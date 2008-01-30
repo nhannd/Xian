@@ -20,22 +20,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices {
     public partial class DevicePage {
         
         /// <summary>
-        /// PageContent control.
+        /// UpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PageContent;
-        
-        /// <summary>
-        /// DevicePageUpdatePanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel DevicePageUpdatePanel;
+        protected global::System.Web.UI.UpdatePanel UpdatePanel;
         
         /// <summary>
         /// ServerPartitionTabs control.

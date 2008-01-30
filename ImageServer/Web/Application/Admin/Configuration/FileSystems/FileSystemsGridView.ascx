@@ -9,7 +9,7 @@
                 OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
                 OnPageIndexChanging="GridView1_PageIndexChanging" EmptyDataText="No filesystems found (Please check the filters!)"
                 PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
-                BorderWidth="1px">
+                BorderWidth="0px">
                 <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
                 <Columns>
                     <asp:BoundField DataField="Description" HeaderText="Description"></asp:BoundField>
@@ -54,6 +54,32 @@
                         <HeaderStyle HorizontalAlign="Center" Wrap="False" />
                     </asp:TemplateField>
                 </Columns>
+                
+                <emptydatatemplate>
+                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" CssClass="CSSGridHeader">
+                        <asp:TableHeaderRow>
+                            <asp:TableHeaderCell>
+                            Description
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center" >
+                            Read
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center" >
+                            Write
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Tier
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Path
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Disk Usage
+                            </asp:TableHeaderCell>
+                        </asp:TableHeaderRow>
+                    </asp:Table>                   
+                </emptydatatemplate> 
+                
                 <RowStyle CssClass="CSSGridRowStyle" />
                 <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
                 <HeaderStyle CssClass="CSSGridHeader" />

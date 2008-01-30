@@ -209,15 +209,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::System.Web.UI.WebControls.DropDownList TiersDropDownList;
         
         /// <summary>
-        /// ValidationSummary1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Sample.Web.UI.Compatibility.ValidationSummary ValidationSummary1;
-        
-        /// <summary>
         /// TabPanel2 control.
         /// </summary>
         /// <remarks>

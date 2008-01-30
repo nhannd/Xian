@@ -296,15 +296,12 @@
 .CSSPopupWindowBody 
 { 
 	vertical-align: top;
-	padding-right: 15px; 
-	padding-left: 15px; 
-	padding-bottom: 15px; 
-	padding-top: 15px; 
+	margin:15px;
 }
 
 .CSSDialogTabPanelContent
 {
-	margin:10px;
+
 }
         
 .CSSPopupWindowTitleBar

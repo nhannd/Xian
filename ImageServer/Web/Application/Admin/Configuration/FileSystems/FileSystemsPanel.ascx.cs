@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -117,10 +118,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
             // setup event handler for child controls
             SetUpEventHandlers();
+
+            int prevSelectIndex = TiersDropDownList.SelectedIndex;
+            if (TiersDropDownList.Items.Count==0)
+            {
+                TiersDropDownList.Items.Add(new ListItem("--- All ---"));
+                foreach (FilesystemTierEnum tier in Tiers)
+                {
+                    TiersDropDownList.Items.Add(new ListItem(tier.Description));
+                }
+            }
+            TiersDropDownList.SelectedIndex = prevSelectIndex; 
+            
+
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            
+
             // This make sure we have the list to work with. 
             // the list may be out-dated if the add/update event is fired later
             // In those cases, the list must be refreshed again.
@@ -153,7 +169,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                 criteria.Description.Like(key);
             }
 
-            if (TiersDropDownList.SelectedIndex >= 1)
+            if (TiersDropDownList.SelectedIndex >= 1) /* 0 = "All" */
                 criteria.FilesystemTierEnum.EqualTo(Tiers[TiersDropDownList.SelectedIndex - 1]);
 
             FileSystemsGridView1.FileSystems = _theController.GetFileSystems(criteria);
@@ -169,6 +185,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// </remarks>
         public void UpdateUI()
         {
+
+            
+
             LoadFileSystems();
 
             Filesystem dev = FileSystemsGridView1.SelectedFileSystem;
@@ -191,17 +210,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
         protected void FilterButton_Click(object sender, ImageClickEventArgs e)
         {
-            LoadFileSystems();
+            //UpdateUI();
         }
 
-        /// <summary>
-        /// Remove all filter settings.
-        /// </summary>
-        protected void Clear()
-        {
-            DescriptionFilter.Text = "";
-            TiersDropDownList.SelectedIndex = -1;
-        }
 
         protected void AddButton_Click(object sender, ImageClickEventArgs e)
         {
@@ -220,9 +231,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
         protected void RefreshButton_Click(object sender, ImageClickEventArgs e)
         {
-            // Clear all filters and reload the data
-            Clear();
-            LoadFileSystems();
+            //UpdateUI();
         }
     }
 }

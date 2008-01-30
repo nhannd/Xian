@@ -26,6 +26,7 @@
                 </table>
             </asp:Panel>
             <div class="CSSPopupWindowBody">
+            <asp:Panel ID="Panel3" runat="server" Height="100%" CssClass="CSSDialogTabPanelContent">
                 <ajaxToolkit:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
                     CssClass="CSSDialogTabControl">
                     <ajaxToolkit:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel"
@@ -140,9 +141,10 @@
                         </HeaderTemplate>
                     </ajaxToolkit:TabPanel>
                 </ajaxToolkit:TabContainer>
-                <br />
+             </asp:Panel>
                 <center>
-                    <table cellpadding="5" cellspacing="5" width="40%">
+                    <br />
+                    <table width="60%">
                         <tr>
                             <td align="center">
                                 <asp:Button ID="OKButton" runat="server" OnClick="OKButton_Click" ValidationGroup="vg1"

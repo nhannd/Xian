@@ -12,10 +12,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <asp:Panel ID="Panel1" runat="server">
+            <asp:Panel ID="Panel1" runat="server" CssClass="ContentPanel">
                 <uc2:FileSystemsPanel ID="FileSystemsPanel1" runat="server"></uc2:FileSystemsPanel>
-                <uc3:AddEditFileSystemDialog ID="AddEditFileSystemDialog1" runat="server" />
             </asp:Panel>
+            <uc3:AddEditFileSystemDialog ID="AddEditFileSystemDialog1" runat="server" />
         </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>

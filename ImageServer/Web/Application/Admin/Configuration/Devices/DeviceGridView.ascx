@@ -49,6 +49,35 @@
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
+                
+                <emptydatatemplate>
+                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" CssClass="CSSGridHeader">
+                        <asp:TableHeaderRow>
+                            <asp:TableHeaderCell>
+                            AE Title
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Description
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            IPAddress
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Port
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center">
+                            Enabled
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center">
+                            DHCP
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Features
+                            </asp:TableHeaderCell>
+                        </asp:TableHeaderRow>
+                    </asp:Table>
+                   
+                </emptydatatemplate> 
                 <RowStyle CssClass="CSSGridRowStyle" />
                 <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
                 <HeaderStyle CssClass="CSSGridHeader" />

@@ -22,7 +22,6 @@
 .TabControl .ajax__tab_header					
 {
 	background: url(./images/tab-line.gif) repeat-x bottom;
-	vertical-align:bottom;
 }
 .TabControl .ajax__tab_outer
 {
@@ -68,8 +67,7 @@
 /* XP IE7 theme - Other Styles */
 .TabControl .ajax__tab_header
 {
-	/*border-bottom: #696969 1px solid;*/
-	vertical-align:bottom;
+	margin:0px;
 }
 	
 .TabControl .ajax__tab_outer
@@ -82,13 +80,17 @@
 }
 .TabControl .ajax__tab_tab
 {
-	color:darkgray;
-	padding: 8px 8px;
-	font-size:80%;
+	vertical-align: bottom;
+	color: darkgray;
+	font-size: 80%;
+	margin: 0;
+	padding-right: 6px;
+	padding-left: 6px;
+	padding-bottom: 8px;
+	padding-top: 8px;
 }
 .TabControl .ajax__tab_body
 {
-
 }
 
 .TabControl .ajax__tab_active .ajax__tab_tab
@@ -132,7 +134,6 @@
 .CSSDialogTabControl .ajax__tab_header					
 {
 	/*background: url(./images/tab-line.gif) repeat-x bottom; */
-	vertical-align:bottom;
 }
 .CSSDialogTabControl .ajax__tab_outer
 {
@@ -177,7 +178,7 @@
 
 .CSSDialogTabControl .ajax__tab_header
 {
-	vertical-align:bottom;
+
 }
 	
 .CSSDialogTabControl .ajax__tab_outer
@@ -190,24 +191,30 @@
 }
 .CSSDialogTabControl .ajax__tab_tab
 {
-	color:darkgray;
-	padding: 8px 8px;
+	vertical-align: bottom;
+	color: darkgray;
+	font-size: 80%;
 	margin: 0;
-	font-size:70%;
+	padding-right: 6px;
+	padding-left: 6px;
+	padding-bottom: 8px;
+	padding-top: 8px;
 }
 
 .CSSDialogTabControl .ajax__tab_active .ajax__tab_tab
 {
 	font-weight: bold;
 	color:Yellow;
-	font-size:100%;
+	font-size:80%;
 }
 
-	
 .CSSDialogTabControl .ajax__tab_body
 {
+	margin: 0px;
+	padding: 5px;
 	border-right: #696969 1px solid;
 	border-top: #696969 1px solid;
 	border-left: #696969 1px solid;
 	border-bottom: #696969 1px solid;
 }
+

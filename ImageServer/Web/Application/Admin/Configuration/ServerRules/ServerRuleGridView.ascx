@@ -41,6 +41,30 @@
                         <HeaderStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
                 </Columns>
+                
+                <emptydatatemplate>
+                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" CssClass="CSSGridHeader">
+                        <asp:TableHeaderRow>
+                            <asp:TableHeaderCell>
+                            Name
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Type
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Apply Time
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center">
+                            Enabled
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center" >
+                            Default
+                            </asp:TableHeaderCell>
+                        </asp:TableHeaderRow>
+                    </asp:Table>                   
+                </emptydatatemplate> 
+                
+                
                 <RowStyle CssClass="CSSGridRowStyle" />
                 <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
                 <HeaderStyle CssClass="CSSGridHeader" />

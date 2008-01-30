@@ -8,7 +8,7 @@
     TagPrefix="clearcanvas" %>
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="DialogPanel" runat="server" CssClass="CSSPopupWindow" Width="400px"
+        <asp:Panel ID="DialogPanel" runat="server" CssClass="CSSPopupWindow" Width="442px"
             Style="display: none">
             <asp:Panel ID="TitleBarPanel" runat="server" CssClass="CSSPopupWindowTitleBar" Width="100%">
                 <table style="width: 100%">
@@ -20,8 +20,8 @@
                 </table>
             </asp:Panel>
             <div class="CSSPopupWindowBody" style="vertical-align: top;">
-                <asp:Panel ID="Panel2" runat="server" Height="200px" CssClass="CSSDialogTabPanelContent">
-                    <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" Height="160px"
+                <asp:Panel ID="Panel2" runat="server" Height="100%" CssClass="CSSDialogTabPanelContent">
+                    <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" 
                         CssClass="CSSDialogTabControl">
                         <cc1:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
                             <ContentTemplate>
@@ -74,9 +74,8 @@
                                                             <clearcanvas:FilesystemPathValidator runat="server" ID="PathValidator" ControlToValidate="PathTextBox"
                                                                 InputName="Filesystem Path" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidPathHint"
                                                                 ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateFilesystemPath"
-                                                                ParamsFunction="ValidationFilesystemPathParams" 
-                                                                ErrorMessage="Invalid or not accessible path"
-                                                                Display="None" ValidationGroup="vg1"/>
+                                                                ParamsFunction="ValidationFilesystemPathParams"
+                                                                Display="None" ValidationGroup="vg1" />
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -108,8 +107,6 @@
                                         </tr>
                                     </table>
                                 </asp:Panel>
-                                <cc2:ValidationSummary ID="ValidationSummary1" runat="server" ShowSummary="False"
-                                    ValidationGroup="vg1" />
                             </ContentTemplate>
                             <HeaderTemplate>
                                 General
@@ -143,21 +140,22 @@
                                         </tr>
                                         <tr id="Tr2" valign="bottom">
                                             <td id="Td2">
-                                            <table>
+                                                <table>
                                                     <tr>
                                                         <td>
-                                                <asp:Label ID="Label5" runat="server" Text="Low Watermark" CssClass="CSSTextLabel" /><br />
-                                                <asp:TextBox ID="LowWatermarkTextBox" runat="server" BorderColor="LightSteelBlue"
-                                                    BorderWidth="1px" ValidationGroup="vg1" MaxLength="7" />
-                                                <uc1:InvalidInputIndicator ID="LowWatermarkHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
-                                                </uc1:InvalidInputIndicator>
-                                                <clearcanvas:RangeComparisonValidator ID="LowWatermarkValidator" EnableClientScript="true"
-                                                    runat="server" ControlToValidate="LowWatermarkTextBox" ControlToCompare="HighWatermarkTextBox"
-                                                    GreaterThan="false" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1"
-                                                    MaxValue="99" ErrorMessage="Low Watermark must be between 1 and 99 and less than High Watermark"
-                                                    Display="None" InvalidInputIndicatorID="LowWatermarkHelp" />
-                                                    
-                                                    </td>
+                                                            <asp:Label ID="Label5" runat="server" Text="Low Watermark" CssClass="CSSTextLabel" /><br />
+                                                            <asp:TextBox ID="LowWatermarkTextBox" runat="server" BorderColor="LightSteelBlue"
+                                                                BorderWidth="1px" ValidationGroup="vg1" MaxLength="7" />
+                                                        </td>
+                                                        <td>
+                                                            <uc1:InvalidInputIndicator ID="LowWatermarkHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                            </uc1:InvalidInputIndicator>
+                                                            <clearcanvas:RangeComparisonValidator ID="LowWatermarkValidator" EnableClientScript="true"
+                                                                runat="server" ControlToValidate="LowWatermarkTextBox" ControlToCompare="HighWatermarkTextBox"
+                                                                GreaterThan="false" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1"
+                                                                MaxValue="99" ErrorMessage="Low Watermark must be between 1 and 99 and less than High Watermark"
+                                                                Display="None" InvalidInputIndicatorID="LowWatermarkHelp" />
+                                                        </td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -168,7 +166,8 @@
                                                     <tr>
                                                         <td>
                                                             <asp:Label ID="Label6" runat="server" Text="Current Percent Full" CssClass="CSSTextLabel" /><br />
-                                                            <asp:Label ID="PercentFullLabel" runat="server" Text="0.00" Width="68px" CssClass="CSSTextLabel" EnableViewState="False"></asp:Label>
+                                                            <asp:Label ID="PercentFullLabel" runat="server" Text="0.00" Width="68px" CssClass="CSSTextLabel"
+                                                                EnableViewState="False"></asp:Label>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -206,6 +205,5 @@
         <cc1:ModalPopupExtender ID="ModalPopupExtender1" BehaviorID="MyStupidExtender" runat="server"
             Enabled="true" TargetControlID="DummyPanel" PopupControlID="DialogPanel" BackgroundCssClass="CSSModalBackground">
         </cc1:ModalPopupExtender>
-        &nbsp; &nbsp;
     </ContentTemplate>
 </asp:UpdatePanel>

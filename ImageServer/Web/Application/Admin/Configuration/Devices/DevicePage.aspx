@@ -12,13 +12,13 @@
     Device Management
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <asp:Panel runat="server" ID="PageContent">
-        <asp:UpdatePanel ID="DevicePageUpdatePanel" runat="server" UpdateMode="Conditional">
-            <ContentTemplate>
-                <ccPartitionTabs:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
-                <ccAddEdit:AddEditDeviceDialog ID="AddEditDeviceControl1" runat="server" />
-                <ccConfirm:ConfirmDialog ID="ConfirmDialog1" runat="server" />
-            </ContentTemplate>
-        </asp:UpdatePanel>
-    </asp:Panel>
+
+    <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+            <ccPartitionTabs:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
+            <ccAddEdit:AddEditDeviceDialog ID="AddEditDeviceControl1" runat="server" />
+            <ccConfirm:ConfirmDialog ID="ConfirmDialog1" runat="server" />
+        </ContentTemplate>
+    </asp:UpdatePanel>
+    
 </asp:Content>

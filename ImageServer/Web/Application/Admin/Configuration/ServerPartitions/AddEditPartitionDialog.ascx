@@ -8,21 +8,18 @@
     TagPrefix="uc1" %>
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="DialogPanel" runat="server" CssClass="CSSPopupWindow" Style="display: none"
-            Width="420px">
-            <asp:Panel ID="TitleBarPanel" runat="server" CssClass="CSSPopupWindowTitleBar" Width="100%">
-                <table style="width: 100%">
+        <asp:Panel ID="DialogPanel" runat="server" CssClass="CSSPopupWindow" Style="display: none" Width="440px">
+            <asp:Panel ID="TitleBarPanel" runat="server" CssClass="CSSPopupWindowTitleBar">
+                <table width="100%">
                     <tr>
                         <td valign="middle">
                             <asp:Label ID="TitleLabel" runat="server" EnableViewState="False" Text="Add Partition"
-                                Width="100%"></asp:Label></td>
+                                ></asp:Label></td>
                     </tr>
                 </table>
             </asp:Panel>
-            <cc2:ValidationSummary ID="ValidationSummary1" runat="server" BackColor="#FFFFC0"
-                Height="81px" ShowMessageBox="false" ShowSummary="False" Style="left: 462px;
-                position: absolute; top: 77px" ValidationGroup="vg1" Width="159px"></cc2:ValidationSummary>
             <div class="CSSPopupWindowBody">
+            <asp:Panel ID="Panel3" runat="server" Height="100%" CssClass="CSSDialogTabPanelContent">
                 <ccAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
                     CssClass="CSSDialogTabControl">
                     <ccAjax:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel"
@@ -187,9 +184,10 @@
                         </HeaderTemplate>
                     </ccAjax:TabPanel>
                 </ccAjax:TabContainer>
-                <br />
+            </asp:Panel>
                 <center>
-                    <table cellpadding="0" cellspacing="0" width="80%">
+                    <br />
+                    <table width="80%">
                         <tr align="center">
                             <td>
                                 <asp:Button ID="OKButton" runat="server" Text="Add" Width="77px" OnClick="OKButton_Click"
@@ -212,4 +210,3 @@
         </ccAjax:ModalPopupExtender>
     </ContentTemplate>
 </asp:UpdatePanel>
-&nbsp; 

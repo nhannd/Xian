@@ -19,8 +19,36 @@
                     <asp:BoundField DataField="StudyDescription" HeaderText="Description"></asp:BoundField>
                     <asp:BoundField DataField="NumberOfRelatedSeries" HeaderText="Series"></asp:BoundField>
                     <asp:BoundField DataField="NumberOfRelatedInstances" HeaderText="Instances"></asp:BoundField>
-                    <%--Placeholder for the hover menu--%>
+                    
                 </Columns>
+                <emptydatatemplate>
+                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" CssClass="CSSGridHeader">
+                        <asp:TableHeaderRow>
+                            <asp:TableHeaderCell>
+                            Patient's Name
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Patient ID
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Accession #
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Study Date
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Description
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Series
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Instances
+                            </asp:TableHeaderCell>
+                        </asp:TableHeaderRow>
+                    </asp:Table>
+                   
+                </emptydatatemplate> 
                 <RowStyle CssClass="CSSGridRowStyle" />
                 <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
                 <HeaderStyle CssClass="CSSGridHeader" />

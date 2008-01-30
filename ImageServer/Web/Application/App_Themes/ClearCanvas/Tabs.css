@@ -21,7 +21,6 @@
 .TabControl .ajax__tab_header					
 {
 	background: url(./images/tab-line.gif) repeat-x bottom;
-	vertical-align:bottom;
 }
 .TabControl .ajax__tab_outer
 {
@@ -80,7 +79,7 @@
 }
 .TabControl .ajax__tab_tab
 {
-	padding: 8px 8px;
+	padding: 6px 6px;
 	margin: 0;
 	font-size:100%;
 	
@@ -190,14 +189,14 @@
 }
 .CSSDialogTabControl .ajax__tab_tab
 {
-	padding: 8px 8px;
+	padding: 6px 6px;
 	margin: 0;
-	font-size:80%;	
+	font-size:100%;	
 }
 
 .CSSDialogTabControl .ajax__tab_active .ajax__tab_tab
 {
-	font-size:80%;
+	font-size:100%;
 }
 
 .CSSDialogTabControl .ajax__tab_body

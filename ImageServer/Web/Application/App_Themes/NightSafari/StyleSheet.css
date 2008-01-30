@@ -25,23 +25,35 @@ body
 .CSSTextBoxLabel
 {
 	width: 100px;
-	margin-left: 3px;
-	margin-right: 3px;
+	margin: 5px;
 }
 
  
 .CSSFilterTextBox
 {
 	width: 100px;
-	margin-left: 3px;
-	margin-right: 3px;
+	margin-left: 5px;
+	margin-right: 5px;
+	border-right: #696969 1px solid;
+	border-top: #696969 1px solid;
+	border-left: #696969 1px solid;
+	border-bottom: #696969 1px solid;
+	background-color: #1c1c1c;
+	color: #66ff66;
 }
 
 .CSSFilterDropDownList
 {
-	width: 120px;
-	margin-left: 3px;
-	margin-right: 3px;
+	width: 140px;
+	margin-left: 5px;
+	margin-right: 5px;
+	border-right: #696969 1px solid;
+	border-top: #696969 1px solid;
+	border-left: #696969 1px solid;
+	border-bottom: #696969 1px solid;
+	background-color: #1c1c1c;
+	color: #66ff66;
+	font-style: italic;
 }
 
 .FilterButtonContainer
@@ -52,8 +64,8 @@ body
 
 .CSSCheckBox
 {
-	margin-left:10px;
-	margin-right:10px;
+	margin: 10px;
+	
 }
 
 

@@ -56,13 +56,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         protected global::System.Web.UI.WebControls.Label TitleLabel;
         
         /// <summary>
-        /// ValidationSummary1 control.
+        /// Panel3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Sample.Web.UI.Compatibility.ValidationSummary ValidationSummary1;
+        protected global::System.Web.UI.WebControls.Panel Panel3;
         
         /// <summary>
         /// ServerPartitionTabContainer control.

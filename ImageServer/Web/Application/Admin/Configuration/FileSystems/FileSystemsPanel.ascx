@@ -5,6 +5,8 @@
 <%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="uc5" %>
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
+        <asp:Panel ID="Panel2" runat="server" Height="100%">
+        
         <asp:Table ID="Table" runat="server" Width="100%" CellSpacing="0" CellPadding="0">
             <asp:TableHeaderRow>
                 <asp:TableHeaderCell HorizontalAlign="left" VerticalAlign="Bottom" Width="100%">
@@ -28,11 +30,10 @@
                                 <table cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td align="left">
-                                            <asp:Label ID="Label1" runat="server" Text="Description" CssClass="CSSTextBoxLabel"
-                                                EnableViewState="False"></asp:Label><br />
+                                            <asp:Label ID="Label1" runat="server" Text="Description" CssClass="CSSTextBoxLabel" ></asp:Label><br />
                                             <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="CSSFilterTextBox" ToolTip="Filter the list by AE Title"></asp:TextBox></td>
                                         <td align="left">
-                                            <asp:Label ID="Label2" runat="server" Text="Tiers" CssClass="CSSTextBoxLabel" EnableViewState="False"></asp:Label><br />
+                                            <asp:Label ID="Label2" runat="server" Text="Tiers" CssClass="CSSTextBoxLabel"></asp:Label><br />
                                             <asp:DropDownList ID="TiersDropDownList" runat="server" CssClass="CSSFilterDropDownList">
                                             </asp:DropDownList></td>
                                         <td align="right" valign="bottom">
@@ -58,5 +59,9 @@
                 </asp:TableCell>
             </asp:TableRow>
         </asp:Table>
+        </asp:panel>
+        
+        
+        
     </ContentTemplate>
 </asp:UpdatePanel>
