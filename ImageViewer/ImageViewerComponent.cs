@@ -253,7 +253,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the context-menu model. The menu is displayed when right-clicking on any tile.
 		/// </summary>
-		public override ActionModelNode ContextMenuModel
+		public ActionModelNode ContextMenuModel
 		{
 			get
 			{

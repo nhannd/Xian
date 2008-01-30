@@ -426,7 +426,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			get { return ActionModelRoot.CreateModel(this.GetType().FullName, "receive-queue-toolbar", _toolSet.Actions); }
 		}
 
-		public override ActionModelNode ContextMenuModel
+		public ActionModelNode ContextMenuModel
 		{
 			get { return ActionModelRoot.CreateModel(this.GetType().FullName, "receive-queue-contextmenu", _toolSet.Actions); }
 		}

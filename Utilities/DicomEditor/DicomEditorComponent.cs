@@ -362,7 +362,7 @@ namespace ClearCanvas.Utilities.DicomEditor
             get { return _toolbarModel; }
         }
 
-		public override ActionModelNode ContextMenuModel
+		public ActionModelNode ContextMenuModel
         {
             get { return _contextMenuModel; }
         }

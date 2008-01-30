@@ -492,13 +492,13 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Gets the context-menu model. The menu is displayed when clicking on the background of an application component.
+        /// Gets the meta context-menu model. The menu is displayed when clicking on the background of an application component.
         /// </summary>
-        public virtual ActionModelNode ContextMenuModel
+        public virtual ActionModelNode MetaContextMenuModel
         {
             get
             {
-                return ActionModelRoot.CreateModel(typeof(ApplicationComponent).FullName, "applicationcomponent-contextmenu", _toolSet.Actions);
+                return ActionModelRoot.CreateModel(typeof(ApplicationComponent).FullName, "applicationcomponent-metacontextmenu", _toolSet.Actions);
             }
         }
 

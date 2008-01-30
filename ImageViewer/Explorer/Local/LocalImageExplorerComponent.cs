@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 				this.DefaultActionHandler();
 		}
 
-		public override ActionModelNode ContextMenuModel
+		public ActionModelNode ContextMenuModel
 		{
 			get
 			{

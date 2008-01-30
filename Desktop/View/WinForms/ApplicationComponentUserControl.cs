@@ -60,7 +60,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             if (component is ApplicationComponent)
             {
-                ActionModelNode menuModel = ((ApplicationComponent)component).ContextMenuModel;
+                ActionModelNode menuModel = ((ApplicationComponent)component).MetaContextMenuModel;
                 if (menuModel != null)
                 {
                     ToolStripBuilder.BuildMenu(_contextMenu.Items, menuModel.ChildNodes);
