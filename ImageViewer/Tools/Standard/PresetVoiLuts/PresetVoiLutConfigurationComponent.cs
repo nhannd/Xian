@@ -205,7 +205,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			}
 		}
 
-		public ActionModelNode ContextMenuModel
+		public override ActionModelNode ContextMenuModel
 		{
 			get
 			{

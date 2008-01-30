@@ -132,13 +132,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public ServerTree ServerTree
         {
             get { return _serverTree; }
-            set { _serverTree = value; }
         }
 
         public AEServerGroup SelectedServers
         {
             get { return _selectedServers; }
-            set { _selectedServers = value; }
         }
 
         public int UpdateType
@@ -150,13 +148,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         public ActionModelRoot ToolbarModel
         {
             get { return _toolbarModel; }
-            set { _toolbarModel = value; }
         }
 
-        public ActionModelRoot ContextMenuModel
+        public override ActionModelNode ContextMenuModel
         {
             get { return _contextMenuModel; }
-            set { _contextMenuModel = value; }
         }
 
 		public bool ShowTools
