@@ -1,80 +1,82 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-   <head>
-      <title>MPPS Details Dispatcher page</title>
-      <link href="../../css/default.css" rel="stylesheet" type="text/css" />
-      <script type="text/javascript" src="../../js/jsx.js"></script>
-      <script type="text/javascript" src="../../js/jsml.js"></script>
-      <script type="text/javascript" src="../../js/ui.js"></script>
-      <script type="text/javascript" src="../../js/ris.js"></script>
-      <script type="text/javascript" src="../../js/layout.js"></script>
-      <script type="text/javascript" >
-        function onBodyLoad()
-        {		        
-            try
-            {
-                if(!Ris)
-                    return;
-                
-                // first check if the documentation was captured before, and if the "capturePageUrl" was recorded
-                // if the capturePageUrl is known, just redirect immediately there 
+	<head>
+		<title>MPPS Details Dispatcher page</title>
+		<link href="../../css/default.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="../../js/jsx.js"></script>
+		<script type="text/javascript" src="../../js/jsml.js"></script>
+		<script type="text/javascript" src="../../js/ui.js"></script>
+		<script type="text/javascript" src="../../js/ris.js"></script>
+		<script type="text/javascript" src="../../js/layout.js"></script>
+		<script type="text/javascript" >
+		function onBodyLoad()
+		{
+				try
+				{
+					if(!Ris)
+						return;
+
+					// first check if the documentation was captured before, and if the "capturePageUrl" was recorded
+					// if the capturePageUrl is known, just redirect immediately there 
 				// (this provides a form of versioning, whereby data is always displayed by the same page that captured it in the first place)
-                var data = JSML.parse(Ris.getTag("Documentation")) || {};
-                if(data.capturePageUrl)
-                {
-                    window.location = data.capturePageUrl;
-                }
-                else
-                {
-                    // this is new documentation, so determine the appropriate capture page
-                    // from information provided by the healthcare context
-                    // (it is entirely up to the site to determine this algorithm)
-                    var mpps = Ris.getHealthcareContext();
-                    
-                    // redirect to appropriate page
-                    window.location = mpps ? selectPage(mpps) : "about:blank";
-                }
-            }
-            catch(e)
-            {
-               var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
-               Field.setValue($("errorMsg"), message);
-            }
-        }
-        function selectPage(mpps)
-        {
-            var modalityName = mpps.ModalityProcedureSteps[0].ModalityName;
-            
-            if(modalityName == "CT")
-                return "http://localhost/RIS/forms/technologist/ct-mpps.htm";
-                
-            if(modalityName == "MRI")
-                return "http://localhost/RIS/forms/technologist/mri-mpps.htm";
-                
-            if(modalityName == "PET")
-                return "http://localhost/RIS/forms/technologist/petct-mpps.htm";
-                
-            if(modalityName == "Angiography" || modalityName == "Interventional" || modalityName == "Neuro Angiography")
-                return "http://localhost/RIS/forms/technologist/angio-interv-mpps.htm";
+					var data = JSML.parse(Ris.getTag("Documentation")) || {};
+					if(data.capturePageUrl)
+					{
+						window.location = data.capturePageUrl;
+					}
+					else
+					{
+						// this is new documentation, so determine the appropriate capture page
+						// from information provided by the healthcare context
+						// (it is entirely up to the site to determine this algorithm)
+						var mpps = Ris.getHealthcareContext();
 
-            if(modalityName == "General Radiography" || modalityName == "GI/GU")
-                return "http://localhost/RIS/forms/technologist/cr-mpps.htm";
-                
-            if(modalityName == "Breast Imaging")
-                return "http://localhost/RIS/forms/technologist/mammo-mpps.htm";
+						// redirect to appropriate page
+						window.location = mpps ? selectPage(mpps) : "about:blank";
+					}
+				}
+				catch(e)
+				{
+					var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+					Field.setValue($("errorMsg"), message);
+				}
+		}
+		function selectPage(mpps)
+		{
+				var modalityName = mpps.ModalityProcedureSteps[0].ModalityName;
 
-            if(modalityName == "Ultrasound" || modalityName == "Prostate Centre" || modalityName == "CEOU OB" || modalityName == "Hydro Gyn")
-                return "http://localhost/RIS/forms/technologist/ultrasound-mpps.htm";
-                
-            if(modalityName == "Nuclear Medicine")
-                return "http://localhost/RIS/forms/technologist/nucmed-mpps.htm";
+				if(modalityName == "CT")
+					return "http://localhost/RIS/forms/technologist/ct-mpps.htm";
 
-            return "about:blank";
-        }
-      </script>
-   </head>
-   <body onload="onBodyLoad()">
-   <div id="errorMsg" />
-   </body>
+				if(modalityName == "MRI")
+					return "http://localhost/RIS/forms/technologist/mri-mpps.htm";
+
+				if(modalityName == "PET")
+					return "http://localhost/RIS/forms/technologist/petct-mpps.htm";
+
+				if(modalityName == "Angiography" || modalityName == "Interventional" || modalityName == "Neuro Angiography")
+					return "http://localhost/RIS/forms/technologist/angio-interv-mpps.htm";
+
+				if(modalityName == "General Radiography" || modalityName == "GI/GU")
+					return "http://localhost/RIS/forms/technologist/cr-mpps.htm";
+
+				if(modalityName == "Breast Imaging")
+					return "http://localhost/RIS/forms/technologist/mammo-mpps.htm";
+
+				if(modalityName == "Ultrasound" || modalityName == "Prostate Centre")
+					return "http://localhost/RIS/forms/technologist/ultrasound-mpps.htm";
+
+				if(modalityName == "CEOU OB" || modalityName == "Hydro Gyn")
+					return "http://localhost/RIS/forms/technologist/ob-us-mpps.htm";
+
+				if(modalityName == "Nuclear Medicine")
+					return "http://localhost/RIS/forms/technologist/nucmed-mpps.htm";
+
+				return "about:blank";
+		}
+		</script>
+	</head>
+	<body onload="onBodyLoad()">
+	<div id="errorMsg" />
+	</body>
 </html>
-       
