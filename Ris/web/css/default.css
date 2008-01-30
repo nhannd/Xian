@@ -175,6 +175,11 @@ a.collapsibleHeading span.plusMinus
    white-space: nowrap;
 }
 
+.divCell textarea
+{
+	width: 100%;
+}
+
 .checkedDivCell
 {
    white-space: wrap;

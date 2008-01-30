@@ -354,6 +354,22 @@ var Table = {
 		        input.onblur = function() { table._onEditComplete(row, col); }
 		    }
 		    else
+		    if(["textarea"].indexOf(column.cellType) > -1)
+		    {
+		        var input = document.createElement("textarea");
+		        td.appendChild(input);
+				  td.style.height = "100%";  // overwrite default styles heights so whole text area is visible
+		        td._setCellDisplayValue = function(value) { input.value = (value || ""); }
+		        if(column.cols) input.cols = column.cols;
+				  if(column.rows) input.rows = column.rows;
+		        
+		        // respond to every keystroke
+		        input.onkeyup = input.onchange = function() { column.setValue(obj, this.value); table._onCellUpdate(row, col); }
+		        
+		        // consider the edit complete when focus is lost
+		        input.onblur = function() { table._onEditComplete(row, col); }
+		    }
+		    else
 		    if(["date", "datetime"].indexOf(column.cellType) > -1)
 		    {
 		        var input = document.createElement("input");
