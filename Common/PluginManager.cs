@@ -275,7 +275,8 @@ namespace ClearCanvas.Common
                 //
                 
                 setup.PrivateBinPath = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath;
-                
+			    setup.ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+			 
                 #endregion 
 
                 domain = AppDomain.CreateDomain(

@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Xml;
 using ClearCanvas.ImageServer.Rules;
 
@@ -50,12 +49,24 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
             XmlDocument theDoc = new XmlDocument();
 
-            theDoc.Load(new StringReader(ruleXml));
-            bool result = Rule.ValidateRule(theDoc);
+            try
+            {
+                theDoc.LoadXml(ruleXml);
+            }
+            catch (Exception e)
+            {
+                ErrorMessage = "Unable to parse XML: " + e.Message;
+                return false;
+            }
 
-            if (!result)
-                ErrorMessage = "Unable to compile Server Rule. Syntax Error.";
-            return result;
+            string error;
+            if (false == Rule.ValidateRule(theDoc, out error))
+            {
+                ErrorMessage = error;
+                return false;
+            }
+
+            return true;
         }
     }
 }

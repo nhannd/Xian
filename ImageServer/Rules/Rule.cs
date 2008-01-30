@@ -120,8 +120,9 @@ namespace ClearCanvas.ImageServer.Rules
         /// Method for validating proper format of a ServerRule.
         /// </summary>
         /// <param name="rule">The rule to validate</param>
+        /// <param name="errorDescription">A failure description on error.</param>
         /// <returns>true on successful validation, otherwise false.</returns>
-        public static bool ValidateRule(XmlDocument rule)
+        public static bool ValidateRule(XmlDocument rule, out string errorDescription)
         {
             XmlSpecificationCompiler specCompiler = new XmlSpecificationCompiler("dicom");
             XmlActionCompiler<ServerActionContext> actionCompiler = new XmlActionCompiler<ServerActionContext>();
@@ -134,11 +135,13 @@ namespace ClearCanvas.ImageServer.Rules
             {
                 theRule.Compile(specCompiler, actionCompiler);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                errorDescription = e.Message;
                 return false;
             }
 
+            errorDescription = "Success";
             return true;
         }
 

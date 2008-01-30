@@ -32,6 +32,7 @@
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Web.Script.Services;
 using System.Web.Services;
 using System.Xml;
@@ -104,11 +105,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
 
             XmlDocument theDoc = new XmlDocument();
 
-            theDoc.Load(new StringReader(serverRule));
-
-            if (false == ClearCanvas.ImageServer.Rules.Rule.ValidateRule(theDoc))
+            try
             {
-                result.ErrorText = "Unable to compile Server Rule.";
+                string xml = Microsoft.JScript.GlobalObject.unescape(serverRule);
+                theDoc.LoadXml(xml);
+            }
+            catch (Exception e)
+            {
+                result.ErrorText = "Unable to parse XML: " + e.Message;
+                result.Success = false;
+                result.ErrorCode = -5000;
+                return result;
+            }
+
+            string error;
+            if (false == ClearCanvas.ImageServer.Rules.Rule.ValidateRule(theDoc, out error))
+            {
+                result.ErrorText = error;
                 result.Success = false;
                 result.ErrorCode = -5000;
             }

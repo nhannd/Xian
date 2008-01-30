@@ -1,16 +1,23 @@
-<Project DefaultTargets="CopyPlugins" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
+<Project DefaultTargets="CopyPlugins;CopyBin" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ItemGroup>
 		<PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll"/>
 		<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll"/>
-
+		<PluginFiles Include="$(ProjectDir)\..\..\Rules\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.dll"/>
+		<PluginFiles Include="$(ProjectDir)\..\..\..\Common\bin\$(Configuration)\ClearCanvas.Common.dll"/>
+		<BinFiles Include="$(ProjectDir)\..\..\..\DicomServices\bin\$(Configuration)\ClearCanvas.DicomServices.dll"/>
+		<BinFiles Include="$(ProjectDir)\..\..\..\log4net\bin\$(Configuration)\ClearCanvas.log4net.dll"/>
+		<BinFiles Include="$(ProjectDir)\..\..\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll"/>
 	</ItemGroup>
-	
-    <Target Name="CopyPlugins">
+	<Target Name="CopyPlugins">
 		<Message Text="Copying plugin assemblies into plugins folder (ASP.NET Development Server must not be running)"/>
 		<Message Text="$(ProjectDir)"/>
 		<Message Text="@(PluginFiles)"/>
-
 		<Copy SkipUnchangedFiles="true" SourceFiles="@(PluginFiles)" DestinationFolder="$(ProjectDir)\plugins"/>
-    </Target> 
+	</Target> 
+	<Target Name="CopyBin">
+		<Message Text="Copying common assemblies into bin folder (ASP.NET Development Server must not be running)"/>
+		<Message Text="$(ProjectDir)"/>
+		<Message Text="@(BinFiles)"/>
+		<Copy SkipUnchangedFiles="true" SourceFiles="@(BinFiles)" DestinationFolder="$(ProjectDir)\bin"/>
+	</Target> 
 </Project> 

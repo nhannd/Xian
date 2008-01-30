@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             {
                 control = document.getElementById('" + RuleXmlTextBox.ClientID + @"');
                 params = new Array();
-                params.serverRule=control.value;
+                params.serverRule=escape(control.value);
                 return params;
             }
 
