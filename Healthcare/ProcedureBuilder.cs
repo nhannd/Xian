@@ -104,13 +104,7 @@ namespace ClearCanvas.Healthcare
                 stepsNode.AppendChild(stepNode);
             }
 
-            StringBuilder sb = new StringBuilder();
-            using(XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb)))
-            {
-                writer.Formatting = System.Xml.Formatting.Indented;
-                xmlDoc.Save(writer);
-                type.PlanXml = sb.ToString();
-            }
+            type.SetPlanXml(xmlDoc);
         }
 
         internal void BuildProcedure(Procedure procedure)
@@ -127,13 +121,10 @@ namespace ClearCanvas.Healthcare
             }
 
             // plan may not exist
-            if(string.IsNullOrEmpty(type.PlanXml))
+            if(type.GetPlanXml().DocumentElement == null)
                 return;
 
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(type.PlanXml);
-
-            XmlNodeList stepNodes = xmlDoc.SelectNodes("procedure-steps/procedure-step");
+            XmlNodeList stepNodes = type.GetPlanXml().SelectNodes("procedure-steps/procedure-step");
             foreach (XmlElement stepNode in stepNodes)
             {
                 string className = stepNode.GetAttribute("class");

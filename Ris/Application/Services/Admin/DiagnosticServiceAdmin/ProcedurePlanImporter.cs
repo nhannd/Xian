@@ -132,7 +132,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 
                 if (!ds.ProcedureTypes.Contains(rpt))
                 {
-                    ds.AddProcedureType(rpt);
+                    ds.ProcedureTypes.Add(rpt);
                 }
             }
         }

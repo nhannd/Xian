@@ -60,19 +60,6 @@ namespace ClearCanvas.Healthcare {
 		private void CustomInitialize()
 		{
 		}
-
-        public virtual void AddProcedureType(ProcedureType rpt)
-        {
-            if (this.ProcedureTypes.Contains(rpt))
-            {
-                throw new HealthcareWorkflowException(
-                    string.Format("Diagnostic Service {0} already contains Procedure Type {1}",
-                    this.Id, rpt.Id));
-            }
-
-            this.ProcedureTypes.Add(rpt);
-        }
-		
 		
 		#region Object overrides
 

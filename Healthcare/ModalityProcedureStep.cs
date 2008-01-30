@@ -62,7 +62,7 @@ namespace ClearCanvas.Healthcare {
             // set modality - need to look up by ID
             try
             {
-                string modalityId = GetAttribute(xmlNode, "modalityID", true);
+                string modalityId = GetAttribute(xmlNode, "modality", true);
                 ModalitySearchCriteria where = new ModalitySearchCriteria();
                 where.Id.EqualTo(modalityId);
 
@@ -81,7 +81,7 @@ namespace ClearCanvas.Healthcare {
         {
             ModalityProcedureStep step = (ModalityProcedureStep) prototype;
             xmlNode.SetAttribute("description", step.Description);
-            xmlNode.SetAttribute("modalityID", step.Modality.Id);
+            xmlNode.SetAttribute("modality", step.Modality.Id);
         }
     }
 

@@ -55,6 +55,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceExporter.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceImporter.cs" />
+    <Compile Include="Admin\ProcedureTypeAdmin\ProcedureTypeExporter.cs" />
+    <Compile Include="Admin\ProcedureTypeAdmin\ProcedureTypeImporter.cs" />
     <Compile Include="Admin\UserAdmin\UserAdminService.cs" />
     <Compile Include="Admin\UserAdmin\AuthorityGroupAssembler.cs" />
     <Compile Include="Admin\UserAdmin\AuthorityTokenAssembler.cs" />

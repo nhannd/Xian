@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Text;
 
 using Iesi.Collections;
@@ -67,7 +68,32 @@ namespace ClearCanvas.Healthcare {
             builder.SetPlanFromPrototype(this, prototype);
         }
 
-		/// <summary>
+        /// <summary>
+        /// Gets the XML representation of the procedure plan for this procedure type.
+        /// </summary>
+        public virtual XmlDocument GetPlanXml()
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            if (!string.IsNullOrEmpty(_planXml))
+                xmlDoc.LoadXml(_planXml);
+            return xmlDoc;
+        }
+
+        /// <summary>
+        /// Sets the XML representation of the procedure plan for this procedure type.
+        /// </summary>
+        public virtual void SetPlanXml(XmlDocument value)
+        {
+            StringBuilder sb = new StringBuilder();
+            using (XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb)))
+            {
+                writer.Formatting = Formatting.Indented;
+                value.Save(writer);
+                _planXml = sb.ToString();
+            }
+        }
+
+        /// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.
 		/// </summary>
@@ -75,16 +101,7 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
-        /// <summary>
-        /// Gets or sets the XML representation of the procedure plan for this procedure type.
-        /// </summary>
-        protected internal virtual string PlanXml
-	    {
-            get { return _planXml; }
-            set { _planXml = value; }
-	    }
-	
-		#region Object overrides
+        #region Object overrides
 		
 		public override bool Equals(object that)
 		{
