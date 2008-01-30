@@ -82,6 +82,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
+		/// Gets the graphic's tightest bounding box.
+		/// </summary>
+		public abstract RectangleF BoundingBox { get; }
+
+		/// <summary>
 		/// Gets or sets the <see cref="CursorToken"/> that should be shown when stretching
 		/// this graphic.
 		/// </summary>
@@ -147,7 +152,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Gets the point on the graphic that is closest to the specified point.
+		/// Gets the point on the graphic closest to the specified point.
 		/// </summary>
 		/// <param name="point"></param>
 		/// <returns></returns>

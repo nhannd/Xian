@@ -52,11 +52,21 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 		}
 
+		/// <summary>
+		/// Creates a <see cref="RectanglePrimitive"/>
+		/// </summary>
+		/// <returns></returns>
 		protected override BoundableGraphic CreateBoundableGraphic()
 		{
 			return new RectanglePrimitive();
 		}
 
+		/// <summary>
+		/// Gets the point on the <see cref="RectangleInteractiveGraphic"/>
+		/// closest to the specified point.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override PointF GetClosestPoint(PointF point)
 		{
 			double currentDistance;

@@ -98,6 +98,22 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
+		/// Gets the graphic's tightest bounding box.
+		/// </summary>
+		public override RectangleF BoundingBox
+		{
+			get 
+			{
+				PointF[] pointArray = new PointF[this.PolyLine.Count];
+
+				for (int i = 0; i < this.PolyLine.Count; i++)
+					pointArray[i] = this.PolyLine[i];
+
+				return RectangleUtilities.ComputeBoundingRectangle(pointArray);
+			}
+		}
+
+		/// <summary>
 		/// Gets or sets the <see cref="CursorToken"/> that should be shown
 		/// when moving this graphic.
 		/// </summary>
@@ -157,6 +173,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return this.PolyLine.HitTest(point);
 		}
 
+		/// <summary>
+		/// Gets the point on the <see cref="PolyLineInteractiveGraphic"/>
+		/// closest to the specified point.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override PointF GetClosestPoint(PointF point)
 		{
 			double shortestDistance = double.MaxValue;

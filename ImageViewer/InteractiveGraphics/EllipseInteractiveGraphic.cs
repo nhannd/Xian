@@ -23,12 +23,25 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 		}
 
+		/// <summary>
+		/// Creates an <see cref="EllipsePrimitive"/>.
+		/// </summary>
+		/// <returns></returns>
 		protected override BoundableGraphic CreateBoundableGraphic()
 		{
 			return new EllipsePrimitive();
 		}
 
-		public override bool HitTest(System.Drawing.Point point)
+		/// <summary>
+		/// Peforms a hit test on the <see cref="EllipseInteractiveGraphic"/>
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// The active region of this hit test is the ellipse itself, as well as
+		/// the bounding rectangle.
+		/// </remarks>
+		public override bool HitTest(Point point)
 		{
 			this.CoordinateSystem = CoordinateSystem.Destination;
 			RectangleF boundingBox = new RectangleF(this.Left, this.Top, this.Width, this.Height);
@@ -46,6 +59,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return result || base.HitTest(point);
 		}
 
+		/// <summary>
+		/// Gets the point where the ellipse intersects the line whose end points
+		/// are the center of the ellipse and the specified point.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override PointF GetClosestPoint(PointF point)
 		{
 			// Semi major/minor axes

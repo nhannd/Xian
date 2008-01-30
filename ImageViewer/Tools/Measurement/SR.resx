@@ -130,7 +130,7 @@
     <value>Delete</value>
   </data>
   <data name="NotApplicable" xml:space="preserve">
-    <value>n/a</value>
+    <value>N/A</value>
   </data>
   <data name="ToolsMeasurementArea" xml:space="preserve">
     <value>Area:</value>
@@ -139,7 +139,7 @@
     <value>Area: {0:F0} pixels</value>
   </data>
   <data name="ToolsMeasurementFormatAreaSquareCm" xml:space="preserve">
-    <value>Area: {0:F2} sq cm</value>
+    <value>Area: {0:F2} cm²</value>
   </data>
   <data name="ToolsMeasurementFormatLengthCm" xml:space="preserve">
     <value>Length: {0:F2} cm</value>
@@ -184,7 +184,7 @@
     <value>Elliptical ROI</value>
   </data>
   <data name="ToolsMeasurementFormatAreaSquareMm" xml:space="preserve">
-    <value>Area: {0:F2} sq mm</value>
+    <value>Area: {0:F2} mm²</value>
   </data>
   <data name="CommandCreateEllipiticalRoi" xml:space="preserve">
     <value>Create Elliptical ROI</value>
@@ -200,5 +200,17 @@
   </data>
   <data name="ToolsMeasurementFormatLengthMm" xml:space="preserve">
     <value>Length: {0:F2} mm</value>
+  </data>
+  <data name="ToolsMeasurementFormatMean" xml:space="preserve">
+    <value>Mean: {0}</value>
+  </data>
+  <data name="ToolsMeasurementFormatMeanCT" xml:space="preserve">
+    <value>Mean: {0} HU</value>
+  </data>
+  <data name="ToolsMeasurementFormatStdDev" xml:space="preserve">
+    <value>Std Dev: {0}</value>
+  </data>
+  <data name="ToolsMeasurementFormatStdDevCT" xml:space="preserve">
+    <value>Std Dev: {0} HU</value>
   </data>
 </root>

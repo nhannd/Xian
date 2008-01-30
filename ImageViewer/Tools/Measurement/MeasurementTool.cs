@@ -7,6 +7,7 @@ using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -119,10 +120,13 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			string calloutText = "";
 
+
 			foreach (IRoiAnalyzer analyzer in _roiAnalyzers)
 			{
 				string analysis = analyzer.Analyze(roiGraphic);
-				calloutText += analysis + "\n";
+
+				if (analysis != String.Empty)
+					calloutText += analysis + "\n";
 			}
 
 			roiGraphic.Callout.Text = calloutText;

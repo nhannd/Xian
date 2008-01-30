@@ -4,6 +4,8 @@ using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
+using System.Drawing;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -12,21 +14,23 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		public string Analyze(RoiGraphic roiGraphic)
 		{
 			RectangleInteractiveGraphic rectangle = roiGraphic.Roi as RectangleInteractiveGraphic;
-			IImageSopProvider provider = roiGraphic.ParentPresentationImage as IImageSopProvider;
 			
 			Platform.CheckForInvalidCast(rectangle, "roiGraphic.Roi", "RectangleInteractiveGraphic");
 			
-			return Analyze(provider.ImageSop, rectangle);
+			return Analyze(rectangle);
 		}
 
-		public abstract string Analyze(ImageSop sop, RectangleInteractiveGraphic rectangle);
+		public abstract string Analyze(RectangleInteractiveGraphic rectangle);
 	}
 
 	[ExtensionOf(typeof(RectangleAnalyzerExtensionPoint))]
 	public class RectangleAreaCalculator : RectangleAnalyzer
 	{
-		public override string Analyze(ImageSop imageSop, RectangleInteractiveGraphic rectangle)
+		public override string Analyze(RectangleInteractiveGraphic rectangle)
 		{
+			IImageSopProvider provider = rectangle.ParentPresentationImage as IImageSopProvider;
+			ImageSop imageSop = provider.ImageSop;
+
 			Units units = Units.Centimeters;
 
 			rectangle.CoordinateSystem = CoordinateSystem.Source;
@@ -51,6 +55,26 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 					text = String.Format(SR.ToolsMeasurementFormatAreaSquareCm, areaInMm / 100);
 			}
 			return text;
+		}
+	}
+
+	[ExtensionOf(typeof(RectangleAnalyzerExtensionPoint))]
+	public class RectangleStatisticsCalculator : RectangleAnalyzer
+	{
+		public override string Analyze(RectangleInteractiveGraphic rectangle)
+		{
+			rectangle.CoordinateSystem = CoordinateSystem.Source;
+
+			string str = RoiStatisticsCalculator.Calculate(rectangle, IsPointInRoi);
+
+			rectangle.ResetCoordinateSystem();
+
+			return str;
+		}
+
+		public bool IsPointInRoi(int x, int y)
+		{
+			return true;
 		}
 	}
 }

@@ -8,6 +8,10 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// An <see cref="InteractiveGraphic"/> that can be represented 
+	/// as a bounding rectangle.
+	/// </summary>
 	public abstract class BoundableInteractiveGraphic : InteractiveGraphic
 	{
 		private const int _topLeft = 0;
@@ -95,6 +99,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
+		/// Gets the graphic's tightest bounding box.
+		/// </summary>
+		public override RectangleF BoundingBox
+		{
+			get { return new RectangleF(this.TopLeft, new SizeF(this.Width, this.Height)); }
+		}
+
+		/// <summary>
 		/// Gets or sets the colour of the <see cref="RectangleInteractiveGraphic"/>.
 		/// </summary>
 		public override Color Color
@@ -133,6 +145,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Creates the actual boundable graphic, such as a rectangle or ellipse.
+		/// </summary>
+		/// <returns></returns>
 		protected abstract BoundableGraphic CreateBoundableGraphic();
 
 		/// <summary>
@@ -202,12 +218,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 
 			return token;
-		}
-
-		protected void AddControlPoints()
-		{
-			for (int i = 0; i < 4; i++)
-				base.ControlPoints.Add(new PointF(0, 0));
 		}
 
 		/// <summary>
@@ -289,7 +299,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Peforms a hit test on the <see cref="RectangleInteractiveGraphic"/>
+		/// Peforms a hit test on the <see cref="BoundableInteractiveGraphic"/>
 		/// </summary>
 		/// <param name="point"></param>
 		/// <returns></returns>
@@ -297,5 +307,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			return this.BoundableGraphic.HitTest(point);
 		}
+
+		private void AddControlPoints()
+		{
+			for (int i = 0; i < 4; i++)
+				base.ControlPoints.Add(new PointF(0, 0));
+		}
+
 	}
 }

@@ -110,6 +110,7 @@
     <Compile Include="DeleteGraphicTool.cs" />
     <Compile Include="RectangleAnalyzers.cs" />
     <Compile Include="RectangularROITool.cs" />
+    <Compile Include="RoiStatisticsCalculator.cs" />
     <Compile Include="RulerAnalyzers.cs" />
     <Compile Include="RulerTool.cs" />
     <Compile Include="SR.Designer.cs">

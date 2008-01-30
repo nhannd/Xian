@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to n/a.
+        ///   Looks up a localized string similar to N/A.
         /// </summary>
         public static string NotApplicable {
             get {
@@ -232,7 +232,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Area: {0:F2} sq cm.
+        ///   Looks up a localized string similar to Area: {0:F2} cm².
         /// </summary>
         public static string ToolsMeasurementFormatAreaSquareCm {
             get {
@@ -241,7 +241,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Area: {0:F2} sq mm.
+        ///   Looks up a localized string similar to Area: {0:F2} mm².
         /// </summary>
         public static string ToolsMeasurementFormatAreaSquareMm {
             get {
@@ -273,6 +273,42 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         public static string ToolsMeasurementFormatLengthPixels {
             get {
                 return ResourceManager.GetString("ToolsMeasurementFormatLengthPixels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mean: {0}.
+        /// </summary>
+        public static string ToolsMeasurementFormatMean {
+            get {
+                return ResourceManager.GetString("ToolsMeasurementFormatMean", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mean: {0} HU.
+        /// </summary>
+        public static string ToolsMeasurementFormatMeanCT {
+            get {
+                return ResourceManager.GetString("ToolsMeasurementFormatMeanCT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Std Dev: {0}.
+        /// </summary>
+        public static string ToolsMeasurementFormatStdDev {
+            get {
+                return ResourceManager.GetString("ToolsMeasurementFormatStdDev", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Std Dev: {0} HU.
+        /// </summary>
+        public static string ToolsMeasurementFormatStdDevCT {
+            get {
+                return ResourceManager.GetString("ToolsMeasurementFormatStdDevCT", resourceCulture);
             }
         }
         

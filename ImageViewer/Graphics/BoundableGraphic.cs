@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </remarks>
 	public abstract class BoundableGraphic : VectorGraphic
 	{
-		protected RectangleF _rectangle = new RectangleF(0,0,0,0);
+		private RectangleF _rectangle = new RectangleF(0,0,0,0);
 		private event EventHandler<PointChangedEventArgs> _topLeftChangedEvent;
 		private event EventHandler<PointChangedEventArgs> _bottomRightChangedEvent;
 
@@ -163,6 +163,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Gets the rectangle that defines a <see cref="BoundableGraphic"/>.
+		/// </summary>
 		protected RectangleF Rectangle
 		{
 			get

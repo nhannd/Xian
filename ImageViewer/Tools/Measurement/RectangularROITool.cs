@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	public interface IRectangleAnalyzer : IRoiAnalyzer
 	{
-		string Analyze(ImageSop sop, RectangleInteractiveGraphic rectangle);
+		string Analyze(RectangleInteractiveGraphic rectangle);
 	}
 
 	[ExtensionPoint]

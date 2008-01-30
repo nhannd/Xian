@@ -15,21 +15,23 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		public string Analyze(RoiGraphic roiGraphic)
 		{
 			PolyLineInteractiveGraphic ruler = roiGraphic.Roi as PolyLineInteractiveGraphic;
-			IImageSopProvider provider = roiGraphic.ParentPresentationImage as IImageSopProvider;
 
 			Platform.CheckForInvalidCast(ruler, "roiGraphic.Roi", "PolyLineInteractiveGraphic");
 
-			return Analyze(provider.ImageSop, ruler);
+			return Analyze(ruler);
 		}
 
-		public abstract string Analyze(ImageSop sop, PolyLineInteractiveGraphic rectangle);
+		public abstract string Analyze(PolyLineInteractiveGraphic rectangle);
 	}
 
 	[ExtensionOf(typeof(RulerAnalyzerExtensionPoint))]
 	public class RulerLengthCalculator : RulerAnalyzer
 	{
-		public override string Analyze(ImageSop imageSop, PolyLineInteractiveGraphic line)
+		public override string Analyze(PolyLineInteractiveGraphic line)
 		{
+			IImageSopProvider provider = line.ParentPresentationImage as IImageSopProvider;
+			ImageSop imageSop = provider.ImageSop;
+
 			Units units = Units.Centimeters;
 
 			line.CoordinateSystem = CoordinateSystem.Source;

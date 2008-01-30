@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	public interface IEllipseAnalyzer : IRoiAnalyzer
 	{
-		string Analyze(ImageSop sop, EllipseInteractiveGraphic rectangle);
+		string Analyze(EllipseInteractiveGraphic ellipse);
 	}
 
 	[ExtensionPoint]

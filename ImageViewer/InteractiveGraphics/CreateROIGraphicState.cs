@@ -60,13 +60,20 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 				SizeF offset = new SizeF(0, 30);
 
+				// Setup the callout
 				PointF calloutLocation = mousePoint - offset;
 				this.ROIGraphic.Callout.CoordinateSystem = CoordinateSystem.Destination;
 				this.ROIGraphic.Callout.Location = calloutLocation;
 				this.ROIGraphic.Callout.ResetCoordinateSystem();
 
+				// Suspend the ROIChanged event while we initialize the control points
+				this.ROIGraphic.SuspendRoiChangedEvent();
+
 				for (int i = 0; i < this.ROIGraphic.Roi.ControlPoints.Count; i++)
 					this.ROIGraphic.Roi.ControlPoints[i] = mousePoint;
+
+				// Now we're ready to broadcast the ROIChanged event to everyone who's listening
+				this.ROIGraphic.ResumeRoiChangedEvent(true);
 
 				this.ROIGraphic.Roi.ResetCoordinateSystem();
 

@@ -107,6 +107,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private event EventHandler _roiChangedEvent;
 		private bool _selected;
 		private bool _focussed;
+		private bool _raiseRoiChangedEvent = true;
 
 		#endregion
 
@@ -191,6 +192,33 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return _roiGraphic.HitTest(point) || _calloutGraphic.HitTest(point);
 		}
 
+		/// <summary>
+		/// Suspends the raising of the <see cref="RoiChanged"/> event.
+		/// </summary>
+		/// <remarks>
+		/// There are times when it is desirable to suspend the raising of the
+		/// <see cref="RoiChanged"/> event, such as when initializing 
+		/// control points.  To resume the raising of the event, call
+		/// <see cref="ResumeRoiChangedEvent"/>.
+		/// </remarks>
+		public void SuspendRoiChangedEvent()
+		{
+			_raiseRoiChangedEvent = false;
+		}
+
+		/// <summary>
+		/// Resumes the raising of the <see cref="RoiChanged"/> event.
+		/// </summary>
+		/// <param name="raiseEventNow">If <b>true</b>, the <see cref="RoiChanged"/>
+		/// event is raised immediately.
+		/// </param>
+		public void ResumeRoiChangedEvent(bool raiseEventNow)
+		{
+			_raiseRoiChangedEvent = true;
+			
+			if (raiseEventNow)
+				EventsHelper.Fire(_roiChangedEvent, this, EventArgs.Empty);
+		}
 
 		#region IContextMenuProvider Members
 
@@ -447,7 +475,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_calloutGraphic.CoordinateSystem = _roiGraphic.CoordinateSystem;
 			_calloutGraphic.EndPoint = _roiGraphic.GetClosestPoint(_calloutGraphic.StartPoint);
 			_calloutGraphic.ResetCoordinateSystem();
-			EventsHelper.Fire(_roiChangedEvent, this, EventArgs.Empty);
+
+			if (_raiseRoiChangedEvent)
+				EventsHelper.Fire(_roiChangedEvent, this, EventArgs.Empty);
 		}
 
 		private void OnCalloutTopLeftChanged(object sender, PointChangedEventArgs e)
