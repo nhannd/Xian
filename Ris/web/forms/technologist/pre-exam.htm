@@ -3,6 +3,7 @@
 	<head>
         <title>Breast Imaging</title>
         <link href="../../css/default.css" rel="stylesheet" type="text/css" />
+        <link href="../../css/tabs.css" rel="stylesheet" type="text/css" />
         <link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript" src="../../js/calendar/calendar.js"></script>
         <script type="text/javascript" src="../../js/calendar/lang/calendar-en.js"></script>
@@ -12,6 +13,7 @@
 	    <script type="text/javascript" src="../../js/ris.js"></script>
 	    <script type="text/javascript" src="../../js/layout.js"></script>
 	    <script type="text/javascript" src="../../js/collapse.js"></script>
+	    <script type="text/javascript" src="../../js/tabs.js"></script>
 	    <script type="text/javascript" >
 		    var data = {};
 		    var errorProvider = new ErrorProvider();
@@ -576,105 +578,83 @@
         <tr><td class="tableheading"></td></tr>
       </table>
 
-      <p class="sectionheading">
-         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Medications</a>
-      </p>
-      <div class="collapsibleContent">
-         <table id="medicationsTable"  width="100%">
-           <tr>
-            <td class="tableheading"></td>
-           </tr>
-         </table>
+      <div id="OptionalDocumentation" class="TabControl">
+         <div class="TabList">
+         <label for="Medications" class="Tab">Medications</label>
+         <label for="Callback" class="Tab">Callback</label>
+         <label for="LabResults" class="Tab">Lab Results (Angio/Interventional)</label>
+         <label for="Creatinine" class="Tab">Creatinine (CT, MRI, PET)</label>
+         <label for="Renal" class="Tab">Renal (CT, MRI, PET)</label>
+         <label for="Sedation" class="Tab">Sedation (MRI)</label>
+         <label for="Research" class="Tab">Research (PET)</label>
+         <label for="PSA" class="Tab">PSA Results (Prostate Center)</label>
+         <label for="Cardiac" class="Tab">Cardiac Condition (Prostate Center)</label>
+         </div>
+         
+         <div id="Medications" class="TabPage">
+            <table id="medicationsTable"  width="100%">
+              <tr>
+               <td class="tableheading"></td>
+              </tr>
+            </table>
+         </div>
+         <div id="Callback" class="TabPage">
+            <table id="callbackTable"  width="100%">
+              <tr>
+               <td class="tableheading"></td>
+              </tr>
+            </table>
+         </div>
+         <div id="LabResults" class="TabPage">
+            <table id="labResultsTable"  width="100%">
+              <tr>
+               <td class="tableheading"></td>
+              </tr>
+            </table>
+         </div>
+         <div id="Creatinine" class="TabPage">
+            <table id="creatinineTable"  width="100%">
+              <tr>
+               <td class="tableheading"></td>
+              </tr>
+            </table>
+         </div>
+         <div id="Renal" class="TabPage">
+            <table id="renalDiseaseTable"  width="100%">
+              <tr>
+               <td class="tableheading"></td>
+              </tr>
+            </table>
+         </div>
+         <div id="Sedation" class="TabPage">
+            <table id="sedationTable"  width="100%">
+              <tr>
+               <td class="tableheading"></td>
+              </tr>
+            </table>
+         </div>
+         <div id="Research" class="TabPage">
+            <table id="petResearchTable"  width="100%">
+              <tr>
+               <td class="tableheading"></td>
+              </tr>
+            </table>
+         </div>
+         <div id="PSA" class="TabPage">
+            <table id="psaResultsTable"  width="100%">
+              <tr>
+               <td class="tableheading"></td>
+              </tr>
+            </table>
+         </div>
+         <div id="Cardiac" class="TabPage">
+            <table id="cardiacConditionTable"  width="100%">
+              <tr>
+               <td class="tableheading"></td>
+              </tr>
+            </table>
+         </div>
       </div>
-
-      <p class="sectionheading">
-         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Callback</a>
-      </p>
-      <div class="collapsibleContent">
-         <table id="callbackTable"  width="100%">
-           <tr>
-            <td class="tableheading"></td>
-           </tr>
-         </table>
-      </div>
-
-      <p class="sectionheading">
-         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Lab Results (Angio/Interventional)</a>
-      </p>
-      <div class="collapsibleContent">
-         <table id="labResultsTable"  width="100%">
-           <tr>
-            <td class="tableheading"></td>
-           </tr>
-         </table>
-      </div>
-
-      <p class="sectionheading">
-         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Creatinine (CT, MRI, PET)</a>
-      </p>
-      <div class="collapsibleContent">
-         <table id="creatinineTable"  width="100%">
-           <tr>
-            <td class="tableheading"></td>
-           </tr>
-         </table>
-      </div>
-
-      <p class="sectionheading">
-         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Renal (CT, MRI, PET)</a>
-      </p>
-      <div class="collapsibleContent">
-         <table id="renalDiseaseTable"  width="100%">
-           <tr>
-            <td class="tableheading"></td>
-           </tr>
-         </table>
-      </div>
-
-      <p class="sectionheading">
-         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Sedation (MRI)</a>
-      </p>
-      <div class="collapsibleContent">
-         <table id="sedationTable"  width="100%">
-           <tr>
-            <td class="tableheading"></td>
-           </tr>
-         </table>
-      </div>
-
-      <p class="sectionheading">
-         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Research (PET)</a>
-      </p>
-      <div class="collapsibleContent">
-         <table id="petResearchTable"  width="100%">
-           <tr>
-            <td class="tableheading"></td>
-           </tr>
-         </table>
-      </div>
-
-      <p class="sectionheading">
-         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> PSA Results (Prostate Center)</a>
-      </p>
-      <div class="collapsibleContent">
-         <table id="psaResultsTable"  width="100%">
-           <tr>
-            <td class="tableheading"></td>
-           </tr>
-         </table>
-      </div>
-
-      <p class="sectionheading">
-         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Cardiac Condition (Prostate Center)</a>
-      </p>
-      <div class="collapsibleContent">
-         <table id="cardiacConditionTable"  width="100%">
-           <tr>
-            <td class="tableheading"></td>
-           </tr>
-         </table>
-      </div>
-
       </form>
 	</body>
 </html>

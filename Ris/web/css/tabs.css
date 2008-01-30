@@ -1,0 +1,36 @@
+.TabControl {
+   margin-top: 1em;
+}
+
+.Tab {
+   /*display:inline;*/
+   white-space:nowrap;
+   font-size: 1.2em;
+   font-weight: bold;
+   margin: 0 0 0 0;
+   color: #3D98D1;
+   background-color: #ffffff;
+   border: thin solid #A8D8F4;
+   padding: 0 0.1em 0.1em 0.1em;
+}
+
+.Tab.Active {
+   color: #ffffff;
+   background-color: #3D98D1;
+}
+
+.Tab:hover, .Tab.Active:hover{
+   background-color: lightblue;
+}
+
+.TabPage {
+   padding: 1em 1em 1em 1em;
+   display:none;
+   border:none;
+}
+
+.TabPage.Active
+{
+   display:block;
+   border: thin solid #A8D8F4;
+}
