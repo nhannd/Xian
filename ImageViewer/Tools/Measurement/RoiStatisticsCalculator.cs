@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			GrayscaleImageGraphic image,
 			IsPointInRoiDelegate isPointInRoi)
 		{
-			int sum = 0;
+			Int64 sum = 0;
 			int pixelCount = 0;
 
 			image.PixelData.ForEachPixel(
