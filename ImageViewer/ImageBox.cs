@@ -182,7 +182,10 @@ namespace ClearCanvas.ImageViewer
 
 				// If the display set has changed, remember the change
 				if (_displaySet != value)
+				{
 					eventArgs = new DisplaySetChangedEventArgs(_displaySet, value);
+					ImageViewer.EventBroker.OnDisplaySetChanging(new DisplaySetChangingEventArgs(_displaySet, value));
+				}
 
 				// Break association with the old display set (should we dispose too?)
 				if (_displaySet != null)
@@ -219,7 +222,11 @@ namespace ClearCanvas.ImageViewer
 
 				// If the display set has changed, let subscribers know
 				if (eventArgs != null)
+				{
 					EventsHelper.Fire(_displaySetChangedEvent, this, eventArgs);
+					
+					this.ImageViewer.EventBroker.OnDisplaySetChanged(eventArgs);
+				}
 			}
 		}
 

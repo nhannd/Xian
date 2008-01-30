@@ -61,11 +61,20 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Auto Stack Synchronization.
+        ///   Looks up a localized string similar to Auto Synchronize Stacking.
         /// </summary>
-        internal static string MenuAutoStackSynchronization {
+        internal static string MenuAutoSynchronizeStacking {
             get {
-                return ResourceManager.GetString("MenuAutoStackSynchronization", resourceCulture);
+                return ResourceManager.GetString("MenuAutoSynchronizeStacking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Synchronize All.
+        /// </summary>
+        internal static string MenuAutoSynchronizeStackingAll {
+            get {
+                return ResourceManager.GetString("MenuAutoSynchronizeStackingAll", resourceCulture);
             }
         }
         
@@ -88,11 +97,20 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Auto Stack Synchronization.
+        ///   Looks up a localized string similar to Auto Synchronize Stacking.
         /// </summary>
-        internal static string ToolbarAutoStackSynchronization {
+        internal static string ToolbarAutoSynchronizeStacking {
             get {
-                return ResourceManager.GetString("ToolbarAutoStackSynchronization", resourceCulture);
+                return ResourceManager.GetString("ToolbarAutoSynchronizeStacking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Synchronize All.
+        /// </summary>
+        internal static string ToolbarAutoSynchronizeStackingAll {
+            get {
+                return ResourceManager.GetString("ToolbarAutoSynchronizeStackingAll", resourceCulture);
             }
         }
         
@@ -106,11 +124,20 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Auto Stack Synchronization.
+        ///   Looks up a localized string similar to Auto Synchronize Stacking.
         /// </summary>
-        internal static string TooltipAutoStackSynchronization {
+        internal static string TooltipAutoSynchronizeStacking {
             get {
-                return ResourceManager.GetString("TooltipAutoStackSynchronization", resourceCulture);
+                return ResourceManager.GetString("TooltipAutoSynchronizeStacking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Synchronize All.
+        /// </summary>
+        internal static string TooltipAutoSynchronizeStackingAll {
+            get {
+                return ResourceManager.GetString("TooltipAutoSynchronizeStackingAll", resourceCulture);
             }
         }
         

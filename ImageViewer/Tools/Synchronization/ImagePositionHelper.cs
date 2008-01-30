@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {

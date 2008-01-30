@@ -57,6 +57,9 @@ namespace ClearCanvas.ImageViewer
 
 		private event EventHandler<MouseCaptureChangedEventArgs> _mouseCaptureChanged;
 
+		private event EventHandler<DisplaySetChangingEventArgs> _displaySetChanging;
+		private event EventHandler<DisplaySetChangedEventArgs> _displaySetChanged;
+
 		#endregion
 
 		/// <summary>
@@ -193,6 +196,28 @@ namespace ClearCanvas.ImageViewer
 		internal void OnMouseCaptureChanged(MouseCaptureChangedEventArgs args)
 		{
 			EventsHelper.Fire(_mouseCaptureChanged, this, args);
+		}
+
+		public event EventHandler<DisplaySetChangingEventArgs> DisplaySetChanging
+		{
+			add { _displaySetChanging += value; }
+			remove { _displaySetChanging -= value; }
+		}
+
+		internal void OnDisplaySetChanging(DisplaySetChangingEventArgs args)
+		{
+			EventsHelper.Fire(_displaySetChanging, this, args);
+		}
+
+		public event EventHandler<DisplaySetChangedEventArgs> DisplaySetChanged
+		{
+			add { _displaySetChanged += value; }
+			remove { _displaySetChanged -= value; }
+		}
+
+		internal void OnDisplaySetChanged(DisplaySetChangedEventArgs args)
+		{
+			EventsHelper.Fire(_displaySetChanged, this, args);
 		}
 	}
 }

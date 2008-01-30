@@ -30,9 +30,6 @@
 #endregion
 
 using System.Reflection;
-using System.Runtime.CompilerServices;
-
-using ClearCanvas.Common;
 
 [assembly: ClearCanvas.Common.Plugin()]
 

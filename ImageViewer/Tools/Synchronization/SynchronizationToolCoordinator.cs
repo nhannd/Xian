@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		{
 			if (_stackingSynchronizationTool != null)
 			{
-				OnSynchronizedImages(_stackingSynchronizationTool.Synchronize());
+				OnSynchronizedImages(_stackingSynchronizationTool.SynchronizeSelected());
 			}
 		}
 	}

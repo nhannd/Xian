@@ -114,6 +114,7 @@
     <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStore.cs" />
     <Compile Include="Annotations\Dicom\DicomFixedAnnotationLayoutProvider.cs" />
     <Compile Include="Annotations\IAnnotationResourceResolver.cs" />
+    <Compile Include="DisplaySetChangingEventArgs.cs" />
     <Compile Include="Graphics\BoundableGraphic.cs" />
     <Compile Include="Graphics\EllipsePrimitive.cs" />
     <Compile Include="InteractiveGraphics\BoundableInteractiveGraphic.cs" />

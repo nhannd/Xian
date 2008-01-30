@@ -34,7 +34,7 @@ using System;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// Provides data for the <see cref="Tile.PresentationImageChanged"/> event.
+	/// Provides data for the <see cref="EventBroker.DisplaySetChanged"/> event.
 	/// </summary>
 	public class DisplaySetChangedEventArgs : EventArgs
 	{
@@ -44,8 +44,6 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Initializes a new instance of <see cref="DisplaySetChangedEventArgs"/>.
 		/// </summary>
-		/// <param name="oldDisplaySet"></param>
-		/// <param name="newDisplaySet"></param>
 		public DisplaySetChangedEventArgs(
 			IDisplaySet oldDisplaySet,
 			IDisplaySet newDisplaySet)

@@ -1,8 +1,6 @@
+using System;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Mathematics;
-using System;
-using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
