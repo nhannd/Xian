@@ -270,18 +270,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		{
 			_deferSynchronizeUntilDisplaySetChanged = false;
 
-			// When something new is dropped in, do a synchronize all ignoring the one dropped in.
-			// It will then get synchronized with others in the same plane keeping everything synchronized.
-			List<IImageBox> affected = new List<IImageBox>(SynchronizeAllExcept(this.Context.Viewer.SelectedImageBox));
-
-			// Now synchronize everything with the selected one.
-			foreach (IImageBox imageBox in SynchronizeSelected())
-			{
-				if (!affected.Contains(imageBox))
-					affected.Add(imageBox);
-			}
-
-			_coordinator.OnSynchronizedImages(affected);
+			_coordinator.OnSynchronizedImages(SynchronizeNewDisplaySet(e.NewDisplaySet));
 		}
 
 		private void RecalculateOffsetForVisibleDisplaySets()
@@ -487,8 +476,16 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private IEnumerable<IImageBox> SynchronizeWithImage(IImageBox referenceImageBox)
 		{
+			return SynchronizeWithImage(referenceImageBox, null);
+		}
+
+		private IEnumerable<IImageBox> SynchronizeWithImage(IImageBox referenceImageBox, IImageBox ignoreImageBox)
+		{
 			foreach (IImageBox imageBox in GetImageBoxesToSynchronize(referenceImageBox))
 			{
+				if (imageBox == ignoreImageBox)
+					continue;
+
 				int index = CalculateClosestSlice(referenceImageBox, imageBox);
 				if (index >= 0 && index != imageBox.TopLeftPresentationImageIndex)
 				{
@@ -498,36 +495,59 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			}
 		}
 
-		private IEnumerable<IImageBox> SynchronizeAllExcept(IImageBox excludeImageBox)
+		private IEnumerable<IImageBox> SynchronizeNewDisplaySet(IDisplaySet newDisplaySet)
+		{
+			if (!SynchronizeActive || newDisplaySet == null)
+				yield break;
+
+			IImageBox changedImageBox = newDisplaySet.ImageBox;
+			IImageBox selectedImageBox = this.Context.Viewer.SelectedImageBox;
+
+			foreach (IImageBox imageBox in this.Context.Viewer.PhysicalWorkspace.ImageBoxes)
+			{
+				if (imageBox != changedImageBox && imageBox != selectedImageBox)
+				{
+					foreach (IImageBox affectedImageBox in SynchronizeWithImage(imageBox, changedImageBox == selectedImageBox ? null : selectedImageBox))
+						yield return affectedImageBox;
+				}
+			}
+
+			if (selectedImageBox == null)
+				yield break;
+
+			foreach (IImageBox affectedImageBox in SynchronizeWithImage(selectedImageBox))
+				yield return affectedImageBox;
+		}
+
+		private IEnumerable<IImageBox> SynchronizeAll()
 		{
 			if (!SynchronizeActive)
 				yield break;
 
 			IImageBox selectedImageBox = this.Context.Viewer.SelectedImageBox;
-			if (selectedImageBox != null && selectedImageBox != excludeImageBox)
-			{
-				foreach (IImageBox affectedImageBox in SynchronizeWithImage(selectedImageBox))
-					yield return affectedImageBox;
-			}
 
 			foreach (IImageBox imageBox in this.Context.Viewer.PhysicalWorkspace.ImageBoxes)
 			{
-				if (imageBox != excludeImageBox)
+				if (imageBox != selectedImageBox)
 				{
-					foreach (IImageBox affectedImageBox in SynchronizeWithImage(imageBox))
+					foreach (IImageBox affectedImageBox in SynchronizeWithImage(imageBox, selectedImageBox))
 						yield return affectedImageBox;
 				}
 			}
-		}
 
-		private IEnumerable<IImageBox> SynchronizeAll()
-		{
-			return SynchronizeAllExcept(null);
+			if (selectedImageBox == null)
+				yield break;
+
+			foreach (IImageBox affectedImageBox in SynchronizeWithImage(selectedImageBox))
+				yield return affectedImageBox;
 		}
 
 		public IEnumerable<IImageBox> SynchronizeSelected()
 		{
 			if (!SynchronizeActive || _deferSynchronizeUntilDisplaySetChanged)
+				yield break;
+
+			if (this.Context.Viewer.SelectedImageBox == null)
 				yield break;
 
 			foreach (IImageBox imageBox in SynchronizeWithImage(this.Context.Viewer.SelectedImageBox))
