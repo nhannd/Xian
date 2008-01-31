@@ -3,13 +3,18 @@
 	<head>
         <title>Report Preview</title>
         <link href="css/default.css" rel="stylesheet" type="text/css" />
+        <link href="css/tabs.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript" src="js/jsx.js"></script>
 	    <script type="text/javascript" src="js/jsml.js"></script>
 	    <script type="text/javascript" src="js/ui.js"></script>
 	    <script type="text/javascript" src="js/ris.js"></script>
 	    <script type="text/javascript" src="js/preview.js"></script>
 	    <script type="text/javascript" src="js/layout.js"></script>
+	    <script type="text/javascript" src="js/tabs.js"></script>
+	    <script type="text/javascript" src="js/structuredreport.js"></script>
 	    <script type="text/javascript" >
+			var errorProvider = new ErrorProvider();
+		 
 		    function onBodyLoad()
 		    {
 		        scaleWidth();
@@ -34,9 +39,10 @@
                         
                         var service = Ris.getPatientDataService();
                         var data = service.getData(request);
-
-                        $("preview").innerHTML = formatReport(data.GetReportDetailResponse.Report);
-                    }
+								
+								var report = data.GetReportDetailResponse.Report;
+								createReportPreview($("preview"), report);
+						}
 	            }
 	            catch(e)
 	            {

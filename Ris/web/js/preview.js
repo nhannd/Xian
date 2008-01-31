@@ -271,9 +271,9 @@ function groupDataToOrders(listData)
     return orders;
 }
 
-function formatReport(report)
+function createReportPreview(element, report)
 {
-    if (report == null || report.Parts == null || report.Parts.length == 0)
+    if (element == null || report == null || report.Parts == null || report.Parts.length == 0)
         return "";
         
     var formattedReport = "";
@@ -314,7 +314,7 @@ function formatReport(report)
 
 	try
 	{
-		var mainReport = JSML.parse(report.Parts[0].Content);
+    var mainReport = JSML.parse(report.Parts[0].Content);
 		mainReport = "<B>Impression:</B> " + mainReport.Impression + "<br>" + "<B>Finding:</B> " + mainReport.Finding + "<br>";
 	}
 	catch(e)
@@ -326,22 +326,37 @@ function formatReport(report)
 
 	if (mainReport)
 	{
-		var isDraft = new Boolean(report.Parts[0].Status.Code == 'P');
+	    var isDraft = new Boolean(report.Parts[0].Status.Code == 'P');
 
-		formattedReport += isDraft == true ? "<font color='red'>" : ""; 
-		formattedReport += "<h3>";
-		formattedReport += "Main Report";
-		formattedReport += isDraft == true ? " (Draft)" : "";
-		formattedReport += "</h3>";
+	    formattedReport += isDraft == true ? "<font color='red'>" : ""; 
+	    formattedReport += "<h3>";
+	    formattedReport += "Main Report";
+	    formattedReport += isDraft == true ? " (Draft)" : "";
+	    formattedReport += "</h3>";
+		 formattedReport += "<div id=\"structuredReport\" style=\"{margin-bottom:1em;}\"></div>";
 		formattedReport += mainReport;
 
 		formattedReport += formatReportPerformer(report.Parts[0]);
 
-		formattedReport += isDraft == true ? "</font>" : ""; 
+	    formattedReport += isDraft == true ? "</font>" : ""; 
 	}
 
 	
-    return formattedReport;
+   element.innerHTML = formattedReport;
+	 
+	if(mainReport && mainReport.structuredReport)
+	{
+		createStructuredReportPreview(mainReport.structuredReport);
+	}
+}
+
+function createStructuredReportPreview(structuredReport)
+{
+	if(!structuredReport)
+		return;
+		
+	$("structuredReport").innerHTML = structuredReportHtml();
+	initStructuredReport(structuredReport, true);
 }
 
 function formatReportPerformer(reportPart)

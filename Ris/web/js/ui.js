@@ -362,6 +362,7 @@ var Table = {
 		        td._setCellDisplayValue = function(value) { input.value = (value || ""); }
 		        if(column.cols) input.cols = column.cols;
 				  if(column.rows) input.rows = column.rows;
+				  if(column.readOnly) input.readOnly = column.readOnly;
 		        
 		        // respond to every keystroke
 		        input.onkeyup = input.onchange = function() { column.setValue(obj, this.value); table._onCellUpdate(row, col); }

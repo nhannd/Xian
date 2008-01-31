@@ -1,104 +1,128 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-        <title>Report Editor</title>
-        <link href="css/default.css" rel="stylesheet" type="text/css" />
-        <script type="text/javascript" src="js/jsx.js"></script>
-	    <script type="text/javascript" src="js/jsml.js"></script>
-	    <script type="text/javascript" src="js/ui.js"></script>
-	    <script type="text/javascript" src="js/ris.js"></script>
-		<script type="text/javascript" src="js/preview.js"></script>
-	    <script type="text/javascript" >
-		    var data = {};
+	<title>Report Editor</title>
+	<link href="css/default.css" rel="stylesheet" type="text/css" />
+	<link href="css/tabs.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="js/jsx.js"></script>
+	<script type="text/javascript" src="js/jsml.js"></script>
+	<script type="text/javascript" src="js/ui.js"></script>
+	<script type="text/javascript" src="js/ris.js"></script>
+	<script type="text/javascript" src="js/preview.js"></script>
+	<script type="text/javascript" src="js/tabs.js"></script>
+	<script type="text/javascript" src="js/structuredreport.js"></script>
+	<script type="text/javascript" >
+		var report = {};
+		var documentation = {};
+		var errorProvider = new ErrorProvider();
 
-            // this no-arg method must be implemented for the component to save report
-            function saveData()
-            {
-                var report = { Finding:    Field.getValue($("finding")),
-                               Impression: Field.getValue($("impression")) };
+		// this no-arg method must be implemented for the component to save report
+		function saveData()
+		{
+			report.Finding = Field.getValue($("finding"));
+			report.Impression = Field.getValue($("impression"));
 
-				var reportJsml = "";
-				if (report.Finding || report.Impression)
-					reportJsml = JSML.create(report, "Report");
+			var reportJsml = "";
+			if (report.Finding || report.Impression || report.structuredReport)
+				reportJsml = JSML.create(report, "Report");
 
-                Ris.setTag("Report", reportJsml);
-            }
-            
-			function loadData()
+			 Ris.setTag("Report", reportJsml);
+		}
+
+		function loadData()
+		{
+			report = JSML.parse(Ris.getTag("Report")) || {};
+
+			if (report != null)
 			{
-				data = Ris.getTag("Report");
-				var report = JSML.parse(data);
-				
-				if (report != null)
+				Field.setValue($("finding"), report.Finding);
+				Field.setValue($("impression"), report.Impression);
+			}
+		
+			if (!report.structuredReport)
+			{
+				var documentation = JSML.parse(Ris.getTag("Documentation"));
+				if(documentation && documentation.obusReportType)
 				{
-					Field.setValue($("finding"), report.Finding);
-					Field.setValue($("impression"), report.Impression);
+					report.structuredReport = documentation;
 				}
+			}
+			else
+			{
+				documentation = report.structuredReport;
 			}
 			
-			function loadReportedProceduresTable()
+			if(report.structuredReport)
 			{
-				var worklistItem = Ris.getHealthcareContext();
-
-				if (worklistItem == null || worklistItem.ReportRef == null)
-					return false;
-
-				// construct request object
-				var request = {
-					// only request the report detail if there is a report     
-					GetReportDetailRequest: { ReportRef: worklistItem.ReportRef }
-				};
-
-				var service = Ris.getPatientDataService();
-				var data = service.getData(request);
-				if (data == null || data.GetReportDetailResponse == null)
-					return false;
-
-				var reportDetail = data.GetReportDetailResponse.Report;
-
-				if (reportDetail == null ||  reportDetail.Procedures == null || reportDetail.Procedures.length == 0)
-					return false;
-
-				createProceduresTable($("proceduresTable"), reportDetail.Procedures);
-
-				return true;
+				$("structuredReport").innerHTML = structuredReportHtml();
+				initStructuredReport(report.structuredReport, true);
 			}
-			
-			function onBodyLoad()
+		}
+		
+		function loadReportedProceduresTable()
+		{
+			var worklistItem = Ris.getHealthcareContext();
+
+			if (worklistItem == null || worklistItem.ReportRef == null)
+				return false;
+
+			// construct request object
+			var request = {
+				// only request the report detail if there is a report     
+				GetReportDetailRequest: { ReportRef: worklistItem.ReportRef }
+			};
+
+			var service = Ris.getPatientDataService();
+			var data = service.getData(request);
+			if (data == null || data.GetReportDetailResponse == null)
+				return false;
+
+			var reportDetail = data.GetReportDetailResponse.Report;
+
+			if (reportDetail == null ||  reportDetail.Procedures == null || reportDetail.Procedures.length == 0)
+				return false;
+
+			createProceduresTable($("proceduresTable"), reportDetail.Procedures);
+
+			return true;
+		}
+		
+		function onBodyLoad()
+		{
+			if(!Ris)
+				return;
+
+			try
 			{
-				if(!Ris)
-					return;
-
-				try
-				{
-					loadData();
-					if (loadReportedProceduresTable() == false)
-						Field.show($("proceduresTable"), false);
-				}
-				catch(e)
-				{
-					var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
-					Field.setValue($("myForm"), message);
-				}
+				loadData();
+				if (loadReportedProceduresTable() == false)
+					Field.show($("proceduresTable"), false);
 			}
-		</script>
-	</head>
-	<body onload="javascript: onBodyLoad()" style="padding-top:0">
-		<form id="myForm" style="padding-top:0">
-		    <p class="sectionheading">Reported Procedures</p>
-			<table border="0" id="proceduresTable">
-				<tr class="tableheading">
-					<td>Procedure</td>
-					<td>Protocol</td>
-					<td>Code</td>
-				</tr>
-					<!-- this empty row is here so the color of the first data row is consistent with other previews -->
-		            <tr colspan="3"></tr>
-			</table>
-		    <p class="sectionheading">Impression</p>
-			<textarea style="width:99%" rows="15" border="0" id="impression"></textarea>
-		    <p class="sectionheading">Finding</p>
-			<textarea style="width:99%" rows="15" border="0" id="finding"></textarea>
-		</form>
-	</body>
+			catch(e)
+			{
+				var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+				Field.setValue($("myForm"), message);
+			}
+		}
+</script>
+</head>
+<body onload="javascript: onBodyLoad()" style="padding-top:0">
+	<form id="myForm" style="padding-top:0">
+		<p class="sectionheading">Reported Procedures</p>
+		<table border="0" id="proceduresTable">
+			<tr class="tableheading">
+				<td>Procedure</td>
+				<td>Protocol</td>
+				<td>Code</td>
+			</tr>
+			<!-- this empty row is here so the color of the first data row is consistent with other previews -->
+			<tr colspan="3"></tr>
+		</table>
+		<div id="structuredReport"></div>
+		<p class="sectionheading">Impression</p>
+		<textarea style="width:99%" rows="15" border="0" id="impression"></textarea>
+		<p class="sectionheading">Finding</p>
+		<textarea style="width:99%" rows="15" border="0" id="finding"></textarea>
+	</form>
+</body>
 </html>
