@@ -9,7 +9,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 	/// <summary>
 	/// A simple 3D vector class.
 	/// </summary>
-	public class Vector3D
+	public class Vector3D : IEquatable<Vector3D>
 	{
 		private float _x;
 		private float _y;
@@ -172,5 +172,30 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		{
 			return new Vector3D(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
 		}
+
+		public override int GetHashCode()
+		{
+			return (int)(3F * _x + 5F * _y + 7F * _z);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == this)
+				return true;
+
+			return this.Equals(obj as Vector3D);
+		}
+
+		#region IEquatable<Vector3D> Members
+
+		public bool Equals(Vector3D other)
+		{
+			if (other == null)
+				return false;
+
+			return (X == other.X && Y == other.Y && Z == other.Z);
+		}
+
+		#endregion
 	}
 }

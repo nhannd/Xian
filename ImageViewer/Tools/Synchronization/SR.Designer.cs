@@ -61,24 +61,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Auto Synchronize Stacking.
-        /// </summary>
-        internal static string MenuAutoSynchronizeStacking {
-            get {
-                return ResourceManager.GetString("MenuAutoSynchronizeStacking", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Synchronize All.
-        /// </summary>
-        internal static string MenuAutoSynchronizeStackingAll {
-            get {
-                return ResourceManager.GetString("MenuAutoSynchronizeStackingAll", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Reference Lines.
         /// </summary>
         internal static string MenuReferenceLines {
@@ -97,20 +79,20 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Auto Synchronize Stacking.
+        ///   Looks up a localized string similar to Synchronize Stacking.
         /// </summary>
-        internal static string ToolbarAutoSynchronizeStacking {
+        internal static string MenuSynchronizeStacking {
             get {
-                return ResourceManager.GetString("ToolbarAutoSynchronizeStacking", resourceCulture);
+                return ResourceManager.GetString("MenuSynchronizeStacking", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Synchronize All.
         /// </summary>
-        internal static string ToolbarAutoSynchronizeStackingAll {
+        internal static string MenuSynchronizeStackingAll {
             get {
-                return ResourceManager.GetString("ToolbarAutoSynchronizeStackingAll", resourceCulture);
+                return ResourceManager.GetString("MenuSynchronizeStackingAll", resourceCulture);
             }
         }
         
@@ -124,20 +106,20 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Auto Synchronize Stacking.
+        ///   Looks up a localized string similar to Synchronize Stacking.
         /// </summary>
-        internal static string TooltipAutoSynchronizeStacking {
+        internal static string ToolbarSynchronizeStacking {
             get {
-                return ResourceManager.GetString("TooltipAutoSynchronizeStacking", resourceCulture);
+                return ResourceManager.GetString("ToolbarSynchronizeStacking", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Synchronize All.
         /// </summary>
-        internal static string TooltipAutoSynchronizeStackingAll {
+        internal static string ToolbarSynchronizeStackingAll {
             get {
-                return ResourceManager.GetString("TooltipAutoSynchronizeStackingAll", resourceCulture);
+                return ResourceManager.GetString("ToolbarSynchronizeStackingAll", resourceCulture);
             }
         }
         
@@ -147,6 +129,24 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization {
         internal static string TooltipReferenceLines {
             get {
                 return ResourceManager.GetString("TooltipReferenceLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Synchronize Stacking.
+        /// </summary>
+        internal static string TooltipSynchronizeStacking {
+            get {
+                return ResourceManager.GetString("TooltipSynchronizeStacking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Synchronize All.
+        /// </summary>
+        internal static string TooltipSynchronizeStackingAll {
+            get {
+                return ResourceManager.GetString("TooltipSynchronizeStackingAll", resourceCulture);
             }
         }
     }

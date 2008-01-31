@@ -117,34 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MenuAutoSynchronizeStacking" xml:space="preserve">
-    <value>Auto Synchronize Stacking</value>
-  </data>
-  <data name="MenuAutoSynchronizeStackingAll" xml:space="preserve">
-    <value>Synchronize All</value>
-  </data>
   <data name="MenuReferenceLines" xml:space="preserve">
     <value>Reference Lines</value>
   </data>
   <data name="MenuStandard" xml:space="preserve">
     <value>Standard</value>
   </data>
-  <data name="ToolbarAutoSynchronizeStacking" xml:space="preserve">
-    <value>Auto Synchronize Stacking</value>
+  <data name="MenuSynchronizeStacking" xml:space="preserve">
+    <value>Synchronize Stacking</value>
   </data>
-  <data name="ToolbarAutoSynchronizeStackingAll" xml:space="preserve">
+  <data name="MenuSynchronizeStackingAll" xml:space="preserve">
     <value>Synchronize All</value>
   </data>
   <data name="ToolbarReferenceLines" xml:space="preserve">
     <value>Reference Lines</value>
   </data>
-  <data name="TooltipAutoSynchronizeStacking" xml:space="preserve">
-    <value>Auto Synchronize Stacking</value>
+  <data name="ToolbarSynchronizeStacking" xml:space="preserve">
+    <value>Synchronize Stacking</value>
   </data>
-  <data name="TooltipAutoSynchronizeStackingAll" xml:space="preserve">
+  <data name="ToolbarSynchronizeStackingAll" xml:space="preserve">
     <value>Synchronize All</value>
   </data>
   <data name="TooltipReferenceLines" xml:space="preserve">
     <value>Reference Lines</value>
+  </data>
+  <data name="TooltipSynchronizeStacking" xml:space="preserve">
+    <value>Synchronize Stacking</value>
+  </data>
+  <data name="TooltipSynchronizeStackingAll" xml:space="preserve">
+    <value>Synchronize All</value>
   </data>
 </root>

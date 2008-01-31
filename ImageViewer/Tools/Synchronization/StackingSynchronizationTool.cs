@@ -41,25 +41,25 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
-	[MenuAction("synchronize", "global-menus/MenuTools/MenuStandard/MenuAutoSynchronizeStacking", "ToggleAutoSynchronize", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("synchronize", "global-toolbars/ToolbarStandard/ToolbarAutoSynchronizeStacking", "ToggleAutoSynchronize", Flags = ClickActionFlags.CheckAction)]
-	[CheckedStateObserver("synchronize", "AutoSynchronizeActive", "AutoSynchronizeActiveChanged")]
-	[Tooltip("synchronize", "TooltipAutoSynchronizeStacking")]
+	[MenuAction("synchronize", "global-menus/MenuTools/MenuStandard/MenuSynchronizeStacking", "ToggleSynchronize", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("synchronize", "global-toolbars/ToolbarStandard/ToolbarSynchronizeStacking", "ToggleSynchronize", Flags = ClickActionFlags.CheckAction)]
+	[CheckedStateObserver("synchronize", "SynchronizeActive", "SynchronizeActiveChanged")]
+	[Tooltip("synchronize", "TooltipSynchronizeStacking")]
 	[IconSet("synchronize", IconScheme.Colour, "Icons.SynchronizeToolSmall.png", "Icons.SynchronizeToolMedium.png", "Icons.SynchronizeToolLarge.png")]
-	[GroupHint("synchronize", "Tools.Image.Manipulation.Stacking.AutoSynchronize")]
+	[GroupHint("synchronize", "Tools.Image.Manipulation.Stacking.Synchronize")]
 
-	[MenuAction("synchronizeAll", "global-menus/MenuTools/MenuStandard/MenuAutoSynchronizeStackingAll", "ToggleAutoSynchronizeAll", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("synchronizeAll", "global-toolbars/ToolbarStandard/ToolbarAutoSynchronizeStackingAll", "ToggleAutoSynchronizeAll", Flags = ClickActionFlags.CheckAction)]
-	[CheckedStateObserver("synchronizeAll", "AutoSynchronizeAllActive", "AutoSynchronizeAllActiveChanged")]
-	[EnabledStateObserver("synchronizeAll", "AutoSynchronizeAllEnabled", "AutoSynchronizeAllEnabledChanged")]
-	[Tooltip("synchronizeAll", "TooltipAutoSynchronizeStackingAll")]
+	[MenuAction("synchronizeAll", "global-menus/MenuTools/MenuStandard/MenuSynchronizeStackingAll", "ToggleSynchronizeAll", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("synchronizeAll", "global-toolbars/ToolbarStandard/ToolbarSynchronizeStackingAll", "ToggleSynchronizeAll", Flags = ClickActionFlags.CheckAction)]
+	[CheckedStateObserver("synchronizeAll", "SynchronizeAllActive", "SynchronizeAllActiveChanged")]
+	[EnabledStateObserver("synchronizeAll", "SynchronizeAllEnabled", "SynchronizeAllEnabledChanged")]
+	[Tooltip("synchronizeAll", "TooltipSynchronizeStackingAll")]
 	[IconSet("synchronizeAll", IconScheme.Colour, "Icons.SynchronizeAllToolSmall.png", "Icons.SynchronizeAllToolMedium.png", "Icons.SynchronizeAllToolLarge.png")]
-	[GroupHint("synchronizeAll", "Tools.Image.Manipulation.Stacking.AutoSynchronizeAll")]
+	[GroupHint("synchronizeAll", "Tools.Image.Manipulation.Stacking.SynchronizeAll")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class StackingSynchronizationTool : ImageViewerTool
 	{
-		#region ImageInfo 
+		#region ImageInfo
 
 		private class ImageInfo
 		{
@@ -69,139 +69,144 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		#endregion
 
-		private class Offset
+		#region OffsetKey
+
+		private class OffsetKey
 		{
-			public Offset(string frameOfReferenceUid, string studyInstanceUid)
+			public OffsetKey(string studyInstanceUid, string frameOfReferenceUid, Vector3D normal)
 			{
 				FrameOfReferenceUid = frameOfReferenceUid;
 				StudyInstanceUid = studyInstanceUid;
+				Normal = normal;
 			}
 
 			public readonly string FrameOfReferenceUid;
 			public readonly string StudyInstanceUid;
+			public readonly Vector3D Normal;
 
 			public override bool Equals(object obj)
 			{
 				if (obj == this)
 					return true;
 
-				if (obj is Offset)
+				if (obj is OffsetKey)
 				{
-					Offset other = (Offset) obj;
-					return other.FrameOfReferenceUid == FrameOfReferenceUid && other.StudyInstanceUid == StudyInstanceUid;
+					OffsetKey other = (OffsetKey) obj;
+					return other.FrameOfReferenceUid == FrameOfReferenceUid && other.StudyInstanceUid == StudyInstanceUid && other.Normal.Equals(Normal);
 				}
 
 				return false;
 			}
 
+
 			public override int  GetHashCode()
 			{
-				return 3*FrameOfReferenceUid.GetHashCode() + 7*StudyInstanceUid.GetHashCode();
+				return 3*FrameOfReferenceUid.GetHashCode() + 5*StudyInstanceUid.GetHashCode() + 7 *Normal.GetHashCode();
 			}
 		}
 
-		private class OffsetValue
-		{
-			public Vector3D Offset = Vector3D.GetNullVector();
-			public int Count = 0;
-		}
+		#endregion
 
-		private bool _autoSynchronizeActive;
-		private event EventHandler _autoSynchronizeActiveChanged;
+		#region Private Fields
 
-		private bool _autoSynchronizeAllActive;
-		private event EventHandler _autoSynchronizeAllActiveChanged;
+		private bool _synchronizeActive;
+		private event EventHandler _synchronizeActiveChanged;
 
-		private bool _autoSynchronizeAllEnabled;
-		private event EventHandler _autoSynchronizeAllEnabledChanged;
+		private bool _synchronizeAllActive;
+		private event EventHandler _synchronizeAllActiveChanged;
+
+		private bool _synchronizeAllEnabled;
+		private event EventHandler _synchronizeAllEnabledChanged;
 
 		private SynchronizationToolCoordinator _coordinator;
 
 		private readonly Dictionary<string, ImageInfo> _sopInfoDictionary;
-		private readonly Dictionary<Offset, OffsetValue> _currentOffsets;
+		private readonly Dictionary<OffsetKey, Dictionary<OffsetKey, Vector3D>> _offsets;
 
 		private static readonly float _fiveDegreesInRadians = (float)(5 * Math.PI / 180);
 
 		private bool _deferSynchronizeUntilDisplaySetChanged;
 
+		#endregion
+
 		public StackingSynchronizationTool()
 		{
 			_deferSynchronizeUntilDisplaySetChanged = false;
 
-			_autoSynchronizeActive = false;
-			_autoSynchronizeAllActive = false;
-			_autoSynchronizeAllEnabled = false;
+			_synchronizeActive = false;
+			_synchronizeAllActive = false;
+			_synchronizeAllEnabled = false;
 
 			_sopInfoDictionary = new Dictionary<string, ImageInfo>();
-			_currentOffsets = new Dictionary<Offset, OffsetValue>();
+			_offsets = new Dictionary<OffsetKey, Dictionary<OffsetKey, Vector3D>>();
 		}
 
-		public bool AutoSynchronizeActive
+		public bool SynchronizeActive
 		{
-			get { return _autoSynchronizeActive; }
+			get { return _synchronizeActive; }
 			set
 			{
-				if (_autoSynchronizeActive == value)
+				if (_synchronizeActive == value)
 					return;
 
-				_autoSynchronizeActive = value;
-				EventsHelper.Fire(_autoSynchronizeActiveChanged, this, EventArgs.Empty);
+				_synchronizeActive = value;
+				EventsHelper.Fire(_synchronizeActiveChanged, this, EventArgs.Empty);
 
-				this.AutoSynchronizeAllEnabled = _autoSynchronizeActive;
+				this.SynchronizeAllEnabled = _synchronizeActive;
 			}
 		}
 
-		public event EventHandler AutoSynchronizeActiveChanged
+		public event EventHandler SynchronizeActiveChanged
 		{
-			add { _autoSynchronizeActiveChanged += value; }
-			remove { _autoSynchronizeActiveChanged -= value; }
+			add { _synchronizeActiveChanged += value; }
+			remove { _synchronizeActiveChanged -= value; }
 		}
 
-		public bool AutoSynchronizeAllActive
+		public bool SynchronizeAllActive
 		{
-			get { return _autoSynchronizeAllActive; }
+			get { return _synchronizeAllActive; }
 			set
 			{
-				if (value && !AutoSynchronizeActive)
+				if (value && !SynchronizeActive)
 					value = false;
 
-				if (_autoSynchronizeAllActive == value)
+				if (_synchronizeAllActive == value)
 					return;
 
-				_autoSynchronizeAllActive = value;
-				EventsHelper.Fire(_autoSynchronizeAllActiveChanged, this, EventArgs.Empty);
+				_synchronizeAllActive = value;
+				EventsHelper.Fire(_synchronizeAllActiveChanged, this, EventArgs.Empty);
 			}
 		}
 
-		public event EventHandler AutoSynchronizeAllActiveChanged
+		public event EventHandler SynchronizeAllActiveChanged
 		{
-			add { _autoSynchronizeAllActiveChanged += value; }
-			remove { _autoSynchronizeAllActiveChanged -= value; }
+			add { _synchronizeAllActiveChanged += value; }
+			remove { _synchronizeAllActiveChanged -= value; }
 		}
 
-		public bool AutoSynchronizeAllEnabled
+		public bool SynchronizeAllEnabled
 		{
-			get { return _autoSynchronizeAllEnabled; }
+			get { return _synchronizeAllEnabled; }
 			set
 			{
-				if (value && !AutoSynchronizeActive)
+				if (value && !SynchronizeActive)
 					value = false;
 
-				if (_autoSynchronizeAllEnabled == value)
+				if (_synchronizeAllEnabled == value)
 					return;
 
 				if (!value)
-					AutoSynchronizeAllActive = false;
+					SynchronizeAllActive = false;
 
-				_autoSynchronizeAllEnabled = value;
-				EventsHelper.Fire(_autoSynchronizeAllEnabledChanged, this, EventArgs.Empty);
+				_synchronizeAllEnabled = value;
+				EventsHelper.Fire(_synchronizeAllEnabledChanged, this, EventArgs.Empty);
 			}
 		}
 
-		public event EventHandler AutoSynchronizeAllEnabledChanged
+		public event EventHandler SynchronizeAllEnabledChanged
 		{
-			add { _autoSynchronizeAllEnabledChanged += value; }
-			remove { _autoSynchronizeAllEnabledChanged -= value; }
+			add { _synchronizeAllEnabledChanged += value; }
+			remove { _synchronizeAllEnabledChanged -= value; }
 		}
 
 		public override void Initialize()
@@ -227,28 +232,33 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			base.Dispose(disposing);
 		}
 
-		private void ToggleAutoSynchronize()
+		private void ToggleSynchronize()
 		{
-			AutoSynchronizeActive = !AutoSynchronizeActive;
-			AutoSynchronizeAllActive = AutoSynchronizeActive;
-			
-			_coordinator.OnSynchronizedImages(SynchronizeAll());
+			SynchronizeActive = !SynchronizeActive;
+			SynchronizeAllActive = SynchronizeActive;
 
-			_currentOffsets.Clear();
+			////Clear all offsets
+			if (!SynchronizeActive)
+				_offsets.Clear();
+			else 
+				_coordinator.OnSynchronizedImages(SynchronizeAll());
 		}
 
-		private void ToggleAutoSynchronizeAll()
+		private void ToggleSynchronizeAll()
 		{
-			AutoSynchronizeAllActive = !AutoSynchronizeAllActive;
+			SynchronizeAllActive = !SynchronizeAllActive;
 
-			RecalculateOffsets();
+			if (SynchronizeAllActive)
+			{
+				RecalculateOffsetForVisibleDisplaySets();
+				_coordinator.OnSynchronizedImages(SynchronizeAll());
+			}
 		}
 
 		private void OnLayoutCompleted(object sender, EventArgs e)
 		{
-			// When something new is dropped in, do a synchronize all ignoring the one dropped in.
-			// It will then get automatically synchronized with any others in the same plane.
-			_coordinator.OnSynchronizedImages(SynchronizeAllExcept(this.Context.Viewer.SelectedImageBox));
+			//this is the best we can do in this situation.
+			_coordinator.OnSynchronizedImages(SynchronizeAll());
 		}
 
 		private void OnDisplaySetChanging(object sender, DisplaySetChangingEventArgs e)
@@ -261,61 +271,122 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			_deferSynchronizeUntilDisplaySetChanged = false;
 
 			// When something new is dropped in, do a synchronize all ignoring the one dropped in.
-			// It will then get automatically synchronized with any others in the same plane.
-			_coordinator.OnSynchronizedImages(SynchronizeAllExcept(this.Context.Viewer.SelectedImageBox));
+			// It will then get synchronized with others in the same plane keeping everything synchronized.
+			List<IImageBox> affected = new List<IImageBox>(SynchronizeAllExcept(this.Context.Viewer.SelectedImageBox));
+
+			// Now synchronize everything with the selected one.
+			foreach (IImageBox imageBox in SynchronizeSelected())
+			{
+				if (!affected.Contains(imageBox))
+					affected.Add(imageBox);
+			}
+
+			_coordinator.OnSynchronizedImages(affected);
 		}
 
-		private void RecalculateOffsets()
+		private void RecalculateOffsetForVisibleDisplaySets()
 		{
-			if (!AutoSynchronizeAllActive)
-				return;
-
-			_currentOffsets.Clear();
-
 			foreach (IImageBox referenceImageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes)
 			{
+				OffsetKey referenceOffsetKey = null;
+				Dictionary<OffsetKey, Vector3D> referenceOffsetDictionary = null;
+
 				foreach (IImageBox imageBox in GetImageBoxesToSynchronize(referenceImageBox))
 				{
 					if (imageBox.TopLeftPresentationImage is IImageSopProvider)
 					{
 						ImageSop sop = ((IImageSopProvider) imageBox.TopLeftPresentationImage).ImageSop;
+
 						if (!String.IsNullOrEmpty(sop.FrameOfReferenceUid) && !String.IsNullOrEmpty(sop.StudyInstanceUID))
 						{
 							ImageSop referenceSop = ((IImageSopProvider) referenceImageBox.TopLeftPresentationImage).ImageSop;
-							if (sop.FrameOfReferenceUid != referenceSop.FrameOfReferenceUid && sop.StudyInstanceUID != referenceSop.FrameOfReferenceUid)
+
+							if (sop.FrameOfReferenceUid != referenceSop.FrameOfReferenceUid && sop.StudyInstanceUID != referenceSop.StudyInstanceUID)
 							{
 								ImageInfo referenceImageInfo = GetImageInformation(referenceSop);
 								ImageInfo info = GetImageInformation(sop);
 
-								if (NormalsWithinLimits(referenceImageInfo, info))
+								if (info != null && NormalsWithinLimits(referenceImageInfo, info))
 								{
-									Offset key = new Offset(sop.FrameOfReferenceUid, sop.StudyInstanceUID);
-									if (!_currentOffsets.ContainsKey(key))
-										_currentOffsets.Add(key, new OffsetValue());
+									OffsetKey key = new OffsetKey(sop.StudyInstanceUID, sop.FrameOfReferenceUid, info.Normal);
 
-									OffsetValue value = _currentOffsets[key];
+									if (referenceOffsetKey == null)
+									{
+										//reset the related offsets
+										referenceOffsetKey = new OffsetKey(referenceSop.StudyInstanceUID, referenceSop.FrameOfReferenceUid, referenceImageInfo.Normal);
+										if (_offsets.ContainsKey(referenceOffsetKey))
+										{
+											referenceOffsetDictionary = _offsets[referenceOffsetKey];
+											referenceOffsetDictionary.Remove(key);
+										}
+										else
+										{
+											referenceOffsetDictionary = new Dictionary<OffsetKey, Vector3D>();
+											_offsets[referenceOffsetKey] = referenceOffsetDictionary;
+										}
+									}
 
-									++value.Count;
-									value.Offset = value.Offset + (info.Position - referenceImageInfo.Position);
+									Vector3D currentOffset = null;
+									if (referenceOffsetDictionary.ContainsKey(key))
+										currentOffset = referenceOffsetDictionary[key];
+
+									Vector3D offset = info.Position - referenceImageInfo.Position;
+									if (currentOffset == null || offset.Magnitude < currentOffset.Magnitude)
+										referenceOffsetDictionary[key] = offset;
 								}
 							}
 						}
 					}
 				}
 			}
-
-			foreach (OffsetValue value in _currentOffsets.Values)
-			{
-				value.Offset = value.Offset/(float)value.Count;
-				value.Count = 1;
-			}
 		}
 
-		private Vector3D GetOffset(ImageSop sop)
+		private Vector3D GetOffset(ImageSop referenceSop, ImageInfo referenceImageInfo, ImageSop sop, ImageInfo info)
 		{
-			Offset key = new Offset(sop.FrameOfReferenceUid, sop.StudyInstanceUID);
-			if (_currentOffsets.ContainsKey(key))
-				return _currentOffsets[key].Offset;
+			// looking for offset between A and C, say.
+
+			OffsetKey referenceOffsetKey = new OffsetKey(referenceSop.StudyInstanceUID, referenceSop.FrameOfReferenceUid, referenceImageInfo.Normal);
+			if (_offsets.ContainsKey(referenceOffsetKey))
+			{
+				// A is there.
+				OffsetKey key = new OffsetKey(sop.StudyInstanceUID, sop.FrameOfReferenceUid, info.Normal);
+				if (!key.Equals(referenceOffsetKey))
+				{
+					// A and C are not in the same frame of reference.
+
+					if (_offsets[referenceOffsetKey].ContainsKey(key))
+					{
+						// there is an offset between A and C.
+						return _offsets[referenceOffsetKey][key];
+					}
+					else if (_offsets.ContainsKey(key))
+					{
+						// No direct offset, but we have other offsets for C.
+						Vector3D inferredOffset = null;
+						foreach (KeyValuePair<OffsetKey, Vector3D> referenceRelatedOffset in _offsets[referenceOffsetKey])
+						{
+							// Iterate through A's offsets and see if C has a similar offset.
+							if (_offsets[key].ContainsKey(referenceRelatedOffset.Key))
+							{
+								// A has an offset for B, as does C
+								// We now have offset of B relative to A (A --> B) = B - A
+								// and offset of C relative to B (C --> B) = B - C
+								// Offset of A relative to C is equal to (A --> B + B --> C) = C - A = (C - B) + (B - A)
+
+								// this is (A --> B) - (C --> B) = (A --> B) + (B --> C)
+								Vector3D offset = referenceRelatedOffset.Value - _offsets[key][referenceRelatedOffset.Key];
+
+								// again, take the smallest of all the possible offsets.
+								if (inferredOffset == null || offset.Magnitude < inferredOffset.Magnitude)
+									inferredOffset = offset;
+							}
+						}
+
+						if (inferredOffset != null)
+							return inferredOffset;
+					}
+				}
+			}
 
 			return Vector3D.GetNullVector();
 		}
@@ -375,22 +446,23 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 					bool sameFrameOfReference = sop.FrameOfReferenceUid == referenceSop.FrameOfReferenceUid &&
 					                             sop.StudyInstanceUID == referenceSop.StudyInstanceUID;
 
-					if (this.AutoSynchronizeAllActive || sameFrameOfReference)
+					// When 'synchronize all' is false, we only synchronize within the same frame of reference.
+					if (this.SynchronizeAllActive || sameFrameOfReference)
 					{
 						ImageInfo info = GetImageInformation(sop);
 						if (info != null && NormalsWithinLimits(referenceImageInfo, info))
 						{
-							Vector3D offset = sameFrameOfReference ? Vector3D.GetNullVector() : GetOffset(sop);
-							if (offset != null)
-							{
-								Vector3D difference = referenceImageInfo.Position + offset - info.Position;
-								float distance = difference.Magnitude;
+							//Don't bother getting an offset for something in the same frame of reference.
+							Vector3D offset = sameFrameOfReference ? Vector3D.GetNullVector() : GetOffset(referenceSop, referenceImageInfo, sop, info);
 
-								if (Math.Abs(distance) <= closestDistance)
-								{
-									closestDistance = distance;
-									closestIndex = index;
-								}
+							Vector3D difference = referenceImageInfo.Position + offset - info.Position;
+							float distance = difference.Magnitude;
+
+							//Add trace statements to make sure what you expected is actually what's happening!
+							if (Math.Abs(distance) <= closestDistance)
+							{
+								closestDistance = distance;
+								closestIndex = index;
 							}
 						}
 					}
@@ -428,11 +500,11 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private IEnumerable<IImageBox> SynchronizeAllExcept(IImageBox excludeImageBox)
 		{
-			if (!AutoSynchronizeActive)
+			if (!SynchronizeActive)
 				yield break;
 
 			IImageBox selectedImageBox = this.Context.Viewer.SelectedImageBox;
-			if (selectedImageBox != excludeImageBox)
+			if (selectedImageBox != null && selectedImageBox != excludeImageBox)
 			{
 				foreach (IImageBox affectedImageBox in SynchronizeWithImage(selectedImageBox))
 					yield return affectedImageBox;
@@ -455,7 +527,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		public IEnumerable<IImageBox> SynchronizeSelected()
 		{
-			if (!AutoSynchronizeActive || _deferSynchronizeUntilDisplaySetChanged)
+			if (!SynchronizeActive || _deferSynchronizeUntilDisplaySetChanged)
 				yield break;
 
 			foreach (IImageBox imageBox in SynchronizeWithImage(this.Context.Viewer.SelectedImageBox))
