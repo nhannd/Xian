@@ -147,12 +147,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override void Start()
         {
-            Platform.GetService<IReportingWorkflowService>(
-                delegate(IReportingWorkflowService service)
-                {
-                    ListProcedureExtendedPropertiesResponse extendedPropertiesResponse = service.ListProcedureExtendedProperties(new ListProcedureExtendedPropertiesRequest(_worklistItem.ProcedureRef));
-                    _extendedProperties = CollectionUtils.FirstElement(extendedPropertiesResponse.ProcedureExtendedProperties);
-                });
             _supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, new string[] { "PRAD" });
 
             _reportEditorComponent.SetUrl(this.EditorUrl);
@@ -201,6 +195,12 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _reportPart; }
             set { _reportPart = value; }
         }
+
+    	public Dictionary<string, string> ExtendedProperties
+    	{
+			get { return _extendedProperties; }
+			set { _extendedProperties = value; }
+    	}
 
         public event EventHandler VerifyRequested
         {

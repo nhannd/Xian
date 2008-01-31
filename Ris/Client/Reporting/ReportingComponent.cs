@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -75,8 +76,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private ReportDetail _report;
         private ReportPartDetail _reportPart;
+    	private Dictionary<string, string> _extendedProperties;
 
-        /// <summary>
+    	/// <summary>
         /// Constructor
         /// </summary>
         public ReportingComponent(ReportingWorklistItem worklistItem)
@@ -122,7 +124,10 @@ namespace ClearCanvas.Ris.Client.Reporting
                     _report = response.Report;
                     _reportPart = _report.GetPart(response.ReportPartIndex);
 
-                    // For resident, look for the default supervisor if it does not already exist
+					ListProcedureExtendedPropertiesResponse extendedPropertiesResponse = service.ListProcedureExtendedProperties(new ListProcedureExtendedPropertiesRequest(_worklistItem.ProcedureRef));
+					_extendedProperties = CollectionUtils.FirstElement(extendedPropertiesResponse.ProcedureExtendedProperties);
+
+					// For resident, look for the default supervisor if it does not already exist
                     if (_reportPart != null && _reportPart.Supervisor == null && String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID) == false)
                     {
                         GetRadiologistListResponse getRadListresponse = service.GetRadiologistList(new GetRadiologistListRequest(SupervisorSettings.Default.SupervisorID));
@@ -325,6 +330,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 _reportEditor.Report = _report;
                 _reportEditor.ReportPart = _reportPart;
                 _reportEditor.WorklistItem = _worklistItem;
+            	_reportEditor.ExtendedProperties = _extendedProperties;
 
                 _reportEditor.IsEditingAddendum = _reportPart.Index > 0;
                 _reportEditor.VerifyEnabled = _canCompleteInterpretationAndVerify || _canCompleteVerification;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common;
@@ -30,6 +31,11 @@ namespace ClearCanvas.Ris.Client
         /// Gets and sets the report part being edited
         /// </summary>
         ReportPartDetail ReportPart { get; set; }
+
+		/// <summary>
+		/// Gets and sets the extended properties associated to the worklist item being edited
+		/// </summary>
+		Dictionary<string, string> ExtendedProperties { get; set; }
 
         /// <summary>
         /// Sets the editor mode
