@@ -200,6 +200,9 @@ namespace ClearCanvas.Common.Specifications
 
         private Specification BuildNode(XmlElement node)
         {
+            if (!_operatorMap.ContainsKey(node.Name))
+                throw new XmlSpecificationCompilerException("Unknown Xml specification node: " + node.Name);
+
             IXmlSpecificationCompilerOperator op = _operatorMap[node.Name];
             Specification spec = op.Compile(node, _compilerContext);
 
@@ -239,7 +242,11 @@ namespace ClearCanvas.Common.Specifications
 
             bool ignoreCase = !stringIgnoreCase.Equals("false", StringComparison.InvariantCultureIgnoreCase);
 
-            return new RegexSpecification(node.GetAttribute("pattern"), ignoreCase);
+            string pattern = GetAttributeOrNull(node, "pattern");
+            if (pattern == null)
+                throw new XmlSpecificationCompilerException("Xml attribute 'pattern' is required for regex.");
+            
+            return new RegexSpecification(pattern, ignoreCase);
         }
 
         private Specification CreateNotNull(XmlElement node)
@@ -323,7 +330,7 @@ namespace ClearCanvas.Common.Specifications
         {
             string refValue = GetAttributeOrNull(node, "refValue");
             if (refValue == null)
-                throw new XmlSpecificationCompilerException("Xml attribute 'refValue' is required.");
+                throw new XmlSpecificationCompilerException("Xml attribute 'refValue' is required for equal.");
 
             EqualSpecification s = new EqualSpecification();
             s.RefValueExpression = CreateExpression(refValue, GetAttributeOrNull(node, "expressionLanguage"));
@@ -334,7 +341,7 @@ namespace ClearCanvas.Common.Specifications
         {
             string refValue = GetAttributeOrNull(node, "refValue");
             if (refValue == null)
-                throw new XmlSpecificationCompilerException("Xml attribute 'refValue' is required.");
+                throw new XmlSpecificationCompilerException("Xml attribute 'refValue' is required for not-equal.");
 
             NotEqualSpecification s = new NotEqualSpecification();
             s.RefValueExpression = CreateExpression(refValue, GetAttributeOrNull(node, "expressionLanguage"));

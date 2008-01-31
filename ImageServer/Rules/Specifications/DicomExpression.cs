@@ -47,6 +47,12 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
 
         public Expression CreateExpression(string text)
         {
+            if(text.StartsWith("$"))
+            {
+                DicomTag tag = DicomTagDictionary.GetDicomTag(text.Substring(1));
+                if (tag == null)
+                    throw new XmlSpecificationCompilerException("Invalid DICOM tag: " + text); 
+            }
             return new DicomExpression(text);
         }
 

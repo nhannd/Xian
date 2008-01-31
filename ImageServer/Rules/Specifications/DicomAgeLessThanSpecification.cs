@@ -56,10 +56,14 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
 
         public Specification Compile(XmlElement xmlNode, IXmlSpecificationCompilerContext context)
         {
-            string units = xmlNode.GetAttribute("units");
-
+            string units = xmlNode.GetAttribute("units").ToLower();
             if (units == null)
-                units = "years";
+                throw new XmlSpecificationCompilerException("Xml attribute 'units' is required.");
+
+            if (!units.Equals("years")
+                && !units.Equals("weeks")
+                && !units.Equals("days"))
+                throw new XmlSpecificationCompilerException("Incorrect value for 'units' Xml attribute.  Should be 'years', 'weeks', or 'days'");
 
             string refValue = GetAttributeOrNull(xmlNode, "refValue");
             if (refValue == null)

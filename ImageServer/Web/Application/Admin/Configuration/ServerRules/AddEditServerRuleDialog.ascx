@@ -14,7 +14,7 @@
 <asp:UpdatePanel ID="AddEditUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="DialogPanel" runat="server" CssClass="CSSPopupWindow" Style="display: none"
-            Width="500px">
+            Width="700px">
             <asp:Panel ID="TitleBarPanel" runat="server" CssClass="CSSPopupWindowTitleBar" Width="100%">
                 <table style="width: 100%">
                     <tr>
@@ -122,7 +122,7 @@
                                     <tr>
                                         <td>
                                             <asp:TextBox ID="RuleXmlTextBox" runat="server" EnableViewState="true" Width="100%"
-                                                Rows="12" TextMode="MultiLine"></asp:TextBox>
+                                                Rows="16" TextMode="MultiLine"></asp:TextBox>
                                         </td>
                                         <td>
                                             <uc1:InvalidInputIndicator ID="InvalidRuleHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
