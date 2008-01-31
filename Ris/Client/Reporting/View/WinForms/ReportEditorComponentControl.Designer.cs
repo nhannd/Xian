@@ -60,6 +60,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this._browserSplitContainer = new System.Windows.Forms.SplitContainer();
             this._residentPanel = new System.Windows.Forms.Panel();
             this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this._cancelButton = new System.Windows.Forms.Button();
@@ -68,11 +69,12 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._sendToVerifyButton = new System.Windows.Forms.Button();
             this._sendToTranscriptionButton = new System.Windows.Forms.Button();
             this._saveButton = new System.Windows.Forms.Button();
-            this._browserSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
+            this._browserSplitContainer.SuspendLayout();
             this._residentPanel.SuspendLayout();
             this._buttonPanel.SuspendLayout();
-            this._browserSplitContainer.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -82,8 +84,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this._browserSplitContainer, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this._residentPanel, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this._cancelButton, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this._buttonPanel, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 1, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -94,6 +96,17 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(661, 606);
             this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // _browserSplitContainer
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this._browserSplitContainer, 2);
+            this._browserSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._browserSplitContainer.Location = new System.Drawing.Point(3, 3);
+            this._browserSplitContainer.Name = "_browserSplitContainer";
+            this._browserSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this._browserSplitContainer.Size = new System.Drawing.Size(655, 490);
+            this._browserSplitContainer.SplitterDistance = 120;
+            this._browserSplitContainer.TabIndex = 6;
             // 
             // _residentPanel
             // 
@@ -118,7 +131,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // _cancelButton
             // 
             this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._cancelButton.Location = new System.Drawing.Point(574, 559);
+            this._cancelButton.Location = new System.Drawing.Point(13, 3);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(84, 37);
             this._cancelButton.TabIndex = 4;
@@ -135,7 +148,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._buttonPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this._buttonPanel.Location = new System.Drawing.Point(3, 559);
             this._buttonPanel.Name = "_buttonPanel";
-            this._buttonPanel.Size = new System.Drawing.Size(565, 44);
+            this._buttonPanel.Size = new System.Drawing.Size(549, 44);
             this._buttonPanel.TabIndex = 5;
             // 
             // _verifyButton
@@ -178,16 +191,15 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._saveButton.UseVisualStyleBackColor = true;
             this._saveButton.Click += new System.EventHandler(this._saveButton_Click);
             // 
-            // _browserSplitContainer
+            // flowLayoutPanel1
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this._browserSplitContainer, 2);
-            this._browserSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._browserSplitContainer.Location = new System.Drawing.Point(3, 3);
-            this._browserSplitContainer.Name = "_browserSplitContainer";
-            this._browserSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this._browserSplitContainer.Size = new System.Drawing.Size(655, 490);
-            this._browserSplitContainer.SplitterDistance = 120;
-            this._browserSplitContainer.TabIndex = 6;
+            this.flowLayoutPanel1.Controls.Add(this._cancelButton);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(558, 559);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(100, 44);
+            this.flowLayoutPanel1.TabIndex = 7;
             // 
             // ReportEditorComponentControl
             // 
@@ -198,9 +210,10 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.Name = "ReportEditorComponentControl";
             this.Size = new System.Drawing.Size(661, 606);
             this.tableLayoutPanel1.ResumeLayout(false);
+            this._browserSplitContainer.ResumeLayout(false);
             this._residentPanel.ResumeLayout(false);
             this._buttonPanel.ResumeLayout(false);
-            this._browserSplitContainer.ResumeLayout(false);
+            this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -217,6 +230,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private System.Windows.Forms.Button _sendToTranscriptionButton;
         private System.Windows.Forms.Button _saveButton;
         private System.Windows.Forms.SplitContainer _browserSplitContainer;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 
     }
 }

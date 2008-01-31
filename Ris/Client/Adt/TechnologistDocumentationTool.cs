@@ -39,8 +39,8 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Document", "Apply")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Document", "Apply")]
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Open", "Apply")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Open", "Apply")]
     [IconSet("apply", IconScheme.Colour, "StartToolSmall.png", "StartToolMedium.png", "StartToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(TechnologistMainWorkflowItemToolExtensionPoint))]

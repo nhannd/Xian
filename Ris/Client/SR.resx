@@ -438,9 +438,6 @@
   <data name="TitlePatientComponent" xml:space="preserve">
     <value>Patient - {0} {1}</value>
   </data>
-  <data name="TitlePatientFeedbacks" xml:space="preserve">
-    <value>Patient Feedback</value>
-  </data>
   <data name="TitlePatientProfile" xml:space="preserve">
     <value>Patient Profile</value>
   </data>

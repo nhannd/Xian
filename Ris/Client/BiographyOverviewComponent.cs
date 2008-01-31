@@ -29,8 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -150,7 +148,6 @@ namespace ClearCanvas.Ris.Client
             // Create component for each tab
             BiographyOrderHistoryComponent orderHistoryComponent = new BiographyOrderHistoryComponent(_patientRef);
             BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
-            BiographyFeedbackComponent feedbackComponent = new BiographyFeedbackComponent();
             BiographyDemographicComponent demographicComponent = new BiographyDemographicComponent(_patientRef, _profileRef);
             MimeDocumentPreviewComponent documentComponent = new MimeDocumentPreviewComponent();
             documentComponent.PatientAttachments = _patientProfile.Attachments;
@@ -161,7 +158,6 @@ namespace ClearCanvas.Ris.Client
             tabContainer.Pages.Add(new TabPage(SR.TitleDemographic, demographicComponent));
             tabContainer.Pages.Add(new TabPage(SR.TitleDocuments, documentComponent));
             tabContainer.Pages.Add(new TabPage(SR.TitleNotes, noteComponent));
-            tabContainer.Pages.Add(new TabPage(SR.TitlePatientFeedbacks, feedbackComponent));
 
             TabGroupComponentContainer tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
             tabGroupContainer.AddTabGroup(new TabGroup(tabContainer, 1.0f));

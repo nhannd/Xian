@@ -59,7 +59,7 @@
 						Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
 						Field.setValue($("agesex"), 
 							getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath) +
-							" (" + patientProfile.Sex.Value + ")"); 
+							" / " + patientProfile.Sex.Value); 
 					}
 
 					var orderDetail = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.Order : null;

@@ -1024,15 +1024,6 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Patient Feedback.
-        /// </summary>
-        internal static string TitlePatientFeedbacks {
-            get {
-                return ResourceManager.GetString("TitlePatientFeedbacks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Patient Profile.
         /// </summary>
         internal static string TitlePatientProfile {
