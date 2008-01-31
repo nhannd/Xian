@@ -70,6 +70,7 @@ namespace ClearCanvas.Desktop.Configuration
 
 		private class ConfigurationNavigatorComponentContainer : NavigatorComponentContainer
 		{
+			private int _initialPageIndex;
 			private ConfigurationPageManager _configurationPageManager;
 
 			public ConfigurationNavigatorComponentContainer(string initialPagePath)
@@ -87,27 +88,21 @@ namespace ClearCanvas.Desktop.Configuration
 
 				pages.Sort(new NavigatorPagePathComparer());
 
-				int initialPage = 0;
+				_initialPageIndex = 0;
 				int i = 0;
 
 				foreach (NavigatorPage page in pages)
 				{
 					//do the unresolved paths match?
 					if (page.Path.ToString() == initialPagePath)
-						initialPage = i;
+						_initialPageIndex = i;
 
 					this.Pages.Add(page);
 					++i;
 				}
 
-				if (Pages.Count > 0)
-				{
-					MoveTo(initialPage);
-				}
-				else
-				{
+				if (Pages.Count == 0)
 					throw new Exception(SR.MessageNoConfigurationPagesExist);
-				}
 			}
 
 			public IEnumerable<IConfigurationPage> ConfigurationPages
@@ -115,10 +110,19 @@ namespace ClearCanvas.Desktop.Configuration
 				get { return _configurationPageManager.Pages; }
 			}
 
+			public override void Start()
+			{
+				base.Start();
+
+				MoveTo(_initialPageIndex);
+			}
+
 			public override void Accept()
 			{
 				if (this.HasValidationErrors)
+				{
 					ShowValidation(true);
+				}
 				else
 				{
 					try
