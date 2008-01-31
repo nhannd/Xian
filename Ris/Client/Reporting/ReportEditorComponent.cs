@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 
 using ClearCanvas.Common;
@@ -83,8 +84,15 @@ namespace ClearCanvas.Ris.Client.Reporting
                         ReportPartDetail addendumPart = _owner._reportPart.Index > 0 ? _owner._reportPart : null;
                         return addendumPart == null ? "" : addendumPart.Content;
                     case "Preview":
-                    default:
                         return JsmlSerializer.Serialize(_owner._report, "report");
+                    default:
+                        string value;
+                        _owner._extendedProperties.TryGetValue(tag, out value);
+                        if(string.IsNullOrEmpty(value))
+                        {
+                            value = JsmlSerializer.Serialize(_owner._report, "report");
+                        }
+                        return value;
                 }
             }
 
@@ -128,6 +136,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         private event EventHandler _saveRequested;
         private event EventHandler _cancelRequested;
 
+        private Dictionary<string, string> _extendedProperties;
         private ILookupHandler _supervisorLookupHandler;
 
         public ReportEditorComponent()
@@ -138,6 +147,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override void Start()
         {
+            Platform.GetService<IReportingWorkflowService>(
+                delegate(IReportingWorkflowService service)
+                {
+                    ListProcedureExtendedPropertiesResponse extendedPropertiesResponse = service.ListProcedureExtendedProperties(new ListProcedureExtendedPropertiesRequest(_worklistItem.ProcedureRef));
+                    _extendedProperties = CollectionUtils.FirstElement(extendedPropertiesResponse.ProcedureExtendedProperties);
+                });
             _supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, new string[] { "PRAD" });
 
             _reportEditorComponent.SetUrl(this.EditorUrl);
@@ -259,7 +274,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         public ApplicationComponentHost ReportPreviewHost
         {
             get { return _reportPreviewHost; }
-        }
+                }
 
         public bool CanSendToTranscription
         {
@@ -267,33 +282,33 @@ namespace ClearCanvas.Ris.Client.Reporting
         }
 
         public bool CanVerifyReport
-        {
+                {
             get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport); }
-        }
+                }
 
         public void Verify()
-        {
+            {
             _reportEditorComponent.SaveData();
             EventsHelper.Fire(_verifyRequested, this, EventArgs.Empty);
-        }
+            }
 
         public void SendToVerify()
         {
-            _reportEditorComponent.SaveData();
+                _reportEditorComponent.SaveData();
             EventsHelper.Fire(_sendToVerifyRequested, this, EventArgs.Empty);
-        }
+                }
 
         public void SendToTranscription()
         {
-            _reportEditorComponent.SaveData();
+                _reportEditorComponent.SaveData();
             EventsHelper.Fire(_sendToTranscriptionRequested, this, EventArgs.Empty);
-        }
+            }
 
         public void Save()
         {
-            _reportEditorComponent.SaveData();
+                _reportEditorComponent.SaveData();
             EventsHelper.Fire(_saveRequested, this, EventArgs.Empty);
-        }
+            }
 
         public void Cancel()
         {
@@ -327,5 +342,5 @@ namespace ClearCanvas.Ris.Client.Reporting
         }
 
         #endregion
-    }
+            }
 }

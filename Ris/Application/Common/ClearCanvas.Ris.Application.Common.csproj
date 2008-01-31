@@ -100,6 +100,8 @@
     <Compile Include="ReportingWorkflow\GetLinkableInterpretationsResponse.cs" />
     <Compile Include="ProtocollingWorkflow\StartOrderProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\StartOrderProtocolResponse.cs" />
+    <Compile Include="ReportingWorkflow\ListProcedureExtendedPropertiesRequest.cs" />
+    <Compile Include="ReportingWorkflow\ListProcedureExtendedPropertiesResponse.cs" />
     <Compile Include="ReportingWorkflow\PriorProcedureSummary.cs" />
     <Compile Include="WorklistItemSummaryBase.cs" />
     <Compile Include="Login\GetWorkingFacilityChoicesRequest.cs" />

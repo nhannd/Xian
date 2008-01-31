@@ -220,5 +220,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <returns><see cref="GetRadiologistListResponse"/></returns>
         [OperationContract]
         GetRadiologistListResponse GetRadiologistList(GetRadiologistListRequest request);
+
+        [OperationContract]
+        ListProcedureExtendedPropertiesResponse ListProcedureExtendedProperties(ListProcedureExtendedPropertiesRequest request);
     }
 }

@@ -126,6 +126,29 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.ProcedureStepRef)));
         }
 
+		[ReadOperation]
+		public ListProcedureExtendedPropertiesResponse ListProcedureExtendedProperties(ListProcedureExtendedPropertiesRequest request)
+		{
+			Procedure procedure = this.PersistenceContext.Load<Procedure>(request.ProcedureRef);
+
+			ListProcedureExtendedPropertiesResponse response = new ListProcedureExtendedPropertiesResponse();
+
+			foreach (ModalityProcedureStep mps in procedure.ModalityProcedureSteps)
+			{
+				foreach(ModalityPerformedProcedureStep mpps in mps.PerformedSteps)
+				{
+					Dictionary<string,string> extendedProperties = new Dictionary<string, string>();
+					foreach (string key in mpps.ExtendedProperties.Keys)
+					{
+						extendedProperties[key] = mpps.ExtendedProperties[key];
+					}
+					response.ProcedureExtendedProperties.Add(extendedProperties);
+				}
+			}
+
+			return response;
+		}
+
         [UpdateOperation]
         [OperationEnablement("CanStartInterpretation")]
         public StartInterpretationResponse StartInterpretation(StartInterpretationRequest request)
