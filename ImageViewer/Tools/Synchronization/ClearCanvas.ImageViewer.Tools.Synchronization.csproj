@@ -72,13 +72,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\AutoSynchronizeStackingToolLarge.png" />
+    <EmbeddedResource Include="Icons\SynchronizeToolLarge.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\AutoSynchronizeStackingToolMedium.png" />
+    <EmbeddedResource Include="Icons\SynchronizeToolMedium.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\AutoSynchronizeStackingToolSmall.png" />
+    <EmbeddedResource Include="Icons\SynchronizeToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\CurrentReferenceLineToolLarge.png" />
@@ -90,13 +90,13 @@
     <EmbeddedResource Include="Icons\CurrentReferenceLineToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\AutoSynchronizeStackingAllToolLarge.png" />
+    <EmbeddedResource Include="Icons\SynchronizeAllToolLarge.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\AutoSynchronizeStackingAllToolSmall.png" />
+    <EmbeddedResource Include="Icons\SynchronizeAllToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\AutoSynchronizeStackingAllToolMedium.png" />
+    <EmbeddedResource Include="Icons\SynchronizeAllToolMedium.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	[ButtonAction("synchronize", "global-toolbars/ToolbarStandard/ToolbarAutoSynchronizeStacking", "ToggleAutoSynchronize", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("synchronize", "AutoSynchronizeActive", "AutoSynchronizeActiveChanged")]
 	[Tooltip("synchronize", "TooltipAutoSynchronizeStacking")]
-	[IconSet("synchronize", IconScheme.Colour, "Icons.AutoSynchronizeStackingToolSmall.png", "Icons.AutoSynchronizeStackingToolMedium.png", "Icons.AutoSynchronizeStackingToolLarge.png")]
+	[IconSet("synchronize", IconScheme.Colour, "Icons.SynchronizeToolSmall.png", "Icons.SynchronizeToolMedium.png", "Icons.SynchronizeToolLarge.png")]
 	[GroupHint("synchronize", "Tools.Image.Manipulation.Stacking.AutoSynchronize")]
 
 	[MenuAction("synchronizeAll", "global-menus/MenuTools/MenuStandard/MenuAutoSynchronizeStackingAll", "ToggleAutoSynchronizeAll", Flags = ClickActionFlags.CheckAction)]
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	[CheckedStateObserver("synchronizeAll", "AutoSynchronizeAllActive", "AutoSynchronizeAllActiveChanged")]
 	[EnabledStateObserver("synchronizeAll", "AutoSynchronizeAllEnabled", "AutoSynchronizeAllEnabledChanged")]
 	[Tooltip("synchronizeAll", "TooltipAutoSynchronizeStackingAll")]
-	[IconSet("synchronizeAll", IconScheme.Colour, "Icons.AutoSynchronizeStackingAllToolSmall.png", "Icons.AutoSynchronizeStackingAllToolMedium.png", "Icons.AutoSynchronizeStackingAllToolLarge.png")]
+	[IconSet("synchronizeAll", IconScheme.Colour, "Icons.SynchronizeAllToolSmall.png", "Icons.SynchronizeAllToolMedium.png", "Icons.SynchronizeAllToolLarge.png")]
 	[GroupHint("synchronizeAll", "Tools.Image.Manipulation.Stacking.AutoSynchronizeAll")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
