@@ -44,12 +44,12 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
-	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuReferenceLines", "Toggle", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarReferenceLines", "Toggle", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "global-menus/MenuTools/MenuSynchronization/MenuReferenceLines", "Toggle", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("activate", "global-toolbars/ToolbarSynchronization/ToolbarReferenceLines", "Toggle", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActiveChanged")]
 	[Tooltip("activate", "TooltipReferenceLines")]
 	[IconSet("activate", IconScheme.Colour, "Icons.CurrentReferenceLineToolSmall.png", "Icons.CurrentReferenceLineToolMedium.png", "Icons.CurrentReferenceLineToolLarge.png")]
-	[GroupHint("activate", "Tools.Image.Synchronization.ReferenceLines")]
+	[GroupHint("activate", "Tools.Image.Synchronization.ReferenceLines.Current")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ReferenceLineTool : ImageViewerTool

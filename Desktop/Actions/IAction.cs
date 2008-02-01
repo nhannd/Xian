@@ -43,7 +43,7 @@ namespace ClearCanvas.Desktop.Actions
     /// </remarks>
     public interface IAction
     {
-        /// <summary>
+		/// <summary>
         /// Occurs when the <see cref="Enabled"/> property of this action changes.
         /// </summary>
         event EventHandler EnabledChanged;
@@ -61,7 +61,12 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Occurs when the <see cref="Tooltip"/> property of this action changes.
         /// </summary>
-		event EventHandler TooltipChanged; 
+		event EventHandler TooltipChanged;
+
+		/// <summary>
+		/// Occurs when the <see cref="IconSet"/> property of this action changes.
+		/// </summary>
+		event EventHandler IconSetChanged;
 
         /// <summary>
         /// Gets the fully-qualified logical identifier for this action.

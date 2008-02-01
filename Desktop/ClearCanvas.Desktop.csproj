@@ -66,6 +66,7 @@
     <Compile Include="Actions\GroupHint.cs" />
     <Compile Include="Actions\GroupHintAttribute.cs" />
     <Compile Include="Actions\IActionView.cs" />
+    <Compile Include="Actions\IconSetObserverAttribute.cs" />
     <Compile Include="Actions\IObservablePropertyBinding.cs" />
     <Compile Include="Actions\KeyboardAction.cs" />
     <Compile Include="Actions\KeyboardActionAttribute.cs" />

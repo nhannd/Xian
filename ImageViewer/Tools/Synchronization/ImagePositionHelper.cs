@@ -13,7 +13,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		public static Vector3D SourceToPatientTopLeftOfImage(ImageSop sop)
 		{
 			Platform.CheckForNullReference(sop, "sop");
-			ImagePositionPatient imagePositionPatient = sop.ImagePositionPatient;
 			return SourceToPatient(sop.ImageOrientationPatient, sop.PixelSpacing, sop.ImagePositionPatient, 0F, 0F);
 		}
 

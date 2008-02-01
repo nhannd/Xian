@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
@@ -44,6 +45,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private EventHandler _actionVisibleChangedHandler;
 		private EventHandler _actionLabelChangedHandler;
 		private EventHandler _actionTooltipChangedHandler;
+		private EventHandler _actionIconSetChangedHandler;
 
         public ActiveToolbarButton(IClickAction action)
         {
@@ -54,12 +56,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_actionVisibleChangedHandler = new EventHandler(OnActionVisibleChanged);
 			_actionLabelChangedHandler = new EventHandler(OnActionLabelChanged);
 			_actionTooltipChangedHandler = new EventHandler(OnActionTooltipChanged);
+			_actionIconSetChangedHandler = new EventHandler(OnActionIconSetChanged);
 
             _action.EnabledChanged += _actionEnabledChangedHandler;
             _action.CheckedChanged += _actionCheckedChangedHandler;
 			_action.VisibleChanged += _actionVisibleChangedHandler;
 			_action.LabelChanged += _actionLabelChangedHandler;
 			_action.TooltipChanged += _actionTooltipChangedHandler;
+			_action.IconSetChanged += _actionIconSetChangedHandler;
 
             this.Text = _action.Label;
             this.Enabled = _action.Enabled;
@@ -68,25 +72,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             UpdateVisibility();
             UpdateEnablement();
+			UpdateIcon();
 
             this.Click += delegate(object sender, EventArgs e)
             {
                 _action.Click();
             };
-
-            if (_action.IconSet != null && _action.ResourceResolver != null)
-            {
-                try
-                {
-                    this.Image = IconFactory.CreateIcon(_action.IconSet.MediumIcon, _action.ResourceResolver);
-                }
-                catch (Exception e)
-                {
-                    // the icon was either null or not found - log some helpful message
-                    Platform.Log(LogLevel.Error, e);
-                }
-            }
-
         }
 
         private void OnActionCheckedChanged(object sender, EventArgs e)
@@ -113,7 +104,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			this.ToolTipText = _action.Tooltip;
 		}
-		
+
+		private void OnActionIconSetChanged(object sender, EventArgs e)
+		{
+			UpdateIcon();
+		}
+
 		protected override void Dispose(bool disposing)
         {
             if (disposing && _action != null)
@@ -129,6 +125,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				_action.VisibleChanged -= _actionVisibleChangedHandler;
 				_action.LabelChanged -= _actionLabelChangedHandler;
 				_action.TooltipChanged -= _actionTooltipChangedHandler;
+				_action.IconSetChanged -= _actionIconSetChangedHandler;
 
                 _action = null;
             }
@@ -144,5 +141,27 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             this.Enabled = _action.Enabled && (_action.Permissible || DesktopViewSettings.Default.EnableNonPermissibleActions);
         }
-    }
+	
+		private void UpdateIcon()
+		{
+			if (_action.IconSet != null && _action.ResourceResolver != null)
+			{
+				try
+				{
+					Image oldImage = this.Image;
+					this.Image = IconFactory.CreateIcon(_action.IconSet.MediumIcon, _action.ResourceResolver);
+
+					if (oldImage != null)
+						oldImage.Dispose();
+
+					this.Invalidate();
+				}
+				catch (Exception e)
+				{
+					// the icon was either null or not found - log some helpful message
+					Platform.Log(LogLevel.Error, e);
+				}
+			}
+		}
+	}
 }

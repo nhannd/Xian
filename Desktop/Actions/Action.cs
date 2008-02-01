@@ -51,6 +51,7 @@ namespace ClearCanvas.Desktop.Actions
 		private GroupHint _groupHint;
 
         private IconSet _iconSet;
+		private event EventHandler _iconSetChanged;
 
         private bool _enabled;
         private event EventHandler _enabledChanged;
@@ -159,7 +160,14 @@ namespace ClearCanvas.Desktop.Actions
         public IconSet IconSet
         {
             get { return _iconSet; }
-            set { _iconSet = value; }
+            set
+            {
+				if (_iconSet == value)
+					return;
+
+            	_iconSet = value;
+				EventsHelper.Fire(_iconSetChanged, this, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -279,7 +287,16 @@ namespace ClearCanvas.Desktop.Actions
             remove { _tooltipChanged -= value; }
         }
 
-        /// <summary>
+		/// <summary>
+		/// Occurs when the <see cref="IAction.IconSet"/> property of this action changes.
+		/// </summary>
+		public event EventHandler IconSetChanged
+		{
+			add { _iconSetChanged += value; }
+			remove { _iconSetChanged -= value; }
+		}
+		
+		/// <summary>
         /// Gets a value indicating whether this action is permissible.
         /// </summary>
         /// <remarks>

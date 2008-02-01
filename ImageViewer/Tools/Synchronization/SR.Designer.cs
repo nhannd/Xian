@@ -61,6 +61,24 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Link Studies.
+        /// </summary>
+        internal static string LabelLinkStudies {
+            get {
+                return ResourceManager.GetString("LabelLinkStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unlink Studies.
+        /// </summary>
+        internal static string LabelUnlinkStudies {
+            get {
+                return ResourceManager.GetString("LabelUnlinkStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reference Lines.
         /// </summary>
         internal static string MenuReferenceLines {
@@ -70,11 +88,11 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Standard.
+        ///   Looks up a localized string similar to Synchronization.
         /// </summary>
-        internal static string MenuStandard {
+        internal static string MenuSynchronization {
             get {
-                return ResourceManager.GetString("MenuStandard", resourceCulture);
+                return ResourceManager.GetString("MenuSynchronization", resourceCulture);
             }
         }
         
@@ -88,15 +106,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Synchronize All.
-        /// </summary>
-        internal static string MenuSynchronizeStackingAll {
-            get {
-                return ResourceManager.GetString("MenuSynchronizeStackingAll", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Reference Lines.
         /// </summary>
         internal static string ToolbarReferenceLines {
@@ -106,20 +115,20 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Synchronization.
+        /// </summary>
+        internal static string ToolbarSynchronization {
+            get {
+                return ResourceManager.GetString("ToolbarSynchronization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Synchronize Stacking.
         /// </summary>
         internal static string ToolbarSynchronizeStacking {
             get {
                 return ResourceManager.GetString("ToolbarSynchronizeStacking", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Synchronize All.
-        /// </summary>
-        internal static string ToolbarSynchronizeStackingAll {
-            get {
-                return ResourceManager.GetString("ToolbarSynchronizeStackingAll", resourceCulture);
             }
         }
         
@@ -138,15 +147,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization {
         internal static string TooltipSynchronizeStacking {
             get {
                 return ResourceManager.GetString("TooltipSynchronizeStacking", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Synchronize All.
-        /// </summary>
-        internal static string TooltipSynchronizeStackingAll {
-            get {
-                return ResourceManager.GetString("TooltipSynchronizeStackingAll", resourceCulture);
             }
         }
     }

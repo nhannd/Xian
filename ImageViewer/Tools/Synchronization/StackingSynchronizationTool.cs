@@ -41,20 +41,20 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
-	[MenuAction("synchronize", "global-menus/MenuTools/MenuStandard/MenuSynchronizeStacking", "ToggleSynchronize", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("synchronize", "global-toolbars/ToolbarStandard/ToolbarSynchronizeStacking", "ToggleSynchronize", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("synchronize", "global-menus/MenuTools/MenuSynchronization/MenuSynchronizeStacking", "ToggleSynchronize", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("synchronize", "global-toolbars/ToolbarSynchronization/ToolbarSynchronizeStacking", "ToggleSynchronize", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("synchronize", "SynchronizeActive", "SynchronizeActiveChanged")]
 	[Tooltip("synchronize", "TooltipSynchronizeStacking")]
 	[IconSet("synchronize", IconScheme.Colour, "Icons.SynchronizeToolSmall.png", "Icons.SynchronizeToolMedium.png", "Icons.SynchronizeToolLarge.png")]
 	[GroupHint("synchronize", "Tools.Image.Manipulation.Stacking.Synchronize")]
 
-	[MenuAction("synchronizeAll", "global-menus/MenuTools/MenuStandard/MenuSynchronizeStackingAll", "ToggleSynchronizeAll", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("synchronizeAll", "global-toolbars/ToolbarStandard/ToolbarSynchronizeStackingAll", "ToggleSynchronizeAll", Flags = ClickActionFlags.CheckAction)]
-	[CheckedStateObserver("synchronizeAll", "SynchronizeAllActive", "SynchronizeAllActiveChanged")]
-	[EnabledStateObserver("synchronizeAll", "SynchronizeAllEnabled", "SynchronizeAllEnabledChanged")]
-	[Tooltip("synchronizeAll", "TooltipSynchronizeStackingAll")]
-	[IconSet("synchronizeAll", IconScheme.Colour, "Icons.SynchronizeAllToolSmall.png", "Icons.SynchronizeAllToolMedium.png", "Icons.SynchronizeAllToolLarge.png")]
-	[GroupHint("synchronizeAll", "Tools.Image.Manipulation.Stacking.SynchronizeAll")]
+	[MenuAction("linkStudies", "global-menus/MenuTools/MenuSynchronization/MenuSynchronizeStackingLinkStudies", "ToggleLinkStudies")]
+	[ButtonAction("linkStudies", "global-toolbars/ToolbarSynchronization/ToolbarSynchronizeStackingLinkStudies", "ToggleLinkStudies")]
+	[EnabledStateObserver("linkStudies", "LinkStudiesEnabled", "LinkStudiesEnabledChanged")]
+	[LabelValueObserver("linkStudies", "LinkStudiesLabel", "StudiesLinkedChanged")]
+	[IconSetObserver("linkStudies", "LinkStudiesIconSet", "StudiesLinkedChanged")]
+	[TooltipValueObserver("linkStudies", "LinkStudiesTooltip", "StudiesLinkedChanged")]
+	[GroupHint("linkStudies", "Tools.Image.Manipulation.Stacking.LinkStudies")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class StackingSynchronizationTool : ImageViewerTool
@@ -112,12 +112,15 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		private bool _synchronizeActive;
 		private event EventHandler _synchronizeActiveChanged;
 
-		private bool _synchronizeAllActive;
-		private event EventHandler _synchronizeAllActiveChanged;
+		private bool _linkStudiesEnabled;
+		private event EventHandler _linkStudiesEnabledChanged;
 
-		private bool _synchronizeAllEnabled;
-		private event EventHandler _synchronizeAllEnabledChanged;
+		private bool _studiesLinked;
+		private event EventHandler _studiesLinkedChanged;
 
+		private readonly IconSet _linkStudiesIconSet;
+		private readonly IconSet _unlinkStudiesIconSet;
+		
 		private SynchronizationToolCoordinator _coordinator;
 
 		private readonly Dictionary<string, ImageInfo> _sopInfoDictionary;
@@ -134,8 +137,11 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			_deferSynchronizeUntilDisplaySetChanged = false;
 
 			_synchronizeActive = false;
-			_synchronizeAllActive = false;
-			_synchronizeAllEnabled = false;
+			_linkStudiesEnabled = false;
+
+			_studiesLinked = true;
+			_linkStudiesIconSet = new IconSet(IconScheme.Colour, "Icons.LinkStudiesToolSmall.png", "Icons.LinkStudiesToolMedium.png", "Icons.LinkStudiesToolLarge.png");
+			_unlinkStudiesIconSet = new IconSet(IconScheme.Colour, "Icons.UnlinkStudiesToolSmall.png", "Icons.UnlinkStudiesToolMedium.png", "Icons.UnlinkStudiesToolLarge.png");
 
 			_sopInfoDictionary = new Dictionary<string, ImageInfo>();
 			_offsets = new Dictionary<OffsetKey, Dictionary<OffsetKey, Vector3D>>();
@@ -152,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				_synchronizeActive = value;
 				EventsHelper.Fire(_synchronizeActiveChanged, this, EventArgs.Empty);
 
-				this.SynchronizeAllEnabled = _synchronizeActive;
+				LinkStudiesEnabled = _synchronizeActive;
 			}
 		}
 
@@ -162,51 +168,79 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			remove { _synchronizeActiveChanged -= value; }
 		}
 
-		public bool SynchronizeAllActive
+		public bool LinkStudiesEnabled
 		{
-			get { return _synchronizeAllActive; }
+			get { return _linkStudiesEnabled; }
 			set
 			{
 				if (value && !SynchronizeActive)
 					value = false;
 
-				if (_synchronizeAllActive == value)
-					return;
-
-				_synchronizeAllActive = value;
-				EventsHelper.Fire(_synchronizeAllActiveChanged, this, EventArgs.Empty);
-			}
-		}
-
-		public event EventHandler SynchronizeAllActiveChanged
-		{
-			add { _synchronizeAllActiveChanged += value; }
-			remove { _synchronizeAllActiveChanged -= value; }
-		}
-
-		public bool SynchronizeAllEnabled
-		{
-			get { return _synchronizeAllEnabled; }
-			set
-			{
-				if (value && !SynchronizeActive)
-					value = false;
-
-				if (_synchronizeAllEnabled == value)
+				if (_linkStudiesEnabled == value)
 					return;
 
 				if (!value)
-					SynchronizeAllActive = false;
+				{
+					_offsets.Clear();
+					StudiesLinked = true;
+				}
 
-				_synchronizeAllEnabled = value;
-				EventsHelper.Fire(_synchronizeAllEnabledChanged, this, EventArgs.Empty);
+				_linkStudiesEnabled = value;
+				EventsHelper.Fire(_linkStudiesEnabledChanged, this, EventArgs.Empty);
 			}
 		}
 
-		public event EventHandler SynchronizeAllEnabledChanged
+		public event EventHandler LinkStudiesEnabledChanged
 		{
-			add { _synchronizeAllEnabledChanged += value; }
-			remove { _synchronizeAllEnabledChanged -= value; }
+			add { _linkStudiesEnabledChanged += value; }
+			remove { _linkStudiesEnabledChanged -= value; }
+		}
+
+		public bool StudiesLinked
+		{
+			get { return _studiesLinked; }
+			set
+			{
+				if (value && !SynchronizeActive)
+					value = true;
+
+				if (_studiesLinked == value)
+					return;
+
+				_studiesLinked = value;
+
+				EventsHelper.Fire(_studiesLinkedChanged, this, EventArgs.Empty);
+			}
+		}
+
+		public event EventHandler StudiesLinkedChanged
+		{
+			add { _studiesLinkedChanged += value; }
+			remove { _studiesLinkedChanged -= value; }
+		}
+
+		public IconSet LinkStudiesIconSet
+		{
+			get
+			{
+				return _studiesLinked ? _unlinkStudiesIconSet : _linkStudiesIconSet;
+			}	
+		}
+
+		public string LinkStudiesLabel
+		{
+			get
+			{
+				return _studiesLinked ? SR.LabelUnlinkStudies : SR.LabelLinkStudies;
+			}
+		}
+
+		public string LinkStudiesTooltip
+		{
+			get
+			{
+				return _studiesLinked ? SR.LabelUnlinkStudies : SR.LabelLinkStudies;
+			}
 		}
 
 		public override void Initialize()
@@ -235,20 +269,16 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		private void ToggleSynchronize()
 		{
 			SynchronizeActive = !SynchronizeActive;
-			SynchronizeAllActive = SynchronizeActive;
 
-			////Clear all offsets
-			if (!SynchronizeActive)
-				_offsets.Clear();
-			else 
+			if (SynchronizeActive)
 				_coordinator.OnSynchronizedImages(SynchronizeAll());
 		}
 
-		private void ToggleSynchronizeAll()
+		private void ToggleLinkStudies()
 		{
-			SynchronizeAllActive = !SynchronizeAllActive;
+			StudiesLinked = !StudiesLinked;
 
-			if (SynchronizeAllActive)
+			if (StudiesLinked)
 			{
 				RecalculateOffsetForVisibleDisplaySets();
 				_coordinator.OnSynchronizedImages(SynchronizeAll());
@@ -435,8 +465,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 					bool sameFrameOfReference = sop.FrameOfReferenceUid == referenceSop.FrameOfReferenceUid &&
 					                             sop.StudyInstanceUID == referenceSop.StudyInstanceUID;
 
-					// When 'synchronize all' is false, we only synchronize within the same frame of reference.
-					if (this.SynchronizeAllActive || sameFrameOfReference)
+					// When 'studies linked' is false, we only synchronize within the same frame of reference.
+					if (this.StudiesLinked || sameFrameOfReference)
 					{
 						ImageInfo info = GetImageInformation(sop);
 						if (info != null && NormalsWithinLimits(referenceImageInfo, info))
@@ -479,6 +509,18 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			return SynchronizeWithImage(referenceImageBox, null);
 		}
 
+		private bool SynchronizeImageBoxes(IImageBox referenceImageBox, IImageBox imageBox)
+		{
+			int index = CalculateClosestSlice(referenceImageBox, imageBox);
+			if (index >= 0 && index != imageBox.TopLeftPresentationImageIndex)
+			{
+				imageBox.TopLeftPresentationImageIndex = index;
+				return true;
+			}
+
+			return false;
+		}
+
 		private IEnumerable<IImageBox> SynchronizeWithImage(IImageBox referenceImageBox, IImageBox ignoreImageBox)
 		{
 			foreach (IImageBox imageBox in GetImageBoxesToSynchronize(referenceImageBox))
@@ -486,12 +528,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				if (imageBox == ignoreImageBox)
 					continue;
 
-				int index = CalculateClosestSlice(referenceImageBox, imageBox);
-				if (index >= 0 && index != imageBox.TopLeftPresentationImageIndex)
-				{
-					imageBox.TopLeftPresentationImageIndex = index;
+				if (SynchronizeImageBoxes(referenceImageBox, imageBox))
 					yield return imageBox;
-				}
 			}
 		}
 
@@ -503,20 +541,27 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			IImageBox changedImageBox = newDisplaySet.ImageBox;
 			IImageBox selectedImageBox = this.Context.Viewer.SelectedImageBox;
 
-			foreach (IImageBox imageBox in this.Context.Viewer.PhysicalWorkspace.ImageBoxes)
+			if (selectedImageBox == null || selectedImageBox == changedImageBox)
 			{
-				if (imageBox != changedImageBox && imageBox != selectedImageBox)
+				// if there is no selected image box or the new one is selected, try
+				// to sync it up with the other ones.
+
+				bool synced = false;
+				// Do a reverse synchronization; sync the newly selected one with all the others.
+				foreach (IImageBox imageBox in GetImageBoxesToSynchronize(changedImageBox))
 				{
-					foreach (IImageBox affectedImageBox in SynchronizeWithImage(imageBox, changedImageBox == selectedImageBox ? null : selectedImageBox))
-						yield return affectedImageBox;
+						if (SynchronizeImageBoxes(imageBox, changedImageBox))
+							synced = true;
 				}
+
+				if (synced)
+					yield return changedImageBox;
 			}
-
-			if (selectedImageBox == null)
-				yield break;
-
-			foreach (IImageBox affectedImageBox in SynchronizeWithImage(selectedImageBox))
-				yield return affectedImageBox;
+			else
+			{
+				if (SynchronizeImageBoxes(selectedImageBox, changedImageBox))
+					yield return changedImageBox;
+			}
 		}
 
 		private IEnumerable<IImageBox> SynchronizeAll()
@@ -530,6 +575,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			{
 				if (imageBox != selectedImageBox)
 				{
+					//Synchronize everything with everything else, but never with the selected (do it last).
 					foreach (IImageBox affectedImageBox in SynchronizeWithImage(imageBox, selectedImageBox))
 						yield return affectedImageBox;
 				}
@@ -538,6 +584,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			if (selectedImageBox == null)
 				yield break;
 
+			//Synchronize with the selected.
 			foreach (IImageBox affectedImageBox in SynchronizeWithImage(selectedImageBox))
 				yield return affectedImageBox;
 		}

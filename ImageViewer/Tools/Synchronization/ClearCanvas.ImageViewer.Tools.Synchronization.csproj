@@ -90,13 +90,18 @@
     <EmbeddedResource Include="Icons\CurrentReferenceLineToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\SynchronizeAllToolLarge.png" />
+    <EmbeddedResource Include="Icons\LinkStudiesToolLarge.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\SynchronizeAllToolSmall.png" />
+    <EmbeddedResource Include="Icons\LinkStudiesToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\SynchronizeAllToolMedium.png" />
+    <EmbeddedResource Include="Icons\LinkStudiesToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\UnlinkStudiesToolLarge.png" />
+    <EmbeddedResource Include="Icons\UnlinkStudiesToolMedium.png" />
+    <EmbeddedResource Include="Icons\UnlinkStudiesToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
