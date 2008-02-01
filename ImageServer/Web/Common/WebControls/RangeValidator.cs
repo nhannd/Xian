@@ -108,15 +108,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
         
 
-        protected override void RegisterClientSideValidationFunction()
+        protected override void RegisterClientSideValidationExtensionScripts()
         {
-            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.RangeValidator.js");
-            template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
-            template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
+            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.RangeValidator.js");
             template.Replace("@@MIN_VALUE@@", MinValue.ToString());
             template.Replace("@@MAX_VALUE@@", MaxValue.ToString());
-            
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
+
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
 
 
         }

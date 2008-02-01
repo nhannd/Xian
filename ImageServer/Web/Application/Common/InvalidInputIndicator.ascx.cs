@@ -64,5 +64,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             validator.InputControl.Attributes.Add("multiplevalidators", _referenceCounter > 1 ? "true" : "false");
         }
 
+
+        #region IInvalidInputIndicator Members
+
+
+        public Control TooltipLabelContainer
+        {
+            get
+            {
+                return HintPanel;
+
+            }
+        }
+
+        #endregion
     }
 }

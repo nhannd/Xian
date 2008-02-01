@@ -1,5 +1,5 @@
 // This script defines the client-side validator extension class @@CLIENTID@@_ClientSideEvaludator
-// to validate an input within a specified range.
+// to validate an input using a web service.
 //
 // This class defines how the validation is carried and what to do afterwards.
 
@@ -19,6 +19,11 @@ function @@CLIENTID@@_ClientSideEvaluator()
             '@@INVALID_INPUT_INDICATOR_TOOLTIP_CONTAINER_CLIENTID@@'=='null'? null:document.getElementById('@@INVALID_INPUT_INDICATOR_TOOLTIP_CONTAINER_CLIENTID@@'),
             '@@IGNORE_EMPTY_VALUE@@'
     );
+    
+    this.webserviceURL = '@@WEBSERVICE_URL@@';
+    this.webserviceOperation = '@@WEBSERVICE_OPERATION@@';
+    this.paramFunc =  @@PARAMETER_FUNCTION@@;
+    this.timeout = 1000;
 }
 
 // override BaseClientValidator.OnEvaludate() 
@@ -33,34 +38,53 @@ function @@CLIENTID@@_ClientSideEvaluator()
     }
     
     
-    if (this.input.value!=null && this.input.value!='')
+    callObj = service.createCallOptions();
+    callObj.funcName = this.webserviceOperation;
+    callObj.async = false;
+    callObj.timeOut = this.timeout;
+    callObj.params = this.paramFunc();
+
+    var res;  
+    resObj = service.ValidationServices.callService(callObj, res);
+
+    if (!resObj.error)
     {
-        if (!isNaN(this.input.value)){
-            portValue = parseInt(this.input.value);
-            result.OK = portValue >= @@MIN_VALUE@@ && portValue<= @@MAX_VALUE@@;            
+        wsResult = eval(resObj.value); 
+
+        if (!wsResult.Success)
+        {
+            // errorCode > 0 = warning
+            if (wsResult.ErrorCode > 0)
+            {
+                var ans = window.confirm('Unable to validate @@INPUT_NAME@@ : ' + wsResult.ErrorText + '\nWould you like to ignore it?');
+                if (ans)
+                {
+                    result.OK = true;
+                }
+                else
+                {
+                    result.OK = false;
+                    result.Message = 'Unable to validate this field: '+ wsResult.ErrorText;
+                }
+            }
+            else
+            {
+                result.OK = false;
+                result.Message = wsResult.ErrorText + ' (Error ' + wsResult.ErrorCode + ')';
+            }
         }
         else
         {
-            result.OK = false;
         }
-    }   
+        
+    }
     else
     {
+        alert('Error occured while calling ' + this.webserviceOperation + ' at ' + this.webserviceURL +' : ' + resObj.errorDetail.string);
         result.OK = false;
+        result.Message = resObj.errorDetail.string;
     }
     
-    if (result.OK == false)
-    {
-        if ('@@ERROR_MESSAGE@@' == null || '@@ERROR_MESSAGE@@'=='')
-        {
-            result.Message = 'Must be between @@MIN_VALUE@@ and @@MAX_VALUE@@';
-        }
-        else
-        {
-            result.Message = '@@ERROR_MESSAGE@@';
-        }
-    }
-     
     return result;
 
 };
@@ -83,4 +107,3 @@ function @@CLIENTID@@_ClientSideEvaluator()
 //    BaseClientValidator.prototype.SetErrorMessage.call(this, result);
 //    alert(result.Message);
 //}
-

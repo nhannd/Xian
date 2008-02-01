@@ -1,13 +1,13 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="InvalidInputIndicator.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
-<asp:Panel ID="ContainerPanel" runat="server" Wrap="False">
+<asp:Panel ID="ContainerPanel" runat="server"  >
     <asp:Image ID="Image" runat="server" />
     
-    <asp:Panel ID="HintPanel" runat="server" Style="color: #ff0066">
-    <asp:Label ID="HintLabel" runat="server" BorderColor="Silver" BorderStyle="Solid"
-        BorderWidth="1px" Style="position:relative; padding-right: 10px; padding-left: 10px; padding-bottom: 5px;
-        color: #ff6600; padding-top: 5px; background-color: #ffffcc" Text="Label"></asp:Label>
+    <asp:Panel ID="HintPanel" runat="server" Wrap="true" 
+        Style="background-color: #ffffcc;color: #ff6600;position:relative; padding-right: 10px; padding-left: 10px; padding-bottom: 5px; padding-top: 5px;" BorderWidth="1px">
+        <asp:Label ID="HintLabel" runat="server" 
+            Text="Label"></asp:Label>
         
         </asp:Panel>
         

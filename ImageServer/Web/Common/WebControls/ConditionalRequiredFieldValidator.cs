@@ -104,30 +104,38 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
         #region Protected Methods
 
-        protected override void RegisterClientSideValidationFunction()
-        {
-            if (ConditionalCheckBoxID != null)
-            {
-                ScriptTemplate template =
-                    new ScriptTemplate(GetType().Assembly,
-                                       "ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator_OnValidate_Conditional.js");
-                template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
-                template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
-                template.Replace("@@CONDITIONAL_CONTROL_CLIENTID@@", GetControlRenderID(ConditionalCheckBoxID));
-                template.Replace("@@REQUIRED_WHEN_CHECKED@@", RequiredWhenChecked.ToString().ToLower());
-                template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue.ToString().ToLower());
-                Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
-            }
-            else
-            {
-                ScriptTemplate template =
-                    new ScriptTemplate(GetType().Assembly,
-                                       "ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator_OnValidate.js");
-                template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
-                template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
-                Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
-            }
-        }
+
+
+        //protected override void RegisterClientSideValidationExtensionScripts()
+        //{
+        //    if (ConditionalCheckBoxID != null)
+        //    {
+        //        ScriptTemplate template =
+        //            new ScriptTemplate(GetType().Assembly,
+        //                               "ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator_OnValidate_Conditional.js");
+        //        template.Replace("@@CLIENTID@@", ClientID);
+        //        template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
+        //        template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
+        //        template.Replace("@@CONDITIONAL_CONTROL_CLIENTID@@", GetControlRenderID(ConditionalCheckBoxID));
+        //        template.Replace("@@REQUIRED_WHEN_CHECKED@@", RequiredWhenChecked.ToString().ToLower());
+        //        template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue.ToString().ToLower());
+        //        template.Replace("@@ERROR_MESSAGE@@", ErrorMessage);
+                
+        //        Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
+        //    }
+        //    else
+        //    {
+        //        ScriptTemplate template =
+        //            new ScriptTemplate(GetType().Assembly,
+        //                               "ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator_OnValidate.js");
+        //        template.Replace("@@CLIENTID@@", ClientID); 
+        //        template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
+        //        template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
+        //        template.Replace("@@ERROR_MESSAGE@@", ErrorMessage);
+                
+        //        Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
+        //    }
+        //}
 
         protected override bool OnServerSideEvaluate()
         {
@@ -167,6 +175,18 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         }
 
         #endregion Protected Methods
+
+        protected override void RegisterClientSideValidationExtensionScripts()
+        {
+            base.RegisterClientSideBaseValidationScripts();
+
+            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator.js");
+
+            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@", ConditionalCheckBoxID == null ? null : GetControlRenderID(ConditionalCheckBoxID));
+            template.Replace("@@REQUIRED_WHEN_CHECKED@@", RequiredWhenChecked ? "true" : "false");
+
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
+        }
     }
 
    

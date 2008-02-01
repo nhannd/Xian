@@ -66,6 +66,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         private int _max;
         private string _comparisonControlId;
         private bool _greaterThan;
+        private string _compareToInputName;
         #endregion Private Members
 
         #region Public Properties
@@ -101,9 +102,27 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             set { _greaterThan = value; }
         }
 
+        public string CompareToInputName
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(_compareToInputName))
+                    return _comparisonControlId;
+                else
+                    return _compareToInputName;
+            }
+            set { _compareToInputName = value; }
+        }
+
         #endregion Public Properties
 
         #region Protected Methods
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            int x = 0;
+        }
         
 
         /// <summary>
@@ -112,56 +131,71 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         /// <returns></returns>
         protected override bool OnServerSideEvaluate()
         {
-
+            bool result = false;
             Decimal value1;
             if (Decimal.TryParse(GetControlValidationValue(ControlToValidate), out value1))
             {
                 if (value1 < MinValue || value1 > MaxValue)
                 {
-                    return false;
-                }
-
-                Decimal value2 ;
-                if (Decimal.TryParse(GetControlValidationValue(ControlToCompare), out value2))
-                {
-                    if (GreaterThan)
-                    {
-                        return value1 >= value2;
-                        
-                    }
-                    else
-                    {
-                        return value1 <= value2;
-                    }
-
+                    result = false;
                 }
                 else
                 {
-                    // can't parse value2... assume value1 is OK
-                    return true;
+                    Decimal value2;
+                    if (Decimal.TryParse(GetControlValidationValue(ControlToCompare), out value2))
+                    {
+                        if (GreaterThan)
+                        {
+                            result = value1 >= value2;
+
+                        }
+                        else
+                        {
+                            result = value1 <= value2;
+                        }
+
+                    }
+                    else
+                    {
+                        // can't parse value2... assume value1 is OK
+                        result = true;
+                    }
                 }
+
             }
-            
-            
-            return false;
+
+            if (result == false && String.IsNullOrEmpty(ErrorMessage))
+            {
+                ErrorMessage = String.Format("{0} must be between {1} and {2} and {3} {4}",
+                                             InputName,
+                                             MinValue,
+                                             MaxValue,
+                                             GreaterThan ? "greater than" : "less than",
+                                             CompareToInputName);
+            }
+
+
+            return result;
         }
 
        
 
-        protected override void RegisterClientSideValidationFunction()
+        protected override void RegisterClientSideValidationExtensionScripts()
         {
+            
+
             // Register Javascript for client-side validation
             string comparison = GreaterThan ? ">=" : "<=";
             
-            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.RangeComparisonValidator.js");
-            template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
-            template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
+            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.RangeComparisonValidator.js");
             template.Replace("@@COMPARE_INPUT_CLIENTID@@", GetControlRenderID(ControlToCompare));
             template.Replace("@@MIN_VALUE@@", MinValue.ToString());
             template.Replace("@@MAX_VALUE@@", MaxValue.ToString());
             template.Replace("@@COMPARISON_OP@@", comparison);
+            template.Replace("@@COMPARE_TO_INPUT_NAME@@", CompareToInputName);
 
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
+
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
 
         }
 

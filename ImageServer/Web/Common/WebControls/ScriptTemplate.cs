@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 
@@ -49,10 +50,27 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         /// <summary>
         /// Creates an instance of <see cref="ScriptTemplate"/>
         /// </summary>
-        /// <param name="assembly">The assembly which contains the embedded javascript template</param>
+        /// <param name="validator">The validator to which the validator belongs.</param>
         /// <param name="name">Fully-qualified name of the javascript template (including the namespace)</param>
         /// <remarks>
+        /// 
         /// </remarks>
+        public ScriptTemplate(BaseValidator validator,  string name):
+            this(validator.GetType().Assembly, name)
+        {
+            Replace("@@CLIENTID@@", validator.ClientID);
+            Replace("@@INPUT_NAME@@", validator.InputName);
+            Replace("@@INPUT_CLIENTID@@", validator.InputControl.ClientID);
+            Replace("@@INPUT_NORMAL_BKCOLOR@@", ColorTranslator.ToHtml(validator.InputNormalColor));
+            Replace("@@INPUT_INVALID_BKCOLOR@@", ColorTranslator.ToHtml(validator.InvalidInputColor));
+            Replace("@@INVALID_INPUT_INDICATOR_CLIENTID@@", validator.InvalidInputIndicator == null ? null : validator.InvalidInputIndicator.Container.ClientID);
+            Replace("@@INVALID_INPUT_INDICATOR_TOOLTIP_CLIENTID@@", validator.InvalidInputIndicator == null ? null : validator.InvalidInputIndicator.TooltipLabel.ClientID);
+            Replace("@@INVALID_INPUT_INDICATOR_TOOLTIP_CONTAINER_CLIENTID@@", validator.InvalidInputIndicator == null ? null : validator.InvalidInputIndicator.TooltipLabelContainer.ClientID);
+            Replace("@@ERROR_MESSAGE@@", validator.ErrorMessage);
+            Replace("@@IGNORE_EMPTY_VALUE@@", validator.IgnoreEmptyValue? "true":"false");
+            
+        }
+
         public ScriptTemplate(Assembly assembly, string name)
         {
             Stream stream = assembly.GetManifestResourceStream(name);
@@ -60,6 +78,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             _script = reader.ReadToEnd();
             stream.Close();
             reader.Dispose();
+
         }
 
         #endregion Constructors

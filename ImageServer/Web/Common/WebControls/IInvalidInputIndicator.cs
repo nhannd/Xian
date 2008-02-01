@@ -17,6 +17,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             get;
         }
 
+        Control TooltipLabelContainer
+        {
+            get;
+        }
+
+
+
         void AttachValidator(BaseValidator validator);
 
         void Show();

@@ -124,16 +124,31 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         }
 
        
-        protected override void RegisterClientSideValidationFunction()
-        {
-            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.RegularExpressionValidator.js");
-            template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
-            template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
-            template.Replace("@@REGULAR_EXPRESSION@@", ValidationExpression.Replace("\\", "\\\\").Replace("'", "\\'"));
-            template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue.ToString().ToLower());
+        //protected override void RegisterClientSideValidationExtensionScripts()
+        //{
+        //    ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.RegularExpressionValidator.js");
+        //    template.Replace("@@CLIENTID@@", ClientID);
+        //    template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
+        //    template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
+        //    template.Replace("@@REGULAR_EXPRESSION@@", ValidationExpression.Replace("\\", "\\\\").Replace("'", "\\'"));
+        //    template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue.ToString().ToLower());
+        //    template.Replace("@@ERROR_MESSAGE@@", ErrorMessage);
+
+            
            
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
+        //    Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
  
+        //}
+
+
+        protected override void RegisterClientSideValidationExtensionScripts()
+        {
+            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.RegularExpressionValidator.js");
+            template.Replace("@@REGULAR_EXPRESSION@@", ValidationExpression.Replace("\\", "\\\\").Replace("'", "\\'"));
+
+
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
+
         }
 
         #endregion Protected Methods

@@ -30,6 +30,8 @@
 #endregion
 
 using System;
+using System.Drawing;
+
 namespace ClearCanvas.ImageServer.Web.Common.WebControls
 {
     /// <summary>
@@ -78,32 +80,39 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
         #region Protected Methods
 
-        protected override void RegisterClientSideValidationFunction()
+       
+        protected override void OnLoad(EventArgs e)
         {
-            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.LengthValidator.js");
-
-            template.Replace("@@CLIENT_SIDE_VALIDATION_FUNCTION@@", ClientEvalFunctionName);
-            template.Replace("@@INPUT_CLIENTID@@", GetControlRenderID(ControlToValidate));
-            template.Replace("@@MIN_LENGTH@@", MinLength.ToString());
-            template.Replace("@@MAX_LENGTH@@", MaxLength.ToString());
-
-
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
+            base.OnLoad(e);
 
         }
+
 
         protected override bool OnServerSideEvaluate()
         {
-            String value = GetControlValidationValue(ControlToValidate);
-            if (value == null || value.Length < MinLength || value.Length>MaxLength)
-            {
-                ErrorMessage = String.Format("Must be at least {0} and no more than {1} characters.", MinLength, MaxLength);
-                return false;
-            }
-            else
-                return true;
+            //String value = GetControlValidationValue(ControlToValidate);
+            //if (value == null || value.Length < MinLength || value.Length>MaxLength)
+            //{
+            //    ErrorMessage = String.Format("Must be at least {0} and no more than {1} characters.", MinLength, MaxLength);
+            //    return false;
+            //}
+            //else
+            //    return true;
+            return true;
         }
 
         #endregion Protected Methods
+
+        protected override void RegisterClientSideValidationExtensionScripts()
+        {
+            
+            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.LengthValidator.js");
+
+            template.Replace("@@MIN_LENGTH@@", MinLength.ToString());
+            template.Replace("@@MAX_LENGTH@@", MaxLength.ToString());
+
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID+"_ValidatorClass", template.Script, true);
+        }
+
     }
 }

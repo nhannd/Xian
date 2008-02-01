@@ -129,10 +129,13 @@
                                                             <uc1:InvalidInputIndicator ID="HighWatermarkHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
                                                             </uc1:InvalidInputIndicator>
                                                             <clearcanvas:RangeComparisonValidator ID="HighWatermarkValidator" runat="server"
-                                                                EnableClientScript="true" ControlToValidate="HighWatermarkTextBox" ControlToCompare="LowWatermarkTextBox"
+                                                                ControlToValidate="HighWatermarkTextBox" 
+                                                                ControlToCompare="LowWatermarkTextBox"
                                                                 GreaterThan="true" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1"
-                                                                MaxValue="99" ErrorMessage="High Watermark must be between 1 and 99 and greater than Low Watermark"
-                                                                Display="None" InvalidInputIndicatorID="HighWatermarkHelp" />
+                                                                MaxValue="99" 
+                                                                InputName="High watermark"
+                                                                CompareToInputName="Low watermark"
+                                                                Display="None" InvalidInputIndicatorID="HighWatermarkHelp"/>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -153,7 +156,9 @@
                                                             <clearcanvas:RangeComparisonValidator ID="LowWatermarkValidator" EnableClientScript="true"
                                                                 runat="server" ControlToValidate="LowWatermarkTextBox" ControlToCompare="HighWatermarkTextBox"
                                                                 GreaterThan="false" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1"
-                                                                MaxValue="99" ErrorMessage="Low Watermark must be between 1 and 99 and less than High Watermark"
+                                                                MaxValue="99" 
+                                                                InputName="Low watermark"
+                                                                CompareToInputName="High watermark"                                                                
                                                                 Display="None" InvalidInputIndicatorID="LowWatermarkHelp" />
                                                         </td>
                                                     </tr>

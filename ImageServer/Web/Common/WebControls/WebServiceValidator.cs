@@ -167,20 +167,34 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             Page.ClientScript.RegisterStartupScript(GetType(), "WebServiceInit", template.Script, true);
         }    
 
+        
 
-        protected override void RegisterClientSideValidationFunction()
+        //protected override void RegisterClientSideValidationExtensionScripts()
+        //{
+        //    ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.WebServiceValidator_ClientValidation.js");
+        //    template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
+        //    template.Replace("@@INPUT_CLIENTID@@", GetControlRenderID(ControlToValidate));
+        //    template.Replace("@@WEBSERVICE_OPERATION@@", ServiceOperation);
+        //    template.Replace("@@WEBSERVICE_URL@@", ServiceURL);
+        //    template.Replace("@@PARAMETER_FUNCTION@@", ParamsFunction);
+        //    template.Replace("@@INPUT_NAME@@", InputName);
+        //    template.Replace("@@INVALID_INPUT_POPUP_TOOLTIP@@", InputName);
+        //    template.Replace("@@CLIENTID@@", ClientID);
+            
+            
+        //    Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
+        //}
+
+        protected override void RegisterClientSideValidationExtensionScripts()
         {
-            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.WebServiceValidator_ClientValidation.js");
-            template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
-            template.Replace("@@INPUT_CLIENTID@@", GetControlRenderID(ControlToValidate));
+            
+            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.WebServiceValidator.js");
             template.Replace("@@WEBSERVICE_OPERATION@@", ServiceOperation);
             template.Replace("@@WEBSERVICE_URL@@", ServiceURL);
             template.Replace("@@PARAMETER_FUNCTION@@", ParamsFunction);
-            template.Replace("@@INPUT_NAME@@", InputName);
 
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }
-
 
         protected override bool OnServerSideEvaluate()
         {

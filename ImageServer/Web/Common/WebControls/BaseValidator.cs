@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
     /// Base validator class for all custom validators.
     /// </summary>
     /// <remarks>
-    /// All derived classes must override <see cref="OnServerSideEvaluate"/> and <see cref="RegisterClientSideValidationFunction"/>
+    /// All derived classes must override <see cref="OnServerSideEvaluate"/> and <see cref="RegisterClientSideValidationExtensionScripts"/>
     /// to provide the result of the validation. Other validation aspects such as showing/hidding the error indication, highlighting
     /// the input will be taken cared of by the base class.
     /// </remarks>
@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         /// <summary>
         /// Gets the control used to indicate the input is invalid
         /// </summary>
- 		protected IInvalidInputIndicator InvalidInputIndicator
+ 		public IInvalidInputIndicator InvalidInputIndicator
         {
             get
             {
@@ -148,7 +148,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         /// <summary>
         /// Gets or sets the background color value for the input control when validation passes.
         /// </summary>
-        protected Color InputNormalColor
+        public Color InputNormalColor
         {
             get
             {
@@ -167,7 +167,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         {
             get
             {
-                return ClientID + "_OnValidate";
+                return ClientID + "_OnClientSideValidation";
             }
         }
 
@@ -187,6 +187,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
                 return ClientID + "_OnValidInput";
             }
         }
+
 
         #endregion Protected Properties
 
@@ -239,15 +240,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
-
-            if (EnableClientScript)
-            {
-                RegisterScriptOnValidateFunction();
-                RegisterScriptOnInvalidInputFunction();
-                RegisterScriptOnValidInputFunction();
-                RegisterClientSideValidationFunction();
-            }
+            base.OnLoad(e); 
 
             
             if (!Page.IsPostBack)
@@ -261,65 +254,36 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
                 InputControl.BackColor = InputNormalColor;
               
             }
-        }
 
-        protected void RegisterScriptOnInvalidInputFunction()
-        {
-            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator_OnInValid.js");
-            template.Replace("@@ERROR_FUNCTION_NAME@@", OnInvalidInputFunctionName);
-            template.Replace("@@INPUT_CLIENTID@@", GetControlRenderID(ControlToValidate));
-            template.Replace("@@INPUT_NORMAL_BKCOLOR@@", ColorTranslator.ToHtml(InvalidInputColor));
-            template.Replace("@@INVALID_INPUT_POPUP_CONTROL@@", 
-                                InvalidInputIndicator == null
-                                              ? "null"
-                                              : "document.getElementById('" + InvalidInputIndicator.Container.ClientID + "')"
-                            );
-
-            template.Replace("@@INVALID_INPUT_POPUP_TOOLTIP@@", 
-                                InvalidInputIndicator == null
-                                              ? "null"
-                                              : "document.getElementById('" + InvalidInputIndicator.TooltipLabel.ClientID +"')"
-                
-                            );
-
-
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), OnInvalidInputFunctionName, template.Script, true);
-        }
-
-
-        protected void RegisterScriptOnValidateFunction()
-        {
-            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator_OnValidate.js");
-            template.Replace("@@FUNCTION_NAME@@", ClientSideOnValidateFunctionName);
-            template.Replace("@@CLIENT_SIDE_EVALUATION_FUNCTION@@", ClientEvalFunctionName);
-            template.Replace("@@CLIENT_SIDE_ON_VALID_FUNCTION@@", OnValidInputFunctionName);
-            template.Replace("@@CLIENT_SIDE_ON_INVALID_FUNCTION@@", OnInvalidInputFunctionName);
-            template.Replace("@@INVALID_INPUT_MESSAGE@@", ErrorMessage);
-
-
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientSideOnValidateFunctionName, template.Script, true);
+            if (EnableClientScript)
+            {
+                RegisterClientSideBaseValidationScripts();
+                RegisterClientSideValidationExtensionScripts();
+            }
 
         }
 
         
 
-        protected void RegisterScriptOnValidInputFunction()
+        protected void RegisterClientSideBaseValidationScripts()
         {
+            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator.js");
+            template.Replace("@@CLIENTID@@", ClientID);
+            template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
 
-            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator_OnValid.js");
-            template.Replace("@@FUNCTION_NAME@@", OnValidInputFunctionName);
-            template.Replace("@@INPUT_CLIENTID@@", GetControlRenderID(ControlToValidate));
             template.Replace("@@INPUT_NORMAL_BKCOLOR@@", ColorTranslator.ToHtml(InputNormalColor));
-            template.Replace("@@INVALID_INPUT_POPUP_CONTROL@@", 
-                InvalidInputIndicator == null
-                                              ? "null"
-                                              : "document.getElementById('" + InvalidInputIndicator.Container.ClientID + "')"
+            template.Replace("@@INPUT_INVALID_BKCOLOR@@", ColorTranslator.ToHtml(InvalidInputColor));
+            template.Replace("@@CLIENT_EVALUATION_CLASS@@", ClientSideOnValidateFunctionName);
 
-                );
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), "BaseValidationScripts", template.Script, true);
 
 
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), OnValidInputFunctionName, template.Script, true);
 
+            template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator_OnClientValidation.js");
+            
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientSideOnValidateFunctionName, template.Script, true);
+
+            
         }
 
 
@@ -376,8 +340,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         /// such as turning on/off <see cref="InvalidInputIndicator"/> or highlighting the input. 
         /// </para>
         /// <para>
-        /// Client-side validation is specified in <see cref="RegisterClientSideValidationFunction"/>.
-        /// </para>
+        /// Client-side validation is specified in <see cref="RegisterClientSideValidationExtensionScripts"/>.
+        /// </para> 
         /// </remarks>
         protected abstract bool OnServerSideEvaluate();
 
@@ -385,15 +349,14 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         /// Method called during initialization to register client-side validation script.
         /// </summary>
         /// <remarks>
-        /// <para>Derived classes must provide its own client-side validation script which must return a boolean
-        /// indicating the validation passes or fails. The base class will take care of other artifacts
+        /// <para>Derived classes must provide its own client-side validation extension script 
         /// such as turning on/off <see cref="InvalidInputIndicator"/> or highlighting the input. 
         /// </para>
         /// <para>
         /// Server-side validation is specified in <see cref="OnServerSideEvaluate"/>.
         /// </para>
         /// </remarks>
-        protected abstract void RegisterClientSideValidationFunction();
+        protected abstract void RegisterClientSideValidationExtensionScripts();
 
         #endregion Abstract methods
 
