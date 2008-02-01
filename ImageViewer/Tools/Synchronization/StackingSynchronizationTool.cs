@@ -368,54 +368,59 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private Vector3D GetOffset(ImageSop referenceSop, ImageInfo referenceImageInfo, ImageSop sop, ImageInfo info)
 		{
-			// looking for offset between A and C, say.
-
 			OffsetKey referenceOffsetKey = new OffsetKey(referenceSop.StudyInstanceUID, referenceSop.FrameOfReferenceUid, referenceImageInfo.Normal);
 			if (_offsets.ContainsKey(referenceOffsetKey))
 			{
-				// A is there.
 				OffsetKey key = new OffsetKey(sop.StudyInstanceUID, sop.FrameOfReferenceUid, info.Normal);
 				if (!key.Equals(referenceOffsetKey))
 				{
-					// A and C are not in the same frame of reference.
-
-					if (_offsets[referenceOffsetKey].ContainsKey(key))
-					{
-						// there is an offset between A and C.
-						return _offsets[referenceOffsetKey][key];
-					}
-					else if (_offsets.ContainsKey(key))
-					{
-						//TODO: this could be made recursive.
-
-						// No direct offset, but we have other offsets for C.
-						Vector3D inferredOffset = null;
-						foreach (KeyValuePair<OffsetKey, Vector3D> referenceRelatedOffset in _offsets[referenceOffsetKey])
-						{
-							// Iterate through A's offsets and see if C has a similar offset.
-							if (_offsets[key].ContainsKey(referenceRelatedOffset.Key))
-							{
-								// A has an offset for B, as does C
-								// We now have offset of B relative to A (A --> B) = B - A
-								// and offset of C relative to B (C --> B) = B - C
-								// Offset of A relative to C is equal to (A --> B + B --> C) = C - A = (C - B) + (B - A)
-
-								// this is (A --> B) - (C --> B) = (A --> B) + (B --> C)
-								Vector3D offset = referenceRelatedOffset.Value - _offsets[key][referenceRelatedOffset.Key];
-
-								// again, take the smallest of all the possible offsets.
-								if (inferredOffset == null || offset.Magnitude < inferredOffset.Magnitude)
-									inferredOffset = offset;
-							}
-						}
-
-						if (inferredOffset != null)
-							return inferredOffset;
-					}
+					Vector3D offset = GetOffset(referenceOffsetKey, key, new List<OffsetKey>());
+					if (offset != null)
+						return offset;
 				}
 			}
 
 			return Vector3D.GetNullVector();
+		}
+
+		private Vector3D GetOffset(OffsetKey referenceOffsetKey, OffsetKey key, List<OffsetKey> eliminated)
+		{
+			if (referenceOffsetKey.Equals(key))
+				return null;
+
+			// This 'reference key' has now been checked against 'key', so whether it 
+			// has a direct dependency or not, it should not be considered again,
+			// otherwise, we could end up in infinite recursion.
+			eliminated.Add(referenceOffsetKey);
+
+			if (_offsets[referenceOffsetKey].ContainsKey(key))
+			{
+				return _offsets[referenceOffsetKey][key];
+			}
+			else
+			{
+				Vector3D relativeOffset = null;
+
+				foreach (OffsetKey relatedKey in _offsets[referenceOffsetKey].Keys)
+				{
+					if (eliminated.Contains(relatedKey))
+						continue;
+					
+					Vector3D offset = GetOffset(relatedKey, key, eliminated);
+					if (offset != null)
+					{
+						//again, find the smallest of all possible offsets.
+						offset += _offsets[referenceOffsetKey][relatedKey];
+						if (relativeOffset == null || offset.Magnitude < relativeOffset.Magnitude)
+							relativeOffset = offset;
+					}
+				}
+
+				if (relativeOffset != null)
+					return relativeOffset;
+			}
+
+			return null;
 		}
 
 		private ImageInfo GetImageInformation(ImageSop sop)

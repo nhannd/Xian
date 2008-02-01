@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 
 		public override int GetHashCode()
 		{
-			return (int)(3F * _x + 5F * _y + 7F * _z);
+			return (int)(3 * _x.GetHashCode() + 5 * _y.GetHashCode() + 7 * _z.GetHashCode());
 		}
 
 		public override bool Equals(object obj)
