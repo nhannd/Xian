@@ -8,17 +8,31 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare
 {
+    /// <summary>
+    /// Defines an extension point to provide implementations of <see cref="IProcedureStepBuilder"/>.
+    /// </summary>
     [ExtensionPoint]
     public class ProcedureStepBuilderExtensionPoint : ExtensionPoint<IProcedureStepBuilder>
     {
     }
 
+    /// <summary>
+    /// Defines an interface to a procedure-step builder.  A procedure-step builder is an object
+    /// that is responsible for instantiating a given class of procedure step from an XML plan.
+    /// </summary>
+    /// <remarks>
+    /// Do not implement this interface directly. Instead use the abstract base class
+    /// <see cref="ProcedureStepBuilderBase"/>.
+    /// </remarks>
     public interface IProcedureStepBuilder
     {
+        /// <summary>
+        /// Gets the class of procedure step that this builder is responsible for.
+        /// </summary>
         Type ProcedureStepClass { get; }
 
         /// <summary>
-        /// 
+        /// Creates an instance of a procedure-step class from XML.
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <param name="procedure"></param>
@@ -27,25 +41,62 @@ namespace ClearCanvas.Healthcare
         /// The procedure is provided for reference only.  For example, the builder
         /// may need to create another object that refers to the procedure.  The
         /// builder is NOT responsible for adding the created <see cref="ProcedureStep"/>
-        /// to the procedure.
+        /// to the procedure, and must NOT do so.
         /// </remarks>
         ProcedureStep CreateInstance(XmlElement xmlNode, Procedure procedure);
-        void SavePrototype(ProcedureStep prototype, XmlElement xmlNode);
+
+        /// <summary>
+        /// Creates an XML representation of the specified procedure-step prototype.
+        /// </summary>
+        /// <param name="prototype"></param>
+        /// <param name="xmlNode"></param>
+        void SaveInstance(ProcedureStep prototype, XmlElement xmlNode);
     }
 
+    /// <summary>
+    /// Abstract base implementation of <see cref="IProcedureStepBuilder"/>.
+    /// </summary>
     public abstract class ProcedureStepBuilderBase : IProcedureStepBuilder
     {
         #region IProcedureStepBuilder Members
 
+        /// <summary>
+        /// Gets the class of procedure step that this builder is responsible for.
+        /// </summary>
         public abstract Type ProcedureStepClass { get; }
 
+        /// <summary>
+        /// Creates an instance of a procedure-step class from XML.
+        /// </summary>
+        /// <param name="xmlNode"></param>
+        /// <param name="procedure"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// The procedure is provided for reference only.  For example, the builder
+        /// may need to create another object that refers to the procedure.  The
+        /// builder is NOT responsible for adding the created <see cref="ProcedureStep"/>
+        /// to the procedure, and must NOT do so.
+        /// </remarks>
         public abstract ProcedureStep CreateInstance(XmlElement xmlNode, Procedure procedure);
 
-        public abstract void SavePrototype(ProcedureStep prototype, XmlElement xmlNode);
+        /// <summary>
+        /// Creates an XML representation of the specified procedure-step prototype.
+        /// </summary>
+        /// <param name="prototype"></param>
+        /// <param name="xmlNode"></param>
+        public abstract void SaveInstance(ProcedureStep prototype, XmlElement xmlNode);
 
         #endregion
 
-        protected string GetAttribute(XmlElement xmlNode, string attribute, bool required)
+        /// <summary>
+        /// Utility method to get the value of an attribute from an XML node, optionally 
+        /// throwing an exception if the attribute does not exist.
+        /// </summary>
+        /// <param name="xmlNode"></param>
+        /// <param name="attribute"></param>
+        /// <param name="required"></param>
+        /// <returns></returns>
+        protected static string GetAttribute(XmlElement xmlNode, string attribute, bool required)
         {
             string value = xmlNode.GetAttribute(attribute);
             if(required && string.IsNullOrEmpty(value))
@@ -54,6 +105,11 @@ namespace ClearCanvas.Healthcare
         }
     }
 
+    #region ProcedureBuilderException class
+
+    /// <summary>
+    /// Defines an exception class for errors that occur in the <see cref="ProcedureBuilder"/>.
+    /// </summary>
     public class ProcedureBuilderException: Exception
     {
         public ProcedureBuilderException(string message)
@@ -67,13 +123,25 @@ namespace ClearCanvas.Healthcare
         }
     }
 
+    #endregion
+
+    /// <summary>
+    /// Internal class that assembles <see cref="Procedure"/> objects according to a plan
+    /// specified by a <see cref="ProcedureType"/>.
+    /// </summary>
     internal class ProcedureBuilder
     {
 
         #region Static Cache
 
+        /// <summary>
+        /// Cache of <see cref="IProcedureStepBuilder"/> for each class of procedure step.
+        /// </summary>
         private static readonly Dictionary<Type, IProcedureStepBuilder> _mapClassToBuilder;
 
+        /// <summary>
+        /// Static constructor.
+        /// </summary>
         static ProcedureBuilder()
         {
             _mapClassToBuilder = new Dictionary<Type, IProcedureStepBuilder>();
@@ -85,39 +153,60 @@ namespace ClearCanvas.Healthcare
 
         #endregion
 
-        public ProcedureBuilder()
+        #region Internal methods
+
+        /// <summary>
+        /// Adds procedure steps to the specified <see cref="Procedure"/>,
+        /// according to the plan specified by its <see cref="Procedure.Type"/> property.
+        /// </summary>
+        /// <remarks>
+        /// This builds the specified procedure according to its <see cref="Procedure.Type"/>.
+        /// It also takes into account any procedure-type inheritance, adding inherited procedure
+        /// steps as well.
+        /// </remarks>
+        /// <param name="procedure"></param>
+        internal void BuildProcedureFromPlan(Procedure procedure)
         {
+            BuildProcedureFromPlan(procedure, procedure.Type);
         }
 
-        internal void SetPlanFromPrototype(ProcedureType type, Procedure prototype)
+        /// <summary>
+        /// Uses the specified <see cref="Procedure"/> as a prototype
+        /// to create and save a plan in the <see cref="Procedure.Type"/> property.
+        /// </summary>
+        /// <remarks>
+        /// This method generates the procedure plan XML by simply iterating over
+        /// all procedure steps in the <see cref="Procedure.ProcedureSteps"/>
+        /// property of the specified procedure.  It does not take procedure-plan
+        /// inheritance into account. Therefore, it should not be considered an
+        /// inverse of <see cref="BuildProcedureFromPlan(Procedure)"/>.
+        /// </remarks>
+        /// <param name="procedure"></param>
+        internal XmlDocument CreatePlanFromProcedure(Procedure procedure)
         {
             XmlDocument xmlDoc = new XmlDocument();
             XmlElement stepsNode = xmlDoc.CreateElement("procedure-steps");
             xmlDoc.AppendChild(stepsNode);
-            foreach (ProcedureStep step in prototype.ProcedureSteps)
+            foreach (ProcedureStep step in procedure.ProcedureSteps)
             {
                 IProcedureStepBuilder builder = GetBuilderForClass(step.GetClass());
                 XmlElement stepNode = xmlDoc.CreateElement("procedure-step");
                 stepNode.SetAttribute("class", step.GetClass().FullName);
-                builder.SavePrototype(step, stepNode);
+                builder.SaveInstance(step, stepNode);
 
                 stepsNode.AppendChild(stepNode);
             }
-
-            type.SetPlanXml(xmlDoc);
+            return xmlDoc;
         }
 
-        internal void BuildProcedure(Procedure procedure)
-        {
-            BuildProcedure(procedure, procedure.Type);
-        }
+        #endregion
 
-        private void BuildProcedure(Procedure procedure, ProcedureType type)
+        private void BuildProcedureFromPlan(Procedure procedure, ProcedureType type)
         {
             // first apply the base procedure type recursively
             if(type.BaseType != null)
             {
-                BuildProcedure(procedure, type.BaseType);
+                BuildProcedureFromPlan(procedure, type.BaseType);
             }
 
             // plan may not exist

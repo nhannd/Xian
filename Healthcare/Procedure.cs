@@ -137,7 +137,7 @@ namespace ClearCanvas.Healthcare {
                 throw new WorkflowException("Procedure steps have already been created for this Procedure.");
 
             ProcedureBuilder builder = new ProcedureBuilder();
-            builder.BuildProcedure(this);
+            builder.BuildProcedureFromPlan(this);
         }
 
         /// <summary>

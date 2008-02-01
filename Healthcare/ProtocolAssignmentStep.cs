@@ -57,7 +57,7 @@ namespace ClearCanvas.Healthcare {
             return step;
         }
 
-        public override void SavePrototype(ProcedureStep prototype, XmlElement xmlNode)
+        public override void SaveInstance(ProcedureStep prototype, XmlElement xmlNode)
         {
             // nothing to do
         }

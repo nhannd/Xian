@@ -77,7 +77,7 @@ namespace ClearCanvas.Healthcare {
             return step;
         }
 
-        public override void SavePrototype(ProcedureStep prototype, XmlElement xmlNode)
+        public override void SaveInstance(ProcedureStep prototype, XmlElement xmlNode)
         {
             ModalityProcedureStep step = (ModalityProcedureStep) prototype;
             xmlNode.SetAttribute("description", step.Description);

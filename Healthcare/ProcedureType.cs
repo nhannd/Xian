@@ -65,7 +65,7 @@ namespace ClearCanvas.Healthcare {
         public virtual void SetPlanFromPrototype(Procedure prototype)
         {
             ProcedureBuilder builder = new ProcedureBuilder();
-            builder.SetPlanFromPrototype(this, prototype);
+            this.SetPlanXml(builder.CreatePlanFromProcedure(prototype));
         }
 
         /// <summary>
