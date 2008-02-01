@@ -81,9 +81,10 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
     ///         Display="None" ValidationGroup="vg1"/> 
     /// </code>
     /// </example>
-    public class FilesystemPathValidator:WebServiceValidator
+    public class FilesystemPathValidator : WebServiceValidator
     {
         #region Protected Methods
+
         protected override bool OnServerSideEvaluate()
         {
             String path = GetControlValidationValue(ControlToValidate);
@@ -99,7 +100,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             {
                 client = new ValidationServiceClient();
                 ValidationResult result = client.CheckPath(path);
-                
+
                 client.Close();
 
                 if (!String.IsNullOrEmpty(result.ErrorText))
@@ -107,23 +108,21 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
                 return result.Success;
             }
-            catch(EndpointNotFoundException e)
+            catch (EndpointNotFoundException e)
             {
-                
                 ErrorMessage = e.Message;
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 ErrorMessage = e.Message;
                 return false;
             }
             finally
             {
-                if (client != null && client.State==CommunicationState.Opened)
+                if (client != null && client.State == CommunicationState.Opened)
                     client.Close();
             }
-
         }
 
         #endregion Protected Methods

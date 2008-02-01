@@ -45,10 +45,10 @@
                                                 <asp:CheckBox ID="EnabledOnlyFilter" runat="server" Text="Enabled" CssClass="CSSCheckBox" />
                                             </td>
                                             <td align="right" valign="bottom">
-                                                <asp:Panel ID="FilterButtonContainer" runat="server"  CssClass="FilterButtonContainer">
+                                                <asp:Panel ID="FilterButtonContainer" runat="server" CssClass="FilterButtonContainer">
                                                     <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png"
                                                         OnClick="FilterButton_Click" />
-                                                 </asp:Panel>
+                                                </asp:Panel>
                                             </td>
                                         </tr>
                                     </table>

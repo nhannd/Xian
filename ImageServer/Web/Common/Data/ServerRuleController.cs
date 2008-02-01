@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 {
     internal class ServerRuleAdaptor :
         BaseAdaptor
-            <ServerRule, IServerRuleEntityBroker, ServerRuleSelectCriteria,ServerRuleUpdateColumns>
+            <ServerRule, IServerRuleEntityBroker, ServerRuleSelectCriteria, ServerRuleUpdateColumns>
     {
     }
 

@@ -45,6 +45,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
     public partial class AddEditDeviceDialog : UserControl
     {
         #region private variables
+
         // The server partitions that the new device can be associated with
         // This list will be determined by the user level permission.
         private IList<ServerPartition> _partitions = new List<ServerPartition>();
@@ -52,23 +53,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         private bool _editMode;
         // device being editted/added
         private Device _device;
+
         #endregion
 
         #region public members
+
         /// <summary>
         /// Sets the list of partitions users allowed to pick.
         /// </summary>
         public IList<ServerPartition> Partitions
         {
-            set
-            {
-                _partitions = value;
-            }
+            set { _partitions = value; }
 
-            get
-            {
-                return _partitions;
-            }
+            get { return _partitions; }
         }
 
         /// <summary>
@@ -77,7 +74,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         public bool EditMode
         {
             get { return _editMode; }
-            set { 
+            set
+            {
                 _editMode = value;
                 ViewState[ClientID + "_EditMode"] = value;
             }
@@ -90,42 +88,42 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         {
             set
             {
-                this._device = value;
+                _device = value;
                 // put into viewstate to retrieve later
                 ViewState[ClientID + "_EdittedDevice"] = _device;
             }
-            get
-            {
-                return _device;
-            }
-
+            get { return _device; }
         }
+
         #endregion // public members
 
         #region Events
+
         /// <summary>
         /// Defines the event handler for <seealso cref="OKClicked"/>.
         /// </summary>
         /// <param name="device">The device being added.</param>
         public delegate void OnOKClickedEventHandler(Device device);
+
         /// <summary>
         /// Occurs when users click on "OK".
         /// </summary>
         public event OnOKClickedEventHandler OKClicked;
+
         #endregion Events
 
         #region Public delegates
 
-
         #endregion // public delegates
 
         #region Protected methods
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
-            this.TabContainer1.ActiveTabIndex = 0;
-            
+            TabContainer1.ActiveTabIndex = 0;
+
             // Set up the popup extender
             // These settings could been done in the aspx page as well
             // but if we are to javascript to display, that won't work.
@@ -140,15 +138,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
             DHCPCheckBox.InputAttributes.Add("onClick", "EnableDisableIp();");
 
-            Page.ClientScript.RegisterClientScriptBlock(this.GetType(), this.ClientID,
-                        @"<script language='javascript'>
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID,
+                                                        @"<script language='javascript'>
                             function EnableDisableIp()
                             {
                                 var checkBox = document.getElementById('" +
-                                                        this.DHCPCheckBox.ClientID +
+                                                        DHCPCheckBox.ClientID +
                                                         @"');
                                 var ipBox = document.getElementById('" +
-                                                        this.IPAddressTextBox.ClientID +
+                                                        IPAddressTextBox.ClientID +
                                                         @"');
                                 ipBox.disabled=checkBox.checked;         
                                 ipBox.value = '';
@@ -159,20 +157,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
             if (Page.IsPostBack == false)
             {
-               
             }
             else
             {
                 if (ViewState[ClientID + "_EditMode"] != null)
-                    _editMode = (bool)ViewState[ClientID + "_EditMode"];
+                    _editMode = (bool) ViewState[ClientID + "_EditMode"];
 
                 if (ViewState[ClientID + "_EdittedDevice"] != null)
                     _device = ViewState[ClientID + "_EdittedDevice"] as Device;
             }
-
         }
 
 
@@ -183,11 +178,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         /// <param name="e"></param>
         protected void OKButton_Click(object sender, EventArgs e)
         {
-
             if (Page.IsValid)
             {
                 SaveData();
-                
+
                 if (OKClicked != null)
                     OKClicked(Device);
 
@@ -201,7 +195,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
         private void SaveData()
         {
-            if (Device==null)
+            if (Device == null)
             {
                 Device = new Device();
             }
@@ -221,7 +215,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         }
 
         #endregion Protected methods
-
 
         #region Public methods
 
@@ -279,9 +272,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
                 ServerPartitionDropDownList.SelectedValue = Device.ServerPartitionKey.Key.ToString();
             }
-
-            
-            
         }
 
         /// <summary>
@@ -327,9 +317,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         }
 
         #endregion Public methods
-
-
-        
     }
- 
 }

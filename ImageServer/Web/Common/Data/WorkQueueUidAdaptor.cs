@@ -34,7 +34,8 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    public class WorkQueueUidAdaptor : BaseAdaptor<WorkQueueUid, IWorkQueueUidEntityBroker, WorkQueueUidSelectCriteria, WorkQueueUidUpdateColumns>
+    public class WorkQueueUidAdaptor :
+        BaseAdaptor<WorkQueueUid, IWorkQueueUidEntityBroker, WorkQueueUidSelectCriteria, WorkQueueUidUpdateColumns>
     {
     }
 }

@@ -51,13 +51,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
     /// <summary>
     /// Device configuration screen controller.
     /// </summary>
-    public class DeviceConfigurationController:IDeviceConfigurationController
+    public class DeviceConfigurationController : IDeviceConfigurationController
     {
         #region Private members
+
         /// <summary>
         /// The adapter class to retrieve/set devices from device table
         /// </summary>
         private DeviceDataAdapter _adapter = new DeviceDataAdapter();
+
         /// <summary>
         /// The adapter class to set/retrieve server partitions from server partition table
         /// </summary>
@@ -66,6 +68,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         #endregion
 
         #region public methods
+
         /// <summary>
         /// Add a device in the database.
         /// </summary>
@@ -75,7 +78,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             Platform.Log(LogLevel.Info, "Adding new device : AETitle = {0}", device.AeTitle);
 
             bool ok = _adapter.AddDevice(device);
-            
+
             Platform.Log(LogLevel.Info, "New device added : AETitle = {0}", device.AeTitle);
 
             return ok;
@@ -89,13 +92,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         public bool DeleteDevice(Device device)
         {
             Platform.Log(LogLevel.Info, "Deleting {0}, GUID={1}", device.AeTitle, device.GetKey());
-            
+
             bool ok = _adapter.DeleteDevice(device);
 
             Platform.Log(LogLevel.Info, "Delete of {0} {1}", device.AeTitle, ok ? "Successful" : "Failed");
 
             return ok;
-
         }
 
         /// <summary>
@@ -105,9 +107,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns><b>true</b> if the record is updated successfully. <b>false</b> otherwise.</returns>
         public bool UpdateDevice(Device device)
         {
-            Platform.Log(LogLevel.Info, "Updating device GUID={1} : AETitle={0}",  device.GetKey(), device.AeTitle);
+            Platform.Log(LogLevel.Info, "Updating device GUID={1} : AETitle={0}", device.GetKey(), device.AeTitle);
             bool ok = _adapter.Update(device);
-            Platform.Log(LogLevel.Info, "Device GUID={0} {1}", device.GetKey(), ok? "updated":" failed to update");
+            Platform.Log(LogLevel.Info, "Device GUID={0} {1}", device.GetKey(), ok ? "updated" : " failed to update");
 
             return ok;
         }
@@ -129,8 +131,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         public IList<ServerPartition> GetServerPartitions()
         {
             return _serverAdapter.GetServerPartitions();
-
         }
+
         #endregion public methods
     }
 }

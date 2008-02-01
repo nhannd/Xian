@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
@@ -44,29 +43,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
     public partial class AddFilesystemDialog : UserControl
     {
         #region private variables
+
         // The server partitions that the new device can be associated with
         // This list will be determined by the user level permission.
         private IList<FilesystemTierEnum> _tiers = new List<FilesystemTierEnum>();
 
         private bool _editMode = false;
         private Filesystem _filesystem;
+
         #endregion
 
         #region public members
+
         /// <summary>
         /// Sets or gets the list of filesystem tiers which users are allowed to pick.
         /// </summary>
         public IList<FilesystemTierEnum> FilesystemTiers
         {
-            set
-            {
-                _tiers = value;
-            }
+            set { _tiers = value; }
 
-            get
-            {
-                return _tiers;
-            }
+            get { return _tiers; }
         }
 
         /// <summary>
@@ -74,9 +70,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// </summary>
         public bool EditMode
         {
-            set { 
+            set
+            {
                 _editMode = value;
-                ViewState[ ClientID+"_EditMode"] = value;
+                ViewState[ClientID + "_EditMode"] = value;
             }
             get { return _editMode; }
         }
@@ -86,8 +83,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// </summary>
         public Filesystem FileSystem
         {
-            set { _filesystem = value;
-                ViewState[ ClientID+"_FileSystem"] = value;
+            set
+            {
+                _filesystem = value;
+                ViewState[ClientID + "_FileSystem"] = value;
             }
             get { return _filesystem; }
         }
@@ -95,11 +94,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         #endregion // public members
 
         #region Events
+
         /// <summary>
         /// Defines the event handler for <seealso cref="OKClicked"/>.
         /// </summary>
         /// <param name="filesystem">The device being added.</param>
         public delegate void OKClickedEventHandler(Filesystem filesystem);
+
         /// <summary>
         /// Occurs when users click on "OK".
         /// </summary>
@@ -109,22 +110,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
         #region Public delegates
 
-
         #endregion // public delegates
 
         #region Protected methods
 
-        protected override void OnPreRender(EventArgs e)
-        {
-            base.OnPreRender(e);
-        }
-
-        
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
-            
+
             // Set up the popup extender
             // These settings could been done in the aspx page as well
             // but if we are to javascript to display, that won't work.
@@ -138,12 +132,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
             OKButton.OnClientClick = ClientID + "_clearFields()";
 
-            Page.ClientScript.RegisterClientScriptBlock(this.GetType(), this.ClientID,
-                        @"<script language='javascript'>
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID,
+                                                        @"<script language='javascript'>
 
                             function ValidationFilesystemPathParams()
                             {
-                                control = document.getElementById('" + PathTextBox.ClientID + @"');
+                                control = document.getElementById('" +
+                                                        PathTextBox.ClientID +
+                                                        @"');
                                 params = new Array();
                                 params.path=control.value;
 
@@ -162,34 +158,36 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                                 txtbox.style.backgroundColor = '';
                             }
 
-                            function " + ClientID + @"_clearFields()
+                            function " +
+                                                        ClientID +
+                                                        @"_clearFields()
                             {
                                 
-                                AddEditFileSystemsDialog_ClearField('" + DescriptionTextBox.ClientID + @"');
-                                AddEditFileSystemsDialog_ClearField('" + PathTextBox.ClientID + @"');
+                                AddEditFileSystemsDialog_ClearField('" +
+                                                        DescriptionTextBox.ClientID +
+                                                        @"');
+                                AddEditFileSystemsDialog_ClearField('" +
+                                                        PathTextBox.ClientID +
+                                                        @"');
 
                                 
                             }
                         </script>");
-
-           
         }
 
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            
             if (Page.IsPostBack == false)
             {
-
             }
             else
             {
                 // reload the filesystem information user is working on
-                if (ViewState[ ClientID+"_EditMode"]!=null)
-                    _editMode = (bool) ViewState[ ClientID+"_EditMode"];
+                if (ViewState[ClientID + "_EditMode"] != null)
+                    _editMode = (bool) ViewState[ClientID + "_EditMode"];
 
-                FileSystem = ViewState[ ClientID+"_FileSystem"] as Filesystem;
+                FileSystem = ViewState[ClientID + "_FileSystem"] as Filesystem;
             }
         }
 
@@ -201,7 +199,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// <param name="e"></param>
         protected void OKButton_Click(object sender, EventArgs e)
         {
-            
             if (Page.IsValid)
             {
                 SaveData();
@@ -247,18 +244,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
         protected void ReadOnlyCheckBox_Init(object sender, EventArgs e)
         {
-
         }
 
         protected void CancelButton_Click(object sender, EventArgs e)
         {
-
         }
 
         #endregion Protected methods
 
-
         #region Public methods
+
         /// <summary>
         /// Displays the add device dialog box.
         /// </summary>
@@ -311,9 +306,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
                 TiersDropDownList.SelectedIndex = 0;
             }
-            else if (Page.IsValid) 
+            else if (Page.IsValid)
             {
-                
                 // set the data using the info in the filesystem to be editted
                 DescriptionTextBox.Text = FileSystem.Description;
                 PathTextBox.Text = FileSystem.FilesystemPath;
@@ -323,8 +317,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                 HighWatermarkTextBox.Text = FileSystem.HighWatermark.ToString();
                 TiersDropDownList.SelectedValue = FileSystem.FilesystemTierEnum.Enum.ToString();
                 PercentFullLabel.Text = FileSystem.PercentFull.ToString();
-
-                
             }
         }
 
@@ -354,8 +346,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         }
 
         #endregion Public methods
-
-        
     }
- 
 }

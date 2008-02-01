@@ -16,11 +16,11 @@
                                     <asp:Label ID="PatientsName" runat="server" CssClass="CSSAccordianHeaderText" Text="Patient's Name"
                                         EnableViewState="False" Width="30%" />
                                     <asp:Label ID="WorkQueueType" runat="server" CssClass="CSSAccordianHeaderText" Text="Type"
-                                        EnableViewState="False" Width="15%"  />
+                                        EnableViewState="False" Width="15%" />
                                     <asp:Label ID="WorkQueueStatus" runat="server" CssClass="CSSAccordianHeaderText"
                                         Text="Status" EnableViewState="False" Width="15%" />
                                     <asp:Label ID="ScheduledTime" runat="server" CssClass="CSSAccordianHeaderText" Text="Schedule"
-                                        EnableViewState="False"  />
+                                        EnableViewState="False" />
                                 </asp:Panel>
                             </asp:Panel>
                         </asp:Panel>

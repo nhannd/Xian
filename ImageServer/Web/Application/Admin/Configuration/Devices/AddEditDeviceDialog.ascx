@@ -18,26 +18,24 @@
                     </tr>
                 </table>
             </asp:Panel>
-            
             <div class="CSSPopupWindowBody">
                 <asp:Panel ID="Panel3" runat="server" Height="100%" CssClass="CSSDialogTabPanelContent">
                     <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
                         <cc1:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
                             <ContentTemplate>
                                 <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
-                                    <table id="Table2" runat="server" >
-                                        <tr id="Tr1" runat="server" align="left" >
+                                    <table id="Table2" runat="server">
+                                        <tr id="Tr1" runat="server" align="left">
                                             <td id="Td1" runat="server" valign="bottom">
                                                 <table width="100%">
                                                     <tr align="left">
-                                                        <td  width="100%">
+                                                        <td width="100%">
                                                             <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="CSSTextLabel" /><br />
                                                             <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="vg1" MaxLength="16"></asp:TextBox>
                                                         </td>
-                                                        <td >
+                                                        <td>
                                                             <uc1:InvalidInputIndicator ID="AETitleHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png"
                                                                 Visible="true"></uc1:InvalidInputIndicator>
-                                                            
                                                             <clearcanvas:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                                 ControlToValidate="AETitleTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
                                                                 InvalidInputIndicatorID="AETitleHelp" ErrorMessage="AE Title is required" Display="None"
@@ -50,12 +48,12 @@
                                                     </tr>
                                                 </table>
                                             </td>
-                                            <td id="Td2" runat="server" align="left"  valign="bottom">
+                                            <td id="Td2" runat="server" align="left" valign="bottom">
                                                 <table width="100%">
                                                     <tr align="left">
-                                                        <td  width="100%">
+                                                        <td width="100%">
                                                             <asp:Label ID="Label2" runat="server" Text="Description" CssClass="CSSTextLabel" /><br />
-                                                            <asp:TextBox ID="DescriptionTextBox" runat="server" ></asp:TextBox>
+                                                            <asp:TextBox ID="DescriptionTextBox" runat="server"></asp:TextBox>
                                                         </td>
                                                         <td>
                                                         </td>
@@ -63,20 +61,19 @@
                                                 </table>
                                             </td>
                                         </tr>
-                                        <tr id="Tr2" runat="server" align="left" valign="bottom" >
-                                            <td id="Td4"  valign="bottom" >
-                                                <table width="100%" >
+                                        <tr id="Tr2" runat="server" align="left" valign="bottom">
+                                            <td id="Td4" valign="bottom">
+                                                <table width="100%">
                                                     <tr align="left">
-                                                        <td  width="100%" >
+                                                        <td width="100%">
                                                             <asp:Label ID="Label3" runat="server" Text="IP Address" CssClass="CSSTextLabel" />
-                                                            <asp:CheckBox ID="DHCPCheckBox" runat="server" Text="DHCP"/><br />
-                                                            
-                                                            <asp:TextBox ID="IPAddressTextBox" runat="server"  ValidationGroup="vg1">
+                                                            <asp:CheckBox ID="DHCPCheckBox" runat="server" Text="DHCP" /><br />
+                                                            <asp:TextBox ID="IPAddressTextBox" runat="server" ValidationGroup="vg1">
                                                             </asp:TextBox>
                                                         </td>
-                                                        <td align="left" >
+                                                        <td align="left">
                                                             <uc1:InvalidInputIndicator ID="IPAddressHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
-                                                                </uc1:InvalidInputIndicator>
+                                                            </uc1:InvalidInputIndicator>
                                                             <clearcanvas:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
                                                                 runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
                                                                 ConditionalCheckBoxID="DHCPCheckBox" RequiredWhenChecked="False" ValidationGroup="vg1"
@@ -84,37 +81,35 @@
                                                                 Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
                                                             <clearcanvas:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator1"
                                                                 runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
-                                                                IgnoreEmptyValue="true"
-                                                                ValidationGroup="vg1" ValidationExpression="^([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])$"
+                                                                IgnoreEmptyValue="true" ValidationGroup="vg1" ValidationExpression="^([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])$"
                                                                 ErrorMessage="IP address is malformed" Display="None" InvalidInputIndicatorID="IPAddressHelp"></clearcanvas:RegularExpressionFieldValidator>
                                                         </td>
                                                     </tr>
-                                                    
                                                 </table>
                                             </td>
-                                            <td id="Td6" runat="server" align="left"  valign="bottom">
-                                                <table width="100%" >
-                                                    <tr align="left" >
-                                                        <td  width="100%">
+                                            <td id="Td6" runat="server" align="left" valign="bottom">
+                                                <table width="100%">
+                                                    <tr align="left">
+                                                        <td width="100%">
                                                             <asp:Label ID="Label4" runat="server" Text="Partition" CssClass="CSSTextLabel" /><br />
-                                                            <asp:DropDownList ID="ServerPartitionDropDownList" runat="server" Width="100%" >
+                                                            <asp:DropDownList ID="ServerPartitionDropDownList" runat="server" Width="100%">
                                                             </asp:DropDownList>
                                                         </td>
-                                                        <td >
+                                                        <td>
                                                         </td>
                                                     </tr>
                                                 </table>
                                             </td>
                                         </tr>
-                                        <tr id="Tr3" runat="server" align="left"  valign="bottom" >
+                                        <tr id="Tr3" runat="server" align="left" valign="bottom">
                                             <td id="Td7" runat="server" valign="bottom">
                                                 <table width="100%">
                                                     <tr align="left">
-                                                        <td  width="100%">
+                                                        <td width="100%">
                                                             <asp:Label ID="Label5" runat="server" Text="Port" CssClass="CSSTextLabel" /><br />
                                                             <asp:TextBox ID="PortTextBox" runat="server" />
                                                         </td>
-                                                        <td >
+                                                        <td>
                                                             <uc1:InvalidInputIndicator ID="PortHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png"
                                                                 Visible="true"></uc1:InvalidInputIndicator>
                                                             <clearcanvas:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
@@ -125,17 +120,17 @@
                                                     </tr>
                                                 </table>
                                             </td>
-                                            <td id="Td9" runat="server"  valign="bottom">
+                                            <td id="Td9" runat="server" valign="bottom">
                                                 <table width="100%">
                                                     <tr align="left">
-                                                        <td  width="100%" >
+                                                        <td width="100%">
                                                             <asp:CheckBox ID="ActiveCheckBox" runat="server" Checked="True" Text="Enabled" />
                                                         </td>
-                                                        <td >
+                                                        <td>
                                                         </td>
                                                     </tr>
                                                 </table>
-                                                </td>
+                                            </td>
                                         </tr>
                                     </table>
                                 </asp:Panel>
@@ -144,7 +139,7 @@
                                 General
                             </HeaderTemplate>
                         </cc1:TabPanel>
-                        <cc1:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2" Height="200px" >
+                        <cc1:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2" Height="200px">
                             <ContentTemplate>
                                 <asp:Panel ID="Panel2" runat="server" CssClass="CSSDialogTabPanelContent">
                                     <table width="100%">
@@ -183,19 +178,19 @@
                 </asp:Panel>
                 <br />
                 <center>
-                <table width="80%">
-                    <tr>
-                        <td align="center">
-                            <asp:Button ID="OKButton" runat="server" Text="Add" Width="77px" OnClick="OKButton_Click"
-                                ValidationGroup="vg1" />
-                        </td>
-                        <td align="center">
-                            <asp:Button ID="CancelButton" runat="server" Text="Cancel" />
-                        </td>
-                    </tr>
-                </table>
-                <br />
-                </center>                            
+                    <table width="80%">
+                        <tr>
+                            <td align="center">
+                                <asp:Button ID="OKButton" runat="server" Text="Add" Width="77px" OnClick="OKButton_Click"
+                                    ValidationGroup="vg1" />
+                            </td>
+                            <td align="center">
+                                <asp:Button ID="CancelButton" runat="server" Text="Cancel" />
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                </center>
                 <asp:Panel ID="DummyPanel" runat="server" Height="1px" Width="36px" Style="z-index: 101;
                     left: 522px; position: absolute; top: 53px">
                 </asp:Panel>

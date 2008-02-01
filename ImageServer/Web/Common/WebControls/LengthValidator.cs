@@ -55,15 +55,17 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
     ///         Display="None" ValidationGroup="vg1"/> 
     /// </code>
     /// </example>
-    public class LengthValidator:BaseValidator
+    public class LengthValidator : BaseValidator
     {
         #region Private Members
+
         private int _minLength = Int32.MinValue;
         private int _maxLength = Int32.MaxValue;
 
         #endregion Private Members
 
         #region Public Properties
+
         public int MinLength
         {
             get { return _minLength; }
@@ -80,11 +82,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
         #region Protected Methods
 
-       
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
         }
 
 
@@ -105,14 +105,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
         protected override void RegisterClientSideValidationExtensionScripts()
         {
-            
-            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.LengthValidator.js");
+            ScriptTemplate template =
+                new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.LengthValidator.js");
 
             template.Replace("@@MIN_LENGTH@@", MinLength.ToString());
             template.Replace("@@MAX_LENGTH@@", MaxLength.ToString());
 
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID+"_ValidatorClass", template.Script, true);
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }
-
     }
 }

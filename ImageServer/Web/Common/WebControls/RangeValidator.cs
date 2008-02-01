@@ -57,15 +57,16 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
     /// 
     /// </example>
     /// 
-    public class RangeValidator: BaseValidator
+    public class RangeValidator : BaseValidator
     {
         #region Private Members
+
         private int _min;
         private int _max;
+
         #endregion Private Members
 
         #region Public Properties
-
 
         /// <summary>
         /// Sets or gets the minimum acceptable value.
@@ -88,7 +89,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         #endregion Public Properties
 
         #region Protected Methods
-        
 
         /// <summary>
         /// Called during server-side validation
@@ -96,7 +96,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         /// <returns></returns>
         protected override bool OnServerSideEvaluate()
         {
-
             Decimal value;
             if (Decimal.TryParse(GetControlValidationValue(ControlToValidate), out value))
             {
@@ -106,17 +105,15 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             return false;
         }
 
-        
 
         protected override void RegisterClientSideValidationExtensionScripts()
         {
-            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.RangeValidator.js");
+            ScriptTemplate template =
+                new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.RangeValidator.js");
             template.Replace("@@MIN_VALUE@@", MinValue.ToString());
             template.Replace("@@MAX_VALUE@@", MaxValue.ToString());
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
-
-
         }
 
         #endregion Protected Methods

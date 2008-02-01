@@ -47,9 +47,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         IList<ServerPartition> GetAllPartitions();
     }
 
-    public class ServerPartitionConfigController:IServerPartitionConfigurationController
+    public class ServerPartitionConfigController : IServerPartitionConfigurationController
     {
         #region Private members
+
         /// <summary>
         /// The adapter class to set/retrieve server partitions from server partition table
         /// </summary>
@@ -58,6 +59,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         #endregion
 
         #region public methods
+
         /// <summary>
         /// Add a partition in the database.
         /// </summary>
@@ -99,7 +101,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <summary>
         /// Retrieves a list of <seealso cref="ServerPartition"/> matching the specified criteria.
         /// </summary>
-         /// <returns>A list of partitions</returns>
+        /// <returns>A list of partitions</returns>
         public IList<ServerPartition> GetPartitions(ServerPartitionSelectCriteria criteria)
         {
             return _serverAdapter.GetServerPartitions(criteria);

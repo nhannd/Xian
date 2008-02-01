@@ -30,18 +30,9 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using System.Collections.Generic;
-
-using System.ComponentModel;
 using ClearCanvas.ImageServer.Model;
 
 
@@ -50,14 +41,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
     //
     //  Used to display the list of devices.
     //
-    public partial class DeviceGridView : System.Web.UI.UserControl
+    public partial class DeviceGridView : UserControl
     {
         #region private members
+
         // server partitions lookup table based on server key
         private Dictionary<string, ServerPartition> _DictionaryPartitions = new Dictionary<string, ServerPartition>();
         // list of devices to display
         private IList<Device> _devices;
-        
+
         #endregion Private members
 
         #region protected properties
@@ -91,7 +83,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                     return null;
 
                 // SelectedIndex is for the current page. Must convert to the index of the entire list
-                int index = GridView1.PageIndex * GridView1.PageSize + GridView1.SelectedIndex;
+                int index = GridView1.PageIndex*GridView1.PageSize + GridView1.SelectedIndex;
 
                 if (index < 0 || index > Devices.Count - 1)
                     return null;
@@ -100,7 +92,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             }
             set
             {
-                
                 GridView1.SelectedIndex = Devices.IndexOf(value);
                 if (OnDeviceSelectionChanged != null)
                     OnDeviceSelectionChanged(this, value);
@@ -112,10 +103,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         /// </summary>
         public IList<Device> Devices
         {
-            get
-            {
-                return _devices;
-            }
+            get { return _devices; }
             set
             {
                 _devices = value;
@@ -123,10 +111,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             }
         }
 
-       
         #endregion
 
         #region Events
+
         /// <summary>
         /// Defines the handler for <seealso cref="OnDeviceSelectionChanged"/> event.
         /// </summary>
@@ -144,14 +132,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
         #endregion // Events
 
-        
         #region protected methods
 
         protected void Page_Load(object sender, EventArgs e)
         {
             GridView1.DataBind();
         }
-        
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -161,22 +148,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
             GridView1.PagerSettings.Visible = false;
-            GridView1.SelectedIndexChanged +=new EventHandler(GridView1_SelectedIndexChanged);
-
+            GridView1.SelectedIndexChanged += GridView1_SelectedIndexChanged;
         }
 
-         /// <summary>
+        /// <summary>
         /// Updates the grid pager based on the current list.
         /// </summary>
         protected void UpdatePager()
         {
             #region update pager of the gridview if it is used
-            if (GridView1.BottomPagerRow != null) 
+
+            if (GridView1.BottomPagerRow != null)
             {
                 // Show Number of devices in the list
                 Label lbl = GridView1.BottomPagerRow.Cells[0].FindControl("PagerDeviceCountLabel") as Label;
                 if (lbl != null)
-                    lbl.Text = string.Format("{0} device(s)", this.Devices.Count);
+                    lbl.Text = string.Format("{0} device(s)", Devices.Count);
 
                 // Show current page and the number of pages for the list
                 lbl = GridView1.BottomPagerRow.Cells[0].FindControl("PagerPagingLabel") as Label;
@@ -187,7 +174,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                 ImageButton btn = GridView1.BottomPagerRow.Cells[0].FindControl("PagerPrevImageButton") as ImageButton;
                 if (btn != null)
                 {
-                    if (this.Devices.Count == 0 || GridView1.PageIndex == 0)
+                    if (Devices.Count == 0 || GridView1.PageIndex == 0)
                     {
                         btn.ImageUrl = "~/images/prev_disabled.gif";
                         btn.Enabled = false;
@@ -205,7 +192,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                 btn = GridView1.BottomPagerRow.Cells[0].FindControl("PagerNextImageButton") as ImageButton;
                 if (btn != null)
                 {
-                    if (this.Devices.Count == 0 || GridView1.PageIndex == GridView1.PageCount - 1)
+                    if (Devices.Count == 0 || GridView1.PageIndex == GridView1.PageCount - 1)
                     {
                         btn.ImageUrl = "~/images/next_disabled.gif";
                         btn.Enabled = false;
@@ -218,26 +205,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
                     btn.Style.Add("cursor", "hand");
                 }
-
             }
+
             #endregion
-
-
         }
-
-        
 
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            
             if (GridView1.EditIndex != e.Row.RowIndex)
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
                     // Add OnClick attribute to each row to make javascript call "Select$###" (where ### is the selected row)
                     // This method when posted back will be handled by the grid
-                    e.Row.Attributes["OnClick"] = Page.ClientScript.GetPostBackEventReference(GridView1, "Select$" + e.Row.RowIndex);
+                    e.Row.Attributes["OnClick"] =
+                        Page.ClientScript.GetPostBackEventReference(GridView1, "Select$" + e.Row.RowIndex);
                     e.Row.Style["cursor"] = "hand";
 
                     // For some reason, double-click won't work if single-click is used
@@ -249,23 +232,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                     CustomizeServerPartitionColumn(e);
                     CustomizeFeaturesColumn(e);
                 }
-
             }
-
         }
 
         protected void CustomizeFeaturesColumn(GridViewRowEventArgs e)
         {
-            int index = e.Row.RowIndex;
             PlaceHolder placeHolder = e.Row.FindControl("FeaturePlaceHolder") as PlaceHolder;
 
-            if (placeHolder!=null)
+            if (placeHolder != null)
             {
                 // add an image for each enabled feature
                 AddAllowStorageImage(e, placeHolder);
                 AddAllowRetrieveImage(e, placeHolder);
                 AddAllowQueryImage(e, placeHolder);
-                
             }
         }
 
@@ -324,9 +303,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             placeHolder.Controls.Add(img);
         }
 
-        protected  void CustomizeDHCPColumn(GridViewRowEventArgs e)
+        protected void CustomizeDHCPColumn(GridViewRowEventArgs e)
         {
-            Image img = ((Image)e.Row.FindControl("DHCPImage"));
+            Image img = ((Image) e.Row.FindControl("DHCPImage"));
             if (img != null)
             {
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "DHCP"));
@@ -341,10 +320,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             }
         }
 
-        protected  void CustomizeActiveColumn(GridViewRowEventArgs e)
+        protected void CustomizeActiveColumn(GridViewRowEventArgs e)
         {
-            Image img = ((Image)e.Row.FindControl("ActiveImage"));
-            
+            Image img = ((Image) e.Row.FindControl("ActiveImage"));
+
             if (img != null)
             {
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "Enabled"));
@@ -358,9 +337,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         }
 
         // Display the Partition Description in Server Partition column
-        protected  void CustomizeServerPartitionColumn(GridViewRowEventArgs e)
+        protected void CustomizeServerPartitionColumn(GridViewRowEventArgs e)
         {
-            
             Device dev = e.Row.DataItem as Device;
             Label lbl = e.Row.FindControl("ServerParitionLabel") as Label; // The label is added in the template
             lbl.Text = dev.ServerPartition.AeTitle;
@@ -369,7 +347,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         // Display the Partition Description in Server Partition column
         protected void CustomizeIpAddressColumn(GridViewRowEventArgs e)
         {
-
             Device dev = e.Row.DataItem as Device;
             Label lbl = e.Row.FindControl("IpAddressLabel") as Label; // The label is added in the template
             if (dev.Dhcp)
@@ -377,30 +354,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             else
                 lbl.Text = dev.IpAddress;
         }
-        
+
         protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             Device dev = SelectedDevice;
-            if (dev!=null)
+            if (dev != null)
                 if (OnDeviceSelectionChanged != null)
                     OnDeviceSelectionChanged(this, dev);
-            
         }
+
         protected void GridView1_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
         {
-            
         }
 
         protected void GridView1_DataBound(object sender, EventArgs e)
         {
-            UpdatePager();          
+            UpdatePager();
         }
 
         protected void GridView1_PageIndexChanged(object sender, EventArgs e)
         {
             DataBind();
         }
-        
+
         protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             GridView1.PageIndex = e.NewPageIndex;
@@ -409,7 +385,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
         protected void ImageButton_Command(object sender, CommandEventArgs e)
         {
-
             // get the current page selected
             int intCurIndex = GridView1.PageIndex;
 
@@ -431,11 +406,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
             DataBind();
         }
-        
+
         #endregion
 
-        
         #region public methods
+
         /// <summary>
         /// Binds the list to the control.
         /// </summary>
@@ -447,11 +422,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             GridView1.DataBind();
 
             GridView1.PagerSettings.Visible = false;
-
         }
 
         #endregion // public methods
-
     }
-
 }

@@ -54,17 +54,17 @@
                         <HeaderStyle HorizontalAlign="Center" Wrap="False" />
                     </asp:TemplateField>
                 </Columns>
-                
-                <emptydatatemplate>
-                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" CssClass="CSSGridHeader">
+                <EmptyDataTemplate>
+                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
+                        CssClass="CSSGridHeader">
                         <asp:TableHeaderRow>
                             <asp:TableHeaderCell>
                             Description
                             </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center" >
+                            <asp:TableHeaderCell HorizontalAlign="Center">
                             Read
                             </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center" >
+                            <asp:TableHeaderCell HorizontalAlign="Center">
                             Write
                             </asp:TableHeaderCell>
                             <asp:TableHeaderCell>
@@ -77,9 +77,8 @@
                             Disk Usage
                             </asp:TableHeaderCell>
                         </asp:TableHeaderRow>
-                    </asp:Table>                   
-                </emptydatatemplate> 
-                
+                    </asp:Table>
+                </EmptyDataTemplate>
                 <RowStyle CssClass="CSSGridRowStyle" />
                 <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
                 <HeaderStyle CssClass="CSSGridHeader" />

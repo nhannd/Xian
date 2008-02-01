@@ -1,3 +1,34 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.IO;
 using System.Text;
@@ -58,7 +89,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         {
             set
             {
-                this._rule = value;
+                _rule = value;
                 // put into viewstate to retrieve later
                 if (_rule != null)
                     ViewState[ClientID + "_EdittedRule"] = _rule.GetKey();
@@ -68,7 +99,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
         #endregion // public members
 
-        
         #region Events
 
         /// <summary>
@@ -85,12 +115,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         #endregion Events
 
         #region Protected Methods
+
         protected override void OnInit(EventArgs e)
         {
-
             base.OnInit(e);
 
-            this.ServerPartitionTabContainer.ActiveTabIndex = 0;
+            ServerPartitionTabContainer.ActiveTabIndex = 0;
 
             // Set up the popup extender
             // These settings could been done in the aspx page as well
@@ -101,14 +131,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
-            this.SampleRuleDropDownList.Attributes.Add("onchange", "webServiceScript(this, this.SelectedIndex);");
-            this.RuleTypeDropDownList.Attributes.Add("onchange", "selectRuleType(this);");
+            SampleRuleDropDownList.Attributes.Add("onchange", "webServiceScript(this, SelectedIndex);");
+            RuleTypeDropDownList.Attributes.Add("onchange", "selectRuleType(this);");
 
-            Page.ClientScript.RegisterClientScriptBlock(this.GetType(), this.ClientID,
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID,
                                                         @"<script type='text/javascript'>
             function ValidationServerRuleParams()
             {
-                control = document.getElementById('" + RuleXmlTextBox.ClientID + @"');
+                control = document.getElementById('" +
+                                                        RuleXmlTextBox.ClientID +
+                                                        @"');
                 params = new Array();
                 params.serverRule=escape(control.value);
                 return params;
@@ -241,7 +273,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
                     _editMode = (bool) ViewState[ClientID + "_EditMode"];
 
                 if (ViewState[ClientID + "_ServerPartition"] != null)
-                    _partition = (ServerPartition)ViewState[ClientID + "_ServerPartition"];
+                    _partition = (ServerPartition) ViewState[ClientID + "_ServerPartition"];
 
                 if (ViewState[ClientID + "_EdittedRule"] != null)
                 {
@@ -253,7 +285,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
         protected void OKButton_Click(object sender, EventArgs e)
         {
-            
             if (Page.IsValid)
             {
                 SaveData();
@@ -287,7 +318,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             _rule.RuleName = RuleNameTextBox.Text;
 
             _rule.ServerRuleTypeEnum = new ServerRuleTypeEnum();
-            _rule.ServerRuleTypeEnum.SetEnum(short.Parse(this.RuleTypeDropDownList.SelectedItem.Value));
+            _rule.ServerRuleTypeEnum.SetEnum(short.Parse(RuleTypeDropDownList.SelectedItem.Value));
 
             if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.GetEnum("AutoRoute"))
                 _rule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.GetEnum("SopProcessed");
@@ -309,28 +340,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         public void Show()
         {
             // update the dropdown list
-            this.RuleApplyTimeDropDownList.Items.Clear();
-            this.RuleTypeDropDownList.Items.Clear();
-            this.RuleXmlTabPanel.TabIndex = 0;
-            this.ServerPartitionTabContainer.ActiveTabIndex = 0;
+            RuleApplyTimeDropDownList.Items.Clear();
+            RuleTypeDropDownList.Items.Clear();
+            RuleXmlTabPanel.TabIndex = 0;
+            ServerPartitionTabContainer.ActiveTabIndex = 0;
 
             if (EditMode)
             {
                 TitleLabel.Text = "Edit Server Rule";
                 OKButton.Text = "Update";
 
-                this.DefaultCheckBox.Checked = _rule.DefaultRule;
-                this.EnabledCheckBox.Checked = _rule.Enabled;
+                DefaultCheckBox.Checked = _rule.DefaultRule;
+                EnabledCheckBox.Checked = _rule.Enabled;
 
-                this.RuleNameTextBox.Text = _rule.RuleName;
+                RuleNameTextBox.Text = _rule.RuleName;
 
-                this.SampleRuleDropDownList.Visible = false;
-                this.SelectSampleRuleLabel.Visible = false;
+                SampleRuleDropDownList.Visible = false;
+                SelectSampleRuleLabel.Visible = false;
 
                 // Fill in the drop down menus
                 RuleTypeDropDownList.Items.Add(new ListItem(
-                                   _rule.ServerRuleTypeEnum.Description,
-                                   _rule.ServerRuleTypeEnum.Enum.ToString()));
+                                                   _rule.ServerRuleTypeEnum.Description,
+                                                   _rule.ServerRuleTypeEnum.Enum.ToString()));
 
                 if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("StudyDelete").Enum)
                 {
@@ -377,26 +408,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
                 tw.Close();
 
-                this.RuleXmlTextBox.Text = sw.ToString();
+                RuleXmlTextBox.Text = sw.ToString();
             }
             else
             {
                 TitleLabel.Text = "Add Server Rule";
                 OKButton.Text = "Add";
 
-                this.DefaultCheckBox.Checked = false;
-                this.EnabledCheckBox.Checked = true;
+                DefaultCheckBox.Checked = false;
+                EnabledCheckBox.Checked = true;
 
-                this.RuleNameTextBox.Text = "";
-                this.RuleXmlTextBox.Text = "";
+                RuleNameTextBox.Text = "";
+                RuleXmlTextBox.Text = "";
 
-                this.SampleRuleDropDownList.Visible = true;
-                this.SelectSampleRuleLabel.Visible = true;
+                SampleRuleDropDownList.Visible = true;
+                SelectSampleRuleLabel.Visible = true;
 
                 // Do the drop down lists
                 RuleTypeDropDownList.Items.Add(new ListItem(
-                                                ServerRuleTypeEnum.GetEnum("AutoRoute").Description,
-                                                ServerRuleTypeEnum.GetEnum("AutoRoute").Enum.ToString()));
+                                                   ServerRuleTypeEnum.GetEnum("AutoRoute").Description,
+                                                   ServerRuleTypeEnum.GetEnum("AutoRoute").Enum.ToString()));
 
                 RuleTypeDropDownList.Items.Add(new ListItem(
                                                    ServerRuleTypeEnum.GetEnum("StudyDelete").Description,
@@ -413,7 +444,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             }
 
             ModalPopupExtender1.Show();
-            this.AddEditUpdatePanel.Update();
+            AddEditUpdatePanel.Update();
             return;
         }
 

@@ -250,3 +250,18 @@ body
 	
 }
 
+/*****************************************************************************************
+	Invalid input indicator styles
+*****************************************************************************************/
+.CSSInvalidInputIndicatorContainer
+{
+}
+
+.CSSInvalidIndicatorTooltipPanel
+{
+	background-color: #ffffcc;
+}
+
+.CSSInvalidIndicatorTooltip
+{
+}

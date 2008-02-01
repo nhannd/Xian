@@ -293,3 +293,21 @@
 	
 }
 
+/*****************************************************************************************
+	Invalid input indicator styles
+*****************************************************************************************/
+.CSSInvalidInputIndicatorContainer
+{
+}
+
+.CSSInvalidIndicatorTooltipPanel
+{
+	border-right: #990000 1px solid;
+	border-top: #990000 1px solid;
+	border-left: #990000 1px solid;
+	border-bottom: #990000 1px solid;
+}
+
+.CSSInvalidIndicatorTooltip
+{
+}

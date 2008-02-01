@@ -40,10 +40,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
     //
     //  Used to display the list of devices.
     //
-    public partial class FileSystemsGridView : System.Web.UI.UserControl
+    public partial class FileSystemsGridView : UserControl
     {
         #region private members
+
         private IList<Filesystem> _fileSystems;
+
         #endregion Private members
 
         #region protected properties
@@ -71,7 +73,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                     return null;
 
                 // SelectedIndex is for the current page. Must convert to the index of the entire list
-                int index = GridView1.PageIndex * GridView1.PageSize + GridView1.SelectedIndex;
+                int index = GridView1.PageIndex*GridView1.PageSize + GridView1.SelectedIndex;
 
                 if (index < 0 || index > FileSystems.Count - 1)
                     return null;
@@ -80,7 +82,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             }
             set
             {
-
                 GridView1.SelectedIndex = FileSystems.IndexOf(value);
                 if (FileSystemSelectionChanged != null)
                     FileSystemSelectionChanged(this, value);
@@ -92,10 +93,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// </summary>
         public IList<Filesystem> FileSystems
         {
-            get
-            {
-                return _fileSystems;
-            }
+            get { return _fileSystems; }
             set
             {
                 _fileSystems = value;
@@ -103,10 +101,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             }
         }
 
-       
         #endregion
 
         #region Events
+
         /// <summary>
         /// Defines the handler for <seealso cref="FileSystemSelectionChanged"/> event.
         /// </summary>
@@ -124,14 +122,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
         #endregion // Events
 
-        
         #region protected methods
 
         protected void Page_Load(object sender, EventArgs e)
         {
             GridView1.DataBind();
         }
-        
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -141,22 +138,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
             GridView1.PagerSettings.Visible = false;
-            GridView1.SelectedIndexChanged +=new EventHandler(GridView1_SelectedIndexChanged);
-
+            GridView1.SelectedIndexChanged += GridView1_SelectedIndexChanged;
         }
 
-         /// <summary>
+        /// <summary>
         /// Updates the grid pager based on the current list.
         /// </summary>
         protected void UpdatePager()
         {
             #region update pager of the gridview if it is used
-            if (GridView1.BottomPagerRow != null) 
+
+            if (GridView1.BottomPagerRow != null)
             {
                 // Show Number of devices in the list
                 Label lbl = GridView1.BottomPagerRow.Cells[0].FindControl("PagerFileSystemCountLabel") as Label;
                 if (lbl != null)
-                    lbl.Text = string.Format("{0} device(s)", this.FileSystems.Count);
+                    lbl.Text = string.Format("{0} device(s)", FileSystems.Count);
 
                 // Show current page and the number of pages for the list
                 lbl = GridView1.BottomPagerRow.Cells[0].FindControl("PagerPagingLabel") as Label;
@@ -167,7 +164,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                 ImageButton btn = GridView1.BottomPagerRow.Cells[0].FindControl("PagerPrevImageButton") as ImageButton;
                 if (btn != null)
                 {
-                    if (this.FileSystems.Count == 0 || GridView1.PageIndex == 0)
+                    if (FileSystems.Count == 0 || GridView1.PageIndex == 0)
                     {
                         btn.ImageUrl = "~/images/prev_disabled.gif";
                         btn.Enabled = false;
@@ -185,7 +182,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                 btn = GridView1.BottomPagerRow.Cells[0].FindControl("PagerNextImageButton") as ImageButton;
                 if (btn != null)
                 {
-                    if (this.FileSystems.Count == 0 || GridView1.PageIndex == GridView1.PageCount - 1)
+                    if (FileSystems.Count == 0 || GridView1.PageIndex == GridView1.PageCount - 1)
                     {
                         btn.ImageUrl = "~/images/next_disabled.gif";
                         btn.Enabled = false;
@@ -198,24 +195,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
                     btn.Style.Add("cursor", "hand");
                 }
-
             }
+
             #endregion
-
-
         }
 
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            
             if (GridView1.EditIndex != e.Row.RowIndex)
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
                     // Add OnClick attribute to each row to make javascript call "Select$###" (where ### is the selected row)
                     // This method when posted back will be handled by the grid
-                    e.Row.Attributes["OnClick"] = Page.ClientScript.GetPostBackEventReference(GridView1, "Select$" + e.Row.RowIndex);
+                    e.Row.Attributes["OnClick"] =
+                        Page.ClientScript.GetPostBackEventReference(GridView1, "Select$" + e.Row.RowIndex);
                     e.Row.Style["cursor"] = "hand";
 
                     // For some reason, double-click won't work if single-click is used
@@ -228,9 +223,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                     CustomizeFilesystemTierColumn(e.Row);
                     CustomizeUsageColumn(e.Row);
                 }
-
             }
-
         }
 
         private void CustomizeUsageColumn(GridViewRow row)
@@ -241,25 +234,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             if (img != null)
             {
                 img.ImageUrl = string.Format("~/Common/BarChart.aspx?pct={0}&high={1}&low={2}",
-                                        fs.PercentFull,
-                                        fs.HighWatermark,
-                                        fs.LowWatermark);
-                img.AlternateText = string.Format("Current Usage   : {0}%\nHigh Watermark : {1}%\nLow Watermark  : {2}%",
-                                        fs.PercentFull,
-                                        fs.HighWatermark,
-                                        fs.LowWatermark);
-
+                                             fs.PercentFull,
+                                             fs.HighWatermark,
+                                             fs.LowWatermark);
+                img.AlternateText =
+                    string.Format("Current Usage   : {0}%\nHigh Watermark : {1}%\nLow Watermark  : {2}%",
+                                  fs.PercentFull,
+                                  fs.HighWatermark,
+                                  fs.LowWatermark);
             }
         }
+
         private void CustomizePathColumn(GridViewRow row)
         {
             Filesystem fs = row.DataItem as Filesystem;
             Label lbl = row.FindControl("PathLabel") as Label; // The label is added in the template
-            
-            if (fs.FilesystemPath!=null)
+
+            if (fs.FilesystemPath != null)
             {
                 // truncate it
-                if (fs.FilesystemPath.Length>50)
+                if (fs.FilesystemPath.Length > 50)
                 {
                     lbl.Text = fs.FilesystemPath.Substring(0, 45) + "...";
                     lbl.ToolTip = string.Format("{0}: {1}", fs.Description, fs.FilesystemPath);
@@ -278,11 +272,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             lbl.Text = fs.FilesystemTierEnum.Description;
         }
 
-        
 
         private void CustomizeBooleanColumn(GridViewRow row, string controlName, string fieldName)
         {
-            Image img = ((Image)row.FindControl(controlName));
+            Image img = ((Image) row.FindControl(controlName));
             if (img != null)
             {
                 bool active = Convert.ToBoolean(DataBinder.Eval(row.DataItem, fieldName));
@@ -297,9 +290,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             }
         }
 
-        protected  void CustomizeReadColumn(GridViewRowEventArgs e)
+        protected void CustomizeReadColumn(GridViewRowEventArgs e)
         {
-            Image img = ((Image)e.Row.FindControl("ReadImage"));
+            Image img = ((Image) e.Row.FindControl("ReadImage"));
             if (img != null)
             {
                 bool enabled = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "Enabled"));
@@ -326,7 +319,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
         protected void CustomizeWriteColumn(GridViewRowEventArgs e)
         {
-            Image img = ((Image)e.Row.FindControl("WriteImage"));
+            Image img = ((Image) e.Row.FindControl("WriteImage"));
             if (img != null)
             {
                 bool enabled = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "Enabled"));
@@ -345,39 +338,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                 }
             }
         }
-        
+
         protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             Filesystem filesystem = SelectedFileSystem;
             if (filesystem != null)
                 if (FileSystemSelectionChanged != null)
                     FileSystemSelectionChanged(this, filesystem);
-            
         }
+
         protected void GridView1_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
         {
-            
         }
 
         protected void GridView1_DataBound(object sender, EventArgs e)
         {
-            UpdatePager();          
+            UpdatePager();
         }
 
         protected void GridView1_PageIndexChanged(object sender, EventArgs e)
         {
-           // DataBind();
+            // DataBind();
         }
-        
+
         protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-          //  GridView1.PageIndex = e.NewPageIndex;
-          //  DataBind();
+            //  GridView1.PageIndex = e.NewPageIndex;
+            //  DataBind();
         }
 
         protected void ImageButton_Command(object sender, CommandEventArgs e)
         {
-
             // get the current page selected
             int intCurIndex = GridView1.PageIndex;
 
@@ -399,11 +390,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
             DataBind();
         }
-        
+
         #endregion
 
-        
         #region public methods
+
         /// <summary>
         /// Binds the list to the control.
         /// </summary>
@@ -415,11 +406,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             GridView1.DataBind();
 
             GridView1.PagerSettings.Visible = false;
-
         }
 
         #endregion // public methods
-
     }
-
 }

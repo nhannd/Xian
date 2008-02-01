@@ -50,6 +50,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
     public class WorkQueueSummary
     {
         #region Private members
+
         private ServerEntityKey _ref;
         private string _patientID;
         private string _patientName;
@@ -57,10 +58,11 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         private WorkQueueStatusEnum _status;
         private int _numInstancesPending;
         private DateTime _scheduledDateTime;
-        
+
         #endregion Private members
 
         #region Public Properties
+
         public DateTime ScheduledDateTime
         {
             get { return _scheduledDateTime; }

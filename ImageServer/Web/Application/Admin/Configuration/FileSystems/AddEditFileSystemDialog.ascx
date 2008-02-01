@@ -21,8 +21,7 @@
             </asp:Panel>
             <div class="CSSPopupWindowBody" style="vertical-align: top;">
                 <asp:Panel ID="Panel2" runat="server" Height="100%" CssClass="CSSDialogTabPanelContent">
-                    <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" 
-                        CssClass="CSSDialogTabControl">
+                    <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
                         <cc1:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
                             <ContentTemplate>
                                 <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
@@ -74,8 +73,7 @@
                                                             <clearcanvas:FilesystemPathValidator runat="server" ID="PathValidator" ControlToValidate="PathTextBox"
                                                                 InputName="Filesystem Path" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidPathHint"
                                                                 ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateFilesystemPath"
-                                                                ParamsFunction="ValidationFilesystemPathParams"
-                                                                Display="None" ValidationGroup="vg1" />
+                                                                ParamsFunction="ValidationFilesystemPathParams" Display="None" ValidationGroup="vg1" />
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -129,13 +127,10 @@
                                                             <uc1:InvalidInputIndicator ID="HighWatermarkHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
                                                             </uc1:InvalidInputIndicator>
                                                             <clearcanvas:RangeComparisonValidator ID="HighWatermarkValidator" runat="server"
-                                                                ControlToValidate="HighWatermarkTextBox" 
-                                                                ControlToCompare="LowWatermarkTextBox"
+                                                                ControlToValidate="HighWatermarkTextBox" ControlToCompare="LowWatermarkTextBox"
                                                                 GreaterThan="true" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1"
-                                                                MaxValue="99" 
-                                                                InputName="High watermark"
-                                                                CompareToInputName="Low watermark"
-                                                                Display="None" InvalidInputIndicatorID="HighWatermarkHelp"/>
+                                                                MaxValue="99" InputName="High watermark" CompareToInputName="Low watermark" Display="None"
+                                                                InvalidInputIndicatorID="HighWatermarkHelp" />
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -156,10 +151,8 @@
                                                             <clearcanvas:RangeComparisonValidator ID="LowWatermarkValidator" EnableClientScript="true"
                                                                 runat="server" ControlToValidate="LowWatermarkTextBox" ControlToCompare="HighWatermarkTextBox"
                                                                 GreaterThan="false" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1"
-                                                                MaxValue="99" 
-                                                                InputName="Low watermark"
-                                                                CompareToInputName="High watermark"                                                                
-                                                                Display="None" InvalidInputIndicatorID="LowWatermarkHelp" />
+                                                                MaxValue="99" InputName="Low watermark" CompareToInputName="High watermark" Display="None"
+                                                                InvalidInputIndicatorID="LowWatermarkHelp" />
                                                         </td>
                                                     </tr>
                                                 </table>

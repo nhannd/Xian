@@ -31,8 +31,7 @@
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label1" runat="server" Text="Type" CssClass="CSSTextBoxLabel"
-                                                    EnableViewState="False" /><br />
+                                                <asp:Label ID="Label1" runat="server" Text="Type" CssClass="CSSTextBoxLabel" EnableViewState="False" /><br />
                                                 <asp:DropDownList ID="RuleTypeDropDownList" runat="server" CssClass="CSSFilterDropDownList" />
                                             </td>
                                             <td align="left" valign="bottom">
@@ -51,7 +50,7 @@
                                                     CssClass="CSSCheckBox" />
                                             </td>
                                             <td align="right" valign="bottom">
-                                                <asp:Panel ID="FilterButtonContainer" runat="server"  CssClass="FilterButtonContainer">
+                                                <asp:Panel ID="FilterButtonContainer" runat="server" CssClass="FilterButtonContainer">
                                                     <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png"
                                                         OnClick="FilterButton_Click" ToolTip="Filter" />
                                                 </asp:Panel>

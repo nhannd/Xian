@@ -30,22 +30,14 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 
 namespace ClearCanvas.ImageServer.Web.Application.Common
 {
     /// <summary>
     /// General dialog box to prompt user for confirmation.
     /// </summary>
-    public partial class ConfirmDialog : System.Web.UI.UserControl
+    public partial class ConfirmDialog : UserControl
     {
         /// <summary>
         /// Types of message to display.
@@ -56,17 +48,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             WARNING
         } ;
 
-
         #region Private Members
-        
+
         // The associated data. This can be retrieved later on.
         private object _data;
 
         // type of message being displayed
         private MessageTypeEnum _type = MessageTypeEnum.NONE;
-        
-        #endregion Private Members
 
+        #endregion Private Members
 
         #region Public properties
 
@@ -75,7 +65,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// </summary>
         public object Data
         {
-            set { 
+            set
+            {
                 _data = value;
                 ViewState["ConfirmDialog_Data"] = value;
             }
@@ -96,12 +87,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// </summary>
         public string Message
         {
-            set { this.MessageLabel.Text = value;  }
-            get { return this.MessageLabel.Text;  }
+            set { MessageLabel.Text = value; }
+            get { return MessageLabel.Text; }
         }
 
         #endregion Public properties
-
 
         #region Events
 
@@ -139,8 +129,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
         #endregion Protected methods
 
-        
-
         #region public methods
 
         /// <summary>
@@ -156,11 +144,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// </summary>
         public void Show()
         {
-            switch(_type)
+            switch (_type)
             {
                 case MessageTypeEnum.NONE:
-                        IconImage.Visible = false;
-                        break;
+                    IconImage.Visible = false;
+                    break;
 
                 case MessageTypeEnum.WARNING:
                     IconImage.ImageUrl = "~/images/icons/icon_warning.png";
@@ -173,6 +161,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         }
 
         #endregion public methods
-
     }
 }

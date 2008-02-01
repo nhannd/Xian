@@ -41,7 +41,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
     /// <summary>
     /// Used to create/update/delete server partition entries in the database.
     /// </summary>
-    public class ServerPartitionDataAdapter : BaseAdaptor<ServerPartition, IServerPartitionEntityBroker, ServerPartitionSelectCriteria, ServerPartitionUpdateColumns>
+    public class ServerPartitionDataAdapter :
+        BaseAdaptor
+            <ServerPartition, IServerPartitionEntityBroker, ServerPartitionSelectCriteria, ServerPartitionUpdateColumns>
     {
         #region Public methods
 

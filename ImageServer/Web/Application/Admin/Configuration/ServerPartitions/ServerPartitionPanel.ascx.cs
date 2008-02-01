@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
     /// <summary>
     /// Server parition panel  used in <seealso cref="ServerPartitionPage"/> web page.
     /// </summary>
-    public partial class ServerPartitionPanel : System.Web.UI.UserControl
+    public partial class ServerPartitionPanel : UserControl
     {
         #region Private Members
 

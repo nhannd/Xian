@@ -26,122 +26,122 @@
                 </table>
             </asp:Panel>
             <div class="CSSPopupWindowBody">
-            <asp:Panel ID="Panel3" runat="server" Height="100%" CssClass="CSSDialogTabPanelContent">
-                <ajaxToolkit:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
-                    CssClass="CSSDialogTabControl">
-                    <ajaxToolkit:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel"
-                        TabIndex="0" CssClass="CSSTabPanel">
-                        <ContentTemplate>
-                            <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
-                                <table runat="server" width="100%">
-                                    <tr>
-                                        <td colspan="2">
-                                            <table width="100%">
-                                                <tr>
-                                                    <td width="100%">
-                                                        <asp:Label ID="Label1" runat="server" Text="Name" CssClass="CSSTextLabel"></asp:Label><br />
-                                                        <asp:TextBox ID="RuleNameTextBox" runat="server" Width="100%" ValidationGroup="vg1"></asp:TextBox>
-                                                    </td>
-                                                    <td>
-                                                        <uc1:InvalidInputIndicator ID="RuleNameHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
-                                                        </uc1:InvalidInputIndicator>
-                                                        <clearcanvas:ConditionalRequiredFieldValidator ID="RuleNameValidator" runat="server"
-                                                            ControlToValidate="RuleNameTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
-                                                            ErrorMessage="Rule must have a name" InvalidInputIndicatorID="RuleNameHelp" Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <table width="100%">
-                                                <tr>
-                                                    <td>
-                                                        <asp:Label ID="RuleTypeLabel" runat="server" Text="Type" CssClass="CSSTextLabel"></asp:Label><br />
-                                                        <asp:DropDownList ID="RuleTypeDropDownList" runat="server" Width="90%">
-                                                        </asp:DropDownList>
-                                                    </td>
-                                                    <td>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <table width="100%">
-                                                <tr>
-                                                    <td>
-                                                        <asp:Label ID="RuleApplyTimeLabel" runat="server" Text="Apply Time"></asp:Label><br />
-                                                        <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" Width="90%">
-                                                        </asp:DropDownList>
-                                                    </td>
-                                                    <td>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <table width="100%">
-                                                <tr>
-                                                    <td>
-                                                        <asp:CheckBox ID="EnabledCheckBox" runat="server" Text="Enabled" Checked="true" />
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <table width="100%">
-                                                <tr>
-                                                    <td>
-                                                        <asp:CheckBox ID="DefaultCheckBox" runat="server" Text="Default" Checked="false" />
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </asp:Panel>
-                        </ContentTemplate>
-                        <HeaderTemplate>
-                            General
-                        </HeaderTemplate>
-                    </ajaxToolkit:TabPanel>
-                    <ajaxToolkit:TabPanel ID="RuleXmlTabPanel" runat="server" HeaderText="TabPanel2">
-                        <ContentTemplate>
-                            <asp:Panel ID="Panel2" runat="server" CssClass="CSSDialogTabPanelContent">
-                                <table width="100%" cellpadding="5" cellspacing="5">
-                                    <tr>
-                                        <td>
-                                            <asp:Label ID="SelectSampleRuleLabel" runat="server" Text="Select Sample Rule"></asp:Label><br />
-                                            <asp:DropDownList ID="SampleRuleDropDownList" runat="server">
-                                            </asp:DropDownList>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <asp:TextBox ID="RuleXmlTextBox" runat="server" EnableViewState="true" Width="100%"
-                                                Rows="16" TextMode="MultiLine"></asp:TextBox>
-                                        </td>
-                                        <td>
-                                            <uc1:InvalidInputIndicator ID="InvalidRuleHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
-                                            <clearcanvas:ServerRuleValidator runat="server" ID="ServerRuleValidator" ControlToValidate="RuleXmlTextBox"
-                                                InputName="Server Rule XML" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidRuleHint"
-                                                ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateServerRule"
-                                                ParamsFunction="ValidationServerRuleParams" ErrorMessage="Invalid Server Rule"
-                                                Display="None" ValidationGroup="vg1" />
-                                        </td>
-                                    </tr>
-                                </table>
-                            </asp:Panel>
-                        </ContentTemplate>
-                        <HeaderTemplate>
-                            Rule XML
-                        </HeaderTemplate>
-                    </ajaxToolkit:TabPanel>
-                </ajaxToolkit:TabContainer>
-             </asp:Panel>
+                <asp:Panel ID="Panel3" runat="server" Height="100%" CssClass="CSSDialogTabPanelContent">
+                    <ajaxToolkit:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
+                        CssClass="CSSDialogTabControl">
+                        <ajaxToolkit:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel"
+                            TabIndex="0" CssClass="CSSTabPanel">
+                            <ContentTemplate>
+                                <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
+                                    <table runat="server" width="100%">
+                                        <tr>
+                                            <td colspan="2">
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td width="100%">
+                                                            <asp:Label ID="Label1" runat="server" Text="Name" CssClass="CSSTextLabel"></asp:Label><br />
+                                                            <asp:TextBox ID="RuleNameTextBox" runat="server" Width="100%" ValidationGroup="vg1"></asp:TextBox>
+                                                        </td>
+                                                        <td>
+                                                            <uc1:InvalidInputIndicator ID="RuleNameHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                            </uc1:InvalidInputIndicator>
+                                                            <clearcanvas:ConditionalRequiredFieldValidator ID="RuleNameValidator" runat="server"
+                                                                ControlToValidate="RuleNameTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                                ErrorMessage="Rule must have a name" InvalidInputIndicatorID="RuleNameHelp" Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td>
+                                                            <asp:Label ID="RuleTypeLabel" runat="server" Text="Type" CssClass="CSSTextLabel"></asp:Label><br />
+                                                            <asp:DropDownList ID="RuleTypeDropDownList" runat="server" Width="90%">
+                                                            </asp:DropDownList>
+                                                        </td>
+                                                        <td>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td>
+                                                            <asp:Label ID="RuleApplyTimeLabel" runat="server" Text="Apply Time"></asp:Label><br />
+                                                            <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" Width="90%">
+                                                            </asp:DropDownList>
+                                                        </td>
+                                                        <td>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td>
+                                                            <asp:CheckBox ID="EnabledCheckBox" runat="server" Text="Enabled" Checked="true" />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td>
+                                                            <asp:CheckBox ID="DefaultCheckBox" runat="server" Text="Default" Checked="false" />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </asp:Panel>
+                            </ContentTemplate>
+                            <HeaderTemplate>
+                                General
+                            </HeaderTemplate>
+                        </ajaxToolkit:TabPanel>
+                        <ajaxToolkit:TabPanel ID="RuleXmlTabPanel" runat="server" HeaderText="TabPanel2">
+                            <ContentTemplate>
+                                <asp:Panel ID="Panel2" runat="server" CssClass="CSSDialogTabPanelContent">
+                                    <table width="100%" cellpadding="5" cellspacing="5">
+                                        <tr>
+                                            <td>
+                                                <asp:Label ID="SelectSampleRuleLabel" runat="server" Text="Select Sample Rule"></asp:Label><br />
+                                                <asp:DropDownList ID="SampleRuleDropDownList" runat="server">
+                                                </asp:DropDownList>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <asp:TextBox ID="RuleXmlTextBox" runat="server" EnableViewState="true" Width="100%"
+                                                    Rows="16" TextMode="MultiLine"></asp:TextBox>
+                                            </td>
+                                            <td>
+                                                <uc1:InvalidInputIndicator ID="InvalidRuleHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
+                                                <clearcanvas:ServerRuleValidator runat="server" ID="ServerRuleValidator" ControlToValidate="RuleXmlTextBox"
+                                                    InputName="Server Rule XML" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidRuleHint"
+                                                    ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateServerRule"
+                                                    ParamsFunction="ValidationServerRuleParams" ErrorMessage="Invalid Server Rule"
+                                                    Display="None" ValidationGroup="vg1" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </asp:Panel>
+                            </ContentTemplate>
+                            <HeaderTemplate>
+                                Rule XML
+                            </HeaderTemplate>
+                        </ajaxToolkit:TabPanel>
+                    </ajaxToolkit:TabContainer>
+                </asp:Panel>
                 <center>
                     <br />
                     <table width="60%">

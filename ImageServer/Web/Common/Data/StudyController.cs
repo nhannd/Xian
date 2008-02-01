@@ -38,11 +38,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
     public class StudyController : BaseController
     {
         #region Private Members
+
         private readonly StudyAdaptor _adaptor = new StudyAdaptor();
         private readonly SeriesSearchAdaptor _seriesAdaptor = new SeriesSearchAdaptor();
+
         #endregion
 
         #region Public Methods
+
         public IList<Study> GetStudies(StudySelectCriteria criteria)
         {
             return _adaptor.Get(criteria);
@@ -56,7 +59,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             return _seriesAdaptor.Get(criteria);
         }
-        #endregion
 
+        #endregion
     }
 }

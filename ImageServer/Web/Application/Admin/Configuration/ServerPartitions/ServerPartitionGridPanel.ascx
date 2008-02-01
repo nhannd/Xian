@@ -5,8 +5,8 @@
         <asp:Panel runat="server" CssClass="CSSGridViewPanelContent">
             <asp:GridView ID="PartitionGridView" runat="server" AutoGenerateColumns="False" CssClass="CSSGridView"
                 Width="100%" OnRowDataBound="PartitionGridView_RowDataBound" AllowSorting="True"
-                PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" 
-                CaptionAlign="Top" BorderWidth="0px">
+                PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
+                BorderWidth="0px">
                 <Columns>
                     <asp:BoundField DataField="AeTitle" HeaderText="AE Title" />
                     <asp:BoundField DataField="Description" HeaderText="Description" />
@@ -32,10 +32,10 @@
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
-
                 </Columns>
-                <emptydatatemplate>
-                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" CssClass="CSSGridHeader">
+                <EmptyDataTemplate>
+                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
+                        CssClass="CSSGridHeader">
                         <asp:TableHeaderRow>
                             <asp:TableHeaderCell>
                             AE Title
@@ -49,16 +49,15 @@
                             <asp:TableHeaderCell>
                             Partition Folder
                             </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center" >
+                            <asp:TableHeaderCell HorizontalAlign="Center">
                             Enabled
                             </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center" >
+                            <asp:TableHeaderCell HorizontalAlign="Center">
                             Accept Any Device
                             </asp:TableHeaderCell>
                         </asp:TableHeaderRow>
                     </asp:Table>
-                   
-                </emptydatatemplate> 
+                </EmptyDataTemplate>
                 <RowStyle CssClass="CSSGridRowStyle" />
                 <HeaderStyle CssClass="CSSGridHeader" />
                 <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />

@@ -30,30 +30,26 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 
 namespace ClearCanvas.ImageServer.Web.Application.Common
 {
     /// <summary>
     /// Control to display the summary information of a grid
     /// </summary>
-    public partial class GridPager : System.Web.UI.UserControl
+    public partial class GridPager : UserControl
     {
         #region Private Members
+
         private GridView _grid;
         private string _itemName;
         private string _puralItemName;
+
         #endregion Private Members
 
         #region Public Properties
+
         /// <summary>
         /// Sets/Gets the grid associated with this control
         /// </summary>
@@ -81,10 +77,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             set { _puralItemName = value; }
         }
 
-
         #endregion Public Properties
 
         #region Public Delegates
+
         /// <summary>
         /// Methods to retrieve the number of records.
         /// </summary>
@@ -102,17 +98,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         #endregion Public Delegates
 
         #region Protected methods
+
         protected void Page_Load(object sender, EventArgs e)
         {
-
         }
 
-        protected override void  OnPreRender(EventArgs e)
+        protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
-            UpdateUI(); 
-            
-            
+            UpdateUI();
         }
 
         protected void PageButtonClick(object sender, CommandEventArgs e)
@@ -142,18 +136,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         #endregion Protected methods
 
         #region Public methods
-        
+
         /// <summary>
         /// Update the UI contents
         /// </summary>
         public void UpdateUI()
         {
-            if (_grid!=null)
+            if (_grid != null)
             {
-                
-                int selected = _grid.SelectedIndex;
-
-                if (GetRecordCountMethod!=null)
+                if (GetRecordCountMethod != null)
                 {
                     int numRows = GetRecordCountMethod();
                     ItemCountLabel.Text = string.Format("{0} {1}", numRows, numRows <= 1 ? ItemName : PuralItemName);
@@ -173,10 +164,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                     PrevPageButton.ImageUrl = "~/images/icons/BackDisabled.png";
                     PrevPageButton.Enabled = false;
                 }
-                    
-                
 
-                if (_grid.PageIndex < _grid.PageCount-1)
+
+                if (_grid.PageIndex < _grid.PageCount - 1)
                 {
                     NextPageButton.ImageUrl = "~/images/icons/ForwardEnabled.png";
                     NextPageButton.Enabled = true;
@@ -185,18 +175,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                 {
                     NextPageButton.ImageUrl = "~/images/icons/ForwardDisabled.png";
                     NextPageButton.Enabled = false;
-                
-                    
                 }
-
-
             }
-
-
         }
-        #endregion Public methods
-      
-    }
 
+        #endregion Public methods
+    }
 }
 

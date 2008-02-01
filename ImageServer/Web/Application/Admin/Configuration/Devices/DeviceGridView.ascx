@@ -49,9 +49,9 @@
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
-                
-                <emptydatatemplate>
-                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" CssClass="CSSGridHeader">
+                <EmptyDataTemplate>
+                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
+                        CssClass="CSSGridHeader">
                         <asp:TableHeaderRow>
                             <asp:TableHeaderCell>
                             AE Title
@@ -76,8 +76,7 @@
                             </asp:TableHeaderCell>
                         </asp:TableHeaderRow>
                     </asp:Table>
-                   
-                </emptydatatemplate> 
+                </EmptyDataTemplate>
                 <RowStyle CssClass="CSSGridRowStyle" />
                 <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
                 <HeaderStyle CssClass="CSSGridHeader" />

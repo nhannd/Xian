@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
     /// <summary>
     /// Panel to display list of FileSystems for a particular server partition.
     /// </summary>
-    public partial class FileSystemsPanel : System.Web.UI.UserControl
+    public partial class FileSystemsPanel : UserControl
     {
         #region Private members
 
@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             SetUpEventHandlers();
 
             int prevSelectIndex = TiersDropDownList.SelectedIndex;
-            if (TiersDropDownList.Items.Count==0)
+            if (TiersDropDownList.Items.Count == 0)
             {
                 TiersDropDownList.Items.Add(new ListItem("--- All ---"));
                 foreach (FilesystemTierEnum tier in Tiers)
@@ -128,15 +128,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                     TiersDropDownList.Items.Add(new ListItem(tier.Description));
                 }
             }
-            TiersDropDownList.SelectedIndex = prevSelectIndex; 
-            
-
+            TiersDropDownList.SelectedIndex = prevSelectIndex;
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            
-
             // This make sure we have the list to work with. 
             // the list may be out-dated if the add/update event is fired later
             // In those cases, the list must be refreshed again.
@@ -185,9 +181,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// </remarks>
         public void UpdateUI()
         {
-
-            
-
             LoadFileSystems();
 
             Filesystem dev = FileSystemsGridView1.SelectedFileSystem;

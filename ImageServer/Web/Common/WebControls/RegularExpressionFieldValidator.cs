@@ -28,6 +28,7 @@
 // OF SUCH DAMAGE.
 
 #endregion
+
 #region License
 
 // Copyright (c) 2006-2008, ClearCanvas Inc.
@@ -90,7 +91,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
     public class RegularExpressionFieldValidator : BaseValidator
     {
         #region Private Members
+
         private string _regEx;
+
         #endregion Private Members
 
         #region Public Properties
@@ -104,11 +107,10 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             set { _regEx = value; }
         }
 
-
         #endregion Public Properties
 
         #region Protected Methods
-        
+
         /// <summary>
         /// Called during server-side validation
         /// </summary>
@@ -117,38 +119,21 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         {
             string value = GetControlValidationValue(ControlToValidate);
             Regex regex = new Regex(ValidationExpression);
-            if (value!=null)
+            if (value != null)
                 return regex.IsMatch(value);
             else
                 return false;
         }
 
-       
-        //protected override void RegisterClientSideValidationExtensionScripts()
-        //{
-        //    ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.RegularExpressionValidator.js");
-        //    template.Replace("@@CLIENTID@@", ClientID);
-        //    template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
-        //    template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
-        //    template.Replace("@@REGULAR_EXPRESSION@@", ValidationExpression.Replace("\\", "\\\\").Replace("'", "\\'"));
-        //    template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue.ToString().ToLower());
-        //    template.Replace("@@ERROR_MESSAGE@@", ErrorMessage);
-
-            
-           
-        //    Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
- 
-        //}
-
 
         protected override void RegisterClientSideValidationExtensionScripts()
         {
-            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.RegularExpressionValidator.js");
+            ScriptTemplate template =
+                new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.RegularExpressionValidator.js");
             template.Replace("@@REGULAR_EXPRESSION@@", ValidationExpression.Replace("\\", "\\\\").Replace("'", "\\'"));
 
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
-
         }
 
         #endregion Protected Methods

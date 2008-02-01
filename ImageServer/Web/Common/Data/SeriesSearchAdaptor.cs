@@ -34,7 +34,8 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    public class SeriesSearchAdaptor : BaseAdaptor<Series,ISeriesEntityBroker,SeriesSelectCriteria,SeriesUpdateColumns>
+    public class SeriesSearchAdaptor :
+        BaseAdaptor<Series, ISeriesEntityBroker, SeriesSelectCriteria, SeriesUpdateColumns>
     {
     }
 }

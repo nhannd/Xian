@@ -79,7 +79,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 TIEntity select = ctx.GetBroker<TIEntity>();
                 return select.Load(key);
             }
-            
         }
 
         public IList<TServerEntity> Get(TCriteria criteria)
@@ -107,7 +106,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception adding {0}", typeof(TServerEntity));
+                Platform.Log(LogLevel.Error, e, "Unexpected exception adding {0}", typeof (TServerEntity));
                 return false;
             }
         }
@@ -128,7 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception updating {0}", typeof(TServerEntity));
+                Platform.Log(LogLevel.Error, e, "Unexpected exception updating {0}", typeof (TServerEntity));
                 return false;
             }
         }
@@ -150,10 +149,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception updating {0}", typeof(TServerEntity));
+                Platform.Log(LogLevel.Error, e, "Unexpected exception updating {0}", typeof (TServerEntity));
                 return false;
             }
         }
+
         #endregion
     }
 }

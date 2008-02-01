@@ -29,23 +29,13 @@
 
 #endregion
 
-
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 
-namespace ImageServerWebApplication.Common
+namespace ClearCanvas.ImageServer.Web.Application.Common
 {
     /// <summary>
     /// Generate a disk usage bar.
@@ -58,14 +48,17 @@ namespace ImageServerWebApplication.Common
     public partial class BarChart : System.Web.UI.Page
     {
         #region Private members
+
         private float _percentage;
         private float _high;
         private float _low;
         private int _width;
         private int _height;
+
         #endregion
 
         #region protected methods
+
         protected void Page_Load(object sender, EventArgs e)
         {
             // Read the input from the query string
@@ -73,12 +66,12 @@ namespace ImageServerWebApplication.Common
             _high = float.Parse(Request.QueryString["high"]);
             _low = float.Parse(Request.QueryString["low"]);
 
-            
+
             // set the ContentType appropriately, we are creating PNG image
             Response.ContentType = "image/png";
 
             // Load the background image
-            System.Drawing.Image bmp = System.Drawing.Image.FromFile(Server.MapPath("~/images/usage.png"));
+            Image bmp = Image.FromFile(Server.MapPath("~/images/usage.png"));
             Graphics graphics = Graphics.FromImage(bmp);
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -115,21 +108,19 @@ namespace ImageServerWebApplication.Common
 
             // overlay the "usage" bar on top
             graphics.CompositingMode = CompositingMode.SourceOver;
-            graphics.FillRectangle(brush, new Rectangle(leftoffset, 6, (int)(_width * _percentage / 100f), 8));
+            graphics.FillRectangle(brush, new Rectangle(leftoffset, 6, (int) (_width*_percentage/100f), 8));
 
             // add watermark icons
             graphics.CompositingMode = CompositingMode.SourceOver;
-            System.Drawing.Image watermark = System.Drawing.Image.FromFile(Server.MapPath("~/images/Watermark.gif"));
+            Image watermark = Image.FromFile(Server.MapPath("~/images/Watermark.gif"));
 
 
-            graphics.DrawImageUnscaled(watermark, (int)(_width * _high / 100f) - watermark.Width / 2 + leftoffset, 12);
-            graphics.DrawImageUnscaled(watermark, (int)(_width * _low / 100f) - watermark.Width / 2 + leftoffset, 12);
+            graphics.DrawImageUnscaled(watermark, (int) (_width*_high/100f) - watermark.Width/2 + leftoffset, 12);
+            graphics.DrawImageUnscaled(watermark, (int) (_width*_low/100f) - watermark.Width/2 + leftoffset, 12);
 
             watermark.Dispose();
+        }
 
-        }    
         #endregion protected methods
-
-       
     }
 }

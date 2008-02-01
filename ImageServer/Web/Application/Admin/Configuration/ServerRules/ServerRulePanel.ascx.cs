@@ -1,3 +1,34 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -7,7 +38,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRules
 {
-    public partial class ServerRulePanel : System.Web.UI.UserControl
+    public partial class ServerRulePanel : UserControl
     {
         private readonly ServerRuleController _controller = new ServerRuleController();
         private ServerPartition _partition;
@@ -32,18 +63,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             // only query for device in this partition
             criteria.ServerPartitionKey.EqualTo(ServerPartition.GetKey());
 
-            if (!String.IsNullOrEmpty(this.RuleApplyTimeDropDownList.Text))
+            if (!String.IsNullOrEmpty(RuleApplyTimeDropDownList.Text))
             {
-                if (!this.RuleApplyTimeDropDownList.Text.Equals("All"))
+                if (!RuleApplyTimeDropDownList.Text.Equals("All"))
                 {
                     ServerRuleApplyTimeEnum en = new ServerRuleApplyTimeEnum();
                     en.SetEnum(short.Parse(RuleApplyTimeDropDownList.SelectedItem.Value));
                     criteria.ServerRuleApplyTimeEnum.EqualTo(en);
                 }
             }
-            if (!String.IsNullOrEmpty(this.RuleTypeDropDownList.Text))
+            if (!String.IsNullOrEmpty(RuleTypeDropDownList.Text))
             {
-                if (!this.RuleTypeDropDownList.Text.Equals("All"))
+                if (!RuleTypeDropDownList.Text.Equals("All"))
                 {
                     ServerRuleTypeEnum en = new ServerRuleTypeEnum();
                     en.SetEnum(short.Parse(RuleTypeDropDownList.SelectedItem.Value));
@@ -51,19 +82,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
                 }
             }
 
-            if (this.EnabledOnlyFilter.Checked)
+            if (EnabledOnlyFilter.Checked)
             {
                 criteria.Enabled.EqualTo(true);
             }
 
-            if (this.DefaultOnlyFilter.Checked)
+            if (DefaultOnlyFilter.Checked)
             {
                 criteria.DefaultRule.EqualTo(true);
             }
 
             ServerRuleGridViewControl.ServerRules = _controller.GetServerRules(criteria);
             ServerRuleGridViewControl.DataBind();
-
         }
 
         /// <summary>
@@ -79,7 +109,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
             // UpdatePanel UpdateMode must be set to "conditional"
             // Calling UpdatePanel.Update() will force the client to refresh the screen
-            this.ServerRuleUpdatePanel.Update();
+            ServerRuleUpdatePanel.Update();
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -91,28 +121,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             GridPager.PuralItemName = "Rules";
             GridPager.Grid = ServerRuleGridViewControl.TheGrid;
 
-            GridPager.GetRecordCountMethod = delegate {
-                                                    return ServerRuleGridViewControl.ServerRules.Count;
-                                                };
+            GridPager.GetRecordCountMethod = delegate { return ServerRuleGridViewControl.ServerRules.Count; };
 
-            int prevSelectIndex = this.RuleApplyTimeDropDownList.SelectedIndex;
+            int prevSelectIndex = RuleApplyTimeDropDownList.SelectedIndex;
             RuleApplyTimeDropDownList.Items.Clear();
             RuleApplyTimeDropDownList.Items.Add(new ListItem("All"));
             foreach (ServerRuleApplyTimeEnum applyTimeEnum in ServerRuleApplyTimeEnum.GetAll())
             {
-                RuleApplyTimeDropDownList.Items.Add(new ListItem(applyTimeEnum.Description,applyTimeEnum.Enum.ToString()));
+                RuleApplyTimeDropDownList.Items.Add(
+                    new ListItem(applyTimeEnum.Description, applyTimeEnum.Enum.ToString()));
             }
             RuleApplyTimeDropDownList.SelectedIndex = prevSelectIndex;
 
 
-            prevSelectIndex = this.RuleTypeDropDownList.SelectedIndex;
+            prevSelectIndex = RuleTypeDropDownList.SelectedIndex;
             RuleTypeDropDownList.Items.Clear();
             RuleTypeDropDownList.Items.Add(new ListItem("All"));
             foreach (ServerRuleTypeEnum typeEnum in ServerRuleTypeEnum.GetAll())
             {
                 RuleTypeDropDownList.Items.Add(new ListItem(typeEnum.Description, typeEnum.Enum.ToString()));
             }
-            RuleTypeDropDownList.SelectedIndex = prevSelectIndex; 
+            RuleTypeDropDownList.SelectedIndex = prevSelectIndex;
 
 
             LoadRules();
@@ -133,7 +162,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
                 DeleteButton.ImageUrl = "~/images/icons/DeleteDisabled.png";
             }
             else
-            {                
+            {
                 EditButton.Enabled = true;
                 EditButton.ImageUrl = "~/images/icons/EditEnabled.png";
 
@@ -146,7 +175,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
                 {
                     DeleteButton.Enabled = true;
                     DeleteButton.ImageUrl = "~/images/icons/DeleteEnabled.png";
-                }                
+                }
             }
 
             base.OnPreRender(e);
@@ -154,19 +183,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
         protected void AddButton_Click(object sender, ImageClickEventArgs e)
         {
-            EnclosingPage.OnAddRule(null, this.ServerPartition);
+            EnclosingPage.OnAddRule(null, ServerPartition);
         }
 
         protected void EditButton_Click(object sender, ImageClickEventArgs e)
         {
-            if (this.ServerRuleGridViewControl.SelectedRule != null)
-                EnclosingPage.OnEditRule(ServerRuleGridViewControl.SelectedRule, this.ServerPartition);
+            if (ServerRuleGridViewControl.SelectedRule != null)
+                EnclosingPage.OnEditRule(ServerRuleGridViewControl.SelectedRule, ServerPartition);
         }
 
         protected void DeleteButton_Click(object sender, ImageClickEventArgs e)
         {
-            if (this.ServerRuleGridViewControl.SelectedRule != null)
-                EnclosingPage.OnDeleteRule(ServerRuleGridViewControl.SelectedRule, this.ServerPartition);
+            if (ServerRuleGridViewControl.SelectedRule != null)
+                EnclosingPage.OnDeleteRule(ServerRuleGridViewControl.SelectedRule, ServerPartition);
         }
 
         protected void RefreshButton_Click(object sender, ImageClickEventArgs e)
@@ -186,7 +215,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
         public void OnRowSelected(int index)
         {
-            
         }
     }
 }

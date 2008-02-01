@@ -29,12 +29,10 @@
 
 #endregion
 
-
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 {
-
     /// <summary>
     /// Detailed view of a <see cref="Study"/> in the context of the WorkQueue configuration UI.
     /// </summary>
@@ -49,18 +47,19 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
     public class StudyDetails
     {
         #region Private Members
+
         private string _studyInstanceUID;
         private string _patientID;
         private string _patientName;
         private string _status;
-        private bool?   _lock;
+        private bool? _lock;
         private string _accessionNumber;
         private string _studyDescription;
 
         #endregion Private Members
 
-
         #region Public Properties
+
         public string StudyInstanceUID
         {
             get { return _studyInstanceUID; }

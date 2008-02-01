@@ -34,7 +34,8 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    public class StudyStorageAdaptor : BaseAdaptor<StudyStorage, IStudyStorageEntityBroker, StudyStorageSelectCriteria, StudyStorageUpdateColumns>
+    public class StudyStorageAdaptor :
+        BaseAdaptor<StudyStorage, IStudyStorageEntityBroker, StudyStorageSelectCriteria, StudyStorageUpdateColumns>
     {
     }
 }

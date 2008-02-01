@@ -68,17 +68,15 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
             IList<Study> studyList = studyAdaptor.Get(studycriteria);
 
-            if (studyList==null || studyList.Count==0)
+            if (studyList == null || studyList.Count == 0)
             {
                 summary.PatientID = "N/A";
                 summary.PatientName = "N/A";
-
             }
             else
             {
                 summary.PatientID = studyList[0].PatientId;
                 summary.PatientName = studyList[0].PatientsName;
- 
             }
 
 
@@ -114,7 +112,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             summary.Type = details.Type;
             summary.Status = details.Status;
 
-            summary.PatientID = (details.Study==null)? "N/A": details.Study.PatientID;
+            summary.PatientID = (details.Study == null) ? "N/A" : details.Study.PatientID;
             summary.PatientName = (details.Study == null) ? "N/A" : details.Study.PatientName;
 
             summary.NumInstancesPending = (details.NumInstancesPending);

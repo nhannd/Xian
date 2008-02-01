@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
         protected override void OnInit(EventArgs e)
         {
-            this.FileSystemsPanel1.EnclosingPage = this;
+            FileSystemsPanel1.EnclosingPage = this;
 
             base.OnInit(e);
 

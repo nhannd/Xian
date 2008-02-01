@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         private bool _editMode;
         // device being editted/added
         private ServerPartition _partition;
-        
+
         #endregion
 
         #region Public Properties
@@ -67,32 +67,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         {
             set
             {
-                this._partition = value;
+                _partition = value;
                 // put into viewstate to retrieve later
                 ViewState[ClientID + "_EdittedPartition"] = _partition;
             }
-            get
-            {
-                return _partition;
-            }
-
+            get { return _partition; }
         }
 
         #endregion // public members
 
         #region Events
+
         /// <summary>
         /// Defines the event handler for <seealso cref="OKClicked"/>.
         /// </summary>
         /// <param name="partition">The partition being added.</param>
         public delegate void OnOKClickedEventHandler(ServerPartition partition);
+
         /// <summary>
         /// Occurs when users click on "OK".
         /// </summary>
         public event OnOKClickedEventHandler OKClicked;
+
         #endregion Events
 
         #region Protected Methods
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -110,21 +110,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
             AutoInsertDeviceCheckBox.InputAttributes.Add("onclick", "EnableDisable();");
-            
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), this.ClientID,
-                @"<script language='javascript'>
+
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID,
+                                                        @"<script language='javascript'>
                     function EnableDisable()
                     {  
                          var autoInsertCheck = document.getElementById('" +
-                                                    AutoInsertDeviceCheckBox.ClientID +
-                                                    @"');
+                                                        AutoInsertDeviceCheckBox.ClientID +
+                                                        @"');
                          var defaultPortInput = document.getElementById('" +
-                                                    DefaultRemotePortTextBox.ClientID +
-                                                    @"');
+                                                        DefaultRemotePortTextBox.ClientID +
+                                                        @"');
                          defaultPortInput.disabled = !autoInsertCheck.checked;
                     }
                 </script>");
-
         }
 
 
@@ -133,7 +132,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             if (Page.IsPostBack)
             {
                 if (ViewState[ClientID + "_EditMode"] != null)
-                    _editMode = (bool)ViewState[ClientID + "_EditMode"];
+                    _editMode = (bool) ViewState[ClientID + "_EditMode"];
 
                 if (ViewState[ClientID + "_EdittedPartition"] != null)
                     _partition = ViewState[ClientID + "_EdittedPartition"] as ServerPartition;
@@ -147,22 +146,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// <param name="sender"></param>
         /// <param name="e"></param>
         protected void OKButton_Click(object sender, EventArgs e)
-        {            
+        {
             if (Page.IsValid)
             {
                 SaveData();
 
                 if (OKClicked != null)
-                    OKClicked(Partition); 
-                
+                    OKClicked(Partition);
+
                 Close();
             }
             else
             {
                 Show(false);
             }
-            
-           
         }
 
         private void SaveData()
@@ -201,7 +198,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 OKButton.Text = "Add";
             }
 
-            
 
             if (Partition == null)
             {
@@ -217,7 +213,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 AutoInsertDeviceCheckBox.Enabled = true;
                 DefaultRemotePortTextBox.Enabled = true;
             }
-            else if (Page.IsValid) // only update the UI with the partition if the data is valid, otherwise, keep them on the screen
+            else if (Page.IsValid)
+                // only update the UI with the partition if the data is valid, otherwise, keep them on the screen
             {
                 AETitleTextBox.Text = Partition.AeTitle;
                 DescriptionTextBox.Text = Partition.Description;
@@ -231,9 +228,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 DefaultRemotePortTextBox.Enabled = Partition.AutoInsertDevice;
             }
         }
+
         #endregion Protected methods
 
         #region Public Methods
+
         /// <summary>
         /// Displays the add device dialog box.
         /// </summary>
@@ -246,7 +245,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             {
                 ServerPartitionTabContainer.ActiveTabIndex = 0;
             }
-            
+
 
             UpdatePanel.Update();
             ModalPopupExtender1.Show();
@@ -262,5 +261,4 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
 
         #endregion Public methods
     }
- 
 }

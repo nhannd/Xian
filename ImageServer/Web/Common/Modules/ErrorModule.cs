@@ -47,23 +47,27 @@ namespace ClearCanvas.ImageServer.Web.Common.Modules
     public class ErrorModule : IHttpModule
     {
         #region IHttpModule Members
+
         public void Init(HttpApplication application)
         {
             application.Error += new EventHandler(application_Error);
-            
         }
-        public void Dispose() { }
+
+        public void Dispose()
+        {
+        }
+
         #endregion
 
         public void application_Error(object sender, EventArgs e)
         {
-            
             HttpContext ctx = HttpContext.Current;
             Exception theException;
 
-            for (theException = ctx.Server.GetLastError(); theException.InnerException != null; theException = theException.InnerException)
+            for (theException = ctx.Server.GetLastError();
+                 theException.InnerException != null;
+                 theException = theException.InnerException)
             {
-                
             }
 
             if (theException is HttpException)
@@ -77,5 +81,4 @@ namespace ClearCanvas.ImageServer.Web.Common.Modules
             }
         }
     }
-
 }

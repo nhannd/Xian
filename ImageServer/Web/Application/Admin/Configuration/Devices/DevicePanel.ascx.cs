@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
     /// <summary>
     /// Panel to display list of devices for a particular server partition.
     /// </summary>
-    public partial class DevicePanel : System.Web.UI.UserControl
+    public partial class DevicePanel : UserControl
     {
         #region Private members
 
@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                 else
                     FilterButton.ImageUrl = "~/images/icons/QueryEnabled.png";
             }
-            UpdateUI();          
+            UpdateUI();
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -237,7 +237,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
         protected void AddButton_Click(object sender, ImageClickEventArgs e)
         {
-            EnclosingPage.OnAddDevice(_theController,ServerPartition);
+            EnclosingPage.OnAddDevice(_theController, ServerPartition);
         }
 
         protected void EditButton_Click(object sender, ImageClickEventArgs e)

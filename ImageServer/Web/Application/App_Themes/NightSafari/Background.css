@@ -234,3 +234,18 @@ background-image: url(images/gridheaderbackground.png);
 
 
 
+/*****************************************************************************************
+	Invalid input indicator styles
+*****************************************************************************************/
+.CSSInvalidInputIndicatorContainer
+{
+}
+
+.CSSInvalidIndicatorTooltipPanel
+{
+	background-color: #ffffcc;
+}
+
+.CSSInvalidIndicatorTooltip
+{
+}

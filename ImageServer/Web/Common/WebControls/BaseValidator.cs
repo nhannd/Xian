@@ -43,16 +43,17 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
     /// to provide the result of the validation. Other validation aspects such as showing/hidding the error indication, highlighting
     /// the input will be taken cared of by the base class.
     /// </remarks>
-    abstract public class BaseValidator: System.Web.UI.WebControls.BaseValidator
+    public abstract class BaseValidator : System.Web.UI.WebControls.BaseValidator
     {
         #region Private members
-        private string  _invalidInputIndicatorID="";
-        private Color   _invalidInputColor;
-        private bool    _validateWhenDisabled = false;
-        private bool _ignoreEmptyValue = false;
-        private string  _inputName;
-        #endregion Private members
 
+        private string _invalidInputIndicatorID = "";
+        private Color _invalidInputColor;
+        private bool _validateWhenDisabled = false;
+        private bool _ignoreEmptyValue = false;
+        private string _inputName;
+
+        #endregion Private members
 
         #region Public Properties
 
@@ -95,10 +96,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         /// </summary>
         public bool IgnoreEmptyValue
         {
-            get
-            {
-                return _ignoreEmptyValue;
-            }
+            get { return _ignoreEmptyValue; }
             set { _ignoreEmptyValue = value; }
         }
 
@@ -121,7 +119,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
         #endregion Public Properties
 
-
         #region Protected Properties
 
         /// <summary>
@@ -136,15 +133,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         /// <summary>
         /// Gets the control used to indicate the input is invalid
         /// </summary>
- 		public IInvalidInputIndicator InvalidInputIndicator
+        public IInvalidInputIndicator InvalidInputIndicator
         {
-            get
-            {
-                return FindControl(InvalidInputIndicatorID) as IInvalidInputIndicator;
-            }
+            get { return FindControl(InvalidInputIndicatorID) as IInvalidInputIndicator; }
         }
-        
-        
+
+
         /// <summary>
         /// Gets or sets the background color value for the input control when validation passes.
         /// </summary>
@@ -157,37 +151,24 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
                 else
                     return (Color) ViewState[ClientID + "_ValidateCtrlBackColor"];
             }
-            set
-            {
-                ViewState[ClientID + "_ValidateCtrlBackColor"] = value;
-            }
+            set { ViewState[ClientID + "_ValidateCtrlBackColor"] = value; }
         }
 
         protected string ClientSideOnValidateFunctionName
         {
-            get
-            {
-                return ClientID + "_OnClientSideValidation";
-            }
+            get { return ClientID + "_OnClientSideValidation"; }
         }
 
 
         protected string OnInvalidInputFunctionName
         {
-            get
-            {
-                return ClientID + "_OnInvalidInput";
-            }
+            get { return ClientID + "_OnInvalidInput"; }
         }
 
         protected string OnValidInputFunctionName
         {
-            get
-            {
-                return ClientID + "_OnValidInput";
-            }
+            get { return ClientID + "_OnValidInput"; }
         }
-
 
         #endregion Protected Properties
 
@@ -199,7 +180,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
             if (DetermineRenderUplevel() && EnableClientScript)
             {
-                Page.ClientScript.RegisterExpandoAttribute(ClientID, "evaluationfunction", ClientSideOnValidateFunctionName);
+                Page.ClientScript.RegisterExpandoAttribute(ClientID, "evaluationfunction",
+                                                           ClientSideOnValidateFunctionName);
                 writer.AddAttribute("evaluationfunction", ClientSideOnValidateFunctionName);
             }
         }
@@ -222,12 +204,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             // if we are the first validator called by the browser to evaluate the input. 
             // If so, we can safely hide any error indicator that's shown previously if the current input is valid. 
             //
-            
+
             // Increment "validatorscounter" value to include this validator
             int counter = 0;
-            if (InputControl.Attributes["validatorscounter"]!=null)
+            if (InputControl.Attributes["validatorscounter"] != null)
             {
-                 counter = Int32.Parse(InputControl.Attributes["validatorscounter"]);
+                counter = Int32.Parse(InputControl.Attributes["validatorscounter"]);
             }
             InputControl.Attributes.Add("validatorscounter", String.Format("{0}", counter + 1));
 
@@ -237,22 +219,21 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
                 InputControl.Attributes.Add("calledvalidatorcounter", "0");
             }
         }
-        
+
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e); 
+            base.OnLoad(e);
 
-            
+
             if (!Page.IsPostBack)
             {
                 // save current background color
-                InputNormalColor = InputControl.BackColor;      
+                InputNormalColor = InputControl.BackColor;
             }
             else
             {
                 // Restore the input background color
                 InputControl.BackColor = InputNormalColor;
-              
             }
 
             if (EnableClientScript)
@@ -260,14 +241,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
                 RegisterClientSideBaseValidationScripts();
                 RegisterClientSideValidationExtensionScripts();
             }
-
         }
 
-        
 
         protected void RegisterClientSideBaseValidationScripts()
         {
-            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator.js");
+            ScriptTemplate template =
+                new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator.js");
             template.Replace("@@CLIENTID@@", ClientID);
             template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
 
@@ -278,18 +258,17 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             Page.ClientScript.RegisterClientScriptBlock(GetType(), "BaseValidationScripts", template.Script, true);
 
 
+            template =
+                new ScriptTemplate(this,
+                                   "ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator_OnClientValidation.js");
 
-            template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator_OnClientValidation.js");
-            
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientSideOnValidateFunctionName, template.Script, true);
-
-            
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientSideOnValidateFunctionName, template.Script,
+                                                        true);
         }
 
 
-		protected override bool EvaluateIsValid()
+        protected override bool EvaluateIsValid()
         {
-            
             if (Enabled || ValidateWhenDisabled)
             {
                 string value = GetControlValidationValue(ControlToValidate);
@@ -315,21 +294,21 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
                     if (InvalidInputIndicator != null)
                     {
-                        InvalidInputIndicator.TooltipLabel.Text= ErrorMessage;
+                        InvalidInputIndicator.TooltipLabel.Text = ErrorMessage;
                         InvalidInputIndicator.Show();
-
                     }
 
                     return false;
                 }
             }
 
-		    return true;
-
+            return true;
         }
+
         #endregion Protected methods
 
         #region Abstract methods
+
         /// <summary>
         /// Method called while server-side validation is taking place.
         /// </summary>
@@ -359,6 +338,5 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         protected abstract void RegisterClientSideValidationExtensionScripts();
 
         #endregion Abstract methods
-
     }
 }

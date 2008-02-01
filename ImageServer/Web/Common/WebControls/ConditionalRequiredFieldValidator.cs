@@ -104,8 +104,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
         #region Protected Methods
 
-
-
         //protected override void RegisterClientSideValidationExtensionScripts()
         //{
         //    if (ConditionalCheckBoxID != null)
@@ -120,7 +118,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         //        template.Replace("@@REQUIRED_WHEN_CHECKED@@", RequiredWhenChecked.ToString().ToLower());
         //        template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue.ToString().ToLower());
         //        template.Replace("@@ERROR_MESSAGE@@", ErrorMessage);
-                
+
         //        Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
         //    }
         //    else
@@ -132,20 +130,19 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         //        template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
         //        template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
         //        template.Replace("@@ERROR_MESSAGE@@", ErrorMessage);
-                
+
         //        Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
         //    }
         //}
 
         protected override bool OnServerSideEvaluate()
         {
-           
             CheckBox chkbox = String.IsNullOrEmpty(ConditionalCheckBoxID)
                                   ? null
                                   : FindControl(ConditionalCheckBoxID) as CheckBox;
 
             string value = GetControlValidationValue(ControlToValidate);
-            
+
             if (chkbox != null)
             {
                 if (RequiredWhenChecked)
@@ -157,9 +154,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
                 }
                 else // Required when unchecked
                 {
-                    if (chkbox.Checked==false)
+                    if (chkbox.Checked == false)
                     {
-                       return !String.IsNullOrEmpty(value);
+                        return !String.IsNullOrEmpty(value);
                     }
                 }
             }
@@ -180,14 +177,15 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         {
             base.RegisterClientSideBaseValidationScripts();
 
-            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator.js");
+            ScriptTemplate template =
+                new ScriptTemplate(this,
+                                   "ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator.js");
 
-            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@", ConditionalCheckBoxID == null ? null : GetControlRenderID(ConditionalCheckBoxID));
+            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@",
+                             ConditionalCheckBoxID == null ? null : GetControlRenderID(ConditionalCheckBoxID));
             template.Replace("@@REQUIRED_WHEN_CHECKED@@", RequiredWhenChecked ? "true" : "false");
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }
     }
-
-   
 }
