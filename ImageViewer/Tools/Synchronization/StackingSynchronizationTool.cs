@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 			public override int  GetHashCode()
 			{
-				return 3*FrameOfReferenceUid.GetHashCode() + 5*StudyInstanceUid.GetHashCode() + 7 *Normal.GetHashCode();
+				return 3*FrameOfReferenceUid.GetHashCode() + 5*StudyInstanceUid.GetHashCode() + 7*Normal.GetHashCode();
 			}
 		}
 
@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 				_synchronizeActive = value;
 				EventsHelper.Fire(_synchronizeActiveChanged, this, EventArgs.Empty);
-
+				
 				LinkStudiesEnabled = _synchronizeActive;
 			}
 		}
@@ -208,7 +208,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 					return;
 
 				_studiesLinked = value;
-
 				EventsHelper.Fire(_studiesLinkedChanged, this, EventArgs.Empty);
 			}
 		}
@@ -309,6 +308,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			{
 				OffsetKey referenceOffsetKey = null;
 				Dictionary<OffsetKey, Vector3D> referenceOffsetDictionary = null;
+				List<OffsetKey> foundRelatedKeys = new List<OffsetKey>();
 
 				foreach (IImageBox imageBox in GetImageBoxesToSynchronize(referenceImageBox))
 				{
@@ -331,18 +331,24 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 									if (referenceOffsetKey == null)
 									{
-										//reset the related offsets
 										referenceOffsetKey = new OffsetKey(referenceSop.StudyInstanceUID, referenceSop.FrameOfReferenceUid, referenceImageInfo.Normal);
 										if (_offsets.ContainsKey(referenceOffsetKey))
 										{
 											referenceOffsetDictionary = _offsets[referenceOffsetKey];
-											referenceOffsetDictionary.Remove(key);
 										}
 										else
 										{
 											referenceOffsetDictionary = new Dictionary<OffsetKey, Vector3D>();
 											_offsets[referenceOffsetKey] = referenceOffsetDictionary;
 										}
+									}
+
+									//as each new key is found, clear it from the dictionary so it can be recalculated
+									//based on the currently visible display sets.
+									if (!foundRelatedKeys.Contains(key))
+									{
+										foundRelatedKeys.Add(key);
+										referenceOffsetDictionary.Remove(key);
 									}
 
 									Vector3D currentOffset = null;
@@ -380,6 +386,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 					}
 					else if (_offsets.ContainsKey(key))
 					{
+						//TODO: this could be made recursive.
+
 						// No direct offset, but we have other offsets for C.
 						Vector3D inferredOffset = null;
 						foreach (KeyValuePair<OffsetKey, Vector3D> referenceRelatedOffset in _offsets[referenceOffsetKey])
