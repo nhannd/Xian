@@ -4,8 +4,6 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.Mathematics
 {
-	// TODO: this class should be unit tested.
-
 	/// <summary>
 	/// A simple 3D vector class.
 	/// </summary>
@@ -104,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 
 			cross.X = _y * right.Z - _z * right.Y;
 			cross.Y = -_x * right.Z + _z * right.X;
-			cross.Z = _x * right.Y + _y * right.X;
+			cross.Z = _x * right.Y - _y * right.X;
 
 			return cross;
 		}
@@ -173,11 +171,37 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return new Vector3D(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
 		}
 
+		/// <summary>
+		/// Gets whether or not <paramref name="left"/> is equal to <paramref name="right"/>, within a given tolerance (per vector component).
+		/// </summary>
+		public static bool AreEqual(Vector3D left, Vector3D right, float tolerance)
+		{
+			return FloatComparer.AreEqual(left.X, right.X, tolerance) &&
+					FloatComparer.AreEqual(left.Y, right.Y, tolerance) &&
+					FloatComparer.AreEqual(left.Z, right.Z, tolerance);
+		}
+
+		/// <summary>
+		/// Gets whether or not <paramref name="left"/> is equal to <paramref name="right"/>, within a small tolerance (per vector component).
+		/// </summary>
+		public static bool AreEqual(Vector3D left, Vector3D right)
+		{
+			return FloatComparer.AreEqual(left.X, right.X) &&
+					FloatComparer.AreEqual(left.Y, right.Y) && 
+					FloatComparer.AreEqual(left.Z, right.Z);
+		}
+
+		/// <summary>
+		/// Gets a hash code for the vector.
+		/// </summary>
 		public override int GetHashCode()
 		{
 			return (int)(3 * _x.GetHashCode() + 5 * _y.GetHashCode() + 7 * _z.GetHashCode());
 		}
 
+		/// <summary>
+		/// Gets whether or not this object equals <paramref name="obj"/>.
+		/// </summary>
 		public override bool Equals(object obj)
 		{
 			if (obj == this)
@@ -188,6 +212,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 
 		#region IEquatable<Vector3D> Members
 
+		/// <summary>
+		/// Gets whether or not this object equals <paramref name="other"/>.
+		/// </summary>
 		public bool Equals(Vector3D other)
 		{
 			if (other == null)

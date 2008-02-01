@@ -5,7 +5,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Mathematics
 {
-	// TODO: this class should be unit tested.
 	// TODO: Determinant, Inverse, etc are still missing.
 
 	/// <summary>
@@ -239,7 +238,6 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			}
 
 			return result;
-
 		}
 
 		/// <summary>
@@ -312,6 +310,44 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			}
 
 			return clone;
+		}
+
+		/// <summary>
+		/// Gets whether or not <paramref name="left"/> is equal to <paramref name="right"/>, within a given tolerance (per matrix component).
+		/// </summary>
+		public static bool AreEqual(Matrix left, Matrix right, float tolerance)
+		{
+			Platform.CheckTrue(left.Columns == right.Columns && left.Rows == right.Rows, "Matrix Same Dimensions");
+
+			for (int row = 0; row < left.Rows; ++row)
+			{
+				for (int column = 0; column < left.Columns; ++column)
+				{
+					if (!FloatComparer.AreEqual(left[row, column], right[row, column], tolerance))
+						return false;
+				}
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Gets whether or not <paramref name="left"/> is equal to <paramref name="right"/>, within a small tolerance (per matrix component).
+		/// </summary>
+		public static bool AreEqual(Matrix left, Matrix right)
+		{
+			Platform.CheckTrue(left.Columns == right.Columns && left.Rows == right.Rows, "Matrix Same Dimensions");
+
+			for (int row = 0; row < left.Rows; ++row)
+			{
+				for (int column = 0; column < left.Columns; ++column)
+				{
+					if (!FloatComparer.AreEqual(left[row, column], right[row, column]))
+						return false;
+				}
+			}
+
+			return true;
 		}
 	}
 }

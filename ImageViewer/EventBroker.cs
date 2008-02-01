@@ -198,6 +198,9 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_mouseCaptureChanged, this, args);
 		}
 
+		/// <summary>
+		/// Occurs when a display set is about to change.
+		/// </summary>
 		public event EventHandler<DisplaySetChangingEventArgs> DisplaySetChanging
 		{
 			add { _displaySetChanging += value; }
@@ -209,6 +212,9 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_displaySetChanging, this, args);
 		}
 
+		/// <summary>
+		/// Occurs when a display set has changed.
+		/// </summary>
 		public event EventHandler<DisplaySetChangedEventArgs> DisplaySetChanged
 		{
 			add { _displaySetChanged += value; }

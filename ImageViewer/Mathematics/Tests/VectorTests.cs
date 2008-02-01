@@ -39,9 +39,9 @@ using NUnit.Framework;
 namespace ClearCanvas.ImageViewer.Mathematics.Tests
 {
 	[TestFixture]
-	public class VectorTest
+	public class VectorTests
 	{
-		public VectorTest()
+		public VectorTests()
 		{
 		}
 

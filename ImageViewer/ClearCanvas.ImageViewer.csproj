@@ -120,6 +120,8 @@
     <Compile Include="InteractiveGraphics\BoundableInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\Tests\EllipseInteractiveGraphicTest.cs" />
+    <Compile Include="Mathematics\Tests\MatrixTests.cs" />
+    <Compile Include="Mathematics\Tests\Vector3DTests.cs" />
     <Compile Include="NamedCompositeGraphicSettings.cs" />
     <Compile Include="NamedCompositeGraphicSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -212,7 +214,7 @@
     <Compile Include="InteractiveGraphics\PointsMemento.cs" />
     <Compile Include="InteractiveGraphics\StandardStatefulCompositeGraphic.cs" />
     <Compile Include="Mathematics\Matrix.cs" />
-    <Compile Include="Mathematics\Tests\VectorTest.cs" />
+    <Compile Include="Mathematics\Tests\VectorTests.cs" />
     <Compile Include="Mathematics\Vector3D.cs" />
     <Compile Include="ReferenceCountedObjectWrapper.cs" />
     <Compile Include="PresentationImageChangedEventArgs.cs" />
