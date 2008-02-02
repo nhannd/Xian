@@ -1,42 +1,44 @@
+using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
+	/// <summary>
+	/// A warpper for the WinForms Screen class
+	/// </summary>
 	internal class ScreenInfo : IScreenInfo
 	{
-		private readonly string _name;
-		private readonly int _width;
-		private readonly int _height;
-		private readonly int _bitDepth;
+		private readonly Screen _screen;
 
-		public ScreenInfo(Control control)
+		public ScreenInfo(Screen screen)
 		{
-			Screen screen = Screen.FromControl(control);
-			_name = screen.DeviceName;
-			_width = screen.Bounds.Width;
-			_height = screen.Bounds.Height;
-			_bitDepth = screen.BitsPerPixel;
+			_screen = screen;
 		}
 
-		public string Name
+		public int BitsPerPixel
 		{
-			get { return _name;  }	
+			get { return _screen.BitsPerPixel; }
 		}
 
-		public int Width
+		public Rectangle Bounds
 		{
-			get { return _width; }
+			get { return _screen.Bounds; }
 		}
-		
-		public int Height
+
+		public string DeviceName
 		{
-			get { return _height; }
+			get { return _screen.DeviceName; }
 		}
-		
-		public int BitDepth
+
+		public bool Primary
 		{
-			get { return _bitDepth; }
+			get { return _screen.Primary; }
+		}
+
+		public Rectangle WorkingArea
+		{
+			get { return _screen.WorkingArea; }
 		}
 	}
 }

@@ -1,4 +1,5 @@
 
+using System.Drawing;
 namespace ClearCanvas.ImageViewer.Rendering
 {
 	/// <summary>
@@ -7,23 +8,29 @@ namespace ClearCanvas.ImageViewer.Rendering
 	public interface IScreenInfo
 	{
 		/// <summary>
-		/// Gets the name of the display device.
+		/// Gets the number of bits of memory, associated with one pixel of data.
 		/// </summary>
-		string Name { get; }
+		int BitsPerPixel { get; }
 
 		/// <summary>
-		/// Gets the width of the screen in pixels.
+		/// Gets the bounds of the display.
 		/// </summary>
-		int Width { get; }
+		Rectangle Bounds { get; }
 
 		/// <summary>
-		/// Gets the height of the screen in pixels.
+		/// Gets the device name associated with a display.
 		/// </summary>
-		int Height { get; }
+		string DeviceName { get; }
 
 		/// <summary>
-		/// Gets the number of bits associated with a single pixel.
+		/// Gets a value indicating whether a particular display is the primary device.
 		/// </summary>
-		int BitDepth { get; }
+		bool Primary { get; }
+
+		/// <summary>
+		/// Gets the working area of the display. The working area is the desktop area 
+		/// of the display, excluding taskbars, docked windows, and docked tool bars.
+		/// </summary>
+		Rectangle WorkingArea { get; }
 	}
 }

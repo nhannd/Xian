@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			DrawArgs args = new DrawArgs(
 				this.Surface, 
-				new ScreenInfo(this),
+				new ScreenInfo(Screen.FromControl(this)),
 				ClearCanvas.ImageViewer.Rendering.DrawMode.Render);
 
 			try
@@ -217,7 +217,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 				DrawArgs args = new DrawArgs(
 					this.Surface,
-					new ScreenInfo(this),
+					new ScreenInfo(Screen.FromControl(this)),
 					ClearCanvas.ImageViewer.Rendering.DrawMode.Refresh);
 
 				try
