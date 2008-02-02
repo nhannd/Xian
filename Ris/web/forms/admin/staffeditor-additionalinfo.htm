@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>Angio/Interventional Details</title>
+      <link href="../../css/default.css" rel="stylesheet" type="text/css" />
+      <script type="text/javascript" src="../../js/jsx.js"></script>
+      <script type="text/javascript" src="../../js/jsml.js"></script>
+      <script type="text/javascript" src="../../js/ui.js"></script>
+      <script type="text/javascript" src="../../js/ris.js"></script>
+      <script type="text/javascript" src="../../js/layout.js"></script>
+      <script type="text/javascript" >
+         var errorProvider = new ErrorProvider();
+
+         function onBodyLoad()
+         {
+            try
+            {
+               scaleWidth();
+         
+				if(Ris)
+				{
+					$("hmri").value = Ris.getTag("HmriNumber") || "";
+				}
+            }
+            catch(e)
+            {
+               var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+               Field.setValue($("myForm"), message);
+            }
+         }
+		 
+		 function onHmriChanged()
+		 {
+		 }
+         
+         
+         //////////////////////////////////////////////////////////////////////////
+         // RIS integration API
+         function hasValidationErrors()
+         {
+            return errorProvider.hasErrors();
+         }
+
+         function showValidation(show)
+         {
+            errorProvider.setVisible(show);
+         }
+
+         function saveData()
+         {
+            Ris.setTag("HmriNumber", $("hmri").value);
+         }
+         //////////////////////////////////////////////////////////////////////////
+      </script>
+   </head>
+   <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
+      <form id="myForm">
+		<input id="hmri" type="text" onchange="javascript: onHmriChanged()"/>
+      </form>         
+   </body>
+</html>
