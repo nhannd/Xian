@@ -154,6 +154,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			DrawArgs args = new DrawArgs(
 				this.Surface, 
+				new ScreenInfo(this),
 				ClearCanvas.ImageViewer.Rendering.DrawMode.Render);
 
 			try
@@ -215,7 +216,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				this.Surface.ClipRectangle = e.ClipRectangle;
 
 				DrawArgs args = new DrawArgs(
-					this.Surface, 
+					this.Surface,
+					new ScreenInfo(this),
 					ClearCanvas.ImageViewer.Rendering.DrawMode.Refresh);
 
 				try

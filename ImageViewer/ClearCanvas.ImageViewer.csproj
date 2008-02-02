@@ -224,6 +224,7 @@
     <Compile Include="Rendering\RendererBase.cs" />
     <Compile Include="Rendering\RendererFactoryBase.cs" />
     <Compile Include="Rendering\RenderPerformanceReportBroker.cs" />
+    <Compile Include="Rendering\IScreenInfo.cs" />
     <Compile Include="SimpleLogicalWorkspaceBuilder.cs" />
     <Compile Include="SimpleImageLayoutManager.cs" />
     <Compile Include="SimplePhysicalWorkspaceFiller.cs" />

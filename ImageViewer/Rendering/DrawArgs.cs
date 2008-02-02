@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		private readonly DrawMode _drawMode;
 		private readonly IRenderingSurface _renderingSurface;
 		private CompositeGraphic _sceneGraph;
-
+		private IScreenInfo _screenInfo;
 		private object _tag;
 
 		#endregion
@@ -69,9 +69,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// </summary>
 		public DrawArgs(
 			IRenderingSurface surface, 
+			IScreenInfo screenInfo,
 			DrawMode drawMode)
 		{
 			_renderingSurface = surface;
+			_screenInfo = screenInfo;
 			_drawMode = drawMode;
 		}
 
@@ -98,6 +100,20 @@ namespace ClearCanvas.ImageViewer.Rendering
 		public DrawMode DrawMode
 		{
 			get { return _drawMode; }
+		}
+
+		/// <summary>
+		/// Gets information about the screen on which the <see cref="DrawArgs.SceneGraph"/>
+		/// will be drawn.
+		/// </summary>
+		/// <remarks>
+		/// If the tile to be drawn straddles two screens, the information returned
+		/// will be that of the screen on which the larger portion of the <see cref="Tile"/>
+		/// resides.
+		/// </remarks>
+		public IScreenInfo ScreenInfo
+		{
+			get { return _screenInfo; }
 		}
 
 		/// <summary>
