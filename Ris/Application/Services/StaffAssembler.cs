@@ -48,29 +48,34 @@ namespace ClearCanvas.Ris.Application.Services
                 return null;
 
             return new StaffSummary(staff.GetRef(), staff.Id,
-                EnumUtils.GetEnumValueInfo<StaffType>(staff.Type, context),
+                EnumUtils.GetEnumValueInfo(staff.Type, context),
                 new PersonNameAssembler().CreatePersonNameDetail(staff.Name));
         }
 
         public StaffDetail CreateStaffDetail(Staff staff, IPersistenceContext context)
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
-            TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
-            AddressAssembler addressAssembler = new AddressAssembler();
 
-            return new StaffDetail(staff.Id, EnumUtils.GetEnumValueInfo<StaffType>(staff.Type, context),
-                assembler.CreatePersonNameDetail(staff.Name));
+            return new StaffDetail(staff.Id, EnumUtils.GetEnumValueInfo(staff.Type, context),
+                assembler.CreatePersonNameDetail(staff.Name), staff.LicenseNumber, staff.BillingNumber,
+                    new Dictionary<string, string>(staff.ExtendedProperties));
         }
 
         public void UpdateStaff(StaffDetail detail, Staff staff)
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
-            TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
-            AddressAssembler addressAssembler = new AddressAssembler();
 
             staff.Id = detail.StaffId;
             staff.Type = EnumUtils.GetEnumValue<StaffType>(detail.StaffType);
             assembler.UpdatePersonName(detail.Name, staff.Name);
+            staff.LicenseNumber = detail.LicenseNumber;
+            staff.BillingNumber = detail.BillingNumber;
+
+            // explicitly copy each pair, so that we don't remove any properties that the client may have removed
+            foreach (KeyValuePair<string, string> pair in detail.ExtendedProperties)
+            {
+                staff.ExtendedProperties[pair.Key] = pair.Value;
+            }
         }
     }
 }

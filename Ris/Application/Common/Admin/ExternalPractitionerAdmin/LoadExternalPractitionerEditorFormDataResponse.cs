@@ -44,14 +44,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
             List<EnumValueInfo> addressTypeChoices,
             List<string> addressProvinceChoices,
             List<string> addressCountryChoices,
-            List<EnumValueInfo> phoneTypeChoices,
-            List<EnumValueInfo> licenseAuthorityChoices)
+            List<EnumValueInfo> phoneTypeChoices)
         {
             this.AddressTypeChoices = addressTypeChoices;
             this.AddressProvinceChoices = addressProvinceChoices;
             this.AddressCountryChoices = addressCountryChoices;
             this.PhoneTypeChoices = phoneTypeChoices;
-            this.LicenseAuthorityChoices = licenseAuthorityChoices;
         }
 
         [DataMember]
@@ -65,8 +63,5 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 
         [DataMember]
         public List<EnumValueInfo> PhoneTypeChoices;
-
-        [DataMember]
-        public List<EnumValueInfo> LicenseAuthorityChoices;
     }
 }

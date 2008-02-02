@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
         /// <summary>
         /// Import external practitioner from CSV format.
         /// </summary>
-        /// <param name="lines">
+        /// <param name="rows">
         /// Each string in the list must contain 25 CSV fields, as follows:
         ///     0 - FamilyName
         ///     1 - GivenName
@@ -67,8 +67,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
         ///     3 - Prefix
         ///     4 - Suffix
         ///     5 - Degree
-        ///     6 - LicenseNumberId
-        ///     7 - LicenseNumberAssigningAuthority
+        ///     6 - LicenseNumber
+        ///     7 - BillingNumber
         ///     8 - Street
         ///     9 - Unit
         ///     10 - City
@@ -108,8 +108,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
                 string epSuffix = fields[4];
                 string epDegree = fields[5];
 
-                string epLicenseId = fields[6];
-                string epLicenseAssigningAuthority = fields[7];
+                string epLicense = fields[6];
+                string epBillingNumber = fields[7];
 
                 string addressStreet = fields[8];
                 string addressUnit = fields[9];
@@ -135,15 +135,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
                 DateTime? faxValidFrom = ParseDateTime(fields[26]);
                 DateTime? faxValidUntil = ParseDateTime(fields[27]);
 
-                PractitionerLicenseAuthorityEnum licenseAuth = context.GetBroker<IEnumBroker>().Find<PractitionerLicenseAuthorityEnum>(epLicenseAssigningAuthority);
-                PractitionerLicenseNumber licenseNumber = new PractitionerLicenseNumber(epLicenseId, licenseAuth);
 
-                ExternalPractitioner ep = GetExternalPracitioner(licenseNumber, importedEPs);
+                ExternalPractitioner ep = GetExternalPracitioner(epLicense, importedEPs);
 
                 if (ep == null)
                 {
                     ep = new ExternalPractitioner();
-                    ep.LicenseNumber = licenseNumber;
+                    ep.LicenseNumber = epLicense;
+                    ep.BillingNumber = epBillingNumber;
 
                     ep.Name = new PersonName(epFamilyName, epGivenName, epMiddlename, epPrefix, epSuffix, epDegree);
 
@@ -209,25 +208,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 
         #region Private Methods
 
-        private ExternalPractitioner GetExternalPracitioner(PractitionerLicenseNumber license, List<ExternalPractitioner> importedEPs)
+        private ExternalPractitioner GetExternalPracitioner(string license, List<ExternalPractitioner> importedEPs)
         {
             // if licenseId is not supplied, then assume the record does not exist
-            if (string.IsNullOrEmpty(license.Id))
+            if (string.IsNullOrEmpty(license))
                 return null;
 
-            ExternalPractitioner externalPractitioner = null;
+            ExternalPractitioner externalPractitioner;
 
-            externalPractitioner = CollectionUtils.SelectFirst<ExternalPractitioner>(importedEPs,
+            externalPractitioner = CollectionUtils.SelectFirst(importedEPs,
                 delegate(ExternalPractitioner ep) { return Equals(ep.LicenseNumber, license); });
 
             if (externalPractitioner == null)
             {
                 ExternalPractitionerSearchCriteria criteria = new ExternalPractitionerSearchCriteria();
-                criteria.LicenseNumber.Id.EqualTo(license.Id);
-                criteria.LicenseNumber.AssigningAuthority.EqualTo(license.AssigningAuthority);
+                criteria.LicenseNumber.EqualTo(license);
 
                 IExternalPractitionerBroker broker = _context.GetBroker<IExternalPractitionerBroker>();
-                externalPractitioner = CollectionUtils.FirstElement<ExternalPractitioner>(broker.Find(criteria));
+                externalPractitioner = CollectionUtils.FirstElement(broker.Find(criteria));
             }
 
             return externalPractitioner;

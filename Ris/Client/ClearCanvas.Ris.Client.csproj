@@ -85,7 +85,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>FolderExplorerComponentSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Formatting\LicenseNumberFormat.cs" />
     <Compile Include="Formatting\VisitNumberFormat.cs" />
     <Compile Include="IWorkflowFolderToolContext.cs" />
     <Compile Include="IWorkflowItemToolContext.cs" />

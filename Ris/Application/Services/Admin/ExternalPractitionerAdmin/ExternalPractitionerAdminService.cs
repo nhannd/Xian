@@ -98,9 +98,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
                 EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext),
                 dummyProvinces,
                 dummyCountries,
-                (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false),
-                EnumUtils.GetEnumValueList<PractitionerLicenseAuthorityEnum>(PersistenceContext)
-                );
+                (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false));
 
         }
 
@@ -163,7 +161,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
                                      delegate(string word)
                                      {
                                          ExternalPractitionerSearchCriteria c = new ExternalPractitionerSearchCriteria();
-                                         c.LicenseNumber.Id.StartsWith(word);
+                                         c.LicenseNumber.StartsWith(word);
                                          return c;
                                      }));
 

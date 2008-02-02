@@ -59,15 +59,13 @@ namespace ClearCanvas.Ris.Client
     {
         private ExternalPractitionerDetail _practitionerDetail;
         private bool _isNew;
-        private List<EnumValueInfo> _licenseAuthorityChoices;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ExternalPractitionerDetailsEditorComponent(bool isNew, List<EnumValueInfo> licenseAuthorityChoices)
+        public ExternalPractitionerDetailsEditorComponent(bool isNew)
         {
             _practitionerDetail = new ExternalPractitionerDetail();
-            _licenseAuthorityChoices = licenseAuthorityChoices;
             _isNew = isNew;
         }
 
@@ -154,25 +152,20 @@ namespace ClearCanvas.Ris.Client
 
         public string LicenseNumber
         {
-            get { return _practitionerDetail.LicenseNumber.Id; }
+            get { return _practitionerDetail.LicenseNumber; }
             set
             {
-                _practitionerDetail.LicenseNumber.Id = value;
+                _practitionerDetail.LicenseNumber = value;
                 this.Modified = true;
             }
         }
 
-        public IList LicenseAuthorityChoices
+        public string BillingNumber
         {
-            get { return _licenseAuthorityChoices; }
-        }
-
-        public EnumValueInfo LicenseAuthority
-        {
-            get { return _practitionerDetail.LicenseNumber.AssigningAuthority; }
+            get { return _practitionerDetail.BillingNumber; }
             set
             {
-                _practitionerDetail.LicenseNumber.AssigningAuthority = value;
+                _practitionerDetail.BillingNumber = value;
                 this.Modified = true;
             }
         }

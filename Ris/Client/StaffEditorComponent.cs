@@ -43,6 +43,37 @@ using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 
 namespace ClearCanvas.Ris.Client
 {
+    /// <summary>
+    /// Defines an interface for providing custom editing pages to be displayed in the staff editor.
+    /// </summary>
+    public interface IStaffEditorPageProvider
+    {
+        IStaffEditorPage[] GetEditorPages(StaffDetail staffDetail);
+    }
+
+    /// <summary>
+    /// Defines an interface to a custom staff editor page.
+    /// </summary>
+    public interface IStaffEditorPage
+    {
+        Path Path { get; }
+        IApplicationComponent GetComponent();
+
+        void Save();
+    }
+
+    /// <summary>
+    /// Defines an extension point for adding custom pages to the staff editor.
+    /// </summary>
+    public class StaffEditorPageProviderExtensionPoint : ExtensionPoint<IStaffEditorPageProvider>
+    {
+    }
+
+
+
+    /// <summary>
+    /// Allows editing of staff person information.
+    /// </summary>
     public class StaffEditorComponent : NavigatorComponentContainer
     {
         private EntityRef _staffRef;
@@ -51,11 +82,11 @@ namespace ClearCanvas.Ris.Client
         // return values for staff
         private StaffSummary _staffSummary;
 
-        private bool _isNew;
+        private readonly bool _isNew;
 
         private StaffDetailsEditorComponent _detailsEditor;
-        //private AddressesSummaryComponent _addressesSummary;
-        //private PhoneNumbersSummaryComponent _phoneNumbersSummary;
+
+        private List<IStaffEditorPage> _extensionPages;
 
         /// <summary>
         /// Constructs an editor to edit a new staff
@@ -69,7 +100,6 @@ namespace ClearCanvas.Ris.Client
         /// Constructs an editor to edit an existing staff profile
         /// </summary>
         /// <param name="reference"></param>
-        /// <param name="staffMode"></param>
         public StaffEditorComponent(EntityRef reference)
         {
             _isNew = false;
@@ -93,8 +123,6 @@ namespace ClearCanvas.Ris.Client
 
                     string rootPath = SR.TitleStaff;
                     this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new StaffDetailsEditorComponent(_isNew, formDataResponse.StaffTypeChoices)));
-                    //this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
-                    //this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
 
                     this.ValidationStrategy = new AllComponentsValidationStrategy();
 
@@ -111,9 +139,21 @@ namespace ClearCanvas.Ris.Client
                     }
 
                     _detailsEditor.StaffDetail = _staffDetail;
-                    //_addressesSummary.Subject = _staffDetail.Addresses;
-                    //_phoneNumbersSummary.Subject = _staffDetail.TelephoneNumbers;
                 });
+
+            // instantiate all extension pages
+            _extensionPages = new List<IStaffEditorPage>();
+            foreach (IStaffEditorPageProvider pageProvider in new StaffEditorPageProviderExtensionPoint().CreateExtensions())
+            {
+                _extensionPages.AddRange(pageProvider.GetEditorPages(_staffDetail));
+            }
+
+            // add extension pages to navigator
+            // the navigator will start those components if the user goes to that page
+            foreach (IStaffEditorPage page in _extensionPages)
+            {
+                this.Pages.Add(new NavigatorPage(page.Path.LocalizedPath, page.GetComponent()));
+            }
 
             base.Start();
         }
@@ -133,6 +173,9 @@ namespace ClearCanvas.Ris.Client
 
             try
             {
+                // give extension pages a chance to save data prior to commit
+                _extensionPages.ForEach(delegate (IStaffEditorPage page) { page.Save(); });
+
                 Platform.GetService<IStaffAdminService>(
                     delegate(IStaffAdminService service)
                     {

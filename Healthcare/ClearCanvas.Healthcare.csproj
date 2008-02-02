@@ -107,7 +107,6 @@
     <Compile Include="OrderAttachment.cs" />
     <Compile Include="PatientAttachment.cs" />
     <Compile Include="PatientIdentifier.cs" />
-    <Compile Include="PractitionerLicenseNumber.cs" />
     <Compile Include="ProcedureCheckIn.cs" />
     <Compile Include="Protocol.cs" />
     <Compile Include="ProtocolCode.cs" />
@@ -301,9 +300,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="InsuranceAuthorityEnum.enum.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="PractitionerLicenseAuthorityEnum.enum.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -65,6 +65,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _staffType.DataSource = _component.StaffTypeChoices;
             _staffType.DataBindings.Add("Value", _component, "StaffType", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _licenseNumber.DataBindings.Add("Value", _component, "LicenseNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+            _billingNumber.DataBindings.Add("Value", _component, "BillingNumber", true, DataSourceUpdateMode.OnPropertyChanged);
         }
     }
 }

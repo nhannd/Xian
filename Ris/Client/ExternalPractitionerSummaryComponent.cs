@@ -138,7 +138,7 @@ namespace ClearCanvas.Ris.Client
                 1.0f));
 
             _practitioners.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnLicenseNumber,
-                delegate(ExternalPractitionerSummary staff) { return LicenseNumberFormat.Format(staff.LicenseNumber); },
+                delegate(ExternalPractitionerSummary staff) { return staff.LicenseNumber; },
                 1.0f));
 
             _staffActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));

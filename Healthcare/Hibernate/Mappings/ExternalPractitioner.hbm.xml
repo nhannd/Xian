@@ -14,10 +14,8 @@
       <property name="Suffix" column="Suffix_" type="String" length="10" not-null="false"/>
       <property name="Degree" column="Degree_" type="String" length="10" not-null="false"/>
     </component>
-    <component name="LicenseNumber" class="PractitionerLicenseNumber">
-      <property name="Id" column="LicenseNumberId_" type="String"/>
-      <many-to-one name="AssigningAuthority" class="PractitionerLicenseAuthorityEnum" column="LicenseNumberAssigningAuthority_"/>
-    </component>
+    <property name="LicenseNumber" column="LicenseNumber_" type="String" length="100"/>
+    <property name="BillingNumber" column="BillingNumber_" type="String" length="100"/>
     <idbag name="TelephoneNumbers" lazy="true" table="ExternalPractitionerTelephoneNumber_" access="nosetter.camelcase-underscore">
       <collection-id column="OID_" type="Guid">
         <generator class="guid.comb"/>
@@ -55,5 +53,11 @@
         </property>
       </composite-element>
     </idbag>
+    
+    <map name="ExtendedProperties" lazy="true" table="ExternalPractitionerExtendedProperties_">
+      <key column="ExternalPractitionerOID_"/>
+      <index column="Name_" type="String"/>
+      <element column="Value_" type="String" length="4000"/>
+    </map>
   </class>
 </hibernate-mapping>

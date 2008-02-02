@@ -40,11 +40,12 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class ExternalPractitionerSummary : DataContractBase, ICloneable, IEquatable<ExternalPractitionerSummary>
     {
-        public ExternalPractitionerSummary(EntityRef pracRef, PersonNameDetail personNameDetail, CompositeIdentifierDetail licenseNumber)
+        public ExternalPractitionerSummary(EntityRef pracRef, PersonNameDetail personNameDetail, string licenseNumber, string billingNumber)
         {
             this.PractitionerRef = pracRef;
             this.Name = personNameDetail;
             this.LicenseNumber = licenseNumber;
+            this.BillingNumber = billingNumber;
         }
 
         public ExternalPractitionerSummary()
@@ -58,8 +59,10 @@ namespace ClearCanvas.Ris.Application.Common
         public PersonNameDetail Name;
 
         [DataMember]
-        public CompositeIdentifierDetail LicenseNumber;
+        public string LicenseNumber;
 
+        [DataMember]
+        public string BillingNumber;
 
         public bool Equals(ExternalPractitionerSummary externalPractitionerSummary)
         {
@@ -85,10 +88,8 @@ namespace ClearCanvas.Ris.Application.Common
             ExternalPractitionerSummary clone = new ExternalPractitionerSummary();
             clone.PractitionerRef = this.PractitionerRef;
             clone.Name = (PersonNameDetail)this.Name.Clone();
-            if (this.LicenseNumber != null)
-            {
-                clone.LicenseNumber = (CompositeIdentifierDetail)this.LicenseNumber.Clone();
-            }
+            clone.LicenseNumber = this.LicenseNumber;
+            clone.BillingNumber = this.BillingNumber;
             return clone;
         }
 

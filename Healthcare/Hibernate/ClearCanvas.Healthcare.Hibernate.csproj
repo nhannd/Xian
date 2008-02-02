@@ -199,7 +199,6 @@
     <EmbeddedResource Include="Mappings\ProtocolGroup.hbm.xml" />
     <EmbeddedResource Include="Mappings\InformationAuthorityEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\InsuranceAuthorityEnum.hbm.xml" />
-    <EmbeddedResource Include="Mappings\PractitionerLicenseAuthorityEnum.hbm.xml" />
     <EmbeddedResource Include="Brokers\PriorReportBroker.hbm.xml" />
     <EmbeddedResource Include="Mappings\ProtocolAssignmentStep.hbm.xml" />
     <EmbeddedResource Include="Mappings\ProtocolResolutionStep.hbm.xml" />

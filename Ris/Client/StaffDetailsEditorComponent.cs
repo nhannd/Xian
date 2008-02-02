@@ -177,6 +177,26 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        public string LicenseNumber
+        {
+            get { return _staffDetail.LicenseNumber; }
+            set
+            {
+                _staffDetail.LicenseNumber = value;
+                this.Modified = true;
+            }
+        }
+
+        public string BillingNumber
+        {
+            get { return _staffDetail.BillingNumber; }
+            set
+            {
+                _staffDetail.BillingNumber = value;
+                this.Modified = true;
+            }
+        }
+
         #endregion
     }
 }

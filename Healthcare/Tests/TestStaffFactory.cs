@@ -42,8 +42,11 @@ namespace ClearCanvas.Healthcare.Tests
             return new Staff(
                 "01",
                 new PersonName("Simpson", "Bart", null, null, null, null),
+                null,   // license
+                null,   // billing
                 staffType,
-                null);
+                null,
+                new Dictionary<string, string>());
         }
     }
 }

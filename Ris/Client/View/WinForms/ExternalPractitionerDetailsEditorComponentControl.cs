@@ -61,10 +61,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _familyName.DataBindings.Add("Value", _component, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);
             _givenName.DataBindings.Add("Value", _component, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
             _middleName.DataBindings.Add("Value", _component, "MiddleName", true, DataSourceUpdateMode.OnPropertyChanged);
-            
+
             _licenseNumber.DataBindings.Add("Value", _component, "LicenseNumber", true, DataSourceUpdateMode.OnPropertyChanged);
-            _licenseAuthority.DataSource = _component.LicenseAuthorityChoices;
-            _licenseAuthority.DataBindings.Add("Value", _component, "LicenseAuthority", true, DataSourceUpdateMode.OnPropertyChanged);
+            _billingNumber.DataBindings.Add("Value", _component, "BillingNumber", true, DataSourceUpdateMode.OnPropertyChanged);
         }
     }
 }

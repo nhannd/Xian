@@ -43,6 +43,33 @@ using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 
 namespace ClearCanvas.Ris.Client
 {
+    /// <summary>
+    /// Defines an interface for providing custom editing pages to be displayed in the staff editor.
+    /// </summary>
+    public interface IExternalPractitionerEditorPageProvider
+    {
+        IExternalPractitionerEditorPage[] GetEditorPages(ExternalPractitionerDetail practitionerDetail);
+    }
+
+    /// <summary>
+    /// Defines an interface to a custom staff editor page.
+    /// </summary>
+    public interface IExternalPractitionerEditorPage
+    {
+        Path Path { get; }
+        IApplicationComponent GetComponent();
+
+        void Save();
+    }
+
+    /// <summary>
+    /// Defines an extension point for adding custom pages to the staff editor.
+    /// </summary>
+    public class ExternalPractitionerEditorPageProviderExtensionPoint : ExtensionPoint<IExternalPractitionerEditorPageProvider>
+    {
+    }
+
+
     public class ExternalPractitionerEditorComponent : NavigatorComponentContainer
     {
         private EntityRef _practitionerRef;
@@ -51,11 +78,13 @@ namespace ClearCanvas.Ris.Client
         // return values for staff
         private ExternalPractitionerSummary _practitionerSummary;
 
-        private bool _isNew;
+        private readonly bool _isNew;
 
         private ExternalPractitionerDetailsEditorComponent _detailsEditor;
         private AddressesSummaryComponent _addressesSummary;
         private PhoneNumbersSummaryComponent _phoneNumbersSummary;
+
+        private List<IExternalPractitionerEditorPage> _extensionPages;
 
         /// <summary>
         /// Constructs an editor to edit a new staff
@@ -69,7 +98,6 @@ namespace ClearCanvas.Ris.Client
         /// Constructs an editor to edit an existing staff profile
         /// </summary>
         /// <param name="reference"></param>
-        /// <param name="staffMode"></param>
         public ExternalPractitionerEditorComponent(EntityRef reference)
         {
             _isNew = false;
@@ -92,7 +120,7 @@ namespace ClearCanvas.Ris.Client
                     LoadExternalPractitionerEditorFormDataResponse formDataResponse = service.LoadExternalPractitionerEditorFormData(new LoadExternalPractitionerEditorFormDataRequest());
 
                     string rootPath = SR.TitleExternalPractitioner;
-                    this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new ExternalPractitionerDetailsEditorComponent(_isNew, formDataResponse.LicenseAuthorityChoices)));
+                    this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new ExternalPractitionerDetailsEditorComponent(_isNew)));
                     this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
                     this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
 
@@ -114,6 +142,20 @@ namespace ClearCanvas.Ris.Client
                     _phoneNumbersSummary.Subject = _practitionerDetail.TelephoneNumbers;
                 });
 
+            // instantiate all extension pages
+            _extensionPages = new List<IExternalPractitionerEditorPage>();
+            foreach (IExternalPractitionerEditorPageProvider pageProvider in new ExternalPractitionerEditorPageProviderExtensionPoint().CreateExtensions())
+            {
+                _extensionPages.AddRange(pageProvider.GetEditorPages(_practitionerDetail));
+            }
+
+            // add extension pages to navigator
+            // the navigator will start those components if the user goes to that page
+            foreach (IStaffEditorPage page in _extensionPages)
+            {
+                this.Pages.Add(new NavigatorPage(page.Path.LocalizedPath, page.GetComponent()));
+            }
+
             base.Start();
         }
 
@@ -132,6 +174,9 @@ namespace ClearCanvas.Ris.Client
 
             try
             {
+                // give extension pages a chance to save data prior to commit
+                _extensionPages.ForEach(delegate(IExternalPractitionerEditorPage page) { page.Save(); });
+
                 Platform.GetService<IExternalPractitionerAdminService>(
                     delegate(IExternalPractitionerAdminService service)
                     {

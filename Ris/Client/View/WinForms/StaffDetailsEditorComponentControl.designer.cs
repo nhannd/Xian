@@ -64,6 +64,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._givenName = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._familyName = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._staffId = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._billingNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._licenseNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.SuspendLayout();
             // 
             // _staffType
@@ -72,69 +74,104 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._staffType.DisplayMember = "";
             this._staffType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._staffType.LabelText = "StaffType";
-            this._staffType.Location = new System.Drawing.Point(17, 101);
-            this._staffType.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._staffType.Location = new System.Drawing.Point(13, 82);
+            this._staffType.Margin = new System.Windows.Forms.Padding(2);
             this._staffType.Name = "_staffType";
-            this._staffType.Size = new System.Drawing.Size(200, 50);
+            this._staffType.Size = new System.Drawing.Size(150, 41);
             this._staffType.TabIndex = 3;
             this._staffType.Value = null;
             // 
             // _middleName
             // 
             this._middleName.LabelText = "Middle Name";
-            this._middleName.Location = new System.Drawing.Point(462, 25);
-            this._middleName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._middleName.Location = new System.Drawing.Point(346, 20);
+            this._middleName.Margin = new System.Windows.Forms.Padding(2);
             this._middleName.Mask = "";
             this._middleName.Name = "_middleName";
-            this._middleName.Size = new System.Drawing.Size(200, 50);
+            this._middleName.PasswordChar = '\0';
+            this._middleName.Size = new System.Drawing.Size(150, 41);
             this._middleName.TabIndex = 2;
+            this._middleName.ToolTip = null;
             this._middleName.Value = null;
             // 
             // _givenName
             // 
             this._givenName.LabelText = "Given Name";
-            this._givenName.Location = new System.Drawing.Point(239, 25);
-            this._givenName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._givenName.Location = new System.Drawing.Point(179, 20);
+            this._givenName.Margin = new System.Windows.Forms.Padding(2);
             this._givenName.Mask = "";
             this._givenName.Name = "_givenName";
-            this._givenName.Size = new System.Drawing.Size(200, 50);
+            this._givenName.PasswordChar = '\0';
+            this._givenName.Size = new System.Drawing.Size(150, 41);
             this._givenName.TabIndex = 1;
+            this._givenName.ToolTip = null;
             this._givenName.Value = null;
             // 
             // _familyName
             // 
             this._familyName.LabelText = "Family Name";
-            this._familyName.Location = new System.Drawing.Point(17, 25);
-            this._familyName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._familyName.Location = new System.Drawing.Point(13, 20);
+            this._familyName.Margin = new System.Windows.Forms.Padding(2);
             this._familyName.Mask = "";
             this._familyName.Name = "_familyName";
-            this._familyName.Size = new System.Drawing.Size(200, 50);
+            this._familyName.PasswordChar = '\0';
+            this._familyName.Size = new System.Drawing.Size(150, 41);
             this._familyName.TabIndex = 0;
+            this._familyName.ToolTip = null;
             this._familyName.Value = null;
             // 
             // _staffId
             // 
             this._staffId.LabelText = "Staff ID";
-            this._staffId.Location = new System.Drawing.Point(239, 101);
-            this._staffId.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._staffId.Location = new System.Drawing.Point(179, 82);
+            this._staffId.Margin = new System.Windows.Forms.Padding(2);
             this._staffId.Mask = "";
             this._staffId.Name = "_staffId";
-            this._staffId.Size = new System.Drawing.Size(200, 50);
+            this._staffId.PasswordChar = '\0';
+            this._staffId.Size = new System.Drawing.Size(150, 41);
             this._staffId.TabIndex = 4;
+            this._staffId.ToolTip = null;
             this._staffId.Value = null;
+            // 
+            // _billingNumber
+            // 
+            this._billingNumber.LabelText = "Billing Number";
+            this._billingNumber.Location = new System.Drawing.Point(179, 142);
+            this._billingNumber.Margin = new System.Windows.Forms.Padding(2);
+            this._billingNumber.Mask = "";
+            this._billingNumber.Name = "_billingNumber";
+            this._billingNumber.PasswordChar = '\0';
+            this._billingNumber.Size = new System.Drawing.Size(150, 41);
+            this._billingNumber.TabIndex = 7;
+            this._billingNumber.ToolTip = null;
+            this._billingNumber.Value = null;
+            // 
+            // _licenseNumber
+            // 
+            this._licenseNumber.LabelText = "License Number";
+            this._licenseNumber.Location = new System.Drawing.Point(13, 142);
+            this._licenseNumber.Margin = new System.Windows.Forms.Padding(2);
+            this._licenseNumber.Mask = "";
+            this._licenseNumber.Name = "_licenseNumber";
+            this._licenseNumber.PasswordChar = '\0';
+            this._licenseNumber.Size = new System.Drawing.Size(150, 41);
+            this._licenseNumber.TabIndex = 6;
+            this._licenseNumber.ToolTip = null;
+            this._licenseNumber.Value = null;
             // 
             // StaffDetailsEditorComponentControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._billingNumber);
+            this.Controls.Add(this._licenseNumber);
             this.Controls.Add(this._staffId);
             this.Controls.Add(this._middleName);
             this.Controls.Add(this._givenName);
             this.Controls.Add(this._familyName);
             this.Controls.Add(this._staffType);
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "StaffDetailsEditorComponentControl";
-            this.Size = new System.Drawing.Size(671, 181);
+            this.Size = new System.Drawing.Size(515, 199);
             this.ResumeLayout(false);
 
         }
@@ -146,6 +183,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TextField _givenName;
         private ClearCanvas.Desktop.View.WinForms.TextField _familyName;
         private ClearCanvas.Desktop.View.WinForms.TextField _staffId;
+        private ClearCanvas.Desktop.View.WinForms.TextField _billingNumber;
+        private ClearCanvas.Desktop.View.WinForms.TextField _licenseNumber;
 
     }
 }

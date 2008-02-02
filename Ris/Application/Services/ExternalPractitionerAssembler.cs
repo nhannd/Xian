@@ -44,19 +44,13 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public ExternalPractitionerSummary CreateExternalPractitionerSummary(ExternalPractitioner prac, IPersistenceContext context)
         {
-            ExternalPractitionerSummary summary = new ExternalPractitionerSummary();
-            summary.PractitionerRef = prac.GetRef();
-            summary.Name = new PersonNameAssembler().CreatePersonNameDetail(prac.Name);
-            if (prac.LicenseNumber != null)
-            {
-                summary.LicenseNumber = CreateLicenseNumberSummary(prac.LicenseNumber);
-            }
-            return summary;
-        }
+            ExternalPractitionerSummary summary = new ExternalPractitionerSummary(
+                prac.GetRef(),
+                new PersonNameAssembler().CreatePersonNameDetail(prac.Name),
+                prac.LicenseNumber,
+                prac.BillingNumber);
 
-        private CompositeIdentifierDetail CreateLicenseNumberSummary(PractitionerLicenseNumber license)
-        {
-            return new CompositeIdentifierDetail(license.Id, EnumUtils.GetEnumValueInfo(license.AssigningAuthority));
+            return summary;
         }
 
         public ExternalPractitionerDetail CreateExternalPractitionerDetail(ExternalPractitioner prac, IPersistenceContext context)
@@ -65,25 +59,24 @@ namespace ClearCanvas.Ris.Application.Services
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
             AddressAssembler addressAssembler = new AddressAssembler();
 
-            ExternalPractitionerDetail detail = new ExternalPractitionerDetail();
-            detail.Name = assembler.CreatePersonNameDetail(prac.Name);
-            detail.TelephoneNumbers = CollectionUtils.Map<TelephoneNumber, TelephoneDetail, List<TelephoneDetail>>(
+            ExternalPractitionerDetail detail = new ExternalPractitionerDetail(
+                assembler.CreatePersonNameDetail(prac.Name),
+                prac.LicenseNumber,
+                prac.BillingNumber,
+                CollectionUtils.Map<TelephoneNumber, TelephoneDetail, List<TelephoneDetail>>(
                     prac.TelephoneNumbers,
                     delegate(TelephoneNumber phone)
                     {
                         return telephoneNumberAssembler.CreateTelephoneDetail(phone, context);
-                    });
-            detail.Addresses = CollectionUtils.Map<Address, AddressDetail, List<AddressDetail>>(
+                    }),
+                CollectionUtils.Map<Address, AddressDetail, List<AddressDetail>>(
                     prac.Addresses,
                     delegate(Address address)
                     {
                         return addressAssembler.CreateAddressDetail(address, context);
-                    });
+                    }),
+                    new Dictionary<string, string>(prac.ExtendedProperties));
 
-            if (prac.LicenseNumber != null)
-            {
-                detail.LicenseNumber = CreateLicenseNumberSummary(prac.LicenseNumber);
-            }
 
             return detail;
         }
@@ -112,8 +105,14 @@ namespace ClearCanvas.Ris.Application.Services
                 }
             }
 
-            prac.LicenseNumber = new PractitionerLicenseNumber(detail.LicenseNumber.Id,
-                EnumUtils.GetEnumValue<PractitionerLicenseAuthorityEnum>(detail.LicenseNumber.AssigningAuthority, context));
+            prac.LicenseNumber = detail.LicenseNumber;
+            prac.BillingNumber = detail.BillingNumber;
+
+            // explicitly copy each pair, so that we don't remove any properties that the client may have removed
+            foreach (KeyValuePair<string, string> pair in detail.ExtendedProperties)
+            {
+                prac.ExtendedProperties[pair.Key] = pair.Value;
+            }
         }
     }
 }
