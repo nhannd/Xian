@@ -149,7 +149,7 @@ namespace ClearCanvas.Dicom
                     foreach (string subVal in valueArray)
                         if (subVal.Length > Tag.VR.MaximumLength)
                             throw new DicomDataException(
-                                String.Format("Invalid value length ({0}) for tag {1} of VR {2} of max size {3}", subVal, Tag, Tag.VR, Tag.VR.UnitSize));
+                                String.Format("Invalid value length ({0}) for tag {1} of VR {2} of max size {3}", subVal, Tag, Tag.VR, Tag.VR.MaximumLength));
                 }
             }
 

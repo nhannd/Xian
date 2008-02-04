@@ -1468,6 +1468,10 @@ namespace ClearCanvas.Dicom
             return length;
         }
 
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
+        {
+             return new ByteBuffer(_values, ByteBuffer.LocalMachineEndian);
+        }
 
     }
     #endregion
@@ -1658,17 +1662,19 @@ namespace ClearCanvas.Dicom
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
             int len = _values.Length;
-            byte[] byteVal = new byte[len];
-
-            Buffer.BlockCopy(_values, 0, byteVal, 0, len);
-
-            ByteBuffer bb = new ByteBuffer(byteVal, syntax.Endian);
             if (syntax.Endian != ByteBuffer.LocalMachineEndian)
             {
+                byte[] byteVal = new byte[len];
+
+                Buffer.BlockCopy(_values, 0, byteVal, 0, len);
+
+                ByteBuffer bb = new ByteBuffer(byteVal, syntax.Endian);
                 bb.Swap(Tag.VR.UnitSize);
+
+                return bb;
             }
 
-            return bb;
+            return new ByteBuffer(_values, syntax.Endian);
         }
 
         #endregion
@@ -3184,7 +3190,14 @@ namespace ClearCanvas.Dicom
 
         protected override byte ParseNumber(string val)
         {
-            throw new Exception("The method or operation is not implemented.");
+            if (val == null)
+                throw new DicomDataException("Null values invalid for UN VR");
+
+            byte parseVal;
+            if (false == byte.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+                throw new DicomDataException(
+                    String.Format("Invalid byte format value for tag {0}: {1}", Tag, val));
+            return parseVal;
         }
 
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)

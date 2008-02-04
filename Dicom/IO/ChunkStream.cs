@@ -129,6 +129,10 @@ namespace ClearCanvas.Dicom.IO
                 count -= bytesInChunk;
                 dstOffset += bytesInChunk;
                 _position += bytesInChunk;
+
+                // Allow garbage collection for the chunk, its already been read
+                _chunks[_current] = null;
+
                 _current++;
                 _offset = 0;
             }
@@ -163,6 +167,8 @@ namespace ClearCanvas.Dicom.IO
             for (int i = 0; i < _chunks.Count; i++)
             {
                 byte[] chunk = _chunks[i];
+                if (chunk == null)
+                    throw new NotSupportedException("Seek not supported at this time");
                 if (remain > chunk.Length)
                 {
                     remain -= chunk.Length;

@@ -1195,7 +1195,7 @@ namespace ClearCanvas.Dicom.Network
                             _dimse.CommandReader.Dataset = _dimse.Command;
                         }
 
-                        DicomReadStatus stat = _dimse.CommandReader.Read(null, DicomReadOptions.Default);
+                        DicomReadStatus stat = _dimse.CommandReader.Read(null, DicomReadOptions.UseDictionaryForExplicitUN);
                         if (stat == DicomReadStatus.UnknownError)
                         {
                             DicomLogger.LogError("Unexpected parsing error when reading command group elements.");
@@ -1258,7 +1258,7 @@ namespace ClearCanvas.Dicom.Network
                             _dimse.DatasetReader.Dataset = _dimse.Dataset;
                         }
 
-                        DicomReadStatus stat = _dimse.DatasetReader.Read(null, DicomReadOptions.Default);
+                        DicomReadStatus stat = _dimse.DatasetReader.Read(null, DicomReadOptions.UseDictionaryForExplicitUN);
                         if (stat == DicomReadStatus.UnknownError)
                         {
                             DicomLogger.LogError("Unexpected parsing error when reading DataSet.");
