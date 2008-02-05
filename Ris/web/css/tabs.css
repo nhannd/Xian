@@ -5,32 +5,31 @@
 
 .Tab 
 {
-   display:inline;
+	display: inline-block;
    white-space:nowrap;
    font-size: 1.2em;
    font-weight: bold;
    margin: 0 0 0 0;
    color: #3D98D1;
    background-color: #ffffff;
-   border: thin solid #A8D8F4;
-   padding: 0 0.1em 0.1em 0.1em;
-	height:1%;
+   border: 1px solid #A8D8F4;
+   padding: 0 0.1em 0 0.1em;
 }
 
 .ActiveTab
 {
    color: #ffffff;
    background-color: #3D98D1;
-	height:1%;
 }
 
 .Tab:hover, .ActiveTab:hover
 {
-   background-color: green;
+   background-color: lightblue;
 }
 
 .TabPage 
 {
+	margin-top: -1px;
    padding: 1em 1em 1em 1em;
    display:none;
    border:none;
@@ -39,5 +38,5 @@
 .ActiveTabPage
 {
    display:block;
-   border: thin solid #A8D8F4;
+   border: 1px solid #A8D8F4;
 }
