@@ -321,8 +321,8 @@ namespace ClearCanvas.Desktop
             PageHost host = _mapPageToHost[page];
             if (!host.IsStarted)
             {
-                host.StartComponent();
                 page.Component.ModifiedChanged += Component_ModifiedChanged;
+                host.StartComponent();
             }
         }
 

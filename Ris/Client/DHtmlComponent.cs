@@ -59,12 +59,12 @@ namespace ClearCanvas.Ris.Client
         public class DHtmlScriptCallback
         {
             protected DHtmlComponent _component;
-            private HtmlActionModelRenderer _renderer;
+            private readonly HtmlActionModelRenderer _actionModelRenderer;
 
             public DHtmlScriptCallback(DHtmlComponent component)
             {
                 _component = component;
-                _renderer = new HtmlActionModelRenderer();
+                _actionModelRenderer = new HtmlActionModelRenderer();
             }
 
             /// <summary>
@@ -100,6 +100,12 @@ namespace ClearCanvas.Ris.Client
                 {
                     throw new NotSupportedException("Type must be YesNo or OkCancel");
                 }
+            }
+
+            public bool Modified
+            {
+                get { return _component.Modified; }
+                set { _component.Modified = value; }
             }
 
             public string DateFormat
@@ -172,7 +178,7 @@ namespace ClearCanvas.Ris.Client
 
             public string GetActionHtml(string labelSearch, string actionLabel)
             {
-                return _renderer.GetHTML(_component.GetActionModel(), labelSearch, actionLabel);
+                return _actionModelRenderer.GetHTML(_component.GetActionModel(), labelSearch, actionLabel);
             }
 
             public string ResolveStaffName(string search)
