@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	public interface IProtractorAnalyzer : IRoiAnalyzer
 	{
-		string Analyze(ImageSop sop, PolyLineInteractiveGraphic rectangle);
+		string Analyze(PolyLineInteractiveGraphic rectangle);
 	}
 
 	[ExtensionPoint]

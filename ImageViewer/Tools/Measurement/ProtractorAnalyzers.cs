@@ -17,16 +17,16 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			Platform.CheckForInvalidCast(protractor, "roiGraphic.Roi", "PolyLineInteractiveGraphic");
 
-			return Analyze(provider.ImageSop, protractor);
+			return Analyze(protractor);
 		}
 
-		public abstract string Analyze(ImageSop sop, PolyLineInteractiveGraphic rectangle);
+		public abstract string Analyze(PolyLineInteractiveGraphic rectangle);
 	}
 
 	[ExtensionOf(typeof(ProtractorAnalyzerExtensionPoint))]
 	public class ProtractorAngleCalculator : ProtractorAnalyzer
 	{
-		public override string Analyze(ImageSop imageSop, PolyLineInteractiveGraphic protractor)
+		public override string Analyze(PolyLineInteractiveGraphic protractor)
 		{
 			// Don't show the callout until the second ray drawn
 			if (protractor.PolyLine.Count < 3)
@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				protractor.PolyLine[2]);
 
 			protractor.ResetCoordinateSystem();
-			string text = String.Format("{0:F2}°", angle);
+			string text = String.Format("{0:F0}°", angle);
 
 			return text;
 		}
