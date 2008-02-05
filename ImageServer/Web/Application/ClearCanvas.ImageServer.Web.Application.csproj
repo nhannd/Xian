@@ -395,15 +395,6 @@
     <Content Include="App_Themes\ClearCanvas\Layout.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheet.css" />
     <Content Include="App_Themes\ClearCanvas\Tabs.css" />
-    <Content Include="App_Themes\NightSafari\Accordian.css" />
-    <Content Include="App_Themes\NightSafari\Background.css" />
-    <Content Include="App_Themes\NightSafari\Border.css" />
-    <Content Include="App_Themes\NightSafari\Calendar.css" />
-    <Content Include="App_Themes\NightSafari\Font.css" />
-    <Content Include="App_Themes\NightSafari\images\background.gif" />
-    <Content Include="App_Themes\NightSafari\images\logos\ImageServerLogo.png" />
-    <Content Include="App_Themes\NightSafari\Layout.css" />
-    <Content Include="App_Themes\NightSafari\Tabs.css" />
     <Content Include="Common\BasePage.aspx" />
     <Content Include="Common\InvalidInputIndicator.ascx" />
     <Content Include="Common\ServerPartitionTabs.ascx" />
@@ -424,7 +415,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Service References\ValidationServerProxy.map" />
-    <Content Include="App_Themes\NightSafari\logo.skin" />
     <Content Include="Common\GridPager.ascx" />
     <Content Include="Global.asax" />
     <Content Include="images\add_disabled.gif" />
@@ -468,19 +458,6 @@
     <Content Include="images\usage.png" />
     <Content Include="Search\SearchPage.aspx" />
     <Content Include="Search\SearchPanel.ascx" />
-    <Content Include="App_Themes\NightSafari\images\gridheaderbackground.png" />
-    <Content Include="App_Themes\NightSafari\images\icon_warning.gif" />
-    <Content Include="App_Themes\NightSafari\images\tab-active-left.gif" />
-    <Content Include="App_Themes\NightSafari\images\tab-active-right.gif" />
-    <Content Include="App_Themes\NightSafari\images\tab-active.gif" />
-    <Content Include="App_Themes\NightSafari\images\tab-hover-left.gif" />
-    <Content Include="App_Themes\NightSafari\images\tab-hover-right.gif" />
-    <Content Include="App_Themes\NightSafari\images\tab-hover.gif" />
-    <Content Include="App_Themes\NightSafari\images\tab-left.gif" />
-    <Content Include="App_Themes\NightSafari\images\tab-line.gif" />
-    <Content Include="App_Themes\NightSafari\images\tab-right.gif" />
-    <Content Include="App_Themes\NightSafari\images\tab.gif" />
-    <Content Include="App_Themes\NightSafari\StyleSheet.css" />
     <Content Include="Admin\Configuration\Preferences\Theme.aspx" />
     <Content Include="Services\ValidationServices.asmx" />
     <Content Include="Web.sitemap" />
