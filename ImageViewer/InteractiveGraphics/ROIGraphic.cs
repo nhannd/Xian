@@ -445,7 +445,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Roi.State = this.Roi.CreateSelectedState();
 			this.Callout.State = this.Callout.CreateSelectedState();
 
-			this.Roi.ControlPoints.Visible = true;
+			this.Roi.ControlPoints.Visible = false;
 			this.Color = Color.Tomato;
 			Draw();
 
