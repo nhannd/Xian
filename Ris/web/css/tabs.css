@@ -1,9 +1,11 @@
-.TabControl {
+.TabControl 
+{
    margin-top: 1em;
 }
 
-.Tab {
-   /*display:inline;*/
+.Tab 
+{
+   display:inline;
    white-space:nowrap;
    font-size: 1.2em;
    font-weight: bold;
@@ -12,24 +14,29 @@
    background-color: #ffffff;
    border: thin solid #A8D8F4;
    padding: 0 0.1em 0.1em 0.1em;
+	height:1%;
 }
 
-.Tab.Active {
+.ActiveTab
+{
    color: #ffffff;
    background-color: #3D98D1;
+	height:1%;
 }
 
-.Tab:hover, .Tab.Active:hover{
-   background-color: lightblue;
+.Tab:hover, .ActiveTab:hover
+{
+   background-color: green;
 }
 
-.TabPage {
+.TabPage 
+{
    padding: 1em 1em 1em 1em;
    display:none;
    border:none;
 }
 
-.TabPage.Active
+.ActiveTabPage
 {
    display:block;
    border: thin solid #A8D8F4;
