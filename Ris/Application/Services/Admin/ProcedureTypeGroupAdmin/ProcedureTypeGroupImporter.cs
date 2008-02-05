@@ -120,9 +120,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
 
             List<ProcedureType> types = new List<ProcedureType>();
 
-            for (bool elementExists = reader.ReadToDescendant(tagProcedureTypeGroup);
+            for (bool elementExists = reader.Read();
                 elementExists;
-                elementExists = reader.ReadToNextSibling(tagProcedureTypeGroup))
+                elementExists = reader.Read())
             {
                 ProcedureTypeSearchCriteria criteria = new ProcedureTypeSearchCriteria();
 
