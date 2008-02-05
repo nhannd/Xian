@@ -57,11 +57,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _staffs.ToolbarModel = _component.StaffListActionModel;
-            _staffs.MenuModel = _component.StaffListActionModel;
+            _staffTableView.ToolbarModel = _component.StaffListActionModel;
+            _staffTableView.MenuModel = _component.StaffListActionModel;
 
-            _staffs.Table = _component.Staffs;
-            _staffs.DataBindings.Add("Selection", _component, "SelectedStaff", true, DataSourceUpdateMode.OnPropertyChanged);
+            _staffTableView.Table = _component.Staffs;
+            _staffTableView.DataBindings.Add("Selection", _component, "SelectedStaff", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _firstName.DataBindings.Add("Value", _component, "FirstName", true, DataSourceUpdateMode.OnPropertyChanged);
             _lastName.DataBindings.Add("Value", _component, "LastName", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -69,16 +69,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _okButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
             _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");
             _cancelButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
-        }
-
-        private void _staffs_Load(object sender, EventArgs e)
-        {
-            //_component.LoadStaffTable();
-        }
-
-        private void _staffs_ItemDoubleClicked(object sender, EventArgs e)
-        {
-            _component.DoubleClickSelectedStaff();
         }
 
         private void _searchButton_Click(object sender, EventArgs e)
@@ -97,6 +87,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private void _cancelButton_Click(object sender, EventArgs e)
         {
             _component.Cancel();
+        }
+
+        private void _staffTableView_ItemDoubleClicked(object sender, EventArgs e)
+        {
+            _component.DoubleClickSelectedStaff();
         }
     }
 }

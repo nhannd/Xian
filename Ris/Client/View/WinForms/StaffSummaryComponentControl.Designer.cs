@@ -59,105 +59,43 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            this._staffs = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this._lastName = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._okButton = new System.Windows.Forms.Button();
             this._firstName = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._searchButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._cancelButton = new System.Windows.Forms.Button();
-            this._okButton = new System.Windows.Forms.Button();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
+            this._lastName = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._staffTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this._searchButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // _staffs
+            // _okButton
             // 
-            this._staffs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._staffs.Location = new System.Drawing.Point(4, 62);
-            this._staffs.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this._staffs.MenuModel = null;
-            this._staffs.Name = "_staffs";
-            this._staffs.ReadOnly = false;
-            this._staffs.Selection = selection1;
-            this._staffs.Size = new System.Drawing.Size(562, 293);
-            this._staffs.TabIndex = 0;
-            this._staffs.Table = null;
-            this._staffs.ToolbarModel = null;
-            this._staffs.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._staffs.Load += new System.EventHandler(this._staffs_Load);
-            this._staffs.ItemDoubleClicked += new System.EventHandler(this._staffs_ItemDoubleClicked);
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this._staffs, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 2);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(570, 411);
-            this.tableLayoutPanel1.TabIndex = 1;
-            // 
-            // tableLayoutPanel2
-            // 
-            this.tableLayoutPanel2.ColumnCount = 3;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.Controls.Add(this._lastName, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this._firstName, 1, 0);
-            this.tableLayoutPanel2.Controls.Add(this._searchButton, 2, 0);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(2, 2);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 1;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(410, 54);
-            this.tableLayoutPanel2.TabIndex = 1;
-            // 
-            // _lastName
-            // 
-            this._lastName.LabelText = "Last Name";
-            this._lastName.Location = new System.Drawing.Point(2, 2);
-            this._lastName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._lastName.Mask = "";
-            this._lastName.Name = "_lastName";
-            this._lastName.Size = new System.Drawing.Size(137, 41);
-            this._lastName.TabIndex = 0;
-            this._lastName.Value = null;
+            this._okButton.Location = new System.Drawing.Point(410, 2);
+            this._okButton.Margin = new System.Windows.Forms.Padding(2);
+            this._okButton.Name = "_okButton";
+            this._okButton.Size = new System.Drawing.Size(75, 23);
+            this._okButton.TabIndex = 0;
+            this._okButton.Text = "OK";
+            this._okButton.UseVisualStyleBackColor = true;
+            this._okButton.Click += new System.EventHandler(this._okButton_Click);
             // 
             // _firstName
             // 
             this._firstName.LabelText = "First Name";
-            this._firstName.Location = new System.Drawing.Point(143, 2);
-            this._firstName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._firstName.Location = new System.Drawing.Point(156, 2);
+            this._firstName.Margin = new System.Windows.Forms.Padding(2);
             this._firstName.Mask = "";
             this._firstName.Name = "_firstName";
+            this._firstName.PasswordChar = '\0';
             this._firstName.Size = new System.Drawing.Size(150, 41);
             this._firstName.TabIndex = 1;
+            this._firstName.ToolTip = null;
             this._firstName.Value = null;
-            // 
-            // _searchButton
-            // 
-            this._searchButton.Location = new System.Drawing.Point(297, 2);
-            this._searchButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._searchButton.Name = "_searchButton";
-            this._searchButton.Size = new System.Drawing.Size(56, 19);
-            this._searchButton.TabIndex = 2;
-            this._searchButton.Text = "Search";
-            this._searchButton.UseVisualStyleBackColor = true;
-            this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
             // 
             // flowLayoutPanel1
             // 
@@ -166,33 +104,86 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.flowLayoutPanel1.Controls.Add(this._cancelButton);
             this.flowLayoutPanel1.Controls.Add(this._okButton);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(2, 361);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(2, 379);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(566, 46);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(566, 30);
             this.flowLayoutPanel1.TabIndex = 1;
             // 
             // _cancelButton
             // 
-            this._cancelButton.Location = new System.Drawing.Point(508, 2);
-            this._cancelButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._cancelButton.Location = new System.Drawing.Point(489, 2);
+            this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
             this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(56, 19);
+            this._cancelButton.Size = new System.Drawing.Size(75, 23);
             this._cancelButton.TabIndex = 1;
             this._cancelButton.Text = "Cancel";
             this._cancelButton.UseVisualStyleBackColor = true;
             this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
             // 
-            // _okButton
+            // _lastName
             // 
-            this._okButton.Location = new System.Drawing.Point(448, 2);
-            this._okButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._okButton.Name = "_okButton";
-            this._okButton.Size = new System.Drawing.Size(56, 19);
-            this._okButton.TabIndex = 0;
-            this._okButton.Text = "OK";
-            this._okButton.UseVisualStyleBackColor = true;
-            this._okButton.Click += new System.EventHandler(this._okButton_Click);
+            this._lastName.LabelText = "Last Name";
+            this._lastName.Location = new System.Drawing.Point(0, 2);
+            this._lastName.Margin = new System.Windows.Forms.Padding(2);
+            this._lastName.Mask = "";
+            this._lastName.Name = "_lastName";
+            this._lastName.PasswordChar = '\0';
+            this._lastName.Size = new System.Drawing.Size(152, 41);
+            this._lastName.TabIndex = 0;
+            this._lastName.ToolTip = null;
+            this._lastName.Value = null;
+            // 
+            // _staffTableView
+            // 
+            this._staffTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._staffTableView.Location = new System.Drawing.Point(4, 64);
+            this._staffTableView.Margin = new System.Windows.Forms.Padding(4);
+            this._staffTableView.Name = "_staffTableView";
+            this._staffTableView.ReadOnly = false;
+            this._staffTableView.Size = new System.Drawing.Size(562, 309);
+            this._staffTableView.TabIndex = 0;
+            this._staffTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._staffTableView.ItemDoubleClicked += new System.EventHandler(this._staffTableView_ItemDoubleClicked);
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this._staffTableView, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 2);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(570, 411);
+            this.tableLayoutPanel1.TabIndex = 2;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this._searchButton);
+            this.panel1.Controls.Add(this._lastName);
+            this.panel1.Controls.Add(this._firstName);
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(455, 54);
+            this.panel1.TabIndex = 2;
+            // 
+            // _searchButton
+            // 
+            this._searchButton.Location = new System.Drawing.Point(310, 20);
+            this._searchButton.Margin = new System.Windows.Forms.Padding(2);
+            this._searchButton.Name = "_searchButton";
+            this._searchButton.Size = new System.Drawing.Size(75, 23);
+            this._searchButton.TabIndex = 2;
+            this._searchButton.Text = "Search";
+            this._searchButton.UseVisualStyleBackColor = true;
+            this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
             // 
             // StaffSummaryComponentControl
             // 
@@ -201,23 +192,24 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "StaffSummaryComponentControl";
             this.Size = new System.Drawing.Size(570, 411);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel2.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private ClearCanvas.Desktop.View.WinForms.TableView _staffs;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private ClearCanvas.Desktop.View.WinForms.TextField _lastName;
+        private System.Windows.Forms.Button _okButton;
         private ClearCanvas.Desktop.View.WinForms.TextField _firstName;
-        private System.Windows.Forms.Button _searchButton;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button _cancelButton;
-        private System.Windows.Forms.Button _okButton;
+        private ClearCanvas.Desktop.View.WinForms.TextField _lastName;
+        private ClearCanvas.Desktop.View.WinForms.TableView _staffTableView;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button _searchButton;
+
     }
 }

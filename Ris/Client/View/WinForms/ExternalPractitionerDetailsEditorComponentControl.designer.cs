@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // _licenseNumber
             // 
             this._licenseNumber.LabelText = "License Number";
-            this._licenseNumber.Location = new System.Drawing.Point(13, 77);
+            this._licenseNumber.Location = new System.Drawing.Point(13, 129);
             this._licenseNumber.Margin = new System.Windows.Forms.Padding(2);
             this._licenseNumber.Mask = "";
             this._licenseNumber.Name = "_licenseNumber";
@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // _middleName
             // 
             this._middleName.LabelText = "Middle Name";
-            this._middleName.Location = new System.Drawing.Point(346, 20);
+            this._middleName.Location = new System.Drawing.Point(13, 75);
             this._middleName.Margin = new System.Windows.Forms.Padding(2);
             this._middleName.Mask = "";
             this._middleName.Name = "_middleName";
@@ -121,7 +121,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // _billingNumber
             // 
             this._billingNumber.LabelText = "Billing Number";
-            this._billingNumber.Location = new System.Drawing.Point(179, 77);
+            this._billingNumber.Location = new System.Drawing.Point(179, 129);
             this._billingNumber.Margin = new System.Windows.Forms.Padding(2);
             this._billingNumber.Mask = "";
             this._billingNumber.Name = "_billingNumber";
@@ -141,7 +141,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.Controls.Add(this._familyName);
             this.Controls.Add(this._licenseNumber);
             this.Name = "ExternalPractitionerDetailsEditorComponentControl";
-            this.Size = new System.Drawing.Size(503, 147);
+            this.Size = new System.Drawing.Size(360, 200);
             this.ResumeLayout(false);
 
         }
