@@ -13,7 +13,7 @@
                                 <asp:Panel ID="Panel10" runat="server" CssClass="CSSAccordianHeaderPanelContent">
                                     <asp:Label ID="PatientID" runat="server" CssClass="CSSAccordianHeaderText" Text="Patient ID"
                                         EnableViewState="False" Width="15%" />
-                                    <asp:Label ID="PatientsName" runat="server" CssClass="CSSAccordianHeaderText" Text="Patient's Name"
+                                    <asp:Label ID="PatientsName" runat="server" CssClass="CSSAccordianHeaderText" Text="Patient Name"
                                         EnableViewState="False" Width="30%" />
                                     <asp:Label ID="WorkQueueType" runat="server" CssClass="CSSAccordianHeaderText" Text="Type"
                                         EnableViewState="False" Width="15%" />

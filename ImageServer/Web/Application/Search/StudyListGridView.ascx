@@ -12,7 +12,7 @@
                 CellPadding="0"
                 PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
                 <Columns>
-                    <asp:BoundField DataField="PatientsName" HeaderText="Patient's Name"></asp:BoundField>
+                    <asp:BoundField DataField="PatientsName" HeaderText="Patient Name"></asp:BoundField>
                     <asp:BoundField DataField="PatientID" HeaderText="Patient ID"></asp:BoundField>
                     <asp:BoundField DataField="AccessionNumber" HeaderText="Accession #"></asp:BoundField>
                     <asp:BoundField DataField="StudyDate" HeaderText="Study Date"></asp:BoundField>
@@ -25,7 +25,7 @@
                     <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" CssClass="CSSGridHeader">
                         <asp:TableHeaderRow>
                             <asp:TableHeaderCell>
-                            Patient's Name
+                            Patient Name
                             </asp:TableHeaderCell>
                             <asp:TableHeaderCell>
                             Patient ID
