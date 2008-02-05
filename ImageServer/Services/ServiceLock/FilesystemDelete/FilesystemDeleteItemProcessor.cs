@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         #region Private Members
         private FilesystemMonitor _monitor;
         private float _bytesToRemove;
+        private int _studiesInserted = 0;
         #endregion
 
         #region Private Methods
@@ -121,6 +122,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                     {
                         update.Commit();
                         _bytesToRemove -= studySize;
+                        _studiesInserted++;
                     }
                 }
             }
@@ -183,14 +185,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
             ServerFilesystemInfo fs = _monitor.Filesystems[item.FilesystemKey];
 
-            Platform.Log(LogLevel.Info, "Starting filesystem watermark check on filesystem {0} (High Watermark: {1}, Low Watermark: {2}",
-                         fs.Filesystem.Description, fs.Filesystem.HighWatermark, fs.Filesystem.LowWatermark);
+            //Platform.Log(LogLevel.Info, "Starting filesystem watermark check on filesystem {0} (High Watermark: {1}, Low Watermark: {2}",
+              //           fs.Filesystem.Description, fs.Filesystem.HighWatermark, fs.Filesystem.LowWatermark);
 
             if (_monitor.CheckFilesystemAboveHighWatermark(item.FilesystemKey))
             {
                 if (CheckWorkQueueDeleteCount(item) > 0)
                 {
-                    Platform.Log(LogLevel.Info, "Delaying filesystem check, StudyDelete items still in the WorkQueue: {0} (Current: {1}, High Watermark: {2}",
+                    Platform.Log(LogLevel.Info, "Delaying filesystem check, StudyDelete items still in the WorkQueue: {0} (Current: {1}, High Watermark: {2})",
                                  fs.Filesystem.Description, fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark);
 
                     UnlockServiceLock(item, true, Platform.Time.AddMinutes(1));
@@ -198,8 +200,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 else
                 {
                     _bytesToRemove = _monitor.CheckFilesystemBytesToRemove(item.FilesystemKey);
-                    int delayMinutes = 10;
+                    int delayMinutes = 8;
 
+                    Platform.Log(LogLevel.Info,
+                                 "Filesystem above high watermark (Current: {0}, High Watermark: {1}).  Starting query for Filesystem delete candidates on '{2}'.",
+                                 fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark, fs.Filesystem.Description);
                     try
                     {
                         DoStudyDelete(item);
@@ -210,10 +215,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                         delayMinutes = 1;
                     }
 
-                    Platform.Log(LogLevel.Info, "Completed filesystem delete: {0} (Current: {1}, High Watermark: {2})",
-                           fs.Filesystem.Description, fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark);
+                    DateTime scheduledTime = Platform.Time.AddMinutes(delayMinutes);
+                    if (_studiesInserted == 0)
+                        Platform.Log(LogLevel.Warn, "No eligable candidates to remove from filesystem '{0}'.  Next scheduled filesystem check {1}", fs.Filesystem.Description, scheduledTime);
+                    else
+                        Platform.Log(LogLevel.Info, "Completed inserting delete candidates into WorkQueue: {0} (Current: {1}, High Watermark: {2}).  {3} studies inserted.  Next scheduled filesystem check {4}",
+                               fs.Filesystem.Description, fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark, _studiesInserted, scheduledTime);
 
-                    UnlockServiceLock(item, true, Platform.Time.AddMinutes(delayMinutes));
+                    UnlockServiceLock(item, true, scheduledTime);
                 }
             }
             else if (_monitor.CheckFilesystemAboveLowWatermark(item.FilesystemKey))
@@ -221,14 +230,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 Platform.Log(LogLevel.Info, "Filesystem below high watermark: {0} (Current: {1}, High Watermark: {2}",
                        fs.Filesystem.Description, fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark);
 
-                UnlockServiceLock(item, true, Platform.Time.AddMinutes(1));
+                UnlockServiceLock(item, true, Platform.Time.AddMinutes(2));
             }
             else
             {
                 Platform.Log(LogLevel.Info, "Filesystem below watermarks: {0} (Current: {1}, High Watermark: {2}",
                        fs.Filesystem.Description, fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark);
 
-                UnlockServiceLock(item, true, Platform.Time.AddMinutes(2));
+                UnlockServiceLock(item, true, Platform.Time.AddMinutes(5));
             }
         }
 

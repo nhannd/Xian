@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
             _partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
 
-            Platform.Log(LogLevel.Info, "Deleting study {0} from Partition {1}", StorageLocation.StudyInstanceUid,
+            Platform.Log(LogLevel.Info, "Deleting study '{0}' from partition '{1}'", StorageLocation.StudyInstanceUid,
                          _partition.Description);
             
             RemoveFilesystem();

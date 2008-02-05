@@ -4,6 +4,10 @@ using System.Text;
 
 namespace ClearCanvas.Common.Specifications
 {
+    /// <summary>
+    /// Class for implementing Case/When/Else statements.
+    /// </summary>
+    /// <see cref="ISpecification"/>
     public class CaseSpecification : Specification
     {
         private readonly List<WhenThenPair> _whenThens;
@@ -15,6 +19,12 @@ namespace ClearCanvas.Common.Specifications
             _else = elseSpecification;
         }
 
+        /// <summary>
+        /// Perform the test.
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <param name="root"></param>
+        /// <returns></returns>
         protected override TestResult InnerTest(object exp, object root)
         {
             // test when-then pairs in order
