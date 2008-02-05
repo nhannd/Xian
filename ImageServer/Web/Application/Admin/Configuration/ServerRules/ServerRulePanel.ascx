@@ -32,12 +32,12 @@
                                         <tr>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="Type" CssClass="CSSTextBoxLabel" EnableViewState="False" /><br />
-                                                <asp:DropDownList ID="RuleTypeDropDownList" runat="server" CssClass="CSSFilterDropDownList" />
+                                                <asp:DropDownList ID="RuleTypeDropDownList" runat="server" CssClass="CSSFilterDropDownList" ToolTip="Filter by type" />
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label2" runat="server" Text="Apply Time" CssClass="CSSTextBoxLabel"
                                                     EnableViewState="False"></asp:Label><br />
-                                                <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" CssClass="CSSFilterDropDownList" />
+                                                <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" CssClass="CSSFilterDropDownList" ToolTip="Filter by apply time"/>
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <br />

@@ -30,7 +30,7 @@
                                         <tr>
                                             <td align="left">
                                                 <asp:Label ID="Label1" runat="server" Text="Description" CssClass="CSSTextBoxLabel"></asp:Label><br />
-                                                <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="CSSFilterTextBox" ToolTip="Filter the list by AE Title"></asp:TextBox></td>
+                                                <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="CSSFilterTextBox" ToolTip="Filter by description"></asp:TextBox></td>
                                             <td align="left">
                                                 <asp:Label ID="Label2" runat="server" Text="Tiers" CssClass="CSSTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="TiersDropDownList" runat="server" CssClass="CSSFilterDropDownList">
