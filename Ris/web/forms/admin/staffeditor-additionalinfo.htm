@@ -31,6 +31,8 @@
 		 
 		 function onHmriChanged()
 		 {
+			Ris.setModified(true); // notify ris that data may have been modified
+			errorProvider.setError($("hmri"), (!$("hmri").value || $("hmri").value.match(/^\d+$/)) ? null : "HRMI # can only contain digits.");
 		 }
          
          
@@ -53,9 +55,10 @@
          //////////////////////////////////////////////////////////////////////////
       </script>
    </head>
-   <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
-      <form id="myForm">
-		<input id="hmri" type="text" onchange="javascript: onHmriChanged()"/>
-      </form>         
+   <body onload="onBodyLoad()" onresize="scaleWidth()">
+    <form id="myForm">
+		<label for="hrmi">HMRI #</label>
+		<input id="hmri" type="text" onkeyup="onHmriChanged()" onchange="onHmriChanged()" />
+	</form>         
    </body>
 </html>
