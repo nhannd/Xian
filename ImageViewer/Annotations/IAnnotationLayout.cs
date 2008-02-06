@@ -44,5 +44,10 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// Gets the entire set of <see cref="AnnotationBox"/>es.
 		/// </summary>
 		IEnumerable<AnnotationBox> AnnotationBoxes { get; }
+
+		/// <summary>
+		/// Gets or sets whether the <see cref="IAnnotationLayout"/> is visible.
+		/// </summary>
+		bool Visible { get; set; }
 	}
 }

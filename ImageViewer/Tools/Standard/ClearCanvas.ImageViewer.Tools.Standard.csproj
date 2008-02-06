@@ -168,6 +168,7 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="StackTool.cs" />
+    <Compile Include="TextOverlayTool.cs" />
     <Compile Include="WindowLevelTool.cs" />
     <Compile Include="ZoomFixedTool.cs" />
     <Compile Include="ZoomTool.cs" />
@@ -266,6 +267,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\InvertToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ShowHideTextOverlayToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ShowHideTextOverlayToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ShowHideTextOverlayToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

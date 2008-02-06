@@ -512,4 +512,13 @@ Please ensure that the name/keystroke combination is unique.</value>
   <data name="TooltipInvert" xml:space="preserve">
     <value>Invert</value>
   </data>
+  <data name="MenuShowHideTextOverlay" xml:space="preserve">
+    <value>Show/Hide Text Overlay</value>
+  </data>
+  <data name="ToolbarShowHideTextOverlay" xml:space="preserve">
+    <value>Show/Hide Text Overlay</value>
+  </data>
+  <data name="TooltipShowHideTextOverlay" xml:space="preserve">
+    <value>Show/Hide Text Overlay</value>
+  </data>
 </root>

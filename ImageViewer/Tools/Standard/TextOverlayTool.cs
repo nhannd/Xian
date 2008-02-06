@@ -33,60 +33,62 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.ImageViewer.Annotations
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer;
+using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Annotations;
+
+namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	internal class EmptyAnnotationLayout : AnnotationLayout
-	{
-		public EmptyAnnotationLayout()
-		{
-		}
+	[MenuAction("showHide", "global-menus/MenuTools/MenuStandard/MenuShowHideTextOverlay", "ShowHide")]
+	[KeyboardAction("showHide", "imageviewer-keyboard/ToolsStandardShowHideTextOverlay", "ShowHide", KeyStroke = XKeys.O)]
+	[ButtonAction("showHide", "global-toolbars/ToolbarStandard/ToolbarShowHideTextOverlay", "ShowHide")]
+	[Tooltip("showHide", "TooltipShowHideTextOverlay")]
+	[GroupHint("showHide", "Tools.Image.Manipulation.TextOverlay.ShowHide")]
+	[IconSet("showHide", IconScheme.Colour, "Icons.ShowHideTextOverlayToolSmall.png", "Icons.ShowHideTextOverlayToolMedium.png", "Icons.ShowHideTextOverlayToolLarge.png")]
 
-		public override IEnumerable<AnnotationBox> AnnotationBoxes
-		{
-			get { yield break; }
-		}
-	}
-
-	/// <summary>
-	/// Abstract base class for <see cref="IAnnotationLayout"/>.
-	/// </summary>
-	public abstract class AnnotationLayout : IAnnotationLayout
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	public class TextOverlayTool : Tool<IImageViewerToolContext>
 	{
-		private static readonly IAnnotationLayout _empty = new EmptyAnnotationLayout();
 		private bool _visible;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		protected AnnotationLayout()
+		public TextOverlayTool()
 		{
 			_visible = true;
 		}
 
-		/// <summary>
-		/// Gets an empty <see cref="IAnnotationLayout"/>.
-		/// </summary>
-		public static IAnnotationLayout Empty
+		public override void Initialize()
 		{
-			get { return _empty; }	
+			base.Initialize();
+
+			this.Context.Viewer.EventBroker.ImageDrawing += OnImageDrawing;
 		}
 
-		#region IAnnotationLayout Members
-
-		/// <summary>
-		/// Gets the entire set of <see cref="AnnotationBox"/>es.
-		/// </summary>
-		public abstract IEnumerable<AnnotationBox> AnnotationBoxes { get; }
-
-		/// <summary>
-		/// Gets or sets whether the <see cref="AnnotationLayout"/> is visible.
-		/// </summary>
-		public bool Visible
+		protected override void Dispose(bool disposing)
 		{
-			get { return _visible; }
-			set { _visible = value; }
+			this.Context.Viewer.EventBroker.ImageDrawing -= OnImageDrawing;
+
+			base.Dispose(disposing);
 		}
 
-		#endregion
+		public void ShowHide()
+		{
+			_visible = !_visible;
+			this.Context.Viewer.PhysicalWorkspace.Draw();
+		}
+
+		private void OnImageDrawing(object sender, ImageDrawingEventArgs e)
+		{
+			if (e.PresentationImage is IAnnotationLayoutProvider)
+			{
+				((IAnnotationLayoutProvider) e.PresentationImage).AnnotationLayout.Visible = _visible;
+			}
+		}
 	}
 }

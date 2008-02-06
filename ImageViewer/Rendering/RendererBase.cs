@@ -165,7 +165,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 				return;
 
 			IAnnotationLayout layout = ((IAnnotationLayoutProvider)presentationImage).AnnotationLayout;
-			if (layout == null)
+			if (layout == null || !layout.Visible)
 				return;
 
 			foreach (AnnotationBox annotationBox in layout.AnnotationBoxes)

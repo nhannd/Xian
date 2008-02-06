@@ -702,6 +702,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show/Hide Text Overlay.
+        /// </summary>
+        internal static string MenuShowHideTextOverlay {
+            get {
+                return ResourceManager.GetString("MenuShowHideTextOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Stack.
         /// </summary>
         internal static string MenuStack {
@@ -1062,6 +1071,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show/Hide Text Overlay.
+        /// </summary>
+        internal static string ToolbarShowHideTextOverlay {
+            get {
+                return ResourceManager.GetString("ToolbarShowHideTextOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stack.
         /// </summary>
         internal static string ToolbarStack {
@@ -1202,6 +1220,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string TooltipRotateRight {
             get {
                 return ResourceManager.GetString("TooltipRotateRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show/Hide Text Overlay.
+        /// </summary>
+        internal static string TooltipShowHideTextOverlay {
+            get {
+                return ResourceManager.GetString("TooltipShowHideTextOverlay", resourceCulture);
             }
         }
         
