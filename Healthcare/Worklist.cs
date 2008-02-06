@@ -30,10 +30,10 @@
 #endregion
 
 using System.Collections;
-using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Core;
 using Iesi.Collections;
 using Iesi.Collections.Generic;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Healthcare
 {
@@ -42,12 +42,12 @@ namespace ClearCanvas.Healthcare
         private string _name;
         private string _description;
         private readonly ISet<ProcedureTypeGroup> _procedureTypeGroups;
-        private readonly ISet<User> _users;
+        private readonly ISet<string> _users;
 
         public Worklist()
         {
             _procedureTypeGroups = new HashedSet<ProcedureTypeGroup>();
-            _users = new HashedSet<User>();
+            _users = new HashedSet<string>();
         }
 
         public abstract IList GetWorklistItems(Staff currentUserStaff, IPersistenceContext context);
@@ -76,7 +76,7 @@ namespace ClearCanvas.Healthcare
             get { return _procedureTypeGroups; }
         }
 
-        public virtual ISet<User> Users
+        public virtual ISet<string> Users
         {
             get { return _users; }
         }

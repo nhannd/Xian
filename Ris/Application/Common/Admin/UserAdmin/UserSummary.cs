@@ -38,11 +38,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class UserSummary : DataContractBase
     {
-        public UserSummary(EntityRef entityRef, string userId, string displayName, DateTime creationTime, DateTime? validFrom, DateTime? validUntil,
+        public UserSummary(string userId, string displayName, DateTime creationTime, DateTime? validFrom, DateTime? validUntil,
             DateTime? lastLoginTime, bool enabled)
         {
-            this.UserRef = entityRef;
-            this.UserId = userId;
+            this.UserName = userId;
             this.DisplayName = displayName;
             this.CreationTime = creationTime;
             this.ValidFrom = validFrom;
@@ -52,10 +51,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
         }
 
         [DataMember]
-        public EntityRef UserRef;
-
-        [DataMember]
-        public string UserId;
+        public string UserName;
 
         [DataMember]
         public string DisplayName;
@@ -78,7 +74,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
         protected bool Equals(UserSummary userSummary)
         {
             if (userSummary == null) return false;
-            return Equals(UserId, userSummary.UserId);
+            return Equals(UserName, userSummary.UserName);
         }
 
         public override bool Equals(object obj)
@@ -89,7 +85,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
 
         public override int GetHashCode()
         {
-            return UserId.GetHashCode();
+            return UserName.GetHashCode();
         }
     }
 }

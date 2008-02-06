@@ -199,7 +199,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 if (_selectedAuthorityGroup == null) return;
 
-                AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent(_selectedAuthorityGroup.EntityRef);
+                AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent(_selectedAuthorityGroup.Name);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleUpdateAuthorityGroup);
 

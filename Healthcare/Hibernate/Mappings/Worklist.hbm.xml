@@ -16,9 +16,9 @@
       <many-to-many column="ProcedureTypeGroupOID_" class="ProcedureTypeGroup" fetch="join"/>
     </set>
 
-    <set name="Users" table="WorklistUser_" lazy="true" access="nosetter.camelcase-underscore">
+    <set name="Users" lazy="true" table="WorklistUsers_" access="nosetter.camelcase-underscore">
       <key column="WorklistOID_"/>
-      <many-to-many column="UserOID_" class="ClearCanvas.Enterprise.Authentication.User, ClearCanvas.Enterprise.Authentication" fetch="join"/>
+      <element column="UserName_" type="String"/>
     </set>
   </class>
 </hibernate-mapping>

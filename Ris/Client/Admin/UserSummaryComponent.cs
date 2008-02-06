@@ -210,13 +210,13 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 if (_selectedUser == null) return;
 
-                UserEditorComponent editor = new UserEditorComponent(_selectedUser.UserRef);
+                UserEditorComponent editor = new UserEditorComponent(_selectedUser.UserName);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleUpdateUser);
 
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    _userTable.Items.Replace(delegate(UserSummary u) { return u.UserRef.Equals(editor.UserSummary.UserRef, true); },
+                    _userTable.Items.Replace(delegate(UserSummary u) { return u.UserName == editor.UserSummary.UserName; },
                         editor.UserSummary);
                 }
             }
@@ -234,14 +234,14 @@ namespace ClearCanvas.Ris.Client.Admin
                 if (_selectedUser == null) return;
 
                 // confirm this action
-                if(this.Host.ShowMessageBox(string.Format("Reset password for user {0}?", _selectedUser.UserId), MessageBoxActions.OkCancel) == DialogBoxAction.Cancel)
+                if(this.Host.ShowMessageBox(string.Format("Reset password for user {0}?", _selectedUser.UserName), MessageBoxActions.OkCancel) == DialogBoxAction.Cancel)
                     return;
 
                 Platform.GetService<IUserAdminService>(
                     delegate(IUserAdminService service)
                     {
-                        ResetUserPasswordResponse response = service.ResetUserPassword(new ResetUserPasswordRequest(_selectedUser.UserRef));
-                        _userTable.Items.Replace(delegate(UserSummary u) { return u.UserRef.Equals(response.UserSummary.UserRef, true); },
+                        ResetUserPasswordResponse response = service.ResetUserPassword(new ResetUserPasswordRequest(_selectedUser.UserName));
+                        _userTable.Items.Replace(delegate(UserSummary u) { return u.UserName == response.UserSummary.UserName; },
                            response.UserSummary);
                     });
             }

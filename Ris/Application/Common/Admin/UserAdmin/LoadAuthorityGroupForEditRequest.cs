@@ -39,12 +39,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class LoadAuthorityGroupForEditRequest : DataContractBase
     {
-        public LoadAuthorityGroupForEditRequest(EntityRef authorityGroupRef)
+        public LoadAuthorityGroupForEditRequest(string name)
         {
-            AuthorityGroupRef = authorityGroupRef;
+            this.AuthorityGroupName = name;
         }
 
         [DataMember]
-        public EntityRef AuthorityGroupRef;
+        public string AuthorityGroupName;
     }
 }

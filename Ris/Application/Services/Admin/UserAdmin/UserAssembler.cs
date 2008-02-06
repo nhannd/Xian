@@ -39,6 +39,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise.Authentication.Brokers;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 {
@@ -46,7 +47,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
     {
         internal UserSummary GetUserSummary(User user)
         {
-            return new UserSummary(user.GetRef(), user.UserName, user.DisplayName, user.CreationTime, user.ValidFrom, user.ValidUntil,
+            return new UserSummary(user.UserName, user.DisplayName, user.CreationTime, user.ValidFrom, user.ValidUntil,
                 user.LastLoginTime, user.Enabled);
         }
 
@@ -74,18 +75,27 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 
         internal void UpdateUser(User user, UserDetail detail, IPersistenceContext context)
         {
-            // user.UserName is not updated
-            // user.Password is not updated
+            // do not update user.UserName
+            // do not update user.Password
             user.DisplayName = detail.DisplayName;
             user.ValidFrom = detail.ValidFrom;
             user.ValidUntil = detail.ValidUntil;
             user.Enabled = detail.Enabled;
-            user.AuthorityGroups.Clear();
-            user.AuthorityGroups.AddAll(CollectionUtils.Map<AuthorityGroupSummary, AuthorityGroup>(detail.AuthorityGroups,
+
+            // process authority groups
+            List<string> authGroupNames = CollectionUtils.Map<AuthorityGroupSummary, string>(detail.AuthorityGroups,
                 delegate(AuthorityGroupSummary group)
                 {
-                    return context.Load<AuthorityGroup>(group.EntityRef);
-                }));
+                    return group.Name;
+                });
+
+            AuthorityGroupSearchCriteria where = new AuthorityGroupSearchCriteria();
+            where.Name.In(authGroupNames);
+            IList<AuthorityGroup> authGroups = context.GetBroker<IAuthorityGroupBroker>().Find(where);
+
+
+            user.AuthorityGroups.Clear();
+            user.AuthorityGroups.AddAll(authGroups);
         }
     }
 }

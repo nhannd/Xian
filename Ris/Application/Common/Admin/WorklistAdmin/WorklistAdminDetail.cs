@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     {
         public WorklistAdminDetail()
         {
-            Users = new List<UserSummary>();
+            Users = new List<string>();
             ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>();
         }
 
@@ -71,6 +71,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         public List<ProcedureTypeGroupSummary> ProcedureTypeGroups;
 
         [DataMember]
-        public List<UserSummary> Users;
+        public List<string> Users;
     }
 }

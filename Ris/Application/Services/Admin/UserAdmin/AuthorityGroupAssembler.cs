@@ -32,6 +32,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Core;
@@ -42,10 +44,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
     {
         internal AuthorityGroupSummary GetAuthorityGroupSummary(AuthorityGroup authorityGroup)
         {
-            return new AuthorityGroupSummary(
-                authorityGroup.GetRef(),
-                authorityGroup.Name
-                );
+            return new AuthorityGroupSummary(authorityGroup.Name);
         }
 
         internal AuthorityGroupDetail GetAuthorityGroupDetail(AuthorityGroup authorityGroup)
@@ -68,11 +67,19 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         {
             authorityGroup.Name = detail.Name;
 
+            // process authority tokens
+            List<string> tokenNames = CollectionUtils.Map<AuthorityTokenSummary, string>(detail.AuthorityTokens,
+                delegate(AuthorityTokenSummary token)
+                {
+                    return token.Name;
+                });
+
+            AuthorityTokenSearchCriteria where = new AuthorityTokenSearchCriteria();
+            where.Name.In(tokenNames);
+            IList<AuthorityToken> authTokens = persistenceContext.GetBroker<IAuthorityTokenBroker>().Find(where);
+            
             authorityGroup.AuthorityTokens.Clear();
-            foreach (AuthorityTokenSummary summary in detail.AuthorityTokens)
-            {
-                authorityGroup.AuthorityTokens.Add(persistenceContext.Load<AuthorityToken>(summary.EntityRef));
-            }
+            authorityGroup.AuthorityTokens.AddAll(authTokens);
         }
     }
 }

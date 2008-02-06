@@ -124,7 +124,9 @@ namespace ClearCanvas.Ris.Application.Services.Login
             PersonNameDetail fullName = null;
             try 
 	        {	
-                Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindStaffForUser(user);
+                StaffSearchCriteria where = new StaffSearchCriteria();
+                where.UserName.EqualTo(user);
+	            Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(where);
                 if(staff != null)
                 {
                     PersonNameAssembler nameAssembler = new PersonNameAssembler();

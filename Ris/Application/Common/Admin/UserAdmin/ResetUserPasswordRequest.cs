@@ -39,12 +39,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class ResetUserPasswordRequest : DataContractBase
     {
-        public ResetUserPasswordRequest(EntityRef userRef)
+        public ResetUserPasswordRequest(string userName)
         {
-            this.UserRef = userRef;
+            this.UserName = userName;
         }
 
         [DataMember]
-        public EntityRef UserRef;
+        public string UserName;
     }
 }

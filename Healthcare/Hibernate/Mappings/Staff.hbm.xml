@@ -19,11 +19,8 @@
     <property name="BillingNumber" column="BillingNumber_" type="String" length="100"/>
     <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.StaffTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
 
-    <!-- This property associates the staff with a User entity - may be null if the Staff is not associated with a user
-         Technically it should be a one-to-one mapping (e.g it should enforce that a Staff maps to at most one user and vice-versa.
-         However, this cannot be achieved at the database-level, as we must allow for the possibility of nulls
-    -->
-    <many-to-one name="User" class="ClearCanvas.Enterprise.Authentication.User, ClearCanvas.Enterprise.Authentication" column="UserOID_" not-null="false"/>
+    <!-- This property associates the staff with a User identity - may be null if the Staff is not associated with a user. -->
+    <property name="UserName" column="UserName_" type="String" not-null="false"/>
 
     <map name="ExtendedProperties" lazy="true" table="StaffExtendedProperties_">
       <key column="StaffOID_"/>

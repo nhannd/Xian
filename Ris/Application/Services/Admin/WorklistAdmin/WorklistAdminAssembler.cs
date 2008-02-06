@@ -55,13 +55,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                         return assembler.GetProcedureTypeGroupSummary(rptGroup, context);
                     });
 
-            UserAssembler userAssembler = new UserAssembler();
-            detail.Users = CollectionUtils.Map<User, UserSummary, List<UserSummary>>(
-                worklist.Users,
-                delegate(User user)
-                    {
-                        return userAssembler.GetUserSummary(user);
-                    });
+            detail.Users = new List<string>(worklist.Users);
 
             return detail;
         }
@@ -82,11 +76,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 worklist.ProcedureTypeGroups.Add(context.Load<ProcedureTypeGroup>(summary.EntityRef));
             });
 
+            // process users
             worklist.Users.Clear();
-            detail.Users.ForEach(delegate (UserSummary summary)
-            {
-                worklist.Users.Add(context.Load<User>(summary.UserRef));
-            });
+            worklist.Users.AddAll(detail.Users);
         }
     }
 }

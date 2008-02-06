@@ -39,14 +39,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class AuthorityGroupSummary : DataContractBase
     {
-        public AuthorityGroupSummary(EntityRef entityRef, string name)
+        public AuthorityGroupSummary(string name)
         {
-            EntityRef = entityRef;
             Name = name;
         }
-
-        [DataMember]
-        public EntityRef EntityRef;
 
         [DataMember]
         public string Name;

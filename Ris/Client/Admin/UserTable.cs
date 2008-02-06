@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client.Admin
         public UserTable()
         {
             this.Columns.Add(new TableColumn<UserSummary, string>(SR.ColumnUserId,
-                delegate(UserSummary user) { return user.UserId; },
+                delegate(UserSummary user) { return user.UserName; },
                 1.0f));
 
             this.Columns.Add(new TableColumn<UserSummary, string>(SR.ColumnUserName,

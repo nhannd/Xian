@@ -40,20 +40,23 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
     public partial class StaffBroker
     {
-        public Staff FindStaffForUser(string userName)
-        {
-            HqlQuery query = new HqlQuery("from Staff s");
-            query.Conditions.Add(new HqlCondition("s.User.UserName = ?", new object[] { userName }));
+        // JR: this is no longer needed, but left it here because it is likely we'll need to do something similar in future
+        // if we end up defining a User shadow class within Healthcare
 
-            IList<Staff> results = this.ExecuteHql<Staff>(query);
-            if (results.Count > 0)
-            {
-                return results[0];
-            }
-            else
-            {
-                throw new EntityNotFoundException(string.Format(SR.ErrorNoStaffForUser, userName), null);
-            }
-        }
+        //public Staff FindStaffForUser(string userName)
+        //{
+        //    HqlQuery query = new HqlQuery("from Staff s");
+        //    query.Conditions.Add(new HqlCondition("s.User.UserName = ?", new object[] { userName }));
+
+        //    IList<Staff> results = this.ExecuteHql<Staff>(query);
+        //    if (results.Count > 0)
+        //    {
+        //        return results[0];
+        //    }
+        //    else
+        //    {
+        //        throw new EntityNotFoundException(string.Format(SR.ErrorNoStaffForUser, userName), null);
+        //    }
+        //}
     }
 }

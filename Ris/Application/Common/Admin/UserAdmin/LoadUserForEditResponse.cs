@@ -39,14 +39,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class LoadUserForEditResponse : DataContractBase
     {
-        public LoadUserForEditResponse(EntityRef userRef, UserDetail userDetail)
+        public LoadUserForEditResponse(UserDetail userDetail)
         {
-            UserRef = userRef;
             UserDetail = userDetail;
         }
-
-        [DataMember]
-        public EntityRef UserRef;
 
         [DataMember]
         public UserDetail UserDetail;

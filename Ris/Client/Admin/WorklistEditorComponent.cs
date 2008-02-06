@@ -56,6 +56,15 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(WorklistEditorComponentViewExtensionPoint))]
     public class WorklistEditorComponent : ApplicationComponent
     {
+        class UserTable : Table<string>
+        {
+            public UserTable()
+            {
+                this.Columns.Add(new TableColumn<string, string>("User", delegate(string user) { return user; }));
+            }
+        }
+
+
         private readonly bool _isNew;
 
         private EntityRef _editedItemEntityRef;
@@ -127,9 +136,9 @@ namespace ClearCanvas.Ris.Client.Admin
                         _availableProcedureTypeGroups.Items.Remove(selectedSummary);
                     }
 
-                    foreach (UserSummary selectedUserSummary in _selectedUsers.Items)
+                    foreach (string userName in _selectedUsers.Items)
                     {
-                        _availableUsers.Items.Remove(selectedUserSummary);
+                        _availableUsers.Items.Remove(userName);
                     }
 
                 });

@@ -56,10 +56,11 @@ namespace ClearCanvas.Ris.Application.Services
         /// </summary>
         private Staff _currentUserStaff;
 
-        /// <summary>
-        /// Cached User object.  Caching is acceptable only if this service instance is never re-used.
-        /// </summary>
-        private User _currentUser;
+
+        protected string CurrentUser
+        {
+            get { return Thread.CurrentPrincipal.Identity.Name; }
+        }
 
         /// <summary>
         /// Obtains the staff associated with the current user.  If no <see cref="Staff"/> is associated with the current user,
@@ -73,7 +74,9 @@ namespace ClearCanvas.Ris.Application.Services
                 {
                     try
                     {
-                        _currentUserStaff = PersistenceContext.GetBroker<IStaffBroker>().FindStaffForUser(Thread.CurrentPrincipal.Identity.Name);
+                        StaffSearchCriteria where = new StaffSearchCriteria();
+                        where.UserName.EqualTo(CurrentUser);
+                        _currentUserStaff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(where);
                     }
                     catch (EntityNotFoundException)
                     {
@@ -82,24 +85,6 @@ namespace ClearCanvas.Ris.Application.Services
                 }
 
                 return _currentUserStaff;
-            }
-        }
-
-        /// <summary>
-        /// Obtains the <see cref="User"/> entity for the current user.
-        /// </summary>
-        protected User CurrentUser
-        {
-            get
-            {
-                if(_currentUser == null)
-                {
-                    UserSearchCriteria criteria = new UserSearchCriteria();
-                    criteria.UserName.EqualTo(Thread.CurrentPrincipal.Identity.Name);
-                    _currentUser = this.PersistenceContext.GetBroker<IUserBroker>().FindOne(criteria);
-                }
-
-                return _currentUser;
             }
         }
 

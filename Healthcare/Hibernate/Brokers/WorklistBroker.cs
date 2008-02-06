@@ -44,16 +44,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     {
         #region Private Fields
 
-        private readonly string _selectHql = "select w from Worklist w join w.Users u"
-                                             + " where u = :user ";
+        private readonly string _selectHql = "select w from Worklist w join w.Users u where u = :user ";
 
         #endregion
 
         #region IWorklistBroker Members
 
-        public IList FindWorklists(User currentUser, IList classNames)
+        public IList FindWorklistsForUser(string userName, IList classNames)
         {
-            return DoQuery(currentUser, ConstructWorklistHql(classNames));
+            return DoQuery(userName, ConstructWorklistHql(classNames));
         }
 
         public Worklist FindWorklist(string name, string type)
@@ -89,10 +88,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return string.Concat(" and (", worklistCondition, ")");
         }
 
-        private IList DoQuery(User currentUser, string subCriteria)
+        private IList DoQuery(string userName, string subCriteria)
         {
             IQuery query = this.Context.CreateHibernateQuery(_selectHql + subCriteria);
-            query.SetParameter("user", currentUser);
+            query.SetParameter("user", userName);
             return query.List();
         }
 

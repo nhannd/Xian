@@ -60,12 +60,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         {
             GetWorklistEditFormDataResponse response = new GetWorklistEditFormDataResponse();
 
-            UserAssembler userAssembler = new UserAssembler();
-            response.Users = CollectionUtils.Map<User, UserSummary, List<UserSummary>>(
+            response.Users = CollectionUtils.Map<User, string>(
                 this.PersistenceContext.GetBroker<IUserBroker>().FindAll(),
                 delegate(User user)
                 {
-                    return userAssembler.GetUserSummary(user);
+                    return user.UserName;
                 });
 
             // TODO: Need stronger typed representation of worklist type options.  See bug #886

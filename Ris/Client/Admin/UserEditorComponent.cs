@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Admin
     public class UserEditorComponent : ApplicationComponent
     {
         private bool _isNew;
-        private EntityRef _userRef;
+        private string _userName;
         private UserDetail _userDetail;
         private List<AuthorityGroupTableEntry> _authorityGroups;
         private SelectableAuthorityGroupTable _table;
@@ -119,16 +119,16 @@ namespace ClearCanvas.Ris.Client.Admin
         public UserEditorComponent()
         {
             _isNew = true;
-            _userRef = null;
+            _userName = null;
             _table = new SelectableAuthorityGroupTable();
         }
 
-        public UserEditorComponent(EntityRef userRef)
+        public UserEditorComponent(string userName)
         {
-            Platform.CheckForNullReference(userRef, "userRef");
+            Platform.CheckForNullReference(userName, "userName");
 
             _isNew = false;
-            _userRef = userRef;
+            _userName = userName;
             _table = new SelectableAuthorityGroupTable();
         }
 
@@ -160,8 +160,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     }
                     else
                     {
-                        LoadUserForEditResponse response = service.LoadUserForEdit(new LoadUserForEditRequest(_userRef));
-                        _userRef = response.UserRef;
+                        LoadUserForEditResponse response = service.LoadUserForEdit(new LoadUserForEditRequest(_userName));
                         _userDetail = response.UserDetail;
                     }
 
@@ -297,7 +296,7 @@ namespace ClearCanvas.Ris.Client.Admin
                         }
                         else
                         {
-                            UpdateUserResponse response = service.UpdateUser(new UpdateUserRequest(_userRef, _userDetail));
+                            UpdateUserResponse response = service.UpdateUser(new UpdateUserRequest(_userDetail));
                             _userSummary = response.UserSummary;
                         }
                     });
@@ -345,7 +344,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 CollectionUtils.Remove(_userDetail.AuthorityGroups,
                     delegate(AuthorityGroupSummary summary)
                     {
-                        return summary.EntityRef == changedEntry.AuthorityGroupSummary.EntityRef;
+                        return summary.Name == changedEntry.AuthorityGroupSummary.Name;
                     });
                 this.Modified = true;
             }
@@ -354,7 +353,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 bool alreadyAdded = CollectionUtils.Contains(_userDetail.AuthorityGroups,
                     delegate(AuthorityGroupSummary summary)
                     {
-                        return summary.EntityRef == changedEntry.AuthorityGroupSummary.EntityRef;
+                        return summary.Name == changedEntry.AuthorityGroupSummary.Name;
                     });
                 
                 if (alreadyAdded == false)
@@ -378,7 +377,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 AuthorityGroupTableEntry foundEntry = CollectionUtils.SelectFirst(_authorityGroups,
                     delegate(AuthorityGroupTableEntry entry)
                     {
-                        return selectedSummary.EntityRef == entry.AuthorityGroupSummary.EntityRef;
+                        return selectedSummary.Name == entry.AuthorityGroupSummary.Name;
                     });
 
                 if (foundEntry != null) foundEntry.Selected = true;

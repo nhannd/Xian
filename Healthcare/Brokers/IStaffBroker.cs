@@ -37,6 +37,5 @@ namespace ClearCanvas.Healthcare.Brokers
 {
     public partial interface IStaffBroker
     {
-        Staff FindStaffForUser(string userName);
     }
 }

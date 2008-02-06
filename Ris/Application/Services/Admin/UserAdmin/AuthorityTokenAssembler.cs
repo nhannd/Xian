@@ -42,7 +42,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         internal AuthorityTokenSummary GetAuthorityTokenSummary(AuthorityToken authorityToken)
         {
             return new AuthorityTokenSummary(
-                authorityToken.GetRef(),
                 authorityToken.Name,
                 authorityToken.Description
                 );

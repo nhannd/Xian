@@ -39,15 +39,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class AuthorityTokenSummary : DataContractBase
     {
-        public AuthorityTokenSummary(EntityRef entityRef, string name, string description)
+        public AuthorityTokenSummary(string name, string description)
         {
-            EntityRef = entityRef;
             Name = name;
             Description = description;
         }
-
-        [DataMember]
-        public EntityRef EntityRef;
 
         [DataMember]
         public string Name;

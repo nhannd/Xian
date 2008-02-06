@@ -30,14 +30,13 @@
 #endregion
 
 using System.Collections;
-using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IWorklistBroker : IEntityBroker<Worklist, WorklistSearchCriteria>
     {
-        IList FindWorklists(User currentUser, IList worklistClassNames);
+        IList FindWorklistsForUser(string userName, IList worklistClassNames);
         Worklist FindWorklist(string name, string type);
         bool NameExistsForType(string name, string type);
     }

@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
     {
         private const int _numFields = 9;
 
-        IPersistenceContext _context;
+        private IPersistenceContext _context;
 
         #region DataImporterBase overrides
 
@@ -60,10 +60,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         /// <summary>
         /// Import staff and user from CSV format.
         /// </summary>
-        /// <param name="lines">
+        /// <param name="rows">
         /// Each string in the list must contain 25 CSV fields, as follows:
         ///     0 - UserName
-        ///     1 - Type
+        ///     1 - StaffType
         ///     2 - Id
         ///     3 - FamilyName
         ///     4 - GivenName
@@ -121,7 +121,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
                     importedStaff.Add(staff);
                 }
 
-                TrySetStaffUser(user, staff);
+                if (string.IsNullOrEmpty(staff.UserName))
+                    staff.UserName = userName;
             }
         }
 
@@ -161,22 +162,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
                 criteria.Id.EqualTo(staffId);
 
                 IStaffBroker broker = _context.GetBroker<IStaffBroker>();
-                staff = CollectionUtils.FirstElement<Staff>(broker.Find(criteria));
+                staff = CollectionUtils.FirstElement(broker.Find(criteria));
             }
 
             return staff;
-        }
-
-        private void TrySetStaffUser(User user, Staff staff)
-        {
-            if(staff.User != null && staff.User != user)
-            {
-
-            }
-            else
-            {
-                staff.User = user;
-            }
         }
 
         #endregion

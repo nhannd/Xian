@@ -39,14 +39,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class UpdateAuthorityGroupRequest : DataContractBase
     {
-        public UpdateAuthorityGroupRequest(EntityRef authorityGroupRef, AuthorityGroupDetail authorityGroupDetail)
+        public UpdateAuthorityGroupRequest(AuthorityGroupDetail authorityGroupDetail)
         {
-            AuthorityGroupRef = authorityGroupRef;
             AuthorityGroupDetail = authorityGroupDetail;
         }
-
-        [DataMember]
-        public EntityRef AuthorityGroupRef;
 
         [DataMember]
         public AuthorityGroupDetail AuthorityGroupDetail;

@@ -123,7 +123,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 ICollection<ProcedureTypeGroup> procedureTypeGroups = GetProcedureTypeGroups(reader.ReadSubtree());
 
                 reader.ReadToNextSibling(tagSubscribers);
-                ICollection<User> users = GetUsers(reader.ReadSubtree());
+                ICollection<string> users = GetUsers(reader.ReadSubtree());
 
                 worklist.Description = description;
                 worklist.ProcedureTypeGroups.AddAll(procedureTypeGroups);
@@ -175,11 +175,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             return groups;
         }
 
-        private ICollection<User> GetUsers(XmlReader reader)
+        private ICollection<string> GetUsers(XmlReader reader)
         {
             reader.Read();
 
-            List<User> users = new List<User>();
+            List<string> users = new List<string>();
 
             for (bool elementExists = reader.ReadToDescendant(tagSubscriber);
                 elementExists;
@@ -192,31 +192,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 {
                     case "user":
 
-                        UserSearchCriteria criteria = new UserSearchCriteria();
-                        criteria.UserName.EqualTo(userName);
-
-                        IUserBroker broker = _context.GetBroker<IUserBroker>();
-                        User user = CollectionUtils.FirstElement<User>(broker.Find(criteria));
-                        if (user != null) users.Add(user);
-
+                        if (!string.IsNullOrEmpty(userName))
+                            users.Add(userName);
                         break;
                     case "user-group":
-
-                        AuthorityGroupSearchCriteria groupCriteria = new AuthorityGroupSearchCriteria();
-                        groupCriteria.Name.EqualTo(userName);
-
-                        IAuthorityGroupBroker groupBroker = _context.GetBroker<IAuthorityGroupBroker>();
-                        AuthorityGroup group = CollectionUtils.FirstElement<AuthorityGroup>(groupBroker.Find(groupCriteria));
-
-                        if (group != null)
-                        {
-                            foreach(User authorityGroupUser in group.Users)
-                            {
-                                users.Add(authorityGroupUser);
-                            }
-                        }
-
-                        break;
+                        // JR: disabled this functionality because I'm trying
+                        // to remove explicity coupling between Healthcare and Enterprise.Authentication
+                        // perhaps it could be re-implemented if needed
+                        throw new NotSupportedException();
                     default:
                         break;
                 }

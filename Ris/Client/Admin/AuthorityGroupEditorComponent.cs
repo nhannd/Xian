@@ -108,7 +108,7 @@ namespace ClearCanvas.Ris.Client.Admin
     public class AuthorityGroupEditorComponent : ApplicationComponent
     {
         private bool _isNew;
-        private EntityRef _authorityGroupRef;
+        private string _authorityGroupName;
         private AuthorityGroupDetail _authorityGroupDetail;
         private List<AuthorityTokenTableEntry> _authorityTokens;
         private SelectableAuthorityTokenTable _authorityTokenTable;
@@ -119,16 +119,15 @@ namespace ClearCanvas.Ris.Client.Admin
         public AuthorityGroupEditorComponent()
         {
             _isNew = true;
-            _authorityGroupRef = null;
             _authorityTokenTable = new SelectableAuthorityTokenTable();
         }
 
-        public AuthorityGroupEditorComponent(EntityRef authorityGroupRef)
+        public AuthorityGroupEditorComponent(string authorityGroupName)
         {
-            Platform.CheckForNullReference(authorityGroupRef, "authorityGroupRef");
+            Platform.CheckForNullReference(authorityGroupName, "authorityGroupName");
 
             _isNew = false;
-            _authorityGroupRef = authorityGroupRef;
+            _authorityGroupName = authorityGroupName;
             _authorityTokenTable = new SelectableAuthorityTokenTable();
         }
 
@@ -152,8 +151,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     }
                     else
                     {
-                        LoadAuthorityGroupForEditResponse response = service.LoadAuthorityGroupForEdit(new LoadAuthorityGroupForEditRequest(_authorityGroupRef));
-                        _authorityGroupRef = response.AuthorityGroupRef;
+                        LoadAuthorityGroupForEditResponse response = service.LoadAuthorityGroupForEdit(new LoadAuthorityGroupForEditRequest(_authorityGroupName));
                         _authorityGroupDetail = response.AuthorityGroupDetail;
                     }
 
@@ -204,7 +202,7 @@ namespace ClearCanvas.Ris.Client.Admin
                         }
                         else
                         {
-                            UpdateAuthorityGroupResponse response = service.UpdateAuthorityGroup(new UpdateAuthorityGroupRequest(_authorityGroupRef, _authorityGroupDetail));
+                            UpdateAuthorityGroupResponse response = service.UpdateAuthorityGroup(new UpdateAuthorityGroupRequest(_authorityGroupDetail));
                         }
                     });
 
@@ -244,21 +242,21 @@ namespace ClearCanvas.Ris.Client.Admin
 
             if (changedEntry.Selected == false)
             {
-                CollectionUtils.Remove<AuthorityTokenSummary>(
+                CollectionUtils.Remove(
                     _authorityGroupDetail.AuthorityTokens,
                     delegate(AuthorityTokenSummary summary)
                     {
-                        return summary.EntityRef == changedEntry.AuthorityTokenSummary.EntityRef;
+                        return summary.Name == changedEntry.AuthorityTokenSummary.Name;
                     });
                 this.Modified = true;
             }
             else
             {
-                bool alreadyAdded = CollectionUtils.Contains<AuthorityTokenSummary>(
+                bool alreadyAdded = CollectionUtils.Contains(
                     _authorityGroupDetail.AuthorityTokens,
                     delegate(AuthorityTokenSummary summary)
                     {
-                        return summary.EntityRef == changedEntry.AuthorityTokenSummary.EntityRef;
+                        return summary.Name == changedEntry.AuthorityTokenSummary.Name;
                     });
 
                 if (alreadyAdded == false)
@@ -279,11 +277,11 @@ namespace ClearCanvas.Ris.Client.Admin
 
             foreach (AuthorityTokenSummary selectedToken in _authorityGroupDetail.AuthorityTokens)
             {
-                AuthorityTokenTableEntry foundEntry = CollectionUtils.SelectFirst<AuthorityTokenTableEntry>(
+                AuthorityTokenTableEntry foundEntry = CollectionUtils.SelectFirst(
                     _authorityTokens,
                     delegate(AuthorityTokenTableEntry entry)
                     {
-                        return selectedToken.EntityRef == entry.AuthorityTokenSummary.EntityRef;
+                        return selectedToken.Name == entry.AuthorityTokenSummary.Name;
                     });
 
                 if (foundEntry != null) foundEntry.Selected = true;

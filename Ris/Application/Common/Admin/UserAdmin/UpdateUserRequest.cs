@@ -39,14 +39,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class UpdateUserRequest : DataContractBase
     {
-        public UpdateUserRequest(EntityRef userRef, UserDetail userDetail)
+        public UpdateUserRequest(UserDetail userDetail)
         {
-            UserRef = userRef;
             UserDetail = userDetail;
         }
-
-        [DataMember]
-        public EntityRef UserRef;
 
         [DataMember]
         public UserDetail UserDetail;

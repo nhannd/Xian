@@ -73,12 +73,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
         public LoadUserForEditResponse LoadUserForEdit(LoadUserForEditRequest request)
         {
-            User user = PersistenceContext.Load<User>(request.UserRef);
+            User user = FindUserByName(request.UserName);
             Staff staff = null;
             try
             {
+                StaffSearchCriteria where = new StaffSearchCriteria();
+                where.UserName.EqualTo(user.UserName);
+
                 IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
-                staff = staffBroker.FindStaffForUser(user.UserName);
+                staff = staffBroker.FindOne(where);
             }
             catch (EntityNotFoundException)
             {
@@ -86,7 +89,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             }
 
             UserAssembler assembler = new UserAssembler();
-            return new LoadUserForEditResponse(user.GetRef(), assembler.GetUserDetail(user, staff));
+            return new LoadUserForEditResponse(assembler.GetUserDetail(user, staff));
         }
 
 
@@ -111,7 +114,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
         public LoadAuthorityGroupForEditResponse LoadAuthorityGroupForEdit(LoadAuthorityGroupForEditRequest request)
         {
-            AuthorityGroup authorityGroup = PersistenceContext.Load<AuthorityGroup>(request.AuthorityGroupRef);
+            AuthorityGroup authorityGroup = FindAuthorityGroupByName(request.AuthorityGroupName);
             AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
             return new LoadAuthorityGroupForEditResponse(authorityGroup.GetRef(), assembler.GetAuthorityGroupDetail(authorityGroup));
         }
@@ -152,7 +155,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             {
                 IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
                 Staff staff = staffBroker.Load(request.UserDetail.StaffRef);
-                staff.User = user;
+                staff.UserName = user.UserName;
             }
 
             PersistenceContext.SynchState();
@@ -164,7 +167,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
         public UpdateUserResponse UpdateUser(UpdateUserRequest request)
         {
-            User user = PersistenceContext.Load<User>(request.UserRef);
+            User user = FindUserByName(request.UserDetail.UserName);
 
             // update user account info
             UserAssembler assembler = new UserAssembler();
@@ -177,8 +180,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
             try
             {
-                Staff staff = staffBroker.FindStaffForUser(user.UserName);
-                staff.User = null;  // dissociate any previously associated staff
+                // dissociate any previously associated staff
+                StaffSearchCriteria where = new StaffSearchCriteria();
+                where.UserName.EqualTo(user.UserName);
+                Staff staff = staffBroker.FindOne(where);
+                staff.UserName = null;
             }
             catch (EntityNotFoundException)
             {
@@ -189,7 +195,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             if (request.UserDetail.StaffRef != null)
             {
                 Staff staff = staffBroker.Load(request.UserDetail.StaffRef);
-                staff.User = user;
+                staff.UserName = user.UserName;
             }
 
             return new UpdateUserResponse(assembler.GetUserSummary(user));
@@ -200,9 +206,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         public ResetUserPasswordResponse ResetUserPassword(ResetUserPasswordRequest request)
         {
             Platform.CheckForNullReference(request, "request");
-            Platform.CheckMemberIsSet(request.UserRef, "UserRef");
+            Platform.CheckMemberIsSet(request.UserName, "UserName");
 
-            User user = PersistenceContext.Load<User>(request.UserRef);
+            User user = FindUserByName(request.UserName);
             user.ResetPassword();
 
             UserAssembler assembler = new UserAssembler();
@@ -227,7 +233,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
         public UpdateAuthorityGroupResponse UpdateAuthorityGroup(UpdateAuthorityGroupRequest request)
         {
-            AuthorityGroup authorityGroup = PersistenceContext.Load<AuthorityGroup>(request.AuthorityGroupRef);
+            AuthorityGroup authorityGroup = FindAuthorityGroupByName(request.AuthorityGroupDetail.Name);
             AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
             assembler.UpdateAuthorityGroup(authorityGroup, request.AuthorityGroupDetail, PersistenceContext);
 
@@ -237,6 +243,36 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         }
 
         #endregion
+
+        private AuthorityGroup FindAuthorityGroupByName(string name)
+        {
+            try
+            {
+                AuthorityGroupSearchCriteria where = new AuthorityGroupSearchCriteria();
+                where.Name.EqualTo(name);
+
+                return PersistenceContext.GetBroker<IAuthorityGroupBroker>().FindOne(where);
+            }
+            catch (EntityNotFoundException)
+            {
+                throw new RequestValidationException(string.Format("{0} is not a valid authority group.", name));
+            }
+        }
+
+        private User FindUserByName(string name)
+        {
+            try
+            {
+                UserSearchCriteria where = new UserSearchCriteria();
+                where.UserName.EqualTo(name);
+
+                return PersistenceContext.GetBroker<IUserBroker>().FindOne(where);
+            }
+            catch (EntityNotFoundException)
+            {
+                throw new RequestValidationException(string.Format("{0} is not a valid user name.", name));
+            }
+        }
 
     }
 }
