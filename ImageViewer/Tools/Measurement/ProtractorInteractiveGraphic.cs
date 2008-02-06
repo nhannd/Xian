@@ -8,7 +8,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	internal class ProtractorInteractiveGraphic : PolyLineInteractiveGraphic
 	{
-		private ArcPrimitive _arc;
+		private InvariantArcPrimitive _arc;
 		private readonly int _arcRadius = 20;
 
 		public ProtractorInteractiveGraphic() : base(true, 3)
@@ -43,16 +43,29 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			base.OnControlPointChanged(sender, e);
 		}
 
+		public override bool HitTest(Point point)
+		{
+			if (_arc == null)
+				return base.HitTest(point);
+			else
+			{
+				if (_arc.Visible)
+					return _arc.HitTest(point) || base.HitTest(point);
+				else
+					return base.HitTest(point);
+			}
+		}
+
 		private void CalculateArc()
 		{
 			this.PolyLine.CoordinateSystem = CoordinateSystem.Destination;
-
-			// The arc center is the vertex of the protractor
-			PointF arcCenter = this.PolyLine[1];
 			_arc.CoordinateSystem = CoordinateSystem.Destination;
 
-			_arc.TopLeft = new PointF(arcCenter.X - _arcRadius, arcCenter.Y - _arcRadius);
-			_arc.BottomRight = new PointF(arcCenter.X + _arcRadius, arcCenter.Y + _arcRadius);
+			// The arc center is the vertex of the protractor
+			_arc.AnchorPoint = this.PolyLine[1];
+
+			_arc.InvariantTopLeft = new PointF(-_arcRadius, -_arcRadius);
+			_arc.InvariantBottomRight = new PointF(_arcRadius, _arcRadius);
 
 			float startAngle, sweepAngle;
 			CalculateAngles(out startAngle, out sweepAngle);
@@ -89,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (_arc != null)
 				return;
 
-			_arc = new ArcPrimitive();
+			_arc = new InvariantArcPrimitive();
 			base.Graphics.Add(_arc);
 		}
 

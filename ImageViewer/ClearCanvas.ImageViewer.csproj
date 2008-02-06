@@ -118,6 +118,12 @@
     <Compile Include="Graphics\ArcPrimitive.cs" />
     <Compile Include="Graphics\BoundableGraphic.cs" />
     <Compile Include="Graphics\EllipsePrimitive.cs" />
+    <Compile Include="Graphics\IArcGraphic.cs" />
+    <Compile Include="Graphics\IBoundableGraphic.cs" />
+    <Compile Include="Graphics\InvariantArcPrimitive.cs" />
+    <Compile Include="Graphics\InvariantBoundablePrimitive.cs" />
+    <Compile Include="Graphics\InvariantEllipsePrimitive.cs" />
+    <Compile Include="Graphics\IVectorGraphic.cs" />
     <Compile Include="InteractiveGraphics\BoundableInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\Tests\EllipseInteractiveGraphicTest.cs" />

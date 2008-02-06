@@ -134,15 +134,19 @@ namespace ClearCanvas.ImageViewer.Rendering
 					else if (graphic is LinePrimitive)
 						DrawLinePrimitive((LinePrimitive)graphic);
 					else if (graphic is RectanglePrimitive)
-						DrawRectanglePrimitive((RectanglePrimitive)graphic);
+						DrawRectanglePrimitive((IBoundableGraphic)graphic);
+					else if (graphic is InvariantRectanglePrimitive)
+						DrawRectanglePrimitive((IBoundableGraphic)graphic);
 					else if (graphic is EllipsePrimitive)
-						DrawEllipsePrimitive((EllipsePrimitive)graphic);
+						DrawEllipsePrimitive((IBoundableGraphic)graphic);
+					else if (graphic is InvariantEllipsePrimitive)
+						DrawEllipsePrimitive((IBoundableGraphic)graphic);
 					else if (graphic is ArcPrimitive)
-						DrawArcPrimitive((ArcPrimitive)graphic);
+						DrawArcPrimitive((IArcGraphic)graphic);
+					else if (graphic is InvariantArcPrimitive)
+						DrawArcPrimitive((IArcGraphic)graphic);
 					else if (graphic is PointPrimitive)
 						DrawPointPrimitive((PointPrimitive)graphic);
-					else if (graphic is InvariantRectanglePrimitive)
-						DrawInvariantRectanglePrimitive((InvariantRectanglePrimitive)graphic);
 					else if (graphic is InvariantTextPrimitive)
 						DrawTextPrimitive((InvariantTextPrimitive)graphic);
 				}
@@ -188,27 +192,22 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// <summary>
 		/// Draws a <see cref="RectanglePrimitive"/>.  Must be overridden and implemented.
 		/// </summary>
-		protected abstract void DrawRectanglePrimitive(RectanglePrimitive rect);
+		protected abstract void DrawRectanglePrimitive(IBoundableGraphic rectangle);
 
 		/// <summary>
 		/// Draws a <see cref="EllipsePrimitive"/>.  Must be overridden and implemented.
 		/// </summary>
-		protected abstract void DrawEllipsePrimitive(EllipsePrimitive rect);
+		protected abstract void DrawEllipsePrimitive(IBoundableGraphic ellipse);
 
 		/// <summary>
 		/// Draws a <see cref="ArcPrimitive"/>.  Must be overridden and implemented.
 		/// </summary>
-		protected abstract void DrawArcPrimitive(ArcPrimitive rect);
+		protected abstract void DrawArcPrimitive(IArcGraphic arc);
 
 		/// <summary>
 		/// Draws a <see cref="PointPrimitive"/>.  Must be overridden and implemented.
 		/// </summary>
 		protected abstract void DrawPointPrimitive(PointPrimitive pointPrimitive);
-
-		/// <summary>
-		/// Draws an <see cref="InvariantRectanglePrimitive"/>.  Must be overridden and implemented.
-		/// </summary>
-		protected abstract void DrawInvariantRectanglePrimitive(InvariantRectanglePrimitive rect);
 
 		/// <summary>
 		/// Draws an <see cref="InvariantTextPrimitive"/>.  Must be overridden and implemented.

@@ -278,7 +278,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// <summary>
 		/// Draws a <see cref="RectanglePrimitive"/>.
 		/// </summary>
-		protected override void DrawRectanglePrimitive(RectanglePrimitive rect)
+		protected override void DrawRectanglePrimitive(IBoundableGraphic rect)
 		{
 			Surface.FinalBuffer.Graphics.Transform = rect.SpatialTransform.CumulativeTransform;
 			rect.CoordinateSystem = CoordinateSystem.Source;
@@ -322,7 +322,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// <summary>
 		/// Draws a <see cref="RectanglePrimitive"/>.
 		/// </summary>
-		protected override void DrawEllipsePrimitive(EllipsePrimitive ellipse)
+		protected override void DrawEllipsePrimitive(IBoundableGraphic ellipse)
 		{
 			Surface.FinalBuffer.Graphics.Transform = ellipse.SpatialTransform.CumulativeTransform;
 			ellipse.CoordinateSystem = CoordinateSystem.Source;
@@ -368,7 +368,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// <summary>
 		/// Draws a <see cref="ArcPrimitive"/>.
 		/// </summary>
-		protected override void DrawArcPrimitive(ArcPrimitive arc)
+		protected override void DrawArcPrimitive(IArcGraphic arc)
 		{
 			Surface.FinalBuffer.Graphics.Transform = arc.SpatialTransform.CumulativeTransform;
 			arc.CoordinateSystem = CoordinateSystem.Source;
@@ -440,50 +440,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 				1);
 
 			pointPrimitive.ResetCoordinateSystem();
-			Surface.FinalBuffer.Graphics.ResetTransform();
-		}
-
-		/// <summary>
-		/// Draws an <see cref="InvariantRectanglePrimitive"/>.
-		/// </summary>
-		protected override void DrawInvariantRectanglePrimitive(InvariantRectanglePrimitive rect)
-		{
-			Surface.FinalBuffer.Graphics.Transform = rect.SpatialTransform.CumulativeTransform;
-			rect.CoordinateSystem = CoordinateSystem.Source;
-
-			float offsetX = 0;
-			float offsetY = 0;
-
-			if (rect.Width < 0)
-				offsetX = rect.Width;
-
-			if (rect.Height < 0)
-				offsetY = rect.Height;
-
-			// Draw drop shadow
-			_pen.Color = Color.Black;
-			_pen.Width = CalculateScaledPenWidth(rect, 1);
-
-			SetDashStyle(rect);
-
-			Surface.FinalBuffer.Graphics.DrawRectangle(
-				_pen,
-				rect.TopLeft.X + offsetX + GetDropShadowOffset(rect).Width,
-				rect.TopLeft.Y + offsetY + GetDropShadowOffset(rect).Height,
-				Math.Abs(rect.Width),
-				Math.Abs(rect.Height));
-
-			// Draw rectangle
-			_pen.Color = rect.Color;
-
-			Surface.FinalBuffer.Graphics.DrawRectangle(
-				_pen,
-				rect.TopLeft.X + offsetX,
-				rect.TopLeft.Y + offsetY,
-				Math.Abs(rect.Width),
-				Math.Abs(rect.Height));
-
-			rect.ResetCoordinateSystem();
 			Surface.FinalBuffer.Graphics.ResetTransform();
 		}
 
@@ -671,7 +627,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			font.Dispose();
 		}
 
-		private void SetDashStyle(VectorGraphic graphic)
+		private void SetDashStyle(IVectorGraphic graphic)
 		{
 			if (graphic.LineStyle == LineStyle.Solid)
 			{

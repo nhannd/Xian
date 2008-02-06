@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// An vector <see cref="Graphic"/>.
 	/// </summary>
-	public abstract class VectorGraphic : Graphic
+	public abstract class VectorGraphic : Graphic, IVectorGraphic
 	{
 		/// <summary>
 		/// The hit test distance in destination pixels.

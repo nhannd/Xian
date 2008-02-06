@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -13,7 +14,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// ellipse is defined by the <see cref="ArcPrimitive.StartAngle"/>
 	/// and <see cref="ArcPrimitive.SweepAngle"/>.
 	/// </remarks>
-	public class ArcPrimitive : BoundableGraphic
+	public class ArcPrimitive : BoundableGraphic, IArcGraphic
 	{
 		private float _startAngle;
 		private float _sweepAngle;
@@ -44,7 +45,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 			set { _sweepAngle = value; }
 		}
 
-
 		/// <summary>
 		/// Performs a hit test on the <see cref="ArcPrimitive"/> at a given point.
 		/// </summary>
@@ -59,15 +59,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public override bool HitTest(Point point)
 		{
-			GraphicsPath path = new GraphicsPath();
 			this.CoordinateSystem = CoordinateSystem.Destination;
-			path.AddArc(this.Rectangle, this.StartAngle, this.SweepAngle);
-
-			Pen pen = new Pen(Brushes.White, HitTestDistance);
-			bool result = path.IsOutlineVisible(point, pen);
-
-			path.Dispose();
-			pen.Dispose();
+			bool result = HitTest(point, this.Rectangle, this.StartAngle, this.SweepAngle);
 			this.ResetCoordinateSystem();
 
 			return result;
@@ -83,6 +76,24 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public override bool Contains(PointF point)
 		{
 			return false;
+		}
+
+		internal static bool HitTest(
+			PointF point, 
+			RectangleF boundingBox, 
+			float startAngle,
+			float sweepAngle)
+		{
+			GraphicsPath path = new GraphicsPath();
+			path.AddArc(RectangleUtilities.ConvertToPositiveRectangle(boundingBox), startAngle, sweepAngle);
+
+			Pen pen = new Pen(Brushes.White, HitTestDistance);
+			bool result = path.IsOutlineVisible(point, pen);
+
+			path.Dispose();
+			pen.Dispose();
+
+			return result;
 		}
 	}
 }

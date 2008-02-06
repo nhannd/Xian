@@ -29,9 +29,7 @@
 
 #endregion
 
-using System.Diagnostics;
 using System.Drawing;
-using ClearCanvas.Common;
 using System.Drawing.Drawing2D;
 using ClearCanvas.ImageViewer.Mathematics;
 
@@ -63,18 +61,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public override bool HitTest(Point point)
 		{
-			GraphicsPath path = new GraphicsPath();
 			this.CoordinateSystem = CoordinateSystem.Destination;
-			path.AddRectangle(RectangleUtilities.ConvertToPositiveRectangle(this.Rectangle));
-
-			string str = string.Format("Hit test: {0}\n", this.Rectangle.ToString());
-			Trace.Write(str);
-
-			Pen pen = new Pen(Brushes.White, HitTestDistance);
-			bool result = path.IsOutlineVisible(point, pen);
-
-			path.Dispose();
-			pen.Dispose();
+			bool result = HitTest(point, this.Rectangle);
 			this.ResetCoordinateSystem();
 
 			return result;
@@ -89,6 +77,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public override bool Contains(PointF point)
 		{
 			return this.Rectangle.Contains(point);
+		}
+
+		internal static bool HitTest(PointF point, RectangleF rectangle)
+		{
+			GraphicsPath path = new GraphicsPath();
+			path.AddRectangle(RectangleUtilities.ConvertToPositiveRectangle(rectangle));
+
+			Pen pen = new Pen(Brushes.White, HitTestDistance);
+			bool result = path.IsOutlineVisible(point, pen);
+
+			path.Dispose();
+			pen.Dispose();
+
+			return result;
 		}
 	}
 }
