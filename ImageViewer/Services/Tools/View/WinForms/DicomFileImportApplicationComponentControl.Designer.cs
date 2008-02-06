@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._importProgressControl.AcceptButton = null;
 			this._importProgressControl.AvailableCount = 0;
 			this._importProgressControl.CancelButton = null;
-			this._importProgressControl.CancelEnabled = true;
+			this._importProgressControl.ButtonEnabled = true;
 			this._importProgressControl.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this._importProgressControl.FailedSteps = 0;
 			this._importProgressControl.Location = new System.Drawing.Point(0, 228);

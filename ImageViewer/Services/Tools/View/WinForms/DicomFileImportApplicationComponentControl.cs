@@ -62,24 +62,20 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			_importTable.ToolbarModel = _component.ToolbarModel;
 			_importTable.MenuModel = _component.ContextMenuModel;
 
-			_importTable.SelectionChanged += new EventHandler(OnSelectionChanged);
+			_importTable.SelectionChanged += delegate { _component.SetSelection(_importTable.Selection); };
 
 			BindingSource bindingSource = new BindingSource();
 			bindingSource.DataSource = _component;
 
+        	_importProgressControl.ButtonText = SR.LabelCancel;
 			_importProgressControl.DataBindings.Add("StatusMessage", bindingSource, "SelectedStatusMessage", true, DataSourceUpdateMode.OnPropertyChanged);
 			_importProgressControl.DataBindings.Add("TotalToProcess", bindingSource, "SelectedTotalToProcess", true, DataSourceUpdateMode.OnPropertyChanged);
 			_importProgressControl.DataBindings.Add("TotalProcessed", bindingSource, "SelectedTotalProcessed", true, DataSourceUpdateMode.OnPropertyChanged);
 			_importProgressControl.DataBindings.Add("AvailableCount", bindingSource, "SelectedAvailableCount", true, DataSourceUpdateMode.OnPropertyChanged);
 			_importProgressControl.DataBindings.Add("FailedSteps", bindingSource, "SelectedFailedSteps", true, DataSourceUpdateMode.OnPropertyChanged);
-			_importProgressControl.DataBindings.Add("CancelEnabled", bindingSource, "SelectedCancelEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_importProgressControl.DataBindings.Add("ButtonEnabled", bindingSource, "SelectedCancelEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_importProgressControl.CancelButtonClicked += delegate(object sender, EventArgs args) { _component.CancelSelected(); };
-		}
-
-		void OnSelectionChanged(object sender, EventArgs e)
-		{
-			_component.SetSelection(_importTable.Selection);
+			_importProgressControl.ButtonClicked += delegate(object sender, EventArgs args) { _component.CancelSelected(); };
 		}
 	}
 }

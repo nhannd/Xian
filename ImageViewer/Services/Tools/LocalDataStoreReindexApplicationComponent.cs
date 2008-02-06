@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using System.Text;
 
 using ClearCanvas.Common;
@@ -48,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[AssociateView(typeof(LocalDataStoreReindexApplicationComponentViewExtensionPoint))]
 	public class LocalDataStoreReindexApplicationComponent : ApplicationComponent
 	{
-		private ReindexProgressItem _reindexProgress;
+		private readonly ReindexProgressItem _reindexProgress;
 
 		private string _statusMessage;
 		private int _totalProcessed;
@@ -56,10 +57,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private int _failedSteps;
 		private int _availableCount;
 		private bool _cancelEnabled;
+		private bool _reindexEnabled;
 
 		public LocalDataStoreReindexApplicationComponent()
 		{
 			_reindexProgress = new ReindexProgressItem();
+			Reset();
 		}
 
 		public string Title
@@ -67,18 +70,27 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			get { return SR.TitleReindexLocalDataStore; }
 		}
 
-		private void OnConnected(object sender, EventArgs e)
+		private void Reset()
 		{
-		}
-
-		private void OnLostConnection(object sender, EventArgs e)
-		{
-			this.StatusMessage = SR.MessageActivityMonitorServiceUnavailable;
 			this.TotalProcessed = 0;
 			this.TotalToProcess = 0;
 			this.AvailableCount = 0;
 			this.FailedSteps = 0;
 			this.CancelEnabled = false;
+			this.ReindexEnabled = true;
+		}
+
+		private void OnLostConnection(object sender, EventArgs e)
+		{
+			this.StatusMessage = SR.MessageActivityMonitorServiceUnavailable;
+			Reset();
+			this.ReindexEnabled = false;
+		}
+
+		private void OnReindexFailed()
+		{
+			this.StatusMessage = SR.MessageFailedToStartReindex;
+			Reset();
 		}
 
 		private void OnReindexProgressUpdate(object sender, ItemEventArgs<ReindexProgressItem> e)
@@ -91,27 +103,31 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			this.AvailableCount = _reindexProgress.NumberOfFilesCommittedToDataStore;
 			this.FailedSteps = _reindexProgress.TotalDataStoreCommitFailures;
 			this.CancelEnabled = (_reindexProgress.AllowedCancellationOperations & CancellationFlags.Cancel) == CancellationFlags.Cancel;
+			this.ReindexEnabled = 
+				(_reindexProgress.AllowedCancellationOperations & CancellationFlags.Clear) == CancellationFlags.Clear &&
+					(_reindexProgress.IsComplete() || 
+						(_reindexProgress.Cancelled && _reindexProgress.TotalImportsProcessed == _reindexProgress.TotalDataStoreCommitsProcessed));
 		}
 
 		public override void Start()
 		{
 			base.Start();
 
-			LocalDataStoreActivityMonitor.Instance.LostConnection += new EventHandler(OnLostConnection);
-			LocalDataStoreActivityMonitor.Instance.Connected += new EventHandler(OnConnected);
-			LocalDataStoreActivityMonitor.Instance.ReindexProgressUpdate += new EventHandler<ItemEventArgs<ReindexProgressItem>>(OnReindexProgressUpdate);
+			LocalDataStoreActivityMonitor.Instance.LostConnection += OnLostConnection;
+			LocalDataStoreActivityMonitor.Instance.ReindexProgressUpdate += OnReindexProgressUpdate;
 
 			if (!LocalDataStoreActivityMonitor.Instance.IsConnected)
 				this.OnLostConnection(null, null);
+			else
+				Reindex();
 		}
 
 		public override void Stop()
 		{
 			base.Stop();
 
-			LocalDataStoreActivityMonitor.Instance.LostConnection -= new EventHandler(OnLostConnection);
-			LocalDataStoreActivityMonitor.Instance.Connected -= new EventHandler(OnConnected);
-			LocalDataStoreActivityMonitor.Instance.ReindexProgressUpdate -= new EventHandler<ItemEventArgs<ReindexProgressItem>>(OnReindexProgressUpdate);
+			LocalDataStoreActivityMonitor.Instance.LostConnection -= OnLostConnection;
+			LocalDataStoreActivityMonitor.Instance.ReindexProgressUpdate -= OnReindexProgressUpdate;
 		}
 
 		public string StatusMessage
@@ -207,8 +223,51 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 		}
 
+		public bool ReindexEnabled
+		{
+			get { return _reindexEnabled; }	
+			set 
+			{ 
+				if (value == _reindexEnabled)
+					return;
+
+				_reindexEnabled = value;
+				this.NotifyPropertyChanged("ReindexEnabled");
+			}
+		}
+
+		public void Reindex()
+		{
+			if (!this.ReindexEnabled)
+				return;
+
+			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
+			try
+			{
+				client.Open();
+				client.Reindex();
+				client.Close();
+
+				this.ReindexEnabled = false;
+			}
+			catch (EndpointNotFoundException)
+			{
+				client.Abort();
+				OnLostConnection(null, null);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				client.Abort();
+				OnReindexFailed();
+			}
+		}
+
 		public void Cancel()
 		{
+			if (!this.CancelEnabled)
+				return;
+
 			if (this.Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmCancelReindex, MessageBoxActions.YesNo) == DialogBoxAction.No)
 				return;
 

@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._failedCount = new System.Windows.Forms.Label();
 			this._statusMessage = new System.Windows.Forms.Label();
 			this._availableCount = new System.Windows.Forms.Label();
-			this._cancelButton = new System.Windows.Forms.Button();
+			this._button = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// _statusLabel
@@ -165,22 +165,21 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._availableCount.Text = "0";
 			this._availableCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
-			// _cancelButton
+			// _button
 			// 
-			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(257, 121);
-			this._cancelButton.Name = "_cancelButton";
-			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 9;
-			this._cancelButton.Text = "Cancel";
-			this._cancelButton.UseVisualStyleBackColor = true;
-			this._cancelButton.Click += new System.EventHandler(this.OnCancelButtonClicked);
+			this._button.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this._button.Location = new System.Drawing.Point(257, 121);
+			this._button.Name = "_button";
+			this._button.Size = new System.Drawing.Size(75, 23);
+			this._button.TabIndex = 9;
+			this._button.Text = "Cancel";
+			this._button.UseVisualStyleBackColor = true;
 			// 
 			// ImportProgressControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._cancelButton);
+			this.Controls.Add(this._button);
 			this.Controls.Add(this._availableCount);
 			this.Controls.Add(this._statusMessage);
 			this.Controls.Add(this._failedCount);
@@ -208,6 +207,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 		private System.Windows.Forms.Label _failedCount;
 		private System.Windows.Forms.Label _statusMessage;
 		private System.Windows.Forms.Label _availableCount;
-		private System.Windows.Forms.Button _cancelButton;
+		private System.Windows.Forms.Button _button;
 	}
 }

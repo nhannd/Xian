@@ -78,9 +78,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						_activeJobInformation.ProgressItem.Removed = false;
 						
 						if (!inactive)
+						{
 							_activeJobInformation.ProgressItem.StatusMessage = SR.MessagePending;
+						}
 						else
+						{
 							_activeJobInformation.ProgressItem.StatusMessage = SR.MessageInactive;
+							_activeJobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+						}
 					}
 				}
 			}
@@ -148,6 +153,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 									lock (_activeJobInformation.SyncRoot)
 									{
 										_activeJobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+										UpdateProgress();
 									}
 
 									_active = false;
@@ -156,7 +162,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							};
 
 							ThreadPool.QueueUserWorkItem(resumeImportsDelegate, this);
-						};
+						}
 					}
 				}
 			}

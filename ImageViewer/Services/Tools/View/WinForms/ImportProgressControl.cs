@@ -43,17 +43,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 {
 	public partial class ImportProgressControl : ApplicationComponentUserControl
 	{
-		private event EventHandler _cancelButtonClicked;
-
 		public ImportProgressControl()
 		{
 			InitializeComponent();
 		}
 
-		public event EventHandler CancelButtonClicked
+		public event EventHandler ButtonClicked
 		{
-			add { _cancelButtonClicked += value; }
-			remove { _cancelButtonClicked -= value; }
+			add { _button.Click += value; }
+			remove { _button.Click -= value; }
 		}
 
 		public string StatusMessage
@@ -123,15 +121,16 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			}
 		}
 
-		public bool CancelEnabled
+		public string ButtonText
 		{
-			get { return _cancelButton.Enabled; }
-			set { _cancelButton.Enabled = value; }
+			get { return _button.Text; }
+			set { _button.Text = value; }
 		}
 
-		private void OnCancelButtonClicked(object sender, EventArgs e)
+		public bool ButtonEnabled
 		{
-			EventsHelper.Fire(_cancelButtonClicked, this, EventArgs.Empty);
+			get { return _button.Enabled; }
+			set { _button.Enabled = value; }
 		}
 	}
 }

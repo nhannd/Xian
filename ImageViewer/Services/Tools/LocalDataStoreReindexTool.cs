@@ -60,25 +60,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public void Activate()
 		{
-			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
-			try
-			{
-				client.Open();
-				client.Reindex();
-				client.Close();
-
-				LocalDataStoreActivityMonitorComponentManager.ShowReindexComponent(this.Context.DesktopWindow);
-			}
-			catch (EndpointNotFoundException)
-			{
-				client.Abort();
-				this.Context.DesktopWindow.ShowMessageBox(SR.MessageReindexLocalDataStoreServiceNotRunning, MessageBoxActions.Ok);
-			}
-			catch (Exception e)
-			{
-				client.Abort();
-				ExceptionHandler.Report(e, SR.MessageFailedToStartReindex, this.Context.DesktopWindow);
-			}
+			LocalDataStoreActivityMonitorComponentManager.ShowReindexComponent(this.Context.DesktopWindow);
 		}
 	}
 }

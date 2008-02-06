@@ -64,9 +64,33 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			_reindexProgressControl.DataBindings.Add("TotalProcessed", bindingSource, "TotalProcessed", true, DataSourceUpdateMode.OnPropertyChanged);
 			_reindexProgressControl.DataBindings.Add("AvailableCount", bindingSource, "AvailableCount", true, DataSourceUpdateMode.OnPropertyChanged);
 			_reindexProgressControl.DataBindings.Add("FailedSteps", bindingSource, "FailedSteps", true, DataSourceUpdateMode.OnPropertyChanged);
-			_reindexProgressControl.DataBindings.Add("CancelEnabled", bindingSource, "CancelEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_reindexProgressControl.CancelButtonClicked += delegate(object sender, EventArgs args) { _component.Cancel(); };
+        	UpdateButtonText();
+        	_component.PropertyChanged += OnPropertyChanged;
+
+			_reindexProgressControl.ButtonClicked += delegate(object sender, EventArgs args)
+			                                         	{
+															if (_component.CancelEnabled)
+			                                         			_component.Cancel();
+															else if (_component.ReindexEnabled)
+																_component.Reindex();
+			                                         	};
         }
+
+		private void UpdateButtonText()
+		{
+			_reindexProgressControl.ButtonEnabled = (_component.CancelEnabled || _component.ReindexEnabled);
+
+			if (_component.CancelEnabled)
+				_reindexProgressControl.ButtonText = SR.LabelCancel;
+			else
+				_reindexProgressControl.ButtonText = SR.LabelStart;
+		}
+
+		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "CancelEnabled" || e.PropertyName == "ReindexEnabled")
+				UpdateButtonText();
+		}
     }
 }

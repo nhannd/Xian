@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._reindexProgressControl.AutoSize = true;
 			this._reindexProgressControl.AvailableCount = 0;
 			this._reindexProgressControl.CancelButton = null;
-			this._reindexProgressControl.CancelEnabled = true;
+			this._reindexProgressControl.ButtonEnabled = true;
 			this._reindexProgressControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._reindexProgressControl.FailedSteps = 0;
 			this._reindexProgressControl.Location = new System.Drawing.Point(0, 0);
