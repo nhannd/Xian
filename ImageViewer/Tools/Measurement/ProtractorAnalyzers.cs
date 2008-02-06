@@ -1,32 +1,14 @@
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	public abstract class ProtractorAnalyzer : IProtractorAnalyzer
-	{
-		public string Analyze(RoiGraphic roiGraphic)
-		{
-			PolyLineInteractiveGraphic protractor = roiGraphic.Roi as PolyLineInteractiveGraphic;
-			IImageSopProvider provider = roiGraphic.ParentPresentationImage as IImageSopProvider;
-
-			Platform.CheckForInvalidCast(protractor, "roiGraphic.Roi", "PolyLineInteractiveGraphic");
-
-			return Analyze(protractor);
-		}
-
-		public abstract string Analyze(PolyLineInteractiveGraphic rectangle);
-	}
-
 	[ExtensionOf(typeof(ProtractorAnalyzerExtensionPoint))]
-	public class ProtractorAngleCalculator : ProtractorAnalyzer
+	public class ProtractorAngleCalculator : IRoiAnalyzer<PolyLineInteractiveGraphic>
 	{
-		public override string Analyze(PolyLineInteractiveGraphic protractor)
+		public string Analyze(PolyLineInteractiveGraphic protractor)
 		{
 			// Don't show the callout until the second ray drawn
 			if (protractor.PolyLine.Count < 3)

@@ -102,9 +102,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			float x1 = center.X;
 			float y1 = center.Y;
 
+			// If the ellipse is flat, just return center of ellipse
 			if (a == 0 || b == 0)
 				return new PointF(x1, y1);
 
+			// Account for case when point is directly above or below the
+			// center of the ellipse.  This prevents the slope calculation 
+			// from being undefined.
 			if (x2 == x1)
 			{
 				if (y2 > y1)

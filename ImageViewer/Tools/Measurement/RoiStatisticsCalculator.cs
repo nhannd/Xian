@@ -1,7 +1,7 @@
 using System;
+using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using System.Drawing;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -27,13 +27,10 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			string str;
 
-			if (IsValidRectangle(graphic, image))
+			if (IsGraphicInImage(graphic, image))
 			{
 				int mean = CalculateMean(graphic, image, isPointInRoi);
 				int stdDev = CalculateStandardDeviation(graphic, image, mean, isPointInRoi);
-				
-				// Make sure the mean is passed through the modality LUT
-				mean = image.ModalityLut[mean];
 
 				if (IsCT(graphic))
 				{
@@ -83,7 +80,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 						if (isPointInRoi(x, y))
 						{
 							pixelCount++;
-							sum += image.PixelData.GetPixel(pixelIndex);
+							// Make sure we run the raw pixel through the modality LUT
+							// when doing the calculation. Note that the modality LUT
+							// can be something other than a rescale intercept, so we can't
+							// just run the mean through the LUT.
+							sum += image.ModalityLut[image.PixelData.GetPixel(pixelIndex)];
 						}
 					});
 
@@ -92,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (pixelCount == 0)
 				mean = 0;
 			else
-				mean = (int)Math.Round(sum/(float)pixelCount);
+				mean = (int)Math.Round(sum/(double)pixelCount);
 
 			return mean;
 		}
@@ -117,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 						if (isPointInRoi(x, y))
 						{
 							pixelCount++;
-							deviation = image.PixelData.GetPixel(pixelIndex) - mean;
+							deviation = image.ModalityLut[image.PixelData.GetPixel(pixelIndex)] - mean;
 							sum += deviation*deviation;
 						}
 					});
@@ -132,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			return stdDev;
 		}
 
-		private static bool IsValidRectangle(InteractiveGraphic graphic, GrayscaleImageGraphic image)
+		private static bool IsGraphicInImage(InteractiveGraphic graphic, GrayscaleImageGraphic image)
 		{
 			RectangleF boundingBox = RectangleUtilities.ConvertToPositiveRectangle(graphic.BoundingBox);
 
@@ -141,8 +142,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			if (boundingBox.Left < 0 ||
 				boundingBox.Top < 0 ||
-				boundingBox.Right > image.Columns ||
-				boundingBox.Bottom > image.Rows)
+				boundingBox.Right > (image.Columns - 1) ||
+				boundingBox.Bottom > (image.Rows - 1) )
 				return false;
 
 			return true;

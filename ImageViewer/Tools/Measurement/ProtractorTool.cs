@@ -34,7 +34,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -48,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class ProtractorTool : MeasurementTool
+	public class ProtractorTool : MeasurementTool<PolyLineInteractiveGraphic>
 	{
 		public ProtractorTool()
 			: base(SR.TooltipProtractor)
@@ -77,13 +76,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		}
 	}
 
-	public interface IProtractorAnalyzer : IRoiAnalyzer
-	{
-		string Analyze(PolyLineInteractiveGraphic rectangle);
-	}
-
 	[ExtensionPoint]
-	public sealed class ProtractorAnalyzerExtensionPoint : ExtensionPoint<IProtractorAnalyzer>
+	public sealed class ProtractorAnalyzerExtensionPoint 
+		: ExtensionPoint<IRoiAnalyzer<PolyLineInteractiveGraphic>>
 	{
 	}
 }

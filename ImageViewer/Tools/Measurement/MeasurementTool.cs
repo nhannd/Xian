@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	public abstract class MeasurementTool : MouseImageViewerTool
+	public abstract class MeasurementTool<T> : MouseImageViewerTool
+		where T:InteractiveGraphic
 	{
 		private RoiGraphic _roiGraphic;
-		private List<IRoiAnalyzer> _roiAnalyzers;
+		private List<IRoiAnalyzer<T>> _roiAnalyzers;
 
 		/// <summary>
 		/// Constructor.
@@ -121,9 +121,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			string calloutText = "";
 
 
-			foreach (IRoiAnalyzer analyzer in _roiAnalyzers)
+			foreach (IRoiAnalyzer<T> analyzer in _roiAnalyzers)
 			{
-				string analysis = analyzer.Analyze(roiGraphic);
+				string analysis = analyzer.Analyze(roiGraphic.Roi as T);
 
 				if (analysis != String.Empty)
 					calloutText += analysis + "\n";
@@ -153,11 +153,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (analyzers == null)
 				return;
 
-			_roiAnalyzers = new List<IRoiAnalyzer>();
+			_roiAnalyzers = new List<IRoiAnalyzer<T>>();
 			
 			foreach (object analyzer in analyzers)
 			{
-				IRoiAnalyzer roiAnalyzer = analyzer as IRoiAnalyzer;
+				IRoiAnalyzer<T> roiAnalyzer = analyzer as IRoiAnalyzer<T>;
 
 				Platform.CheckForInvalidCast(roiAnalyzer, "analyzer", "IRoiAnalyzer");
 

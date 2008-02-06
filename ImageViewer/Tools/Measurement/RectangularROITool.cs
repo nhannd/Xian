@@ -34,7 +34,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -47,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class RectangularRoiTool : MeasurementTool
+    public class RectangularRoiTool : MeasurementTool<RectangleInteractiveGraphic>
 	{
 		public RectangularRoiTool()
 			: base(SR.TooltipRectangularRoi)
@@ -76,13 +75,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		}
 	}
 
-	public interface IRectangleAnalyzer : IRoiAnalyzer
-	{
-		string Analyze(RectangleInteractiveGraphic rectangle);
-	}
-
 	[ExtensionPoint]
-	public sealed class RectangleAnalyzerExtensionPoint : ExtensionPoint<IRectangleAnalyzer>
+	public sealed class RectangleAnalyzerExtensionPoint 
+		: ExtensionPoint<IRoiAnalyzer<RectangleInteractiveGraphic>>
 	{
 	}
 

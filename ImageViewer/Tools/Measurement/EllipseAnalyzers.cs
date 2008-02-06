@@ -1,32 +1,22 @@
 using System;
-using System.Drawing;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	public abstract class EllipseAnalyzer : IEllipseAnalyzer
-	{
-		public string Analyze(RoiGraphic roiGraphic)
-		{
-			EllipseInteractiveGraphic ellipse = roiGraphic.Roi as EllipseInteractiveGraphic;
-			Platform.CheckForInvalidCast(ellipse, "roiGraphic.Roi", "EllipseInteractiveGraphic");
-
-			return Analyze(ellipse);
-		}
-
-		public abstract string Analyze(EllipseInteractiveGraphic ellipse);
-	}
-
 	[ExtensionOf(typeof(EllipseAnalyzerExtensionPoint))]
-	public class EllipseAreaCalculator : EllipseAnalyzer
+	public class EllipseAreaCalculator : IRoiAnalyzer<EllipseInteractiveGraphic>
 	{
-		public override string Analyze(EllipseInteractiveGraphic ellipse)
+		public string Analyze(EllipseInteractiveGraphic ellipse)
 		{
 			IImageSopProvider provider = ellipse.ParentPresentationImage as IImageSopProvider;
+
+			if (provider == null)
+				return String.Empty;
+			
 			ImageSop imageSop = provider.ImageSop;
 
 			Units units = Units.Centimeters;
@@ -57,11 +47,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	}
 
 	[ExtensionOf(typeof(EllipseAnalyzerExtensionPoint))]
-	public class EllipseStatisticsCalculator : EllipseAnalyzer
+	public class EllipseStatisticsCalculator : IRoiAnalyzer<EllipseInteractiveGraphic>
 	{
 		float a, b, a2, b2, h, k, xh, yk, r;
 
-		public override string Analyze(EllipseInteractiveGraphic ellipse)
+		public string Analyze(EllipseInteractiveGraphic ellipse)
 		{
 			ellipse.CoordinateSystem = CoordinateSystem.Source;
 

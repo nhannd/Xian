@@ -1,34 +1,22 @@
 using System;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
-using System.Drawing;
-using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	public abstract class RectangleAnalyzer : IRectangleAnalyzer
-	{
-		public string Analyze(RoiGraphic roiGraphic)
-		{
-			RectangleInteractiveGraphic rectangle = roiGraphic.Roi as RectangleInteractiveGraphic;
-			
-			Platform.CheckForInvalidCast(rectangle, "roiGraphic.Roi", "RectangleInteractiveGraphic");
-			
-			return Analyze(rectangle);
-		}
-
-		public abstract string Analyze(RectangleInteractiveGraphic rectangle);
-	}
-
 	[ExtensionOf(typeof(RectangleAnalyzerExtensionPoint))]
-	public class RectangleAreaCalculator : RectangleAnalyzer
+	public class RectangleAreaCalculator : IRoiAnalyzer<RectangleInteractiveGraphic>
 	{
-		public override string Analyze(RectangleInteractiveGraphic rectangle)
+		public string Analyze(RectangleInteractiveGraphic rectangle)
 		{
 			IImageSopProvider provider = rectangle.ParentPresentationImage as IImageSopProvider;
+
+			if (provider == null)
+				return String.Empty;
+			
 			ImageSop imageSop = provider.ImageSop;
 
 			Units units = Units.Centimeters;
@@ -59,9 +47,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	}
 
 	[ExtensionOf(typeof(RectangleAnalyzerExtensionPoint))]
-	public class RectangleStatisticsCalculator : RectangleAnalyzer
+	public class RectangleStatisticsCalculator : IRoiAnalyzer<RectangleInteractiveGraphic>
 	{
-		public override string Analyze(RectangleInteractiveGraphic rectangle)
+		public string Analyze(RectangleInteractiveGraphic rectangle)
 		{
 			rectangle.CoordinateSystem = CoordinateSystem.Source;
 

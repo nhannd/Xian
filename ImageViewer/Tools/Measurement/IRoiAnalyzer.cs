@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	public interface IRoiAnalyzer
+	public interface IRoiAnalyzer<T> where T:InteractiveGraphic
 	{
-		string Analyze(RoiGraphic roiGraphic);
+		string Analyze(T roiGraphic);
 	}
 }

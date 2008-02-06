@@ -29,15 +29,11 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -51,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class RulerTool : MeasurementTool
+    public class RulerTool : MeasurementTool<PolyLineInteractiveGraphic>
 	{
 		public RulerTool()
 			: base(SR.TooltipRuler)
@@ -80,13 +76,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		}
 	}
 
-	public interface IRulerAnalyzer : IRoiAnalyzer
-	{
-		string Analyze(PolyLineInteractiveGraphic rectangle);
-	}
-
 	[ExtensionPoint]
-	public sealed class RulerAnalyzerExtensionPoint : ExtensionPoint<IRulerAnalyzer>
+	public sealed class RulerAnalyzerExtensionPoint 
+		: ExtensionPoint<IRoiAnalyzer<PolyLineInteractiveGraphic>>
 	{
 	}
 }

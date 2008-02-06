@@ -1,35 +1,22 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	public abstract class RulerAnalyzer : IRulerAnalyzer
-	{
-		public string Analyze(RoiGraphic roiGraphic)
-		{
-			PolyLineInteractiveGraphic ruler = roiGraphic.Roi as PolyLineInteractiveGraphic;
-
-			Platform.CheckForInvalidCast(ruler, "roiGraphic.Roi", "PolyLineInteractiveGraphic");
-
-			return Analyze(ruler);
-		}
-
-		public abstract string Analyze(PolyLineInteractiveGraphic rectangle);
-	}
-
 	[ExtensionOf(typeof(RulerAnalyzerExtensionPoint))]
-	public class RulerLengthCalculator : RulerAnalyzer
+	public class RulerLengthCalculator : IRoiAnalyzer<PolyLineInteractiveGraphic>
 	{
-		public override string Analyze(PolyLineInteractiveGraphic line)
+		public string Analyze(PolyLineInteractiveGraphic line)
 		{
 			IImageSopProvider provider = line.ParentPresentationImage as IImageSopProvider;
+
+			if (provider == null)
+				return String.Empty;
+
 			ImageSop imageSop = provider.ImageSop;
 
 			Units units = Units.Centimeters;

@@ -29,15 +29,11 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -50,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class EllipticalRoiTool : MeasurementTool
+    public class EllipticalRoiTool : MeasurementTool<EllipseInteractiveGraphic>
 	{
 		public EllipticalRoiTool()
 			: base(SR.TooltipEllipticalRoi)
@@ -79,13 +75,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		}
 	}
 
-	public interface IEllipseAnalyzer : IRoiAnalyzer
-	{
-		string Analyze(EllipseInteractiveGraphic ellipse);
-	}
-
 	[ExtensionPoint]
-	public sealed class EllipseAnalyzerExtensionPoint : ExtensionPoint<IEllipseAnalyzer>
+	public sealed class EllipseAnalyzerExtensionPoint 
+		: ExtensionPoint<IRoiAnalyzer<EllipseInteractiveGraphic>>
 	{
 	}
 }
