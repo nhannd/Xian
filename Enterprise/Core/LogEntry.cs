@@ -50,7 +50,7 @@ namespace ClearCanvas.Enterprise.Core
         protected LogEntry(string operation, string details)
             :this(
                 Platform.Time,
-                Assembly.GetEntryAssembly().GetName().Name, // TODO: replace this with something more meaningful????
+                null, // TODO: replace this with something more meaningful????
                 Thread.CurrentPrincipal.Identity.Name,
                 operation,
                 details
