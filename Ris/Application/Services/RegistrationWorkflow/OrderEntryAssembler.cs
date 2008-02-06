@@ -89,6 +89,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         return noteAssembler.CreateOrderNoteDetail(note, context);
                     });
 
+            requisition.ExtendedProperties = new Dictionary<string, string>(order.ExtendedProperties);
+
             return requisition;
         }
 
@@ -124,6 +126,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             // synchronize Order.Notes from order requisition
             OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
             noteAssembler.Synchronize(order.Notes, requisition.Notes, currentStaff, context);
+
+            if(requisition.ExtendedProperties != null)
+            {
+                // copy properties individually so as not to overwrite any that were not sent by the client
+                foreach (KeyValuePair<string, string> pair in requisition.ExtendedProperties)
+                {
+                    order.ExtendedProperties[pair.Key] = pair.Value;
+                }
+            }
         }
 
         public ProcedureRequisition CreateProcedureRequisition(Procedure rp, IPersistenceContext context)

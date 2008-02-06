@@ -63,7 +63,7 @@
     </Compile>
     <Compile Include="Folders\FolderOptionComponent.cs" />
     <Compile Include="Folders\RegistrationWorkflowFolders.cs" />
-    <Compile Include="OrderEntryComponent.cs" />
+    <Compile Include="OrderEditorComponent.cs" />
     <Compile Include="HL7QueueItemSummaryTable.cs" />
     <Compile Include="HL7QueuePatientSearchTool.cs" />
     <Compile Include="HL7QueuePreviewComponent.cs" />

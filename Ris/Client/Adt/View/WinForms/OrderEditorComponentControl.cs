@@ -33,20 +33,21 @@ using System;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.Adt;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="OrderEntryComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="OrderEditorComponent"/>
     /// </summary>
-    public partial class OrderEntryComponentControl : ApplicationComponentUserControl
+    public partial class OrderEditorComponentControl : ApplicationComponentUserControl
     {
-        private readonly OrderEntryComponent _component;
+        private readonly OrderEditorComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public OrderEntryComponentControl(OrderEntryComponent component)
+        public OrderEditorComponentControl(OrderEditorComponent component)
             :base(component)
         {
             InitializeComponent();
@@ -56,9 +57,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             banner.Dock = DockStyle.Fill;
             _bannerPanel.Controls.Add(banner);
 
-            Control orderAttachmentSummary = (Control)_component.OrderAttachmentSummaryHost.ComponentView.GuiElement;
-            orderAttachmentSummary.Dock = DockStyle.Fill;
-            _documentsTab.Controls.Add(orderAttachmentSummary);
+            Control rightHandTabPages = (Control)_component.RightHandComponentContainerHost.ComponentView.GuiElement;
+            rightHandTabPages.Dock = DockStyle.Fill;
+            _rightHandPanel.Controls.Add(rightHandTabPages);
 
             Control orderNoteSummary = (Control)_component.OrderNoteSummaryHost.ComponentView.GuiElement;
             orderNoteSummary.Dock = DockStyle.Fill;

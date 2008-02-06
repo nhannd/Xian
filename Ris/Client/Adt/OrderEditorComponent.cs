@@ -49,18 +49,44 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Client.Adt
 {
     /// <summary>
-    /// Extension point for views onto <see cref="OrderEntryComponent"/>
+    /// Defines an interface for providing custom editing pages to be displayed in the order editor.
     /// </summary>
-    [ExtensionPoint]
-    public class OrderEntryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    public interface IOrderEditorPageProvider
+    {
+        IOrderEditorPage[] GetEditorPages(Dictionary<string, string> extendedProperties);
+    }
+
+    /// <summary>
+    /// Defines an interface to a custom order editor page.
+    /// </summary>
+    public interface IOrderEditorPage
+    {
+        Path Path { get; }
+        IApplicationComponent GetComponent();
+
+        void Save();
+    }
+
+    /// <summary>
+    /// Defines an extension point for adding custom pages to the order editor.
+    /// </summary>
+    public class OrderEditorPageProviderExtensionPoint : ExtensionPoint<IOrderEditorPageProvider>
     {
     }
 
     /// <summary>
-    /// OrderEntryComponent class
+    /// Extension point for views onto <see cref="OrderEditorComponent"/>
     /// </summary>
-    [AssociateView(typeof(OrderEntryComponentViewExtensionPoint))]
-    public class OrderEntryComponent : ApplicationComponent
+    [ExtensionPoint]
+    public class OrderEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    {
+    }
+
+    /// <summary>
+    /// OrderEditorComponent class
+    /// </summary>
+    [AssociateView(typeof(OrderEditorComponentViewExtensionPoint))]
+    public class OrderEditorComponent : ApplicationComponent
     {
         public enum Mode
         {
@@ -135,17 +161,22 @@ namespace ClearCanvas.Ris.Client.Adt
         private event EventHandler _changeCommitted;
 
         private MimeDocumentPreviewComponent _attachmentSummaryComponent;
-        private ChildComponentHost _orderAttachmentSummaryComponentHost;
+
+        private TabComponentContainer _rightHandComponentContainer;
+        private ChildComponentHost _rightHandComponentContainerHost;
 
         private OrderNoteSummaryComponent _noteSummaryComponent;
         private ChildComponentHost _orderNoteSummaryComponentHost;
 
         private ChildComponentHost _bannerComponentHost;
 
+        private List<IOrderEditorPage> _extensionPages;
+        private Dictionary<string, string> _extendedProperties;
+
         /// <summary>
         /// Constructor for creating a new order.
         /// </summary>
-        public OrderEntryComponent(EntityRef patientRef, EntityRef profileRef)
+        public OrderEditorComponent(EntityRef patientRef, EntityRef profileRef)
             : this(patientRef, profileRef, null, Mode.NewOrder)
         {
         }
@@ -153,7 +184,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor for creating a new order with attachments.
         /// </summary>
-        public OrderEntryComponent(EntityRef patientRef, EntityRef profileRef, List<OrderAttachmentSummary> attachments)
+        public OrderEditorComponent(EntityRef patientRef, EntityRef profileRef, List<OrderAttachmentSummary> attachments)
             : this(patientRef, profileRef, null, Mode.NewOrder)
         {
             _attachmentSummaryComponent.OrderAttachments = attachments;
@@ -166,7 +197,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <param name="profileRef"></param>
         /// <param name="orderRef"></param>
         /// <param name="mode"></param>
-        public OrderEntryComponent(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef, Mode mode)
+        public OrderEditorComponent(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef, Mode mode)
         {
             Platform.CheckForNullReference(patientRef, "patientRef");
 
@@ -237,6 +268,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(new HealthcareContext(_patientRef, _profileRef, _orderRef)));
             _bannerComponentHost.StartComponent();
 
+
             _consultantLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
             _diagnosticServiceLookupHandler = new DiagnosticServiceLookupHandler(this.Host.DesktopWindow);
             _orderingPractitionerLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
@@ -259,6 +291,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 _selectedPriority = _priorityChoices.Count > 0 ? _priorityChoices[0] : null;
                 _orderingFacility = LoginSession.Current.WorkingFacility;
                 _schedulingRequestTime = Platform.Time;
+                _extendedProperties = new Dictionary<string, string>();
             }
             else
             {
@@ -283,9 +316,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Presentation Model
 
-        public ApplicationComponentHost OrderAttachmentSummaryHost
+        public ApplicationComponentHost RightHandComponentContainerHost
         {
-            get { return _orderAttachmentSummaryComponentHost; }
+            get { return _rightHandComponentContainerHost; }
         }
 
         public ApplicationComponentHost OrderNoteSummaryHost
@@ -723,6 +756,7 @@ namespace ClearCanvas.Ris.Client.Adt
             requisition.CopiesToPractitioners = new List<ExternalPractitionerSummary>(_consultantsTable.Items);
             requisition.Attachments = new List<OrderAttachmentSummary>(_attachmentSummaryComponent.OrderAttachments);
             requisition.Notes = new List<OrderNoteDetail>(_noteSummaryComponent.Notes);
+            requisition.ExtendedProperties = _extendedProperties;
             return requisition;
         }
 
@@ -745,10 +779,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _attachmentSummaryComponent.OrderAttachments = existingOrder.Attachments;
             _noteSummaryComponent.Notes = existingOrder.Notes;
+            _extendedProperties = existingOrder.ExtendedProperties;
         }
         
         private bool SubmitOrder()
         {
+            // give extension pages a chance to save data prior to commit
+            _extensionPages.ForEach(delegate(IOrderEditorPage page) { page.Save(); });
+
             OrderRequisition requisition = BuildOrderRequisition();
 
             try
@@ -791,12 +829,33 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void InitializeTabPages()
         {
-            _orderAttachmentSummaryComponentHost = new ChildComponentHost(this.Host, _attachmentSummaryComponent);
-            _orderAttachmentSummaryComponentHost.StartComponent();
-            this.ChangeCommitted += delegate { _attachmentSummaryComponent.SaveChanges(); };
-
             _orderNoteSummaryComponentHost = new ChildComponentHost(this.Host, _noteSummaryComponent);
             _orderNoteSummaryComponentHost.StartComponent();
+
+            _rightHandComponentContainer = new TabComponentContainer();
+            _rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
+
+            // order attachment component
+            _attachmentSummaryComponent = new MimeDocumentPreviewComponent(true, true, MimeDocumentPreviewComponent.AttachmentMode.Order);
+            this.ChangeCommitted += delegate { _attachmentSummaryComponent.SaveChanges(); };
+            _rightHandComponentContainer.Pages.Add(new TabPage("Documents", _attachmentSummaryComponent));
+
+            // instantiate all extension pages
+            _extensionPages = new List<IOrderEditorPage>();
+            foreach (IOrderEditorPageProvider pageProvider in new OrderEditorPageProviderExtensionPoint().CreateExtensions())
+            {
+                _extensionPages.AddRange(pageProvider.GetEditorPages(_extendedProperties));
+            }
+
+            // add extension pages to navigator
+            // the navigator will start those components if the user goes to that page
+            foreach (IOrderEditorPage page in _extensionPages)
+            {
+                _rightHandComponentContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
+            }
+
+            _rightHandComponentContainerHost.StartComponent();
+
         }
     
     }

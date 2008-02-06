@@ -122,5 +122,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// </summary>
         [DataMember]
         public List<OrderNoteDetail> Notes;
+
+        /// <summary>
+        /// A dictionary of extended properties for this order.  Optional.
+        /// </summary>
+        [DataMember]
+        public Dictionary<string, string> ExtendedProperties;
     }
 }

@@ -131,7 +131,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 ApplicationComponent.LaunchAsWorkspace(
                     desktopWindow,
-                    new OrderEntryComponent(patientRef, profileRef),
+                    new OrderEditorComponent(patientRef, profileRef),
                     title);
             }
             catch (Exception e)

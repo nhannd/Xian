@@ -36,24 +36,25 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.Adt;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="OrderEntryComponent"/>
+    /// Provides a Windows Forms view onto <see cref="OrderEditorComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(OrderEntryComponentViewExtensionPoint))]
-    public class OrderEntryComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(OrderEditorComponentViewExtensionPoint))]
+    public class OrderEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        private OrderEntryComponent _component;
-        private OrderEntryComponentControl _control;
+        private OrderEditorComponent _component;
+        private OrderEditorComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (OrderEntryComponent)component;
+            _component = (OrderEditorComponent)component;
         }
 
         #endregion
@@ -64,7 +65,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new OrderEntryComponentControl(_component);
+                    _control = new OrderEditorComponentControl(_component);
                 }
                 return _control;
             }

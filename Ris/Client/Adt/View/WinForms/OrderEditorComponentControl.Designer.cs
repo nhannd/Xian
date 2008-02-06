@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
-    partial class OrderEntryComponentControl
+    partial class OrderEditorComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OrderEntryComponentControl));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OrderEditorComponentControl));
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -87,9 +87,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this._indication = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._orderingFacility = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this.tabControl2 = new System.Windows.Forms.TabControl();
-            this._documentsTab = new System.Windows.Forms.TabPage();
             this._bannerPanel = new System.Windows.Forms.Panel();
+            this._rightHandPanel = new System.Windows.Forms.Panel();
             this.tableLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -102,7 +101,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabPage2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel2.SuspendLayout();
-            this.tabControl2.SuspendLayout();
             this.SuspendLayout();
             // 
             // _cancelButton
@@ -172,7 +170,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.tabControl2);
+            this.splitContainer1.Panel2.Controls.Add(this._rightHandPanel);
             this.splitContainer1.Size = new System.Drawing.Size(1021, 645);
             this.splitContainer1.SplitterDistance = 510;
             this.splitContainer1.SplitterWidth = 3;
@@ -318,7 +316,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderNotesTab.Location = new System.Drawing.Point(4, 22);
             this._orderNotesTab.Margin = new System.Windows.Forms.Padding(2);
             this._orderNotesTab.Name = "_orderNotesTab";
-            this._orderNotesTab.Size = new System.Drawing.Size(496, 334);
+            this._orderNotesTab.Size = new System.Drawing.Size(496, 349);
             this._orderNotesTab.TabIndex = 2;
             this._orderNotesTab.Text = "Notes";
             this._orderNotesTab.UseVisualStyleBackColor = true;
@@ -330,7 +328,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPage2.Size = new System.Drawing.Size(496, 334);
+            this.tabPage2.Size = new System.Drawing.Size(496, 349);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Copies To";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -348,7 +346,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(492, 330);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(492, 345);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // _consultantsTableView
@@ -361,7 +359,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._consultantsTableView.Name = "_consultantsTableView";
             this._consultantsTableView.ReadOnly = false;
             this._consultantsTableView.ShowToolbar = false;
-            this._consultantsTableView.Size = new System.Drawing.Size(484, 260);
+            this._consultantsTableView.Size = new System.Drawing.Size(484, 275);
             this._consultantsTableView.TabIndex = 2;
             this._consultantsTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             // 
@@ -484,6 +482,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._indication.Margin = new System.Windows.Forms.Padding(2);
             this._indication.Mask = "";
             this._indication.Name = "_indication";
+            this._indication.PasswordChar = '\0';
             this._indication.Size = new System.Drawing.Size(506, 40);
             this._indication.TabIndex = 5;
             this._indication.ToolTip = null;
@@ -499,33 +498,12 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderingFacility.Margin = new System.Windows.Forms.Padding(2);
             this._orderingFacility.Mask = "";
             this._orderingFacility.Name = "_orderingFacility";
+            this._orderingFacility.PasswordChar = '\0';
             this._orderingFacility.ReadOnly = true;
             this._orderingFacility.Size = new System.Drawing.Size(251, 41);
             this._orderingFacility.TabIndex = 0;
             this._orderingFacility.ToolTip = null;
             this._orderingFacility.Value = null;
-            // 
-            // tabControl2
-            // 
-            this.tabControl2.Controls.Add(this._documentsTab);
-            this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl2.Location = new System.Drawing.Point(0, 0);
-            this.tabControl2.Margin = new System.Windows.Forms.Padding(2);
-            this.tabControl2.Name = "tabControl2";
-            this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(508, 645);
-            this.tabControl2.TabIndex = 0;
-            // 
-            // _documentsTab
-            // 
-            this._documentsTab.Location = new System.Drawing.Point(4, 22);
-            this._documentsTab.Margin = new System.Windows.Forms.Padding(2);
-            this._documentsTab.Name = "_documentsTab";
-            this._documentsTab.Padding = new System.Windows.Forms.Padding(2);
-            this._documentsTab.Size = new System.Drawing.Size(500, 619);
-            this._documentsTab.TabIndex = 0;
-            this._documentsTab.Text = "Documents";
-            this._documentsTab.UseVisualStyleBackColor = true;
             // 
             // _bannerPanel
             // 
@@ -535,13 +513,21 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._bannerPanel.Size = new System.Drawing.Size(1019, 79);
             this._bannerPanel.TabIndex = 0;
             // 
-            // OrderEntryComponentControl
+            // _rightHandPanel
+            // 
+            this._rightHandPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._rightHandPanel.Location = new System.Drawing.Point(0, 0);
+            this._rightHandPanel.Name = "_rightHandPanel";
+            this._rightHandPanel.Size = new System.Drawing.Size(508, 645);
+            this._rightHandPanel.TabIndex = 0;
+            // 
+            // OrderEditorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel2);
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "OrderEntryComponentControl";
+            this.Name = "OrderEditorComponentControl";
             this.Size = new System.Drawing.Size(1025, 767);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
@@ -558,7 +544,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabPage2.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
-            this.tabControl2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -575,8 +560,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TableView _consultantsTableView;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _acceptButton;
-        private System.Windows.Forms.TabControl tabControl2;
-        private System.Windows.Forms.TabPage _documentsTab;
         private ClearCanvas.Ris.Client.View.WinForms.LookupField _diagnosticService;
         private System.Windows.Forms.Button _addConsultantButton;
         private ClearCanvas.Ris.Client.View.WinForms.LookupField _consultantLookup;
@@ -596,6 +579,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.Panel _rightHandPanel;
 
     }
 }

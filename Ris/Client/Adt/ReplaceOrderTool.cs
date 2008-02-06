@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 WorklistItemSummaryBase item = (WorklistItemSummaryBase)this.Context.Selection.Item;
                 ApplicationComponent.LaunchAsWorkspace(
                     this.Context.DesktopWindow,
-                    new OrderEntryComponent(item.PatientRef, item.PatientProfileRef, item.OrderRef, OrderEntryComponent.Mode.ReplaceOrder),
+                    new OrderEditorComponent(item.PatientRef, item.PatientProfileRef, item.OrderRef, OrderEditorComponent.Mode.ReplaceOrder),
                     string.Format(SR.TitleReplaceOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)));
             }
             catch (Exception e)

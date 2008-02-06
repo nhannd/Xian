@@ -54,13 +54,13 @@
       <DependentUpon>CheckInOrderComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CheckInOrderComponentView.cs" />
-    <Compile Include="OrderEntryComponentControl.cs">
+    <Compile Include="OrderEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="OrderEntryComponentControl.Designer.cs">
-      <DependentUpon>OrderEntryComponentControl.cs</DependentUpon>
+    <Compile Include="OrderEditorComponentControl.Designer.cs">
+      <DependentUpon>OrderEditorComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="OrderEntryComponentView.cs" />
+    <Compile Include="OrderEditorComponentView.cs" />
     <Compile Include="HL7QueuePreviewComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -211,9 +211,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="OrderEntryComponentControl.resx">
+    <EmbeddedResource Include="OrderEditorComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>OrderEntryComponentControl.cs</DependentUpon>
+      <DependentUpon>OrderEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HL7QueuePreviewComponentControl.resx">
       <DependentUpon>HL7QueuePreviewComponentControl.cs</DependentUpon>
