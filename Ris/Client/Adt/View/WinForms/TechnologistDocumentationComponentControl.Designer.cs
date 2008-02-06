@@ -65,10 +65,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._btnComplete = new System.Windows.Forms.Button();
             this._bannerPanel = new System.Windows.Forms.Panel();
             this._orderDocumentationPanel = new System.Windows.Forms.Panel();
-            this._documentationTabs = new System.Windows.Forms.TabControl();
             this._tableLayoutPanelRoot.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
-            this._orderDocumentationPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // _tableLayoutPanelRoot
@@ -134,21 +132,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._orderDocumentationPanel.AutoSize = true;
             this._orderDocumentationPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._orderDocumentationPanel.Controls.Add(this._documentationTabs);
             this._orderDocumentationPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this._orderDocumentationPanel.Location = new System.Drawing.Point(3, 88);
             this._orderDocumentationPanel.Name = "_orderDocumentationPanel";
             this._orderDocumentationPanel.Size = new System.Drawing.Size(1027, 524);
             this._orderDocumentationPanel.TabIndex = 2;
-            // 
-            // _documentationTabs
-            // 
-            this._documentationTabs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._documentationTabs.Location = new System.Drawing.Point(0, 0);
-            this._documentationTabs.Name = "_documentationTabs";
-            this._documentationTabs.SelectedIndex = 0;
-            this._documentationTabs.Size = new System.Drawing.Size(1027, 524);
-            this._documentationTabs.TabIndex = 0;
             // 
             // TechnologistDocumentationComponentControl
             // 
@@ -161,7 +149,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._tableLayoutPanelRoot.ResumeLayout(false);
             this._tableLayoutPanelRoot.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
-            this._orderDocumentationPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -174,6 +161,5 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.Button _btnSave;
         private System.Windows.Forms.Panel _bannerPanel;
         private System.Windows.Forms.Panel _orderDocumentationPanel;
-        private System.Windows.Forms.TabControl _documentationTabs;
     }
 }

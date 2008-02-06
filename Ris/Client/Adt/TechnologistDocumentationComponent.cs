@@ -37,6 +37,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
@@ -98,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             public void AddPage(IDocumentationPage page)
             {
-                _owner.InsertDocumentationPage(page, _owner._documentationHosts.Count);
+                _owner.InsertDocumentationPage(page, _owner._documentationTabContainer.Pages.Count);
             }
 
             public void InsertPage(IDocumentationPage page, int position)
@@ -123,27 +124,18 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #endregion
 
-        public class DocumentationHost
+        #region DocumentationTabContainer class
+
+        class DocumentationTabContainer : TabComponentContainer
         {
-            private readonly string _title;
-            private readonly ApplicationComponentHost _host;
-
-            public DocumentationHost(string title, ApplicationComponentHost host)
+            public override void Start()
             {
-                _title = title;
-                _host = host;
-            }
-
-            public string Title
-            {
-                get { return _title; }
-            }
-
-            public ApplicationComponentHost Host
-            {
-                get { return _host; }
+                this.ValidationStrategy = new AllComponentsValidationStrategy();
+                base.Start();
             }
         }
+
+        #endregion
 
         #region Private Members
 
@@ -159,8 +151,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private ClickAction _discontinueAction;
 
         private ChildComponentHost _bannerComponentHost;
-        private readonly List<DocumentationHost> _documentationHosts;
-        private DocumentationHost _initialHost;
+        private ChildComponentHost _documentationHost;
+        private DocumentationTabContainer _documentationTabContainer;
 
         private readonly List<ITechnologistDocumentationModule> _documentationModules = new List<ITechnologistDocumentationModule>();
 
@@ -170,7 +162,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private TechnologistDocumentationOrderDetailsComponent _orderDetailsComponent;
 
         private bool _completeEnabled;
-        private readonly bool _saveEnabled = true;
+        private bool _saveEnabled = true;
 
         private event EventHandler _documentCompleted;
         private event EventHandler _documentSaved;
@@ -180,7 +172,6 @@ namespace ClearCanvas.Ris.Client.Adt
         public TechnologistDocumentationComponent(ModalityWorklistItem item)
         {
             _worklistItem = item;
-            _documentationHosts = new List<DocumentationHost>();
         }
 
         #region ApplicationComponent overrides
@@ -193,6 +184,13 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Start();
         }
 
+        public override void Stop()
+        {
+            // TODO prepare the component to exit the live phase
+            // This is a good place to do any clean up
+            base.Stop();
+        }
+
         #endregion
 
         #region Presentation Model Methods
@@ -202,14 +200,9 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _bannerComponentHost; }
         }
 
-        public List<DocumentationHost> DocumentationHosts
+        public ApplicationComponentHost DocumentationHost
         {
-            get { return _documentationHosts; }
-        }
-
-        public DocumentationHost InitialHost
-        {
-            get { return _initialHost; }    
+            get { return _documentationHost; }
         }
 
         public ITable ProcedurePlanSummaryTable
@@ -232,9 +225,8 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             try
             {
-                Save(false);
-
-                EventsHelper.Fire(_documentSaved, this, EventArgs.Empty);
+                if (Save(false))
+                    EventsHelper.Fire(_documentSaved, this, EventArgs.Empty);
             }
             catch (Exception e)
             {
@@ -343,20 +335,32 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Private methods
 
-        private void Save(bool completeDocumentation)
+        private bool Save(bool completeDocumentation)
         {
-            _preExamComponent.SaveData();
-            _postExamComponent.SaveData();
-
-            _ppsComponent.SaveData();
-
-            foreach(ITechnologistDocumentationModule module in _documentationModules)
+            if (this.HasValidationErrors)
             {
-                module.SaveData(completeDocumentation);
+                ShowValidation(true);
+                return false;
+            }
+
+            if (_documentationTabContainer.HasValidationErrors)
+            {
+                _documentationTabContainer.ShowValidation(true);
+                return false;
             }
 
             try
             {
+                _preExamComponent.SaveData();
+                _postExamComponent.SaveData();
+
+                _ppsComponent.SaveData();
+
+                foreach(ITechnologistDocumentationModule module in _documentationModules)
+                {
+                    module.SaveData(completeDocumentation);
+                }
+
                 Platform.GetService<ITechnologistDocumentationService>(
                     delegate(ITechnologistDocumentationService service)
                         {
@@ -387,17 +391,21 @@ namespace ClearCanvas.Ris.Client.Adt
                                 RefreshProcedurePlanSummary(saveResponse.ProcedurePlan);
                             }
                         });
+
+                return true;
             }
             catch(Exception e)
             {
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
+
+            return false;
         }
 
         private void InitializeProcedurePlanSummary()
         {
             _procedurePlanSummaryTable = new ProcedurePlanSummaryTable();
-            _procedurePlanSummaryTable.CheckedRowsChanged += delegate { UpdateActionEnablement(); };
+            _procedurePlanSummaryTable.CheckedRowsChanged += delegate(object sender, EventArgs args) { UpdateActionEnablement(); };
 
             Platform.GetService<IModalityWorkflowService>(
                 delegate(IModalityWorkflowService service)
@@ -426,6 +434,8 @@ namespace ClearCanvas.Ris.Client.Adt
             _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
             _bannerComponentHost.StartComponent();
 
+            _documentationTabContainer = new DocumentationTabContainer();
+
             _orderDetailsComponent = new TechnologistDocumentationOrderDetailsComponent(_worklistItem);
             InsertDocumentationPage(_orderDetailsComponent, 0);
 
@@ -449,7 +459,10 @@ namespace ClearCanvas.Ris.Client.Adt
             _postExamComponent = new ExamDetailsComponent("Post-exam",
                                                           TechnologistDocumentationComponentSettings.Default.PostExamDetailsPageUrl,
                                                           _orderExtendedProperties);
-            InsertDocumentationPage(_postExamComponent, _documentationHosts.Count);
+            InsertDocumentationPage(_postExamComponent, _documentationTabContainer.Pages.Count);
+
+            _documentationHost = new ChildComponentHost(this.Host, _documentationTabContainer);
+            _documentationHost.StartComponent();
 
             SetInitialDocumentationTabPage();
         }
@@ -459,26 +472,24 @@ namespace ClearCanvas.Ris.Client.Adt
             // TODO add a setting for initial page
             string requestedTabPageName = "Exam";
 
-            DocumentationHost requestedHost = CollectionUtils.SelectFirst(_documentationHosts,
-                delegate(DocumentationHost host) { return string.Compare(host.Title, requestedTabPageName, true) == 0; });
+            TabPage requestedTabPage = CollectionUtils.SelectFirst<TabPage>(
+                _documentationTabContainer.Pages,
+                delegate(TabPage tabPage) { return string.Compare(tabPage.Name, requestedTabPageName, true) == 0; });
 
-            if (requestedHost != null)
-                _initialHost = requestedHost;
-            else
-                _initialHost = CollectionUtils.FirstElement(_documentationHosts);
+            if (requestedTabPage != null)
+                _documentationTabContainer.CurrentPage = requestedTabPage;
         }
 
         private void InsertDocumentationPage(IDocumentationPage page, int position)
         {
-            DocumentationHost documentationHost = new DocumentationHost(page.Title, new ChildComponentHost(this.Host, page.Component));
-            documentationHost.Host.StartComponent();
-            _documentationHosts.Insert(position, documentationHost);
+            _documentationTabContainer.Pages.Insert(position, new TabPage(page.Title, page.Component));
         }
 
         private List<ProcedurePlanSummaryTableItem> ListCheckedSummmaryTableItems()
         {
             return CollectionUtils.Map<Checkable<ProcedurePlanSummaryTableItem>, ProcedurePlanSummaryTableItem>(
-                CollectionUtils.Select(_procedurePlanSummaryTable.Items,
+                CollectionUtils.Select<Checkable<ProcedurePlanSummaryTableItem>>(
+                    _procedurePlanSummaryTable.Items,
                     delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.IsChecked; }),
                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item; });
         }

@@ -56,19 +56,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             banner.Dock = DockStyle.Fill;
             _bannerPanel.Controls.Add(banner);
 
-            foreach (TechnologistDocumentationComponent.DocumentationHost documentationHost in _component.DocumentationHosts)
-            {
-                TabPage newTab = new TabPage(documentationHost.Title);
-
-                Control documentationControl = (Control)documentationHost.Host.ComponentView.GuiElement;
-                documentationControl.Dock = DockStyle.Fill;
-                newTab.Controls.Add(documentationControl);
-
-                _documentationTabs.Controls.Add(newTab);
-
-                if (documentationHost == _component.InitialHost)
-                    _documentationTabs.SelectTab(newTab);
-            }
+            Control documentationTabs = (Control)_component.DocumentationHost.ComponentView.GuiElement;
+            documentationTabs.Dock = DockStyle.Fill;
+            _orderDocumentationPanel.Controls.Add(documentationTabs);
 
             _btnComplete.DataBindings.Add("Enabled", _component, "CompleteEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
