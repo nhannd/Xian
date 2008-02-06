@@ -106,6 +106,7 @@
     <Compile Include="IRoiAnalyzer.cs" />
     <Compile Include="MeasurementTool.cs" />
     <Compile Include="ProtractorAnalyzers.cs" />
+    <Compile Include="ProtractorInteractiveGraphic.cs" />
     <Compile Include="ProtractorTool.cs" />
     <Compile Include="DeleteGraphicTool.cs" />
     <Compile Include="RectangleAnalyzers.cs" />

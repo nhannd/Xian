@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected override InteractiveGraphic CreateInteractiveGraphic()
 		{
-			return new PolyLineInteractiveGraphic(true, 3);
+			return new ProtractorInteractiveGraphic();
 		}
 
 		protected override string CreationCommandName

@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		/// <param name="point">The mouse position in destination coordinates.</param>
 		/// <returns>
-		/// <b>True</b> if <paramref name="point"/> "hits" the <see cref="RectanglePrimitive"/>,
+		/// <b>True</b> if <paramref name="point"/> "hits" the <see cref="EllipsePrimitive"/>,
 		/// <b>false</b> otherwise.
 		/// </returns>
 		/// <remarks>

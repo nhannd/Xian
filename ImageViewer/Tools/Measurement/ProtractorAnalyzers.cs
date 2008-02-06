@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				protractor.PolyLine[2]);
 
 			protractor.ResetCoordinateSystem();
-			string text = String.Format("{0:F0}°", angle);
+			string text = String.Format("{0:F0}°", Math.Abs(angle));
 
 			return text;
 		}

@@ -36,6 +36,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			float dotProduct = a.Dot(b);
 
+			Vector3D crossProduct = a.Cross(b);
+
 			float magA = a.Magnitude;
 			float magB = b.Magnitude;
 
@@ -52,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (cosTheta < -1.0f)
 				cosTheta = -1.0f;
 
-			double theta = Math.Acos(cosTheta);
+			double theta = Math.Acos(cosTheta) * Math.Sign(crossProduct.Z);
 
 			double thetaInDegrees = theta / Math.PI * 180;
 

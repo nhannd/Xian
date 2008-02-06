@@ -366,6 +366,56 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
+		/// Draws a <see cref="ArcPrimitive"/>.
+		/// </summary>
+		protected override void DrawArcPrimitive(ArcPrimitive arc)
+		{
+			Surface.FinalBuffer.Graphics.Transform = arc.SpatialTransform.CumulativeTransform;
+			arc.CoordinateSystem = CoordinateSystem.Source;
+
+			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+			float offsetX = 0;
+			float offsetY = 0;
+
+			if (arc.Width < 0)
+				offsetX = arc.Width;
+
+			if (arc.Height < 0)
+				offsetY = arc.Height;
+
+			// Draw drop shadow
+			_pen.Color = Color.Black;
+			_pen.Width = CalculateScaledPenWidth(arc, 1);
+
+			SetDashStyle(arc);
+
+			Surface.FinalBuffer.Graphics.DrawArc(
+				_pen,
+				arc.TopLeft.X + offsetX + GetDropShadowOffset(arc).Width,
+				arc.TopLeft.Y + offsetY + GetDropShadowOffset(arc).Height,
+				Math.Abs(arc.Width),
+				Math.Abs(arc.Height),
+				arc.StartAngle,
+				arc.SweepAngle);
+
+			// Draw rectangle
+			_pen.Color = arc.Color;
+
+			Surface.FinalBuffer.Graphics.DrawArc(
+				_pen,
+				arc.TopLeft.X + offsetX,
+				arc.TopLeft.Y + offsetY,
+				Math.Abs(arc.Width),
+				Math.Abs(arc.Height),
+				arc.StartAngle,
+				arc.SweepAngle);
+
+			arc.ResetCoordinateSystem();
+			Surface.FinalBuffer.Graphics.ResetTransform();
+		}
+
+		/// <summary>
 		/// Draws a <see cref="PointPrimitive"/>.
 		/// </summary>
 		protected override void DrawPointPrimitive(PointPrimitive pointPrimitive)
