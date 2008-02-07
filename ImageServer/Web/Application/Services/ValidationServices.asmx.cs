@@ -32,11 +32,13 @@
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.ServiceModel;
 using System.Text.RegularExpressions;
 using System.Web.Script.Services;
 using System.Web.Services;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Web.Application.FilesystemServiceProxy;
 using ClearCanvas.ImageServer.Web.Application.ValidationServerProxy;
 
 namespace ClearCanvas.ImageServer.Web.Application.Services
@@ -63,26 +65,36 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
         {
             // This web service in turns call a WCF service which resides on the same or different systems.
 
-            ValidationResult res = new  ValidationResult();
-
+            FilesystemServiceProxy.FilesystemInfo fsInfo = null;
+            FilesystemServiceProxy.FilesystemServiceClient client = new FilesystemServiceProxy.FilesystemServiceClient();
+            ValidationResult result = new ValidationResult();
+            result.Success = false;
             try
             {
-                ValidationServiceClient service = new ValidationServiceClient();
-                service.Open();
-                res = service.CheckPath(path);
-                service.Close();
+                fsInfo = client.GetFilesystemInfo(path);
+                if (fsInfo.Exists)
+                {
+                    result.Success = true;
+                }
+                else
+                {
+                    result.Success = false;
+                    result.ErrorText = String.Format("{0} is either invalid or not reachable.", path);
+                }
+                return result;
             }
-            catch(Exception ex)
+            catch(Exception e)
             {
-                Platform.Log(LogLevel.Error, "ValidationService ValidateFilesystemPath failed: {0}", ex.StackTrace);
-
-                res.Success = false;
-                res.ErrorCode = -5000;
-                res.ErrorText = "Validation Service is not available at this time.";
-                
+                result.Success = false;
+                result.ErrorText = String.Format("Cannot validate path {0}: {1}", path, e.Message);
             }
-            
-            return res;
+            finally
+            {
+                if (client.State == CommunicationState.Opened)
+                    client.Close();
+            }
+
+            return result;
         }
 
         /// <summary>

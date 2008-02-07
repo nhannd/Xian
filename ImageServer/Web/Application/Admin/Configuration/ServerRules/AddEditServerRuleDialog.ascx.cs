@@ -1,4 +1,4 @@
-#region License
+    #region License
 
 // Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
-            SampleRuleDropDownList.Attributes.Add("onchange", "webServiceScript(this, SelectedIndex);");
+            SampleRuleDropDownList.Attributes.Add("onchange", "webServiceScript(this, this.SelectedIndex);");
             RuleTypeDropDownList.Attributes.Add("onchange", "selectRuleType(this);");
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID,

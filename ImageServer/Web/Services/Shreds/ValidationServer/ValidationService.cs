@@ -33,6 +33,7 @@
 using System.Net;
 using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Services.Shreds.ValidationServer
 {
@@ -48,10 +49,10 @@ namespace ClearCanvas.ImageServer.Web.Services.Shreds.ValidationServer
         public ValidationResult CheckPath(string path)
         {
 
-            Platform.Log(LogLevel.Debug, "ValidationService: validating {0}" , path); 
-            
+            Platform.Log(LogLevel.Debug, "ValidationService: validating {0}" , path);
+            FilesystemInfo fsInfo = FilesystemUtils.GetDirectoryInfo(path);
             ValidationResult res = new ValidationResult();
-            if (ClearCanvas.Common.Utilities.FileSystem.DirectoryExists(path, 1000))
+            if (fsInfo.Exists)
             {
                 Platform.Log(LogLevel.Debug, "ValidationService: {0} exists " , path); 
                 res.Success = true;

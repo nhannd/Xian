@@ -3,9 +3,14 @@
 <%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
     TagPrefix="uc1" %>
 <%@ Register Assembly="Validators" Namespace="Sample.Web.UI.Compatibility" TagPrefix="cc2" %>
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajax" %>
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls"
     TagPrefix="clearcanvas" %>
+<asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
+    <Services>
+        <asp:ServiceReference Path="~/Services/FilesystemInfoService.asmx" />
+    </Services>
+</asp:ScriptManagerProxy>
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="DialogPanel" runat="server" CssClass="CSSPopupWindow" Width="442px"
@@ -21,8 +26,8 @@
             </asp:Panel>
             <div class="CSSPopupWindowBody" style="vertical-align: top;">
                 <asp:Panel ID="Panel2" runat="server" Height="100%" CssClass="CSSDialogTabPanelContent">
-                    <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
-                        <cc1:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
+                    <ajax:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
+                        <ajax:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
                             <ContentTemplate>
                                 <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
                                     <table id="TABLE1" runat="server" cellspacing="4" width="100%">
@@ -109,66 +114,101 @@
                             <HeaderTemplate>
                                 General
                             </HeaderTemplate>
-                        </cc1:TabPanel>
-                        <cc1:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2">
+                        </ajax:TabPanel>
+                        <ajax:TabPanel ID="TabPanel2" runat="server" HeaderText="Watermarks Tab" OnClientClick="LoadFilesystemInfo">
                             <ContentTemplate>
-                                <asp:Panel ID="Panel3" runat="server" CssClass="CSSDialogTabPanelContent">
-                                    <table id="TABLE2" runat="server" cellspacing="4" width="100%">
+                                <asp:Panel ID="Panel3" runat="server" CssClass="CSSDialogTabPanelContent" Width="100%">
+                                    <table id="TABLE2" runat="server" cellspacing="4">
+                                        <!-- total size -->
+                                        <tr id="Tr4" align="left" valign="bottom">
+                                            <td>
+                                                <asp:Panel runat="server" ID="TotalSizePanel">
+                                                    <table>
+                                                        <tr>
+                                                            <td width="120px" align="left" valign="bottom">
+                                                                <asp:Label ID="Label7" runat="server" Text="Total Size" CssClass="CSSTextLabel" />
+                                                            </td>
+                                                            <td>
+                                                                <asp:Label ID="TotalSizeIndicator" runat="server" Text="??? KB" />
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </asp:Panel>
+                                            </td>
+                                        </tr>
+                                        <!-- available size -->
+                                        <tr id="Tr3" align="left" valign="bottom">
+                                            <td>
+                                                <asp:Panel runat="server" ID="AvailableSizePanel">
+                                                    <table>
+                                                        <tr>
+                                                            <td width="120px" align="left" valign="bottom">
+                                                                <asp:Label ID="Label8" runat="server" Text="Available" CssClass="CSSTextLabel" />
+                                                            </td>
+                                                            <td>
+                                                                <asp:Label ID="AvailableSizeIndicator" runat="server" Text="??? KB" />
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </asp:Panel>
+                                            </td>
+                                        </tr>
+                                        <!-- highwatermark -->
+                                        <tr id="Tr5" align="left" valign="bottom">
+                                            <td>
+                                                <asp:Panel runat="server" ID="HighWatermarkPanel">
+                                                    <table>
+                                                        <tr>
+                                                            <td width="120px" align="left" valign="bottom">
+                                                                <asp:Label ID="Label4" runat="server" Text="High Watermark" CssClass="CSSTextLabel" /><br />
+                                                                <asp:TextBox ID="HighWatermarkTextBox" runat="server" BorderColor="LightSteelBlue"
+                                                                    BorderWidth="1px" ValidationGroup="vg1" MaxLength="8" Width="100px" />%
+                                                            </td>
+                                                            <td align="left" valign="bottom">
+                                                                <asp:TextBox runat="server" ID="HighWatermarkSize" BorderColor="LightSteelBlue" BorderWidth="1px"
+                                                                    Text="???.??? GB" Enabled="false" Width="80px" Style="text-align: right" />
+                                                            </td>
+                                                            <td align="left" valign="bottom">
+                                                                <uc1:InvalidInputIndicator ID="HighWatermarkHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                                </uc1:InvalidInputIndicator>
+                                                                <clearcanvas:RangeComparisonValidator ID="HighWatermarkValidator" runat="server"
+                                                                    ControlToValidate="HighWatermarkTextBox" ControlToCompare="LowWatermarkTextBox"
+                                                                    GreaterThan="true" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1"
+                                                                    MaxValue="99" InputName="High watermark" CompareToInputName="Low watermark" Display="None"
+                                                                    InvalidInputIndicatorID="HighWatermarkHelp" />
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </asp:Panel>
+                                            </td>
+                                        </tr>
+                                        <!-- low w -->
                                         <tr id="Tr1" align="left" valign="bottom">
                                             <td>
-                                                <table>
-                                                    <tr>
-                                                        <td>
-                                                            <asp:Label ID="Label4" runat="server" Text="High Watermark" CssClass="CSSTextLabel" /><br />
-                                                            <asp:TextBox ID="HighWatermarkTextBox" runat="server" BorderColor="LightSteelBlue"
-                                                                BorderWidth="1px" ValidationGroup="vg1" MaxLength="7" />
-                                                        </td>
-                                                        <td>
-                                                            <uc1:InvalidInputIndicator ID="HighWatermarkHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
-                                                            </uc1:InvalidInputIndicator>
-                                                            <clearcanvas:RangeComparisonValidator ID="HighWatermarkValidator" runat="server"
-                                                                ControlToValidate="HighWatermarkTextBox" ControlToCompare="LowWatermarkTextBox"
-                                                                GreaterThan="true" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1"
-                                                                MaxValue="99" InputName="High watermark" CompareToInputName="Low watermark" Display="None"
-                                                                InvalidInputIndicatorID="HighWatermarkHelp" />
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr id="Tr2" valign="bottom">
-                                            <td id="Td2">
-                                                <table>
-                                                    <tr>
-                                                        <td>
-                                                            <asp:Label ID="Label5" runat="server" Text="Low Watermark" CssClass="CSSTextLabel" /><br />
-                                                            <asp:TextBox ID="LowWatermarkTextBox" runat="server" BorderColor="LightSteelBlue"
-                                                                BorderWidth="1px" ValidationGroup="vg1" MaxLength="7" />
-                                                        </td>
-                                                        <td>
-                                                            <uc1:InvalidInputIndicator ID="LowWatermarkHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
-                                                            </uc1:InvalidInputIndicator>
-                                                            <clearcanvas:RangeComparisonValidator ID="LowWatermarkValidator" EnableClientScript="true"
-                                                                runat="server" ControlToValidate="LowWatermarkTextBox" ControlToCompare="HighWatermarkTextBox"
-                                                                GreaterThan="false" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1"
-                                                                MaxValue="99" InputName="Low watermark" CompareToInputName="High watermark" Display="None"
-                                                                InvalidInputIndicatorID="LowWatermarkHelp" />
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr id="Tr3" valign="bottom">
-                                            <td id="Td3">
-                                                <table>
-                                                    <tr>
-                                                        <td>
-                                                            <asp:Label ID="Label6" runat="server" Text="Current Percent Full" CssClass="CSSTextLabel" /><br />
-                                                            <asp:Label ID="PercentFullLabel" runat="server" Text="0.00" Width="68px" CssClass="CSSTextLabel"
-                                                                EnableViewState="False"></asp:Label>
-                                                        </td>
-                                                    </tr>
-                                                </table>
+                                                <asp:Panel runat="server" ID="Panel4">
+                                                    <table>
+                                                        <tr>
+                                                            <td width="120px" align="left" valign="bottom">
+                                                                <asp:Label ID="Label5" runat="server" Text="Low Watermark" CssClass="CSSTextLabel" /><br />
+                                                                <asp:TextBox ID="LowWatermarkTextBox" runat="server" BorderColor="LightSteelBlue"
+                                                                    BorderWidth="1px" ValidationGroup="vg1" MaxLength="8" Width="100px" />%
+                                                            </td>
+                                                            <td align="left" valign="bottom">
+                                                                <asp:TextBox runat="server" ID="LowWaterMarkSize" BorderColor="LightSteelBlue" BorderWidth="1px"
+                                                                    Text="???.??? GB" Enabled="false" Width="80px" Style="text-align: right" />
+                                                            </td>
+                                                            <td align="left" valign="bottom">
+                                                                <uc1:InvalidInputIndicator ID="LowWatermarkHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                                </uc1:InvalidInputIndicator>
+                                                                <clearcanvas:RangeComparisonValidator ID="LowWatermarkValidator" EnableClientScript="true"
+                                                                    runat="server" ControlToValidate="LowWatermarkTextBox" ControlToCompare="HighWatermarkTextBox"
+                                                                    GreaterThan="false" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1"
+                                                                    MaxValue="99" InputName="Low watermark" CompareToInputName="High watermark" Display="None"
+                                                                    InvalidInputIndicatorID="LowWatermarkHelp" />
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </asp:Panel>
                                             </td>
                                         </tr>
                                     </table>
@@ -177,8 +217,8 @@
                             <HeaderTemplate>
                                 Watermarks
                             </HeaderTemplate>
-                        </cc1:TabPanel>
-                    </cc1:TabContainer>
+                        </ajax:TabPanel>
+                    </ajax:TabContainer>
                 </asp:Panel>
                 <center>
                     <br />
@@ -198,10 +238,12 @@
                 <asp:Panel ID="DummyPanel" runat="server" Height="1px" Width="36px" Style="z-index: 100;
                     left: 786px; position: absolute; top: 32px">
                 </asp:Panel>
+                <asp:HiddenField ID="TotalSize" runat="server" />
+                <asp:HiddenField ID="AvailableSize" runat="server" />
             </div>
         </asp:Panel>
-        <cc1:ModalPopupExtender ID="ModalPopupExtender1" BehaviorID="MyStupidExtender" runat="server"
+        <ajax:ModalPopupExtender ID="ModalPopupExtender1" BehaviorID="MyStupidExtender" runat="server"
             Enabled="true" TargetControlID="DummyPanel" PopupControlID="DialogPanel" BackgroundCssClass="CSSModalBackground">
-        </cc1:ModalPopupExtender>
+        </ajax:ModalPopupExtender>
     </ContentTemplate>
 </asp:UpdatePanel>

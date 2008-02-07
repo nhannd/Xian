@@ -29,53 +29,51 @@
 
 #endregion
 
-using System;
-using System.IO;
-using System.Threading;
+using System.Runtime.Serialization;
 
-namespace ClearCanvas.Common.Utilities
+namespace ClearCanvas.ImageServer.Common.Utilities
 {
-    /// <summary>
-    /// Helper class to deal with file systems.
-    /// </summary>
-    public class FileSystem
+    [DataContract]
+    public class FilesystemInfo
     {
-       
-        #region Static Methods
+        #region Private members
+        private string _path;
+        private bool _exists;
+        private ulong _sizeInKB;
+        private ulong _freeSizeInKB;
 
+        #endregion Private members
 
-        /// <summary>
-        /// Checks if a specified directory exists on the network and accessible from local machine.
-        /// </summary>
-        /// <param name="dir"></param>
-        /// <param name="timeout"></param>
-        /// <returns></returns>
-        public static bool DirectoryExists(String dir, int timeout)
+        #region Public properties
+        [DataMember]
+        public string Path
         {
-            bool exists = false;
-
-            
-            if (timeout > 0)
-            {
-                Thread t = new Thread(delegate()
-                                      {
-                                          exists = Directory.Exists(dir);
-                                      });
-
-                t.Start();
-                t.Join(timeout);
-                t.Abort();
-            }
-            else
-            {
-                exists = Directory.Exists(dir);
-            }
-            
-
-            return exists;
+            get { return _path; }
+            set { _path = value; }
         }
 
+        [DataMember]
+        public bool Exists
+        {
+            get { return _exists; }
+            set { _exists = value; }
+        }
 
-        #endregion Static Methods
+        [DataMember]
+        public ulong SizeInKB
+        {
+            get { return _sizeInKB; }
+            set { _sizeInKB = value; }
+        }
+
+        [DataMember]
+        public ulong FreeSizeInKB
+        {
+            get { return _freeSizeInKB; }
+            set { _freeSizeInKB = value; }
+        }
+
+        #endregion Public properties
     }
+
 }

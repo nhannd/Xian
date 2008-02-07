@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
     /// <summary>
     /// Provides convenience mean to load a javascript template from embedded resource.
     /// </summary>
-    internal class ScriptTemplate
+    public  class ScriptTemplate
     {
         #region Private Members
         private String _script;

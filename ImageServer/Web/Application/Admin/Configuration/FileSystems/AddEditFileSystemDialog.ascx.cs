@@ -31,9 +31,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.WebControls;
+
 
 namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems
 {
@@ -118,7 +122,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         {
             base.OnInit(e);
 
-
             // Set up the popup extender
             // These settings could been done in the aspx page as well
             // but if we are to javascript to display, that won't work.
@@ -129,50 +132,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             ModalPopupExtender1.DropShadow = true;
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
-
-            OKButton.OnClientClick = ClientID + "_clearFields()";
-
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID,
-                                                        @"<script language='javascript'>
-
-                            function ValidationFilesystemPathParams()
-                            {
-                                control = document.getElementById('" +
-                                                        PathTextBox.ClientID +
-                                                        @"');
-                                params = new Array();
-                                params.path=control.value;
-
-                                return params;
-                            }
+            RegisterClientSideScripts();
 
 
-                            function AddEditFileSystemsDialog_HideHelpImage(helpImgID)
-                            {
-                                img = document.getElementById(helpImgID);
-                                img.style.visibility = 'hidden';
-                            }
-                            function AddEditFileSystemsDialog_ClearField(fieldID)
-                            {
-                                txtbox = document.getElementById(fieldID);
-                                txtbox.style.backgroundColor = '';
-                            }
+            HighWatermarkTextBox.Attributes["onkeyup"] = "RecalculateWatermark()";
+            LowWatermarkTextBox.Attributes["onkeyup"] = "RecalculateWatermark()";
 
-                            function " +
-                                                        ClientID +
-                                                        @"_clearFields()
-                            {
-                                
-                                AddEditFileSystemsDialog_ClearField('" +
-                                                        DescriptionTextBox.ClientID +
-                                                        @"');
-                                AddEditFileSystemsDialog_ClearField('" +
-                                                        PathTextBox.ClientID +
-                                                        @"');
 
-                                
-                            }
-                        </script>");
+        }
+
+        private void RegisterClientSideScripts()
+        {
+            ScriptTemplate template = new ScriptTemplate(typeof(AddFilesystemDialog).Assembly, "ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems.Filesystem.js");
+            template.Replace("@@HW_PERCENTAGE_INPUT_CLIENTID@@", HighWatermarkTextBox.ClientID);
+            template.Replace("@@HW_SIZE_CLIENTID@@", HighWatermarkSize.ClientID);
+            template.Replace("@@LW_PERCENTAGE_INPUT_CLIENTID@@", LowWatermarkTextBox.ClientID);
+            template.Replace("@@LW_SIZE_CLIENTID@@", LowWaterMarkSize.ClientID);
+            template.Replace("@@PATH_INPUT_CLIENTID@@", PathTextBox.ClientID);
+            template.Replace("@@TOTAL_SIZE_INDICATOR_CLIENTID@@", TotalSizeIndicator.ClientID);
+            template.Replace("@@AVAILABLE_SIZE_INDICATOR_CLIENTID@@", AvailableSizeIndicator.ClientID);
+            template.Replace("@@TOTAL_SIZE_CLIENTID@@", TotalSize.ClientID);
+            template.Replace("@@AVAILABLE_SIZE_CLIENTID@@", AvailableSize.ClientID);
+
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID+"_scripts", template.Script, true);
         }
 
 
@@ -216,12 +198,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
         private void SaveData()
         {
+            
             if (FileSystem == null)
             {
                 // create a filesystem 
                 FileSystem = new Filesystem();
                 FileSystem.LowWatermark = 80.00M;
                 FileSystem.HighWatermark = 90.00M;
+                FileSystem.PercentFull = 0.0M;
             }
 
             FileSystem.Description = DescriptionTextBox.Text;
@@ -238,7 +222,33 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             if (Decimal.TryParse(HighWatermarkTextBox.Text, out highWatermark))
                 FileSystem.HighWatermark = highWatermark;
 
+            UpdateFilesystemUsage(FileSystem);
+
             FileSystem.FilesystemTierEnum = FilesystemTiers[TiersDropDownList.SelectedIndex];
+        }
+
+        static private void UpdateFilesystemUsage(Filesystem fs)
+        {
+            FilesystemServiceProxy.FilesystemServiceClient client = new FilesystemServiceProxy.FilesystemServiceClient();
+
+            try
+            {
+                FilesystemServiceProxy.FilesystemInfo info = client.GetFilesystemInfo(fs.FilesystemPath);
+                if (info!=null && info.Exists)
+                {
+                    fs.PercentFull = ((decimal)(info.SizeInKB - info.FreeSizeInKB)) / info.SizeInKB * 100.0M;
+                }
+                
+            }
+            catch(Exception e)
+            {
+                Platform.Log(LogLevel.Error,  e.StackTrace);
+            }
+            finally
+            {
+                if (client.State == CommunicationState.Opened)
+                    client.Close();
+            }
         }
 
 
@@ -302,7 +312,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                 WriteCheckBox.Checked = true;
                 LowWatermarkTextBox.Text = "80.00";
                 HighWatermarkTextBox.Text = "90.00";
-                PercentFullLabel.Text = "0.00";
 
                 TiersDropDownList.SelectedIndex = 0;
             }
@@ -316,7 +325,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                 LowWatermarkTextBox.Text = FileSystem.LowWatermark.ToString();
                 HighWatermarkTextBox.Text = FileSystem.HighWatermark.ToString();
                 TiersDropDownList.SelectedValue = FileSystem.FilesystemTierEnum.Enum.ToString();
-                PercentFullLabel.Text = FileSystem.PercentFull.ToString();
             }
         }
 

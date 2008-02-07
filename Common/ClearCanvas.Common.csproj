@@ -224,7 +224,6 @@
     <Compile Include="Utilities\BlockingQueue.cs" />
     <Compile Include="Utilities\CodeClock.cs" />
     <Compile Include="Utilities\DateTimeUtils.cs" />
-    <Compile Include="Utilities\FileSystem.cs" />
     <Compile Include="Utilities\ListEventArgs.cs" />
     <Compile Include="Utilities\CollectionUtils.cs" />
     <Compile Include="Configuration\StandardSettingsProvider.cs" />

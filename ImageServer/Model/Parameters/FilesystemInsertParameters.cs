@@ -84,5 +84,10 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { SubCriteria["LowWatermark"] = new ProcedureParameter<Decimal>("LowWatermark", value); }
         }
+
+        public Decimal PercentFull
+        {
+            set { SubCriteria["PercentFull"] = new ProcedureParameter<Decimal>("PercentFull", value); }
+        }
     }
 }

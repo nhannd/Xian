@@ -4,16 +4,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Untitled Page</title>
-    
     <style runat="server" id="IE6PNGBugFixCSS"/>
+    
     
 </head>
 <body>
+<script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/NumberFormat154.js") %>" ></script>
+    
     <!-- this is special code that web service validation needs -->
     <div id="service" style="behavior:url(<%= ResolveClientUrl("~/Services/webservice.htc") %>);" />
     <!-- this is special code that web service validation needs -->
-    
-    <center>
+
         <div>
             <form id="form1" runat="server">
                 <asp:ScriptManager ID="ScriptManager1" runat="server" />
@@ -78,6 +79,6 @@
                 </asp:Panel>
             </form>
         </div>
-    </center>
+
 </body>
 </html>
