@@ -1403,6 +1403,7 @@ function onTypeSelected()
 	{
 		document.getElementById("TypeSelection").style.display = 'none';
 		document.getElementById("T1T2T3Doc").style.display = 'block';
+		document.getElementById("reportType").innerHTML = data.obusReportType;
 		initTabs();
 	}
 }
@@ -1481,8 +1482,6 @@ function structuredReportHtml()
 	html+= 	"		</table>";
 	html+= 	"		<input type=\"button\" value=\"Confirm\" onclick=\"javascript: onTypeSelected()\"/>";
 	html+= 	"	</div>";
-	html+= 	"	<select id=\"fetusSelect\" onChange=\"javascript: selectFetus(this.options[this.selectedIndex].value)\" style=\"{margin-top:1em; margin-bottom:1em;}\">";
-	html+= 	"	</select>";
 	html+= 	"	<div id=\"T1T2T3Doc\" class=\"TabControl\">";
 	html+= 	"		<div class=\"TabList\">";
 	html+= 	"			<label for=\"IndicationsAndDates\" class=\"Tab\">Indications & Dates</label>";
@@ -1492,6 +1491,10 @@ function structuredReportHtml()
 	html+= 	"			<label id=\"CardiacTab\" for=\"Cardiac\" class=\"Tab\">Cardiac</label>";
 	html+= 	"			<label for=\"WellBeing\" class=\"Tab\">Well-being</label>";
 	html+= 	"			<label for=\"CommentsConclusion\" class=\"Tab\">Comments/Conclusion</label>";
+	html+= 	"		</div>";
+	html+= 	"		<div class=\"TabHeader\">";
+	html+= 	"			<select id=\"fetusSelect\" onChange=\"javascript: selectFetus(this.options[this.selectedIndex].value)\" style=\"{float:right;}\"></select>";
+	html+= 	"			Report Type:&nbsp;<span id=\"reportType\"></span>";
 	html+= 	"		</div>";
 	html+= 	"		<div id=\"IndicationsAndDates\" class=\"TabPage\">";
 	html+= 	"			<table id=\"indicationsAndDatesTable\" width=\"100%\">";
