@@ -638,6 +638,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_realImageSop.GetTagAsDicomStringArray(tag, out val, out tagExists);
 		}
 
+		public override void GetTagOBOW(uint tag, out byte[] value, out bool tagExists)
+		{
+			_realImageSop.GetTagOBOW(tag, out value, out tagExists);
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			_realImageSop = null;

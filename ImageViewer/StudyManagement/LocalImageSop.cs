@@ -200,29 +200,54 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			value = value ?? "";
 		}
 
-		private void GetUint16FromAttribute(DicomAttribute attribute, uint position, out ushort value)
+		/// <summary>
+		/// Gets a DICOM OB or OW tag (byte[]), not including encapsulated pixel data.
+		/// </summary>
+		/// <remarks>
+		/// GetTag methods should make no assumptions about what to return in the <paramref name="value"/> parameter
+		/// when a tag does not exist.  It should simply return the default value for <paramref name="value"/>'s Type,
+		/// which is either null, 0 or "" depending on whether it is a reference or value Type.  Similarly, no data validation
+		/// should be done in these methods either.  It is expected that the unaltered tag value will be returned.
+		/// </remarks>
+		/// <param name="tag"></param>
+		/// <param name="value"></param>
+		/// <param name="tagExists"></param>
+		public override void GetTagOBOW(uint tag, out byte[] value, out bool tagExists)
+		{
+			GetTag<byte[]>(tag, out value, 0, out tagExists, GetAttributeValueOBOW);
+		}
+
+		private static void GetUint16FromAttribute(DicomAttribute attribute, uint position, out ushort value)
 		{
 			attribute.TryGetUInt16((int)position, out value);
 		}
 
-		private void GetInt32FromAttribute(DicomAttribute attribute, uint position, out int value)
+		private static void GetInt32FromAttribute(DicomAttribute attribute, uint position, out int value)
 		{
 			attribute.TryGetInt32((int)position, out value);
 		}
 
-		private void GetFloat64FromAttribute(DicomAttribute attribute, uint position, out double value)
+		private static void GetFloat64FromAttribute(DicomAttribute attribute, uint position, out double value)
 		{
 			attribute.TryGetFloat64((int)position, out value);
 		}
 
-		private void GetStringFromAttribute(DicomAttribute attribute, uint position, out string value)
+		private static void GetStringFromAttribute(DicomAttribute attribute, uint position, out string value)
 		{
 			attribute.TryGetString((int)position, out value);
 		}
 
-		private void GetStringArrayFromAttribute(DicomAttribute attribute, uint position, out string value)
+		private static void GetStringArrayFromAttribute(DicomAttribute attribute, uint position, out string value)
 		{
 			value = attribute.ToString();
+		}
+
+		private static void GetAttributeValueOBOW(DicomAttribute attribute, uint position, out byte[] value)
+		{
+			if (attribute is DicomAttributeOW || attribute is DicomAttributeOB)
+				value = (byte[])attribute.Values;
+			else
+				value = null;
 		}
 
 		private void GetTag<T>(uint tag, out T value, uint position, out bool tagExists, GetTagDelegate<T> getter)

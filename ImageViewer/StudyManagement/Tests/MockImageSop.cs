@@ -668,6 +668,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			throw new Exception("The method or operation is not implemented.");
 		}
 
+		public override void GetTagOBOW(uint tag, out byte[] value, out bool tagExists)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override string TransferSyntaxUID
 		{
 			get

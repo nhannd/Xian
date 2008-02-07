@@ -805,6 +805,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tagExists"></param>
 		public abstract void GetTagAsDicomStringArray(uint tag, out string value, out bool tagExists);
 
+		/// <summary>
+		/// Gets a DICOM OB or OW tag (byte[]), not including encapsulated pixel data.
+		/// </summary>
+		/// <remarks>
+		/// GetTag methods should make no assumptions about what to return in the <paramref name="value"/> parameter
+		/// when a tag does not exist.  It should simply return the default value for <paramref name="value"/>'s Type,
+		/// which is either null, 0 or "" depending on whether it is a reference or value Type.  Similarly, no data validation
+		/// should be done in these methods either.  It is expected that the unaltered tag value will be returned.
+		/// </remarks>
+		/// <param name="tag"></param>
+		/// <param name="value"></param>
+		/// <param name="tagExists"></param>
+		public abstract void GetTagOBOW(uint tag, out byte[] value, out bool tagExists);
+
 		#endregion
 
 		#region Disposal
