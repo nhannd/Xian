@@ -66,6 +66,11 @@ namespace ClearCanvas.Ris.Application.Services
             {
                 _assembler.UpdatePatientAttachment(domainItem, sourceItem, _context);
             }
+
+            protected override void RemoveDomainItem(IList<PatientAttachment> domainList, PatientAttachment domainItem)
+            {
+                domainList.Remove(domainItem);
+            }
         }
 
         public void Synchronize(IList<PatientAttachment> domainList, IList<PatientAttachmentSummary> sourceList, IPersistenceContext context)

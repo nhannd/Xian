@@ -261,6 +261,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _noteSummaryComponent = new OrderNoteSummaryComponent();
             _attachmentSummaryComponent = new MimeDocumentPreviewComponent(true, true, MimeDocumentPreviewComponent.AttachmentMode.Order);
+            this.ChangeCommitted += delegate { _attachmentSummaryComponent.SaveChanges(); };
         }
 
         public override void Start()
@@ -835,9 +836,6 @@ namespace ClearCanvas.Ris.Client.Adt
             _rightHandComponentContainer = new TabComponentContainer();
             _rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 
-            // order attachment component
-            _attachmentSummaryComponent = new MimeDocumentPreviewComponent(true, true, MimeDocumentPreviewComponent.AttachmentMode.Order);
-            this.ChangeCommitted += delegate { _attachmentSummaryComponent.SaveChanges(); };
             _rightHandComponentContainer.Pages.Add(new TabPage("Documents", _attachmentSummaryComponent));
 
             // instantiate all extension pages

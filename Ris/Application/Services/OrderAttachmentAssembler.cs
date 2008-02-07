@@ -66,6 +66,11 @@ namespace ClearCanvas.Ris.Application.Services
             {
                 _assembler.UpdateOrderAttachment(domainItem, sourceItem, _context);
             }
+
+            protected override void RemoveDomainItem(IList<OrderAttachment> domainList, OrderAttachment domainItem)
+            {
+                domainList.Remove(domainItem);
+            }
         }
 
         public void Synchronize(IList<OrderAttachment> domainList, IList<OrderAttachmentSummary> sourceList, IPersistenceContext context)

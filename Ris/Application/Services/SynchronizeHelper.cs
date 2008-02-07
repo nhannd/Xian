@@ -44,10 +44,12 @@ namespace ClearCanvas.Ris.Application.Services
         public delegate bool CompareItemsDelegate(TDomainItem domainItem, TSourceItem sourceItem);
         public delegate TDomainItem CreateDomainItemDelegate(TSourceItem item);
         public delegate void UpdateDomainItemDelegate(TDomainItem domainItem, TSourceItem sourceItem);
+        public delegate void RemoveDomainItemDelegate(IList<TDomainItem> domainList, TDomainItem domainItem);
 
         private readonly CompareItemsDelegate _compareItemsCallback;
         private readonly CreateDomainItemDelegate _createDomainItemCallback;
         private readonly UpdateDomainItemDelegate _updateDomainItemCallback;
+        private readonly RemoveDomainItemDelegate _removeDomainItemCallback;
 
         protected bool _allowUpdate = false;
         protected bool _allowRemove = false;
@@ -57,7 +59,6 @@ namespace ClearCanvas.Ris.Application.Services
         /// </summary>
         protected SynchronizeHelper()
         {
-            
         }
 
         /// <summary>
@@ -66,19 +67,20 @@ namespace ClearCanvas.Ris.Application.Services
         /// <param name="compareItemsCallback"></param>
         /// <param name="createDomainItemCallback"></param>
         /// <param name="updateDomainItemCallback"></param>
-        /// <param name="allowRemove"></param>
+        /// <param name="removeDomainItemCallback"></param>
         public SynchronizeHelper(
             CompareItemsDelegate compareItemsCallback,
             CreateDomainItemDelegate createDomainItemCallback,
             UpdateDomainItemDelegate updateDomainItemCallback,
-            bool allowRemove)
+            RemoveDomainItemDelegate removeDomainItemCallback)
         {
             _compareItemsCallback = compareItemsCallback;
             _createDomainItemCallback = createDomainItemCallback;
             _updateDomainItemCallback = updateDomainItemCallback;
+            _removeDomainItemCallback = removeDomainItemCallback;
 
             _allowUpdate = _updateDomainItemCallback != null;
-            _allowRemove = allowRemove;
+            _allowRemove = _removeDomainItemCallback != null;
         }
 
         /// <summary>
@@ -114,13 +116,16 @@ namespace ClearCanvas.Ris.Application.Services
                 });
 
             // Remove any unprocessed items from the domain list
-            if (_allowRemove && unProcessed.Count > 0)
+            if (unProcessed.Count > 0)
             {
-                CollectionUtils.ForEach(unProcessed,
-                    delegate(TDomainItem domainItem)
-                    {
-                        domainList.Remove(domainItem);
-                    });
+                if (_allowRemove)
+                {
+                    CollectionUtils.ForEach(unProcessed,
+                        delegate(TDomainItem domainItem)
+                        {
+                            RemoveDomainItem(domainList, domainItem);
+                        });
+                }
             }
         }
 
@@ -146,6 +151,14 @@ namespace ClearCanvas.Ris.Application.Services
                 throw new NotImplementedException("Method must be overridden or a delegate supplied.");
 
             _updateDomainItemCallback(domainItem, sourceItem);
+        }
+
+        protected virtual void RemoveDomainItem(IList<TDomainItem> domainList, TDomainItem domainItem)
+        {
+            if (_removeDomainItemCallback == null)
+                throw new NotImplementedException("Method must be overridden or a delegate supplied.");
+
+            _removeDomainItemCallback(domainList, domainItem);
         }
     }
 }
