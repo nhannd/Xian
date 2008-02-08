@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 				data[x] = x;
 			}
 
-			IndexedPixelData pixelData = new IndexedPixelData(5, 5, 8, 8, 7, false, data);
+			GrayscalePixelData pixelData = new GrayscalePixelData(5, 5, 8, 8, 7, false, data);
 			MinMaxPixelCalculatedLinearLut lut = new MinMaxPixelCalculatedLinearLut(pixelData);
 			lut.MinInputValue = 0;
 			lut.MaxInputValue = 255;
@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			}
 
 			ModalityLutLinear modalityLut = new ModalityLutLinear(8, true, 1.0, -10);
-			IndexedPixelData pixelData = new IndexedPixelData(5, 5, 8, 8, 7, false, data);
+			GrayscalePixelData pixelData = new GrayscalePixelData(5, 5, 8, 8, 7, false, data);
 			MinMaxPixelCalculatedLinearLut lut = new MinMaxPixelCalculatedLinearLut(pixelData, modalityLut);
 			lut.MinInputValue = 0;
 			lut.MaxInputValue = 255;

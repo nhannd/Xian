@@ -85,16 +85,10 @@ namespace ClearCanvas.ImageViewer.Rendering
 					dstWidth,
 					dstBytesPerPixel);
 			}
-			//else
-			//{
-			//    RenderPaletteColor(
-			//        imageGraphic as PaletteColorImageGraphic,
-			//        srcViewableRectangle,
-			//        dstViewableRectangle,
-			//        pDstPixelData,
-			//        dstWidth,
-			//        dstBytesPerPixel);
-			//}
+			else
+			{
+				throw new Exception("Unknown ImageGraphic.");
+			}
 
 			clock.Stop();
 			RenderPerformanceReportBroker.PublishPerformanceReport("ImageRenderer.Render", clock.Seconds);
@@ -175,46 +169,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 				}
 			}
 		}
-
-		//private static void RenderPaletteColor(
-		//    PaletteColorImageGraphic image,
-		//    RectangleF srcViewableRectangle,
-		//    Rectangle dstViewableRectangle,
-		//    IntPtr pDstPixelData,
-		//    int dstWidth,
-		//    int dstBytesPerPixel)
-		//{
-		//    fixed (byte* pSrcPixelData = image.PixelData.Raw)
-		//    {
-		//        if (image.InterpolationMode == InterpolationMode.Bilinear)
-		//        {
-		//            fixed (int* pColorMap = image.ColorMap.Data)
-		//            {
-		//                ImageInterpolatorBilinear.LutData lutData;
-		//                lutData.Data = pColorMap;
-		//                lutData.FirstMappedPixelData = image.ColorMap.MinInputValue;
-		//                lutData.Length = image.ColorMap.Data.Length;
-
-		//                ImageInterpolatorBilinear.Interpolate(
-		//                    srcViewableRectangle,
-		//                    pSrcPixelData,
-		//                    image.Columns,
-		//                    image.Rows,
-		//                    image.BytesPerPixel,
-		//                    image.BitsStored,
-		//                    dstViewableRectangle,
-		//                    (byte*)pDstPixelData,
-		//                    dstWidth,
-		//                    dstBytesPerPixel,
-		//                    IsRotated(image),
-		//                    &lutData, //ok because it's a local variable in an unsafe method, therefore it's already fixed.
-		//                    false,
-		//                    false,
-		//                    image.IsSigned);
-		//            }
-		//        }
-		//    }
-		//}
 
 		private static bool IsRotated(ImageGraphic imageGraphic)
 		{

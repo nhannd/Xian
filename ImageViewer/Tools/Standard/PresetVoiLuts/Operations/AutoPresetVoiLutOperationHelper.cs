@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 			IImageGraphicProvider graphicProvider = presentationImage as IImageGraphicProvider;
 			if (graphicProvider != null)
-				return graphicProvider.ImageGraphic.PixelData is IndexedPixelData;
+				return graphicProvider.ImageGraphic.PixelData is GrayscalePixelData;
 
 			return false;
 		}
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			if (currentLut is MinMaxPixelCalculatedLinearLut)
 				return;
 
-			IndexedPixelData pixelData = (IndexedPixelData)((IImageGraphicProvider)presentationImage).ImageGraphic.PixelData;
+			GrayscalePixelData pixelData = (GrayscalePixelData)((IImageGraphicProvider)presentationImage).ImageGraphic.PixelData;
 
 			IModalityLutProvider modalityLutProvider = presentationImage as IModalityLutProvider;
 			if (modalityLutProvider != null)
@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 					return new AutoVoiLutLinear(sopProvider.ImageSop);
 			}
 
-			IndexedPixelData pixelData = (IndexedPixelData)((IImageGraphicProvider)presentationImage).ImageGraphic.PixelData;
+			GrayscalePixelData pixelData = (GrayscalePixelData)((IImageGraphicProvider)presentationImage).ImageGraphic.PixelData;
 
 			IModalityLutProvider modalityLutProvider = presentationImage as IModalityLutProvider;
 			if (modalityLutProvider != null)

@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new IndexedPixelData(
+			PixelData pixelDataWrapper = new GrayscalePixelData(
 				rows,
 				columns,
 				bitsAllocated,
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new IndexedPixelData(
+			PixelData pixelDataWrapper = new GrayscalePixelData(
 				rows,
 				columns,
 				bitsAllocated,
@@ -150,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new IndexedPixelData(
+			PixelData pixelDataWrapper = new GrayscalePixelData(
 				rows,
 				columns,
 				bitsAllocated,
@@ -192,7 +192,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new IndexedPixelData(
+			PixelData pixelDataWrapper = new GrayscalePixelData(
 				rows,
 				columns,
 				bitsAllocated,
@@ -234,7 +234,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new IndexedPixelData(
+			PixelData pixelDataWrapper = new GrayscalePixelData(
 				rows,
 				columns,
 				bitsAllocated,
@@ -313,7 +313,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new IndexedPixelData(
+			PixelData pixelDataWrapper = new GrayscalePixelData(
 				rows,
 				columns,
 				bitsAllocated,
@@ -363,7 +363,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new IndexedPixelData(
+			PixelData pixelDataWrapper = new GrayscalePixelData(
 				rows,
 				columns,
 				bitsAllocated,
@@ -388,7 +388,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new IndexedPixelData(
+			PixelData pixelDataWrapper = new GrayscalePixelData(
 				rows,
 				columns,
 				bitsAllocated,
@@ -442,7 +442,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new IndexedPixelData(
+			PixelData pixelDataWrapper = new GrayscalePixelData(
 				rows,
 				columns,
 				bitsAllocated,

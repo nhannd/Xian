@@ -32,15 +32,16 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
-	/// A grayscale <see cref="IndexedImageGraphic"/>.
+	/// A grayscale <see cref="ImageGraphic"/>.
 	/// </summary>
 	public class GrayscaleImageGraphic 
-		: IndexedImageGraphic, 
+		: ImageGraphic, 
 		IModalityLutProvider, 
 		IVoiLutProvider, 
 		IColorMapProvider
@@ -53,13 +54,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Private fields
 
-		private LutComposer _lutComposer;
-		private LutFactory _lutFactory;
+		private int _bitsStored;
+		private int _highBit;
+		private bool _isSigned;
 
 		private double _rescaleSlope;
 		private double _rescaleIntercept;
 		private bool _invert;
 
+		private LutComposer _lutComposer;
+		private LutFactory _lutFactory;
 		private IVoiLutManager _voiLutManager;
 
 		private IColorMapManager _colorMapManager;
@@ -88,14 +92,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </para>
 		/// </remarks>
 		public GrayscaleImageGraphic(int rows, int columns)
-			: base(rows, 
-				   columns, 
-				   16, /* bits allocated */
-				   16, /* bits stored */
-				   15, /* high bit */
-				   false) /* is signed */
+			: base(rows, columns, 16 /* bits allocated */)
 		{
-			Initialize(1, 0, false);
+			Initialize(16, 15, false, 1, 0, false);
 		}
 
 		/// <summary>
@@ -130,12 +129,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 				rows,
 				columns,
 				bitsAllocated,
-				bitsStored,
-				highBit,
-				isSigned,
 				pixelData)
 		{
-			Initialize(rescaleSlope, rescaleIntercept, inverted);
+			Initialize(bitsStored, highBit, isSigned, rescaleSlope, rescaleIntercept, inverted);
 		}
 
 		/// <summary>
@@ -173,17 +169,47 @@ namespace ClearCanvas.ImageViewer.Graphics
 				rows,
 				columns,
 				bitsAllocated,
-				bitsStored,
-				highBit,
-				isSigned,
 				pixelDataGetter)
 		{
-			Initialize(rescaleSlope, rescaleIntercept, inverted);
+			Initialize(bitsStored, highBit, isSigned, rescaleSlope, rescaleIntercept, inverted);
 		}
 
 		#endregion
 
 		#region Public properties
+
+		/// <summary>
+		/// Gets the number of bits stored in the image.
+		/// </summary>
+		/// <remarks>
+		/// The number of bits stored does not necessarily equal the number of bits
+		/// allocated. Values of 8, 10, 12 and 16 are typical.
+		/// </remarks>
+		public int BitsStored
+		{
+			get { return _bitsStored; }
+		}
+
+		/// <summary>
+		/// Gets the high bit.
+		/// </summary>
+		/// <remarks>
+		/// Theoretically, the high bit does not necessarily have to equal
+		/// Bits Stored - 1.  But in almost all cases this assumption is true;
+		/// we too make this assumption.
+		/// </remarks>
+		public int HighBit
+		{
+			get { return _highBit; }
+		}
+
+		/// <summary>
+		/// Get a value indicating whether the image's pixel data is signed.
+		/// </summary>
+		public bool IsSigned
+		{
+			get { return _isSigned; }
+		}
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the image should be inverted.
@@ -195,6 +221,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get { return _invert; }
 			set { _invert = value; }
+		}
+
+		/// <summary>
+		/// Gets an object that encapsulates the pixel data.
+		/// </summary>
+		public new GrayscalePixelData PixelData
+		{
+			get
+			{
+				return base.PixelData as GrayscalePixelData;
+			}
 		}
 
 		#region IVoiLutProvider Members
@@ -272,7 +309,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Retrieves this image's <see cref="IColorMap"/>.
 		/// </summary>
-		public sealed override IColorMap ColorMap
+		public IColorMap ColorMap
 		{
 			get
 			{
@@ -331,10 +368,52 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
+		/// <summary>
+		/// Creates an object that encapsulates the pixel data.
+		/// </summary>
+		/// <returns></returns>
+		protected override PixelData CreatePixelDataWrapper()
+		{
+			if (this.PixelDataRaw != null)
+			{
+				return new GrayscalePixelData(
+					this.Rows,
+					this.Columns,
+					this.BitsPerPixel,
+					this.BitsStored,
+					this.HighBit,
+					this.IsSigned,
+					this.PixelDataRaw);
+			}
+			else
+			{
+				return new GrayscalePixelData(
+					this.Rows,
+					this.Columns,
+					this.BitsPerPixel,
+					this.BitsStored,
+					this.HighBit,
+					this.IsSigned,
+					this.PixelDataGetter);
+			}
+		}
+
 		#region Private methods
 
-		private void Initialize(double rescaleSlope, double rescaleIntercept, bool invert)
+		private void Initialize(
+			int bitsStored,
+			int highBit,
+			bool isSigned,
+			double rescaleSlope, 
+			double rescaleIntercept, 
+			bool invert)
 		{
+			DicomValidator.ValidateBitsStored(bitsStored);
+			DicomValidator.ValidateHighBit(highBit);
+
+			_bitsStored = bitsStored;
+			_highBit = highBit;
+			_isSigned = isSigned;
 			_rescaleSlope = rescaleSlope <= double.Epsilon ? 1 : rescaleSlope;
 			_rescaleIntercept = rescaleIntercept;
 			_invert = invert;

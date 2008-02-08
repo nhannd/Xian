@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <param name="pixelData">The pixel data the algorithm will be run on.</param>
 		/// <param name="modalityLut">The modality lut to use for calculating <see cref="AlgorithmCalculatedVoiLutLinear.WindowWidth"/> 
 		/// and <see cref="AlgorithmCalculatedVoiLutLinear.WindowCenter"/>, if applicable.</param>
-		public MinMaxPixelCalculatedLinearLut(IndexedPixelData pixelData, IModalityLut modalityLut)
+		public MinMaxPixelCalculatedLinearLut(GrayscalePixelData pixelData, IModalityLut modalityLut)
 			: base(pixelData, modalityLut)
 		{
 		}
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Constructor.
 		/// </summary>
 		/// <param name="pixelData">The pixel data the algorithm will be run on.</param>
-		public MinMaxPixelCalculatedLinearLut(IndexedPixelData pixelData)
+		public MinMaxPixelCalculatedLinearLut(GrayscalePixelData pixelData)
 			: base(pixelData)
 		{
 		}
@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <param name="pixelData">The input pixel data.</param>
 		/// <param name="windowStart">Returns the minimum pixel value.</param>
 		/// <param name="windowEnd">Returns the maximum pixel value.</param>
-		protected override void CalculateWindowRange(IndexedPixelData pixelData, out int windowStart, out int windowEnd)
+		protected override void CalculateWindowRange(GrayscalePixelData pixelData, out int windowStart, out int windowEnd)
 		{
 			pixelData.CalculateMinMaxPixelValue(out windowStart, out windowEnd);
 		}

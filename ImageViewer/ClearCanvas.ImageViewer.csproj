@@ -186,7 +186,7 @@
     <Compile Include="Imaging\IDataLut.cs" />
     <Compile Include="Imaging\IInitialVoiLutProvider.cs" />
     <Compile Include="Imaging\ILut.cs" />
-    <Compile Include="Imaging\IndexedPixelData.cs" />
+    <Compile Include="Imaging\GrayscalePixelData.cs" />
     <Compile Include="Graphics\IImageSpatialTransform.cs" />
     <Compile Include="Graphics\ImageSpatialTransformMemento.cs" />
     <Compile Include="Imaging\InitialVoiLutProvider.cs" />
@@ -205,7 +205,6 @@
     <Compile Include="Imaging\IVoiLutLinear.cs" />
     <Compile Include="Imaging\IBasicVoiLutLinear.cs" />
     <Compile Include="Graphics\PointPrimitive.cs" />
-    <Compile Include="Graphics\IndexedImageGraphic.cs" />
     <Compile Include="GrayscalePresentationImage.cs" />
     <Compile Include="Imaging\ComposedLutPool.cs" />
     <Compile Include="Imaging\StandardColorMaps.cs" />

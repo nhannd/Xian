@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 		{
 			return (base.AppliesTo(presentationImage) &&
 			        presentationImage is IImageGraphicProvider &&
-			        ((IImageGraphicProvider) presentationImage).ImageGraphic.PixelData is IndexedPixelData);
+			        ((IImageGraphicProvider) presentationImage).ImageGraphic.PixelData is GrayscalePixelData);
 		}
 
 		public override void Apply(IPresentationImage presentationImage)
@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			if (currentLut is MinMaxPixelCalculatedLinearLut)
 				return;
 
-			IndexedPixelData pixelData = (IndexedPixelData)((IImageGraphicProvider) presentationImage).ImageGraphic.PixelData;
+			GrayscalePixelData pixelData = (GrayscalePixelData)((IImageGraphicProvider) presentationImage).ImageGraphic.PixelData;
 
 			IModalityLutProvider modalityLutProvider = presentationImage as IModalityLutProvider;
 			if (modalityLutProvider != null)

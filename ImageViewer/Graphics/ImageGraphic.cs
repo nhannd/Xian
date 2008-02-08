@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// An image <see cref="Graphic"/>.
 	/// </summary>
 	/// <remarks>
-	/// The derived classes <see cref="IndexedImageGraphic"/> and 
+	/// The derived classes <see cref="GrayscaleImageGraphic"/> and 
 	/// <see cref="ColorImageGraphic"/> represent the two basic types of
 	/// 2D images in the framework.
 	/// 
@@ -185,7 +185,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Gets the number of bits per pixel.
 		/// </summary>
-		/// <remarks>In the case of <see cref="IndexedImageGraphic"/>, this
+		/// <remarks>In the case of <see cref="GrayscaleImageGraphic"/>, this
 		/// property will always have a value of 8 or 16, whereas in the
 		/// case of <see cref="ColorImageGraphic"/>, it will always have
 		/// a value of 32 (ARGB).</remarks>

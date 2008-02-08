@@ -86,9 +86,9 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			return _image.PixelData as ColorPixelData;
 		}
 
-		private IndexedPixelData IndexedPixelData()
+		private GrayscalePixelData IndexedPixelData()
 		{
-			return _image.PixelData as IndexedPixelData;
+			return _image.PixelData as GrayscalePixelData;
 		}
 
 		private static void Trace(string trace)

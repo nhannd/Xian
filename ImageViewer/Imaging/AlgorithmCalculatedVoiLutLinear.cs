@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// This class provides all the base functionality for a Linear Lut where the 
 	/// <see cref="WindowWidth"/> and <see cref="WindowCenter"/> are calculated via some algorithm
-	/// on (an image's) <see cref="IndexedPixelData"/>.
+	/// on (an image's) <see cref="GrayscalePixelData"/>.
 	/// </summary>
 	/// <remarks>
 	/// Inheritors must implement the <see cref="CalculateWindowRange"/> method in order to perform
@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		#region Private Fields
 
-		private readonly IndexedPixelData _pixelData;
+		private readonly GrayscalePixelData _pixelData;
 		private readonly IModalityLut _modalityLut;
 
 		private double _windowWidth;
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		/// <param name="pixelData">The pixel data the algorithm will be run on.</param>
 		/// <param name="modalityLut">The modality lut to use for calculating <see cref="WindowWidth"/> and <see cref="WindowCenter"/>, if applicable.</param>
-		protected AlgorithmCalculatedVoiLutLinear(IndexedPixelData pixelData, IModalityLut modalityLut)
+		protected AlgorithmCalculatedVoiLutLinear(GrayscalePixelData pixelData, IModalityLut modalityLut)
 		{
 			Platform.CheckForNullReference(pixelData, "pixelData");
 
@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Constructor.
 		/// </summary>
 		/// <param name="pixelData">The pixel data the algorithm will be run on.</param>
-		protected AlgorithmCalculatedVoiLutLinear(IndexedPixelData pixelData)
+		protected AlgorithmCalculatedVoiLutLinear(GrayscalePixelData pixelData)
 			: this(pixelData, null)
 		{
 		}
@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <param name="pixelData">The pixel data that is to be used to calculate <paramref name="windowStart"/> and <paramref name="windowEnd"/>.</param>
 		/// <param name="windowStart">returns the start value in the window range.</param>
 		/// <param name="windowEnd">returns the end value in the window range.</param>
-		protected abstract void CalculateWindowRange(IndexedPixelData pixelData, out int windowStart, out int windowEnd);
+		protected abstract void CalculateWindowRange(GrayscalePixelData pixelData, out int windowStart, out int windowEnd);
 
 		#endregion
 

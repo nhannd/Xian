@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// An indexed pixel data wrapper.
 	/// </summary>
 	/// <remarks>
-	/// <see cref="IndexedPixelData"/> provides a number of convenience methods
+	/// <see cref="GrayscalePixelData"/> provides a number of convenience methods
 	/// to make accessing and changing indexed pixel data easier.  Use these methods
 	/// judiciously, as the convenience comes at the expense of performance.
 	/// For example, if you're doing complex image processing, using methods
@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// to get the raw byte array, then use unsafe code to do your processing.
 	/// </remarks>
 	/// <seealso cref="PixelData"/>
-	public class IndexedPixelData : PixelData
+	public class GrayscalePixelData : PixelData
 	{
 		#region Private fields
 
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region Public constructor
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="IndexedPixelData"/> with the
+		/// Initializes a new instance of <see cref="GrayscalePixelData"/> with the
 		/// specified image parameters.
 		/// </summary>
 		/// <param name="rows">The number of rows.</param>
@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <param name="highBit">The high bit of the <paramref name="pixelData"/>.</param>
 		/// <param name="isSigned">Indicates whether or not <paramref name="pixelData"/> contains signed data.</param>
 		/// <param name="pixelData">The pixel data to be wrapped.</param>
-		public IndexedPixelData(
+		public GrayscalePixelData(
 			int rows,
 			int columns,
 			int bitsAllocated,
@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="IndexedPixelData"/> with the
+		/// Initializes a new instance of <see cref="GrayscalePixelData"/> with the
 		/// specified image parameters.
 		/// </summary>
 		/// <param name="rows">The number of rows.</param>
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <param name="highBit">The high bit of the pixel data returned by <paramref name="pixelDataGetter"/>.</param>
 		/// <param name="isSigned">Indicates whether or not the pixel data returned by <paramref name="pixelDataGetter"/> contains signed data.</param>
 		/// <param name="pixelDataGetter">A delegate that returns the pixel data.</param>
-		public IndexedPixelData(
+		public GrayscalePixelData(
 			int rows,
 			int columns,
 			int bitsAllocated,
@@ -139,9 +139,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Returns a copy of the object, including the pixel data.
 		/// </summary>
 		/// <returns></returns>
-		public new IndexedPixelData Clone()
+		public new GrayscalePixelData Clone()
 		{
-			return base.Clone() as IndexedPixelData;
+			return base.Clone() as GrayscalePixelData;
 		}
 
 		/// <summary>
@@ -305,7 +305,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		protected override PixelData CloneInternal()
 		{
-			return new IndexedPixelData(
+			return new GrayscalePixelData(
 				_rows,
 				_columns,
 				_bitsAllocated,

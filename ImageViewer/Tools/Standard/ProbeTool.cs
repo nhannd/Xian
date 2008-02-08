@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		private void GetPixelValue(
-			IndexedImageGraphic grayscaleImage, 
+			GrayscaleImageGraphic grayscaleImage, 
 			Point sourcePointRounded, 
 			ref int pixelValue,
 			ref string pixelValueString)
