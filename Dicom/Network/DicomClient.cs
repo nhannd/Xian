@@ -101,7 +101,17 @@ namespace ClearCanvas.Dicom.Network
             _socket = new Socket(ep.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             SetSocketOptions(_assoc as ClientAssociationParameters);
 
-            _socket.Connect(ep);
+            IAsyncResult result = _socket.BeginConnect(ep, null, null);
+
+            bool success = result.AsyncWaitHandle.WaitOne(_assoc.ConnectTimeout, true);
+
+            if (!success)
+            {
+                // NOTE, MUST CLOSE THE SOCKET
+                _socket.Close();
+                throw new NetworkException(String.Format("Timeout while attempting to connect to remote server {0}",ep));
+            }
+
 
             _network = new NetworkStream(_socket);
 

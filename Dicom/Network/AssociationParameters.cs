@@ -210,6 +210,7 @@ namespace ClearCanvas.Dicom.Network
         private int _receiveBufferSize = 81 * 1460;
         private int _readTimeout = 30 * 1000; // 30 seconds
         private int _writeTimeout = 30 * 1000; // 30 seconds
+        private int _connectTimeout = 10 * 1000; // 10 seconds
         private ushort _maxOperationsInvoked = 1;
         private ushort _maxOperationsPerformed = 1;
 
@@ -252,6 +253,7 @@ namespace ClearCanvas.Dicom.Network
             _remoteEndPoint = parameters._remoteEndPoint;
             _sendBufferSize = parameters._sendBufferSize;
             _writeTimeout = parameters._writeTimeout;
+            _connectTimeout = parameters._connectTimeout;
 
             foreach (byte id in parameters._presContexts.Keys)
             {
@@ -358,6 +360,15 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
+        /// The timeout when connecting to a remote server in milliseconds.
+        /// </summary>
+        public int ConnectTimeout
+        {
+            get { return _connectTimeout; }
+            set { _connectTimeout = value; }
+        }
+
+        /// <summary>
         /// Called AE (association acceptor AE) for the association
         /// </summary>
         public String CalledAE
@@ -436,7 +447,6 @@ namespace ClearCanvas.Dicom.Network
             get { return _remotePort; }
             internal set { _remotePort = value; }
         }
-
 		#endregion
 
         #region Events
