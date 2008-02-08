@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			return _image.PixelData as ColorPixelData;
 		}
 
-		private GrayscalePixelData IndexedPixelData()
+		private GrayscalePixelData GrayscalePixelData()
 		{
 			return _image.PixelData as GrayscalePixelData;
 		}
@@ -540,18 +540,18 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 				if (_image.BitsPerPixel == 16)
 				{
 					//Get the 4 neighbour pixels for performing bilinear interpolation.
-					arrayOfValues[0, 0] = (float)IndexedPixelData().GetPixel(srcPointInt00.X, srcPointInt00.Y);
-					arrayOfValues[0, 1] = (float)IndexedPixelData().GetPixel(srcPointInt00.X, srcPointInt00.Y + 1);
-					arrayOfValues[1, 0] = (float)IndexedPixelData().GetPixel(srcPointInt00.X + 1, srcPointInt00.Y);
-					arrayOfValues[1, 1] = (float)IndexedPixelData().GetPixel(srcPointInt00.X + 1, srcPointInt00.Y + 1);
+					arrayOfValues[0, 0] = (float)GrayscalePixelData().GetPixel(srcPointInt00.X, srcPointInt00.Y);
+					arrayOfValues[0, 1] = (float)GrayscalePixelData().GetPixel(srcPointInt00.X, srcPointInt00.Y + 1);
+					arrayOfValues[1, 0] = (float)GrayscalePixelData().GetPixel(srcPointInt00.X + 1, srcPointInt00.Y);
+					arrayOfValues[1, 1] = (float)GrayscalePixelData().GetPixel(srcPointInt00.X + 1, srcPointInt00.Y + 1);
 				}
 				else if (_image.BitsPerPixel == 8)
 				{
 					//Get the 4 neighbour pixels for performing bilinear interpolation.
-					arrayOfValues[0, 0] = (float)IndexedPixelData().GetPixel(srcPointInt00.X, srcPointInt00.Y);
-					arrayOfValues[0, 1] = (float)IndexedPixelData().GetPixel(srcPointInt00.X, srcPointInt00.Y + 1);
-					arrayOfValues[1, 0] = (float)IndexedPixelData().GetPixel(srcPointInt00.X + 1, srcPointInt00.Y);
-					arrayOfValues[1, 1] = (float)IndexedPixelData().GetPixel(srcPointInt00.X + 1, srcPointInt00.Y + 1);
+					arrayOfValues[0, 0] = (float)GrayscalePixelData().GetPixel(srcPointInt00.X, srcPointInt00.Y);
+					arrayOfValues[0, 1] = (float)GrayscalePixelData().GetPixel(srcPointInt00.X, srcPointInt00.Y + 1);
+					arrayOfValues[1, 0] = (float)GrayscalePixelData().GetPixel(srcPointInt00.X + 1, srcPointInt00.Y);
+					arrayOfValues[1, 1] = (float)GrayscalePixelData().GetPixel(srcPointInt00.X + 1, srcPointInt00.Y + 1);
 				}
 			}
 
@@ -653,28 +653,28 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 						if (_sourceImageType == ImageTypes.Mono16)
 						{
 							ushort pixelValue = (ushort)((x + y) * scale16);
-							IndexedPixelData().SetPixel(x, y, pixelValue);
+							GrayscalePixelData().SetPixel(x, y, pixelValue);
 							if (_tracePhantom)
 								strTracePhantom += String.Format("{0}  ", pixelValue);
 						}
 						else if (_sourceImageType == ImageTypes.Mono8)
 						{
 							byte pixelValue = (byte)((x + y) * scale8);
-							IndexedPixelData().SetPixel(x, y, pixelValue);
+							GrayscalePixelData().SetPixel(x, y, pixelValue);
 							if (_tracePhantom)
 								strTracePhantom += String.Format("{0}  ", pixelValue);
 						}
 						else if (_sourceImageType == ImageTypes.Mono16Signed)
 						{
 							short pixelValue = (short)((x + y) * scale16 - 32767);
-							IndexedPixelData().SetPixel(x, y, pixelValue);
+							GrayscalePixelData().SetPixel(x, y, pixelValue);
 							if (_tracePhantom)
 								strTracePhantom += String.Format("{0}  ", pixelValue);
 						}
 						else if (_sourceImageType == ImageTypes.Mono8Signed)
 						{
 							sbyte pixelValue = (sbyte)((x + y) * scale8 - 127);
-							IndexedPixelData().SetPixel(x, y, pixelValue);
+							GrayscalePixelData().SetPixel(x, y, pixelValue);
 							if (_tracePhantom)
 								strTracePhantom += String.Format("{0}  ", pixelValue);
 						}

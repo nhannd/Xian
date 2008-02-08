@@ -222,7 +222,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		}
 
 		[Test]
-		public void SetPixelSigned16Indexed()
+		public void SetPixelSigned16Grayscale()
 		{
 			int columns = 7;
 			int rows = 19;

@@ -88,8 +88,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="rows"></param>
 		/// <param name="columns"></param>
 		/// <param name="bitsPerPixel">Can be 8 or 16 in the case of
-		/// grayscale or indexed (palette) colour images, or 32 for
-		/// multichannel colour images.</param>
+		/// grayscale images, or 32 for multichannel colour images.</param>
 		/// <remarks>
 		/// Creates an empty image of a specific size and bit depth.
 		/// All all entries in the byte buffer are set to zero. Useful as
@@ -110,8 +109,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="rows"></param>
 		/// <param name="columns"></param>
 		/// <param name="bitsPerPixel">Can be 8 or 16 in the case of
-		/// grayscale or indexed (palette) colour images, or 32 for
-		/// multichannel colour images.</param>
+		/// grayscale images, or 32 for multichannel colour images.</param>
 		/// <param name="pixelData"></param>
 		/// <remarks>
 		/// Creates an image using existing pixel data.
@@ -135,8 +133,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="rows"></param>
 		/// <param name="columns"></param>
 		/// <param name="bitsPerPixel">Can be 8 or 16 in the case of
-		/// grayscale or indexed (palette) colour images, or 32 for
-		/// multichannel colour images.</param>
+		/// grayscale images, or 32 for multichannel colour images.</param>
 		/// <param name="pixelDataGetter"></param>
 		/// <remarks>
 		/// Creates an image using existing pixel data but does so

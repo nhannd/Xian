@@ -37,11 +37,11 @@ using ClearCanvas.Dicom;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// An indexed pixel data wrapper.
+	/// A grayscale pixel data wrapper.
 	/// </summary>
 	/// <remarks>
 	/// <see cref="GrayscalePixelData"/> provides a number of convenience methods
-	/// to make accessing and changing indexed pixel data easier.  Use these methods
+	/// to make accessing and changing grayscale pixel data easier.  Use these methods
 	/// judiciously, as the convenience comes at the expense of performance.
 	/// For example, if you're doing complex image processing, using methods
 	/// such as <see cref="PixelData.SetPixel(int, int, int)"/> is not recommended if you want
