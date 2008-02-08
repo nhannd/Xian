@@ -170,18 +170,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					string rgbFormatted = String.Format(SR.FormatRGB, color.R, color.G, color.B);
 					pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, rgbFormatted);
 				}
-				else if (_selectedImageGraphic is PaletteColorImageGraphic)
-				{
-					showModalityValue = false;
-					showVoiValue = false;
-
-					PaletteColorImageGraphic image = _selectedImageGraphic as PaletteColorImageGraphic;
-
-					int pixelValue = image.PixelData.GetPixel(sourcePointRounded.X, sourcePointRounded.Y);
-					Color color = Color.FromArgb(image.ColorMap[pixelValue]);
-					string rgbFormatted = String.Format(SR.FormatPaletteColor, pixelValue, color.R, color.G, color.B);
-					pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, rgbFormatted);
-				}
 				else
 				{
 					showPixelValue = false;

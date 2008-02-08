@@ -459,15 +459,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} (R={1}, G={2}, B={3}).
-        /// </summary>
-        internal static string FormatPaletteColor {
-            get {
-                return ResourceManager.GetString("FormatPaletteColor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to R={0}, G={1}, B={2}.
         /// </summary>
         internal static string FormatRGB {

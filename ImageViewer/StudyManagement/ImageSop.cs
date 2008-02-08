@@ -660,7 +660,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Converts the input (possibly compressed) pixel data to a standard,
 		/// 'normalized' format.
-		///  </summary>
+		/// </summary>
 		/// <remarks>
 		/// <para>
 		/// Normally, this helper method would be called from (subclass) implementations of
@@ -682,17 +682,31 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			// If it's a colour image, we want to change the colour space to ARGB
 			// so that it's easily consumed downstream
 			if (this.PhotometricInterpretation != PhotometricInterpretation.Monochrome1 &&
-			    this.PhotometricInterpretation != PhotometricInterpretation.Monochrome2 &&
-				this.PhotometricInterpretation != PhotometricInterpretation.PaletteColor)
+			    this.PhotometricInterpretation != PhotometricInterpretation.Monochrome2)
 			{
 				int sizeInBytes = this.Rows * this.Columns * 4;
 				byte[] newPixelData = new byte[sizeInBytes];
 
-				ColorSpaceConverter.ToArgb(
-					this.PhotometricInterpretation,
-					this.PlanarConfiguration,
-					normalizedPixelData,
-					newPixelData);
+				// Convert palette colour images to ARGB so we don't get interpolation artifacts
+				// when rendering.
+				if (this.PhotometricInterpretation == PhotometricInterpretation.PaletteColor)
+				{
+					ColorSpaceConverter.ToArgb(
+						this.BitsAllocated, 
+						this.PixelRepresentation != 0 ? true : false,
+						normalizedPixelData, 
+						newPixelData,
+						CreateColorMap());
+				}
+				// Convert RGB and YBR variants
+				else
+				{
+					ColorSpaceConverter.ToArgb(
+						this.PhotometricInterpretation,
+						this.PlanarConfiguration,
+						normalizedPixelData,
+						newPixelData);
+				}
 
 				normalizedPixelData = newPixelData;
 			}
@@ -826,5 +840,56 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				this.TransferSyntaxUID != "1.2.840.10008.1.2.2")
 				throw new SopValidationException(SR.ExceptionInvalidTransferSyntaxUID);
 		}
+
+		private IColorMap CreateColorMap()
+		{
+			bool tagExists;
+			int lutSize, firstMappedPixel, bitsPerLutEntry;
+
+			GetTag(DicomTags.RedPaletteColorLookupTableDescriptor, out lutSize, 0, out tagExists);
+
+			if (!tagExists)
+				throw new Exception("LUT Size missing.");
+
+			GetTag(DicomTags.RedPaletteColorLookupTableDescriptor, out firstMappedPixel, 1, out tagExists);
+
+			if (!tagExists)
+				throw new Exception("First Mapped Pixel missing.");
+
+			GetTag(DicomTags.RedPaletteColorLookupTableDescriptor, out bitsPerLutEntry, 2, out tagExists);
+
+			if (!tagExists)
+				throw new Exception("Bits Per Entry missing.");
+
+			byte[] redLut, greenLut, blueLut;
+
+			GetTagOBOW(DicomTags.RedPaletteColorLookupTableData, out redLut, out tagExists);
+
+			if (!tagExists)
+				throw new Exception("Red Palette Color LUT missing.");
+
+			GetTagOBOW(DicomTags.GreenPaletteColorLookupTableData, out greenLut, out tagExists);
+
+			if (!tagExists)
+				throw new Exception("Green Palette Color LUT missing.");
+
+			GetTagOBOW(DicomTags.BluePaletteColorLookupTableData, out blueLut, out tagExists);
+
+			if (!tagExists)
+				throw new Exception("Blue Palette Color LUT missing.");
+
+			// The DICOM standard says that if the LUT size is 0, it means that it's 65536 in size.
+			if (lutSize == 0)
+				lutSize = 65536;
+
+			return new PaletteColorMap(
+				lutSize,
+				firstMappedPixel,
+				bitsPerLutEntry,
+				redLut,
+				greenLut,
+				blueLut);
+		}
+
 	}
 }

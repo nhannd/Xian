@@ -48,14 +48,14 @@ namespace ClearCanvas.ImageViewer
 		/// <returns></returns>
 		public static IPresentationImage Create(ImageSop imageSop)
 		{
-			if (imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ||
-			    imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome2)
+			if (imageSop.PhotometricInterpretation == PhotometricInterpretation.Unknown)
+			{
+				throw new Exception("Photometric interpretation is unknown.");
+			}
+			else if (imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ||
+					 imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome2)
 			{
 				return new DicomGrayscalePresentationImage(imageSop);
-			}
-			else if (imageSop.PhotometricInterpretation == PhotometricInterpretation.PaletteColor)
-			{
-				return new DicomPaletteColorPresentationImage(imageSop);
 			}
 			else
 			{

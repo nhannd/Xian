@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using ClearCanvas.Dicom;
 
@@ -136,6 +137,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <param name="planarConfiguration">The planar configuration of <paramref name="srcPixelData"/>.</param>
 		/// <param name="srcPixelData">The input pixel data to be converted.</param>
 		/// <param name="argbPixelData">The converted output pixel data in ARGB format.</param>
+		/// <remarks>
+		/// Only RGB and YBR variants can be converted.  For PALETTE COLOR, use <see cref="ToArgb(int,bool,byte[],byte[],IColorMap)"/>.
+		/// </remarks>
 		public static void ToArgb(
 			PhotometricInterpretation photometricInterpretation,
 			int planarConfiguration,
@@ -143,6 +147,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 			byte[] argbPixelData)
 		{
 			int sizeInPixels = argbPixelData.Length / 4;
+
+			if (photometricInterpretation == PhotometricInterpretation.Monochrome1 ||
+				photometricInterpretation == PhotometricInterpretation.Monochrome2 ||
+				photometricInterpretation == PhotometricInterpretation.PaletteColor ||
+				photometricInterpretation == PhotometricInterpretation.Unknown)
+				throw new Exception("Invalid photometric interpretation.  Must be either RGB or a YBR variant.");
 
 			if (photometricInterpretation == PhotometricInterpretation.Rgb)
 			{
@@ -157,6 +167,102 @@ namespace ClearCanvas.ImageViewer.Imaging
 					YbrTripletToArgb(srcPixelData, argbPixelData, sizeInPixels, photometricInterpretation);
 				else
 					YbrPlanarToArgb(srcPixelData, argbPixelData, sizeInPixels, photometricInterpretation);
+			}
+		}
+
+		/// <summary>
+		/// Converts indexed pixel data to ARGB using the specified colour map.
+		/// </summary>
+		/// <param name="bitsAllocated">Number of bits allocated in <paramref name="srcPixelData"/>.</param>
+		/// <param name="isSigned">Indicates whether <paramref name="srcPixelData"/> is signed.</param>
+		/// <param name="srcPixelData">The input pixel data to be converted.</param>
+		/// <param name="argbPixelData">The converted output pixel data in ARGB format.</param>
+		/// <param name="map">The colour map to be used.</param>
+		/// <remarks>
+		/// Internally, this method is used to convert PALETTE COLOR images to ARGB.
+		/// </remarks>
+		public static void ToArgb(
+			int bitsAllocated,
+			bool isSigned, 
+			byte[] srcPixelData, 
+			byte[] argbPixelData, 
+			IColorMap map)
+		{
+			int sizeInPixels = argbPixelData.Length/4;
+			int firstPixelMapped = map.MinInputValue;
+
+			fixed (byte* pSrcPixelData = srcPixelData)
+			{
+				fixed (byte* pArgbPixelData = argbPixelData)
+				{
+					fixed (int* pColorMap = map.Data)
+					{
+						int dst = 0;
+
+						if (bitsAllocated == 8)
+						{
+							if (isSigned)
+							{
+								// 8-bit signed
+								for (int i = 0; i < sizeInPixels; i++)
+								{
+									int value = pColorMap[((sbyte*)pSrcPixelData)[i] - firstPixelMapped];
+									pArgbPixelData[dst] = Color.FromArgb(value).B;
+									pArgbPixelData[dst + 1] = Color.FromArgb(value).G;
+									pArgbPixelData[dst + 2] = Color.FromArgb(value).R;
+									pArgbPixelData[dst + 3] = Color.FromArgb(value).A;
+
+									dst += 4;
+								}
+							}
+							else
+							{
+								// 8-bit unsigned
+								for (int i = 0; i < sizeInPixels; i++)
+								{
+									int value = pColorMap[pSrcPixelData[i] - firstPixelMapped];
+									pArgbPixelData[dst] = Color.FromArgb(value).B;
+									pArgbPixelData[dst + 1] = Color.FromArgb(value).G;
+									pArgbPixelData[dst + 2] = Color.FromArgb(value).R;
+									pArgbPixelData[dst + 3] = Color.FromArgb(value).A;
+
+									dst += 4;
+								}
+							}
+						}
+						else
+						{
+							if (isSigned)
+							{
+								// 16-bit signed
+								for (int i = 0; i < sizeInPixels; i++)
+								{
+									int value = pColorMap[((short*)pSrcPixelData)[i] - firstPixelMapped];
+									pArgbPixelData[dst] = Color.FromArgb(value).B;
+									pArgbPixelData[dst + 1] = Color.FromArgb(value).G;
+									pArgbPixelData[dst + 2] = Color.FromArgb(value).R;
+									pArgbPixelData[dst + 3] = Color.FromArgb(value).A;
+
+									dst += 4;
+								}
+							}
+							else
+							{
+								// 16-bit unsinged
+								for (int i = 0; i < sizeInPixels; i++)
+								{
+									int value = pColorMap[((ushort*)pSrcPixelData)[i] - firstPixelMapped];
+									pArgbPixelData[dst] = Color.FromArgb(value).B;
+									pArgbPixelData[dst + 1] = Color.FromArgb(value).G;
+									pArgbPixelData[dst + 2] = Color.FromArgb(value).R;
+									pArgbPixelData[dst + 3] = Color.FromArgb(value).A;
+
+									dst += 4;
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -267,7 +373,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 					int dst = 0;
 
 					int bOffset = sizeInPixels;
-					int rOffset = sizeInPixels * 2;
+					int rOffset = sizeInPixels*2;
 
 					YbrToRgb converter = GetYbrToRgbConverter(photometricInterpretation);
 

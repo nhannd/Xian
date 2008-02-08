@@ -114,7 +114,6 @@
     <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStore.cs" />
     <Compile Include="Annotations\Dicom\DicomFixedAnnotationLayoutProvider.cs" />
     <Compile Include="Annotations\IAnnotationResourceResolver.cs" />
-    <Compile Include="DicomPaletteColorPresentationImage.cs" />
     <Compile Include="DisplaySetChangingEventArgs.cs" />
     <Compile Include="Graphics\ArcPrimitive.cs" />
     <Compile Include="Graphics\BoundableGraphic.cs" />
@@ -125,7 +124,6 @@
     <Compile Include="Graphics\InvariantBoundablePrimitive.cs" />
     <Compile Include="Graphics\InvariantEllipsePrimitive.cs" />
     <Compile Include="Graphics\IVectorGraphic.cs" />
-    <Compile Include="Graphics\PaletteColorImageGraphic.cs" />
     <Compile Include="Imaging\PaletteColorMap.cs" />
     <Compile Include="InteractiveGraphics\BoundableInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphic.cs" />
