@@ -28,74 +28,45 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		{
 			this.CoordinateSystem = CoordinateSystem.Destination;
 
+			PointF point1 = _line.Pt1;
+			PointF point2 = _line.Pt2;
+
+			float lineWidth = Math.Abs(point1.X - point2.X);
+			float lineHeight = Math.Abs(point1.Y - point2.Y);
+
 			PointF anchorPoint = new PointF();
+
 			Rectangle rectangle = base.ParentPresentationImage.Tile.ClientRectangle;
 
-			float lineWidth = Math.Abs(_line.Pt1.X - _line.Pt2.X);
-			float lineHeight = Math.Abs(_line.Pt1.Y - _line.Pt2.Y);
-
-			float halfTextWidth = _text.Dimensions.Width / 2F;
-			float halfTextHeight = _text.Dimensions.Height / 2F;
+			float halfHeight = _text.Dimensions.Height / 2F;
+			float halfWidth = _text.Dimensions.Width / 2F;
 
 			if (lineWidth >= lineHeight)
 			{
-				if (_line.Pt1.X > rectangle.Right && _line.Pt2.X > rectangle.Right)
+				if (point1.X >= rectangle.Right && point2.X >= rectangle.Right || point1.X <= rectangle.Left && point2.X <= rectangle.Left)
 				{
 					//line is entirely outside the rectangle.
-					PointF leftMost = (_line.Pt1.X > _line.Pt2.X) ? _line.Pt2 : _line.Pt1;
-					anchorPoint = PointF.Subtract(leftMost, new SizeF(halfTextWidth, 0));
-				}
-				else if (_line.Pt1.X <= rectangle.Left && _line.Pt2.X <= rectangle.Left)
-				{
-					//line is entirely outside the rectangle.
-					PointF rightMost = (_line.Pt1.X > _line.Pt2.X) ? _line.Pt1 : _line.Pt2;
-					anchorPoint = PointF.Add(rightMost, new SizeF(halfTextWidth, 0));
+					anchorPoint = point1;
 				}
 				else
 				{
-					if (_line.Pt1.X > _line.Pt2.X)
-					{
-						anchorPoint.X = Math.Min(_line.Pt1.X + halfTextWidth, rectangle.Right - halfTextWidth);
-						anchorPoint.Y = _line.Pt1.Y;
-						float lineX = Math.Min(_line.Pt1.X, rectangle.Right - halfTextWidth * 2F);
-						_line.Pt1 = new PointF(lineX, _line.Pt1.Y);
-					}
-					else
-					{
-						anchorPoint.X = Math.Min(_line.Pt2.X + halfTextWidth, rectangle.Right - halfTextWidth);
-						anchorPoint.Y = _line.Pt2.Y;
-						_line.Pt2 = PointF.Subtract(_line.Pt2, new SizeF(halfTextWidth, 0));
-					}
+					PointF rightMost = (point1.X > point2.X) ? point1 : point2;
+					anchorPoint.X = Math.Min(rightMost.X + halfWidth, rectangle.Right - halfWidth);
+					anchorPoint.Y = rightMost.Y;
 				}
 			}
 			else
 			{
-				if (_line.Pt1.Y >= rectangle.Bottom && _line.Pt2.Y >= rectangle.Bottom)
+				if (point1.Y >= rectangle.Bottom && point2.Y >= rectangle.Bottom || point1.Y <= rectangle.Top && point2.Y <= rectangle.Top)
 				{
 					//line is entirely outside the rectangle.
-					PointF topMost = (_line.Pt1.Y > _line.Pt2.Y) ? _line.Pt2 : _line.Pt1;
-					anchorPoint = PointF.Subtract(topMost, new SizeF(0, halfTextHeight));
-				}
-				else if(_line.Pt1.Y <= rectangle.Top && _line.Pt2.Y <= rectangle.Top)
-				{
-					//line is entirely outside the rectangle.
-					PointF bottomMost = (_line.Pt1.Y > _line.Pt2.Y) ? _line.Pt1 : _line.Pt2;
-					anchorPoint = PointF.Add(bottomMost, new SizeF(0, halfTextHeight));
+					anchorPoint = point1;
 				}
 				else
 				{
-					if (_line.Pt1.Y > _line.Pt2.Y)
-					{
-						anchorPoint.X = _line.Pt1.X;
-						anchorPoint.Y = Math.Min(_line.Pt1.Y + halfTextHeight, rectangle.Bottom - halfTextHeight);
-						_line.Pt1 = PointF.Subtract(_line.Pt1, new SizeF(0, halfTextHeight));
-					}
-					else
-					{
-						anchorPoint.X = _line.Pt1.X;
-						anchorPoint.Y = Math.Min(_line.Pt2.Y + halfTextHeight, rectangle.Bottom - halfTextHeight);
-						_line.Pt2 = PointF.Subtract(_line.Pt2, new SizeF(0, halfTextHeight));
-					}
+					PointF bottomMost = (point1.Y > point2.Y) ? point1 : point2;
+					anchorPoint.X = bottomMost.X;
+					anchorPoint.Y = Math.Min(bottomMost.Y + halfHeight, rectangle.Bottom - halfHeight);
 				}
 			}
 
