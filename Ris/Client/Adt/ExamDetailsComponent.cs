@@ -46,17 +46,12 @@ namespace ClearCanvas.Ris.Client.Adt
             SetUrl(url);
         }
 
-        protected override string GetTag(string tag)
+        protected override IDictionary<string, string> TagData
         {
-            string value;
-            _orderExtendedProperties.TryGetValue(tag, out value);
-
-            return value;
-        }
-
-        protected override void SetTag(string tag, string data)
-        {
-            _orderExtendedProperties[tag] = data;
+            get
+            {
+                return _orderExtendedProperties;
+            }
         }
 
         #region IDocumentationPage Members

@@ -2,6 +2,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -34,11 +35,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 base.Start();
             }
 
-            public void Refresh()
-            {
-                NotifyAllPropertiesChanged();
-            }
-
             protected override DataContractBase GetHealthcareContext()
             {
                 return _worklistItem;
@@ -47,15 +43,18 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private ChildComponentHost _orderNotesComponentHost;
         private ChildComponentHost _protocolSummaryComponentHost;
-        
+        private ChildComponentHost _additionalInfoComponentHost;
+       
         private readonly WorklistItemSummaryBase _worklistItem;
+        private readonly IDictionary<string, string> _orderExtendedProperties;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public TechnologistDocumentationOrderDetailsComponent(WorklistItemSummaryBase worklistItem)
+        public TechnologistDocumentationOrderDetailsComponent(WorklistItemSummaryBase worklistItem, IDictionary<string, string> orderExtendedProperties)
         {
             _worklistItem = worklistItem;
+            _orderExtendedProperties = orderExtendedProperties;
         }
 
         public override void Start()
@@ -66,8 +65,15 @@ namespace ClearCanvas.Ris.Client.Adt
             _protocolSummaryComponentHost = new ChildComponentHost(this.Host, new ProtocolSummaryComponent(_worklistItem));
             _protocolSummaryComponentHost.StartComponent();
 
-            // TODO prepare the component for its live phase
+            _additionalInfoComponentHost = new ChildComponentHost(this.Host, new OrderAdditionalInfoComponent(_orderExtendedProperties));
+            _additionalInfoComponentHost.StartComponent();
+
             base.Start();
+        }
+
+        public ApplicationComponentHost AdditionalInfoHost
+        {
+            get { return _additionalInfoComponentHost; }
         }
 
         public ApplicationComponentHost ProtocolHost

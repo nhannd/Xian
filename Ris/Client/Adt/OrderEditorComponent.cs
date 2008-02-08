@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// </summary>
     public interface IOrderEditorPageProvider
     {
-        IOrderEditorPage[] GetEditorPages(Dictionary<string, string> extendedProperties);
+        IOrderEditorPage[] GetEditorPages(DataContractBase healthcareContext, Dictionary<string, string> extendedProperties);
     }
 
     /// <summary>
@@ -161,6 +161,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private event EventHandler _changeCommitted;
 
         private MimeDocumentPreviewComponent _attachmentSummaryComponent;
+        private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 
         private TabComponentContainer _rightHandComponentContainer;
         private ChildComponentHost _rightHandComponentContainerHost;
@@ -171,7 +172,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private ChildComponentHost _bannerComponentHost;
 
         private List<IOrderEditorPage> _extensionPages;
-        private Dictionary<string, string> _extendedProperties;
+        private Dictionary<string, string> _extendedProperties = new Dictionary<string, string>();
 
         /// <summary>
         /// Constructor for creating a new order.
@@ -262,6 +263,8 @@ namespace ClearCanvas.Ris.Client.Adt
             _noteSummaryComponent = new OrderNoteSummaryComponent();
             _attachmentSummaryComponent = new MimeDocumentPreviewComponent(true, true, MimeDocumentPreviewComponent.AttachmentMode.Order);
             this.ChangeCommitted += delegate { _attachmentSummaryComponent.SaveChanges(); };
+            _orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
+
         }
 
         public override void Start()
@@ -292,7 +295,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 _selectedPriority = _priorityChoices.Count > 0 ? _priorityChoices[0] : null;
                 _orderingFacility = LoginSession.Current.WorkingFacility;
                 _schedulingRequestTime = Platform.Time;
-                _extendedProperties = new Dictionary<string, string>();
             }
             else
             {
@@ -780,11 +782,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _attachmentSummaryComponent.OrderAttachments = existingOrder.Attachments;
             _noteSummaryComponent.Notes = existingOrder.Notes;
-            _extendedProperties = existingOrder.ExtendedProperties;
+            _orderAdditionalInfoComponent.OrderExtendedProperties = _extendedProperties = existingOrder.ExtendedProperties;
         }
         
         private bool SubmitOrder()
         {
+            // give additional info page a chance to save data
+            _orderAdditionalInfoComponent.SaveData();
+
             // give extension pages a chance to save data prior to commit
             _extensionPages.ForEach(delegate(IOrderEditorPage page) { page.Save(); });
 
@@ -837,12 +842,14 @@ namespace ClearCanvas.Ris.Client.Adt
             _rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 
             _rightHandComponentContainer.Pages.Add(new TabPage("Documents", _attachmentSummaryComponent));
+            _rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _orderAdditionalInfoComponent));
 
             // instantiate all extension pages
             _extensionPages = new List<IOrderEditorPage>();
             foreach (IOrderEditorPageProvider pageProvider in new OrderEditorPageProviderExtensionPoint().CreateExtensions())
             {
-                _extensionPages.AddRange(pageProvider.GetEditorPages(_extendedProperties));
+                _extensionPages.AddRange(pageProvider.GetEditorPages(new HealthcareContext(_patientRef, _profileRef, _orderRef),
+                    _extendedProperties));
             }
 
             // add extension pages to navigator

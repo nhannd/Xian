@@ -39,6 +39,8 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Enterprise.Common;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -200,12 +202,15 @@ namespace ClearCanvas.Ris.Client
 
             public string GetTag(string tag)
             {
-                return _component.GetTag(tag);
+                string value;
+                _component.TagData.TryGetValue(tag, out value);
+
+                return value;
             }
 
             public void SetTag(string tag, string data)
             {
-                _component.SetTag(tag, data);
+                _component.TagData[tag] = data;
             }
         }
 
@@ -310,14 +315,12 @@ namespace ClearCanvas.Ris.Client
             throw new NotSupportedException("Healthcare context not supported by this component.");
         }
 
-        protected virtual string GetTag(string tag)
+        protected virtual IDictionary<string, string> TagData
         {
-            throw new NotSupportedException(string.Format("Tag {0} is not supported by this component.", tag));
-        }
-
-        protected virtual void SetTag(string tag, string data)
-        {
-            throw new NotSupportedException(string.Format("Tag {0} is not supported by this component.", tag));
+            get
+            {
+                throw new NotSupportedException("Tag data not supported by this component.");
+            }
         }
 
         /// <summary>

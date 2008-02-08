@@ -71,30 +71,12 @@ namespace ClearCanvas.Ris.Client.Adt
                 return _performedProcedureStep;
             }
 
-            protected override string GetTag(string tag)
+            protected override IDictionary<string, string> TagData
             {
-                if(_performedProcedureStep == null)
-                    return null;
-
-                string value;
-                if(string.Equals(tag, "StartTime"))
+                get
                 {
-                    value = Format.DateTime(_performedProcedureStep.StartTime);
+                    return _performedProcedureStep.ExtendedProperties;
                 }
-                else if(string.Equals(tag, "StopTime"))
-                {
-                    value = Format.DateTime(_performedProcedureStep.EndTime);
-                }
-                else
-                {
-                    _performedProcedureStep.ExtendedProperties.TryGetValue(tag, out value);
-                }
-                return value;
-            }
-
-            protected override void SetTag(string tag, string data)
-            {
-                _performedProcedureStep.ExtendedProperties[tag] = data;
             }
 
             public ModalityPerformedProcedureStepSummary PerformedProcedureStep

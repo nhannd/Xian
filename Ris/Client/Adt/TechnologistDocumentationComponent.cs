@@ -124,19 +124,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #endregion
 
-        #region DocumentationTabContainer class
-
-        class DocumentationTabContainer : TabComponentContainer
-        {
-            public override void Start()
-            {
-                this.ValidationStrategy = new AllComponentsValidationStrategy();
-                base.Start();
-            }
-        }
-
-        #endregion
-
         #region Private Members
 
         private readonly ModalityWorklistItem _worklistItem;
@@ -152,7 +139,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private ChildComponentHost _bannerComponentHost;
         private ChildComponentHost _documentationHost;
-        private DocumentationTabContainer _documentationTabContainer;
+        private TabComponentContainer _documentationTabContainer;
 
         private readonly List<ITechnologistDocumentationModule> _documentationModules = new List<ITechnologistDocumentationModule>();
 
@@ -434,9 +421,10 @@ namespace ClearCanvas.Ris.Client.Adt
             _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
             _bannerComponentHost.StartComponent();
 
-            _documentationTabContainer = new DocumentationTabContainer();
+            _documentationTabContainer = new TabComponentContainer();
+            _documentationTabContainer.ValidationStrategy = new AllComponentsValidationStrategy();
 
-            _orderDetailsComponent = new TechnologistDocumentationOrderDetailsComponent(_worklistItem);
+            _orderDetailsComponent = new TechnologistDocumentationOrderDetailsComponent(_worklistItem, _orderExtendedProperties);
             InsertDocumentationPage(_orderDetailsComponent, 0);
 
             _preExamComponent = new ExamDetailsComponent("Pre-exam",
@@ -488,7 +476,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private List<ProcedurePlanSummaryTableItem> ListCheckedSummmaryTableItems()
         {
             return CollectionUtils.Map<Checkable<ProcedurePlanSummaryTableItem>, ProcedurePlanSummaryTableItem>(
-                CollectionUtils.Select<Checkable<ProcedurePlanSummaryTableItem>>(
+                CollectionUtils.Select(
                     _procedurePlanSummaryTable.Items,
                     delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.IsChecked; }),
                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item; });

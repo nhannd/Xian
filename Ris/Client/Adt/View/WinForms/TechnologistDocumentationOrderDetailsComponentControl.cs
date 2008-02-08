@@ -22,11 +22,15 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             Control protocols = (Control)_component.ProtocolHost.ComponentView.GuiElement;
             protocols.Dock = DockStyle.Fill;
-            _protocolPanel.Controls.Add(protocols);
+            _protocolsPanel.Controls.Add(protocols);
 
             Control notes = (Control)_component.NotesHost.ComponentView.GuiElement;
             notes.Dock = DockStyle.Fill;
-            _notesPanel.Controls.Add(notes);
+            _orderNotesPanel.Controls.Add(notes);
+
+            Control additionalInfo = (Control)_component.AdditionalInfoHost.ComponentView.GuiElement;
+            additionalInfo.Dock = DockStyle.Fill;
+            _additionalInfoPanel.Controls.Add(additionalInfo);
         }
     }
 }

@@ -28,67 +28,102 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this._protocolPanel = new System.Windows.Forms.Panel();
-            this._notesPanel = new System.Windows.Forms.Panel();
-            this.tableLayoutPanel1.SuspendLayout();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this._additionalInfoPanel = new System.Windows.Forms.Panel();
+            this._protocolsPanel = new System.Windows.Forms.Panel();
+            this._orderNotesPanel = new System.Windows.Forms.Panel();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tableLayoutPanel1
+            // splitContainer1
             // 
-            this.tableLayoutPanel1.AutoSize = true;
-            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this._protocolPanel, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this._notesPanel, 0, 1);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(521, 389);
-            this.tableLayoutPanel1.TabIndex = 0;
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
             // 
-            // _protocolPanel
+            // splitContainer1.Panel1
             // 
-            this._protocolPanel.AutoSize = true;
-            this._protocolPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._protocolPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._protocolPanel.Location = new System.Drawing.Point(3, 3);
-            this._protocolPanel.Name = "_protocolPanel";
-            this._protocolPanel.Size = new System.Drawing.Size(515, 188);
-            this._protocolPanel.TabIndex = 0;
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
             // 
-            // _notesPanel
+            // splitContainer1.Panel2
             // 
-            this._notesPanel.AutoSize = true;
-            this._notesPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._notesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._notesPanel.Location = new System.Drawing.Point(3, 197);
-            this._notesPanel.Name = "_notesPanel";
-            this._notesPanel.Size = new System.Drawing.Size(515, 189);
-            this._notesPanel.TabIndex = 1;
+            this.splitContainer1.Panel2.Controls.Add(this._additionalInfoPanel);
+            this.splitContainer1.Size = new System.Drawing.Size(521, 389);
+            this.splitContainer1.SplitterDistance = 250;
+            this.splitContainer1.TabIndex = 0;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this._protocolsPanel);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this._orderNotesPanel);
+            this.splitContainer2.Size = new System.Drawing.Size(250, 389);
+            this.splitContainer2.SplitterDistance = 188;
+            this.splitContainer2.TabIndex = 0;
+            // 
+            // _additionalInfoPanel
+            // 
+            this._additionalInfoPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._additionalInfoPanel.Location = new System.Drawing.Point(0, 0);
+            this._additionalInfoPanel.Name = "_additionalInfoPanel";
+            this._additionalInfoPanel.Size = new System.Drawing.Size(267, 389);
+            this._additionalInfoPanel.TabIndex = 0;
+            // 
+            // _protocolsPanel
+            // 
+            this._protocolsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._protocolsPanel.Location = new System.Drawing.Point(0, 0);
+            this._protocolsPanel.Name = "_protocolsPanel";
+            this._protocolsPanel.Size = new System.Drawing.Size(250, 188);
+            this._protocolsPanel.TabIndex = 1;
+            // 
+            // _orderNotesPanel
+            // 
+            this._orderNotesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._orderNotesPanel.Location = new System.Drawing.Point(0, 0);
+            this._orderNotesPanel.Name = "_orderNotesPanel";
+            this._orderNotesPanel.Size = new System.Drawing.Size(250, 197);
+            this._orderNotesPanel.TabIndex = 1;
             // 
             // TechnologistDocumentationOrderDetailsComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this.splitContainer1);
             this.Name = "TechnologistDocumentationOrderDetailsComponentControl";
             this.Size = new System.Drawing.Size(521, 389);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Panel _protocolPanel;
-        private System.Windows.Forms.Panel _notesPanel;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.Panel _protocolsPanel;
+        private System.Windows.Forms.Panel _orderNotesPanel;
+        private System.Windows.Forms.Panel _additionalInfoPanel;
+
     }
 }
