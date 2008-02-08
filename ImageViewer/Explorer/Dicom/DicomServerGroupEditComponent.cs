@@ -73,22 +73,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 				ServerTree serverTree = groupComponent._serverTree;
 
-				if (String.IsNullOrEmpty(groupComponent._serverGroupName))
-				{
-					return new ValidationResult(false, SR.MessageServerGroupNameCannotBeEmpty);
-				}
-				else
-				{
-					bool valid = true; 
-					string conflictingPath = "";
-					if (groupComponent._isNewServerGroup && serverTree.CanAddGroupToCurrentGroup(groupComponent._serverGroupName, out conflictingPath))
-						valid = false;
-					else if (!groupComponent._isNewServerGroup && serverTree.CanEditCurrentGroup(groupComponent._serverGroupName, out conflictingPath))
-						valid = false;
+				bool valid = true; 
+				string conflictingPath = "";
+				if (groupComponent._isNewServerGroup && serverTree.CanAddGroupToCurrentGroup(groupComponent._serverGroupName, out conflictingPath))
+					valid = false;
+				else if (!groupComponent._isNewServerGroup && serverTree.CanEditCurrentGroup(groupComponent._serverGroupName, out conflictingPath))
+					valid = false;
 
-					if (!valid)
-						return new ValidationResult(false, String.Format(SR.FormatServerGroupConflict, groupComponent._serverGroupName, conflictingPath));
-				}
+				if (!valid)
+					return new ValidationResult(false, String.Format(SR.FormatServerGroupConflict, groupComponent._serverGroupName, conflictingPath));
 
 				return new ValidationResult(true, "");
 			}
@@ -130,6 +123,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		#region Public Properties
 
+		[ValidateNotNull(Message = "MessageServerGroupNameCannotBeEmpty")]
 		public string ServerGroupName
 		{
 			get { return _serverGroupName; }

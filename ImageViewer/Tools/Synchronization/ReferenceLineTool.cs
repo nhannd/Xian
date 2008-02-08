@@ -329,6 +329,12 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			bottomRight = new PointF(bottomRightPatient[0, 0] / spacingColumn, bottomRightPatient[1, 0] / spacingRow);
 		}
 
+		private void CreateReferenceLines(CompositeGraphic referenceLineCompositeGraphic, int number)
+		{
+			for (int index = referenceLineCompositeGraphic.Graphics.Count; index < number; ++index)
+				referenceLineCompositeGraphic.Graphics.Add(new ReferenceLineGraphic());
+		}
+
 		private void GetReferenceLineInfo(IPresentationImage referenceImage, IPresentationImage image, out string text, out PointF topLeft, out PointF bottomRight)
 		{
 			ImageSop referenceSop = ((IImageSopProvider) referenceImage).ImageSop;
@@ -336,12 +342,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			
 			//TODO: later, add a config option to show slice location.
 			text = referenceSop.InstanceNumber.ToString();
-		}
-
-		private void CreateReferenceLines(CompositeGraphic referenceLineCompositeGraphic, int number)
-		{
-			for(int index = referenceLineCompositeGraphic.Graphics.Count; index < number; ++index)
-				referenceLineCompositeGraphic.Graphics.Add(new ReferenceLineGraphic());
 		}
 
 		private void SetReferenceLineInfo(CompositeGraphic referenceLineCompositeGraphic, int index, string text, PointF point1, PointF point2)

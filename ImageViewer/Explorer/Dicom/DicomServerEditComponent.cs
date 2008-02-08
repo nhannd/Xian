@@ -153,7 +153,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			base.Validation.Add(new ConflictingServerValidationRule("ServerPort"));
 		}
 
-		#region Public Properties
+		#region Presentation Model
 
 		[ValidateNotNull(Message = "MessageServerNameCannotBeEmpty")]
 		public string ServerName
@@ -249,8 +249,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _serverTree.CurrentNode.IsLocalDataStore; }
 		}
 
-		#endregion
-
 		public void Accept()
 		{
 			ServerAE = ServerAE.Trim();
@@ -276,9 +274,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				{
 					((ServerGroup) _serverTree.CurrentNode).AddChild(newServer);
 					_serverTree.CurrentNode = newServer;
-					_serverTree.Save();
-					_serverTree.FireServerTreeUpdatedEvent();
 				}
+
+				_serverTree.Save();
+				_serverTree.FireServerTreeUpdatedEvent();
 
 				this.ExitCode = ApplicationComponentExitCode.Accepted;
 				Host.Exit();
@@ -289,5 +288,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			Host.Exit();
 		}
+
+		#endregion
 	}
 }
