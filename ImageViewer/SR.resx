@@ -153,6 +153,9 @@
   <data name="DescriptionGreenColorMap" xml:space="preserve">
     <value>Green</value>
   </data>
+  <data name="DescriptionPaletteColorMap" xml:space="preserve">
+    <value>Palette Color</value>
+  </data>
   <data name="DescriptionRedColorMap" xml:space="preserve">
     <value>Red</value>
   </data>

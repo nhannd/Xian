@@ -44,6 +44,212 @@ namespace ClearCanvas.ImageViewer.Rendering
 	{
 		[ThreadStatic] private static int[] _finalLutBuffer;
 
+		public static void Render(
+			ImageGraphic imageGraphic,
+			IntPtr pDstPixelData,
+			int dstWidth,
+			int dstBytesPerPixel,
+			Rectangle clientRectangle)
+		{
+			if (clientRectangle.Width <= 0 || clientRectangle.Height <= 0)
+				return;
+
+			if (imageGraphic.SizeInBytes != imageGraphic.PixelData.Raw.Length)
+				throw new InvalidOperationException(String.Format(SR.ExceptionIncorrectPixelDataSize, imageGraphic.SizeInBytes, imageGraphic.PixelData.Raw.Length));
+
+			CodeClock clock = new CodeClock();
+			clock.Start();
+
+			RectangleF srcViewableRectangle;
+			Rectangle dstViewableRectangle;
+
+			CalculateVisibleRectangles(imageGraphic, clientRectangle, out dstViewableRectangle, out srcViewableRectangle);
+
+			if (imageGraphic is GrayscaleImageGraphic)
+			{
+				RenderGrayscale(
+					imageGraphic as GrayscaleImageGraphic,
+					srcViewableRectangle,
+					dstViewableRectangle,
+					pDstPixelData,
+					dstWidth,
+					dstBytesPerPixel);
+			}
+			else if (imageGraphic is ColorImageGraphic)
+			{
+				RenderColor(
+					imageGraphic as ColorImageGraphic,
+					srcViewableRectangle,
+					dstViewableRectangle,
+					pDstPixelData,
+					dstWidth,
+					dstBytesPerPixel);
+			}
+			else
+			{
+				RenderPaletteColor(
+					imageGraphic as PaletteColorImageGraphic,
+					srcViewableRectangle,
+					dstViewableRectangle,
+					pDstPixelData,
+					dstWidth,
+					dstBytesPerPixel);
+			}
+
+			clock.Stop();
+			RenderPerformanceReportBroker.PublishPerformanceReport("ImageRenderer.Render", clock.Seconds);
+		}
+
+		private static void RenderGrayscale(
+			GrayscaleImageGraphic image, 
+			RectangleF srcViewableRectangle, 
+			Rectangle dstViewableRectangle,
+			IntPtr pDstPixelData,
+			int dstWidth,
+			int dstBytesPerPixel)
+		{
+			fixed (byte* pSrcPixelData = image.PixelData.Raw)
+			{
+				if (image.InterpolationMode == InterpolationMode.Bilinear)
+				{
+					int[] finalLutBuffer = ConstructFinalLut(image.OutputLut, image.ColorMap, image.Invert);
+
+					fixed (int* pFinalLutData = finalLutBuffer)
+					{
+						ImageInterpolatorBilinear.LutData lutData;
+						lutData.Data = pFinalLutData;
+						lutData.FirstMappedPixelData = image.OutputLut.MinInputValue;
+						lutData.Length = finalLutBuffer.Length;
+
+						ImageInterpolatorBilinear.Interpolate(
+							srcViewableRectangle,
+							pSrcPixelData,
+							image.Columns,
+							image.Rows,
+							image.BytesPerPixel,
+							image.BitsStored,
+							dstViewableRectangle,
+							(byte*) pDstPixelData,
+							dstWidth,
+							dstBytesPerPixel,
+							IsRotated(image),
+							&lutData, //ok because it's a local variable in an unsafe method, therefore it's already fixed.
+							false,
+							false,
+							image.IsSigned);
+					}
+				}
+			}
+		}
+
+		private static void RenderColor(
+			ColorImageGraphic image,
+			RectangleF srcViewableRectangle,
+			Rectangle dstViewableRectangle,
+			IntPtr pDstPixelData,
+			int dstWidth,
+			int dstBytesPerPixel)
+		{
+			fixed (byte* pSrcPixelData = image.PixelData.Raw)
+			{
+				if (image.InterpolationMode == InterpolationMode.Bilinear)
+				{
+					int srcBytesPerPixel = 4;
+
+					ImageInterpolatorBilinear.Interpolate(
+						srcViewableRectangle,
+						pSrcPixelData,
+						image.Columns,
+						image.Rows,
+						srcBytesPerPixel,
+						32,
+						dstViewableRectangle,
+						(byte*)pDstPixelData,
+						dstWidth,
+						dstBytesPerPixel,
+						IsRotated(image),
+						null,
+						true,
+						false,
+						false);
+				}
+			}
+		}
+
+		private static void RenderPaletteColor(
+			PaletteColorImageGraphic image,
+			RectangleF srcViewableRectangle,
+			Rectangle dstViewableRectangle,
+			IntPtr pDstPixelData,
+			int dstWidth,
+			int dstBytesPerPixel)
+		{
+			fixed (byte* pSrcPixelData = image.PixelData.Raw)
+			{
+				if (image.InterpolationMode == InterpolationMode.Bilinear)
+				{
+					fixed (int* pColorMap = image.ColorMap.Data)
+					{
+						ImageInterpolatorBilinear.LutData lutData;
+						lutData.Data = pColorMap;
+						lutData.FirstMappedPixelData = image.ColorMap.MinInputValue;
+						lutData.Length = image.ColorMap.Data.Length;
+
+						ImageInterpolatorBilinear.Interpolate(
+							srcViewableRectangle,
+							pSrcPixelData,
+							image.Columns,
+							image.Rows,
+							image.BytesPerPixel,
+							image.BitsStored,
+							dstViewableRectangle,
+							(byte*)pDstPixelData,
+							dstWidth,
+							dstBytesPerPixel,
+							IsRotated(image),
+							&lutData, //ok because it's a local variable in an unsafe method, therefore it's already fixed.
+							false,
+							false,
+							image.IsSigned);
+					}
+				}
+			}
+		}
+
+		private static bool IsRotated(ImageGraphic imageGraphic)
+		{
+			float m12 = imageGraphic.SpatialTransform.CumulativeTransform.Elements[2];
+			return !FloatComparer.AreEqual(m12, 0.0f, 0.001f);
+		}
+
+		//internal for unit testing only.
+		internal static void CalculateVisibleRectangles(
+			ImageGraphic imageGraphic,
+			Rectangle clientRectangle,
+			out Rectangle dstVisibleRectangle,
+			out RectangleF srcVisibleRectangle)
+		{
+			Rectangle srcRectangle = new Rectangle(0, 0, imageGraphic.Columns, imageGraphic.Rows);
+			RectangleF dstRectangle = imageGraphic.SpatialTransform.ConvertToDestination(srcRectangle);
+
+			// Find the intersection between the drawable client rectangle and
+			// the transformed destination rectangle
+			dstRectangle = RectangleUtilities.RoundInflate(dstRectangle);
+			dstRectangle = RectangleUtilities.Intersect(clientRectangle, dstRectangle);
+
+			if (dstRectangle.IsEmpty)
+			{
+				dstVisibleRectangle = Rectangle.Empty;
+				srcVisibleRectangle = RectangleF.Empty;
+				return;
+			}
+
+			// Figure out what portion of the image is visible in source coordinates
+			srcVisibleRectangle = imageGraphic.SpatialTransform.ConvertToSource(dstRectangle);
+			//dstRectangle is already rounded, this is just a conversion to Rectangle.
+			dstVisibleRectangle = Rectangle.Round(dstRectangle);
+		}
+
 		private static int[] ConstructFinalLut(IComposedLut outputLut, IColorMap colorMap, bool invert)
 		{
 			CodeClock clock = new CodeClock();
@@ -88,137 +294,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 			RenderPerformanceReportBroker.PublishPerformanceReport("ImageRenderer.ConstructFinalLut", clock.Seconds);
 
 			return _finalLutBuffer;
-		}
-
-		public static void Render(
-			ImageGraphic imageGraphic,
-			IntPtr pDstPixelData,
-			int dstWidth,
-			int dstBytesPerPixel,
-			Rectangle clientRectangle)
-		{
-			if (clientRectangle.Width <= 0 || clientRectangle.Height <= 0)
-				return;
-
-			CodeClock clock = new CodeClock();
-			clock.Start();
-
-			RectangleF srcViewableRectangle;
-			Rectangle dstViewableRectangle;
-
-			CalculateVisibleRectangles(imageGraphic, clientRectangle, out dstViewableRectangle, out srcViewableRectangle);
-
-			byte[] srcPixelData = imageGraphic.PixelData.Raw;
-
-			IndexedImageGraphic grayscaleImage = imageGraphic as IndexedImageGraphic;
-			ColorImageGraphic colorImage = imageGraphic as ColorImageGraphic;
-
-			bool swapXY = IsRotated(imageGraphic);
-
-			fixed (byte* pSrcPixelData = srcPixelData)
-			{
-				if (imageGraphic.InterpolationMode == InterpolationMode.Bilinear)
-				{
-					if (grayscaleImage != null)
-					{
-						int srcBytesPerPixel = imageGraphic.BitsPerPixel / 8;
-						int expectedSize = imageGraphic.Rows*imageGraphic.Columns*srcBytesPerPixel;
-						int actualSize = srcPixelData == null ? 0 : srcPixelData.Length;
-						if (actualSize < expectedSize)
-							throw new InvalidOperationException(String.Format(SR.ExceptionIncorrectPixelDataSize, expectedSize, actualSize));
-
-						int[] finalLutBuffer = ConstructFinalLut(grayscaleImage.OutputLut, grayscaleImage.ColorMap, grayscaleImage.Invert);
-
-						fixed (int* pFinalLutData = finalLutBuffer)
-						{
-							ImageInterpolatorBilinear.LUTDATA lutData;
-							lutData.LutData = pFinalLutData;
-							lutData.FirstMappedPixelData = grayscaleImage.OutputLut.MinInputValue;
-							lutData.Length = finalLutBuffer.Length;
-
-							ImageInterpolatorBilinear.Interpolate(
-								srcViewableRectangle,
-								pSrcPixelData,
-								grayscaleImage.Columns,
-								grayscaleImage.Rows,
-								srcBytesPerPixel,
-								grayscaleImage.BitsStored,
-								dstViewableRectangle,
-								(byte*) pDstPixelData,
-								dstWidth,
-								dstBytesPerPixel,
-								swapXY,
-								&lutData, //ok because it's a local variable in an unsafe method, therefore it's already fixed.
-								false,
-								false,
-								grayscaleImage.IsSigned);
-						}
-					}
-					else if (colorImage != null)
-					{
-						int srcBytesPerPixel = 4;
-
-						int expectedSize = imageGraphic.Rows * imageGraphic.Columns * srcBytesPerPixel;
-						int actualSize = srcPixelData == null ? 0 : srcPixelData.Length;
-						if (actualSize < expectedSize)
-							throw new InvalidOperationException(String.Format(SR.ExceptionIncorrectPixelDataSize, expectedSize, actualSize));
-
-						ImageInterpolatorBilinear.Interpolate(
-							srcViewableRectangle,
-							pSrcPixelData,
-							colorImage.Columns,
-							colorImage.Rows,
-							srcBytesPerPixel,
-							32,
-							dstViewableRectangle,
-							(byte*) pDstPixelData,
-							dstWidth,
-							dstBytesPerPixel,
-							swapXY,
-							null,
-							true,
-							false,
-							false);
-					}
-				}
-			}
-
-			clock.Stop();
-			RenderPerformanceReportBroker.PublishPerformanceReport("ImageRenderer.Render", clock.Seconds);
-		}
-
-		private static bool IsRotated(ImageGraphic imageGraphic)
-		{
-			float m12 = imageGraphic.SpatialTransform.CumulativeTransform.Elements[2];
-			return !FloatComparer.AreEqual(m12, 0.0f, 0.001f);
-		}
-
-		//internal for unit testing only.
-		internal static void CalculateVisibleRectangles(
-			ImageGraphic imageGraphic,
-			Rectangle clientRectangle,
-			out Rectangle dstVisibleRectangle,
-			out RectangleF srcVisibleRectangle)
-		{
-			Rectangle srcRectangle = new Rectangle(0, 0, imageGraphic.Columns, imageGraphic.Rows);
-			RectangleF dstRectangle = imageGraphic.SpatialTransform.ConvertToDestination(srcRectangle);
-
-			// Find the intersection between the drawable client rectangle and
-			// the transformed destination rectangle
-			dstRectangle = RectangleUtilities.RoundInflate(dstRectangle);
-			dstRectangle = RectangleUtilities.Intersect(clientRectangle, dstRectangle);
-
-			if (dstRectangle.IsEmpty)
-			{
-				dstVisibleRectangle = Rectangle.Empty;
-				srcVisibleRectangle = RectangleF.Empty;
-				return;
-			}
-
-			// Figure out what portion of the image is visible in source coordinates
-			srcVisibleRectangle = imageGraphic.SpatialTransform.ConvertToSource(dstRectangle);
-			//dstRectangle is already rounded, this is just a conversion to Rectangle.
-			dstVisibleRectangle = Rectangle.Round(dstRectangle);
 		}
 	}
 }

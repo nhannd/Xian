@@ -682,7 +682,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			// If it's a colour image, we want to change the colour space to ARGB
 			// so that it's easily consumed downstream
 			if (this.PhotometricInterpretation != PhotometricInterpretation.Monochrome1 &&
-			    this.PhotometricInterpretation != PhotometricInterpretation.Monochrome2)
+			    this.PhotometricInterpretation != PhotometricInterpretation.Monochrome2 &&
+				this.PhotometricInterpretation != PhotometricInterpretation.PaletteColor)
 			{
 				int sizeInBytes = this.Rows * this.Columns * 4;
 				byte[] newPixelData = new byte[sizeInBytes];

@@ -31,14 +31,13 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// A Dicom Grayscale Presentation image.
+	/// A DICOM grayscale <see cref="PresentationImage"/>.
 	/// </summary>
 	public class DicomGrayscalePresentationImage 
 		: GrayscalePresentationImage, IImageSopProvider

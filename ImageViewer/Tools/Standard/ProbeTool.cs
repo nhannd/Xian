@@ -132,7 +132,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void Probe(Point destinationPoint)
 		{
-			PointF sourcePoint = _selectedImageGraphic.SpatialTransform.ConvertToSource(destinationPoint);
 			Point sourcePointRounded = Point.Truncate(_selectedImageGraphic.SpatialTransform.ConvertToSource(destinationPoint));
 
 			//!! Make these user preferences later.
@@ -145,39 +144,51 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			string modalityLutString = String.Format("{0}: {1}", SR.LabelModalityLut, SR.LabelNotApplicable);
 			string voiLutString = String.Format("{0}: {1}", SR.LabelVOILut, SR.LabelNotApplicable);
 
-			Rectangle imageRectangle = new Rectangle(0, 0, _selectedImageGraphic.Columns, _selectedImageGraphic.Rows);
-
 			if (_selectedImageGraphic.HitTest(destinationPoint))
 			{
 				probeString = String.Format("LOC: x={0}, y={1}", sourcePointRounded.X, sourcePointRounded.Y);
 
 				if (_selectedImageGraphic is GrayscaleImageGraphic)
 				{
-					GrayscaleImageGraphic grayscaleImage = _selectedImageGraphic as GrayscaleImageGraphic;
+					GrayscaleImageGraphic image = _selectedImageGraphic as GrayscaleImageGraphic;
 
-					if (grayscaleImage != null)
-					{
-						int pixelValue = 0;
-						int modalityLutValue = 0;
-						int voiLutValue = 0;
+					int pixelValue = 0;
+					int modalityLutValue = 0;
+					int voiLutValue = 0;
 
-						GetPixelValue(grayscaleImage, sourcePointRounded, ref pixelValue, ref pixelValueString);
-						GetModalityLutValue(grayscaleImage, pixelValue, ref modalityLutValue, ref modalityLutString);
-						GetVoiLutValue(grayscaleImage, modalityLutValue, ref voiLutValue, ref voiLutString);
-					}
+					GetPixelValue(image, sourcePointRounded, ref pixelValue, ref pixelValueString);
+					GetModalityLutValue(image, pixelValue, ref modalityLutValue, ref modalityLutString);
+					GetVoiLutValue(image, modalityLutValue, ref voiLutValue, ref voiLutString);
 				}
-				else
+				else if (_selectedImageGraphic is ColorImageGraphic)
 				{
 					showModalityValue = false;
 					showVoiValue = false;
 
-					Color color = ((ColorImageGraphic)_selectedImageGraphic).PixelData.GetPixelAsColor(sourcePointRounded.X, sourcePointRounded.Y);
+					ColorImageGraphic image = _selectedImageGraphic as ColorImageGraphic;
+					Color color = image.PixelData.GetPixelAsColor(sourcePointRounded.X, sourcePointRounded.Y);
 					string rgbFormatted = String.Format(SR.FormatRGB, color.R, color.G, color.B);
 					pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, rgbFormatted);
 				}
-			}
+				else if (_selectedImageGraphic is PaletteColorImageGraphic)
+				{
+					showModalityValue = false;
+					showVoiValue = false;
 
-			//string probeString = String.Format("LOC: x={0}, y={1}", sourcePoint.X, sourcePoint.Y);
+					PaletteColorImageGraphic image = _selectedImageGraphic as PaletteColorImageGraphic;
+
+					int pixelValue = image.PixelData.GetPixel(sourcePointRounded.X, sourcePointRounded.Y);
+					Color color = Color.FromArgb(image.ColorMap[pixelValue]);
+					string rgbFormatted = String.Format(SR.FormatPaletteColor, pixelValue, color.R, color.G, color.B);
+					pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, rgbFormatted);
+				}
+				else
+				{
+					showPixelValue = false;
+					showModalityValue = false;
+					showVoiValue = false;
+				}
+			}
 
 			if (showPixelValue)
 				probeString += "\n" + pixelValueString;
@@ -190,7 +201,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		private void GetPixelValue(
-			GrayscaleImageGraphic grayscaleImage, 
+			IndexedImageGraphic grayscaleImage, 
 			Point sourcePointRounded, 
 			ref int pixelValue,
 			ref string pixelValueString)

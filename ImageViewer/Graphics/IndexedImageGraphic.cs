@@ -45,7 +45,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private int _bitsStored;
 		private int _highBit;
 		private bool _isSigned;
-		private bool _invert;
 
 		#endregion
 
@@ -66,14 +65,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 			int bitsAllocated,
 			int bitsStored,
 			int highBit,
-			bool isSigned,
-			bool invert)
+			bool isSigned)
 			: base(
 				rows,
 				columns,
 				bitsAllocated)
 		{
-			Initialize(bitsStored, highBit, isSigned, invert);
+			Initialize(bitsStored, highBit, isSigned);
 		}
 
 		/// <summary>
@@ -90,7 +88,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 			int bitsStored,
 			int highBit,
 			bool isSigned,
-			bool invert,
 			byte[] pixelData)
 			: base(
 				rows,
@@ -98,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				bitsAllocated,
 				pixelData)
 		{
-			Initialize(bitsStored, highBit, isSigned, invert);
+			Initialize(bitsStored, highBit, isSigned);
 		}
 
 		/// <summary>
@@ -111,7 +108,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="bitsStored"></param>
 		/// <param name="highBit"></param>
 		/// <param name="isSigned"></param>
-		/// <param name="invert"></param>
 		/// <param name="pixelDataGetter"></param>
 		/// <remarks>
 		/// Creates an indexed image using existing pixel data but does so
@@ -126,7 +122,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 			int bitsStored,
 			int highBit,
 			bool isSigned,
-			bool invert,
 			PixelDataGetter pixelDataGetter)
 			: base(
 				rows,
@@ -134,10 +129,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 				bitsAllocated,
 				pixelDataGetter)
 		{
-			Initialize(bitsStored, highBit, isSigned, invert);
+			Initialize(bitsStored, highBit, isSigned);
 		}
 
-		private void Initialize(int bitsStored, int highBit, bool isSigned, bool invert)
+		private void Initialize(int bitsStored, int highBit, bool isSigned)
 		{
 			DicomValidator.ValidateBitsStored(bitsStored);
 			DicomValidator.ValidateHighBit(highBit);
@@ -145,7 +140,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_bitsStored = bitsStored;
 			_highBit = highBit;
 			_isSigned = isSigned;
-			_invert = invert;
 		}
 
 		#endregion
@@ -184,19 +178,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the image should
-		/// be inverted.
-		/// </summary>
-		/// <remarks>
-		/// Inversion is equivalent to polarity.
-		/// </remarks>
-		public bool Invert
-		{
-			get { return _invert; }
-			set { _invert = value; }
-		}
-
-		/// <summary>
 		/// Gets an object that encapsulates the pixel data.
 		/// </summary>
 		public new IndexedPixelData PixelData
@@ -208,12 +189,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// The output of the LUT pipeline.
-		/// </summary>
-		public abstract IComposedLut OutputLut { get; }
-
-		/// <summary>
-		/// The color map for the image, if applicable.
+		/// The colour map for the image, if applicable.
 		/// </summary>
 		/// <remarks>
 		/// Each entry in the <see cref="ColorMap"/> array is 32-bit ARGB value.

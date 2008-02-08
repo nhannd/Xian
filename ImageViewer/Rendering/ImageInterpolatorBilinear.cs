@@ -37,9 +37,9 @@ namespace ClearCanvas.ImageViewer.Rendering
     internal unsafe class ImageInterpolatorBilinear
     {
 		[StructLayout(LayoutKind.Sequential)]
-		public struct LUTDATA
+		public struct LutData
 		{
-			public int* LutData;
+			public int* Data;
 			public int FirstMappedPixelData;
 			public int Length;
 		}
@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Rendering
             int dstWidth,
             int dstBytesPerPixel,
             bool swapXY,
-            LUTDATA* lutData,
+            LutData* lutData,
             bool isRGB,
             bool isPlanar,
             bool isSigned)
@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			int dstRegionRectBottom,
 
 			bool swapXY,
-			LUTDATA* lutData
+			LutData* lutData
 		);
     }
 }

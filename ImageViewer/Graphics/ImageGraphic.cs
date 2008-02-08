@@ -195,6 +195,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
+		/// Gets the number of bytes per pixel.
+		/// </summary>
+		public int BytesPerPixel
+		{
+			get { return this.BitsPerPixel/8; }
+		}
+
+		/// <summary>
 		/// Gets a value indicating whether image is aligned on a 4-byte boundary
 		/// </summary>
 		/// <remarks>Bitmaps in Windows need to be aligned on a 4-byte boundary.  

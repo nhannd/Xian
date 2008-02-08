@@ -35,7 +35,7 @@ using ClearCanvas.ImageViewer.Imaging;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// A 2D colour Presentation Image.
+	/// A colour <see cref="PresentationImage"/>.
 	/// </summary>
 	public class ColorPresentationImage : BasicPresentationImage
 	{

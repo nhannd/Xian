@@ -39,7 +39,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// A grayscale <see cref="IndexedImageGraphic"/>.
 	/// </summary>
-	public class GrayscaleImageGraphic : IndexedImageGraphic, IModalityLutProvider, IVoiLutProvider, IColorMapProvider
+	public class GrayscaleImageGraphic 
+		: IndexedImageGraphic, 
+		IModalityLutProvider, 
+		IVoiLutProvider, 
+		IColorMapProvider
 	{
 		private enum Luts
 		{ 
@@ -54,6 +58,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private double _rescaleSlope;
 		private double _rescaleIntercept;
+		private bool _invert;
 
 		private IVoiLutManager _voiLutManager;
 
@@ -88,10 +93,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 				   16, /* bits allocated */
 				   16, /* bits stored */
 				   15, /* high bit */
-				   false,
 				   false) /* is signed */
 		{
-			Initialize(1, 0);
+			Initialize(1, 0, false);
 		}
 
 		/// <summary>
@@ -129,10 +133,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 				bitsStored,
 				highBit,
 				isSigned,
-				inverted,
 				pixelData)
 		{
-			Initialize(rescaleSlope, rescaleIntercept);
+			Initialize(rescaleSlope, rescaleIntercept, inverted);
 		}
 
 		/// <summary>
@@ -173,15 +176,26 @@ namespace ClearCanvas.ImageViewer.Graphics
 				bitsStored,
 				highBit,
 				isSigned,
-				inverted,
 				pixelDataGetter)
 		{
-			Initialize(rescaleSlope, rescaleIntercept);
+			Initialize(rescaleSlope, rescaleIntercept, inverted);
 		}
 
 		#endregion
 
 		#region Public properties
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the image should be inverted.
+		/// </summary>
+		/// <remarks>
+		/// Inversion is equivalent to polarity.
+		/// </remarks>
+		public bool Invert
+		{
+			get { return _invert; }
+			set { _invert = value; }
+		}
 
 		#region IVoiLutProvider Members
 
@@ -246,7 +260,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// The output lut composed of both the Modality and Voi Luts.
 		/// </summary>
-		public sealed override IComposedLut OutputLut
+		public IComposedLut OutputLut
 		{
 			get
 			{
@@ -319,10 +333,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Private methods
 
-		private void Initialize(double rescaleSlope, double rescaleIntercept)
+		private void Initialize(double rescaleSlope, double rescaleIntercept, bool invert)
 		{
 			_rescaleSlope = rescaleSlope <= double.Epsilon ? 1 : rescaleSlope;
 			_rescaleIntercept = rescaleIntercept;
+			_invert = invert;
 		}
 
 		private void InitializeNecessaryLuts(Luts luts)

@@ -247,19 +247,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 			_pen.Width = CalculateScaledPenWidth(line, 1);
 
 			SetDashStyle(line);
-#if MONO
-			Size del = new Size((int)GDIRenderer._dropShadowOffset.Width, (int)GDIRenderer._dropShadowOffset.Height);
 
-			Surface.FinalBuffer.Graphics.DrawLine(
-				_pen,
-				line.Pt1 + del,
-				line.Pt2 + del);
-#else
 			Surface.FinalBuffer.Graphics.DrawLine(
 				_pen,
 				line.Pt1 + GetDropShadowOffset(line),
 				line.Pt2 + GetDropShadowOffset(line));
-#endif
 
 			// Draw line
 			_pen.Color = line.Color;
@@ -465,15 +457,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 			_brush.Color = Color.Black;
 
 			SizeF dropShadowOffset = new SizeF(1, 1);
-#if MONO
-			Size del = new Size((int)GDIRenderer._dropShadowOffset.Width, (int)GDIRenderer._dropShadowOffset.Height);
-
-			Surface.FinalBuffer.Graphics.DrawString(
-				textPrimitive.Text,
-				font,
-				_brush,
-				textPrimitive.AnchorPoint + del);
-#else
 			PointF boundingBoxTopLeft = new PointF(textPrimitive.BoundingBox.Left, textPrimitive.BoundingBox.Top);
 
 			Surface.FinalBuffer.Graphics.DrawString(
@@ -481,7 +464,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 				font,
 				_brush,
 				boundingBoxTopLeft + dropShadowOffset);
-#endif
+
 			// Draw text
 			_brush.Color = textPrimitive.Color;
 

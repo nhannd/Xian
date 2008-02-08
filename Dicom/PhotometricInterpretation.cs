@@ -58,7 +58,7 @@ namespace ClearCanvas.Dicom
             _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.Unknown, "UNKNOWN");
             _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.Monochrome1, "MONOCHROME1");
             _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.Monochrome2, "MONOCHROME2");
-            _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.PaletteColor, "PALETTE_COLOR");
+            _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.PaletteColor, "PALETTE COLOR");
             _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.Rgb, "RGB");
             _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.YbrFull, "YBR_FULL");
             _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.YbrFull422, "YBR_FULL_422");

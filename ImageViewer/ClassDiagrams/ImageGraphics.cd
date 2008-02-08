@@ -5,21 +5,21 @@
     <Position X="3.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Graphics\ImageGraphic.cs</FileName>
-      <HashCode>AAIAAQAAAIBAEUCQAAAggAgAAIAACiBEQAgBABgAQAA=</HashCode>
+      <HashCode>AAIAAQAAAIBAEUCQAAAggCgAAIAACiBEQAgBABgAQAA=</HashCode>
     </TypeIdentifier>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.IndexedImageGraphic" Collapsed="true">
     <Position X="2.25" Y="2.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>Graphics\IndexedImageGraphic.cs</FileName>
-      <HashCode>AAIAAAAAAAQAAQAAAACABAEAAAAAACAAAAAAAAACQAI=</HashCode>
+      <HashCode>AAIAAAAAAAAAAQAAAACABAEAAAAAACEAAAAAAAACQAI=</HashCode>
     </TypeIdentifier>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.GrayscaleImageGraphic" Collapsed="true">
-    <Position X="2" Y="4" Width="2" />
+    <Position X="3.25" Y="4.25" Width="2" />
     <TypeIdentifier>
       <FileName>Graphics\GrayscaleImageGraphic.cs</FileName>
-      <HashCode>BAgAAAQQgCQAAYAAAAAAAAAAAJIEgAAAAgAAIAACAAA=</HashCode>
+      <HashCode>BAgACEwAACQAAYAACAAAAAAIAIIEgQEAAAEAIAACAAA=</HashCode>
     </TypeIdentifier>
     <Lollipop Orientation="Right" Position="0.1" />
   </Class>
@@ -36,6 +36,13 @@
     <TypeIdentifier>
       <FileName>Graphics\ColorImageGraphic.cs</FileName>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAQAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClearCanvas.ImageViewer.Graphics.PaletteColorImageGraphic" Collapsed="true">
+    <Position X="1" Y="4.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>Graphics\PaletteColorImageGraphic.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAACAABAAAAAAAAAAEAAAAAEAAAAAA=</HashCode>
     </TypeIdentifier>
   </Class>
 </ClassDiagram>

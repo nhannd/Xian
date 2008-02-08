@@ -36,7 +36,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// A Dicom colour presentation image.
+	/// A DICOM colour <see cref="PresentationImage"/>.
 	/// </summary>
 	public class DicomColorPresentationImage
 		: ColorPresentationImage, IImageSopProvider

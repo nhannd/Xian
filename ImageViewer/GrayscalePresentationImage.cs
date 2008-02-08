@@ -35,7 +35,7 @@ using ClearCanvas.ImageViewer.Imaging;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// A 2D grayscale Presentation Image.
+	/// A grayscale <see cref="PresentationImage"/>.
 	/// </summary>
 	public class GrayscalePresentationImage 
 		: BasicPresentationImage, 
@@ -157,32 +157,6 @@ namespace ClearCanvas.ImageViewer
 			get { return (GrayscaleImageGraphic)base.ImageGraphic; }
 		}
 
-		/// <summary>
-		/// Creates a clone of the <see cref="GrayscalePresentationImage"/>.
-		/// </summary>
-		/// <returns></returns>
-		public override IPresentationImage CreateFreshCopy()
-		{
-			if (_constructor == 0)
-				return new GrayscalePresentationImage(_rows, _columns);
-			else
-				return new GrayscalePresentationImage(
-					_rows,
-					_columns,
-					_bitsAllocated,
-					_bitsStored,
-					_highBit,
-					_isSigned,
-					_inverted,
-					_rescaleSlope,
-					_rescaleIntercept,
-					_pixelSpacingX,
-					_pixelSpacingY,
-					_pixelAspectRatioX,
-					_pixelAspectRatioY,
-					_pixelDataGetter);
-		}
-
 		#region IModalityLutProvider Members
 
 		/// <summary>
@@ -224,6 +198,32 @@ namespace ClearCanvas.ImageViewer
 			{
 				return this.ImageGraphic.ColorMapManager;
 			}
+		}
+
+		/// <summary>
+		/// Creates a clone of the <see cref="GrayscalePresentationImage"/>.
+		/// </summary>
+		/// <returns></returns>
+		public override IPresentationImage CreateFreshCopy()
+		{
+			if (_constructor == 0)
+				return new GrayscalePresentationImage(_rows, _columns);
+			else
+				return new GrayscalePresentationImage(
+					_rows,
+					_columns,
+					_bitsAllocated,
+					_bitsStored,
+					_highBit,
+					_isSigned,
+					_inverted,
+					_rescaleSlope,
+					_rescaleIntercept,
+					_pixelSpacingX,
+					_pixelSpacingY,
+					_pixelAspectRatioX,
+					_pixelAspectRatioY,
+					_pixelDataGetter);
 		}
 
 		#endregion

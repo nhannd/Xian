@@ -87,6 +87,40 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
+		/// Draws the <see cref="IPresentationImage"/> passed in through the <see cref="DrawArgs"/>.
+		/// </summary>
+		/// <remarks>
+		/// This method is called by the <see cref="PresentationImage"/> whenever
+		/// <see cref="IDrawable.Draw"/> is called.  If you are implementing
+		/// your own renderer, <see cref="DrawArgs"/> contains all you need to 
+		/// know to perform the rendering, such as the <see cref="IRenderingSurface"/>, etc.  
+		/// </remarks>
+		public virtual void Draw(DrawArgs drawArgs)
+		{
+			try
+			{
+				Initialize(drawArgs); 
+				
+				if (drawArgs.RenderingSurface.ClientRectangle.Width == 0 || drawArgs.RenderingSurface.ClientRectangle.Height == 0)
+					return;
+								
+				if (DrawMode == DrawMode.Render)
+					Render();
+				else
+					Refresh();
+			}
+			catch (Exception e)
+			{
+				ShowErrorMessage(e.Message);
+			}
+		}
+
+		/// <summary>
+		/// Factory method for an <see cref="IRenderingSurface"/>.
+		/// </summary>
+		public abstract IRenderingSurface GetRenderingSurface(IntPtr windowID, int width, int height);
+
+		/// <summary>
 		/// Initializes the member variables before calling <see cref="Render"/> or <see cref="Refresh"/>.
 		/// </summary>
 		protected virtual void Initialize(DrawArgs drawArgs)
@@ -223,40 +257,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// Draws an error message in the Scene Graph's client area of the screen.
 		/// </summary>
 		protected abstract void ShowErrorMessage(string message);
-
-		/// <summary>
-		/// Factory method for an <see cref="IRenderingSurface"/>.
-		/// </summary>
-		public abstract IRenderingSurface GetRenderingSurface(IntPtr windowID, int width, int height);
-
-		/// <summary>
-		/// Draws the <see cref="IPresentationImage"/> passed in through the <see cref="DrawArgs"/>.
-		/// </summary>
-		/// <remarks>
-		/// This method is called by the <see cref="PresentationImage"/> whenever
-		/// <see cref="IDrawable.Draw"/> is called.  If you are implementing
-		/// your own renderer, <see cref="DrawArgs"/> contains all you need to 
-		/// know to perform the rendering, such as the <see cref="IRenderingSurface"/>, etc.  
-		/// </remarks>
-		public virtual void Draw(DrawArgs drawArgs)
-		{
-			try
-			{
-				Initialize(drawArgs); 
-				
-				if (drawArgs.RenderingSurface.ClientRectangle.Width == 0 || drawArgs.RenderingSurface.ClientRectangle.Height == 0)
-					return;
-								
-				if (DrawMode == DrawMode.Render)
-					Render();
-				else
-					Refresh();
-			}
-			catch (Exception e)
-			{
-				ShowErrorMessage(e.Message);
-			}
-		}
 
 		#region Disposal
 
