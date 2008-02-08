@@ -39,16 +39,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="DicomServerEditComponent"/>
     /// </summary>
-    public partial class DicomServerEditComponentControl : CustomUserControl
+	public partial class DicomServerEditComponentControl : ApplicationComponentUserControl
     {
         private DicomServerEditComponent _component;
-        private BindingSource _bindingSource;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public DicomServerEditComponentControl(DicomServerEditComponent component)
-        {
+			: base(component)
+		{
             InitializeComponent();
 
             _component = component;
@@ -59,15 +59,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             AcceptClicked += new EventHandler(OnAcceptClicked);
             CancelClicked += new EventHandler(OnCancelClicked);
 
-            _bindingSource = new BindingSource();
-            _bindingSource.DataSource = _component;
-            this._serverName.DataBindings.Add("Text", _bindingSource, "ServerName", true, DataSourceUpdateMode.OnPropertyChanged);
-            this._location.DataBindings.Add("Text", _bindingSource, "ServerLocation", true, DataSourceUpdateMode.OnPropertyChanged);
-            this._ae.DataBindings.Add("Text", _bindingSource, "ServerAE", true, DataSourceUpdateMode.OnPropertyChanged);
-            this._host.DataBindings.Add("Text", _bindingSource, "ServerHost", true, DataSourceUpdateMode.OnPropertyChanged);
+			this._serverName.DataBindings.Add("Text", _component, "ServerName", true, DataSourceUpdateMode.OnPropertyChanged);
+			this._location.DataBindings.Add("Text", _component, "ServerLocation", true, DataSourceUpdateMode.OnPropertyChanged);
+			this._ae.DataBindings.Add("Text", _component, "ServerAE", true, DataSourceUpdateMode.OnPropertyChanged);
+			this._host.DataBindings.Add("Text", _component, "ServerHost", true, DataSourceUpdateMode.OnPropertyChanged);
 			_btnAccept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			Binding portBinding = new Binding("Text", _bindingSource, "ServerPort", true, DataSourceUpdateMode.OnPropertyChanged);
+			Binding portBinding = new Binding("Text", _component, "ServerPort", true, DataSourceUpdateMode.OnPropertyChanged);
 			portBinding.Format += new ConvertEventHandler(OnPortBindingFormat);
 			portBinding.Parse += new ConvertEventHandler(OnPortBindingParse);
         	_port.DataBindings.Add(portBinding);
@@ -81,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			if (e.DesiredType != typeof(string))
 				return;
 
-			if (e.Value == null)
+			if ((int)e.Value <= 0)
 				e.Value = "";
 			else 
 				e.Value = e.Value.ToString();
@@ -89,13 +87,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 		void OnPortBindingParse(object sender, ConvertEventArgs e)
 		{
-			if (e.DesiredType != typeof(int?))
+			if (e.DesiredType != typeof(int))
 				return;
 
 			int value;
-			if (!int.TryParse((string)e.Value, out value))
+			if (!(e.Value is string) || !int.TryParse((string)e.Value, out value))
 			{
-				e.Value = null;
+				e.Value = 0;
 			}
 			else
 			{

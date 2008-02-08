@@ -39,16 +39,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="DicomServerGroupEditComponent"/>
     /// </summary>
-    public partial class DicomServerGroupEditComponentControl : CustomUserControl
-    {
-        private DicomServerGroupEditComponent _component;
-        private BindingSource _bindingSource;
+    public partial class DicomServerGroupEditComponentControl : ApplicationComponentUserControl
+	{
+        private readonly DicomServerGroupEditComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public DicomServerGroupEditComponentControl(DicomServerGroupEditComponent component)
-        {
+			: base(component)
+		{
             InitializeComponent();
 
             _component = component;
@@ -59,9 +59,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			AcceptClicked += new EventHandler(OnAcceptClicked);
             CancelClicked += new EventHandler(OnCancelClicked);
 
-            _bindingSource = new BindingSource();
-            _bindingSource.DataSource = _component;
-            this._serverGroupName.DataBindings.Add("Text", _bindingSource, "ServerGroupName", true, DataSourceUpdateMode.OnPropertyChanged);
+            this._serverGroupName.DataBindings.Add("Text", _component, "ServerGroupName", true, DataSourceUpdateMode.OnPropertyChanged);
             _btnAccept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 

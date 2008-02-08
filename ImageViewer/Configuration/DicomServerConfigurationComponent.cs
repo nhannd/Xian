@@ -36,6 +36,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.Desktop.Validation;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Configuration
@@ -55,8 +56,8 @@ namespace ClearCanvas.ImageViewer.Configuration
     public class DicomServerConfigurationComponent : ConfigurationApplicationComponent
     {
         private string _aeTitle;
-        private string _port;
-        private string _storageDir;
+        private int _port;
+        private string _storageDirectory;
 		private bool _enabled;
 
         /// <summary>
@@ -66,101 +67,129 @@ namespace ClearCanvas.ImageViewer.Configuration
         {
 		}
 
-        public override void Start()
-        {
-			Refresh();
-			base.Start();
-
-			this.Validation.Add(new AETitleValidatonRule());
-			this.Validation.Add(new PortValidationRule());
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
-        public void Refresh()
-        {
-			BlockingOperation.Run(this.ConnectToClientInternal);
-			SignalPropertyChanged();
-		}
-
-		private void ConnectToClientInternal()
-		{
-			try
-			{
-				_enabled = true;
+    	private void ConnectToClientInternal()
+    	{
+    		try
+    		{
 				DicomServerConfigurationHelper.Refresh(true);
 
-				_aeTitle = DicomServerConfigurationHelper.AETitle;
-				_port = DicomServerConfigurationHelper.Port.ToString();
-				_storageDir = DicomServerConfigurationHelper.InterimStorageDirectory;
-			}
-			catch
-			{
-				_aeTitle = "";
-				_port = "";
-				_storageDir = "";
-				_enabled = false;
+    			_aeTitle = DicomServerConfigurationHelper.AETitle;
+    			_port = DicomServerConfigurationHelper.Port;
+				_storageDirectory = DicomServerConfigurationHelper.InterimStorageDirectory;
 
-				this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToRetrieveServerSettings, MessageBoxActions.Ok);
+    			Enabled = true;
+    		}
+    		catch
+    		{
+    			Enabled = false;
+				
+				_aeTitle = "";
+    			_port	= 0;
+				_storageDirectory = "";
+
+    			this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToRetrieveServerSettings, MessageBoxActions.Ok);
+    		}
+
+			NotifyPropertyChanged("AETitle");
+			NotifyPropertyChanged("Port");
+			NotifyPropertyChanged("StorageDirectory");
+    	}
+
+    	public override void Start()
+        {
+			base.Start();
+			Refresh();
+		}
+
+    	public override void Save()
+    	{
+    		try
+    		{
+    			DicomServerConfigurationHelper.Update("localhost", _aeTitle, _port, _storageDirectory);
+    		}
+    		catch
+    		{
+    			this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToUpdateServerSettings, MessageBoxActions.Ok);
+    		}
+    	}
+
+    	public override bool HasValidationErrors
+		{
+			get
+			{
+				AETitle = AETitle.Trim();
+
+				return Enabled && base.HasValidationErrors;
 			}
 		}
 
-        public override void Save()
-        {
-            try
-            {
-				// This should never throw an exception because we should have validated the port already.
-				int port = Convert.ToInt32(_port);
-				DicomServerConfigurationHelper.Update("localhost", _aeTitle, port, _storageDir);
-            }
-            catch
-            {
-				this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToUpdateServerSettings, MessageBoxActions.Ok);
-			}
-        }
+        #region Presentation Model
 
-        private void SignalPropertyChanged()
-        {
-            NotifyPropertyChanged("AETitle");
-            NotifyPropertyChanged("Port");
-            NotifyPropertyChanged("Enabled");
-        }
-
-        #region Properties
-
-        public string AETitle
+		[ValidateLength(1, 16, Message = "ValidationAETitleLengthIncorrect")]
+		[ValidateRegex(@"[\r\n\e\f\\]+", SuccessOnMatch = false, Message = "ValidationAETitleInvalidCharacters")]
+		public string AETitle
         {
             get { return _aeTitle; }
             set 
             {
-				if (value != null)
-					_aeTitle = value.Trim();
-				else
-					_aeTitle = String.Empty;
+				if (_aeTitle == value)
+					return;
 
-                this.Modified = true;
+				_aeTitle = value ?? "";
+                base.Modified = true;
+				NotifyPropertyChanged("AETitle");
             }
         }
 
-        public string Port
+		[ValidateGreaterThanAttribute(0, Inclusive = false, Message = "ValidationPortOutOfRange")]
+		[ValidateLessThanAttribute(65536, Inclusive = false, Message = "ValidationPortOutOfRange")]
+		public int Port
         {
             get { return _port; }
             set 
-            { 
+            {
+				if (_port == value)
+					return;
+
                 _port = value;
-                this.Modified = true;
-            }
+				base.Modified = true;
+				NotifyPropertyChanged("Port");
+			}
         }
 
-        public bool Enabled
+		//private for now.
+		private string StorageDirectory
+		{
+			get { return _storageDirectory; }
+			set
+			{
+				if (_storageDirectory == value)
+					return;
+
+				_storageDirectory = value;
+				base.Modified = true;
+				NotifyPropertyChanged("StorageDirectory");
+			}
+		}
+		
+		public bool Enabled
         {
 			get { return _enabled; }
+			private set
+			{
+				if (_enabled == value)
+					return;
+
+				_enabled = value;
+				NotifyPropertyChanged("Enabled");
+			}
         }
 
-        #endregion
+		public void Refresh()
+		{
+			BlockingOperation.Run(this.ConnectToClientInternal);
+		}
 
+		#endregion
     }
 }

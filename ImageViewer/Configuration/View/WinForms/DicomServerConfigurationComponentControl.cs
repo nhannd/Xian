@@ -51,14 +51,44 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _aeTitle.DataBindings.Add("Value", _component, "AETitle", true, DataSourceUpdateMode.OnPropertyChanged);
-            _port.DataBindings.Add("Value", _component, "Port", true, DataSourceUpdateMode.OnPropertyChanged);
-
-            _aeTitle.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
-            _port.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_aeTitle.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_port.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			
+			_aeTitle.DataBindings.Add("Value", _component, "AETitle", true, DataSourceUpdateMode.OnPropertyChanged);
+			Binding portBinding = new Binding("Value", _component, "Port", true, DataSourceUpdateMode.OnPropertyChanged);
+			portBinding.Format += new ConvertEventHandler(OnPortBindingFormat);
+			portBinding.Parse += new ConvertEventHandler(OnPortBindingParse);
+			_port.DataBindings.Add(portBinding);
         }
 
-        private void _refreshButton_Click(object sender, EventArgs e)
+		void OnPortBindingFormat(object sender, ConvertEventArgs e)
+		{
+			if (e.DesiredType != typeof(string))
+				return;
+
+			if ((int)e.Value <= 0)
+				e.Value = "";
+			else
+				e.Value = e.Value.ToString();
+		}
+
+		void OnPortBindingParse(object sender, ConvertEventArgs e)
+		{
+			if (e.DesiredType != typeof(int))
+				return;
+
+			int value;
+			if (!(e.Value is string) || !int.TryParse((string)e.Value, out value))
+			{
+				e.Value = 0;
+			}
+			else
+			{
+				e.Value = value;
+			}
+		}
+		
+		private void _refreshButton_Click(object sender, EventArgs e)
         {
             _component.Refresh();
         }

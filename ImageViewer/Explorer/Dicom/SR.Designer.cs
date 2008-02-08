@@ -380,11 +380,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The AE Title must be between 1 and 16 characters in length and contain no spaces..
+        ///   Looks up a localized string similar to The AE Title contains invalid characters..
         /// </summary>
-        internal static string MessageServerAEInvalid {
+        internal static string MessageServerAEInvalidCharacters {
             get {
-                return ResourceManager.GetString("MessageServerAEInvalid", resourceCulture);
+                return ResourceManager.GetString("MessageServerAEInvalidCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The AE Title must be between 1 and 16 characters..
+        /// </summary>
+        internal static string MessageServerAEInvalidLength {
+            get {
+                return ResourceManager.GetString("MessageServerAEInvalidLength", resourceCulture);
             }
         }
         

@@ -41,7 +41,7 @@ namespace ClearCanvas.Desktop.Validation
 	{
 		private string _pattern;
 		private bool _allowNull;
-
+		private bool _successOnMatch;
 
 		/// <summary>
 		/// Constructor.
@@ -50,6 +50,7 @@ namespace ClearCanvas.Desktop.Validation
 		public ValidateRegexAttribute(string pattern)
 		{
 			_pattern = pattern;
+			_successOnMatch = true;
 		}
 
 		/// <summary>
@@ -64,6 +65,20 @@ namespace ClearCanvas.Desktop.Validation
 		{
 			get { return _allowNull; }
 			set { _allowNull = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether a successful match indicates a successful result.
+		/// </summary>
+		/// <remarks>
+		/// For example, you may want to test that a string does not contain any 'a' or 'b' characters.  In order
+		/// to do this, you must specify <see cref="SuccessOnMatch"/> = false and a pattern of "[ab]+".  This pattern
+		/// will result in a successful match, and there is no easy way to do a !(not) in regular expressions.
+		/// </remarks>
+		public bool SuccessOnMatch
+		{
+			get { return _successOnMatch; }
+			set { _successOnMatch = value; }
 		}
 
 		/// <summary>
@@ -85,7 +100,7 @@ namespace ClearCanvas.Desktop.Validation
 					if (_allowNull && string.IsNullOrEmpty(value))
 						return new ValidationResult(true, "");
 					else
-						return new ValidationResult(Regex.Match(value ?? "", _pattern).Success, message);
+						return new ValidationResult(Regex.Match(value ?? "", _pattern).Success == SuccessOnMatch, message);
 				});
 		}
 	}

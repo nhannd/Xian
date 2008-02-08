@@ -226,8 +226,11 @@ Please change the dates and try again.</value>
   <data name="MessagePortInvalid" xml:space="preserve">
     <value>The Port must be between 1 and 65535.</value>
   </data>
-  <data name="MessageServerAEInvalid" xml:space="preserve">
-    <value>The AE Title must be between 1 and 16 characters in length and contain no spaces.</value>
+  <data name="MessageServerAEInvalidCharacters" xml:space="preserve">
+    <value>The AE Title contains invalid characters.</value>
+  </data>
+  <data name="MessageServerAEInvalidLength" xml:space="preserve">
+    <value>The AE Title must be between 1 and 16 characters.</value>
   </data>
   <data name="MessageServerGroupNameCannotBeEmpty" xml:space="preserve">
     <value>The Server Group Name cannot be empty.</value>

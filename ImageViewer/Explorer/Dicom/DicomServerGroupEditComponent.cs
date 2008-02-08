@@ -35,6 +35,7 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Validation;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -53,6 +54,48 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     [AssociateView(typeof(DicomServerGroupEditComponentViewExtensionPoint))]
     public class DicomServerGroupEditComponent : ApplicationComponent
     {
+		private class ConflictingServerGroupValidationRule : IValidationRule
+		{
+			public ConflictingServerGroupValidationRule()
+			{
+			}
+
+			#region IValidationRule Members
+
+			public string PropertyName
+			{
+				get { return "ServerGroupName"; }
+			}
+
+			public ValidationResult GetResult(IApplicationComponent component)
+			{
+				DicomServerGroupEditComponent groupComponent = (DicomServerGroupEditComponent)component;
+
+				ServerTree serverTree = groupComponent._serverTree;
+
+				if (String.IsNullOrEmpty(groupComponent._serverGroupName))
+				{
+					return new ValidationResult(false, SR.MessageServerGroupNameCannotBeEmpty);
+				}
+				else
+				{
+					bool valid = true; 
+					string conflictingPath = "";
+					if (groupComponent._isNewServerGroup && serverTree.CanAddGroupToCurrentGroup(groupComponent._serverGroupName, out conflictingPath))
+						valid = false;
+					else if (!groupComponent._isNewServerGroup && serverTree.CanEditCurrentGroup(groupComponent._serverGroupName, out conflictingPath))
+						valid = false;
+
+					if (!valid)
+						return new ValidationResult(false, String.Format(SR.FormatServerGroupConflict, groupComponent._serverGroupName, conflictingPath));
+				}
+
+				return new ValidationResult(true, "");
+			}
+
+			#endregion
+		}
+
 		#region Private Fields
 
 		private readonly ServerTree _serverTree;
@@ -79,6 +122,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         }
 
+		public override void Start()
+		{
+			base.Start();
+			base.Validation.Add(new ConflictingServerGroupValidationRule());
+		}
+
 		#region Public Properties
 
 		public string ServerGroupName
@@ -90,7 +139,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 
 				_serverGroupName = value;
-				this.AcceptEnabled = !String.IsNullOrEmpty(_serverGroupName);
+				this.AcceptEnabled = true;
 				NotifyPropertyChanged("ServerGroupName");
 			}
 		}
@@ -112,58 +161,36 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		
 		public void Accept()
         {
-            if (!IsServerGroupNameValid())
-            {
-            	this.AcceptEnabled = false;
-            	return;
-            }
+			ServerGroupName = ServerGroupName.Trim();
 
-            if (!_isNewServerGroup)
+            if (base.HasValidationErrors)
             {
-                ServerGroup serverGroup = (ServerGroup)_serverTree.CurrentNode;
-                serverGroup.NameOfGroup = _serverGroupName;
+            	base.ShowValidation(true);
             }
-            else
+			else
             {
-                ServerGroup serverGroup = new ServerGroup(_serverGroupName);
-                ((ServerGroup)_serverTree.CurrentNode).AddChild(serverGroup);
-                _serverTree.CurrentNode = serverGroup;
-            }
+            	if (!_isNewServerGroup)
+            	{
+            		ServerGroup serverGroup = (ServerGroup) _serverTree.CurrentNode;
+            		serverGroup.NameOfGroup = _serverGroupName;
+            	}
+            	else
+            	{
+            		ServerGroup serverGroup = new ServerGroup(_serverGroupName);
+            		((ServerGroup) _serverTree.CurrentNode).AddChild(serverGroup);
+            		_serverTree.CurrentNode = serverGroup;
+            	}
 
-			_serverTree.Save();
-            _serverTree.FireServerTreeUpdatedEvent();
-            this.ExitCode = ApplicationComponentExitCode.Accepted;
-            Host.Exit();
-            return;
+            	_serverTree.Save();
+            	_serverTree.FireServerTreeUpdatedEvent();
+            	this.ExitCode = ApplicationComponentExitCode.Accepted;
+            	Host.Exit();
+            }
         }
 
         public void Cancel()
         {
             Host.Exit();
-        }
-
-        private bool IsServerGroupNameValid()
-        {
-			bool valid = true;
-			if (String.IsNullOrEmpty(_serverGroupName))
-			{
-				this.Host.DesktopWindow.ShowMessageBox(SR.MessageServerGroupNameCannotBeEmpty, MessageBoxActions.Ok);
-				valid = false;
-			}
-			else
-			{
-				string conflictingPath = "";
-				if (_isNewServerGroup && _serverTree.CanAddGroupToCurrentGroup(_serverGroupName, out conflictingPath))
-					valid = false;
-				else if (!_isNewServerGroup && _serverTree.CanEditCurrentGroup(_serverGroupName, out conflictingPath))
-					valid = false;
-
-				if (!valid)
-					this.Host.DesktopWindow.ShowMessageBox(
-						String.Format(SR.FormatServerGroupConflict, _serverGroupName, conflictingPath), MessageBoxActions.Ok);
-			}
-
-        	return valid;
         }
     }
 }

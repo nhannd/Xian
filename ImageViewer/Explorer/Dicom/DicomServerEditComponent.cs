@@ -31,10 +31,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Services.ServerTree;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -46,12 +48,61 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	{
 	}
 
-	/// <summary>
-	/// DicomServerEditComponent class
-	/// </summary>
 	[AssociateView(typeof(DicomServerEditComponentViewExtensionPoint))]
 	public class DicomServerEditComponent : ApplicationComponent
 	{
+		private class ConflictingServerValidationRule : IValidationRule
+		{
+			private readonly string _propertyName;
+
+			public ConflictingServerValidationRule(string propertyName)
+			{
+				_propertyName = propertyName;
+			}
+
+			#region IValidationRule Members
+
+			public string PropertyName
+			{
+				get { return _propertyName; }
+			}
+
+			public ValidationResult GetResult(IApplicationComponent component)
+			{
+				DicomServerEditComponent serverComponent = (DicomServerEditComponent)component;
+
+				ServerTree serverTree = serverComponent._serverTree;
+
+				bool isConflicted;
+				string conflictingServerPath;
+
+				if (serverTree.CurrentNode.IsServer)
+				{
+					isConflicted = serverTree.CanEditCurrentServer(serverComponent.ServerName, 
+						serverComponent.ServerAE, 
+						serverComponent.ServerHost, 
+						serverComponent.ServerPort, out conflictingServerPath);
+				}
+				else
+				{
+					isConflicted = serverTree.CanAddServerToCurrentGroup(serverComponent.ServerName, 
+						serverComponent.ServerAE, 
+						serverComponent.ServerHost, 
+						serverComponent.ServerPort, out conflictingServerPath);
+				}
+
+				if (isConflicted)
+				{
+					return new ValidationResult(false, String.Format(SR.FormatServerConflict, conflictingServerPath));
+				}
+
+				return new ValidationResult(true, "");
+
+			}
+
+			#endregion
+		}
+
 		public static readonly int MinimumPort = 1;
 		public static readonly int DefaultPort = 104;
 		public static readonly int MaximumPort = 65535;
@@ -63,13 +114,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private string _serverLocation;
 		private string _serverAE;
 		private string _serverHost;
-		private int? _serverPort;
+		private int _serverPort;
 
 		#endregion
 
 		public DicomServerEditComponent(ServerTree dicomServerTree)
 		{
 			_serverTree = dicomServerTree;
+
 			if (_serverTree.CurrentNode.IsServer)
 			{
 				Server server = (Server)_serverTree.CurrentNode;
@@ -89,8 +141,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
+		public override void Start()
+		{
+			base.Start();
+
+			// All of the properties contribute to conflicts in the server tree, 
+			// so we'll just show the validation errors for each one.
+			base.Validation.Add(new ConflictingServerValidationRule("ServerName"));
+			base.Validation.Add(new ConflictingServerValidationRule("ServerAE"));
+			base.Validation.Add(new ConflictingServerValidationRule("ServerHost"));
+			base.Validation.Add(new ConflictingServerValidationRule("ServerPort"));
+		}
+
 		#region Public Properties
 
+		[ValidateNotNull(Message = "MessageServerNameCannotBeEmpty")]
 		public string ServerName
 		{
 			get { return _serverName; }
@@ -100,7 +165,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 
 				_serverName = value;
-				UpdateAcceptEnabled();
+				AcceptEnabled = true;
 				NotifyPropertyChanged("ServerName");
 			}
 		}
@@ -114,11 +179,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 				
 				_serverLocation = value;
-				UpdateAcceptEnabled();
+				AcceptEnabled = true;
 				NotifyPropertyChanged("ServerLocation");
 			}
 		}
 
+		[ValidateLength(1, 16, Message = "MessageServerAEInvalidLength")]
+		[ValidateRegex(@"[\r\n\e\f\\]+", SuccessOnMatch = false, Message = "MessageServerAEInvalidCharacters")]
 		public string ServerAE
 		{
 			get { return _serverAE; }
@@ -128,11 +195,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 
 				_serverAE = value;
-				UpdateAcceptEnabled();
+				AcceptEnabled = true;
 				NotifyPropertyChanged("ServerAE");
 			}
 		}
 
+		[ValidateNotNull(Message = "MessageHostNameCannotBeEmpty")]
 		public string ServerHost
 		{
 			get { return _serverHost; }
@@ -142,12 +210,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 				
 				_serverHost = value;
-				UpdateAcceptEnabled();
+				AcceptEnabled = true;
 				NotifyPropertyChanged("ServerHost");
 			}
 		}
 
-		public int? ServerPort
+		[ValidateGreaterThanAttribute(0, Inclusive = false, Message = "MessagePortInvalid")]
+		[ValidateLessThanAttribute(65536, Inclusive = false, Message = "MessagePortInvalid")]
+		public int ServerPort
 		{
 			get { return _serverPort; }
 			set
@@ -156,91 +226,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 				
 				_serverPort = value;
-				UpdateAcceptEnabled();
+				AcceptEnabled = true;
 				NotifyPropertyChanged("ServerPort");
 			}
-		}
-
-		#endregion
-
-		private void UpdateAcceptEnabled()
-		{
-			if (String.IsNullOrEmpty(_serverHost) || String.IsNullOrEmpty(_serverAE) || String.IsNullOrEmpty(_serverName) || _serverPort == null)
-				this.AcceptEnabled = false;
-			else 
-				this.AcceptEnabled = true;
-		}
-
-		public void Accept()
-		{
-			if (!IsServerPropertyValid())
-			{
-				this.AcceptEnabled = false;
-				return;
-			}
-
-			Server newServer = new Server(_serverName, _serverLocation, _serverHost, _serverAE, (int)_serverPort);
-
-			// edit current server
-			if (_serverTree.CurrentNode.IsServer)
-			{
-				_serverTree.ReplaceDicomServerInCurrentGroup(newServer);
-			}
-			// add new server
-			else if (_serverTree.CurrentNode.IsServerGroup)
-			{
-				((ServerGroup)_serverTree.CurrentNode).AddChild(newServer);
-				_serverTree.CurrentNode = newServer;
-				_serverTree.Save();
-				_serverTree.FireServerTreeUpdatedEvent();
-			}
-
-			this.ExitCode = ApplicationComponentExitCode.Accepted;
-			Host.Exit();
-		}
-
-		public void Cancel()
-		{
-			Host.Exit();
-		}
-
-		private string VerifyServerProperties()
-		{
-			if (String.IsNullOrEmpty(_serverName))
-				return SR.MessageServerNameCannotBeEmpty;
-			if (String.IsNullOrEmpty(_serverHost))
-				return SR.MessageHostNameCannotBeEmpty;
-			if (String.IsNullOrEmpty(_serverAE) || _serverAE.Length > 16 || _serverAE.Contains(" "))
-				return SR.MessageServerAEInvalid;
-			if (_serverPort == null || (int)_serverPort < MinimumPort || (int)_serverPort > MaximumPort)
-				return SR.MessagePortInvalid;
-
-			return null;
-		}
-
-		private bool IsServerPropertyValid()
-		{
-			string verifyMessage = VerifyServerProperties();
-			if (verifyMessage != null)
-			{
-				this.Host.DesktopWindow.ShowMessageBox(verifyMessage, MessageBoxActions.Ok);
-				return false;
-			}
-
-			bool isConflicted;
-			string conflictingServerPath;
-			if (_serverTree.CurrentNode.IsServer)
-				isConflicted = _serverTree.CanEditCurrentServer(_serverName, _serverAE, _serverHost, (int)_serverPort, out conflictingServerPath);
-			else
-				isConflicted = _serverTree.CanAddServerToCurrentGroup(_serverName, _serverAE, _serverHost, (int)_serverPort, out conflictingServerPath);
-
-			if (isConflicted)
-			{
-				this.Host.DesktopWindow.ShowMessageBox(String.Format(SR.FormatServerConflict, conflictingServerPath), MessageBoxActions.Ok);
-				return false;
-			}
-
-			return true;
 		}
 
 		public bool AcceptEnabled
@@ -259,6 +247,47 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public bool FieldReadonly
 		{
 			get { return _serverTree.CurrentNode.IsLocalDataStore; }
+		}
+
+		#endregion
+
+		public void Accept()
+		{
+			ServerAE = ServerAE.Trim();
+			ServerName = ServerName.Trim();
+			ServerLocation = ServerLocation.Trim();
+			ServerHost = ServerHost.Trim();
+
+			if (base.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+			}
+			else
+			{
+				Server newServer = new Server(_serverName, _serverLocation, _serverHost, _serverAE, _serverPort);
+
+				// edit current server
+				if (_serverTree.CurrentNode.IsServer)
+				{
+					_serverTree.ReplaceDicomServerInCurrentGroup(newServer);
+				}
+					// add new server
+				else if (_serverTree.CurrentNode.IsServerGroup)
+				{
+					((ServerGroup) _serverTree.CurrentNode).AddChild(newServer);
+					_serverTree.CurrentNode = newServer;
+					_serverTree.Save();
+					_serverTree.FireServerTreeUpdatedEvent();
+				}
+
+				this.ExitCode = ApplicationComponentExitCode.Accepted;
+				Host.Exit();
+			}
+		}
+
+		public void Cancel()
+		{
+			Host.Exit();
 		}
 	}
 }

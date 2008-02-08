@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AETitleValidatonRule.cs" />
     <Compile Include="DicomServerConfigurationComponent.cs" />
     <Compile Include="DicomServerConfigurationPageProvider.cs" />
     <Compile Include="DicomServerConfigurationHelper.cs" />
@@ -51,7 +50,6 @@
     <Compile Include="MonitorConfigurationApplicationComponent.cs" />
     <Compile Include="MonitorConfigurationPageProvider.cs" />
     <Compile Include="MonitorConfigurationSettings.cs" />
-    <Compile Include="PortValidationRule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
