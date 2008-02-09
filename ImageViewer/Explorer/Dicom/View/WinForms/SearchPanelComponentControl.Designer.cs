@@ -82,8 +82,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._patientID.Margin = new System.Windows.Forms.Padding(2);
 			this._patientID.Mask = "";
 			this._patientID.Name = "_patientID";
+			this._patientID.PasswordChar = '\0';
 			this._patientID.Size = new System.Drawing.Size(156, 41);
 			this._patientID.TabIndex = 0;
+			this._patientID.ToolTip = null;
 			this._patientID.Value = null;
 			// 
 			// _accessionNumber
@@ -93,8 +95,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._accessionNumber.Margin = new System.Windows.Forms.Padding(2);
 			this._accessionNumber.Mask = "";
 			this._accessionNumber.Name = "_accessionNumber";
+			this._accessionNumber.PasswordChar = '\0';
 			this._accessionNumber.Size = new System.Drawing.Size(156, 41);
 			this._accessionNumber.TabIndex = 15;
+			this._accessionNumber.ToolTip = null;
 			this._accessionNumber.Value = null;
 			// 
 			// _lastName
@@ -104,8 +108,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._lastName.Margin = new System.Windows.Forms.Padding(2);
 			this._lastName.Mask = "";
 			this._lastName.Name = "_lastName";
+			this._lastName.PasswordChar = '\0';
 			this._lastName.Size = new System.Drawing.Size(156, 41);
 			this._lastName.TabIndex = 5;
+			this._lastName.ToolTip = null;
 			this._lastName.Value = null;
 			// 
 			// _firstName
@@ -115,8 +121,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._firstName.Margin = new System.Windows.Forms.Padding(2);
 			this._firstName.Mask = "";
 			this._firstName.Name = "_firstName";
+			this._firstName.PasswordChar = '\0';
 			this._firstName.Size = new System.Drawing.Size(156, 41);
 			this._firstName.TabIndex = 10;
+			this._firstName.ToolTip = null;
 			this._firstName.Value = null;
 			// 
 			// _studyDateFrom
@@ -152,8 +160,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._studyDescription.Margin = new System.Windows.Forms.Padding(2);
 			this._studyDescription.Mask = "";
 			this._studyDescription.Name = "_studyDescription";
+			this._studyDescription.PasswordChar = '\0';
 			this._studyDescription.Size = new System.Drawing.Size(156, 41);
 			this._studyDescription.TabIndex = 30;
+			this._studyDescription.ToolTip = null;
 			this._studyDescription.Value = null;
 			// 
 			// _searchButton
@@ -161,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._searchButton.Image = ((System.Drawing.Image)(resources.GetObject("_searchButton.Image")));
 			this._searchButton.Location = new System.Drawing.Point(660, 63);
 			this._searchButton.Name = "_searchButton";
-			this._searchButton.Size = new System.Drawing.Size(75, 22);
+			this._searchButton.Size = new System.Drawing.Size(90, 22);
 			this._searchButton.TabIndex = 40;
 			this._searchButton.Text = "Search";
 			this._searchButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -170,11 +180,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _searchLastWeekButton
 			// 
-			this._searchLastWeekButton.Location = new System.Drawing.Point(751, 93);
+			this._searchLastWeekButton.Image = ((System.Drawing.Image)(resources.GetObject("_searchLastWeekButton.Image")));
+			this._searchLastWeekButton.Location = new System.Drawing.Point(756, 93);
 			this._searchLastWeekButton.Name = "_searchLastWeekButton";
-			this._searchLastWeekButton.Size = new System.Drawing.Size(75, 22);
+			this._searchLastWeekButton.Size = new System.Drawing.Size(90, 22);
 			this._searchLastWeekButton.TabIndex = 55;
 			this._searchLastWeekButton.Text = "Last 7 days";
+			this._searchLastWeekButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._searchLastWeekButton.UseVisualStyleBackColor = true;
 			this._searchLastWeekButton.Click += new System.EventHandler(this.OnSearchLastWeekButtonClick);
 			// 
@@ -183,7 +195,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._clearButton.Image = ((System.Drawing.Image)(resources.GetObject("_clearButton.Image")));
 			this._clearButton.Location = new System.Drawing.Point(660, 93);
 			this._clearButton.Name = "_clearButton";
-			this._clearButton.Size = new System.Drawing.Size(75, 22);
+			this._clearButton.Size = new System.Drawing.Size(90, 22);
 			this._clearButton.TabIndex = 45;
 			this._clearButton.Text = "Clear";
 			this._clearButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -192,11 +204,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _searchTodayButton
 			// 
-			this._searchTodayButton.Location = new System.Drawing.Point(751, 63);
+			this._searchTodayButton.Image = ((System.Drawing.Image)(resources.GetObject("_searchTodayButton.Image")));
+			this._searchTodayButton.Location = new System.Drawing.Point(756, 63);
 			this._searchTodayButton.Name = "_searchTodayButton";
-			this._searchTodayButton.Size = new System.Drawing.Size(75, 22);
+			this._searchTodayButton.Size = new System.Drawing.Size(90, 22);
 			this._searchTodayButton.TabIndex = 50;
 			this._searchTodayButton.Text = "Today";
+			this._searchTodayButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._searchTodayButton.UseVisualStyleBackColor = true;
 			this._searchTodayButton.Click += new System.EventHandler(this.OnSearchTodayButtonClicked);
 			// 
