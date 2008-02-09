@@ -2,7 +2,7 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Font Name="Segoe UI" Size="9" />
   <Class Name="ClearCanvas.ImageViewer.PresentationImage" Collapsed="true">
-    <Position X="5.25" Y="0.75" Width="1.5" />
+    <Position X="4" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <FileName>PresentationImage.cs</FileName>
       <HashCode>QEMUACAAICBAAgAAABBCAABAFAAADgEIAABAAIAAASI=</HashCode>
@@ -10,17 +10,11 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.BasicPresentationImage" Collapsed="true">
-    <Position X="5" Y="1.75" Width="2" />
+    <Position X="3.75" Y="1.75" Width="2" />
     <TypeIdentifier>
       <FileName>BasicPresentationImage.cs</FileName>
       <HashCode>CAQAAAAAYKgAAACQAIBAADFAAAgAAAAAAAAAgAAAIAQ=</HashCode>
     </TypeIdentifier>
-    <InheritanceLine Type="ClearCanvas.ImageViewer.PresentationImage" FixedFromPoint="true">
-      <Path>
-        <Point X="6" Y="1.312" />
-        <Point X="6" Y="1.75" />
-      </Path>
-    </InheritanceLine>
     <Lollipop Orientation="Left" Position="0.1" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.ColorPresentationImage" Collapsed="true">
@@ -53,21 +47,5 @@
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAABAAAAAAAEAAIAAA=</HashCode>
     </TypeIdentifier>
     <Lollipop Orientation="Left" Position="0.1" />
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.DicomPaletteColorPresentationImage" Collapsed="true">
-    <Position X="9" Y="4.75" Width="2.75" />
-    <TypeIdentifier>
-      <FileName>DicomPaletteColorPresentationImage.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAABAAAAAAAEAAIAAA=</HashCode>
-    </TypeIdentifier>
-    <InheritanceLine Type="ClearCanvas.ImageViewer.BasicPresentationImage" FixedToPoint="true">
-      <Path>
-        <Point X="6" Y="2.441" />
-        <Point X="6" Y="3.125" />
-        <Point X="10.625" Y="3.125" />
-        <Point X="10.625" Y="4.75" />
-      </Path>
-    </InheritanceLine>
-    <Lollipop Position="0.2" />
   </Class>
 </ClassDiagram>

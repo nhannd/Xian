@@ -23,7 +23,7 @@
     </InheritanceLine>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.CreateGraphicState" Collapsed="true">
-    <Position X="6" Y="1.75" Width="1.5" />
+    <Position X="6" Y="1.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\CreateGraphicState.cs</FileName>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
@@ -134,10 +134,10 @@
       <HashCode>AAAAAAAAAGQAAAAEAAAAAAAAAAAAiAAAIAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Class>
-  <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.CreateRectangleGraphicState" Collapsed="true">
+  <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.CreateBoundableGraphicState" Collapsed="true">
     <Position X="9" Y="1.75" Width="2.25" />
     <TypeIdentifier>
-      <FileName>InteractiveGraphics\CreateRectangleGraphicState.cs</FileName>
+      <FileName>InteractiveGraphics\CreateBoundableGraphicState.cs</FileName>
       <HashCode>AAAAAAAAAGQAAAAEAAAAAAAAAAAAiAAAIAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Class>

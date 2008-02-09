@@ -1,46 +1,60 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Font Name="Tahoma" Size="8.25" />
-  <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.ROIGraphic" Collapsed="true">
-    <Position X="2" Y="2.25" Width="1.5" />
+  <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.RoiGraphic" Collapsed="true">
+    <Position X="1.75" Y="2" Width="2" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\ROIGraphic.cs</FileName>
-      <HashCode>QEICAGICAABAAAQAIAKgMQQAgBAYBgEBAAAAgCAAQAI=</HashCode>
+      <HashCode>QAICAEICAABQAAQEAAIgNQQAgBAYBgEBAAEAgAAAQAI=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="Roi" />
       <Property Name="Callout" />
+      <Property Name="Roi" />
     </ShowAsAssociation>
     <Lollipop Orientation="Left" Position="0.1" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.InteractiveGraphic" Collapsed="true">
-    <Position X="4" Y="3" Width="1.5" />
+    <Position X="4" Y="3" Width="2" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\InteractiveGraphic.cs</FileName>
-      <HashCode>CgASAGAAAAEAAQAAIACAAQAAAAAABAAFAEAAgSQAIAA=</HashCode>
+      <HashCode>CgASAEAAACEAAQAEAAAAAQAAACAABAAFAAAAwQQAAAA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.CalloutGraphic" Collapsed="true">
-    <Position X="4" Y="1.25" Width="1.5" />
+    <Position X="4" Y="1.25" Width="2" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\CalloutGraphic.cs</FileName>
-      <HashCode>AAAAAGAAAIBAQAAAIAKAIQQQIAAABAABECAAiiACIAg=</HashCode>
+      <HashCode>AAAAAAAAAIBAQAAAAAIAIQQQIAAABAABECAAigACAAg=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.PolyLineInteractiveGraphic" Collapsed="true">
-    <Position X="2.25" Y="4.25" Width="2.25" />
+    <Position X="4.75" Y="4.25" Width="2.25" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\PolyLineInteractiveGraphic.cs</FileName>
-      <HashCode>AAACEEAAAIBIIgAAAAAAIQAAYCAABAABACAAgAAAIAA=</HashCode>
+      <HashCode>AAACEEAAAKBIAgAAAAAAIQAAYCAABAABACAAwAAAAAA=</HashCode>
     </TypeIdentifier>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.RectangleInteractiveGraphic" Collapsed="true">
-    <Position X="5" Y="4.25" Width="2.25" />
+    <Position X="1" Y="5.5" Width="2.25" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\RectangleInteractiveGraphic.cs</FileName>
-      <HashCode>AgACAlAAAIBABBAAGIAAIQCAIAAABAABACAAgAJAIAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAQAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.BoundableInteractiveGraphic" Collapsed="true">
+    <Position X="2.25" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>InteractiveGraphics\BoundableInteractiveGraphic.cs</FileName>
+      <HashCode>AgACAlAABIBAAJAAGIAQAUCgICAIBAABCCCAwAIAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.EllipseInteractiveGraphic" Collapsed="true">
+    <Position X="3.5" Y="5.5" Width="2" />
+    <TypeIdentifier>
+      <FileName>InteractiveGraphics\EllipseInteractiveGraphic.cs</FileName>
+      <HashCode>AAAAAAAAAABAAAAAAAgAAAAgAAAAAAAAAAAAQAAAAAA=</HashCode>
     </TypeIdentifier>
   </Class>
 </ClassDiagram>
