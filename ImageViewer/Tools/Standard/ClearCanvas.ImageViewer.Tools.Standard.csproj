@@ -269,13 +269,13 @@
     <EmbeddedResource Include="Icons\InvertToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\ShowHideTextOverlayToolLarge.png" />
+    <EmbeddedResource Include="Icons\TextOverlayToolLarge.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\ShowHideTextOverlayToolMedium.png" />
+    <EmbeddedResource Include="Icons\TextOverlayToolMedium.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\ShowHideTextOverlayToolSmall.png" />
+    <EmbeddedResource Include="Icons\TextOverlayToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

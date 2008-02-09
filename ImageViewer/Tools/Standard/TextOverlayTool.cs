@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ButtonAction("showHide", "global-toolbars/ToolbarStandard/ToolbarShowHideTextOverlay", "ShowHide")]
 	[Tooltip("showHide", "TooltipShowHideTextOverlay")]
 	[GroupHint("showHide", "Tools.Image.Manipulation.TextOverlay.ShowHide")]
-	[IconSet("showHide", IconScheme.Colour, "Icons.ShowHideTextOverlayToolSmall.png", "Icons.ShowHideTextOverlayToolMedium.png", "Icons.ShowHideTextOverlayToolLarge.png")]
+	[IconSet("showHide", IconScheme.Colour, "Icons.TextOverlayToolSmall.png", "Icons.TextOverlayToolMedium.png", "Icons.TextOverlayToolLarge.png")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class TextOverlayTool : Tool<IImageViewerToolContext>
