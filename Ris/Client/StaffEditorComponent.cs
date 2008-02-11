@@ -48,7 +48,18 @@ namespace ClearCanvas.Ris.Client
     /// </summary>
     public interface IStaffEditorPageProvider
     {
-        IStaffEditorPage[] GetEditorPages(StaffDetail staffDetail);
+        IStaffEditorPage[] GetEditorPages(IStaffEditorContext context);
+    }
+
+    /// <summary>
+    /// Defines an interface for providing a custom editor page with access to the editor
+    /// context.
+    /// </summary>
+    public interface IStaffEditorContext
+    {
+        EntityRef StaffRef { get; }
+
+        IDictionary<string, string> StaffExtendedProperties { get; }
     }
 
     /// <summary>
@@ -76,6 +87,31 @@ namespace ClearCanvas.Ris.Client
     /// </summary>
     public class StaffEditorComponent : NavigatorComponentContainer
     {
+        #region StaffEditorContext
+
+        class EditorContext : IStaffEditorContext
+        {
+            private readonly StaffEditorComponent _owner;
+
+            public EditorContext(StaffEditorComponent owner)
+            {
+                _owner = owner;
+            }
+
+            public EntityRef StaffRef
+            {
+                get { return _owner._staffRef; }
+            }
+
+            public IDictionary<string, string> StaffExtendedProperties
+            {
+                get { return _owner._staffDetail.ExtendedProperties; }
+            }
+        }
+
+        #endregion
+
+
         private EntityRef _staffRef;
         private StaffDetail _staffDetail;
 
@@ -145,7 +181,7 @@ namespace ClearCanvas.Ris.Client
             _extensionPages = new List<IStaffEditorPage>();
             foreach (IStaffEditorPageProvider pageProvider in new StaffEditorPageProviderExtensionPoint().CreateExtensions())
             {
-                _extensionPages.AddRange(pageProvider.GetEditorPages(_staffDetail));
+                _extensionPages.AddRange(pageProvider.GetEditorPages(new EditorContext(this)));
             }
 
             // add extension pages to navigator

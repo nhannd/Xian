@@ -48,7 +48,18 @@ namespace ClearCanvas.Ris.Client
     /// </summary>
     public interface IExternalPractitionerEditorPageProvider
     {
-        IExternalPractitionerEditorPage[] GetEditorPages(ExternalPractitionerDetail practitionerDetail);
+        IExternalPractitionerEditorPage[] GetEditorPages(IExternalPractitionerEditorContext context);
+    }
+
+    /// <summary>
+    /// Defines an interface for providing a custom editor page with access to the editor
+    /// context.
+    /// </summary>
+    public interface IExternalPractitionerEditorContext
+    {
+        EntityRef PractitionerRef { get; }
+
+        IDictionary<string, string> PractitionerExtendedProperties { get; }
     }
 
     /// <summary>
@@ -72,6 +83,30 @@ namespace ClearCanvas.Ris.Client
 
     public class ExternalPractitionerEditorComponent : NavigatorComponentContainer
     {
+        #region StaffEditorContext
+
+        class EditorContext : IExternalPractitionerEditorContext
+        {
+            private readonly ExternalPractitionerEditorComponent _owner;
+
+            public EditorContext(ExternalPractitionerEditorComponent owner)
+            {
+                _owner = owner;
+            }
+
+            public EntityRef PractitionerRef
+            {
+                get { return _owner._practitionerRef; }
+            }
+
+            public IDictionary<string, string> PractitionerExtendedProperties
+            {
+                get { return _owner._practitionerDetail.ExtendedProperties; }
+            }
+        }
+
+        #endregion
+
         private EntityRef _practitionerRef;
         private ExternalPractitionerDetail _practitionerDetail;
 
@@ -146,7 +181,7 @@ namespace ClearCanvas.Ris.Client
             _extensionPages = new List<IExternalPractitionerEditorPage>();
             foreach (IExternalPractitionerEditorPageProvider pageProvider in new ExternalPractitionerEditorPageProviderExtensionPoint().CreateExtensions())
             {
-                _extensionPages.AddRange(pageProvider.GetEditorPages(_practitionerDetail));
+                _extensionPages.AddRange(pageProvider.GetEditorPages(new EditorContext(this)));
             }
 
             // add extension pages to navigator

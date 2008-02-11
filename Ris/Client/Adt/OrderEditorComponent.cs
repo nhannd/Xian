@@ -53,7 +53,35 @@ namespace ClearCanvas.Ris.Client.Adt
     /// </summary>
     public interface IOrderEditorPageProvider
     {
-        IOrderEditorPage[] GetEditorPages(DataContractBase healthcareContext, Dictionary<string, string> extendedProperties);
+        IOrderEditorPage[] GetEditorPages(IOrderEditorContext context);
+    }
+
+    /// <summary>
+    /// Defines an interface for providing a custom editor page with access to the editor
+    /// context.
+    /// </summary>
+    public interface IOrderEditorContext
+    {
+        /// <summary>
+        /// Patient ref.
+        /// </summary>
+        EntityRef PatientRef { get; }
+
+        /// <summary>
+        /// Patient Profile ref.
+        /// </summary>
+        EntityRef PatientProfileRef { get; }
+
+        /// <summary>
+        /// Order ref.
+        /// </summary>
+        EntityRef OrderRef { get; }
+
+        /// <summary>
+        /// Exposes the extended properties associated with the Order.  Modifications made to these
+        /// properties by the editor page will be persisted whenever the order editor is saved.
+        /// </summary>
+        IDictionary<string, string> OrderExtendedProperties { get; }
     }
 
     /// <summary>
@@ -95,8 +123,10 @@ namespace ClearCanvas.Ris.Client.Adt
             ReplaceOrder
         }
 
+        #region HealthcareContext
+
         /// <summary>
-        /// Define a helper class to for the banner component
+        /// Define a helper class to for DHTML components.
         /// </summary>
         [DataContract]
         class HealthcareContext : DataContractBase
@@ -117,6 +147,43 @@ namespace ClearCanvas.Ris.Client.Adt
             [DataMember]
             public EntityRef OrderRef;
         }
+
+        #endregion
+
+        #region OrderEditorContext
+
+        class OrderEditorContext : IOrderEditorContext
+        {
+            private OrderEditorComponent _owner;
+
+            public OrderEditorContext(OrderEditorComponent owner)
+            {
+                _owner = owner;
+            }
+
+            public EntityRef PatientRef
+            {
+                get { return _owner._patientRef; }
+            }
+
+            public EntityRef PatientProfileRef
+            {
+                get { return _owner._profileRef; }
+            }
+
+            public EntityRef OrderRef
+            {
+                get { return _owner._orderRef; }
+            }
+
+            public IDictionary<string, string> OrderExtendedProperties
+            {
+                get { return _owner._extendedProperties; }
+            }
+        }
+
+        #endregion
+
 
         private readonly Mode _mode;
         private EntityRef _patientRef;
@@ -848,8 +915,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _extensionPages = new List<IOrderEditorPage>();
             foreach (IOrderEditorPageProvider pageProvider in new OrderEditorPageProviderExtensionPoint().CreateExtensions())
             {
-                _extensionPages.AddRange(pageProvider.GetEditorPages(new HealthcareContext(_patientRef, _profileRef, _orderRef),
-                    _extendedProperties));
+                _extensionPages.AddRange(pageProvider.GetEditorPages(new OrderEditorContext(this)));
             }
 
             // add extension pages to navigator
