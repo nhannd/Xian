@@ -43,8 +43,8 @@
                   data = JSML.parse(Ris.getTag("Documentation")) || {};
 
 				  var mpps = Ris.getHealthcareContext();
-                  startTime = mpps ? mpps.StartTime;
-                  stopTime = mpps ? mpps.EndTime;
+                  startTime = mpps.StartTime;
+                  stopTime = mpps.EndTime;
                }
 
                data.acquisition = data.acquisition || {};

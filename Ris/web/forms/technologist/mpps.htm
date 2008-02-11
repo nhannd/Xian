@@ -18,7 +18,7 @@
 
 					// first check if the documentation was captured before, and if the "capturePageUrl" was recorded
 					// if the capturePageUrl is known, just redirect immediately there 
-				// (this provides a form of versioning, whereby data is always displayed by the same page that captured it in the first place)
+					// (this provides a form of versioning, whereby data is always displayed by the same page that captured it in the first place)
 					var data = JSML.parse(Ris.getTag("Documentation")) || {};
 					if(data.capturePageUrl)
 					{
