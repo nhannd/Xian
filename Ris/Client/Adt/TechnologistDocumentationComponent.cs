@@ -244,9 +244,8 @@ namespace ClearCanvas.Ris.Client.Adt
             try
             {
                 // validate first
-                Save(true);
-
-                EventsHelper.Fire(_documentCompleted, this, EventArgs.Empty);
+                if (Save(true))
+                    EventsHelper.Fire(_documentCompleted, this, EventArgs.Empty);
             }
             catch (Exception e)
             {
