@@ -306,9 +306,6 @@
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
-    <Compile Include="Service References\ValidationServerProxy.cs">
-      <DependentUpon>ValidationServerProxy.map</DependentUpon>
-    </Compile>
     <Compile Include="Services\FilesystemInfoService.asmx.cs">
       <DependentUpon>FilesystemInfoService.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -417,7 +414,6 @@
     <None Include="Scripts\.svn\entries" />
     <None Include="Scripts\.svn\format" />
     <None Include="Service References\FilesystemServiceProxy.map" />
-    <None Include="Service References\ValidationServerProxy.map" />
     <Content Include="Common\GridPager.ascx" />
     <Content Include="Global.asax" />
     <Content Include="images\add_disabled.gif" />

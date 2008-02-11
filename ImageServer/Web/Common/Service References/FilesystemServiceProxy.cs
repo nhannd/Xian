@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.FilesystemServiceProxy
+namespace ClearCanvas.ImageServer.Web.Common.FilesystemServiceProxy
 {
     using System.Runtime.Serialization;
     using System;
@@ -101,23 +101,22 @@ namespace ClearCanvas.ImageServer.Web.Application.FilesystemServiceProxy
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ClearCanvas.ImageServer.Web.Application.FilesystemServiceProxy.IFilesystemService" +
-        "")]
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ClearCanvas.ImageServer.Web.Common.FilesystemServiceProxy.IFilesystemService")]
     public interface IFilesystemService
     {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFilesystemService/GetFilesystemInfo", ReplyAction="http://tempuri.org/IFilesystemService/GetFilesystemInfoResponse")]
-        ClearCanvas.ImageServer.Web.Application.FilesystemServiceProxy.FilesystemInfo GetFilesystemInfo(string path);
+        ClearCanvas.ImageServer.Web.Common.FilesystemServiceProxy.FilesystemInfo GetFilesystemInfo(string path);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
-    public interface IFilesystemServiceChannel : ClearCanvas.ImageServer.Web.Application.FilesystemServiceProxy.IFilesystemService, System.ServiceModel.IClientChannel
+    public interface IFilesystemServiceChannel : ClearCanvas.ImageServer.Web.Common.FilesystemServiceProxy.IFilesystemService, System.ServiceModel.IClientChannel
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
-    public partial class FilesystemServiceClient : System.ServiceModel.ClientBase<ClearCanvas.ImageServer.Web.Application.FilesystemServiceProxy.IFilesystemService>, ClearCanvas.ImageServer.Web.Application.FilesystemServiceProxy.IFilesystemService
+    public partial class FilesystemServiceClient : System.ServiceModel.ClientBase<ClearCanvas.ImageServer.Web.Common.FilesystemServiceProxy.IFilesystemService>, ClearCanvas.ImageServer.Web.Common.FilesystemServiceProxy.IFilesystemService
     {
         
         public FilesystemServiceClient()
@@ -144,7 +143,7 @@ namespace ClearCanvas.ImageServer.Web.Application.FilesystemServiceProxy
         {
         }
         
-        public ClearCanvas.ImageServer.Web.Application.FilesystemServiceProxy.FilesystemInfo GetFilesystemInfo(string path)
+        public ClearCanvas.ImageServer.Web.Common.FilesystemServiceProxy.FilesystemInfo GetFilesystemInfo(string path)
         {
             return base.Channel.GetFilesystemInfo(path);
         }

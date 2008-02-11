@@ -39,7 +39,7 @@ using System.Web.Services;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Web.Application.FilesystemServiceProxy;
-using ClearCanvas.ImageServer.Web.Application.ValidationServerProxy;
+using ClearCanvas.ImageServer.Web.Common.WebControls;
 
 namespace ClearCanvas.ImageServer.Web.Application.Services
 {
@@ -65,9 +65,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
         {
             // This web service in turns call a WCF service which resides on the same or different systems.
 
+            ValidationResult result = new ValidationResult();
+            if (String.IsNullOrEmpty(path))
+            {
+                result.Success = false;
+                result.ErrorCode = -1;
+                result.ErrorText = "Path cannot be empty";
+                return result;
+            }
+
             FilesystemServiceProxy.FilesystemInfo fsInfo = null;
             FilesystemServiceProxy.FilesystemServiceClient client = new FilesystemServiceProxy.FilesystemServiceClient();
-            ValidationResult result = new ValidationResult();
             result.Success = false;
             try
             {

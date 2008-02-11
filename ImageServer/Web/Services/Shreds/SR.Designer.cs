@@ -61,38 +61,20 @@ namespace ClearCanvas.ImageServer.Web.Services.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Allows clients to determine the properties of a filesystem.
+        ///   Looks up a localized string similar to Allows clients to determine the properties of a storage filesystem.
         /// </summary>
-        internal static string FilesystemQueryServiceDisplayDescription {
+        internal static string FilesystemServiceDisplayDescription {
             get {
-                return ResourceManager.GetString("FilesystemQueryServiceDisplayDescription", resourceCulture);
+                return ResourceManager.GetString("FilesystemServiceDisplayDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Filesystem Service.
         /// </summary>
-        internal static string FilesystemQueryServiceDisplayName {
+        internal static string FilesystemServiceDisplayName {
             get {
-                return ResourceManager.GetString("FilesystemQueryServiceDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Provide validation services.
-        /// </summary>
-        internal static string ValidationServerDescription {
-            get {
-                return ResourceManager.GetString("ValidationServerDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ValidationServer.
-        /// </summary>
-        internal static string ValidationServerName {
-            get {
-                return ResourceManager.GetString("ValidationServerName", resourceCulture);
+                return ResourceManager.GetString("FilesystemServiceDisplayName", resourceCulture);
             }
         }
     }

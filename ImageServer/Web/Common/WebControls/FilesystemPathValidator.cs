@@ -31,7 +31,6 @@
 
 using System;
 using System.ServiceModel;
-using ClearCanvas.ImageServer.Web.Common.ValidationServer;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls
 {
@@ -95,18 +94,15 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
                 return false;
             }
 
-            ValidationServiceClient client = null;
+            FilesystemServiceProxy.FilesystemServiceClient client = null;
             try
             {
-                client = new ValidationServiceClient();
-                ValidationResult result = client.CheckPath(path);
+                client = new FilesystemServiceProxy.FilesystemServiceClient();
+                FilesystemServiceProxy.FilesystemInfo fsInfo = client.GetFilesystemInfo(path);
 
                 client.Close();
 
-                if (!String.IsNullOrEmpty(result.ErrorText))
-                    ErrorMessage = result.ErrorText;
-
-                return result.Success;
+                return fsInfo.Exists;
             }
             catch (EndpointNotFoundException e)
             {

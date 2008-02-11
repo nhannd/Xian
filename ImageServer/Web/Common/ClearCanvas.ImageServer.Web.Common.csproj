@@ -59,8 +59,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\ServerPartitionConfigController.cs" />
     <Compile Include="Data\ServerPartitionDataAdapter.cs" />
-    <Compile Include="Service References\ValidationServer.cs">
-      <DependentUpon>ValidationServer.map</DependentUpon>
+    <Compile Include="Service References\FilesystemServiceProxy.cs">
+      <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
     <Compile Include="WebControls\BaseValidator.cs" />
     <Compile Include="WebControls\ConditionalRequiredFieldValidator.cs" />
@@ -70,6 +70,7 @@
     <Compile Include="WebControls\LengthValidator.cs" />
     <Compile Include="WebControls\ScriptTemplate.cs" />
     <Compile Include="WebControls\ServerRuleValidator.cs" />
+    <Compile Include="WebControls\ValidationResult.cs" />
     <Compile Include="WebControls\WebServiceValidator.cs" />
     <Compile Include="WebControls\RangeValidator.cs" />
     <Compile Include="WebControls\RegularExpressionFieldValidator.cs" />
@@ -97,8 +98,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="Service References\ValidationServer.map" />
+    <None Include="app.config">
+    </None>
+    <None Include="Service References\FilesystemServiceProxy.map" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="WebControls\LengthValidator.js" />

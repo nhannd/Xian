@@ -33,7 +33,12 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageServer.Common.Utilities
 {
-    [DataContract]
+    /// <summary>
+    /// Contains information about a filesystem folder.
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    [DataContract] 
     public class FilesystemInfo
     {
         #region Private members
@@ -45,7 +50,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         #endregion Private members
 
         #region Public properties
-        [DataMember]
+        [DataMember(IsRequired=true)]
         public string Path
         {
             get { return _path; }

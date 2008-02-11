@@ -8,35 +8,7 @@ using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.ImageServer.Web.Services.Shreds.Management
 {
-
-    // The following settings must be added to your configuration file in order for 
-    // the new WCF service item added to your project to work correctly.
-
-    // <system.serviceModel>
-    //    <services>
-    //      <!-- Before deployment, you should remove the returnFaults behavior configuration to avoid disclosing information in exception messages -->
-    //      <service type="ClearCanvas.ImageServer.Web.Services.Shreds.ManagementServer.FilesystemService" behaviorConfiguration="returnFaults">
-    //        <endpoint contract="ClearCanvas.ImageServer.Web.Services.Shreds.MiscellaneousServer.IFilesystemService" binding="wsHttpBinding"/>
-    //      </service>
-    //    </services>
-    //    <behaviors>
-    //      <serviceBehaviors>
-    //        <behavior name="returnFaults" >
-    //          <serviceDebug includeExceptionDetailInFaults="true" />
-    //        </behavior>
-    //       </serviceBehaviors>
-    //    </behaviors>
-    // </system.serviceModel>
-
-
-    // A WCF service consists of a contract (defined below), 
-    // a class which implements that interface, and configuration 
-    // entries that specify behaviors and endpoints associated with 
-    // that implementation (see <system.serviceModel> in your application
-    // configuration file).
-    
-
-    [ServiceContract()]
+    [ServiceContract]
     public interface IFilesystemService
     {
         [OperationContract]
@@ -57,16 +29,17 @@ namespace ClearCanvas.ImageServer.Web.Services.Shreds.Management
 
         #endregion
 
+        #region WcfShred override
         public override void Start()
         {
             try
             {
-                ServiceEndpointDescription sed = StartHttpHost<FilesystemService, IFilesystemService>("FilesystemService", SR.FilesystemQueryServiceDisplayDescription);
+                ServiceEndpointDescription sed = StartHttpHost<FilesystemService, IFilesystemService>("FilesystemService", SR.FilesystemServiceDisplayDescription);
 
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, "Failed to start {0} : {1}", SR.FilesystemQueryServiceDisplayName, e.StackTrace);
+                Platform.Log(LogLevel.Error, "Failed to start {0} : {1}", SR.FilesystemServiceDisplayName, e.StackTrace);
 
             }
         }
@@ -78,13 +51,15 @@ namespace ClearCanvas.ImageServer.Web.Services.Shreds.Management
 
         public override string GetDisplayName()
         {
-            return SR.FilesystemQueryServiceDisplayName;
+            return SR.FilesystemServiceDisplayName;
         }
 
         public override string GetDescription()
         {
-            return SR.FilesystemQueryServiceDisplayDescription;
+            return SR.FilesystemServiceDisplayDescription;
         }
+
+        #endregion WcfShred override
     }
 
 }

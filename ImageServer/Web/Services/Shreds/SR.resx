@@ -117,16 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="FilesystemQueryServiceDisplayDescription" xml:space="preserve">
-    <value>Allows clients to determine the properties of a filesystem</value>
+  <data name="FilesystemServiceDisplayDescription" xml:space="preserve">
+    <value>Allows clients to determine the properties of a storage filesystem</value>
   </data>
-  <data name="FilesystemQueryServiceDisplayName" xml:space="preserve">
+  <data name="FilesystemServiceDisplayName" xml:space="preserve">
     <value>Filesystem Service</value>
-  </data>
-  <data name="ValidationServerDescription" xml:space="preserve">
-    <value>Provide validation services</value>
-  </data>
-  <data name="ValidationServerName" xml:space="preserve">
-    <value>ValidationServer</value>
   </data>
 </root>
