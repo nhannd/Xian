@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			return null;
 		}
 
-		private IEnumerable<IPresentationImage> ClearReferencePointGraphics()
+		private IEnumerable<IPresentationImage> ClearSpatialLocatorGraphics()
 		{
 			foreach (SpatialLocatorGraphic graphic in _spatialLocatorGraphicCache)
 			{
@@ -240,9 +240,9 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			Draw(imageBoxesToDraw);
 		}
 
-		public void ClearReferencePoints()
+		public void OnSpatialLocatorStopped()
 		{
-			Draw(ClearReferencePointGraphics());
+			Draw(ClearSpatialLocatorGraphics());
 		}
 
 		public void OnReferenceLinesCalculated(IEnumerable<IPresentationImage> affectedImages)

@@ -87,6 +87,11 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			base.Dispose(disposing);
 		}
 
+		private SpatialLocatorGraphic GetSpatialLocatorGraphic(IPresentationImage image)
+		{
+			return _coordinator.GetSpatialLocatorGraphic(image);
+		}
+
 		private bool CalculateReferencePoint(IImageBox imageBox, Vector3D referencePositionPatient)
 		{
 			ImageSop referenceSop = base.SelectedImageSopProvider.ImageSop;
@@ -153,11 +158,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			return false;
 		}
 
-		private SpatialLocatorGraphic GetSpatialLocatorGraphic(IPresentationImage image)
-		{
-			return _coordinator.GetSpatialLocatorGraphic(image);
-		}
-
 		private IEnumerable<IImageBox> CalculateReferencePoints(Vector3D referencePositionPatient)
 		{
 			foreach (IImageBox imageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes)
@@ -215,7 +215,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		public override void Cancel()
 		{
-			_coordinator.ClearReferencePoints();
+			_coordinator.OnSpatialLocatorStopped();
 			_inUse = false;
 		}
 	}
