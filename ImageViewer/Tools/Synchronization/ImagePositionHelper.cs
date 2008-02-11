@@ -1,3 +1,4 @@
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Mathematics;
@@ -32,6 +33,16 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		{
 			Platform.CheckForNullReference(sop, "sop");
 			return SourceToPatient(sop.ImageOrientationPatient, sop.PixelSpacing, sop.ImagePositionPatient, sop.Columns - 1, sop.Rows - 1);
+		}
+
+		internal static Vector3D SourceToPatient(ImageSop sop, PointF sourcePoint)
+		{
+			return SourceToPatient(sop, sourcePoint.X, sourcePoint.Y);
+		}
+
+		public static Vector3D SourceToPatient(ImageSop sop, float pixelPositionX, float pixelPositionY)
+		{
+			return SourceToPatient(sop.ImageOrientationPatient, sop.PixelSpacing, sop.ImagePositionPatient, pixelPositionX, pixelPositionY);
 		}
 
 		public static Vector3D SourceToPatient(

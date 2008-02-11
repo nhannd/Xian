@@ -1,9 +1,28 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
+	internal class ReferenceLineCompositeGraphic : CompositeGraphic
+	{
+		public ReferenceLineCompositeGraphic()
+		{
+		}
+
+		public ReferenceLineGraphic this[int index]
+		{
+			get
+			{
+				for (int i = base.Graphics.Count; i <= index; ++i)
+					base.Graphics.Add(new ReferenceLineGraphic());
+
+				return (ReferenceLineGraphic)base.Graphics[index];
+			}
+		}
+	}
+
 	internal class ReferenceLineGraphic : CompositeGraphic
 	{
 		private readonly LinePrimitive _line;

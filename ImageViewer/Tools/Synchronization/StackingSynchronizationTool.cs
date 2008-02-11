@@ -59,16 +59,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class StackingSynchronizationTool : ImageViewerTool
 	{
-		#region ImageInfo
-
-		private class ImageInfo
-		{
-			public Vector3D Normal;
-			public Vector3D Position;
-		}
-
-		#endregion
-
 		#region OffsetKey
 
 		private class OffsetKey
@@ -123,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		
 		private SynchronizationToolCoordinator _coordinator;
 
-		private readonly Dictionary<string, ImageInfo> _sopInfoDictionary;
+		private SopInfoCache _cache;
 		private readonly Dictionary<OffsetKey, Dictionary<OffsetKey, Vector3D>> _offsets;
 
 		private static readonly float _fiveDegreesInRadians = (float)(5 * Math.PI / 180);
@@ -143,7 +133,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			_linkStudiesIconSet = new IconSet(IconScheme.Colour, "Icons.LinkStudiesToolSmall.png", "Icons.LinkStudiesToolMedium.png", "Icons.LinkStudiesToolLarge.png");
 			_unlinkStudiesIconSet = new IconSet(IconScheme.Colour, "Icons.UnlinkStudiesToolSmall.png", "Icons.UnlinkStudiesToolMedium.png", "Icons.UnlinkStudiesToolLarge.png");
 
-			_sopInfoDictionary = new Dictionary<string, ImageInfo>();
 			_offsets = new Dictionary<OffsetKey, Dictionary<OffsetKey, Vector3D>>();
 		}
 
@@ -250,6 +239,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			base.ImageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
 			base.ImageViewer.PhysicalWorkspace.LayoutCompleted += OnLayoutCompleted;
 
+			_cache = SopInfoCache.Get();
+
 			_coordinator = SynchronizationToolCoordinator.Get(base.ImageViewer);
 			_coordinator.StackingSynchronizationTool = this;
 		}
@@ -260,6 +251,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			base.ImageViewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
 			base.ImageViewer.PhysicalWorkspace.LayoutCompleted -= OnLayoutCompleted;
 
+			_cache.Release();
 			_coordinator.Release();
 
 			base.Dispose(disposing);
@@ -322,8 +314,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 							if (sop.FrameOfReferenceUid != referenceSop.FrameOfReferenceUid && sop.StudyInstanceUID != referenceSop.StudyInstanceUID)
 							{
-								ImageInfo referenceImageInfo = GetImageInformation(referenceSop);
-								ImageInfo info = GetImageInformation(sop);
+								ImageInfo referenceImageInfo = _cache.GetImageInformation(referenceSop);
+								ImageInfo info = _cache.GetImageInformation(sop);
 
 								if (info != null && NormalsWithinLimits(referenceImageInfo, info))
 								{
@@ -355,7 +347,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 									if (referenceOffsetDictionary.ContainsKey(key))
 										currentOffset = referenceOffsetDictionary[key];
 
-									Vector3D offset = info.Position - referenceImageInfo.Position;
+									Vector3D offset = info.PositionPatientCenterOfImage - referenceImageInfo.PositionPatientCenterOfImage;
 									if (currentOffset == null || offset.Magnitude < currentOffset.Magnitude)
 										referenceOffsetDictionary[key] = offset;
 								}
@@ -423,33 +415,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			return null;
 		}
 
-		private ImageInfo GetImageInformation(ImageSop sop)
-		{
-			ImageInfo info;
-
-			//Caching as much of the floating point arithmetic as we can for each image
-			//improves the efficiency of finding the closest slice by about 4x.
-			if (!_sopInfoDictionary.ContainsKey(sop.SopInstanceUID))
-			{
-				// Calculation of position of the center of the image in patient coordinates 
-				// using the matrix method described in Dicom PS 3.3 C.7.6.2.1.1.
-				info = new ImageInfo();
-				info.Position = ImagePositionHelper.SourceToPatientCenterOfImage(sop);
-				info.Normal = ImagePositionHelper.CalculateNormalVector(sop);
-
-				if (info.Position == null || info.Normal == null)
-					return null;
-
-				_sopInfoDictionary[sop.SopInstanceUID] = info;
-			}
-			else
-			{
-				info = _sopInfoDictionary[sop.SopInstanceUID];
-			}
-
-			return info;
-		}
-
 		private static bool NormalsWithinLimits(ImageInfo referenceImageInfo, ImageInfo compareImageInfo)
 		{
 			float angle = Math.Abs((float)Math.Acos(compareImageInfo.Normal.Dot(referenceImageInfo.Normal)));
@@ -460,7 +425,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		{
 			ImageSop referenceSop = ((IImageSopProvider) referenceImageBox.TopLeftPresentationImage).ImageSop;
 
-			ImageInfo referenceImageInfo = GetImageInformation(referenceSop);
+			ImageInfo referenceImageInfo = _cache.GetImageInformation(referenceSop);
 			if (referenceImageInfo == null)
 				return -1;
 
@@ -481,16 +446,15 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 					// When 'studies linked' is false, we only synchronize within the same frame of reference.
 					if (this.StudiesLinked || sameFrameOfReference)
 					{
-						ImageInfo info = GetImageInformation(sop);
+						ImageInfo info = _cache.GetImageInformation(sop);
 						if (info != null && NormalsWithinLimits(referenceImageInfo, info))
 						{
 							//Don't bother getting an offset for something in the same frame of reference.
 							Vector3D offset = sameFrameOfReference ? Vector3D.GetNullVector() : GetOffset(referenceSop, referenceImageInfo, sop, info);
 
-							Vector3D difference = referenceImageInfo.Position + offset - info.Position;
+							Vector3D difference = referenceImageInfo.PositionPatientCenterOfImage + offset - info.PositionPatientCenterOfImage;
 							float distance = difference.Magnitude;
 
-							//Add trace statements to make sure what you expected is actually what's happening!
 							if (Math.Abs(distance) <= closestDistance)
 							{
 								closestDistance = distance;
@@ -602,7 +566,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				yield return affectedImageBox;
 		}
 
-		public IEnumerable<IImageBox> SynchronizeSelected()
+		public IEnumerable<IImageBox> SynchronizeWithSelectedImage()
 		{
 			if (!SynchronizeActive || _deferSynchronizeUntilDisplaySetChanged)
 				yield break;

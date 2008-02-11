@@ -126,14 +126,23 @@
   <data name="MenuReferenceLines" xml:space="preserve">
     <value>Reference Lines</value>
   </data>
+  <data name="MenuSpatialLocator" xml:space="preserve">
+    <value>Spatial Locator</value>
+  </data>
   <data name="MenuSynchronization" xml:space="preserve">
     <value>Synchronization</value>
   </data>
   <data name="MenuSynchronizeStacking" xml:space="preserve">
     <value>Synchronize Stacking</value>
   </data>
+  <data name="PrefixSpatialLocatorTool" xml:space="preserve">
+    <value>Spatial Locator</value>
+  </data>
   <data name="ToolbarReferenceLines" xml:space="preserve">
     <value>Reference Lines</value>
+  </data>
+  <data name="ToolbarSpatialLocator" xml:space="preserve">
+    <value>Spatial Locator</value>
   </data>
   <data name="ToolbarSynchronization" xml:space="preserve">
     <value>Synchronization</value>

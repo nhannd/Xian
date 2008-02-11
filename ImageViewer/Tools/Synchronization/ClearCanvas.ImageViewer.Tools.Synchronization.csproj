@@ -34,6 +34,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SpatialLocatorGraphic.cs" />
+    <Compile Include="SopInfoCache.cs" />
+    <Compile Include="SpatialLocatorTool.cs" />
     <Compile Include="ImagePositionHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceLineGraphic.cs" />
@@ -102,6 +105,18 @@
     <EmbeddedResource Include="Icons\UnlinkStudiesToolLarge.png" />
     <EmbeddedResource Include="Icons\UnlinkStudiesToolMedium.png" />
     <EmbeddedResource Include="Icons\UnlinkStudiesToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SpatialLocatorToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SpatialLocatorToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SpatialLocatorToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SpatialLocatorCursor.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

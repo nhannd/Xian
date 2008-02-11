@@ -88,6 +88,15 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Spatial Locator.
+        /// </summary>
+        internal static string MenuSpatialLocator {
+            get {
+                return ResourceManager.GetString("MenuSpatialLocator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Synchronization.
         /// </summary>
         internal static string MenuSynchronization {
@@ -106,11 +115,29 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Spatial Locator.
+        /// </summary>
+        internal static string PrefixSpatialLocatorTool {
+            get {
+                return ResourceManager.GetString("PrefixSpatialLocatorTool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reference Lines.
         /// </summary>
         internal static string ToolbarReferenceLines {
             get {
                 return ResourceManager.GetString("ToolbarReferenceLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Spatial Locator.
+        /// </summary>
+        internal static string ToolbarSpatialLocator {
+            get {
+                return ResourceManager.GetString("ToolbarSpatialLocator", resourceCulture);
             }
         }
         

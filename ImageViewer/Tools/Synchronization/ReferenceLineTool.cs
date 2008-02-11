@@ -54,19 +54,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ReferenceLineTool : ImageViewerTool
 	{
-		#region ImageInfo struct
-
-		private class ImageInfo
-		{
-			public Matrix RotationMatrix;
-			public Vector3D Normal;
-			public Vector3D PositionPatientTopLeft;
-			public Vector3D PositionPatientBottomRight;
-			public Vector3D PositionImagePlaneTopLeft;
-		}
-
-		#endregion
-
 		private ImageInfo _currentReferenceImageInfo;
 		private IPresentationImage _currentReferenceImage;
 		private IPresentationImage _firstReferenceImage;
@@ -76,17 +63,13 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		private event EventHandler _activeChanged;
 
 		private SynchronizationToolCoordinator _coordinator;
+		private SopInfoCache _cache;
 
-		private readonly Dictionary<string, ImageInfo> _sopInfoDictionary;
-
-		private static readonly string _compositeGraphicName = "ReferenceLines";
-
-		private const float _toleranceInRadians = (float)(1 * Math.PI / 180);
+		private static readonly float _toleranceInRadians = (float)(1 * Math.PI / 180);
 
 		public ReferenceLineTool()
 		{
 			_active = false;
-			_sopInfoDictionary = new Dictionary<string, ImageInfo>();
 		}
 
 		public bool Active
@@ -114,6 +97,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 			base.ImageViewer.EventBroker.ImageDrawing += OnImageDrawing;
 
+			_cache = SopInfoCache.Get();
+			
 			_coordinator = SynchronizationToolCoordinator.Get(base.ImageViewer);
 			_coordinator.ReferenceLineTool = this;
 		}
@@ -122,6 +107,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		{
 			base.ImageViewer.EventBroker.ImageDrawing -= OnImageDrawing;
 
+			_cache.Release();
 			_coordinator.Release();
 
 			base.Dispose(disposing);
@@ -135,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			}
 			else
 			{
-				CompositeGraphic compositeGraphic = GetReferenceLineCompositeGraphic(e.PresentationImage);
+				ReferenceLineCompositeGraphic compositeGraphic = GetReferenceLineCompositeGraphic(e.PresentationImage);
 				if (compositeGraphic != null)
 					compositeGraphic.Visible = false;
 			}
@@ -145,6 +131,11 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		{
 			Active = !Active;
 			_coordinator.OnReferenceLinesCalculated(CalculateReferenceLines());
+		}
+
+		private ReferenceLineCompositeGraphic GetReferenceLineCompositeGraphic(IPresentationImage image)
+		{
+			return _coordinator.GetReferenceLineCompositeGraphic(image);
 		}
 
 		private void SetCurrentReferenceImage()
@@ -160,8 +151,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				ImageSop currentReferenceSop = ((IImageSopProvider) _currentReferenceImage).ImageSop;
 				if (!String.IsNullOrEmpty(currentReferenceSop.FrameOfReferenceUid) && !String.IsNullOrEmpty(currentReferenceSop.StudyInstanceUID))
 				{
-					_currentReferenceImageInfo = GetImageInformation(((IImageSopProvider) _currentReferenceImage).ImageSop);
-					valid = true;
+					_currentReferenceImageInfo = _cache.GetImageInformation(((IImageSopProvider)_currentReferenceImage).ImageSop);
+					valid = _currentReferenceImageInfo != null;
 				}
 			}
 
@@ -172,40 +163,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			}
 
 			CalculateFirstAndLastReferenceImages();
-		}
-
-		private ImageInfo GetImageInformation(ImageSop sop)
-		{
-			ImageInfo info;
-
-			if (!_sopInfoDictionary.ContainsKey(sop.SopInstanceUID))
-			{
-				info = new ImageInfo();
-				info.PositionPatientTopLeft = ImagePositionHelper.SourceToPatientTopLeftOfImage(sop);
-				info.PositionPatientBottomRight = ImagePositionHelper.SourceToPatientBottomRightOfImage(sop);
-				info.RotationMatrix = ImagePositionHelper.GetRotationMatrix(sop);
-
-				if (info.PositionPatientTopLeft == null || info.PositionPatientBottomRight == null || info.RotationMatrix == null)
-					return null;
-
-				info.Normal = new Vector3D(info.RotationMatrix[2, 0], info.RotationMatrix[2, 1], info.RotationMatrix[2, 2]);
-
-				// Transform the position (patient) vector to the coordinate system of the image.
-				// This way, the z-components will all be along the same vector path.
-				Matrix positionPatientMatrix = new Matrix(3, 1);
-				positionPatientMatrix.SetColumn(0, info.PositionPatientTopLeft.X, info.PositionPatientTopLeft.Y, info.PositionPatientTopLeft.Z);
-				Matrix result = info.RotationMatrix * positionPatientMatrix;
-
-				info.PositionImagePlaneTopLeft = new Vector3D(result[0, 0], result[1, 0], result[2, 0]);
-
-				_sopInfoDictionary[sop.SopInstanceUID] = info;
-			}
-			else
-			{
-				info = _sopInfoDictionary[sop.SopInstanceUID];
-			}
-
-			return info;
 		}
 
 		private bool ShouldShowReferenceLinesForImage(IPresentationImage image)
@@ -226,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 				if (sop.FrameOfReferenceUid == currentReferenceSop.FrameOfReferenceUid && sop.StudyInstanceUID == currentReferenceSop.StudyInstanceUID)
 				{
-					ImageInfo info = GetImageInformation(sop);
+					ImageInfo info = _cache.GetImageInformation(sop);
 					if (info != null)
 					{
 						float ninetyMinusAngle = (float)Math.Abs(Math.PI / 2 - Math.Abs(Math.Acos(info.Normal.Dot(_currentReferenceImageInfo.Normal))));
@@ -237,14 +194,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			}
 
 			return false;
-		}
-
-		private static CompositeGraphic GetReferenceLineCompositeGraphic(IPresentationImage image)
-		{
-			if (image == null || !(image is INamedCompositeGraphicProvider))
-				return null;
-
-			return ((INamedCompositeGraphicProvider) image).GetNamedCompositeGraphic(_compositeGraphicName);
 		}
 
 		private void CalculateFirstAndLastReferenceImages()
@@ -269,7 +218,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 					ImageSop sop = ((IImageSopProvider)image).ImageSop;
 					if (sop.FrameOfReferenceUid == currentReferenceSop.FrameOfReferenceUid && sop.StudyInstanceUID == currentReferenceSop.StudyInstanceUID)
 					{
-						ImageInfo info = GetImageInformation(sop);
+						ImageInfo info = _cache.GetImageInformation(sop);
 						if (info != null)
 						{
 							// 2. Is the image within 1 degree of being in the same plane as the current image?
@@ -282,12 +231,15 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 								//    the smallest and largest z-components, respectively, as the 'first' and 'last' reference images.
 								float imageZComponent = info.PositionImagePlaneTopLeft.Z;
 
+								// < keeps the first image as close to the beginning of the display set as possible.
 								if (imageZComponent < firstReferenceImageZComponent)
 								{
 									_firstReferenceImage = image;
 									firstReferenceImageZComponent = imageZComponent;
 								}
-								if (imageZComponent > lastReferenceImageZComponent)
+								
+								// >= keeps the last image as close to the end of the display set as possible.
+								if (imageZComponent >= lastReferenceImageZComponent)
 								{
 									_lastReferenceImage = image;
 									lastReferenceImageZComponent = imageZComponent;
@@ -301,21 +253,17 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private void TransformPoints(ImageSop referenceImageSop, ImageSop projectImageSop, out PointF topLeft, out PointF bottomRight)
 		{
-			ImageInfo referenceImageInfo = GetImageInformation(referenceImageSop);
-			ImageInfo projectImageInfo = GetImageInformation(projectImageSop);
+			ImageInfo referenceImageInfo = _cache.GetImageInformation(referenceImageSop);
+			ImageInfo projectImageInfo = _cache.GetImageInformation(projectImageSop);
 
 			// Transform the reference image diagonal to the destination image's coordinate system.
+			Vector3D translatedTopLeft = referenceImageInfo.PositionPatientTopLeft - projectImageInfo.PositionPatientTopLeft;
 			Matrix topLeftPatient = new Matrix(3, 1);
-			topLeftPatient.SetColumn(0, 
-										referenceImageInfo.PositionPatientTopLeft.X - projectImageInfo.PositionPatientTopLeft.X,
-										referenceImageInfo.PositionPatientTopLeft.Y - projectImageInfo.PositionPatientTopLeft.Y,
-										referenceImageInfo.PositionPatientTopLeft.Z - projectImageInfo.PositionPatientTopLeft.Z);
+			topLeftPatient.SetColumn(0, translatedTopLeft.X, translatedTopLeft.Y, translatedTopLeft.Z);
 
 			Matrix bottomRightPatient = new Matrix(3, 1);
-			bottomRightPatient.SetColumn(0,
-										referenceImageInfo.PositionPatientBottomRight.X - projectImageInfo.PositionPatientTopLeft.X,
-										referenceImageInfo.PositionPatientBottomRight.Y - projectImageInfo.PositionPatientTopLeft.Y,
-										referenceImageInfo.PositionPatientBottomRight.Z - projectImageInfo.PositionPatientTopLeft.Z);
+			Vector3D translatedBottomRight = referenceImageInfo.PositionPatientBottomRight - projectImageInfo.PositionPatientTopLeft;
+			bottomRightPatient.SetColumn(0, translatedBottomRight.X, translatedBottomRight.Y, translatedBottomRight.Z);
 
 			topLeftPatient = projectImageInfo.RotationMatrix * topLeftPatient;
 			bottomRightPatient = projectImageInfo.RotationMatrix * bottomRightPatient;
@@ -324,52 +272,41 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			float spacingRow = (float)spacing.Row;
 			float spacingColumn = (float)spacing.Column;
 
-			//The coordinates need to be converted to pixel coordinates b/c right now they are in mm.
+			//The coordinates need to be converted to pixel coordinates because right now they are in mm.
 			topLeft = new PointF(topLeftPatient[0, 0] / spacingColumn, topLeftPatient[1, 0] / spacingRow);
 			bottomRight = new PointF(bottomRightPatient[0, 0] / spacingColumn, bottomRightPatient[1, 0] / spacingRow);
 		}
 
-		private void CreateReferenceLines(CompositeGraphic referenceLineCompositeGraphic, int number)
+		private void CalculateReferenceLine
+			(
+				IPresentationImage referenceImage, 
+				IPresentationImage image, 
+				ReferenceLineCompositeGraphic referenceLineCompositeGraphic, 
+				int index
+			)
 		{
-			for (int index = referenceLineCompositeGraphic.Graphics.Count; index < number; ++index)
-				referenceLineCompositeGraphic.Graphics.Add(new ReferenceLineGraphic());
-		}
-
-		private void GetReferenceLineInfo(IPresentationImage referenceImage, IPresentationImage image, out string text, out PointF topLeft, out PointF bottomRight)
-		{
-			ImageSop referenceSop = ((IImageSopProvider) referenceImage).ImageSop;
+			PointF topLeft, bottomRight;
+			ImageSop referenceSop = ((IImageSopProvider)referenceImage).ImageSop;
 			TransformPoints(referenceSop, ((IImageSopProvider)image).ImageSop, out topLeft, out bottomRight);
-			
-			//TODO: later, add a config option to show slice location.
-			text = referenceSop.InstanceNumber.ToString();
-		}
 
-		private void SetReferenceLineInfo(CompositeGraphic referenceLineCompositeGraphic, int index, string text, PointF point1, PointF point2)
-		{
-			ReferenceLineGraphic referenceLine = (ReferenceLineGraphic)referenceLineCompositeGraphic.Graphics[index];
+			//TODO: later, add a config option to show slice location.
+			string text = referenceSop.InstanceNumber.ToString();
+
+			ReferenceLineGraphic referenceLine = referenceLineCompositeGraphic[index];
 			referenceLine.CoordinateSystem = CoordinateSystem.Source;
-			referenceLine.Point1 = point1;
-			referenceLine.Point2 = point2;
+			referenceLine.Point1 = topLeft;
+			referenceLine.Point2 = bottomRight;
 			referenceLine.Text = text;	
 			referenceLine.ResetCoordinateSystem();
 		}
 
 		public void CalculateReferenceLines(IPresentationImage image)
 		{
-			string text;
-			PointF point1, point2;
-
-			CompositeGraphic referenceLineCompositeGraphic = GetReferenceLineCompositeGraphic(image);
-			CreateReferenceLines(referenceLineCompositeGraphic, 3);
-
-			GetReferenceLineInfo(_currentReferenceImage, image, out text, out point1, out point2);
-			SetReferenceLineInfo(referenceLineCompositeGraphic, 0, text, point1, point2);
-
-			GetReferenceLineInfo(_firstReferenceImage, image, out text, out point1, out point2);
-			SetReferenceLineInfo(referenceLineCompositeGraphic, 1, text, point1, point2);
-
-			GetReferenceLineInfo(_lastReferenceImage, image, out text, out point1, out point2);
-			SetReferenceLineInfo(referenceLineCompositeGraphic, 2, text, point1, point2);
+			ReferenceLineCompositeGraphic referenceLineCompositeGraphic = GetReferenceLineCompositeGraphic(image);
+			
+			CalculateReferenceLine(_currentReferenceImage, image, referenceLineCompositeGraphic, 0);
+			CalculateReferenceLine(_firstReferenceImage, image, referenceLineCompositeGraphic, 1);
+			CalculateReferenceLine(_lastReferenceImage, image, referenceLineCompositeGraphic, 2);
 
 			referenceLineCompositeGraphic.Visible = true;
 		}
@@ -392,7 +329,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 					}
 					else
 					{
-						CompositeGraphic compositeGraphic = GetReferenceLineCompositeGraphic(image);
+						ReferenceLineCompositeGraphic compositeGraphic = GetReferenceLineCompositeGraphic(image);
 						if (compositeGraphic != null && compositeGraphic.Visible)
 							yield return image;
 					}
