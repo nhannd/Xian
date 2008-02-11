@@ -436,7 +436,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _documentationTabContainer.Pages.Add(new TabPage("Order", _orderDetailsComponent));
 
             _ppsComponent = new PerformedProcedureComponent(_procedurePlan.OrderRef, this);
-            _ppsComponent.ProcedurePlanChanged += delegate(object sender, ProcedurePlanChangedEventArgs e) { RefreshProcedurePlanSummary(e.procedurePlanDetail); };
+            _ppsComponent.ProcedurePlanChanged += delegate(object sender, ProcedurePlanChangedEventArgs e) { RefreshProcedurePlanSummary(e.ProcedurePlanDetail); };
             _documentationTabContainer.Pages.Add(new TabPage("Exam", _ppsComponent));
 
             // create extension pages
@@ -459,12 +459,13 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void SetInitialDocumentationTabPage()
         {
-            // TODO add a setting for initial page
-            string requestedTabPageName = "Exam";
+            string selectedTabName = TechnologistDocumentationComponentSettings.Default.InitiallySelectedTabPageName;
+            if(string.IsNullOrEmpty(selectedTabName))
+                return;
 
             TabPage requestedTabPage = CollectionUtils.SelectFirst(
                 _documentationTabContainer.Pages,
-                delegate(TabPage tabPage) { return string.Compare(tabPage.Name, requestedTabPageName, true) == 0; });
+                delegate(TabPage tabPage) { return tabPage.Name.Equals(selectedTabName, StringComparison.InvariantCultureIgnoreCase); });
 
             if (requestedTabPage != null)
                 _documentationTabContainer.CurrentPage = requestedTabPage;

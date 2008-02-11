@@ -58,5 +58,19 @@ namespace ClearCanvas.Ris.Client.Adt {
                 return ((string)(this["ProtocolSummaryUrl"]));
             }
         }
+        
+        /// <summary>
+        /// Name of the documentation page that is initially selected when the documentation workspace is opened
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Name of the documentation page that is initially selected when the documentation " +
+            "workspace is opened")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string InitiallySelectedTabPageName {
+            get {
+                return ((string)(this["InitiallySelectedTabPageName"]));
+            }
+        }
     }
 }

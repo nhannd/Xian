@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _procedurePlanDetail = procedurePlanDetail;
         }
 
-        public ProcedurePlanDetail procedurePlanDetail
+        public ProcedurePlanDetail ProcedurePlanDetail
         {
             get { return _procedurePlanDetail; }
         }
