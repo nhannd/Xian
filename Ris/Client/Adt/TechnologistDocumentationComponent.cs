@@ -45,23 +45,42 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentat
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public interface ITechnologistDocumentationModule
+    /// <summary>
+    /// Defines an interface for providing custom documentation pages to be displayed in the documentation workspace.
+    /// </summary>
+    public interface ITechnologistDocumentationPageProvider
     {
-        void Initialize(ITechnologistDocumentationContext context);
-        void SaveData(bool completeDocumentation);
+        ITechnologistDocumentationPage[] GetDocumentationPages(ITechnologistDocumentationContext context);
     }
 
+    /// <summary>
+    /// Defines an extension point for adding custom documentation pages to the technologist documentation workspace.
+    /// </summary>
     [ExtensionPoint]
-    public class TechnologistDocumentationModuleExtensionPoint : ExtensionPoint<ITechnologistDocumentationModule>
+    public class TechnologistDocumentationPageProviderExtensionPoint : ExtensionPoint<ITechnologistDocumentationPageProvider>
     {
     }
 
-    public interface ITechnologistDocumentationContext : IToolContext
+    /// <summary>
+    /// Defines an interface for providing a custom documentation page with access to the documentation
+    /// context.
+    /// </summary>
+    public interface ITechnologistDocumentationContext
     {
-        DesktopWindow DesktopWindow { get; }
-        void AddPage(IDocumentationPage page);
-        void InsertPage(IDocumentationPage page, int position);
+        /// <summary>
+        /// Exposes the extended properties associated with the Order.  Modifications made to these
+        /// properties by the documentation page will be persisted whenever the documentation workspace is saved.
+        /// </summary>
+        IDictionary<string, string> OrderExtendedProperties { get; }
+
+        /// <summary>
+        /// Gets the <see cref="ProcedurePlanDetail"/> representing this order.
+        /// </summary>
         ProcedurePlanDetail ProcedurePlan { get; }
+
+        /// <summary>
+        /// Occurs when the value of the <see cref="ProcedurePlan"/> property changes.
+        /// </summary>
         event EventHandler ProcedurePlanChanged;
     }
     
@@ -81,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         #region TechnologistDocumentationContext class
 
-        class TechnologistDocumentationContext : ToolContext, ITechnologistDocumentationContext
+        class TechnologistDocumentationContext : ITechnologistDocumentationContext
         {
             private readonly TechnologistDocumentationComponent _owner;
 
@@ -92,19 +111,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
             #region ITechnologistDocumentationContext Members
 
-            public DesktopWindow DesktopWindow
+            public IDictionary<string, string> OrderExtendedProperties
             {
-                get { return _owner.Host.DesktopWindow; }
-            }
-
-            public void AddPage(IDocumentationPage page)
-            {
-                _owner.InsertDocumentationPage(page, _owner._documentationTabContainer.Pages.Count);
-            }
-
-            public void InsertPage(IDocumentationPage page, int position)
-            {
-                _owner.InsertDocumentationPage(page, position);
+                get { return _owner._orderExtendedProperties; }
             }
 
             public ProcedurePlanDetail ProcedurePlan
@@ -141,10 +150,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private ChildComponentHost _documentationHost;
         private TabComponentContainer _documentationTabContainer;
 
-        private readonly List<ITechnologistDocumentationModule> _documentationModules = new List<ITechnologistDocumentationModule>();
+        private readonly List<ITechnologistDocumentationPage> _extensionPages = new List<ITechnologistDocumentationPage>();
 
-        private ExamDetailsComponent _preExamComponent;
-        private ExamDetailsComponent _postExamComponent;
         private PerformedProcedureComponent _ppsComponent;
         private TechnologistDocumentationOrderDetailsComponent _orderDetailsComponent;
 
@@ -324,30 +331,31 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private bool Save(bool completeDocumentation)
         {
-            if (this.HasValidationErrors)
+            // only do validation if they are completing the documentation, not if they are just saving a draft
+            if(completeDocumentation)
             {
-                ShowValidation(true);
-                return false;
-            }
+                if (this.HasValidationErrors)
+                {
+                    ShowValidation(true);
+                    return false;
+                }
 
-            if (_documentationTabContainer.HasValidationErrors)
-            {
-                _documentationTabContainer.ShowValidation(true);
-                return false;
+                if (_documentationTabContainer.HasValidationErrors)
+                {
+                    _documentationTabContainer.ShowValidation(true);
+                    return false;
+                }
             }
 
             try
             {
-                _preExamComponent.SaveData();
-                _postExamComponent.SaveData();
-
-                _ppsComponent.SaveData();
-
-                foreach(ITechnologistDocumentationModule module in _documentationModules)
+                // allow extension pages to save data
+                foreach(ITechnologistDocumentationPage page in _extensionPages)
                 {
-                    module.SaveData(completeDocumentation);
+                    page.Save(completeDocumentation);
                 }
 
+                _ppsComponent.SaveData();
                 Platform.GetService<ITechnologistDocumentationService>(
                     delegate(ITechnologistDocumentationService service)
                         {
@@ -425,29 +433,23 @@ namespace ClearCanvas.Ris.Client.Adt
             _documentationTabContainer.ValidationStrategy = new AllComponentsValidationStrategy();
 
             _orderDetailsComponent = new TechnologistDocumentationOrderDetailsComponent(_worklistItem, _orderExtendedProperties);
-            InsertDocumentationPage(_orderDetailsComponent, 0);
+            _documentationTabContainer.Pages.Add(new TabPage("Order", _orderDetailsComponent));
 
-            _preExamComponent = new ExamDetailsComponent("Pre-exam",
-                                                         TechnologistDocumentationComponentSettings.Default.PreExamDetailsPageUrl,
-                                                         _orderExtendedProperties);
-            InsertDocumentationPage(_preExamComponent, 1);
-
-            _ppsComponent = new PerformedProcedureComponent("Exam", _procedurePlan.OrderRef, this);
+            _ppsComponent = new PerformedProcedureComponent(_procedurePlan.OrderRef, this);
             _ppsComponent.ProcedurePlanChanged += delegate(object sender, ProcedurePlanChangedEventArgs e) { RefreshProcedurePlanSummary(e.procedurePlanDetail); };
-            InsertDocumentationPage(_ppsComponent, 2);
+            _documentationTabContainer.Pages.Add(new TabPage("Exam", _ppsComponent));
 
-            // create extension modules, which may add documentation pages to the tab container
+            // create extension pages
             TechnologistDocumentationContext context = new TechnologistDocumentationContext(this);
-            foreach (ITechnologistDocumentationModule module in (new TechnologistDocumentationModuleExtensionPoint()).CreateExtensions())
+            foreach (ITechnologistDocumentationPageProvider pageProvider in (new TechnologistDocumentationPageProviderExtensionPoint()).CreateExtensions())
             {
-                module.Initialize(context);
-                _documentationModules.Add(module);
+                _extensionPages.AddRange(pageProvider.GetDocumentationPages(context));
             }
 
-            _postExamComponent = new ExamDetailsComponent("Post-exam",
-                                                          TechnologistDocumentationComponentSettings.Default.PostExamDetailsPageUrl,
-                                                          _orderExtendedProperties);
-            InsertDocumentationPage(_postExamComponent, _documentationTabContainer.Pages.Count);
+            foreach (ITechnologistDocumentationPage page in _extensionPages)
+            {
+                _documentationTabContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
+            }
 
             _documentationHost = new ChildComponentHost(this.Host, _documentationTabContainer);
             _documentationHost.StartComponent();
@@ -460,17 +462,12 @@ namespace ClearCanvas.Ris.Client.Adt
             // TODO add a setting for initial page
             string requestedTabPageName = "Exam";
 
-            TabPage requestedTabPage = CollectionUtils.SelectFirst<TabPage>(
+            TabPage requestedTabPage = CollectionUtils.SelectFirst(
                 _documentationTabContainer.Pages,
                 delegate(TabPage tabPage) { return string.Compare(tabPage.Name, requestedTabPageName, true) == 0; });
 
             if (requestedTabPage != null)
                 _documentationTabContainer.CurrentPage = requestedTabPage;
-        }
-
-        private void InsertDocumentationPage(IDocumentationPage page, int position)
-        {
-            _documentationTabContainer.Pages.Insert(position, new TabPage(page.Title, page.Component));
         }
 
         private List<ProcedurePlanSummaryTableItem> ListCheckedSummmaryTableItems()

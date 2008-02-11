@@ -51,10 +51,9 @@
     <Compile Include="NewOrderTool.cs" />
     <Compile Include="PatientBiographyTool.cs" />
     <Compile Include="PatientSearchTool.cs" />
-    <Compile Include="ExamDetailsComponent.cs" />
     <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
-    <Compile Include="IDocumentationPage.cs" />
+    <Compile Include="ITechnologistDocumentationPage.cs" />
     <Compile Include="PerformedProcedureComponent.cs" />
     <Compile Include="PerformedProcedureComponentSettings.cs" />
     <Compile Include="PerformedProcedureComponentSettings.Designer.cs">

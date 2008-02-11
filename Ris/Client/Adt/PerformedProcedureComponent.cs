@@ -54,7 +54,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// PerformedProcedureComponent class
     /// </summary>
     [AssociateView(typeof(PerformedProcedureComponentViewExtensionPoint))]
-    public class PerformedProcedureComponent : ApplicationComponent, IDocumentationPage
+    public class PerformedProcedureComponent : ApplicationComponent
     {
         #region MPPS Details Component
 
@@ -111,7 +111,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private ChildComponentHost _mppsDetailsComponentHost;
         private MppsDetailsComponent _detailsComponent;
-        private readonly string _title;
         private TechnologistDocumentationComponent _owner;
 
         private event EventHandler<ProcedurePlanChangedEventArgs> _procedurePlanChanged;
@@ -119,9 +118,8 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor
         /// </summary>
-        public PerformedProcedureComponent(string title, EntityRef orderRef, TechnologistDocumentationComponent owner)
+        public PerformedProcedureComponent(EntityRef orderRef, TechnologistDocumentationComponent owner)
         {
-            _title = title;
             _orderRef = orderRef;
             _owner = owner;
         }
@@ -182,20 +180,6 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Stop()
         {
             base.Stop();
-        }
-
-        #endregion
-
-        #region IDocumentationPage Members
-
-        string IDocumentationPage.Title
-        {
-            get { return _title; }
-        }
-
-        IApplicationComponent IDocumentationPage.Component
-        {
-            get { return this; }   
         }
 
         #endregion

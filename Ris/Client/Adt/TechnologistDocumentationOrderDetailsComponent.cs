@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// TechnologistDocumentationOrderDetailsComponent class
     /// </summary>
     [AssociateView(typeof(TechnologistDocumentationOrderDetailsComponentViewExtensionPoint))]
-    public class TechnologistDocumentationOrderDetailsComponent : ApplicationComponent, IDocumentationPage
+    public class TechnologistDocumentationOrderDetailsComponent : ApplicationComponent
     {
         public class ProtocolSummaryComponent : DHtmlComponent
         {
@@ -85,19 +85,5 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get { return _orderNotesComponentHost; }
         }
-
-        #region IDocumentationPage Members
-
-        public string Title
-        {
-            get { return "Order Details"; }
-        }
-
-        public IApplicationComponent Component
-        {
-            get { return this; }
-        }
-
-        #endregion
     }
 }

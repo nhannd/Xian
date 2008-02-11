@@ -29,43 +29,35 @@
 
 #endregion
 
-using System.Collections.Generic;
+using System;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public class ExamDetailsComponent : DHtmlComponent, IDocumentationPage
+    public class ProcedurePlanChangedEventArgs : EventArgs
     {
-        private readonly string _title;
-        private readonly Dictionary<string, string> _orderExtendedProperties;
+        private readonly ProcedurePlanDetail _procedurePlanDetail;
 
-        public ExamDetailsComponent(string title, string url, Dictionary<string, string> orderExtendedProperties)
+        public ProcedurePlanChangedEventArgs(ProcedurePlanDetail procedurePlanDetail)
         {
-            _title = title;
-            _orderExtendedProperties = orderExtendedProperties;
-
-            SetUrl(url);
+            _procedurePlanDetail = procedurePlanDetail;
         }
 
-        protected override IDictionary<string, string> TagData
+        public ProcedurePlanDetail procedurePlanDetail
         {
-            get
-            {
-                return _orderExtendedProperties;
-            }
+            get { return _procedurePlanDetail; }
         }
+    }
 
-        #region IDocumentationPage Members
+    /// <summary>
+    /// Defines an interface to a custom documentation page.
+    /// </summary>
+    public interface ITechnologistDocumentationPage
+    {
+        Path Path { get; }
+        IApplicationComponent GetComponent();
 
-        string IDocumentationPage.Title
-        {
-            get { return _title; }
-        }
-
-        ClearCanvas.Desktop.IApplicationComponent IDocumentationPage.Component
-        {
-            get { return this; }
-        }
-
-        #endregion
+        void Save(bool complete);
     }
 }
