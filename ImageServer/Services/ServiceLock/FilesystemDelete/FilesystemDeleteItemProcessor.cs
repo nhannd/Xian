@@ -53,33 +53,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         #endregion
 
         #region Private Methods
-        /// <summary>
-        /// Update the Percentage full for a <see cref="Model.Filesystem"/> in the database.
-        /// </summary>
-        /// <param name="item">The <see cref="Model.ServiceLock"/> triggering this update.</param>
-        private void UpdateFilesystemPercentFull(Model.ServiceLock item)
-        {
-            using (
-                IUpdateContext update =
-                    PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IFilesystemEntityBroker filesystemUpdate = update.GetBroker<IFilesystemEntityBroker>();
-
-                FilesystemUpdateColumns updateParms = new FilesystemUpdateColumns();
-
-                ServerFilesystemInfo fs = _monitor.Filesystems[item.FilesystemKey];
-                updateParms.PercentFull = (Decimal) fs.UsedSpacePercentage;
-
-                if (false == filesystemUpdate.Update(fs.Filesystem.GetKey(), updateParms))
-                {
-                    Platform.Log(LogLevel.Error, "Unexpected problem updating Filesystem table with the Percent Full of the Filesystem");
-                }
-                else
-                {
-                    update.Commit();
-                }
-            }
-        }
+        
 
         /// <summary>
         /// Process StudyDelete Candidates retrieved from the <see cref="Model.FilesystemQueue"/> table
@@ -180,9 +154,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             _monitor = new FilesystemMonitor();
             _monitor.Load();
 
-            // Update the DB Percent full
-            UpdateFilesystemPercentFull(item);
-
             ServerFilesystemInfo fs = _monitor.Filesystems[item.FilesystemKey];
 
             //Platform.Log(LogLevel.Info, "Starting filesystem watermark check on filesystem {0} (High Watermark: {1}, Low Watermark: {2}",
@@ -193,7 +164,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 if (CheckWorkQueueDeleteCount(item) > 0)
                 {
                     Platform.Log(LogLevel.Info, "Delaying filesystem check, StudyDelete items still in the WorkQueue: {0} (Current: {1}, High Watermark: {2})",
-                                 fs.Filesystem.Description, fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark);
+                                 fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
 
                     UnlockServiceLock(item, true, Platform.Time.AddMinutes(1));
                 }
@@ -204,7 +175,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
                     Platform.Log(LogLevel.Info,
                                  "Filesystem above high watermark (Current: {0}, High Watermark: {1}).  Starting query for Filesystem delete candidates on '{2}'.",
-                                 fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark, fs.Filesystem.Description);
+                                 fs.UsedSpacePercentage, fs.Filesystem.HighWatermark, fs.Filesystem.Description);
                     try
                     {
                         DoStudyDelete(item);
@@ -220,7 +191,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                         Platform.Log(LogLevel.Warn, "No eligable candidates to remove from filesystem '{0}'.  Next scheduled filesystem check {1}", fs.Filesystem.Description, scheduledTime);
                     else
                         Platform.Log(LogLevel.Info, "Completed inserting delete candidates into WorkQueue: {0} (Current: {1}, High Watermark: {2}).  {3} studies inserted.  Next scheduled filesystem check {4}",
-                               fs.Filesystem.Description, fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark, _studiesInserted, scheduledTime);
+                               fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark, _studiesInserted, scheduledTime);
 
                     UnlockServiceLock(item, true, scheduledTime);
                 }
@@ -228,14 +199,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             else if (_monitor.CheckFilesystemAboveLowWatermark(item.FilesystemKey))
             {
                 Platform.Log(LogLevel.Info, "Filesystem below high watermark: {0} (Current: {1}, High Watermark: {2}",
-                       fs.Filesystem.Description, fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark);
+                       fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
 
                 UnlockServiceLock(item, true, Platform.Time.AddMinutes(2));
             }
             else
             {
                 Platform.Log(LogLevel.Info, "Filesystem below watermarks: {0} (Current: {1}, High Watermark: {2}",
-                       fs.Filesystem.Description, fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark);
+                       fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
 
                 UnlockServiceLock(item, true, Platform.Time.AddMinutes(5));
             }

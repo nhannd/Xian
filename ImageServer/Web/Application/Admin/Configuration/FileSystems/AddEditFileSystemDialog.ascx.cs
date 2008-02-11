@@ -205,7 +205,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                 FileSystem = new Filesystem();
                 FileSystem.LowWatermark = 80.00M;
                 FileSystem.HighWatermark = 90.00M;
-                FileSystem.PercentFull = 0.0M;
             }
 
             FileSystem.Description = DescriptionTextBox.Text;
@@ -222,35 +221,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             if (Decimal.TryParse(HighWatermarkTextBox.Text, out highWatermark))
                 FileSystem.HighWatermark = highWatermark;
 
-            UpdateFilesystemUsage(FileSystem);
-
             FileSystem.FilesystemTierEnum = FilesystemTiers[TiersDropDownList.SelectedIndex];
         }
 
-        static private void UpdateFilesystemUsage(Filesystem fs)
-        {
-            FilesystemServiceProxy.FilesystemServiceClient client = new FilesystemServiceProxy.FilesystemServiceClient();
-
-            try
-            {
-                FilesystemServiceProxy.FilesystemInfo info = client.GetFilesystemInfo(fs.FilesystemPath);
-                if (info!=null && info.Exists)
-                {
-                    fs.PercentFull = ((decimal)(info.SizeInKB - info.FreeSizeInKB)) / info.SizeInKB * 100.0M;
-                }
-                
-            }
-            catch(Exception e)
-            {
-                Platform.Log(LogLevel.Error,  e.StackTrace);
-            }
-            finally
-            {
-                if (client.State == CommunicationState.Opened)
-                    client.Close();
-            }
-        }
-
+       
 
         protected void ReadOnlyCheckBox_Init(object sender, EventArgs e)
         {

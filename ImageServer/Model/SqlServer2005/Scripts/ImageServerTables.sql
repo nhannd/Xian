@@ -761,9 +761,8 @@ CREATE TABLE [dbo].[Filesystem](
 	[WriteOnly] [bit] NOT NULL,
 	[Description] [nvarchar](128) NULL,
 	[FilesystemTierEnum] [smallint] NOT NULL,
-	[LowWatermark] [decimal](6, 2) NOT NULL CONSTRAINT [DF_Filesystem_LowWatermark]  DEFAULT ((80.00)),
-	[HighWatermark] [decimal](6, 2) NOT NULL CONSTRAINT [DF_Filesystem_HighWatermark]  DEFAULT ((90.00)),
-	[PercentFull] [decimal](6, 2) NOT NULL CONSTRAINT [DF_Filesystem_PercentFull]  DEFAULT ((0.00)),
+	[LowWatermark] [decimal](8, 4) NOT NULL CONSTRAINT [DF_Filesystem_LowWatermark]  DEFAULT ((80.00)),
+	[HighWatermark] [decimal](8, 4) NOT NULL CONSTRAINT [DF_Filesystem_HighWatermark]  DEFAULT ((90.00)),
  CONSTRAINT [PK_Filesystem] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC

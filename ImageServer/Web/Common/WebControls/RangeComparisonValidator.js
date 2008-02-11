@@ -40,7 +40,7 @@ function @@CLIENTID@@_ClientSideEvaluator()
     
     if (this.input.value!=null && this.input.value!='' && !isNaN(this.input.value))
     {
-        controlValue = parseInt(this.input.value);
+        controlValue = parseFloat(this.input.value);
             
         if (compareCtrl!=null && compareCtrl.value!='' &&  !isNaN(compareCtrl.value))
         {

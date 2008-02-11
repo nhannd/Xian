@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
@@ -226,20 +227,52 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             }
         }
 
+        
+
+        private float GetFilesystemUsedPercentage(Filesystem fs)
+        {
+            if (!isServiceAvailable())
+                return float.NaN;
+
+            FilesystemServiceProxy.FilesystemServiceClient client = new FilesystemServiceProxy.FilesystemServiceClient();
+            
+            try
+            {
+                FilesystemServiceProxy.FilesystemInfo fsInfo =  client.GetFilesystemInfo(fs.FilesystemPath);
+
+                _serviceIsOffline = false;
+                _lastServiceAvailableTime = DateTime.Now;
+                return ((float)fsInfo.FreeSizeInKB)/fsInfo.SizeInKB*100.0F;
+            }
+            catch(Exception e)
+            {
+                _serviceIsOffline = true;
+                _lastServiceAvailableTime = DateTime.Now;
+            }
+            finally
+            {
+                if (client.State == CommunicationState.Opened)
+                    client.Close();
+            }
+
+            return float.NaN;
+        }
+
         private void CustomizeUsageColumn(GridViewRow row)
         {
             Filesystem fs = row.DataItem as Filesystem;
             Image img = row.FindControl("UsageImage") as Image;
 
+            float usage = GetFilesystemUsedPercentage(fs);
             if (img != null)
             {
                 img.ImageUrl = string.Format("~/Common/BarChart.aspx?pct={0}&high={1}&low={2}",
-                                             fs.PercentFull,
+                                             usage,
                                              fs.HighWatermark,
                                              fs.LowWatermark);
                 img.AlternateText =
-                    string.Format("Current Usage   : {0}%\nHigh Watermark : {1}%\nLow Watermark  : {2}%",
-                                  fs.PercentFull,
+                    string.Format("Current Usage   : {0}\nHigh Watermark : {1}%\nLow Watermark  : {2}%",
+                                  float.IsNaN(usage) ? "Unknown" : usage.ToString() + "%",
                                   fs.HighWatermark,
                                   fs.LowWatermark);
             }
@@ -392,6 +425,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         }
 
         #endregion
+
+        #region Private Static members
+        static private bool _serviceIsOffline = false;
+        static private DateTime _lastServiceAvailableTime = DateTime.Now;
+
+        /// <summary>
+        /// Return a value indicating whether the last web service call was successful.
+        /// </summary>
+        /// <returns></returns>
+        static private bool isServiceAvailable()
+        {
+            TimeSpan elapsed = DateTime.Now - _lastServiceAvailableTime;
+            return (!_serviceIsOffline || /*service was offline but */ elapsed.Seconds > 15);
+        }
+
+        #endregion Private Static members
 
         #region public methods
 

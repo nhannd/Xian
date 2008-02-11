@@ -94,6 +94,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
             catch(Exception e)
             {
                 result.Success = false;
+                result.ErrorCode = 100;
                 result.ErrorText = String.Format("Cannot validate path {0}: {1}", path, e.Message);
             }
             finally

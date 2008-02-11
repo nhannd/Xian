@@ -53,7 +53,7 @@ function @@CLIENTID@@_ClientSideEvaluator()
 
         if (!wsResult.Success)
         {
-            // errorCode > 0 = warning
+            // errorCode > 0 is treated as warning from the web service. The client can ignore warning
             if (wsResult.ErrorCode > 0)
             {
                 var ans = window.confirm('Unable to validate @@INPUT_NAME@@ : ' + wsResult.ErrorText + '\nWould you like to ignore it?');
@@ -70,7 +70,7 @@ function @@CLIENTID@@_ClientSideEvaluator()
             else
             {
                 result.OK = false;
-                result.Message = wsResult.ErrorText + ' (Error ' + wsResult.ErrorCode + ')';
+                result.Message = wsResult.ErrorText;
             }
         }
         else

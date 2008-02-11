@@ -33,10 +33,10 @@ function RecalculateWatermark()
 }
 
 
-function FormatPercentage(value)
+function FormatPercentage(value, decimalpoints)
 {
     var pct = new NumberFormat(value * 100.0);
-    pct.setPlaces(2);
+    pct.setPlaces(decimalpoints);
     return pct.toFormatted() + '%';
 }
 
@@ -117,7 +117,7 @@ function OnLoadFilesystemInfoSuccess(result)
         
 
         available = document.getElementById('@@AVAILABLE_SIZE_INDICATOR_CLIENTID@@');
-        available.innerHTML = FormatSize(sizeFree.value) + ' (' + FormatPercentage(sizeFree.value/sizeTotal.value) +')';
+        available.innerHTML = FormatSize(sizeFree.value) + ' (' + FormatPercentage(sizeFree.value/sizeTotal.value, 4) +')';
 
         RecalculateWatermark();
     }

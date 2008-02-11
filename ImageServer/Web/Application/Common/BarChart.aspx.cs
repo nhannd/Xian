@@ -95,30 +95,36 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// <param name="graphics"></param>
         protected void DrawUsageOverlay(ref Graphics graphics)
         {
-            SolidBrush brush = new SolidBrush(Color.LightGray);
+            if (_percentage != float.NaN)
+            {
+                SolidBrush brush = new SolidBrush(Color.LightGray);
 
-            int leftoffset = 1;
+                int leftoffset = 1;
 
-            if (_percentage < _low)
-                brush.Color = Color.FromArgb(150, 0x27, 0xFF, 0x0F);
-            else if (_percentage < _high)
-                brush.Color = Color.FromArgb(150, 0xFF, 0xD8, 0x00);
-            else
-                brush.Color = Color.FromArgb(150, 0xFF, 0x3A, 0x00);
+            
+                if (_percentage < _low)
+                    brush.Color = Color.FromArgb(150, 0x27, 0xFF, 0x0F);
+                else if (_percentage < _high)
+                    brush.Color = Color.FromArgb(150, 0xFF, 0xD8, 0x00);
+                else
+                    brush.Color = Color.FromArgb(150, 0xFF, 0x3A, 0x00);
 
-            // overlay the "usage" bar on top
-            graphics.CompositingMode = CompositingMode.SourceOver;
-            graphics.FillRectangle(brush, new Rectangle(leftoffset, 6, (int) (_width*_percentage/100f), 8));
+                // overlay the "usage" bar on top
+                graphics.CompositingMode = CompositingMode.SourceOver;
+                graphics.FillRectangle(brush, new Rectangle(leftoffset, 6, (int)(_width * _percentage / 100f), 8));
 
-            // add watermark icons
-            graphics.CompositingMode = CompositingMode.SourceOver;
-            Image watermark = Image.FromFile(Server.MapPath("~/images/Watermark.gif"));
+                // add watermark icons
+                graphics.CompositingMode = CompositingMode.SourceOver;
+                Image watermark = Image.FromFile(Server.MapPath("~/images/Watermark.gif"));
 
 
-            graphics.DrawImageUnscaled(watermark, (int) (_width*_high/100f) - watermark.Width/2 + leftoffset, 12);
-            graphics.DrawImageUnscaled(watermark, (int) (_width*_low/100f) - watermark.Width/2 + leftoffset, 12);
+                graphics.DrawImageUnscaled(watermark, (int)(_width * _high / 100f) - watermark.Width / 2 + leftoffset, 12);
+                graphics.DrawImageUnscaled(watermark, (int)(_width * _low / 100f) - watermark.Width / 2 + leftoffset, 12);
 
-            watermark.Dispose();
+                watermark.Dispose();
+            }
+
+            
         }
 
         #endregion protected methods

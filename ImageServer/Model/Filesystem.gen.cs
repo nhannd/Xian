@@ -53,7 +53,6 @@ namespace ClearCanvas.ImageServer.Model
         private FilesystemTierEnum _filesystemTierEnum;
         private System.Decimal _highWatermark;
         private System.Decimal _lowWatermark;
-        private System.Decimal _percentFull;
         private System.Boolean _readOnly;
         private System.Boolean _writeOnly;
         #endregion
@@ -88,11 +87,6 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _lowWatermark; }
         set { _lowWatermark = value; }
-        }
-        public System.Decimal PercentFull
-        {
-        get { return _percentFull; }
-        set { _percentFull = value; }
         }
         public System.Boolean ReadOnly
         {

@@ -64,10 +64,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["LowWatermark"] = new EntityUpdateColumn<System.Decimal>("LowWatermark", value); }
         }
-        public System.Decimal PercentFull
-        {
-            set { SubParameters["PercentFull"] = new EntityUpdateColumn<System.Decimal>("PercentFull", value); }
-        }
         public System.Boolean ReadOnly
         {
             set { SubParameters["ReadOnly"] = new EntityUpdateColumn<System.Boolean>("ReadOnly", value); }

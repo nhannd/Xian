@@ -107,17 +107,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Decimal>)SubCriteria["LowWatermark"];
             } 
         }
-        public ISearchCondition<System.Decimal> PercentFull
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("PercentFull"))
-              {
-                 SubCriteria["PercentFull"] = new SearchCondition<System.Decimal>("PercentFull");
-              }
-              return (ISearchCondition<System.Decimal>)SubCriteria["PercentFull"];
-            } 
-        }
         public ISearchCondition<System.Boolean> ReadOnly
         {
             get

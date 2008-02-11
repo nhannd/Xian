@@ -72,21 +72,20 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             // additional work on insert.
             using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                IFilesystemEntityBroker broker = ctx.GetBroker<IFilesystemEntityBroker>();
-                FilesystemUpdateColumns columns = new FilesystemUpdateColumns();
-                columns.Description = filesystem.Description;
-                columns.Enabled = filesystem.Enabled;
-                columns.FilesystemPath = filesystem.FilesystemPath;
-                columns.ReadOnly = filesystem.ReadOnly;
-                columns.FilesystemTierEnum = filesystem.FilesystemTierEnum;
-                columns.WriteOnly = filesystem.WriteOnly;
-                columns.HighWatermark = filesystem.HighWatermark;
-                columns.LowWatermark = filesystem.LowWatermark;
-                columns.PercentFull = filesystem.PercentFull;
+                IInsertFilesystem insert = ctx.GetBroker<IInsertFilesystem>();
+                FilesystemInsertParameters parms = new FilesystemInsertParameters();
+                parms.Description = filesystem.Description;
+                parms.Enabled = filesystem.Enabled;
+                parms.FilesystemPath = filesystem.FilesystemPath;
+                parms.ReadOnly = filesystem.ReadOnly;
+                parms.TypeEnum = filesystem.FilesystemTierEnum;
+                parms.WriteOnly = filesystem.WriteOnly;
+                parms.HighWatermark = filesystem.HighWatermark;
+                parms.LowWatermark = filesystem.LowWatermark;
 
-                Filesystem fs = broker.Insert(columns);
+                IList<Filesystem> list = insert.Execute(parms);
 
-                ok = (fs != null);
+                ok = list != null && list.Count > 0;
 
                 if (ok)
                     ctx.Commit();
@@ -98,18 +97,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool Update(Filesystem filesystem)
         {
-            FilesystemUpdateColumns columns = new FilesystemUpdateColumns();
-            columns.Description = filesystem.Description;
-            columns.Enabled = filesystem.Enabled;
-            columns.FilesystemPath = filesystem.FilesystemPath;
-            columns.ReadOnly = filesystem.ReadOnly;
-            columns.FilesystemTierEnum = filesystem.FilesystemTierEnum;
-            columns.WriteOnly = filesystem.WriteOnly;
-            columns.HighWatermark = filesystem.HighWatermark;
-            columns.LowWatermark = filesystem.LowWatermark;
-            columns.PercentFull = filesystem.PercentFull;
 
-            return Update(filesystem.GetKey(), columns);
+            FilesystemUpdateColumns parms = new FilesystemUpdateColumns();
+            parms.Description = filesystem.Description;
+            parms.Enabled = filesystem.Enabled;
+            parms.FilesystemPath = filesystem.FilesystemPath;
+            parms.ReadOnly = filesystem.ReadOnly;
+            parms.FilesystemTierEnum = filesystem.FilesystemTierEnum;
+            parms.WriteOnly = filesystem.WriteOnly;
+            parms.HighWatermark = filesystem.HighWatermark;
+            parms.LowWatermark = filesystem.LowWatermark;
+
+
+            return Update(filesystem.GetKey(), parms);
         }
 
         public IList<FilesystemTierEnum> GetFileSystemTiers()
