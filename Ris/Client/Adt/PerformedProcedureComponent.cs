@@ -43,6 +43,57 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 namespace ClearCanvas.Ris.Client.Adt
 {
     /// <summary>
+    /// Defines an interface for providing custom editing pages to capture information about a performed procedure step.
+    /// </summary>
+    public interface IPerformedStepEditorPageProvider
+    {
+        IPerformedStepEditorPage[] GetEditorPages(IPerformedStepEditorContext context);
+    }
+
+    /// <summary>
+    /// Defines an interface for providing a custom editor page with access to the editor
+    /// context.
+    /// </summary>
+    public interface IPerformedStepEditorContext
+    {
+        /// <summary>
+        /// Gets the currently selected performed procedure step.
+        /// </summary>
+        ModalityPerformedProcedureStepSummary SelectedPerformedStep { get; }
+
+        /// <summary>
+        /// Occurs when the <see cref="SelectedPerformedStep"/> property changes.
+        /// </summary>
+        event EventHandler SelectedPerformedStepChanged;
+
+        /// <summary>
+        /// Exposes the extended properties associated with the <see cref="SelectedPerformedStep"/>.  Modifications made to these
+        /// properties by the editor page will be persisted whenever the editor is saved.
+        /// </summary>
+        IDictionary<string, string> SelectedPerformedStepExtendedProperties { get; }
+    }
+
+    /// <summary>
+    /// Defines an extension point for adding custom pages to the performed procedure step editor.
+    /// </summary>
+    [ExtensionPoint]
+    public class PerformedStepEditorPageProviderExtensionPoint : ExtensionPoint<IPerformedStepEditorPageProvider>
+    {
+    }
+
+    /// <summary>
+    /// Defines an interface to a custom performed procedure step editor page.
+    /// </summary>
+    public interface IPerformedStepEditorPage
+    {
+        Path Path { get; }
+        IApplicationComponent GetComponent();
+
+        void Save();
+    }
+
+
+    /// <summary>
     /// Extension point for views onto <see cref="PerformedProcedureComponent"/>
     /// </summary>
     [ExtensionPoint]
@@ -56,61 +107,103 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(PerformedProcedureComponentViewExtensionPoint))]
     public class PerformedProcedureComponent : ApplicationComponent
     {
-        #region MPPS Details Component
+        #region EditorContext
 
-        class MppsDetailsComponent : DHtmlComponent
+        class EditorContext : IPerformedStepEditorContext
         {
-            private ModalityPerformedProcedureStepSummary _performedProcedureStep;
+            private PerformedProcedureComponent _owner;
 
-            public MppsDetailsComponent()
+            public EditorContext(PerformedProcedureComponent owner)
             {
+                _owner = owner;
             }
 
-            protected override DataContractBase GetHealthcareContext()
+            public event EventHandler SelectedPerformedStepChanged
             {
-                return _performedProcedureStep;
+                add { _owner._selectedMppsChanged += value; }
+                remove { _owner._selectedMppsChanged -= value; }
             }
 
-            protected override IDictionary<string, string> TagData
+            public ModalityPerformedProcedureStepSummary SelectedPerformedStep
             {
-                get
-                {
-                    return _performedProcedureStep.ExtendedProperties;
-                }
+                get { return _owner._selectedMpps; }
             }
 
-            public ModalityPerformedProcedureStepSummary PerformedProcedureStep
+            public IDictionary<string, string> SelectedPerformedStepExtendedProperties
             {
-                get { return _performedProcedureStep; }
-                set
-                {
-                    if(!Equals(value, _performedProcedureStep))
-                    {
-                        if (_performedProcedureStep != null)
-                        {
-                            // store data for current step
-                            SaveData();
-                        }
-                        _performedProcedureStep = value;
-
-                        SetUrl(PerformedProcedureComponentSettings.Default.DetailsPageUrl);
-                    }
-                }
+                get { return _owner._selectedMpps == null ? null : _owner._selectedMpps.ExtendedProperties; }
             }
         }
 
         #endregion
 
+        #region MPPS Details Component
+
+        class MppsDetailsComponent : DHtmlComponent, IPerformedStepEditorPage
+        {
+            private IPerformedStepEditorContext _context;
+
+            public MppsDetailsComponent(IPerformedStepEditorContext context)
+            {
+                _context = context;
+            }
+
+            public override void Start()
+            {
+                // when the selected step changes, refresh the browser
+                _context.SelectedPerformedStepChanged += delegate
+                {
+                    SetUrl(PerformedProcedureComponentSettings.Default.DetailsPageUrl);
+                };
+
+                base.Start();
+            }
+
+            protected override DataContractBase GetHealthcareContext()
+            {
+                // use the selected performed step as a healthcare context for the DHTML page
+                return _context.SelectedPerformedStep;
+            }
+
+            protected override IDictionary<string, string> TagData
+            {
+                get { return _context.SelectedPerformedStepExtendedProperties; }
+            }
+
+            #region IPerformedStepEditorPage Members
+
+            Path IPerformedStepEditorPage.Path
+            {
+                get { return new Path("Details", new ResourceResolver(this.GetType().Assembly)); }
+            }
+
+            IApplicationComponent IPerformedStepEditorPage.GetComponent()
+            {
+                return this;
+            }
+
+            void IPerformedStepEditorPage.Save()
+            {
+                SaveData();
+            }
+
+            #endregion
+        }
+
+        #endregion
+
+        private EntityRef _orderRef;
         private readonly TechnologistDocumentationMppsSummaryTable _mppsTable = new TechnologistDocumentationMppsSummaryTable();
         private ModalityPerformedProcedureStepSummary _selectedMpps;
-        private EntityRef _orderRef;
+        private event EventHandler _selectedMppsChanged;
 
         private SimpleActionModel _mppsActionHandler;
         private ClickAction _stopAction;
         private ClickAction _discontinueAction;
 
-        private ChildComponentHost _mppsDetailsComponentHost;
-        private MppsDetailsComponent _detailsComponent;
+        private ChildComponentHost _detailsPagesHost;
+        private List<IPerformedStepEditorPage> _editorPages = new List<IPerformedStepEditorPage>();
+
         private TechnologistDocumentationComponent _owner;
 
         private event EventHandler<ProcedurePlanChangedEventArgs> _procedurePlanChanged;
@@ -138,7 +231,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         internal void SaveData()
         {
-            _detailsComponent.SaveData();
+            foreach (IPerformedStepEditorPage page in _editorPages)
+            {
+                page.Save();
+            }
         }
 
         internal IList<ModalityPerformedProcedureStepSummary> PerformedProcedureSteps
@@ -150,10 +246,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            _mppsDetailsComponentHost = new ChildComponentHost(this.Host, _detailsComponent = new MppsDetailsComponent());
-            //_mppsDetailsComponentHost.Title = SR.TitlePerformedProcedureComponent;
-            _mppsDetailsComponentHost.StartComponent();
-
             ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
 
             _mppsActionHandler = new SimpleActionModel(resolver);
@@ -174,12 +266,51 @@ namespace ClearCanvas.Ris.Client.Adt
                     });
             }
 
+            // create extension editor pages, if any exist
+            foreach (IPerformedStepEditorPageProvider provider in (new PerformedStepEditorPageProviderExtensionPoint().CreateExtensions()))
+            {
+                _editorPages.AddRange(provider.GetEditorPages(new EditorContext(this)));
+            }
+
+            // if no editor pages are available via extensions, create the default editor
+            if(_editorPages.Count == 0)
+                _editorPages.Add(new MppsDetailsComponent(new EditorContext(this)));
+
+            // if there are multiple pages, need to create a tab container
+            if(_editorPages.Count > 1)
+            {
+                TabComponentContainer tabContainer = new TabComponentContainer();
+                _detailsPagesHost = new ChildComponentHost(this.Host, tabContainer);
+                foreach (IPerformedStepEditorPage page in _editorPages)
+                {
+                    tabContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
+                }
+            }
+            else
+            {
+                // don't create a tab container for just one page
+                _detailsPagesHost = new ChildComponentHost(this.Host, _editorPages[0].GetComponent());
+            }
+
+            // start details pages host
+            _detailsPagesHost.StartComponent();
+
+
             base.Start();
         }
 
-        public override void Stop()
+        public override bool HasValidationErrors
         {
-            base.Stop();
+            get
+            {
+                return _detailsPagesHost.Component.HasValidationErrors || base.HasValidationErrors;
+            }
+        }
+
+        public override void ShowValidation(bool show)
+        {
+            _detailsPagesHost.Component.ShowValidation(show);
+            base.ShowValidation(show);
         }
 
         #endregion
@@ -209,9 +340,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 ModalityPerformedProcedureStepSummary selectedMpps = (ModalityPerformedProcedureStepSummary)value.Item;
                 if (selectedMpps != _selectedMpps)
                 {
-                    _selectedMpps = selectedMpps;
-                    UpdateActionEnablement();
-                    _detailsComponent.PerformedProcedureStep = _selectedMpps;
+                    OnSelectedMppsChanged(selectedMpps);
                 }
             }
         }
@@ -223,7 +352,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public ApplicationComponentHost DetailsComponentHost
         {
-            get { return _mppsDetailsComponentHost; }
+            get { return _detailsPagesHost; }
         }
 
         private void RefreshProcedurePlanTree(ProcedurePlanDetail procedurePlanDetail)
@@ -238,24 +367,20 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void StopPerformedProcedureStep()
         {
-            if (this.HasValidationErrors || _detailsComponent.HasValidationErrors)
+            if (_selectedMpps == null)
             {
-                ShowValidation(true);
-                _detailsComponent.ShowValidation(true);
                 return;
             }
 
-            //this.Host.DesktopWindow.ShowMessageBox("Valid", MessageBoxActions.Ok);
-            //return;
-
-            if(_selectedMpps == null)
+            if (this.HasValidationErrors)
             {
+                ShowValidation(true);
                 return;
             }
 
             try
             {
-                _detailsComponent.SaveData();
+                SaveData();
 
                 Platform.GetService<IModalityWorkflowService>(
                     delegate(IModalityWorkflowService service)
@@ -325,6 +450,21 @@ namespace ClearCanvas.Ris.Client.Adt
         #endregion
 
         #region Private Methods
+
+        private void OnSelectedMppsChanged(ModalityPerformedProcedureStepSummary newSelection)
+        {
+            if (_selectedMpps != null)
+            {
+                // save changes to existing data first
+                SaveData();
+            }
+
+            _selectedMpps = newSelection;
+
+            UpdateActionEnablement();
+
+            EventsHelper.Fire(_selectedMppsChanged, this, EventArgs.Empty);
+        }
 
         private void UpdateActionEnablement()
         {

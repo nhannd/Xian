@@ -178,11 +178,18 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Start();
         }
 
-        public override void Stop()
+        public override bool HasValidationErrors
         {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
-            base.Stop();
+            get
+            {
+                return _documentationTabContainer.HasValidationErrors || base.HasValidationErrors;
+            }
+        }
+
+        public override void ShowValidation(bool show)
+        {
+            _documentationTabContainer.ShowValidation(show);
+            base.ShowValidation(show);
         }
 
         #endregion
@@ -336,12 +343,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 if (this.HasValidationErrors)
                 {
                     ShowValidation(true);
-                    return false;
-                }
-
-                if (_documentationTabContainer.HasValidationErrors)
-                {
-                    _documentationTabContainer.ShowValidation(true);
                     return false;
                 }
             }

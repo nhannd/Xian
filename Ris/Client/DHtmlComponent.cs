@@ -202,6 +202,11 @@ namespace ClearCanvas.Ris.Client
 
             public string GetTag(string tag)
             {
+                // if component doesn't support tag data, just do the most lenient thing and return null
+                // we could throw an exception, but that seems counter to the spirit of javascript
+                if(_component.TagData == null)
+                    return null;
+
                 string value;
                 _component.TagData.TryGetValue(tag, out value);
 
@@ -210,6 +215,11 @@ namespace ClearCanvas.Ris.Client
 
             public void SetTag(string tag, string data)
             {
+                // in this case, throwing an exception is probably warranted because there is no point
+                // letting the page believe that it is successfully storing tags when in fact it isn't
+                if(_component.TagData == null)
+                    throw new NotSupportedException("This component does not support storage of tags.");
+
                 _component.TagData[tag] = data;
             }
         }
