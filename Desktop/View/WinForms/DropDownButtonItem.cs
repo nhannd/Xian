@@ -87,6 +87,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				_action.VisibleChanged -= _actionVisibleChangedHandler;
 				_action.LabelChanged -= _actionLabelChangedHandler;
 				_action.TooltipChanged -= _actionTooltipChangedHandler;
+				_action.IconSetChanged -= _actionIconSetChangedHandler;
 
 				_action = null;
 			}
