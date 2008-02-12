@@ -41,7 +41,7 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	[KeyboardAction("previous", "imageviewer-keyboard/ToolsStandardPreviousDisplaySet", "PreviousDisplaySet", KeyStroke = XKeys.R)]
+	[KeyboardAction("previous", "imageviewer-keyboard/ToolsStandardPreviousDisplaySet", "PreviousDisplaySet", KeyStroke = XKeys.E)]
 	[MenuAction("previous", "global-menus/MenuTools/MenuStandard/MenuPreviousDisplaySet", "PreviousDisplaySet")]
 	[ButtonAction("previous", "global-toolbars/ToolbarStandard/ToolbarPreviousDisplaySet", "PreviousDisplaySet")]
 	[Tooltip("previous", "TooltipPreviousDisplaySet")]
