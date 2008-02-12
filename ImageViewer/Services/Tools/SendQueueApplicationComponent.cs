@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -41,6 +40,9 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Services.ServerTree;
+using MyServerTree = ClearCanvas.ImageViewer.Services.ServerTree.ServerTree;
+
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -69,12 +71,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 	public class SendQueueItem : SendProgressItem
 	{
+		private string _serverName;
 		private PersonName _patientsName;
 
 		private SendQueueItem()
 		{
 			this.StudyInformation = new StudyInformation();
 			_patientsName = new PersonName("");
+			_serverName = null;
 		}
 
 		internal SendQueueItem(SendProgressItem progressItem)
@@ -90,6 +94,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			get { return _patientsName; }
 		}
 
+		public string ServerName
+		{
+			get { return _serverName; }	
+		}
+
 		internal void UpdateFromProgressItem(SendProgressItem progressItem)
 		{
 			if (!this.Identifier.Equals(this.Identifier))
@@ -99,6 +108,28 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			if (!String.IsNullOrEmpty(this.StudyInformation.PatientsName) && this.StudyInformation.PatientsName != _patientsName.ToString())
 				_patientsName = new PersonName(this.StudyInformation.PatientsName);
+
+			if (_serverName == null)
+			{
+				_serverName = "";
+				try
+				{
+					MyServerTree serverTree = new MyServerTree();
+					List<IServerTreeNode> servers = serverTree.FindChildServers(serverTree.RootNode.ServerGroupNode);
+					foreach (Server server in servers)
+					{
+						if (server.AETitle == progressItem.ToAETitle)
+						{
+							_serverName = server.Name;
+							break;
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Error, ex);
+				}
+			}
 		}
 	}
 
@@ -275,7 +306,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			column = new TableColumn<SendQueueItem, string>(
 					SR.TitleTo,
-					delegate(SendQueueItem item) { return FormatString(item.ToAETitle); },
+					delegate(SendQueueItem item)
+					{
+						return FormatString(!String.IsNullOrEmpty(item.ServerName) ? item.ServerName : item.ToAETitle);
+					},
 					0.75f);
 
 			_sendTable.Columns.Add(column);

@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -41,6 +40,9 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Services.ServerTree;
+using MyServerTree = ClearCanvas.ImageViewer.Services.ServerTree.ServerTree;
+using System.Collections;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -75,6 +77,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	public class ReceiveQueueItem : ReceiveProgressItem
 	{
 		private PersonName _patientsName;
+		private string _serverName;
 
 		private ReceiveQueueItem()
 		{
@@ -95,6 +98,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			get { return _patientsName; }
 		}
 
+		public string ServerName
+		{
+			get { return _serverName; }	
+		}
+
 		internal void UpdateFromProgressItem(ReceiveProgressItem progressItem)
 		{
 			if (!this.Identifier.Equals(this.Identifier))
@@ -104,6 +112,28 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			if (!String.IsNullOrEmpty(this.StudyInformation.PatientsName) && this.StudyInformation.PatientsName != _patientsName.ToString())
 				_patientsName = new PersonName(this.StudyInformation.PatientsName);
+
+			if (_serverName == null)
+			{
+				_serverName = "";
+				try
+				{
+					MyServerTree serverTree = new MyServerTree();
+					List<IServerTreeNode> servers = serverTree.FindChildServers(serverTree.RootNode.ServerGroupNode);
+					foreach (Server server in servers)
+					{
+						if (server.AETitle == progressItem.FromAETitle)
+						{
+							_serverName = server.Name;
+							break;
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Error, ex);
+				}
+			}
 		}
 	}
 
@@ -310,7 +340,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			column = new TableColumn<ReceiveQueueItem, string>(
 					SR.TitleFrom,
-					delegate(ReceiveQueueItem item) { return FormatString(item.FromAETitle); },
+					delegate(ReceiveQueueItem item)
+						{
+							return FormatString(!String.IsNullOrEmpty(item.ServerName) ? item.ServerName : item.FromAETitle);
+						},
 					0.75f);
 
 			_receiveTable.Columns.Add(column);
