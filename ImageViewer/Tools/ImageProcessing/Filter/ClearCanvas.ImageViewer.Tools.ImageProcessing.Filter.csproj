@@ -37,8 +37,6 @@
   <ItemGroup>
     <Compile Include="ConvolutionFilter.cs" />
     <Compile Include="ConvolutionKernel.cs" />
-    <Compile Include="DropDownButtonAction.cs" />
-    <Compile Include="DropDownButtonActionAttribute.cs" />
     <Compile Include="EdgeDetectionFilterTool.cs" />
     <Compile Include="FilterTool.cs" />
     <Compile Include="SharpeningFilterTool.cs" />

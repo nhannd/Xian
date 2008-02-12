@@ -204,9 +204,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private static ToolStripItem CreateToolStripItemForAction(IAction action, ToolStripKind kind)
         {
-            // optimization: since most actions will be IClickAction, we can just create the controls
-            // directly rather than use the associated view, which is slower
-            // however, an AssociateViewAttribute should always take precedence
+            // optimization: for framework-provided actions, we can just create the controls
+            // directly rather than use the associated view, which is slower;
+            // however, an AssociateViewAttribute should always take precedence.
             if (action.GetType().GetCustomAttributes(typeof(AssociateViewAttribute), true).Length == 0)
             {
                 if (action is IClickAction)
@@ -216,12 +216,15 @@ namespace ClearCanvas.Desktop.View.WinForms
                     else
                         return new ActiveToolbarButton((IClickAction)action);
                 }
+				else if (action is IDropDownButtonAction && kind == ToolStripKind.Toolbar)
+				{
+					return new DropDownButtonItem((IDropDownButtonAction)action);
+				}
             }
 
             IActionView view = (IActionView)ViewFactory.CreateAssociatedView(action.GetType());
             view.SetAction(action);
             return (ToolStripItem)view.GuiElement;
         }
-
     }
 }

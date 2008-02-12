@@ -5,7 +5,6 @@
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\Desktop\Applets\WebBrowser\bin\$(Configuration)\ClearCanvas.Desktop.Applets.WebBrowser.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\Desktop\Applets\WebBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Applets.WebBrowser.View.WinForms.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\ImageProcessing\Filter\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\ImageProcessing\Filter\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter.View.WinForms.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NPlot.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\ImageProcessing\RoiAnalysis\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\ImageProcessing\RoiAnalysis\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.View.WinForms.dll" />
