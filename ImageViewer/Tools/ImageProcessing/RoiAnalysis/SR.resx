@@ -129,7 +129,7 @@
   <data name="ToolbarRoiAnalysis" xml:space="preserve">
     <value>ROI Analysis</value>
   </data>
-  <data name="TooltipAnalysis" xml:space="preserve">
+  <data name="TooltipRoiAnalysis" xml:space="preserve">
     <value>ROI Analysis</value>
   </data>
 </root>

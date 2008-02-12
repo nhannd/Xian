@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
     [ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarRoiAnalysis")]
     [ClickHandler("show", "Show")]
 	[IconSet("show", IconScheme.Colour, "Icons.RoiHistogramToolSmall.png", "Icons.RoiHistogramToolMedium.png", "Icons.RoiHistogramToolLarge.png")]
-	[Tooltip("show", "TooltipROIAnalysis")]
+	[Tooltip("show", "TooltipRoiAnalysis")]
 
     /// <summary>
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
