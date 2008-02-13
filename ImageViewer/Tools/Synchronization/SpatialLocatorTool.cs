@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 			int closestIndex = -1;
 			float closestDistanceMillimetres = float.MaxValue;
-			PointF? closestPointImage = null;
+			PointF closestPointImage = PointF.Empty;
 
 			for (int i = imageBox.DisplaySet.PresentationImages.Count - 1; i >= 0; --i)
 			{
@@ -112,36 +112,25 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 						ImageInfo info = _cache.GetImageInformation(sop);
 						if (info != null)
 						{
-							// Translate the reference point to the destination image origin (top left)
-							Vector3D translatedPositionPatient = referencePositionPatient - info.PositionPatientTopLeft;
+							Vector3D positionImage = sop.ConvertToImage(referencePositionPatient, info.PositionPatientTopLeft);
 
-							// Transform the point to the destination image's coordinate system
-							Matrix rotated = new Matrix(3, 1);
-							rotated.SetColumn(0, translatedPositionPatient.X, translatedPositionPatient.Y, translatedPositionPatient.Z);
-
-							rotated = info.RotationMatrix * rotated;
-							// Take the distance normal to the image plane to find the closest image
-							float zDistanceMillimetres = Math.Abs(rotated[2, 0]);
-
-							PixelSpacing spacing = sop.PixelSpacing;
-							float spacingRow = (float) spacing.Row;
-							float spacingColumn = (float) spacing.Column;
+							float zDistanceMillimetres = Math.Abs(positionImage.Z);
 
 							//The coordinates need to be converted to pixel coordinates because right now they are in mm.
-							PointF transformed = new PointF(rotated[0, 0] / spacingColumn, rotated[1, 0] / spacingRow);
+							PointF positionImagePixels = (PointF)sop.ConvertToImagePixel(new PointF(positionImage.X, positionImage.Y));
 
 							if (zDistanceMillimetres < closestDistanceMillimetres)
 							{
 								closestIndex = i;
 								closestDistanceMillimetres = zDistanceMillimetres;
-								closestPointImage = transformed;
+								closestPointImage = positionImagePixels;
 							}
 						}
 					}
 				}
 			}
 
-			if (closestIndex >= 0 && closestPointImage != null)
+			if (closestIndex >= 0)
 			{
 				imageBox.TopLeftPresentationImageIndex = closestIndex;
 
@@ -149,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				if (existingGraphic != null)
 				{
 					existingGraphic.CoordinateSystem = CoordinateSystem.Source;
-					existingGraphic.Anchor = (PointF)closestPointImage;
+					existingGraphic.Anchor = closestPointImage;
 					existingGraphic.ResetCoordinateSystem();
 					return true;
 				}
@@ -181,11 +170,11 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				return false;
 
 			PointF sourcePoint = ((SpatialTransform)base.SelectedSpatialTransformProvider.SpatialTransform).ConvertToSource(destinationPoint);
-			Vector3D referencePosition = ImagePositionHelper.SourceToPatient(referenceSop, sourcePoint);
-			if (referencePosition == null)
+			Vector3D referencePositionPatient = referenceSop.ConvertToPatient(sourcePoint);
+			if (referencePositionPatient == null)
 				return false;
 
-			_coordinator.OnSpatialLocatorPointsCalculated(CalculateReferencePoints(ImagePositionHelper.SourceToPatient(referenceSop, sourcePoint)));
+			_coordinator.OnSpatialLocatorPointsCalculated(CalculateReferencePoints(referencePositionPatient));
 			return true;
 		}
 

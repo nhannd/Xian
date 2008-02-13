@@ -51,6 +51,7 @@
     <Compile Include="Dicom\GeneralImageAnnotationItemProvider.cs" />
     <Compile Include="Dicom\PatientStudyAnnotationItemProvider.cs" />
     <Compile Include="Dicom\PatientAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\SliceLocationAnnotationItem.cs" />
     <Compile Include="Presentation\AppliedLutAnnotationItem.cs">
       <SubType>Code</SubType>
     </Compile>

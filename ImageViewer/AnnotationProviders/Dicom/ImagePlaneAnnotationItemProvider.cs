@@ -73,20 +73,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						)
 					);
 
-				_annotationItems.Add
-				(
-					new DicomAnnotationItem<string>
-						(
-							"Dicom.ImagePlane.SliceLocation",
-							resolver,
-							delegate(ImageSop imageSop)
-							{
-								return String.Format(SR.Formatmm1, imageSop.SliceLocation);
-							},
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
+				_annotationItems.Add(new SliceLocationAnnotationItem());
 			}
 
 			return _annotationItems;

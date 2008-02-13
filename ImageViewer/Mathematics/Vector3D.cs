@@ -7,11 +7,20 @@ namespace ClearCanvas.ImageViewer.Mathematics
 	/// <summary>
 	/// A simple 3D vector class.
 	/// </summary>
+	/// <remarks>
+	/// The Vector3D class is immutable.  All necessary operations
+	/// can be done via the operator overloads.
+	/// </remarks>
 	public class Vector3D : IEquatable<Vector3D>
 	{
-		private float _x;
-		private float _y;
-		private float _z;
+		private readonly float _x;
+		private readonly float _y;
+		private readonly float _z;
+
+		/// <summary>
+		/// Represents the empty (zero) vector.
+		/// </summary>
+		public static readonly Vector3D Empty = new Vector3D(0F, 0F, 0F);
 
 		/// <summary>
 		/// Constructor.
@@ -29,7 +38,6 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		public float X
 		{
 			get { return _x; }
-			set { _x = value; }
 		}
 
 		/// <summary>
@@ -38,7 +46,6 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		public float Y
 		{
 			get { return _y; }
-			set { _y = value; }
 		}
 
 		/// <summary>
@@ -47,7 +54,6 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		public float Z
 		{
 			get { return _z; }
-			set { _z = value; }
 		}
 
 		/// <summary>
@@ -100,11 +106,11 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		{
 			Vector3D cross = new Vector3D(0, 0, 0);
 
-			cross.X = _y * right.Z - _z * right.Y;
-			cross.Y = -_x * right.Z + _z * right.X;
-			cross.Z = _x * right.Y - _y * right.X;
+			float x = _y * right.Z - _z * right.Y;
+			float y = -_x * right.Z + _z * right.X;
+			float z = _x * right.Y - _y * right.X;
 
-			return cross;
+			return new Vector3D(x, y, z);
 		}
 
 		/// <summary>
@@ -113,14 +119,6 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		public override string ToString()
 		{
 			return String.Format(@"({0:F8}, {1:F8}, {2:F8})", _x, _y, _z);
-		}
-
-		/// <summary>
-		/// Gets a null vector, where all components are zero.
-		/// </summary>
-		public static Vector3D GetNullVector()
-		{
-			return new Vector3D(0F, 0F, 0F);
 		}
 
 		/// <summary>

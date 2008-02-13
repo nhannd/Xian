@@ -225,8 +225,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 							float angle = Math.Abs((float)Math.Acos(info.Normal.Dot(_currentReferenceImageInfo.Normal)));
 							if (angle <= _toleranceInRadians || (Math.PI - angle) <= _toleranceInRadians)
 							{
-								// 3. Use the Image Position (in the coordinate system of the Image Plane!) to determine the 
-								//    first and last reference line.  By transforming the Image Position (Patient) to 
+								// 3. Use the Image Position (in the coordinate system of the Image Plane without moving the origin!) 
+								//    to determine the first and last reference line.  By transforming the Image Position (Patient) to 
 								//    the coordinate system of the image plane, we can then simply take the 2 images with
 								//    the smallest and largest z-components, respectively, as the 'first' and 'last' reference images.
 								float imageZComponent = info.PositionImagePlaneTopLeft.Z;
@@ -256,25 +256,13 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			ImageInfo referenceImageInfo = _cache.GetImageInformation(referenceImageSop);
 			ImageInfo projectImageInfo = _cache.GetImageInformation(projectImageSop);
 
-			// Transform the reference image diagonal to the destination image's coordinate system.
-			Vector3D translatedTopLeft = referenceImageInfo.PositionPatientTopLeft - projectImageInfo.PositionPatientTopLeft;
-			Matrix topLeftPatient = new Matrix(3, 1);
-			topLeftPatient.SetColumn(0, translatedTopLeft.X, translatedTopLeft.Y, translatedTopLeft.Z);
-
-			Matrix bottomRightPatient = new Matrix(3, 1);
-			Vector3D translatedBottomRight = referenceImageInfo.PositionPatientBottomRight - projectImageInfo.PositionPatientTopLeft;
-			bottomRightPatient.SetColumn(0, translatedBottomRight.X, translatedBottomRight.Y, translatedBottomRight.Z);
-
-			topLeftPatient = projectImageInfo.RotationMatrix * topLeftPatient;
-			bottomRightPatient = projectImageInfo.RotationMatrix * bottomRightPatient;
-
-			PixelSpacing spacing = projectImageSop.PixelSpacing;
-			float spacingRow = (float)spacing.Row;
-			float spacingColumn = (float)spacing.Column;
+			// Transform the reference image diagonal to the destination image's coordinate system (pixel position 0,0 as the origin).
+			Vector3D transformedTopLeft = projectImageSop.ConvertToImage(referenceImageInfo.PositionPatientTopLeft, projectImageInfo.PositionPatientTopLeft);
+			Vector3D transformedBottomRight = projectImageSop.ConvertToImage(referenceImageInfo.PositionPatientBottomRight, projectImageInfo.PositionPatientTopLeft);
 
 			//The coordinates need to be converted to pixel coordinates because right now they are in mm.
-			topLeft = new PointF(topLeftPatient[0, 0] / spacingColumn, topLeftPatient[1, 0] / spacingRow);
-			bottomRight = new PointF(bottomRightPatient[0, 0] / spacingColumn, bottomRightPatient[1, 0] / spacingRow);
+			topLeft = (PointF)projectImageSop.ConvertToImagePixel(new PointF(transformedTopLeft.X, transformedTopLeft.Y));
+			bottomRight = (PointF)projectImageSop.ConvertToImagePixel(new PointF(transformedBottomRight.X, transformedBottomRight.Y));
 		}
 
 		private void CalculateReferenceLine

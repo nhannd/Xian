@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Mathematics;
 using System.Threading;
 using ClearCanvas.ImageViewer.StudyManagement;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
 	internal class ImageInfo
 	{
-		public Matrix RotationMatrix;
 		public Vector3D Normal;
 		public Vector3D PositionPatientTopLeft;
 		public Vector3D PositionPatientCenterOfImage;
@@ -62,24 +62,16 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				if (!_sopInfoDictionary.ContainsKey(sop.SopInstanceUID))
 				{
 					info = new ImageInfo();
-					info.PositionPatientTopLeft = ImagePositionHelper.SourceToPatientTopLeftOfImage(sop);
-					info.PositionPatientCenterOfImage = ImagePositionHelper.SourceToPatientCenterOfImage(sop);
-					info.PositionPatientBottomRight = ImagePositionHelper.SourceToPatientBottomRightOfImage(sop);
-					info.RotationMatrix = ImagePositionHelper.GetRotationMatrix(sop);
+					info.PositionPatientTopLeft = sop.ConvertToPatient(PointF.Empty);
+					info.PositionPatientCenterOfImage = sop.ConvertToPatient(new PointF((sop.Columns - 1)/2F, (sop.Rows - 1)/2F));
+					info.PositionPatientBottomRight = sop.ConvertToPatient(new PointF(sop.Columns - 1, sop.Rows - 1));
+					info.Normal = sop.GetNormalVector();
 
-					if (info.PositionPatientTopLeft == null || info.PositionPatientBottomRight == null || info.RotationMatrix == null)
+					if (info.PositionPatientCenterOfImage == null || info.Normal == null)
 						return null;
 
-					info.Normal = new Vector3D(info.RotationMatrix[2, 0], info.RotationMatrix[2, 1], info.RotationMatrix[2, 2]);
-
-					// Transform the position (patient) vector to the coordinate system of the image.
-					// This way, the z-components will all be along the same vector path.
-					Matrix positionPatientMatrix = new Matrix(3, 1);
-					positionPatientMatrix.SetColumn(0, info.PositionPatientTopLeft.X, info.PositionPatientTopLeft.Y,
-					                                info.PositionPatientTopLeft.Z);
-					Matrix result = info.RotationMatrix*positionPatientMatrix;
-
-					info.PositionImagePlaneTopLeft = new Vector3D(result[0, 0], result[1, 0], result[2, 0]);
+					// here, we want the position in the coordinate system of the image plane, without moving the origin.
+					info.PositionImagePlaneTopLeft = sop.ConvertToImage(info.PositionPatientTopLeft, Vector3D.Empty);
 
 					_sopInfoDictionary[sop.SopInstanceUID] = info;
 				}

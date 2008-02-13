@@ -37,7 +37,6 @@
     <Compile Include="SpatialLocatorGraphic.cs" />
     <Compile Include="SopInfoCache.cs" />
     <Compile Include="SpatialLocatorTool.cs" />
-    <Compile Include="ImagePositionHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceLineGraphic.cs" />
     <Compile Include="ReferenceLineTool.cs" />

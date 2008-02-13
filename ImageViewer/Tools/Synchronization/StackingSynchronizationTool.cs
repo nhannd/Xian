@@ -372,7 +372,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				}
 			}
 
-			return Vector3D.GetNullVector();
+			return Vector3D.Empty;
 		}
 
 		private Vector3D GetOffset(OffsetKey referenceOffsetKey, OffsetKey key, List<OffsetKey> eliminated)
@@ -450,7 +450,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 						if (info != null && NormalsWithinLimits(referenceImageInfo, info))
 						{
 							//Don't bother getting an offset for something in the same frame of reference.
-							Vector3D offset = sameFrameOfReference ? Vector3D.GetNullVector() : GetOffset(referenceSop, referenceImageInfo, sop, info);
+							Vector3D offset = sameFrameOfReference ? Vector3D.Empty : GetOffset(referenceSop, referenceImageInfo, sop, info);
 
 							Vector3D difference = referenceImageInfo.PositionPatientCenterOfImage + offset - info.PositionPatientCenterOfImage;
 							float distance = difference.Magnitude;
