@@ -30,60 +30,50 @@
 #endregion
 
 using System;
+using System.Text.RegularExpressions;
 
-namespace ClearCanvas.ImageServer.Web.Common.WebControls
+namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
     /// <summary>
-    /// Validate if the value in the number input control is in a specified range.
+    /// Validate if an input control value matches a specified regular expression.
     /// </summary>
     /// <remarks>
-    /// This control has slightly different behaviour than standard ASP.NET <seealso cref="RangeValidator"/>.
+    /// This control has slightly different behaviour than standard ASP.NET <seealso cref="RegularExpressionFieldValidator"/>.
     /// Developers can optionally specify the background color for the input control if the validation fails.
     /// </remarks>
     /// 
     /// <example>
-    /// The following block adds validation for the Port number. If the input is not within 0 and 32000
-    /// the Port text box will be highlighted.
+    /// The following block adds validation for the IP Address. If the input is not an IP address, the IP address
+    /// text box will be highlighted.
     /// 
-    /// <clearcanvas:RangeValidator 
-    ///                                ID="RangeValidator1" runat="server"
-    ///                                ControlToValidate="PortTextBox"
+    /// <clearcanvas:RegularExpressionFieldValidator 
+    ///                                ID="RegularExpressionFieldValidator1" runat="server"
+    ///                                ControlToValidate="IPAddressTextBox"
     ///                                InvalidInputBackColor="#FAFFB5"
     ///                                ValidationGroup="vg1" 
-    ///                                MinValue="0"
-    ///                                MaxValue="32000"
-    ///                                ErrorMessage="The Port number is not valid.">
-    /// </clearcanvas:RangeValidator>
+    ///                                ValidationExpression="^([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])$"
+    ///                                ErrorMessage="The IP address is not valid." Display="None">
+    /// </clearcanvas:RegularExpressionFieldValidator>
     /// 
     /// </example>
     /// 
-    public class RangeValidator : BaseValidator
+    public class RegularExpressionFieldValidator : BaseValidator
     {
         #region Private Members
 
-        private int _min;
-        private int _max;
+        private string _regEx;
 
         #endregion Private Members
 
         #region Public Properties
 
         /// <summary>
-        /// Sets or gets the minimum acceptable value.
+        /// Sets or gets the regular expression to validate the input.
         /// </summary>
-        public int MinValue
+        public string ValidationExpression
         {
-            get { return _min; }
-            set { _min = value; }
-        }
-
-        /// <summary>
-        /// Sets or gets the maximum acceptable value.
-        /// </summary>
-        public int MaxValue
-        {
-            get { return _max; }
-            set { _max = value; }
+            get { return _regEx; }
+            set { _regEx = value; }
         }
 
         #endregion Public Properties
@@ -96,22 +86,21 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         /// <returns></returns>
         protected override bool OnServerSideEvaluate()
         {
-            Decimal value;
-            if (Decimal.TryParse(GetControlValidationValue(ControlToValidate), out value))
-            {
-                return value >= MinValue && value <= MaxValue;
-            }
-
-            return false;
+            string value = GetControlValidationValue(ControlToValidate);
+            Regex regex = new Regex(ValidationExpression);
+            if (value != null)
+                return regex.IsMatch(value);
+            else
+                return false;
         }
 
 
         protected override void RegisterClientSideValidationExtensionScripts()
         {
             ScriptTemplate template =
-                new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.RangeValidator.js");
-            template.Replace("@@MIN_VALUE@@", MinValue.ToString());
-            template.Replace("@@MAX_VALUE@@", MaxValue.ToString());
+                new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionValidator.js");
+            template.Replace("@@REGULAR_EXPRESSION@@", ValidationExpression.Replace("\\", "\\\\").Replace("'", "\\'"));
+
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }

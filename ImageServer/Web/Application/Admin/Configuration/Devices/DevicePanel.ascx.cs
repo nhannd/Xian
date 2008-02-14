@@ -123,14 +123,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
-            if (Page.IsPostBack)
-            {
-                // Change the image of the "Apply Filter" button based on the filter settings
-                if (HasFilters())
-                    FilterButton.ImageUrl = "~/images/icons/QueryEnabled.png";
-                else
-                    FilterButton.ImageUrl = "~/images/icons/QueryEnabled.png";
-            }
             UpdateUI();
         }
 
@@ -209,20 +201,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             if (dev == null)
             {
                 // no device being selected
-
-                EditButton.Enabled = false;
-                EditButton.ImageUrl = "~/images/icons/EditDisabled.png";
-
-                DeleteButton.Enabled = false;
-                DeleteButton.ImageUrl = "~/images/icons/DeleteDisabled.png";
+                EditToolbarButton.Enabled = false;
+                DeleteToolbarButton.Enabled = false;
             }
             else
             {
-                EditButton.Enabled = true;
-                EditButton.ImageUrl = "~/images/icons/EditEnabled.png";
-
-                DeleteButton.Enabled = true;
-                DeleteButton.ImageUrl = "~/images/icons/DeleteEnabled.png";
+                EditToolbarButton.Enabled = true;
+                DeleteToolbarButton.Enabled = true;
             }
 
             // UpdatePanel UpdateMode must be set to "conditional"

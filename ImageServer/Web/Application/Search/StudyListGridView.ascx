@@ -10,6 +10,9 @@
                 OnDataBound="GridView1_DataBound"                
                 EmptyDataText="" 
                 CellPadding="0"
+                OnSelectedIndexChanged="GridView1_SelectedIndexChanged" 
+                OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
+                OnPageIndexChanging="GridView1_PageIndexChanging" 
                 PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
                 <Columns>
                     <asp:BoundField DataField="PatientsName" HeaderText="Patient Name"></asp:BoundField>

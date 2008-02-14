@@ -33,7 +33,7 @@ using System;
 using System.Drawing;
 using System.Web.UI.WebControls;
 
-namespace ClearCanvas.ImageServer.Web.Common.WebControls
+namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
     /// <summary>
     /// Base validator class for all custom validators.
@@ -247,7 +247,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         protected void RegisterClientSideBaseValidationScripts()
         {
             ScriptTemplate template =
-                new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator.js");
+                new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.BaseValidator.js");
             template.Replace("@@CLIENTID@@", ClientID);
             template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
 
@@ -260,7 +260,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
             template =
                 new ScriptTemplate(this,
-                                   "ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator_OnClientValidation.js");
+                                   "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.BaseValidator_OnClientValidation.js");
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientSideOnValidateFunctionName, template.Script,
                                                         true);

@@ -3,6 +3,8 @@
 <%@ Register Src="StudyListGridView.ascx" TagName="StudyListGridView" TagPrefix="uc1" %>
 <%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="uc5" %>
 <%@ Register Src="~/Common/GridPager.ascx" TagName="GridPager" TagPrefix="uc8" %>
+<%@ Register TagPrefix="clearcanvas" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" 
+    Assembly="ClearCanvas.ImageServer.Web.Common" %>
 
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
@@ -10,12 +12,18 @@
             <asp:Table ID="Table" runat="server"  
                 CellPadding="0" CellSpacing="0"
                 BorderWidth="0px" Width="100%">
-                <asp:TableHeaderRow HorizontalAlign="right">
-                    <asp:TableHeaderCell >
+                <asp:TableHeaderRow>
+                    <asp:TableHeaderCell HorizontalAlign="Left">
                         <asp:Panel ID="Panel1"  runat="server" CssClass="CSSToolbarPanelContainer">
                             <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
                                 <asp:Panel ID="Panel4" runat="server" CssClass="CSSToolbarContent">
-                                
+                                    <clearcanvas:ToolbarButton 
+                                        ID="DeleteToolbarButton" runat="server" 
+                                        EnabledImageURL="~/images/icons/DeleteEnabled.png" 
+                                        DisabledImageURL="~/images/icons/DeleteDisabled.png"
+                                        AlternateText="Delete study"
+                                        OnClick="OnDeleteToolbarButtonClick"
+                                        />
                                 </asp:Panel>
                             </asp:Panel>
                         </asp:Panel>
@@ -62,8 +70,6 @@
                                 </td>
                             </tr>
                         </table>
-                        
-                        
                         
                     </asp:TableHeaderCell>
                 </asp:TableHeaderRow>

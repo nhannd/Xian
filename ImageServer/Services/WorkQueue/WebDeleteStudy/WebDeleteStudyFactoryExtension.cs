@@ -29,44 +29,35 @@
 
 #endregion
 
-using System;
-using System.Xml;
-using ClearCanvas.ImageServer.Rules;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy;
 
-namespace ClearCanvas.ImageServer.Web.Common.WebControls
+namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 {
-    public class ServerRuleValidator : WebServiceValidator
+    /// <summary>
+    /// Plugin for processing 'WebDeleteStudy' WorkQueue items.
+    /// </summary>
+    [ExtensionOf(typeof(WorkQueueFactoryExtensionPoint))]
+    public class WebDeleteStudyFactoryExtension : DeleteStudyFactoryExtension
     {
-        protected override bool OnServerSideEvaluate()
+        #region Constructors
+        public WebDeleteStudyFactoryExtension()
+        { }
+        #endregion
+
+        #region IWorkQueueProcessorFactory Members
+
+        public override WorkQueueTypeEnum GetWorkQueueType()
         {
-            String ruleXml = GetControlValidationValue(ControlToValidate);
-
-            if (String.IsNullOrEmpty(ruleXml))
-            {
-                ErrorMessage = "Server Rule XML must be specified";
-                return false;
-            }
-
-            XmlDocument theDoc = new XmlDocument();
-
-            try
-            {
-                theDoc.LoadXml(ruleXml);
-            }
-            catch (Exception e)
-            {
-                ErrorMessage = "Unable to parse XML: " + e.Message;
-                return false;
-            }
-
-            string error;
-            if (false == Rule.ValidateRule(theDoc, out error))
-            {
-                ErrorMessage = error;
-                return false;
-            }
-
-            return true;
+            return WorkQueueTypeEnum.GetEnum("WebDeleteStudy");
         }
+
+        public override IWorkQueueItemProcessor GetItemProcessor()
+        {
+            return new WebDeleteStudyItemProcessor();
+        }
+
+        #endregion
     }
 }

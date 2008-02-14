@@ -17,6 +17,12 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
            (newid(),102,'DeleteStudy','Delete Study','Delete a Study.')
 GO
 
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),103,'WebDeleteStudy','Web Delete Study','Manual study delete via the Web UI.')
+GO
+
 -- WorkQueueStatusEnum inserts
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])

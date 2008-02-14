@@ -34,6 +34,7 @@ using System.Web.UI;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 namespace ClearCanvas.ImageServer.Web.Application.Search
 {
@@ -111,6 +112,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         {
             base.OnInit(e);
 
+
             // initialize the controller
             _searchController = new StudyController();
 
@@ -126,14 +128,40 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             
         }
 
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (StudyListGridView1.IsPostBack)
+            {
                 LoadStudies();
+            }
+
+            
         }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+            UpdateUI();
+        }
+
+        protected void OnToolbarButton1Click(object sender, ImageClickEventArgs e)
+        {
+            ((ToolbarButton)sender).Enabled = !((ToolbarButton)sender).Enabled;
+        }
+
+       
 
         public void UpdateUI()
         {
+            if (StudyListGridView1.SelectedStudy!=null)
+            {
+                DeleteToolbarButton.Enabled = true;
+            }
+            else
+            {
+                DeleteToolbarButton.Enabled = false;
+            }
             UpdatePanel.Update();
         }
 
@@ -142,6 +170,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             // reload the data
             LoadStudies();
             //    SearchAccordianControl.PageIndex = 0;
+        }
+
+        protected void OnDeleteToolbarButtonClick(object sender, ImageClickEventArgs e)
+        {
+            Study study = StudyListGridView1.SelectedStudy;
+            if (study != null)
+            {
+                EnclosingPage.OnDeleteStudy(study);
+            }
         }
     }
 }

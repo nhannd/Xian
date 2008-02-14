@@ -29,7 +29,9 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -60,6 +62,35 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return _seriesAdaptor.Get(criteria);
         }
 
+
+        public bool DeleteStudy(Study study)
+        {
+            WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
+            WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
+            columns.WorkQueueTypeEnum = WorkQueueTypeEnum.GetEnum("WebDeleteStudy");
+            columns.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+            columns.ServerPartitionKey = study.ServerPartitionKey;
+
+            StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
+            StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+            criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+            criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+
+            IList<StudyStorage> storages = studyStorageAdaptor.Get(criteria);
+            int counter = 0;
+            foreach(StudyStorage storage in storages)
+            {
+                counter++;
+                columns.StudyStorageKey = storage.GetKey();
+                columns.ScheduledTime = DateTime.Now.AddSeconds(60 + (counter)*15); // spread by 15 seconds
+                columns.ExpirationTime = DateTime.Now.AddDays(1);
+                columns.FailureCount = 0;
+
+                workqueueAdaptor.Add(columns);
+            }
+
+            return true;
+        }
         #endregion
     }
 }

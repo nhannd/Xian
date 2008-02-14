@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator RequiredFieldValidator2;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator RequiredFieldValidator2;
         
         /// <summary>
         /// RegularExpressionFieldValidator2 control.
@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.RegularExpressionFieldValidator RegularExpressionFieldValidator2;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionFieldValidator RegularExpressionFieldValidator2;
         
         /// <summary>
         /// Td2 control.
@@ -251,7 +251,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator ConditionalRequiredFieldValidator1;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator ConditionalRequiredFieldValidator1;
         
         /// <summary>
         /// RegularExpressionFieldValidator1 control.
@@ -260,7 +260,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.RegularExpressionFieldValidator RegularExpressionFieldValidator1;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionFieldValidator RegularExpressionFieldValidator1;
         
         /// <summary>
         /// Td6 control.
@@ -341,7 +341,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.RangeValidator PortValidator1;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeValidator PortValidator1;
         
         /// <summary>
         /// Td9 control.

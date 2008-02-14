@@ -3,6 +3,9 @@
 <%@ Register Src="~/Common/GridPager.ascx" TagName="GridPager" TagPrefix="uc8" %>
 <%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="uc5" %>
 <%@ Register Src="DeviceGridView.ascx" TagName="DeviceGridView" TagPrefix="uc1" %>
+<%@ Register TagPrefix="clearcanvas" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" 
+    Assembly="ClearCanvas.ImageServer.Web.Common" %>
+    
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="Panel1" runat="server">
@@ -13,14 +16,27 @@
                         <asp:Panel ID="Panel2" runat="server" CssClass="CSSToolbarPanelContainer">
                             <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
                                 <asp:Panel ID="Panel4" runat="server" CssClass="CSSToolbarContent">
-                                    <asp:ImageButton ID="AddButton" runat="server" ImageUrl="~/images/icons/AddEnabled.png"
-                                        AlternateText="Add" OnClick="AddButton_Click" />
-                                    <asp:ImageButton ID="EditButton" runat="server" ImageUrl="~/images/icons/EditEnabled.png"
-                                        OnClick="EditButton_Click" AlternateText="Edit" />
-                                    <asp:ImageButton ID="DeleteButton" runat="server" ImageUrl="~/images/icons/DeleteEnabled.png"
-                                        OnClick="DeleteButton_Click" AlternateText="Delete" />
-                                    <asp:ImageButton ID="RefreshButton" runat="server" ImageUrl="~/images/icons/RefreshEnabled.png"
-                                        OnClick="RefreshButton_Click" AlternateText="Refresh" />
+                                
+                                 <clearcanvas:ToolbarButton
+                                        ID="AddToolbarButton" runat="server" 
+                                        EnabledImageURL="~/images/icons/AddEnabled.png" 
+                                        DisabledImageURL="~/images/icons/AddDisabled.png"
+                                        OnClick="AddButton_Click" AlternateText="Add a device" 
+                                        />
+                                        
+                                  <clearcanvas:ToolbarButton
+                                        ID="EditToolbarButton" runat="server" 
+                                        EnabledImageURL="~/images/icons/EditEnabled.png" 
+                                        DisabledImageURL="~/images/icons/EditDisabled.png"
+                                        OnClick="EditButton_Click" AlternateText="Edit a device"
+                                        />
+                                   <clearcanvas:ToolbarButton
+                                        ID="DeleteToolbarButton" runat="server" 
+                                        EnabledImageURL="~/images/icons/DeleteEnabled.png" 
+                                        DisabledImageURL="~/images/icons/DeleteDisabled.png"
+                                        OnClick="DeleteButton_Click" AlternateText="Delete device"
+                                        />
+                                        
                                 </asp:Panel>
                             </asp:Panel>
                         </asp:Panel>
@@ -46,9 +62,13 @@
                                                 <asp:CheckBox ID="DHCPOnlyFilter" runat="server" Text="DHCP" ToolTip="Show only devices using DHCP"
                                                     CssClass="CSSCheckBox" /></td>
                                             <td align="right" valign="bottom">
-                                                <asp:Panel ID="FilterButtonContainer" runat="server" CssClass="FilterButtonContainer">
-                                                    <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png"
-                                                        OnClick="FilterButton_Click" ToolTip="Filter" />
+                                                <asp:Panel ID="FilterButtonContainer" runat="server" CssClass="FilterButtonContainer">                                                        
+                                                    <clearcanvas:ToolbarButton
+                                                        ID="FilterToolbarButton" runat="server" 
+                                                        EnabledImageURL="~/images/icons/QueryEnabled.png" 
+                                                        DisabledImageURL="~/images/icons/QueryDisabled.png"
+                                                        OnClick="FilterButton_Click" Tooltip="Filter devices"
+                                                        />
                                                 </asp:Panel>
                                             </td>
                                         </tr>

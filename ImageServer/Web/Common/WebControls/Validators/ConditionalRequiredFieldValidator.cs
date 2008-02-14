@@ -32,7 +32,7 @@
 using System;
 using System.Web.UI.WebControls;
 
-namespace ClearCanvas.ImageServer.Web.Common.WebControls
+namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
     /// <summary>
     /// Validate a required Web UI input control containing value based on the state of another checkbox control.
@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
             ScriptTemplate template =
                 new ScriptTemplate(this,
-                                   "ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator.js");
+                                   "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator.js");
 
             template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@",
                              ConditionalCheckBoxID == null ? null : GetControlRenderID(ConditionalCheckBoxID));

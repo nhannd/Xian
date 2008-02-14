@@ -32,13 +32,24 @@
 using System;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Common;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Search
 {
     public partial class SearchPage : BasePage
     {
+
+        // the controller used for database interaction
+        private StudyController _controller = new StudyController();
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            ConfirmDialog1.Confirmed += delegate(object data)
+                                {
+                                    // delete the device and reload the affected partition.
+                                    Study study = data as Study;
+                                    _controller.DeleteStudy(study);
+                                };
         }
 
         protected override void OnInit(EventArgs e)
@@ -55,6 +66,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
                                                 return panel;
                                             });
+        }
+
+
+        public void OnDeleteStudy(Study study)
+        {
+            ConfirmDialog1.Message =
+                string.Format("Are you sure to remove {0} ?", study.StudyInstanceUid);
+            ConfirmDialog1.MessageType = ConfirmDialog.MessageTypeEnum.WARNING;
+            ConfirmDialog1.Data = study;
+            ConfirmDialog1.Show();
         }
     }
 }

@@ -30,33 +30,17 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
+namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 {
-    /// <summary>
-    /// Plugin for processing 'DeleteStudy' WorkQueue items.
-    /// </summary>
-    [ExtensionOf(typeof(WorkQueueFactoryExtensionPoint))]
-    public class DeleteStudyFactoryExtension : IWorkQueueProcessorFactory
+    public class WebDeleteStudyItemProcessor : DeleteStudyItemProcessor
     {
-        #region Constructors
-        public DeleteStudyFactoryExtension()
-        { }
-        #endregion
-
-        #region IWorkQueueProcessorFactory Members
-
-        public virtual WorkQueueTypeEnum GetWorkQueueType()
+        public override void Process(Model.WorkQueue item)
         {
-            return WorkQueueTypeEnum.GetEnum("DeleteStudy");
+            Platform.Log(LogLevel.Info, "Procesing Web Delete Study entry...");
+            base.Process(item);
         }
 
-        public virtual IWorkQueueItemProcessor GetItemProcessor()
-        {
-            return new DeleteStudyItemProcessor();
-        }
-
-        #endregion
     }
 }

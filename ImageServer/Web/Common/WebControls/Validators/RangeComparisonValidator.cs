@@ -31,7 +31,7 @@
 
 using System;
 
-namespace ClearCanvas.ImageServer.Web.Common.WebControls
+namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
     /// <summary>
     /// Validate if the value in the number input control is in a specified range and that it is 
@@ -176,7 +176,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             string comparison = GreaterThan ? ">=" : "<=";
 
             ScriptTemplate template =
-                new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.RangeComparisonValidator.js");
+                new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeComparisonValidator.js");
             template.Replace("@@COMPARE_INPUT_CLIENTID@@", GetControlRenderID(ControlToCompare));
             template.Replace("@@MIN_VALUE@@", MinValue.ToString());
             template.Replace("@@MAX_VALUE@@", MaxValue.ToString());

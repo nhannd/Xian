@@ -62,18 +62,19 @@
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
-    <Compile Include="WebControls\BaseValidator.cs" />
-    <Compile Include="WebControls\ConditionalRequiredFieldValidator.cs" />
-    <Compile Include="WebControls\RangeComparisonValidator.cs" />
-    <Compile Include="WebControls\FilesystemPathValidator.cs" />
-    <Compile Include="WebControls\IInvalidInputIndicator.cs" />
-    <Compile Include="WebControls\LengthValidator.cs" />
+    <Compile Include="WebControls\Validators\BaseValidator.cs" />
+    <Compile Include="WebControls\Validators\ConditionalRequiredFieldValidator.cs" />
+    <Compile Include="WebControls\Validators\RangeComparisonValidator.cs" />
+    <Compile Include="WebControls\Validators\FilesystemPathValidator.cs" />
+    <Compile Include="WebControls\Validators\IInvalidInputIndicator.cs" />
+    <Compile Include="WebControls\Validators\LengthValidator.cs" />
     <Compile Include="WebControls\ScriptTemplate.cs" />
-    <Compile Include="WebControls\ServerRuleValidator.cs" />
-    <Compile Include="WebControls\ValidationResult.cs" />
-    <Compile Include="WebControls\WebServiceValidator.cs" />
-    <Compile Include="WebControls\RangeValidator.cs" />
-    <Compile Include="WebControls\RegularExpressionFieldValidator.cs" />
+    <Compile Include="WebControls\Validators\ServerRuleValidator.cs" />
+    <Compile Include="WebControls\UI\ToolbarButton.cs" />
+    <Compile Include="WebControls\Validators\ValidationResult.cs" />
+    <Compile Include="WebControls\Validators\WebServiceValidator.cs" />
+    <Compile Include="WebControls\Validators\RangeValidator.cs" />
+    <Compile Include="WebControls\Validators\RegularExpressionFieldValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -100,34 +101,35 @@
   <ItemGroup>
     <None Include="app.config">
     </None>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Service References\FilesystemServiceProxy.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="WebControls\LengthValidator.js" />
+    <EmbeddedResource Include="WebControls\Validators\LengthValidator.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="WebControls\WebServiceValidator_Init.js" />
+    <EmbeddedResource Include="WebControls\Validators\WebServiceValidator_Init.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="WebControls\RangeComparisonValidator.js" />
+    <EmbeddedResource Include="WebControls\Validators\RangeComparisonValidator.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="WebControls\RangeValidator.js" />
+    <EmbeddedResource Include="WebControls\Validators\RangeValidator.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="WebControls\RegularExpressionValidator.js" />
+    <EmbeddedResource Include="WebControls\Validators\RegularExpressionValidator.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="WebControls\BaseValidator.js" />
+    <EmbeddedResource Include="WebControls\Validators\BaseValidator.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="WebControls\ConditionalRequiredFieldValidator.js" />
+    <EmbeddedResource Include="WebControls\Validators\ConditionalRequiredFieldValidator.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="WebControls\BaseValidator_OnClientValidation.js" />
+    <EmbeddedResource Include="WebControls\Validators\BaseValidator_OnClientValidation.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="WebControls\WebServiceValidator.js" />
+    <EmbeddedResource Include="WebControls\Validators\WebServiceValidator.js" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

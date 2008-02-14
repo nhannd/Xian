@@ -104,15 +104,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             base.OnPreRender(e);
 
             UpdateUI();
-
-            if (Page.IsPostBack)
-            {
-                // Change the image of the "Apply Filter" button based on the filter settings
-                if (HasFilters())
-                    FilterButton.ImageUrl = "~/images/icons/QueryEnabled.png";
-                else
-                    FilterButton.ImageUrl = "~/images/icons/QueryEnabled.png";
-            }
         }
 
         protected override void OnInit(EventArgs e)
@@ -183,14 +174,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             if (parition == null)
             {
                 // no Partition being selected
-
-                EditButton.Enabled = false;
-                EditButton.ImageUrl = "~/images/icons/EditDisabled.png";
+                EditToolbarButton.Enabled = false;
             }
             else
             {
-                EditButton.Enabled = true;
-                EditButton.ImageUrl = "~/images/icons/EditEnabled.png";
+                EditToolbarButton.Enabled = true;
             }
 
             UpdatePanel1.Update();

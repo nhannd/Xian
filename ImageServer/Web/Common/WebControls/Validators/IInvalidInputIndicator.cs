@@ -4,7 +4,7 @@ using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ClearCanvas.ImageServer.Web.Common.WebControls
+namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
     public interface IInvalidInputIndicator
     {

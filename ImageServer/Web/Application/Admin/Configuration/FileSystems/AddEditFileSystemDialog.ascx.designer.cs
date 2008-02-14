@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator ConditionalRequiredFieldValidator1;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator ConditionalRequiredFieldValidator1;
         
         /// <summary>
         /// ReadCheckBox control.
@@ -188,7 +188,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.FilesystemPathValidator PathValidator;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.FilesystemPathValidator PathValidator;
         
         /// <summary>
         /// WriteCheckBox control.
@@ -377,7 +377,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.RangeComparisonValidator HighWatermarkValidator;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeComparisonValidator HighWatermarkValidator;
         
         /// <summary>
         /// Tr1 control.
@@ -440,7 +440,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.RangeComparisonValidator LowWatermarkValidator;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeComparisonValidator LowWatermarkValidator;
         
         /// <summary>
         /// OKButton control.

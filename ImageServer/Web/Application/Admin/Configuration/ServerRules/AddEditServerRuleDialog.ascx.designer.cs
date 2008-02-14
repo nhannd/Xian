@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator RuleNameValidator;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator RuleNameValidator;
         
         /// <summary>
         /// RuleTypeLabel control.
@@ -242,7 +242,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.ServerRuleValidator ServerRuleValidator;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ServerRuleValidator ServerRuleValidator;
         
         /// <summary>
         /// OKButton control.

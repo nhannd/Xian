@@ -37,9 +37,7 @@ using System.Text.RegularExpressions;
 using System.Web.Script.Services;
 using System.Web.Services;
 using System.Xml;
-using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Web.Application.FilesystemServiceProxy;
-using ClearCanvas.ImageServer.Web.Common.WebControls;
+using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
 
 namespace ClearCanvas.ImageServer.Web.Application.Services
 {

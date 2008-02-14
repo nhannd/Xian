@@ -2,10 +2,10 @@
     Codebehind="AddEditDeviceDialog.ascx.cs" %>
 <%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
     TagPrefix="uc1" %>
-<%@ Register Assembly="Validators" Namespace="Sample.Web.UI.Compatibility" TagPrefix="cc2" %>
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
-<%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls"
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+<%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.Validators"
     TagPrefix="clearcanvas" %>
+    
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="DialogPanel" runat="server" CssClass="CSSPopupWindow" Width="442px"
@@ -20,8 +20,8 @@
             </asp:Panel>
             <div class="CSSPopupWindowBody">
                 <asp:Panel ID="Panel3" runat="server" Height="100%" CssClass="CSSDialogTabPanelContent">
-                    <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
-                        <cc1:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
+                    <ajaxToolkit:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
+                        <ajaxToolkit:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
                             <ContentTemplate>
                                 <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
                                     <table id="Table2" runat="server">
@@ -138,8 +138,8 @@
                             <HeaderTemplate>
                                 General
                             </HeaderTemplate>
-                        </cc1:TabPanel>
-                        <cc1:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2" Height="200px">
+                        </ajaxToolkit:TabPanel>
+                        <ajaxToolkit:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2" Height="200px">
                             <ContentTemplate>
                                 <asp:Panel ID="Panel2" runat="server" CssClass="CSSDialogTabPanelContent">
                                     <table width="100%">
@@ -173,8 +173,8 @@
                             <HeaderTemplate>
                                 Features
                             </HeaderTemplate>
-                        </cc1:TabPanel>
-                    </cc1:TabContainer>
+                        </ajaxToolkit:TabPanel>
+                    </ajaxToolkit:TabContainer>
                 </asp:Panel>
                 <br />
                 <center>
@@ -196,8 +196,8 @@
                 </asp:Panel>
             </div>
         </asp:Panel>
-        <cc1:ModalPopupExtender ID="ModalPopupExtender1" BehaviorID="MyStupidExtender" runat="server"
+        <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtender1" BehaviorID="MyStupidExtender" runat="server"
             Enabled="true" TargetControlID="DummyPanel" PopupControlID="DialogPanel" BackgroundCssClass="CSSModalBackground">
-        </cc1:ModalPopupExtender>
+        </ajaxToolkit:ModalPopupExtender>
     </ContentTemplate>
 </asp:UpdatePanel>

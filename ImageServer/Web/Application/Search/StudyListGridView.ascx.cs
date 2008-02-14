@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         {
             get
             {
-                if (Studies.Count == 0 || GridView1.SelectedIndex < 0)
+                if (Studies==null || Studies.Count == 0 || GridView1.SelectedIndex < 0)
                     return null;
 
                 // SelectedIndex is for the current page. Must convert to the index of the entire list

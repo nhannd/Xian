@@ -33,6 +33,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls
 {

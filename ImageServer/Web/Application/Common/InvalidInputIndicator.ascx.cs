@@ -1,14 +1,7 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using ClearCanvas.ImageServer.Web.Common.WebControls;
+using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
 
 namespace ClearCanvas.ImageServer.Web.Application.Common
 {
@@ -58,7 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
         
 
-        public void AttachValidator(ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator validator)
+        public void AttachValidator(ClearCanvas.ImageServer.Web.Common.WebControls.Validators.BaseValidator validator)
         {
             _referenceCounter ++;
             validator.InputControl.Attributes.Add("multiplevalidators", _referenceCounter > 1 ? "true" : "false");

@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator RequiredFieldValidator2;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator RequiredFieldValidator2;
         
         /// <summary>
         /// RegularExpressionFieldValidator2 control.
@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.RegularExpressionFieldValidator RegularExpressionFieldValidator2;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionFieldValidator RegularExpressionFieldValidator2;
         
         /// <summary>
         /// Label1 control.
@@ -188,7 +188,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.RangeValidator PortValidator1;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeValidator PortValidator1;
         
         /// <summary>
         /// PortHelp control.
@@ -224,7 +224,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator Conditionalrequiredfieldvalidator1;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator Conditionalrequiredfieldvalidator1;
         
         /// <summary>
         /// FolderHelp control.
@@ -314,7 +314,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.RangeValidator DefaultRemotePortRangeValidator;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeValidator DefaultRemotePortRangeValidator;
         
         /// <summary>
         /// OKButton control.

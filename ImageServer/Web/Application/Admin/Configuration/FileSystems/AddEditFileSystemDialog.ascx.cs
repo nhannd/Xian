@@ -37,6 +37,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.WebControls;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems

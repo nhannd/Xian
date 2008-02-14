@@ -187,13 +187,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             if (dev == null)
             {
                 // no FileSystem being selected
-                EditButton.Enabled = false;
-                EditButton.ImageUrl = "~/images/icons/EditDisabled.png";
+                EditToolbarButton.Enabled = false;
             }
             else
             {
-                EditButton.Enabled = true;
-                EditButton.ImageUrl = "~/images/icons/EditEnabled.png";
+                EditToolbarButton.Enabled = true;
             }
 
             // UpdatePanel UpdateMode must be set to "conditional"

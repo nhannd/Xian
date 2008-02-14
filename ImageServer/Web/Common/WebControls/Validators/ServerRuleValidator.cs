@@ -29,34 +29,44 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Model;
+using System;
+using System.Xml;
+using ClearCanvas.ImageServer.Rules;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
+namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
-    /// <summary>
-    /// Plugin for processing 'DeleteStudy' WorkQueue items.
-    /// </summary>
-    [ExtensionOf(typeof(WorkQueueFactoryExtensionPoint))]
-    public class DeleteStudyFactoryExtension : IWorkQueueProcessorFactory
+    public class ServerRuleValidator : WebServiceValidator
     {
-        #region Constructors
-        public DeleteStudyFactoryExtension()
-        { }
-        #endregion
-
-        #region IWorkQueueProcessorFactory Members
-
-        public virtual WorkQueueTypeEnum GetWorkQueueType()
+        protected override bool OnServerSideEvaluate()
         {
-            return WorkQueueTypeEnum.GetEnum("DeleteStudy");
-        }
+            String ruleXml = GetControlValidationValue(ControlToValidate);
 
-        public virtual IWorkQueueItemProcessor GetItemProcessor()
-        {
-            return new DeleteStudyItemProcessor();
-        }
+            if (String.IsNullOrEmpty(ruleXml))
+            {
+                ErrorMessage = "Server Rule XML must be specified";
+                return false;
+            }
 
-        #endregion
+            XmlDocument theDoc = new XmlDocument();
+
+            try
+            {
+                theDoc.LoadXml(ruleXml);
+            }
+            catch (Exception e)
+            {
+                ErrorMessage = "Unable to parse XML: " + e.Message;
+                return false;
+            }
+
+            string error;
+            if (false == Rule.ValidateRule(theDoc, out error))
+            {
+                ErrorMessage = error;
+                return false;
+            }
+
+            return true;
+        }
     }
 }

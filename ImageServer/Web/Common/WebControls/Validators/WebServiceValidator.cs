@@ -31,7 +31,7 @@
 
 using System;
 
-namespace ClearCanvas.ImageServer.Web.Common.WebControls
+namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
     /// <summary>
     /// Provide validation functionality which is carried out by a Web Service.
@@ -171,8 +171,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
         protected override void RegisterClientSideValidationExtensionScripts()
         {
-            
-            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.WebServiceValidator.js");
+
+            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.WebServiceValidator.js");
             template.Replace("@@WEBSERVICE_OPERATION@@", ServiceOperation);
             template.Replace("@@WEBSERVICE_URL@@", ServiceURL);
             template.Replace("@@PARAMETER_FUNCTION@@", ParamsFunction);

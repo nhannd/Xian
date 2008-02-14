@@ -74,40 +74,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices {
         protected global::System.Web.UI.WebControls.Panel Panel4;
         
         /// <summary>
-        /// AddButton control.
+        /// AddToolbarButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton AddButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton AddToolbarButton;
         
         /// <summary>
-        /// EditButton control.
+        /// EditToolbarButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton EditButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton EditToolbarButton;
         
         /// <summary>
-        /// DeleteButton control.
+        /// DeleteToolbarButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton DeleteButton;
-        
-        /// <summary>
-        /// RefreshButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton RefreshButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteToolbarButton;
         
         /// <summary>
         /// FilterPanel control.
@@ -200,13 +191,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices {
         protected global::System.Web.UI.WebControls.Panel FilterButtonContainer;
         
         /// <summary>
-        /// FilterButton control.
+        /// FilterToolbarButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton FilterButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton FilterToolbarButton;
         
         /// <summary>
         /// DeviceGridViewControl1 control.

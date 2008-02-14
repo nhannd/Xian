@@ -1,11 +1,13 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="AddEditServerRuleDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRules.AddEditServerRuleDialog" %>
-<%@ Register Assembly="Validators" Namespace="Sample.Web.UI.Compatibility" TagPrefix="cc2" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
-<%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls"
-    TagPrefix="clearcanvas" %>
+
 <%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
     TagPrefix="uc1" %>
+
+<%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.Validators"
+    TagPrefix="clearcanvas" %>
+    
 <asp:ScriptManagerProxy runat="server">
     <Services>
         <asp:ServiceReference Path="ServerRuleSamples.asmx" />
@@ -19,7 +21,8 @@
                 <table style="width: 100%">
                     <tr>
                         <td valign="middle">
-                            <asp:Label ID="TitleLabel" runat="server" EnableViewState="False" InvalidInputIndicator="Add Server Rule"
+                            <asp:Label ID="TitleLabel" runat="server" EnableViewState="False" 
+                                Text="Add Server Rule"
                                 Width="100%"></asp:Label>
                         </td>
                     </tr>
@@ -43,8 +46,8 @@
                                                             <asp:TextBox ID="RuleNameTextBox" runat="server" Width="100%" ValidationGroup="vg1"></asp:TextBox>
                                                         </td>
                                                         <td>
-                                                            <uc1:InvalidInputIndicator ID="RuleNameHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
-                                                            </uc1:InvalidInputIndicator>
+                                                            <clearcanvas:InvalidInputIndicator ID="RuleNameHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                            </clearcanvas:InvalidInputIndicator>
                                                             <clearcanvas:ConditionalRequiredFieldValidator ID="RuleNameValidator" runat="server"
                                                                 ControlToValidate="RuleNameTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
                                                                 ErrorMessage="Rule must have a name" InvalidInputIndicatorID="RuleNameHelp" Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
@@ -125,7 +128,7 @@
                                                     Rows="16" TextMode="MultiLine"></asp:TextBox>
                                             </td>
                                             <td>
-                                                <uc1:InvalidInputIndicator ID="InvalidRuleHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
+                                                <clearcanvas:InvalidInputIndicator ID="InvalidRuleHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
                                                 <clearcanvas:ServerRuleValidator runat="server" ID="ServerRuleValidator" ControlToValidate="RuleXmlTextBox"
                                                     InputName="Server Rule XML" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidRuleHint"
                                                     ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateServerRule"

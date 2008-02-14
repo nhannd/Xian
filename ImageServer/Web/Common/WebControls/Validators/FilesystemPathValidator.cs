@@ -32,7 +32,7 @@
 using System;
 using System.ServiceModel;
 
-namespace ClearCanvas.ImageServer.Web.Common.WebControls
+namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
     /// <summary>
     /// Validate a Web UI input control containing a filesystem path.

@@ -30,88 +30,92 @@
 #endregion
 
 using System;
-using System.Drawing;
 
-namespace ClearCanvas.ImageServer.Web.Common.WebControls
+namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
     /// <summary>
-    /// Validate length of the input.
+    /// Validate if the value in the number input control is in a specified range.
     /// </summary>
+    /// <remarks>
+    /// This control has slightly different behaviour than standard ASP.NET <seealso cref="RangeValidator"/>.
+    /// Developers can optionally specify the background color for the input control if the validation fails.
+    /// </remarks>
+    /// 
     /// <example>
-    /// <para>
-    /// The following example adds min password length validation. 
-    /// </code>
-    /// <uc1:InvalidInputIndicator ID="InvalidZipCodeIndicator" runat="server" 
-    ///     ImageUrl="~/images/icons/HelpSmall.png"
-    ///     Visible="true"/>
-    ///                                                        
-    /// <clearcanvas:FilesystemPathValidator runat="server" ID="PasswordValidator" 
-    ///         ControlToValidate="PasswordTextBox"
-    ///         InputName="Password" 
-    ///         InvalidInputColor="#FAFFB5" 
-    ///         InvalidInputIndicatorID="InvalidPasswordIndicator"
-    ///         MinLength="8"
-    ///         ErrorMessage="Invalid password"
-    ///         Display="None" ValidationGroup="vg1"/> 
-    /// </code>
+    /// The following block adds validation for the Port number. If the input is not within 0 and 32000
+    /// the Port text box will be highlighted.
+    /// 
+    /// <clearcanvas:RangeValidator 
+    ///                                ID="RangeValidator1" runat="server"
+    ///                                ControlToValidate="PortTextBox"
+    ///                                InvalidInputBackColor="#FAFFB5"
+    ///                                ValidationGroup="vg1" 
+    ///                                MinValue="0"
+    ///                                MaxValue="32000"
+    ///                                ErrorMessage="The Port number is not valid.">
+    /// </clearcanvas:RangeValidator>
+    /// 
     /// </example>
-    public class LengthValidator : BaseValidator
+    /// 
+    public class RangeValidator : BaseValidator
     {
         #region Private Members
 
-        private int _minLength = Int32.MinValue;
-        private int _maxLength = Int32.MaxValue;
+        private int _min;
+        private int _max;
 
         #endregion Private Members
 
         #region Public Properties
 
-        public int MinLength
+        /// <summary>
+        /// Sets or gets the minimum acceptable value.
+        /// </summary>
+        public int MinValue
         {
-            get { return _minLength; }
-            set { _minLength = value; }
+            get { return _min; }
+            set { _min = value; }
         }
 
-        public int MaxLength
+        /// <summary>
+        /// Sets or gets the maximum acceptable value.
+        /// </summary>
+        public int MaxValue
         {
-            get { return _maxLength; }
-            set { _maxLength = value; }
+            get { return _max; }
+            set { _max = value; }
         }
 
         #endregion Public Properties
 
         #region Protected Methods
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-        }
-
-
+        /// <summary>
+        /// Called during server-side validation
+        /// </summary>
+        /// <returns></returns>
         protected override bool OnServerSideEvaluate()
         {
-            //String value = GetControlValidationValue(ControlToValidate);
-            //if (value == null || value.Length < MinLength || value.Length>MaxLength)
-            //{
-            //    ErrorMessage = String.Format("Must be at least {0} and no more than {1} characters.", MinLength, MaxLength);
-            //    return false;
-            //}
-            //else
-            //    return true;
-            return true;
+            Decimal value;
+            if (Decimal.TryParse(GetControlValidationValue(ControlToValidate), out value))
+            {
+                return value >= MinValue && value <= MaxValue;
+            }
+
+            return false;
         }
 
-        #endregion Protected Methods
 
         protected override void RegisterClientSideValidationExtensionScripts()
         {
             ScriptTemplate template =
-                new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.LengthValidator.js");
-
-            template.Replace("@@MIN_LENGTH@@", MinLength.ToString());
-            template.Replace("@@MAX_LENGTH@@", MaxLength.ToString());
+                new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeValidator.js");
+            template.Replace("@@MIN_VALUE@@", MinValue.ToString());
+            template.Replace("@@MAX_VALUE@@", MaxValue.ToString());
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }
+
+        #endregion Protected Methods
     }
 }
