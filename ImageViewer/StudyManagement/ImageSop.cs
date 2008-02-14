@@ -815,6 +815,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			ImagePositionPatient position = this.ImagePositionPatient;
 
+			// A shortcut for when the pixel position is (0, 0).
 			if (positionPixels.X == 0F && positionPixels.Y == 0F)
 				return new Vector3D((float)position.X, (float)position.Y, (float)position.Z);
 
@@ -876,7 +877,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Transforms the input position vector (in patient coordinates) to the coordinate
+		/// Converts the input position vector (in patient coordinates) to the coordinate
 		/// system of the image, with the origin at <paramref name="originPatient"/> (in patient coordinates).
 		/// </summary>
 		/// <remarks>
@@ -923,21 +924,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Converts the input position vector (in patient coordinates) to image pixel coordinates.
-		/// </summary>
-		/// <returns>The corresponding pixel coordinate, or null if the <see cref="ImageSop"/>'s position information is invalid.</returns>
-		public PointF? ConvertToImagePixel(Vector3D positionPatient)
-		{
-			Platform.CheckForNullReference(positionPatient, "positionPatient");
-
-			Vector3D imagePosition = ConvertToImage(positionPatient);
-			if (imagePosition == null)
-				return null;
-
-			return ConvertToImagePixel(new PointF(imagePosition.X, imagePosition.Y));
-		}
-
-		/// <summary>
 		/// Converts a point in the image plane expressed in millimetres (mm) into a point expressed in pixels.
 		/// </summary>
 		/// <returns>The corresponding pixel coordinate, or null if the <see cref="ImageSop"/>'s position information is invalid.</returns>
@@ -971,8 +957,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		
 		/// <summary>
 		/// Gets a rotation matrix that, when multiplied by a column matrix representing a
-		/// position vector in patient coordinates, will transform the position vector
-		/// into the coordinate system of the image plane.
+		/// position vector in patient coordinates, will rotate the position vector
+		/// into a coordinate system matching that of the image plane.
 		/// </summary>
 		/// <returns>The rotation matrix, or null if the <see cref="ImageSop"/>'s position information is invalid.</returns>
 		public Matrix GetRotationMatrix()
