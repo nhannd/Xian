@@ -3,10 +3,10 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 
 <%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
-    TagPrefix="uc1" %>
+    TagPrefix="CCCommon" %>
 
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.Validators"
-    TagPrefix="clearcanvas" %>
+    TagPrefix="CCValidators" %>
     
 <asp:ScriptManagerProxy runat="server">
     <Services>
@@ -46,11 +46,11 @@
                                                             <asp:TextBox ID="RuleNameTextBox" runat="server" Width="100%" ValidationGroup="vg1"></asp:TextBox>
                                                         </td>
                                                         <td>
-                                                            <clearcanvas:InvalidInputIndicator ID="RuleNameHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
-                                                            </clearcanvas:InvalidInputIndicator>
-                                                            <clearcanvas:ConditionalRequiredFieldValidator ID="RuleNameValidator" runat="server"
+                                                            <CCCommon:InvalidInputIndicator ID="RuleNameHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                            </CCCommon:InvalidInputIndicator>
+                                                            <CCValidators:ConditionalRequiredFieldValidator ID="RuleNameValidator" runat="server"
                                                                 ControlToValidate="RuleNameTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
-                                                                ErrorMessage="Rule must have a name" InvalidInputIndicatorID="RuleNameHelp" Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
+                                                                ErrorMessage="Rule must have a name" InvalidInputIndicatorID="RuleNameHelp" Display="None"></CCValidators:ConditionalRequiredFieldValidator>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -128,8 +128,8 @@
                                                     Rows="16" TextMode="MultiLine"></asp:TextBox>
                                             </td>
                                             <td>
-                                                <clearcanvas:InvalidInputIndicator ID="InvalidRuleHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
-                                                <clearcanvas:ServerRuleValidator runat="server" ID="ServerRuleValidator" ControlToValidate="RuleXmlTextBox"
+                                                <CCCommon:InvalidInputIndicator ID="InvalidRuleHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
+                                                <CCValidators:ServerRuleValidator runat="server" ID="ServerRuleValidator" ControlToValidate="RuleXmlTextBox"
                                                     InputName="Server Rule XML" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidRuleHint"
                                                     ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateServerRule"
                                                     ParamsFunction="ValidationServerRuleParams" ErrorMessage="Invalid Server Rule"

@@ -162,7 +162,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
         protected void RegisterWebServiceInitScripts()
         {
-            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.WebServiceValidator_Init.js");
+            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.WebServiceValidator_Init.js");
             template.Replace("@@WEBSERVICE_URL@@", ServiceURL);
             Page.ClientScript.RegisterStartupScript(GetType(), "WebServiceInit", template.Script, true);
         }    

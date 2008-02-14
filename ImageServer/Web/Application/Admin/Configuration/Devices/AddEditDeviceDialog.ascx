@@ -1,10 +1,10 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices.AddEditDeviceDialog"
     Codebehind="AddEditDeviceDialog.ascx.cs" %>
 <%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
-    TagPrefix="uc1" %>
+    TagPrefix="CCCommon" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.Validators"
-    TagPrefix="clearcanvas" %>
+    TagPrefix="CCValidators" %>
     
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
@@ -34,16 +34,16 @@
                                                             <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="vg1" MaxLength="16"></asp:TextBox>
                                                         </td>
                                                         <td>
-                                                            <uc1:InvalidInputIndicator ID="AETitleHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png"
-                                                                Visible="true"></uc1:InvalidInputIndicator>
-                                                            <clearcanvas:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
+                                                            <CCCommon:InvalidInputIndicator ID="AETitleHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png"
+                                                                Visible="true"></CCCommon:InvalidInputIndicator>
+                                                            <CCValidators:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                                 ControlToValidate="AETitleTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
                                                                 InvalidInputIndicatorID="AETitleHelp" ErrorMessage="AE Title is required" Display="None"
                                                                 RequiredWhenChecked="False">
-                                                            </clearcanvas:ConditionalRequiredFieldValidator><clearcanvas:RegularExpressionFieldValidator
+                                                            </CCValidators:ConditionalRequiredFieldValidator><CCValidators:RegularExpressionFieldValidator
                                                                 ID="RegularExpressionFieldValidator2" runat="server" ControlToValidate="AETitleTextBox"
                                                                 InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AETitleHelp"
-                                                                ValidationExpression="^([^\\]){1,16}$" ErrorMessage="Invalid AE Title" Display="None"></clearcanvas:RegularExpressionFieldValidator>
+                                                                ValidationExpression="^([^\\]){1,16}$" ErrorMessage="Invalid AE Title" Display="None"></CCValidators:RegularExpressionFieldValidator>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -72,17 +72,17 @@
                                                             </asp:TextBox>
                                                         </td>
                                                         <td align="left">
-                                                            <uc1:InvalidInputIndicator ID="IPAddressHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
-                                                            </uc1:InvalidInputIndicator>
-                                                            <clearcanvas:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
+                                                            <CCCommon:InvalidInputIndicator ID="IPAddressHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                            </CCCommon:InvalidInputIndicator>
+                                                            <CCValidators:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
                                                                 runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
                                                                 ConditionalCheckBoxID="DHCPCheckBox" RequiredWhenChecked="False" ValidationGroup="vg1"
                                                                 ErrorMessage="Device IP address is required if it uses static IP" InvalidInputIndicatorID="IPAddressHelp"
-                                                                Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
-                                                            <clearcanvas:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator1"
+                                                                Display="None"></CCValidators:ConditionalRequiredFieldValidator>
+                                                            <CCValidators:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator1"
                                                                 runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
                                                                 IgnoreEmptyValue="true" ValidationGroup="vg1" ValidationExpression="^([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])$"
-                                                                ErrorMessage="IP address is malformed" Display="None" InvalidInputIndicatorID="IPAddressHelp"></clearcanvas:RegularExpressionFieldValidator>
+                                                                ErrorMessage="IP address is malformed" Display="None" InvalidInputIndicatorID="IPAddressHelp"></CCValidators:RegularExpressionFieldValidator>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -110,12 +110,12 @@
                                                             <asp:TextBox ID="PortTextBox" runat="server" />
                                                         </td>
                                                         <td>
-                                                            <uc1:InvalidInputIndicator ID="PortHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png"
-                                                                Visible="true"></uc1:InvalidInputIndicator>
-                                                            <clearcanvas:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
+                                                            <CCCommon:InvalidInputIndicator ID="PortHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png"
+                                                                Visible="true"></CCCommon:InvalidInputIndicator>
+                                                            <CCValidators:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
                                                                 InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
                                                                 ErrorMessage="Device Port must be between 1 and 65535" InvalidInputIndicatorID="PortHelp"
-                                                                Display="None"></clearcanvas:RangeValidator>
+                                                                Display="None"></CCValidators:RangeValidator>
                                                         </td>
                                                     </tr>
                                                 </table>

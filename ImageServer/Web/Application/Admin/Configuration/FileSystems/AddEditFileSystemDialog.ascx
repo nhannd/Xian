@@ -1,9 +1,9 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems.AddFilesystemDialog"
     Codebehind="AddEditFileSystemDialog.ascx.cs" %>
 <%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
-    TagPrefix="uc1" %>
-<%@ Register Assembly="Validators" Namespace="Sample.Web.UI.Compatibility" TagPrefix="cc2" %>
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajax" %>
+    TagPrefix="CCCommon" %>
+<%@ Register Assembly="Validators" Namespace="Sample.Web.UI.Compatibility" TagPrefix="CCValidators" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.Validators"
     TagPrefix="clearcanvas" %>
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
@@ -26,8 +26,8 @@
             </asp:Panel>
             <div class="CSSPopupWindowBody" style="vertical-align: top;">
                 <asp:Panel ID="Panel2" runat="server" Height="100%" CssClass="CSSDialogTabPanelContent">
-                    <ajax:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
-                        <ajax:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
+                    <ajaxToolkit:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
+                        <ajaxToolkit:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
                             <ContentTemplate>
                                 <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
                                     <table id="TABLE1" runat="server" cellspacing="4" width="100%">
@@ -41,8 +41,8 @@
                                                                 BorderWidth="1px" MaxLength="128" ValidationGroup="vg1"></asp:TextBox>
                                                         </td>
                                                         <td>
-                                                            <uc1:InvalidInputIndicator ID="InvalidDescriptionHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png"
-                                                                Visible="true"></uc1:InvalidInputIndicator>
+                                                            <CCCommon:InvalidInputIndicator ID="InvalidDescriptionHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png"
+                                                                Visible="true"></CCCommon:InvalidInputIndicator>
                                                             <clearcanvas:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
                                                                 runat="server" ControlToValidate="DescriptionTextBox" InvalidInputColor="#FAFFB5"
                                                                 ValidationGroup="vg1" ErrorMessage="Description is required!!" Display="None"
@@ -73,8 +73,8 @@
                                                                 BorderWidth="1px" ValidationGroup="vg1" MaxLength="256"></asp:TextBox>
                                                         </td>
                                                         <td>
-                                                            <uc1:InvalidInputIndicator ID="InvalidPathHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
-                                                            </uc1:InvalidInputIndicator>
+                                                            <CCCommon:InvalidInputIndicator ID="InvalidPathHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                            </CCCommon:InvalidInputIndicator>
                                                             <clearcanvas:FilesystemPathValidator runat="server" ID="PathValidator" ControlToValidate="PathTextBox"
                                                                 InputName="Filesystem Path" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidPathHint"
                                                                 ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateFilesystemPath"
@@ -114,8 +114,8 @@
                             <HeaderTemplate>
                                 General
                             </HeaderTemplate>
-                        </ajax:TabPanel>
-                        <ajax:TabPanel ID="TabPanel2" runat="server" HeaderText="Watermarks Tab" OnClientClick="LoadFilesystemInfo">
+                        </ajaxToolkit:TabPanel>
+                        <ajaxToolkit:TabPanel ID="TabPanel2" runat="server" HeaderText="Watermarks Tab" OnClientClick="LoadFilesystemInfo">
                             <ContentTemplate>
                                 <asp:Panel ID="Panel3" runat="server" CssClass="CSSDialogTabPanelContent" Width="100%">
                                     <table id="TABLE2" runat="server" cellspacing="4">
@@ -169,8 +169,8 @@
                                                                     Text="???.??? GB" Enabled="false" Width="80px" Style="text-align: right" />
                                                             </td>
                                                             <td align="left" valign="bottom">
-                                                                <uc1:InvalidInputIndicator ID="HighWatermarkHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
-                                                                </uc1:InvalidInputIndicator>
+                                                                <CCCommon:InvalidInputIndicator ID="HighWatermarkHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                                </CCCommon:InvalidInputIndicator>
                                                                 <clearcanvas:RangeComparisonValidator ID="HighWatermarkValidator" runat="server"
                                                                     ControlToValidate="HighWatermarkTextBox" ControlToCompare="LowWatermarkTextBox"
                                                                     GreaterThan="true" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1"
@@ -198,8 +198,8 @@
                                                                     Text="???.??? GB" Enabled="false" Width="80px" Style="text-align: right" />
                                                             </td>
                                                             <td align="left" valign="bottom">
-                                                                <uc1:InvalidInputIndicator ID="LowWatermarkHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
-                                                                </uc1:InvalidInputIndicator>
+                                                                <CCCommon:InvalidInputIndicator ID="LowWatermarkHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                                </CCCommon:InvalidInputIndicator>
                                                                 <clearcanvas:RangeComparisonValidator ID="LowWatermarkValidator" EnableClientScript="true"
                                                                     runat="server" ControlToValidate="LowWatermarkTextBox" ControlToCompare="HighWatermarkTextBox"
                                                                     GreaterThan="false" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1"
@@ -217,8 +217,8 @@
                             <HeaderTemplate>
                                 Watermarks
                             </HeaderTemplate>
-                        </ajax:TabPanel>
-                    </ajax:TabContainer>
+                        </ajaxToolkit:TabPanel>
+                    </ajaxToolkit:TabContainer>
                 </asp:Panel>
                 <center>
                     <br />
@@ -242,8 +242,8 @@
                 <asp:HiddenField ID="AvailableSize" runat="server" />
             </div>
         </asp:Panel>
-        <ajax:ModalPopupExtender ID="ModalPopupExtender1" BehaviorID="MyStupidExtender" runat="server"
+        <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtender1" BehaviorID="MyStupidExtender" runat="server"
             Enabled="true" TargetControlID="DummyPanel" PopupControlID="DialogPanel" BackgroundCssClass="CSSModalBackground">
-        </ajax:ModalPopupExtender>
+        </ajaxToolkit:ModalPopupExtender>
     </ContentTemplate>
 </asp:UpdatePanel>
