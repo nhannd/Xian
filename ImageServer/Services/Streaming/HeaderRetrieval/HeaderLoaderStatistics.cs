@@ -29,73 +29,49 @@
 
 #endregion
 
-#pragma warning disable 1591
+using ClearCanvas.Common.Statistics;
 
-using System.Collections.Generic;
-using System.Xml;
-
-namespace ClearCanvas.Common.Statistics
+namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
 {
-    /// <summary>
-    /// Base collection of <see cref="StatisticsSet"/>.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    internal class StatisticsSetCollection<T>
-        where T : StatisticsSet, new()
+    internal class HeaderLoaderStatistics:StatisticsSet
     {
-        #region Private members
-
-        private List<T> _list = new List<T>();
-
-        #endregion Private members
-
-        #region public properties
-
-        public List<T> Items
+        #region Constructors
+        public HeaderLoaderStatistics()
+            : base("HeaderLoading")
         {
-            get { return _list; }
-            set { _list = value; }
+            AddField(new ByteCountStatistics("HeaderSize"));
+            AddField(new TimeSpanStatistics("FindStudyFolder"));
+            AddField(new TimeSpanStatistics("CompressHeader")); 
+            AddField(new TimeSpanStatistics("LoadHeaderStream"));
         }
 
-        public int Count
+        #endregion Constructors
+
+
+        #region Public Properties
+
+        public ulong Size
         {
-            get { return Items.Count; }
+            get { return (this["HeaderSize"] as ByteCountStatistics).Value; }
+            set { (this["HeaderSize"] as ByteCountStatistics).Value = value; }
         }
 
-        #endregion public properties
-
-        #region public methods
-
-        /// <summary>
-        /// Returns a new instance of the underlying statistics set.
-        /// </summary>
-        /// <returns></returns>
-        public T NewStatistics()
+        public TimeSpanStatistics FindStudyFolder
         {
-            T newStat = new T();
-            _list.Add(newStat);
-            return newStat;
+            get { return this["FindStudyFolder"] as TimeSpanStatistics; }
         }
 
-        /// <summary>
-        /// Returns the statistics collection as a list of XML elements.
-        /// </summary>
-        /// <param name="doc"></param>
-        /// <param name="recursive"></param>
-        /// <returns></returns>
-        public virtual List<XmlElement> ToXmlElements(XmlDocument doc, bool recursive)
+        public TimeSpanStatistics LoadHeaderStream
         {
-            List<XmlElement> list = new List<XmlElement>();
-
-            foreach (StatisticsSet item in Items)
-            {
-                XmlElement xml = item.GetXmlElement(doc, recursive);
-                list.Add(xml);
-            }
-
-            return list;
+            get { return this["LoadHeaderStream"] as TimeSpanStatistics; }
         }
 
-        #endregion public methods
+        public TimeSpanStatistics CompressHeader
+        {
+            get { return this["CompressHeader"] as TimeSpanStatistics; }
+        }
+
+        #endregion Public Properties
+
     }
 }

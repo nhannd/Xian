@@ -40,15 +40,16 @@ namespace ClearCanvas.Common.Statistics
     /// <summary>
     /// Statistics to hold one of more <see cref="IStatistics"/>.
     /// </summary>
-    public abstract class StatisticsSet
+    public class StatisticsSet
     {
         #region Protected Members
 
         protected String _name;
-
-        // list of sub-statistics
+         // list of sub-statistics
         protected Dictionary<object, IStatistics> _fields = new Dictionary<object, IStatistics>();
 
+        private Dictionary<object, StatisticsSet> _subStatistics = new Dictionary<object, StatisticsSet>();
+       
         #endregion
 
         #region Public Properties
@@ -68,6 +69,12 @@ namespace ClearCanvas.Common.Statistics
         public ICollection<IStatistics> Fields
         {
             get { return _fields.Values; }
+        }
+
+        public Dictionary<object, StatisticsSet> SubStatistics
+        {
+            get { return _subStatistics; }
+            set { _subStatistics = value; }
         }
 
         /// <summary>
@@ -103,17 +110,47 @@ namespace ClearCanvas.Common.Statistics
             _fields[stat.Name] = stat;
         }
 
+
+        /// <summary>
+        /// Adds a specified statistics into the set using its name as the key.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        public void AddField(string name, string value)
+        {
+            Statistics<string> newField = new Statistics<string>(name);
+            newField.Value = value;
+            _fields[name] = newField;
+        }
+
+
+        /// <summary>
+        /// Adds a sub-statistics.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="stat"></param>
+        public void AddSubStats(object key, StatisticsSet stat)
+        {
+            _subStatistics.Add(key, stat);
+        }
+
         /// <summary>
         /// Gets the XML representation of the statistics set.
         /// </summary>
         /// <param name="doc"></param>
+        /// <param name="recursive"></param>
         /// <returns></returns>
-        public virtual XmlElement GetXmlElement(XmlDocument doc)
+        public virtual XmlElement GetXmlElement(XmlDocument doc, bool recursive)
         {
             XmlElement el = doc.CreateElement("Statistics");
-            XmlAttribute attrType = doc.CreateAttribute("Type");
-            attrType.Value = GetType().Name;
-            el.Attributes.Append(attrType);
+
+            if (this.GetType()!=typeof(StatisticsSet))
+            {
+                XmlAttribute attrType = doc.CreateAttribute("Type");
+                attrType.Value = GetType().Name;
+                el.Attributes.Append(attrType);    
+            }
+
             XmlAttribute attrDescription = doc.CreateAttribute("Description");
             attrDescription.Value = Name;
             el.Attributes.Append(attrDescription);
@@ -127,9 +164,20 @@ namespace ClearCanvas.Common.Statistics
                 }
             }
 
+            if (recursive)
+            {
+                foreach (StatisticsSet substat in SubStatistics.Values)
+                {
+                    el.AppendChild(substat.GetXmlElement(doc, recursive));
+                } 
+            }
+            
+
             return el;
         }
 
         #endregion
+
+        
     }
 }

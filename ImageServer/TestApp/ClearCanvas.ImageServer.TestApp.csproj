@@ -32,10 +32,22 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CFindSCU.cs" />
+    <Compile Include="HeaderStreamingTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HeaderStreamingTest.Designer.cs">
+      <DependentUpon>HeaderStreamingTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\HeaderStreamingService.cs">
+      <DependentUpon>HeaderStreamingService.map</DependentUpon>
+    </Compile>
     <Compile Include="TestAppForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -44,6 +56,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="HeaderStreamingTest.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>HeaderStreamingTest.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TestAppForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TestAppForm.cs</DependentUpon>
@@ -63,6 +79,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Service References\HeaderStreamingService.map" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>

@@ -286,7 +286,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
 				if (_stats.NumInstances > 0)
                 {
-                    _stats.LogAll = true;
                     StatisticsLogger.Log(LogLevel.Info, _stats);
                 }
             }

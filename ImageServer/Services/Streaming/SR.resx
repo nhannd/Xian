@@ -123,6 +123,12 @@
   <data name="DicomServerDescription" xml:space="preserve">
     <value>Dicom Server</value>
   </data>
+  <data name="HeaderStreamingServiceDescription" xml:space="preserve">
+    <value>Provide DICOM header streaming service</value>
+  </data>
+  <data name="HeaderStreamingServiceDisplayName" xml:space="preserve">
+    <value>Header Streaming Service</value>
+  </data>
   <data name="WorkQueueServer" xml:space="preserve">
     <value>Work Queue Server</value>
   </data>

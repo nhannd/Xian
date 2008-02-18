@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,31 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DicomServer" xml:space="preserve">
-    <value>Dicom Server</value>
-  </data>
-  <data name="DicomServerDescription" xml:space="preserve">
-    <value>Dicom Server</value>
-  </data>
-  <data name="HeaderRetrievalStreamingServiceDescription" xml:space="preserve">
-    <value>Provide DICOM header streaming service</value>
-  </data>
-  <data name="ServiceLockServer" xml:space="preserve">
-    <value>ServiceLock Server</value>
-  </data>
-  <data name="ServiceLockServerDescription" xml:space="preserve">
-    <value>ServiceLock Server</value>
-  </data>
-  <data name="StreamingServer" xml:space="preserve">
-    <value>Streaming Server</value>
-  </data>
-  <data name="StreamingServerDescription" xml:space="preserve">
-    <value>Provide DICOM header and image streaming services</value>
-  </data>
-  <data name="WorkQueueServer" xml:space="preserve">
-    <value>Work Queue Server</value>
-  </data>
-  <data name="WorkQueueServerDescription" xml:space="preserve">
-    <value>Work Queue Server</value>
-  </data>
+  <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
 </root>

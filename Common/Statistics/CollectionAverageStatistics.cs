@@ -51,17 +51,10 @@ namespace ClearCanvas.Common.Statistics
         #region Private members
 
         private readonly StatisticsSetCollection<T> _collection = new StatisticsSetCollection<T>();
-        private bool _logAll = false;
-
+        
         #endregion Private members
 
         #region Public properties
-
-        public bool LogAll
-        {
-            set { _logAll = value; }
-            get { return _logAll; }
-        }
 
         public int Count
         {
@@ -225,14 +218,15 @@ namespace ClearCanvas.Common.Statistics
         /// Returns the XML element which contains the average attributes for the child collection.
         /// </summary>
         /// <param name="doc"></param>
+        /// <param name="recursive"></param>
         /// <returns></returns>
-        public override XmlElement GetXmlElement(XmlDocument doc)
+        public override XmlElement GetXmlElement(XmlDocument doc, bool recursive)
         {
             CalculateAverage();
-            XmlElement xml = base.GetXmlElement(doc);
-            if (LogAll)
+            XmlElement xml = base.GetXmlElement(doc, recursive);
+            if (recursive)
             {
-                List<XmlElement> list = _collection.ToXmlElements(doc);
+                List<XmlElement> list = _collection.ToXmlElements(doc, recursive);
                 foreach (XmlElement el in list)
                 {
                     xml.AppendChild(el);

@@ -79,6 +79,15 @@ namespace ClearCanvas.ImageServer.Services.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Provide DICOM header streaming service.
+        /// </summary>
+        internal static string HeaderRetrievalStreamingServiceDescription {
+            get {
+                return ResourceManager.GetString("HeaderRetrievalStreamingServiceDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ServiceLock Server.
         /// </summary>
         internal static string ServiceLockServer {
@@ -93,6 +102,24 @@ namespace ClearCanvas.ImageServer.Services.Shreds {
         internal static string ServiceLockServerDescription {
             get {
                 return ResourceManager.GetString("ServiceLockServerDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Streaming Server.
+        /// </summary>
+        internal static string StreamingServer {
+            get {
+                return ResourceManager.GetString("StreamingServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Provide DICOM header and image streaming services.
+        /// </summary>
+        internal static string StreamingServerDescription {
+            get {
+                return ResourceManager.GetString("StreamingServerDescription", resourceCulture);
             }
         }
         

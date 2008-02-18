@@ -29,73 +29,61 @@
 
 #endregion
 
-#pragma warning disable 1591
+using System;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval;
+using ClearCanvas.Server.ShredHost;
 
-using System.Collections.Generic;
-using System.Xml;
-
-namespace ClearCanvas.Common.Statistics
+namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer
 {
     /// <summary>
-    /// Base collection of <see cref="StatisticsSet"/>.
+    /// Plugin to handle streaming request for the ImageServer.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    internal class StatisticsSetCollection<T>
-        where T : StatisticsSet, new()
+    [ExtensionOf(typeof(ShredExtensionPoint))]
+    public class StreamingServerExtension : WcfShred
     {
-        #region Private members
+        #region Private Members
 
-        private List<T> _list = new List<T>();
+        private readonly string _className;
 
-        #endregion Private members
+        #endregion
 
-        #region public properties
+        #region Constructors
 
-        public List<T> Items
+        public StreamingServerExtension()
         {
-            get { return _list; }
-            set { _list = value; }
+            _className = GetType().ToString();
         }
 
-        public int Count
+        #endregion
+
+        #region IShred Implementation Shred Override
+
+        public override void Start()
         {
-            get { return Items.Count; }
+            Platform.Log(LogLevel.Info,"{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
+
+            StartNetPipeHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval", SR.HeaderRetrievalStreamingServiceDescription);
+
+
         }
 
-        #endregion public properties
-
-        #region public methods
-
-        /// <summary>
-        /// Returns a new instance of the underlying statistics set.
-        /// </summary>
-        /// <returns></returns>
-        public T NewStatistics()
+        public override void Stop()
         {
-            T newStat = new T();
-            _list.Add(newStat);
-            return newStat;
+            Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
+            StopHost("HeaderRetrieval");
         }
 
-        /// <summary>
-        /// Returns the statistics collection as a list of XML elements.
-        /// </summary>
-        /// <param name="doc"></param>
-        /// <param name="recursive"></param>
-        /// <returns></returns>
-        public virtual List<XmlElement> ToXmlElements(XmlDocument doc, bool recursive)
+        public override string GetDisplayName()
         {
-            List<XmlElement> list = new List<XmlElement>();
-
-            foreach (StatisticsSet item in Items)
-            {
-                XmlElement xml = item.GetXmlElement(doc, recursive);
-                list.Add(xml);
-            }
-
-            return list;
+            return SR.StreamingServer;
         }
 
-        #endregion public methods
+        public override string GetDescription()
+        {
+            return SR.StreamingServerDescription;
+        }
+
+        #endregion
     }
 }

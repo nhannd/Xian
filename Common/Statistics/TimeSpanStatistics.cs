@@ -85,9 +85,9 @@ namespace ClearCanvas.Common.Statistics
         #region Constructors
 
         public TimeSpanStatistics()
-            : base("TimeSpanStatistics")
+            : this("TimeSpanStatistics")
         {
-            Value = new System.TimeSpan();
+            
         }
 
         public TimeSpanStatistics(string name)

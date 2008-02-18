@@ -29,73 +29,38 @@
 
 #endregion
 
-#pragma warning disable 1591
+using System.Runtime.Serialization;
 
-using System.Collections.Generic;
-using System.Xml;
-
-namespace ClearCanvas.Common.Statistics
+namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
 {
     /// <summary>
-    /// Base collection of <see cref="StatisticsSet"/>.
+    /// Encapsulates the parameters passed by the client to header streaming service
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    internal class StatisticsSetCollection<T>
-        where T : StatisticsSet, new()
+    [DataContract]
+    public class HeaderRetrievalParameters
     {
         #region Private members
-
-        private List<T> _list = new List<T>();
+        private string _studyInstanceUID;
+        private string _serverAETitle;
 
         #endregion Private members
 
-        #region public properties
-
-        public List<T> Items
+        #region Public Properties
+        
+        [DataMember(IsRequired = true)]
+        public string StudyInstanceUID
         {
-            get { return _list; }
-            set { _list = value; }
+            get { return _studyInstanceUID; }
+            set { _studyInstanceUID = value; }
         }
 
-        public int Count
+        [DataMember(IsRequired=true)]
+        public string ServerAETitle
         {
-            get { return Items.Count; }
+            get { return _serverAETitle; }
+            set { _serverAETitle = value; }
         }
 
-        #endregion public properties
-
-        #region public methods
-
-        /// <summary>
-        /// Returns a new instance of the underlying statistics set.
-        /// </summary>
-        /// <returns></returns>
-        public T NewStatistics()
-        {
-            T newStat = new T();
-            _list.Add(newStat);
-            return newStat;
-        }
-
-        /// <summary>
-        /// Returns the statistics collection as a list of XML elements.
-        /// </summary>
-        /// <param name="doc"></param>
-        /// <param name="recursive"></param>
-        /// <returns></returns>
-        public virtual List<XmlElement> ToXmlElements(XmlDocument doc, bool recursive)
-        {
-            List<XmlElement> list = new List<XmlElement>();
-
-            foreach (StatisticsSet item in Items)
-            {
-                XmlElement xml = item.GetXmlElement(doc, recursive);
-                list.Add(xml);
-            }
-
-            return list;
-        }
-
-        #endregion public methods
+        #endregion Public Properties
     }
 }

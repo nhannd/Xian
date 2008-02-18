@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceReference>
+	<ProxyGenerationParameters
+		ServiceReferenceUri="net.pipe://localhost/HeaderRetrieval/HeaderRetrieval"
+		Name="HeaderStreamingService"
+		NotifyPropertyChange="True"
+		UseObservableCollection="False">
+	</ProxyGenerationParameters>
+	<EndPoints>
+		<EndPoint
+			Address="net.pipe://localhost/HeaderRetrieval/HeaderRetrieval"
+			BindingConfiguration="NetNamedPipeBinding_IHeaderRetrievalService"
+			Contract="ClearCanvas.ImageServer.TestApp.HeaderStreamingService.IHeaderRetrievalService"
+			>
+		</EndPoint>
+	</EndPoints>
+</ServiceReference>

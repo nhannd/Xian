@@ -51,7 +51,7 @@ namespace ClearCanvas.Common.Statistics
         /// <param name="statistics"></param>
         public static void Log(LogLevel logLevel, StatisticsSet statistics)
         {
-            XmlElement el = statistics.GetXmlElement(doc);
+            XmlElement el = statistics.GetXmlElement(doc, true);
 
             using (StringWriter sw = new StringWriter())
             {
