@@ -285,7 +285,6 @@
     <Compile Include="InformationBox.cs" />
     <Compile Include="InformationBoxChangedEventArgs.cs" />
     <Compile Include="Graphics\IGraphic.cs" />
-    <Compile Include="Graphics\SceneGraph.cs" />
     <Compile Include="Rendering\Tests\ImageRendererBilinearInterpolationTests.cs" />
     <Compile Include="Rendering\Tests\ImageRendererTestUtilities.cs" />
     <Compile Include="Mathematics\Tests\RectangleUtilitiesTests.cs" />

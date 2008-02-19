@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <remarks>
 		/// <see cref="ImageGraphic"/> is the first <see cref="IGraphic"/>
-		/// added to the <see cref="SceneGraph"/> and thus is rendered first.
+		/// added to the <see cref="PresentationImage.SceneGraph"/> and thus is rendered first.
 		/// </remarks>
 		public ImageGraphic ImageGraphic
 		{

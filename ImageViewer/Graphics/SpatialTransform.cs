@@ -42,11 +42,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </summary>
 	public class SpatialTransform : ISpatialTransform
 	{
+		/// <summary>
+		/// The default minimum scale value.
+		/// </summary>
+		protected static readonly float DefaultMinimumScale = 0.25F;
+		/// <summary>
+		/// The default maximum scale value.
+		/// </summary>
+		protected static readonly float DefaultMaximumScale = 64.0F;
+
 		#region Private fields
 
 		private float _scale = 1.0f;
-		private float _maximumScale = 64.0f;
-		private float _minimumScale = 0.25f;
+		private float _maximumScale = DefaultMaximumScale;
+		private float _minimumScale = DefaultMinimumScale;
 		private float _scaleX = 1.0f;
 		private float _scaleY = 1.0f;
 		private float _cumulativeScale = 1.0f;
@@ -57,10 +66,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private bool _flipY;
 		private Matrix _cumulativeTransform;
 		private Matrix _transform;
-		private Rectangle _clientRectangle;
 		private bool _recalculationRequired;
-		private IGraphic _ownerGraphic;
-
+		private readonly IGraphic _ownerGraphic;
 		#endregion
 
 		/// <summary>
@@ -69,10 +76,26 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public SpatialTransform(IGraphic ownerGraphic)
 		{
 			_ownerGraphic = ownerGraphic;
+			_recalculationRequired = true;
 			Initialize();
 		}
 
 		#region Properties
+
+		private bool RecalculationRequired
+		{
+			get { return _recalculationRequired; }
+			set
+			{
+				if (value && OwnerGraphic is CompositeGraphic)
+				{
+					foreach (Graphic graphic in ((CompositeGraphic)OwnerGraphic).Graphics)
+						graphic.SpatialTransform.ForceRecalculation();
+				}
+
+				_recalculationRequired = value;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the scale.
@@ -81,19 +104,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get
 			{
-				CalculateScale();
 				return _scale;
 			}
 			set
 			{
 				if (value > _maximumScale)
-					_scale = _maximumScale;
+					value = _maximumScale;
 				else if (value < _minimumScale)
-					_scale = _minimumScale;
-				else
-					_scale = value;
+					value = _minimumScale;
 
+				if (_scale == value)
+					return;
+
+				_scale = value;
 				this.RecalculationRequired = true;
+
+				OnScaleChanged();
 			}
 		}
 
@@ -108,11 +134,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get
 			{
-				CalculateScale();
 				return _scaleX;
 			}
 			protected set 
-			{ 
+			{
 				_scaleX = value;
 			}
 		}
@@ -122,13 +147,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		/// <remarks>Usually, <see cref="Scale"/> = <see cref="ScaleX"/> = <see cref="ScaleY"/>.
 		/// However, when pixels are non-square, <see cref="ScaleX"/> and <see cref="ScaleY"/>
-		/// will differ.  Note that <see cref="ScaleY"/> is does not account for flip and is
+		/// will differ.  Note that <see cref="ScaleY"/> does not account for flip and is
 		/// thus always positive.</remarks>
 		public float ScaleY
 		{
 			get
 			{
-				CalculateScale();
 				return _scaleY;
 			}
 			protected set 
@@ -162,7 +186,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get { return _translationX; }
 			set	
-			{ 
+			{
+				if (_translationX == value)
+					return;
+				
 				_translationX = value;
 				this.RecalculationRequired = true;
 			}
@@ -176,6 +203,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get	{ return _translationY; }
 			set	
 			{ 
+				if (_translationY == value)
+					return;
+
 				_translationY = value;
 				this.RecalculationRequired = true;
 			}
@@ -190,6 +220,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return _flipX; }
 			set 
 			{ 
+				if (_flipX == value)
+					return;
+
 				_flipX = value;
 				this.RecalculationRequired = true;
 			}
@@ -204,6 +237,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return _flipY; }
 			set 
 			{ 
+				if (_flipY == value)
+					return;
+
 				_flipY = value;
 				this.RecalculationRequired = true;
 			}
@@ -227,11 +263,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 				if ((value % 90) != 0)
 					throw new ArgumentException(SR.ExceptionInvalidRotationValue);
 
-				_rotationXY = value % 360;
+				value = value % 360;
 
-				if (_rotationXY < 0)
-					_rotationXY += 360;
+				if (value < 0)
+					value += 360;
 
+				if (_rotationXY == value)
+					return;
+
+				_rotationXY = value;
 				this.RecalculationRequired = true;
 			}
 		}
@@ -290,40 +330,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-
-#if UNIT_TESTS
-		/// <summary>
-		/// 
-		/// </summary>
-		public Rectangle ClientRectangle
-#else
-		internal Rectangle ClientRectangle
-#endif
-		{
-			get { return _clientRectangle; }
-			set 
-			{ 
-				_clientRectangle = value;
-				this.RecalculationRequired = true;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether the transformation
-		/// needs to be recalculated.
-		/// </summary>
-		protected internal bool RecalculationRequired
-		{
-			get { return _recalculationRequired; }
-			set { _recalculationRequired = value; }
-		}
-
 		internal IGraphic OwnerGraphic
 		{
 			get { return _ownerGraphic; }
 		}
 
 		#endregion
+
+		internal void ForceRecalculation()
+		{
+			RecalculationRequired = true;
+		}
 
 		#region Public methods
 
@@ -458,7 +475,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public virtual object CreateMemento()
 		{
 			SpatialTransformMemento memento = new SpatialTransformMemento();
-
 			memento.FlipX = this.FlipX;
 			memento.FlipY = this.FlipY;
 			memento.RotationXY = this.RotationXY;
@@ -549,9 +565,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gives subclasses an opportunity to override the scale calculation.
+		/// Called when the value of <see cref="Scale"/> changes, giving derived classes
+		/// a chance to modify the other scale parameters, such as <see cref="ScaleX"/> and <see cref="ScaleY"/>.
 		/// </summary>
-		protected virtual void CalculateScale()
+		protected virtual void OnScaleChanged()
 		{
 			this.ScaleX = _scale;
 			this.ScaleY = _scale;

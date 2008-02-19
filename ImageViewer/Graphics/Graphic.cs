@@ -113,6 +113,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		internal void SetParentGraphic(IGraphic parentGraphic)
 		{
 			_parentGraphic = parentGraphic;
+			SpatialTransform.ForceRecalculation();
 		}
 
 		/// <summary>

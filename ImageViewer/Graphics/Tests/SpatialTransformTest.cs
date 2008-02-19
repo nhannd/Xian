@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		public void ScaleAnisotropicPixelSpacing1()
 		{
 			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 1, 2, 0, 0);
-			ImageSpatialTransform transform = graphic.SpatialTransform as ImageSpatialTransform;
+			ImageSpatialTransform transform = (ImageSpatialTransform)graphic.SpatialTransform;
 			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
 
 			transform.ScaleToFit = false;
@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		public void ScaleAnisotropicPixelSpacing2()
 		{
 			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 2, 1, 0, 0);
-			ImageSpatialTransform transform = graphic.SpatialTransform as ImageSpatialTransform;
+			ImageSpatialTransform transform = (ImageSpatialTransform)graphic.SpatialTransform;
 			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
 
 			transform.ScaleToFit = false;
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		public void ScaleAnisotropicPixelAspectRatio1()
 		{
 			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 0, 0, 1, 2);
-			ImageSpatialTransform transform = graphic.SpatialTransform as ImageSpatialTransform;
+			ImageSpatialTransform transform = (ImageSpatialTransform)graphic.SpatialTransform;
 			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
 
 			transform.ScaleToFit = false;
@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		public void ScaleAnisotropicPixelAspectRatio2()
 		{
 			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 0, 0, 2, 1);
-			ImageSpatialTransform transform = graphic.SpatialTransform as ImageSpatialTransform;
+			ImageSpatialTransform transform = (ImageSpatialTransform)graphic.SpatialTransform;
 			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
 
 			transform.ScaleToFit = false;
@@ -287,7 +287,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		{
 			// be sure to covert back and forth
 			CompositeImageGraphic graphic = new CompositeImageGraphic(3062, 3732);
-			ImageSpatialTransform transform = graphic.SpatialTransform as ImageSpatialTransform;
+			ImageSpatialTransform transform = (ImageSpatialTransform)graphic.SpatialTransform;
 			transform.ClientRectangle = new Rectangle(6, 6, 493, 626);
 
 			PointF srcPt1 = new Point(100, 200);
@@ -300,7 +300,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void CumulativeTransform()
 		{
-			SceneGraph sceneGraph = new SceneGraph();
+			CompositeGraphic sceneGraph = new CompositeGraphic();
 
 			CompositeGraphic graphic1 = new CompositeGraphic();
 			graphic1.SpatialTransform.Scale = 2.0f;
@@ -341,7 +341,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		private ImageSpatialTransform CreateTransform()
 		{
 			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384);
-			ImageSpatialTransform transform = graphic.SpatialTransform as ImageSpatialTransform;
+			ImageSpatialTransform transform = (ImageSpatialTransform)graphic.SpatialTransform;
 			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
 			return transform;
 		}

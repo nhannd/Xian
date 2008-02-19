@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
@@ -52,12 +53,13 @@ namespace ClearCanvas.ImageViewer
 		private ImageViewerComponent _imageViewer;
 		private DisplaySet _parentDisplaySet;
 		private Tile _tile;
+		private Rectangle _clientRectangle;
 
 		private bool _selected = false;
 		private bool _linked = true;
 		private string _uid;
 		
-		private SceneGraph _sceneGraph;
+		private CompositeGraphic _sceneGraph;
 		private ISelectableGraphic _selectedGraphic;
 		private IFocussableGraphic _focussedGraphic;
 
@@ -122,6 +124,15 @@ namespace ClearCanvas.ImageViewer
 						_tile.PresentationImage = this;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Gets the client rectangle of the surface on which the
+		/// presentation image will be rendered.
+		/// </summary>
+		public Rectangle ClientRectangle
+		{
+			get { return _clientRectangle; }
 		}
 
 		/// <summary>
@@ -197,7 +208,7 @@ namespace ClearCanvas.ImageViewer
 			{
 				if (_sceneGraph == null)
 				{
-					_sceneGraph = new SceneGraph();
+					_sceneGraph = new CompositeGraphic();
 					_sceneGraph.SetParentPresentationImage(this);
 				}
 
@@ -377,8 +388,7 @@ namespace ClearCanvas.ImageViewer
 		public virtual void OnDraw(DrawArgs drawArgs)
 		{
 			drawArgs.SceneGraph = this.SceneGraph;
-
-			((SceneGraph)SceneGraph).ClientRectangle = drawArgs.RenderingSurface.ClientRectangle;
+			_clientRectangle = drawArgs.RenderingSurface.ClientRectangle;
 
 			OnDrawing();
 

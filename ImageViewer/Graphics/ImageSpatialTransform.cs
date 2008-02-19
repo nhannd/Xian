@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using ClearCanvas.Common;
 
@@ -43,6 +44,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#region Private Fields
 
 		private bool _scaleToFit;
+		private bool _calculatingScaleToFit;
 
 		private int _columns;
 		private int _rows;
@@ -52,6 +54,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private double _pixelAspectRatioX;
 		private double _pixelAspectRatioY;
+
+		private Rectangle _clientRectangle;
 
 		private float _pixelAspectRatio = 0.0f;
 
@@ -78,14 +82,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			double pixelAspectRatioX,
 			double pixelAspectRatioY) : base(ownerGraphic)
 		{
+			if (ownerGraphic != null)
+				ownerGraphic.Drawing += OwnerGraphicDrawing;
+
 			_rows = rows;
 			_columns = columns;
 			_pixelSpacingX = pixelSpacingX;
 			_pixelSpacingY = pixelSpacingY;
 			_pixelAspectRatioX = pixelAspectRatioX;
 			_pixelAspectRatioY = pixelAspectRatioY;
-			this.ScaleToFit = true;
-			this.RecalculationRequired = true;
+			_scaleToFit = true;
+			_calculatingScaleToFit = false;
 		}
 
 		/// <summary>
@@ -101,7 +108,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			set
 			{
 				_scaleToFit = value;
-				this.RecalculationRequired = true;
+				if (_scaleToFit)
+					CalculateScaleToFit();
 			}
 		}
 
@@ -153,6 +161,37 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return this.ClientRectangle.Height; }
 		}
 
+#pragma warning disable 1591
+#if UNIT_TESTS
+		public Rectangle ClientRectangle
+#else
+		internal Rectangle ClientRectangle
+#endif
+		{
+			get
+			{
+				// NOTE: we maintain a member variable for the
+				// client rectangle for 2 reasons:
+				// 1. so we can unit test the class without a need 
+				//    for a parent presentation image.
+				// 2. So we don't have to unnecessarily recalculate
+				//    the scale when the client rectangle has 
+				//    not changed.
+
+				return _clientRectangle;
+			}
+			set 
+			{
+				if (_clientRectangle == value)
+					return;
+
+				_clientRectangle = value;
+				if (_scaleToFit) 
+					CalculateScaleToFit();
+			}
+		}
+#pragma warning restore 1591
+
 		/// <summary>
 		/// This methods overrides <see cref="SpatialTransform.CreateMemento"/>.
 		/// </summary>
@@ -202,34 +241,28 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <remarks>
 		/// This scale calculation accounts for non-square pixels.
 		/// </remarks>
-		protected override void CalculateScale()
+		protected override void OnScaleChanged()
 		{
-			if (!this.RecalculationRequired)
+			if (_calculatingScaleToFit)
 				return;
-
-			this.RecalculationRequired = false;
-
-			if (this.ScaleToFit)
+			
+			this.ScaleToFit = false;
+			if (this.PixelAspectRatio >= 1)
 			{
-				CalculateScaleToFit();
+				this.ScaleX = this.Scale;
+				this.ScaleY = this.Scale * this.PixelAspectRatio;
 			}
 			else
 			{
-				if (this.PixelAspectRatio >= 1)
-				{
-					this.ScaleX = this.Scale;
-					this.ScaleY = this.Scale * this.PixelAspectRatio;
-				}
-				else
-				{
-					this.ScaleX = this.Scale / this.PixelAspectRatio;
-					this.ScaleY = this.Scale;
-				}
+				this.ScaleX = this.Scale / this.PixelAspectRatio;
+				this.ScaleY = this.Scale;
 			}
 		}
 
 		private void CalculateScaleToFit()
 		{
+			_calculatingScaleToFit = true;
+
 			if (this.RotationXY == 90 || this.RotationXY == 270)
 			{
 				float imageAspectRatio = (float)this.SourceWidth / this.AdjustedSourceHeight;
@@ -263,8 +296,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 			}
 
-			this.MinimumScale = Math.Min(this.ScaleX / 2, 0.5f);
+			this.MinimumScale = Math.Min(this.ScaleX / 2, DefaultMinimumScale);
 			this.Scale = this.ScaleX;
+
+			_calculatingScaleToFit = false;
+		}
+
+		private void OwnerGraphicDrawing(object sender, EventArgs e)
+		{
+			this.ClientRectangle = OwnerGraphic.ParentPresentationImage.ClientRectangle;
 		}
 	}
 }

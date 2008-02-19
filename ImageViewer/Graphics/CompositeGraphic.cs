@@ -205,7 +205,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 			graphic.SetParentPresentationImage(this.ParentPresentationImage);
 			graphic.SetImageViewer(this.ImageViewer);
 			graphic.CoordinateSystem = this.CoordinateSystem;
-			graphic.SpatialTransform.RecalculationRequired = true;
 		}
 
 		private void OnGraphicRemoved(object sender, ListEventArgs<IGraphic> e)

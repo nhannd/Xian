@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			this.CoordinateSystem = CoordinateSystem.Destination;
 
 			PointF anchorPoint = new PointF();
-			Rectangle rectangle = base.ParentPresentationImage.Tile.ClientRectangle;
+			Rectangle rectangle = base.ParentPresentationImage.ClientRectangle;
 
 			float lineWidth = Math.Abs(_line.Pt1.X - _line.Pt2.X);
 			float lineHeight = Math.Abs(_line.Pt1.Y - _line.Pt2.Y);

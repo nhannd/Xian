@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.ImageViewer.Graphics;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -73,6 +74,12 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="IPresentationImage"/> or <b>null</b> if the 
 		/// <see cref="IPresentationImage"/> is not currently visible.</value>
 		ITile Tile { get; }
+
+		/// <summary>
+		/// Gets the client rectangle of the surface on which the
+		/// presentation image will be rendered.
+		/// </summary>
+		Rectangle ClientRectangle { get; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the <see cref="IPresentationImage"/>

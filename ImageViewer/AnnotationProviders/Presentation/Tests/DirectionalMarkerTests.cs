@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation.Tests
 		DirectionalMarkerAnnotationItem _rightAnnotation;
 		DirectionalMarkerAnnotationItem _bottomAnnotation;
 
-		SpatialTransform _transform;
+		ImageSpatialTransform _transform;
 
 		public DirectionalMarkerTests()
 		{ 
