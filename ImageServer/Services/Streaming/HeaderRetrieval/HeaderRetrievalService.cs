@@ -53,9 +53,23 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
 
         public Stream GetStudyHeader(string callingAETitle, HeaderRetrievalParameters parameters)
         {
-            HeaderRetrievalStatistics stats = new HeaderRetrievalStatistics();
             
+            try
+            {
+                Platform.CheckForEmptyString(callingAETitle, "callingAETitle");
+                Platform.CheckForNullReference(parameters, "parameters");
+                Platform.CheckForEmptyString(parameters.ServerAETitle, "parameters.ServerAETitle");
+                Platform.CheckForEmptyString(parameters.StudyInstanceUID, "parameters.StudyInstanceUID");
+            }
+            catch(ArgumentException e)
+            {
+                Platform.Log(LogLevel.Error, "GetStudyHeader: Error in request call:" + e.Message);
+                throw;
+            }
+
+            HeaderRetrievalStatistics stats = new HeaderRetrievalStatistics();
             stats.ProcessTime.Start();
+
             
             HeaderLoader loader = new HeaderLoader();
                 
@@ -81,17 +95,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
                 if (Settings.Default.LogStatistics)
                 {
                     stats.AddField("StudyInstanceUid", parameters.StudyInstanceUID);
-                    RemoteEndpointMessageProperty remoteEndPoint = null;
-                    try
-                    {
-                        remoteEndPoint = (RemoteEndpointMessageProperty)OperationContext.Current.IncomingMessageProperties[RemoteEndpointMessageProperty.Name];
-                        stats.AddField("Client",String.Format("{0}@{1}:{2}", callingAETitle, remoteEndPoint.Address, remoteEndPoint.Port));
-                    }
-                    catch (Exception)
-                    {
-                        stats.AddField("Client", callingAETitle);
-                    }
-
+                    
                     stats.AddSubStats("Loading", loader.Statistics);
                     StatisticsLogger.Log(LogLevel.Info, stats);    
                 }
