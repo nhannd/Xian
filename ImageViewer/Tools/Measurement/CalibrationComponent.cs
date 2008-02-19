@@ -30,53 +30,83 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Validation;
 
-namespace ClearCanvas.ImageViewer.Graphics
+namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	/// <summary>
-	/// An extension point for graphic tools.
+	/// Extension point for views onto <see cref="CalibrationComponent"/>.
 	/// </summary>
-	[ExtensionPoint()]
-	public sealed class GraphicToolExtensionPoint : ExtensionPoint<ITool>
+	[ExtensionPoint]
+	public sealed class CalibrationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
 	/// <summary>
-	/// An interface for graphic tools.
+	/// CalibrationComponent class.
 	/// </summary>
-	public interface IGraphicToolContext : IToolContext
+	[AssociateView(typeof(CalibrationComponentViewExtensionPoint))]
+	public class CalibrationComponent : ApplicationComponent
 	{
-		/// <summary>
-		/// Gets the graphic that the tool applies to.
-		/// </summary>
-		IGraphic Graphic { get; }
-	}
+		private double _lengthInCm;
+		private readonly int _decimalPlaces = 1;
+		private readonly double _minimum = 0.1;
+		private readonly double _increment = 0.1;
 
-	/// <summary>
-	/// Base implementation of <see cref="IGraphicToolContext"/>.
-	/// </summary>
-	public class GraphicToolContext : ToolContext, IGraphicToolContext
-	{
-		private readonly IGraphic _graphic;
+		public CalibrationComponent()
+		{
+			_lengthInCm = 1.0;
+		}
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public GraphicToolContext(IGraphic graphic)
+		public CalibrationComponent(double lengthInCm)
 		{
-			_graphic = graphic;
+			Platform.CheckPositive(lengthInCm, "lengthInCm");
+
+			_lengthInCm = Math.Round(lengthInCm, _decimalPlaces);
 		}
 
-		/// <summary>
-		/// Gets the graphic that the tool applies to.
-		/// </summary>
-		public IGraphic Graphic
+		[ValidateGreaterThan(0.0, Inclusive = false, Message = "MessageInvalidLength")]
+		public double LengthInCm
 		{
-			get { return _graphic; }
+			get { return _lengthInCm; }
+			set { _lengthInCm = value; }
 		}
+
+		public int DecimalPlaces
+		{
+			get { return _decimalPlaces; }
+		}
+
+		public double Minimum
+		{
+			get { return _minimum; }
+		}
+
+		public double Increment
+		{
+			get { return _increment; }
+		}
+
+		public void Accept()
+		{
+			if (base.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+				return;
+			}
+
+			this.Exit(ApplicationComponentExitCode.Accepted);
+		}
+
+		public void Cancel()
+		{
+			this.Exit(ApplicationComponentExitCode.None);
+		}
+
 	}
 }

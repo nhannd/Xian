@@ -323,6 +323,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Too
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Tools.Measurement.View.WinForms", "Tools\Measurement\View\WinForms\ClearCanvas.ImageViewer.Tools.Measurement.View.WinForms.csproj", "{5C17A246-C4AB-4D66-8715-425192D88D6E}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -485,6 +491,10 @@ Global
 		{86CD94ED-BB4C-46C0-B54D-5F1EAE5A18D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86CD94ED-BB4C-46C0-B54D-5F1EAE5A18D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86CD94ED-BB4C-46C0-B54D-5F1EAE5A18D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C17A246-C4AB-4D66-8715-425192D88D6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C17A246-C4AB-4D66-8715-425192D88D6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C17A246-C4AB-4D66-8715-425192D88D6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C17A246-C4AB-4D66-8715-425192D88D6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

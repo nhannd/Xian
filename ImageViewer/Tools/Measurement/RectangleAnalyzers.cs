@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			double areaInPixels = Formula.AreaOfRectangle(rectangle.Width, rectangle.Height);
 			rectangle.ResetCoordinateSystem();
 
-			PixelSpacing pixelSpacing = imageSop.GetModalityPixelSpacing();
+			PixelSpacing pixelSpacing = imageSop.NormalizedPixelSpacing;
 
 			string text;
 

@@ -29,47 +29,47 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.Graphics;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
+using System;
 
-namespace ClearCanvas.ImageViewer.Tools.Measurement
+namespace ClearCanvas.ImageViewer.Tools.Measurement.View.WinForms
 {
-	[MenuAction("closemenu", "basicgraphic-menu/MenuClose")]
-	[Tooltip("closemenu", "CloseMenu")]
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="CalibrationComponent"/>.
+    /// </summary>
+    public partial class CalibrationComponentControl : ApplicationComponentUserControl
+    {
+        private readonly CalibrationComponent _component;
 
-	[MenuAction("delete", "basicgraphic-menu/DeleteGraphicTool", "Delete")]
-	[Tooltip("delete", "DeleteGraphicTool")]
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public CalibrationComponentControl(CalibrationComponent component)
+            :base(component)
+        {
+			_component = component;
+            InitializeComponent();
 
-	[ExtensionOf(typeof(GraphicToolExtensionPoint))]
+        	this.AcceptButton = _ok;
+        	this.CancelButton = _cancel;
 
-	public class DeleteGraphicTool : GraphicTool
-	{
-		public DeleteGraphicTool()
-		{
-		}
+        	_length.DecimalPlaces = _component.DecimalPlaces;
+        	_length.Increment = (decimal) _component.Increment;
+        	_length.Minimum = (decimal) _component.Minimum;
 
-		public void Delete()
-		{
-			IGraphic graphic = this.Context.Graphic;
-			
-			IOverlayGraphicsProvider image = graphic.ParentPresentationImage as IOverlayGraphicsProvider;
+            BindingSource bindingSource = new BindingSource();
+			bindingSource.DataSource = _component;
 
-			if (image == null)
-				return;
-
-			int restoreIndex = image.OverlayGraphics.IndexOf(graphic);
-			if (restoreIndex < 0)
-				return;
-
-			image.OverlayGraphics.Remove(graphic);
-			graphic.ParentPresentationImage.Draw();
-
-			InsertRemoveGraphicUndoableCommand command = InsertRemoveGraphicUndoableCommand.GetInsertCommand(image.OverlayGraphics, graphic, restoreIndex);
-			command.Name = SR.NameDeleteGraphic;
-			this.Context.Graphic.ImageViewer.CommandHistory.AddCommand(command);
-		}
-	}
+        	_length.DataBindings.Add("Value", bindingSource, "LengthInCm", true, DataSourceUpdateMode.OnPropertyChanged);
+        	_ok.Click += delegate
+        	             	{
+        	             		_component.Accept();
+        	             	};
+        	_cancel.Click += delegate
+        	                 	{
+        	                 		_component.Cancel();
+        	                 	};
+        }
+    }
 }

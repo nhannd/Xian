@@ -18,22 +18,41 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				return String.Empty;
 
 			ImageSop imageSop = provider.ImageSop;
-
 			Units units = Units.Centimeters;
+			PixelSpacing pixelSpacing = imageSop.NormalizedPixelSpacing;
+
+			string text;
+
+			double length = CalculateLength(line, pixelSpacing, ref units);
+
+			if (units == Units.Pixels)
+				text = String.Format(SR.ToolsMeasurementFormatLengthPixels, length);
+			else if (units == Units.Millimeters)
+				text = String.Format(SR.ToolsMeasurementFormatLengthMm, length);
+			else
+				text = String.Format(SR.ToolsMeasurementFormatLengthCm, length);
+
+			return text;
+		}
+
+		public static double CalculateLength(
+			PolyLineInteractiveGraphic line, 
+			PixelSpacing pixelSpacing, 
+			ref Units units)
+		{
+			if (pixelSpacing.IsNull)
+				units = Units.Pixels;
 
 			line.CoordinateSystem = CoordinateSystem.Source;
 			double widthInPixels = line.PolyLine[1].X - line.PolyLine[0].X;
 			double heightInPixels = line.PolyLine[1].Y - line.PolyLine[0].Y;
 			line.ResetCoordinateSystem();
 
-			PixelSpacing pixelSpacing = imageSop.GetModalityPixelSpacing();
+			double length;
 
-			string text;
-
-			if (pixelSpacing.IsNull || units == Units.Pixels)
+			if (units == Units.Pixels)
 			{
-				double length = Math.Sqrt(widthInPixels * widthInPixels + heightInPixels * heightInPixels);
-				text = String.Format(SR.ToolsMeasurementFormatLengthPixels, length);
+				length = Math.Sqrt(widthInPixels * widthInPixels + heightInPixels * heightInPixels);
 			}
 			else
 			{
@@ -42,11 +61,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				double lengthInMm = Math.Sqrt(widthInMm * widthInMm + heightInMm * heightInMm);
 
 				if (units == Units.Millimeters)
-					text = String.Format(SR.ToolsMeasurementFormatLengthMm, lengthInMm);
+					length = lengthInMm;
 				else
-					text = String.Format(SR.ToolsMeasurementFormatLengthCm, lengthInMm / 10);
+					length = lengthInMm / 10;
 			}
-			return text;
+
+			return length;
 		}
 	}
 }

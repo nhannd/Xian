@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Calibrate.
+        /// </summary>
+        public static string CalibrationDialogTitle {
+            get {
+                return ResourceManager.GetString("CalibrationDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create Elliptical ROI.
         /// </summary>
         public static string CommandCreateEllipiticalRoi {
@@ -102,6 +111,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         public static string DeleteGraphicTool {
             get {
                 return ResourceManager.GetString("DeleteGraphicTool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Calibrate.
+        /// </summary>
+        public static string MenuCalibrationTool {
+            get {
+                return ResourceManager.GetString("MenuCalibrationTool", resourceCulture);
             }
         }
         
@@ -156,6 +174,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         public static string MenuRuler {
             get {
                 return ResourceManager.GetString("MenuRuler", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Length must be greater than 0 cm..
+        /// </summary>
+        public static string MessageInvalidLength {
+            get {
+                return ResourceManager.GetString("MessageInvalidLength", resourceCulture);
             }
         }
         
@@ -232,7 +259,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Area: {0:F2} cm².
+        ///   Looks up a localized string similar to Area: {0:F1} cm².
         /// </summary>
         public static string ToolsMeasurementFormatAreaSquareCm {
             get {
@@ -241,7 +268,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Area: {0:F2} mm².
+        ///   Looks up a localized string similar to Area: {0:F0} mm².
         /// </summary>
         public static string ToolsMeasurementFormatAreaSquareMm {
             get {
@@ -250,7 +277,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Length: {0:F2} cm.
+        ///   Looks up a localized string similar to Length: {0:F1} cm.
         /// </summary>
         public static string ToolsMeasurementFormatLengthCm {
             get {
@@ -259,7 +286,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Length: {0:F2} mm.
+        ///   Looks up a localized string similar to Length: {0:F0} mm.
         /// </summary>
         public static string ToolsMeasurementFormatLengthMm {
             get {
@@ -268,7 +295,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Length: {0:F2} pixels.
+        ///   Looks up a localized string similar to Length: {0:F0} pixels.
         /// </summary>
         public static string ToolsMeasurementFormatLengthPixels {
             get {
@@ -309,6 +336,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         public static string ToolsMeasurementFormatStdDevCT {
             get {
                 return ResourceManager.GetString("ToolsMeasurementFormatStdDevCT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Calibrate.
+        /// </summary>
+        public static string TooltipCalibrationTool {
+            get {
+                return ResourceManager.GetString("TooltipCalibrationTool", resourceCulture);
             }
         }
         

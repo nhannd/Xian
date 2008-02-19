@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			double areaInPixels = Formula.AreaOfEllipse(ellipse.Width, ellipse.Height);
 			ellipse.ResetCoordinateSystem();
 
-			PixelSpacing pixelSpacing = imageSop.GetModalityPixelSpacing();
+			PixelSpacing pixelSpacing = imageSop.NormalizedPixelSpacing;
 
 			string text;
 

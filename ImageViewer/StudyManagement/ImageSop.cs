@@ -34,9 +34,6 @@ using System.Collections.Generic;
 using ClearCanvas.Codecs;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.Mathematics;
-using System.Drawing;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -47,6 +44,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	{
 		private static readonly object _syncLock = new object();
 		private static volatile ImageCodecMap _imageCodecMap;
+		private NormalizedPixelSpacing _normalizedPixelSpacing;
 
 		private ImagePlaneHelper _imagePlaneHelper;
 
@@ -257,7 +255,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the pixel spacing.
 		/// </summary>
 		/// <remarks>
-		/// Returns a <see cref="PixelSpacing"/> object with zero for all its values when no data is available or the existing data is bad/incorrect.
+		/// It is generally recommended that clients use <see cref="NormalizedPixelSpacing"/> when
+		/// in calculations that require the pixel spacing.
 		/// </remarks>
 		public virtual PixelSpacing PixelSpacing
 		{
@@ -767,59 +766,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
-		#region Public Helper Methods
-
 		/// <summary>
 		/// Gets the pixel spacing appropriate to the modality.
 		/// </summary>
 		/// <remarks>
 		/// For projection based modalities (i.e. CR, DX and MG), Imager Pixel Spacing is
 		/// returned as the pixel spacing.  For all other modalities, the standard
-		/// Pixel Spacing is returned.
+		/// Pixel Spacing is returned. Clients who require the pixel spacing should use this
+		/// property as opposed to the raw DICOM pixel spacing property in <see cref="ImageSop.PixelSpacing"/>.
 		/// </remarks>
-		public PixelSpacing GetModalityPixelSpacing()
+		public NormalizedPixelSpacing NormalizedPixelSpacing
 		{
-			PixelSpacing pixelSpacing;
-
-			if (String.Compare(Modality, "CR", true) == 0 ||
-				String.Compare(Modality, "DX", true) == 0 ||
-				String.Compare(Modality, "MG", true) == 0)
+			get
 			{
-				double pixelSpacingRow = 0, pixelSpacingColumn = 0;
+				if (_normalizedPixelSpacing == null)
+					_normalizedPixelSpacing = new NormalizedPixelSpacing(this);
 
-				bool tagExists;
-				GetTag(DicomTags.ImagerPixelSpacing, out pixelSpacingRow, 0, out tagExists);
-				if (tagExists)
-					GetTag(DicomTags.ImagerPixelSpacing, out pixelSpacingColumn, 1, out tagExists);
-
-				if (!tagExists)
-				{
-					pixelSpacingRow = pixelSpacingColumn = 0;
-				}
-
-				pixelSpacing = new PixelSpacing(pixelSpacingRow, pixelSpacingColumn);
+				return _normalizedPixelSpacing;
 			}
-			else
-			{
-				pixelSpacing = this.PixelSpacing;
-			}
-
-			if (IsPixelSpacingInvalid(pixelSpacing))
-				return new PixelSpacing(0, 0);
-			else
-				return pixelSpacing;
 		}
 
-		#endregion
-
-		private static bool IsPixelSpacingInvalid(PixelSpacing pixelSpacing)
-		{
-			return pixelSpacing.Row <= float.Epsilon ||
-			       pixelSpacing.Column <= float.Epsilon ||
-			       double.IsNaN(pixelSpacing.Row) ||
-			       double.IsNaN(pixelSpacing.Column);
-		}
-		
 		/// <summary>
 		/// Validates the <see cref="ImageSop"/> object.
 		/// </summary>

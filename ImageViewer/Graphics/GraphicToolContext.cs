@@ -30,46 +30,66 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.Tools.Measurement
+namespace ClearCanvas.ImageViewer.Graphics
 {
-	[MenuAction("closemenu", "basicgraphic-menu/MenuClose")]
-	[Tooltip("closemenu", "CloseMenu")]
-
-	[MenuAction("delete", "basicgraphic-menu/DeleteGraphicTool", "Delete")]
-	[Tooltip("delete", "DeleteGraphicTool")]
-
-	[ExtensionOf(typeof(GraphicToolExtensionPoint))]
-
-	public class DeleteGraphicTool : GraphicTool
+	/// <summary>
+	/// An extension point for graphic tools.
+	/// </summary>
+	[ExtensionPoint()]
+	public sealed class GraphicToolExtensionPoint : ExtensionPoint<ITool>
 	{
-		public DeleteGraphicTool()
+	}
+
+	/// <summary>
+	/// An interface for graphic tools.
+	/// </summary>
+	public interface IGraphicToolContext : IToolContext
+	{
+		/// <summary>
+		/// Gets the <see cref="IGraphic"/> that the tool applies to.
+		/// </summary>
+		IGraphic Graphic { get; }
+
+		/// <summary>
+		/// Gets the <see cref="IDesktopWindow"/>.
+		/// </summary>
+		IDesktopWindow DesktopWindow { get; }
+	}
+
+	/// <summary>
+	/// Base implementation of <see cref="IGraphicToolContext"/>.
+	/// </summary>
+	public class GraphicToolContext : ToolContext, IGraphicToolContext
+	{
+		private readonly IGraphic _graphic;
+		private readonly IDesktopWindow _desktopWindow;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public GraphicToolContext(IGraphic graphic, IDesktopWindow desktopWindow)
 		{
+			_graphic = graphic;
+			_desktopWindow = desktopWindow;
 		}
 
-		public void Delete()
+		/// <summary>
+		/// Gets the graphic that the tool applies to.
+		/// </summary>
+		public IGraphic Graphic
 		{
-			IGraphic graphic = this.Context.Graphic;
-			
-			IOverlayGraphicsProvider image = graphic.ParentPresentationImage as IOverlayGraphicsProvider;
+			get { return _graphic; }
+		}
 
-			if (image == null)
-				return;
-
-			int restoreIndex = image.OverlayGraphics.IndexOf(graphic);
-			if (restoreIndex < 0)
-				return;
-
-			image.OverlayGraphics.Remove(graphic);
-			graphic.ParentPresentationImage.Draw();
-
-			InsertRemoveGraphicUndoableCommand command = InsertRemoveGraphicUndoableCommand.GetInsertCommand(image.OverlayGraphics, graphic, restoreIndex);
-			command.Name = SR.NameDeleteGraphic;
-			this.Context.Graphic.ImageViewer.CommandHistory.AddCommand(command);
+		/// <summary>
+		/// Gets the owning <see cref="IDesktopWindow"/>.
+		/// </summary>
+		public IDesktopWindow DesktopWindow
+		{
+			get { return _desktopWindow; }
 		}
 	}
 }

@@ -100,6 +100,8 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CalibrationComponent.cs" />
+    <Compile Include="CalibrationTool.cs" />
     <Compile Include="EllipseAnalyzers.cs" />
     <Compile Include="EllipticalRoiTool.cs" />
     <Compile Include="Formula.cs" />
@@ -119,6 +121,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="Tests\CalibrationTest.cs" />
     <Compile Include="Tests\FormulaTest.cs" />
     <Compile Include="Units.cs" />
     <EmbeddedResource Include="SR.resx">

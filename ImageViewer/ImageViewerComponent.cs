@@ -237,6 +237,14 @@ namespace ClearCanvas.ImageViewer
 		#region Public Properties
 
 		/// <summary>
+		/// Gets the host <see cref="IDesktopWindow"/>.
+		/// </summary>
+		public IDesktopWindow DesktopWindow
+		{
+			get { return this.Host.DesktopWindow; }
+		}
+
+		/// <summary>
 		/// Gets actions associated with the <see cref="ImageViewerComponent"/>'s
 		/// <see cref="ToolSet"/>.
 		/// </summary>

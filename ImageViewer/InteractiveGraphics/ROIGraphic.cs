@@ -51,9 +51,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// <see cref="RoiGraphic"/> essentially acts as a template for any kind
 	/// of interactive region of interest.  The type of region of interest
 	/// can be any <see cref="InteractiveGraphic"/>, such as a line, a rectangle, 
-	/// an ellipse, etc.; it is definable by the
-	/// the tool writer via the constructor.  The callout line will snap to the
-	/// nearest <see cref="ControlPoint"/> on the <see cref="InteractiveGraphic"/>.
+	/// an ellipse, etc.; it is definable by the tool writer via the constructor.  
+	/// By default, the callout line will snap to the
+	/// nearest point on the <see cref="InteractiveGraphic"/>.
 	/// </remarks>
 	public class RoiGraphic
 		: StandardStatefulCompositeGraphic, 
@@ -231,7 +231,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				return null;
 
 			if (_toolSet == null)
-				_toolSet = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(this));
+				_toolSet = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(this, this.ImageViewer.DesktopWindow));
 
 			return ActionModelRoot.CreateModel(this.GetType().FullName, "basicgraphic-menu", _toolSet.Actions);
 		}

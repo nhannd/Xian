@@ -42,6 +42,11 @@ namespace ClearCanvas.ImageViewer
     public interface IImageViewer : IDisposable
     {
 		/// <summary>
+		/// Get the host <see cref="IDesktopWindow"/>.
+		/// </summary>
+		IDesktopWindow DesktopWindow { get; }
+
+		/// <summary>
 		/// Gets the image viewer's <see cref="StudyTree"/>.
 		/// </summary>
 		StudyTree StudyTree { get; }

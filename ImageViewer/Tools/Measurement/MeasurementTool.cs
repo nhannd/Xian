@@ -7,6 +7,7 @@ using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -46,6 +47,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			InteractiveGraphic interactiveGraphic = CreateInteractiveGraphic();
 
 			_roiGraphic = new RoiGraphic(interactiveGraphic, true);
+			_roiGraphic.Name = this.ToString();
 
 			image.OverlayGraphics.Add(_roiGraphic);
 			_roiGraphic.RoiChanged += OnRoiChanged;
@@ -59,8 +61,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			this.Cancel();
 			return false;
 		}
-
-
 
 		public override bool Track(IMouseInformation mouseInformation)
 		{

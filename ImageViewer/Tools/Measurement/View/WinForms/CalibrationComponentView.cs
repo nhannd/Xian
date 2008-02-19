@@ -32,94 +32,47 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Dicom
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.ImageViewer.Tools.Measurement.View.WinForms
 {
-    public class PixelSpacing : IEquatable<PixelSpacing>
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="CalibrationComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(CalibrationComponentViewExtensionPoint))]
+    public class CalibrationComponentView : WinFormsView, IApplicationComponentView
     {
-		
-		#region Private Members
-		
-		double _row;
-		double _column;
+        private CalibrationComponent _component;
+        private CalibrationComponentControl _control;
 
-		#endregion
-		
-		/// <summary>
-		/// Constructor for NHibernate.
-		/// </summary>
-		protected PixelSpacing()
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of <see cref="PixelSpacing"/>.
-		/// </summary>
-		public PixelSpacing(double row, double column)
-		{
-			_row = row;
-			_column = column;
-		}
-
-		public bool IsNull
-		{
-			get { return _row == 0 || _column == 0; }
-		}
-
-		#region NHibernate Persistent Properties
-
-		public virtual double Row
-        {
-            get { return _row; }
-            protected set { _row = value; }
-        }
-
-        public virtual double Column
-        {
-            get { return _column; }
-			protected set { _column = value; }
-		}
-
-		#endregion
-
-		public override string ToString()
-		{
-			return String.Format(@"{0:F8}\{1:F8}", _row, _column);
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (obj == this)
-				return true;
-
-			if (obj is PixelSpacing)
-				return this.Equals((PixelSpacing) obj);
-
-			return false;
-		}
+        #region IApplicationComponentView Members
 
         /// <summary>
-        /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
+        /// Called by the host to assign this view to a component.
         /// </summary>
-        /// <returns>
-        /// A hash code for the current <see cref="T:System.Object"></see>.
-        /// </returns>
-        public override int GetHashCode()
+        public void SetComponent(IApplicationComponent component)
         {
-            return base.GetHashCode();
+            _component = (CalibrationComponent)component;
         }
 
-		#region IEquatable<PixelSpacing> Members
+        #endregion
 
-		public bool Equals(PixelSpacing other)
-		{
-			if (other == null)
-				return false;
-
-			return this.Row == other.Row && this.Column == other.Column;
-		}
-
-		#endregion
-	}
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new CalibrationComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

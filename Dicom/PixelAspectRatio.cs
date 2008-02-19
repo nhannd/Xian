@@ -60,6 +60,11 @@ namespace ClearCanvas.Dicom
 			_column = column;
 		}
 
+		public bool IsNull
+		{
+			get { return _row == 0 || _column == 0; }
+		}
+
 		#region NHibernate Persistent Properties
 
 		public virtual double Row

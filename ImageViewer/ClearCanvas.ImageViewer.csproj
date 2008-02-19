@@ -114,6 +114,7 @@
     <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStore.cs" />
     <Compile Include="Annotations\Dicom\DicomFixedAnnotationLayoutProvider.cs" />
     <Compile Include="Annotations\IAnnotationResourceResolver.cs" />
+    <Compile Include="BaseTools\GraphicTool.cs" />
     <Compile Include="DisplaySetChangingEventArgs.cs" />
     <Compile Include="Graphics\ArcPrimitive.cs" />
     <Compile Include="Graphics\BoundableGraphic.cs" />
@@ -136,7 +137,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>NamedCompositeGraphicSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Graphics\GraphicTool.cs" />
+    <Compile Include="Graphics\GraphicToolContext.cs" />
     <Compile Include="Comparers\Tests\SortTests.cs" />
     <Compile Include="Imaging\Tests\ColorMapTests.cs" />
     <Compile Include="Imaging\Tests\MinMaxPixelCalculatedLutTests.cs" />
@@ -235,6 +236,7 @@
     <Compile Include="SimpleLogicalWorkspaceBuilder.cs" />
     <Compile Include="SimpleImageLayoutManager.cs" />
     <Compile Include="SimplePhysicalWorkspaceFiller.cs" />
+    <Compile Include="StudyManagement\NormalizedPixelSpacing.cs" />
     <Compile Include="StudyManagement\ImagePlaneHelper.cs" />
     <Compile Include="StudyManagement\SopDataRetrieverFactory.cs" />
     <Compile Include="StudyManagement\SopValidationException.cs" />
