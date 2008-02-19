@@ -88,9 +88,11 @@ namespace ClearCanvas.Dicom.IO
         private long _endGroup2 = 0;
         private bool _inGroup2 = false;
 
+        private string _filename;
+
         private Stack<SequenceRecord> _sqrs = new Stack<SequenceRecord>();
 
-        private DicomAttributeOB _fragment = null;
+        private DicomFragmentSequence _fragment = null;
         #endregion
 
         #region Public Constructors
@@ -120,6 +122,12 @@ namespace ClearCanvas.Dicom.IO
             {
                 _dataset = value;
             }
+        }
+
+        public string Filename
+        {
+            get { return _filename; }
+            set { _filename = value; }
         }
 
         public long BytesEstimated
@@ -166,7 +174,7 @@ namespace ClearCanvas.Dicom.IO
                         // Only change if we're still reading the meta info
                         if (_dataset.StartTagValue < DicomTags.TransferSyntaxUid)
                         {
-                            Dicom.TransferSyntax group2syntax =
+                            TransferSyntax group2syntax =
                                 TransferSyntax.GetTransferSyntax(
                                     _dataset[DicomTags.TransferSyntaxUid].GetString(0, String.Empty));
                             if (group2syntax == null)
@@ -431,16 +439,31 @@ namespace ClearCanvas.Dicom.IO
                         {
                             if (_remain >= _len)
                             {
-                                ByteBuffer data = new ByteBuffer(_endian);
-                                data.CopyFrom(_stream, (int)_len);
+                                if (Flags.IsSet(options, DicomReadOptions.StorePixelDataReferences)
+                                    && _fragment.HasOffsetTable)
+                                {
+                                    FileReference reference = new FileReference(Filename, _stream.Position, _len, _endian, DicomVr.OBvr);
+                                    DicomFragment fragment =
+                                        new DicomFragment(reference);
+                                    _fragment.AddFragment(fragment);
+                                    _stream.Seek(_len, SeekOrigin.Current);
+                                }
+                                else
+                                {
+                                    ByteBuffer data = new ByteBuffer(_endian);
+                                    data.CopyFrom(_stream, (int) _len);
+
+                                    if (!_fragment.HasOffsetTable)
+                                        _fragment.SetOffsetTable(data);
+                                    else
+                                    {
+                                        DicomFragment fragment = new DicomFragment(data);
+                                        _fragment.AddFragment(fragment);
+                                    }
+                                }
+
                                 _remain -= _len;
                                 _read += _len;
-
-                                if (!_fragment.HasOffsetTable)
-                                    _fragment.SetOffsetTable(data);
-                                else
-                                    _fragment.AddFragment(data);
-
                             }
                             else
                             {
@@ -509,6 +532,7 @@ namespace ClearCanvas.Dicom.IO
                                 DicomStreamReader idsr = new DicomStreamReader(data.Stream);
                                 idsr.Dataset = ds;
                                 idsr.TransferSyntax = _syntax;
+                                idsr.Filename = Filename;
                                 DicomReadStatus stat = idsr.Read(null, options);
                                 if (stat == DicomReadStatus.UnknownError)
                                 {
@@ -562,7 +586,9 @@ namespace ClearCanvas.Dicom.IO
                             }
                             else
                             {
-                                _fragment = new DicomAttributeOB(_tag);
+                                _fragment = new DicomFragmentSequence(_tag);
+
+                                _dataset.LoadDicomFields(_fragment);
                             }
                         }
                         else
@@ -605,10 +631,32 @@ namespace ClearCanvas.Dicom.IO
                             {
                                 if (_remain >= _len)
                                 {
-                                    if (Flags.IsSet(options, DicomReadOptions.DoNotStorePixelDataInDataSet) && _tag.TagValue == DicomTags.PixelData)
+                                    if ((_tag.TagValue == DicomTags.PixelData)
+                                        && Flags.IsSet(options, DicomReadOptions.DoNotStorePixelDataInDataSet))
                                     {
                                         // Skip PixelData !!
-                                        _stream.Seek((int)_len, SeekOrigin.Current);
+                                        _stream.Seek((int) _len, SeekOrigin.Current);
+                                        _remain -= _len;
+                                        _read += _len;
+                                    }
+                                    else if ((_tag.TagValue == DicomTags.PixelData) &&
+                                             Flags.IsSet(options, DicomReadOptions.StorePixelDataReferences))
+                                    {
+                                        FileReference reference =
+                                            new FileReference(this.Filename, _stream.Position, _len, _endian,
+                                                              _tag.VR);
+                                        _stream.Seek((int) _len, SeekOrigin.Current);
+
+                                        if (_tag.VR.Equals(DicomVr.OWvr))
+                                        {
+                                            DicomAttributeOW elem = new DicomAttributeOW(_tag, reference);
+                                            _dataset[_tag] = elem;
+                                        }
+                                        else
+                                        {
+                                            DicomAttributeOB elem = new DicomAttributeOB(_tag, reference);
+                                            _dataset[_tag] = elem;
+                                        }
                                         _remain -= _len;
                                         _read += _len;
                                     }
@@ -631,10 +679,9 @@ namespace ClearCanvas.Dicom.IO
                                         }
 
                                         bb.Endian = _endian;
-                                        bb.CopyFrom(_stream, (int)_len);
+                                        bb.CopyFrom(_stream, (int) _len);
 
                                         DicomAttribute elem = _tag.CreateDicomAttribute(bb);
-
 
                                         _remain -= _len;
                                         _read += _len;

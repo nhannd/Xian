@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 
 namespace ClearCanvas.Dicom.IO
@@ -166,9 +163,9 @@ namespace ClearCanvas.Dicom.IO
                     }
                 }
 
-                else if (item is DicomAttributeOB && _syntax.Encapsulated)
+                else if (item is DicomFragmentSequence)
                 {
-                    DicomAttributeOB fs = item as DicomAttributeOB;
+                    DicomFragmentSequence fs = item as DicomFragmentSequence;
 
                     if (_syntax.ExplicitVr)
                         _writer.Write((ushort)0x0000);
@@ -187,19 +184,18 @@ namespace ClearCanvas.Dicom.IO
                         _writer.Write((uint)0x00000000);
                     }
 
-                    foreach (ByteBuffer bb in fs.Fragments)
+                    foreach (DicomFragment bb in fs.Fragments)
                     {
                         _writer.Write((ushort)DicomTag.Item.Group);
                         _writer.Write((ushort)DicomTag.Item.Element);
                         _writer.Write((uint)bb.Length);
-                        bb.CopyTo(_writer.BaseStream);
+                        bb.GetByteBuffer(_syntax).CopyTo(_writer.BaseStream);
                     }
 
                     _writer.Write((ushort)DicomTag.SequenceDelimitationItem.Group);
                     _writer.Write((ushort)DicomTag.SequenceDelimitationItem.Element);
                     _writer.Write((uint)0x00000000);
                 }
-
                 else
                 {
                     DicomAttribute de = item as DicomAttribute;

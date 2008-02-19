@@ -657,7 +657,7 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// The number of values assigned to the attribute.
         /// </summary>
-        public long Count
+        public virtual long Count
         {
             get { return _valueCount; }
             protected set { _valueCount = value; }

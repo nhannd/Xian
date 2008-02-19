@@ -50,6 +50,7 @@ namespace ClearCanvas.Dicom.Tests
         [Test]
         public void AttributeAETest()
         {
+            // ValidateVrValues is turned off by default, enable for sake of tests.
             AttributeAETestSuite test = new AttributeAETestSuite();
             test.TestConstructors();
             test.TestSet();
@@ -846,7 +847,7 @@ namespace ClearCanvas.Dicom.Tests
                 Assert.AreEqual(0x100, valueUInt32);
                 Assert.AreEqual(0x100, attrib.GetUInt32(0, 0));
 
-                Assert.IsTrue(attrib.TryGetUInt32(2, out valueUInt32) == true);
+                Assert.IsTrue(attrib.TryGetUInt32(2, out valueUInt32));
                 Assert.AreEqual(0x07fe0010, attrib.GetUInt32(2, 0x0));
                 
 
@@ -938,15 +939,9 @@ namespace ClearCanvas.Dicom.Tests
                 Assert.AreEqual(2, attrib.Count);
                 Assert.AreEqual("10001010", attrib.GetString(0, "")); 
                 Assert.AreEqual("FFFEFFE0", attrib.GetString(1, ""));
-                
 
-                #endregion
-
-                
-
+                #endregion               
             }
-
-
         }
         #endregion
 
@@ -965,7 +960,6 @@ namespace ClearCanvas.Dicom.Tests
             }
             Assert.AreEqual(testResult, true);
 
-            testResult = true;
             try
             {
                 DicomAttributeCS attrib = new DicomAttributeCS(DicomTagDictionary.GetDicomTag(DicomTags.ImageType));
@@ -1931,7 +1925,7 @@ namespace ClearCanvas.Dicom.Tests
                 Int16 valueInt16;
                 attrib = CreateAttribute();
                 attrib.SetInt16(0, 1000);
-                Assert.IsTrue(attrib.TryGetInt16(0, out valueInt16) == true);
+                Assert.IsTrue(attrib.TryGetInt16(0, out valueInt16));
                 Assert.AreEqual(1000, valueInt16);
                 Assert.AreEqual(1000, attrib.GetInt16(0, 0));
  
@@ -1957,7 +1951,7 @@ namespace ClearCanvas.Dicom.Tests
                 attrib = CreateAttribute();
                 attrib.SetString(0, " 1000 ");
                 Assert.AreEqual(1, attrib.Count);
-                Assert.IsTrue(attrib.TryGetInt16(0, out valueInt16) == true);
+                Assert.IsTrue(attrib.TryGetInt16(0, out valueInt16));
                 Assert.AreEqual(1000, valueInt16);
                 Assert.AreEqual(1000, attrib.GetInt16(0, 0));
  
@@ -1967,7 +1961,7 @@ namespace ClearCanvas.Dicom.Tests
                 Int32 valueInt32;
                 attrib = CreateAttribute();
                 attrib.SetInt32(0, 1000);
-                Assert.IsTrue(attrib.TryGetInt32(0, out valueInt32) == true);
+                Assert.IsTrue(attrib.TryGetInt32(0, out valueInt32));
                 Assert.AreEqual(1000, valueInt32);
                 Assert.AreEqual(1000, attrib.GetInt32(0, 0));
 
@@ -1993,7 +1987,7 @@ namespace ClearCanvas.Dicom.Tests
                 attrib = CreateAttribute();
                 attrib.SetString(0, " 1000 ");
                 Assert.AreEqual(1, attrib.Count);
-                Assert.IsTrue(attrib.TryGetInt32(0, out valueInt32) == true);
+                Assert.IsTrue(attrib.TryGetInt32(0, out valueInt32));
                 Assert.AreEqual(1000, valueInt32);
                 Assert.AreEqual(1000, attrib.GetInt32(0, 0));
 
@@ -2065,7 +2059,7 @@ namespace ClearCanvas.Dicom.Tests
                 attrib = CreateAttribute();
                 attrib.SetString(0, " 1000 ");
                 Assert.AreEqual(1, attrib.Count);
-                Assert.IsTrue(attrib.TryGetUInt16(0, out valueUInt16) == true);
+                Assert.IsTrue(attrib.TryGetUInt16(0, out valueUInt16));
                 Assert.AreEqual(1000, valueUInt16);
                 Assert.AreEqual(1000, attrib.GetUInt16(0, 0));
 
@@ -2075,7 +2069,7 @@ namespace ClearCanvas.Dicom.Tests
                 UInt32 valueUInt32;
                 attrib = CreateAttribute();
                 attrib.SetUInt32(0, 1000);
-                Assert.IsTrue(attrib.TryGetUInt32(0, out valueUInt32) == true);
+                Assert.IsTrue(attrib.TryGetUInt32(0, out valueUInt32));
                 Assert.AreEqual(1000, valueUInt32);
                 Assert.AreEqual(1000, attrib.GetUInt32(0, 0));
 
@@ -2589,7 +2583,7 @@ namespace ClearCanvas.Dicom.Tests
                 attrib = CreateAttribute();
                 attrib.SetString(0, " 1000 ");
                 Assert.AreEqual(1, attrib.Count);
-                Assert.IsTrue(attrib.TryGetInt16(0, out valueInt16) == true);
+                Assert.IsTrue(attrib.TryGetInt16(0, out valueInt16));
                 Assert.AreEqual(1000, valueInt16);
                 Assert.AreEqual(1000, attrib.GetInt16(0, 0));
 

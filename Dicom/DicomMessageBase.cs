@@ -31,6 +31,7 @@
 
 using System;
 using System.Text;
+using ClearCanvas.Dicom.Codec;
 
 namespace ClearCanvas.Dicom
 {
@@ -58,6 +59,10 @@ namespace ClearCanvas.Dicom
         public DicomAttributeCollection DataSet
         {
             get { return _dataSet; }
+        }
+
+        public void ChangeTransferSyntax(TransferSyntax newTransferSyntax, IDicomCodec codec, DicomCodecParameters parameters)
+        {
         }
 
         /// <summary>

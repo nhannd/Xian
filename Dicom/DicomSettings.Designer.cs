@@ -23,7 +23,11 @@ namespace ClearCanvas.Dicom {
             }
         }
         
+        /// <summary>
+        /// When set, the lengths of DICOM tags will be validated.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("When set, the lengths of DICOM tags will be validated.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ValidateVrLengths {
@@ -32,7 +36,11 @@ namespace ClearCanvas.Dicom {
             }
         }
         
+        /// <summary>
+        /// When set, the values of DICOM Attributes will be checked.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("When set, the values of DICOM Attributes will be checked.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ValidateVrValues {

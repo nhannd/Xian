@@ -116,14 +116,14 @@ namespace ClearCanvas.Dicom.Tests
 
             uint length = 256 * 256 * 2;
 
-            DicomAttributeOW pixels = new DicomAttributeOW(DicomTags.PixelData); ;
+            DicomAttributeOW pixels = new DicomAttributeOW(DicomTags.PixelData);
 
             byte[] pixelArray = new byte[length];
 
             for (uint i = 0; i < length; i += 2)
                 pixelArray[i] = (byte)(i % 255);
 
-            pixels.Values = pixelArray;
+            pixels.Values = pixelArray; 
 
             theSet[DicomTags.PixelData] = pixels;
 
@@ -145,6 +145,99 @@ namespace ClearCanvas.Dicom.Tests
 
             studyItem[DicomTags.ReferencedSopClassUid].SetStringValue(SopClass.MrImageStorageUid);
             studyItem[DicomTags.ReferencedSopInstanceUid].SetStringValue("1.2.3.4.5.6.7.8.9");
+
+        }
+
+        public void SetupMultiframeXA(DicomAttributeCollection theSet, uint rows, uint columns, uint frames)
+        {
+            theSet[DicomTags.SpecificCharacterSet].SetStringValue("ISO_IR 100");
+            theSet[DicomTags.ImageType].SetStringValue("DERIVED\\SECONDARY\\SINGLE PLANE\\SINGLE A");
+            theSet[DicomTags.InstanceCreationDate].SetStringValue("20080219");
+            theSet[DicomTags.InstanceCreationTime].SetStringValue("143600");
+            theSet[DicomTags.SopClassUid].SetStringValue(SopClass.XRayAngiographicImageStorageUid);
+            theSet[DicomTags.SopInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
+            theSet[DicomTags.StudyDate].SetStringValue("20080219");
+            theSet[DicomTags.StudyTime].SetStringValue("143600");
+            theSet[DicomTags.SeriesDate].SetStringValue("20080219");
+            theSet[DicomTags.SeriesTime].SetStringValue("143700");
+            theSet[DicomTags.AccessionNumber].SetStringValue("A4567");
+            theSet[DicomTags.Modality].SetStringValue("XA");
+            theSet[DicomTags.Manufacturer].SetStringValue("ClearCanvas");
+            theSet[DicomTags.InstitutionName].SetStringValue("KardiologieUniklinikHeidelberg");
+            theSet[DicomTags.ReferringPhysiciansName].SetStringValue("Last^First");
+            theSet[DicomTags.StudyDescription].SetStringValue("HEART");
+            theSet[DicomTags.SeriesDescription].SetStringValue("Heart 2D EPI BH TRA");
+            theSet[DicomTags.PatientsName].SetStringValue("Patient^Test");
+            theSet[DicomTags.PatientId].SetStringValue("ID123-45-9999");
+            theSet[DicomTags.PatientsBirthDate].SetStringValue("19600101");
+            theSet[DicomTags.PatientsSex].SetStringValue("M");
+            theSet[DicomTags.PatientsWeight].SetStringValue("80");
+            theSet[DicomTags.Kvp].SetStringValue("80");
+            theSet[DicomTags.ProtocolName].SetStringValue("25  FPS Koronarien");
+            theSet[DicomTags.FrameTime].SetStringValue("40");
+            theSet[DicomTags.FrameDelay].SetStringValue("0");
+            theSet[DicomTags.DistanceSourceToDetector].SetStringValue("1018");
+            theSet[DicomTags.ExposureTime].SetStringValue("7");
+            theSet[DicomTags.XRayTubeCurrent].SetStringValue("815");
+            theSet[DicomTags.RadiationSetting].SetStringValue("GR");
+            theSet[DicomTags.IntensifierSize].SetStringValue("169.99998");
+            theSet[DicomTags.PositionerMotion].SetStringValue("STATIC");
+            theSet[DicomTags.PositionerPrimaryAngle].SetStringValue("-40.2999999");
+            theSet[DicomTags.PositionerSecondaryAngle].SetStringValue("-15.5");
+            theSet[DicomTags.DeviceSerialNumber].SetStringValue("1234");
+            theSet[DicomTags.SoftwareVersions].SetStringValue("V1.0");
+            theSet[DicomTags.StudyInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
+            theSet[DicomTags.SeriesInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
+            theSet[DicomTags.StudyId].SetStringValue("20021208125233");
+            theSet[DicomTags.SeriesNumber].SetStringValue("1");
+            theSet[DicomTags.AcquisitionNumber].SetStringValue("3");
+            theSet[DicomTags.InstanceNumber].SetStringValue("13");
+            theSet[DicomTags.PatientOrientation].SetNullValue();
+            theSet[DicomTags.ImagesInAcquisition].SetStringValue("1");
+            theSet[DicomTags.SamplesPerPixel].SetStringValue("1");
+            theSet[DicomTags.PhotometricInterpretation].SetStringValue("MONOCHROME2");
+            theSet[DicomTags.NumberOfFrames].SetUInt32(0, frames);
+            theSet[DicomTags.Rows].SetUInt32(0,rows);
+            theSet[DicomTags.Columns].SetUInt32(0, columns);
+            theSet[DicomTags.FrameIncrementPointer].SetUInt32(0,DicomTags.FrameTime);
+            theSet[DicomTags.BitsAllocated].SetStringValue("8");
+            theSet[DicomTags.BitsStored].SetStringValue("8");
+            theSet[DicomTags.HighBit].SetStringValue("7");
+            theSet[DicomTags.PixelRepresentation].SetStringValue("0");
+            theSet[DicomTags.WindowCenter].SetStringValue("128");
+            theSet[DicomTags.WindowWidth].SetStringValue("204.8");
+            theSet[DicomTags.PerformedProcedureStepStartDate].SetStringValue("20080219");
+            theSet[DicomTags.PerformedProcedureStepStartTime].SetStringValue("143600");
+            theSet[DicomTags.PerformedProcedureStepId].SetStringValue("UNKNOWN");
+
+            uint length = rows * columns * frames;
+            if (length % 2 == 1)
+                length++;
+            DicomAttributeOW pixels = new DicomAttributeOW(DicomTags.PixelData);
+
+            byte[] pixelArray = new byte[length];
+            pixelArray[length - 1] = 0x00; // Padding char
+
+            for (uint frameCount = 0; frameCount < frames; frameCount++)
+                for (uint i = frameCount * rows * columns, val = frameCount + 1; i < (frameCount + 1) * rows * columns; i++, val++)
+                    pixelArray[i] = (byte)(val % 255);
+            
+            pixels.Values = pixelArray;
+
+            theSet[DicomTags.PixelData] = pixels;
+
+            DicomSequenceItem item = new DicomSequenceItem();
+            theSet[DicomTags.RequestAttributesSequence].AddSequenceItem(item);
+
+            item[DicomTags.RequestedProcedureId].SetStringValue("XA123");
+            item[DicomTags.ScheduledProcedureStepId].SetStringValue("XA1234");
+
+            item = new DicomSequenceItem();
+            theSet[DicomTags.RequestAttributesSequence].AddSequenceItem(item);
+
+            item[DicomTags.RequestedProcedureId].SetStringValue("XA123");
+            item[DicomTags.ScheduledProcedureStepId].SetStringValue("XA1234");
+
 
         }
     }

@@ -79,6 +79,7 @@ namespace ClearCanvas.Dicom
         AllowSeekingForContext = 4,
         ReadNonPart10Files = 8,
         DoNotStorePixelDataInDataSet = 16,
+        StorePixelDataReferences = 32,
         Default = DicomReadOptions.UseDictionaryForExplicitUN | DicomReadOptions.AllowSeekingForContext | DicomReadOptions.ReadNonPart10Files
     }
 

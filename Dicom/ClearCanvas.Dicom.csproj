@@ -169,12 +169,17 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Codec\DicomCodecException.cs" />
+    <Compile Include="Codec\DicomCodecRegistry.cs" />
+    <Compile Include="Codec\IDicomCodec.cs" />
     <Compile Include="DicomAttributeMultiValueText.cs" />
     <Compile Include="DicomDataException.cs" />
     <Compile Include="DicomDirectoryWriter.cs" />
+    <Compile Include="DicomFragmentSequence.cs" />
     <Compile Include="DicomImplementation.cs" />
     <Compile Include="DicomLogger.cs" />
     <Compile Include="DicomMessage.cs" />
+    <Compile Include="DicomPixelData.cs" />
     <Compile Include="DicomSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

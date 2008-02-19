@@ -141,6 +141,9 @@ namespace ClearCanvas.Dicom
         /// <param name="value"></param>
         internal virtual void ValidateString(string value)
         {
+            if (value == null)
+                return;
+
             if (DicomSettings.Default.ValidateVrLengths)
             {
                 if (Tag.VR.MaximumLength != 0)
@@ -313,9 +316,7 @@ namespace ClearCanvas.Dicom
         /// </example>
         ///
         public override void SetStringValue(String stringValue)
-        {
-            ValidateString(stringValue);
-
+        {            
             if (stringValue == null || stringValue.Length == 0)
             {
                 Count = 0;
@@ -323,6 +324,8 @@ namespace ClearCanvas.Dicom
                 _values = new String[0];
                 return;
             }
+
+            ValidateString(stringValue);
 
             _values = stringValue.Split(new char[] { '\\' });
 

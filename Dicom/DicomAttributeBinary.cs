@@ -32,11 +32,59 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom
 {
+    #region FileReference
+    internal class FileReference
+    {
+        #region Private Members
+        private readonly string _filename;
+        private readonly long _offset;
+        private readonly long _length;
+        private readonly Endian _endian;
+        private readonly DicomVr _vr;
+        #endregion
+
+        #region Public Properties
+        internal string Filename
+        {
+            get { return _filename; }
+        }
+        internal long Offset
+        {
+            get { return _offset; }
+        }
+        internal Endian Endian
+        {
+            get { return _endian; }
+        }
+        internal DicomVr Vr
+        {
+            get { return _vr; }
+        }
+
+        public uint Length
+        {
+            get { return (uint) _length; }
+        }
+        #endregion
+
+        #region Constructors
+        internal FileReference(string file, long offset, long length, Endian endian, DicomVr vr)
+        {
+            _filename = file;
+            _offset = offset;
+            _length = length;
+            _endian = endian;
+            _vr = vr;
+        }
+        #endregion
+    }
+    #endregion
 
     #region DicomAttributeBinary<T>
     /// <summary>
@@ -48,6 +96,7 @@ namespace ClearCanvas.Dicom
     {
         protected T[] _values = new T[0];
         protected NumberStyles _numberStyle = NumberStyles.Any;
+        internal FileReference _reference = null;
 
         #region Constructors
         internal DicomAttributeBinary(uint tag)
@@ -58,6 +107,13 @@ namespace ClearCanvas.Dicom
         internal DicomAttributeBinary(DicomTag tag)
             : base(tag)
         {
+        }
+
+        internal DicomAttributeBinary(DicomTag tag, FileReference reference) : base(tag)
+        {
+            _reference = reference;
+
+            SetStreamLength();
         }
 
         internal DicomAttributeBinary(DicomTag tag, ByteBuffer item)
@@ -74,11 +130,21 @@ namespace ClearCanvas.Dicom
         internal DicomAttributeBinary(DicomAttributeBinary<T> attrib)
             : base(attrib)
         {
-            T[] values = (T[])attrib.Values;
+            if (attrib._reference != null)
+            {
+                // just reassign reference, since the object is ready-only anyways
+                _reference = attrib._reference;
+                SetStreamLength();
+            }
+            else
+            {
+                T[] values = (T[]) attrib.Values;
 
-            _values = new T[values.Length];
+                _values = new T[values.Length];
 
-            values.CopyTo(_values, 0);
+                values.CopyTo(_values, 0);
+                SetStreamLength();
+            }
         }
         #endregion
 
@@ -107,7 +173,11 @@ namespace ClearCanvas.Dicom
         
         protected virtual void SetStreamLength()
         {
-            if (_values == null)
+            if (_reference != null)
+            {
+                StreamLength = _reference.Length;
+            }
+            else if (_values == null)
             {
                 Count = 0;
                 StreamLength = 0;
@@ -121,6 +191,11 @@ namespace ClearCanvas.Dicom
 
         protected void AppendValue(T val)
         {
+            if (_reference != null)
+            {
+                _values = Load();
+                _reference = null;
+            }
             T[] temp = new T[Count + 1];
             if (_values != null && _values.Length > 0)
                 Array.Copy(_values, temp, Count);
@@ -130,6 +205,26 @@ namespace ClearCanvas.Dicom
             SetStreamLength();
         }
 
+        internal virtual T[] Load()
+        {
+            ByteBuffer bb;
+            using (FileStream fs = new FileStream(_reference.Filename, FileMode.Open))
+            {
+                fs.Seek(_reference.Offset, SeekOrigin.Begin);
+
+                bb = new ByteBuffer();
+                bb.CopyFrom(fs, (int)_reference.Length);
+                fs.Close();
+            }
+
+            if (ByteBuffer.LocalMachineEndian != _reference.Endian)
+                bb.Swap(Tag.VR.UnitSize);
+
+            T[] values = new T[bb.Length / Tag.VR.UnitSize];
+            Buffer.BlockCopy(bb.ToBytes(), 0, values, 0, values.Length * Tag.VR.UnitSize);
+
+            return values;
+        }
         #endregion
 
         #region Abstract Methods
@@ -139,23 +234,42 @@ namespace ClearCanvas.Dicom
 
         public override void SetNullValue()
         {
+            if (_reference != null) _reference = null;
+
             _values = new T[0];
             SetStreamLength();
         }
 
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
-            int len = _values.Length * Tag.VR.UnitSize;
-            byte[] byteVal = new byte[len];
-
-            Buffer.BlockCopy(_values, 0, byteVal, 0, len);
-
-            ByteBuffer bb = new ByteBuffer(byteVal, syntax.Endian);
-            if (syntax.Endian != ByteBuffer.LocalMachineEndian)
+            ByteBuffer bb;
+            if (_reference != null)
             {
-                bb.Swap(Tag.VR.UnitSize);
-            }
+                using (FileStream fs = new FileStream(_reference.Filename, FileMode.Open))
+                {
+                    fs.Seek(_reference.Offset, SeekOrigin.Begin);
 
+                    bb = new ByteBuffer();
+                    bb.CopyFrom(fs, (int)_reference.Length);
+                    fs.Close();
+                }
+
+                if (syntax.Endian != _reference.Endian)
+                    bb.Swap(Tag.VR.UnitSize);
+            }
+            else
+            {
+                int len = _values.Length*Tag.VR.UnitSize;
+                byte[] byteVal = new byte[len];
+
+                Buffer.BlockCopy(_values, 0, byteVal, 0, len);
+
+                bb = new ByteBuffer(byteVal, syntax.Endian);
+                if (syntax.Endian != ByteBuffer.LocalMachineEndian)
+                {
+                    bb.Swap(Tag.VR.UnitSize);
+                }
+            }
             return bb;
         }
 
@@ -165,17 +279,18 @@ namespace ClearCanvas.Dicom
             if (obj == null || GetType() != obj.GetType()) return false;
 
             DicomAttributeBinary<T> a = (DicomAttributeBinary<T>)obj;
-            T[] array = (T[])a.Values;
+            T[] destArray = (T[])a.Values;
+            T[] sourceArray = (T[]) Values;
 
             if (Count != a.Count)
                 return false;
             if (Count == 0 && a.Count == 0)
                 return true;
-            if (array.Length != _values.Length)
+            if (destArray.Length != sourceArray.Length)
                 return false;
 
             for (int index = 0; index < a.Count; index++)
-                if (!array[index].Equals(_values[index]))
+                if (!destArray[index].Equals(sourceArray[index]))
                     return false;
 
             return true;
@@ -427,7 +542,7 @@ namespace ClearCanvas.Dicom
             ByteBuffer bb = new ByteBuffer(byteVal, syntax.Endian);
             if (syntax.Endian != ByteBuffer.LocalMachineEndian)
             {
-                bb.Swap(Tag.VR.UnitSize);
+                bb.Swap(Tag.VR.UnitSize/2);
             }
 
             return bb;
@@ -1328,6 +1443,11 @@ namespace ClearCanvas.Dicom
         {
         }
 
+        internal DicomAttributeOB(DicomTag tag, FileReference reference)
+            : base(tag, reference)
+        {
+        }
+
         #endregion
 
         #region Abstract Method Implementation
@@ -1335,7 +1455,16 @@ namespace ClearCanvas.Dicom
 
         public override Object Values
         {
-            get { return _values; }
+            get
+            {
+                if (_reference != null)
+                {
+                    _values = Load();
+                    SetStreamLength();
+                }
+
+                return _values;
+            }
             set
             {
                 if (value is byte[])
@@ -1452,11 +1581,7 @@ namespace ClearCanvas.Dicom
                     length += 4; // item tag
                     length += 4; // fragment length
                     length += (uint)bb.Length;
-                }
-                foreach (ByteBuffer bb in _fragments)
-                {
-                    length += (uint)bb.Length;
-                }
+                }          
             }
             else
             {
@@ -1470,7 +1595,25 @@ namespace ClearCanvas.Dicom
 
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
-             return new ByteBuffer(_values, ByteBuffer.LocalMachineEndian);
+            ByteBuffer bb;
+            if (_reference != null)
+            {
+                using (FileStream fs = new FileStream(_reference.Filename, FileMode.Open))
+                {
+                    fs.Seek(_reference.Offset, SeekOrigin.Begin);
+
+                    bb = new ByteBuffer();
+                    bb.CopyFrom(fs, (int)_reference.Length);
+                    fs.Close();
+                }
+
+                if (syntax.Endian != _reference.Endian)
+                    bb.Swap(Tag.VR.UnitSize);
+            }
+            else
+                bb = new ByteBuffer(_values, ByteBuffer.LocalMachineEndian);
+
+             return bb;
         }
 
     }
@@ -1597,12 +1740,26 @@ namespace ClearCanvas.Dicom
         {
         }
 
+        internal DicomAttributeOW(DicomTag tag, FileReference reference)
+            : base(tag, reference)
+        {
+        }
+
+
         #region Abstract Method Implementation
 
         protected override void SetStreamLength()
         {
-            Count = _values.Length;
-            StreamLength = (uint)(_values.Length);
+            if (_reference != null)
+            {
+                Count = _reference.Length;
+                StreamLength = _reference.Length;
+            }
+            else
+            {
+                Count = _values.Length;
+                StreamLength = (uint) (_values.Length);
+            }
         }
 
         public override string ToString()
@@ -1612,7 +1769,16 @@ namespace ClearCanvas.Dicom
 
         public override Object Values
         {
-            get { return _values; }
+            get
+            {
+                if (_reference != null)
+                {
+                    _values = Load();
+                    SetStreamLength();
+                }
+
+                 return _values;
+            }
             set
             {
                 if (value is ushort[])
@@ -1646,6 +1812,26 @@ namespace ClearCanvas.Dicom
         {
             return new DicomAttributeOW(this);
         }
+        internal override byte[] Load()
+        {
+            ByteBuffer bb;
+            using (FileStream fs = new FileStream(_reference.Filename, FileMode.Open))
+            {
+                fs.Seek(_reference.Offset, SeekOrigin.Begin);
+
+                bb = new ByteBuffer();
+                bb.CopyFrom(fs, (int)_reference.Length);
+                fs.Close();
+            }
+
+            if (ByteBuffer.LocalMachineEndian != _reference.Endian)
+                bb.Swap(Tag.VR.UnitSize);
+
+            byte[] values = new byte[bb.Length];
+            Buffer.BlockCopy(bb.ToBytes(), 0, values, 0, values.Length);
+
+            return values;
+        }
 
         protected override byte ParseNumber(string val)
         {
@@ -1661,20 +1847,39 @@ namespace ClearCanvas.Dicom
 
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
-            int len = _values.Length;
-            if (syntax.Endian != ByteBuffer.LocalMachineEndian)
+            ByteBuffer bb;
+            if (_reference != null)
             {
-                byte[] byteVal = new byte[len];
+                using (FileStream fs = new FileStream(_reference.Filename, FileMode.Open))
+                {
+                    fs.Seek(_reference.Offset, SeekOrigin.Begin);
 
-                Buffer.BlockCopy(_values, 0, byteVal, 0, len);
+                    bb = new ByteBuffer();
+                    bb.CopyFrom(fs, (int)_reference.Length);
+                    fs.Close();
+                }
 
-                ByteBuffer bb = new ByteBuffer(byteVal, syntax.Endian);
-                bb.Swap(Tag.VR.UnitSize);
+                if (syntax.Endian != _reference.Endian)
+                    bb.Swap(Tag.VR.UnitSize);
 
-                return bb;
+                bb.Endian = syntax.Endian;
             }
+            else
+            {
+                int len = _values.Length;
+                if (syntax.Endian != ByteBuffer.LocalMachineEndian)
+                {
+                    byte[] byteVal = new byte[len];
 
-            return new ByteBuffer(_values, syntax.Endian);
+                    Buffer.BlockCopy(_values, 0, byteVal, 0, len);
+
+                    bb = new ByteBuffer(byteVal, syntax.Endian);
+                    bb.Swap(Tag.VR.UnitSize);
+                }
+                else
+                    bb = new ByteBuffer(_values, syntax.Endian);
+            }
+            return bb;
         }
 
         #endregion

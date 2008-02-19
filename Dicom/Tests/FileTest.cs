@@ -30,12 +30,9 @@
 #endregion
 
 #if UNIT_TESTS
-using System;
-using System.Collections.Generic;
-using System.Text;
 
+using System;
 using NUnit.Framework;
-using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Dicom.Tests
 {
@@ -54,7 +51,7 @@ namespace ClearCanvas.Dicom.Tests
 
         }
 
-        private void SetupMetaInfo(DicomFile theFile)
+        private static void SetupMetaInfo(DicomFile theFile)
         {
             DicomAttributeCollection theSet = theFile.MetaInfo;
 
@@ -63,7 +60,7 @@ namespace ClearCanvas.Dicom.Tests
             theFile.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian; 
 
             theSet[DicomTags.ImplementationClassUid].SetStringValue("1.1.1.1.1.11.1");
-            theSet[DicomTags.ImplementationVersionName].SetStringValue("CC ImageServer 1.0");
+            theSet[DicomTags.ImplementationVersionName].SetStringValue("CC DICOM 1.0");
         }
 
 
@@ -73,7 +70,7 @@ namespace ClearCanvas.Dicom.Tests
 
             Assert.AreEqual(result, true);
 
-            DicomFile newFile = new DicomFile("CreateFileTest.dcm");
+            DicomFile newFile = new DicomFile(sourceFile.Filename);
 
             DicomReadOptions readOptions = DicomReadOptions.Default;
             newFile.Load(readOptions);
@@ -94,14 +91,61 @@ namespace ClearCanvas.Dicom.Tests
         }
 
         [Test]
+        public void MultiframeCreateFileTest()
+        {
+            DicomFile file = new DicomFile("MultiframeCreateFileTest.dcm");
+
+            DicomAttributeCollection dataSet = file.DataSet;
+
+            SetupMultiframeXA(dataSet, 511, 511, 5);
+
+            SetupMetaInfo(file);
+
+            // Little Endian Tests
+            file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+
+            DicomWriteOptions writeOptions = DicomWriteOptions.Default;
+            WriteOptionsTest(file, writeOptions);
+
+            writeOptions = DicomWriteOptions.ExplicitLengthSequence;
+            WriteOptionsTest(file, writeOptions);
+
+            writeOptions = DicomWriteOptions.ExplicitLengthSequenceItem;
+            WriteOptionsTest(file, writeOptions);
+
+            writeOptions = DicomWriteOptions.ExplicitLengthSequence | DicomWriteOptions.ExplicitLengthSequenceItem;
+            WriteOptionsTest(file, writeOptions);
+
+            writeOptions = DicomWriteOptions.None;
+            WriteOptionsTest(file, writeOptions);
+
+            // Big Endian Tests
+            file.Filename = "MultiframeBigEndianCreateFileTest.dcm";
+            file.TransferSyntax = TransferSyntax.ExplicitVrBigEndian;
+
+            writeOptions = DicomWriteOptions.Default;
+            WriteOptionsTest(file, writeOptions);
+
+            writeOptions = DicomWriteOptions.ExplicitLengthSequence;
+            WriteOptionsTest(file, writeOptions);
+
+            writeOptions = DicomWriteOptions.ExplicitLengthSequenceItem;
+            WriteOptionsTest(file, writeOptions);
+
+            writeOptions = DicomWriteOptions.ExplicitLengthSequence | DicomWriteOptions.ExplicitLengthSequenceItem;
+            WriteOptionsTest(file, writeOptions);
+
+            writeOptions = DicomWriteOptions.None;
+            WriteOptionsTest(file, writeOptions);
+
+        }
+
+        [Test]
         public void CreateFileTest()
         {
             DicomFile file = new DicomFile("CreateFileTest.dcm");
 
             DicomAttributeCollection dataSet = file.DataSet;
-
-            DicomAttributeCollection metaInfo = file.DataSet;
-
 
             SetupMR(dataSet);
 
@@ -126,6 +170,7 @@ namespace ClearCanvas.Dicom.Tests
             WriteOptionsTest(file, writeOptions);
 
             // Big Endian Tests
+            file.Filename = "BigEndianCreateFileTest.dcm";
             file.TransferSyntax = TransferSyntax.ExplicitVrBigEndian;
 
             writeOptions = DicomWriteOptions.Default;
@@ -142,6 +187,195 @@ namespace ClearCanvas.Dicom.Tests
 
             writeOptions = DicomWriteOptions.None;
             WriteOptionsTest(file, writeOptions);
+
+        }
+
+        public void ReadOptionsTest(DicomFile sourceFile, DicomReadOptions options, bool areEqual)
+        {
+            bool result = sourceFile.Save(DicomWriteOptions.Default);
+
+            Assert.AreEqual(result, true);
+
+            DicomFile newFile = new DicomFile(sourceFile.Filename);
+
+            newFile.Load(options);
+
+            if (areEqual)
+                Assert.AreEqual(sourceFile.DataSet.Equals(newFile.DataSet), true);
+            else
+                Assert.AreNotEqual(sourceFile.DataSet.Equals(newFile.DataSet), true);
+        }
+
+        [Test]
+        public void FileReadTest()
+        {
+            DicomFile file = new DicomFile("LittleEndianReadFileTest.dcm");
+
+            DicomAttributeCollection dataSet = file.DataSet;
+
+            SetupMR(dataSet);
+
+            SetupMetaInfo(file);
+
+            // Little Endian Tests
+            file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+
+            DicomReadOptions readOptions = DicomReadOptions.Default;
+            ReadOptionsTest(file, readOptions, true);
+
+            readOptions = DicomReadOptions.StorePixelDataReferences;
+            ReadOptionsTest(file, readOptions, true);
+
+            readOptions = DicomReadOptions.DoNotStorePixelDataInDataSet;
+            ReadOptionsTest(file, readOptions, false);
+
+            readOptions = DicomReadOptions.None;
+            ReadOptionsTest(file, readOptions, true);
+
+
+            // Big Endian Tests
+            file.Filename = "BigEndianReadTest.dcm";
+            file.TransferSyntax = TransferSyntax.ExplicitVrBigEndian;
+
+            readOptions = DicomReadOptions.Default;
+            ReadOptionsTest(file, readOptions, true);
+
+            readOptions = DicomReadOptions.StorePixelDataReferences;
+            ReadOptionsTest(file, readOptions, true);
+
+            readOptions = DicomReadOptions.DoNotStorePixelDataInDataSet;
+            ReadOptionsTest(file, readOptions, false);
+
+            readOptions = DicomReadOptions.None;
+            ReadOptionsTest(file, readOptions, true);
+
+        }
+        [Test]
+        public void MultiframeReadTest()
+        {
+            DicomFile file = new DicomFile("LittleEndianMultiframeTest.dcm");
+
+            DicomAttributeCollection dataSet = file.DataSet;
+
+            SetupMultiframeXA(dataSet, 511, 511, 5);
+
+            SetupMetaInfo(file);
+
+            // Little Endian Tests
+            file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+
+            DicomReadOptions readOptions = DicomReadOptions.Default;
+            ReadOptionsTest(file, readOptions, true);
+
+            readOptions = DicomReadOptions.StorePixelDataReferences;
+            ReadOptionsTest(file, readOptions, true);
+
+            readOptions = DicomReadOptions.DoNotStorePixelDataInDataSet;
+            ReadOptionsTest(file, readOptions, false);
+
+            readOptions = DicomReadOptions.None;
+            ReadOptionsTest(file, readOptions, true);
+
+
+            // Big Endian Tests
+            file.Filename = "BigEndianMultiframeTest.dcm";
+            file.TransferSyntax = TransferSyntax.ExplicitVrBigEndian;
+
+            readOptions = DicomReadOptions.Default;
+            ReadOptionsTest(file, readOptions, true);
+
+            readOptions = DicomReadOptions.StorePixelDataReferences;
+            ReadOptionsTest(file, readOptions, true);
+
+            readOptions = DicomReadOptions.DoNotStorePixelDataInDataSet;
+            ReadOptionsTest(file, readOptions, false);
+
+            readOptions = DicomReadOptions.None;
+            ReadOptionsTest(file, readOptions, true);
+
+        }
+
+        private void CheckPixels(string filename)
+        {
+            DicomReadOptions readOptions = DicomReadOptions.StorePixelDataReferences;
+            DicomFile newFile = new DicomFile(filename);
+
+            newFile.Load(readOptions);
+            DicomUncompressedPixelData pd = new DicomUncompressedPixelData(newFile.DataSet);
+
+            for (int frame = 0; frame < pd.NumberOfFrames; frame++)
+            {
+                byte[] data = pd.GetFrame(frame);
+                uint pdVal = (uint)frame + 1;
+                for (int i = 0; i < pd.UncompressedFrameSize; i++, pdVal++)
+                {
+                    if (data[i] != pdVal%255)
+                    {
+                        string val = String.Format("Value bad: frame: {0}, pixel: {1}, val1: {2}, val2: {3}", frame, i, data[i], pdVal%255);
+                        Console.Write(val);
+                    }
+                    Assert.AreEqual(data[i], pdVal%255);
+                }
+            }            
+        }
+
+        [Test]
+        public void ReadPixelsFromDisk()
+        {
+
+            // Check odd dimension file w/ odd frames
+            DicomFile file = new DicomFile("LittlePixelTest.dcm");
+
+            DicomAttributeCollection dataSet = file.DataSet;
+
+            SetupMultiframeXA(dataSet,511,511,5);
+
+            SetupMetaInfo(file);
+
+            // Little Endian Tests
+            file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+
+            bool result = file.Save(DicomWriteOptions.Default);
+            Assert.AreEqual(result, true);
+
+            CheckPixels(file.Filename);
+
+            // Big Endian Tests
+            file.Filename = "BigEndianMultiframeTest.dcm";
+            file.TransferSyntax = TransferSyntax.ExplicitVrBigEndian;
+
+            result = file.Save(DicomWriteOptions.Default);
+            Assert.AreEqual(result, true);
+
+            CheckPixels(file.Filename);
+
+            // Now check even size w/ even number of frames
+
+            // Setup the file
+            file = new DicomFile("LittlePixelTest.dcm");
+
+            dataSet = file.DataSet;
+
+            SetupMultiframeXA(dataSet, 512, 512, 6);
+
+            SetupMetaInfo(file);
+
+            // Little Endian Tests
+            file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+
+            result = file.Save(DicomWriteOptions.Default);
+            Assert.AreEqual(result, true);
+
+            CheckPixels(file.Filename);
+
+            // Big Endian Tests
+            file.Filename = "BigEndianMultiframeTest.dcm";
+            file.TransferSyntax = TransferSyntax.ExplicitVrBigEndian;
+
+            result = file.Save(DicomWriteOptions.Default);
+            Assert.AreEqual(result, true);
+
+            CheckPixels(file.Filename);
 
         }
     }
