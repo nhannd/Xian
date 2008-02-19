@@ -62,16 +62,16 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				if (!_sopInfoDictionary.ContainsKey(sop.SopInstanceUID))
 				{
 					info = new ImageInfo();
-					info.PositionPatientTopLeft = sop.ConvertToPatient(PointF.Empty);
-					info.PositionPatientCenterOfImage = sop.ConvertToPatient(new PointF((sop.Columns - 1)/2F, (sop.Rows - 1)/2F));
-					info.PositionPatientBottomRight = sop.ConvertToPatient(new PointF(sop.Columns - 1, sop.Rows - 1));
-					info.Normal = sop.GetNormalVector();
+					info.PositionPatientTopLeft = sop.ImagePlaneHelper.ConvertToPatient(PointF.Empty);
+					info.PositionPatientCenterOfImage = sop.ImagePlaneHelper.ConvertToPatient(new PointF((sop.Columns - 1) / 2F, (sop.Rows - 1) / 2F));
+					info.PositionPatientBottomRight = sop.ImagePlaneHelper.ConvertToPatient(new PointF(sop.Columns - 1, sop.Rows - 1));
+					info.Normal = sop.ImagePlaneHelper.GetNormalVector();
 
 					if (info.PositionPatientCenterOfImage == null || info.Normal == null)
 						return null;
 
 					// here, we want the position in the coordinate system of the image plane, without moving the origin.
-					info.PositionImagePlaneTopLeft = sop.ConvertToImage(info.PositionPatientTopLeft, Vector3D.Empty);
+					info.PositionImagePlaneTopLeft = sop.ImagePlaneHelper.ConvertToImage(info.PositionPatientTopLeft, Vector3D.Empty);
 
 					_sopInfoDictionary[sop.SopInstanceUID] = info;
 				}

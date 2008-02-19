@@ -18,8 +18,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 			if (presentationImage is IImageSopProvider)
 			{
 				ImageSop sop = ((IImageSopProvider) presentationImage).ImageSop;
-				Vector3D normal = sop.GetNormalVector();
-				Vector3D positionCenterOfImage = sop.ConvertToPatient(new PointF((sop.Columns - 1)/2F, (sop.Rows - 1)/2F));
+				Vector3D normal = sop.ImagePlaneHelper.GetNormalVector();
+				Vector3D positionCenterOfImage = sop.ImagePlaneHelper.ConvertToPatient(new PointF((sop.Columns - 1) / 2F, (sop.Rows - 1) / 2F));
 
 				if (normal != null && positionCenterOfImage != null)
 				{

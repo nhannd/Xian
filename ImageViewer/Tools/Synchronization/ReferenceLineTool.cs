@@ -257,12 +257,12 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			ImageInfo projectImageInfo = _cache.GetImageInformation(projectImageSop);
 
 			// Transform the reference image diagonal to the destination image's coordinate system (pixel position 0,0 as the origin).
-			Vector3D transformedTopLeft = projectImageSop.ConvertToImage(referenceImageInfo.PositionPatientTopLeft, projectImageInfo.PositionPatientTopLeft);
-			Vector3D transformedBottomRight = projectImageSop.ConvertToImage(referenceImageInfo.PositionPatientBottomRight, projectImageInfo.PositionPatientTopLeft);
+			Vector3D transformedTopLeft = projectImageSop.ImagePlaneHelper.ConvertToImage(referenceImageInfo.PositionPatientTopLeft, projectImageInfo.PositionPatientTopLeft);
+			Vector3D transformedBottomRight = projectImageSop.ImagePlaneHelper.ConvertToImage(referenceImageInfo.PositionPatientBottomRight, projectImageInfo.PositionPatientTopLeft);
 
 			//The coordinates need to be converted to pixel coordinates because right now they are in mm.
-			topLeft = (PointF)projectImageSop.ConvertToImagePixel(new PointF(transformedTopLeft.X, transformedTopLeft.Y));
-			bottomRight = (PointF)projectImageSop.ConvertToImagePixel(new PointF(transformedBottomRight.X, transformedBottomRight.Y));
+			topLeft = (PointF)projectImageSop.ImagePlaneHelper.ConvertToImagePixel(new PointF(transformedTopLeft.X, transformedTopLeft.Y));
+			bottomRight = (PointF)projectImageSop.ImagePlaneHelper.ConvertToImagePixel(new PointF(transformedBottomRight.X, transformedBottomRight.Y));
 		}
 
 		private void CalculateReferenceLine
@@ -288,7 +288,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			referenceLine.ResetCoordinateSystem();
 		}
 
-		public void CalculateReferenceLines(IPresentationImage image)
+		private void CalculateReferenceLines(IPresentationImage image)
 		{
 			ReferenceLineCompositeGraphic referenceLineCompositeGraphic = GetReferenceLineCompositeGraphic(image);
 			
