@@ -235,6 +235,7 @@
     <Compile Include="SimpleLogicalWorkspaceBuilder.cs" />
     <Compile Include="SimpleImageLayoutManager.cs" />
     <Compile Include="SimplePhysicalWorkspaceFiller.cs" />
+    <Compile Include="StudyManagement\ImagePlaneHelper.cs" />
     <Compile Include="StudyManagement\SopDataRetrieverFactory.cs" />
     <Compile Include="StudyManagement\SopValidationException.cs" />
     <Compile Include="Imaging\IVoiLutManager.cs" />
