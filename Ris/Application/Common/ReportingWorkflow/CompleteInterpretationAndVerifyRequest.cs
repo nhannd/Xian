@@ -29,7 +29,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -39,7 +38,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     public class CompleteInterpretationAndVerifyRequest : CompleteInterpretationRequestBase
     {
         public CompleteInterpretationAndVerifyRequest(EntityRef interpretationStepRef)
-            : this(interpretationStepRef, null, null)
+            : base(interpretationStepRef)
         {
         }
 

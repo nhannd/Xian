@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -41,13 +38,17 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     public class CompleteVerificationRequest : SaveReportRequest
     {
         public CompleteVerificationRequest(EntityRef verificationStepRef)
-            :this(verificationStepRef, null)
+            :base(verificationStepRef, null, null)
         {
+            this.SkipSaveReport = true;
         }
 
         public CompleteVerificationRequest(EntityRef verificationStepRef, string reportContent)
             :base(verificationStepRef, reportContent, null)
         {
         }
+
+        [DataMember]
+        public bool SkipSaveReport;
     }
 }

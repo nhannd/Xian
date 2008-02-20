@@ -177,7 +177,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
             Staff supervisor = GetSupervisor(interpretation, request.SupervisorRef);
 
-            SaveReportHelper(request, interpretation, supervisor);
+            if (request.SkipSaveReport == false)
+                SaveReportHelper(request, interpretation, supervisor);
+
+            if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.Content))
+                throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
 
             Operations.CompleteInterpretationForTranscription op = new Operations.CompleteInterpretationForTranscription();
             ReportingProcedureStep nextStep = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
@@ -199,7 +203,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && supervisor == null)
                 throw new RequestValidationException(SR.ExceptionResidentReportMissingSupervisor);
 
-            SaveReportHelper(request, interpretation, supervisor);
+            if (request.SkipSaveReport == false)
+                SaveReportHelper(request, interpretation, supervisor);
+
+            if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.Content))
+                throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
 
             Operations.CompleteInterpretationForVerification op = new Operations.CompleteInterpretationForVerification();
             ReportingProcedureStep nextStep = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
@@ -219,7 +227,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
             Staff supervisor = GetSupervisor(interpretation, request.SupervisorRef);
 
-            SaveReportHelper(request, interpretation, supervisor);
+            if (request.SkipSaveReport == false)
+                SaveReportHelper(request, interpretation, supervisor);
 
             if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.Content))
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
@@ -287,7 +296,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         {
             VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
 
-            SaveReportHelper(request, verification, null);
+            if (request.SkipSaveReport == false)
+                SaveReportHelper(request, verification, null);
 
             if (verification.ReportPart == null || String.IsNullOrEmpty(verification.ReportPart.Content))
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);

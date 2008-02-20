@@ -31,7 +31,6 @@
 
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
-using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
@@ -39,7 +38,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     public class CompleteInterpretationForVerificationRequest : CompleteInterpretationRequestBase
     {
         public CompleteInterpretationForVerificationRequest(EntityRef interpretationStepRef)
-            : this(interpretationStepRef, null, null)
+            : base(interpretationStepRef)
         {
         }
 
