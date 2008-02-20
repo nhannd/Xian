@@ -8,5 +8,8 @@
     <Setting Name="ReadBufferSize" Type="System.UInt32" Scope="Application">
       <Value Profile="(Default)">65536</Value>
     </Setting>
+    <Setting Name="Binding" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">wshttp</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -30,6 +30,8 @@
 #endregion
 
 using System;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval;
 using ClearCanvas.Server.ShredHost;
@@ -63,9 +65,17 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer
         {
             Platform.Log(LogLevel.Info,"{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
 
-            StartNetPipeHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval", SR.HeaderRetrievalStreamingServiceDescription);
+            if (StreamingServer.Default.BindingType=="http")
+            {
+                StartHttpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval", SR.HeaderRetrievalStreamingServiceDescription);
 
-
+            }
+            else
+            {
+                StartNetTcpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval", SR.HeaderRetrievalStreamingServiceDescription);
+    
+            }
+            
         }
 
         public override void Stop()

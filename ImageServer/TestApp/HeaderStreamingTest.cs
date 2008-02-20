@@ -19,9 +19,17 @@ namespace ClearCanvas.ImageServer.TestApp
 {
     public partial class HeaderStreamingTest : Form
     {
+        private WSHttpBinding wsHttpBinding = new WSHttpBinding();
+        private NetTcpBinding netTcpBinding = new NetTcpBinding();
+        
         public HeaderStreamingTest()
         {
             InitializeComponent();
+
+
+            Bindings.Items.Add(wsHttpBinding.Name);
+            Bindings.Items.Add(netTcpBinding.Name);
+            Bindings.SelectedIndex = 0;
 
             Random rand = new Random();
             timer1.Interval = 5000 + (int) (rand.NextDouble()*15000);
@@ -83,8 +91,56 @@ namespace ClearCanvas.ImageServer.TestApp
         {
             LogTextPanel.Text = "";
             StatisticsLog.Text = "";
+            HeaderRetrievalServiceClient proxy = null;
 
-            HeaderRetrievalServiceClient proxy = new HeaderRetrievalServiceClient();
+            if (Bindings.SelectedItem.ToString()==wsHttpBinding.Name)
+            {
+                const int OneMegaByte = 1048576;
+                bool authenticated = Secured.Checked;
+                wsHttpBinding.MaxReceivedMessageSize = OneMegaByte;
+                wsHttpBinding.ReaderQuotas.MaxStringContentLength = OneMegaByte;
+                wsHttpBinding.ReaderQuotas.MaxArrayLength = OneMegaByte;
+                wsHttpBinding.Security.Mode = authenticated ? SecurityMode.Message : SecurityMode.None;
+                wsHttpBinding.Security.Message.ClientCredentialType = authenticated ?
+                    MessageCredentialType.Windows : MessageCredentialType.None;
+
+                string remotehost = IP.Text;
+                int port = Int32.Parse(WcfPort.Text);
+
+                Uri uri =
+                    new UriBuilder(
+                        String.Format("http://{0}:{1}/{2}/{3}", remotehost, port, ServiceName.Text, ServiceName.Text)).Uri;
+                        
+                EndpointAddress endpoint = new EndpointAddress(uri);
+
+                proxy = new HeaderRetrievalServiceClient(wsHttpBinding, endpoint);
+            }
+
+            else if (Bindings.SelectedItem.ToString() == netTcpBinding.Name)
+            {
+                const int OneMegaByte = 1048576;
+                bool authenticated = Secured.Checked;
+                netTcpBinding.MaxReceivedMessageSize = OneMegaByte;
+                netTcpBinding.ReaderQuotas.MaxStringContentLength = OneMegaByte;
+                netTcpBinding.ReaderQuotas.MaxArrayLength = OneMegaByte;
+                netTcpBinding.Security.Mode = authenticated ?  SecurityMode.Message:SecurityMode.None;
+                netTcpBinding.Security.Message.ClientCredentialType = authenticated ?
+                    MessageCredentialType.Windows : MessageCredentialType.None;
+
+                string remotehost = IP.Text;
+                int port = Int32.Parse(WcfPort.Text);
+
+
+                Uri uri =
+                    new UriBuilder(
+                        String.Format("net.tcp://{0}:{1}/{2}/{3}", remotehost, port, ServiceName.Text, ServiceName.Text)).Uri;
+                        
+                EndpointAddress endpoint = new EndpointAddress(uri);
+
+                proxy = new HeaderRetrievalServiceClient(netTcpBinding, endpoint);
+            }
+
+           
             try
             {
                 HeaderRetrievalParameters parms = new HeaderRetrievalParameters();
@@ -188,6 +244,23 @@ namespace ClearCanvas.ImageServer.TestApp
         private void groupBox1_Enter(object sender, EventArgs e)
         {
 
+        }
+
+        private void Secured_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Bindings_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (Bindings.SelectedItem.ToString()==wsHttpBinding.Name)
+            {
+                WcfPort.Text = "50221";
+            }
+            else if (Bindings.SelectedItem.ToString()==netTcpBinding.Name)
+            {
+                WcfPort.Text = "50222";
+            }
         }
     }
 }

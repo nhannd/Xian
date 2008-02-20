@@ -40,5 +40,14 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval {
                 return ((uint)(this["ReadBufferSize"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("wshttp")]
+        public string Binding {
+            get {
+                return ((string)(this["Binding"]));
+            }
+        }
     }
 }
