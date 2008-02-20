@@ -1411,13 +1411,7 @@ namespace ClearCanvas.Dicom
     /// </summary>
     public class DicomAttributeOB : DicomAttributeBinary<byte>
     {
-        #region Protected Members
-        protected List<uint> _table;
-        protected List<ByteBuffer> _fragments = new List<ByteBuffer>();
-        #endregion
-
         #region Constructors
-
         public DicomAttributeOB(uint tag)
             : base(tag)
         {
@@ -1451,7 +1445,6 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Abstract Method Implementation
-
 
         public override Object Values
         {
@@ -1501,63 +1494,6 @@ namespace ClearCanvas.Dicom
             return parseVal;
         }
 
-        #endregion
-
-        #region Public Properties
-        public bool HasOffsetTable
-        {
-            get { return _table != null; }
-        }
-
-        public ByteBuffer OffsetTableBuffer
-        {
-            get
-            {
-                ByteBuffer offsets = new ByteBuffer();
-                if (_table != null)
-                {
-                    foreach (uint offset in _table)
-                    {
-                        offsets.Writer.Write(offset);
-                    }
-                }
-                return offsets;
-            }
-        }
-
-        public List<uint> OffsetTable
-        {
-            get
-            {
-                if (_table == null)
-                    _table = new List<uint>();
-                return _table;
-            }
-        }
-
-        public IList<ByteBuffer> Fragments
-        {
-            get { return _fragments; }
-        }
-        #endregion
-
-        #region Public Methods
-        public void SetOffsetTable(ByteBuffer table)
-        {
-            _table = new List<uint>();
-            _table.AddRange(table.ToUInt32s());
-        }
-        public void SetOffsetTable(List<uint> table)
-        {
-            _table = new List<uint>(table);
-        }
-
-        public void AddFragment(ByteBuffer fragment)
-        {
-            _fragments.Add(fragment);
-        }
-        #endregion
-
         internal override uint CalculateWriteLength(TransferSyntax syntax, DicomWriteOptions options)
         {
             uint length = 0;
@@ -1571,24 +1507,9 @@ namespace ClearCanvas.Dicom
             {
                 length += 4; // length
             }
-            if ((Tag.TagValue == DicomTags.PixelData) && syntax.Encapsulated)
+            if (_values != null)
             {
-                length += 4 + 4; // offset tag
-                if (Flags.IsSet(options, DicomWriteOptions.WriteFragmentOffsetTable) && _table != null)
-                    length += (uint)(_table.Count * 4);
-                foreach (ByteBuffer bb in _fragments)
-                {
-                    length += 4; // item tag
-                    length += 4; // fragment length
-                    length += (uint)bb.Length;
-                }          
-            }
-            else
-            {
-                if (_values != null)
-                {
-                    length += (uint)_values.Length;
-                }
+                length += (uint) _values.Length;
             }
             return length;
         }
@@ -1614,9 +1535,9 @@ namespace ClearCanvas.Dicom
                 bb = new ByteBuffer(_values, ByteBuffer.LocalMachineEndian);
 
              return bb;
-        }
-
-    }
+         }
+        #endregion
+     }
     #endregion
 
     #region DicomAttributeOF

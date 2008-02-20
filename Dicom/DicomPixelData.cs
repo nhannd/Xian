@@ -76,6 +76,8 @@ namespace ClearCanvas.Dicom
 
         #endregion
 
+        public abstract void UpdateAttributeCollection(DicomAttributeCollection dataset);
+
         #region Public Properties
         [DicomField(DicomTags.NumberOfFrames, DefaultValue = DicomFieldDefault.Default)]
         public int NumberOfFrames
@@ -184,7 +186,7 @@ namespace ClearCanvas.Dicom
 
 
     /// <summary>
-    /// A <see cref="DicomAttribute"/> representing uncompressed pixel data.
+    /// Class representing uncompressed pixel data.
     /// </summary>
     public class DicomUncompressedPixelData : DicomPixelData
     {
@@ -193,14 +195,28 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Constructors
-        internal DicomUncompressedPixelData(DicomAttributeCollection collection)
+        public DicomUncompressedPixelData(DicomAttributeCollection collection)
             : base(collection)
         {
             _pd = collection[DicomTags.PixelData];
         }
+
+        public DicomUncompressedPixelData(DicomCompressedPixelData pd) : base(pd)
+        {
+            if (this.BitsAllocated > 8)
+                _pd = new DicomAttributeOW(DicomTags.PixelData);
+            else
+                _pd = new DicomAttributeOB(DicomTags.PixelData);
+        }
         #endregion
 
         #region Public Methods
+        public override void UpdateAttributeCollection(DicomAttributeCollection dataset)
+        {
+            dataset.SaveDicomFields(this);
+            dataset[DicomTags.PixelData] = _pd;
+        }
+
         public byte[] GetFrame(int frame)
         {
             if (frame >= NumberOfFrames)
@@ -300,20 +316,25 @@ namespace ClearCanvas.Dicom
 
 
     /// <summary>
-    /// A <see cref="DicomAttribute"/> representing compressed pixel data.
+    /// Class representing compressed pixel data.
     /// </summary>
     public class DicomCompressedPixelData : DicomPixelData
     {
         #region Protected Members
         protected List<uint> _table;
         protected List<DicomFragment> _fragments = new List<DicomFragment>();
-        private DicomFragmentSequence _sq;
+        private readonly DicomFragmentSequence _sq;
         #endregion
 
         #region Constructors
         public DicomCompressedPixelData(DicomAttributeCollection collection) : base(collection)
         {
             _sq = (DicomFragmentSequence)collection[DicomTags.PixelData];
+        }
+
+        public DicomCompressedPixelData(DicomUncompressedPixelData pd) : base(pd)
+        {
+            _sq = new DicomFragmentSequence(DicomTags.PixelData);
         }
 
 
@@ -323,6 +344,139 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Public Methods
+        public override void UpdateAttributeCollection(DicomAttributeCollection dataset)
+        {
+            dataset.SaveDicomFields(this);
+            dataset[DicomTags.PixelData] = _sq;
+        }
+
+        public void AddFrame(byte[] data)
+        {
+            DicomFragmentSequence sequence = _sq;
+
+            uint offset = 0;
+            foreach (DicomFragment fragment in sequence.Fragments)
+            {
+                offset += (8 + fragment.Length);
+            }
+            sequence.OffsetTable.Add(offset);
+
+            ByteBuffer buffer = new ByteBuffer();
+            buffer.Append(data, 0, data.Length);
+            sequence.Fragments.Add(new DicomFragment(buffer));
+        }
+
+
+        public List<DicomFragment> GetFrameFragments(int frame)
+        {
+            if (frame < 0 || frame >= NumberOfFrames)
+                throw new IndexOutOfRangeException("Requested frame out of range!");
+
+            List<DicomFragment> fragments = new List<DicomFragment>();
+            DicomFragmentSequence sequence = _sq;
+            int fragmentCount = sequence.Fragments.Count;
+
+            if (NumberOfFrames == 1)
+            {
+                foreach (DicomFragment frag in sequence.Fragments)
+                    fragments.Add(frag);
+                return fragments;
+            }
+
+            if (fragmentCount == NumberOfFrames)
+            {
+                fragments.Add(sequence.Fragments[frame]);
+                return fragments;
+            }
+
+            if (sequence.HasOffsetTable && sequence.OffsetTable.Count == NumberOfFrames)
+            {
+                uint offset = sequence.OffsetTable[frame];
+                uint stop = 0xffffffff;
+                uint pos = 0;
+
+                if ((frame + 1) < NumberOfFrames)
+                {
+                    stop = sequence.OffsetTable[frame + 1];
+                }
+
+                int i = 0;
+                while (pos < offset && i < fragmentCount)
+                {
+                    pos += (8 + sequence.Fragments[i].Length);
+                    i++;
+                }
+
+                // check for invalid offset table
+                if (pos != offset)
+                    goto GUESS_FRAME_OFFSET;
+
+                while (offset < stop && i < fragmentCount)
+                {
+                    fragments.Add(sequence.Fragments[i]);
+                    offset += (8 + sequence.Fragments[i].Length);
+                    i++;
+                }
+
+                return fragments;
+            }
+
+        GUESS_FRAME_OFFSET:
+            if (sequence.Fragments.Count > 0)
+            {
+                uint fragmentSize = sequence.Fragments[0].Length;
+
+                bool allSameLength = true;
+                for (int i = 0; i < fragmentCount; i++)
+                {
+                    if (sequence.Fragments[i].Length != fragmentSize)
+                    {
+                        allSameLength = false;
+                        break;
+                    }
+                }
+
+                if (allSameLength)
+                {
+                    if ((fragmentCount % NumberOfFrames) != 0)
+                        throw new DicomDataException("Unable to determine frame length from pixel data sequence!");
+
+                    int count = fragmentCount / NumberOfFrames;
+                    int start = frame * count;
+
+                    for (int i = 0; i < fragmentCount; i++)
+                    {
+                        fragments.Add(sequence.Fragments[start + i]);
+                    }
+
+                    return fragments;
+                }
+                else
+                {
+                    // what if a single frame ends on a fragment boundary?
+
+                    int count = 0;
+                    int start = 0;
+
+                    for (int i = 0; i < fragmentCount && count < frame; i++, start++)
+                    {
+                        if (sequence.Fragments[i].Length != fragmentSize)
+                            count++;
+                    }
+
+                    for (int i = start; i < fragmentCount; i++)
+                    {
+                        fragments.Add(sequence.Fragments[i]);
+                        if (sequence.Fragments[i].Length != fragmentSize)
+                            break;
+                    }
+
+                    return fragments;
+                }
+            }
+
+            return fragments;
+        }
         #endregion
 
     }

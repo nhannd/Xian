@@ -442,6 +442,12 @@ namespace ClearCanvas.Dicom
                 bool thisValidNext = thisEnumerator.MoveNext();
                 bool compareValidNext = compareEnumerator.MoveNext();
 
+                // Skip empty attributes
+                while (thisValidNext && thisEnumerator.Current.IsEmpty)
+                    thisValidNext = thisEnumerator.MoveNext();
+                while (compareValidNext && compareEnumerator.Current.IsEmpty)
+                    compareValidNext = compareEnumerator.MoveNext();
+
                 if (!thisValidNext && !compareValidNext)
                     break; // break & exit with true
 

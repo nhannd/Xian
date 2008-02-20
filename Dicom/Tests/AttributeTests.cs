@@ -140,11 +140,11 @@ namespace ClearCanvas.Dicom.Tests
                 // special case: set null or empty string
                 attr = CreateAttribute();
                 attr.SetStringValue( null);
-                Assert.AreEqual(0, attr.Count);
+                Assert.AreEqual(1, attr.Count);
                 Assert.AreEqual(0, attr.StreamLength);
 
                 attr.SetStringValue( "");
-                Assert.AreEqual(0, attr.Count);
+                Assert.AreEqual(1, attr.Count);
                 Assert.AreEqual(0, attr.StreamLength);
 
                 #endregion
@@ -5253,7 +5253,7 @@ namespace ClearCanvas.Dicom.Tests
                 attrib.SetString(0, "1.2.455.33.54.309393");
                 Assert.AreEqual(1, attrib.Count); 
                 attrib.SetStringValue(null);
-                Assert.AreEqual(0, attrib.Count);
+                Assert.AreEqual(1, attrib.Count);
                 Assert.AreEqual(0, attrib.StreamLength);
 
 

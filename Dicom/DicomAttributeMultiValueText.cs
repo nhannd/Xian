@@ -240,7 +240,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if ((Count == 0) && (_values == null))
+                if ((Count == 0) && (_values == null || _values.Length == 0))
                     return true;
                 return false;
             }
@@ -319,7 +319,7 @@ namespace ClearCanvas.Dicom
         {            
             if (stringValue == null || stringValue.Length == 0)
             {
-                Count = 0;
+                Count = 1;
                 StreamLength = 0;
                 _values = new String[0];
                 return;

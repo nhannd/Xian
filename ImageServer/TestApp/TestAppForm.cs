@@ -37,9 +37,11 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.TestApp
 {
@@ -167,20 +169,10 @@ namespace ClearCanvas.ImageServer.TestApp
             double val;
             dicomFile.DataSet[DicomTags.RescaleSlope].TryGetFloat64(0, out val);
 
-
-            /*
+        
             dicomFile.DataSet[DicomTags.StationName].SetStringValue("AE");
 
-            dicomFile.Save("F:\\MedicalImages\\ClearCanvasDownloadImageSet\\DXStudy\\tmp.dcm");
-
-           // ServerRulesEngine engine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
-            //engine.Load();
-
-            //ServerActionContext context = new ServerActionContext(dicomFile,null,null);
-            //engine.Execute(context);
-            */
             string folder = @"..\";
-            
             DicomDirectoryWriter dicomDirectoryWriter = new DicomDirectoryWriter();
             dicomDirectoryWriter.ImplementationVersionName = "VETPACS2006";
             dicomDirectoryWriter.SourceApplicationEntityTitle = "LEADTOOLS";
@@ -195,6 +187,30 @@ namespace ClearCanvas.ImageServer.TestApp
             dicomDirectoryWriter.Save(folder + @"DIR00001\DICOMDIR2");
             File.WriteAllText(folder + @"DIR00001\DICOMDIR2dump.txt", dicomDirectoryWriter.Dump("", DicomDumpOptions.Default));
             
+        }
+
+        private void buttonLoadCompressed_Click(object sender, EventArgs e)
+        {
+            openFileDialog.ShowDialog();
+
+            DicomFile dicomFile = new DicomFile(openFileDialog.FileName);
+
+            dicomFile.Load();
+
+            double val;
+            dicomFile.DataSet[DicomTags.RescaleSlope].TryGetFloat64(0, out val);
+
+            dicomFile.Filename = "f:\\test.dcm";
+            dicomFile.Save();
+        }
+
+        private void buttonReformatDirectories_Click(object sender, EventArgs e)
+        {
+            DicomFileCleanup cleanup = new DicomFileCleanup();
+
+            cleanup.SourceDirectory = "F:\\Compressed Medical Images";
+            cleanup.DestinationDirectory = "F:\\MedicalImages\\";
+            cleanup.Scan();
         }
     }
 }

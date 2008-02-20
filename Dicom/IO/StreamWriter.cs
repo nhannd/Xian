@@ -86,6 +86,9 @@ namespace ClearCanvas.Dicom.IO
                 if (item.Tag.Element == 0x0000)
                     continue;
 
+                if (item.IsEmpty)
+                    continue;
+
                 if (Flags.IsSet(options, DicomWriteOptions.CalculateGroupLengths)
                     && item.Tag.Group != _group && item.Tag.Group <= 0x7fe0)
                 {

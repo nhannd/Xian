@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+
+    <Compile Include="DicomFileCleanup.cs" />
     <Compile Include="CFindSCU.cs" />
     <Compile Include="HeaderStreamingTest.cs">
       <SubType>Form</SubType>
