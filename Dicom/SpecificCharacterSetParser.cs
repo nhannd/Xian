@@ -129,6 +129,34 @@ namespace ClearCanvas.Dicom
 
         }
 
+        // What does "isomorphic code page" mean? And why use the Arabic code page (Windows-1256) as 
+        // isomorphic code page?
+        //
+        // The use of the isomorphic code page is in enabling us to store DICOM strings in Unicode form,
+        // for example, storing the Patient's Name tag data in a SQL Server 2005 database, so that 
+        // the tag data can be, e.g. conveyed unaltered to a C-FIND query SCU. Note that the goal isn't 
+        // to convert the DICOM string into a Unicode string, i.e. not to convert a string of double-byte
+        // characters into Unicode Kanji characters; the goal is to represent the double-byte characters
+        // in Unicode so that it can be stored or transmitted as if we were dealing with the original 
+        // DICOM source data. For example, if the DICOM string contains an escape sequence, the 
+        // escape sequence should be preserved in the Unicode string.
+        // 
+        // In order to accomplish this, an appropriate code page must be used. How does the code page 
+        // fit into this? To convert to and from DICOM string data and Unicode data, you must specify to
+        // the converter which 'code page' the DICOM data is or is to be represented in, since there is, 
+        // and there will not be anything inherent in the string that conveys encoding information.
+        //
+        // Why must the appropriate code page be used? A code page basically serves as a mapping from
+        // single bytes to characters (in a logical sense). For example, the byte \x1a represents the
+        // Escape character. The problem arises, however, when for certain code pages, certain bytes
+        // have no mapping to characters. Thus, when this code page is used to convert DICOM data 
+        // to Unicode data, if the converter runs into these problem bytes, it cannot represent the
+        // byte as a Unicode character (and will represent it as a question mark '?').
+        //
+        // This applies in the reverse direction as well. Which finally brings us to Windows-1256. 
+        // As it turns out, the Arabic code page is the only one for which every byte value (00 to ff)
+        // has a character representation in Unicode. Therefore, I call it the Isomorphic Code Page:
+        // it allows characters to be encoded in both directions and still 'look' the same.
         const string IsomorphicCodePage = "Windows-1256";
 
         public static bool DoesSpecificCharacterSetApplyToThisVR(string vr)
