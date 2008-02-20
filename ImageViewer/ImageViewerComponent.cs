@@ -546,7 +546,7 @@ namespace ClearCanvas.ImageViewer
 			}
 			catch (Exception e)
 			{
-				OpenStudyException ex = new OpenStudyException(SR.ExceptionLoadCompleteFailure, e);
+				OpenStudyException ex = new OpenStudyException("Failed to load any of the requested images.", e);
 				throw ex;
 			}
 
@@ -556,7 +556,6 @@ namespace ClearCanvas.ImageViewer
 			while (true)
 			{
 				ImageSop image = studyLoader.LoadNextImage();
-
 				if (image == null)
 					break;
 
@@ -774,21 +773,14 @@ namespace ClearCanvas.ImageViewer
 
 		private void VerifyLoad(int totalImages, int failedImages)
 		{
-			if (failedImages == totalImages)
-			{
-				OpenStudyException ex = new OpenStudyException(SR.ExceptionLoadCompleteFailure);
-				ex.TotalImages = totalImages;
-				ex.FailedImages = failedImages;
-				throw ex;
-			}
-			else if (failedImages > 0 || totalImages == 0)
-			{
-				string msg = String.Format(SR.ExceptionLoadPartialFailure, totalImages - failedImages, totalImages);
-				OpenStudyException ex = new OpenStudyException(msg);
-				ex.TotalImages = totalImages;
-				ex.FailedImages = failedImages;
-				throw ex;
-			}
+			if (failedImages == 0)
+				return;
+
+			string message = String.Format("{0} of {1} images have failed to load.", failedImages, totalImages);
+			OpenStudyException ex = new OpenStudyException(message);
+			ex.TotalImages = totalImages;
+			ex.FailedImages = failedImages;
+			throw ex;
 		}
 
 		#endregion

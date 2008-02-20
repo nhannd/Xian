@@ -87,17 +87,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				BackgroundTask task = new BackgroundTask(TaskMethod, false, deleteStudies);
 				ProgressDialog.Show(task, Application.DesktopWindows.ActiveWindow, true);
 			}
-			catch (EndpointNotFoundException)
-			{
-				this.Context.DesktopWindow.ShowMessageBox(SR.MessageDeleteLocalDataStoreServiceNotRunning, MessageBoxActions.Ok);
-			}
-			catch (LocalDataStoreDeletionHelper.ConnectionLostException e)
-			{
-				ExceptionHandler.Report(e, this.Context.DesktopWindow);
-			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, SR.MessageFailedToStartDelete, this.Context.DesktopWindow);
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
 		}
 

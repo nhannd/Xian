@@ -42,6 +42,20 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	public static class LocalDataStoreDeletionHelper
 	{
 		[Serializable]
+		public class UnableToConnectException : CommunicationException
+		{
+			internal UnableToConnectException(string message)
+				: base(message)
+			{
+			}
+
+			internal UnableToConnectException(string message, Exception innerException)
+				: base(message, innerException)
+			{
+			}
+		}
+
+		[Serializable]
 		public class ConnectionLostException : CommunicationException
 		{
 			internal ConnectionLostException(string message)
@@ -49,8 +63,8 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			{
 			}
 
-			protected ConnectionLostException(SerializationInfo info, StreamingContext context)
-				: base(info, context)
+			internal ConnectionLostException(string message, Exception innerException)
+				: base(message, innerException)
 			{
 			}
 		}
@@ -154,7 +168,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				lock (_waitLock)
 				{
 					_waitDeleteInstanceUids.Clear();
-					_error = new ConnectionLostException(SR.ExceptionActivityMonitorConnectionLost);
+					_error = new ConnectionLostException("The connection to Local Data Store Activity Monitor has been lost.");
 					Monitor.Pulse(_waitLock);
 				}
 			}
@@ -219,10 +233,10 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				client.Close();
 				
 			}
-			catch
+			catch (Exception e)
 			{
 				client.Abort();
-				throw;
+				throw new UnableToConnectException("Unable to connect to the Local Data Store service.", e);
 			}
 		}
 
@@ -246,10 +260,10 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				monitor.InnerChannel.Faulted += new EventHandler(callback.OnLostConnection);
 				monitor.InnerChannel.Closed += new EventHandler(callback.OnLostConnection);
 			}
-			catch
+			catch (Exception e)
 			{
 				monitor.Abort();
-				throw;
+				throw new UnableToConnectException("Unable to connect to the Local Data Store Activity Monitor service.", e);
 			}
 
 			try

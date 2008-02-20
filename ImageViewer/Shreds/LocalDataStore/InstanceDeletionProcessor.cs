@@ -248,7 +248,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			public void DeleteInstances(DeleteInstancesRequest request)
 			{
 				if (request.InstanceLevel != InstanceLevel.Study)
-					throw new Exception(SR.ExceptionOnlyStudyLevelDeletionCurrentlySupported);
+					throw new NotSupportedException(SR.ExceptionOnlyStudyLevelDeletionCurrentlySupported);
 
 				lock (_syncLock)
 				{

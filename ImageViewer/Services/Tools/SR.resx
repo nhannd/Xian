@@ -193,12 +193,15 @@ Do you want to cancel the reindex operation anyway?</value>
   <data name="MessageConfirmSendToMultipleServers" xml:space="preserve">
     <value>You have selected multiple servers to send to.  Are you sure you want to continue?</value>
   </data>
-  <data name="MessageDeleteLocalDataStoreServiceNotRunning" xml:space="preserve">
-    <value>Failed to delete the selected studies because the Local Data Store service is not running.
-Please ensure the ClearCanvas server is running or contact your system administrator for assistance.</value>
-  </data>
   <data name="MessageDeletingStudies" xml:space="preserve">
     <value>Deleting studies ...</value>
+  </data>
+  <data name="MessageDeletionHelperConnectionLost" xml:space="preserve">
+    <value>Deletion progress can no longer be obtained; the connection to the required service has been lost.</value>
+  </data>
+  <data name="MessageDeletionHelperUnableToConnect" xml:space="preserve">
+    <value>Failed to process delete request because the Local Data Store service is not running.
+Please ensure the ClearCanvas server is running or contact your system administrator for assistance.</value>
   </data>
   <data name="MessageFailedToImportSelection" xml:space="preserve">
     <value>Failed to initiate an import of the selected items.</value>

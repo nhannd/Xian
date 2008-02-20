@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
     			Enabled = true;
     		}
-    		catch
+    		catch(Exception e)
     		{
     			Enabled = false;
 				
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Configuration
     			_port	= 0;
 				_storageDirectory = "";
 
-    			this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToRetrieveServerSettings, MessageBoxActions.Ok);
+    			ExceptionHandler.Report(e, this.Host.DesktopWindow);
     		}
 
 			NotifyPropertyChanged("AETitle");
@@ -107,9 +107,9 @@ namespace ClearCanvas.ImageViewer.Configuration
     		{
     			DicomServerConfigurationHelper.Update("localhost", _aeTitle, _port, _storageDirectory);
     		}
-    		catch
+    		catch (Exception e)
     		{
-    			this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToUpdateServerSettings, MessageBoxActions.Ok);
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
     		}
     	}
 

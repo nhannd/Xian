@@ -124,10 +124,10 @@
     <value>Diskspace Manager</value>
   </data>
   <data name="ExceptionDicomServerConfigurationRefreshFailed" xml:space="preserve">
-    <value>Failed to retrieve the Local Dicom Server configuration (AE title, port) likely because the service is not running.  Please ensure the service is running and try again.</value>
+    <value>Failed to retrieve the Dicom Server configuration.  Please ensure the service is running and try again.</value>
   </data>
   <data name="ExceptionDicomServerConfigurationUpdateFailed" xml:space="preserve">
-    <value>Failed to update the Local Dicom Server configuration likely because the service is not running.  Please ensure the service is running and try again.</value>
+    <value>Failed to update the Dicom Server configuration.  Please ensure the service is running and try again.</value>
   </data>
   <data name="LabelBytes" xml:space="preserve">
     <value>bytes</value>
@@ -147,14 +147,8 @@
   <data name="MessageFailedToRetrieveDiskspaceManagementSettings" xml:space="preserve">
     <value>Failed to retrieve Diskspace Management settings.  Make sure the ClearCanvas Service is running.</value>
   </data>
-  <data name="MessageFailedToRetrieveServerSettings" xml:space="preserve">
-    <value>Failed to retrieve DICOM Server settings.  Make sure the ClearCanvas Service is running.</value>
-  </data>
   <data name="MessageFailedToUpdateDiskspaceManagementSettings" xml:space="preserve">
     <value>Failed to update Diskspace Management settings.  Make sure the ClearCanvas Service is running.</value>
-  </data>
-  <data name="MessageFailedToUpdateServerSettings" xml:space="preserve">
-    <value>Failed to update DICOM Server settings.  Make sure the ClearCanvas Service is running.</value>
   </data>
   <data name="MonitorConfiguration" xml:space="preserve">
     <value>Window Configuration</value>

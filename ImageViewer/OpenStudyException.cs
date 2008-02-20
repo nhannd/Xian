@@ -30,9 +30,54 @@
 #endregion
 
 using System;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// Exception handling policy for <see cref="OpenStudyException"/>s.
+	/// </summary>
+	[ExceptionPolicyFor(typeof(OpenStudyException))]
+	
+	[ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
+	public sealed class OpenStudyExceptionHandlingPolicy : IExceptionPolicy
+	{
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public OpenStudyExceptionHandlingPolicy()
+		{
+		}
+
+		#region IExceptionPolicy Members
+
+		///<summary>
+		/// Handles the specified exception.
+		///</summary>
+		public void Handle(Exception e, IExceptionHandlingContext exceptionHandlingContext)
+		{
+			exceptionHandlingContext.Log(LogLevel.Error, e);
+
+			OpenStudyException ex = (OpenStudyException)e;
+
+			string message = null;
+			if (ex.SuccessfulImages == 0)
+			{
+				message = SR.ExceptionLoadCompleteFailure;
+			}
+			else if (ex.FailedImages > 0)
+			{
+				message = String.Format(SR.ExceptionLoadPartialFailure, ex.TotalImages - ex.FailedImages, ex.TotalImages);
+			}
+
+			if (message != null)
+				exceptionHandlingContext.ShowMessageBox(message);
+		}
+
+		#endregion
+	}
+	
 	/// <summary>
 	/// The exception that is thrown when a study or image fails to open.
 	/// </summary>

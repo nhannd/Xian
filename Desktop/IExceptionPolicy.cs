@@ -58,7 +58,7 @@ namespace ClearCanvas.Desktop
         ///<summary>
         /// Handles the specified exception.
         ///</summary>
-        void Handle(Exception e, IExceptionHandlingContext exceptonHandlingContext);
+        void Handle(Exception e, IExceptionHandlingContext exceptionHandlingContext);
     }
 
     ///<summary>

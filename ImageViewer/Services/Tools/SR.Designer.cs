@@ -287,21 +287,30 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to delete the selected studies because the Local Data Store service is not running.
-        ///Please ensure the ClearCanvas server is running or contact your system administrator for assistance..
-        /// </summary>
-        internal static string MessageDeleteLocalDataStoreServiceNotRunning {
-            get {
-                return ResourceManager.GetString("MessageDeleteLocalDataStoreServiceNotRunning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Deleting studies ....
         /// </summary>
         internal static string MessageDeletingStudies {
             get {
                 return ResourceManager.GetString("MessageDeletingStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deletion progress can no longer be obtained; the connection to the required service has been lost..
+        /// </summary>
+        internal static string MessageDeletionHelperConnectionLost {
+            get {
+                return ResourceManager.GetString("MessageDeletionHelperConnectionLost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to process delete request because the Local Data Store service is not running.
+        ///Please ensure the ClearCanvas server is running or contact your system administrator for assistance..
+        /// </summary>
+        internal static string MessageDeletionHelperUnableToConnect {
+            get {
+                return ResourceManager.GetString("MessageDeletionHelperUnableToConnect", resourceCulture);
             }
         }
         

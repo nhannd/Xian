@@ -93,9 +93,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 			catch (OpenStudyException e)
 			{
-				if (e.SuccessfulImages == 0 || e.FailedImages > 0)
-					ExceptionHandler.Report(e, this.Context.DesktopWindow);
-
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 				if (e.SuccessfulImages == 0)
 					return;
 			}
@@ -123,9 +121,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					// Study failed to load completely; keep track of how many
 					// images in the study actually did load
 					successfulImagesInLoadFailure += e.SuccessfulImages;
-
-					if (e.SuccessfulImages == 0 || e.FailedImages > 0)
-						ExceptionHandler.Report(e, this.Context.DesktopWindow);
+					ExceptionHandler.Report(e, this.Context.DesktopWindow);
 				}
 			}
 
@@ -150,9 +146,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 				catch (OpenStudyException e)
 				{
-					if (e.SuccessfulImages == 0 || e.FailedImages > 0)
-						ExceptionHandler.Report(e, this.Context.DesktopWindow);
-
+					ExceptionHandler.Report(e, this.Context.DesktopWindow);
 					if (e.SuccessfulImages == 0)
 						continue;
 				}

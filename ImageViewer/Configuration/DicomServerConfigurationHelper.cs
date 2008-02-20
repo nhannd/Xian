@@ -38,11 +38,79 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using System.Threading;
 using System.ServiceModel;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
+	/// <summary>
+	/// Exception handling policy for <see cref="DicomServerConfigurationHelper.UpdateException"/>s and <see cref="DicomServerConfigurationHelper.RefreshException"/>s.
+	/// </summary>
+	[ExceptionPolicyFor(typeof(DicomServerConfigurationHelper.UpdateException))]
+	[ExceptionPolicyFor(typeof(DicomServerConfigurationHelper.RefreshException))]
+
+	[ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
+	public sealed class DicomServerConfigurationHelperExceptionPolicy : IExceptionPolicy
+	{
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public DicomServerConfigurationHelperExceptionPolicy()
+		{
+		}
+
+		#region IExceptionPolicy Members
+
+		///<summary>
+		/// Handles the specified exception.
+		///</summary>
+		public void Handle(Exception e, IExceptionHandlingContext exceptionHandlingContext)
+		{
+			if (!(e.InnerException is EndpointNotFoundException))
+				exceptionHandlingContext.Log(LogLevel.Error, e);
+
+			if (e is DicomServerConfigurationHelper.RefreshException)
+			{
+				exceptionHandlingContext.ShowMessageBox(SR.ExceptionDicomServerConfigurationRefreshFailed);
+			}
+			else if (e is DicomServerConfigurationHelper.UpdateException)
+			{
+				exceptionHandlingContext.ShowMessageBox(SR.ExceptionDicomServerConfigurationUpdateFailed);
+			}
+		}
+
+		#endregion
+	}
+	
 	public static class DicomServerConfigurationHelper
 	{
+		[Serializable]
+		public class UpdateException : Exception
+		{
+			internal UpdateException(string message)
+				: base(message)
+			{
+			}
+
+			internal UpdateException(string message, Exception innerException)
+				: base(message, innerException)
+			{
+			}
+		}
+
+		[Serializable]
+		public class RefreshException : Exception
+		{
+			internal RefreshException(string message)
+				: base(message)
+			{
+			}
+
+			internal RefreshException(string message, Exception innerException)
+				: base(message, innerException)
+			{
+			}
+		}
+
 		private class DicomServerConfigurationProvider : IDicomServerConfigurationProvider
 		{
 			internal DicomServerConfigurationProvider()
@@ -259,7 +327,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			catch (Exception e)
 			{
 				client.Abort();
-				throw new Exception(SR.ExceptionDicomServerConfigurationRefreshFailed, e);
+				throw new RefreshException("Failed to get the Dicom server configuration; the service may not be running.", e);
 			}
 			finally
 			{
@@ -284,7 +352,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			catch (Exception e)
 			{
 				client.Abort();
-				throw new Exception(SR.ExceptionDicomServerConfigurationUpdateFailed, e);
+				throw new UpdateException("Failed to update the Dicom server configuration; the service may not be running.", e);
 			}
 			finally
 			{ 

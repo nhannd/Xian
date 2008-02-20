@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to retrieve the Local Dicom Server configuration (AE title, port) likely because the service is not running.  Please ensure the service is running and try again..
+        ///   Looks up a localized string similar to Failed to retrieve the Dicom Server configuration.  Please ensure the service is running and try again..
         /// </summary>
         internal static string ExceptionDicomServerConfigurationRefreshFailed {
             get {
@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to update the Local Dicom Server configuration likely because the service is not running.  Please ensure the service is running and try again..
+        ///   Looks up a localized string similar to Failed to update the Dicom Server configuration.  Please ensure the service is running and try again..
         /// </summary>
         internal static string ExceptionDicomServerConfigurationUpdateFailed {
             get {
@@ -151,29 +151,11 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to retrieve DICOM Server settings.  Make sure the ClearCanvas Service is running..
-        /// </summary>
-        internal static string MessageFailedToRetrieveServerSettings {
-            get {
-                return ResourceManager.GetString("MessageFailedToRetrieveServerSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Failed to update Diskspace Management settings.  Make sure the ClearCanvas Service is running..
         /// </summary>
         internal static string MessageFailedToUpdateDiskspaceManagementSettings {
             get {
                 return ResourceManager.GetString("MessageFailedToUpdateDiskspaceManagementSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to update DICOM Server settings.  Make sure the ClearCanvas Service is running..
-        /// </summary>
-        internal static string MessageFailedToUpdateServerSettings {
-            get {
-                return ResourceManager.GetString("MessageFailedToUpdateServerSettings", resourceCulture);
             }
         }
         
