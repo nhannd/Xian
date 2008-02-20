@@ -229,16 +229,24 @@ namespace ClearCanvas.Dicom.Network
 
             // Tells the state of the connection as of the last activity on the socket
             if (!_socket.Connected)
+            {
                 CloseNetwork();
-
-            if (_socket.Available > 0)
-                return true;
+                return false;
+            }
 
             // This is the recommended way to determine if a socket is still active, make a
             // zero byte send call, and see if an exception is thrown.  See the Socket.Connected
             // MSDN documentation  Only do the check when we know there's no data available
             try
             {
+                if (_socket.Poll(1000, SelectMode.SelectRead))
+                {
+                    if (_socket.Available > 0)
+                        return true;
+                    CloseNetwork();
+                    return false;
+                } 
+
                 _socket.Send(new byte[1], 0, 0);
             }
             catch (SocketException e)
