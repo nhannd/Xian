@@ -45,7 +45,7 @@ namespace ClearCanvas.Healthcare
         protected override RegistrationWorklistItemSearchCriteria[] GetQueryConditions(Staff staff)
         {
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
-            criteria.Order.Status.EqualTo(OrderStatus.DC);
+            criteria.Order.Status.In(new OrderStatus[] { OrderStatus.DC, OrderStatus.CA });
             criteria.Procedure.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
             return new RegistrationWorklistItemSearchCriteria[] { criteria };
         }
