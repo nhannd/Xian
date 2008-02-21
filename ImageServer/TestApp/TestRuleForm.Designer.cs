@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.ImageServer.TestApp
 {
-    partial class TestAppForm
+    partial class TestRuleForm
     {
         /// <summary>
         /// Required designer variable.

@@ -45,8 +45,7 @@ namespace ClearCanvas.ImageServer.TestApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new TestAppForm());
-            Application.Run(new HeaderStreamingTest());
+            Application.Run(new Startup());
         }
     }
 }

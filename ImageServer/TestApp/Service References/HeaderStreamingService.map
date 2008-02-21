@@ -8,8 +8,8 @@
 	</ProxyGenerationParameters>
 	<EndPoints>
 		<EndPoint
-			Address="http://localhost:50221/HeaderRetrieval/HeaderRetrieval"
-			BindingConfiguration="WSHttpBinding_IHeaderRetrievalService"
+			Address="net.tcp://localhost:50222/HeaderRetrieval/HeaderRetrieval"
+			BindingConfiguration="NetTcpBinding_IHeaderRetrievalService"
 			Contract="ClearCanvas.ImageServer.TestApp.HeaderStreamingService.IHeaderRetrievalService"
 			>
 		</EndPoint>

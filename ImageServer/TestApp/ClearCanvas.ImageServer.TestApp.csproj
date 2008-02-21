@@ -32,6 +32,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
@@ -39,33 +40,42 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-
     <Compile Include="DicomFileCleanup.cs" />
     <Compile Include="CFindSCU.cs" />
-    <Compile Include="HeaderStreamingTest.cs">
+    <Compile Include="TestHeaderStreamingForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="HeaderStreamingTest.Designer.cs">
-      <DependentUpon>HeaderStreamingTest.cs</DependentUpon>
+    <Compile Include="TestHeaderStreamingForm.Designer.cs">
+      <DependentUpon>TestHeaderStreamingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Service References\HeaderStreamingService.cs">
       <DependentUpon>HeaderStreamingService.map</DependentUpon>
     </Compile>
-    <Compile Include="TestAppForm.cs">
+    <Compile Include="Startup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TestAppForm.Designer.cs">
-      <DependentUpon>TestAppForm.cs</DependentUpon>
+    <Compile Include="Startup.Designer.cs">
+      <DependentUpon>Startup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TestRuleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TestRuleForm.Designer.cs">
+      <DependentUpon>TestRuleForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="HeaderStreamingTest.resx">
+    <EmbeddedResource Include="TestHeaderStreamingForm.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>HeaderStreamingTest.cs</DependentUpon>
+      <DependentUpon>TestHeaderStreamingForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TestAppForm.resx">
+    <EmbeddedResource Include="Startup.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>TestAppForm.cs</DependentUpon>
+      <DependentUpon>Startup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestRuleForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TestRuleForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -83,6 +93,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Service References\HeaderStreamingService.map" />
+    <None Include="InstallClientCert.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>

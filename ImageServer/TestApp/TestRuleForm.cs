@@ -45,9 +45,9 @@ using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.TestApp
 {
-    public partial class TestAppForm : Form
+    public partial class TestRuleForm : Form
     {
-        public TestAppForm()
+        public TestRuleForm()
         {
             
             InitializeComponent();

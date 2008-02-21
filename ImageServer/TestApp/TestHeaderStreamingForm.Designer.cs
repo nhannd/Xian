@@ -1,6 +1,6 @@
 namespace ClearCanvas.ImageServer.TestApp
 {
-    partial class HeaderStreamingTest
+    partial class TestHeaderStreamingForm
     {
         /// <summary>
         /// Required designer variable.
@@ -35,12 +35,21 @@ namespace ClearCanvas.ImageServer.TestApp
             this.LogTextPanel = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.certifcateGroupbox = new System.Windows.Forms.GroupBox();
+            this.ValidateServerCert = new System.Windows.Forms.CheckBox();
+            this.ClientCertSubjectName = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.EndPointDNS = new System.Windows.Forms.TextBox();
+            this.ServiceName = new System.Windows.Forms.TextBox();
             this.WcfPort = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.Bindings = new System.Windows.Forms.ComboBox();
             this.Secured = new System.Windows.Forms.CheckBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.IP = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.Port = new System.Windows.Forms.TextBox();
             this.AETitle = new System.Windows.Forms.TextBox();
@@ -56,10 +65,9 @@ namespace ClearCanvas.ImageServer.TestApp
             this.StatisticsLog = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.ServiceName = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.certifcateGroupbox.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -71,35 +79,35 @@ namespace ClearCanvas.ImageServer.TestApp
             // 
             // Query
             // 
-            this.Query.Location = new System.Drawing.Point(546, 37);
+            this.Query.Location = new System.Drawing.Point(282, 88);
             this.Query.Name = "Query";
-            this.Query.Size = new System.Drawing.Size(75, 23);
+            this.Query.Size = new System.Drawing.Size(102, 23);
             this.Query.TabIndex = 1;
-            this.Query.Text = "Query";
+            this.Query.Text = "Search Studies";
             this.Query.UseVisualStyleBackColor = true;
             this.Query.Click += new System.EventHandler(this.Query_Click);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(162, 25);
+            this.label2.Location = new System.Drawing.Point(153, 25);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(79, 13);
+            this.label2.Size = new System.Drawing.Size(96, 13);
             this.label2.TabIndex = 3;
-            this.label2.Text = "Server Partition";
+            this.label2.Text = "Server Partition AE";
             // 
             // ServerAE
             // 
-            this.ServerAE.Location = new System.Drawing.Point(165, 41);
+            this.ServerAE.Location = new System.Drawing.Point(156, 40);
             this.ServerAE.Name = "ServerAE";
-            this.ServerAE.Size = new System.Drawing.Size(170, 20);
+            this.ServerAE.Size = new System.Drawing.Size(100, 20);
             this.ServerAE.TabIndex = 4;
             this.ServerAE.Text = "ImageServer";
             // 
             // LogTextPanel
             // 
             this.LogTextPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LogTextPanel.Location = new System.Drawing.Point(3, 467);
+            this.LogTextPanel.Location = new System.Drawing.Point(3, 520);
             this.LogTextPanel.Multiline = true;
             this.LogTextPanel.Name = "LogTextPanel";
             this.LogTextPanel.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -110,6 +118,7 @@ namespace ClearCanvas.ImageServer.TestApp
             // 
             this.groupBox1.Controls.Add(this.groupBox3);
             this.groupBox1.Controls.Add(this.IP);
+            this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.Port);
             this.groupBox1.Controls.Add(this.AETitle);
@@ -119,30 +128,87 @@ namespace ClearCanvas.ImageServer.TestApp
             this.groupBox1.Controls.Add(this.Query);
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1066, 91);
+            this.groupBox1.Size = new System.Drawing.Size(1066, 144);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.certifcateGroupbox);
+            this.groupBox3.Controls.Add(this.EndPointDNS);
             this.groupBox3.Controls.Add(this.ServiceName);
             this.groupBox3.Controls.Add(this.WcfPort);
             this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.Controls.Add(this.Bindings);
             this.groupBox3.Controls.Add(this.Secured);
             this.groupBox3.Controls.Add(this.label7);
+            this.groupBox3.Controls.Add(this.label10);
             this.groupBox3.Controls.Add(this.label4);
-            this.groupBox3.Location = new System.Drawing.Point(659, 9);
+            this.groupBox3.Location = new System.Drawing.Point(412, 9);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(401, 76);
+            this.groupBox3.Size = new System.Drawing.Size(648, 117);
             this.groupBox3.TabIndex = 14;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "WCF Settings";
             // 
+            // certifcateGroupbox
+            // 
+            this.certifcateGroupbox.Controls.Add(this.ValidateServerCert);
+            this.certifcateGroupbox.Controls.Add(this.ClientCertSubjectName);
+            this.certifcateGroupbox.Controls.Add(this.label9);
+            this.certifcateGroupbox.Location = new System.Drawing.Point(332, 10);
+            this.certifcateGroupbox.Name = "certifcateGroupbox";
+            this.certifcateGroupbox.Size = new System.Drawing.Size(310, 101);
+            this.certifcateGroupbox.TabIndex = 18;
+            this.certifcateGroupbox.TabStop = false;
+            this.certifcateGroupbox.Text = "certificate";
+            // 
+            // ValidateServerCert
+            // 
+            this.ValidateServerCert.AutoSize = true;
+            this.ValidateServerCert.Location = new System.Drawing.Point(146, 41);
+            this.ValidateServerCert.Name = "ValidateServerCert";
+            this.ValidateServerCert.Size = new System.Drawing.Size(144, 17);
+            this.ValidateServerCert.TabIndex = 16;
+            this.ValidateServerCert.Text = "validate server certificate";
+            this.ValidateServerCert.UseVisualStyleBackColor = true;
+            // 
+            // ClientCertSubjectName
+            // 
+            this.ClientCertSubjectName.Enabled = false;
+            this.ClientCertSubjectName.Location = new System.Drawing.Point(22, 41);
+            this.ClientCertSubjectName.Name = "ClientCertSubjectName";
+            this.ClientCertSubjectName.Size = new System.Drawing.Size(100, 20);
+            this.ClientCertSubjectName.TabIndex = 15;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(19, 25);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(78, 13);
+            this.label9.TabIndex = 14;
+            this.label9.Text = "local certificate";
+            // 
+            // EndPointDNS
+            // 
+            this.EndPointDNS.Location = new System.Drawing.Point(206, 32);
+            this.EndPointDNS.Name = "EndPointDNS";
+            this.EndPointDNS.Size = new System.Drawing.Size(100, 20);
+            this.EndPointDNS.TabIndex = 17;
+            // 
+            // ServiceName
+            // 
+            this.ServiceName.Location = new System.Drawing.Point(19, 32);
+            this.ServiceName.Name = "ServiceName";
+            this.ServiceName.Size = new System.Drawing.Size(100, 20);
+            this.ServiceName.TabIndex = 16;
+            this.ServiceName.Text = "HeaderRetrieval";
+            // 
             // WcfPort
             // 
-            this.WcfPort.Location = new System.Drawing.Point(258, 48);
+            this.WcfPort.Location = new System.Drawing.Point(136, 32);
             this.WcfPort.Name = "WcfPort";
             this.WcfPort.Size = new System.Drawing.Size(55, 20);
             this.WcfPort.TabIndex = 15;
@@ -150,7 +216,7 @@ namespace ClearCanvas.ImageServer.TestApp
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(122, 28);
+            this.label1.Location = new System.Drawing.Point(16, 65);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(42, 13);
             this.label1.TabIndex = 14;
@@ -159,7 +225,7 @@ namespace ClearCanvas.ImageServer.TestApp
             // Bindings
             // 
             this.Bindings.FormattingEnabled = true;
-            this.Bindings.Location = new System.Drawing.Point(125, 47);
+            this.Bindings.Location = new System.Drawing.Point(19, 82);
             this.Bindings.Name = "Bindings";
             this.Bindings.Size = new System.Drawing.Size(121, 21);
             this.Bindings.TabIndex = 13;
@@ -168,7 +234,9 @@ namespace ClearCanvas.ImageServer.TestApp
             // Secured
             // 
             this.Secured.AutoSize = true;
-            this.Secured.Location = new System.Drawing.Point(319, 50);
+            this.Secured.Checked = true;
+            this.Secured.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.Secured.Location = new System.Drawing.Point(157, 84);
             this.Secured.Name = "Secured";
             this.Secured.Size = new System.Drawing.Size(66, 17);
             this.Secured.TabIndex = 12;
@@ -176,10 +244,28 @@ namespace ClearCanvas.ImageServer.TestApp
             this.Secured.UseVisualStyleBackColor = true;
             this.Secured.CheckedChanged += new System.EventHandler(this.Secured_CheckedChanged);
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(16, 16);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(43, 13);
+            this.label7.TabIndex = 8;
+            this.label7.Text = "Service";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(203, 16);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(87, 13);
+            this.label10.TabIndex = 8;
+            this.label10.Text = "EndPoint Identify";
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(255, 28);
+            this.label4.Location = new System.Drawing.Point(133, 16);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(26, 13);
             this.label4.TabIndex = 8;
@@ -187,26 +273,35 @@ namespace ClearCanvas.ImageServer.TestApp
             // 
             // IP
             // 
-            this.IP.Location = new System.Drawing.Point(357, 40);
+            this.IP.Location = new System.Drawing.Point(35, 90);
             this.IP.Name = "IP";
             this.IP.Size = new System.Drawing.Size(100, 20);
             this.IP.TabIndex = 11;
             this.IP.Text = "localhost";
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(153, 74);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(60, 13);
+            this.label8.TabIndex = 10;
+            this.label8.Text = "Server Port";
+            // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(354, 24);
+            this.label5.Location = new System.Drawing.Point(32, 74);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(17, 13);
+            this.label5.Size = new System.Drawing.Size(61, 13);
             this.label5.TabIndex = 10;
-            this.label5.Text = "IP";
+            this.label5.Text = "Server host";
             // 
             // Port
             // 
-            this.Port.Location = new System.Drawing.Point(467, 40);
+            this.Port.Location = new System.Drawing.Point(156, 90);
             this.Port.Name = "Port";
-            this.Port.Size = new System.Drawing.Size(60, 20);
+            this.Port.Size = new System.Drawing.Size(100, 20);
             this.Port.TabIndex = 9;
             this.Port.Text = "2112";
             // 
@@ -238,7 +333,7 @@ namespace ClearCanvas.ImageServer.TestApp
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 100);
+            this.splitContainer1.Location = new System.Drawing.Point(3, 153);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -316,7 +411,7 @@ namespace ClearCanvas.ImageServer.TestApp
             // 
             this.groupBox2.Controls.Add(this.StatisticsLog);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox2.Location = new System.Drawing.Point(3, 329);
+            this.groupBox2.Location = new System.Drawing.Point(3, 382);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(1066, 132);
             this.groupBox2.TabIndex = 10;
@@ -351,23 +446,6 @@ namespace ClearCanvas.ImageServer.TestApp
             this.tableLayoutPanel4.Size = new System.Drawing.Size(1072, 697);
             this.tableLayoutPanel4.TabIndex = 11;
             // 
-            // ServiceName
-            // 
-            this.ServiceName.Location = new System.Drawing.Point(19, 48);
-            this.ServiceName.Name = "ServiceName";
-            this.ServiceName.Size = new System.Drawing.Size(100, 20);
-            this.ServiceName.TabIndex = 16;
-            this.ServiceName.Text = "HeaderRetrieval";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(16, 28);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(43, 13);
-            this.label7.TabIndex = 8;
-            this.label7.Text = "Service";
-            // 
             // HeaderStreamingTest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -380,6 +458,8 @@ namespace ClearCanvas.ImageServer.TestApp
             this.groupBox1.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.certifcateGroupbox.ResumeLayout(false);
+            this.certifcateGroupbox.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -428,5 +508,12 @@ namespace ClearCanvas.ImageServer.TestApp
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox ServiceName;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox ClientCertSubjectName;
+        private System.Windows.Forms.TextBox EndPointDNS;
+        private System.Windows.Forms.GroupBox certifcateGroupbox;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.CheckBox ValidateServerCert;
+        private System.Windows.Forms.Label label10;
     }
 }
