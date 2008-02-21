@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[ExtensionOf(typeof(RectangleAnalyzerExtensionPoint))]
 	public class RectangleAreaCalculator : IRoiAnalyzer<RectangleInteractiveGraphic>
 	{
-		public string Analyze(RectangleInteractiveGraphic rectangle)
+		public string Analyze(RectangleInteractiveGraphic rectangle, RoiAnalysisMethod method)
 		{
 			IImageSopProvider provider = rectangle.ParentPresentationImage as IImageSopProvider;
 
@@ -49,8 +49,13 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[ExtensionOf(typeof(RectangleAnalyzerExtensionPoint))]
 	public class RectangleStatisticsCalculator : IRoiAnalyzer<RectangleInteractiveGraphic>
 	{
-		public string Analyze(RectangleInteractiveGraphic rectangle)
+		public string Analyze(RectangleInteractiveGraphic rectangle, RoiAnalysisMethod method)
 		{
+			if (method == RoiAnalysisMethod.Fast)
+			{
+				return String.Format("{0} {1}\n{2} {1}", SR.ToolsMeasurementMean, SR.ToolsMeasurementCalculating, SR.ToolsMeasurementStdev);
+			}
+
 			rectangle.CoordinateSystem = CoordinateSystem.Source;
 
 			string str = RoiStatisticsCalculator.Calculate(rectangle, IsPointInRoi);

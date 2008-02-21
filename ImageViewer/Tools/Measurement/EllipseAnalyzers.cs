@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[ExtensionOf(typeof(EllipseAnalyzerExtensionPoint))]
 	public class EllipseAreaCalculator : IRoiAnalyzer<EllipseInteractiveGraphic>
 	{
-		public string Analyze(EllipseInteractiveGraphic ellipse)
+		public string Analyze(EllipseInteractiveGraphic ellipse, RoiAnalysisMethod method)
 		{
 			IImageSopProvider provider = ellipse.ParentPresentationImage as IImageSopProvider;
 
@@ -51,8 +51,13 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	{
 		float a, b, a2, b2, h, k, xh, yk, r;
 
-		public string Analyze(EllipseInteractiveGraphic ellipse)
+		public string Analyze(EllipseInteractiveGraphic ellipse, RoiAnalysisMethod method)
 		{
+			if (method == RoiAnalysisMethod.Fast)
+			{
+				return String.Format("{0} {1}\n{2} {1}", SR.ToolsMeasurementMean, SR.ToolsMeasurementCalculating, SR.ToolsMeasurementStdev);
+			}
+
 			ellipse.CoordinateSystem = CoordinateSystem.Source;
 
 			a = ellipse.Width/2;

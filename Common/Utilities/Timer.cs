@@ -31,7 +31,6 @@
 
 using System;
 using System.Threading;
-using System.Timers;
 
 namespace ClearCanvas.Common.Utilities
 {
@@ -67,7 +66,7 @@ namespace ClearCanvas.Common.Utilities
 		private readonly object _startStopLock;
 		private volatile State _state;
 		private volatile int _intervalMilliseconds;
-
+		
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -106,21 +105,6 @@ namespace ClearCanvas.Common.Utilities
 			_startStopLock = new object();
 			_state = State.Stopped;
 			_intervalMilliseconds = intervalMilliseconds;
-		}
-
-		/// <summary>
-		/// Finalizer.
-		/// </summary>
-		~Timer()
-		{
-			try
-			{
-				Stop();
-			}
-			catch(Exception e)
-			{
-				Platform.Log(LogLevel.Warn, e);
-			}
 		}
 
 		/// <summary>

@@ -8,7 +8,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[ExtensionOf(typeof(ProtractorAnalyzerExtensionPoint))]
 	public class ProtractorAngleCalculator : IRoiAnalyzer<PolyLineInteractiveGraphic>
 	{
-		public string Analyze(PolyLineInteractiveGraphic protractor)
+		public string Analyze(PolyLineInteractiveGraphic protractor, RoiAnalysisMethod method)
 		{
 			// Don't show the callout until the second ray drawn
 			if (protractor.PolyLine.Count < 3)

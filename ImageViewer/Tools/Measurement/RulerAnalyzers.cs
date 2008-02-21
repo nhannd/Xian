@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[ExtensionOf(typeof(RulerAnalyzerExtensionPoint))]
 	public class RulerLengthCalculator : IRoiAnalyzer<PolyLineInteractiveGraphic>
 	{
-		public string Analyze(PolyLineInteractiveGraphic line)
+		public string Analyze(PolyLineInteractiveGraphic line, RoiAnalysisMethod method)
 		{
 			IImageSopProvider provider = line.ParentPresentationImage as IImageSopProvider;
 

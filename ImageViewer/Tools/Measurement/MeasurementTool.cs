@@ -1,20 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Common.Utilities;
+using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	public abstract class MeasurementTool<T> : MouseImageViewerTool
 		where T:InteractiveGraphic
 	{
-		private RoiGraphic _roiGraphic;
+		private DelayedEventPublisher _roiChangedDelayedEventPublisher;
+
+		private RoiGraphic _createRoiGraphic;
+		private InteractiveGraphic _currentChangingRoi;
+
 		private List<IRoiAnalyzer<T>> _roiAnalyzers;
 
 		/// <summary>
@@ -29,33 +35,50 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected abstract string CreationCommandName { get; }
 
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			_roiChangedDelayedEventPublisher = new DelayedEventPublisher(OnDelayedRoiChanged);
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && _roiChangedDelayedEventPublisher != null)
+			{
+				_roiChangedDelayedEventPublisher.Dispose();
+				_roiChangedDelayedEventPublisher = null;
+			}
+
+			base.Dispose(disposing);
+		}
+
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			base.Start(mouseInformation);
 
-			IOverlayGraphicsProvider image = mouseInformation.Tile.PresentationImage as IOverlayGraphicsProvider;
+			if (_createRoiGraphic != null)
+				return _createRoiGraphic.Start(mouseInformation);
 
+			IOverlayGraphicsProvider image = mouseInformation.Tile.PresentationImage as IOverlayGraphicsProvider;
 			if (image == null)
 				return false;
-
-			if (_roiGraphic != null)
-				return _roiGraphic.Start(mouseInformation);
-
+			
 			//When you create a graphic from within a tool (particularly one that needs capture, like a multi-click graphic),
 			//see it through to the end of creation.  It's just cleaner, not to mention that if this tool knows how to create it,
 			//it should also know how to (and be responsible for) cancelling it and/or deleting it appropriately.
 			InteractiveGraphic interactiveGraphic = CreateInteractiveGraphic();
 
-			_roiGraphic = new RoiGraphic(interactiveGraphic, true);
-			_roiGraphic.Name = this.ToString();
+			_createRoiGraphic = new RoiGraphic(interactiveGraphic, true);
+			_createRoiGraphic.Name = this.ToString();
 
-			image.OverlayGraphics.Add(_roiGraphic);
-			_roiGraphic.RoiChanged += OnRoiChanged;
+			_createRoiGraphic.RoiChanged += OnRoiChanged;
 
-			OnRoiCreation(_roiGraphic);
+			image.OverlayGraphics.Add(_createRoiGraphic);
+			OnRoiCreation(_createRoiGraphic);
 			CreateAnalyzersInternal();
 
-			if (_roiGraphic.Start(mouseInformation))
+			if (_createRoiGraphic.Start(mouseInformation))
 				return true;
 
 			this.Cancel();
@@ -64,48 +87,63 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			if (_roiGraphic != null)
-				return _roiGraphic.Track(mouseInformation);
+			if (_createRoiGraphic != null)
+				return _createRoiGraphic.Track(mouseInformation);
 
 			return false;
 		}
 
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
-			if (_roiGraphic != null)
-			{
-				if (_roiGraphic.Stop(mouseInformation))
-				{
-					IOverlayGraphicsProvider image = (IOverlayGraphicsProvider)mouseInformation.Tile.PresentationImage;
+			if (_createRoiGraphic == null)
+				return false;
 
-					InsertRemoveGraphicUndoableCommand command = InsertRemoveGraphicUndoableCommand.GetRemoveCommand(image.OverlayGraphics, _roiGraphic);
-					command.Name = this.CreationCommandName;
-					_roiGraphic.ImageViewer.CommandHistory.AddCommand(command);
-					return true;
-				}
-			}
+			if (_createRoiGraphic.Stop(mouseInformation))
+				return true;
 
-			_roiGraphic = null;
+			ResetActivelyChangingRoi();
+
+			IOverlayGraphicsProvider image = (IOverlayGraphicsProvider)mouseInformation.Tile.PresentationImage;
+
+			InsertRemoveGraphicUndoableCommand command = InsertRemoveGraphicUndoableCommand.GetRemoveCommand(image.OverlayGraphics, _createRoiGraphic);
+			command.Name = this.CreationCommandName;
+			_createRoiGraphic.ImageViewer.CommandHistory.AddCommand(command);
+			_createRoiGraphic = null;
 			return false;
 		}
 
 		public override void Cancel()
 		{
-			if (_roiGraphic != null)
-				_roiGraphic.Cancel();
+			if (_createRoiGraphic == null)
+				return;
 
-			IOverlayGraphicsProvider image = _roiGraphic.ParentPresentationImage as IOverlayGraphicsProvider;
-			image.OverlayGraphics.Remove(_roiGraphic);
+			ResetActivelyChangingRoi();
+			_createRoiGraphic.RoiChanged -= OnRoiChanged;
 
-			_roiGraphic.ParentPresentationImage.Draw();
-			_roiGraphic = null;
+			_createRoiGraphic.Cancel();
+
+			// Cancel pending delayed event.
+			_roiChangedDelayedEventPublisher.Cancel();
+
+			IOverlayGraphicsProvider image = (IOverlayGraphicsProvider)_createRoiGraphic.ParentPresentationImage;
+			image.OverlayGraphics.Remove(_createRoiGraphic);
+
+			_createRoiGraphic.ParentPresentationImage.Draw();
+			_createRoiGraphic = null;
 		}
 
 		public override CursorToken GetCursorToken(Point point)
 		{
-			if (_roiGraphic != null)
-				return _roiGraphic.GetCursorToken(point);
+			if (_createRoiGraphic != null)
+				return _createRoiGraphic.GetCursorToken(point);
 
+			return null;
+		}
+
+		protected abstract InteractiveGraphic CreateInteractiveGraphic();
+
+		protected virtual object[] CreateAnalyzers()
+		{
 			return null;
 		}
 
@@ -115,34 +153,50 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected virtual void OnRoiChanged(RoiGraphic roiGraphic)
 		{
-			if (_roiAnalyzers == null)
+			_roiChangedDelayedEventPublisher.Publish(roiGraphic, EventArgs.Empty);
+			SetCurrentChangingRoi(roiGraphic.Roi);			
+			Analyze(roiGraphic, RoiAnalysisMethod.Fast);
+		}
+
+		protected virtual void OnDelayedRoiChanged(RoiGraphic roiGraphic)
+		{
+			Analyze(roiGraphic, RoiAnalysisMethod.Accurate);
+			roiGraphic.Draw();
+		}
+
+		private void Analyze(RoiGraphic roiGraphic, RoiAnalysisMethod analysisMethod)
+		{
+			if (_roiAnalyzers == null || _roiAnalyzers.Count == 0)
 				return;
 
-			string calloutText = "";
-
+			StringBuilder calloutText = new StringBuilder();
 
 			foreach (IRoiAnalyzer<T> analyzer in _roiAnalyzers)
 			{
-				string analysis = analyzer.Analyze(roiGraphic.Roi as T);
-
-				if (analysis != String.Empty)
-					calloutText += analysis + "\n";
+				string analysis = analyzer.Analyze(roiGraphic.Roi as T, analysisMethod);
+				if (!String.IsNullOrEmpty(analysis))
+					calloutText.AppendLine(analysis);
 			}
 
-			roiGraphic.Callout.Text = calloutText;
+			roiGraphic.Callout.Text = calloutText.ToString();
 		}
 
-		protected virtual object[] CreateAnalyzers()
+		private void SetCurrentChangingRoi(InteractiveGraphic roi)
 		{
-			return null;
+			if (_currentChangingRoi == null)
+			{
+				_currentChangingRoi = roi;
+				_currentChangingRoi.StateChanged += OnRoiStateChanged;
+			}
 		}
 
-		protected abstract InteractiveGraphic CreateInteractiveGraphic();
-
-		private void OnRoiChanged(object sender, EventArgs e)
+		private void ResetActivelyChangingRoi()
 		{
-			RoiGraphic roiGraphic = sender as RoiGraphic;
-			OnRoiChanged(roiGraphic);
+			if (_currentChangingRoi != null)
+			{
+				_currentChangingRoi.StateChanged -= OnRoiStateChanged;
+				_currentChangingRoi = null;
+			}
 		}
 
 		private void CreateAnalyzersInternal()
@@ -163,6 +217,28 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 				_roiAnalyzers.Add(roiAnalyzer);
 			}
+		}
+
+		private void OnRoiStateChanged(object sender, GraphicStateChangedEventArgs e)
+		{
+			ResetActivelyChangingRoi();
+
+			// We use the state change to force analysis of the currently changing
+			// Roi because it is otherwise possible (if the user clicked quickly again
+			// to start creating a new Roi) for the currently roi's text to fail to update.
+			// We can't do this in the Stop() method because it doesn't work for Rois
+			// that are not in the create state.
+			_roiChangedDelayedEventPublisher.PublishNow();
+		}
+
+		private void OnDelayedRoiChanged(object sender, EventArgs e)
+		{
+			OnDelayedRoiChanged(sender as RoiGraphic);
+		}
+
+		private void OnRoiChanged(object sender, EventArgs e)
+		{
+			OnRoiChanged(sender as RoiGraphic);
 		}
 	}
 }

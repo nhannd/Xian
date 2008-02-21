@@ -225,4 +225,13 @@
   <data name="TooltipCalibrationTool" xml:space="preserve">
     <value>Calibrate</value>
   </data>
+  <data name="ToolsMeasurementCalculating" xml:space="preserve">
+    <value>Calculating ...</value>
+  </data>
+  <data name="ToolsMeasurementMean" xml:space="preserve">
+    <value>Mean:</value>
+  </data>
+  <data name="ToolsMeasurementStdev" xml:space="preserve">
+    <value>Stdev:</value>
+  </data>
 </root>
