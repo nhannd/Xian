@@ -99,27 +99,18 @@ namespace ClearCanvas.Ris.Application.Services
 
         public ReportPartDetail CreateReportPartDetail(ReportPart reportPart, IPersistenceContext context)
         {
-            ReportPartDetail summary = new ReportPartDetail();
-
-            summary.ReportPartRef = reportPart.GetRef();
-            summary.Index = reportPart.Index;
-            summary.Content = reportPart.Content;
-            summary.Status = EnumUtils.GetEnumValueInfo(reportPart.Status, context);
-
             StaffAssembler staffAssembler = new StaffAssembler();
-
-            if (reportPart.Supervisor != null)
-                summary.Supervisor = staffAssembler.CreateStaffSummary(reportPart.Supervisor, context);
-
-            if (reportPart.Interpreter != null)
-                summary.InterpretedBy = staffAssembler.CreateStaffSummary(reportPart.Interpreter, context);
-
-            if (reportPart.Transcriber != null)
-                summary.TranscribedBy = staffAssembler.CreateStaffSummary(reportPart.Transcriber, context);
-
-            if (reportPart.Verifier != null)
-                summary.VerifiedBy = staffAssembler.CreateStaffSummary(reportPart.Verifier, context);
-
+            ReportPartDetail summary = new ReportPartDetail(
+                reportPart.GetRef(),
+                reportPart.Index,
+                reportPart.Index > 0,
+                reportPart.Content,
+                EnumUtils.GetEnumValueInfo(reportPart.Status, context),
+                reportPart.Supervisor == null ? null : staffAssembler.CreateStaffSummary(reportPart.Supervisor, context),
+                reportPart.Interpreter == null ? null : staffAssembler.CreateStaffSummary(reportPart.Interpreter, context),
+                reportPart.Transcriber == null ? null : staffAssembler.CreateStaffSummary(reportPart.Transcriber, context),
+                reportPart.Verifier == null ? null : staffAssembler.CreateStaffSummary(reportPart.Verifier, context)
+                );
 
             return summary;
         }

@@ -35,11 +35,108 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
+    /// Defines an interface for providing a custom report editor.
+    /// </summary>
+    public interface IReportEditorProvider
+    {
+        IReportEditor GetEditor(IReportingContext context);
+    }
+
+    /// <summary>
+    /// Defines an interface for providing a custom report editor page with access to the reporting
+    /// context.
+    /// </summary>
+    public interface IReportingContext
+    {
+        /// <summary>
+        /// Gets the reporting worklist item.
+        /// </summary>
+        ReportingWorklistItem WorklistItem { get; }
+
+        /// <summary>
+        /// Gets the report associated with the worklist item.
+        /// </summary>
+        ReportDetail Report { get; }
+
+        /// <summary>
+        /// Gets the index of the active report part (the part that is being edited).
+        /// </summary>
+        int ActiveReportPartIndex { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the Verify operation is enabled.
+        /// </summary>
+        bool CanVerify { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the Send To Verify operation is enabled.
+        /// </summary>
+        bool CanSendToBeVerified { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the Send To Transcription operation is enabled.
+        /// </summary>
+        bool CanSendToTranscription { get; }
+
+        /// <summary>
+        /// Gets or sets the report content for the active report part.
+        /// </summary>
+        string ReportContent { get; set; }
+
+        /// <summary>
+        /// Gets or sets the supervisor for the active report part.
+        /// </summary>
+        StaffSummary Supervisor { get; set; }
+
+        /// <summary>
+        /// Notifies that the editor requests to verify the report.
+        /// </summary>
+        void VerifyReport();
+
+        /// <summary>
+        /// Notifies that the editor requests to send the report to be verified.
+        /// </summary>
+        void SendToBeVerified();
+
+        /// <summary>
+        /// Notifies that the editor requests to send the report to transcription.
+        /// </summary>
+        void SendToTranscription();
+
+        /// <summary>
+        /// Notifies that the editor requests to save the report.
+        /// </summary>
+        void SaveReport();
+
+        /// <summary>
+        /// Notifies that the editor requests to cancel.
+        /// </summary>
+        void CancelEditing();
+    }
+
+    /// <summary>
+    /// Defines an interface to a custom report editor.
+    /// </summary>
+    public interface IReportEditor
+    {
+        IApplicationComponent GetComponent();
+    }
+
+    /// <summary>
+    /// Defines an extension point for providing a custom report editor.
+    /// </summary>
+    [ExtensionPoint]
+    public class ReportEditorProviderExtensionPoint : ExtensionPoint<IReportEditorProvider>
+    {
+    }
+
     /// <summary>
     /// Extension point for views onto <see cref="ReportingComponent"/>
     /// </summary>
@@ -54,20 +151,103 @@ namespace ClearCanvas.Ris.Client.Reporting
     [AssociateView(typeof(ReportingComponentViewExtensionPoint))]
     public class ReportingComponent : ApplicationComponent
     {
+        #region IReportingContext implementation
 
-        private readonly BannerComponent _bannerComponent;
-        private ChildComponentHost _bannerHost;
+        class ReportingContext : IReportingContext
+        {
+            private readonly ReportingComponent _owner;
 
-        private readonly IReportEditor _reportEditor;
-        private ChildComponentHost _reportEditorHost;
+            public ReportingContext(ReportingComponent owner)
+            {
+                _owner = owner;
+            }
 
-        private readonly PriorReportComponent _priorReportComponent;
-        private ChildComponentHost _priorReportHost;
+            public ReportingWorklistItem WorklistItem
+            {
+                get { return _owner._worklistItem; }
+            }
 
-        private readonly OrderDetailViewComponent _orderDetailComponent;
-        private ChildComponentHost _orderDetailHost;
+            public ReportDetail Report
+            {
+                get { return _owner._report; }
+            }
+
+            public int ActiveReportPartIndex
+            {
+                get { return _owner._activeReportPartIndex; }
+            }
+
+            public bool CanVerify
+            {
+                get { return _owner.CanVerify; }
+            }
+
+            public bool CanSendToBeVerified
+            {
+                get { return _owner.CanSendToBeVerified; }
+            }
+
+            public bool CanSendToTranscription
+            {
+                get { return _owner.CanSendToTranscription; }
+            }
+
+            public string ReportContent
+            {
+                get { return _owner._reportContent; }
+                set { _owner._reportContent = value; }
+            }
+
+            public StaffSummary Supervisor
+            {
+                get { return _owner._supervisor; }
+                set
+                {
+                    _owner.SetSupervisor(value);
+                }
+            }
+
+            public void VerifyReport()
+            {
+                _owner.Verify();
+            }
+
+            public void SendToBeVerified()
+            {
+                _owner.SendToBeVerified();
+            }
+
+            public void SendToTranscription()
+            {
+                _owner.SendToTranscription();
+            }
+
+            public void SaveReport()
+            {
+                _owner.Save();
+            }
+
+            public void CancelEditing()
+            {
+                _owner.Cancel();
+            }
+        }
+
+        #endregion
 
         private readonly ReportingWorklistItem _worklistItem;
+
+        private BannerComponent _bannerComponent;
+        private ChildComponentHost _bannerHost;
+
+        private IReportEditor _reportEditor;
+        private ChildComponentHost _reportEditorHost;
+
+        private PriorReportComponent _priorReportComponent;
+        private ChildComponentHost _priorReportHost;
+
+        private OrderDetailViewComponent _orderDetailComponent;
+        private ChildComponentHost _orderDetailHost;
 
         private bool _canCompleteInterpretationAndVerify;
         private bool _canCompleteVerification;
@@ -75,8 +255,10 @@ namespace ClearCanvas.Ris.Client.Reporting
         private bool _canCompleteInterpretationForTranscription;
 
         private ReportDetail _report;
-        private ReportPartDetail _reportPart;
+        private int _activeReportPartIndex;
     	private Dictionary<string, string> _extendedProperties;
+        private StaffSummary _supervisor;
+        private string _reportContent;
 
     	/// <summary>
         /// Constructor
@@ -85,29 +267,20 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             _worklistItem = worklistItem;
 
-            _bannerComponent = new BannerComponent(_worklistItem);
 
-            // Look for any report editor extensions.  If not found, use the default one
-            ReportEditorExtensionPoint reportEditorExtensionPoint = new ReportEditorExtensionPoint();
-            _reportEditor = CollectionUtils.FirstElement<IReportEditor>(reportEditorExtensionPoint.CreateExtensions());
-            if (_reportEditor == null)
-                _reportEditor = new ReportEditorComponent();
-
-            _priorReportComponent = new PriorReportComponent(_worklistItem);
-            _orderDetailComponent = new OrderDetailViewComponent(_worklistItem);
         }
 
         public override void Start()
         {
+            _bannerComponent = new BannerComponent(_worklistItem);
             _bannerHost = new ChildComponentHost(this.Host, _bannerComponent);
             _bannerHost.StartComponent();
 
-            _reportEditorHost = new ChildComponentHost(this.Host, _reportEditor);
-            _reportEditorHost.StartComponent();
-
+            _priorReportComponent = new PriorReportComponent(_worklistItem);
             _priorReportHost = new ChildComponentHost(this.Host, _priorReportComponent);
             _priorReportHost.StartComponent();
 
+            _orderDetailComponent = new OrderDetailViewComponent(_worklistItem);
             _orderDetailHost = new ChildComponentHost(this.Host, _orderDetailComponent);
             _orderDetailHost.StartComponent();
 
@@ -122,27 +295,49 @@ namespace ClearCanvas.Ris.Client.Reporting
 
                     LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_worklistItem.ProcedureStepRef));
                     _report = response.Report;
-                    _reportPart = _report.GetPart(response.ReportPartIndex);
+                    _activeReportPartIndex = response.ReportPartIndex;
 
-					ListProcedureExtendedPropertiesResponse extendedPropertiesResponse = service.ListProcedureExtendedProperties(new ListProcedureExtendedPropertiesRequest(_worklistItem.ProcedureRef));
-					_extendedProperties = CollectionUtils.FirstElement(extendedPropertiesResponse.ProcedureExtendedProperties);
-
-					// For resident, look for the default supervisor if it does not already exist
-                    if (_reportPart != null && _reportPart.Supervisor == null && String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID) == false)
+                    ReportPartDetail activePart = _report.GetPart(_activeReportPartIndex);
+                    _reportContent = activePart == null ? null : activePart.Content;
+                    if(activePart != null && activePart.Supervisor != null)
                     {
-                        GetRadiologistListResponse getRadListresponse = service.GetRadiologistList(new GetRadiologistListRequest(SupervisorSettings.Default.SupervisorID));
-                        _reportPart.Supervisor = CollectionUtils.FirstElement(getRadListresponse.Radiologists);
+                        // active part already has a supervisor assigned
+                        _supervisor = activePart.Supervisor;
                     }
+                    else
+                    {
+                        // active part does not have a supervisor assigned
+                        // if this user has a default supervisor, retreive it, otherwise leave supervisor as null
+                        if (!String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID))
+                        {
+                            GetRadiologistListResponse getRadListresponse = service.GetRadiologistList(new GetRadiologistListRequest(SupervisorSettings.Default.SupervisorID));
+                            _supervisor = CollectionUtils.FirstElement(getRadListresponse.Radiologists);
+                        }
+                    }
+
+                    //TODO: look at this
+                    ListProcedureExtendedPropertiesResponse extendedPropertiesResponse = service.ListProcedureExtendedProperties(new ListProcedureExtendedPropertiesRequest(_worklistItem.ProcedureRef));
+                    _extendedProperties = CollectionUtils.FirstElement(extendedPropertiesResponse.ProcedureExtendedProperties);
                 });
 
-            SyncReportEditorData(true);
+            // check for a report editor provider.  If not found, use the default one
+            IReportEditorProvider provider = CollectionUtils.FirstElement<IReportEditorProvider>(
+                                                    new ReportEditorProviderExtensionPoint().CreateExtensions());
+
+            _reportEditor = provider == null ? new ReportEditorComponent(new ReportingContext(this)) : provider.GetEditor(new ReportingContext(this));
+            _reportEditorHost = new ChildComponentHost(this.Host, _reportEditor.GetComponent());
+            _reportEditorHost.StartComponent();
 
             base.Start();
         }
 
         public override void Stop()
         {
-            SyncReportEditorData(false);
+            if(_reportEditor != null && _reportEditor is IDisposable)
+            {
+                ((IDisposable)_reportEditor).Dispose();
+                _reportEditor = null;
+            }
             
             base.Stop();
         }
@@ -173,7 +368,22 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #region Private Event Handlers
 
-        void _reportEditorComponent_OnVerifyRequested(object sender, EventArgs e)
+        private bool CanVerify
+        {
+            get { return (_canCompleteInterpretationAndVerify || _canCompleteVerification) && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport); }
+        }
+
+        private bool CanSendToBeVerified
+        {
+            get { return _canCompleteInterpretationForVerification; }
+        }
+
+        private bool CanSendToTranscription
+        {
+            get { return _canCompleteInterpretationForTranscription && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow); }
+        }
+
+        private void Verify()
         {
             try
             {
@@ -185,8 +395,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                             service.CompleteInterpretationAndVerify(
                                 new CompleteInterpretationAndVerifyRequest(
                                 _worklistItem.ProcedureStepRef,
-                                _reportEditor.ReportPart.Content,
-                                _reportEditor.ReportPart.Supervisor == null ? null : _reportEditor.ReportPart.Supervisor.StaffRef));
+                                _reportContent,
+                                _supervisor == null ? null : _supervisor.StaffRef));
                         });
                 }
                 else if (_canCompleteVerification)
@@ -194,7 +404,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     Platform.GetService<IReportingWorkflowService>(
                         delegate(IReportingWorkflowService service)
                         {
-                            service.CompleteVerification(new CompleteVerificationRequest(_worklistItem.ProcedureStepRef, _reportEditor.ReportPart.Content));
+                            service.CompleteVerification(new CompleteVerificationRequest(_worklistItem.ProcedureStepRef, _reportContent));
                         });
                 }
 
@@ -216,11 +426,11 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        void _reportEditorComponent_OnSendToVerifyRequested(object sender, EventArgs e)
+        private void SendToBeVerified()
         {
             try
             {
-                if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && _reportEditor.ReportPart.Supervisor == null)
+                if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && _supervisor == null)
                 {
                     this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
                     return;
@@ -232,8 +442,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.CompleteInterpretationForVerification(
                             new CompleteInterpretationForVerificationRequest(
                             _worklistItem.ProcedureStepRef,
-                            _reportEditor.ReportPart.Content,
-                            _reportEditor.ReportPart.Supervisor == null ? null : _reportEditor.ReportPart.Supervisor.StaffRef));
+                            _reportContent,
+                            _supervisor == null ? null : _supervisor.StaffRef));
                     });
 
                 // Source Folders
@@ -253,7 +463,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        void _reportEditorComponent_OnSendToTranscriptionRequested(object sender, EventArgs e)
+        private void SendToTranscription()
         {
             try
             {
@@ -263,8 +473,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.CompleteInterpretationForTranscription(
                             new CompleteInterpretationForTranscriptionRequest(
                             _worklistItem.ProcedureStepRef,
-                            _reportEditor.ReportPart.Content,
-                            _reportEditor.ReportPart.Supervisor == null ? null : _reportEditor.ReportPart.Supervisor.StaffRef));
+                            _reportContent,
+                            _supervisor == null ? null : _supervisor.StaffRef));
                     });
 
                 // Source Folders
@@ -284,7 +494,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        void _reportEditorComponent_OnSaveRequested(object sender, EventArgs e)
+        private void Save()
         {
             try
             {
@@ -294,8 +504,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.SaveReport(
                             new SaveReportRequest(
                             _worklistItem.ProcedureStepRef,
-                            _reportEditor.ReportPart.Content,
-                            _reportEditor.ReportPart.Supervisor == null ? null : _reportEditor.ReportPart.Supervisor.StaffRef));
+                            _reportContent,
+                            _supervisor == null ? null : _supervisor.StaffRef));
                     });
 
                 // Source Folders
@@ -316,49 +526,16 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        void _reportEditorComponent_OnCancelRequested(object sender, EventArgs e)
+        private void Cancel()
         {
             this.Exit(ApplicationComponentExitCode.None);
         }
 
         #endregion
 
-        private void SyncReportEditorData(bool set)
+        private void SetSupervisor(StaffSummary supervisor)
         {
-            if (set)
-            {
-                _reportEditor.Report = _report;
-                _reportEditor.ReportPart = _reportPart;
-                _reportEditor.WorklistItem = _worklistItem;
-            	_reportEditor.ExtendedProperties = _extendedProperties;
-
-                _reportEditor.IsEditingAddendum = _reportPart.Index > 0;
-                _reportEditor.VerifyEnabled = _canCompleteInterpretationAndVerify || _canCompleteVerification;
-                _reportEditor.SendToVerifyEnabled = _canCompleteInterpretationForVerification;
-                _reportEditor.SendToTranscriptionEnabled = _canCompleteInterpretationForTranscription;
-
-                // Setup the various editor closed events.  Do not invalidate the ToBeReported folder type, since it's communual
-                _reportEditor.VerifyRequested += _reportEditorComponent_OnVerifyRequested;
-                _reportEditor.SendToVerifyRequested += _reportEditorComponent_OnSendToVerifyRequested;
-                _reportEditor.SendToTranscriptionRequested += _reportEditorComponent_OnSendToTranscriptionRequested;
-                _reportEditor.SaveRequested += _reportEditorComponent_OnSaveRequested;
-                _reportEditor.CancelRequested += _reportEditorComponent_OnCancelRequested;
-            }
-            else // get
-            {
-                _reportPart = _reportEditor.ReportPart;
-                SaveSupervisor(_reportEditor.ReportPart.Supervisor);
-
-                _reportEditor.VerifyRequested -= _reportEditorComponent_OnVerifyRequested;
-                _reportEditor.SendToVerifyRequested -= _reportEditorComponent_OnSendToVerifyRequested;
-                _reportEditor.SendToTranscriptionRequested -= _reportEditorComponent_OnSendToTranscriptionRequested;
-                _reportEditor.SaveRequested -= _reportEditorComponent_OnSaveRequested;
-                _reportEditor.CancelRequested -= _reportEditorComponent_OnCancelRequested;
-            }
-        }
-
-        private void SaveSupervisor(StaffSummary supervisor)
-        {
+            _supervisor = supervisor;
             SupervisorSettings.Default.SupervisorID = supervisor == null ? "" : supervisor.StaffId;
             SupervisorSettings.Default.Save();
         }

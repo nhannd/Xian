@@ -37,11 +37,29 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class ReportPartDetail : DataContractBase
     {
+        public ReportPartDetail(EntityRef reportPartRef, int index, bool isAddendum, string content, EnumValueInfo status,
+            StaffSummary supervisor, StaffSummary interpretedBy, StaffSummary transcribedBy, StaffSummary verifiedBy)
+        {
+            this.ReportPartRef = reportPartRef;
+            this.Index = index;
+            this.IsAddendum = isAddendum;
+            this.Content = content;
+            this.Status = status;
+            this.Supervisor = supervisor;
+            this.InterpretedBy = interpretedBy;
+            this.TranscribedBy = transcribedBy;
+            this.VerifiedBy = verifiedBy;
+        }
+
+
         [DataMember]
         public EntityRef ReportPartRef;
 
         [DataMember]
         public int Index;
+
+        [DataMember]
+        public bool IsAddendum;
 
         [DataMember]
         public string Content;

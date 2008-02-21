@@ -98,6 +98,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// <summary>
     /// Defines an extension point for adding custom pages to the order editor.
     /// </summary>
+    [ExtensionPoint]
     public class OrderEditorPageProviderExtensionPoint : ExtensionPoint<IOrderEditorPageProvider>
     {
     }

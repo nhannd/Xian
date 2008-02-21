@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _sendToVerifyButton.DataBindings.Add("Enabled", _component, "SendToVerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
             _sendToTranscriptionButton.DataBindings.Add("Enabled", _component, "SendToTranscriptionEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 
-            if (_component.CanVerifyReport)
+            if (_component.VerifyReportVisible)
             {
                 _residentPanel.Visible = false;
                 _supervisor.Visible = false;
@@ -76,10 +76,10 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
                 _verifyButton.Visible = false;
             }
 
-            if (_component.CanSendToTranscription == false)
+            if (_component.SendToTranscriptionVisible == false)
                 _sendToTranscriptionButton.Visible = false;
 
-            if (_component.IsEditingAddendum == false)
+            if (_component.IsAddendum == false)
             {
                 _browserSplitContainer.Panel2Collapsed = true;
             }

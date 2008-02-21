@@ -58,6 +58,8 @@ namespace ClearCanvas.Ris.Client.Reporting
     [AssociateView(typeof (ReportEditorComponentViewExtensionPoint))]
     public class ReportEditorComponent : ApplicationComponent, IReportEditor
     {
+        #region Hackiness
+
         // TODO: this is a temporary hack - remove this class and use Healthcare context instead of tags
         private class TagStore : IDictionary<string, string>
         {
@@ -73,23 +75,22 @@ namespace ClearCanvas.Ris.Client.Reporting
                 switch (key)
                 {
                     case "Report":
-                        ReportPartDetail reportPart = _owner._report.GetPart(0);
-                        value = reportPart == null ? "" : reportPart.Content;
+                        value = _owner._reportingContext.ReportContent;
                         return true;
                     case "Addendum":
-                        ReportPartDetail addendumPart = _owner._reportPart.Index > 0 ? _owner._reportPart : null;
-                        value = addendumPart == null ? "" : addendumPart.Content;
+                        value = _owner._reportingContext.ReportContent;
                         return true;
                     case "Preview":
-                        value = JsmlSerializer.Serialize(_owner._report, "report");
+                        value = JsmlSerializer.Serialize(_owner._reportingContext.Report, "report");
                         return true;
                     default:
-                        _owner._extendedProperties.TryGetValue(key, out value);
-                        if (string.IsNullOrEmpty(value))
-                        {
-                            value = JsmlSerializer.Serialize(_owner._report, "report");
-                        }
-                        return true;
+                        value = null;
+                        //_owner._extendedProperties.TryGetValue(key, out value);
+                        //if (string.IsNullOrEmpty(value))
+                        //{
+                        //    value = JsmlSerializer.Serialize(_owner._reportingContext.Report, "report");
+                        //}
+                        return false;
                 }
             }
 
@@ -107,7 +108,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     {
                         case "Report":
                         case "Addendum":
-                            _owner.ReportContent = value;
+                            _owner._reportingContext.ReportContent = value;
                             break;
                         default:
                             break;
@@ -189,6 +190,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             #endregion
         }
 
+        #endregion
 
         public class DHtmlReportEditorComponent : DHtmlComponent
         {
@@ -216,51 +218,39 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             protected override DataContractBase GetHealthcareContext()
             {
-                return _owner._worklistItem;
+                return _owner._reportingContext.WorklistItem;
             }
         }
 
-        private readonly DHtmlReportEditorComponent _reportEditorComponent;
-        private ChildComponentHost _reportEditorHost;
+        private readonly DHtmlReportEditorComponent _editingComponent;
+        private ChildComponentHost _editingHost;
 
-        private readonly DHtmlReportEditorComponent _reportPreviewComponent;
-        private ChildComponentHost _reportPreviewHost;
+        private readonly DHtmlReportEditorComponent _previewComponent;
+        private ChildComponentHost _previewHost;
 
-        private ReportingWorklistItem _worklistItem;
-        private ReportDetail _report;
-        private ReportPartDetail _reportPart;
-
-        private bool _isEditingAddendum;
-        private bool _verifyEnabled;
-        private bool _sendToVerifyEnabled;
-        private bool _sendToTranscriptionEnabled;
-
-        private event EventHandler _verifyRequested;
-        private event EventHandler _sendToVerifyRequested;
-        private event EventHandler _sendToTranscriptionRequested;
-        private event EventHandler _saveRequested;
-        private event EventHandler _cancelRequested;
+        private readonly IReportingContext _reportingContext;
 
         private Dictionary<string, string> _extendedProperties;
         private ILookupHandler _supervisorLookupHandler;
 
-        public ReportEditorComponent()
+        public ReportEditorComponent(IReportingContext context)
         {
-            _reportEditorComponent = new DHtmlReportEditorComponent(this);
-            _reportPreviewComponent = new DHtmlReportEditorComponent(this);
+            _reportingContext = context;
+            _editingComponent = new DHtmlReportEditorComponent(this);
+            _previewComponent = new DHtmlReportEditorComponent(this);
         }
 
         public override void Start()
         {
             _supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, new string[] {"PRAD"});
 
-            _reportEditorComponent.SetUrl(this.EditorUrl);
-            _reportEditorHost = new ChildComponentHost(this.Host, _reportEditorComponent);
-            _reportEditorHost.StartComponent();
+            _editingComponent.SetUrl(this.EditorUrl);
+            _editingHost = new ChildComponentHost(this.Host, _editingComponent);
+            _editingHost.StartComponent();
 
-            _reportPreviewComponent.SetUrl(this.PreviewUrl);
-            _reportPreviewHost = new ChildComponentHost(this.Host, _reportPreviewComponent);
-            _reportPreviewHost.StartComponent();
+            _previewComponent.SetUrl(this.PreviewUrl);
+            _previewHost = new ChildComponentHost(this.Host, _previewComponent);
+            _previewHost.StartComponent();
 
             base.Start();
         }
@@ -269,8 +259,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             get
             {
-                return
-                    this.IsEditingAddendum
+                return IsAddendum
                         ? ReportEditorComponentSettings.Default.AddendumEditorPageUrl
                         : ReportEditorComponentSettings.Default.ReportEditorPageUrl;
             }
@@ -280,154 +269,92 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             get
             {
-                return
-                    this.IsEditingAddendum ? ReportEditorComponentSettings.Default.ReportPreviewPageUrl : "about:blank";
+                return IsAddendum ? ReportEditorComponentSettings.Default.ReportPreviewPageUrl : "about:blank";
             }
         }
 
-        #region IReportEditor Members
-
-        public string ReportContent
-        {
-            get { return _reportPart.Content; }
-            set { _reportPart.Content = value; }
-        }
-
-        public ReportingWorklistItem WorklistItem
-        {
-            get { return _worklistItem; }
-            set { _worklistItem = value; }
-        }
-
-        public ReportDetail Report
-        {
-            get { return _report; }
-            set { _report = value; }
-        }
-
-        public ReportPartDetail ReportPart
-        {
-            get { return _reportPart; }
-            set { _reportPart = value; }
-        }
-
-        public Dictionary<string, string> ExtendedProperties
-        {
-            get { return _extendedProperties; }
-            set { _extendedProperties = value; }
-        }
-
-        public event EventHandler VerifyRequested
-        {
-            add { _verifyRequested += value; }
-            remove { _verifyRequested -= value; }
-        }
-
-        public event EventHandler SendToVerifyRequested
-        {
-            add { _sendToVerifyRequested += value; }
-            remove { _sendToVerifyRequested -= value; }
-        }
-
-        public event EventHandler SendToTranscriptionRequested
-        {
-            add { _sendToTranscriptionRequested += value; }
-            remove { _sendToTranscriptionRequested -= value; }
-        }
-
-        public event EventHandler SaveRequested
-        {
-            add { _saveRequested += value; }
-            remove { _saveRequested -= value; }
-        }
-
-        public event EventHandler CancelRequested
-        {
-            add { _cancelRequested += value; }
-            remove { _cancelRequested -= value; }
-        }
-
-        public bool IsEditingAddendum
-        {
-            get { return _isEditingAddendum; }
-            set { _isEditingAddendum = value; }
-        }
-
-        public bool VerifyEnabled
-        {
-            get { return _verifyEnabled; }
-            set { _verifyEnabled = value; }
-        }
-
-        public bool SendToVerifyEnabled
-        {
-            get { return _sendToVerifyEnabled; }
-            set { _sendToVerifyEnabled = value; }
-        }
-
-        public bool SendToTranscriptionEnabled
-        {
-            get { return _sendToTranscriptionEnabled; }
-            set { _sendToTranscriptionEnabled = value; }
-        }
-
-        public StaffSummary Supervisor
-        {
-            get { return _reportPart.Supervisor; }
-            set { _reportPart.Supervisor = value; }
-        }
-
-        #endregion
-
         #region Presentation Model
+
+        public bool IsAddendum
+        {
+            get { return _reportingContext.ActiveReportPartIndex > 0; }
+        }
 
         public ApplicationComponentHost ReportEditorHost
         {
-            get { return _reportEditorHost; }
+            get { return _editingHost; }
         }
 
         public ApplicationComponentHost ReportPreviewHost
         {
-            get { return _reportPreviewHost; }
+            get { return _previewHost; }
         }
 
-        public bool CanSendToTranscription
+        public bool SendToTranscriptionVisible
         {
             get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow); }
         }
 
-        public bool CanVerifyReport
+        public bool VerifyReportVisible
         {
             get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport); }
         }
 
+        public bool VerifyEnabled
+        {
+            get { return _reportingContext.CanVerify; }
+        }
+
+        public bool SendToVerifyEnabled
+        {
+            get { return _reportingContext.CanSendToBeVerified; }
+        }
+
+        public bool SendToTranscriptionEnabled
+        {
+            get { return _reportingContext.CanSendToTranscription; }
+        }
+            
         public void Verify()
         {
-            _reportEditorComponent.SaveData();
-            EventsHelper.Fire(_verifyRequested, this, EventArgs.Empty);
+            _editingComponent.SaveData();
+            _reportingContext.VerifyReport();
         }
 
         public void SendToVerify()
         {
-            _reportEditorComponent.SaveData();
-            EventsHelper.Fire(_sendToVerifyRequested, this, EventArgs.Empty);
+            _editingComponent.SaveData();
+            _reportingContext.SendToBeVerified();
         }
 
         public void SendToTranscription()
         {
-            _reportEditorComponent.SaveData();
-            EventsHelper.Fire(_sendToTranscriptionRequested, this, EventArgs.Empty);
+            _editingComponent.SaveData();
+            _reportingContext.SendToTranscription();
         }
 
         public void Save()
         {
-            _reportEditorComponent.SaveData();
-            EventsHelper.Fire(_saveRequested, this, EventArgs.Empty);
+            _editingComponent.SaveData();
+            _reportingContext.SaveReport();
         }
 
         public void Cancel()
         {
-            EventsHelper.Fire(_cancelRequested, this, EventArgs.Empty);
+            _reportingContext.CancelEditing();
+        }
+
+        public StaffSummary Supervisor
+        {
+            get { return _reportingContext.Supervisor; }
+            set
+            {
+                if(!Equals(value, _reportingContext.Supervisor))
+                {
+                    _reportingContext.Supervisor = value;
+                    NotifyPropertyChanged("Supervisor");
+                }
+            }
         }
 
         public ILookupHandler SupervisorLookupHandler
@@ -435,26 +362,13 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _supervisorLookupHandler; }
         }
 
-        public IList GetRadiologistSuggestion(string query)
-        {
-            ArrayList suggestions = new ArrayList();
-            try
-            {
-                Platform.GetService<IReportingWorkflowService>(
-                    delegate(IReportingWorkflowService service)
-                    {
-                        GetRadiologistListResponse response =
-                            service.GetRadiologistList(new GetRadiologistListRequest());
-                        suggestions.AddRange(response.Radiologists);
-                    });
-            }
-            catch (Exception e)
-            {
-                // could not launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+        #endregion
 
-            return suggestions;
+        #region IReportEditor Members
+
+        IApplicationComponent IReportEditor.GetComponent()
+        {
+            return this;
         }
 
         #endregion
