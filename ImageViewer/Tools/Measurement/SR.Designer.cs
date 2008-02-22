@@ -250,15 +250,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Calculating ....
-        /// </summary>
-        public static string ToolsMeasurementCalculating {
-            get {
-                return ResourceManager.GetString("ToolsMeasurementCalculating", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Area: {0:F0} pixels.
         /// </summary>
         public static string ToolsMeasurementFormatAreaPixels {
@@ -282,6 +273,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         public static string ToolsMeasurementFormatAreaSquareMm {
             get {
                 return ResourceManager.GetString("ToolsMeasurementFormatAreaSquareMm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0:F0}°.
+        /// </summary>
+        public static string ToolsMeasurementFormatDegrees {
+            get {
+                return ResourceManager.GetString("ToolsMeasurementFormatDegrees", resourceCulture);
             }
         }
         
@@ -354,6 +354,24 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         public static string ToolsMeasurementMean {
             get {
                 return ResourceManager.GetString("ToolsMeasurementMean", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ---.
+        /// </summary>
+        public static string ToolsMeasurementNoValue {
+            get {
+                return ResourceManager.GetString("ToolsMeasurementNoValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Vertex.
+        /// </summary>
+        public static string ToolsMeasurementSetVertex {
+            get {
+                return ResourceManager.GetString("ToolsMeasurementSetVertex", resourceCulture);
             }
         }
         

@@ -37,6 +37,13 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
+	public class EllipseRoiInfo : RoiInfo
+	{
+		public EllipseRoiInfo()
+		{
+		}
+	}
+
 	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuEllipticalRoi", "Select", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarEllipticalRoi", "Select", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
@@ -46,16 +53,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class EllipticalRoiTool : MeasurementTool<EllipseInteractiveGraphic>
+	public class EllipticalRoiTool : MeasurementTool<EllipseRoiInfo>
 	{
 		public EllipticalRoiTool()
 			: base(SR.TooltipEllipticalRoi)
 		{
-		}
-
-		protected override InteractiveGraphic  CreateInteractiveGraphic()
-		{
-			return new EllipseInteractiveGraphic(true);
 		}
 
 		protected override string CreationCommandName
@@ -63,21 +65,14 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return SR.CommandCreateEllipiticalRoi; }
 		}
 
+		protected override InteractiveGraphic CreateInteractiveGraphic()
+		{
+			return new EllipseInteractiveGraphic(true);
+		}
+
 		protected override void OnRoiCreation(RoiGraphic roiGraphic)
 		{
 			roiGraphic.Roi.ControlPoints.Visible = false;
 		}
-
-		protected override object[] CreateAnalyzers()
-		{
-			EllipseAnalyzerExtensionPoint extensionPoint = new EllipseAnalyzerExtensionPoint();
-			return extensionPoint.CreateExtensions();
-		}
-	}
-
-	[ExtensionPoint]
-	public sealed class EllipseAnalyzerExtensionPoint 
-		: ExtensionPoint<IRoiAnalyzer<EllipseInteractiveGraphic>>
-	{
 	}
 }

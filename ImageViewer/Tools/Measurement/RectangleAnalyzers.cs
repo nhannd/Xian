@@ -1,31 +1,19 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	[ExtensionOf(typeof(RectangleAnalyzerExtensionPoint))]
-	public class RectangleAreaCalculator : IRoiAnalyzer<RectangleInteractiveGraphic>
+	[ExtensionOf(typeof(RoiAnalyzerExtensionPoint<RectangularRoiInfo>))]
+	public class RectangleAreaCalculator : IRoiAnalyzer<RectangularRoiInfo>
 	{
-		public string Analyze(RectangleInteractiveGraphic rectangle, RoiAnalysisMethod method)
+		public string Analyze(RectangularRoiInfo roiInfo)
 		{
-			IImageSopProvider provider = rectangle.ParentPresentationImage as IImageSopProvider;
-
-			if (provider == null)
-				return String.Empty;
-			
-			ImageSop imageSop = provider.ImageSop;
-
 			Units units = Units.Centimeters;
 
-			rectangle.CoordinateSystem = CoordinateSystem.Source;
-			double areaInPixels = Formula.AreaOfRectangle(rectangle.Width, rectangle.Height);
-			rectangle.ResetCoordinateSystem();
+			double areaInPixels = Formula.AreaOfRectangle(roiInfo.BoundingBox.Width, roiInfo.BoundingBox.Height);
 
-			PixelSpacing pixelSpacing = imageSop.NormalizedPixelSpacing;
+			PixelSpacing pixelSpacing = roiInfo.NormalizedPixelSpacing;
 
 			string text;
 
@@ -46,23 +34,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		}
 	}
 
-	[ExtensionOf(typeof(RectangleAnalyzerExtensionPoint))]
-	public class RectangleStatisticsCalculator : IRoiAnalyzer<RectangleInteractiveGraphic>
+	[ExtensionOf(typeof(RoiAnalyzerExtensionPoint<RectangularRoiInfo>))]
+	public class RectangleStatisticsCalculator : IRoiAnalyzer<RectangularRoiInfo>
 	{
-		public string Analyze(RectangleInteractiveGraphic rectangle, RoiAnalysisMethod method)
+		public string Analyze(RectangularRoiInfo roiInfo)
 		{
-			if (method == RoiAnalysisMethod.Fast)
-			{
-				return String.Format("{0} {1}\n{2} {1}", SR.ToolsMeasurementMean, SR.ToolsMeasurementCalculating, SR.ToolsMeasurementStdev);
-			}
-
-			rectangle.CoordinateSystem = CoordinateSystem.Source;
-
-			string str = RoiStatisticsCalculator.Calculate(rectangle, IsPointInRoi);
-
-			rectangle.ResetCoordinateSystem();
-
-			return str;
+			return RoiStatisticsCalculator.Calculate(roiInfo, IsPointInRoi);
 		}
 
 		public bool IsPointInRoi(int x, int y)

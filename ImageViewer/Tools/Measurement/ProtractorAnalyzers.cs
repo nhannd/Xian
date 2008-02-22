@@ -1,30 +1,23 @@
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	[ExtensionOf(typeof(ProtractorAnalyzerExtensionPoint))]
-	public class ProtractorAngleCalculator : IRoiAnalyzer<PolyLineInteractiveGraphic>
+	[ExtensionOf(typeof(RoiAnalyzerExtensionPoint<ProtractorRoiInfo>))]
+	public class ProtractorAngleCalculator : IRoiAnalyzer<ProtractorRoiInfo>
 	{
-		public string Analyze(PolyLineInteractiveGraphic protractor, RoiAnalysisMethod method)
+		public string Analyze(ProtractorRoiInfo roiInfo)
 		{
-			// Don't show the callout until the second ray drawn
-			if (protractor.PolyLine.Count < 3)
-				return "Set Vertex";
-
-			protractor.CoordinateSystem = CoordinateSystem.Destination;
+			// Don't show the callout until the second ray is drawn
+			if (roiInfo.Points.Count < 3)
+				return SR.ToolsMeasurementSetVertex;
 
 			double angle = Formula.SubtendedAngle(
-				protractor.PolyLine[0],
-				protractor.PolyLine[1],
-				protractor.PolyLine[2]);
+				roiInfo.Points[0],
+				roiInfo.Points[1],
+				roiInfo.Points[2]);
 
-			protractor.ResetCoordinateSystem();
-			string text = String.Format("{0:F0}°", Math.Abs(angle));
-
-			return text;
+			return String.Format(SR.ToolsMeasurementFormatDegrees, Math.Abs(angle));
 		}
 	}
 }

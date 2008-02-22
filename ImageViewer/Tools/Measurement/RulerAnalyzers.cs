@@ -1,29 +1,21 @@
 using System;
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	[ExtensionOf(typeof(RulerAnalyzerExtensionPoint))]
-	public class RulerLengthCalculator : IRoiAnalyzer<PolyLineInteractiveGraphic>
+	[ExtensionOf(typeof(RoiAnalyzerExtensionPoint<RulerRoiInfo>))]
+	public class RulerLengthCalculator : IRoiAnalyzer<RulerRoiInfo>
 	{
-		public string Analyze(PolyLineInteractiveGraphic line, RoiAnalysisMethod method)
+		public string Analyze(RulerRoiInfo roiInfo)
 		{
-			IImageSopProvider provider = line.ParentPresentationImage as IImageSopProvider;
-
-			if (provider == null)
-				return String.Empty;
-
-			ImageSop imageSop = provider.ImageSop;
 			Units units = Units.Centimeters;
-			PixelSpacing pixelSpacing = imageSop.NormalizedPixelSpacing;
 
 			string text;
 
-			double length = CalculateLength(line, pixelSpacing, ref units);
+			double length = CalculateLength(roiInfo.Point1, roiInfo.Point2, roiInfo.NormalizedPixelSpacing, ref units);
 
 			if (units == Units.Pixels)
 				text = String.Format(SR.ToolsMeasurementFormatLengthPixels, length);
@@ -36,17 +28,16 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		}
 
 		public static double CalculateLength(
-			PolyLineInteractiveGraphic line, 
-			PixelSpacing pixelSpacing, 
+			PointF point1,
+			PointF point2,
+			PixelSpacing normalizedPixelSpacing,
 			ref Units units)
 		{
-			if (pixelSpacing.IsNull)
+			if (normalizedPixelSpacing.IsNull)
 				units = Units.Pixels;
 
-			line.CoordinateSystem = CoordinateSystem.Source;
-			double widthInPixels = line.PolyLine[1].X - line.PolyLine[0].X;
-			double heightInPixels = line.PolyLine[1].Y - line.PolyLine[0].Y;
-			line.ResetCoordinateSystem();
+			double widthInPixels = point2.X - point1.X;
+			double heightInPixels = point2.Y - point1.Y;
 
 			double length;
 
@@ -56,8 +47,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			}
 			else
 			{
-				double widthInMm = widthInPixels * pixelSpacing.Column;
-				double heightInMm = heightInPixels * pixelSpacing.Row;
+				double widthInMm = widthInPixels * normalizedPixelSpacing.Column;
+				double heightInMm = heightInPixels * normalizedPixelSpacing.Row;
 				double lengthInMm = Math.Sqrt(widthInMm * widthInMm + heightInMm * heightInMm);
 
 				if (units == Units.Millimeters)
@@ -67,6 +58,17 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			}
 
 			return length;
+		}
+
+		public static double CalculateLength(
+			PolyLineInteractiveGraphic polyLineInteractiveGraphic,
+			PixelSpacing normalizedPixelSpacing,
+			ref Units units)
+		{
+			return CalculateLength(
+				polyLineInteractiveGraphic.PolyLine[0],
+				polyLineInteractiveGraphic.PolyLine[1],
+				normalizedPixelSpacing, ref units);
 		}
 	}
 }

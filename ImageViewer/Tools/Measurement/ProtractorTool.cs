@@ -29,14 +29,55 @@
 
 #endregion
 
+using System.Collections.Generic;
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
+	public class ProtractorRoiInfo : RoiInfo
+	{
+		private List<PointF> _points;
+
+		public ProtractorRoiInfo()
+		{
+			_points = new List<PointF>();
+		}
+
+		public List<PointF> Points
+		{
+			get { return _points; }
+			set
+			{
+				Platform.CheckForNullReference(value, "value");
+				_points = value;
+			}
+		}
+
+		public override void Initialize(InteractiveGraphic graphic)
+		{
+			ProtractorInteractiveGraphic protractor = graphic as ProtractorInteractiveGraphic;
+			Platform.CheckForInvalidCast(protractor, "protractor", typeof(ProtractorInteractiveGraphic).FullName);
+
+			base.Initialize(graphic);
+
+			_points.Clear();
+
+			graphic.CoordinateSystem = CoordinateSystem.Source;
+
+			PolyLineGraphic line = protractor.PolyLine;
+			for (int i = 0; i < line.Count; ++i)
+				_points.Add(line[i]);
+
+			graphic.ResetCoordinateSystem();
+		}
+	}
+
 	[MenuAction("activate", "imageviewer-contextmenu/MenuProtractor", "Select", Flags = ClickActionFlags.CheckAction)]
 	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuProtractor", "Select", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarProtractor", "Select", Flags = ClickActionFlags.CheckAction)]
@@ -47,16 +88,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class ProtractorTool : MeasurementTool<PolyLineInteractiveGraphic>
+	public class ProtractorTool : MeasurementTool<ProtractorRoiInfo>
 	{
 		public ProtractorTool()
 			: base(SR.TooltipProtractor)
 		{
-		}
-
-		protected override InteractiveGraphic CreateInteractiveGraphic()
-		{
-			return new ProtractorInteractiveGraphic();
 		}
 
 		protected override string CreationCommandName
@@ -64,21 +100,14 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return SR.CommandCreateProtractor; }
 		}
 
+		protected override InteractiveGraphic CreateInteractiveGraphic()
+		{
+			return new ProtractorInteractiveGraphic();
+		}
+
 		protected override void OnRoiCreation(RoiGraphic roiGraphic)
 		{
 			roiGraphic.Roi.ControlPoints.Visible = false;
 		}
-		
-		protected override object[] CreateAnalyzers()
-		{
-			ProtractorAnalyzerExtensionPoint extensionPoint = new ProtractorAnalyzerExtensionPoint();
-			return extensionPoint.CreateExtensions();
-		}
-	}
-
-	[ExtensionPoint]
-	public sealed class ProtractorAnalyzerExtensionPoint 
-		: ExtensionPoint<IRoiAnalyzer<PolyLineInteractiveGraphic>>
-	{
 	}
 }

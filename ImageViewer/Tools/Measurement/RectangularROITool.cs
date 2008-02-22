@@ -37,6 +37,13 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
+	public class RectangularRoiInfo : RoiInfo
+	{
+		public RectangularRoiInfo()
+		{
+		}
+	}
+
 	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuRectangularRoi", "Select", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRectangularRoi", "Select", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
@@ -46,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class RectangularRoiTool : MeasurementTool<RectangleInteractiveGraphic>
+	public class RectangularRoiTool : MeasurementTool<RectangularRoiInfo>
 	{
 		public RectangularRoiTool()
 			: base(SR.TooltipRectangularRoi)
@@ -58,27 +65,14 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return SR.CommandCreateRectangleRoi; }
 		}
 
-		protected override void OnRoiCreation(RoiGraphic roiGraphic)
-		{
-			roiGraphic.Roi.ControlPoints.Visible = false;
-		}
-
 		protected override InteractiveGraphic CreateInteractiveGraphic()
 		{
 			return new RectangleInteractiveGraphic(true);
 		}
 
-		protected override object[] CreateAnalyzers()
+		protected override void OnRoiCreation(RoiGraphic roiGraphic)
 		{
-			RectangleAnalyzerExtensionPoint extensionPoint = new RectangleAnalyzerExtensionPoint();
-			return extensionPoint.CreateExtensions();
+			roiGraphic.Roi.ControlPoints.Visible = false;
 		}
 	}
-
-	[ExtensionPoint]
-	public sealed class RectangleAnalyzerExtensionPoint 
-		: ExtensionPoint<IRoiAnalyzer<RectangleInteractiveGraphic>>
-	{
-	}
-
 }

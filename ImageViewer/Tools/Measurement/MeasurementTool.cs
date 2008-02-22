@@ -2,19 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
-using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.Common.Utilities;
-using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	public abstract class MeasurementTool<T> : MouseImageViewerTool
-		where T:InteractiveGraphic
+		where T : RoiInfo, new()
 	{
 		private DelayedEventPublisher _roiChangedDelayedEventPublisher;
 
@@ -142,9 +140,10 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected abstract InteractiveGraphic CreateInteractiveGraphic();
 
-		protected virtual object[] CreateAnalyzers()
+		protected virtual IEnumerable<IRoiAnalyzer<T>> CreateAnalyzers()
 		{
-			return null;
+			foreach (IRoiAnalyzer<T> analyzer in new RoiAnalyzerExtensionPoint<T>().CreateExtensions())
+				yield return analyzer;
 		}
 
 		protected virtual void OnRoiCreation(RoiGraphic roiGraphic)
@@ -153,32 +152,56 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected virtual void OnRoiChanged(RoiGraphic roiGraphic)
 		{
-			_roiChangedDelayedEventPublisher.Publish(roiGraphic, EventArgs.Empty);
-			SetCurrentChangingRoi(roiGraphic.Roi);			
-			Analyze(roiGraphic, RoiAnalysisMethod.Fast);
+			bool active = roiGraphic.Roi.State is MoveGraphicState ||
+			              roiGraphic.Roi.State is MoveControlPointGraphicState ||
+			              roiGraphic.Roi.State is CreateGraphicState;
+
+			if (!active)
+			{
+				// the roi is inactive, focused or selected, but not actively
+				// moving or stretching; just do the calculation immediately.
+				OnDelayedRoiChanged(roiGraphic);
+			}
+			else
+			{
+				_roiChangedDelayedEventPublisher.Publish(roiGraphic, EventArgs.Empty);
+				SetCurrentChangingRoi(roiGraphic.Roi);
+				Analyze(roiGraphic, RoiAnalysisMode.Dynamic);
+			}
 		}
 
 		protected virtual void OnDelayedRoiChanged(RoiGraphic roiGraphic)
 		{
-			Analyze(roiGraphic, RoiAnalysisMethod.Accurate);
+			Analyze(roiGraphic, RoiAnalysisMode.Delayed);
 			roiGraphic.Draw();
 		}
 
-		private void Analyze(RoiGraphic roiGraphic, RoiAnalysisMethod analysisMethod)
+		private void Analyze(RoiGraphic roiGraphic, RoiAnalysisMode analysisMode)
 		{
-			if (_roiAnalyzers == null || _roiAnalyzers.Count == 0)
-				return;
+			string text = null;
 
-			StringBuilder calloutText = new StringBuilder();
-
-			foreach (IRoiAnalyzer<T> analyzer in _roiAnalyzers)
+			if (_roiAnalyzers != null && _roiAnalyzers.Count > 0)
 			{
-				string analysis = analyzer.Analyze(roiGraphic.Roi as T, analysisMethod);
-				if (!String.IsNullOrEmpty(analysis))
-					calloutText.AppendLine(analysis);
+				T roiInfo = new T();
+				roiInfo.Initialize(roiGraphic.Roi);
+				roiInfo.Mode = analysisMode;
+
+				if (roiInfo.IsValid())
+				{
+					StringBuilder builder = new StringBuilder();
+
+					foreach (IRoiAnalyzer<T> analyzer in _roiAnalyzers)
+					{
+						string analysis = analyzer.Analyze(roiInfo);
+						if (!String.IsNullOrEmpty(analysis))
+							builder.AppendLine(analysis);
+					}
+
+					text = builder.ToString();
+				}
 			}
 
-			roiGraphic.Callout.Text = calloutText.ToString();
+			roiGraphic.Callout.Text = text ?? SR.ToolsMeasurementNoValue;
 		}
 
 		private void SetCurrentChangingRoi(InteractiveGraphic roi)
@@ -196,26 +219,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			{
 				_currentChangingRoi.StateChanged -= OnRoiStateChanged;
 				_currentChangingRoi = null;
-			}
-		}
-
-		private void CreateAnalyzersInternal()
-		{
-			object[] analyzers = CreateAnalyzers();
-
-			// No analyzers could be found
-			if (analyzers == null)
-				return;
-
-			_roiAnalyzers = new List<IRoiAnalyzer<T>>();
-			
-			foreach (object analyzer in analyzers)
-			{
-				IRoiAnalyzer<T> roiAnalyzer = analyzer as IRoiAnalyzer<T>;
-
-				Platform.CheckForInvalidCast(roiAnalyzer, "analyzer", "IRoiAnalyzer");
-
-				_roiAnalyzers.Add(roiAnalyzer);
 			}
 		}
 
@@ -239,6 +242,14 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		private void OnRoiChanged(object sender, EventArgs e)
 		{
 			OnRoiChanged(sender as RoiGraphic);
+		}
+
+		private void CreateAnalyzersInternal()
+		{
+			if (_roiAnalyzers != null)
+				return;
+
+			_roiAnalyzers = new List<IRoiAnalyzer<T>>(CreateAnalyzers());
 		}
 	}
 }

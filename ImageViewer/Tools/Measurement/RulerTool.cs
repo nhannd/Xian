@@ -29,14 +29,53 @@
 
 #endregion
 
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
+	public class RulerRoiInfo : RoiInfo
+	{
+		private PointF _point1;
+		private PointF _point2;
+
+		public RulerRoiInfo()
+		{
+		}
+
+		public PointF Point1
+		{
+			get { return _point1; }
+			set { _point1 = value; }
+		}
+
+		public PointF Point2
+		{
+			get { return _point2; }
+			set { _point2 = value; }
+		}
+
+		public override void Initialize(InteractiveGraphic graphic)
+		{
+			PolyLineInteractiveGraphic line = (PolyLineInteractiveGraphic) graphic;
+			Platform.CheckForInvalidCast(line, "line", typeof(ProtractorInteractiveGraphic).FullName);
+
+			base.Initialize(graphic);
+
+			graphic.CoordinateSystem = CoordinateSystem.Source;
+
+			_point1 = line.PolyLine[0];
+			_point2 = line.PolyLine[1];
+
+			graphic.ResetCoordinateSystem();
+		}
+	}
+
 	[MenuAction("activate", "imageviewer-contextmenu/MenuRuler", "Select", Flags = ClickActionFlags.CheckAction)]
 	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuRuler", "Select", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRuler", "Select", Flags = ClickActionFlags.CheckAction)]
@@ -47,16 +86,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class RulerTool : MeasurementTool<PolyLineInteractiveGraphic>
+	public class RulerTool : MeasurementTool<RulerRoiInfo>
 	{
 		public RulerTool()
 			: base(SR.TooltipRuler)
 		{
-		}
-
-		protected override InteractiveGraphic CreateInteractiveGraphic()
-		{
-			return new PolyLineInteractiveGraphic(true, 2);
 		}
 
 		protected override string CreationCommandName
@@ -64,21 +98,14 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return SR.CommandCreateRuler; }
 		}
 
+		protected override InteractiveGraphic CreateInteractiveGraphic()
+		{
+			return new PolyLineInteractiveGraphic(true, 2);
+		}
+
 		protected override void OnRoiCreation(RoiGraphic roiGraphic)
 		{
 			roiGraphic.Roi.ControlPoints.Visible = false;
 		}
-
-		protected override object[] CreateAnalyzers()
-		{
-			RulerAnalyzerExtensionPoint extensionPoint = new RulerAnalyzerExtensionPoint();
-			return extensionPoint.CreateExtensions();
-		}
-	}
-
-	[ExtensionPoint]
-	public sealed class RulerAnalyzerExtensionPoint 
-		: ExtensionPoint<IRoiAnalyzer<PolyLineInteractiveGraphic>>
-	{
 	}
 }

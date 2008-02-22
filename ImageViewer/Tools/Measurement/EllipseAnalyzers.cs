@@ -1,31 +1,20 @@
 using System;
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	[ExtensionOf(typeof(EllipseAnalyzerExtensionPoint))]
-	public class EllipseAreaCalculator : IRoiAnalyzer<EllipseInteractiveGraphic>
+	[ExtensionOf(typeof(RoiAnalyzerExtensionPoint<EllipseRoiInfo>))]
+	public class EllipseAreaCalculator : IRoiAnalyzer<EllipseRoiInfo>
 	{
-		public string Analyze(EllipseInteractiveGraphic ellipse, RoiAnalysisMethod method)
+		public string Analyze(EllipseRoiInfo roiInfo)
 		{
-			IImageSopProvider provider = ellipse.ParentPresentationImage as IImageSopProvider;
-
-			if (provider == null)
-				return String.Empty;
-			
-			ImageSop imageSop = provider.ImageSop;
-
 			Units units = Units.Centimeters;
 
-			ellipse.CoordinateSystem = CoordinateSystem.Source;
-			double areaInPixels = Formula.AreaOfEllipse(ellipse.Width, ellipse.Height);
-			ellipse.ResetCoordinateSystem();
+			double areaInPixels = Formula.AreaOfEllipse(roiInfo.BoundingBox.Width, roiInfo.BoundingBox.Height);
 
-			PixelSpacing pixelSpacing = imageSop.NormalizedPixelSpacing;
+			PixelSpacing pixelSpacing = roiInfo.NormalizedPixelSpacing;
 
 			string text;
 
@@ -46,32 +35,23 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		}
 	}
 
-	[ExtensionOf(typeof(EllipseAnalyzerExtensionPoint))]
-	public class EllipseStatisticsCalculator : IRoiAnalyzer<EllipseInteractiveGraphic>
+	[ExtensionOf(typeof(RoiAnalyzerExtensionPoint<EllipseRoiInfo>))]
+	public class EllipseStatisticsCalculator : IRoiAnalyzer<EllipseRoiInfo>
 	{
 		float a, b, a2, b2, h, k, xh, yk, r;
 
-		public string Analyze(EllipseInteractiveGraphic ellipse, RoiAnalysisMethod method)
+		public string Analyze(EllipseRoiInfo roiInfo)
 		{
-			if (method == RoiAnalysisMethod.Fast)
-			{
-				return String.Format("{0} {1}\n{2} {1}", SR.ToolsMeasurementMean, SR.ToolsMeasurementCalculating, SR.ToolsMeasurementStdev);
-			}
+			RectangleF boundingBox = roiInfo.BoundingBox;
 
-			ellipse.CoordinateSystem = CoordinateSystem.Source;
+			a = boundingBox.Width / 2;
+			b = boundingBox.Height / 2;
+			a2 = a * a;
+			b2 = b * b;
+			h = boundingBox.Left + a;
+			k = boundingBox.Top + b;
 
-			a = ellipse.Width/2;
-			b = ellipse.Height/2;
-			a2 = a*a;
-			b2 = b*b;
-			h = ellipse.Left + a;
-			k = ellipse.Top + b;
-
-			string str = RoiStatisticsCalculator.Calculate(ellipse, IsPointInRoi);
-
-			ellipse.ResetCoordinateSystem();
-
-			return str;
+			return RoiStatisticsCalculator.Calculate(roiInfo, IsPointInRoi);
 		}
 
 		public bool IsPointInRoi(int x, int y)
