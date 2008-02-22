@@ -58,11 +58,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             Control reportPreview = (Control)_component.ReportPreviewHost.ComponentView.GuiElement;
             reportPreview.Dock = DockStyle.Fill;
             _browserSplitContainer.Panel2.Controls.Add(reportPreview);
-
-            if (_component.IsAddendum == false)
-            {
-                _browserSplitContainer.Panel2Collapsed = true;
-            }
+            _browserSplitContainer.Panel2Collapsed = !_component.PreviewVisible;
         }
     }
 }

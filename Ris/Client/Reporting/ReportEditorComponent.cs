@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             protected override string GetTag(string tag)
             {
                 if (tag == ReportContentTag)
-                    return _owner._reportingContext.ReportContent;
+                    return _owner.ReportContent;
 
                 return base.GetTag(tag);
             }
@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             protected override void SetTag(string tag, string data)
             {
                 if (tag == ReportContentTag)
-                    _owner._reportingContext.ReportContent = data;
+                    _owner.ReportContent = data;
                 else
                     base.SetTag(tag, data);
             }
@@ -166,9 +166,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #region Presentation Model
 
-        public bool IsAddendum
+        public virtual bool PreviewVisible
         {
-            get { return _reportingContext.ActiveReportPartIndex > 0; }
+            get { return IsAddendum; }
         }
 
         public ApplicationComponentHost ReportEditorHost
@@ -179,6 +179,12 @@ namespace ClearCanvas.Ris.Client.Reporting
         public ApplicationComponentHost ReportPreviewHost
         {
             get { return _previewHost; }
+        }
+
+        public string ReportContent
+        {
+            get { return _reportingContext.ReportContent; }
+            set { _reportingContext.ReportContent = value; }
         }
 
         #endregion
@@ -200,5 +206,11 @@ namespace ClearCanvas.Ris.Client.Reporting
                 return IsAddendum ? ReportEditorComponentSettings.Default.ReportPreviewPageUrl : "about:blank";
             }
         }
+
+        private bool IsAddendum
+        {
+            get { return _reportingContext.ActiveReportPartIndex > 0; }
+        }
+
     }
 }
