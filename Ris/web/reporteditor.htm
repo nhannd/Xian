@@ -48,6 +48,7 @@
 
 		function loadData()
 		{
+			var hc = Ris.getHealthcareContext();
 			report = JSML.parse(Ris.getTag("ReportContent")) || {};
 
 			if (report != null)
@@ -55,17 +56,21 @@
 				Field.setValue($("finding"), report.Finding);
 				Field.setValue($("impression"), report.Impression);
 			}
-		
+			
+			// check if we should be using OBSR
 			if (!report.structuredReport)
 			{
-				var documentation = JSML.parse(Ris.getTag("Documentation"));
-				if(documentation && documentation.obusReportType)
+				var service = Ris.getService("ClearCanvas.Ris.Application.Uhn.Common.StructuredReporting.IStructuredReportingService, ClearCanvas.Ris.Application.Uhn.Common");
+				var response = service.GetPerformedProcedureSteps( { ProcedureRef: hc.ProcedureRef } );
+				var pps = response.PerformedProcedureSteps.firstElement();
+				if(pps && pps.ExtendedProperties)
 				{
-					report.structuredReport = documentation;
+					var documentation = JSML.parse(pps.ExtendedProperties.Documentation);
+					if(documentation && documentation.obusReportType)
+					{
+						report.structuredReport = documentation;
+					}
 				}
-			}
-			else
-			{
 			}
 			
 			if(report.structuredReport)

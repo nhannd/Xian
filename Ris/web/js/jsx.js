@@ -7,14 +7,17 @@ var membersOf = function(obj) { var a = []; for(var k in obj) a.add(k); return a
 /*
     Augments the javascript Array prototype with a number of convenience and functional-style methods, and some events.
     The following methods are added:
-        add
-        each
-        map
-        reduce
-        select
-        removeAt
-        remove
-        isArray
+	add
+	each
+	map
+	reduce
+	select
+	find
+	indexOf
+	removeAt
+	remove
+	isArray
+	firstElement
         
     The following events are added:
         itemAdded (note: this event is only fired when the "add" method is called - assignment by [] does not invoke this event)
@@ -133,6 +136,15 @@ if(!Array.prototype.remove)
 	{
 		var i = this.indexOf(obj);
 		return (i > -1) ? this.removeAt(i) : null;
+	};
+}
+
+// returns the first element, or null if the array is empty
+if(!Array.prototype.firstElement)
+{
+	Array.prototype.firstElement = function()
+	{
+		return this.length > 0 ? this[0] : null;
 	};
 }
 
