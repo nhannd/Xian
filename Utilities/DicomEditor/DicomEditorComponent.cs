@@ -445,8 +445,12 @@ namespace ClearCanvas.Utilities.DicomEditor
                             _dicomTagData.Items.Add(editorSqItem);
 
                             this.ReadAttributeCollection(sequenceItem, editorSqItem, nestingLevel + 2);
+                            //add SQ Item delimiter
+                            _dicomTagData.Items.Add(new DicomEditorTag("fffe", "e00d", "Item Delimitation Item", editorSq, nestingLevel + 1));
                         }
                     }
+                    //add SQ delimiter
+                    _dicomTagData.Items.Add(new DicomEditorTag("fffe", "e0dd", "Sequence Delimitation Item", parent, nestingLevel));
                 }
                 else
                 {

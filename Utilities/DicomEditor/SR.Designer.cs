@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
@@ -304,6 +304,15 @@ namespace ClearCanvas.Utilities.DicomEditor {
         internal static string MessageFailedDump {
             get {
                 return ResourceManager.GetString("MessageFailedDump", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No tags were deleted.  This is often because the selection only contains Sequence Items, Sequence Delimiter Items, and Item Delimiter Items which cannot be deleted..
+        /// </summary>
+        internal static string MessageNoTagsWereDeleted {
+            get {
+                return ResourceManager.GetString("MessageNoTagsWereDeleted", resourceCulture);
             }
         }
         

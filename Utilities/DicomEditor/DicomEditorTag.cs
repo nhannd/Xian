@@ -69,7 +69,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         public uint TagId
         {
-            get { return _attribute.Tag.TagValue; } 
+            get { return _attribute == null ? 0 : _attribute.Tag.TagValue; } 
         }
 
         public ushort Group

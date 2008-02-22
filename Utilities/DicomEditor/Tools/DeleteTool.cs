@@ -87,32 +87,41 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
         {
 			if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmDeleteSelectedTags, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
+                bool tagDeleted = false;
+                bool applyToAll = false;
+
                 if (_promptForAll)
                 {
                     if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmDeleteSelectedTagsFromAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
                     {
-                        foreach (DicomEditorTag tag in this.Context.SelectedTags)
-                        {
-                            this.Context.DumpManagement.DeleteTag(tag.TagId, true);
-                        }
-                        this.Context.UpdateDisplay();
+                        applyToAll = true;                                                
                     }
                     else
                     {
-                        foreach (DicomEditorTag tag in this.Context.SelectedTags)
-                        {
-                            this.Context.DumpManagement.DeleteTag(tag.TagId, false);
-                        }
-                        this.Context.UpdateDisplay();
+                        applyToAll = false;
                     }
                 }
                 else
                 {
-                    foreach (DicomEditorTag tag in this.Context.SelectedTags)
+                    applyToAll = false;                    
+                }
+
+                foreach (DicomEditorTag tag in this.Context.SelectedTags)
+                {
+                    if (tag.TagId != 0)
                     {
-                        this.Context.DumpManagement.DeleteTag(tag.TagId, false);
+                        this.Context.DumpManagement.DeleteTag(tag.TagId, applyToAll);
+                        tagDeleted = true;
                     }
+                }
+
+                if (tagDeleted)
+                {
                     this.Context.UpdateDisplay();
+                }
+                else
+                {
+                    this.Context.DesktopWindow.ShowMessageBox(SR.MessageNoTagsWereDeleted, MessageBoxActions.Ok);
                 }
             }
         }

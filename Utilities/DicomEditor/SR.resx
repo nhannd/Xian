@@ -189,6 +189,9 @@
   <data name="MessageFailedDump" xml:space="preserve">
     <value>DICOM Dump operation failed.  File(s) in selection may not be DICOM.</value>
   </data>
+  <data name="MessageNoTagsWereDeleted" xml:space="preserve">
+    <value>No tags were deleted.  This is often because the selection only contains Sequence Items, Sequence Delimiter Items, and Item Delimiter Items which cannot be deleted.</value>
+  </data>
   <data name="MessagePleaseSelectAnImage" xml:space="preserve">
     <value>This tool is only valid when a DICOM Image is selected.</value>
   </data>
