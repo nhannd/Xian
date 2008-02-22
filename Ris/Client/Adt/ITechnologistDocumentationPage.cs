@@ -58,6 +58,6 @@ namespace ClearCanvas.Ris.Client.Adt
         Path Path { get; }
         IApplicationComponent GetComponent();
 
-        void Save(bool complete);
+        bool Save(bool complete);
     }
 }

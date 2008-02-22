@@ -128,7 +128,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private readonly IReportingContext _reportingContext;
 
-        private ILookupHandler _supervisorLookupHandler;
 
         public ReportEditorComponent(IReportingContext context)
         {
@@ -139,8 +138,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override void Start()
         {
-            _supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, new string[] {"PRAD"});
-
             _editingComponent.SetUrl(this.EditorUrl);
             _editingHost = new ChildComponentHost(this.Host, _editingComponent);
             _editingHost.StartComponent();
@@ -157,6 +154,12 @@ namespace ClearCanvas.Ris.Client.Reporting
         IApplicationComponent IReportEditor.GetComponent()
         {
             return this;
+        }
+
+        bool IReportEditor.Save(ReportEditorCloseReason reason)
+        {
+            _editingComponent.SaveData();
+            return true;
         }
 
         #endregion
@@ -176,78 +179,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         public ApplicationComponentHost ReportPreviewHost
         {
             get { return _previewHost; }
-        }
-
-        public bool SendToTranscriptionVisible
-        {
-            get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow); }
-        }
-
-        public bool VerifyReportVisible
-        {
-            get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport); }
-        }
-
-        public bool VerifyEnabled
-        {
-            get { return _reportingContext.CanVerify; }
-        }
-
-        public bool SendToVerifyEnabled
-        {
-            get { return _reportingContext.CanSendToBeVerified; }
-        }
-
-        public bool SendToTranscriptionEnabled
-        {
-            get { return _reportingContext.CanSendToTranscription; }
-        }
-            
-        public void Verify()
-        {
-            _editingComponent.SaveData();
-            _reportingContext.VerifyReport();
-        }
-
-        public void SendToVerify()
-        {
-            _editingComponent.SaveData();
-            _reportingContext.SendToBeVerified();
-        }
-
-        public void SendToTranscription()
-        {
-            _editingComponent.SaveData();
-            _reportingContext.SendToTranscription();
-        }
-
-        public void Save()
-        {
-            _editingComponent.SaveData();
-            _reportingContext.SaveReport();
-        }
-
-        public void Cancel()
-        {
-            _reportingContext.CancelEditing();
-        }
-
-        public StaffSummary Supervisor
-        {
-            get { return _reportingContext.Supervisor; }
-            set
-            {
-                if(!Equals(value, _reportingContext.Supervisor))
-                {
-                    _reportingContext.Supervisor = value;
-                    NotifyPropertyChanged("Supervisor");
-                }
-            }
-        }
-
-        public ILookupHandler SupervisorLookupHandler
-        {
-            get { return _supervisorLookupHandler; }
         }
 
         #endregion

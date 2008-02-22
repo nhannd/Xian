@@ -350,10 +350,13 @@ namespace ClearCanvas.Ris.Client.Adt
             try
             {
                 // allow extension pages to save data
+                bool veto = false;
                 foreach(ITechnologistDocumentationPage page in _extensionPages)
                 {
-                    page.Save(completeDocumentation);
+                    veto = veto || !page.Save(completeDocumentation);
                 }
+                if(veto)
+                    return false;
 
                 _orderDetailsComponent.SaveData();
                 _ppsComponent.SaveData();

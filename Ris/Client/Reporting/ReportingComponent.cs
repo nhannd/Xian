@@ -96,29 +96,19 @@ namespace ClearCanvas.Ris.Client.Reporting
         StaffSummary Supervisor { get; set; }
 
         /// <summary>
-        /// Notifies that the editor requests to verify the report.
+        /// Allows the report editor to request that the reporting component close.
         /// </summary>
-        void VerifyReport();
+        /// <param name="reason"></param>
+        void RequestClose(ReportEditorCloseReason reason);
+    }
 
-        /// <summary>
-        /// Notifies that the editor requests to send the report to be verified.
-        /// </summary>
-        void SendToBeVerified();
-
-        /// <summary>
-        /// Notifies that the editor requests to send the report to transcription.
-        /// </summary>
-        void SendToTranscription();
-
-        /// <summary>
-        /// Notifies that the editor requests to save the report.
-        /// </summary>
-        void SaveReport();
-
-        /// <summary>
-        /// Notifies that the editor requests to cancel.
-        /// </summary>
-        void CancelEditing();
+    public enum ReportEditorCloseReason
+    {
+        CancelEditing,
+        SaveDraft,
+        SendToTranscription,
+        SendToBeVerified,
+        Verify
     }
 
     /// <summary>
@@ -127,6 +117,14 @@ namespace ClearCanvas.Ris.Client.Reporting
     public interface IReportEditor
     {
         IApplicationComponent GetComponent();
+
+        /// <summary>
+        /// Instructs the report editor to save the report content and any other data.
+        /// The report editor may be veto the action by returning false.
+        /// </summary>
+        /// <param name="reason"></param>
+        /// <returns>True to continue with save, or false to veto the operation.</returns>
+        bool Save(ReportEditorCloseReason reason);
     }
 
     /// <summary>
@@ -207,29 +205,9 @@ namespace ClearCanvas.Ris.Client.Reporting
                 }
             }
 
-            public void VerifyReport()
+            public void RequestClose(ReportEditorCloseReason reason)
             {
-                _owner.Verify();
-            }
-
-            public void SendToBeVerified()
-            {
-                _owner.SendToBeVerified();
-            }
-
-            public void SendToTranscription()
-            {
-                _owner.SendToTranscription();
-            }
-
-            public void SaveReport()
-            {
-                _owner.Save();
-            }
-
-            public void CancelEditing()
-            {
-                _owner.Cancel();
+                _owner.RequestClose(reason);
             }
         }
 
@@ -256,6 +234,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private ReportDetail _report;
         private int _activeReportPartIndex;
+        private ILookupHandler _supervisorLookupHandler;
         private StaffSummary _supervisor;
         private string _reportContent;
 
@@ -280,6 +259,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             _orderDetailComponent = new OrderDetailViewComponent(_worklistItem);
             _orderDetailHost = new ChildComponentHost(this.Host, _orderDetailComponent);
             _orderDetailHost.StartComponent();
+
+            _supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, new string[] { "PRAD" });
 
             Platform.GetService<IReportingWorkflowService>(
                 delegate(IReportingWorkflowService service)
@@ -357,27 +338,53 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _orderDetailHost; }
         }
 
-        #endregion
-
-        #region Private Event Handlers
-
-        private bool CanVerify
+        public StaffSummary Supervisor
         {
-            get { return (_canCompleteInterpretationAndVerify || _canCompleteVerification) && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport); }
+            get { return _supervisor; }
+            set
+            {
+                if (!Equals(value, _supervisor))
+                {
+                    _supervisor = value;
+                    NotifyPropertyChanged("Supervisor");
+                }
+            }
         }
 
-        private bool CanSendToBeVerified
+        public ILookupHandler SupervisorLookupHandler
         {
-            get { return _canCompleteInterpretationForVerification; }
+            get { return _supervisorLookupHandler; }
+        }
+        
+        public bool VerifyEnabled
+        {
+            get { return CanVerify; }
         }
 
-        private bool CanSendToTranscription
+        public bool SendToVerifyEnabled
         {
-            get { return _canCompleteInterpretationForTranscription && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow); }
+            get { return CanSendToBeVerified; }
         }
 
-        private void Verify()
+        public bool SendToTranscriptionEnabled
         {
+            get { return CanSendToTranscription; }
+        }
+
+        public bool SendToTranscriptionVisible
+        {
+            get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow); }
+        }
+
+        public bool VerifyReportVisible
+        {
+            get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport); }
+        }
+        
+        public void Verify()
+        {
+            if (!_reportEditor.Save(ReportEditorCloseReason.Verify))
+                return;
             try
             {
                 if (_canCompleteInterpretationAndVerify)
@@ -419,8 +426,10 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        private void SendToBeVerified()
+        public void SendToBeVerified()
         {
+            if (!_reportEditor.Save(ReportEditorCloseReason.SendToBeVerified))
+                return;
             try
             {
                 if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && _supervisor == null)
@@ -456,8 +465,10 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        private void SendToTranscription()
+        public void SendToTranscription()
         {
+            if (!_reportEditor.Save(ReportEditorCloseReason.SendToTranscription))
+                return;
             try
             {
                 Platform.GetService<IReportingWorkflowService>(
@@ -487,8 +498,10 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        private void Save()
+        public void SaveReport()
         {
+            if (!_reportEditor.Save(ReportEditorCloseReason.SaveDraft))
+                return;
             try
             {
                 Platform.GetService<IReportingWorkflowService>(
@@ -519,12 +532,30 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        private void Cancel()
+        public void CancelEditing()
         {
             this.Exit(ApplicationComponentExitCode.None);
         }
 
         #endregion
+
+        #region Private Helpers
+
+        private bool CanVerify
+        {
+            get { return (_canCompleteInterpretationAndVerify || _canCompleteVerification) && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport); }
+        }
+
+        private bool CanSendToBeVerified
+        {
+            get { return _canCompleteInterpretationForVerification; }
+        }
+
+        private bool CanSendToTranscription
+        {
+            get { return _canCompleteInterpretationForTranscription && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow); }
+        }
+
 
         private void SetSupervisor(StaffSummary supervisor)
         {
@@ -532,5 +563,29 @@ namespace ClearCanvas.Ris.Client.Reporting
             SupervisorSettings.Default.SupervisorID = supervisor == null ? "" : supervisor.StaffId;
             SupervisorSettings.Default.Save();
         }
+
+        private void RequestClose(ReportEditorCloseReason reason)
+        {
+            switch(reason)
+            {
+                case ReportEditorCloseReason.SaveDraft:
+                    SaveReport();
+                    break;
+                case ReportEditorCloseReason.SendToTranscription:
+                    SendToTranscription();
+                    break;
+                case ReportEditorCloseReason.SendToBeVerified:
+                    SendToBeVerified();
+                    break;
+                case ReportEditorCloseReason.Verify:
+                    Verify();
+                    break;
+                case ReportEditorCloseReason.CancelEditing:
+                    CancelEditing();
+                    break;
+            }
+        }
+
+        #endregion
     }
 }
