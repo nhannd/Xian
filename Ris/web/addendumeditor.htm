@@ -8,14 +8,6 @@
 	    <script type="text/javascript" src="js/ui.js"></script>
 	    <script type="text/javascript" src="js/ris.js"></script>
 	    <script type="text/javascript" >
-		    var data = {};
-
-            // this no-arg method must be implemented for the component to save report
-            function saveData()
-            {
-                Ris.setTag("Addendum", Field.getValue($("addendum")));
-            }
-            
 		    function onBodyLoad()
 		    {		        
 		        if(!Ris)
@@ -23,8 +15,8 @@
 
 	            try
 	            {
-                    data = Ris.setTag("Addendum");
-                    Field.setValue($("addendum"), data);
+                    var content = Ris.getTag("ReportContent");
+                    Field.setValue($("addendum"), content);
 	            }
 	            catch(e)
 	            {
@@ -33,6 +25,12 @@
 	            }
 				
 		    }
+			
+            // this no-arg method must be implemented for the component to save report
+            function saveData()
+            {
+                Ris.setTag("ReportContent", Field.getValue($("addendum")));
+            }
 		</script>
 	</head>
 	<body onload="javascript: onBodyLoad()" style="padding-top:0">

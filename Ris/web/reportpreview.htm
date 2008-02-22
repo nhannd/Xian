@@ -24,12 +24,8 @@
 
 		try
 		{
-			data = Ris.getTag("Preview");
-			if (data)
-			{
-				var report = JSML.parse(data);
-				createReportPreview($("preview"), report);
-			}
+			var report = Ris.getHealthcareContext();
+			createReportPreview($("preview"), report);
 		}
 		catch(e)
 		{

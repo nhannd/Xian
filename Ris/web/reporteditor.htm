@@ -15,6 +15,24 @@
 		var report = {};
 		var errorProvider = new ErrorProvider();
 
+		function onBodyLoad()
+		{
+			if(!Ris)
+				return;
+
+			try
+			{
+				loadData();
+				if (loadReportedProceduresTable() == false)
+					Field.show($("proceduresTable"), false);
+			}
+			catch(e)
+			{
+				var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+				Field.setValue($("myForm"), message);
+			}
+		}
+
 		// this no-arg method must be implemented for the component to save report
 		function saveData()
 		{
@@ -23,14 +41,14 @@
 
 			var reportJsml = "";
 			if (report.Finding || report.Impression || report.structuredReport)
-				reportJsml = JSML.create(report, "Report");
+				reportJsml = JSML.create(report, "ReportContent");
 
-			 Ris.setTag("Report", reportJsml);
+			 Ris.setTag("ReportContent", reportJsml);
 		}
 
 		function loadData()
 		{
-			report = JSML.parse(Ris.getTag("Report")) || {};
+			report = JSML.parse(Ris.getTag("ReportContent")) || {};
 
 			if (report != null)
 			{
@@ -85,23 +103,6 @@
 			return true;
 		}
 		
-		function onBodyLoad()
-		{
-			if(!Ris)
-				return;
-
-			try
-			{
-				loadData();
-				if (loadReportedProceduresTable() == false)
-					Field.show($("proceduresTable"), false);
-			}
-			catch(e)
-			{
-				var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
-				Field.setValue($("myForm"), message);
-			}
-		}
 </script>
 </head>
 <body onload="javascript: onBodyLoad()" style="padding-top:0">
