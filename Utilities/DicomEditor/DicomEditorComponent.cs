@@ -432,25 +432,28 @@ namespace ClearCanvas.Utilities.DicomEditor
             {
                 if (attribute is DicomAttributeSQ)
                 {
-                    DicomEditorTag editorSq = new DicomEditorTag(attribute, null, nestingLevel);
+                    DicomEditorTag editorSq = new DicomEditorTag(attribute, parent, nestingLevel);
                     _dicomTagData.Items.Add(editorSq);
 
                     DicomSequenceItem[] items = (DicomSequenceItem[])((DicomAttributeSQ)attribute).Values;
                     if (items.Length != 0)
                     {       
                         DicomEditorTag editorSqItem;
-                        foreach (DicomSequenceItem sequenceItem in items)
+                        DicomSequenceItem sequenceItem;
+                        for(int i=0; i<items.Length; i++)
                         {
-                            editorSqItem = new DicomEditorTag("fffe", "e000", "Sequence Item", editorSq, nestingLevel + 1);
+                            sequenceItem = items[i];
+
+                            editorSqItem = new DicomEditorTag("fffe", "e000", "Sequence Item", editorSq, i, nestingLevel + 1);
                             _dicomTagData.Items.Add(editorSqItem);
 
                             this.ReadAttributeCollection(sequenceItem, editorSqItem, nestingLevel + 2);
                             //add SQ Item delimiter
-                            _dicomTagData.Items.Add(new DicomEditorTag("fffe", "e00d", "Item Delimitation Item", editorSq, nestingLevel + 1));
+                            _dicomTagData.Items.Add(new DicomEditorTag("fffe", "e00d", "Item Delimitation Item", editorSqItem, i, nestingLevel + 1));
                         }
                     }
                     //add SQ delimiter
-                    _dicomTagData.Items.Add(new DicomEditorTag("fffe", "e0dd", "Sequence Delimitation Item", parent, nestingLevel));
+                    _dicomTagData.Items.Add(new DicomEditorTag("fffe", "e0dd", "Sequence Delimitation Item", editorSq, items.Length, nestingLevel));
                 }
                 else
                 {

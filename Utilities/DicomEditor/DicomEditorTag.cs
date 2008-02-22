@@ -53,9 +53,10 @@ namespace ClearCanvas.Utilities.DicomEditor
 
             _parentTag = parentTag;
             _nestingLevel = nestingLevel;
+            _postitionOrdinal = 0;
         }
 
-        public DicomEditorTag(string group, string element, string tagName, DicomEditorTag parentTag, int displayLevel)
+        public DicomEditorTag(string group, string element, string tagName, DicomEditorTag parentTag, int positionOrdinal, int displayLevel)
         {
             _attribute = null;
 
@@ -64,6 +65,7 @@ namespace ClearCanvas.Utilities.DicomEditor
             _tagName = tagName;
 
             _parentTag = parentTag;
+            _postitionOrdinal = positionOrdinal;
             _nestingLevel = displayLevel;            
         }
 
@@ -158,11 +160,11 @@ namespace ClearCanvas.Utilities.DicomEditor
                 case SortType.GroupElement:
                     if (_parentTag == null)
                     {
-                        return String.Format("({0:x4},", _group) + String.Format("{0:x4})", _element);
+                        return String.Format("({0:x4},", _group) + String.Format("{0:x4})", _element) + _postitionOrdinal.ToString();
                     }
                     else
                     {
-                        return _parentTag.SortKey(type) + String.Format("({0:x4},", _group) + String.Format("{0:x4})", _element);
+                        return _parentTag.SortKey(type) + String.Format("({0:x4},", _group) + String.Format("{0:x4})", _element) + _postitionOrdinal.ToString();
                     }
                 case SortType.TagName:
                     typeSpecificModifier = _tagName;
@@ -197,7 +199,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                     }
                     break;
                 default:
-                    typeSpecificModifier = String.Format("({0:x4},", _group) + String.Format("{0:x4})", _element);
+                    typeSpecificModifier = String.Format("({0:x4},", _group) + String.Format("{0:x4})", _element) + _postitionOrdinal.ToString();
                     break;
             }
 
@@ -210,6 +212,7 @@ namespace ClearCanvas.Utilities.DicomEditor
         private ushort _element;
         private string _tagName;      
         private int _nestingLevel;
+        private int _postitionOrdinal;
         private DicomEditorTag _parentTag;
 
         private DicomAttribute _attribute;
