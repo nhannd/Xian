@@ -44,6 +44,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private ChildComponentHost _orderNotesComponentHost;
         private ChildComponentHost _protocolSummaryComponentHost;
         private ChildComponentHost _additionalInfoComponentHost;
+        private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
        
         private readonly WorklistItemSummaryBase _worklistItem;
         private readonly IDictionary<string, string> _orderExtendedProperties;
@@ -65,7 +66,8 @@ namespace ClearCanvas.Ris.Client.Adt
             _protocolSummaryComponentHost = new ChildComponentHost(this.Host, new ProtocolSummaryComponent(_worklistItem));
             _protocolSummaryComponentHost.StartComponent();
 
-            _additionalInfoComponentHost = new ChildComponentHost(this.Host, new OrderAdditionalInfoComponent(_orderExtendedProperties));
+            _orderAdditionalInfoComponent = new OrderAdditionalInfoComponent(_orderExtendedProperties);
+            _additionalInfoComponentHost = new ChildComponentHost(this.Host, _orderAdditionalInfoComponent);
             _additionalInfoComponentHost.StartComponent();
 
             base.Start();
@@ -84,6 +86,11 @@ namespace ClearCanvas.Ris.Client.Adt
         public ApplicationComponentHost NotesHost
         {
             get { return _orderNotesComponentHost; }
+        }
+
+        internal void SaveData()
+        {
+            _orderAdditionalInfoComponent.SaveData();
         }
     }
 }

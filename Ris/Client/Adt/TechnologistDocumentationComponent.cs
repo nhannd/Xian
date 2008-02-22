@@ -355,6 +355,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     page.Save(completeDocumentation);
                 }
 
+                _orderDetailsComponent.SaveData();
                 _ppsComponent.SaveData();
                 Platform.GetService<ITechnologistDocumentationService>(
                     delegate(ITechnologistDocumentationService service)
