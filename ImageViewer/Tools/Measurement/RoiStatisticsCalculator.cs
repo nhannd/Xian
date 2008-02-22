@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			if (isGrayscale && IsBoundingBoxInImage(roiInfo.BoundingBox, roiInfo.ImageColumns, roiInfo.ImageRows))
 			{
-				if (roiInfo.Mode == RoiAnalysisMode.Dynamic)
+				if (roiInfo.Mode == RoiAnalysisMode.Responsive)
 				{
 					return String.Format("{0} {1}\n{2} {1}", SR.ToolsMeasurementMean, SR.ToolsMeasurementNoValue, SR.ToolsMeasurementStdev);
 				}
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 					roiInfo.ModalityLut, 
 					isPointInRoi);
 
-				if (roiInfo.IsCTImage)
+				if (roiInfo.Modality == "CT")
 				{
 					str = String.Format(SR.ToolsMeasurementFormatMeanCT, mean) + "\n" +
 					      String.Format(SR.ToolsMeasurementFormatStdDevCT, stdDev);

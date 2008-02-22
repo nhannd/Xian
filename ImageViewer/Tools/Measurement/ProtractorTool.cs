@@ -52,14 +52,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		public List<PointF> Points
 		{
 			get { return _points; }
-			set
-			{
-				Platform.CheckForNullReference(value, "value");
-				_points = value;
-			}
 		}
 
-		public override void Initialize(InteractiveGraphic graphic)
+		protected internal override void Initialize(InteractiveGraphic graphic)
 		{
 			ProtractorInteractiveGraphic protractor = graphic as ProtractorInteractiveGraphic;
 			Platform.CheckForInvalidCast(protractor, "protractor", typeof(ProtractorInteractiveGraphic).FullName);

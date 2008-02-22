@@ -166,13 +166,13 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			{
 				_roiChangedDelayedEventPublisher.Publish(roiGraphic, EventArgs.Empty);
 				SetCurrentChangingRoi(roiGraphic.Roi);
-				Analyze(roiGraphic, RoiAnalysisMode.Dynamic);
+				Analyze(roiGraphic, RoiAnalysisMode.Responsive);
 			}
 		}
 
 		protected virtual void OnDelayedRoiChanged(RoiGraphic roiGraphic)
 		{
-			Analyze(roiGraphic, RoiAnalysisMode.Delayed);
+			Analyze(roiGraphic, RoiAnalysisMode.Normal);
 			roiGraphic.Draw();
 		}
 

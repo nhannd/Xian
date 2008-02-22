@@ -51,16 +51,14 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		public PointF Point1
 		{
 			get { return _point1; }
-			set { _point1 = value; }
 		}
 
 		public PointF Point2
 		{
 			get { return _point2; }
-			set { _point2 = value; }
 		}
 
-		public override void Initialize(InteractiveGraphic graphic)
+		protected internal override void Initialize(InteractiveGraphic graphic)
 		{
 			PolyLineInteractiveGraphic line = (PolyLineInteractiveGraphic) graphic;
 			Platform.CheckForInvalidCast(line, "line", typeof(ProtractorInteractiveGraphic).FullName);
