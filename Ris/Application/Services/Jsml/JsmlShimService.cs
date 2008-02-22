@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Application.Services.Jsml
                 object innerResponse = operation.Invoke(service, new object[] { innerRequest });
 
                 InvokeOperationResponse response = new InvokeOperationResponse();
-                string responseJsml = JsmlSerializer.Serialize((DataContractBase)innerResponse, "responseData", false);
+                string responseJsml = JsmlSerializer.Serialize(innerResponse, "responseData", false);
 
                 response.ResponseJsml = new JsmlBlob(responseJsml);
                 return response;

@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
     public static class JsmlSerializer
     {
         /// <summary>
-        /// Take an object and serialize all members with DataMemberAttribute to Jsml format.
+        /// Serializes the specified object to JSML format, using the specified objectName as the outermost tag name.
         /// </summary>
         /// <param name="dataObject"></param>
         /// <param name="objectName"></param>
@@ -56,6 +56,14 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
             return Serialize(dataObject, objectName, false);
         }
 
+        /// <summary>
+        /// Serializes the specified object to JSML format, using the specified objectName as the outermost tag name.
+        /// </summary>
+        /// <param name="dataObject"></param>
+        /// <param name="objectName"></param>
+        /// <param name="includeEmptyTags">Specifies whether or not to serialize null-valued properties.
+        ///   If there are many null-valued properties, this will significantly affect the size of the JSML document.</param>
+        /// <returns></returns>
         public static string Serialize(object dataObject, string objectName, bool includeEmptyTags)
         {
             if (dataObject == null)
@@ -66,7 +74,7 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
             using (StringWriter sw = new StringWriter())
             {
                 XmlTextWriter writer = new XmlTextWriter(sw);
-                writer.Formatting = System.Xml.Formatting.Indented;
+                writer.Formatting = Formatting.Indented;
                 SerializeHelper(dataObject, objectName, writer, false);
                 writer.Close();
                 jsml = sw.ToString();
@@ -77,7 +85,7 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
 
 
         /// <summary>
-        /// Take a jsml string and deserialize into an object of the specified type.
+        /// Deserializes the specified JSML text into an object of the specified type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="jsml"></param>
@@ -88,6 +96,12 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
             return (T)Deserialize(typeof(T), jsml);
         }
 
+        /// <summary>
+        /// Deserializes the specified JSML text into an object of the specified type.
+        /// </summary>
+        /// <param name="dataContract"></param>
+        /// <param name="jsml"></param>
+        /// <returns></returns>
         public static object Deserialize(Type dataContract, string jsml)
         {
             if (String.IsNullOrEmpty(jsml))
@@ -96,7 +110,7 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(jsml);
 
-            return (object)DeserializeHelper(dataContract, xmlDoc.DocumentElement);
+            return DeserializeHelper(dataContract, xmlDoc.DocumentElement);
         }
 
 
