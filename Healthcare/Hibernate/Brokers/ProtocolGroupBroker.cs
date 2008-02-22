@@ -46,7 +46,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 return new List<ProtocolGroup>();
 
             string hql =
-                "select p from ProtocolGroup p"
+                "select distinct p from ProtocolGroup p"
                 + " join p.ReadingGroups r "
                 + " join r.ProcedureTypes t"
                 + " where t = :requesteProcedureType";
