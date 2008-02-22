@@ -34,12 +34,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Jsml;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -58,149 +55,16 @@ namespace ClearCanvas.Ris.Client.Reporting
     [AssociateView(typeof (ReportEditorComponentViewExtensionPoint))]
     public class ReportEditorComponent : ApplicationComponent, IReportEditor
     {
-        #region Hackiness
+        #region EditingComponent
 
-        // TODO: this is a temporary hack - remove this class and use Healthcare context instead of tags
-        private class TagStore : IDictionary<string, string>
+        public class EditingComponent : DHtmlComponent
         {
+            private const string ReportContentTag = "ReportContent";
             private readonly ReportEditorComponent _owner;
 
-            public TagStore(ReportEditorComponent owner)
+            public EditingComponent(ReportEditorComponent owner)
             {
                 _owner = owner;
-            }
-
-            public bool TryGetValue(string key, out string value)
-            {
-                switch (key)
-                {
-                    case "Report":
-                        value = _owner._reportingContext.ReportContent;
-                        return true;
-                    case "Addendum":
-                        value = _owner._reportingContext.ReportContent;
-                        return true;
-                    case "Preview":
-                        value = JsmlSerializer.Serialize(_owner._reportingContext.Report, "report");
-                        return true;
-                    default:
-                        value = null;
-                        //_owner._extendedProperties.TryGetValue(key, out value);
-                        //if (string.IsNullOrEmpty(value))
-                        //{
-                        //    value = JsmlSerializer.Serialize(_owner._reportingContext.Report, "report");
-                        //}
-                        return false;
-                }
-            }
-
-            public string this[string key]
-            {
-                get
-                {
-                    string value;
-                    TryGetValue(key, out value);
-                    return value;
-                }
-                set
-                {
-                    switch (key)
-                    {
-                        case "Report":
-                        case "Addendum":
-                            _owner._reportingContext.ReportContent = value;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-
-            #region Unimplemented Members
-
-            public ICollection<string> Values
-            {
-                get { throw new Exception("The method or operation is not implemented."); }
-            }
-
-            public void Add(string key, string value)
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-
-            public bool ContainsKey(string key)
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-
-            public ICollection<string> Keys
-            {
-                get { throw new Exception("The method or operation is not implemented."); }
-            }
-
-            public bool Remove(string key)
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-            public void Add(KeyValuePair<string, string> item)
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-
-            public void Clear()
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-
-            public bool Contains(KeyValuePair<string, string> item)
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-
-            public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex)
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-
-            public int Count
-            {
-                get { throw new Exception("The method or operation is not implemented."); }
-            }
-
-            public bool IsReadOnly
-            {
-                get { throw new Exception("The method or operation is not implemented."); }
-            }
-
-            public bool Remove(KeyValuePair<string, string> item)
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-
-            public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-
-            #endregion
-        }
-
-        #endregion
-
-        public class DHtmlReportEditorComponent : DHtmlComponent
-        {
-            private readonly ReportEditorComponent _owner;
-            private readonly TagStore _tagStore;
-
-            public DHtmlReportEditorComponent(ReportEditorComponent owner)
-            {
-                _owner = owner;
-                _tagStore = new TagStore(owner);
             }
 
             public void Refresh()
@@ -208,12 +72,20 @@ namespace ClearCanvas.Ris.Client.Reporting
                 NotifyAllPropertiesChanged();
             }
 
-            protected override IDictionary<string, string> TagData
+            protected override string GetTag(string tag)
             {
-                get
-                {
-                    return _tagStore;
-                }
+                if (tag == ReportContentTag)
+                    return _owner._reportingContext.ReportContent;
+
+                return base.GetTag(tag);
+            }
+
+            protected override void SetTag(string tag, string data)
+            {
+                if (tag == ReportContentTag)
+                    _owner._reportingContext.ReportContent = data;
+                else
+                    base.SetTag(tag, data);
             }
 
             protected override DataContractBase GetHealthcareContext()
@@ -222,22 +94,47 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        private readonly DHtmlReportEditorComponent _editingComponent;
+        #endregion
+
+        #region PreviewComponent
+
+        public class PreviewComponent : DHtmlComponent
+        {
+            private readonly ReportEditorComponent _owner;
+
+            public PreviewComponent(ReportEditorComponent owner)
+            {
+                _owner = owner;
+            }
+
+            public void Refresh()
+            {
+                NotifyAllPropertiesChanged();
+            }
+
+            protected override DataContractBase GetHealthcareContext()
+            {
+                return _owner._reportingContext.Report;
+            }
+        }
+
+        #endregion
+
+        private readonly EditingComponent _editingComponent;
         private ChildComponentHost _editingHost;
 
-        private readonly DHtmlReportEditorComponent _previewComponent;
+        private readonly PreviewComponent _previewComponent;
         private ChildComponentHost _previewHost;
 
         private readonly IReportingContext _reportingContext;
 
-        private Dictionary<string, string> _extendedProperties;
         private ILookupHandler _supervisorLookupHandler;
 
         public ReportEditorComponent(IReportingContext context)
         {
             _reportingContext = context;
-            _editingComponent = new DHtmlReportEditorComponent(this);
-            _previewComponent = new DHtmlReportEditorComponent(this);
+            _editingComponent = new EditingComponent(this);
+            _previewComponent = new PreviewComponent(this);
         }
 
         public override void Start()
@@ -255,23 +152,14 @@ namespace ClearCanvas.Ris.Client.Reporting
             base.Start();
         }
 
-        private string EditorUrl
+        #region IReportEditor Members
+
+        IApplicationComponent IReportEditor.GetComponent()
         {
-            get
-            {
-                return IsAddendum
-                        ? ReportEditorComponentSettings.Default.AddendumEditorPageUrl
-                        : ReportEditorComponentSettings.Default.ReportEditorPageUrl;
-            }
+            return this;
         }
 
-        private string PreviewUrl
-        {
-            get
-            {
-                return IsAddendum ? ReportEditorComponentSettings.Default.ReportPreviewPageUrl : "about:blank";
-            }
-        }
+        #endregion
 
         #region Presentation Model
 
@@ -364,13 +252,22 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #endregion
 
-        #region IReportEditor Members
-
-        IApplicationComponent IReportEditor.GetComponent()
+        private string EditorUrl
         {
-            return this;
+            get
+            {
+                return IsAddendum
+                        ? ReportEditorComponentSettings.Default.AddendumEditorPageUrl
+                        : ReportEditorComponentSettings.Default.ReportEditorPageUrl;
+            }
         }
 
-        #endregion
+        private string PreviewUrl
+        {
+            get
+            {
+                return IsAddendum ? ReportEditorComponentSettings.Default.ReportPreviewPageUrl : "about:blank";
+            }
+        }
     }
 }

@@ -100,8 +100,6 @@
     <Compile Include="ReportingWorkflow\GetLinkableInterpretationsResponse.cs" />
     <Compile Include="ProtocollingWorkflow\StartOrderProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\StartOrderProtocolResponse.cs" />
-    <Compile Include="ReportingWorkflow\ListProcedureExtendedPropertiesRequest.cs" />
-    <Compile Include="ReportingWorkflow\ListProcedureExtendedPropertiesResponse.cs" />
     <Compile Include="ReportingWorkflow\PriorProcedureSummary.cs" />
     <Compile Include="WorklistItemSummaryBase.cs" />
     <Compile Include="Login\GetWorkingFacilityChoicesRequest.cs" />
@@ -334,7 +332,7 @@
     <Compile Include="ModalityWorkflow\GetProcedurePlanForWorklistItemResponse.cs" />
     <Compile Include="ModalityWorkflow\ListPerformedProcedureStepsRequest.cs" />
     <Compile Include="ModalityWorkflow\ListPerformedProcedureStepsResponse.cs" />
-    <Compile Include="ModalityWorkflow\ModalityPerformedProcedureStepSummary.cs" />
+    <Compile Include="ModalityWorkflow\ModalityPerformedProcedureStepDetail.cs" />
     <Compile Include="ModalityProcedureStepDetail.cs" />
     <Compile Include="ProcedurePlanDetail.cs" />
     <Compile Include="ProcedureDetail.cs" />
@@ -383,7 +381,6 @@
     <Compile Include="ModalityWorkflow\ListWorklistsResponse.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureRequest.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureResponse.cs" />
-    <Compile Include="PerformedProcedureStepDetail.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="ContactPersonDetail.cs" />
     <Compile Include="PatientNoteCategoryDetail.cs" />

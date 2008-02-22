@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class ModalityPerformedProcedureStepAssembler
     {
-        public  ModalityPerformedProcedureStepSummary CreateModalityPerformedProcedureStepSummary(ModalityPerformedProcedureStep mpps, IPersistenceContext context)
+        public  ModalityPerformedProcedureStepDetail CreateModalityPerformedProcedureStepDetail(ModalityPerformedProcedureStep mpps, IPersistenceContext context)
         {
             string name = StringUtilities.Combine(mpps.Activities, " / ", delegate(Activity a) { return a.As<ModalityProcedureStep>().Name; });
 
@@ -53,14 +53,7 @@ namespace ClearCanvas.Ris.Application.Services
                 mpps.Activities,
                 delegate(ModalityProcedureStep mps) { return assembler.CreateModalityProcedureStepSummary(mps, context); });
 
-            Dictionary<string, string> extendedProperties = new Dictionary<string, string>();
-            foreach (string key in mpps.ExtendedProperties.Keys)
-            {
-                extendedProperties[key] = mpps.ExtendedProperties[key];
-            }
-
-
-            return new ModalityPerformedProcedureStepSummary(
+            return new ModalityPerformedProcedureStepDetail(
                 mpps.GetRef(),
                 name,
                 EnumUtils.GetEnumValueInfo(mpps.State, context),
@@ -68,7 +61,7 @@ namespace ClearCanvas.Ris.Application.Services
                 mpps.EndTime,
                 "Dummy Performer",
                 mpsDetails,
-                extendedProperties);
+                new Dictionary<string, string>(mpps.ExtendedProperties));
         }
     }
 }

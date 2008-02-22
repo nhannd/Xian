@@ -37,16 +37,16 @@ using System.Collections.Generic;
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class ModalityPerformedProcedureStepSummary : DataContractBase
+    public class ModalityPerformedProcedureStepDetail : DataContractBase
     {
-        public ModalityPerformedProcedureStepSummary(EntityRef modalityPerformendProcedureStepRef, string inheritedName, EnumValueInfo state, DateTime startTime, DateTime? endTime, string performer, List<ModalityProcedureStepSummary> modalityProcedureSteps, Dictionary<string, string> extendedProperties)
+        public ModalityPerformedProcedureStepDetail(EntityRef modalityPerformendProcedureStepRef, string description, EnumValueInfo state, DateTime startTime, DateTime? endTime, string performer, List<ModalityProcedureStepSummary> modalityProcedureSteps, Dictionary<string, string> extendedProperties)
         {
-            ModalityPerformendProcedureStepRef = modalityPerformendProcedureStepRef;
-            InheritedName = inheritedName;
-            State = state;
-            StartTime = startTime;
-            EndTime = endTime;
-            Performer = performer;
+            this.ModalityPerformendProcedureStepRef = modalityPerformendProcedureStepRef;
+            this.Description = description;
+            this.State = state;
+            this.StartTime = startTime;
+            this.EndTime = endTime;
+            this.Performer = performer;
             this.ModalityProcedureSteps = modalityProcedureSteps;
             this.ExtendedProperties = extendedProperties;
         }
@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         public EntityRef ModalityPerformendProcedureStepRef;
 
         [DataMember]
-        public string InheritedName;
+        public string Description;
 
         [DataMember]
         public EnumValueInfo State;
@@ -72,11 +72,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         /// <summary>
         /// Modality procedure steps that were performed with this performed procedure step.
         /// </summary>
-        //TODO: this does not belong on a summary class
         [DataMember]
         public List<ModalityProcedureStepSummary> ModalityProcedureSteps;
 
-        //TODO: this does not belong on a summary class
         [DataMember]
         public Dictionary<string, string> ExtendedProperties;
     }

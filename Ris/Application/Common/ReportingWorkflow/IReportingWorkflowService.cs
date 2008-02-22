@@ -208,8 +208,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <summary>
         /// Get all the reports of a given patient
         /// </summary>
-        /// <param name="request"><see cref="GetPriorReportsRequest"/></param>
-        /// <returns><see cref="GetPriorReportsResponse"/></returns>
+        /// <param name="request"><see cref="GetPriorsRequest"/></param>
+        /// <returns><see cref="GetPriorsResponse"/></returns>
         [OperationContract]
         GetPriorsResponse GetPriors(GetPriorsRequest request);
 
@@ -220,8 +220,5 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <returns><see cref="GetRadiologistListResponse"/></returns>
         [OperationContract]
         GetRadiologistListResponse GetRadiologistList(GetRadiologistListRequest request);
-
-        [OperationContract]
-        ListProcedureExtendedPropertiesResponse ListProcedureExtendedProperties(ListProcedureExtendedPropertiesRequest request);
     }
 }

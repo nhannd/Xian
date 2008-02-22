@@ -47,6 +47,9 @@ namespace ClearCanvas.Ris.Client
     [ExtensionPoint]
     public class DHtmlComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> { }
 
+    /// <summary>
+    /// Base class for components that display an HTML page.
+    /// </summary>
     [AssociateView(typeof(DHtmlComponentViewExtensionPoint))]
     public class DHtmlComponent : ApplicationComponent
     {
@@ -202,25 +205,12 @@ namespace ClearCanvas.Ris.Client
 
             public string GetTag(string tag)
             {
-                // if component doesn't support tag data, just do the most lenient thing and return null
-                // we could throw an exception, but that seems counter to the spirit of javascript
-                if(_component.TagData == null)
-                    return null;
-
-                string value;
-                _component.TagData.TryGetValue(tag, out value);
-
-                return value;
+                return _component.GetTag(tag);
             }
 
             public void SetTag(string tag, string data)
             {
-                // in this case, throwing an exception is probably warranted because there is no point
-                // letting the page believe that it is successfully storing tags when in fact it isn't
-                if(_component.TagData == null)
-                    throw new NotSupportedException("This component does not support storage of tags.");
-
-                _component.TagData[tag] = data;
+                _component.SetTag(tag, data);
             }
         }
 
@@ -325,11 +315,68 @@ namespace ClearCanvas.Ris.Client
             throw new NotSupportedException("Healthcare context not supported by this component.");
         }
 
+        /// <summary>
+        /// Gets the value associated with the specified tag.
+        /// </summary>
+        /// <remarks>
+        /// The default implementation of this method retrieves tags from the dictionary returned by the
+        /// <see cref="TagData"/> property.
+        /// In most cases this method should not be overridden - override the <see cref="TagData"/> property
+        /// instead.  The only reason to override this method is to do special processing of a given tag
+        /// (for example, to define a special tag that is not stored in the dictionary).
+        /// </remarks>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        protected virtual string GetTag(string tag)
+        {
+            // if component doesn't support tag data, just do the most lenient thing and return null
+            // we could throw an exception, but that seems counter to the spirit of javascript
+            if (this.TagData == null)
+                return null;
+
+            string value;
+            this.TagData.TryGetValue(tag, out value);
+
+            return value;
+        }
+
+        /// <summary>
+        /// Gets the value associated with the specified tag.
+        /// </summary>
+        /// <remarks>
+        /// The default implementation of this method stores tags in the dictionary returned by
+        /// the <see cref="TagData"/> property.
+        /// In most cases this method should not be overridden - override the <see cref="TagData"/> property
+        /// instead.  The only reason to override this method is to do special processing of a given tag
+        /// (for example, to define a special tag that is not stored in the dictionary).
+        /// </remarks>
+        /// <param name="tag"></param>
+        /// <param name="data"></param>
+        protected virtual void SetTag(string tag, string data)
+        {
+            // in this case, throwing an exception is probably warranted because there is no point
+            // letting the page believe that it is successfully storing tags when in fact it isn't
+            if (this.TagData == null)
+                throw new NotSupportedException("This component does not support storage of tags.");
+
+            this.TagData[tag] = data;
+        }
+
+        /// <summary>
+        /// Gets the dictionary used for default storage of tag data.
+        /// </summary>
+        /// <remarks>
+        /// The default implementations of <see cref="GetTag"/> and <see cref="SetTag"/> use the dictionary
+        /// returned by this property to store tag data.  The default implementation of this property
+        /// returns an empty dictionary.  Therefore this property must be overridden
+        /// to support tag storage.  Alternatively, the <see cref="GetTag"/> and <see cref="SetTag"/> methods
+        /// may be overridden directly, but in most cases this is not necessary.
+        /// </remarks>
         protected virtual IDictionary<string, string> TagData
         {
             get
             {
-                throw new NotSupportedException("Tag data not supported by this component.");
+                return new Dictionary<string, string>();
             }
         }
 

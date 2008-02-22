@@ -48,8 +48,8 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
         /// <summary>
         /// Take an object and serialize all members with DataMemberAttribute to Jsml format.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="dataObject"></param>
+        /// <param name="objectName"></param>
         /// <returns></returns>
         public static string Serialize(object dataObject, string objectName)
         {
@@ -133,6 +133,24 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
                     writer.WriteEndElement();
                 }
             }
+            else if (dataObject is IDictionary)
+            {
+                // this clause was added mainly to support serialization of ExtendedProperties, which 
+                // is always a string-keyed dictionary
+                // the dictionary is serialized as if it were an object and each key is a property on the object
+                // jscript will not be able to distinguish that it was originally a dictionary
+                // note that if the dictionary contains non-string keys, unpredictable behaviour may result
+                IDictionary dic = (IDictionary) dataObject;
+                if (dic.Count > 0 || includeEmptyTags)
+                {
+                    writer.WriteStartElement(objectName);
+                    foreach (DictionaryEntry entry in dic)
+                    {
+                        SerializeHelper(entry.Value, entry.Key.ToString(), writer, includeEmptyTags);
+                    }
+                    writer.WriteEndElement();
+                }
+            }
             else if (dataObject is Enum)
             {
                 writer.WriteElementString(objectName, dataObject.ToString());
@@ -189,7 +207,7 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
             {
                 dataObject = Activator.CreateInstance(dataType);
 
-                List<FieldInfo> dataMemberFields = GetDataMemberFields((DataContractBase)dataObject);
+                List<FieldInfo> dataMemberFields = GetDataMemberFields(dataObject);
                 foreach (FieldInfo info in dataMemberFields)
                 {
                     XmlElement memberElement = GetFirstElementWithTagName(xmlElement, info.Name);
@@ -197,6 +215,27 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
                     {
                         object memberObject = DeserializeHelper(info.FieldType, memberElement);
                         info.SetValue(dataObject, memberObject);
+                    }
+                }
+            }
+            else if (typeof(IDictionary).IsAssignableFrom(dataType))
+            {
+                // this clause was added mainly to support de-serialization of ExtendedProperties
+                // note that only strongly-typed dictionaries are supported, and the key type *must* be "string",
+                // and the value type must be JSML-serializable
+                dataObject = Activator.CreateInstance(dataType);
+                Type[] genericTypes = dataType.GetGenericArguments();
+                Type keyType = genericTypes[0];
+                if(keyType != typeof(string))
+                    throw new NotSupportedException("Only IDictionary<string, T>, where T is a JSML-serializable type, is supported.");
+                Type valueType = genericTypes[1];
+
+                foreach (XmlNode node in xmlElement.ChildNodes)
+                {
+                    if(node is XmlElement)
+                    {
+                        object value = DeserializeHelper(valueType, (XmlElement)node);
+                        ((IDictionary)dataObject).Add(node.Name, value);
                     }
                 }
             }
@@ -239,8 +278,6 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
         /// <summary>
         /// Get a list of properties and fields from a data contract object with DataMemberAttribute
         /// </summary>
-        /// <param name="dataContract"></param>
-        /// <returns></returns>
         private static List<FieldInfo> GetDataMemberFields(object dataObject)
         {
             List<FieldInfo> dataMemberFields = CollectionUtils.Select<FieldInfo, List<FieldInfo>>(
@@ -259,17 +296,11 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
             return (XmlElement)CollectionUtils.FirstElement<XmlNode>(xmlElement.GetElementsByTagName(tagName));
         }
 
-        private static string PrefixWithZero(int n) 
-        {
-            // Format integers to have at least two digits.
-            return n < 10 ? '0' + n.ToString() : n.ToString();
-        }
-
         private static bool IsDataContract(Type t)
         {
             return t.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0;
         }
-
+        
         private static string SerializeEntityRef(EntityRef entityRef)
         {
             return string.Format("{0}:{1}:{2}:{3}",

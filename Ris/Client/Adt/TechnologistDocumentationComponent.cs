@@ -362,7 +362,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             // TODO clean this up - this is a bit ugly, not sure if there's a cleaner way
                             Dictionary<EntityRef, Dictionary<string, string>> ppsExtendedProperties
                                                  = new Dictionary<EntityRef, Dictionary<string, string>>();
-                            foreach (ModalityPerformedProcedureStepSummary step in _ppsComponent.PerformedProcedureSteps)
+                            foreach (ModalityPerformedProcedureStepDetail step in _ppsComponent.PerformedProcedureSteps)
                             {
                                 ppsExtendedProperties[step.ModalityPerformendProcedureStepRef] = step.ExtendedProperties;
                             }

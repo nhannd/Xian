@@ -40,10 +40,10 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     {
         public ListPerformedProcedureStepsResponse()
         {
-            PerformedProcedureSteps = new List<ModalityPerformedProcedureStepSummary>();
+            PerformedProcedureSteps = new List<ModalityPerformedProcedureStepDetail>();
         }
 
         [DataMember]
-        public List<ModalityPerformedProcedureStepSummary> PerformedProcedureSteps;
+        public List<ModalityPerformedProcedureStepDetail> PerformedProcedureSteps;
     }
 }

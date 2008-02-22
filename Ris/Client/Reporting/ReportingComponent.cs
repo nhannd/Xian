@@ -256,7 +256,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private ReportDetail _report;
         private int _activeReportPartIndex;
-    	private Dictionary<string, string> _extendedProperties;
         private StaffSummary _supervisor;
         private string _reportContent;
 
@@ -266,8 +265,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         public ReportingComponent(ReportingWorklistItem worklistItem)
         {
             _worklistItem = worklistItem;
-
-
         }
 
         public override void Start()
@@ -314,10 +311,6 @@ namespace ClearCanvas.Ris.Client.Reporting
                             _supervisor = CollectionUtils.FirstElement(getRadListresponse.Radiologists);
                         }
                     }
-
-                    //TODO: look at this
-                    ListProcedureExtendedPropertiesResponse extendedPropertiesResponse = service.ListProcedureExtendedProperties(new ListProcedureExtendedPropertiesRequest(_worklistItem.ProcedureRef));
-                    _extendedProperties = CollectionUtils.FirstElement(extendedPropertiesResponse.ProcedureExtendedProperties);
                 });
 
             // check for a report editor provider.  If not found, use the default one

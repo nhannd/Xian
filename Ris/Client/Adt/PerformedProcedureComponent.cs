@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Gets the currently selected performed procedure step.
         /// </summary>
-        ModalityPerformedProcedureStepSummary SelectedPerformedStep { get; }
+        ModalityPerformedProcedureStepDetail SelectedPerformedStep { get; }
 
         /// <summary>
         /// Occurs when the <see cref="SelectedPerformedStep"/> property changes.
@@ -124,7 +124,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 remove { _owner._selectedMppsChanged -= value; }
             }
 
-            public ModalityPerformedProcedureStepSummary SelectedPerformedStep
+            public ModalityPerformedProcedureStepDetail SelectedPerformedStep
             {
                 get { return _owner._selectedMpps; }
             }
@@ -194,7 +194,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private EntityRef _orderRef;
         private readonly TechnologistDocumentationMppsSummaryTable _mppsTable = new TechnologistDocumentationMppsSummaryTable();
-        private ModalityPerformedProcedureStepSummary _selectedMpps;
+        private ModalityPerformedProcedureStepDetail _selectedMpps;
         private event EventHandler _selectedMppsChanged;
 
         private SimpleActionModel _mppsActionHandler;
@@ -217,7 +217,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _owner = owner;
         }
 
-        internal void AddPerformedProcedureStep(ModalityPerformedProcedureStepSummary mpps)
+        internal void AddPerformedProcedureStep(ModalityPerformedProcedureStepDetail mpps)
         {
             _mppsTable.Items.Add(mpps);
             _mppsTable.Sort();
@@ -237,7 +237,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        internal IList<ModalityPerformedProcedureStepSummary> PerformedProcedureSteps
+        internal IList<ModalityPerformedProcedureStepDetail> PerformedProcedureSteps
         {
             get { return _mppsTable.Items; }   
         }
@@ -337,7 +337,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return new Selection(_selectedMpps); }
             set
             {
-                ModalityPerformedProcedureStepSummary selectedMpps = (ModalityPerformedProcedureStepSummary)value.Item;
+                ModalityPerformedProcedureStepDetail selectedMpps = (ModalityPerformedProcedureStepDetail)value.Item;
                 if (selectedMpps != _selectedMpps)
                 {
                     OnSelectedMppsChanged(selectedMpps);
@@ -393,7 +393,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         RefreshProcedurePlanTree(response.ProcedurePlan);
 
                         _mppsTable.Items.Replace(
-                            delegate(ModalityPerformedProcedureStepSummary mppsSummary)
+                            delegate(ModalityPerformedProcedureStepDetail mppsSummary)
                             {
                                 return mppsSummary.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true);
                             },
@@ -415,7 +415,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             try
             {
-                ModalityPerformedProcedureStepSummary selectedMpps = _selectedMpps;
+                ModalityPerformedProcedureStepDetail selectedMpps = _selectedMpps;
 
                 if (selectedMpps != null)
                 {
@@ -429,9 +429,9 @@ namespace ClearCanvas.Ris.Client.Adt
                             RefreshProcedurePlanTree(response.ProcedurePlan);
 
                             _mppsTable.Items.Replace(
-                                delegate(ModalityPerformedProcedureStepSummary mppsSummary)
+                                delegate(ModalityPerformedProcedureStepDetail mpps)
                                 {
-                                    return mppsSummary.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true);
+                                    return mpps.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true);
                                 },
                                 response.DiscontinuedMpps);
 
@@ -451,7 +451,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Private Methods
 
-        private void OnSelectedMppsChanged(ModalityPerformedProcedureStepSummary newSelection)
+        private void OnSelectedMppsChanged(ModalityPerformedProcedureStepDetail newSelection)
         {
             if (_selectedMpps != null)
             {

@@ -35,28 +35,28 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public class TechnologistDocumentationMppsSummaryTable : Table<ModalityPerformedProcedureStepSummary>
+    public class TechnologistDocumentationMppsSummaryTable : Table<ModalityPerformedProcedureStepDetail>
     {
         public TechnologistDocumentationMppsSummaryTable()
         {
-            this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepSummary, string>(
+            this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, string>(
                                  "Name",
-                                 delegate(ModalityPerformedProcedureStepSummary mpps) { return mpps.InheritedName; },
+                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.Description; },
                                  5.0f));
 
-            this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepSummary, string>(
+            this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, string>(
                                  "State",
-                                 delegate(ModalityPerformedProcedureStepSummary mpps) { return mpps.State.Value; },
+                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.State.Value; },
                                  1.2f));
 
-            this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepSummary, DateTime>(
+            this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, DateTime>(
                                  "Start Time",
-                                 delegate(ModalityPerformedProcedureStepSummary mpps) { return mpps.StartTime; },
+                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.StartTime; },
                                  1.5f));
 
-            this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepSummary, DateTime?>(
+            this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, DateTime?>(
                                  "End Time",
-                                 delegate(ModalityPerformedProcedureStepSummary mpps) { return mpps.EndTime; },
+                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.EndTime; },
                                  1.5f));
         }
     }

@@ -41,6 +41,6 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         public ProcedurePlanDetail ProcedurePlan;
 
         [DataMember]
-        public ModalityPerformedProcedureStepSummary StoppedMpps;
+        public ModalityPerformedProcedureStepDetail StoppedMpps;
     }
 }
