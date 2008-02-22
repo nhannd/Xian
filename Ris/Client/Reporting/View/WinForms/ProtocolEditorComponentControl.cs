@@ -35,108 +35,112 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="ProtocolEditorComponent"/>
-    /// </summary>
-    public partial class ProtocolEditorComponentControl : ApplicationComponentUserControl
-    {
-        private readonly ProtocolEditorComponent _component;
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="ProtocolEditorComponent"/>
+	/// </summary>
+	public partial class ProtocolEditorComponentControl : ApplicationComponentUserControl
+	{
+		private readonly ProtocolEditorComponent _component;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public ProtocolEditorComponentControl(ProtocolEditorComponent component)
-            :base(component)
-        {
-            InitializeComponent();
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public ProtocolEditorComponentControl(ProtocolEditorComponent component)
+			: base(component)
+		{
+			InitializeComponent();
 
-            _component = component;
+			_component = component;
 
-            _protocolGroup.DataSource = _component.ProtocolGroupChoices;
-            _protocolGroup.DataBindings.Add("Value", _component, "ProtocolGroup", true, DataSourceUpdateMode.OnPropertyChanged);
-            _component.PropertyChanged += _component_PropertyChanged;
+			_protocolGroup.DataSource = _component.ProtocolGroupChoices;
+			_protocolGroup.DataBindings.Add("Value", _component, "ProtocolGroup", true, DataSourceUpdateMode.OnPropertyChanged);
+			_defaultGroupCheckBox.DataBindings.Add("Checked", _component, "IsDefaultProtocolGroup", true, DataSourceUpdateMode.OnPropertyChanged);
+			_component.PropertyChanged += _component_PropertyChanged;
 
-            _procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
-            _procedurePlanSummary.DataBindings.Add("Selection", _component, "SelectedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
-            _component.SelectionChanged += RefreshTables;
+			_procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
+			_procedurePlanSummary.DataBindings.Add("Selection", _component, "SelectedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
+			_component.SelectionChanged += RefreshTables;
 
-            _protocolNextItem.DataBindings.Add("Checked", _component, "ProtocolNextItem", true, DataSourceUpdateMode.OnPropertyChanged);
-            _protocolNextItem.DataBindings.Add("Enabled", _component, "ProtocolNextItemEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_protocolNextItem.DataBindings.Add("Checked", _component, "ProtocolNextItem", true, DataSourceUpdateMode.OnPropertyChanged);
+			_protocolNextItem.DataBindings.Add("Enabled", _component, "ProtocolNextItemEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _protocolCodesSelector.ShowToolbars = false;
-            _protocolCodesSelector.ShowColumnHeading = false;
-            _protocolCodesSelector.AvailableItemsTable = _component.AvailableProtocolCodesTable;
-            _protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
-            _protocolCodesSelector.DataBindings.Add("SelectedItemsTableSelection", _component, "SelectedProtocolCodesSelection", true, DataSourceUpdateMode.OnPropertyChanged);
-            _protocolCodesSelector.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_protocolCodesSelector.ShowToolbars = false;
+			_protocolCodesSelector.ShowColumnHeading = false;
+			_protocolCodesSelector.AvailableItemsTable = _component.AvailableProtocolCodesTable;
+			_protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
+			_protocolCodesSelector.DataBindings.Add("SelectedItemsTableSelection", _component, "SelectedProtocolCodesSelection", true, DataSourceUpdateMode.OnPropertyChanged);
+			_protocolCodesSelector.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _btnAccept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-            _btnReject.DataBindings.Add("Enabled", _component, "RejectEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-            _btnSuspend.DataBindings.Add("Enabled", _component, "SuspendEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-            _btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-            _btnSkip.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-        }
+			_btnAccept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnReject.DataBindings.Add("Enabled", _component, "RejectEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnSuspend.DataBindings.Add("Enabled", _component, "SuspendEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnSkip.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
 
-        void _component_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if(e.PropertyName == "ProtocolGroupChoices")
-            {
-                _protocolGroup.DataSource = _component.ProtocolGroupChoices;
-            }
-        }
+		void _component_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "ProtocolGroupChoices")
+			{
+				// Re-setting the datasource overwrites objects bound to the control's "Value", which we don't want, so remove the binding first then re-bind
+				_protocolGroup.DataBindings.Clear();
+				_protocolGroup.DataSource = _component.ProtocolGroupChoices;
+				_protocolGroup.DataBindings.Add("Value", _component, "ProtocolGroup", true, DataSourceUpdateMode.OnPropertyChanged);
+			}
+		}
 
-        private void RefreshTables(object sender, EventArgs e)
-        {
-            _protocolCodesSelector.AvailableItemsTable = _component.AvailableProtocolCodesTable;
-            _protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
-        }
+		private void RefreshTables(object sender, EventArgs e)
+		{
+			_protocolCodesSelector.AvailableItemsTable = _component.AvailableProtocolCodesTable;
+			_protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
+		}
 
-        private void btnAccept_Click(object sender, System.EventArgs e)
-        {
-            using (new CursorManager(this, Cursors.WaitCursor))
-            {
-                _component.Accept();
-            }
-        }
+		private void btnAccept_Click(object sender, System.EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.Accept();
+			}
+		}
 
-        private void btnReject_Click(object sender, System.EventArgs e)
-        {
-            using (new CursorManager(this, Cursors.WaitCursor))
-            {
-                _component.Reject();
-            }
-        }
+		private void btnReject_Click(object sender, System.EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.Reject();
+			}
+		}
 
-        private void btnSuspend_Click(object sender, System.EventArgs e)
-        {
-            using (new CursorManager(this, Cursors.WaitCursor))
-            {
-                _component.Suspend();
-            }
-        }
+		private void btnSuspend_Click(object sender, System.EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.Suspend();
+			}
+		}
 
-        private void btnSave_Click(object sender, System.EventArgs e)
-        {
-            using (new CursorManager(this, Cursors.WaitCursor))
-            {
-                _component.Save();
-            }
-        }
+		private void btnSave_Click(object sender, System.EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.Save();
+			}
+		}
 
-        private void btnClose_Click(object sender, System.EventArgs e)
-        {
-            using (new CursorManager(this, Cursors.WaitCursor))
-            {
-                _component.Close();
-            }
-        }
+		private void btnClose_Click(object sender, System.EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.Close();
+			}
+		}
 
-        private void btnSkip_Click(object sender, EventArgs e)
-        {
-            using (new CursorManager(this, Cursors.WaitCursor))
-            {
-                _component.Skip();
-            }
-        }
-    }
+		private void btnSkip_Click(object sender, EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.Skip();
+			}
+		}
+	}
 }

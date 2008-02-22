@@ -46,6 +46,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PriorReportComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ProtocolGroupSettings.cs" />
+    <Compile Include="ProtocolGroupSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ProtocolGroupSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ProtocollingComponent.cs" />
     <Compile Include="ProtocollingComponentMode.cs" />
     <Compile Include="ProtocollingComponentSettings.cs" />
@@ -188,6 +194,10 @@
     <None Include="PriorReportComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>PriorReportComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ProtocolGroupSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ProtocolGroupSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ProtocollingComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
