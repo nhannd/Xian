@@ -39,11 +39,11 @@ namespace ClearCanvas.Utilities.DicomEditor
     public class DicomEditorTag
     {
         public DicomEditorTag(DicomAttribute attribute)
-            : this(attribute, null, DisplayLevel.Attribute) 
+            : this(attribute, null, 0) 
         {
         }        
 
-        public DicomEditorTag(DicomAttribute attribute, DicomEditorTag parentTag, DisplayLevel displayLevel)
+        public DicomEditorTag(DicomAttribute attribute, DicomEditorTag parentTag, int nestingLevel)
         {
             _attribute = attribute;
 
@@ -52,10 +52,10 @@ namespace ClearCanvas.Utilities.DicomEditor
             _tagName = _attribute.Tag.Name;            
 
             _parentTag = parentTag;
-            _displayLevel = displayLevel;
+            _nestingLevel = nestingLevel;
         }
 
-        public DicomEditorTag(string group, string element, string tagName, DicomEditorTag parentTag, DisplayLevel displayLevel)
+        public DicomEditorTag(string group, string element, string tagName, DicomEditorTag parentTag, int displayLevel)
         {
             _attribute = null;
 
@@ -64,7 +64,7 @@ namespace ClearCanvas.Utilities.DicomEditor
             _tagName = tagName;
 
             _parentTag = parentTag;
-            _displayLevel = displayLevel;            
+            _nestingLevel = displayLevel;            
         }
 
         public uint TagId
@@ -128,20 +128,10 @@ namespace ClearCanvas.Utilities.DicomEditor
             {
                 StringBuilder display = new StringBuilder();
 
-                switch (_displayLevel)
+                for (int i = 0; i < _nestingLevel; i++)
                 {
-                    case DisplayLevel.SequenceItemAttribute:
-                        display.Append("      ");
-                        break;
-                    case DisplayLevel.SequenceItem:
-                        display.Append("   ");
-                        break;
-                    case DisplayLevel.Attribute:
-                        break;
-                    default:
-                        break;
-                }
-
+                    display.Append("      ");
+                }                
                 display.AppendFormat("({0:x4}, {1:x4})", _group, _element);                
 
                 return display.ToString();
@@ -219,7 +209,7 @@ namespace ClearCanvas.Utilities.DicomEditor
         private ushort _group;
         private ushort _element;
         private string _tagName;      
-        private DisplayLevel _displayLevel;
+        private int _nestingLevel;
         private DicomEditorTag _parentTag;
 
         private DicomAttribute _attribute;

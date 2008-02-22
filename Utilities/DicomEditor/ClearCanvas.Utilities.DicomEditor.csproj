@@ -47,7 +47,6 @@
   <ItemGroup>
     <Compile Include="DicomEditorTag.cs" />
     <Compile Include="DisplayedDumpChangedEventArgs.cs" />
-    <Compile Include="DisplayLevel.cs" />
     <Compile Include="DicomEditorTool.cs" />
     <Compile Include="DicomEditorComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

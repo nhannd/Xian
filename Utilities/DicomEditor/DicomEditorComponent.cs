@@ -417,8 +417,8 @@ namespace ClearCanvas.Utilities.DicomEditor
         {
             _dicomTagData.Items.Clear();
 
-            this.ReadAttributeCollection(_loadedFiles[_position].MetaInfo, null, DisplayLevel.Attribute);          
-            this.ReadAttributeCollection(_loadedFiles[_position].DataSet, null,  DisplayLevel.Attribute);
+            this.ReadAttributeCollection(_loadedFiles[_position].MetaInfo, null, 0);          
+            this.ReadAttributeCollection(_loadedFiles[_position].DataSet, null,  0);
 
             this.DicomFileTitle = _loadedFiles[_position].Filename;
 
@@ -426,30 +426,31 @@ namespace ClearCanvas.Utilities.DicomEditor
         }
 
 
-        private void ReadAttributeCollection(DicomAttributeCollection set, DicomEditorTag parent, DisplayLevel displayLevel)
+        private void ReadAttributeCollection(DicomAttributeCollection set, DicomEditorTag parent, int nestingLevel)
         {
             foreach (DicomAttribute attribute in set)
             {
                 if (attribute is DicomAttributeSQ)
                 {
-                    DicomEditorTag editorSq = new DicomEditorTag(attribute, null, displayLevel);
+                    DicomEditorTag editorSq = new DicomEditorTag(attribute, null, nestingLevel);
                     _dicomTagData.Items.Add(editorSq);
 
                     DicomSequenceItem[] items = (DicomSequenceItem[])((DicomAttributeSQ)attribute).Values;
                     if (items.Length != 0)
-                    {
-                        DicomEditorTag editorSqItem = new DicomEditorTag("fffe", "e000", "Sequence Item", editorSq, DisplayLevel.SequenceItem);
-                        _dicomTagData.Items.Add(editorSqItem);
-
+                    {       
+                        DicomEditorTag editorSqItem;
                         foreach (DicomSequenceItem sequenceItem in items)
                         {
-                            this.ReadAttributeCollection(sequenceItem, editorSqItem, DisplayLevel.SequenceItemAttribute);
+                            editorSqItem = new DicomEditorTag("fffe", "e000", "Sequence Item", editorSq, nestingLevel + 1);
+                            _dicomTagData.Items.Add(editorSqItem);
+
+                            this.ReadAttributeCollection(sequenceItem, editorSqItem, nestingLevel + 2);
                         }
                     }
                 }
                 else
                 {
-                    _dicomTagData.Items.Add(new DicomEditorTag(attribute, parent, displayLevel));
+                    _dicomTagData.Items.Add(new DicomEditorTag(attribute, parent, nestingLevel));
                 }
             }
         }
