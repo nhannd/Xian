@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 
@@ -42,6 +43,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			Platform.CheckForNullReference(realImageSop, "realImageSop");
 			_realImageSop = realImageSop;
+		}
+
+
+		public override Series ParentSeries
+		{
+			get
+			{
+				return _realImageSop.ParentSeries;
+			}
+			internal set
+			{
+				_realImageSop.ParentSeries = value;
+			}
+		}
+
+		public override FrameCollection Frames
+		{
+			get
+			{
+				return _realImageSop.Frames;
+			}
 		}
 
 		public override DicomMessageBase NativeDicomObject
@@ -196,6 +218,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override string  FrameOfReferenceUid
 		{
 			get 
@@ -348,6 +371,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override PatientOrientation PatientOrientation
 		{
 			get
@@ -356,6 +380,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override string ImageType
 		{
 			get
@@ -364,6 +389,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int AcquisitionNumber
 		{
 			get
@@ -372,6 +398,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override string AcquisitionDate
 		{
 			get
@@ -380,6 +407,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override string AcquisitionTime
 		{
 			get
@@ -388,6 +416,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override string AcquisitionDateTime
 		{
 			get
@@ -396,6 +425,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int ImagesInAcquisition
 		{
 			get
@@ -404,6 +434,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override string ImageComments
 		{
 			get
@@ -412,6 +443,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override string LossyImageCompression
 		{
 			get
@@ -420,6 +452,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override double[] LossyImageCompressionRatio
 		{
 			get
@@ -428,6 +461,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override PixelSpacing PixelSpacing
 		{
 			get
@@ -436,6 +470,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override ImageOrientationPatient ImageOrientationPatient
 		{
 			get
@@ -444,6 +479,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override ImagePositionPatient ImagePositionPatient
 		{
 			get
@@ -452,6 +488,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override double SliceThickness
 		{
 			get
@@ -460,6 +497,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override double SliceLocation
 		{
 			get
@@ -468,6 +506,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override PixelAspectRatio PixelAspectRatio
 		{
 			get
@@ -476,6 +515,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int SamplesPerPixel
 		{
 			get
@@ -484,6 +524,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override PhotometricInterpretation PhotometricInterpretation
 		{
 			get
@@ -492,6 +533,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int Rows
 		{
 			get
@@ -500,6 +542,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int Columns
 		{
 			get
@@ -508,6 +551,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int BitsAllocated
 		{
 			get
@@ -516,6 +560,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int BitsStored
 		{
 			get
@@ -524,6 +569,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int HighBit
 		{
 			get
@@ -532,6 +578,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int PixelRepresentation
 		{
 			get
@@ -540,6 +587,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int PlanarConfiguration
 		{
 			get
@@ -548,6 +596,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override double RescaleIntercept
 		{
 			get
@@ -556,6 +605,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override double RescaleSlope
 		{
 			get
@@ -564,6 +614,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override string RescaleType
 		{
 			get
@@ -572,6 +623,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override Window[] WindowCenterAndWidth
 		{
 			get
@@ -580,6 +632,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override string[] WindowCenterAndWidthExplanation
 		{
 			get
@@ -588,6 +641,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		protected override void AddFrames()
+		{
+		}
+
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override byte[] GetNormalizedPixelData()
 		{
 			return _realImageSop.GetNormalizedPixelData();

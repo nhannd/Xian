@@ -105,19 +105,19 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				IPresentationImage image = imageBox.DisplaySet.PresentationImages[i];
 				if (image is IImageSopProvider)
 				{
-					ImageSop sop = ((IImageSopProvider)image).ImageSop;
+					Frame frame = ((IImageSopProvider)image).Frame;
 
-					if (referenceSop.StudyInstanceUID == sop.StudyInstanceUID && referenceSop.FrameOfReferenceUid == sop.FrameOfReferenceUid)
+					if (referenceSop.StudyInstanceUID == frame.ParentImageSop.StudyInstanceUID && referenceSop.FrameOfReferenceUid == frame.FrameOfReferenceUid)
 					{
-						ImageInfo info = _cache.GetImageInformation(sop);
+						ImageInfo info = _cache.GetImageInformation(frame);
 						if (info != null)
 						{
-							Vector3D positionImage = sop.ImagePlaneHelper.ConvertToImage(referencePositionPatient, info.PositionPatientTopLeft);
+							Vector3D positionImage = frame.ImagePlaneHelper.ConvertToImage(referencePositionPatient, info.PositionPatientTopLeft);
 
 							float zDistanceMillimetres = Math.Abs(positionImage.Z);
 
 							//The coordinates need to be converted to pixel coordinates because right now they are in mm.
-							PointF positionImagePixels = (PointF)sop.ImagePlaneHelper.ConvertToImagePixel(new PointF(positionImage.X, positionImage.Y));
+							PointF positionImagePixels = (PointF)frame.ImagePlaneHelper.ConvertToImagePixel(new PointF(positionImage.X, positionImage.Y));
 
 							if (zDistanceMillimetres < closestDistanceMillimetres)
 							{
@@ -165,12 +165,12 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				!(base.SelectedSpatialTransformProvider.SpatialTransform is SpatialTransform))
 				return false;
 
-			ImageSop referenceSop = base.SelectedImageSopProvider.ImageSop;
-			if (String.IsNullOrEmpty(referenceSop.FrameOfReferenceUid) || String.IsNullOrEmpty(referenceSop.StudyInstanceUID))
+			Frame referenceFrame = base.SelectedImageSopProvider.Frame;
+			if (String.IsNullOrEmpty(referenceFrame.FrameOfReferenceUid) || String.IsNullOrEmpty(referenceFrame.ParentImageSop.StudyInstanceUID))
 				return false;
 
 			PointF sourcePoint = ((SpatialTransform)base.SelectedSpatialTransformProvider.SpatialTransform).ConvertToSource(destinationPoint);
-			Vector3D referencePositionPatient = referenceSop.ImagePlaneHelper.ConvertToPatient(sourcePoint);
+			Vector3D referencePositionPatient = referenceFrame.ImagePlaneHelper.ConvertToPatient(sourcePoint);
 			if (referencePositionPatient == null)
 				return false;
 

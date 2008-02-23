@@ -53,31 +53,31 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			}
 		}
 
-		public ImageInfo GetImageInformation(ImageSop sop)
+		public ImageInfo GetImageInformation(Frame frame)
 		{
 			lock (_syncLock)
 			{
 				ImageInfo info;
 
-				if (!_sopInfoDictionary.ContainsKey(sop.SopInstanceUID))
+				if (!_sopInfoDictionary.ContainsKey(frame.ParentImageSop.SopInstanceUID))
 				{
 					info = new ImageInfo();
-					info.PositionPatientTopLeft = sop.ImagePlaneHelper.ConvertToPatient(PointF.Empty);
-					info.PositionPatientCenterOfImage = sop.ImagePlaneHelper.ConvertToPatient(new PointF((sop.Columns - 1) / 2F, (sop.Rows - 1) / 2F));
-					info.PositionPatientBottomRight = sop.ImagePlaneHelper.ConvertToPatient(new PointF(sop.Columns - 1, sop.Rows - 1));
-					info.Normal = sop.ImagePlaneHelper.GetNormalVector();
+					info.PositionPatientTopLeft = frame.ImagePlaneHelper.ConvertToPatient(PointF.Empty);
+					info.PositionPatientCenterOfImage = frame.ImagePlaneHelper.ConvertToPatient(new PointF((frame.Columns - 1) / 2F, (frame.Rows - 1) / 2F));
+					info.PositionPatientBottomRight = frame.ImagePlaneHelper.ConvertToPatient(new PointF(frame.Columns - 1, frame.Rows - 1));
+					info.Normal = frame.ImagePlaneHelper.GetNormalVector();
 
 					if (info.PositionPatientCenterOfImage == null || info.Normal == null)
 						return null;
 
 					// here, we want the position in the coordinate system of the image plane, without moving the origin.
-					info.PositionImagePlaneTopLeft = sop.ImagePlaneHelper.ConvertToImage(info.PositionPatientTopLeft, Vector3D.Empty);
+					info.PositionImagePlaneTopLeft = frame.ImagePlaneHelper.ConvertToImage(info.PositionPatientTopLeft, Vector3D.Empty);
 
-					_sopInfoDictionary[sop.SopInstanceUID] = info;
+					_sopInfoDictionary[frame.ParentImageSop.SopInstanceUID] = info;
 				}
 				else
 				{
-					info = _sopInfoDictionary[sop.SopInstanceUID];
+					info = _sopInfoDictionary[frame.ParentImageSop.SopInstanceUID];
 				}
 
 				return info;

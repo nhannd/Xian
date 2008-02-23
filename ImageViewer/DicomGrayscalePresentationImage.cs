@@ -43,33 +43,36 @@ namespace ClearCanvas.ImageViewer
 		: GrayscalePresentationImage, IImageSopProvider
 	{
 		private readonly ImageSop _imageSop;
+		private readonly Frame _frame;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="DicomGrayscalePresentationImage"/>.
 		/// </summary>
-		/// <param name="imageSop">The <see cref="ImageSop"/> from which to construct the image.</param>
+		/// <param name="frame">The <see cref="Frame"/> from which to construct the image.</param>
 		/// <remarks>
-		/// This constructor provides a convenient means of associating an
-		/// <see cref="ImageSop"/> with a <see cref="GrayscalePresentationImage"/>.
+		/// This constructor provides a convenient means of associating a
+		/// <see cref="Frame"/> with a <see cref="GrayscalePresentationImage"/>.
 		/// </remarks>
-		public DicomGrayscalePresentationImage(ImageSop imageSop)
-			: base(imageSop.Rows,
-			       imageSop.Columns,
-			       imageSop.BitsAllocated,
-			       imageSop.BitsStored,
-			       imageSop.HighBit,
-			       imageSop.PixelRepresentation != 0 ? true : false,
-			       imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ? true : false,
-			       imageSop.RescaleSlope,
-			       imageSop.RescaleIntercept,
-			       imageSop.PixelSpacing.Column,
-			       imageSop.PixelSpacing.Row,
-			       imageSop.PixelAspectRatio.Column,
-			       imageSop.PixelAspectRatio.Row,
-			       imageSop.GetNormalizedPixelData)
+		public DicomGrayscalePresentationImage(Frame frame)
+			: base(frame.Rows,
+				   frame.Columns,
+				   frame.BitsAllocated,
+				   frame.BitsStored,
+				   frame.HighBit,
+				   frame.PixelRepresentation != 0 ? true : false,
+				   frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ? true : false,
+				   frame.RescaleSlope,
+				   frame.RescaleIntercept,
+				   frame.PixelSpacing.Column,
+				   frame.PixelSpacing.Row,
+				   frame.PixelAspectRatio.Column,
+				   frame.PixelAspectRatio.Row,
+				   frame.GetNormalizedPixelData)
 		{
-			Platform.CheckForNullReference(imageSop, "imageSop");
-			_imageSop = imageSop;
+			Platform.CheckForNullReference(frame, "frame");
+			_frame = frame;
+			_imageSop = frame.ParentImageSop;
+
 			base.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 		}
 
@@ -83,7 +86,7 @@ namespace ClearCanvas.ImageViewer
 		/// <returns></returns>		
 		public override IPresentationImage CreateFreshCopy()
 		{
-			return new DicomGrayscalePresentationImage(_imageSop);
+			return new DicomGrayscalePresentationImage(_frame);
 		}
 
 		#region IImageSopProvider members
@@ -97,6 +100,14 @@ namespace ClearCanvas.ImageViewer
 		public ImageSop ImageSop
 		{
 			get { return _imageSop; }
+		}
+
+		/// <summary>
+		/// Gets this presentation image's associated <see cref="Frame"/>.
+		/// </summary>
+		public Frame Frame
+		{
+			get { return _frame; }
 		}
 
 		/// <summary>

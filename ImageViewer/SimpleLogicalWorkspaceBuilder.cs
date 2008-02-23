@@ -34,6 +34,8 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.StudyManagement;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -221,13 +223,17 @@ namespace ClearCanvas.ImageViewer
 			displaySet.PresentationImages.Sort(new InstanceNumberComparer());
 		}
 
-		private static IPresentationImage AddImage(IDisplaySet displaySet, ImageSop image)
+		private static void AddImage(IDisplaySet displaySet, ImageSop imageSop)
 		{
-			IPresentationImage presentationImage = PresentationImageFactory.Create(image);
-			presentationImage.Uid = image.SopInstanceUID;
-			displaySet.PresentationImages.Add(presentationImage);
+			IEnumerable<IPresentationImage> presentationImages = PresentationImageFactory.Create(imageSop);
 
-			return presentationImage;
+			foreach (IPresentationImage image in presentationImages)
+			{
+				image.Uid = imageSop.SopInstanceUID;
+				displaySet.PresentationImages.Add(image);
+			}
+
+			//return presentationImage;
 		}
 
 		private static IImageSet GetImageSet(ILogicalWorkspace logicalWorkspace, string studyInstanceUID)

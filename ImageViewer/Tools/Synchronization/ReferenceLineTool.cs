@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				ImageSop currentReferenceSop = ((IImageSopProvider) _currentReferenceImage).ImageSop;
 				if (!String.IsNullOrEmpty(currentReferenceSop.FrameOfReferenceUid) && !String.IsNullOrEmpty(currentReferenceSop.StudyInstanceUID))
 				{
-					_currentReferenceImageInfo = _cache.GetImageInformation(((IImageSopProvider)_currentReferenceImage).ImageSop);
+					_currentReferenceImageInfo = _cache.GetImageInformation(((IImageSopProvider)_currentReferenceImage).Frame);
 					valid = _currentReferenceImageInfo != null;
 				}
 			}
@@ -178,12 +178,12 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 			if (image is IImageSopProvider)
 			{
-				ImageSop currentReferenceSop = ((IImageSopProvider)_currentReferenceImage).ImageSop;
-				ImageSop sop = ((IImageSopProvider)image).ImageSop;
+				Frame currentReferenceFrame = ((IImageSopProvider)_currentReferenceImage).Frame;
+				Frame frame = ((IImageSopProvider)image).Frame;
 
-				if (sop.FrameOfReferenceUid == currentReferenceSop.FrameOfReferenceUid && sop.StudyInstanceUID == currentReferenceSop.StudyInstanceUID)
+				if (frame.FrameOfReferenceUid == currentReferenceFrame.FrameOfReferenceUid && frame.ParentImageSop.StudyInstanceUID == currentReferenceFrame.ParentImageSop.StudyInstanceUID)
 				{
-					ImageInfo info = _cache.GetImageInformation(sop);
+					ImageInfo info = _cache.GetImageInformation(frame);
 					if (info != null)
 					{
 						float ninetyMinusAngle = (float)Math.Abs(Math.PI / 2 - Math.Abs(Math.Acos(info.Normal.Dot(_currentReferenceImageInfo.Normal))));
@@ -215,10 +215,10 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			{
 				if (image is IImageSopProvider)
 				{
-					ImageSop sop = ((IImageSopProvider)image).ImageSop;
-					if (sop.FrameOfReferenceUid == currentReferenceSop.FrameOfReferenceUid && sop.StudyInstanceUID == currentReferenceSop.StudyInstanceUID)
+					Frame frame = ((IImageSopProvider)image).Frame;
+					if (frame.FrameOfReferenceUid == currentReferenceSop.FrameOfReferenceUid && frame.ParentImageSop.StudyInstanceUID == currentReferenceSop.StudyInstanceUID)
 					{
-						ImageInfo info = _cache.GetImageInformation(sop);
+						ImageInfo info = _cache.GetImageInformation(frame);
 						if (info != null)
 						{
 							// 2. Is the image within 1 degree of being in the same plane as the current image?
@@ -251,18 +251,18 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			}
 		}
 
-		private void TransformPoints(ImageSop referenceImageSop, ImageSop projectImageSop, out PointF topLeft, out PointF bottomRight)
+		private void TransformPoints(Frame referenceFrame, Frame projectFrame, out PointF topLeft, out PointF bottomRight)
 		{
-			ImageInfo referenceImageInfo = _cache.GetImageInformation(referenceImageSop);
-			ImageInfo projectImageInfo = _cache.GetImageInformation(projectImageSop);
+			ImageInfo referenceImageInfo = _cache.GetImageInformation(referenceFrame);
+			ImageInfo projectImageInfo = _cache.GetImageInformation(projectFrame);
 
 			// Transform the reference image diagonal to the destination image's coordinate system (pixel position 0,0 as the origin).
-			Vector3D transformedTopLeft = projectImageSop.ImagePlaneHelper.ConvertToImage(referenceImageInfo.PositionPatientTopLeft, projectImageInfo.PositionPatientTopLeft);
-			Vector3D transformedBottomRight = projectImageSop.ImagePlaneHelper.ConvertToImage(referenceImageInfo.PositionPatientBottomRight, projectImageInfo.PositionPatientTopLeft);
+			Vector3D transformedTopLeft = projectFrame.ImagePlaneHelper.ConvertToImage(referenceImageInfo.PositionPatientTopLeft, projectImageInfo.PositionPatientTopLeft);
+			Vector3D transformedBottomRight = projectFrame.ImagePlaneHelper.ConvertToImage(referenceImageInfo.PositionPatientBottomRight, projectImageInfo.PositionPatientTopLeft);
 
 			//The coordinates need to be converted to pixel coordinates because right now they are in mm.
-			topLeft = (PointF)projectImageSop.ImagePlaneHelper.ConvertToImagePixel(new PointF(transformedTopLeft.X, transformedTopLeft.Y));
-			bottomRight = (PointF)projectImageSop.ImagePlaneHelper.ConvertToImagePixel(new PointF(transformedBottomRight.X, transformedBottomRight.Y));
+			topLeft = (PointF)projectFrame.ImagePlaneHelper.ConvertToImagePixel(new PointF(transformedTopLeft.X, transformedTopLeft.Y));
+			bottomRight = (PointF)projectFrame.ImagePlaneHelper.ConvertToImagePixel(new PointF(transformedBottomRight.X, transformedBottomRight.Y));
 		}
 
 		private void CalculateReferenceLine
@@ -274,11 +274,11 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			)
 		{
 			PointF topLeft, bottomRight;
-			ImageSop referenceSop = ((IImageSopProvider)referenceImage).ImageSop;
-			TransformPoints(referenceSop, ((IImageSopProvider)image).ImageSop, out topLeft, out bottomRight);
+			Frame referenceFrame = ((IImageSopProvider)referenceImage).Frame;
+			TransformPoints(referenceFrame, ((IImageSopProvider)image).Frame, out topLeft, out bottomRight);
 
 			//TODO: later, add a config option to show slice location.
-			string text = referenceSop.InstanceNumber.ToString();
+			string text = referenceFrame.ParentImageSop.InstanceNumber.ToString();
 
 			ReferenceLineGraphic referenceLine = referenceLineCompositeGraphic[index];
 			referenceLine.CoordinateSystem = CoordinateSystem.Source;

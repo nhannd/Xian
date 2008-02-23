@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -46,21 +47,28 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <param name="imageSop"></param>
 		/// <returns></returns>
-		public static IPresentationImage Create(ImageSop imageSop)
+		public static IEnumerable<IPresentationImage> Create(ImageSop imageSop)
 		{
-			if (imageSop.PhotometricInterpretation == PhotometricInterpretation.Unknown)
+			List<IPresentationImage> list = new List<IPresentationImage>();
+
+			foreach (Frame frame in imageSop.Frames)
 			{
-				throw new Exception("Photometric interpretation is unknown.");
+				if (frame.PhotometricInterpretation == PhotometricInterpretation.Unknown)
+				{
+					throw new Exception("Photometric interpretation is unknown.");
+				}
+				else if (frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ||
+						 frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome2)
+				{
+					list.Add(new DicomGrayscalePresentationImage(frame));
+				}
+				else
+				{
+					list.Add(new DicomColorPresentationImage(frame));
+				}
 			}
-			else if (imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ||
-					 imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome2)
-			{
-				return new DicomGrayscalePresentationImage(imageSop);
-			}
-			else
-			{
-				return new DicomColorPresentationImage(imageSop);
-			}
+
+			return list;
 		}
 	}
 }

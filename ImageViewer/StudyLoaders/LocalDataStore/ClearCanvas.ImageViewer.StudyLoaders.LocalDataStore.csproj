@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LocalDataStoreFrame.cs" />
     <Compile Include="LocalDataStoreImageSop.cs" />
     <Compile Include="LocalDataStoreStudyLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

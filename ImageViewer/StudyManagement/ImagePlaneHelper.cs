@@ -11,17 +11,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public class ImagePlaneHelper
 	{
-		private readonly ImageSop _sop;
+		private readonly Frame _frame;
 
 		// No sense recalculating these things since they never change.
 		private Vector3D _normalVector;
 		private Matrix _rotationMatrix;
 		private Matrix _pixelToPatientTransform;
 
-		internal ImagePlaneHelper(ImageSop sop)
+		internal ImagePlaneHelper(Frame frame)
 		{
-			Platform.CheckForNullReference(sop, "sop");
-			_sop = sop;
+			Platform.CheckForNullReference(frame, "frame");
+			_frame = frame;
 		}
 
 		/// <summary>
@@ -30,13 +30,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns>A position vector, or null if the <see cref="ImageSop"/>'s position information is invalid.</returns>
 		public Vector3D ConvertToPatient(PointF positionPixels)
 		{
-			ImageOrientationPatient orientation = _sop.ImageOrientationPatient;
-			PixelSpacing pixelSpacing = _sop.PixelSpacing;
+			ImageOrientationPatient orientation = _frame.ImageOrientationPatient;
+			PixelSpacing pixelSpacing = _frame.PixelSpacing;
 
 			if (orientation.IsNull || pixelSpacing.IsNull)
 				return null;
 
-			ImagePositionPatient position = _sop.ImagePositionPatient;
+			ImagePositionPatient position = _frame.ImagePositionPatient;
 
 			// A shortcut for when the pixel position is (0, 0).
 			if (positionPixels.X == 0F && positionPixels.Y == 0F)
@@ -139,7 +139,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns>The corresponding image coordinate, or null if the <see cref="ImageSop"/>'s position information is invalid.</returns>
 		public PointF? ConvertToImage(PointF positionPixels)
 		{
-			PixelSpacing spacing = _sop.PixelSpacing;
+			PixelSpacing spacing = _frame.PixelSpacing;
 			if (spacing.IsNull)
 				return null;
 
@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns>The corresponding pixel coordinate, or null if the <see cref="ImageSop"/>'s position information is invalid.</returns>
 		public PointF? ConvertToImagePixel(PointF positionMillimetres)
 		{
-			PixelSpacing spacing = _sop.PixelSpacing;
+			PixelSpacing spacing = _frame.PixelSpacing;
 			if (spacing.IsNull)
 				return null;
 
@@ -165,7 +165,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns>The normal vector, or null if the <see cref="ImageSop"/>'s position information is invalid.</returns>
 		public Vector3D GetNormalVector()
 		{
-			ImageOrientationPatient orientation = _sop.ImageOrientationPatient;
+			ImageOrientationPatient orientation = _frame.ImageOrientationPatient;
 			if (orientation.IsNull)
 				return null;
 
@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns>The rotation matrix, or null if the <see cref="ImageSop"/>'s position information is invalid.</returns>
 		public Matrix GetRotationMatrix()
 		{
-			ImageOrientationPatient orientation = _sop.ImageOrientationPatient;
+			ImageOrientationPatient orientation = _frame.ImageOrientationPatient;
 			if (orientation.IsNull)
 				return null;
 

@@ -30,28 +30,24 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
-
 	public class LocalDataStoreImageSop : LocalImageSop
 	{
-        private ImageSopInstance _dataStoreImageSopInstance;
-        private ClearCanvas.Dicom.DataStore.Study _dataStoreStudy;
-        private ClearCanvas.Dicom.DataStore.Series _dataStoreSeries;
+        private readonly ImageSopInstance _dataStoreImageSopInstance;
+        private readonly Dicom.DataStore.Study _dataStoreStudy;
+        private readonly Dicom.DataStore.Series _dataStoreSeries;
 
 		public LocalDataStoreImageSop(ImageSopInstance sop)
 			: base(sop.LocationUri.LocalDiskPath)
 		{
             _dataStoreImageSopInstance = sop;
-            _dataStoreStudy = _dataStoreImageSopInstance.GetParentSeries().GetParentStudy() as ClearCanvas.Dicom.DataStore.Study;
-            _dataStoreSeries = _dataStoreImageSopInstance.GetParentSeries() as ClearCanvas.Dicom.DataStore.Series;
+            _dataStoreStudy = _dataStoreImageSopInstance.GetParentSeries().GetParentStudy() as Dicom.DataStore.Study;
+            _dataStoreSeries = _dataStoreImageSopInstance.GetParentSeries() as Dicom.DataStore.Series;
 		}
 
         private ImageSopInstance DataStoreImageSopInstance
@@ -59,12 +55,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             get { return _dataStoreImageSopInstance; }
         }
 
-        private ClearCanvas.Dicom.DataStore.Study DataStoreStudy
+        private Dicom.DataStore.Study DataStoreStudy
         {
             get { return _dataStoreStudy; }
         }
 
-        private ClearCanvas.Dicom.DataStore.Series DataStoreSeries
+        private Dicom.DataStore.Series DataStoreSeries
         {
             get { return _dataStoreSeries; }
         }
@@ -157,11 +153,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             }
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override string FrameOfReferenceUid
 		{
 			get
 			{
-				return this.DataStoreSeries.FrameOfReferenceUid ?? "";
+				return this.Frames[0].FrameOfReferenceUid;
 			}
 		}
 
@@ -205,7 +202,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             }
 		}
 
-
 		public override int InstanceNumber
 		{
 			get
@@ -214,143 +210,151 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override PixelSpacing PixelSpacing
 		{
             get 
             {
-				return this.DataStoreImageSopInstance.PixelSpacing ?? new PixelSpacing(0, 0);
+				return this.Frames[0].PixelSpacing;
             }
 		}
 
-        public override PixelAspectRatio PixelAspectRatio
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		public override PixelAspectRatio PixelAspectRatio
         {
             get
             {
-				return this.DataStoreImageSopInstance.PixelAspectRatio ?? new PixelAspectRatio(1, 1);
+				return this.Frames[0].PixelAspectRatio;
             }
         }
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override ImageOrientationPatient ImageOrientationPatient
 		{
 			get
 			{
-				return this.DataStoreImageSopInstance.ImageOrientationPatient ?? new ImageOrientationPatient(0, 0, 0, 0, 0, 0);
+				return this.Frames[0].ImageOrientationPatient;
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override ImagePositionPatient ImagePositionPatient
 		{
 			get
 			{
-				return this.DataStoreImageSopInstance.ImagePositionPatient ?? new ImagePositionPatient(0, 0, 0);
+				return this.Frames[0].ImagePositionPatient;
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int SamplesPerPixel
 		{
             get 
             {
-				return this.DataStoreImageSopInstance.SamplesPerPixel;
+				return this.Frames[0].SamplesPerPixel;
             }
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override PhotometricInterpretation PhotometricInterpretation
 		{
 			get
 			{
-                return this.DataStoreImageSopInstance.PhotometricInterpretation;
+				return this.Frames[0].PhotometricInterpretation;
 			}
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int Rows
 		{
             get 
             {
-				return this.DataStoreImageSopInstance.Rows;
+				return this.Frames[0].Rows;
             }
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int Columns
 		{
             get 
             {
-				return this.DataStoreImageSopInstance.Columns;
+				return this.Frames[0].Columns;
             }
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int BitsAllocated
 		{
             get 
             {
-				return this.DataStoreImageSopInstance.BitsAllocated;
+				return this.Frames[0].BitsAllocated;
             }
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int BitsStored
 		{
             get 
             {
-				return this.DataStoreImageSopInstance.BitsStored;
+				return this.Frames[0].BitsStored;
             }
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int HighBit
 		{
             get 
             {
-				return this.DataStoreImageSopInstance.HighBit;
+				return this.Frames[0].HighBit;
             }
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int PixelRepresentation
 		{
-            get { return this.DataStoreImageSopInstance.PixelRepresentation; }
+            get { return this.Frames[0].PixelRepresentation; }
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int PlanarConfiguration
 		{
             get 
             {
-				return this.DataStoreImageSopInstance.PlanarConfiguration;
+				return this.Frames[0].PlanarConfiguration;
             }
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override double RescaleIntercept
 		{
             get 
             {
-                return this.DataStoreImageSopInstance.RescaleIntercept;
+                return this.Frames[0].RescaleIntercept;
             }
 		}
 
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override double RescaleSlope
 		{
             get 
             {
-				if (this.DataStoreImageSopInstance.RescaleSlope != 0.0)
-                    return this.DataStoreImageSopInstance.RescaleSlope;
-
-				return 1.0;
+				return this.Frames[0].RescaleSlope;
             }
 		}
 
-		public override Window[]  WindowCenterAndWidth
+		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		public override Window[] WindowCenterAndWidth
 		{
             get
             {
-				if (this.DataStoreImageSopInstance.WindowValues == null || this.DataStoreImageSopInstance.WindowValues.Count == 0)
-					return new Window[] { };
-
-				List<Window> windowCentersAndWidths = new List<Window>();
-				
-				foreach(object existingWindow in this.DataStoreImageSopInstance.WindowValues)
-				{
-					Window window = (Window) existingWindow;
-					windowCentersAndWidths.Add(new Window(window.Width, window.Center));
-				}
-				
-				return windowCentersAndWidths.ToArray();
+            	return this.Frames[0].WindowCenterAndWidth;
             }
+		}
+
+		protected override void AddFrames()
+		{
+			for (int i = 0; i < this.NumberOfFrames; i++)
+				this.Frames.Add(new LocalDataStoreFrame(_dataStoreImageSopInstance, this, i));
 		}
 	}
 }

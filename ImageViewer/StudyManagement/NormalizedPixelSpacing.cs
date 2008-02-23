@@ -13,14 +13,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </remarks>
 	public class NormalizedPixelSpacing : PixelSpacing
 	{
-		private ImageSop _imageSop;
+		private Frame _frame;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="NormalizedPixelSpacing"/>.
 		/// </summary>
-		internal NormalizedPixelSpacing(ImageSop imageSop)
+		internal NormalizedPixelSpacing(Frame frame)
 		{
-			_imageSop = imageSop;
+			_frame = frame;
 			Initialize();
 		}
 
@@ -42,17 +42,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private void Initialize()
 		{
 			// If CR, CX or MG, use ImagePixelSpacing instead
-			if (String.Compare(_imageSop.Modality, "CR", true) == 0 ||
-			    String.Compare(_imageSop.Modality, "DX", true) == 0 ||
-			    String.Compare(_imageSop.Modality, "MG", true) == 0)
+			if (String.Compare(_frame.ParentImageSop.Modality, "CR", true) == 0 ||
+			    String.Compare(_frame.ParentImageSop.Modality, "DX", true) == 0 ||
+			    String.Compare(_frame.ParentImageSop.Modality, "MG", true) == 0)
 			{
 				double pixelSpacingRow = 0, pixelSpacingColumn = 0;
 
 				bool tagExists;
-				_imageSop.GetTag(DicomTags.ImagerPixelSpacing, out pixelSpacingRow, 0, out tagExists);
+				_frame.ParentImageSop.GetTag(DicomTags.ImagerPixelSpacing, out pixelSpacingRow, 0, out tagExists);
 
 				if (tagExists)
-					_imageSop.GetTag(DicomTags.ImagerPixelSpacing, out pixelSpacingColumn, 1, out tagExists);
+					_frame.ParentImageSop.GetTag(DicomTags.ImagerPixelSpacing, out pixelSpacingColumn, 1, out tagExists);
 
 				if (!tagExists)
 					pixelSpacingRow = pixelSpacingColumn = 0;
@@ -63,8 +63,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			// Otherwise, just use pixel spacing
 			else
 			{
-				this.Row = _imageSop.PixelSpacing.Row;
-				this.Column = _imageSop.PixelSpacing.Column;
+				this.Row = _frame.PixelSpacing.Row;
+				this.Column = _frame.PixelSpacing.Column;
 			}
 
 			Validate();

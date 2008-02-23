@@ -98,9 +98,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			if (image is IImageSopProvider)
 			{
-				ImageSop sop = ((IImageSopProvider)image).ImageSop;
-				_normalizedPixelSpacing = sop.NormalizedPixelSpacing;
-				_modality = sop.Modality;
+				Frame frame = ((IImageSopProvider)image).Frame;
+				_normalizedPixelSpacing = frame.NormalizedPixelSpacing;
+				_modality = frame.ParentImageSop.Modality;
 			}
 			else
 			{

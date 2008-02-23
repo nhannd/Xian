@@ -96,6 +96,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			_sopInstanceUID = sopInstanceUid;
 		}
 
+		protected override void AddFrames()
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
+
 		protected override void ValidateInternal()
 		{
 		}

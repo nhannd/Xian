@@ -17,9 +17,9 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		{
 			if (presentationImage is IImageSopProvider)
 			{
-				ImageSop sop = ((IImageSopProvider) presentationImage).ImageSop;
-				Vector3D normal = sop.ImagePlaneHelper.GetNormalVector();
-				Vector3D positionCenterOfImage = sop.ImagePlaneHelper.ConvertToPatient(new PointF((sop.Columns - 1) / 2F, (sop.Rows - 1) / 2F));
+				Frame frame = ((IImageSopProvider) presentationImage).Frame;
+				Vector3D normal = frame.ImagePlaneHelper.GetNormalVector();
+				Vector3D positionCenterOfImage = frame.ImagePlaneHelper.ConvertToPatient(new PointF((frame.Columns - 1) / 2F, (frame.Rows - 1) / 2F));
 
 				if (normal != null && positionCenterOfImage != null)
 				{
@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 				}
 				else
 				{
-					return sop.SliceLocation.ToString("F1");
+					return frame.SliceLocation.ToString("F1");
 				}
 			}
 

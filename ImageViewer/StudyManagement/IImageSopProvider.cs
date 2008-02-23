@@ -34,12 +34,12 @@ using ClearCanvas.ImageViewer.BaseTools;
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
-	/// Provides access to an <see cref="ImageSop"/>.
+	/// Provides access to an <see cref="ImageSop"/> and the relevant <see cref="Frame"/>.
 	/// </summary>
 	/// <remarks>
 	/// <para>
 	/// If you have subclassed <see cref="PresentationImage"/> and want to expose
-	/// an <see cref="ImageSop"/> to <see cref="ImageViewerTool"/> objects, 
+	/// an <see cref="ImageSop"/> and <see cref="Frame"/> to <see cref="ImageViewerTool"/> objects, 
 	/// do so by implementing this interface in your subclass.
 	/// </para>
 	/// <para>
@@ -55,6 +55,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets an <see cref="ImageSop"/>.
 		/// </summary>
+		/// <remarks>
+		/// This is the parent of <see cref="IImageSopProvider.Frame"/>.
+		/// </remarks>
 		ImageSop ImageSop { get; }
+
+		/// <summary>
+		/// Gets a <see cref="Frame"/>.
+		/// </summary>
+		/// <remarks>
+		/// This <see cref="Frame"/> belongs to <see cref="IImageSopProvider.ImageSop"/>.
+		/// </remarks>
+		Frame Frame { get; }
 	}
 }

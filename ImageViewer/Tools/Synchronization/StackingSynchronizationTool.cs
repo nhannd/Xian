@@ -306,24 +306,24 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				{
 					if (imageBox.TopLeftPresentationImage is IImageSopProvider)
 					{
-						ImageSop sop = ((IImageSopProvider) imageBox.TopLeftPresentationImage).ImageSop;
+						Frame frame = ((IImageSopProvider) imageBox.TopLeftPresentationImage).Frame;
 
-						if (!String.IsNullOrEmpty(sop.FrameOfReferenceUid) && !String.IsNullOrEmpty(sop.StudyInstanceUID))
+						if (!String.IsNullOrEmpty(frame.FrameOfReferenceUid) && !String.IsNullOrEmpty(frame.ParentImageSop.StudyInstanceUID))
 						{
-							ImageSop referenceSop = ((IImageSopProvider) referenceImageBox.TopLeftPresentationImage).ImageSop;
+							Frame referenceFrame = ((IImageSopProvider) referenceImageBox.TopLeftPresentationImage).Frame;
 
-							if (sop.FrameOfReferenceUid != referenceSop.FrameOfReferenceUid && sop.StudyInstanceUID != referenceSop.StudyInstanceUID)
+							if (frame.FrameOfReferenceUid != referenceFrame.FrameOfReferenceUid && frame.ParentImageSop.StudyInstanceUID != referenceFrame.ParentImageSop.StudyInstanceUID)
 							{
-								ImageInfo referenceImageInfo = _cache.GetImageInformation(referenceSop);
-								ImageInfo info = _cache.GetImageInformation(sop);
+								ImageInfo referenceImageInfo = _cache.GetImageInformation(referenceFrame);
+								ImageInfo info = _cache.GetImageInformation(frame);
 
 								if (info != null && NormalsWithinLimits(referenceImageInfo, info))
 								{
-									OffsetKey key = new OffsetKey(sop.StudyInstanceUID, sop.FrameOfReferenceUid, info.Normal);
+									OffsetKey key = new OffsetKey(frame.ParentImageSop.StudyInstanceUID, frame.FrameOfReferenceUid, info.Normal);
 
 									if (referenceOffsetKey == null)
 									{
-										referenceOffsetKey = new OffsetKey(referenceSop.StudyInstanceUID, referenceSop.FrameOfReferenceUid, referenceImageInfo.Normal);
+										referenceOffsetKey = new OffsetKey(referenceFrame.ParentImageSop.StudyInstanceUID, referenceFrame.FrameOfReferenceUid, referenceImageInfo.Normal);
 										if (_offsets.ContainsKey(referenceOffsetKey))
 										{
 											referenceOffsetDictionary = _offsets[referenceOffsetKey];
@@ -358,12 +358,12 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			}
 		}
 
-		private Vector3D GetOffset(ImageSop referenceSop, ImageInfo referenceImageInfo, ImageSop sop, ImageInfo info)
+		private Vector3D GetOffset(Frame referenceFrame, ImageInfo referenceImageInfo, Frame frame, ImageInfo info)
 		{
-			OffsetKey referenceOffsetKey = new OffsetKey(referenceSop.StudyInstanceUID, referenceSop.FrameOfReferenceUid, referenceImageInfo.Normal);
+			OffsetKey referenceOffsetKey = new OffsetKey(referenceFrame.ParentImageSop.StudyInstanceUID, referenceFrame.FrameOfReferenceUid, referenceImageInfo.Normal);
 			if (_offsets.ContainsKey(referenceOffsetKey))
 			{
-				OffsetKey key = new OffsetKey(sop.StudyInstanceUID, sop.FrameOfReferenceUid, info.Normal);
+				OffsetKey key = new OffsetKey(frame.ParentImageSop.StudyInstanceUID, frame.FrameOfReferenceUid, info.Normal);
 				if (!key.Equals(referenceOffsetKey))
 				{
 					Vector3D offset = GetOffset(referenceOffsetKey, key, new List<OffsetKey>());
@@ -423,9 +423,9 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private int CalculateClosestSlice(IImageBox referenceImageBox, IImageBox imageBox)
 		{
-			ImageSop referenceSop = ((IImageSopProvider) referenceImageBox.TopLeftPresentationImage).ImageSop;
+			Frame referenceFrame = ((IImageSopProvider) referenceImageBox.TopLeftPresentationImage).Frame;
 
-			ImageInfo referenceImageInfo = _cache.GetImageInformation(referenceSop);
+			ImageInfo referenceImageInfo = _cache.GetImageInformation(referenceFrame);
 			if (referenceImageInfo == null)
 				return -1;
 
@@ -438,19 +438,19 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				IImageSopProvider provider = imageBox.DisplaySet.PresentationImages[index] as IImageSopProvider;
 				if (provider != null)
 				{
-					ImageSop sop = provider.ImageSop;
+					Frame frame = provider.Frame;
 
-					bool sameFrameOfReference = sop.FrameOfReferenceUid == referenceSop.FrameOfReferenceUid &&
-					                             sop.StudyInstanceUID == referenceSop.StudyInstanceUID;
+					bool sameFrameOfReference = frame.FrameOfReferenceUid == referenceFrame.FrameOfReferenceUid &&
+					                             frame.ParentImageSop.StudyInstanceUID == referenceFrame.ParentImageSop.StudyInstanceUID;
 
 					// When 'studies linked' is false, we only synchronize within the same frame of reference.
 					if (this.StudiesLinked || sameFrameOfReference)
 					{
-						ImageInfo info = _cache.GetImageInformation(sop);
+						ImageInfo info = _cache.GetImageInformation(frame);
 						if (info != null && NormalsWithinLimits(referenceImageInfo, info))
 						{
 							//Don't bother getting an offset for something in the same frame of reference.
-							Vector3D offset = sameFrameOfReference ? Vector3D.Empty : GetOffset(referenceSop, referenceImageInfo, sop, info);
+							Vector3D offset = sameFrameOfReference ? Vector3D.Empty : GetOffset(referenceFrame, referenceImageInfo, frame, info);
 
 							Vector3D difference = referenceImageInfo.PositionPatientCenterOfImage + offset - info.PositionPatientCenterOfImage;
 							float distance = difference.Magnitude;

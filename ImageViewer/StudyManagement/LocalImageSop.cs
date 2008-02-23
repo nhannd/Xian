@@ -31,7 +31,6 @@
 
 using System;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -43,7 +42,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private delegate void GetTagDelegate<T>(DicomAttribute attribute, uint position, out T value);
  
 		private DicomFile _dicomFile;
-		private byte[] _pixelData;
 		private bool _loaded;
 
 		/// <summary>
@@ -64,7 +62,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		protected override void Dispose(bool disposing)
 		{
 			_dicomFile = null;
-			_pixelData = null;
 			_loaded = false;
 
 			base.Dispose(disposing);
@@ -75,25 +72,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
         public override DicomMessageBase NativeDicomObject
         {
-            get { return _dicomFile; }
+            get
+            {
+				Load();
+            	return _dicomFile;
+            }
         }
-		
-		/// <summary>
-		/// This method overrides <see cref="ImageSop.GetNormalizedPixelData"/>.
-		/// </summary>
-		/// <returns></returns>
-		public override byte[] GetNormalizedPixelData()
-		{
-			Load();
-			
-			if (_pixelData == null)
-			{
-				byte[] pixelData = (byte[])_dicomFile.DataSet[DicomTags.PixelData].Values;
-				_pixelData = NormalizePixelData(pixelData);
-			}
-
-			return _pixelData;
-		}
 
 		/// <summary>
 		/// This method overides <see cref="Sop.GetTag(uint, out ushort, out bool)"/>.
@@ -277,13 +261,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		private void Load()
+		/// <summary>
+		/// Adds <see cref="Frame"/> objects to <see cref="ImageSop.Frames"/>.
+		/// </summary>
+		protected override void AddFrames()
+		{
+			for (int i = 0; i < this.NumberOfFrames; i++)
+				this.Frames.Add(new LocalFrame(this, i));
+		}
+
+		internal void Load()
 		{
 			if (_loaded)
 				return;
 
 			_loaded = true;
-			_dicomFile.Load(DicomReadOptions.Default);
+			_dicomFile.Load(DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences);
 		}
 	}
 }

@@ -42,27 +42,28 @@ namespace ClearCanvas.ImageViewer
 		: ColorPresentationImage, IImageSopProvider
 	{
 		private readonly ImageSop _imageSop;
-
+		private readonly Frame _frame;
 		/// <summary>
 		/// Initializes a new instance of <see cref="DicomColorPresentationImage"/>.
 		/// </summary>
-		/// <param name="imageSop">The <see cref="ImageSop"/> from which to construct the image.</param>
+		/// <param name="frame">The <see cref="Frame"/> from which to construct the image.</param>
 		/// <remarks>
 		/// This constructor provides a convenient means of associating an
-		/// <see cref="ImageSop"/> with a <see cref="ColorPresentationImage"/>.
+		/// <see cref="Frame"/> with a <see cref="ColorPresentationImage"/>.
 		/// </remarks>
-		public DicomColorPresentationImage(ImageSop imageSop)
-			: base(imageSop.Rows,
-			       imageSop.Columns,
-			       imageSop.PixelSpacing.Column,
-			       imageSop.PixelSpacing.Row,
-			       imageSop.PixelAspectRatio.Column,
-			       imageSop.PixelAspectRatio.Row,
-			       imageSop.GetNormalizedPixelData)
+		public DicomColorPresentationImage(Frame frame)
+			: base(frame.Rows,
+			       frame.Columns,
+			       frame.PixelSpacing.Column,
+			       frame.PixelSpacing.Row,
+			       frame.PixelAspectRatio.Column,
+			       frame.PixelAspectRatio.Row,
+			       frame.GetNormalizedPixelData)
 		{
-			Platform.CheckForNullReference(imageSop, "imageSop");
+			Platform.CheckForNullReference(frame, "frame");
 
-			_imageSop = imageSop;
+			_frame = frame;
+			_imageSop = frame.ParentImageSop;
 			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 		}
 
@@ -76,7 +77,7 @@ namespace ClearCanvas.ImageViewer
 		/// <returns></returns>		
 		public override IPresentationImage CreateFreshCopy()
 		{
-			return new DicomColorPresentationImage(_imageSop);
+			return new DicomColorPresentationImage(_frame);
 		}
 
 		#region IImageSopProvider members
@@ -90,6 +91,14 @@ namespace ClearCanvas.ImageViewer
 		public ImageSop ImageSop
 		{
 			get { return _imageSop; }
+		}
+
+		/// <summary>
+		/// Gets this presentation image's associated <see cref="Frame"/>.
+		/// </summary>
+		public Frame Frame
+		{
+			get { return _frame; }
 		}
 
 		#endregion

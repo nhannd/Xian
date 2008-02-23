@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the parent <see cref="Series"/>.
 		/// </summary>
-		public Series ParentSeries
+		public virtual Series ParentSeries
 		{
 			get { return _parentSeries; }
 			internal set { _parentSeries = value; }

@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			double length = RulerLengthCalculator.CalculateLength(
 				roiGraphic.Roi as PolyLineInteractiveGraphic,
-			    image.ImageSop.NormalizedPixelSpacing, 
+			    image.Frame.NormalizedPixelSpacing, 
 				ref units);
 
 			if (units == Units.Centimeters)
@@ -118,10 +118,10 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			double aspectRatio;
 			
-			if (image.ImageSop.PixelAspectRatio.IsNull)
+			if (image.Frame.PixelAspectRatio.IsNull)
 				aspectRatio = 1;
 			else
-				aspectRatio = image.ImageSop.PixelAspectRatio.Row/image.ImageSop.PixelAspectRatio.Column;
+				aspectRatio = image.Frame.PixelAspectRatio.Row / image.Frame.PixelAspectRatio.Column;
 
 			PolyLineInteractiveGraphic line = roiGraphic.Roi as PolyLineInteractiveGraphic;
 
@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				out pixelSpacingWidth,
 				out pixelSpacingHeight);
 
-			image.ImageSop.NormalizedPixelSpacing.Calibrate(pixelSpacingHeight, pixelSpacingWidth);
+			image.Frame.NormalizedPixelSpacing.Calibrate(pixelSpacingHeight, pixelSpacingWidth);
 
 			if (roiGraphic.ParentPresentationImage is IOverlayGraphicsProvider)
 			{
