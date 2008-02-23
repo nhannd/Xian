@@ -1536,6 +1536,33 @@ namespace ClearCanvas.Dicom
 
              return bb;
          }
+
+        public override bool Equals(object obj)
+        {
+            //Check for null and compare run-time types.
+            if (obj == null) return false;
+
+            if (obj.GetType() != typeof(DicomAttributeOB) && obj.GetType() != typeof(DicomAttributeOW))
+                return false;
+
+            DicomAttribute a = (DicomAttribute)obj;
+            byte[] destArray = (byte[])a.Values;
+            byte[] sourceArray = (byte[])Values;
+
+            if (Count != a.Count)
+                return false;
+            if (Count == 0 && a.Count == 0)
+                return true;
+            if (destArray.Length != sourceArray.Length)
+                return false;
+
+            for (int index = 0; index < a.Count; index++)
+                if (!destArray[index].Equals(sourceArray[index]))
+                    return false;
+
+            return true;
+        }
+
         #endregion
      }
     #endregion
@@ -1803,6 +1830,31 @@ namespace ClearCanvas.Dicom
             return bb;
         }
 
+        public override bool Equals(object obj)
+        {
+            //Check for null and compare run-time types.
+            if (obj == null) return false;
+
+            if (obj.GetType() != typeof(DicomAttributeOB) && obj.GetType() != typeof(DicomAttributeOW))
+                return false;
+
+            DicomAttribute a = (DicomAttribute)obj;
+            byte[] destArray = (byte[])a.Values;
+            byte[] sourceArray = (byte[])Values;
+
+            if (Count != a.Count)
+                return false;
+            if (Count == 0 && a.Count == 0)
+                return true;
+            if (destArray.Length != sourceArray.Length)
+                return false;
+
+            for (int index = 0; index < a.Count; index++)
+                if (!destArray[index].Equals(sourceArray[index]))
+                    return false;
+
+            return true;
+        }
         #endregion
 
 
@@ -3389,9 +3441,10 @@ namespace ClearCanvas.Dicom
             get { return _values; }
             set
             {
-                _values = value as ushort[];
-                if (_values != null)
+                ushort[] vals = value as ushort[];
+                if (vals != null)
                 {
+                    _values = vals;
                     SetStreamLength();
                     return;
                 }

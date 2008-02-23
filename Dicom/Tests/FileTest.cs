@@ -51,19 +51,6 @@ namespace ClearCanvas.Dicom.Tests
 
         }
 
-        private static void SetupMetaInfo(DicomFile theFile)
-        {
-            DicomAttributeCollection theSet = theFile.MetaInfo;
-
-            theSet[DicomTags.MediaStorageSopClassUid].SetStringValue(theFile.DataSet[DicomTags.SopClassUid].GetString(0,""));
-            theSet[DicomTags.MediaStorageSopInstanceUid].SetStringValue(theFile.DataSet[DicomTags.SopInstanceUid].GetString(0, ""));
-            theFile.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian; 
-
-            theSet[DicomTags.ImplementationClassUid].SetStringValue("1.1.1.1.1.11.1");
-            theSet[DicomTags.ImplementationVersionName].SetStringValue("CC DICOM 1.0");
-        }
-
-
         public void WriteOptionsTest(DicomFile sourceFile, DicomWriteOptions options)
         {
             bool result = sourceFile.Save(options);

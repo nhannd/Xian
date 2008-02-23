@@ -52,12 +52,17 @@ namespace ClearCanvas.Dicom
         private ushort _pixelRepresentation;
         private ushort _planarConfiguration;
         private string _photometricInterpretation;
+        private TransferSyntax _transferSyntax = TransferSyntax.ExplicitVrLittleEndian;
         #endregion
 
         #region Constructors
         public DicomPixelData(DicomAttributeCollection collection)
         {
             collection.LoadDicomFields(this);
+            if (collection.Contains(DicomTags.NumberOfFrames))
+                NumberOfFrames = collection[DicomTags.NumberOfFrames].GetInt32(0, 1);
+            if (collection.Contains(DicomTags.PlanarConfiguration))
+                PlanarConfiguration = collection[DicomTags.PlanarConfiguration].GetUInt16(0, 1);
         }
 
         internal DicomPixelData(DicomPixelData attrib)
@@ -77,9 +82,9 @@ namespace ClearCanvas.Dicom
         #endregion
 
         public abstract void UpdateAttributeCollection(DicomAttributeCollection dataset);
+        public abstract void UpdateMessage(DicomMessageBase message);
 
         #region Public Properties
-        [DicomField(DicomTags.NumberOfFrames, DefaultValue = DicomFieldDefault.Default)]
         public int NumberOfFrames
         {
             get { return _frames; }
@@ -151,7 +156,7 @@ namespace ClearCanvas.Dicom
             get { return _pixelRepresentation != 0; }
         }
 
-        [DicomField(DicomTags.PlanarConfiguration, DefaultValue = DicomFieldDefault.Default)]
+        // Not always in images, so don't make it an attribute and manually update it if needed
         public ushort PlanarConfiguration
         {
             get { return _planarConfiguration; }
@@ -181,6 +186,12 @@ namespace ClearCanvas.Dicom
                 return ImageWidth * ImageHeight * BytesAllocated * SamplesPerPixel;
             }
         }
+
+        public TransferSyntax TransferSyntax
+        {
+            get { return _transferSyntax; }
+            set { _transferSyntax = value; }
+        }
         #endregion
     }
 
@@ -192,6 +203,7 @@ namespace ClearCanvas.Dicom
     {
         #region Private Members
         private readonly DicomAttribute _pd;
+        private MemoryStream _ms;
         #endregion
 
         #region Constructors
@@ -214,8 +226,46 @@ namespace ClearCanvas.Dicom
         public override void UpdateAttributeCollection(DicomAttributeCollection dataset)
         {
             dataset.SaveDicomFields(this);
+            if (dataset.Contains(DicomTags.NumberOfFrames) || this.NumberOfFrames > 1)
+                dataset[DicomTags.NumberOfFrames].SetInt32(0, NumberOfFrames);
+            if (dataset.Contains(DicomTags.PlanarConfiguration))
+                dataset[DicomTags.PlanarConfiguration].SetInt32(0, PlanarConfiguration);
+
             dataset[DicomTags.PixelData] = _pd;
+
+            if (_ms != null)
+            {
+                // Add a padding character
+                if ((_ms.Length & 1) == 1)
+                    _ms.WriteByte(0);
+                _pd.Values = _ms.ToArray();
+                _ms.Close();
+                _ms.Dispose();
+                _ms = null;
+            }
         }
+        public override void UpdateMessage(DicomMessageBase message)
+        {
+            UpdateAttributeCollection(message.DataSet);
+            DicomFile file = message as DicomFile;
+            if (file != null)
+                file.TransferSyntax = TransferSyntax;
+        }
+
+        public void AppendFrame(byte[] frameData)
+        {
+            if (_ms == null)
+            {
+                if (_pd.Count == 0)
+                    _ms = new MemoryStream(frameData.Length);
+                else
+                    _ms = new MemoryStream((byte[]) _pd.Values);
+            }
+
+            _ms.Seek(0, SeekOrigin.End);
+            _ms.Write(frameData, 0, frameData.Length);
+        }
+
 
         public byte[] GetFrame(int frame)
         {
@@ -346,11 +396,24 @@ namespace ClearCanvas.Dicom
         #region Public Methods
         public override void UpdateAttributeCollection(DicomAttributeCollection dataset)
         {
+            if (dataset.Contains(DicomTags.NumberOfFrames) || this.NumberOfFrames > 1)
+                dataset[DicomTags.NumberOfFrames].SetInt32(0, NumberOfFrames);
+            if (dataset.Contains(DicomTags.PlanarConfiguration))
+                dataset[DicomTags.PlanarConfiguration].SetInt32(0, PlanarConfiguration);
+
             dataset.SaveDicomFields(this);
             dataset[DicomTags.PixelData] = _sq;
         }
 
-        public void AddFrame(byte[] data)
+        public override void UpdateMessage(DicomMessageBase message)
+        {
+            UpdateAttributeCollection(message.DataSet);
+            DicomFile file = message as DicomFile;
+            if (file != null)
+                file.TransferSyntax = TransferSyntax;
+        }
+
+        public void AddFrameFragment(byte[] data)
         {
             DicomFragmentSequence sequence = _sq;
 

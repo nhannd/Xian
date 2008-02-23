@@ -171,6 +171,7 @@
   <ItemGroup>
     <Compile Include="Codec\DicomCodecException.cs" />
     <Compile Include="Codec\DicomCodecRegistry.cs" />
+    <Compile Include="Codec\DicomRleCodec.cs" />
     <Compile Include="Codec\IDicomCodec.cs" />
     <Compile Include="DicomAttributeMultiValueText.cs" />
     <Compile Include="DicomDataException.cs" />
@@ -208,6 +209,7 @@
     <Compile Include="OffisNetwork\Tests\DcmNetTest.cs" />
     <Compile Include="Tests\AbstractTest.cs" />
     <Compile Include="Tests\AttributeTests.cs" />
+    <Compile Include="Tests\CodecTest.cs" />
     <Compile Include="Tests\DicomFieldTests.cs" />
     <Compile Include="Tests\DicomStringHelperTests.cs" />
     <Compile Include="Tests\FileTest.cs" />
