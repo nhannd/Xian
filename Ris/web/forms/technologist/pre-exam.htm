@@ -272,6 +272,34 @@
 				pregnancyTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				pregnancyTable.bindItems([data.patientScreening]);
 
+				var breastFeedingTable = Table.createTable($("breastFeedingTable"), { editInPlace: true, flow: true, checkBoxes: false },
+					[
+						{	label: "Breast feeding?",
+							cellType: "choice",
+							choices: ["No", "Yes"],
+							getValue: function(item) { return item.breastFeedingStatus || "No"; },
+							setValue: function(item, value) { item.breastFeedingStatus = value; },
+							getError: function(item) { return null; }
+						},
+						{	label: "Exam cancelled?",
+							cellType: "choice",
+							choices: ["No", "Yes"],
+							getValue: function(item) { return item.breastFeedingExamCancelledStatus || "No"; },
+							setValue: function(item, value) { item.breastFeedingExamCancelledStatus = value; },
+							getVisible: function(item) { return item.breastFeedingStatus == "Yes"; },
+							getError: function(item) { return null; }
+						},
+						{	label: "Note",
+							cellType: "text",
+							getValue: function(item) { return item.breastFeedingExamCancelledNote; },
+							setValue: function(item, value) { item.breastFeedingExamCancelledNote = value; },
+						  getVisible: function(item) { return item.breastFeedingExamCancelledStatus == "Yes"; },
+							getError: function(item) { return null; }
+						}
+					]);
+				breastFeedingTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+				breastFeedingTable.bindItems([data.patientScreening]);
+
 				var sedationTable = Table.createTable($("sedationTable"), { editInPlace: true, flow: true, checkBoxes: false },
 					[
 						{	label: "Sedation",
@@ -729,6 +757,11 @@
 
 				<p class="sectionheading">Pregnancy</p>
 				<table id="pregnancyTable"  width="100%">
+				<tr><td class="tableheading"></td></tr>
+				</table>
+
+				<p class="sectionheading">Breast Feeding</p>
+				<table id="breastFeedingTable"  width="100%">
 				<tr><td class="tableheading"></td></tr>
 				</table>
 
