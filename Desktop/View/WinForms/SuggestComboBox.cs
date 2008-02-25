@@ -125,21 +125,29 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         protected override void OnLeave(EventArgs e)
         {
-            // do a case-insensitive search
-            int itemIndex = this.FindStringExact(this.Text);
-
-            if (itemIndex > -1)
+            try
             {
-                // update the selected index
-                this.SelectedIndex = itemIndex;
+                // do a case-insensitive search
+                int itemIndex = this.FindStringExact(this.Text);
+                if (itemIndex > -1)
+                {
+                    // update the selected index
+                    this.SelectedIndex = itemIndex;
 
-                // also update the visible text, because the upper/lower-casing may not match
-                object item = this.Items[itemIndex];
-                this.Text = GetItemText(item);
+                    // also update the visible text, because the upper/lower-casing may not match
+                    object item = this.Items[itemIndex];
+                    this.Text = GetItemText(item);
+                }
+                else
+                {
+                    // doesn't match any suggestions
+                }
             }
-            else
+            catch (ArgumentOutOfRangeException)
             {
-                // doesn't match any suggestions
+                // if the combo box is dropped down, and the control loses focus (calling OnLeave),
+                // it seems WinForms throws an exception from this.Text
+                // not sure why this happens, but there is really nothing that can be done in terms of recovery
             }
 
             // there are 2 ways that the value can change
