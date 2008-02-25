@@ -77,18 +77,24 @@ namespace ClearCanvas.Desktop.Validation
                     c.ShowValidation(show);
                 }
 
-                bool visibleComponentHasErrors = CollectionUtils.Contains<IApplicationComponent>(container.VisibleComponents,
+                bool visibleComponentHasErrors = CollectionUtils.Contains(container.VisibleComponents,
                     delegate(IApplicationComponent c) { return c.HasValidationErrors; });
 
                 // if there are no errors on a visible component, find the first component with errors and ensure it is visible
                 if (!visibleComponentHasErrors)
                 {
-                    IApplicationComponent firstComponentWithErrors = CollectionUtils.SelectFirst<IApplicationComponent>(
+                    IApplicationComponent firstComponentWithErrors = CollectionUtils.SelectFirst(
                         container.ContainedComponents,
                         delegate(IApplicationComponent c) { return c.HasValidationErrors; });
 
                     if (firstComponentWithErrors != null)
+                    {
                         container.EnsureVisible(firstComponentWithErrors);
+
+                        // bug #1644 : call ShowValidation after this component is already visible,
+                        // to ensure that the error icons actually show up
+                        firstComponentWithErrors.ShowValidation(show);
+                    }
                 }
             }
             else
