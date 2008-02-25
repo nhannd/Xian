@@ -5,7 +5,7 @@
 function getAlertHtml(alertItem, patientName)
 {
 	//return "<img width='50' src='" + getAlertIcon(alertItem) + "' alt='" + getAlertTooltip(alertItem, patientName) + "' align='right'/>";
-   return "<img class='alert' src='" + getAlertIcon(alertItem) + "' alt='" + getAlertTooltip(alertItem, patientName) + "'/>";
+	return "<img class='alert' src='" + getAlertIcon(alertItem) + "' alt='" + getAlertTooltip(alertItem, patientName) + "'/>";
 }
 
 function getAlertIcon(alertItem)
@@ -233,8 +233,8 @@ function procedureScheduledDateComparison(data1, data2)
 // group patientOrderData by AccessionNumber
 function groupDataToOrders(listData)
 {
-    var orders = [];
-    for(var i = 0; i < listData.length; i++)
+	var orders = [];
+	for(var i = 0; i < listData.length; i++)
 	{
 	    var thisAccessionNumber = listData[i].AccessionNumber;
 		var thisOrder = orders.find(function(order) { return order.AccessionNumber == thisAccessionNumber; });
@@ -254,18 +254,18 @@ function groupDataToOrders(listData)
 	// set the common properties only at the end, since some properties in setCommonPropertiesFunc may be a composite value of each element
 	for (var j = 0; j < orders.length; j++)
 	{
-	    var thisOrder = orders[j];
+		var thisOrder = orders[j];
 		var firstData = thisOrder.values[0];
 
-        var listProcedureName = thisOrder.values.map(function(item) { return item.ProcedureName; });
-        
-        thisOrder.AccessionNumber = firstData.AccessionNumber;
-        thisOrder.CombineProcedureName = String.combine(listProcedureName, "/");
-        thisOrder.OrderScheduledStartTime = firstData.OrderScheduledStartTime;
-        thisOrder.OrderStatus = firstData.OrderStatus;
-        thisOrder.Insurance = "";
-        thisOrder.OrderingFacility = firstData.OrderingFacility;
-        thisOrder.OrderingPractitioner = firstData.OrderingPractitioner;
+		var listProcedureName = thisOrder.values.map(function(item) { return item.ProcedureName; });
+
+		thisOrder.AccessionNumber = firstData.AccessionNumber;
+		thisOrder.CombineProcedureName = String.combine(listProcedureName, "/");
+		thisOrder.OrderScheduledStartTime = firstData.OrderScheduledStartTime;
+		thisOrder.OrderStatus = firstData.OrderStatus;
+		thisOrder.Insurance = "";
+		thisOrder.OrderingFacility = firstData.OrderingFacility;
+		thisOrder.OrderingPractitioner = firstData.OrderingPractitioner;
 	}
 
     return orders;
@@ -273,44 +273,44 @@ function groupDataToOrders(listData)
 
 function createReportPreview(element, report)
 {
-    if (element == null || report == null || report.Parts == null || report.Parts.length == 0)
-        return "";
-        
-    var formattedReport = "";
- 
-    if (report.Parts.length > 1)
-    {
-        for (var i = report.Parts.length-1; i > 0; i--)
-        {
-            var addendumPart = report.Parts[i];
-            var addendumContent = addendumPart && addendumPart.Content ? addendumPart.Content : "";
-            
-            if (addendumContent)
-            {
-                var isAddendumDraft = new Boolean(addendumPart.Status.Code == 'P');
-                var isCancelled = new Boolean(addendumPart.Status.Code == 'X');
+	if (element == null || report == null || report.Parts == null || report.Parts.length == 0)
+		return "";
 
-				if (isAddendumDraft == true)
-					formattedReport += "<font color='red'><b>Addendum " + i + " (Draft): </b><br>";
-				else if (isCancelled == true)
-					formattedReport += "<b>Addendum " + i + " (cancelled): </b><br>";
-				else
-					formattedReport += "<b>Addendum " + i + ": </b><br>";
+	var formattedReport = "";
 
-                formattedReport += addendumContent;
+	if (report.Parts.length > 1)
+	{
+		for (var i = report.Parts.length-1; i > 0; i--)
+		{
+			var addendumPart = report.Parts[i];
+			var addendumContent = addendumPart && addendumPart.Content ? addendumPart.Content : "";
 			
-				formattedReport += formatReportPerformer(addendumPart);
+			if (addendumContent)
+			{
+				 var isAddendumDraft = new Boolean(addendumPart.Status.Code == 'P');
+				 var isCancelled = new Boolean(addendumPart.Status.Code == 'X');
 
-				if (isAddendumDraft == true)
-					formattedReport += "</font>";
+			if (isAddendumDraft == true)
+				formattedReport += "<font color='red'><b>Addendum " + i + " (Draft): </b><br>";
+			else if (isCancelled == true)
+				formattedReport += "<b>Addendum " + i + " (cancelled): </b><br>";
+			else
+				formattedReport += "<b>Addendum " + i + ": </b><br>";
 
-				formattedReport += "<br><br>";
-            }
-        }
+				 formattedReport += addendumContent;
+		
+			formattedReport += formatReportPerformer(addendumPart);
 
-        if (formattedReport)
-            formattedReport = "<h3>Addendum:</h3>" + formattedReport;
-    }
+			if (isAddendumDraft == true)
+				formattedReport += "</font>";
+
+			formattedReport += "<br><br>";
+			}
+		}
+
+		if (formattedReport)
+			formattedReport = "<h3>Addendum:</h3>" + formattedReport;
+	}
 
 	var mainReportText = "";
 	try
@@ -320,7 +320,7 @@ function createReportPreview(element, report)
 		if(mainReport.Impression || mainReport.Finding)
 		{
 			mainReportText = "<B>Impression:</B> " + mainReport.Impression + "<br>" + "<B>Finding:</B> " + mainReport.Finding + "<br>";
-		}
+	}
 		else
 		{
 			// or it may simply contain a ReportText section (UHN report editor)
@@ -348,10 +348,9 @@ function createReportPreview(element, report)
 		formattedReport += mainReportText;
 	}
 
-	formattedReport += formatReportPerformer(report.Parts[0]);
+		formattedReport += formatReportPerformer(report.Parts[0]);
 
 	formattedReport += isDraft == true ? "</font>" : ""; 
-	
 	element.innerHTML = formattedReport;
 	 
 	 // UHN report may contain a StructuredReport section
@@ -365,16 +364,17 @@ function createStructuredReportPreview(structuredReport)
 {
 	if(!structuredReport)
 		return;
-	$("structuredReport").innerHTML = structuredReportHtml();
-	initStructuredReport(structuredReport, true);
+
+	$("structuredReport").innerHTML = readonlyStructuredReportHtml(structuredReport);
+	initStructuredReportSummary(structuredReport);
 }
 
 function formatReportPerformer(reportPart)
 {
-    if (reportPart == null)
-        return "";
-        
-    var formattedReport = "";
+	if (reportPart == null)
+		return "";
+
+	var formattedReport = "";
 	
 	if (reportPart.InterpretedBy)
 		formattedReport += "<br> Interpreted By: " + Ris.formatPersonName(reportPart.InterpretedBy.Name);

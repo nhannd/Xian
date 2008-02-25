@@ -29,9 +29,10 @@ function initStructuredReport(source, isReadOnly)
 	}
 	else
 	{
-		document.getElementById("TypeSelection").style.display = 'none';
-		document.getElementById("T1T2T3Doc").style.display = 'block';
-		document.getElementById("fetusSelect").style.display = 'block';
+		if(document.getElementById("TypeSelection")) document.getElementById("TypeSelection").style.display = 'none';
+		if(document.getElementById("T1T2T3Doc")) document.getElementById("T1T2T3Doc").style.display = 'block';
+		if(document.getElementById("fetusSelect")) document.getElementById("fetusSelect").style.display = 'block';
+		if(document.getElementById("reportType")) document.getElementById("reportType").innerHTML = data.obusReportType;
 		initTabs();
 	}
 }
@@ -984,7 +985,7 @@ function OnAnatomyChanged(show)
 
 function ShowDetailedCardiac(show)
 {
-	document.getElementById("CardiacTab").style.display = show ? "inline" : "none";
+	if(document.getElementById("CardiacTab")) document.getElementById("CardiacTab").style.display = show ? "inline" : "none";
 }
 
 function initCardiac()
@@ -1425,6 +1426,8 @@ function UpdateFetalNumber(count)
 {
 	// update selection UI to show correct number of fetus selections
 	select = document.getElementById("fetusSelect");
+	
+	if(!select) return;
 
 	if(count == 1)
 	{
