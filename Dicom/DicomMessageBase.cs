@@ -63,6 +63,12 @@ namespace ClearCanvas.Dicom
 
         public void ChangeTransferSyntax(TransferSyntax newTransferSyntax, IDicomCodec codec, DicomCodecParameters parameters)
         {
+            if (codec == null)
+            {
+                IDicomCodec codec2 = DicomCodecRegistry.GetCodec(newTransferSyntax);
+                if (codec2 == null)
+                    throw new DicomCodecException("No registered codec for: " + newTransferSyntax.Name);
+            }
         }
 
         /// <summary>

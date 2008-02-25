@@ -890,6 +890,14 @@ namespace ClearCanvas.Dicom
                             {
                                 elem.SetStringValue((string)value);
                             }
+                            else if (vtype == typeof(UInt16))
+                                elem.SetUInt16(0, (UInt16) value);
+                            else if (vtype == typeof(Int16))
+                                elem.SetInt16(0, (Int16)value);
+                            else if (vtype == typeof(UInt32))
+                                elem.SetUInt32(0, (UInt32)value);
+                            else if (vtype == typeof(Int32))
+                                elem.SetInt32(0, (Int32)value);
                             else
                                 throw new DicomDataException("Invalid binding type for Element VR!");
                         }

@@ -57,9 +57,9 @@ namespace ClearCanvas.Dicom.Codec
         {
             #region Private Members
             private int _count;
-            private uint[] _offsets;
-            private MemoryStream _stream;
-            private BinaryWriter _writer;
+            private readonly uint[] _offsets;
+            private readonly MemoryStream _stream;
+            private readonly BinaryWriter _writer;
             private byte[] _buffer;
 
             private int _prevByte;
@@ -176,15 +176,6 @@ namespace ClearCanvas.Dicom.Codec
                 }
             }
 
-            public void Encode(byte[] data)
-            {
-                int count = data.Length;
-                for (int i = 0; i < count; i++)
-                {
-                    Encode(data[i]);
-                }
-            }
-
             public void MakeEvenLength()
             {
                 // Make even length
@@ -207,7 +198,7 @@ namespace ClearCanvas.Dicom.Codec
                 {
                     int count = Math.Min(128, _bufferPos);
                     _stream.WriteByte((byte)(count - 1));
-                    MoveBuffer(_bufferPos);
+                    MoveBuffer(count);
                 }
 
                 if (_repeatCount >= 2)
@@ -259,7 +250,6 @@ namespace ClearCanvas.Dicom.Codec
 
             int pixelCount = oldPixelData.ImageWidth * oldPixelData.ImageHeight;
             int numberOfSegments = oldPixelData.BytesAllocated * oldPixelData.SamplesPerPixel;
-            int segmentLength = (pixelCount & 1) == 1 ? pixelCount + 1 : pixelCount;
 
             for (int i = 0; i < oldPixelData.NumberOfFrames; i++)
             {
@@ -273,8 +263,8 @@ namespace ClearCanvas.Dicom.Codec
                     int sample = s / oldPixelData.BytesAllocated;
                     int sabyte = s % oldPixelData.BytesAllocated;
 
-                    int pos = 0;
-                    int offset = 0;
+                    int pos;
+                    int offset;
 
                     if (newPixelData.PlanarConfiguration == 0)
                     {
@@ -383,7 +373,7 @@ namespace ClearCanvas.Dicom.Codec
                     }
                     else
                     {
-                        if (n == 0 && i == end - 1)
+                        if (n == 0 && i == end) // Single padding char
                             return;
                         int c = (n & 0x7F) + 1;
                         if ((i + c) >= end)
@@ -455,8 +445,8 @@ namespace ClearCanvas.Dicom.Codec
                     int sample = s / oldPixelData.BytesAllocated;
                     int sabyte = s % oldPixelData.BytesAllocated;
 
-                    int pos = 0;
-                    int offset = 0;
+                    int pos;
+                    int offset;
 
                     if (newPixelData.PlanarConfiguration == 0)
                     {
