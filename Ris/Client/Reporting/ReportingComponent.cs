@@ -61,7 +61,8 @@ namespace ClearCanvas.Ris.Client.Reporting
         ReportingWorklistItem WorklistItem { get; }
 
         /// <summary>
-        /// Gets the report associated with the worklist item.
+        /// Gets the report associated with the worklist item.  Modifications made to this object
+        /// will not be persisted.  Use the <see cref="ReportContent"/> property to update the report content.
         /// </summary>
         ReportDetail Report { get; }
 
@@ -97,17 +98,40 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         /// <summary>
         /// Allows the report editor to request that the reporting component close.
+        /// For example, the report editor may wish to have a microphone button initiate the 'Verify' action.
         /// </summary>
         /// <param name="reason"></param>
         void RequestClose(ReportEditorCloseReason reason);
     }
 
+    /// <summary>
+    /// Defines possible reasons that the report editor is closing.
+    /// </summary>
     public enum ReportEditorCloseReason
     {
+        /// <summary>
+        /// User has cancelled editing, leaving the report in its current state.
+        /// </summary>
         CancelEditing,
+
+        /// <summary>
+        /// Report is saved in its current state.
+        /// </summary>
         SaveDraft,
+
+        /// <summary>
+        /// Report is saved for transcription.
+        /// </summary>
         SendToTranscription,
+
+        /// <summary>
+        /// Report is saved to be verified later.
+        /// </summary>
         SendToBeVerified,
+
+        /// <summary>
+        /// Report is saved and verified immediately.
+        /// </summary>
         Verify
     }
 
@@ -116,6 +140,10 @@ namespace ClearCanvas.Ris.Client.Reporting
     /// </summary>
     public interface IReportEditor
     {
+        /// <summary>
+        /// Gets the report editor application component.
+        /// </summary>
+        /// <returns></returns>
         IApplicationComponent GetComponent();
 
         /// <summary>

@@ -50,13 +50,16 @@ namespace ClearCanvas.Ris.Client.Reporting
     }
 
     /// <summary>
-    /// ReportEditorComponent class
+    /// Default ReportEditorComponent class
     /// </summary>
     [AssociateView(typeof (ReportEditorComponentViewExtensionPoint))]
     public class ReportEditorComponent : ApplicationComponent, IReportEditor
     {
         #region EditingComponent
 
+        /// <summary>
+        /// A DHMTL component that allows editing of the report content.
+        /// </summary>
         public class EditingComponent : DHtmlComponent
         {
             private const string ReportContentTag = "ReportContent";
@@ -98,6 +101,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #region PreviewComponent
 
+        /// <summary>
+        /// A DHMTL component that shows a preview of the existing report parts.
+        /// </summary>
         public class PreviewComponent : DHtmlComponent
         {
             private readonly ReportEditorComponent _owner;

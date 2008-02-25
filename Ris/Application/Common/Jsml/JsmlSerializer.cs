@@ -197,6 +197,19 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
 
                 writer.WriteEndElement();
             }
+            else if(dataObject is XmlDocument)
+            {
+                // this clause supports serialization of an embedded JSML document inline with the
+                // output of the serializer
+                XmlDocument xmlDoc = (XmlDocument) dataObject;
+                if(xmlDoc.DocumentElement != null)
+                {
+                    writer.WriteStartElement(objectName);
+                    // don't write the root element, as it just a container node for the content
+                    xmlDoc.DocumentElement.WriteContentTo(writer);
+                    writer.WriteEndElement();
+                }
+            }
             else
             {
                 writer.WriteElementString(objectName, dataObject.ToString());
@@ -279,6 +292,17 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
                 {
                     object iteratorObject = DeserializeHelper(genericTypes[0], (XmlElement)node);
                     ((IList)dataObject).Add(iteratorObject);
+                }
+            }
+            else if(dataType == typeof(XmlDocument))
+            {
+                // this clause supports deserialization of an embedded JSML document
+                string xml = xmlElement.OuterXml;
+                if(!string.IsNullOrEmpty(xml))
+                {
+                    XmlDocument doc = new XmlDocument();
+                    doc.LoadXml(xml);
+                    dataObject = doc;
                 }
             }
             else
