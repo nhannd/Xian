@@ -48,7 +48,6 @@
 
 		function loadData()
 		{
-			var hc = Ris.getHealthcareContext();
 			report = JSML.parse(Ris.getTag("ReportContent")) || {};
 
 			if (report != null)
@@ -56,73 +55,11 @@
 				Field.setValue($("finding"), report.Finding);
 				Field.setValue($("impression"), report.Impression);
 			}
-			
-			// check if we should be using OBSR
-			if (!report.structuredReport)
-			{
-				var service = Ris.getService("ClearCanvas.Ris.Application.Uhn.Common.StructuredReporting.IStructuredReportingService, ClearCanvas.Ris.Application.Uhn.Common");
-				var response = service.GetPerformedProcedureSteps( { ProcedureRef: hc.ProcedureRef } );
-				var pps = response.PerformedProcedureSteps.firstElement();
-				if(pps && pps.ExtendedProperties)
-				{
-					var documentation = JSML.parse(pps.ExtendedProperties.Documentation);
-					if(documentation && documentation.obusReportType)
-					{
-						report.structuredReport = documentation;
-					}
-				}
-			}
-			
-			if(report.structuredReport)
-			{
-				$("structuredReport").innerHTML = structuredReportHtml();
-				initStructuredReport(report.structuredReport, true);
-			}
-		}
-		
-		function loadReportedProceduresTable()
-		{
-			var worklistItem = Ris.getHealthcareContext();
-
-			if (worklistItem == null || worklistItem.ReportRef == null)
-				return false;
-
-			// construct request object
-			var request = {
-				// only request the report detail if there is a report     
-				GetReportDetailRequest: { ReportRef: worklistItem.ReportRef }
-			};
-
-			var service = Ris.getPatientDataService();
-			var data = service.getData(request);
-			if (data == null || data.GetReportDetailResponse == null)
-				return false;
-
-			var reportDetail = data.GetReportDetailResponse.Report;
-
-			if (reportDetail == null ||  reportDetail.Procedures == null || reportDetail.Procedures.length == 0)
-				return false;
-
-			createProceduresTable($("proceduresTable"), reportDetail.Procedures);
-
-			return true;
-		}
-		
+		}		
 </script>
 </head>
 <body onload="javascript: onBodyLoad()" style="padding-top:0">
 	<form id="myForm" style="padding-top:0">
-		<p class="sectionheading">Reported Procedures</p>
-		<table border="0" id="proceduresTable">
-			<tr class="tableheading">
-				<td>Procedure</td>
-				<td>Protocol</td>
-				<td>Code</td>
-			</tr>
-			<!-- this empty row is here so the color of the first data row is consistent with other previews -->
-			<tr colspan="3"></tr>
-		</table>
-		<div id="structuredReport"></div>
 		<p class="sectionheading">Impression</p>
 		<textarea style="width:99%" rows="15" border="0" id="impression"></textarea>
 		<p class="sectionheading">Finding</p>

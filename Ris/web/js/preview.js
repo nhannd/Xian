@@ -312,41 +312,52 @@ function createReportPreview(element, report)
             formattedReport = "<h3>Addendum:</h3>" + formattedReport;
     }
 
+	var mainReportText = "";
 	try
 	{
-    var mainReport = JSML.parse(report.Parts[0].Content);
-		mainReport = "<B>Impression:</B> " + mainReport.Impression + "<br>" + "<B>Finding:</B> " + mainReport.Finding + "<br>";
+		var mainReport = JSML.parse(report.Parts[0].Content);
+		// depending on how the report was captured, it may contain an Impression and Finding section (Default RIS report editor)
+		if(mainReport.Impression || mainReport.Finding)
+		{
+			mainReportText = "<B>Impression:</B> " + mainReport.Impression + "<br>" + "<B>Finding:</B> " + mainReport.Finding + "<br>";
+		}
+		else
+		{
+			// or it may simply contain a ReportText section (UHN report editor)
+			mainReportText = mainReport.ReportText;
+		}
 	}
 	catch(e)
 	{
-		var mainReport = report.Parts[0].Content;
-		if (mainReport == null)
-			mainReport = "None";
+		// the Content was not JSML, but just plain text
+		mainReportText = report.Parts[0].Content;
+		if (mainReportText == null)
+			mainReportText = "None";
 	}
 
-	if (mainReport)
+	var isDraft = new Boolean(report.Parts[0].Status.Code == 'P');
+
+	formattedReport += isDraft == true ? "<font color='red'>" : ""; 
+	formattedReport += "<h3>";
+	formattedReport += "Main Report";
+	formattedReport += isDraft == true ? " (Draft)" : "";
+	formattedReport += "</h3>";
+	formattedReport += "<div id=\"structuredReport\" style=\"{margin-bottom:1em;}\"></div>";
+	if(mainReportText)
 	{
-	    var isDraft = new Boolean(report.Parts[0].Status.Code == 'P');
-
-	    formattedReport += isDraft == true ? "<font color='red'>" : ""; 
-	    formattedReport += "<h3>";
-	    formattedReport += "Main Report";
-	    formattedReport += isDraft == true ? " (Draft)" : "";
-	    formattedReport += "</h3>";
-		 formattedReport += "<div id=\"structuredReport\" style=\"{margin-bottom:1em;}\"></div>";
-		formattedReport += mainReport;
-
-		formattedReport += formatReportPerformer(report.Parts[0]);
-
-	    formattedReport += isDraft == true ? "</font>" : ""; 
+		formattedReport += mainReportText;
 	}
 
+	formattedReport += formatReportPerformer(report.Parts[0]);
+
+	formattedReport += isDraft == true ? "</font>" : ""; 
 	
-   element.innerHTML = formattedReport;
+	element.innerHTML = formattedReport;
 	 
-	if(mainReport && mainReport.structuredReport)
+	 // UHN report may contain a StructuredReport section
+	if(mainReport && mainReport.StructuredReport)
 	{
-		createStructuredReportPreview(mainReport.structuredReport);
+		createStructuredReportPreview(mainReport.StructuredReport);
 	}
 }
 
@@ -354,7 +365,6 @@ function createStructuredReportPreview(structuredReport)
 {
 	if(!structuredReport)
 		return;
-		
 	$("structuredReport").innerHTML = structuredReportHtml();
 	initStructuredReport(structuredReport, true);
 }

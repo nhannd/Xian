@@ -14,6 +14,7 @@
 <script type="text/javascript" src="js/structuredreport.js"></script>
 <script type="text/javascript" >
 	var data = {};
+	var errorProvider = new ErrorProvider();
 
 	function onBodyLoad()
 	{
@@ -25,11 +26,12 @@
 		try
 		{
 			var report = Ris.getHealthcareContext();
+			createProceduresTable($("proceduresTable"), report.Procedures);
 			createReportPreview($("preview"), report);
 		}
 		catch(e)
 		{
-			 var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+			var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
 			Field.setValue($("myForm"), message);
 		}
 	}
@@ -37,8 +39,17 @@
 </head>
 <body onload="javascript: onBodyLoad()">
 	<form id="myForm">
-		 <p class="sectionheading">Report Preview</p>
-		 <div id="preview"/>
+		<p class="sectionheading">Reported Procedures</p>
+		<table border="0" id="proceduresTable">
+			<tr class="tableheading">
+				<td>Procedure</td>
+				<td>Protocol</td>
+				<td>Code</td>
+			</tr>
+			<!-- this empty row is here so the color of the first data row is consistent with other previews -->
+			<tr colspan="3"></tr>
+		</table>
+		<div id="preview"/>
 	</form>
 </body>
 </html>
