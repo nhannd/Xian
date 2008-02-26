@@ -1008,7 +1008,7 @@ function initCardiac()
 			label: "Heart/Thoracic Ratio",
 			cellType: "choice",
 			choices: standardChoices,
-			getValue: function(item) { return item.heartThoracicRatio ? item.heartThoracicRatio : standardChoices[defaultChoice]; },
+			getValue: function(item) { return item.heartThoracicRatio = item.heartThoracicRatio || standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.heartThoracicRatio = value; },
 			getError: function(item) { return null; }
 		},
@@ -1016,7 +1016,7 @@ function initCardiac()
 			label: "Ventricals symmetrical in size",
 			cellType: "choice",
 			choices: standardChoices,
-			getValue: function(item) { return item.ventricalsSymmetrical ? item.ventricalsSymmetrical : standardChoices[defaultChoice]; },
+			getValue: function(item) { return item.ventricalsSymmetrical = item.ventricalsSymmetrical || standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.ventricalsSymmetrical = value; },
 			getError: function(item) { return null; }
 		},
@@ -1039,7 +1039,7 @@ function initCardiac()
 			label: "Thin and mobile valves",
 			cellType: "choice",
 			choices: standardChoices,
-			getValue: function(item) { return item.thinMobileValves ? item.thinMobileValves : standardChoices[defaultChoice]; },
+			getValue: function(item) { return item.thinMobileValves = item.thinMobileValves || standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.thinMobileValves = value; },
 			getError: function(item) { return null; }
 		},
@@ -1047,7 +1047,7 @@ function initCardiac()
 			label: "Function and rhythm",
 			cellType: "choice",
 			choices: standardChoices,
-			getValue: function(item) { return item.functionAndRhythm ? item.functionAndRhythm : standardChoices[defaultChoice]; },
+			getValue: function(item) { return item.functionAndRhythm = item.functionAndRhythm || standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.functionAndRhythm = value; },
 			getError: function(item) { return null; }
 		},
@@ -1055,7 +1055,7 @@ function initCardiac()
 			label: "Ventricular septum/crux",
 			cellType: "choice",
 			choices: standardChoices,
-			getValue: function(item) { return item.ventricularSeptumCrux ? item.ventricularSeptumCrux : standardChoices[defaultChoice]; },
+			getValue: function(item) { return item.ventricularSeptumCrux = item.ventricularSeptumCrux || standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.ventricularSeptumCrux = value; },
 			getError: function(item) { return null; }
 		}
@@ -1069,7 +1069,7 @@ function initCardiac()
 			label: "Two Outlets",
 			cellType: "choice",
 			choices: standardChoices,
-			getValue: function(item) { return item.twoOutlets ? item.twoOutlets : standardChoices[defaultChoice]; },
+			getValue: function(item) { return item.twoOutlets = item.twoOutlets || standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.twoOutlets = value; },
 			getError: function(item) { return null; }
 		},
@@ -1077,7 +1077,7 @@ function initCardiac()
 			label: "PA \"crosses\" AO",
 			cellType: "choice",
 			choices: standardChoices,
-			getValue: function(item) { return item.paCrossesAO ? item.paCrossesAO : standardChoices[defaultChoice]; },
+			getValue: function(item) { return item.paCrossesAO = item.paCrossesAO || standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.paCrossesAO = value; },
 			getError: function(item) { return null; }
 		},
@@ -1085,7 +1085,7 @@ function initCardiac()
 			label: "Outlets symmetry",
 			cellType: "choice",
 			choices: standardChoices,
-			getValue: function(item) { return item.outletsSymmetry ? item.outletsSymmetry : standardChoices[defaultChoice]; },
+			getValue: function(item) { return item.outletsSymmetry = item.outletsSymmetry || standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.outletsSymmetry = value; },
 			getError: function(item) { return null; }
 		},
@@ -1338,7 +1338,7 @@ function initWellBeing()
 			label: "Texture",
 			cellType: "choice",
 			choices: ["Abnormal", "Normal"],
-			getValue: function(item) { return item.texture ? item.texture : "Normal"; },
+			getValue: function(item) { return item.texture = item.texture || "Normal"; },
 			setValue: function(item, value) { item.texture = value; },
 			getError: function(item) { return null; }
 		}
