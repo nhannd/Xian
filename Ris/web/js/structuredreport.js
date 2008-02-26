@@ -1,12 +1,10 @@
 var data = {};
 var reportType = "unknown";
 var fetus = 0;
-var readOnly = true;
 
-function initStructuredReport(source, isReadOnly)
+function initStructuredReport(source)
 {
 	data = source || {};
-	readOnly = isReadOnly;
 
 	data.indicationsAndDates = data.indicationsAndDates || {};
 	data.indicationsAndDates.lmp = data.indicationsAndDates.lmp || {};
@@ -70,7 +68,7 @@ function initTypeSelectionTable()
 		[
 			{
 				label: "Select report type and confirm",
-				cellType: readOnly ? "readonly" : "choice",
+				cellType: "choice",
 				choices: ["T1", "T2", "T3"],
 				getValue: function(item){ return item.obusReportType; },
 				setValue: function(item, value){ item.obusReportType = value; },
@@ -102,7 +100,7 @@ function initIndicationsAndDates()
 	[
 		{
 			label: "Indication",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: indicationChoices,
 			getValue: function(item) {	return item.indication; },
 			setValue: function(item, value) { item.indication = value; },
@@ -113,7 +111,6 @@ function initIndicationsAndDates()
 			cellType: "textarea",
 			cols: 110,
 			rows: 5,
-			readOnly: readOnly,
 			getValue: function(item) { return item.clinicalDetails; },
 			setValue: function(item, value) { item.clinicalDetails = value; },
 			getError: function(item) { return null; }
@@ -127,8 +124,8 @@ function initIndicationsAndDates()
 	[			
 		{
 			label: "LMP",
-			cellType: readOnly ? "readonly" : "datetime",
-			getValue: function(item) { return readOnly ? Ris.formatDate(item.LMP) : item.LMP; },
+			cellType: "datetime",
+			getValue: function(item) { return item.LMP; },
 			setValue: function(item, value) { item.LMP = value; },
 			getError: function(item) { return null; }
 		},
@@ -155,21 +152,21 @@ function initIndicationsAndDates()
 	[						
 		{
 			label: "1st Ultrasound",
-			cellType: readOnly ? "readonly" : "datetime",
-			getValue: function(item) { return readOnly ? Ris.formatDate(item.firstUltrasound) : item.firstUltrasound; },
+			cellType: "datetime",
+			getValue: function(item) { return item.firstUltrasound; },
 			setValue: function(item, value) { item.firstUltrasound = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Number of weeks",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.numberOfWeeks; },
 			setValue: function(item, value) { item.numberOfWeeks = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Today",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.today; },
 			setValue: function(item, value) { item.today = value; },
 			getError: function(item) { return null; }
@@ -188,8 +185,8 @@ function initIndicationsAndDates()
 	[			
 		{
 			label: "EDC",
-			cellType: readOnly ? "readonly" : "datetime",
-			getValue: function(item) { return readOnly ? Ris.formatDate(item.establishedEDC) : item.establishedEDC; },
+			cellType: "datetime",
+			getValue: function(item) { return item.establishedEDC; },
 			setValue: function(item, value) { item.establishedEDC = value; },
 			getError: function(item) { return null; }
 		},
@@ -202,7 +199,7 @@ function initIndicationsAndDates()
 		},
 		{
 			label: "How Determined",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Dates", "Dates & US", "IVF", "US"],
 			getValue: function(item) { return item.edcMethod; },
 			setValue: function(item, value) { item.edcMethod = value; },
@@ -210,8 +207,8 @@ function initIndicationsAndDates()
 		},
 		{
 			label: "Transferred Date",
-			cellType: readOnly ? "readonly" : "datetime",
-			getValue: function(item) { return readOnly ? Ris.formatDate(item.transferredDate) : item.transferredDate; },
+			cellType: "datetime",
+			getValue: function(item) { return item.transferredDate; },
 			setValue: function(item, value) { item.transferredDate = value; },
 			getError: function(item) { return null; },
 			getVisible: function(item) { return item.edcMethod && item.edcMethod == "IVF"; }
@@ -224,49 +221,52 @@ function initIndicationsAndDates()
 
 function initGeneral()
 {
-	if(reportType == "T1")
-	{
-	}
-	else if(reportType == "T2")
-	{
-	}
-	else if(reportType == "T3")
-	{
-	}
-	else
-	{
-		return;
-	}
-
 	var table = Table.createTable($("generalTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
 		{
 			label: "Visibility",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Satisfactory", "Sub-optimal", "Moderate"],
 			getValue: function(item) { return item.visibility; },
 			setValue: function(item, value) { item.visibility = value; },
 			getError: function(item) { return null; }
 		},
+		// layout placeholder
+		{
+			label: "",
+			cellType: "readonly",
+			getValue: function(item) { return ""; },
+			setValue: function(item, value) { return; },
+			getError: function(item) { return null; }
+		},
 		{
 			label: "Fetal Number",
-			cellType: readOnly ? "readonly" : "text",
-			getValue: function(item) { return item.fetalNumber ? item.fetalNumber : "1"; },
+			cellType: "text",
+			getValue: function(item) { return item.fetalNumber = item.fetalNumber || "1"; },
 			setValue: function(item, value) { item.fetalNumber = value; UpdateFetalNumber(parseInt(item.fetalNumber)); },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Twin Type",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Diamniotic", "dichorionic", "indeterminate", "monoamniotic", "monochorionic", "monochorionic dia", "see comment"],
 			getValue: function(item) { return item.twinType; },
 			setValue: function(item, value) { item.twinType = value; },
 			getError: function(item) { return null; },
 			getVisible: function(item) { return parseInt(item.fetalNumber) > 1; }
 		},
+		// layout placeholder
+		{
+			label: "",
+			cellType: "readonly",
+			getValue: function(item) { return ""; },
+			setValue: function(item, value) { return; },
+			getVisible: function(item) { return parseInt(item.fetalNumber) <= 1; },
+			getError: function(item) { return null; }
+		},
 		{
 			label: "FH Activity",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Absent", "Present"],
 			getValue: function(item) { return item.fhActivity; },
 			setValue: function(item, value) { item.fhActivity = value; },
@@ -274,34 +274,25 @@ function initGeneral()
 		},
 		{
 			label: "Are you sure FH activity is absent?",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Yes", "No"],
 			getValue: function(item) { return item.fhActivityConfirmation; },
 			setValue: function(item, value) { item.fhActivityConfirmation = value; },
 			getError: function(item) { return null; },
 			getVisible: function(item) { return item.fhActivity == "Absent"; }					
 		},
+		// layout placeholder
 		{
-			label: "Presentation",
-			cellType: readOnly ? "readonly" : "choice",
-			choices: ["Breech", "Cephalic", "Oblique", "Transverse"],
-			getValue: function(item) { return item.presentation; },
-			setValue: function(item, value) { item.presentation = value; },
-			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T3"; }
-		},
-		{
-			label: "AFV",
-			cellType: readOnly ? "readonly" : "choice",
-			choices: ["Decreased", "Increased", "Normal", "Subjectively Decreased", "Subjectively Increased"],
-			getValue: function(item) { return item.afv; },
-			setValue: function(item, value) { item.afv = value; },
-			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2"; }
+			label: "",
+			cellType: "readonly",
+			getValue: function(item) { return ""; },
+			setValue: function(item, value) { return; },
+			getVisible: function(item) { return item.fhActivity != "Absent"; },
+			getError: function(item) { return null; }
 		},
 		{
 			label: "Placenta",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Anterior", "Fundal", "Left Lateral", "Right Lateral", "Posterior"],
 			getValue: function(item) { return item.placenta; },
 			setValue: function(item, value) { item.placenta = value; },
@@ -309,7 +300,7 @@ function initGeneral()
 		},
 		{
 			label: "??",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Clear of Cervix", "Close to Cervix", "Praevia"],
 			getValue: function(item) { return item.cervixProximity; },
 			setValue: function(item, value) { item.cervixProximity = value; },
@@ -317,7 +308,7 @@ function initGeneral()
 		},
 		{
 			label: "Right Adnexa",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Normal", "Unseen", "See comments"],
 			getValue: function(item) { return item.rightAdnexa; },
 			setValue: function(item, value) { item.rightAdnexa = value; },
@@ -326,7 +317,7 @@ function initGeneral()
 		},
 		{
 			label: "Left Adnexa",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Normal", "Unseen", "See comments"],
 			getValue: function(item) { return item.leftAdnexa; },
 			setValue: function(item, value) { item.leftAdnexa = value; },
@@ -335,7 +326,7 @@ function initGeneral()
 		},
 		{
 			label: "Yolk Sac",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Normal", "Unseen", "See comments"],
 			getValue: function(item) { return item.yolkSac; },
 			setValue: function(item, value) { item.yolkSac = value; },
@@ -343,8 +334,26 @@ function initGeneral()
 			getVisible: function(item) { return reportType == "T1"; }
 		},
 		{
+			label: "Presentation",
+			cellType: "choice",
+			choices: ["Breech", "Cephalic", "Oblique", "Transverse"],
+			getValue: function(item) { return item.presentation; },
+			setValue: function(item, value) { item.presentation = value; },
+			getError: function(item) { return null; },
+			getVisible: function(item) { return reportType == "T3"; }
+		},
+		{
+			label: "AFV",
+			cellType: "choice",
+			choices: ["Decreased", "Increased", "Normal", "Subjectively Decreased", "Subjectively Increased"],
+			getValue: function(item) { return item.afv; },
+			setValue: function(item, value) { item.afv = value; },
+			getError: function(item) { return null; },
+			getVisible: function(item) { return reportType == "T2"; }
+		},
+		{
 			label: "Cervix",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Funnelling", "Normal", "Not Assessed", "Open", "Unseen"],
 			getValue: function(item) { return item.cervix; },
 			setValue: function(item, value) { item.cervix = value; },
@@ -353,7 +362,7 @@ function initGeneral()
 		},
 		{
 			label: "Apposed Length",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.apposedLength; },
 			setValue: function(item, value) { item.apposedLength = value; },
 			getError: function(item) { return null; },
@@ -361,7 +370,7 @@ function initGeneral()
 		},
 		{
 			label: "Cervix Assessed",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Abdominally", "Labially", "Vaginally"],
 			getValue: function(item) { return item.cervixAssessed; },
 			setValue: function(item, value) { item.cervixAssessed = value; },
@@ -372,7 +381,7 @@ function initGeneral()
 
 	table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 	table.bindItems([data.general]);
-	
+
 	UpdateFetalNumber(parseInt(data.general.fetalNumber) || 1);
 }
 
@@ -382,7 +391,7 @@ function initBiometry()
 	[
 		{
 			label: "Biometry",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Assessed", "Not Assessed"],
 			getValue: function(item) { return item.assessed; },
 			setValue: function(item, value) { item.assessed = value; OnBiometryChanged(value == "Assessed"); },
@@ -397,7 +406,7 @@ function initBiometry()
 		{
 			label: "mm", 
 			size: 13,
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.crl; },
 			setValue: function(item, value) { item.crl = value; },
 			getVisible: function(item) { return reportType == "T1"; },
@@ -419,7 +428,7 @@ function initBiometry()
 	[			
 		{
 			label: "mm", 
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			size: 13,
 			getValue: function(item) { return item.bpd; },
 			setValue: function(item, value) { item.bpd = value; },
@@ -440,7 +449,7 @@ function initBiometry()
 	[			
 		{
 			label: "mm", 
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			size: 13,
 			getValue: function(item) { return item.ofd; },
 			setValue: function(item, value) { item.ofd = value; },
@@ -477,7 +486,7 @@ function initBiometry()
 	[			
 		{
 			label: "mm", 
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			size: 13,
 			getValue: function(item) { return item.hc; },
 			setValue: function(item, value) { item.hc = value; },
@@ -500,7 +509,7 @@ function initBiometry()
 	[			
 		{
 			label: "", 
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			size: 4,
 			getValue: function(item) { return item.abdX; },
 			setValue: function(item, value) { item.abdX = value; },
@@ -517,7 +526,7 @@ function initBiometry()
 		},
 		{
 			label: "", 
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			size: 4,
 			getValue: function(item) { return item.abdY; },
 			setValue: function(item, value) { item.abdY = value; },
@@ -526,7 +535,7 @@ function initBiometry()
 		},
 		{
 			label: "mm", 
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			size: 13,
 			getValue: function(item) { return item.abdAC; },
 			setValue: function(item, value) { item.abdAC = value; },
@@ -549,7 +558,7 @@ function initBiometry()
 	[			
 		{
 			label: "mm", 
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			size: 13,
 			getValue: function(item) { return item.fl; },
 			setValue: function(item, value) { item.fl = value; },
@@ -586,7 +595,7 @@ function initBiometry()
 	[			
 		{
 			label: "mm", 
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.nuchalTransparency; },
 			setValue: function(item, value) { item.nuchalTransparency = value; },
 			getError: function(item) { return null; },
@@ -639,7 +648,7 @@ function initAnatomy()
 	[
 		{
 			label: "Anatomy",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Assessed", "Not assessed", "Not done because previously assessed"],
 			getValue: function(item) { return item.assessed; },
 			setValue: function(item, value) { item.assessed = value; OnAnatomyChanged(value == "Assessed"); },
@@ -653,9 +662,9 @@ function initAnatomy()
 	[
 		{
 			label: "Head shape",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.headShape ? item.headShape : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.headShape; },
 			setValue: function(item, value) { item.headShape = value; },
 			getError: function(item) { return null; }
 		}
@@ -667,41 +676,41 @@ function initAnatomy()
 	[			
 		{
 			label: "Posterior horns",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.posteriorHorns ? item.posteriorHorns : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.posteriorHorns; },
 			setValue: function(item, value) { item.posteriorHorns = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Choroid plexi",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.choroidPlexi ? item.choroidPlexi : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.choroidPlexi; },
 			setValue: function(item, value) { item.choroidPlexi = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Cavum septi",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.cavumSepti ? item.cavumSepti : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.cavumSepti; },
 			setValue: function(item, value) { item.cavumSepti = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Cerebellum",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.cerebellum ? item.cerebellum : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.cerebellum; },
 			setValue: function(item, value) { item.cerebellum = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Cisterna magna",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.cisternaMagna ? item.cisternaMagna : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.cisternaMagna; },
 			setValue: function(item, value) { item.cisternaMagna = value; },
 			getError: function(item) { return null; }
 		}
@@ -713,9 +722,9 @@ function initAnatomy()
 	[
 		{
 			label: "Nuchal fold",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.nuchalFold ? item.nuchalFold : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.nuchalFold; },
 			setValue: function(item, value) { item.nuchalFold = value; },
 			getError: function(item) { return null; }
 		}
@@ -727,32 +736,32 @@ function initAnatomy()
 	[
 		{
 			label: "Eyes",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.eyes ? item.eyes : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.eyes; },
 			setValue: function(item, value) { item.eyes = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Orbital ratio (i/o)",
-			cellType: readOnly ? "readonly" : "text", 
+			cellType: "text", 
 			getValue: function(item) { return item.orbitalRatio },
 			setValue: function(item, value) { item.orbitalRatio = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Mouth",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.mouth ? item.mouth : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.mouth; },
 			setValue: function(item, value) { item.mouth = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Profile",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.profile ? item.profile : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.profile; },
 			setValue: function(item, value) { item.profile = value; },
 			getError: function(item) { return null; }
 		}
@@ -764,9 +773,9 @@ function initAnatomy()
 	[
 		{
 			label: "Spine",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.spine ? item.spine : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.spine; },
 			setValue: function(item, value) { item.spine = value; },
 			getError: function(item) { return null; }
 		}
@@ -778,23 +787,23 @@ function initAnatomy()
 	[
 		{
 			label: "4 Chambers",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.fourChambers ? item.fourChambers : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.fourChambers; },
 			setValue: function(item, value) { item.fourChambers = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Great vessels",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.greatVessels ? item.greatVessels : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.greatVessels; },
 			setValue: function(item, value) { item.greatVessels = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Detailed Cardiac",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: ["Yes", "No"],
 			getValue: function(item) { return item.detailedCardiac; },
 			setValue: function(item, value) { item.detailedCardiac = value; ShowDetailedCardiac(value == "Yes"); },
@@ -811,9 +820,9 @@ function initAnatomy()
 	[
 		{
 			label: "Chest",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.chest ? item.chest : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.chest; },
 			setValue: function(item, value) { item.chest = value; },
 			getError: function(item) { return null; }
 		}
@@ -825,49 +834,49 @@ function initAnatomy()
 	[
 		{
 			label: "Diaphragm",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.diaphragm ? item.diaphragm : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.diaphragm; },
 			setValue: function(item, value) { item.diaphragm = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Stomach",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.stomach ? item.stomach : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.stomach; },
 			setValue: function(item, value) { item.stomach = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Abdominal wall",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.abdominalWall ? item.abdominalWall : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.abdominalWall; },
 			setValue: function(item, value) { item.abdominalWall = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Kidneys - RT",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.kidneysRt ? item.kidneysRt : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.kidneysRt; },
 			setValue: function(item, value) { item.kidneysRt = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Kidneys - LT",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.kidneysLt ? item.kidneysLt : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.kidneysLt; },
 			setValue: function(item, value) { item.kidneysLt = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Bladder",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.bladder ? item.bladder : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.bladder; },
 			setValue: function(item, value) { item.bladder = value; },
 			getError: function(item) { return null; }
 		}
@@ -879,9 +888,9 @@ function initAnatomy()
 	[
 		{
 			label: "Genitalia",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: ["Female", "Male", "Not seen", "See comment"],
-			getValue: function(item) { return item.genitalia ? item.genitalia : "Female"; },
+			getValue: function(item) { return item.genitalia = item.genitalia || "Female"; },
 			setValue: function(item, value) { item.genitalia = value; },
 			getError: function(item) { return null; }
 		}
@@ -893,33 +902,33 @@ function initAnatomy()
 	[
 		{
 			label: "Upper - RT",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.upperRt ? item.upperRt : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.upperRt; },
 			setValue: function(item, value) { item.upperRt = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Upper - LT",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.upperLt ? item.upperLt : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.upperLt; },
 			setValue: function(item, value) { item.upperLt = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Lower - RT",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.lowerRt ? item.lowerRt : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.lowerRt; },
 			setValue: function(item, value) { item.lowerRt = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Lower - LT",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: standardAnswers,
-			getValue: function(item) { return item.lowerLt ? item.lowerLt : standardAnswers[defaultAnswer]; },
+			getValue: function(item) { return item.lowerLt; },
 			setValue: function(item, value) { item.lowerLt = value; },
 			getError: function(item) { return null; }
 		}
@@ -931,9 +940,9 @@ function initAnatomy()
 	[
 		{
 			label: "Cord Vessels",
-			cellType: readOnly ? "readonly" : "choice", 
+			cellType: "choice", 
 			choices: ["2", "3"],
-			getValue: function(item) { return item.cordVessels ? item.cordVessels : "2"; },
+			getValue: function(item) { return item.cordVessels = item.cordVessels || "2"; },
 			setValue: function(item, value) { item.cordVessels = value; },
 			getError: function(item) { return null; }
 		}
@@ -997,7 +1006,7 @@ function initCardiac()
 	[
 		{
 			label: "Heart/Thoracic Ratio",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: standardChoices,
 			getValue: function(item) { return item.heartThoracicRatio ? item.heartThoracicRatio : standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.heartThoracicRatio = value; },
@@ -1005,7 +1014,7 @@ function initCardiac()
 		},
 		{
 			label: "Ventricals symmetrical in size",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: standardChoices,
 			getValue: function(item) { return item.ventricalsSymmetrical ? item.ventricalsSymmetrical : standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.ventricalsSymmetrical = value; },
@@ -1013,14 +1022,14 @@ function initCardiac()
 		},
 		{
 			label: "RV Diameter",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.rvDiameter; },
 			setValue: function(item, value) { item.rvDiameter = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "LV Diameter",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			choices: standardChoices,
 			getValue: function(item) { return item.lvDiameter; },
 			setValue: function(item, value) { item.lvDiameter = value; },
@@ -1028,7 +1037,7 @@ function initCardiac()
 		},
 		{
 			label: "Thin and mobile valves",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: standardChoices,
 			getValue: function(item) { return item.thinMobileValves ? item.thinMobileValves : standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.thinMobileValves = value; },
@@ -1036,7 +1045,7 @@ function initCardiac()
 		},
 		{
 			label: "Function and rhythm",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: standardChoices,
 			getValue: function(item) { return item.functionAndRhythm ? item.functionAndRhythm : standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.functionAndRhythm = value; },
@@ -1044,7 +1053,7 @@ function initCardiac()
 		},
 		{
 			label: "Ventricular septum/crux",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: standardChoices,
 			getValue: function(item) { return item.ventricularSeptumCrux ? item.ventricularSeptumCrux : standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.ventricularSeptumCrux = value; },
@@ -1058,7 +1067,7 @@ function initCardiac()
 	[
 		{
 			label: "Two Outlets",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: standardChoices,
 			getValue: function(item) { return item.twoOutlets ? item.twoOutlets : standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.twoOutlets = value; },
@@ -1066,7 +1075,7 @@ function initCardiac()
 		},
 		{
 			label: "PA \"crosses\" AO",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: standardChoices,
 			getValue: function(item) { return item.paCrossesAO ? item.paCrossesAO : standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.paCrossesAO = value; },
@@ -1074,7 +1083,7 @@ function initCardiac()
 		},
 		{
 			label: "Outlets symmetry",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: standardChoices,
 			getValue: function(item) { return item.outletsSymmetry ? item.outletsSymmetry : standardChoices[defaultChoice]; },
 			setValue: function(item, value) { item.outletsSymmetry = value; },
@@ -1082,14 +1091,14 @@ function initCardiac()
 		},
 		{
 			label: "AO diameter",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.aoDiameter; },
 			setValue: function(item, value) { item.aoDiameter = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "PO diameter",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.poDiameter; },
 			setValue: function(item, value) { item.poDiameter = value; },
 			getError: function(item) { return null; }
@@ -1115,7 +1124,7 @@ function initWellBeing()
 	[
 		{
 			label: "Well-being",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Assessed", "Not Assessed"],
 			getValue: function(item) { return item.assessed ? item.assessed : "Not Assessed"; },
 			setValue: function(item, value) { item.assessed = value; OnWellBeingChanged(value == "Assessed"); },
@@ -1129,7 +1138,7 @@ function initWellBeing()
 	[
 		{
 			label: "AFV",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Decreased", "Increased", "Normal", "Subjectively decreased", "Subjectively increased"],
 			getValue: function(item) { return item.afv; },
 			setValue: function(item, value) { item.afv = value; },
@@ -1137,14 +1146,14 @@ function initWellBeing()
 		},
 		{
 			label: "??",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.unknown; },
 			setValue: function(item, value) { item.unknown = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Max vertical pocket",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.maxVerticalPocket; },
 			setValue: function(item, value) { item.maxVerticalPocket = value; },
 			getError: function(item) { return null; }
@@ -1158,28 +1167,28 @@ function initWellBeing()
 		},
 		{
 			label: "FM",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.fm; },
 			setValue: function(item, value) { item.fm = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "FT",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.ft; },
 			setValue: function(item, value) { item.ft = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "FBM",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.fbm; },
 			setValue: function(item, value) { item.fbm = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "NST",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.nst; },
 			setValue: function(item, value) { item.nst = value; },
 			getError: function(item) { return null; }
@@ -1193,7 +1202,7 @@ function initWellBeing()
 		},
 		{
 			label: "??",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Abnormal", "Equivocal", "Normal"],
 			getValue: function(item) { return item.unknown2; },
 			setValue: function(item, value) { item.unknown2 = value; },
@@ -1207,14 +1216,14 @@ function initWellBeing()
 	[
 		{
 			label: "PI",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.umbilicalPi; },
 			setValue: function(item, value) { item.umbilicalPi = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "EDF",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Absent EDF", "Elevated", "Normal", "Reversed EDF"],
 			getValue: function(item) { return item.edf; },
 			setValue: function(item, value) { item.edf= value; },
@@ -1228,14 +1237,14 @@ function initWellBeing()
 	[
 		{
 			label: "UVVmax",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.uvvMax; },
 			setValue: function(item, value) { item.uvvMax = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Pulsations",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Absent", "Present"],
 			getValue: function(item) { return item.pulsations; },
 			setValue: function(item, value) { item.pulsations = value; },
@@ -1249,29 +1258,29 @@ function initWellBeing()
 	[
 		{
 			label: "PI - Left",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.leftUterinePi; },
 			setValue: function(item, value) { item.leftUterinePi = value; },
 			getError: function(item) { return null; }
 		},
 		{
+			label: "PI - Right",
+			cellType: "text",
+			getValue: function(item) { return item.rightUterinePi; },
+			setValue: function(item, value) { item.rightUterinePi = value; },
+			getError: function(item) { return null; }
+		},
+		{
 			label: "Notch - Left",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Yes", "No"],
 			getValue: function(item) { return item.leftUterinNotch; },
 			setValue: function(item, value) { item.leftUterinNotch = value; },
 			getError: function(item) { return null; }
 		},
 		{
-			label: "PI - Right",
-			cellType: readOnly ? "readonly" : "text",
-			getValue: function(item) { return item.rightUterinePi; },
-			setValue: function(item, value) { item.rightUterinePi = value; },
-			getError: function(item) { return null; }
-		},
-		{
 			label: "Notch - Right",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Yes", "No"],
 			getValue: function(item) { return item.rightUterinNotch; },
 			setValue: function(item, value) { item.rightUterinNotch = value; },
@@ -1285,14 +1294,14 @@ function initWellBeing()
 	[
 		{
 			label: "PI",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.middleCerebralPi; },
 			setValue: function(item, value) { item.middleCerebralPi = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Peak Systolic Velocity",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.peakSystolicVelocity; },
 			setValue: function(item, value) { item.peakSystolicVelocity = value; },
 			getError: function(item) { return null; }
@@ -1305,21 +1314,21 @@ function initWellBeing()
 	[
 		{
 			label: "Max Length",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.maxLength; },
 			setValue: function(item, value) { item.maxLength = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Max Depth",
-			cellType: readOnly ? "readonly" : "text",
+			cellType: "text",
 			getValue: function(item) { return item.maxDepth; },
 			setValue: function(item, value) { item.maxDepth = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Grannum grade",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["0", "1", "2", "3"],
 			getValue: function(item) { return item.grannumGrade; },
 			setValue: function(item, value) { item.grannumGrade = value; },
@@ -1327,7 +1336,7 @@ function initWellBeing()
 		},
 		{
 			label: "Texture",
-			cellType: readOnly ? "readonly" : "choice",
+			cellType: "choice",
 			choices: ["Abnormal", "Normal"],
 			getValue: function(item) { return item.texture ? item.texture : "Normal"; },
 			setValue: function(item, value) { item.texture = value; },
@@ -1377,7 +1386,6 @@ function initCommentsConclusion()
 			cellType: "textarea",
 			cols: 100,
 			rows: 5,
-			readOnly: readOnly,
 			getValue: function(item) { return item.sonographersComments; },
 			setValue: function(item, value) { item.sonographersComments = value; },
 			getError: function(item) { return null; }
@@ -1387,7 +1395,6 @@ function initCommentsConclusion()
 			cellType: "textarea",
 			cols: 100,
 			rows: 5,
-			readOnly: readOnly,
 			getValue: function(item) { return item.mdOpinion; },
 			setValue: function(item, value) { item.mdOpinion = value; },
 			getError: function(item) { return null; }
@@ -1425,7 +1432,7 @@ function initTabs()
 function UpdateFetalNumber(count)
 {
 	// update selection UI to show correct number of fetus selections
-	select = document.getElementById("fetusSelect");
+	var select = document.getElementById("fetusSelect");
 	
 	if(!select) return;
 
@@ -1474,6 +1481,25 @@ function selectFetus(number)
 	bindWellBeing();
 }
 
+function setAnatomyDefaults()
+{
+	if(!data.anatomy[fetus]) return;
+
+	var anatomyProperties = ["headShape", "posteriorHorns", "choroidPlexi", "cavumSepti", "cerebellum", "cisternaMagna", "nuchalFold", "eyes", "mouth", 
+			"profile", "spine", "fourChambers", "greatVessels", "chest", "diaphragm", "stomach", "abdominalWall", "kidneysRt", "kidneysLt", "bladder", "upperRt", "upperLt", 
+			"lowerRt", "lowerLt", "cordVessels"];
+			
+	for(var i = 0; i < anatomyProperties.length; i++)
+	{
+		if(typeof(data.anatomy[fetus][anatomyProperties[i]]) == "undefined" || data.anatomy[fetus][anatomyProperties[i]] == null || data.anatomy[fetus][anatomyProperties[i]] == "")
+		{
+			data.anatomy[fetus][anatomyProperties[i]] = "Normal";
+		}
+	}
+	
+	bindAnatomy();
+}
+
 function structuredReportHtml()
 {
 	var html = "";
@@ -1500,32 +1526,29 @@ function structuredReportHtml()
 	html+= 	"			Report Type:&nbsp;<span id=\"reportType\"></span>";
 	html+= 	"		</div>";
 	html+= 	"		<div id=\"IndicationsAndDates\" class=\"TabPage\">";
-	html+= 	"			<table id=\"indicationsAndDatesTable\" width=\"100%\">";
+	html+= 	"			<table id=\"indicationsAndDatesTable\" width=\"95%\">";
 	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"			</table>";
-	html+= 	"			<br />";
-	html+= 	"			<table id=\"lmpTable\" width=\"100%\">";
+	html+= 	"			<table id=\"lmpTable\">";
 	html+= 	"				<tr><td class=\"tableheading\">LMP</td></tr>";
 	html+= 	"			</table>";
-	html+= 	"			<br />";
-	html+= 	"			<table id=\"usTable\" width=\"100%\">";
+	html+= 	"			<table id=\"usTable\">";
 	html+= 	"				<tr><td class=\"tableheading\">US</td></tr>";
 	html+= 	"			</table>";
-	html+= 	"			<br />";
-	html+= 	"			<table id=\"establishedEDCTable\" width=\"100%\">";
+	html+= 	"			<table id=\"establishedEDCTable\">";
 	html+= 	"				<tr><td class=\"tableheading\">Established EDC</td></tr>";
 	html+= 	"			</table>";
 	html+= 	"		</div>";
 	html+= 	"		<div id=\"General\" class=\"TabPage\">";
-	html+= 	"			<table id=\"generalTable\" width=\"100%\">";
+	html+= 	"			<table id=\"generalTable\">";
 	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"			</table>";
 	html+= 	"		</div>";
 	html+= 	"		<div id=\"Biometry\" class=\"TabPage\">";
-	html+= 	"			<table id=\"biometryAssessedTable\" width=\"100%\">";
+	html+= 	"			<table id=\"biometryAssessedTable\">";
 	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"			</table>";
-	html+= 	"			<div style=\"{float:left;width:50%;}\">";
+	html+= 	"			<div style=\"{float:left;width:48%;}\">";
 	html+= 	"				<table id=\"crlTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">CRL</td></tr>";
 	html+= 	"				</table>";
@@ -1551,7 +1574,7 @@ function structuredReportHtml()
 	html+= 	"					<tr><td class=\"tableheading\">Average Size</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
-	html+= 	"			<div style=\"{float:right;width:50%;}\">";
+	html+= 	"			<div style=\"{float:right;width:48%;}\">";
 	html+= 	"				<table id=\"nuchalTransparencyTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Nuchal Transparency</td></tr>";
 	html+= 	"				</table>";
@@ -1559,91 +1582,90 @@ function structuredReportHtml()
 	html+= 	"			<div style=\"{clear:both;}\">&nbsp;</div>";
 	html+= 	"		</div>";
 	html+= 	"		<div id=\"Anatomy\" class=\"TabPage\">";
-	html+= 	"			<table id=\"anatomyTable\" width=\"100%\">";
+	html+=	"			<input type=\"button\" value=\"Set all Normal\" onClick=\"javascript: setAnatomyDefaults()\" style=\"{float:right; margin-top:1em;}\"></input>";
+	html+= 	"			<table id=\"anatomyTable\" style=\"{width:48%;}\">";
 	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"			</table>";
-	html+= 	"			<div style=\"{width:50%; float:left;}\">";
-	html+= 	"				<table id=\"headShapeTable\" width=\"100%\">";
+	html+= 	"			<div style=\"{width:48%; float:left;}\">";
+	html+= 	"				<table id=\"headShapeTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Head Shape</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"headTable\" width=\"100%\">";
+	html+= 	"				<table id=\"headTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Head</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"nuchalFoldTable\" width=\"100%\">";
+	html+= 	"				<table id=\"nuchalFoldTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Nuchal Fold</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"faceTable\" width=\"100%\">";
+	html+= 	"				<table id=\"faceTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Face</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"spineTable\" width=\"100%\">";
+	html+= 	"				<table id=\"spineTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Spine</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
-	html+= 	"			<div style=\"{width:50%; float:right;}\">";
-	html+= 	"				<table id=\"heartTable\" width=\"100%\">";
+	html+= 	"			<div style=\"{width:48%; float:right;}\">";
+	html+= 	"				<table id=\"heartTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Heart</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"chestTable\" width=\"100%\">";
+	html+= 	"				<table id=\"chestTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Chest</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"abdomenTable\" width=\"100%\">";
+	html+= 	"				<table id=\"abdomenTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Abdomen</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"genitaliaTable\" width=\"100%\">";
+	html+= 	"				<table id=\"genitaliaTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Genitalia</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"extremitiesTable\" width=\"100%\">";
+	html+= 	"				<table id=\"extremitiesTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Extremities</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"cordVesselsTable\" width=\"100%\">";
+	html+= 	"				<table id=\"cordVesselsTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Cord Vessels</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
 	html+= 	"			<div style=\"{clear:both;}\">&nbsp;</div>";
 	html+= 	"		</div>";
 	html+= 	"		<div id=\"Cardiac\" class=\"TabPage\">";
-	html+= 	"			<table id=\"cardiacDummy\" width=\"100%\" style=\"{display:none;}\">";
-	html+= 	"			</table>";
-	html+= 	"			<table id=\"fourChamberViewTable\" width=\"100%\">";
+	html+= 	"			<table id=\"fourChamberViewTable\">";
 	html+= 	"				<tr><td class=\"tableheading\">Four-Chamber View</td></tr>";
 	html+= 	"			</table>";
 	html+= 	"			<br />";
-	html+= 	"			<table id=\"outflowTractsTable\" width=\"100%\">";
+	html+= 	"			<table id=\"outflowTractsTable\">";
 	html+= 	"				<tr><td class=\"tableheading\">Outflow Tracts</td></tr>";
 	html+= 	"			</table>";
 	html+= 	"		</div>";
 	html+= 	"		<div id=\"WellBeing\" class=\"TabPage\">";
-	html+= 	"			<table id=\"wellBeingTable\" width=\"100%\">";
+	html+= 	"			<table id=\"wellBeingTable\">";
 	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"			</table>";
-	html+= 	"			<div style=\"{width:50%;float:left;}\">";
-	html+= 	"				<table id=\"bpsTable\" width=\"100%\">";
+	html+= 	"			<div  id=\"wellBeingBpsColumn\" style=\"{width:48%;float:left;}\">";
+	html+= 	"				<table id=\"bpsTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">BPS</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
-	html+= 	"			<div style=\"{width:50%;float:right;}\">";
+	html+= 	"			<div id=\"wellBeingDopplerColumn\" style=\"{width:48%;float:right;}\">";
 	html+= 	"				<div id=\"dopplerHeading\" class=\"tableheading\">Doppler</div>";
-	html+= 	"				<table id=\"dopplerUmbilicalArteryTable\" width=\"100%\">";
+	html+= 	"				<table id=\"dopplerUmbilicalArteryTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Umbilical - Artery</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"dopplerUmbilicalVeinTable\" width=\"100%\">";
+	html+= 	"				<table id=\"dopplerUmbilicalVeinTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Umbilical - Vein</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"dopplerUterineArteryTable\" width=\"100%\">";
+	html+= 	"				<table id=\"dopplerUterineArteryTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Uterine Artery</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"dopplerMiddleCerebralArteryTable\" width=\"100%\">";
+	html+= 	"				<table id=\"dopplerMiddleCerebralArteryTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Middle Cerebral Artery</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
 	html+= 	"			<div style=\"{clear:both;}\">";
-	html+= 	"				<table id=\"placentaTable\" width=\"100%\">";
+	html+= 	"				<table id=\"placentaTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Placenta</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
 	html+= 	"		</div>";
 	html+= 	"		<div id=\"CommentsConclusion\" class=\"TabPage\">";
-	html+= 	"			<table id=\"commentsConclusionTable\" width=\"100%\">";
+	html+= 	"			<table id=\"commentsConclusionTable\" width=\"98%\">";
 	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"			</table>";
 	html+= 	"		</div>";

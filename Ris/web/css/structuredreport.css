@@ -1,0 +1,63 @@
+#T1T2T3Doc .TabPage
+{
+	height: 225px;
+	overflow:auto;
+}
+
+#T1T2T3Doc .TabPage table{
+	width: 95%;
+}
+
+#wellBeingDopplerColumn .divCell
+{
+	width:45%;
+}
+
+#wellBeingDopplerColumn .divCell *
+{
+	width:100%;
+}
+
+#wellBeingBpsColumn .divCell
+{
+	width:45%;
+}
+
+#wellBeingBpsColumn .divCell *
+{
+	width:100%;
+}
+
+#extremitiesTable .divCell
+{
+	width:45%;
+}
+
+#extremitiesTable .divCell *
+{
+	width:100%;
+}
+
+#placentaTable
+{
+	margin-top: 1em;
+}
+
+#placentaTable .divCell
+{
+	width:20%;
+}
+
+#placentaTable .divCell *
+{
+	width:100%;
+}
+
+#General.TabPage .divCell
+{
+	width:45%;
+}
+#General.TabPage .divCell *
+{
+	width:100%;
+}
