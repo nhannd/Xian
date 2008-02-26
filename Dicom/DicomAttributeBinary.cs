@@ -1536,7 +1536,19 @@ namespace ClearCanvas.Dicom
 
              return bb;
          }
-
+        protected override void SetStreamLength()
+        {
+            if (_reference != null)
+            {
+                Count = _reference.Length;
+                StreamLength = _reference.Length;
+            }
+            else
+            {
+                Count = _values.Length;
+                StreamLength = (uint)(_values.Length);
+            }
+        }
         public override bool Equals(object obj)
         {
             //Check for null and compare run-time types.

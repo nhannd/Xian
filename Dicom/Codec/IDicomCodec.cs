@@ -43,11 +43,48 @@ namespace ClearCanvas.Dicom.Codec
     /// </summary>
     public interface IDicomCodec
     {
+        /// <summary>
+        /// The name of the Codec
+        /// </summary>
         string Name { get; }
+        /// <summary>
+        /// The <see cref="TransferSyntax"/> the codec supports.
+        /// </summary>
         TransferSyntax TransferSyntax { get; }
+        /// <summary>
+        /// Encode (compress) the entire pixel data.
+        /// </summary>
+        /// <param name="oldPixelData">The uncompressed pixel data</param>
+        /// <param name="newPixelData">The output compressed pixel data</param>
+        /// <param name="parameters">The codec parameters</param>
         void Encode(DicomUncompressedPixelData oldPixelData, DicomCompressedPixelData newPixelData, DicomCodecParameters parameters);
+        /// <summary>
+        /// Decode (decompress) the entire pixel data.
+        /// </summary>
+        /// <param name="oldPixelData">The source compressed pixel data.</param>
+        /// <param name="newPixelData">The output pixel data.</param>
+        /// <param name="parameters">The codec parameters.</param>
         void Decode(DicomCompressedPixelData oldPixelData, DicomUncompressedPixelData newPixelData, DicomCodecParameters parameters);
 
+        /// <summary>
+        /// Decode a single frame of pixel data.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Note this method is strictly used with the <see cref="DicomCompressedPixelData"/> class's
+        /// GetFrame() method to compress data frame by frame.  It is expected that the frame data will be output into 
+        /// <paramref name="newPixelData"/> as a single frame of data.
+        /// </para>
+        /// <para>
+        /// If a DICOM file is loaded with the <see cref="DicomReadOptions.StorePixelDataReferences"/>
+        /// option set, this method in conjunction with the <see cref="DicomCompressedPixelData"/> 
+        /// class can allow the library to only load a frame of data at a time.
+        /// </para>
+        /// </remarks>
+        /// <param name="frame">A zero offset frame number</param>
+        /// <param name="oldPixelData">The input pixel data (including all frames)</param>
+        /// <param name="newPixelData">The output pixel data is stored here</param>
+        /// <param name="parameters">The codec parameters</param>
         void DecodeFrame(int frame, DicomCompressedPixelData oldPixelData, DicomUncompressedPixelData newPixelData, DicomCodecParameters parameters);	
 
     }
@@ -57,9 +94,24 @@ namespace ClearCanvas.Dicom.Codec
     /// </summary>
     public interface IDicomCodecFactory
     {
+        /// <summary>
+        /// The name of the factory.
+        /// </summary>
         string Name { get; }
+        /// <summary>
+        /// The transfer syntax associated with the factory.
+        /// </summary>
         TransferSyntax TransferSyntax { get; }
+        /// <summary>
+        /// Get the codec parameters.
+        /// </summary>
+        /// <param name="dataSet">The data set to get codec parameters for.  Note that this value may be null.</param>
+        /// <returns>The codec parameters.</returns>
         DicomCodecParameters GetCodecParameters(DicomAttributeCollection dataSet);
+        /// <summary>
+        /// Get an <see cref="IDicomCodec"/> codec.
+        /// </summary>
+        /// <returns></returns>
         IDicomCodec GetDicomCodec();
     }
 }

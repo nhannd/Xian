@@ -91,8 +91,6 @@ namespace ClearCanvas.ImageServer.TestApp
         {
             folderBrowserDialog.ShowDialog();
 
-            folderBrowserDialog.ShowDialog();
-
             String directory = folderBrowserDialog.SelectedPath;
 
             DirectoryInfo dir = new DirectoryInfo(directory);
@@ -137,6 +135,15 @@ namespace ClearCanvas.ImageServer.TestApp
                     DicomReadOptions options = new DicomReadOptions();
 
                     dicomFile.Load(options);
+
+                    if (dicomFile.TransferSyntax.Equals(TransferSyntax.RleLossless))
+                    {
+                        dicomFile.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
+
+                        dicomFile.Filename = "F:\\UnsortedMedicalImages\\RleDecompressed\\" + dicomFile.MediaStorageSopInstanceUid + ".dcm";
+
+                        dicomFile.Save();
+                    }
 
                     SearchAttributeSet(dicomFile.DataSet,dicomFile.Filename);
                 }

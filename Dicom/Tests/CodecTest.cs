@@ -115,12 +115,18 @@ namespace ClearCanvas.Dicom.Tests
 
             newFile.Load(DicomReadOptions.StorePixelDataReferences);
 
+            DicomPixelData pd;
 
-            DicomCompressedPixelData frags = new DicomCompressedPixelData(newFile);
+            if (!newFile.TransferSyntax.Encapsulated)
+                pd = new DicomUncompressedPixelData(newFile);
+            else if (newFile.TransferSyntax.Equals(TransferSyntax.RleLossless))
+                pd = new DicomCompressedPixelData(newFile);
+            else
+                throw new DicomCodecException("Unsupported transfer syntax: " + newFile.TransferSyntax);
 
-            for (int i=0; i< frags.NumberOfFrames; i++)
+            for (int i=0; i< pd.NumberOfFrames; i++)
             {
-                byte[] frame = frags.GetFrame(i);
+                byte[] frame = pd.GetFrame(i);
 
             }
 

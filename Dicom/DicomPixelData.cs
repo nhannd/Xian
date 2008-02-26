@@ -40,9 +40,16 @@ namespace ClearCanvas.Dicom
     /// <summary>
     /// Base class representing pixel data.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This class is used to represent pixel data within the DICOM library.  It contains
+    /// all the basic tags required to work with pixel data.
+    /// </para>
+    /// </remarks>
     public abstract class DicomPixelData
     {
         #region Private Members
+
         private int _frames = 1;
         private ushort _width;
         private ushort _height;
@@ -54,9 +61,15 @@ namespace ClearCanvas.Dicom
         private ushort _planarConfiguration;
         private string _photometricInterpretation;
         private TransferSyntax _transferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+        private string _lossyImageCompression;
+        private string _lossyImageCompressionMethod;
+        private float _compressionRatio;
+        private string _derivationDescription;
+
         #endregion
 
         #region Constructors
+
         public DicomPixelData(DicomMessageBase message)
         {
             _transferSyntax = message.TransferSyntax;
@@ -66,6 +79,14 @@ namespace ClearCanvas.Dicom
                 NumberOfFrames = message.DataSet[DicomTags.NumberOfFrames].GetInt32(0, 1);
             if (message.DataSet.Contains(DicomTags.PlanarConfiguration))
                 PlanarConfiguration = message.DataSet[DicomTags.PlanarConfiguration].GetUInt16(0, 1);
+            if (message.DataSet.Contains(DicomTags.LossyImageCompression))
+                LossyImageCompression = message.DataSet[DicomTags.LossyImageCompression].GetString(0, "");
+            if (message.DataSet.Contains(DicomTags.LossyImageCompressionRatio))
+                LossyImageCompressionRatio = message.DataSet[DicomTags.LossyImageCompressionRatio].GetFloat32(0, 1.0f);
+            if (message.DataSet.Contains(DicomTags.LossyImageCompressionMethod))
+                LossyImageCompressionMethod = message.DataSet[DicomTags.LossyImageCompressionMethod].GetString(0, "");
+            if (message.DataSet.Contains(DicomTags.DerivationDescription))
+                DerivationDescription = message.DataSet[DicomTags.DerivationDescription].GetString(0, "");
         }
 
 
@@ -76,6 +97,14 @@ namespace ClearCanvas.Dicom
                 NumberOfFrames = collection[DicomTags.NumberOfFrames].GetInt32(0, 1);
             if (collection.Contains(DicomTags.PlanarConfiguration))
                 PlanarConfiguration = collection[DicomTags.PlanarConfiguration].GetUInt16(0, 1);
+            if (collection.Contains(DicomTags.LossyImageCompression))
+                LossyImageCompression = collection[DicomTags.LossyImageCompression].GetString(0, "");
+            if (collection.Contains(DicomTags.LossyImageCompressionRatio))
+                LossyImageCompressionRatio = collection[DicomTags.LossyImageCompressionRatio].GetFloat32(0, 1.0f);
+            if (collection.Contains(DicomTags.LossyImageCompressionMethod))
+                LossyImageCompressionMethod = collection[DicomTags.LossyImageCompressionMethod].GetString(0, "");
+            if (collection.Contains(DicomTags.DerivationDescription))
+                DerivationDescription = collection[DicomTags.DerivationDescription].GetString(0, "");
         }
 
         internal DicomPixelData(DicomPixelData attrib)
@@ -90,15 +119,38 @@ namespace ClearCanvas.Dicom
             this.PixelRepresentation = attrib.PixelRepresentation;
             this.PlanarConfiguration = attrib.PlanarConfiguration;
             this.PhotometricInterpretation = attrib.PhotometricInterpretation;
+            this.LossyImageCompression = attrib.LossyImageCompression;
+            this.DerivationDescription = attrib.DerivationDescription;
+            this.LossyImageCompressionRatio = attrib.LossyImageCompressionRatio;
+            this.LossyImageCompressionMethod = attrib.LossyImageCompressionMethod;
         }
 
         #endregion
 
+        /// <summary>
+        /// Get a specific uncompressed frame.
+        /// </summary>
+        /// <param name="frame">A zero offset frame number</param>
+        /// <returns>A byte array containing the uncompressed pixel data.</returns>
         public abstract byte[] GetFrame(int frame);
+
+        /// <summary>
+        /// Update the tags in an attribute collection.
+        /// </summary>
+        /// <param name="dataset">The attribute collection to update.</param>
         public abstract void UpdateAttributeCollection(DicomAttributeCollection dataset);
+
+        /// <summary>
+        /// Updat ethe pixel data related tags in a DICOM message.
+        /// </summary>
+        /// <param name="message"></param>
         public abstract void UpdateMessage(DicomMessageBase message);
 
         #region Public Properties
+
+        /// <summary>
+        /// The number of frames in the pixel data.
+        /// </summary>
         public int NumberOfFrames
         {
             get { return _frames; }
@@ -144,8 +196,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                int bytes = BitsAllocated / 8;
-                if ((BitsAllocated % 8) > 0)
+                int bytes = BitsAllocated/8;
+                if ((BitsAllocated%8) > 0)
                     bytes++;
                 return bytes;
             }
@@ -182,6 +234,9 @@ namespace ClearCanvas.Dicom
             get { return _planarConfiguration != 0; }
         }
 
+        /// <summary>
+        /// Photometric Interpretation (0028,0004)
+        /// </summary>
         [DicomField(DicomTags.PhotometricInterpretation, DefaultValue = DicomFieldDefault.Null)]
         public string PhotometricInterpretation
         {
@@ -189,15 +244,18 @@ namespace ClearCanvas.Dicom
             set { _photometricInterpretation = value; }
         }
 
+        /// <summary>
+        /// The frame size of an uncompressed frame.
+        /// </summary>
         public int UncompressedFrameSize
         {
             get
             {
                 // ybr full 422 only stores 2/3 of the pixels
                 if (_photometricInterpretation.Equals("YBR_FULL_422"))
-                    return ImageWidth * ImageHeight * BytesAllocated * 2;
+                    return ImageWidth*ImageHeight*BytesAllocated*2;
 
-                return ImageWidth * ImageHeight * BytesAllocated * SamplesPerPixel;
+                return ImageWidth*ImageHeight*BytesAllocated*SamplesPerPixel;
             }
         }
 
@@ -206,6 +264,32 @@ namespace ClearCanvas.Dicom
             get { return _transferSyntax; }
             set { _transferSyntax = value; }
         }
+
+        // Not always in an image, do a manual update.        
+        public string LossyImageCompression
+        {
+            get { return _lossyImageCompression; }
+            set { _lossyImageCompression = value; }
+        }
+
+        public float LossyImageCompressionRatio
+        {
+            get { return _compressionRatio; }
+            set { _compressionRatio = value; }
+        }
+
+        public string DerivationDescription
+        {
+            get { return _derivationDescription; }
+            set { _derivationDescription = value; }
+        }
+
+        public string LossyImageCompressionMethod
+        {
+            get { return _lossyImageCompressionMethod; }
+            set { _lossyImageCompressionMethod = value; }
+        }
+
         #endregion
     }
 
@@ -216,41 +300,80 @@ namespace ClearCanvas.Dicom
     public class DicomUncompressedPixelData : DicomPixelData
     {
         #region Private Members
+
         private readonly DicomAttribute _pd;
         private MemoryStream _ms;
+
         #endregion
 
         #region Constructors
+
+        /// <summary>
+        /// Constructor from a <see cref="DicomMessageBase"/> instance.
+        /// </summary>
+        /// <param name="message"></param>
         public DicomUncompressedPixelData(DicomMessageBase message)
             : base(message)
         {
             _pd = message.DataSet[DicomTags.PixelData];
         }
 
+        /// <summary>
+        /// Constructor from an <see cref="DicomAttributeCollection"/> instance.
+        /// </summary>
+        /// <param name="collection"></param>
         public DicomUncompressedPixelData(DicomAttributeCollection collection)
             : base(collection)
         {
             _pd = collection[DicomTags.PixelData];
         }
 
+        /// <summary>
+        /// Contructor from a <see cref="DicomCompressedPixelData"/> instance.
+        /// </summary>
+        /// <param name="pd"></param>
         public DicomUncompressedPixelData(DicomCompressedPixelData pd) : base(pd)
         {
             if (this.BitsAllocated > 8)
                 _pd = new DicomAttributeOW(DicomTags.PixelData);
             else
-                _pd = new DicomAttributeOB(DicomTags.PixelData);
+            {
+                DicomTag pdTag = DicomTagDictionary.GetDicomTag(DicomTags.PixelData);
+
+                _pd =
+                    new DicomAttributeOB(
+                        new DicomTag(DicomTags.PixelData, pdTag.Name, pdTag.VariableName, DicomVr.OBvr, pdTag.MultiVR,
+                                     pdTag.VMLow, pdTag.VMHigh, pdTag.Retired));
+            }
         }
+
         #endregion
 
         #region Internal Methods
+
+        /// <summary>
+        /// Internal optimization for getting pixel data for the GetFrame method.
+        /// </summary>
+        /// <returns></returns>
         internal byte[] GetData()
         {
             if (_ms == null) return null;
             return _ms.ToArray();
         }
+
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Update a <see cref="DicomAttributeCollection"/> with the pixel data contained
+        /// within this object and also update pixel data related tags.
+        /// </summary>
+        /// <remarks>
+        /// This method will replace the pixel data attribute in <paramref name="dataset"/>
+        /// and update other pixel data related tags within the collection.
+        /// </remarks>
+        /// <param name="dataset">The collection to update.</param>
         public override void UpdateAttributeCollection(DicomAttributeCollection dataset)
         {
             dataset.SaveDicomFields(this);
@@ -272,6 +395,12 @@ namespace ClearCanvas.Dicom
                 _ms = null;
             }
         }
+
+        /// <summary>
+        /// Update a <see cref="DicomMessageBase"/> with the pixel data contained
+        /// within this object and also update pixel data related tags.
+        /// </summary>
+        /// <param name="message"></param>
         public override void UpdateMessage(DicomMessageBase message)
         {
             UpdateAttributeCollection(message.DataSet);
@@ -280,6 +409,10 @@ namespace ClearCanvas.Dicom
                 file.TransferSyntax = TransferSyntax;
         }
 
+        /// <summary>
+        /// Append a frame of data to the pixel data.
+        /// </summary>
+        /// <param name="frameData">The data to append.</param>
         public void AppendFrame(byte[] frameData)
         {
             if (_ms == null)
@@ -294,7 +427,11 @@ namespace ClearCanvas.Dicom
             _ms.Write(frameData, 0, frameData.Length);
         }
 
-
+        /// <summary>
+        /// Get a specific uncompressed frame.
+        /// </summary>
+        /// <param name="frame">The frame to retrieve</param>
+        /// <returns>A byte array containing the frame data.</returns>
         public override byte[] GetFrame(int frame)
         {
             if (frame >= NumberOfFrames)
@@ -332,7 +469,7 @@ namespace ClearCanvas.Dicom
 
                 byte[] pixels = new byte[UncompressedFrameSize];
 
-                Buffer.BlockCopy((byte[])obAttrib.Values, frame*UncompressedFrameSize, pixels, 0, UncompressedFrameSize);
+                Buffer.BlockCopy((byte[]) obAttrib.Values, frame*UncompressedFrameSize, pixels, 0, UncompressedFrameSize);
 
                 return pixels;
             }
@@ -343,7 +480,7 @@ namespace ClearCanvas.Dicom
                 if (owAttrib._reference != null)
                 {
                     ByteBuffer bb;
-                    if ((UncompressedFrameSize % 2 == 1)
+                    if ((UncompressedFrameSize%2 == 1)
                         && (owAttrib._reference.Endian != ByteBuffer.LocalMachineEndian))
                     {
                         // When frames are odd size, and we need to byte swap, we need to get an extra byte.
@@ -387,20 +524,20 @@ namespace ClearCanvas.Dicom
                         bb.Endian = ByteBuffer.LocalMachineEndian;
                     }
 
-                    return bb.ToBytes();                    
+                    return bb.ToBytes();
                 }
                 byte[] pixels = new byte[UncompressedFrameSize];
 
-                Buffer.BlockCopy((byte[])owAttrib.Values, frame * UncompressedFrameSize, pixels, 0, UncompressedFrameSize);
+                Buffer.BlockCopy((byte[]) owAttrib.Values, frame*UncompressedFrameSize, pixels, 0, UncompressedFrameSize);
 
                 return pixels;
             }
 
             return null;
         }
+
         #endregion
     }
-
 
 
     /// <summary>
@@ -409,46 +546,71 @@ namespace ClearCanvas.Dicom
     public class DicomCompressedPixelData : DicomPixelData
     {
         #region Protected Members
+
         protected List<uint> _table;
         protected List<DicomFragment> _fragments = new List<DicomFragment>();
         private readonly DicomFragmentSequence _sq;
+
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Constructor from a <see cref="DicomMessageBase"/> instance.
+        /// </summary>
+        /// <param name="msg">The message to initialize the object from.</param>
         public DicomCompressedPixelData(DicomMessageBase msg)
             : base(msg)
         {
-            _sq = (DicomFragmentSequence)msg.DataSet[DicomTags.PixelData];
+            _sq = (DicomFragmentSequence) msg.DataSet[DicomTags.PixelData];
         }
 
+        /// <summary>
+        /// Constructor from a <see cref="DicomAttributeCollection"/> instance.
+        /// </summary>
+        /// <param name="collection">The collection to initialize the object from.</param>
         public DicomCompressedPixelData(DicomAttributeCollection collection) : base(collection)
         {
-            _sq = (DicomFragmentSequence)collection[DicomTags.PixelData];
+            _sq = (DicomFragmentSequence) collection[DicomTags.PixelData];
         }
 
+        /// <summary>
+        /// Constructor from a <see cref="DicomUncompressedPixeldata"/> instance.
+        /// </summary>
+        /// <param name="pd">The uuncompressed pixel data attribute to initialize the object from.</param>
         public DicomCompressedPixelData(DicomUncompressedPixelData pd) : base(pd)
         {
             _sq = new DicomFragmentSequence(DicomTags.PixelData);
         }
 
-
-        #endregion
-
-        #region Public Properties
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Update an <see cref="DicomAttributeCollection"/> with pixel data related tags.
+        /// </summary>
+        /// <param name="dataset">The collection to update.</param>
         public override void UpdateAttributeCollection(DicomAttributeCollection dataset)
         {
             if (dataset.Contains(DicomTags.NumberOfFrames) || this.NumberOfFrames > 1)
                 dataset[DicomTags.NumberOfFrames].SetInt32(0, NumberOfFrames);
             if (dataset.Contains(DicomTags.PlanarConfiguration))
                 dataset[DicomTags.PlanarConfiguration].SetInt32(0, PlanarConfiguration);
+            if (dataset.Contains(DicomTags.LossyImageCompression) || LossyImageCompression.Length > 0)
+                dataset[DicomTags.LossyImageCompression].SetString(0, LossyImageCompression);
+            if (dataset.Contains(DicomTags.LossyImageCompressionRatio) || LossyImageCompressionRatio != 1.0f)
+                dataset[DicomTags.LossyImageCompressionRatio].SetFloat32(0, LossyImageCompressionRatio);
+            if (dataset.Contains(DicomTags.LossyImageCompressionMethod) || LossyImageCompressionMethod.Length > 0)
+                dataset[DicomTags.LossyImageCompressionMethod].SetString(0, LossyImageCompressionMethod);
+            if (dataset.Contains(DicomTags.DerivationDescription) || DerivationDescription.Length > 0)
+                dataset[DicomTags.DerivationDescription].SetString(0, DerivationDescription);
 
             dataset.SaveDicomFields(this);
             dataset[DicomTags.PixelData] = _sq;
         }
-
+        /// <summary>
+        /// Update a <see cref="DicomMessageBase"/> with pixel data related tags.
+        /// </summary>
+        /// <param name="message">The message to update.</param>
         public override void UpdateMessage(DicomMessageBase message)
         {
             UpdateAttributeCollection(message.DataSet);
@@ -457,6 +619,19 @@ namespace ClearCanvas.Dicom
                 file.TransferSyntax = TransferSyntax;
         }
 
+        /// <summary>
+        /// Get a specific frame's data in uncompressed format.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// If a DICOM file is loaded with the <see cref="DicomReadOptions.StorePixelDataReferences"/>
+        /// option set, this method will only load the specific frame's data from the source file to
+        /// do the decompress, thus reducing memory usage to only the frame being decompressed.
+        /// </para>
+        /// </remarks>
+        /// <param name="frame">A zero offset frame to request.</param>
+        /// <param name="photometricInterpretation">The photometric interpretation of the output data</param>
+        /// <returns>A byte array containing the frame.</returns>
         public byte[] GetFrame(int frame, out string photometricInterpretation)
         {
             DicomUncompressedPixelData pd = new DicomUncompressedPixelData(this);
@@ -480,6 +655,11 @@ namespace ClearCanvas.Dicom
             return pd.GetData();
         }
 
+        /// <summary>
+        /// Get a specific frame's data in uncompressed format.
+        /// </summary>
+        /// <param name="frame">The zero offset frame to get.</param>
+        /// <returns>A byte array containing the pixel data.</returns>
         public override byte[] GetFrame(int frame)
         {
             string photometricInterpretation;
@@ -487,6 +667,11 @@ namespace ClearCanvas.Dicom
             return GetFrame(frame, out photometricInterpretation);
         }
 
+        /// <summary>
+        /// Append a compressed pixel data fragment's worth of data.  It is assumed an entire frame is
+        /// contained within <paramref name="data"/>.
+        /// </summary>
+        /// <param name="data">The fragment data.</param>
         public void AddFrameFragment(byte[] data)
         {
             DicomFragmentSequence sequence = _sq;
@@ -503,7 +688,17 @@ namespace ClearCanvas.Dicom
             sequence.Fragments.Add(new DicomFragment(buffer));
         }
 
-
+        /// <summary>
+        /// Get the pixel data fragments for a frame.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Note that if an offset table was not included within the pixel data, this method will
+        /// attempt to guess which fragments are contained within a frame.
+        /// </para>
+        /// </remarks>
+        /// <param name="frame">The zero offset frame to get the fragments for.</param>
+        /// <returns>A list of fragments associated with the frame.</returns>
         public List<DicomFragment> GetFrameFragments(int frame)
         {
             if (frame < 0 || frame >= NumberOfFrames)
@@ -558,7 +753,7 @@ namespace ClearCanvas.Dicom
                 return fragments;
             }
 
-        GUESS_FRAME_OFFSET:
+            GUESS_FRAME_OFFSET:
             if (sequence.Fragments.Count > 0)
             {
                 uint fragmentSize = sequence.Fragments[0].Length;
@@ -575,11 +770,11 @@ namespace ClearCanvas.Dicom
 
                 if (allSameLength)
                 {
-                    if ((fragmentCount % NumberOfFrames) != 0)
+                    if ((fragmentCount%NumberOfFrames) != 0)
                         throw new DicomDataException("Unable to determine frame length from pixel data sequence!");
 
-                    int count = fragmentCount / NumberOfFrames;
-                    int start = frame * count;
+                    int count = fragmentCount/NumberOfFrames;
+                    int start = frame*count;
 
                     for (int i = 0; i < fragmentCount; i++)
                     {
@@ -614,7 +809,7 @@ namespace ClearCanvas.Dicom
 
             return fragments;
         }
-        #endregion
 
+        #endregion
     }
 }

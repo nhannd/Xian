@@ -33,6 +33,9 @@ using System;
 
 namespace ClearCanvas.Dicom.Codec
 {
+    /// <summary>
+    /// A codec specific exception.
+    /// </summary>
     public class DicomCodecException : DicomException
     {
         public DicomCodecException(string desc, Exception e) : base(desc, e)

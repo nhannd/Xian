@@ -36,6 +36,10 @@ using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom.Codec
 {
+
+    /// <summary>
+    /// Default codec factory for the DICOM RLE Transfer Syntax.
+    /// </summary>
     public class DicomRleCodecFactory : IDicomCodecFactory
     {
         private string _name = TransferSyntax.RleLossless.Name;
@@ -62,6 +66,9 @@ namespace ClearCanvas.Dicom.Codec
         }
     }
 
+    /// <summary>
+    /// Parameters for RLE compression.
+    /// </summary>
     public class DicomRleCodecParameters : DicomCodecParameters
     {
         #region Private Members
@@ -92,6 +99,9 @@ namespace ClearCanvas.Dicom.Codec
         #endregion
     }
 
+    /// <summary>
+    /// The DICOM RLE Transfer Syntax codec.
+    /// </summary>
     public class DicomRleCodec : IDicomCodec
     {
         public string Name
@@ -413,15 +423,20 @@ namespace ClearCanvas.Dicom.Codec
                     if ((n & 0x80) != 0)
                     {
                         int c = 257 - n;
+                        if (i >= end)
+                        {
+                            DicomLogger.LogError("RLE Segement unexpectedly wrong.");
+                            return;
+                        }
                         byte b = rleData[i++];
                         while (c-- > 0)
                         {
-                            buffer[pos++] = b;
-                            if (pos > buffer.Length)
+                            if (pos >= buffer.Length)
                             {
                                 DicomLogger.LogError("RLE segment unexpectedly too long.  Ignoring data.");
                                 return;
                             }
+                            buffer[pos++] = b;
                         }
                     }
                     else
