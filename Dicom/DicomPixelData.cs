@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom
@@ -56,6 +57,18 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Constructors
+        public DicomPixelData(DicomMessageBase message)
+        {
+            _transferSyntax = message.TransferSyntax;
+
+            message.DataSet.LoadDicomFields(this);
+            if (message.DataSet.Contains(DicomTags.NumberOfFrames))
+                NumberOfFrames = message.DataSet[DicomTags.NumberOfFrames].GetInt32(0, 1);
+            if (message.DataSet.Contains(DicomTags.PlanarConfiguration))
+                PlanarConfiguration = message.DataSet[DicomTags.PlanarConfiguration].GetUInt16(0, 1);
+        }
+
+
         public DicomPixelData(DicomAttributeCollection collection)
         {
             collection.LoadDicomFields(this);
@@ -81,6 +94,7 @@ namespace ClearCanvas.Dicom
 
         #endregion
 
+        public abstract byte[] GetFrame(int frame);
         public abstract void UpdateAttributeCollection(DicomAttributeCollection dataset);
         public abstract void UpdateMessage(DicomMessageBase message);
 
@@ -207,6 +221,12 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Constructors
+        public DicomUncompressedPixelData(DicomMessageBase message)
+            : base(message)
+        {
+            _pd = message.DataSet[DicomTags.PixelData];
+        }
+
         public DicomUncompressedPixelData(DicomAttributeCollection collection)
             : base(collection)
         {
@@ -219,6 +239,14 @@ namespace ClearCanvas.Dicom
                 _pd = new DicomAttributeOW(DicomTags.PixelData);
             else
                 _pd = new DicomAttributeOB(DicomTags.PixelData);
+        }
+        #endregion
+
+        #region Internal Methods
+        internal byte[] GetData()
+        {
+            if (_ms == null) return null;
+            return _ms.ToArray();
         }
         #endregion
 
@@ -267,10 +295,20 @@ namespace ClearCanvas.Dicom
         }
 
 
-        public byte[] GetFrame(int frame)
+        public override byte[] GetFrame(int frame)
         {
             if (frame >= NumberOfFrames)
                 throw new ArgumentOutOfRangeException("frame");
+
+            if (_ms != null)
+            {
+                _ms.Seek(0, SeekOrigin.Begin);
+                byte[] pixels = new byte[UncompressedFrameSize];
+
+                _ms.Read(pixels, frame*UncompressedFrameSize, UncompressedFrameSize);
+
+                return pixels;
+            }
 
             DicomAttributeOB obAttrib = _pd as DicomAttributeOB;
             if (obAttrib != null)
@@ -377,6 +415,12 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Constructors
+        public DicomCompressedPixelData(DicomMessageBase msg)
+            : base(msg)
+        {
+            _sq = (DicomFragmentSequence)msg.DataSet[DicomTags.PixelData];
+        }
+
         public DicomCompressedPixelData(DicomAttributeCollection collection) : base(collection)
         {
             _sq = (DicomFragmentSequence)collection[DicomTags.PixelData];
@@ -411,6 +455,36 @@ namespace ClearCanvas.Dicom
             DicomFile file = message as DicomFile;
             if (file != null)
                 file.TransferSyntax = TransferSyntax;
+        }
+
+        public byte[] GetFrame(int frame, out string photometricInterpretation)
+        {
+            DicomUncompressedPixelData pd = new DicomUncompressedPixelData(this);
+
+            IDicomCodec codec = DicomCodecRegistry.GetCodec(TransferSyntax);
+            if (codec == null)
+            {
+                DicomLogger.LogError("Unable to get registered codec for {0}", TransferSyntax);
+
+                throw new DicomCodecException("No registered codec for: " + TransferSyntax.Name);
+            }
+
+            DicomCodecParameters parameters = DicomCodecRegistry.GetCodecParameters(TransferSyntax, null);
+
+            codec.DecodeFrame(frame, this, pd, parameters);
+
+            pd.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+
+            photometricInterpretation = pd.PhotometricInterpretation;
+
+            return pd.GetData();
+        }
+
+        public override byte[] GetFrame(int frame)
+        {
+            string photometricInterpretation;
+
+            return GetFrame(frame, out photometricInterpretation);
         }
 
         public void AddFrameFragment(byte[] data)

@@ -30,9 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Text;
-
 using ClearCanvas.Dicom.Network;
 
 namespace ClearCanvas.Dicom
@@ -44,6 +42,10 @@ namespace ClearCanvas.Dicom
     /// <seealso cref="DicomFile"/>
     public class DicomMessage : DicomMessageBase
     {
+        #region Private Members
+        private TransferSyntax _transferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+        #endregion
+
         #region Command Element Properties
         /// <summary>
         /// The affected SOP Class UID associated with the oepration.
@@ -291,6 +293,13 @@ namespace ClearCanvas.Dicom
                 return sop;
             }
         }
+
+        public override TransferSyntax TransferSyntax
+        {
+            get { return _transferSyntax; }
+            set { _transferSyntax = value; }
+        }
+
         #endregion
 
         #region Constructors
@@ -299,7 +308,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="command">The command set.</param>
         /// <param name="data">The data set.</param>
-        public DicomMessage(DicomAttributeCollection command, DicomAttributeCollection data) : base()
+        public DicomMessage(DicomAttributeCollection command, DicomAttributeCollection data)
         {
             if (command == null)
                 _metaInfo = new DicomAttributeCollection(0x00000000,0x0000FFFF);
@@ -321,6 +330,7 @@ namespace ClearCanvas.Dicom
         /// <param name="file">The <see cref="DicomFile"/> to change into a DicomMessage.</param>
         public DicomMessage(DicomFile file)
         {
+            _transferSyntax = file.TransferSyntax;
             _metaInfo = new DicomAttributeCollection(0x00000000,0x0000FFFF);
             _dataSet = file.DataSet;
         }

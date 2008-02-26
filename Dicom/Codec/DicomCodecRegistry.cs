@@ -36,15 +36,21 @@ namespace ClearCanvas.Dicom.Codec
     public static class DicomCodecRegistry
     {
 
-        private static Dictionary<TransferSyntax,IDicomCodecFactory> _dictionary = new Dictionary<TransferSyntax, IDicomCodecFactory>();
+        private static readonly Dictionary<TransferSyntax,IDicomCodecFactory> _dictionary = new Dictionary<TransferSyntax, IDicomCodecFactory>();
 
-		public static void RegisterCodec(TransferSyntax syntax, IDicomCodecFactory codec)
+        static DicomCodecRegistry()
+        {
+            _dictionary.Add(TransferSyntax.RleLossless,new DicomRleCodecFactory());
+        }
+
+        public static void RegisterCodec(TransferSyntax syntax, IDicomCodecFactory codec)
 		{
             if (_dictionary.ContainsKey(syntax))
             {
                 _dictionary.Remove(syntax);
             }
-		    _dictionary.Add(syntax, codec);
+            if (codec != null)
+		        _dictionary.Add(syntax, codec);
 		}
 
         public static IDicomCodec GetCodec(TransferSyntax syntax)
@@ -56,5 +62,16 @@ namespace ClearCanvas.Dicom.Codec
 
             return factory.GetDicomCodec();
         }
+
+        public static DicomCodecParameters GetCodecParameters(TransferSyntax syntax, DicomAttributeCollection collection)
+        {
+            if (!_dictionary.ContainsKey(syntax))
+                return null;
+
+            IDicomCodecFactory factory = _dictionary[syntax];
+
+            return factory.GetCodecParameters(collection);
+        }
+
     }
 }

@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom.Network
@@ -349,6 +350,7 @@ namespace ClearCanvas.Dicom.Network
                 || (commandField == DicomCommandField.NGetRequest)
                 || (commandField == DicomCommandField.NSetRequest))
             {
+                msg.TransferSyntax = _assoc.GetAcceptedTransferSyntax(pcid);
                 OnReceiveDimseRequest(pcid, msg);
 
                 if (MessageReceived != null)
@@ -740,6 +742,19 @@ namespace ClearCanvas.Dicom.Network
         {
             SendCStoreRequest(presentationID, messageID, priority, null, 0, message);
         }
+        /// <summary>
+        /// Method to send a DICOM C-STORE-RQ message.
+        /// </summary>
+        /// <param name="presentationID"></param>
+        /// <param name="messageID"></param>
+        /// <param name="priority"></param>
+        /// <param name="message"></param>
+        /// <param name="overrideParameters"></param>
+        public void SendCStoreRequest(byte presentationID, ushort messageID,
+            DicomPriority priority, DicomMessage message, DicomCodecParameters overrideParameters)
+        {
+            SendCStoreRequest(presentationID, messageID, priority, null, 0, message, overrideParameters);
+        }
 
         /// <summary>
         /// Method to send a DICOM C-STORE-RQ message.
@@ -752,6 +767,20 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="message"></param>
         public void SendCStoreRequest(byte presentationID, ushort messageID,
             DicomPriority priority, string moveAE, ushort moveMessageID, DicomMessage message)
+        {
+        }
+
+        /// <summary>
+        /// Method to send a DICOM C-STORE-RQ message.
+        /// </summary>
+        /// <param name="presentationID"></param>
+        /// <param name="messageID"></param>
+        /// <param name="priority"></param>
+        /// <param name="moveAE"></param>
+        /// <param name="moveMessageID"></param>
+        /// <param name="message"></param>
+        public void SendCStoreRequest(byte presentationID, ushort messageID,
+            DicomPriority priority, string moveAE, ushort moveMessageID, DicomMessage message, DicomCodecParameters overrideParameters)
         {
             DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
 
@@ -781,6 +810,17 @@ namespace ClearCanvas.Dicom.Network
                 message.MoveOriginatorMessageId = moveMessageID;
             }
 
+            // Handle compress/decompress if necessary
+            TransferSyntax contextSyntax = _assoc.GetAcceptedTransferSyntax(presentationID);
+            if ((contextSyntax != message.TransferSyntax)
+                && contextSyntax.Encapsulated || message.TransferSyntax.Encapsulated)
+            {
+                if (overrideParameters != null)
+                    message.ChangeTransferSyntax(contextSyntax, null, overrideParameters);
+                else
+                    message.ChangeTransferSyntax(contextSyntax);
+            }
+
             SendDimse(presentationID, command, message.DataSet);
         }
 
@@ -801,7 +841,6 @@ namespace ClearCanvas.Dicom.Network
             msg.DataSetType = 0x0101;
             msg.Status = status;
 
-            
             SendDimse(presentationID, msg.CommandSet, null);
         }
 

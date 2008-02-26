@@ -29,30 +29,37 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Dicom.Codec
 {
+    /// <summary>
+    /// Abstract base class for parameters to codecs.
+    /// </summary>
     public abstract class DicomCodecParameters
     {
     }
 
+    /// <summary>
+    /// Interface for Dicom Compressor/Decompressors.
+    /// </summary>
     public interface IDicomCodec
     {
         string Name { get; }
         TransferSyntax TransferSyntax { get; }
-        void Encode(DicomAttributeCollection dataset, DicomUncompressedPixelData oldPixelData, DicomCompressedPixelData newPixelData, DicomCodecParameters parameters);
-        void Decode(DicomAttributeCollection dataset, DicomCompressedPixelData oldPixelData, DicomUncompressedPixelData newPixelData, DicomCodecParameters parameters);	
+        void Encode(DicomUncompressedPixelData oldPixelData, DicomCompressedPixelData newPixelData, DicomCodecParameters parameters);
+        void Decode(DicomCompressedPixelData oldPixelData, DicomUncompressedPixelData newPixelData, DicomCodecParameters parameters);
+
+        void DecodeFrame(int frame, DicomCompressedPixelData oldPixelData, DicomUncompressedPixelData newPixelData, DicomCodecParameters parameters);	
+
     }
 
+    /// <summary>
+    /// Interface for factory for creating DICOM Compressors/Decompressors.
+    /// </summary>
     public interface IDicomCodecFactory
     {
         string Name { get; }
         TransferSyntax TransferSyntax { get; }
-        DicomCodecParameters GetCodecParameters();
+        DicomCodecParameters GetCodecParameters(DicomAttributeCollection dataSet);
         IDicomCodec GetDicomCodec();
     }
-
 }

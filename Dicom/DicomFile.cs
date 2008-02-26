@@ -66,6 +66,11 @@ namespace ClearCanvas.Dicom
             _metaInfo = metaInfo;
             _dataSet = dataSet;
             _filename = filename;
+
+            ImplementationVersionName = DicomImplementation.Version;
+            ImplementationClassUid = DicomImplementation.ClassUID.UID;
+            _metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(TransferSyntax.ExplicitVrLittleEndian.UidString);
+
         }
 
         /// <summary>
@@ -77,6 +82,10 @@ namespace ClearCanvas.Dicom
             _metaInfo = new DicomAttributeCollection(0x00020000, 0x0002FFFF);
             _dataSet = new DicomAttributeCollection(0x00040000, 0xFFFFFFFF);
 
+            ImplementationVersionName = DicomImplementation.Version;
+            ImplementationClassUid = DicomImplementation.ClassUID.UID;
+            _metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(TransferSyntax.ExplicitVrLittleEndian.UidString);
+
             _filename = filename;
         }
 
@@ -87,6 +96,10 @@ namespace ClearCanvas.Dicom
         {
             _metaInfo = new DicomAttributeCollection(0x00020000, 0x0002FFFF);
             _dataSet = new DicomAttributeCollection(0x00040000, 0xFFFFFFFF);
+
+            ImplementationVersionName = DicomImplementation.Version;
+            ImplementationClassUid = DicomImplementation.ClassUID.UID;
+            _metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(TransferSyntax.ExplicitVrLittleEndian.UidString);
 
             _filename = String.Empty;
         }
@@ -116,6 +129,10 @@ namespace ClearCanvas.Dicom
             MediaStorageSopClassUid = msg.AffectedSopClassUid;
             ImplementationVersionName = DicomImplementation.Version;
             ImplementationClassUid = DicomImplementation.ClassUID.UID;
+            if (msg.TransferSyntax.Encapsulated)
+                _metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(msg.TransferSyntax.UidString);
+            else
+                _metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(TransferSyntax.ExplicitVrLittleEndian.UidString);
 
             _filename = filename;
         }
@@ -164,7 +181,7 @@ namespace ClearCanvas.Dicom
         /// This property returns a TransferSyntax object for the transfer syntax encoded 
         /// in the tag Transfer Syntax UID (0002,0010).
         /// </remarks>
-        public TransferSyntax TransferSyntax
+        public override TransferSyntax TransferSyntax
         {
             get
             {

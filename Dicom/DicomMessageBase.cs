@@ -46,6 +46,11 @@ namespace ClearCanvas.Dicom
         internal DicomAttributeCollection _dataSet = null;
 
         /// <summary>
+        /// The Transfer Syntax of the DICOM file or message
+        /// </summary>
+        public abstract TransferSyntax TransferSyntax { get; set; }
+    
+        /// <summary>
         /// The Meta information for the message.
         /// </summary>
         public DicomAttributeCollection MetaInfo
@@ -61,13 +66,64 @@ namespace ClearCanvas.Dicom
             get { return _dataSet; }
         }
 
-        public void ChangeTransferSyntax(TransferSyntax newTransferSyntax, IDicomCodec codec, DicomCodecParameters parameters)
+        public void ChangeTransferSyntax(TransferSyntax newTransferSyntax)
         {
-            if (codec == null)
+            ChangeTransferSyntax(newTransferSyntax, null, null);
+        }
+
+        public void ChangeTransferSyntax(TransferSyntax newTransferSyntax, IDicomCodec inputCodec, DicomCodecParameters inputParameters)
+        {
+            IDicomCodec codec = inputCodec;
+            DicomCodecParameters parameters = inputParameters;
+            if (newTransferSyntax.Encapsulated && this.TransferSyntax.Encapsulated)
+                throw new DicomCodecException("Source and destination transfer syntaxes encapsulated");
+
+            if (newTransferSyntax.Encapsulated)
             {
-                IDicomCodec codec2 = DicomCodecRegistry.GetCodec(newTransferSyntax);
-                if (codec2 == null)
-                    throw new DicomCodecException("No registered codec for: " + newTransferSyntax.Name);
+                if (codec == null)
+                {
+                    codec = DicomCodecRegistry.GetCodec(newTransferSyntax);
+                    if (codec == null)
+                    {
+                        DicomLogger.LogError("Unable to get registered codec for {0}", newTransferSyntax);
+                        throw new DicomCodecException("No registered codec for: " + newTransferSyntax.Name);
+                    }
+                }
+                if (parameters == null)
+                    parameters = DicomCodecRegistry.GetCodecParameters(newTransferSyntax, DataSet);
+
+                DicomUncompressedPixelData pd = new DicomUncompressedPixelData(DataSet);
+                DicomCompressedPixelData fragments = new DicomCompressedPixelData(pd);
+
+                codec.Encode(pd, fragments, parameters);
+
+                fragments.TransferSyntax = newTransferSyntax;
+
+                fragments.UpdateMessage(this);
+            }
+            else
+            {
+                if (codec == null)
+                {
+                    codec = DicomCodecRegistry.GetCodec(TransferSyntax);
+                    if (codec == null)
+                    {
+                        DicomLogger.LogError("Unable to get registered codec for {0}", TransferSyntax);
+
+                        throw new DicomCodecException("No registered codec for: " + TransferSyntax.Name);
+                    }
+
+                    if (parameters == null)
+                        parameters = DicomCodecRegistry.GetCodecParameters(TransferSyntax, DataSet);
+                }
+                DicomCompressedPixelData fragments = new DicomCompressedPixelData(DataSet);
+                DicomUncompressedPixelData pd = new DicomUncompressedPixelData(fragments);
+
+                codec.Decode(fragments, pd, parameters);
+
+                pd.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+
+                pd.UpdateMessage(this);                
             }
         }
 

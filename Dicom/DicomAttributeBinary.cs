@@ -1563,6 +1563,20 @@ namespace ClearCanvas.Dicom
             return true;
         }
 
+        public override int GetHashCode()
+        {
+            if (_values == null)
+                return 0; // TODO
+            else
+            {
+                int hash = 0;
+                for (int index = 0; index < _values.Length; index++)
+                {
+                    hash += (index + 1)*_values[index].GetHashCode();
+                }
+                return hash;
+            }
+        }
         #endregion
      }
     #endregion
@@ -1855,6 +1869,21 @@ namespace ClearCanvas.Dicom
 
             return true;
         }
+        public override int GetHashCode()
+        {
+            if (_values == null)
+                return 0; // TODO
+            else
+            {
+                int hash = 0;
+                for (int index = 0; index < _values.Length; index++)
+                {
+                    hash += (index + 1) * _values[index].GetHashCode();
+                }
+                return hash;
+            }
+        }
+
         #endregion
 
 

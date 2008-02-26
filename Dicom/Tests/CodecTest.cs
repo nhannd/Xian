@@ -84,34 +84,49 @@ namespace ClearCanvas.Dicom.Tests
             DicomAttributeCollection originalMetaInfo = file.MetaInfo.Copy();
             originalFile = new DicomFile("", originalMetaInfo, originalDataSet);
 
-            IDicomCodec rleCodec = new DicomRleCodec();
-
-            DicomUncompressedPixelData pd = new DicomUncompressedPixelData(file.DataSet);
-            DicomCompressedPixelData fragments = new DicomCompressedPixelData(pd);
-
-            rleCodec.Encode(file.DataSet, pd, fragments, null);
-
-            fragments.TransferSyntax = TransferSyntax.RleLossless;
-
-            fragments.UpdateMessage(file);
+            file.ChangeTransferSyntax(TransferSyntax.RleLossless);
 
             file.Save();
 
             DicomFile newFile = new DicomFile(file.Filename);
 
             newFile.Load();
-            fragments = new DicomCompressedPixelData(newFile.DataSet);
-            pd = new DicomUncompressedPixelData(fragments);
 
-            rleCodec.Decode(newFile.DataSet, fragments, pd, null);
-
-            pd.UpdateMessage(newFile);
+            newFile.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
 
             newFile.Filename = "Output" + file.Filename;
             newFile.Save();
 
             Assert.AreEqual(originalFile.DataSet.Equals(newFile.DataSet), true);
         }
+
+        [Test]
+        public void PartialFrameTest()
+        {
+            DicomFile file = new DicomFile("RlePartialFrameTest.dcm");
+
+            this.SetupMultiframeXA(file.DataSet, 511, 511, 7);
+
+            file.ChangeTransferSyntax(TransferSyntax.RleLossless);
+
+            file.Save();
+
+            DicomFile newFile = new DicomFile(file.Filename);
+
+            newFile.Load(DicomReadOptions.StorePixelDataReferences);
+
+
+            DicomCompressedPixelData frags = new DicomCompressedPixelData(newFile);
+
+            for (int i=0; i< frags.NumberOfFrames; i++)
+            {
+                byte[] frame = frags.GetFrame(i);
+
+            }
+
+        }
+
+
     }
 }
 #endif
