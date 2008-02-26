@@ -149,164 +149,21 @@ function initBiometry(fetus)
 
 	biometryAssessedTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 
-	var crlTable = Table.createTable($("crlTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
-	[			
-		new readOnlyCell("mm", "crl"),
-		{
-			label: "wks", 
-			cellType: "readonly",
-			getValue: function(item) { return "CALC"; },
-			setValue: function(item, value) { return null; },
-			getVisible: function(item) { return reportType == "T1"; },
-			getError: function(item) { return null; }
-		}
+	var biometrySummaryTable = Table.createTable($("biometrySummaryTable"+fetus), { editInPlace: true, flow: true, checkBoxes: false},
+	[
+		new readOnlyBiometryCell("CRL", "crl", function(item) { return item.crl ? "CALC" : ""; }),
+		new readOnlyBiometryCell("BPD", "bpd", function(item) { return item.bpd ? "CALC" : ""; }),
+		new readOnlyBiometryCell("OFD", "ofd", function(item) { return item.ofd ? "CALC" : ""; }),
+		new readOnlyBiometryCell("Corrected BPD", "correctedBPD", function(item) { return item.correctedBPD ? "CALC" : ""; }),
+		new readOnlyBiometryCell("HC", "hc", function(item) { return item.hc ? "CALC" : ""; }),
+		new readOnlyBiometryCell("ABPD", "", function(item) { return "TODO"; }),// ABPD
+		new readOnlyBiometryCell("FL", "fl", function(item) { return item.fl ? "CALC" : ""; }),
+		new readOnlyBiometryCell("Average Size", "", function(item) { return "CALC"; }),
+		new readOnlyBiometryCell("Nuchal Transparency", "nuchalTransparency", function(item) { return ""; })
 	]);
-	
-	crlTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-
-	var bpdTable = Table.createTable($("bpdTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
-	[			
-		new readOnlyCell("mm", "bpd"),
-		{
-			label: "wks", 
-			cellType: "readonly",
-			getValue: function(item) { return "CALC"; },
-			setValue: function(item, value) { return null; },
-			getError: function(item) { return null; }					
-		}
-	]);
-
-	bpdTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-
-	var ofdTable = Table.createTable($("ofdTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
-	[			
-		new readOnlyCell("mm", "ofd")
-	]);
-
-	ofdTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-
-	var correctedBpdTable = Table.createTable($("correctedBpdTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
-	[			
-		{
-			label: "mm", 
-			cellType: "readonly",
-			getValue: function(item) { return "CALC"; },
-			setValue: function(item, value) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "wks", 
-			cellType: "readonly",
-			getValue: function(item) { return "CALC"; },
-			setValue: function(item, value) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; },
-			getError: function(item) { return null; }
-		}
-	]);
-
-	correctedBpdTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-
-	var hcTable = Table.createTable($("hcTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
-	[			
-		new readOnlyCell("mm", "hc"),
-		{
-			label: "wks", 
-			cellType: "readonly",
-			getValue: function(item) { return "CALC	"; },
-			setValue: function(item, value) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; },
-			getError: function(item) { return null; }
-		}
-	]);
-
-	hcTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-
-	var abdTable = Table.createTable($("abdTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
-	[			
-		new readOnlyCell("", "abdX"),
-		{
-			label: "", 
-			cellType: "readonly",
-			getValue: function(item) { return "+"; },
-			setValue: function(item, value) { return null; },
-			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
-		},
-		new readOnlyCell("", "abdY"),
-		new readOnlyCell("mm", "abdAC"),
-		{
-			label: "wks", 
-			cellType: "readonly",
-			getValue: function(item) { return "CALC"; },
-			setValue: function(item, value) { return null; },
-			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
-		}
-	]);
-
-	abdTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-
-	var flTable = Table.createTable($("flTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
-	[			
-		new readOnlyCell("mm", "fl"),
-		{
-			label: "wks", 
-			cellType: "readonly",
-			getValue: function(item) { return "CALC"; },
-			setValue: function(item, value) { return null; },
-			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
-		}
-	]);
-
-	flTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-
-	var averageSizeTable = Table.createTable($("averageSizeTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
-	[			
-		{
-			label: "wks", 
-			cellType: "readonly",
-			getValue: function(item) { return "CALC"; },
-			setValue: function(item, value) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; },
-			getError: function(item) { return null; }
-		}
-	]);
-
-	averageSizeTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-
-	var nuchalTransparencyTable = Table.createTable($("nuchalTransparencyTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
-	[			
-		new readOnlyCell("mm", "nuchalTransparency")
-	]);
-
-	nuchalTransparencyTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-
+		
 	biometryAssessedTable.bindItems([data.biometry[fetus]]);
-	OnBiometryChanged(data.biometry[fetus].assessed == "Assessed", fetus);
-	crlTable.bindItems([data.biometry[fetus]]);
-	bpdTable.bindItems([data.biometry[fetus]]);
-	ofdTable.bindItems([data.biometry[fetus]]);
-	correctedBpdTable.bindItems([data.biometry[fetus]]);
-	hcTable.bindItems([data.biometry[fetus]]);
-	abdTable.bindItems([data.biometry[fetus]]);
-	flTable.bindItems([data.biometry[fetus]]);
-	averageSizeTable.bindItems([data.biometry[fetus]]);
-	nuchalTransparencyTable.bindItems([data.biometry[fetus]]);
-}
-
-function OnBiometryChanged(show, fetus)
-{
-	document.getElementById("crlTable"+fetus).style.display = (show && reportType == "T1") ? "block" : "none";
-	document.getElementById("bpdTable"+fetus).style.display = (show) ? "block" : "none";
-	document.getElementById("ofdTable"+fetus).style.display = (show && (reportType == "T2" || reportType == "T3")) ? "block" : "none";
-	document.getElementById("correctedBpdTable"+fetus).style.display = (show && (reportType == "T2" || reportType == "T3")) ? "block" : "none";
-	document.getElementById("hcTable"+fetus).style.display = (show && (reportType == "T2" || reportType == "T3")) ? "block" : "none";
-	document.getElementById("abdTable"+fetus).style.display = (show && (reportType == "T2" || reportType == "T3")) ? "block" : "none";
-	document.getElementById("flTable"+fetus).style.display = (show && (reportType == "T2" || reportType == "T3")) ? "block" : "none";
-	document.getElementById("averageSizeTable"+fetus).style.display = (show && (reportType == "T2" || reportType == "T3")) ? "block" : "none";
-	document.getElementById("nuchalTransparencyTable"+fetus).style.display = (show && reportType == "T2") ? "block" : "none";
+	biometrySummaryTable.bindItems([data.biometry[fetus]]);
 }
 
 function initAnatomy(fetus)
@@ -662,6 +519,22 @@ function readOnlyAssessedCell(label, prop)
 	this.getVisible = function(item) { return item[prop] != null && item[prop] != "" && item[prop] != "Assessed"; };
 }
 
+function readOnlyBiometryCell(label, prop, calcProp)
+{
+	this.label = label;
+	this.prop = prop;
+	this.calc = calcProp;
+	this.cellType = "readonly";
+	this.getValue = function(item) 
+	{ 
+		var value = "";
+		value += (item[prop] != null && item[prop] != "") ? item[prop] + " mm" : "";
+		value += (this.calc(item) != null && this.calc(item) != "") ? (value != "" ? " = " + this.calc(item) + " wks" : this.calc(item) + " wks") : "";
+		return value; 
+	}
+	this.getVisible = function(item) { return this.getValue(item) != ""; }
+}
+
 function readonlyStructuredReportHtml(source)
 {
 	var html = "";
@@ -745,38 +618,9 @@ function biometryHtml(fetus, fetusCount)
 	html+= 	"			<table id=\"biometryAssessedTable" + fetus + "\" width=\"100%\">";
 	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"			</table>";
-	html+= 	"			<div style=\"{float:left;width:48%;}\">";
-	html+= 	"				<table id=\"crlTable" + fetus + "\">";
-	html+= 	"					<tr><td class=\"tableheading\">CRL</td></tr>";
-	html+= 	"				</table>";
-	html+= 	"				<table id=\"bpdTable" + fetus + "\">";
-	html+= 	"					<tr><td class=\"tableheading\">BPD</td></tr>";
-	html+= 	"				</table>";
-	html+= 	"				<table id=\"ofdTable" + fetus + "\">";
-	html+= 	"					<tr><td class=\"tableheading\">OFD</td></tr>";
-	html+= 	"				</table>";
-	html+= 	"				<table id=\"correctedBpdTable" + fetus + "\">";
-	html+= 	"					<tr><td class=\"tableheading\">Corrected BPD</td></tr>";
-	html+= 	"				</table>";
-	html+= 	"				<table id=\"hcTable" + fetus + "\">";
-	html+= 	"					<tr><td class=\"tableheading\">HC</td></tr>";
-	html+= 	"				</table>";
-	html+= 	"				<table id=\"abdTable" + fetus + "\">";
-	html+= 	"					<tr><td class=\"tableheading\">ABD</td></tr>";
-	html+= 	"				</table>";
-	html+= 	"				<table id=\"flTable" + fetus + "\">";
-	html+= 	"					<tr><td class=\"tableheading\">FL</td></tr>";
-	html+= 	"				</table>";
-	html+= 	"				<table id=\"averageSizeTable" + fetus + "\">";
-	html+= 	"					<tr><td class=\"tableheading\">Average Size</td></tr>";
-	html+= 	"				</table>";
-	html+= 	"			</div>";
-	html+= 	"			<div style=\"{float:right;width:48%;}\">";
-	html+= 	"				<table id=\"nuchalTransparencyTable" + fetus + "\">";
-	html+= 	"					<tr><td class=\"tableheading\">Nuchal Transparency</td></tr>";
-	html+= 	"				</table>";
-	html+= 	"			</div>";
-	html+= 	"			<div style=\"{clear:both;}\">&nbsp;</div>";
+	html+= 	"			<table id=\"biometrySummaryTable" + fetus + "\">";
+	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
+	html+= 	"			</table>";
 	html+= 	"		</div>";
 
 	return html;
