@@ -67,6 +67,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._close = new System.Windows.Forms.Button();
             this._setTitle = new System.Windows.Forms.Button();
             this._modify = new System.Windows.Forms.Button();
+            this._accept = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _label
@@ -75,7 +76,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._label.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this._label.Location = new System.Drawing.Point(39, 58);
             this._label.Name = "_label";
-            this._label.Size = new System.Drawing.Size(77, 32);
+            this._label.Size = new System.Drawing.Size(58, 26);
             this._label.TabIndex = 0;
             this._label.Text = "label";
             // 
@@ -83,7 +84,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             // 
             this._text.Location = new System.Drawing.Point(45, 150);
             this._text.Name = "_text";
-            this._text.Size = new System.Drawing.Size(199, 22);
+            this._text.Size = new System.Drawing.Size(199, 20);
             this._text.TabIndex = 1;
             // 
             // label1
@@ -91,7 +92,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(42, 130);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 17);
+            this.label1.Size = new System.Drawing.Size(28, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "Text";
             // 
@@ -117,7 +118,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             // 
             // _close
             // 
-            this._close.Location = new System.Drawing.Point(45, 306);
+            this._close.Location = new System.Drawing.Point(281, 306);
             this._close.Name = "_close";
             this._close.Size = new System.Drawing.Size(74, 23);
             this._close.TabIndex = 5;
@@ -145,10 +146,21 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._modify.UseVisualStyleBackColor = true;
             this._modify.Click += new System.EventHandler(this._modify_Click);
             // 
+            // _accept
+            // 
+            this._accept.Location = new System.Drawing.Point(201, 306);
+            this._accept.Name = "_accept";
+            this._accept.Size = new System.Drawing.Size(74, 23);
+            this._accept.TabIndex = 8;
+            this._accept.Text = "Accept";
+            this._accept.UseVisualStyleBackColor = true;
+            this._accept.Click += new System.EventHandler(this._accept_Click);
+            // 
             // TestComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._accept);
             this.Controls.Add(this._modify);
             this.Controls.Add(this._setTitle);
             this.Controls.Add(this._close);
@@ -174,6 +186,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.Button _close;
         private System.Windows.Forms.Button _setTitle;
         private System.Windows.Forms.Button _modify;
+        private System.Windows.Forms.Button _accept;
 
     }
 }

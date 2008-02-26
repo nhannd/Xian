@@ -183,7 +183,7 @@ namespace ClearCanvas.Desktop
         {
             base.PrepareClose(reason);
 
-            return _host.Component.PrepareExit();
+            return _exitRequestedByComponent || _host.Component.PrepareExit();
         }
         
         /// <summary>

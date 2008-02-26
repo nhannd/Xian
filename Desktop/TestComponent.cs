@@ -86,11 +86,6 @@ namespace ClearCanvas.Desktop
             ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, new TestComponent("Dialog from " + _name), "Dialog from " + _name);
         }
 
-        public void Accept()
-        {
-            this.Host.Exit();
-        }
-
         public void SetTitle()
         {
             this.Host.Title = _text;
@@ -100,5 +95,16 @@ namespace ClearCanvas.Desktop
         {
             this.Modified = true;
         }
+
+        public void Cancel()
+        {
+            this.Exit(ApplicationComponentExitCode.None);
+        }
+
+        public void Accept()
+        {
+            this.Exit(ApplicationComponentExitCode.Error);
+        }
+
     }
 }

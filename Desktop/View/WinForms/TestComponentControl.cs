@@ -66,7 +66,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void _close_Click(object sender, EventArgs e)
         {
-            _component.Accept();
+            _component.Cancel();
         }
 
         private void _setTitle_Click(object sender, EventArgs e)
@@ -77,6 +77,11 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void _modify_Click(object sender, EventArgs e)
         {
             _component.Modify();
+        }
+
+        private void _accept_Click(object sender, EventArgs e)
+        {
+            _component.Accept();
         }
     }
 }
