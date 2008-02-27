@@ -209,9 +209,9 @@ namespace ClearCanvas.Common.Statistics
         /// Returns an instance of the underlying statistics set.
         /// </summary>
         /// <returns></returns>
-        public T NewStatistics()
+        public T NewStatistics(string name)
         {
-            return _collection.NewStatistics();
+            return _collection.NewStatistics(name);
         }
 
         /// <summary>

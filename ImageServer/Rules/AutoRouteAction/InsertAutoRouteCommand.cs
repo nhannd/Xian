@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
@@ -77,6 +78,8 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
             IDeviceEntityBroker selectDevice = updateContext.GetBroker<IDeviceEntityBroker>();
 
             Device dev = CollectionUtils.FirstElement<Device>(selectDevice.Find(deviceSelectCriteria));
+            if (dev == null)
+                throw new ApplicationException(String.Format("Device '{0}' not in database for autoroute request!", _deviceAe));
 
             WorkQueueAutoRouteInsertParameters parms = new WorkQueueAutoRouteInsertParameters();
 

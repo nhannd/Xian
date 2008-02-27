@@ -146,8 +146,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             try
             {
-                _instanceStats = _stats.NewStatistics();
-                _instanceStats.ProcessTime.Start();
+                OnProcessFileBegin();
 
                 _instanceStats.FileLoadTime.Start();
                 file = new DicomFile(path);
@@ -155,7 +154,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 _instanceStats.FileLoadTime.End();
                 _instanceStats.FileSize = (ulong) fileSize;
 
-                
+                _instanceStats.Name = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:"+fileInfo.Name);
 
                 // Get the Patients Name for processing purposes.
                 String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
@@ -239,6 +238,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
 
             _instanceStats.ProcessTime.End();            
+        }
+
+        private void OnProcessFileBegin()
+        {
+            _instanceStats = _stats.NewStatistics("Instance Processing");
+            _instanceStats.ProcessTime.Start();
+            _sopProcessedRulesEngine.Statistics.LoadTime.Reset();
+            _sopProcessedRulesEngine.Statistics.ExecutionTime.Reset();
         }
 
 

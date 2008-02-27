@@ -92,6 +92,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 return ;
             }
 
+            if (device.Dhcp && device.IpAddress.Length == 0)
+            {
+                Platform.Log(LogLevel.Error,
+                             "Auto-route destination is a DHCP device with no known IP address: \"{0}\"", device.AeTitle);
+
+                PostProcessing(item, WorkQueueUidList.Count, true);
+                return;
+            }
+
             ServerPartition partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
 
             // Now setup the StorageSCU component

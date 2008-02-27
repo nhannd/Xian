@@ -69,10 +69,12 @@ namespace ClearCanvas.Common.Statistics
         /// <summary>
         /// Returns a new instance of the underlying statistics set.
         /// </summary>
+        /// <param name="name">Name to be assigned to the statistics set.</param>
         /// <returns></returns>
-        public T NewStatistics()
+        public T NewStatistics(string name)
         {
             T newStat = new T();
+            newStat.Name = name;
             _list.Add(newStat);
             return newStat;
         }

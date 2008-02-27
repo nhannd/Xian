@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
@@ -97,7 +98,26 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 }
 
                 if (list.Count > 0)
+                {
                     device = list[0];
+
+                    // For DHCP devices, we always update the remote ip address, if its changed from what is in the DB.
+                    if (device.Dhcp && !association.RemoteEndPoint.Address.ToString().Equals(device.IpAddress))
+                    {
+                        DeviceUpdateColumns updateColumns = new DeviceUpdateColumns();
+
+                        updateColumns.IpAddress = association.RemoteEndPoint.Address.ToString();
+
+                        IDeviceEntityBroker update = updateContext.GetBroker<IDeviceEntityBroker>();
+
+                        if (!update.Update(device.GetKey(), updateColumns))
+                            Platform.Log(LogLevel.Error,
+                                         "Unable to update IP Address for DHCP device {0} on partition '{1}'",
+                                         device.AeTitle, partition.Description);
+                        else
+                            updateContext.Commit();                    
+                    }
+                }
             }
 
             return device;

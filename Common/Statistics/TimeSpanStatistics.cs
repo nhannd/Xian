@@ -87,7 +87,7 @@ namespace ClearCanvas.Common.Statistics
         public TimeSpanStatistics()
             : this("TimeSpanStatistics")
         {
-            
+            Value = new TimeSpan();
         }
 
         public TimeSpanStatistics(string name)
@@ -115,6 +115,14 @@ namespace ClearCanvas.Common.Statistics
         #region Public Methods
 
         /// <summary>
+        /// Resets the <see cref="TimeSpanStatistics"/>
+        /// </summary>
+        public void Reset()
+        {
+            Value = new System.TimeSpan();
+        }
+
+        /// <summary>
         /// Adds a <see cref="TimeSpanStatistics"/> to the current <see cref="TimeSpanStatistics"/>.
         /// </summary>
         /// <param name="ts"></param>
@@ -126,22 +134,22 @@ namespace ClearCanvas.Common.Statistics
         /// <summary>
         /// Adds a number of ticks to the current <see cref="TimeSpanStatistics"/>.
         /// </summary>
-        /// <param name="ts"></param>
+        /// <param name="ticks"></param>
         /// <remarks>
         /// </remarks>
-        public void Add(long ts)
+        public void Add(long ticks)
         {
-            Value = Value.Add(new TimeSpan(ts));
+            Value = Value.Add(new TimeSpan(ticks));
         }
 
 
         /// <summary>
         /// Subtract a number of ticks from the current <see cref="TimeSpanStatistics"/>.
         /// </summary>
-        /// <param name="ts"></param>
-        public void Subtract(long ts)
+        /// <param name="ticks"></param>
+        public void Subtract(long ticks)
         {
-            Value = Value.Subtract(new TimeSpan(ts));
+            Value = Value.Subtract(new TimeSpan(ticks));
         }
 
         /// <summary>
