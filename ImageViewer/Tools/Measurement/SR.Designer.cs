@@ -108,9 +108,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
-        public static string DeleteGraphicTool {
+        public static string DeleteGraphic {
             get {
-                return ResourceManager.GetString("DeleteGraphicTool", resourceCulture);
+                return ResourceManager.GetString("DeleteGraphic", resourceCulture);
             }
         }
         

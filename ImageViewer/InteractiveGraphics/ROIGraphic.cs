@@ -233,7 +233,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			if (_toolSet == null)
 				_toolSet = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(this, this.ImageViewer.DesktopWindow));
 
-			return ActionModelRoot.CreateModel(this.GetType().FullName, "basicgraphic-menu", _toolSet.Actions);
+			return ActionModelRoot.CreateModel(typeof(RoiGraphic).FullName, "basicgraphic-menu", _toolSet.Actions);
 		}
 
 		#endregion
