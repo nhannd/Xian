@@ -370,14 +370,37 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
+		/// <summary>
+		/// Occurs when one of the <see cref="Roi"/>'s control points has changed.
+		/// </summary>
+		/// <remarks>
+		/// This method does nothing unless overridden.  Derived classes have an
+		/// opportunity to do things such as set the <see cref="Callout"/>'s location based on
+		/// some property of the <see cref="Roi"/>, for example.
+		/// </remarks>
 		protected virtual void OnControlPointChanged()
 		{
 		}
 
+		/// <summary>
+		/// Occurs when the <see cref="Callout"/>'s location has changed.
+		/// </summary>
+		/// <remarks>
+		/// This method does nothing unless overridden.
+		/// </remarks>
 		protected virtual void OnCalloutLocationChanged()
 		{
 		}
 
+		/// <summary>
+		/// Called when the <see cref="Callout"/>'s end point needs to be recalculated.
+		/// </summary>
+		/// <remarks>
+		/// The callout endpoint is automatically calculated based on the properties
+		/// of the <see cref="Roi"/> itself and the location of the <see cref="Callout"/>.
+		/// By default, the value is the closest point to the <see cref="Callout"/>'s 
+		/// location on the <see cref="Roi"/> (determined from <see cref="InteractiveGraphic.GetClosestPoint"/>).
+		/// </remarks>
 		protected virtual PointF CalculateCalloutEndPoint()
 		{
 			return _roiGraphic.GetClosestPoint(_calloutGraphic.StartPoint);
