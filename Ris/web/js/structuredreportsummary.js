@@ -541,6 +541,7 @@ function readonlyStructuredReportHtml(source)
 	var data = source || { general : { fetalNumber: 1}};
 	var fetusCount = data.general.fetalNumber;
 
+	html+= "<div class=\"ObsrSummary\">";
 	html+= titleHtml();
 	html+= indicationsAndDatesHtml();
 	html+= generalHtml(i, fetusCount);
@@ -552,6 +553,7 @@ function readonlyStructuredReportHtml(source)
 		html+= wellBeingHtml(i, fetusCount);
 	}
 	html+= commentsConclusionsHtml();
+	html+= "</div>";
 
 	return html;
 }
@@ -574,19 +576,19 @@ function indicationsAndDatesHtml()
 
 	html+= 	"		<div id=\"IndicationsAndDates\">";
 	html+=	"			<div class=\"sectionheading\">Indications and Dates</div>";
-	html+= 	"			<table id=\"indicationsAndDatesTable\" width=\"100%\">";
+	html+= 	"			<table id=\"indicationsAndDatesTable\">";
 	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"			</table>";
 	html+= 	"			<br />";
-	html+= 	"			<table id=\"lmpTable\" width=\"100%\">";
+	html+= 	"			<table id=\"lmpTable\">";
 	html+= 	"				<tr><td class=\"tableheading\">LMP</td></tr>";
 	html+= 	"			</table>";
 	html+= 	"			<br />";
-	html+= 	"			<table id=\"usTable\" width=\"100%\">";
+	html+= 	"			<table id=\"usTable\">";
 	html+= 	"				<tr><td class=\"tableheading\">US</td></tr>";
 	html+= 	"			</table>";
 	html+= 	"			<br />";
-	html+= 	"			<table id=\"establishedEDCTable\" width=\"100%\">";
+	html+= 	"			<table id=\"establishedEDCTable\">";
 	html+= 	"				<tr><td class=\"tableheading\">Established EDC</td></tr>";
 	html+= 	"			</table>";
 	html+= 	"		</div>";
@@ -600,7 +602,7 @@ function generalHtml()
 	
 	html+= 	"		<div id=\"General\">";
 	html+=	"			<div class=\"sectionheading\">General</div>";
-	html+= 	"			<table id=\"generalTable\" width=\"100%\">";
+	html+= 	"			<table id=\"generalTable\">";
 	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"			</table>";
 	html+= 	"		</div>";
@@ -615,7 +617,7 @@ function biometryHtml(fetus, fetusCount)
 
 	html+= 	"		<div id=\"Biometry" + fetus + "\">";
 	html+=	"			<div class=\"sectionheading\">Biometry" + fetusLabel + "</div>";
-	html+= 	"			<table id=\"biometryAssessedTable" + fetus + "\" width=\"100%\">";
+	html+= 	"			<table id=\"biometryAssessedTable" + fetus + "\">";
 	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"			</table>";
 	html+= 	"			<table id=\"biometrySummaryTable" + fetus + "\">";
@@ -633,43 +635,43 @@ function anatomyHtml(fetus, fetusCount)
 
 	html+= 	"		<div id=\"Anatomy" + fetus + "\">";
 	html+=	"			<div class=\"sectionheading\">Anatomy" + fetusLabel + "</div>";
-	html+= 	"			<table id=\"anatomyTable" + fetus + "\" width=\"100%\">";
+	html+= 	"			<table id=\"anatomyTable" + fetus + "\">";
 	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"			</table>";
 	html+= 	"			<div style=\"{width:48%; float:left;}\">";
-	html+= 	"				<table id=\"headShapeTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table id=\"headShapeTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"headTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table id=\"headTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\">Head</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"nuchalFoldTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table id=\"nuchalFoldTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"faceTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table id=\"faceTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\">Face</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"spineTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table id=\"spineTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
 	html+= 	"			<div style=\"{width:48%; float:right;}\">";
-	html+= 	"				<table id=\"heartTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table id=\"heartTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\">Heart</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"chestTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table id=\"chestTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"abdomenTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table id=\"abdomenTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\">Abdomen</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"genitaliaTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table id=\"genitaliaTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"extremitiesTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table class=\"extremitiesTable\" id=\"extremitiesTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\">Extremities</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"cordVesselsTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table id=\"cordVesselsTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
@@ -686,11 +688,11 @@ function cardiacHtml(fetus, fetusCount)
 	
 	html+= 	"		<div id=\"Cardiac" + fetus + "\">";
 	html+=	"			<div class=\"sectionheading\">Cardiac" + fetusLabel + "</div>";
-	html+= 	"			<table id=\"fourChamberViewTable" + fetus + "\" width=\"100%\">";
+	html+= 	"			<table id=\"fourChamberViewTable" + fetus + "\">";
 	html+= 	"				<tr><td class=\"tableheading\">Four-Chamber View</td></tr>";
 	html+= 	"			</table>";
 	html+= 	"			<br />";
-	html+= 	"			<table id=\"outflowTractsTable" + fetus + "\" width=\"100%\">";
+	html+= 	"			<table id=\"outflowTractsTable" + fetus + "\">";
 	html+= 	"				<tr><td class=\"tableheading\">Outflow Tracts</td></tr>";
 	html+= 	"			</table>";
 	html+= 	"		</div>";
@@ -704,31 +706,31 @@ function wellBeingHtml(fetus, fetusCount)
 	var fetusLabel = fetusCount > 1 ? " - Fetus " + (fetus+1) : "";
 	html+= 	"		<div id=\"WellBeing" + fetus + "\">";
 	html+=	"			<div class=\"sectionheading\">Well-Being" + fetusLabel + "</div>";
-	html+= 	"			<table id=\"wellBeingTable" + fetus + "\" width=\"100%\">";
+	html+= 	"			<table id=\"wellBeingTable" + fetus + "\">";
 	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"			</table>";
-	html+= 	"			<div style=\"{width:48%;float:left;}\">";
-	html+= 	"				<table id=\"bpsTable" + fetus + "\" width=\"100%\">";
+	html+= 	"			<div class=\"wellBeingBpsColumn\" style=\"{width:48%;float:left;}\">";
+	html+= 	"				<table id=\"bpsTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\">BPS</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
-	html+= 	"			<div style=\"{width:48%;float:right;}\">";
+	html+= 	"			<div class=\"wellBeingDopplerColumn\"  style=\"{width:48%;float:right;}\">";
 	html+= 	"				<div id=\"dopplerHeading" + fetus + "\" class=\"tableheading\">Doppler</div>";
-	html+= 	"				<table id=\"dopplerUmbilicalArteryTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table id=\"dopplerUmbilicalArteryTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\">Umbilical - Artery</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"dopplerUmbilicalVeinTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table id=\"dopplerUmbilicalVeinTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\">Umbilical - Vein</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"dopplerUterineArteryTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table id=\"dopplerUterineArteryTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\">Uterine Artery</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"dopplerMiddleCerebralArteryTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table id=\"dopplerMiddleCerebralArteryTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\">Middle Cerebral Artery</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
 	html+= 	"			<div style=\"{clear:both;}\">";
-	html+= 	"				<table id=\"placentaTable" + fetus + "\" width=\"100%\">";
+	html+= 	"				<table class=\"placentaTable\" id=\"placentaTable" + fetus + "\">";
 	html+= 	"					<tr><td class=\"tableheading\">Placenta</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
@@ -743,7 +745,7 @@ function commentsConclusionsHtml()
 
 	html+= 	"		<div id=\"CommentsConclusion\">";
 	html+=	"			<div class=\"sectionheading\">Comments and Conclusions</div>";
-	html+= 	"			<table id=\"commentsConclusionTable\" width=\"100%\">";
+	html+= 	"			<table id=\"commentsConclusionTable\">";
 	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"			</table>";
 	html+= 	"		</div>";

@@ -1,54 +1,59 @@
-#T1T2T3Doc .TabPage
+#ObsrForm .TabPage
 {
 	height: 225px;
 	overflow:auto;
 }
 
-#T1T2T3Doc .TabPage table{
+#ObsrForm .TabPage table{
 	width: 95%;
 }
 
-#wellBeingDopplerColumn .divCell
+.ObsrSummary table 
+{
+	width: 95%;
+}
+
+.wellBeingDopplerColumn .divCell
 {
 	width:45%;
 }
 
-#wellBeingDopplerColumn .divCell *
+.wellBeingDopplerColumn .divCell *
 {
 	width:100%;
 }
 
-#wellBeingBpsColumn .divCell
+.wellBeingBpsColumn .divCell
 {
 	width:45%;
 }
 
-#wellBeingBpsColumn .divCell *
+.wellBeingBpsColumn .divCell *
 {
 	width:100%;
 }
 
-#extremitiesTable .divCell
+.extremitiesTable .divCell
 {
 	width:45%;
 }
 
-#extremitiesTable .divCell *
+.extremitiesTable .divCell *
 {
 	width:100%;
 }
 
-#placentaTable
+.placentaTable
 {
 	margin-top: 1em;
 }
 
-#placentaTable .divCell
+.placentaTable .divCell
 {
 	width:20%;
 }
 
-#placentaTable .divCell *
+.placentaTable .divCell *
 {
 	width:100%;
 }

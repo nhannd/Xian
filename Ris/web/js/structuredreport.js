@@ -21,14 +21,14 @@ function initStructuredReport(source)
 	if(data.obusReportType == null)
 	{
 		document.getElementById("TypeSelection").style.display = 'block';
-		document.getElementById("T1T2T3Doc").style.display = 'none';
+		document.getElementById("ObsrForm").style.display = 'none';
 		document.getElementById("fetusSelect").style.display = 'none';
 		initTypeSelectionTable();
 	}
 	else
 	{
 		if(document.getElementById("TypeSelection")) document.getElementById("TypeSelection").style.display = 'none';
-		if(document.getElementById("T1T2T3Doc")) document.getElementById("T1T2T3Doc").style.display = 'block';
+		if(document.getElementById("ObsrForm")) document.getElementById("ObsrForm").style.display = 'block';
 		if(document.getElementById("fetusSelect")) document.getElementById("fetusSelect").style.display = 'block';
 		if(document.getElementById("reportType")) document.getElementById("reportType").innerHTML = data.obusReportType;
 		initTabs();
@@ -1410,7 +1410,7 @@ function onTypeSelected()
 	if(data.obusReportType != null)
 	{
 		document.getElementById("TypeSelection").style.display = 'none';
-		document.getElementById("T1T2T3Doc").style.display = 'block';
+		document.getElementById("ObsrForm").style.display = 'block';
 		document.getElementById("reportType").innerHTML = data.obusReportType;
 		initTabs();
 	}
@@ -1511,7 +1511,7 @@ function structuredReportHtml()
 	html+= 	"		</table>";
 	html+= 	"		<input type=\"button\" value=\"Confirm\" onclick=\"javascript: onTypeSelected()\"/>";
 	html+= 	"	</div>";
-	html+= 	"	<div id=\"T1T2T3Doc\" class=\"TabControl\">";
+	html+= 	"	<div id=\"ObsrForm\" class=\"TabControl\">";
 	html+= 	"		<div class=\"TabList\">";
 	html+= 	"			<label for=\"IndicationsAndDates\" class=\"Tab\">Indications & Dates</label>";
 	html+= 	"			<label for=\"General\" class=\"Tab\">General</label>";
@@ -1616,7 +1616,7 @@ function structuredReportHtml()
 	html+= 	"				<table id=\"genitaliaTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Genitalia</td></tr>";
 	html+= 	"				</table>";
-	html+= 	"				<table id=\"extremitiesTable\">";
+	html+= 	"				<table class=\"extremitiesTable\" id=\"extremitiesTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Extremities</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"cordVesselsTable\">";
@@ -1638,12 +1638,12 @@ function structuredReportHtml()
 	html+= 	"			<table id=\"wellBeingTable\">";
 	html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"			</table>";
-	html+= 	"			<div  id=\"wellBeingBpsColumn\" style=\"{width:48%;float:left;}\">";
+	html+= 	"			<div class=\"wellBeingBpsColumn\" style=\"{width:48%;float:left;}\">";
 	html+= 	"				<table id=\"bpsTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">BPS</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
-	html+= 	"			<div id=\"wellBeingDopplerColumn\" style=\"{width:48%;float:right;}\">";
+	html+= 	"			<div class=\"wellBeingDopplerColumn\" style=\"{width:48%;float:right;}\">";
 	html+= 	"				<div id=\"dopplerHeading\" class=\"tableheading\">Doppler</div>";
 	html+= 	"				<table id=\"dopplerUmbilicalArteryTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Umbilical - Artery</td></tr>";
@@ -1659,7 +1659,7 @@ function structuredReportHtml()
 	html+= 	"				</table>";
 	html+= 	"			</div>";
 	html+= 	"			<div style=\"{clear:both;}\">";
-	html+= 	"				<table id=\"placentaTable\">";
+	html+= 	"				<table class=\"placentaTable\" id=\"placentaTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Placenta</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
