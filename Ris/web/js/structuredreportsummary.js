@@ -404,8 +404,8 @@ function initWellBeing(fetus)
 	var dopplerUterineArteryTable = Table.createTable($("dopplerUterineArteryTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
 		new readOnlyCell("PI - Left", "leftUterinePi"),
-		new readOnlyCell("Notch - Left", "leftUterineNotch"),
 		new readOnlyCell("PI - Right", "rightUterinePi"),
+		new readOnlyCell("Notch - Left", "leftUterineNotch"),
 		new readOnlyCell("Notch - Right", "rightUterineNotch")
 	]);
 
