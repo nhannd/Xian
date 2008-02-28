@@ -100,16 +100,21 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// in a <see cref="Tile"/>.
 		/// </summary>
 		/// <remarks>
-		/// If set to <b>true</b>, the <see cref="SpatialTransform.Scale"/> property will be ignored.
+		/// If set to <b>true</b>, the <see cref="SpatialTransform.Scale"/> property will be auto-calculated.
 		/// </remarks>
 		public bool ScaleToFit
 		{
 			get { return _scaleToFit; }
 			set
 			{
+				if (_scaleToFit == value)
+					return;
+
 				_scaleToFit = value;
 				if (_scaleToFit)
 					CalculateScaleToFit();
+
+				base.ForceRecalculation();
 			}
 		}
 
@@ -188,6 +193,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 				_clientRectangle = value;
 				if (_scaleToFit) 
 					CalculateScaleToFit();
+
+				base.ForceRecalculation();
 			}
 		}
 #pragma warning restore 1591

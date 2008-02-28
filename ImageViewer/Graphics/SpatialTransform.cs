@@ -138,7 +138,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 			protected set 
 			{
+				if (_scaleX == value)
+					return;
+				
 				_scaleX = value;
+				this.RecalculationRequired = true;
 			}
 		}
 
@@ -157,7 +161,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 			protected set 
 			{
+				if (_scaleY == value)
+					return;
+
 				_scaleY = value;
+				this.RecalculationRequired = true;
 			}
 		}
 
