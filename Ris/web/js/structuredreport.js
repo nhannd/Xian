@@ -1274,16 +1274,16 @@ function initWellBeing()
 			label: "Notch - Left",
 			cellType: "choice",
 			choices: ["Yes", "No"],
-			getValue: function(item) { return item.leftUterinNotch; },
-			setValue: function(item, value) { item.leftUterinNotch = value; },
+			getValue: function(item) { return item.leftUterineNotch; },
+			setValue: function(item, value) { item.leftUterineNotch = value; },
 			getError: function(item) { return null; }
 		},
 		{
 			label: "Notch - Right",
 			cellType: "choice",
 			choices: ["Yes", "No"],
-			getValue: function(item) { return item.rightUterinNotch; },
-			setValue: function(item, value) { item.rightUterinNotch = value; },
+			getValue: function(item) { return item.rightUterineNotch; },
+			setValue: function(item, value) { item.rightUterineNotch = value; },
 			getError: function(item) { return null; }
 		}
 	]);
