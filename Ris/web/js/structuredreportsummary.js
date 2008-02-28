@@ -177,7 +177,7 @@ function initAnatomy(fetus)
 
 	var headShapeTable = Table.createTable($("headShapeTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
-		new readOnlyCell("Head shape", "headShape")
+		new readOnlyCell("Head Shape", "headShape", true)
 	]);			
 	
 	headShapeTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -195,7 +195,7 @@ function initAnatomy(fetus)
 
 	var nuchalFoldTable = Table.createTable($("nuchalFoldTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
-		new readOnlyCell("Nuchal fold", "nuchalFold")
+		new readOnlyCell("Nuchal fold", "nuchalFold", true)
 	]);
 	
 	nuchalFoldTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -212,7 +212,7 @@ function initAnatomy(fetus)
 
 	var spineTable = Table.createTable($("spineTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
-		new readOnlyCell("Spine", "spine")
+		new readOnlyCell("Spine", "spine", true)
 	]);
 
 	spineTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -230,7 +230,7 @@ function initAnatomy(fetus)
 
 	var chestTable = Table.createTable($("chestTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
-		new readOnlyCell("Chest", "chest")
+		new readOnlyCell("Chest", "chest", true)
 	]);
 	
 	chestTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -249,7 +249,7 @@ function initAnatomy(fetus)
 
 	var genitaliaTable = Table.createTable($("genitaliaTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
-		new readOnlyCell("Genitalia", "genitalia")
+		new readOnlyCell("Genitalia", "genitalia", true)
 	]);
 	
 	genitaliaTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -266,7 +266,7 @@ function initAnatomy(fetus)
 
 	var cordVesselsTable = Table.createTable($("cordVesselsTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
-		new readOnlyCell("Cord Vessels", "cordVessels")
+		new readOnlyCell("Cord Vessels", "cordVessels", true)
 	]);
 
 	cordVesselsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -492,9 +492,9 @@ function initSections()
 	initCommentsConclusion();
 }
 
-function readOnlyCell(label, prop)
+function readOnlyCell(label, prop, formatLabelLikeTableHeading)
 {
-	this.label = label;
+	this.label = formatLabelLikeTableHeading ? "<span class=\"tableheading\">" + label + "</span>" : label;
 	this.prop = prop;
 	this.cellType = "readonly";
 	this.getValue = function(item) { return item[prop]; };
@@ -638,19 +638,19 @@ function anatomyHtml(fetus, fetusCount)
 	html+= 	"			</table>";
 	html+= 	"			<div style=\"{width:48%; float:left;}\">";
 	html+= 	"				<table id=\"headShapeTable" + fetus + "\" width=\"100%\">";
-	html+= 	"					<tr><td class=\"tableheading\">Head Shape</td></tr>";
+	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"headTable" + fetus + "\" width=\"100%\">";
 	html+= 	"					<tr><td class=\"tableheading\">Head</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"nuchalFoldTable" + fetus + "\" width=\"100%\">";
-	html+= 	"					<tr><td class=\"tableheading\">Nuchal Fold</td></tr>";
+	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"faceTable" + fetus + "\" width=\"100%\">";
 	html+= 	"					<tr><td class=\"tableheading\">Face</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"spineTable" + fetus + "\" width=\"100%\">";
-	html+= 	"					<tr><td class=\"tableheading\">Spine</td></tr>";
+	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
 	html+= 	"			<div style=\"{width:48%; float:right;}\">";
@@ -658,19 +658,19 @@ function anatomyHtml(fetus, fetusCount)
 	html+= 	"					<tr><td class=\"tableheading\">Heart</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"chestTable" + fetus + "\" width=\"100%\">";
-	html+= 	"					<tr><td class=\"tableheading\">Chest</td></tr>";
+	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"abdomenTable" + fetus + "\" width=\"100%\">";
 	html+= 	"					<tr><td class=\"tableheading\">Abdomen</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"genitaliaTable" + fetus + "\" width=\"100%\">";
-	html+= 	"					<tr><td class=\"tableheading\">Genitalia</td></tr>";
+	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"extremitiesTable" + fetus + "\" width=\"100%\">";
 	html+= 	"					<tr><td class=\"tableheading\">Extremities</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"cordVesselsTable" + fetus + "\" width=\"100%\">";
-	html+= 	"					<tr><td class=\"tableheading\">Cord Vessels</td></tr>";
+	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"				</table>";
 	html+= 	"			</div>";
 	html+= 	"			<div style=\"{clear:both;}\">&nbsp;</div>";
@@ -686,8 +686,6 @@ function cardiacHtml(fetus, fetusCount)
 	
 	html+= 	"		<div id=\"Cardiac" + fetus + "\">";
 	html+=	"			<div class=\"sectionheading\">Cardiac" + fetusLabel + "</div>";
-	html+= 	"			<table id=\"cardiacDummy" + fetus + "\" width=\"100%\" style=\"{display:none;}\">";
-	html+= 	"			</table>";
 	html+= 	"			<table id=\"fourChamberViewTable" + fetus + "\" width=\"100%\">";
 	html+= 	"				<tr><td class=\"tableheading\">Four-Chamber View</td></tr>";
 	html+= 	"			</table>";
