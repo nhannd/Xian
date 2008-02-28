@@ -61,15 +61,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			IOverlayGraphicsProvider image = mouseInformation.Tile.PresentationImage as IOverlayGraphicsProvider;
 			if (image == null)
 				return false;
-			
-			//When you create a graphic from within a tool (particularly one that needs capture, like a multi-click graphic),
-			//see it through to the end of creation.  It's just cleaner, not to mention that if this tool knows how to create it,
-			//it should also know how to (and be responsible for) cancelling it and/or deleting it appropriately.
-			InteractiveGraphic interactiveGraphic = CreateInteractiveGraphic();
 
-			_createRoiGraphic = new RoiGraphic(interactiveGraphic, true);
-			_createRoiGraphic.Name = this.ToString();
-
+			_createRoiGraphic = CreateRoiGraphic();
 			_createRoiGraphic.RoiChanged += OnRoiChanged;
 
 			image.OverlayGraphics.Add(_createRoiGraphic);
@@ -136,6 +129,19 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				return _createRoiGraphic.GetCursorToken(point);
 
 			return null;
+		}
+
+		protected virtual RoiGraphic CreateRoiGraphic()
+		{
+			//When you create a graphic from within a tool (particularly one that needs capture, like a multi-click graphic),
+			//see it through to the end of creation.  It's just cleaner, not to mention that if this tool knows how to create it,
+			//it should also know how to (and be responsible for) cancelling it and/or deleting it appropriately.
+			InteractiveGraphic interactiveGraphic = CreateInteractiveGraphic();
+
+			RoiGraphic roiGraphic = new RoiGraphic(interactiveGraphic, true);
+			roiGraphic.Name = this.ToString();
+
+			return roiGraphic;
 		}
 
 		protected abstract InteractiveGraphic CreateInteractiveGraphic();

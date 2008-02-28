@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
@@ -97,7 +98,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected override InteractiveGraphic CreateInteractiveGraphic()
 		{
-			return new ProtractorInteractiveGraphic();
+			throw new NotImplementedException("This method should never be called since CreateRoiGraphic is overridden.");
+		}
+
+		protected override RoiGraphic CreateRoiGraphic()
+		{
+			return new ProtractorRoiGraphic();
 		}
 
 		protected override void OnRoiCreation(RoiGraphic roiGraphic)

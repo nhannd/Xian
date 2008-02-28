@@ -370,6 +370,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
+		protected virtual void OnControlPointChanged()
+		{
+		}
+
+		protected virtual void OnCalloutLocationChanged()
+		{
+		}
+
+		protected virtual PointF CalculateCalloutEndPoint()
+		{
+			return _roiGraphic.GetClosestPoint(_calloutGraphic.StartPoint);
+		}
+
 		private void BuildGraphic()
 		{
 			base.Graphics.Add(_roiGraphic);
@@ -378,7 +391,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.Graphics.Add(_calloutGraphic);
 
 			_roiGraphic.ControlPoints.ControlPointChangedEvent += new EventHandler<ListEventArgs<PointF>>(OnControlPointChanged);
-			_calloutGraphic.LocationChanged += new EventHandler<PointChangedEventArgs>(OnCalloutTopLeftChanged);
+			_calloutGraphic.LocationChanged += new EventHandler<PointChangedEventArgs>(OnCalloutLocationChanged);
 
 			this.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnROIGraphicStateChanged);
 		}
@@ -468,23 +481,30 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Trace.Write("EnterFocusSelectedState\n");
 		}
 
-		private void OnControlPointChanged(object sender, ListEventArgs<PointF> e)
+		private void SetCalloutEndPoint()
 		{
 			// We're attaching the callout to the ROI, so make sure the two
 			// graphics are in the same coordinate system before we do that.
 			_calloutGraphic.CoordinateSystem = _roiGraphic.CoordinateSystem;
-			_calloutGraphic.EndPoint = _roiGraphic.GetClosestPoint(_calloutGraphic.StartPoint);
+			_calloutGraphic.EndPoint = CalculateCalloutEndPoint();
 			_calloutGraphic.ResetCoordinateSystem();
+		}
+
+		private void OnControlPointChanged(object sender, ListEventArgs<PointF> e)
+		{
+			OnControlPointChanged();
+
+			SetCalloutEndPoint();
 
 			if (_raiseRoiChangedEvent)
 				EventsHelper.Fire(_roiChangedEvent, this, EventArgs.Empty);
 		}
 
-		private void OnCalloutTopLeftChanged(object sender, PointChangedEventArgs e)
+		private void OnCalloutLocationChanged(object sender, PointChangedEventArgs e)
 		{
-			_calloutGraphic.CoordinateSystem = _roiGraphic.CoordinateSystem;
-			_calloutGraphic.EndPoint = _roiGraphic.GetClosestPoint(_calloutGraphic.StartPoint);
-			_calloutGraphic.ResetCoordinateSystem();
+			OnCalloutLocationChanged();
+
+			SetCalloutEndPoint();
 		}
 	}
 }
