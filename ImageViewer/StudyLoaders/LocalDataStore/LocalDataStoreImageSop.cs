@@ -210,6 +210,14 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			}
 		}
 
+		public override int NumberOfFrames
+		{
+			get
+			{
+				return Math.Max(DataStoreImageSopInstance.NumberOfFrames, 1);
+			}
+		}
+
 		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override PixelSpacing PixelSpacing
 		{

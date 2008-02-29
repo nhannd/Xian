@@ -53,6 +53,7 @@ namespace ClearCanvas.Dicom.DataStore
     	private ImageOrientationPatient _imageOrientationPatient;
     	private double _rescaleSlope;
     	private double _rescaleIntercept;
+    	private int _numberOfFrames;
     	private readonly IList _windowValues;
 
 		#endregion
@@ -153,6 +154,12 @@ namespace ClearCanvas.Dicom.DataStore
             get { return _rescaleIntercept; }
 			set { SetValueTypeMember(ref _rescaleIntercept, value); }
         }
+
+    	public virtual int NumberOfFrames
+    	{
+			get { return _numberOfFrames; }
+			set { SetValueTypeMember(ref _numberOfFrames, value); }
+    	}
 
     	public virtual IList WindowValues
         {
@@ -260,6 +267,9 @@ namespace ClearCanvas.Dicom.DataStore
 			attribute = sopInstanceDataset[DicomTags.RescaleIntercept];
 			attribute.TryGetFloat64(0, out doubleValue);
 			RescaleIntercept = doubleValue;
+
+			attribute = sopInstanceDataset[DicomTags.NumberOfFrames];
+			_numberOfFrames = attribute.GetInt32(0, 0);
 
 			List<Window> windowValues = new List<Window>();
 

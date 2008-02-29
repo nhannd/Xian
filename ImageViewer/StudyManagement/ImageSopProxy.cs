@@ -371,6 +371,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		public override int NumberOfFrames
+		{
+			get
+			{
+				return _realImageSop.NumberOfFrames;
+			}
+		}
+
 		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override PatientOrientation PatientOrientation
 		{

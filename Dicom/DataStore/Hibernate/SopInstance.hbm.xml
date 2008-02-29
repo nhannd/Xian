@@ -16,6 +16,7 @@
     <many-to-one name="Series" class="ClearCanvas.Dicom.DataStore.Series, ClearCanvas.Dicom.DataStore" column="SeriesOid_" not-null="true" fetch="select"/>
     <joined-subclass name="ImageSopInstance" table="ImageSopInstance_" lazy="false" >
       <key column="Oid_" />
+      <property name="NumberOfFrames" column="NumberOfFrames_" type="Int32" />
       <property name="SamplesPerPixel" column="SamplesPerPixel_" type="Int32" />
       <property name="BitsStored" column="BitsStored_" type="Int32" />
       <property name="RescaleSlope" column="RescaleSlope_" type="Double" />

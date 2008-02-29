@@ -425,15 +425,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				return 1;
-				//bool tagExists;
-				//int numberOfFrames;
-				//GetTag(DicomTags.NumberOfFrames, out numberOfFrames, out tagExists);
+				bool tagExists;
+				int numberOfFrames;
+				GetTag(DicomTags.NumberOfFrames, out numberOfFrames, out tagExists);
 
-				//if (tagExists)
-				//    return numberOfFrames;
-				//else
-				//    return 1;
+				return Math.Max(numberOfFrames, 1);
 			}
 		}
 
