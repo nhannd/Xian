@@ -53,7 +53,7 @@
                                                             </DynamicItemTemplate>
                                                         </asp:Menu>
                                                     </asp:TableCell>
-                                                    <asp:TableCell HorizontalAlign="right" CssClass="CSSPageTitle">
+                                                    <asp:TableCell BorderColor="Red" BorderWidth="0px" HorizontalAlign="right" CssClass="CSSPageTitle">
                                                         <asp:ContentPlaceHolder ID="ContentPlaceHolderTitle" runat="server">
                                                         </asp:ContentPlaceHolder>
                                                     </asp:TableCell>

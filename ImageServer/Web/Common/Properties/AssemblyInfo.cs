@@ -32,6 +32,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Web.UI;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -64,3 +65,7 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 [assembly: AssemblyVersion("0.90.0.0")]
 [assembly: AssemblyFileVersion("0.90.0.0")]
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton.js", "text/javascript")]
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.js", "text/javascript")]
+
+

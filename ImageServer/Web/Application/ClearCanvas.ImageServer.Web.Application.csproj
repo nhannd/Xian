@@ -303,6 +303,29 @@
     <Compile Include="Search\StudySummary.cs">
     </Compile>
     <Compile Include="Search\StudySummaryAssembler.cs" />
+    <Compile Include="SeriesDetails\SeriesDetailsAssembler.cs" />
+    <Compile Include="SeriesDetails\SeriesDetails.cs" />
+    <Compile Include="SeriesDetails\SeriesDetailsPage.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>SeriesDetailsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SeriesDetails\SeriesDetailsPage.aspx.designer.cs">
+      <DependentUpon>SeriesDetailsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SeriesDetails\SeriesDetailsPanel.ascx.cs">
+      <DependentUpon>SeriesDetailsPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SeriesDetails\SeriesDetailsPanel.ascx.designer.cs">
+      <DependentUpon>SeriesDetailsPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SeriesDetails\SeriesDetailsView.ascx.cs">
+      <DependentUpon>SeriesDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SeriesDetails\SeriesDetailsView.ascx.designer.cs">
+      <DependentUpon>SeriesDetailsView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
@@ -313,6 +336,53 @@
     <Compile Include="Services\ValidationServices.asmx.cs">
       <DependentUpon>ValidationServices.asmx</DependentUpon>
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="StudyDetails\StudyDetailsSecondaryView.ascx.cs">
+      <DependentUpon>StudyDetailsSecondaryView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StudyDetails\StudyDetailsSecondaryView.ascx.designer.cs">
+      <DependentUpon>StudyDetailsSecondaryView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="StudyDetails\PatientSummaryAssembler.cs" />
+    <Compile Include="StudyDetails\PatientSummaryPanel.ascx.cs">
+      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StudyDetails\PatientSummaryPanel.ascx.designer.cs">
+      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="StudyDetails\PatientSummary.cs" />
+    <Compile Include="StudyDetails\SeriesGridView.ascx.cs">
+      <DependentUpon>SeriesGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StudyDetails\SeriesGridView.ascx.designer.cs">
+      <DependentUpon>SeriesGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="StudyDetails\StudyDetailsPage.aspx.cs">
+      <DependentUpon>StudyDetailsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StudyDetails\StudyDetailsPage.aspx.designer.cs">
+      <DependentUpon>StudyDetailsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="StudyDetails\StudyDetails.cs">
+    </Compile>
+    <Compile Include="StudyDetails\StudyDetailsPanel.ascx.cs">
+      <DependentUpon>StudyDetailsPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StudyDetails\StudyDetailsPanel.ascx.designer.cs">
+      <DependentUpon>StudyDetailsPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="StudyDetails\StudyDetailsAssembler.cs" />
+    <Compile Include="StudyDetails\StudyDetailsView.ascx.cs">
+      <DependentUpon>StudyDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StudyDetails\StudyDetailsView.ascx.designer.cs">
+      <DependentUpon>StudyDetailsView.ascx</DependentUpon>
     </Compile>
     <Compile Include="WorkQueue\SearchResultAccordian.ascx.cs">
       <DependentUpon>SearchResultAccordian.ascx</DependentUpon>
@@ -399,7 +469,10 @@
     <Content Include="Common\InvalidInputIndicator.ascx" />
     <Content Include="Common\ServerPartitionTabs.ascx" />
     <Content Include="images\blank.gif" />
+    <Content Include="images\icons\OpenDisabled.png" />
+    <Content Include="images\icons\OpenEnabled.png" />
     <Content Include="Scripts\NumberFormat154.js" />
+    <EmbeddedResource Include="Search\SearchPanel.js" />
     <Content Include="Search\StudyListGridView.ascx" />
     <Content Include="Common\BarChart.aspx" />
     <Content Include="Common\ConfirmDialog.ascx" />
@@ -458,8 +531,18 @@
     <Content Include="Search\SearchPage.aspx" />
     <Content Include="Search\SearchPanel.ascx" />
     <Content Include="Admin\Configuration\Preferences\Theme.aspx" />
+    <Content Include="SeriesDetails\SeriesDetailsPage.aspx" />
+    <Content Include="SeriesDetails\SeriesDetailsPanel.ascx" />
+    <Content Include="SeriesDetails\SeriesDetailsView.ascx" />
     <Content Include="Services\FilesystemInfoService.asmx" />
     <Content Include="Services\ValidationServices.asmx" />
+    <EmbeddedResource Include="StudyDetails\SeriesGridView.js" />
+    <Content Include="StudyDetails\StudyDetailsSecondaryView.ascx" />
+    <Content Include="StudyDetails\PatientSummaryPanel.ascx" />
+    <Content Include="StudyDetails\SeriesGridView.ascx" />
+    <Content Include="StudyDetails\StudyDetailsPage.aspx" />
+    <Content Include="StudyDetails\StudyDetailsPanel.ascx" />
+    <Content Include="StudyDetails\StudyDetailsView.ascx" />
     <Content Include="Web.sitemap" />
     <Content Include="Logging.config" />
     <Content Include="Services\webservice.htc" />
@@ -530,7 +613,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>3345</DevelopmentServerPort>
+          <DevelopmentServerPort>3085</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

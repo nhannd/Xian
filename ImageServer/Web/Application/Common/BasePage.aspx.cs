@@ -49,8 +49,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             {
                 Page.Theme = "ClearCanvas";
             }
-
-            
         }
     }
 }

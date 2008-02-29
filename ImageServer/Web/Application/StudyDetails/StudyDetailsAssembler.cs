@@ -29,49 +29,52 @@
 
 #endregion
 
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
-namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
+namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
 {
     /// <summary>
     /// Assembles an instance of  <see cref="StudyDetails"/> based on a <see cref="Study"/> object.
     /// </summary>
-    public class StudyDetailsAssembler
+    /// <remarks>
+    /// 
+    /// </remarks>
+    static public class StudyDetailsAssembler
     {
         /// <summary>
-        /// Creates an instance of <see cref="StudyDetails"/> base on a <see cref="Study"/> object.
+        /// Returns an instance of <see cref="StudyDetails"/> based on a <see cref="Study"/> object.
         /// </summary>
         /// <param name="study"></param>
         /// <returns></returns>
-        public StudyDetails CreateStudyDetail(Model.Study study)
+        /// <remark>
+        /// 
+        /// </remark>
+        static public StudyDetails CreateStudyDetails(Model.Study study)
         {
             StudyDetails details = new StudyDetails();
-            details.StudyInstanceUID = study.StudyInstanceUid;
-            details.Status = study.StudyStatusEnum.Description;
-            details.PatientName = study.PatientsName;
+
             details.AccessionNumber = study.AccessionNumber;
-            details.PatientID = study.PatientId;
+            details.NumberOfStudyRelatedInstances = study.NumberOfStudyRelatedInstances;
+            details.NumberOfStudyRelatedSeries = study.NumberOfStudyRelatedSeries;
+            details.ReferringPhysicianName = study.ReferringPhysiciansName;
 
+            details.Status = study.StudyStatusEnum.Description;
+            details.StudyDate = study.StudyDate;
             details.StudyDescription = study.StudyDescription;
+            details.StudyId = study.StudyId;
+            details.StudyInstanceUid = study.StudyInstanceUid;
+            details.StudyTime = study.StudyTime;
 
-
-            if (study.StudyInstanceUid != null)
-            {
-                StudyStorageAdaptor adaptor = new StudyStorageAdaptor();
-                StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-                criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-                criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
-
-                IList<StudyStorage> storages = adaptor.Get(criteria);
-                if (storages != null && storages.Count > 0)
-                    details.Lock = storages[0].Lock;
-            }
-
+            StudyController studyController = new StudyController();
+            details.ScheduledForDelete = studyController.ScheduledForDelete(study);
 
             return details;
         }
+
     }
 }

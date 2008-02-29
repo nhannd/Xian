@@ -91,6 +91,47 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             return true;
         }
+
+        /// <summary>
+        /// Returns a value indicating whether the specified study has been scheduled for delete.
+        /// </summary>
+        /// <param name="study"></param>
+        /// <returns></returns>
+        public bool ScheduledForDelete(Study study)
+        {
+            StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
+            StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+            criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+            criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+
+            IList<StudyStorage> storages = studyStorageAdaptor.Get(criteria);
+            int counter = 0;
+            foreach (StudyStorage storage in storages)
+            {
+                WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
+                WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+                workQueueCriteria.WorkQueueTypeEnum.EqualTo(WorkQueueTypeEnum.GetEnum("WebDeleteStudy"));
+                workQueueCriteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+                workQueueCriteria.StudyStorageKey.EqualTo(storage.GetKey());
+
+                workQueueCriteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.GetEnum("Pending"));
+
+                IList<WorkQueue> list = adaptor.Get(workQueueCriteria);
+                if (list != null && list.Count > 0)
+                    return true;
+                else
+                {
+                    workQueueCriteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.GetEnum("Idle")); // not likely but who knows
+                    list = adaptor.Get(workQueueCriteria);
+                    if (list != null && list.Count > 0)
+                        return true;
+                }
+
+                
+            }
+            return false;
+            
+        }
         #endregion
     }
 }

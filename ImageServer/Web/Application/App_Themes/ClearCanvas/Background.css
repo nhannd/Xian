@@ -265,3 +265,22 @@ body
 .CSSInvalidIndicatorTooltip
 {
 }
+
+
+/*****************************************************************************************
+	Study Details view styles
+*****************************************************************************************/
+.CSSStudyDetailsViewRowStyle
+{
+	
+}
+
+
+/*****************************************************************************************
+	Series grid view styles
+*****************************************************************************************/
+.CSSSeriesGridViewHeaderStyle
+{
+	background-image: url(images/gridheaderbackground.png);
+	background-repeat: repeat-x;
+}

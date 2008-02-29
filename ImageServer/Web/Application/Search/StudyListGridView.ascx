@@ -1,10 +1,12 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Search.StudyListGridView"
     Codebehind="StudyListGridView.ascx.cs" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+<%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" TagPrefix="clearcanvas" %>
+
 <asp:Panel ID="Panel1" runat="server" CssClass="CSSGridViewPanelContainer">
     <asp:Panel ID="Panel3" runat="server" CssClass="CSSGridViewPanelBorder">
         <asp:Panel ID="Panel4" runat="server" CssClass="CSSGridViewPanelContent">
-            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" 
+            <clearcanvas:GridView ID="GridView1" runat="server" AutoGenerateColumns="False"  
                 CssClass="CSSGridView"
                 Width="100%" OnRowDataBound="GridView1_RowDataBound" 
                 OnDataBound="GridView1_DataBound"                
@@ -12,7 +14,7 @@
                 CellPadding="0"
                 OnSelectedIndexChanged="GridView1_SelectedIndexChanged" 
                 OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
-                OnPageIndexChanging="GridView1_PageIndexChanging" 
+                OnPageIndexChanging="GridView1_PageIndexChanging"  OnClientRowDblClick="OnStudyListRowDoubleClicked"
                 PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
                 <Columns>
                     <asp:BoundField DataField="PatientsName" HeaderText="Patient Name"></asp:BoundField>
@@ -57,7 +59,7 @@
                 <HeaderStyle CssClass="CSSGridHeader" />
                 <PagerTemplate>
                 </PagerTemplate>
-            </asp:GridView>
+            </clearcanvas:GridView>
         </asp:Panel>
     </asp:Panel>
 </asp:Panel>

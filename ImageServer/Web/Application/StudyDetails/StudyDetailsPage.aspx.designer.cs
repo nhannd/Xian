@@ -8,51 +8,51 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Search {
+namespace ClearCanvas.ImageServer.Web.Application.StudyDetails {
     
     
     /// <summary>
-    /// SearchPage class.
+    /// StudyDetailsPage class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class SearchPage {
+    public partial class StudyDetailsPage {
         
         /// <summary>
-        /// ScriptManagerProxy1 control.
+        /// form1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.ScriptManagerProxy ScriptManagerProxy1;
+        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
-        /// PageContent control.
+        /// ScriptManager1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PageContent;
+        protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// updatepanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        protected global::System.Web.UI.UpdatePanel updatepanel;
         
         /// <summary>
-        /// ServerPartitionTabs control.
+        /// StudyDetailsPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ServerPartitionTabs ServerPartitionTabs;
+        protected global::ClearCanvas.ImageServer.Web.Application.StudyDetails.StudyDetailsPanel StudyDetailsPanel;
     }
 }

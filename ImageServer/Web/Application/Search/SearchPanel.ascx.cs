@@ -30,10 +30,14 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Web.UI;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Application.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 namespace ClearCanvas.ImageServer.Web.Application.Search
@@ -43,6 +47,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         private ServerPartition _serverPartition;
         private StudyController _searchController;
         private SearchPage _enclosingPage;
+        private StudyController _controller = new StudyController();
 
         public ServerPartition ServerPartition
         {
@@ -112,7 +117,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         {
             base.OnInit(e);
 
-
+            StudyListGridView1.Partition = ServerPartition;
+            
             // initialize the controller
             _searchController = new StudyController();
 
@@ -125,38 +131,79 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
                                                   {
                                                       return StudyListGridView1.Studies== null ? 0:StudyListGridView1.Studies.Count;
                                                   };
+
+
+            ConfirmDialog1.Confirmed += delegate(object data)
+                                {
+                                    if (data is IList<Study>)
+                                    {
+                                        IList<Study> studies = data as IList<Study>;
+                                        foreach (Study study in studies)
+                                        {
+                                            _controller.DeleteStudy(study);
+                                        }
+                                    }
+                                    else if (data is Study)
+                                    {
+                                        Study study = data as Study;
+                                        _controller.DeleteStudy(study);
+                                    }
+
+                                    LoadStudies();
+                                };
             
         }
 
-
         protected void Page_Load(object sender, EventArgs e)
         {
+
             if (StudyListGridView1.IsPostBack)
             {
                 LoadStudies();
             }
-
             
         }
 
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
+
+            ScriptTemplate template =
+                new ScriptTemplate(typeof(SearchPanel).Assembly, "ClearCanvas.ImageServer.Web.Application.Search.SearchPanel.js");
+
+            template.Replace("@@DELETE_BUTTON_CLIENTID@@", DeleteToolbarButton.ClientID);
+            template.Replace("@@STUDYLIST_GRIDVIEW_CLIENTID@@", StudyListGridView1.TheGrid.ClientID);
+            template.Replace("@@OPEN_STUDY_BASE_URL@@", Page.ResolveClientUrl("~/StudyDetails/StudyDetailsPage.aspx"));
+            
+            template.Replace("@@PARTITION_AE@@", ServerPartition.AeTitle);
+            template.Replace("@@OPEN_STUDY_BUTTON_CLIENTID@@", ToolbarButton1.ClientID);
+            
+            ScriptManager.RegisterStartupScript(
+                                    this,
+                                    typeof(SearchPanel),
+                                    ClientID + "_OnLoad",
+                                    template.Script,
+                                    true);
+
             UpdateUI();
         }
 
-        protected void OnToolbarButton1Click(object sender, ImageClickEventArgs e)
-        {
-            ((ToolbarButton)sender).Enabled = !((ToolbarButton)sender).Enabled;
-        }
-
-       
-
         public void UpdateUI()
         {
-            if (StudyListGridView1.SelectedStudy!=null)
+            IList<Study> studies = StudyListGridView1.SelectedStudies;
+            if (studies!= null)
             {
+                StudyController controller = new StudyController();
                 DeleteToolbarButton.Enabled = true;
+                foreach (Study study in studies)
+                {
+                    if (controller.ScheduledForDelete(study))
+                    {
+                        DeleteToolbarButton.Enabled = false;
+                        break;
+                    }
+                }
+                
             }
             else
             {
@@ -169,15 +216,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         {
             // reload the data
             LoadStudies();
-            //    SearchAccordianControl.PageIndex = 0;
         }
 
         protected void OnDeleteToolbarButtonClick(object sender, ImageClickEventArgs e)
         {
-            Study study = StudyListGridView1.SelectedStudy;
-            if (study != null)
+            IList<Study> studies = StudyListGridView1.SelectedStudies;
+
+            if (studies != null)
             {
-                EnclosingPage.OnDeleteStudy(study);
+                ConfirmDialog1.Message = string.Format("Are you sure to remove the following studies?<BR/>");
+                ConfirmDialog1.Message += "<table>";
+                foreach (Model.Study study in studies)
+                {
+                    String text = String.Format("<tr align='left'><td>Patient:{0}&nbsp;&nbsp;</td><td>Accession:{1}&nbsp;&nbsp;</td><td>Description:{2}</td></tr>", 
+                                    study.PatientsName, study.AccessionNumber, study.StudyDescription);
+                    ConfirmDialog1.Message += text;
+                }
+                ConfirmDialog1.Message += "</table>";
+
+                ConfirmDialog1.MessageType = ConfirmDialog.MessageTypeEnum.WARNING;
+                ConfirmDialog1.Data = studies;
+                ConfirmDialog1.Show();
             }
         }
     }

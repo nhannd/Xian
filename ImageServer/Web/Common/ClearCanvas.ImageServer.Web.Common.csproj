@@ -34,6 +34,7 @@
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions, Version=1.0.61025.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="Validators, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -43,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Data\BaseAdaptor.cs" />
     <Compile Include="Data\BaseController.cs" />
+    <Compile Include="Data\PatientAdaptor.cs" />
     <Compile Include="Data\WorkQueueUidAdaptor.cs" />
     <Compile Include="Data\StudyStorageAdaptor.cs" />
     <Compile Include="Data\WorkQueueController.cs" />
@@ -62,6 +64,7 @@
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
+    <Compile Include="WebControls\UI\GridView.cs" />
     <Compile Include="WebControls\Validators\BaseValidator.cs" />
     <Compile Include="WebControls\Validators\ConditionalRequiredFieldValidator.cs" />
     <Compile Include="WebControls\Validators\RangeComparisonValidator.cs" />
@@ -130,6 +133,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="WebControls\Validators\WebServiceValidator.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="WebControls\UI\GridView.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="WebControls\UI\ToolbarButton.js" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

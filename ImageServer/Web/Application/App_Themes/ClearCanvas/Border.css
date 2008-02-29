@@ -311,3 +311,15 @@
 .CSSInvalidIndicatorTooltip
 {
 }
+
+
+/*****************************************************************************************
+	Study Details view styles
+*****************************************************************************************/
+.CSSStudyDetailsViewRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}

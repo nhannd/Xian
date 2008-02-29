@@ -29,49 +29,12 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Web.Common.Data;
 
-namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
+namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    /// <summary>
-    /// Assembles an instance of  <see cref="StudyDetails"/> based on a <see cref="Study"/> object.
-    /// </summary>
-    public class StudyDetailsAssembler
+    public class PatientAdaptor : BaseAdaptor<Patient, IPatientEntityBroker, PatientSelectCriteria, PatientUpdateColumns>
     {
-        /// <summary>
-        /// Creates an instance of <see cref="StudyDetails"/> base on a <see cref="Study"/> object.
-        /// </summary>
-        /// <param name="study"></param>
-        /// <returns></returns>
-        public StudyDetails CreateStudyDetail(Model.Study study)
-        {
-            StudyDetails details = new StudyDetails();
-            details.StudyInstanceUID = study.StudyInstanceUid;
-            details.Status = study.StudyStatusEnum.Description;
-            details.PatientName = study.PatientsName;
-            details.AccessionNumber = study.AccessionNumber;
-            details.PatientID = study.PatientId;
-
-            details.StudyDescription = study.StudyDescription;
-
-
-            if (study.StudyInstanceUid != null)
-            {
-                StudyStorageAdaptor adaptor = new StudyStorageAdaptor();
-                StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-                criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-                criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
-
-                IList<StudyStorage> storages = adaptor.Get(criteria);
-                if (storages != null && storages.Count > 0)
-                    details.Lock = storages[0].Lock;
-            }
-
-
-            return details;
-        }
     }
 }

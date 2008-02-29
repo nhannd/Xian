@@ -8,34 +8,25 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Search {
+namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails {
     
     
     /// <summary>
-    /// SearchPage class.
+    /// SeriesDetailsPanel class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class SearchPage {
+    public partial class SeriesDetailsPanel {
         
         /// <summary>
-        /// ScriptManagerProxy1 control.
+        /// Panel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.ScriptManagerProxy ScriptManagerProxy1;
-        
-        /// <summary>
-        /// PageContent control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PageContent;
+        protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
         /// UpdatePanel1 control.
@@ -47,12 +38,30 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// ServerPartitionTabs control.
+        /// StudyDetailsPanelContainer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ServerPartitionTabs ServerPartitionTabs;
+        protected global::System.Web.UI.WebControls.Panel StudyDetailsPanelContainer;
+        
+        /// <summary>
+        /// StudyDetailsViewPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel StudyDetailsViewPanel;
+        
+        /// <summary>
+        /// SeriesDetailsView1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.SeriesDetails.SeriesDetailsView SeriesDetailsView1;
     }
 }

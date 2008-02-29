@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -39,7 +40,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 
     [DefaultProperty("Text")]
     [ToolboxData("<{0}:ToolbarButton runat=server></{0}:ToolbarButton>")]
-    public class ToolbarButton : ImageButton
+    public class ToolbarButton : ImageButton, IScriptControl
     {
         [Bindable(true)]
         [Category("Appearance")]
@@ -103,6 +104,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 Attributes["onMouseOver"] = String.Format("this.src='{0}';", Page.ResolveClientUrl(EnabledHoverImageURL));
                 Attributes["onMouseOut"] = String.Format("this.src='{0}';", Page.ResolveClientUrl(EnabledImageURL));
             }
+
+
+            
             
         }
 
@@ -113,9 +117,64 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             else
                 ImageUrl = DisabledImageURL;
 
-
  	        base.RenderControl(writer);
+
+            String script = @"
+                var @@CONTROLID@@ = document.getElementById('@@CONTROLID@@');
+                @@CONTROLID@@.setEnable = function(enable)      
+                {
+                    @@CONTROLID@@.disabled=!enable; 
+                    @@CONTROLID@@.src = enable? '@@ENABLED_IMAGE_URL@@':'@@DISABLED_IMAGE_URL@@';  
+                }
+            ";
+
+            script = script.Replace("@@CONTROLID@@", ClientID);
+            script = script.Replace("@@ENABLED_IMAGE_URL@@", Page.ResolveClientUrl(EnabledImageURL));
+            script = script.Replace("@@DISABLED_IMAGE_URL@@", Page.ResolveClientUrl(DisabledImageURL));
+
+
+            //ScriptManager.RegisterClientScriptBlock(this, GetType(), ClientID + "_InitEventHandler", script, true);
         }
 
+
+        #region IScriptControl Members
+        public IEnumerable<ScriptDescriptor> GetScriptDescriptors()
+        {
+            ScriptControlDescriptor desc = new ScriptControlDescriptor("ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton", ClientID);
+            desc.AddProperty("EnabledImageUrl", Page.ResolveClientUrl(EnabledImageURL));
+            desc.AddProperty("DisabledImageUrl", Page.ResolveClientUrl(DisabledImageURL));
+
+            return new ScriptDescriptor[] { desc };
+        }
+
+        public IEnumerable<ScriptReference> GetScriptReferences()
+        {
+            ScriptReference reference = new ScriptReference();
+
+            reference.Path = Page.ClientScript.GetWebResourceUrl(typeof(ToolbarButton), "ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton.js");
+            return new ScriptReference[] { reference };
+        }
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+            if (!DesignMode)
+            {
+                ScriptManager sm = ScriptManager.GetCurrent(Page);
+                sm.RegisterScriptControl(this);
+            }
+
+        }
+
+        protected override void Render(HtmlTextWriter writer)
+        {
+            if (!DesignMode)
+            {
+                ScriptManager sm = ScriptManager.GetCurrent(Page);
+                sm.RegisterScriptDescriptors(this);
+            }
+            base.Render(writer);
+        }
+
+        #endregion
     }
 }

@@ -33,6 +33,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
+using System.Globalization;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -43,6 +44,8 @@ using System.Collections.Generic;
 
 using System.ComponentModel;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Search
@@ -56,7 +59,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         // server partitions lookup table based on server key
         private Dictionary<string, ServerPartition> _DictionaryPartitions = new Dictionary<string, ServerPartition>();
         // list of devices to display
-        private IList<Study> _studies;
+        private IList<Model.Study> _studies;
+        private ServerPartition _partition;
         
         #endregion Private members
 
@@ -80,30 +84,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             get { return GridView1; }
         }
 
+
+        public ServerPartition Partition
+        {
+            set { _partition = value; }
+            get { return _partition; }
+        }
+
         /// <summary>
         /// Gets/Sets the current selected device.
         /// </summary>
-        public Study SelectedStudy
+        public IList<Study> SelectedStudies
         {
             get
             {
-                if (Studies==null || Studies.Count == 0 || GridView1.SelectedIndex < 0)
+                if (Studies==null || Studies.Count == 0)
                     return null;
 
-                // SelectedIndex is for the current page. Must convert to the index of the entire list
-                int index = GridView1.PageIndex * GridView1.PageSize + GridView1.SelectedIndex;
-
-                if (index < 0 || index > Studies.Count - 1)
+                int[] rows = GridView1.SelectedIndices;
+                if (rows == null || rows.Length == 0)
                     return null;
 
-                return Studies[index];
-            }
-            set
-            {
+                IList<Study> studies = new List<Study>();
+                for(int i=0; i<rows.Length; i++)
+                {
+                    // SelectedIndex is for the current page. Must convert to the index of the entire list
+                    int index = GridView1.PageIndex * GridView1.PageSize + rows[i];
+                    if (index >=0 && index<Studies.Count)
+                        studies.Add(Studies[index]);
+                }
 
-                GridView1.SelectedIndex = Studies.IndexOf(value);
-                if (OnStudySelectionChanged != null)
-                    OnStudySelectionChanged(this, value);
+                return studies;
             }
         }
 
@@ -130,8 +141,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         /// Defines the handler for <seealso cref="StudyListGridView.OnStudySelectionChanged"/> event.
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="selectedStudy"></param>
-        public delegate void StudySelectedEventHandler(object sender, Study selectedStudy);
+        /// <param name="selectedStudies"></param>
+        public delegate void StudySelectedEventHandler(object sender, IList<Model.Study> selectedStudies);
 
         /// <summary>
         /// Occurs when the selected device in the list is changed.
@@ -146,8 +157,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         
         #region protected methods
 
+
         protected void Page_Load(object sender, EventArgs e)
         {
+
             GridView1.DataBind();
         }
         
@@ -159,7 +172,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
-            GridView1.PagerSettings.Visible = false;
             GridView1.SelectedIndexChanged +=new EventHandler(GridView1_SelectedIndexChanged);
 
         }
@@ -229,8 +241,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
         }
 
-        
-
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
@@ -239,13 +249,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    // Add OnClick attribute to each row to make javascript call "Select$###" (where ### is the selected row)
-                    // This method when posted back will be handled by the grid
-                    e.Row.Attributes["OnClick"] = Page.ClientScript.GetPostBackEventReference(GridView1, "Select$" + e.Row.RowIndex);
-                    e.Row.Style["cursor"] = "hand";
-
-                    // For some reason, double-click won't work if single-click is used
-                    // e.Row.Attributes["ondblclick"] = Page.ClientScript.GetPostBackEventReference(GridView1, "Edit$" + e.Row.RowIndex);
+                    int index = GridView1.PageIndex * GridView1.PageSize + e.Row.RowIndex;
+                    e.Row.Attributes.Add("instanceuid", Studies[index].StudyInstanceUid);
+                    StudyController controller = new StudyController();
+                    e.Row.Attributes.Add("deleted", controller.ScheduledForDelete(Studies[index])? "true":"false");
+                    
                 }
 
             }
@@ -255,10 +263,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         
         protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Study study = SelectedStudy;
-            if (study != null)
+            IList<Study> studies = SelectedStudies;
+            if (studies != null)
                 if (OnStudySelectionChanged != null)
-                    OnStudySelectionChanged(this, study);
+                    OnStudySelectionChanged(this, studies);
             
         }
         
