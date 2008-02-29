@@ -338,7 +338,58 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			Assert.AreEqual(graphic3.SpatialTransform.CumulativeTransform.Elements[0], 24.0f);
 		}
 
-		private ImageSpatialTransform CreateTransform()
+		[ExpectedException(typeof(ArgumentException))]
+		[Test]
+		public void TestRotationConstraints()
+		{
+			CompositeGraphic sceneGraph = CreateTestSceneGraph();
+			//set the image graphic rotation to 90.
+			sceneGraph.Graphics[0].SpatialTransform.RotationXY = 90;
+
+			CompositeImageGraphic imageGraphic = (CompositeImageGraphic)sceneGraph.Graphics[0];
+			CompositeGraphic primitiveOwner = (CompositeGraphic)imageGraphic.Graphics[0];
+			Graphic primitive = (Graphic)primitiveOwner.Graphics[0];
+
+			sceneGraph.SpatialTransform.RotationXY = 90;
+			imageGraphic.SpatialTransform.RotationXY = 90;
+			primitiveOwner.SpatialTransform.RotationXY = 10;
+			primitive.SpatialTransform.RotationXY = 20;
+
+			Assert.AreEqual(sceneGraph.SpatialTransform.CumulativeRotationXY, 90); 
+			Assert.AreEqual(imageGraphic.SpatialTransform.CumulativeRotationXY, 180);
+			Assert.AreEqual(primitiveOwner.SpatialTransform.CumulativeRotationXY, 190);
+			Assert.AreEqual(primitive.SpatialTransform.CumulativeRotationXY, 210);
+
+			try
+			{
+				//this will throw an exception.
+				sceneGraph.SpatialTransform.RotationXY = 30;
+			}
+			catch
+			{
+				//rotation remains at 90.
+				Assert.AreEqual(sceneGraph.SpatialTransform.CumulativeRotationXY, 90);
+				throw;
+			}
+		}
+
+		private static CompositeGraphic CreateTestSceneGraph()
+		{
+			CompositeGraphic sceneGraph = new CompositeGraphic();
+			ImageSpatialTransform imageTransform = CreateTransform();
+
+			sceneGraph.Graphics.Add(imageTransform.OwnerGraphic);
+
+			CompositeGraphic composite = new CompositeGraphic();
+			Graphic leaf = new LinePrimitive();
+			composite.Graphics.Add(leaf);
+
+			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(composite);
+
+			return sceneGraph;
+		}
+
+		private static ImageSpatialTransform CreateTransform()
 		{
 			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384);
 			ImageSpatialTransform transform = (ImageSpatialTransform)graphic.SpatialTransform;

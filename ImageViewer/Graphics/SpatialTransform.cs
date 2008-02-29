@@ -256,34 +256,32 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Gets or sets the rotation in degrees.
 		/// </summary>
-		/// <remarks>
-		/// Any multiple of 90 is allowed.  However, the value will always be "wrap" to
-		/// either 0, 90, 180 or 270.  For example, if set to -450, the property will
-		/// return 270.
-		/// </remarks>
-		/// <exception cref="ArgumentException">The rotation is not a multiple
-		/// of 90 degrees.</exception>
-		public int RotationXY
+		public virtual int RotationXY
 		{
 			get { return (int)_rotationXY; }
 			set 
 			{
-				if ((value % 90) != 0)
-					throw new ArgumentException(SR.ExceptionInvalidRotationValue);
-
-				value = value % 360;
-
-				if (value < 0)
-					value += 360;
-
 				if (_rotationXY == value)
 					return;
 
+				float oldValue = _rotationXY;
 				_rotationXY = value;
-				this.RecalculationRequired = true;
+
+				try
+				{
+					ValidateCumulativeRotationXY();
+				}
+				catch
+				{
+					_rotationXY = oldValue;
+					throw;
+				}
+				finally
+				{
+					this.RecalculationRequired = true;
+				}
 			}
 		}
-
 
 		/// <summary>
 		/// Gets the transform relative to the <see cref="IGraphic"/> object's
@@ -345,9 +343,28 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
-		internal void ForceRecalculation()
+		internal int CumulativeRotationXY
 		{
-			RecalculationRequired = true;
+			get
+			{
+				int cumulativeRotation = RotationXY;
+				if (OwnerGraphic != null && OwnerGraphic.ParentGraphic != null)
+					cumulativeRotation += OwnerGraphic.ParentGraphic.SpatialTransform.CumulativeRotationXY;
+
+				return cumulativeRotation;
+			}
+		}
+
+		internal virtual void ValidateCumulativeRotationXY()
+		{
+			if (OwnerGraphic == null)
+				return;
+
+			if (OwnerGraphic is CompositeGraphic)
+			{
+				foreach (IGraphic graphic in ((CompositeGraphic)OwnerGraphic).Graphics)
+					graphic.SpatialTransform.ValidateCumulativeRotationXY();
+			}
 		}
 
 		#region Public methods
@@ -523,6 +540,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#region Protected methods
 
 		/// <summary>
+		/// Forces the <see cref="CumulativeTransform"/> to be recalculated.
+		/// </summary>
+		internal protected void ForceRecalculation()
+		{
+			RecalculationRequired = true;
+		}
+
+		/// <summary>
 		/// Calculates the cumulative transform.
 		/// </summary>
 		/// <remarks>Once this method is executed, the <see cref="CumulativeTransform"/>
@@ -563,6 +588,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="cumulativeTransform"></param>
 		protected virtual void CalculatePreTransform(Matrix cumulativeTransform)
 		{
+
 		}
 
 		/// <summary>

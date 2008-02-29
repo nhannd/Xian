@@ -118,52 +118,34 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-		private int SourceWidth
-		{
-			get { return _columns; }
-		}
-
-		private int SourceHeight
-		{
-			get { return _rows; }
-		}
-
-		private float AdjustedSourceHeight
-		{
-			get { return this.SourceHeight * this.PixelAspectRatio; }
-		}
-
-		private int DestinationWidth
-		{
-			get { return this.ClientRectangle.Width; }
-		}
-
-		private float PixelAspectRatio
+		/// <summary>
+		/// Gets or sets the rotation in degrees.
+		/// </summary>
+		/// <remarks>
+		/// Any multiple of 90 is allowed.  However, the value will always be "wrap" to
+		/// either 0, 90, 180 or 270.  For example, if set to -450, the property will
+		/// return 270.
+		/// </remarks>
+		/// <exception cref="ArgumentException">The rotation is not a multiple
+		/// of 90 degrees.</exception>
+		public override int RotationXY
 		{
 			get
 			{
-				if (_pixelAspectRatio == 0)
-				{
-					if (_pixelAspectRatioX == 0 || _pixelAspectRatioY == 0)
-					{
-						if (_pixelSpacingX == 0 || _pixelSpacingY == 0)
-							_pixelAspectRatio = 1;
-						else
-							_pixelAspectRatio = (float)_pixelSpacingY / (float)_pixelSpacingX;
-					}
-					else
-					{
-						_pixelAspectRatio = (float)_pixelAspectRatioY / (float)_pixelAspectRatioX;
-					}
-				}
-
-				return _pixelAspectRatio;
+				return base.RotationXY;
 			}
-		}
+			set
+			{
+				value = value % 360;
 
-		private int DestinationHeight
-		{
-			get { return this.ClientRectangle.Height; }
+				if (value < 0)
+					value += 360;
+
+				if (base.RotationXY == value)
+					return;
+
+				base.RotationXY = value;
+			}
 		}
 
 #pragma warning disable 1591
@@ -198,6 +180,53 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 #pragma warning restore 1591
+		private int SourceWidth
+		{
+			get { return _columns; }
+		}
+
+		private int SourceHeight
+		{
+			get { return _rows; }
+		}
+
+		private float AdjustedSourceHeight
+		{
+			get { return this.SourceHeight * this.PixelAspectRatio; }
+		}
+
+		private int DestinationWidth
+		{
+			get { return this.ClientRectangle.Width; }
+		}
+
+		private int DestinationHeight
+		{
+			get { return this.ClientRectangle.Height; }
+		}
+
+		private float PixelAspectRatio
+		{
+			get
+			{
+				if (_pixelAspectRatio == 0)
+				{
+					if (_pixelAspectRatioX == 0 || _pixelAspectRatioY == 0)
+					{
+						if (_pixelSpacingX == 0 || _pixelSpacingY == 0)
+							_pixelAspectRatio = 1;
+						else
+							_pixelAspectRatio = (float)_pixelSpacingY / (float)_pixelSpacingX;
+					}
+					else
+					{
+						_pixelAspectRatio = (float)_pixelAspectRatioY / (float)_pixelAspectRatioX;
+					}
+				}
+
+				return _pixelAspectRatio;
+			}
+		}
 
 		/// <summary>
 		/// This methods overrides <see cref="SpatialTransform.CreateMemento"/>.
@@ -312,6 +341,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private void OwnerGraphicDrawing(object sender, EventArgs e)
 		{
 			this.ClientRectangle = OwnerGraphic.ParentPresentationImage.ClientRectangle;
+		}
+
+		/// <summary>
+		/// Temporary measure until we can support arbitrary rotation of images.
+		/// </summary>
+		internal override void ValidateCumulativeRotationXY()
+		{
+			if ((CumulativeRotationXY % 90) != 0)
+				throw new ArgumentException(SR.ExceptionInvalidRotationValue);
+
+			base.ValidateCumulativeRotationXY();
 		}
 	}
 }
