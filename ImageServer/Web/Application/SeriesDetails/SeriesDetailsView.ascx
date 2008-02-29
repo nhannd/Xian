@@ -1,6 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SeriesDetailsView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.SeriesDetails.SeriesDetailsView" %>
 <asp:DetailsView ID="DetailsView1" runat="server" AutoGenerateRows="False" CellPadding="4" 
-    ForeColor="#333333" GridLines="Horizontal" BorderWidth="1px" Width="100%">
+    GridLines="Both" Width="100%">
     <Fields>
         <asp:BoundField DataField="SeriesInstanceUid" HeaderText="Series Instance UID">
             
@@ -28,12 +28,12 @@
         </asp:BoundField>
         
     </Fields>
-    <RowStyle CssClass="CSSStudyDetailsViewRowStyle" BackColor="#F7F6F3" ForeColor="#333333" BorderStyle="solid"  BorderColor="AliceBlue" BorderWidth="2px" />
     <FooterStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
     <CommandRowStyle BackColor="#E2DED6" Font-Bold="True" />
-    <FieldHeaderStyle BackColor="#E9ECF1"  />
+    <RowStyle BackColor="#F7F6F3" ForeColor="red" />
+    <FieldHeaderStyle  />
     <PagerStyle BackColor="#284775" ForeColor="White" HorizontalAlign="Center" />
-    <HeaderStyle CssClass="CSSStudyDetailsViewHeaderStyle" />
+    <HeaderStyle BackColor="#5D7B9D"  ForeColor="blue" />
     <EditRowStyle BackColor="#999999" />
     <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
     

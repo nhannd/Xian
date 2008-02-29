@@ -6,9 +6,6 @@
 <%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="ccConfirm" %>
 <%@ Register Src="~/Common/ServerPartitionTabs.ascx" TagName="ServerPartitionTabs"
     TagPrefix="ccPartitionTabs" %>
-    
-
-
 <asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
     Search
 </asp:Content>
@@ -18,11 +15,10 @@
             <asp:ScriptReference Path="~/Search/Searchpage.js" ResourceUICultures="it-IT" />
         </Scripts>
     </asp:ScriptManagerProxy>
-
     <asp:Panel runat="server" ID="PageContent">
         <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
-                <ccPartitionTabs:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" Visible="true"/>
+                <ccPartitionTabs:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" Visible="true" />
             </ContentTemplate>
         </asp:UpdatePanel>
     </asp:Panel>

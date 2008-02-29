@@ -224,6 +224,19 @@ body
 	
 }
 
+
+/* Alternating row style */
+.CSSGridAlternatingRowStyle
+{
+}
+
+/* Alternating row cell style */
+.CSSGridAlternatingRowStyle td
+{
+}
+
+
+
 /* gridview cell of the selected row */
 .CSSGridSelectedRowStyle td
 {
@@ -306,3 +319,79 @@ body
 .CSSInvalidIndicatorTooltip
 {
 }
+
+
+/*****************************************************************************************
+	Study Details view styles
+*****************************************************************************************/
+.CSSStudyDetailsViewRowStyle
+{
+
+}
+
+.CSSStudyDetailsViewRowStyle td
+{
+
+}
+
+
+.CSSStudyDetailsViewAlternatingRowStyle
+{
+
+}
+
+
+.CSSStudyDetailsViewAlternatingRowStyle td
+{
+
+}
+
+/*****************************************************************************************
+	Series grid view styles
+*****************************************************************************************/
+
+
+
+.CSSSeriesGridViewHeaderStyle
+{
+	
+}
+
+/* gridview control selected row */
+.CSSSeriesGridViewRowStyle
+{
+
+}
+
+/* gridview control cell */
+.CSSSeriesGridViewRowStyle td
+{
+	color:#333333;
+}
+
+/* gridview control cell */
+.CSSSeriesGridViewAlternatingRowStyle
+{
+
+}
+
+
+/* gridview control cell */
+.CSSSeriesGridViewAlternatingRowStyle td
+{
+	color:#333333;
+}
+
+/* gridview control selected row */
+.CSSSeriesGridSelectedRowStyle
+{
+	color:White;
+}
+
+
+/* gridview cell of the selected row */
+.CSSSeriesGridSelectedRowStyle td
+{
+}
+
+

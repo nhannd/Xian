@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            GridPager.Grid = ServerPartitionGridPanel.TheGrid;
+            GridPager.Target = ServerPartitionGridPanel.TheGrid;
             GridPager.ItemName = "Partition";
             GridPager.PuralItemName = "Partitions";
 

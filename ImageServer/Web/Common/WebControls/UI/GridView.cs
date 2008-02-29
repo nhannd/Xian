@@ -1,35 +1,166 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 {
-    [DefaultProperty("Text")]
+    /// <summary>
+    /// Custom ASP.NET AJAX grid view control.
+    /// </summary>
+    /// <remarks>
+    /// This custom grid view control offers a couple of improvements over the standard ASP.NET GridView:
+    /// multiple selection and client-side item selection (ie. not postback to the server). 
+    /// </remarks>
     [ToolboxData("<{0}:GridView runat=server></{0}:GridView>")]
     public class GridView : System.Web.UI.WebControls.GridView , IScriptControl
     {
-        private string onClientRowClick;
-        private string onClientRowDblClick;
+        #region Private members
+        private string _onClientRowClick;
+        private string _onClientRowDblClick;
+        private Hashtable _selectedRows = new Hashtable();
+        #endregion Private members
 
+
+        #region Public Properties
+        /// <summary>
+        /// Sets or gets the client-side script function name that will be called in the client browser when a row in selected.
+        /// </summary>
+        /// <remark>
+        /// The row will be selected before the specified function is called.
+        /// </remark>
         public string OnClientRowClick
         {
-            get { return onClientRowClick; }
-            set { onClientRowClick = value; }
+            get { return _onClientRowClick; }
+            set { _onClientRowClick = value; }
         }
 
+        /// <summary>
+        /// Sets or gets the client-side script function name that will be called in the client browser when users double-click on a row.
+        /// </summary>
+        /// <remark>
+        /// The row will be selected before the specified function is called.
+        /// </remark>
         public string OnClientRowDblClick
         {
-            get { return onClientRowDblClick; }
-            set { onClientRowDblClick = value; }
+            get { return _onClientRowDblClick; }
+            set { _onClientRowDblClick = value; }
         }
 
-        private Hashtable _prevSelectedRows = new Hashtable();
+
+        /// <summary>
+        /// Gets the index of the first selected item.
+        /// </summary>
+        /// <remarsk>
+        /// Use <see cref="SelectedIndices"/> instead.
+        /// </remarsk>
+        public override int SelectedIndex
+        {
+            get
+            {
+                int[] indices = SelectedIndices;
+                if (indices == null || indices.Length == 0)
+                    return -1;
+
+                return indices[0];
+            }
+        }
+
+        /// <summary>
+        /// Gets the indices of the rows being selected
+        /// </summary>
+        /// <remarks>
+        /// <see cref="SelectedIndices"/>=<b>null</b> or <see cref="SelectedIndices"/>.Length=0 if no row is being selected.
+        /// </remarks>
+        public int[] SelectedIndices
+        {
+            get
+            {
+                if (_selectedRows.Keys.Count == 0)
+                    return null;
+
+                int[] rows = new int[_selectedRows.Keys.Count];
+                int i = 0;
+                foreach (int r in _selectedRows.Keys)
+                    rows[i++] = r;
+
+                return rows;
+            }
+        }
+
+        #endregion Public Properties
+
+
+        #region Public Methods
+
+        public override void RenderControl(HtmlTextWriter writer)
+        {
+            string value = Serialize(_selectedRows.Keys);
+
+
+            Page.ClientScript.RegisterHiddenField(ClientID + "SelectedRowIndices", value);
+            base.RenderControl(writer);
+
+        }
+
+        /// <summary>
+        /// Clear the current selections.
+        /// </summary>
+        public void ClearSelections()
+        {
+            int[] rows = SelectedIndices;
+            if (rows != null)
+            {
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    int rowIndex = rows[i];
+                    Rows[rowIndex].RowState = DataControlRowState.Normal;
+                    Rows[rowIndex].Attributes["selected"] = "false";
+                }
+            }
+
+            _selectedRows = new Hashtable();
+
+        }
+
+        #endregion Public Methods
+
 
         #region IScriptControl Members
 
@@ -45,6 +176,22 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             desc.AddProperty("UnSelectedRowStyle", style);
             desc.AddProperty("UnSelectedRowCSS", RowStyle.CssClass);
 
+
+            if (AlternatingRowStyle!=null)
+            {
+                style = StyleToString(AlternatingRowStyle);
+                desc.AddProperty("AlternatingRowStyle", style);
+                desc.AddProperty("AlternatingRowCSS", AlternatingRowStyle.CssClass); 
+            }
+            else
+            {
+                // use the normal row style
+                style = StyleToString(RowStyle);
+                desc.AddProperty("UnSelectedRowStyle", style);
+                desc.AddProperty("UnSelectedRowCSS", RowStyle.CssClass);
+
+            }
+            
             if (this.OnClientRowClick!=null)
                 desc.AddEvent("onClientRowClick", this.OnClientRowClick);
 
@@ -58,10 +205,15 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         {
             ScriptReference reference = new ScriptReference();
 
-            reference.Path = Page.ClientScript.GetWebResourceUrl(this.GetType(), "ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.js");
-            //reference.Path = ResolveClientUrl("SampleTextBox.js"); //ResolveClientUrl("SampleTextBox.js");
+            reference.Path = Page.ClientScript.GetWebResourceUrl(GetType(), "ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.js");
             return new ScriptReference[] { reference };
         }
+
+        #endregion IScriptControl Members
+
+
+        #region Protected Methods
+
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
@@ -91,87 +243,25 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             int rowIndex = e.NewSelectedIndex;
 
             Rows[rowIndex].RowState = DataControlRowState.Selected;
-            Rows[rowIndex].Attributes["selected"] = "true";
-            _prevSelectedRows[rowIndex] = true;
+            Rows[rowIndex].Attributes["selected"] = "true"; // custom attribute for the client-side script
+            _selectedRows[rowIndex] = true;
         
         }
 
-        private int firstSelectedIndex = -1;
-        public override int SelectedIndex
-        {
-            get
-            {
-                return firstSelectedIndex;
-            }
-            set
-            {
-                firstSelectedIndex = value;
-
-            }
-        }
-
-        public int[] SelectedIndices
-        {
-            get
-            {
-                if (_prevSelectedRows.Keys.Count==0)
-                    return null;
-
-                int[] rows = new int[_prevSelectedRows.Keys.Count];
-                int i = 0;
-                foreach (int r in _prevSelectedRows.Keys)
-                    rows[i++] = r;
-
-                return rows;
-            }
-            set
-            {
-                ClearSelections();
-                for(int i=0; i<value.Length; i++)
-                {
-                    int rowIndex = value[i];
-                    SelectRow(rowIndex);
-                }
-            }
-        }
-
+        
         protected void SelectRow(int rowIndex)
         {
             Rows[rowIndex].RowState = DataControlRowState.Selected;
             Rows[rowIndex].Attributes["selected"] = "true";
-            _prevSelectedRows[rowIndex] = true;
+            _selectedRows[rowIndex] = true;
         }
 
-        protected void ClearSelections()
-        {
-            int[] rows = SelectedIndices;
-            if (rows!=null)
-            {
-                for (int i = 0; i < rows.Length; i++)
-                {
-                    int rowIndex = rows[i];
-                    Rows[rowIndex].RowState = DataControlRowState.Normal;
-                    Rows[rowIndex].Attributes["selected"] = "false";
-                }
-            }
-
-            _prevSelectedRows = new Hashtable();
-            
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            int x = SelectedIndex;
-        }
-
+        
 
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
            
-            
             
             if (!DesignMode)
             {
@@ -181,26 +271,18 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                     if (statesValue != null && statesValue!="")
                     {
                         string[] states = statesValue.Split(',');
-                        int firstSelectedIndex = -1;
+                        
                         for(int i=0; i<states.Length; i++)
                         {
                             int r = int.Parse(states[i]);
-                            _prevSelectedRows[r] = true;
-                            if (firstSelectedIndex < 0)
-                                firstSelectedIndex = r;
+                            _selectedRows[r] = true;
                             
                         }
-
-                        SelectedIndex = firstSelectedIndex;
-                    }
-                    else
-                    {
-                        SelectedIndex = -1;
                     }
                 }
-                else if (SelectedIndex>0)
+                else if (SelectedIndex>=0)
                 {
-                    _prevSelectedRows[SelectedIndex] = SelectedIndex>=0;
+                    _selectedRows[SelectedIndex] = true;
                         
                 }
             }
@@ -235,17 +317,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         }
 
        
-        
-
-        public override void RenderControl(HtmlTextWriter writer)
-        {
-            string value = Serialize(_prevSelectedRows.Keys);
-
-
-            Page.ClientScript.RegisterHiddenField(ClientID + "SelectedRowIndices", value);
-            base.RenderControl(writer);
-            
-        }
 
         
 
@@ -260,7 +331,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 //e.Row.Style.Add("cursor", "pointer");
 
                 
-                if (_prevSelectedRows.ContainsKey(e.Row.RowIndex))
+                if (_selectedRows.ContainsKey(e.Row.RowIndex))
                 {
                     // SelectedIndex = e.Row.RowIndex; // can't use SelectedIndex, Rows doesn't include the new row yet
                     e.Row.RowState = DataControlRowState.Selected;
@@ -276,11 +347,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 
             }
 
-           
+
 
         }
+        
+        #endregion Protected Methods
 
-        public string StyleToString(Style s)
+        static string StyleToString(Style s)
         {
             StringBuilder sb = new StringBuilder();
             
@@ -371,6 +444,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 
         }
 
-        #endregion
+        
     }
 }

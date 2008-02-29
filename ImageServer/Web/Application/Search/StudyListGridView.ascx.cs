@@ -30,28 +30,17 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Globalization;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using System.Collections.Generic;
 
-using System.ComponentModel;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using ClearCanvas.ImageServer.Web.Common.WebControls;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Search
 {
     //
-    //  Used to display the list of study.
+    //  Used to display the list of studies.
     //
     public partial class StudyListGridView : System.Web.UI.UserControl
     {
@@ -252,7 +241,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
                     int index = GridView1.PageIndex * GridView1.PageSize + e.Row.RowIndex;
                     e.Row.Attributes.Add("instanceuid", Studies[index].StudyInstanceUid);
                     StudyController controller = new StudyController();
-                    e.Row.Attributes.Add("deleted", controller.ScheduledForDelete(Studies[index])? "true":"false");
+                    e.Row.Attributes.Add("deleted", controller.IsScheduledForDelete(Studies[index])? "true":"false");
                     
                 }
 

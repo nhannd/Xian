@@ -1,62 +1,71 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
+
 using System;
-using System.Collections;
-using System.Data;
-using System.Configuration;
 using System.Collections.Generic;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Common.Data;
-using ClearCanvas.ImageServer.Web.Common.WebControls;
+using ClearCanvas.ImageServer.Web.Application.SeriesDetails;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
 {
+    /// <summary>
+    /// Series list panel within the <see cref="SeriesDetailsPanel"/>
+    /// </summary>
     public partial class SeriesGridView : System.Web.UI.UserControl
     {
-        private Study _study;
+        #region Private members
         private IList<Model.Series> _series;
+        #endregion Private members
 
+        #region Public properties
+
+        /// <summary>
+        /// Gets or sets the list of series to be displayed
+        /// </summary>
         public IList<Model.Series> Series
         {
             get { return _series; }
             set { _series = value; }
         }
 
-        public Study Study
-        {
-            get { return _study; }
-            set { _study = value; }
-        }
+
+        #endregion Public properties
+
+        #region Protected methods
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Series!=null && Study!=null)
-            {
-                ServerPartitionDataAdapter adaptor = new ServerPartitionDataAdapter();
-                ServerPartition partition = adaptor.Get(Study.ServerPartitionKey); 
-
-                if (partition!=null)
-                {
-                    //ScriptTemplate template = new ScriptTemplate(typeof (SeriesGridView).Assembly,
-                    //                           "ClearCanvas.ImageServer.Web.Application.StudyDetails.SeriesGridView.js");
-                    //template.Replace("@@GRIDVIEW_CONTROL_JS_OBJECT@@", GridView1.ControlJSObjectVariable);
- 
-                    //template.Replace("@@SERIES_DETAILS_PAGE_URL@@",
-                    //                 Page.ResolveClientUrl("~/SeriesDetails/SeriesDetailsPage.aspx"));
-
-                    //template.Replace("@@PARTITION_AE@@", partition.AeTitle);
-                    //template.Replace("@@STUDY_INSTANCE_UID@@", Study.StudyInstanceUid);
-
-                    //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), ClientID + "_OpenSeriesScript",
-                    //                                        template.Script, true);
-                }
-                
-            }
-            
             
             GridView1.DataSource = Series;
             GridView1.DataBind();
@@ -69,10 +78,35 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
                 Series series = e.Row.DataItem as Series;
 
                 Label performedDateTime = e.Row.FindControl("SeriesPerformedDateTime") as Label;
-                performedDateTime.Text = series.PerformedProcedureStepStartDate != null
-                                             ?
-                                                 series.PerformedProcedureStepStartDate.ToString()
-                                             : "";
+
+                if (!String.IsNullOrEmpty(series.PerformedProcedureStepStartDate))
+                {
+                    string dt;
+                    if (DateTimeFormatter.TryFormatDA(series.PerformedProcedureStepStartDate, out dt))
+                    {
+                        performedDateTime.Text = dt;
+                    }
+                    else
+                    {
+                        performedDateTime.Text =
+                            String.Format("<i style='color:red'>[Invalid date:{0}]</i>",
+                                          series.PerformedProcedureStepStartDate);
+                    }
+                }
+
+                if (!String.IsNullOrEmpty(series.PerformedProcedureStepStartTime))
+                {
+                    string dt;
+                    if (DateTimeFormatter.TryFormatTM(series.PerformedProcedureStepStartTime, out dt))
+                    {
+                        performedDateTime.Text += " " + dt;
+                    }
+                    else
+                    {
+                        performedDateTime.Text += " " + String.Format("<i style='color:red'>[Invalid time:{0}]</i>", series.PerformedProcedureStepStartTime);
+                    }
+                }
+                
 
 
                 e.Row.Attributes["seriesuid"] = series.SeriesInstanceUid;
@@ -91,5 +125,8 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
             GridView1.PageIndex = e.NewPageIndex;
             DataBind();
         }
+
+        #endregion Protected methods
+
     }
 }

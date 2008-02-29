@@ -14,10 +14,10 @@
                 CellPadding="0"
                 OnSelectedIndexChanged="GridView1_SelectedIndexChanged" 
                 OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
-                OnPageIndexChanging="GridView1_PageIndexChanging"  OnClientRowDblClick="OnStudyListRowDoubleClicked"
+                OnPageIndexChanging="GridView1_PageIndexChanging"  OnClientRowDblClick="OpenSelectedStudies"
                 PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
                 <Columns>
-                    <asp:BoundField DataField="PatientsName" HeaderText="Patient Name"></asp:BoundField>
+                    <asp:BoundField  DataField="PatientsName" HeaderText="Patient Name"></asp:BoundField>
                     <asp:BoundField DataField="PatientID" HeaderText="Patient ID"></asp:BoundField>
                     <asp:BoundField DataField="AccessionNumber" HeaderText="Accession #"></asp:BoundField>
                     <asp:BoundField DataField="StudyDate" HeaderText="Study Date"></asp:BoundField>
@@ -26,35 +26,22 @@
                     <asp:BoundField DataField="NumberOfRelatedInstances" HeaderText="Instances"></asp:BoundField>
                     
                 </Columns>
-                <emptydatatemplate>
+                <EmptyDataTemplate>
                     <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" CssClass="CSSGridHeader">
                         <asp:TableHeaderRow>
-                            <asp:TableHeaderCell>
-                            Patient Name
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Patient ID
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Accession #
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Study Date
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Description
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Series
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Instances
-                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>Patient Name</asp:TableHeaderCell>
+                            <asp:TableHeaderCell>Patient ID</asp:TableHeaderCell>
+                            <asp:TableHeaderCell>Accession #</asp:TableHeaderCell>
+                            <asp:TableHeaderCell>Study Date</asp:TableHeaderCell>
+                            <asp:TableHeaderCell>Description</asp:TableHeaderCell>
+                            <asp:TableHeaderCell>Series</asp:TableHeaderCell>
+                            <asp:TableHeaderCell>Instances</asp:TableHeaderCell>
                         </asp:TableHeaderRow>
                     </asp:Table>
                    
-                </emptydatatemplate> 
+                </EmptyDataTemplate> 
                 <RowStyle CssClass="CSSGridRowStyle" />
+                <AlternatingRowStyle CssClass="CSSGridAlternatingRowStyle" />
                 <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
                 <HeaderStyle CssClass="CSSGridHeader" />
                 <PagerTemplate>

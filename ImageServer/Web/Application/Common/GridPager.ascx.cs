@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
     {
         #region Private Members
 
-        private GridView _grid;
+        private GridView _target;
         private string _itemName;
         private string _puralItemName;
 
@@ -53,10 +53,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// <summary>
         /// Sets/Gets the grid associated with this control
         /// </summary>
-        public GridView Grid
+        public GridView Target
         {
-            get { return _grid; }
-            set { _grid = value; }
+            get { return _target; }
+            set { _target = value; }
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// </summary>
         /// <returns></returns>
         /// <remarks>
-        /// The number of records may be different than the value reported by <seealso cref="Grid.Rows.Count"/>
+        /// The number of records may be different than the value reported by <seealso cref="GridPager.Target.Rows.Count"/>
         /// </remarks>
         public delegate int GetRecordCountMethodDelegate();
 
@@ -112,25 +112,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         protected void PageButtonClick(object sender, CommandEventArgs e)
         {
             // get the current page selected
-            int intCurIndex = Grid.PageIndex;
+            int intCurIndex = Target.PageIndex;
 
             switch (e.CommandArgument.ToString().ToLower())
             {
                 case "first":
-                    Grid.PageIndex = 0;
+                    Target.PageIndex = 0;
                     break;
                 case "prev":
-                    Grid.PageIndex = intCurIndex - 1;
+                    Target.PageIndex = intCurIndex - 1;
                     break;
                 case "next":
-                    Grid.PageIndex = intCurIndex + 1;
+                    Target.PageIndex = intCurIndex + 1;
                     break;
                 case "last":
-                    Grid.PageIndex = Grid.PageCount;
+                    Target.PageIndex = Target.PageCount;
                     break;
             }
 
-            Grid.DataBind();
+            Target.DataBind();
         }
 
         #endregion Protected methods
@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// </summary>
         public void UpdateUI()
         {
-            if (_grid != null)
+            if (_target != null)
             {
                 if (GetRecordCountMethod != null)
                 {
@@ -152,9 +152,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
 
                 PageCountLabel.Text =
-                    string.Format("Page {0} of {1}", _grid.PageIndex + 1, _grid.PageCount == 0 ? 1 : _grid.PageCount);
+                    string.Format("Page {0} of {1}", _target.PageIndex + 1, _target.PageCount == 0 ? 1 : _target.PageCount);
 
-                if (_grid.PageIndex > 0)
+                if (_target.PageIndex > 0)
                 {
                     PrevPageButton.ImageUrl = "~/images/icons/BackEnabled.png";
                     PrevPageButton.Enabled = true;
@@ -166,7 +166,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                 }
 
 
-                if (_grid.PageIndex < _grid.PageCount - 1)
+                if (_target.PageIndex < _target.PageCount - 1)
                 {
                     NextPageButton.ImageUrl = "~/images/icons/ForwardEnabled.png";
                     NextPageButton.Enabled = true;

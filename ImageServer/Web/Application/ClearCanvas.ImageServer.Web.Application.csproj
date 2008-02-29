@@ -337,13 +337,6 @@
       <DependentUpon>ValidationServices.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="StudyDetails\StudyDetailsSecondaryView.ascx.cs">
-      <DependentUpon>StudyDetailsSecondaryView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="StudyDetails\StudyDetailsSecondaryView.ascx.designer.cs">
-      <DependentUpon>StudyDetailsSecondaryView.ascx</DependentUpon>
-    </Compile>
     <Compile Include="StudyDetails\PatientSummaryAssembler.cs" />
     <Compile Include="StudyDetails\PatientSummaryPanel.ascx.cs">
       <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
@@ -537,7 +530,6 @@
     <Content Include="Services\FilesystemInfoService.asmx" />
     <Content Include="Services\ValidationServices.asmx" />
     <EmbeddedResource Include="StudyDetails\SeriesGridView.js" />
-    <Content Include="StudyDetails\StudyDetailsSecondaryView.ascx" />
     <Content Include="StudyDetails\PatientSummaryPanel.ascx" />
     <Content Include="StudyDetails\SeriesGridView.ascx" />
     <Content Include="StudyDetails\StudyDetailsPage.aspx" />
@@ -613,7 +605,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>3085</DevelopmentServerPort>
+          <DevelopmentServerPort>3201</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

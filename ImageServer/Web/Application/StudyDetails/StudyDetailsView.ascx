@@ -1,6 +1,8 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StudyDetailsView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.StudyDetails.StudyDetailsView" %>
+<%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI"
+    TagPrefix="cc1" %>
 <asp:DetailsView ID="DetailsView1" runat="server" AutoGenerateRows="False" CellPadding="4" 
-    ForeColor="#333333" GridLines="Horizontal" BorderWidth="1px" Width="100%">
+    ForeColor="#333333" GridLines="Horizontal" BorderWidth="1px" Width="100%" >
     <Fields>
         <asp:BoundField DataField="StudyDescription" HeaderText="Study Description">
             
@@ -15,19 +17,26 @@
         <asp:BoundField DataField="StudyInstanceUid" HeaderText="Study Instance UID">
             
         </asp:BoundField>
-        <asp:TemplateField HeaderText="StudyStatus">
+        <asp:TemplateField HeaderText="Study Status">
             <ItemTemplate>
                 <asp:Label ID="Label1" runat="server" Text='<%# DataBinder.Eval(Container.DataItem, "StudyStatusEnum.Description") %>' />
             </ItemTemplate>
             
         </asp:TemplateField>
         
-        <asp:BoundField DataField="StudyDate"  HeaderText="Study Date">
+        <asp:BoundField DataField="StudyDate"  HeaderText="Study Date" Visible="false">
             
         </asp:BoundField>
-        <asp:BoundField DataField="StudyTime"  HeaderText="Study Time">
+        <asp:BoundField DataField="StudyTime"  HeaderText="Study Time" Visible="false">
             
         </asp:BoundField>
+        
+         <asp:TemplateField HeaderText="Study DateTime">
+            <ItemTemplate>
+                <asp:Label runat="server" ID="StudyDateTimeLabel" />
+            </ItemTemplate>
+        </asp:TemplateField>
+        
         <asp:BoundField DataField="StudyID" HeaderText="Study ID">
             
         </asp:BoundField>
@@ -46,6 +55,6 @@
     <PagerStyle BackColor="#284775" ForeColor="White" HorizontalAlign="Center" />
     <HeaderStyle CssClass="CSSStudyDetailsViewHeaderStyle" />
     <EditRowStyle BackColor="#999999" />
-    <AlternatingRowStyle CssClass="CSSStudyDetailsAlternatingRowStyle" />
+    <AlternatingRowStyle CssClass="CSSStudyDetailsViewAlternatingRowStyle" />
     
 </asp:DetailsView>

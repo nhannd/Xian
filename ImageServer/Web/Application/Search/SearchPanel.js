@@ -1,45 +1,51 @@
-Sys.Application.add_load( function(){
-        studylistgrid = $find('@@STUDYLIST_GRIDVIEW_CLIENTID@@');
-        if (studylistgrid!=null)
+/// Register onload event listener
+Sys.Application.add_load( function()
+{
+        studyListGrid = $find('@@STUDYLIST_GRIDVIEW_CLIENTID@@');
+        if (studyListGrid!=null)
         {
-            studylistgrid.add_onClientRowClick(OnStudyListRowSelected);
+            studyListGrid.add_onClientRowClick(OnStudyListRowSelected);
         }
     }
 );
 
+
 function OnStudyListRowSelected(sender, ev)
 {
-    studylistgrid = $find('@@STUDYLIST_GRIDVIEW_CLIENTID@@');
+    var studyListGrid = $find('@@STUDYLIST_GRIDVIEW_CLIENTID@@');
     
-    if (studylistgrid!=null)
+    if (studyListGrid!=null)
     {
-        deletebutton = $find('@@DELETE_BUTTON_CLIENTID@@');
+        // enable the delete study button if the selected study hasn't been scheduled for delete
+        // If multiple studies are selected, only enable the button if none of them has been scheduled for delete.
+        
+        var deleteButton = $find('@@DELETE_BUTTON_CLIENTID@@');
     
-        rows = studylistgrid.getSelectedRowElements();
+        var rows = studyListGrid.getSelectedRowElements();
         if (rows.length>0)
         {
-            enabledelete = true;
+            var allowDelete = true;
             for(i=0; i<rows.length; i++)
             {
-                row = rows[i];
-                deleted = row.getAttribute('deleted')=='true';
+                var row = rows[i];
+                deleted = row.getAttribute('deleted')=='true'; //'deleted' is a custom attribute injected by the server control
                 if (deleted)
                 {
-                    enabledelete = false;
+                    allowDelete = false;
                     break;
                 }
             }
             
-            deletebutton.set_enable(enabledelete);
+            deleteButton.set_enable(allowDelete);
         }
         else
         {
-            deletebutton.set_enable(false);
+            deleteButton.set_enable(false);
         }
         
         
-        openbutton = $find('@@OPEN_STUDY_BUTTON_CLIENTID@@');
-        openbutton.set_enable(rows.length>0);
+        openButton = $find('@@OPEN_STUDY_BUTTON_CLIENTID@@');
+        openButton.set_enable(rows.length>0);
     }
 }
 
@@ -55,10 +61,10 @@ function OnStudyListRowDoubleClicked(sender, ev)
 
 function OpenSelectedStudies()
 {
-    studylistgrid = $find('@@STUDYLIST_GRIDVIEW_CLIENTID@@');
-    if (studylistgrid!=null)
+    studyListGrid = $find('@@STUDYLIST_GRIDVIEW_CLIENTID@@');
+    if (studyListGrid!=null)
     {
-        var rows = studylistgrid.getSelectedRowElements();
+        var rows = studyListGrid.getSelectedRowElements();
         for(i=0; i<rows.length; i++)
         {
             var url = '@@OPEN_STUDY_BASE_URL@@?siuid=' + rows[i].getAttribute('instanceuid') +'&serverae=@@PARTITION_AE@@';

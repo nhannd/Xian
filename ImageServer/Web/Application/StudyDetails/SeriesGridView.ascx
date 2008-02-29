@@ -23,15 +23,15 @@
                             <asp:BoundField DataField="SeriesDescription" HeaderText="Description" />
                             <asp:BoundField DataField="NumberOfSeriesRelatedInstances" HeaderText="Images" />
                             <asp:BoundField DataField="SeriesInstanceUid" HeaderText="Series Instance UID"></asp:BoundField>
-                            <asp:TemplateField HeaderText="Performed On">
+                            <asp:TemplateField  HeaderText="Performed On">
                                 <ItemTemplate>
-                                    <asp:Label runat="server" ID="SeriesPerformedDateTime" Text="" />
+                                    <asp:Label runat="server" ID="SeriesPerformedDateTime" Text="" Nowrap="true" />
                                 </ItemTemplate>
                             </asp:TemplateField>
                         </Columns>
                         <EmptyDataTemplate>
                             <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                                CssClass="CSSGridHeader">
+                                CssClass="CSSSeriesGridViewHeaderStyle">
                                 <asp:TableHeaderRow>
                                     <asp:TableHeaderCell>Series#</asp:TableHeaderCell>
                                     <asp:TableHeaderCell>Modality</asp:TableHeaderCell>
@@ -43,7 +43,7 @@
                         </EmptyDataTemplate>
                         
                         <RowStyle CssClass="CSSSeriesGridViewRowStyle"/>
-                        <HeaderStyle CssClass="CSSSeriesGridViewHeaderStyle" />
+                        <HeaderStyle CssClass="CSSSeriesGridViewHeaderStyle"/>
                         <AlternatingRowStyle CssClass="CSSSeriesGridViewAlternatingRowStyle" />
                         <SelectedRowStyle  CssClass="CSSSeriesGridSelectedRowStyle" />
                     </clearcanvas:GridView>

@@ -4,8 +4,6 @@
 <%@ Register Src="SeriesGridView.ascx" TagName="SeriesGridView" TagPrefix="uc3" %>
 <%@ Register Src="PatientSummaryPanel.ascx" TagName="PatientSummaryPanel" TagPrefix="uc2" %>
 <%@ Register Src="StudyDetailsView.ascx" TagName="StudyDetailsView" TagPrefix="clearcanvas" %>
-<%@ Register Src="StudyDetailsSecondaryView.ascx" TagName="StudyDetailsSecondaryView"
-    TagPrefix="clearcanvas" %>
 <%@ Register TagPrefix="clearcanvas" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI"
     Assembly="ClearCanvas.ImageServer.Web.Common" %>
 <%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="cc2" %>
@@ -30,7 +28,6 @@
                         </td>
                     </tr>
                 </table>
-                <asp:Image ID="Image1" runat="server" Visible="false" />
                 <hr />
             </asp:Panel>
             <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelContainer">
@@ -57,7 +54,6 @@
             <br />
             <asp:Panel ID="Panel2" runat="server">
                 <strong>SERIES</strong>
-                <asp:Image ID="Image2" runat="server" Visible="false" />
                 <hr />
             </asp:Panel>
             <uc3:SeriesGridView ID="SeriesGridView1" runat="server"></uc3:SeriesGridView>

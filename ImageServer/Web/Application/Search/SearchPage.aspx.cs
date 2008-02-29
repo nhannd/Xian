@@ -30,45 +30,25 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Common;
-using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Search
 {
     public partial class SearchPage : BasePage
     {
-
-        // the controller used for database interaction
-        private StudyController _controller = new StudyController();
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            
-        }
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
             ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
-                                            {
-                                                SearchPanel panel =
-                                                    LoadControl("SearchPanel.ascx") as SearchPanel;
-                                                panel.ServerPartition = partition;
-                                                panel.ID = "SearchPanel_" + partition.AeTitle;
+                                                           {
+                                                               SearchPanel panel =
+                                                                   LoadControl("SearchPanel.ascx") as SearchPanel;
+                                                               panel.ServerPartition = partition;
+                                                               panel.ID = "SearchPanel_" + partition.AeTitle;
 
-                                                panel.EnclosingPage = this;
-
-                                                return panel;
-                                            });
-
-
+                                                               return panel;
+                                                           });
         }
-
-
-       
     }
 }

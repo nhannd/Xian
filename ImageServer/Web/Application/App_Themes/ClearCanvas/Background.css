@@ -180,6 +180,19 @@ body
 	
 }
 
+/* Alternating row style */
+.CSSGridAlternatingRowStyle
+{
+	background-color:#F7F6F3;
+}
+
+/* Alternating row cell style */
+.CSSGridAlternatingRowStyle td
+{	
+	background-color:#F7F6F3;
+}
+
+
 /* gridview control selected row */
 .CSSGridSelectedRowStyle
 {
@@ -272,15 +285,75 @@ body
 *****************************************************************************************/
 .CSSStudyDetailsViewRowStyle
 {
-	
+
+}
+
+.CSSStudyDetailsViewRowStyle td
+{
+
+}
+
+
+.CSSStudyDetailsViewAlternatingRowStyle
+{
+	background-color:#F7F6F3;
+}
+
+
+.CSSStudyDetailsViewAlternatingRowStyle td
+{
+	background-color:#F7F6F3;
 }
 
 
 /*****************************************************************************************
 	Series grid view styles
 *****************************************************************************************/
+
+
+
 .CSSSeriesGridViewHeaderStyle
 {
 	background-image: url(images/gridheaderbackground.png);
 	background-repeat: repeat-x;
 }
+
+/* gridview control selected row */
+.CSSSeriesGridViewRowStyle
+{
+
+}
+
+/* gridview control cell */
+.CSSSeriesGridViewRowStyle td
+{
+	background-color:#F7F6F3;
+}
+
+/* gridview control cell */
+.CSSSeriesGridViewAlternatingRowStyle
+{
+
+}
+
+
+/* gridview control cell */
+.CSSSeriesGridViewAlternatingRowStyle td
+{
+	background-color:Transparent;
+}
+
+/* gridview control selected row */
+.CSSSeriesGridSelectedRowStyle
+{
+	background-color:#316AC5;
+}
+
+
+/* gridview cell of the selected row */
+.CSSSeriesGridSelectedRowStyle td
+{
+}
+
+
+

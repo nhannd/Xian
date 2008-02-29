@@ -1,6 +1,12 @@
-// Register the namespace for the control.
-//alert('gridview');
+/// This script contains the javascript component class for the gridview class
+/// 
+/// The control contains the following public methods:
+///     getSelectedRowElements() : returns list of row elements (TR) which are being selected.
+///     _selectRow() : select a specifi
 
+
+// Register the namespace for the control.
+//
 Type.registerNamespace('ClearCanvas.ImageServer.Web.Common.WebControls.UI');
 
 //
@@ -12,6 +18,8 @@ ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView = function(element) {
     this._SelectedRowIndicesField = null;
     this._SelectedRowStyle = null;
     this._SelectedRowCSS = null;
+    this._AlternateRowStyle = null;
+    this._AlternateRowCSS = null;
     this._UnSelectedRowStyle = null;
     this._UnSelectedRowCSS = null;
 }
@@ -19,25 +27,71 @@ ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView = function(element) {
 //
 // Create the prototype for the control.
 //
-
+//
 ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.prototype = 
 {
     initialize : function() {
         ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.callBaseMethod(this, 'initialize');
 
-        
+        // add click and double-click handlers on each row
         for(i = 0; i < this.get_element().rows.length; i++)
         {
-            r =this.get_element().rows[i];
-            $addHandlers(r, 
+            var row =this.get_element().rows[i];
+            $addHandlers(row, 
                      { 
-                        'click' : this._onCellClick  ,
+                        'click' : this._onCellClick,
                         'dblclick' : this._onCellDblClick
-                     }, this);
+                     }, 
+                     this);
         }
     },
     
+    //
+    // public methods
+    //
+    getSelectedRowElements : function() {
+        var rows = this.get_element().rows;
+        var selectedRows = new Array();
+        for(var i=0; i< rows.length; i++)
+        {
+            if (rows[i].getAttribute('isdatarow')=='true' && rows[i].getAttribute('selected')=='true')
+                selectedRows[selectedRows.length]=rows[i];
+        }
+        
+        return selectedRows;
+    },
     
+    selectRow : function (rowIndex)
+    {
+        var row = this.get_element().rows[rowIndex];
+        this._selectRow(row);
+    },
+    
+    unselectRow : function (rowIndex)
+    {
+        var row = this.get_element().rows[rowIndex];
+        this._unselectRow(row);
+    },
+    
+    clearSelections : function()
+    {
+        // unselect those currently selected
+        var rows = this.getSelectedRowElements();
+        for(var i=0; i<rows.length; i++)
+        {
+            var row = rows[i];            
+            this._unselectRow(row);           
+        }
+        
+        var f = $get(this._SelectedRowIndicesField);
+        f.value='';
+                        
+    },
+    
+    
+    //
+    // Events
+    //
     
     add_onClientRowClick : function(handler) {
         this.get_events().addHandler('onClientRowClick', handler);
@@ -52,6 +106,7 @@ ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.prototype =
         }
     },
     
+    
     add_onClientRowDblClick : function(handler) {
         this.get_events().addHandler('onClientRowDblClick', handler);
     },
@@ -65,8 +120,6 @@ ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.prototype =
         }
     },
     
-   
-
     dispose : function() {
         $clearHandlers(this.get_element());
 
@@ -81,140 +134,49 @@ ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.prototype =
         if (this.get_element() && !this.get_element().disabled) {       
         }
     },
-    
-    
-    getSelectedRowElements : function() {
-        r = this.get_element().rows;
-        r2=new Array();
-        for(i=0; i< r.length; i++)
-        {
-            if (r[i].getAttribute('isdatarow')=='true' && r[i].getAttribute('selected')=='true')
-                r2[r2.length]=r[i];
-        }
-        
-        return r2;
-    },
+   
     
     _onCellDblClick : function(e) {
-        row = e.target.parentNode ;
+        var row = e.target.parentNode ;
         if (this.get_element() && !this.get_element().disabled) 
         {
+            this._selectRow(row);            
+            
             var ev = new Sys.EventArgs();
-            ev.row = row;
+            ev.row = row;            
             this.raiseonClientRowDblClick(ev);
         }
     },
     
-    _clearSelections : function(){
-        // unselect those currently selected
-        var rows = this.getSelectedRowElements();
-        for(i=0; i<rows.length; i++)
-        {
-            var row = rows[i];
-            row.style.cssText = this._UnSelectedRowStyle;
-            row.className = this._UnSelectedRowCSS;
-            row.setAttribute('selected', 'false');
-        }
-        
-        var f = $get(this._SelectedRowIndicesField);
-        f.value='';
-                        
-    },
     
     _onCellClick : function(e) {
-        row = e.target.parentNode ;
+        var row = e.target.parentNode ;
         //alert(row);
         if (this.get_element() && !this.get_element().disabled ) 
         {
             if (row.getAttribute('isdatarow')=='true')
             {
-                multipleSelectionMode = true;//e.altKey;
+                var multipleSelectionMode = e.ctrlKey;
                 if (multipleSelectionMode)
                 {
-                    alreadyselected = row.getAttribute('selected')!=undefined && row.getAttribute('selected')=='true';
+                    var alreadyselected = row.getAttribute('selected')!=undefined && row.getAttribute('selected')=='true';
                     if (alreadyselected)
                     {
                         // unselect it
-                        row.style.cssText = this._UnSelectedRowStyle;
+                        this._unselectRow(row);                                                
                         
-                        row.className = this._UnSelectedRowCSS;
-                        
-                        f = $get(this._SelectedRowIndicesField);
-                        
-                        f2 = f.value.split(',');
-                        f.value='';
-                        for(i =0; i<f2.length; i++)
-                        {
-                            if (row.getAttribute('rowIndex')!=f2[i])
-                            {
-                                if (f.value=='')
-                                    f.value =   f2[i];
-                                else
-                                    f.value +=  ',' + f2[i];
-                            }    
-                                
-                        }
-                        row.setAttribute('selected', 'false');
                     }
                     else
                     {
-                        row.style.cssText = this._SelectedRowStyle;
-                        
-                        row.className = this._SelectedRowCSS;
-                        
-                        
-                        f = $get(this._SelectedRowIndicesField);
-
-                        if (f.value==null || f.value=='')
-                            f.value=row.getAttribute('rowIndex');
-                        else
-                            f.value +=  ',' + row.getAttribute('rowIndex');
-                        row.setAttribute('selected', 'true');
+                        this._selectRow(row);
                     }
                     
                     
                 }
                 else
                 {
-                    alreadyselected = row.getAttribute('selected')!=undefined && row.getAttribute('selected')=='true';
-                    if (alreadyselected)
-                    {
-                        // unselect it
-                        row.style.cssText = this._UnSelectedRowStyle;
-                        
-                        row.className = this._UnSelectedRowCSS;
-                        
-                        f = $get(this._SelectedRowIndicesField);
-                        
-                        f2 = f.value.split(',');
-                        f.value='';
-                        for(i =0; i<f2.length; i++)
-                        {
-                            if (row.getAttribute('rowIndex')!=f2[i])
-                            {
-                                if (f.value=='')
-                                    f.value =   f2[i];
-                                else
-                                    f.value +=  ',' + f2[i];
-                            }    
-                                
-                        }
-                        row.setAttribute('selected', 'false');
-                    }
-                    else
-                    {
-                        this._clearSelections();
-                        
-                        row.style.cssText = this._SelectedRowStyle;                        
-                        row.className = this._SelectedRowCSS;                        
-                        
-                        f = $get(this._SelectedRowIndicesField);
-                        f.value=row.getAttribute('rowIndex');                        
-                        row.setAttribute('selected', 'true');
-                        
-                        
-                        
-                    }
+                    this.clearSelections();
+                    this._selectRow(row);
                 }
             }
             
@@ -231,6 +193,68 @@ ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.prototype =
         }
     },
 
+    //
+    // Private methods
+    //
+    _selectRow : function (row)
+    {
+        if (this.get_element() && !this.get_element().disabled ) 
+        {
+            row.style.cssText = this._SelectedRowStyle;                    
+            row.className = this._SelectedRowCSS;
+            
+            
+            var f = $get(this._SelectedRowIndicesField);
+
+            if (f.value==null || f.value=='')
+                f.value=row.getAttribute('rowIndex');
+            else
+                f.value +=  ',' + row.getAttribute('rowIndex');
+                
+            row.setAttribute('selected', 'true');
+        }
+        
+    },
+    
+    _unselectRow : function (row)
+    {
+        if (this.get_element() && !this.get_element().disabled ) 
+        {
+            var rowIndex = parseInt(row.getAttribute('rowIndex'));
+            if (rowIndex%2==0)
+            {
+                row.style.cssText = this._UnSelectedRowStyle ;                       
+                row.className = this._UnSelectedRowCSS;
+            }
+            else
+            {
+                row.style.cssText = (this._AlternatingRowStyle!=null && this._AlternatingRowStyle!=undefined) ? this._AlternatingRowStyle: this._UnSelectedRowStyle;                        
+                row.className = (this._AlternatingRowCSS!=null && this._AlternatingRowCSS!=undefined)? this._AlternatingRowCSS:this._UnSelectedRowCSS;
+            
+            }
+            
+            //update the hidden field which stores the selected row indices
+            var f = $get(this._SelectedRowIndicesField);                        
+            var f2 = f.value.split(',');
+            f.value='';
+            for(i =0; i<f2.length; i++)
+            {
+                if (row.getAttribute('rowIndex')!=f2[i])
+                {
+                    if (f.value=='')
+                        f.value =   f2[i];
+                    else
+                        f.value +=  ',' + f2[i];
+                }    
+                    
+            }
+            
+             row.setAttribute('selected', 'false');
+        }
+        
+    },
+    
+    
 
     //
     // Control properties
@@ -262,6 +286,25 @@ ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.prototype =
     set_SelectedRowCSS : function(value) {
         this._SelectedRowCSS = value;
         this.raisePropertyChanged('SelectedRowCSS');
+    },
+    
+    get_AlternatingRowStyle : function() {
+        return this._AlternatingRowStyle;
+    },
+
+    set_AlternatingRowStyle : function(value) {
+        this._AlternatingRowStyle = value;
+        this.raisePropertyChanged('AlternatingRowStyle');
+    },
+    
+    
+    get_AlternatingRowCSS : function() {
+        return this._AlternatingRowCSS;
+    },
+
+    set_AlternatingRowCSS : function(value) {
+        this._AlternatingRowCSS = value;
+        this.raisePropertyChanged('AlternatingRowCSS');
     },
     
     get_UnSelectedRowStyle : function() {

@@ -64,6 +64,7 @@
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\DateTimeFormatter.cs" />
     <Compile Include="WebControls\UI\GridView.cs" />
     <Compile Include="WebControls\Validators\BaseValidator.cs" />
     <Compile Include="WebControls\Validators\ConditionalRequiredFieldValidator.cs" />
@@ -104,7 +105,6 @@
   <ItemGroup>
     <None Include="app.config">
     </None>
-    <None Include="ClassDiagram1.cd" />
     <None Include="Service References\FilesystemServiceProxy.map" />
   </ItemGroup>
   <ItemGroup>

@@ -29,11 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
@@ -71,7 +67,7 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
             details.StudyTime = study.StudyTime;
 
             StudyController studyController = new StudyController();
-            details.ScheduledForDelete = studyController.ScheduledForDelete(study);
+            details.ScheduledForDelete = studyController.IsScheduledForDelete(study);
 
             return details;
         }

@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// </summary>
         /// <param name="study"></param>
         /// <returns></returns>
-        public bool ScheduledForDelete(Study study)
+        public bool IsScheduledForDelete(Study study)
         {
             StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
             StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();

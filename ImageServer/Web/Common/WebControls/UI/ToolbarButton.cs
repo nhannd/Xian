@@ -31,21 +31,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 {
-
-    [DefaultProperty("Text")]
     [ToolboxData("<{0}:ToolbarButton runat=server></{0}:ToolbarButton>")]
     public class ToolbarButton : ImageButton, IScriptControl
     {
-        [Bindable(true)]
-        [Category("Appearance")]
-        [DefaultValue("")]
-        [Localizable(true)]
+        #region Public Properties
+
+        /// <summary>
+        /// Sets or gets the url of the image to be used when the button is enabled.
+        /// </summary>
         public string EnabledImageURL 
         {
             get
@@ -60,10 +58,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             }
         }
 
-        [Bindable(true)]
-        [Category("Appearance")]
-        [DefaultValue("")]
-        [Localizable(true)]
+        /// <summary>
+        /// Sets or gets the url of the image to be used when the button enabled and user hovers the mouse over the button.
+        /// </summary>
         public string EnabledHoverImageURL
         {
             get
@@ -78,10 +75,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             }
         }
 
-        [Bindable(true)]
-        [Category("Appearance")]
-        [DefaultValue("")]
-        [Localizable(true)]
+        /// <summary>
+        /// Sets or gets the url of the image to be used when the button is disabled.
+        /// </summary>
         public string DisabledImageURL
         {
             get
@@ -96,19 +92,24 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             }
         }
 
+        #endregion Public Properties
+
+        #region Protected Methods
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
             if (String.IsNullOrEmpty(EnabledHoverImageURL)==false && Enabled)
             {
-                Attributes["onMouseOver"] = String.Format("this.src='{0}';", Page.ResolveClientUrl(EnabledHoverImageURL));
-                Attributes["onMouseOut"] = String.Format("this.src='{0}';", Page.ResolveClientUrl(EnabledImageURL));
+                //Attributes["onMouseOver"] = String.Format("this.src='{0}';", Page.ResolveClientUrl(EnabledHoverImageURL));
+                //Attributes["onMouseOut"] = String.Format("this.src='{0}';", Page.ResolveClientUrl(EnabledImageURL));
             }
 
-
-            
-            
         }
+
+
+        #endregion Protected Methods
+
 
         public override void  RenderControl(HtmlTextWriter writer)
         {
@@ -118,22 +119,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 ImageUrl = DisabledImageURL;
 
  	        base.RenderControl(writer);
-
-            String script = @"
-                var @@CONTROLID@@ = document.getElementById('@@CONTROLID@@');
-                @@CONTROLID@@.setEnable = function(enable)      
-                {
-                    @@CONTROLID@@.disabled=!enable; 
-                    @@CONTROLID@@.src = enable? '@@ENABLED_IMAGE_URL@@':'@@DISABLED_IMAGE_URL@@';  
-                }
-            ";
-
-            script = script.Replace("@@CONTROLID@@", ClientID);
-            script = script.Replace("@@ENABLED_IMAGE_URL@@", Page.ResolveClientUrl(EnabledImageURL));
-            script = script.Replace("@@DISABLED_IMAGE_URL@@", Page.ResolveClientUrl(DisabledImageURL));
-
-
-            //ScriptManager.RegisterClientScriptBlock(this, GetType(), ClientID + "_InitEventHandler", script, true);
         }
 
 
@@ -143,6 +128,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             ScriptControlDescriptor desc = new ScriptControlDescriptor("ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton", ClientID);
             desc.AddProperty("EnabledImageUrl", Page.ResolveClientUrl(EnabledImageURL));
             desc.AddProperty("DisabledImageUrl", Page.ResolveClientUrl(DisabledImageURL));
+            if (EnabledHoverImageURL!=null)
+                desc.AddProperty("HoverImageUrl", Page.ResolveClientUrl(EnabledHoverImageURL));
 
             return new ScriptDescriptor[] { desc };
         }
@@ -154,6 +141,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             reference.Path = Page.ClientScript.GetWebResourceUrl(typeof(ToolbarButton), "ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton.js");
             return new ScriptReference[] { reference };
         }
+
+        #endregion IScriptControl Members
+
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
@@ -175,6 +165,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             base.Render(writer);
         }
 
-        #endregion
+       
     }
 }

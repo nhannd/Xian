@@ -9,6 +9,7 @@ ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton = function(eleme
     
     this._EnabledImageUrl = null;
     this._DisabledImageUrl = null;
+    this._HoverImageUrl = null;
 }
 
 //
@@ -19,23 +20,17 @@ ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton.prototype =
 {
     initialize : function() {
         ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton.callBaseMethod(this, 'initialize');
-
+        
+         $addHandlers(this.get_element(), 
+                     { 
+                        'mouseover' : this._onMouseOver,
+                        'mouseout'  : this._onMouseOut
+                     }, 
+                     this);
+                     
     },
    
-    
-    add_onClientClick : function(handler) {
-        this.get_events().addHandler('onClientClick', handler);
-    },
-    remove_onClientClick : function(handler) {
-        this.get_events().removeHandler('onClientClick', handler);
-    },
-    raiseonClientClick : function(eventArgs) {   
-        var handler = this.get_events().getHandler('onClientClick');
-        if (handler) {
-            handler(this, eventArgs);
-        }
-    },
-    
+ 
    
 
     dispose : function() {
@@ -45,25 +40,28 @@ ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton.prototype =
     },
 
     //
-    // Event delegates
+    // Event handlers
     //
 
-    _onFocus : function(e) {
-        if (this.get_element() && !this.get_element().disabled) {
-            //this.get_element().className = this._highlightCssClass;          
-        }
-    },
-    
-    _onClientSideClick : function(e) {
-        alert('hey');
-    },
-    
-    _onBlur : function(e) {
-        if (this.get_element() && !this.get_element().disabled) {
-            // this.get_element().className = this._nohighlightCssClass;          
+    _onMouseOver : function(e) 
+    {
+        if (this.get_element() && !this.get_element().disabled) {     
+            if (this._HoverImageUrl!=undefined && this._HoverImageUrl!=null  && this._HoverImageUrl!='')
+                this.get_element().src =  this._HoverImageUrl;
         }
     },
 
+    _onMouseOut : function(e) 
+    {
+        if (this.get_element() && !this.get_element().disabled) {     
+            this.get_element().src =  this._EnabledImageUrl;
+        }
+        else
+        {
+            this.get_element().src =  this._DisabledImageUrl;
+        }
+    },
+    
 
     //
     // Control properties
@@ -96,6 +94,16 @@ ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton.prototype =
     set_DisabledImageUrl : function(value) {
         this._DisabledImageUrl = value;
         this.raisePropertyChanged('DisabledImageUrl');
+    },
+    
+    
+    get_HoverImageUrl : function() {
+        return this._HoverImageUrl;
+    },
+
+    set_HoverImageUrl : function(value) {
+        this._HoverImageUrl = value;
+        this.raisePropertyChanged('HoverImageUrl');
     }
 
 

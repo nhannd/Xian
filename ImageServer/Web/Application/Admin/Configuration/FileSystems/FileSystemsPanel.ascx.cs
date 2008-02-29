@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             // setup child controls
             GridPager1.ItemName = "FileSystem";
             GridPager1.PuralItemName = "FileSystems";
-            GridPager1.Grid = FileSystemsGridView1.TheGrid;
+            GridPager1.Target = FileSystemsGridView1.TheGrid;
 
             Tiers = _theController.GetFileSystemTiers();
 

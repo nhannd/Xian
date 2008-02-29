@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             // setup child controls
             GridPager.ItemName = "Rule";
             GridPager.PuralItemName = "Rules";
-            GridPager.Grid = ServerRuleGridViewControl.TheGrid;
+            GridPager.Target = ServerRuleGridViewControl.TheGrid;
 
             GridPager.GetRecordCountMethod = delegate { return ServerRuleGridViewControl.ServerRules.Count; };
 

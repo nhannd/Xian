@@ -29,12 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Search
 {
@@ -44,7 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
     /// <remarks>
     /// 
     /// </remarks>
-    public class StudySummaryAssembler
+    static public class StudySummaryAssembler
     {
         /// <summary>
         /// Returns an instance of <see cref="StudySummary"/> based on a <see cref="Study"/> object.

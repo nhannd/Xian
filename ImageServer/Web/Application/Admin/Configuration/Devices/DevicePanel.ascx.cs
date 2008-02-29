@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             // setup child controls
             GridPager1.ItemName = "Device";
             GridPager1.PuralItemName = "Devices";
-            GridPager1.Grid = DeviceGridViewControl1.TheGrid;
+            GridPager1.Target = DeviceGridViewControl1.TheGrid;
 
 
             // setup event handler for child controls
