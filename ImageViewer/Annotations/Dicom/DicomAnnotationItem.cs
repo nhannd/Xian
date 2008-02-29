@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 	/// <seealso cref="AnnotationItem"/>
 	public class DicomAnnotationItem<T>: AnnotationItem
 	{
-		private readonly SopDataRetrieverDelegate<T> _sopDataRetrieverDelegate;
+		private readonly FrameDataRetrieverDelegate<T> _sopDataRetrieverDelegate;
 		private readonly ResultFormatterDelegate<T> _resultFormatterDelegate;
 
 		/// <summary>
@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			(
 				string identifier,
 				IAnnotationResourceResolver resolver,
-				SopDataRetrieverDelegate<T> sopDataRetrieverDelegate,
+				FrameDataRetrieverDelegate<T> sopDataRetrieverDelegate,
 				ResultFormatterDelegate<T> resultFormatterDelegate
 			)
 			: this(identifier, resolver.ResolveDisplayName(identifier), resolver.ResolveLabel(identifier), sopDataRetrieverDelegate, resultFormatterDelegate)
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 				string identifier,
 				string displayName,
 				string label,
-				SopDataRetrieverDelegate<T> sopDataRetrieverDelegate,
+				FrameDataRetrieverDelegate<T> sopDataRetrieverDelegate,
 				ResultFormatterDelegate<T> resultFormatterDelegate
 			)
 			: base(identifier, displayName, label)
@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			if (associatedDicom == null)
 				return "";
 
-			return _resultFormatterDelegate(_sopDataRetrieverDelegate(associatedDicom.ImageSop));
+			return _resultFormatterDelegate(_sopDataRetrieverDelegate(associatedDicom.Frame));
 		}
 	}
 }

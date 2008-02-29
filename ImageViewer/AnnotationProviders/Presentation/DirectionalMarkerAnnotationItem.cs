@@ -86,8 +86,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 				if (associatedDicom != null && associatedTransform != null)
 				{
 					SpatialTransform spatialTransform = associatedTransform.SpatialTransform as SpatialTransform;
-					if (spatialTransform != null && associatedDicom.ImageSop.ImageOrientationPatient != null)
-						markerText = GetAnnotationTextInternal(spatialTransform, associatedDicom.ImageSop.ImageOrientationPatient);
+					if (spatialTransform != null && associatedDicom.Frame.ImageOrientationPatient != null)
+						markerText = GetAnnotationTextInternal(spatialTransform, associatedDicom.Frame.ImageOrientationPatient);
 				}
 			}
 

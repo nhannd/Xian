@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -26,11 +27,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the <see cref="Frame"/> at the specified index.
 		/// </summary>
-		/// <param name="frameNumber">The zero-based frame number. (i.e. the first frame is frame 0).</param>
+		/// <param name="frameNumber">The frame number. The first frame is frame 1.</param>
 		/// <returns></returns>
 		public Frame this[int frameNumber]
 		{
-			get { return _frames[frameNumber]; }
+			get
+			{
+				Platform.CheckPositive(frameNumber, "frameNumber");
+				return _frames[frameNumber-1];
+			}
 		}
 
 		/// <summary>

@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralEquipment.DateOfLastCalibration",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.DateOfLastCalibration),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.DateOfLastCalibration),
 							DicomDataFormatHelper.DateFormat
 						)
 					);
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralEquipment.TimeOfLastCalibration",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.TimeOfLastCalibration),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.TimeOfLastCalibration),
 							DicomDataFormatHelper.TimeFormat
 						)
 					);
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralEquipment.DeviceSerialNumber",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.DeviceSerialNumber),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.DeviceSerialNumber),
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralEquipment.InstitutionAddress",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.InstitutionAddress),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.InstitutionAddress),
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralEquipment.InstitutionalDepartmentName",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.InstitutionalDepartmentName; },
+							delegate(Frame frame) { return frame.ParentImageSop.InstitutionalDepartmentName; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralEquipment.InstitutionName",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.InstitutionName; },
+							delegate(Frame frame) { return frame.ParentImageSop.InstitutionName; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralEquipment.Manufacturer",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.Manufacturer; },
+							delegate(Frame frame) { return frame.ParentImageSop.Manufacturer; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralEquipment.ManufacturersModelName",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.ManufacturersModelName; },
+							delegate(Frame frame) { return frame.ParentImageSop.ManufacturersModelName; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralEquipment.StationName",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.StationName; },
+							delegate(Frame frame) { return frame.ParentImageSop.StationName; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -165,7 +165,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralEquipment.SoftwareVersions",
 							resolver,
-							SopDataRetrieverFactory.GetStringArrayRetriever(DicomTags.SoftwareVersions),
+							FrameDataRetrieverFactory.GetStringArrayRetriever(DicomTags.SoftwareVersions),
 							DicomDataFormatHelper.StringListFormat
 						)
 					);

@@ -266,7 +266,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		protected override void AddFrames()
 		{
-			for (int i = 0; i < this.NumberOfFrames; i++)
+			for (int i = 1; i <= this.NumberOfFrames; i++)
 				this.Frames.Add(new LocalFrame(this, i));
 		}
 

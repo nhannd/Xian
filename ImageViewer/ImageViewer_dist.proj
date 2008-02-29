@@ -91,7 +91,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(DesktopBuild)">
-    <PluginFiles Include="$(SolutionDir)\..\Codecs\bin\$(Configuration)\ClearCanvas.Codecs.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Desktop\Explorer\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\bin\$(Configuration)\ClearCanvas.ImageViewer.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Services\Tools\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.dll" />

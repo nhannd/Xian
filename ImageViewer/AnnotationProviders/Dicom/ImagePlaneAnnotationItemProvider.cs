@@ -65,9 +65,9 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.ImagePlane.SliceThickness",
 							resolver,
-							delegate(ImageSop imageSop)
+							delegate(Frame frame)
 							{
-								return String.Format(SR.Formatmm1, imageSop.SliceThickness);
+								return String.Format(SR.Formatmm1, frame.SliceThickness);
 							},
 							DicomDataFormatHelper.RawStringFormat
 						)

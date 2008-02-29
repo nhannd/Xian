@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get
 			{
-				return this.Frames[0].FrameOfReferenceUid;
+				return this.Frames[1].FrameOfReferenceUid;
 			}
 		}
 
@@ -223,7 +223,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-				return this.Frames[0].PixelSpacing;
+				return this.Frames[1].PixelSpacing;
             }
 		}
 
@@ -232,7 +232,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
         {
             get
             {
-				return this.Frames[0].PixelAspectRatio;
+				return this.Frames[1].PixelAspectRatio;
             }
         }
 
@@ -241,7 +241,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get
 			{
-				return this.Frames[0].ImageOrientationPatient;
+				return this.Frames[1].ImageOrientationPatient;
 			}
 		}
 
@@ -250,7 +250,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get
 			{
-				return this.Frames[0].ImagePositionPatient;
+				return this.Frames[1].ImagePositionPatient;
 			}
 		}
 
@@ -259,7 +259,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-				return this.Frames[0].SamplesPerPixel;
+				return this.Frames[1].SamplesPerPixel;
             }
 		}
 
@@ -268,7 +268,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get
 			{
-				return this.Frames[0].PhotometricInterpretation;
+				return this.Frames[1].PhotometricInterpretation;
 			}
 		}
 
@@ -277,7 +277,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-				return this.Frames[0].Rows;
+				return this.Frames[1].Rows;
             }
 		}
 
@@ -286,7 +286,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-				return this.Frames[0].Columns;
+				return this.Frames[1].Columns;
             }
 		}
 
@@ -295,7 +295,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-				return this.Frames[0].BitsAllocated;
+				return this.Frames[1].BitsAllocated;
             }
 		}
 
@@ -304,7 +304,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-				return this.Frames[0].BitsStored;
+				return this.Frames[1].BitsStored;
             }
 		}
 
@@ -313,14 +313,14 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-				return this.Frames[0].HighBit;
+				return this.Frames[1].HighBit;
             }
 		}
 
 		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
 		public override int PixelRepresentation
 		{
-            get { return this.Frames[0].PixelRepresentation; }
+            get { return this.Frames[1].PixelRepresentation; }
 		}
 
 		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
@@ -328,7 +328,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-				return this.Frames[0].PlanarConfiguration;
+				return this.Frames[1].PlanarConfiguration;
             }
 		}
 
@@ -337,7 +337,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                return this.Frames[0].RescaleIntercept;
+                return this.Frames[1].RescaleIntercept;
             }
 		}
 
@@ -346,7 +346,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-				return this.Frames[0].RescaleSlope;
+				return this.Frames[1].RescaleSlope;
             }
 		}
 
@@ -355,13 +355,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get
             {
-            	return this.Frames[0].WindowCenterAndWidth;
+            	return this.Frames[1].WindowCenterAndWidth;
             }
 		}
 
 		protected override void AddFrames()
 		{
-			for (int i = 0; i < this.NumberOfFrames; i++)
+			for (int i = 1; i <= this.NumberOfFrames; i++)
 				this.Frames.Add(new LocalDataStoreFrame(_dataStoreImageSopInstance, this, i));
 		}
 	}

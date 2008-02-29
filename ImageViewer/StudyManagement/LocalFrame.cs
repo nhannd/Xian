@@ -1,4 +1,5 @@
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Codec;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -49,16 +50,29 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// to worry about the the multitude of DICOM photometric interpretations
 		/// and transfer syntaxes.
 		/// </remarks>
-		/// <seealso cref="Frame.NormalizePixelData"/>
-		/// <seealso cref="Frame.DecompressPixelData"/>
+		/// <seealso cref="Frame.ToArgb"/>
 		public override byte[] GetNormalizedPixelData()
 		{
 			this.ParentLocalImageSop.Load();
 
 			if (_pixelData == null)
 			{
-				DicomUncompressedPixelData pixelData = new DicomUncompressedPixelData(this.ParentLocalImageSop.NativeDicomObject.DataSet);
-				_pixelData = NormalizePixelData(pixelData.GetFrame(this.FrameNumber));
+				DicomMessageBase message = this.ParentLocalImageSop.NativeDicomObject;
+
+				DicomPixelData pixelData;
+
+				if (!message.TransferSyntax.Encapsulated)
+					pixelData = new DicomUncompressedPixelData(message);
+				else if (message.TransferSyntax.Equals(TransferSyntax.RleLossless))
+					pixelData = new DicomCompressedPixelData(message);
+				else
+					throw new DicomCodecException("Unsupported transfer syntax");
+
+				// DICOM library uses zero-based frame numbers
+				_pixelData = pixelData.GetFrame(this.FrameNumber-1);
+
+				if (this.IsColor)
+					_pixelData = this.ToArgb(_pixelData);
 			}
 
 			return _pixelData;

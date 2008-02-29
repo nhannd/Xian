@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Codecs;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -15,8 +15,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private readonly ImageSop _parentImageSop;
 		private readonly int _frameNumber;
-		private static readonly object _syncLock = new object();
-		private static volatile ImageCodecMap _imageCodecMap;
 		private NormalizedPixelSpacing _normalizedPixelSpacing;
 		private ImagePlaneHelper _imagePlaneHelper;
 
@@ -27,9 +25,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// specified parameters.
 		/// </summary>
 		/// <param name="parentImageSop"></param>
-		/// <param name="frameNumber"></param>
+		/// <param name="frameNumber">The first frame is frame 1.</param>
 		protected internal Frame(ImageSop parentImageSop, int frameNumber)
 		{
+			Platform.CheckPositive(frameNumber, "frameNumber");
 			_parentImageSop = parentImageSop;
 			_frameNumber = frameNumber;
 		}
@@ -609,6 +608,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		public bool IsColor
+		{
+			get
+			{
+				return this.PhotometricInterpretation != PhotometricInterpretation.Monochrome1 &&
+				       this.PhotometricInterpretation != PhotometricInterpretation.Monochrome2;
+			}
+		}
 
 		/// <summary>
 		/// Gets the <see cref="ImagePlaneHelper"/> for this <see cref="ImageSop"/>.
@@ -667,98 +674,46 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// to worry about the the multitude of DICOM photometric interpretations
 		/// and transfer syntaxes.
 		/// </remarks>
-		/// <seealso cref="NormalizePixelData"/>
-		/// <seealso cref="DecompressPixelData"/>
+		/// <seealso cref="ToArgb"/>
 		public abstract byte[] GetNormalizedPixelData();
 
 		/// <summary>
-		/// Converts the input (possibly compressed) pixel data to a standard,
-		/// 'normalized' format.
+		/// Converts colour pixel data to ARGB.
 		/// </summary>
 		/// <remarks>
 		/// <para>
 		/// Normally, this helper method would be called from (subclass) implementations of
 		/// <see cref="GetNormalizedPixelData"/> the first time it is accessed.
 		/// </para>
-		/// <para>
-		/// For grayscale images, this method will simply decompress the input pixel
-		/// data and return the 'normalized' data.  For colour images, the input pixel data will be
-		/// decompressed (if necessary) and converted to ARGB format before returning
-		/// the 'normalized' data.
-		/// </para>
 		/// </remarks>
-		/// <seealso cref="DecompressPixelData"/>
 		/// <seealso cref="GetNormalizedPixelData()"/>
-		protected byte[] NormalizePixelData(byte[] compressedPixelData)
+		protected byte[] ToArgb(byte[] pixelData)
 		{
-			byte[] normalizedPixelData = DecompressPixelData(compressedPixelData);
+			int sizeInBytes = this.Rows * this.Columns * 4;
+			byte[] argbPixelData = new byte[sizeInBytes];
 
-			// If it's a colour image, we want to change the colour space to ARGB
-			// so that it's easily consumed downstream
-			if (this.PhotometricInterpretation != PhotometricInterpretation.Monochrome1 &&
-			    this.PhotometricInterpretation != PhotometricInterpretation.Monochrome2)
+			// Convert palette colour images to ARGB so we don't get interpolation artifacts
+			// when rendering.
+			if (this.PhotometricInterpretation == PhotometricInterpretation.PaletteColor)
 			{
-				int sizeInBytes = this.Rows * this.Columns * 4;
-				byte[] newPixelData = new byte[sizeInBytes];
-
-				// Convert palette colour images to ARGB so we don't get interpolation artifacts
-				// when rendering.
-				if (this.PhotometricInterpretation == PhotometricInterpretation.PaletteColor)
-				{
-					ColorSpaceConverter.ToArgb(
-						this.BitsAllocated, 
-						this.PixelRepresentation != 0 ? true : false,
-						normalizedPixelData, 
-						newPixelData,
-						CreateColorMap());
-				}
-				// Convert RGB and YBR variants
-				else
-				{
-					ColorSpaceConverter.ToArgb(
-						this.PhotometricInterpretation,
-						this.PlanarConfiguration,
-						normalizedPixelData,
-						newPixelData);
-				}
-
-				normalizedPixelData = newPixelData;
+				ColorSpaceConverter.ToArgb(
+					this.BitsAllocated, 
+					this.PixelRepresentation != 0 ? true : false,
+					pixelData, 
+					argbPixelData,
+					CreateColorMap());
+			}
+			// Convert RGB and YBR variants to ARGB
+			else
+			{
+				ColorSpaceConverter.ToArgb(
+					this.PhotometricInterpretation,
+					this.PlanarConfiguration,
+					pixelData,
+					argbPixelData);
 			}
 
-			return normalizedPixelData;
-		}
-
-		/// <summary>
-		/// Decompresses/Decodes pixel data, if necessary.
-		/// </summary>
-		/// <param name="compressedPixelData">The pixel data to decompress.</param>
-		/// <remarks>
-		/// <para>
-		/// Normally, this method would not be called by subclasses; usually
-		/// <see cref="NormalizePixelData"/> would be called from within
-		/// <see cref="GetNormalizedPixelData"/> to convert the raw pixel
-		/// data to a standard format for rendering/processing.
-		/// </para>
-		/// <para>
-		/// Internally, this method uses <see cref="IImageCodec"/> extensions
-		/// (<see cref="ImageCodecMap"/>) to perform the decompression.
-		/// </para>
-		/// </remarks>
-		/// <seealso cref="NormalizePixelData"/>
-		/// <seealso cref="GetNormalizedPixelData"/>
-		protected byte[] DecompressPixelData(byte[] compressedPixelData)
-		{
-			return ImageCodecMap.DecompressPixelData(
-				compressedPixelData,
-				_parentImageSop.TransferSyntaxUID,
-				Rows,
-				Columns,
-				BitsAllocated,
-				BitsStored,
-				PixelRepresentation,
-				PhotometricInterpretationHelper.GetString(PhotometricInterpretation),
-				SamplesPerPixel,
-				PlanarConfiguration);
+			return argbPixelData;
 		}
 
 		/// <summary>
@@ -789,23 +744,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					this.PlanarConfiguration, 
 					this.SamplesPerPixel
 				);
-		}
-
-		private static ImageCodecMap ImageCodecMap
-		{
-			get
-			{
-				if (_imageCodecMap == null)
-				{
-					lock (_syncLock)
-					{
-						if (_imageCodecMap == null)
-							_imageCodecMap = new ImageCodecMap();
-					}
-				}
-
-				return _imageCodecMap;
-			}
 		}
 
 		private IColorMap CreateColorMap()

@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralImage.AcquisitionDate",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.AcquisitionDate; },
+							delegate(Frame frame) { return frame.AcquisitionDate; },
 							DicomDataFormatHelper.DateFormat
 						)
 					);
@@ -77,8 +77,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralImage.AcquisitionTime",
-							resolver, 
-							delegate(ImageSop imageSop) { return imageSop.AcquisitionTime; },
+							resolver,
+							delegate(Frame frame) { return frame.AcquisitionTime; },
 							DicomDataFormatHelper.TimeFormat
 						)
 					);
@@ -89,8 +89,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralImage.AcquisitionDateTime",
-							resolver, 
-							delegate(ImageSop imageSop) { return imageSop.AcquisitionDateTime; },
+							resolver,
+							delegate(Frame frame) { return frame.AcquisitionDateTime; },
 							DicomDataFormatHelper.DateTimeFormat
 						)
 					);
@@ -100,8 +100,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralImage.AcquisitionNumber",
-							resolver, 
-							delegate(ImageSop imageSop) { return imageSop.AcquisitionNumber.ToString(); },
+							resolver,
+							delegate(Frame frame) { return frame.AcquisitionNumber.ToString(); },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralImage.ContentDate",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.ContentDate),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.ContentDate),
 							DicomDataFormatHelper.DateFormat
 						)
 					);
@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralImage.ContentTime",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.ContentTime),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.ContentTime),
 							DicomDataFormatHelper.TimeFormat
 						)
 					);
@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralImage.DerivationDescription",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.DerivationDescription),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.DerivationDescription),
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -144,8 +144,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralImage.ImageComments",
-							resolver, 
-							delegate(ImageSop imageSop) { return imageSop.ImageComments; },
+							resolver,
+							delegate(Frame frame) { return frame.ImageComments; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -155,8 +155,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralImage.ImagesInAcquisition",
-							resolver, 
-							delegate(ImageSop imageSop) { return imageSop.ImagesInAcquisition.ToString(); },
+							resolver,
+							delegate(Frame frame) { return frame.ImagesInAcquisition.ToString(); },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -166,8 +166,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralImage.ImageType",
-							resolver, 
-							delegate(ImageSop imageSop) { return imageSop.ImageType; },
+							resolver,
+							delegate(Frame frame) { return frame.ImageType; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -177,12 +177,23 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralImage.InstanceNumber",
-							resolver, 
-							delegate(ImageSop imageSop)
+							resolver,
+							delegate(Frame frame)
 							{
 								string str = String.Format("{0}/{1}",
-									imageSop.InstanceNumber,
-									imageSop.ParentSeries.Sops.Count);
+													frame.ParentImageSop.InstanceNumber,
+													frame.ParentImageSop.ParentSeries.Sops.Count);
+
+								if (frame.ParentImageSop.NumberOfFrames > 1)
+								{
+									string frameString = String.Format(
+										"Fr: {0}/{1}", 
+										frame.FrameNumber, 
+										frame.ParentImageSop.NumberOfFrames);
+
+									str += " " + frameString;
+								}
+
 								return str;
 							},
 							DicomDataFormatHelper.RawStringFormat
@@ -194,8 +205,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralImage.LossyImageCompression",
-							resolver, 
-							delegate(ImageSop imageSop) { return imageSop.LossyImageCompression; },
+							resolver,
+							delegate(Frame frame) { return frame.LossyImageCompression; },
 							DicomDataFormatHelper.BooleanFormatter
 						)
 					);
@@ -205,8 +216,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<double[]>
 						(
 							"Dicom.GeneralImage.LossyImageCompressionRatio",
-							resolver, 
-							delegate(ImageSop imageSop) { return imageSop.LossyImageCompressionRatio; },
+							resolver,
+							delegate(Frame frame) { return frame.LossyImageCompressionRatio; },
 							delegate(double[] values) 
 							{
 								return StringUtilities.Combine<double>(values, ",\n",
@@ -221,7 +232,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralImage.QualityControlImage",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.QualityControlImage),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.QualityControlImage),
 							DicomDataFormatHelper.BooleanFormatter
 						)
 					);

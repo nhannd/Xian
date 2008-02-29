@@ -65,11 +65,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.CTImage.KVP",
 							resolver,
-							delegate(ImageSop imageSop)
+							delegate(Frame frame)
 							{
 								double val;
 								bool tagExists;
-								imageSop.GetTag(DicomTags.Kvp, out val, out tagExists);
+								frame.ParentImageSop.GetTag(DicomTags.Kvp, out val, out tagExists);
 								string str = String.Format(SR.FormatkV, val);
 								return str;
 							},
@@ -83,11 +83,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.CTImage.XRayTubeCurrent",
 							resolver,
-							delegate(ImageSop imageSop)
+							delegate(Frame frame)
 							{
 								int val;
 								bool tagExists;
-								imageSop.GetTag(DicomTags.XRayTubeCurrent, out val, out tagExists);
+								frame.ParentImageSop.GetTag(DicomTags.XRayTubeCurrent, out val, out tagExists);
 								string str = String.Format(SR.FormatmA, val);
 								return str;
 							},
@@ -101,11 +101,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.CTImage.GantryDetectorTilt",
 							resolver,
-							delegate(ImageSop imageSop)
+							delegate(Frame frame)
 							{
 								double val = double.NaN;
 								bool tagExists;
-								imageSop.GetTag(DicomTags.GantryDetectorTilt, out val, out tagExists);
+								frame.ParentImageSop.GetTag(DicomTags.GantryDetectorTilt, out val, out tagExists);
 								string str = String.Format(SR.FormatDegrees, val);
 								return str;
 							},
@@ -119,11 +119,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.CTImage.ExposureTime",
 							resolver,
-							delegate(ImageSop imageSop)
+							delegate(Frame frame)
 							{
 								int val;
 								bool tagExists;
-								imageSop.GetTag(DicomTags.ExposureTime, out val, out tagExists);
+								frame.ParentImageSop.GetTag(DicomTags.ExposureTime, out val, out tagExists);
 								string str = String.Format(SR.Formatms, val);
 								return str;
 							},
@@ -137,11 +137,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.CTImage.ConvolutionKernel",
 							resolver,
-							delegate(ImageSop imageSop)
+							delegate(Frame frame)
 							{
 								string val;
 								bool tagExists;
-								imageSop.GetTag(DicomTags.ConvolutionKernel, out val, out tagExists);
+								frame.ParentImageSop.GetTag(DicomTags.ConvolutionKernel, out val, out tagExists);
 								return val;
 							},
 							DicomDataFormatHelper.RawStringFormat

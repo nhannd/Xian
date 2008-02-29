@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.Patient.EthnicGroup",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.EthnicGroup),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.EthnicGroup),
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.Patient.PatientComments",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.PatientComments),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.PatientComments),
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.Patient.PatientId",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.PatientId; },
+							delegate(Frame frame) { return frame.ParentImageSop.PatientId; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.Patient.PatientsBirthDate",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.PatientsBirthDate; },
+							delegate(Frame frame) { return frame.ParentImageSop.PatientsBirthDate; },
 							DicomDataFormatHelper.DateFormat
 						)
 					);
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.Patient.PatientsBirthTime",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.PatientsBirthTime),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.PatientsBirthTime),
 							DicomDataFormatHelper.TimeFormat
 						)
 					);
@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.Patient.PatientsName",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.PatientsName; },
+							delegate(Frame frame) { return frame.ParentImageSop.PatientsName; },
 							DicomDataFormatHelper.PersonNameFormatter
 						)
 					);
@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.Patient.PatientsSex",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.PatientsSex; },
+							delegate(Frame frame) { return frame.ParentImageSop.PatientsSex; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);

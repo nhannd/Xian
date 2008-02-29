@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				imageSet.Name = id;
 
 				DisplaySet displaySet = new DisplaySet(id, id);
-				IPresentationImage image = new DicomGrayscalePresentationImage(NewMockImageSop(id, id, i).Frames[0]);
+				IPresentationImage image = new DicomGrayscalePresentationImage(NewMockImageSop(id, id, i).Frames[1]);
 				IImageSopProvider sopProvider = (IImageSopProvider)image;
 				((IMockImageSopSetters)sopProvider.ImageSop).StudyDate = i == 0 ? "" : String.Format("200801{0}", i.ToString("00"));
 
@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			{
 				string id = i.ToString();
 				DisplaySet displaySet = new DisplaySet(id, id);
-				IPresentationImage image = new DicomGrayscalePresentationImage(NewMockImageSop(id, id, i).Frames[0]);
+				IPresentationImage image = new DicomGrayscalePresentationImage(NewMockImageSop(id, id, i).Frames[1]);
 				IImageSopProvider sopProvider = (IImageSopProvider)image;
 				((IMockImageSopSetters)sopProvider.ImageSop).SeriesNumber = i;
 
@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			PresentationImageCollection nonOrderedCollection = new PresentationImageCollection();
 
 			MockImageSop junkImageSop = NewMockImageSop("123", "1", 0);
-			orderedCollection.Add(new DicomGrayscalePresentationImage(junkImageSop.Frames[0]));
+			orderedCollection.Add(new DicomGrayscalePresentationImage(junkImageSop.Frames[1]));
 
 			AppendCollection(NewDicomSeries("123", "1", 1, 25), orderedCollection);
 			
@@ -333,7 +333,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 
 		DicomGrayscalePresentationImage NewDicomImage(string studyUID, string seriesUID, int instanceNumber)
 		{
-			return new DicomGrayscalePresentationImage(NewMockImageSop(studyUID, seriesUID, instanceNumber).Frames[0]);
+			return new DicomGrayscalePresentationImage(NewMockImageSop(studyUID, seriesUID, instanceNumber).Frames[1]);
 		}
 
 		MockImageSop NewMockImageSop(string studyUID, string seriesUID, int instanceNumber)

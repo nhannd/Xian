@@ -65,11 +65,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.MRImage.EchoTime",
 							resolver,
-							delegate(ImageSop imageSop)
+							delegate(Frame frame)
 							{
 								double val = double.NaN;
 								bool tagExists;
-								imageSop.GetTag(DicomTags.EchoTime, out val, out tagExists);
+								frame.ParentImageSop.GetTag(DicomTags.EchoTime, out val, out tagExists);
 								string str = String.Format(SR.Formatms, val);
 								return str;
 							},
@@ -83,11 +83,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.MRImage.MagneticFieldStrength",
 							resolver,
-							delegate(ImageSop imageSop)
+							delegate(Frame frame)
 							{
 								double val = double.NaN;
 								bool tagExists;
-								imageSop.GetTag(DicomTags.MagneticFieldStrength, out val, out tagExists);
+								frame.ParentImageSop.GetTag(DicomTags.MagneticFieldStrength, out val, out tagExists);
 
 								double strengthInTeslas = val / 10000;
 								string str = String.Format(SR.FormatTeslas, strengthInTeslas);
@@ -103,14 +103,14 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.MRImage.AcquisitionMatrix",
 							resolver,
-							delegate(ImageSop imageSop)
+							delegate(Frame frame)
 							{
 								ushort frequencyRows, frequencyColumns, phaseRows, phaseColumns;
 								bool tagExists;
-								imageSop.GetTag(DicomTags.AcquisitionMatrix, out frequencyRows, 0, out tagExists);
-								imageSop.GetTag(DicomTags.AcquisitionMatrix, out frequencyColumns, 1, out tagExists);
-								imageSop.GetTag(DicomTags.AcquisitionMatrix, out phaseRows, 2, out tagExists);
-								imageSop.GetTag(DicomTags.AcquisitionMatrix, out phaseColumns, 3, out tagExists);
+								frame.ParentImageSop.GetTag(DicomTags.AcquisitionMatrix, out frequencyRows, 0, out tagExists);
+								frame.ParentImageSop.GetTag(DicomTags.AcquisitionMatrix, out frequencyColumns, 1, out tagExists);
+								frame.ParentImageSop.GetTag(DicomTags.AcquisitionMatrix, out phaseRows, 2, out tagExists);
+								frame.ParentImageSop.GetTag(DicomTags.AcquisitionMatrix, out phaseColumns, 3, out tagExists);
 
 								// Just include freq for now
 								string str = String.Format("{0} x {1}", frequencyColumns, phaseRows);
@@ -126,11 +126,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.MRImage.ReceiveCoilName",
 							resolver,
-							delegate(ImageSop imageSop)
+							delegate(Frame frame)
 							{
 								string val;
 								bool tagExists;
-								imageSop.GetTag(DicomTags.ReceiveCoilName, out val, out tagExists);
+								frame.ParentImageSop.GetTag(DicomTags.ReceiveCoilName, out val, out tagExists);
 								return val;
 							},
 							DicomDataFormatHelper.RawStringFormat
@@ -143,11 +143,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.MRImage.RepetitionTime",
 							resolver,
-							delegate(ImageSop imageSop)
+							delegate(Frame frame)
 							{
 								double val = double.NaN;
 								bool tagExists;
-								imageSop.GetTag(DicomTags.RepetitionTime, out val, out tagExists);
+								frame.ParentImageSop.GetTag(DicomTags.RepetitionTime, out val, out tagExists);
 								string str = String.Format(SR.Formatms, val);
 								return str;
 							},
@@ -161,11 +161,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.MRImage.EchoTrainLength",
 							resolver,
-							delegate(ImageSop imageSop)
+							delegate(Frame frame)
 							{
 								int val;
 								bool tagExists;
-								imageSop.GetTag(DicomTags.EchoTrainLength, out val, out tagExists);
+								frame.ParentImageSop.GetTag(DicomTags.EchoTrainLength, out val, out tagExists);
 								string str = String.Format("{0}", val);
 								return str;
 							},

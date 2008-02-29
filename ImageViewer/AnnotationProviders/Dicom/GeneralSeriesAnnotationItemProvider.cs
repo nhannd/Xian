@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralSeries.BodyPartExamined",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.BodyPartExamined; },
+							delegate(Frame frame) { return frame.ParentImageSop.BodyPartExamined; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralSeries.Laterality",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.Laterality; },
+							delegate(Frame frame) { return frame.ParentImageSop.Laterality; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralSeries.Modality",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.Modality; },
+							delegate(Frame frame) { return frame.ParentImageSop.Modality; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralSeries.OperatorsName",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.OperatorsName; },
+							delegate(Frame frame) { return frame.ParentImageSop.OperatorsName; },
 							DicomDataFormatHelper.PersonNameListFormatter
 						)
 					);
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralSeries.PerformedProcedureStepDescription",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.PerformedProcedureStepDescription),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.PerformedProcedureStepDescription),
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralSeries.PerformingPhysiciansName",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.PerformingPhysiciansName; },
+							delegate(Frame frame) { return frame.ParentImageSop.PerformingPhysiciansName; },
 							DicomDataFormatHelper.PersonNameListFormatter
 						)
 					);
@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralSeries.ProtocolName",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.ProtocolName),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.ProtocolName),
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralSeries.SeriesDate",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.SeriesDate; },
+							delegate(Frame frame) { return frame.ParentImageSop.SeriesDate; },
 							DicomDataFormatHelper.DateFormat
 						)
 					);
@@ -153,7 +153,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralSeries.SeriesTime",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.SeriesTime; },
+							delegate(Frame frame) { return frame.ParentImageSop.SeriesTime; },
 							DicomDataFormatHelper.TimeFormat
 						)
 					);
@@ -164,7 +164,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralSeries.SeriesDescription",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.SeriesDescription; },
+							delegate(Frame frame) { return frame.ParentImageSop.SeriesDescription; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -175,11 +175,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralSeries.SeriesNumber",
 							resolver,
-							delegate(ImageSop imageSop)
+							delegate(Frame frame)
 							{
 								string str = String.Format("{0}/{1}",
-									imageSop.SeriesNumber,
-									imageSop.ParentSeries.ParentStudy.Series.Count);
+									frame.ParentImageSop.SeriesNumber,
+									frame.ParentImageSop.ParentSeries.ParentStudy.Series.Count);
 								return str;
 							},
 							DicomDataFormatHelper.RawStringFormat

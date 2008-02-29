@@ -64,8 +64,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralStudy.AccessionNumber",
-							resolver, 
-							delegate(ImageSop imageSop) { return imageSop.AccessionNumber; },
+							resolver,
+							delegate(Frame frame) { return frame.ParentImageSop.AccessionNumber; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -75,8 +75,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<PersonName>
 						(
 							"Dicom.GeneralStudy.ReferringPhysiciansName",
-							resolver, 
-							delegate(ImageSop imageSop) { return imageSop.ReferringPhysiciansName; },
+							resolver,
+							delegate(Frame frame) { return frame.ParentImageSop.ReferringPhysiciansName; },
 							DicomDataFormatHelper.PersonNameFormatter
 						)
 					);
@@ -86,8 +86,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralStudy.StudyDate",
-							resolver, 
-							delegate(ImageSop imageSop) { return imageSop.StudyDate; },
+							resolver,
+							delegate(Frame frame) { return frame.ParentImageSop.StudyDate; },
 							DicomDataFormatHelper.DateFormat
 						)
 					);
@@ -97,8 +97,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralStudy.StudyTime",
-							resolver, 
-							delegate(ImageSop imageSop) { return imageSop.StudyTime; },
+							resolver,
+							delegate(Frame frame) { return frame.ParentImageSop.StudyTime; },
 							DicomDataFormatHelper.TimeFormat
 						)
 					);
@@ -108,8 +108,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralStudy.StudyDescription",
-							resolver, 
-							delegate(ImageSop imageSop) { return imageSop.StudyDescription; },
+							resolver,
+							delegate(Frame frame) { return frame.ParentImageSop.StudyDescription; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralStudy.StudyId",
 							resolver, 
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.StudyId),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.StudyId),
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);

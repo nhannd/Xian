@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.PatientStudy.AdditionalPatientsHistory",
 							resolver,
-							delegate(ImageSop imageSop) { return imageSop.AdditionalPatientsHistory; },
+							delegate(Frame frame) { return frame.ParentImageSop.AdditionalPatientsHistory; },
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.PatientStudy.Occupation",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.Occupation),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.Occupation),
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.PatientStudy.PatientsAge",
 							resolver,
-							SopDataRetrieverFactory.GetStringRetriever(DicomTags.PatientsAge),
+							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.PatientsAge),
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.PatientStudy.PatientsSize",
 							resolver,
-							SopDataRetrieverFactory.GetDoubleRetriever(DicomTags.PatientsSize),
+							FrameDataRetrieverFactory.GetDoubleRetriever(DicomTags.PatientsSize),
 							delegate(double input)
 							{
 								return String.Format("{0} {1}", input.ToString("F2"), SR.Label_metres);
@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.PatientStudy.PatientsWeight",
 							resolver,
-							SopDataRetrieverFactory.GetDoubleRetriever(DicomTags.PatientsWeight),
+							FrameDataRetrieverFactory.GetDoubleRetriever(DicomTags.PatientsWeight),
 							delegate(double input)
 							{
 								return String.Format("{0} {1}", input.ToString("F2"), SR.Label_kilograms);

@@ -349,7 +349,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Transfer syntax UID must be one of: 1.2.840.10008.1.2, 1.2.840.10008.1.2.1 or 1.2.840.10008.1.2.2..
+        ///   Looks up a localized string similar to Transfer syntax UID must be one of: 1.2.840.10008.1.2, 1.2.840.10008.1.2.1, 1.2.840.10008.1.2.2 or 1.2.840.10008.1.2.5.
         /// </summary>
         public static string ExceptionInvalidTransferSyntaxUID {
             get {
