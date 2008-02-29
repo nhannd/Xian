@@ -453,13 +453,26 @@ var Table = {
 		    else
 		    if(["check","checkbox","bool","boolean"].indexOf(column.cellType) > -1)
 		    {
-               var input = document.createElement("input");
+				  td.className = "checkedDivCell";
+
+				  // Replace top-level label text with an actual label element
+				  // This allows the check-box to be activated while clicking on the text in addition to the box
+				  // <div>label text<br></div> will ultimately become <div><label><input type="checkbox">label text</label></div>
+				  
+				  var label = document.createElement("label");
+				  td.appendChild(label);
+
+				  var input = document.createElement("input");
 		        input.type = "checkbox";
-		        //td.appendChild(input);
-              td.innerHTML = td.innerHTML.replace("<br>", "");
-              td.insertBefore(input, td.firstChild);
-              td.className = "checkedDivCell";
-              td.innerHTML = "<label>" + td.innerHTML + "</label>";
+				  label.appendChild(input);
+
+				  // move the "label text" from the div/cell to the label element
+				  var text = td.removeChild(td.firstChild);
+				  label.appendChild(text);
+
+				  // get rid of useless <br>
+				  if(td.firstChild) td.removeChild(td.firstChild);  // get rid of <br>
+
 		        td._setCellDisplayValue = function(value) { input.checked = value ? true : false; }
 		        if(column.size) input.size = column.size;
 		        
