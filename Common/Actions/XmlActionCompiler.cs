@@ -30,7 +30,10 @@
 #endregion
 
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Xml;
+using System.Xml.Schema;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Actions
@@ -63,6 +66,7 @@ namespace ClearCanvas.Common.Actions
     public class XmlActionCompiler<T>
     {
         private readonly Dictionary<string, IXmlActionCompilerOperator<T>> _operatorMap = new Dictionary<string, IXmlActionCompilerOperator<T>>();
+        private XmlSchema _schema;
 
         /// <summary>
         /// Constructor.
@@ -75,6 +79,42 @@ namespace ClearCanvas.Common.Actions
             {
                 AddOperator(compilerOperator);
             }
+            _schema = CreateSchema();
+        }
+
+        private XmlSchema CreateSchema()
+        {
+            XmlSchema baseSchema = new XmlSchema();
+
+            foreach (IXmlActionCompilerOperator<T> op in _operatorMap.Values)
+            {
+                XmlSchemaElement element = op.GetSchema();
+                baseSchema.Items.Add(element);
+            }
+
+            XmlSchemaSet set = new XmlSchemaSet();
+            set.Add(baseSchema);
+            set.Compile();
+
+            XmlSchema compiledSchema = null;
+            foreach (XmlSchema schema in set.Schemas())
+            {
+                compiledSchema = schema;
+            }
+
+            StringWriter sw = new StringWriter();
+            compiledSchema.Write(sw);
+            Platform.Log(LogLevel.Info, sw);
+
+            return compiledSchema;
+        }
+
+        /// <summary>
+        /// An XML Schema representing the valid XML for the compiler.
+        /// </summary>
+        public XmlSchema Schema
+        {
+            get { return _schema; }
         }
 
         /// <summary>
@@ -89,9 +129,41 @@ namespace ClearCanvas.Common.Actions
         /// </para>
         /// </remarks>
         /// <param name="containingNode">The input XML containg actions to perform.</param>
+        /// <param name="checkSchema">Check the schema when compiling.</param>
         /// <returns>A class instance that implements the <see cref="IActionSet{T}"/> interface.</returns>
-        public IActionSet<T> Compile(XmlElement containingNode)
+        public IActionSet<T> Compile(XmlElement containingNode, bool checkSchema)
         {
+            // Note, recursive calls are made to this method to compile.  The schema is not
+            // checked on recursive calls, but should be checked once on an initial compile.
+            if (checkSchema)
+            {
+                // We must parse the XML to get the schema validation to work.  So, we write
+                // the xml out to a string, and read it back in with Schema Validation enabled
+                StringWriter sw = new StringWriter();
+
+                XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
+                xmlWriterSettings.Encoding = Encoding.UTF8;
+                xmlWriterSettings.ConformanceLevel = ConformanceLevel.Fragment;
+                xmlWriterSettings.Indent = false;
+                xmlWriterSettings.NewLineOnAttributes = false;
+                xmlWriterSettings.IndentChars = "";
+
+                XmlWriter xmlWriter = XmlWriter.Create(sw, xmlWriterSettings);
+                foreach (XmlNode node in containingNode.ChildNodes)
+                    node.WriteTo(xmlWriter);
+                xmlWriter.Close();
+
+                XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
+                xmlReaderSettings.Schemas = new XmlSchemaSet();
+                xmlReaderSettings.Schemas.Add(Schema);
+                xmlReaderSettings.ValidationType = ValidationType.Schema;
+                xmlReaderSettings.ConformanceLevel = ConformanceLevel.Fragment;
+
+                XmlReader xmlReader = XmlTextReader.Create(new StringReader(sw.ToString()), xmlReaderSettings);
+                while (xmlReader.Read()) ;
+                xmlReader.Close();
+            }
+
             List<IActionItem<T>> actions = new List<IActionItem<T>>();
             ICollection<XmlNode> nodes = GetChildElements(containingNode);
             

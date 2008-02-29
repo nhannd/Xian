@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 
@@ -54,6 +55,24 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
             string device = xmlNode.Attributes["device"].Value;
 
             return new AutoRouteActionItem(device);
+        }
+
+        public XmlSchemaElement GetSchema()
+        {
+            XmlSchemaComplexType type = new XmlSchemaComplexType();
+
+            XmlSchemaAttribute attrib = new XmlSchemaAttribute();
+            attrib.Name = "device";
+            attrib.Use = XmlSchemaUse.Required;
+            attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+            type.Attributes.Add(attrib);
+
+
+            XmlSchemaElement element = new XmlSchemaElement();
+            element.Name = "auto-route";
+            element.SchemaType = type;
+
+            return element;
         }
     }
 }

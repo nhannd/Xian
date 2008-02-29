@@ -30,6 +30,7 @@
 #endregion
 
 using System.Xml;
+using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 
@@ -58,6 +59,56 @@ namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
 
             return new Tier1RetentionActionItem(time, timeUnits);
 
+        }
+        public XmlSchemaElement GetSchema()
+        {
+            XmlSchemaComplexType type = new XmlSchemaComplexType();
+
+            XmlSchemaAttribute attrib = new XmlSchemaAttribute();
+            attrib.Name = "time";
+            attrib.Use = XmlSchemaUse.Required;
+            attrib.SchemaTypeName = new XmlQualifiedName("double", "http://www.w3.org/2001/XMLSchema");
+            type.Attributes.Add(attrib);
+
+            XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType();
+
+            XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
+            restriction.BaseTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+
+            XmlSchemaEnumerationFacet enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "hours";
+            restriction.Facets.Add(enumeration);
+
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "weeks";
+            restriction.Facets.Add(enumeration);
+
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "days";
+            restriction.Facets.Add(enumeration);
+
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "months";
+            restriction.Facets.Add(enumeration);
+
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "patientAge";
+            restriction.Facets.Add(enumeration);
+
+            simpleType.Content = restriction;
+
+            attrib = new XmlSchemaAttribute();
+            attrib.Name = "timeUnits";
+            attrib.Use = XmlSchemaUse.Required;
+            attrib.SchemaType = simpleType;
+            type.Attributes.Add(attrib);
+
+       
+            XmlSchemaElement element = new XmlSchemaElement();
+            element.Name = "tier1-retention";
+            element.SchemaType = type;
+
+            return element;
         }
     }
 }

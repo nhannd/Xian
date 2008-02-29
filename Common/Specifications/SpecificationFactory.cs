@@ -129,7 +129,7 @@ namespace ClearCanvas.Common.Specifications
             else
             {
                 XmlElement specNode = _xmlSource.GetSpecificationXml(id);
-                return _cache[id] = _builder.Compile(specNode);
+                return _cache[id] = _builder.Compile(specNode, false);
             }
         }
 
@@ -138,7 +138,7 @@ namespace ClearCanvas.Common.Specifications
             Dictionary<string, ISpecification> specs = new Dictionary<string, ISpecification>();
             foreach (KeyValuePair<string, XmlElement> kvp in _xmlSource.GetAllSpecificationsXml())
             {
-                specs.Add(kvp.Key, _builder.Compile(kvp.Value));
+                specs.Add(kvp.Key, _builder.Compile(kvp.Value, false));
             }
             return specs;
         }

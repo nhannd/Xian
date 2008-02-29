@@ -31,6 +31,7 @@
 
 using System;
 using System.Xml;
+using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
@@ -73,6 +74,59 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
             return new DicomAgeGreaterThanSpecification(units, refValue);
         }
 
+        public XmlSchemaElement GetSchema()
+        {
+            XmlSchemaComplexType type = new XmlSchemaComplexType();
+
+            XmlSchemaAttribute attrib = new XmlSchemaAttribute();
+            attrib.Name = "refValue";
+            attrib.Use = XmlSchemaUse.Required;
+            attrib.SchemaTypeName = new XmlQualifiedName("positiveInteger", "http://www.w3.org/2001/XMLSchema");
+            type.Attributes.Add(attrib);
+
+            attrib = new XmlSchemaAttribute();
+            attrib.Name = "test";
+            attrib.Use = XmlSchemaUse.Optional;
+            attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+            type.Attributes.Add(attrib);
+
+            XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType();
+
+            XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
+            restriction.BaseTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+
+            XmlSchemaEnumerationFacet enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "years";
+            restriction.Facets.Add(enumeration);
+
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "weeks";
+            restriction.Facets.Add(enumeration);
+
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "days";
+            restriction.Facets.Add(enumeration);
+
+            simpleType.Content = restriction;
+
+            attrib = new XmlSchemaAttribute();
+            attrib.Name = "units";
+            attrib.Use = XmlSchemaUse.Required;
+            attrib.SchemaType = simpleType;
+            type.Attributes.Add(attrib);
+
+            attrib = new XmlSchemaAttribute();
+            attrib.Name = "expressionLanguage";
+            attrib.Use = XmlSchemaUse.Optional;
+            attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+            type.Attributes.Add(attrib);
+
+            XmlSchemaElement element = new XmlSchemaElement();
+            element.Name = "dicom-age-greater-than";
+            element.SchemaType = type;
+
+            return element;
+        }
         #endregion
     }
 

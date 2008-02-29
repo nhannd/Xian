@@ -63,19 +63,25 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer
 
         public override void Start()
         {
-            Platform.Log(LogLevel.Info,"{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
-
-            if (StreamingServer.Default.BindingType=="http")
+            Platform.Log(LogLevel.Info, "{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
+            try
             {
-                StartHttpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval", SR.HeaderRetrievalStreamingServiceDescription);
-
+                if (StreamingServer.Default.BindingType == "http")
+                {
+                    StartHttpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval",
+                                                                                   SR.HeaderRetrievalStreamingServiceDescription);
+                }
+                else
+                {
+                    StartNetTcpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval",
+                                                                                     SR.HeaderRetrievalStreamingServiceDescription);
+                }
             }
-            else
+            catch (Exception e)
             {
-                StartNetTcpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval", SR.HeaderRetrievalStreamingServiceDescription);
-    
+                Platform.Log(LogLevel.Fatal, e, "Unexpected exception starting Streaming Server Shred");
+                throw;
             }
-            
         }
 
         public override void Stop()

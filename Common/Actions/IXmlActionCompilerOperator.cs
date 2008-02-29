@@ -30,6 +30,7 @@
 #endregion
 
 using System.Xml;
+using System.Xml.Schema;
 
 namespace ClearCanvas.Common.Actions
 {
@@ -49,5 +50,11 @@ namespace ClearCanvas.Common.Actions
         /// <param name="xmlNode">Input <see cref="XmlElement"/> describing the action to perform.</param>
         /// <returns>A class implementing the <see cref="IActionItem{T}"/> interface which can perform the action.</returns>
         IActionItem<T> Compile(XmlElement xmlNode);
+
+        /// <summary>
+        /// Get an <see cref="XmlSchemaElement"/> describing the ActionItem for validation purposes.
+        /// </summary>
+        /// <returns></returns>
+        XmlSchemaElement GetSchema();
     }
 }

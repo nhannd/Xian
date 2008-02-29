@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageServer.Rules
                                                      delegate(XmlNode child)
                                                      { return child.Name.Equals("condition"); });
 
-            _conditions = specCompiler.Compile(conditionNode as XmlElement);
+            _conditions = specCompiler.Compile(conditionNode as XmlElement, true);
 
             XmlNode actionNode =
                 CollectionUtils.SelectFirst<XmlNode>(ruleNode.ChildNodes,
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageServer.Rules
                                                      { return child.Name.Equals("action"); });
 
 
-            _actions = actionCompiler.Compile(actionNode as XmlElement);
+            _actions = actionCompiler.Compile(actionNode as XmlElement, true);
         }
 
         public void Execute(ServerActionContext context, bool defaultRule, out bool ruleApplied, out bool ruleSuccess)
