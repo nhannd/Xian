@@ -471,7 +471,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		private IEnumerable<IImageBox> GetImageBoxesToSynchronize(IImageBox referenceImageBox)
 		{
 			IImageSopProvider provider = referenceImageBox.TopLeftPresentationImage as IImageSopProvider;
-			if (provider == null || String.IsNullOrEmpty(provider.ImageSop.FrameOfReferenceUid) || String.IsNullOrEmpty(provider.ImageSop.StudyInstanceUID))
+			if (provider == null || String.IsNullOrEmpty(provider.Frame.FrameOfReferenceUid) || String.IsNullOrEmpty(provider.ImageSop.StudyInstanceUID))
 				yield break;
 
 			foreach (IImageBox imageBox in this.Context.Viewer.PhysicalWorkspace.ImageBoxes)

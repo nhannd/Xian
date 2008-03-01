@@ -220,7 +220,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			// This has been added so that the initial presentation of each display set has a reasonable 
 			// sort order.  When proper sorting support is added, the sorters will be extensions.
-			displaySet.PresentationImages.Sort(new InstanceNumberComparer());
+			displaySet.PresentationImages.Sort(new InstanceAndFrameNumberComparer());
 		}
 
 		private static void AddImage(IDisplaySet displaySet, ImageSop imageSop)

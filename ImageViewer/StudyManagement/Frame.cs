@@ -608,6 +608,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		/// <summary>
+		/// Gets a value indicating whether the image is colour.
+		/// </summary>
+		/// <returns>
+		/// <b>true</b> if <see cref="PhotometricInterpretation"/> is anything other than
+		/// MONOCHROME1 or MONOCHROME2.
+		/// </returns>
 		public bool IsColor
 		{
 			get

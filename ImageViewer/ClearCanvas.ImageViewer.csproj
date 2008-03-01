@@ -165,7 +165,7 @@
     <Compile Include="Comparers\ImageSetComparer.cs" />
     <Compile Include="Comparers\DicomSeriesComparer.cs" />
     <Compile Include="Comparers\DisplaySetComparer.cs" />
-    <Compile Include="Comparers\DicomImageSopComparer.cs" />
+    <Compile Include="Comparers\DicomFrameComparer.cs" />
     <Compile Include="Comparers\PresentationImageComparer.cs" />
     <Compile Include="Comparers\StudyDateComparer.cs" />
     <Compile Include="Comparers\SeriesNumberComparer.cs" />
@@ -278,7 +278,7 @@
     <Compile Include="InputManagement\IViewerShortcutManager.cs" />
     <Compile Include="InputManagement\KeyboardButtonShortcut.cs" />
     <Compile Include="InputManagement\Modifiers.cs" />
-    <Compile Include="Comparers\InstanceNumberComparer.cs" />
+    <Compile Include="Comparers\InstanceAndFrameNumberComparer.cs" />
     <Compile Include="InputManagement\MouseButtonShortcut.cs" />
     <Compile Include="InputManagement\KeyboardButtonMessage.cs" />
     <Compile Include="InputManagement\MouseLeaveMessage.cs" />

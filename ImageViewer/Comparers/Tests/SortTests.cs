@@ -231,7 +231,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			Assert.IsFalse(VerifyOrdered(orderedCollection, nonOrderedCollection));
 
 			//Sort it.
-			nonOrderedCollection.Sort(new InstanceNumberComparer(reverse));
+			nonOrderedCollection.Sort(new InstanceAndFrameNumberComparer(reverse));
 			
 			Debug.WriteLine("NON-ORDERED COLLECTION (POST-SORT)");
 			Trace(nonOrderedCollection);

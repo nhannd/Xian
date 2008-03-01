@@ -38,19 +38,19 @@ namespace ClearCanvas.ImageViewer.Comparers
 	/// Base class for comparers that compare some aspect of
 	/// <see cref="ImageSop"/>.
 	/// </summary>
-	public abstract class DicomImageSopComparer : PresentationImageComparer
+	public abstract class DicomFrameComparer : PresentationImageComparer
 	{
 		/// <summary>
-		/// Initializes a new instance of <see cref="DicomImageSopComparer"/>.
+		/// Initializes a new instance of <see cref="DicomFrameComparer"/>.
 		/// </summary>
-		protected DicomImageSopComparer()
+		protected DicomFrameComparer()
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="DicomImageSopComparer"/>.
+		/// Initializes a new instance of <see cref="DicomFrameComparer"/>.
 		/// </summary>
-		protected DicomImageSopComparer(bool reverse)
+		protected DicomFrameComparer(bool reverse)
 			: base(reverse)
 		{
 		}
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Comparers
 				}
 				else if (seriesUIDCompare == 0)
 				{
-					return Compare(image1.ImageSop, image2.ImageSop);
+					return Compare(image1.Frame, image2.Frame);
 				}
 			}
 
@@ -113,6 +113,6 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		protected abstract int Compare(ImageSop x, ImageSop y);
+		protected abstract int Compare(Frame x, Frame y);
 	}
 }

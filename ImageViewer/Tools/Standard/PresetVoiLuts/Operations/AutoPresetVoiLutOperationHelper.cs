@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 				return false;
 
 			IImageSopProvider sopProvider = presentationImage as IImageSopProvider;
-			if (sopProvider != null && sopProvider.ImageSop.WindowCenterAndWidth.Length > 0)
+			if (sopProvider != null && sopProvider.Frame.WindowCenterAndWidth.Length > 0)
 				return true;
 
 			IImageGraphicProvider graphicProvider = presentationImage as IImageGraphicProvider;
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			IImageSopProvider sopProvider = presentationImage as IImageSopProvider;
 			if (sopProvider != null)
 			{
-				if (sopProvider.ImageSop.WindowCenterAndWidth.Length > 0)
+				if (sopProvider.Frame.WindowCenterAndWidth.Length > 0)
 				{
 					if (currentLut is AutoVoiLutLinear)
 						((AutoVoiLutLinear)currentLut).ApplyNext();
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			IImageSopProvider sopProvider = presentationImage as IImageSopProvider;
 			if (sopProvider != null)
 			{
-				if (sopProvider.ImageSop.WindowCenterAndWidth.Length > 0)
+				if (sopProvider.Frame.WindowCenterAndWidth.Length > 0)
 					return new AutoVoiLutLinear(sopProvider.ImageSop);
 			}
 

@@ -34,21 +34,21 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.Comparers
 {
 	/// <summary>
-	/// Compares two <see cref="ImageSop"/>s based on instance number.
+	/// Compares two <see cref="Frame"/>s based on instance number and frame number.
 	/// </summary>
-	public class InstanceNumberComparer : DicomImageSopComparer
+	public class InstanceAndFrameNumberComparer : DicomFrameComparer
 	{
 		/// <summary>
-		/// Initializes a new instance of <see cref="InstanceNumberComparer"/>.
+		/// Initializes a new instance of <see cref="InstanceAndFrameNumberComparer"/>.
 		/// </summary>
-		public InstanceNumberComparer()
+		public InstanceAndFrameNumberComparer()
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="InstanceNumberComparer"/>.
+		/// Initializes a new instance of <see cref="InstanceAndFrameNumberComparer"/>.
 		/// </summary>
-		public InstanceNumberComparer(bool reverse)
+		public InstanceAndFrameNumberComparer(bool reverse)
 			: base(reverse)
 		{
 		}
@@ -59,17 +59,27 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		protected override int Compare(ImageSop x, ImageSop y)
+		protected override int Compare(Frame x, Frame y)
 		{
-			int imageNumber1 = x.InstanceNumber;
-			int imageNumber2 = y.InstanceNumber;
+			int imageNumber1 = x.ParentImageSop.InstanceNumber;
+			int imageNumber2 = y.ParentImageSop.InstanceNumber;
 
 			if (imageNumber1 < imageNumber2)
 				return this.ReturnValue; // x < y
 			else if (imageNumber1 > imageNumber2)
 				return (-this.ReturnValue); // x > y
 			else
-				return 0; // x == y
+			{
+				int frameNumber1 = x.FrameNumber;
+				int frameNumber2 = y.FrameNumber;
+
+				if (frameNumber1 < frameNumber2)
+					return this.ReturnValue;
+				else if (frameNumber1 > frameNumber2)
+					return (-this.ReturnValue);
+				else
+					return 0; // x == y
+			}
 		}
 	}
 }
