@@ -17,7 +17,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
     public partial class ValidationEditorComponentControl : ApplicationComponentUserControl
     {
         private ValidationEditorComponent _component;
-        private ListBox _propertyPicker;
 
         /// <summary>
         /// Constructor
@@ -33,13 +32,16 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _propertiesTableView.ToolbarModel = _component.RulesActionModel;
             _propertiesTableView.MenuModel = _component.RulesActionModel;
             _propertiesTableView.DataBindings.Add("Selection", _component, "SelectedRule", true, DataSourceUpdateMode.OnPropertyChanged);
-            _validationXml.DataBindings.Add("Text", _component, "RuleXml", true, DataSourceUpdateMode.OnPropertyChanged);
             _testButton.DataBindings.Add("Enabled", _component, "CanTestRules");
 
             foreach (PropertyInfo item in _component.ComponentPropertyChoices)
             {
                 _propertiesMenu.Items.Add(item.Name);
             }
+
+            Control editor = (Control)_component.EditorComponentHost.ComponentView.GuiElement;
+            editor.Dock = DockStyle.Fill;
+            _editorPanel.Controls.Add(editor);
         }
 
         private void _okButton_Click(object sender, EventArgs e)
@@ -64,7 +66,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         private void _propertiesMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            _validationXml.SelectedText = e.ClickedItem.Text;
+            _component.InsertText(e.ClickedItem.Text);
         }
     }
 }

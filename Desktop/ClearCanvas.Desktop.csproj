@@ -80,6 +80,8 @@
     <Compile Include="ClosedEventArgs.cs" />
     <Compile Include="CloseHelperComponent.cs" />
     <Compile Include="CloseHelperTool.cs" />
+    <Compile Include="CodeEditorFactory.cs" />
+    <Compile Include="DefaultCodeEditorComponent.cs" />
     <Compile Include="DefaultSuggestionProvider.cs" />
     <Compile Include="DesktopMonitorComponent.cs" />
     <Compile Include="DesktopObjectCreationArgs.cs" />

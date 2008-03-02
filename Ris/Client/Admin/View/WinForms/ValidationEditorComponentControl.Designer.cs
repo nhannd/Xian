@@ -29,26 +29,14 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this._validationXml = new System.Windows.Forms.RichTextBox();
             this._okButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
             this._propertiesTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._testButton = new System.Windows.Forms.Button();
             this._macroButton = new System.Windows.Forms.Button();
             this._propertiesMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this._editorPanel = new System.Windows.Forms.Panel();
             this.SuspendLayout();
-            // 
-            // _validationXml
-            // 
-            this._validationXml.AcceptsTab = true;
-            this._validationXml.AutoWordSelection = true;
-            this._validationXml.DetectUrls = false;
-            this._validationXml.Location = new System.Drawing.Point(16, 195);
-            this._validationXml.Name = "_validationXml";
-            this._validationXml.Size = new System.Drawing.Size(479, 210);
-            this._validationXml.TabIndex = 0;
-            this._validationXml.Text = "";
-            this._validationXml.WordWrap = false;
             // 
             // _okButton
             // 
@@ -105,16 +93,23 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._propertiesMenu.Size = new System.Drawing.Size(61, 4);
             this._propertiesMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._propertiesMenu_ItemClicked);
             // 
+            // _editorPanel
+            // 
+            this._editorPanel.Location = new System.Drawing.Point(16, 195);
+            this._editorPanel.Name = "_editorPanel";
+            this._editorPanel.Size = new System.Drawing.Size(479, 210);
+            this._editorPanel.TabIndex = 6;
+            // 
             // ValidationEditorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._editorPanel);
             this.Controls.Add(this._macroButton);
             this.Controls.Add(this._testButton);
             this.Controls.Add(this._propertiesTableView);
             this.Controls.Add(this._cancelButton);
             this.Controls.Add(this._okButton);
-            this.Controls.Add(this._validationXml);
             this.Name = "ValidationEditorComponentControl";
             this.Size = new System.Drawing.Size(552, 442);
             this.ResumeLayout(false);
@@ -123,12 +118,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         #endregion
 
-        private System.Windows.Forms.RichTextBox _validationXml;
         private System.Windows.Forms.Button _okButton;
         private System.Windows.Forms.Button _cancelButton;
         private ClearCanvas.Desktop.View.WinForms.TableView _propertiesTableView;
         private System.Windows.Forms.Button _testButton;
         private System.Windows.Forms.Button _macroButton;
         private System.Windows.Forms.ContextMenuStrip _propertiesMenu;
+        private System.Windows.Forms.Panel _editorPanel;
     }
 }

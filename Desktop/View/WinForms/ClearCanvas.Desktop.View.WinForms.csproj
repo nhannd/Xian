@@ -58,6 +58,13 @@
       <DependentUpon>CloseHelperComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CloseHelperComponentView.cs" />
+    <Compile Include="DefaultCodeEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DefaultCodeEditorComponentControl.Designer.cs">
+      <DependentUpon>DefaultCodeEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DefaultCodeEditorComponentView.cs" />
     <Compile Include="ComboBoxField.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -432,6 +439,10 @@
     <Content Include="FileBrowser\Images\BrowserForward.png" />
     <Content Include="FileBrowser\Images\BrowserUp.png" />
     <None Include="Resources\ClearFilterSmall.png" />
+    <EmbeddedResource Include="DefaultCodeEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DefaultCodeEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SuggestComboField.resx">
       <DependentUpon>SuggestComboField.cs</DependentUpon>
       <SubType>Designer</SubType>

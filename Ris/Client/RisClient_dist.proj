@@ -20,6 +20,10 @@
 		<SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
 		<SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Uhn\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Uhn.Common.dll" />
     <SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Fax\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Common.dll" />
+    <SharedLibraryFiles Include="$(TrunkDirectory)\Desktop\Applets\Scintilla\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.dll" />
+    <SharedLibraryFiles Include="$(TrunkDirectory)\Desktop\Applets\Scintilla\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.View.WinForms.dll" />
+    <SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\ScintillaNet.dll" />
+    <SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer.dll" />
   </ItemGroup>	
 	
 	<ItemGroup>

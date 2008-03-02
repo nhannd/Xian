@@ -31,6 +31,8 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(ValidationEditorComponentViewExtensionPoint))]
     public class ValidationEditorComponent : ApplicationComponent
     {
+        #region Rule class
+
         class Rule
         {
             private string _name;
@@ -116,6 +118,7 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+        #endregion
 
         private const string tagValidationRule = "validation-rule";
         private const string tagValidationRules = "validation-rules";
@@ -126,8 +129,6 @@ namespace ClearCanvas.Ris.Client.Admin
         private readonly Table<Rule> _rules;
         private Rule _selectedRule;
 
-        private string _ruleXml;
-
         private IConfigurationStore _configStore;
 
         private readonly ApplicationComponent _liveComponent;
@@ -135,6 +136,9 @@ namespace ClearCanvas.Ris.Client.Admin
         private CrudActionModel _rulesActionModel;
         private int _newRuleCounter = 0;
         private List<PropertyInfo> _componentProperties;
+
+        private ChildComponentHost _editorHost;
+        private ICodeEditor _editor;
 
 
         /// <summary>
@@ -190,16 +194,33 @@ namespace ClearCanvas.Ris.Client.Admin
             _rulesActionModel.Delete.SetClickHandler(DeleteSelectedRule);
             _rulesActionModel.Delete.Enabled = false;
 
+            _editor = CodeEditorFactory.CreateCodeEditor();
+            _editor.SetLanguage("xml");
+
+            _editorHost = new ChildComponentHost(this.Host, _editor.GetComponent());
+            _editorHost.StartComponent();
+
             base.Start();
         }
 
 
         public override void Stop()
         {
+            if (_editorHost != null)
+            {
+                _editorHost.StopComponent();
+                _editorHost = null;
+            }
+
             base.Stop();
         }
 
         #region Presentation Model
+
+        public ApplicationComponentHost EditorComponentHost
+        {
+            get { return _editorHost; }
+        }
 
         public IList<PropertyInfo> ComponentPropertyChoices
         {
@@ -232,10 +253,9 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        public string RuleXml
+        public void InsertText(string text)
         {
-            get { return _ruleXml; }
-            set { _ruleXml = value; }
+            _editor.InsertText(text);
         }
 
         public void AddNewRule()
@@ -316,7 +336,7 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             if (_selectedRule != null)
             {
-                _selectedRule.RuleXml = _ruleXml;
+                _selectedRule.RuleXml = _editor.Text;
                 _selectedRule.Update();
 
                 // notify updated
@@ -324,11 +344,11 @@ namespace ClearCanvas.Ris.Client.Admin
             }
 
             _selectedRule = selected;
-            _ruleXml = null;
+            _editor.Text = null;
             
             if (_selectedRule != null)
             {
-                _ruleXml = _selectedRule.RuleXml;
+                _editor.Text = _selectedRule.RuleXml;
                 this.NotifyPropertyChanged("ValidationXml");
             }
 
