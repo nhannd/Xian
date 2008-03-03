@@ -64,10 +64,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private float _rotationXY;
 		private bool _flipX;
 		private bool _flipY;
+		private PointF _centerOfRotationXY;
 		private Matrix _cumulativeTransform;
 		private Matrix _transform;
 		private bool _recalculationRequired;
 		private readonly IGraphic _ownerGraphic;
+		private SpatialTransformValidationPolicy _validationPolicy;
+
 		#endregion
 
 		/// <summary>
@@ -254,34 +257,50 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the rotation in degrees.
+		/// Gets or sets the rotation in the XY plane in degrees.
 		/// </summary>
-		public virtual int RotationXY
+		/// <remarks>
+		/// Values less than 0 or greater than 360 are converted to the equivalent
+		/// angle between 0 and 360. For example, -5 becomes 355 and 390 becomes 30.
+		/// </remarks>
+		public int RotationXY
 		{
 			get { return (int)_rotationXY; }
 			set 
 			{
+				value = value % 360;
+
+				if (value < 0)
+					value += 360;
+
 				if (_rotationXY == value)
 					return;
 
-				float oldValue = _rotationXY;
 				_rotationXY = value;
-
-				try
-				{
-					ValidateCumulativeRotationXY();
-				}
-				catch
-				{
-					_rotationXY = oldValue;
-					throw;
-				}
-				finally
-				{
-					this.RecalculationRequired = true;
-				}
+				this.RecalculationRequired = true;
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets the center of rotation.
+		/// </summary>
+		/// <remarks>
+		/// The point should be specified in terms of the coordinate system
+		/// of the parent graphic, i.e. source coordinates.
+		/// </remarks>
+		public PointF CenterOfRotationXY
+		{
+			get { return _centerOfRotationXY; }
+			set
+			{
+				if (_centerOfRotationXY == value)
+					return;
+
+				_centerOfRotationXY = value;
+				this.RecalculationRequired = true;
+			}
+		}
+
 
 		/// <summary>
 		/// Gets the transform relative to the <see cref="IGraphic"/> object's
@@ -307,7 +326,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// Gets the cumulative scale.
 		/// </summary>
 		/// <remarks>
-		/// This is the scale relative to the root of the scene graph.
+		/// Gets the scale relative to the root of the scene graph.
 		/// </remarks>
 		public float CumulativeScale
 		{
@@ -315,6 +334,24 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				Calculate();
 				return _cumulativeScale;
+			}
+		}
+
+		/// <summary>
+		/// Gets the cumulative rotation in the XY plane.
+		/// </summary>
+		/// <remarks>
+		/// Gets the rotation relative to the root of the scene graph.
+		/// </remarks>
+		public int CumulativeRotationXY
+		{
+			get
+			{
+				int cumulativeRotation = RotationXY;
+				if (OwnerGraphic != null && OwnerGraphic.ParentGraphic != null)
+					cumulativeRotation += OwnerGraphic.ParentGraphic.SpatialTransform.CumulativeRotationXY;
+
+				return cumulativeRotation;
 			}
 		}
 
@@ -336,36 +373,28 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the associated <see cref="SpatialTransformValidationPolicy"/>.
+		/// </summary>
+		/// <remarks>
+		/// It is not always desirable to allow an <see cref="IGraphic"/> to be transformed
+		/// in arbitrary ways.  For example, at present, images can only be rotated in
+		/// 90 degree increments.  This property essentially allows a validation policy to be set on a
+		/// per graphic basis.  If validation fails, an <see cref="ArgumentException"/> is thrown.
+		/// </remarks>
+		public SpatialTransformValidationPolicy ValidationPolicy
+		{
+			get { return _validationPolicy; }
+			set { _validationPolicy = value; }
+		}
+
+
 		internal IGraphic OwnerGraphic
 		{
 			get { return _ownerGraphic; }
 		}
 
 		#endregion
-
-		internal int CumulativeRotationXY
-		{
-			get
-			{
-				int cumulativeRotation = RotationXY;
-				if (OwnerGraphic != null && OwnerGraphic.ParentGraphic != null)
-					cumulativeRotation += OwnerGraphic.ParentGraphic.SpatialTransform.CumulativeRotationXY;
-
-				return cumulativeRotation;
-			}
-		}
-
-		internal virtual void ValidateCumulativeRotationXY()
-		{
-			if (OwnerGraphic == null)
-				return;
-
-			if (OwnerGraphic is CompositeGraphic)
-			{
-				foreach (IGraphic graphic in ((CompositeGraphic)OwnerGraphic).Graphics)
-					graphic.SpatialTransform.ValidateCumulativeRotationXY();
-			}
-		}
 
 		#region Public methods
 
@@ -557,6 +586,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 			if (!this.RecalculationRequired)
 				return;
 
+			// Validate if there's a validation policy in place.  Otherwise, assume all is good.
+			if (_validationPolicy != null)
+				_validationPolicy.Validate(this);
+
 			// The cumulative transform is the product of the transform of the
 			// parent graphic and the transform of this graphic (i.e. the current transform)
 			// If there is no parent graphic, then the cumulative transform = current transform
@@ -588,7 +621,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="cumulativeTransform"></param>
 		protected virtual void CalculatePreTransform(Matrix cumulativeTransform)
 		{
-
+			cumulativeTransform.Translate(_centerOfRotationXY.X, _centerOfRotationXY.Y);
 		}
 
 		/// <summary>
@@ -596,6 +629,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		protected virtual void CalculatePostTransform(Matrix cumulativeTransform)
 		{
+			cumulativeTransform.Translate(-_centerOfRotationXY.X, -_centerOfRotationXY.Y);
 		}
 
 		/// <summary>

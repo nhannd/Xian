@@ -39,6 +39,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// An image specific <see cref="SpatialTransform"/>.
 	/// </summary>
+	/// <remarks>
+	/// This <see cref="SpatialTransform"/> centers an image in a <see cref="Tile"/>
+	/// and provides <see cref="ScaleToFit"/> functionality.
+	/// </remarks>
 	public class ImageSpatialTransform : SpatialTransform, IImageSpatialTransform
 	{
 		#region Private Fields
@@ -115,36 +119,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 					CalculateScaleToFit();
 
 				base.ForceRecalculation();
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the rotation in degrees.
-		/// </summary>
-		/// <remarks>
-		/// Any multiple of 90 is allowed.  However, the value will always be "wrap" to
-		/// either 0, 90, 180 or 270.  For example, if set to -450, the property will
-		/// return 270.
-		/// </remarks>
-		/// <exception cref="ArgumentException">The rotation is not a multiple
-		/// of 90 degrees.</exception>
-		public override int RotationXY
-		{
-			get
-			{
-				return base.RotationXY;
-			}
-			set
-			{
-				value = value % 360;
-
-				if (value < 0)
-					value += 360;
-
-				if (base.RotationXY == value)
-					return;
-
-				base.RotationXY = value;
 			}
 		}
 
@@ -341,17 +315,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private void OwnerGraphicDrawing(object sender, EventArgs e)
 		{
 			this.ClientRectangle = OwnerGraphic.ParentPresentationImage.ClientRectangle;
-		}
-
-		/// <summary>
-		/// Temporary measure until we can support arbitrary rotation of images.
-		/// </summary>
-		internal override void ValidateCumulativeRotationXY()
-		{
-			if ((CumulativeRotationXY % 90) != 0)
-				throw new ArgumentException(SR.ExceptionInvalidRotationValue);
-
-			base.ValidateCumulativeRotationXY();
 		}
 	}
 }

@@ -121,6 +121,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_roiGraphic = graphic;
 
 			BuildGraphic();
+			SetTransformValidationPolicy(this);
 
 			if (userCreated)
 				base.State = CreateCreateState();
@@ -417,6 +418,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_calloutGraphic.LocationChanged += new EventHandler<PointChangedEventArgs>(OnCalloutLocationChanged);
 
 			this.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnROIGraphicStateChanged);
+		}
+
+		private static void SetTransformValidationPolicy(CompositeGraphic compositeGraphic)
+		{
+			foreach (IGraphic graphic in compositeGraphic.Graphics)
+			{
+				if (graphic is CompositeGraphic)
+					SetTransformValidationPolicy(graphic as CompositeGraphic);
+
+				compositeGraphic.SpatialTransform.ValidationPolicy = new RoiTransformPolicy();
+			}
 		}
 
 		private void OnROIGraphicStateChanged(object sender, GraphicStateChangedEventArgs e)

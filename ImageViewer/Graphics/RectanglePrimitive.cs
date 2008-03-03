@@ -61,8 +61,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public override bool HitTest(Point point)
 		{
-			this.CoordinateSystem = CoordinateSystem.Destination;
-			bool result = HitTest(point, this.Rectangle);
+			this.CoordinateSystem = CoordinateSystem.Source;
+			bool result = HitTest(this.SpatialTransform.ConvertToSource(point), this.Rectangle, this.SpatialTransform);
 			this.ResetCoordinateSystem();
 
 			return result;
@@ -79,12 +79,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return this.Rectangle.Contains(point);
 		}
 
-		internal static bool HitTest(PointF point, RectangleF rectangle)
+		internal static bool HitTest(PointF point, RectangleF rectangle, SpatialTransform transform)
 		{
 			GraphicsPath path = new GraphicsPath();
+			path.Transform(transform.Transform);
 			path.AddRectangle(RectangleUtilities.ConvertToPositiveRectangle(rectangle));
 
-			Pen pen = new Pen(Brushes.White, HitTestDistance);
+			Pen pen = new Pen(Brushes.White, HitTestDistance/transform.CumulativeScale);
 			bool result = path.IsOutlineVisible(point, pen);
 
 			path.Dispose();

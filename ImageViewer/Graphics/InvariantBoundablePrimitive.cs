@@ -1,5 +1,6 @@
 using System.Drawing;
 using ClearCanvas.Common;
+using System.Drawing.Drawing2D;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -34,7 +35,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 				else
 				{
-					return new PointF(base.AnchorPoint.X + _rectangle.Location.X, base.AnchorPoint.Y + _rectangle.Location.Y);
+					Matrix m = new Matrix();
+					m.Rotate(this.SpatialTransform.CumulativeRotationXY);
+					PointF[] pt = { this.InvariantTopLeft };
+					m.TransformPoints(pt);
+					m.Dispose();
+
+					return new PointF(base.AnchorPoint.X + pt[0].X, base.AnchorPoint.Y + pt[0].Y);
 				}
 			}
 		}
@@ -80,7 +87,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 				else
 				{
-					return new PointF(base.AnchorPoint.X + this.InvariantBottomRight.X, base.AnchorPoint.Y + this.InvariantBottomRight.Y);
+					Matrix m = new Matrix();
+					m.Rotate(this.SpatialTransform.CumulativeRotationXY);
+					PointF[] pt = { this.InvariantBottomRight };
+					m.TransformPoints(pt);
+					m.Dispose();
+
+					return new PointF(base.AnchorPoint.X + pt[0].X, base.AnchorPoint.Y + pt[0].Y);
 				}
 			}
 		}

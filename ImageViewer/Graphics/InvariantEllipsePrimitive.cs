@@ -30,8 +30,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public override bool HitTest(Point point)
 		{
-			this.CoordinateSystem = CoordinateSystem.Destination;
-			bool result = EllipsePrimitive.HitTest(point, this.Rectangle);
+			this.CoordinateSystem = CoordinateSystem.Source;
+			bool result = EllipsePrimitive.HitTest(
+				this.SpatialTransform.ConvertToSource(point), 
+				this.Rectangle,
+				this.SpatialTransform);
 			this.ResetCoordinateSystem();
 
 			return result;

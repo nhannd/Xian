@@ -121,13 +121,16 @@
     <Compile Include="Graphics\EllipsePrimitive.cs" />
     <Compile Include="Graphics\IArcGraphic.cs" />
     <Compile Include="Graphics\IBoundableGraphic.cs" />
+    <Compile Include="Graphics\ImageTransformPolicy.cs" />
     <Compile Include="Graphics\InvariantArcPrimitive.cs" />
     <Compile Include="Graphics\InvariantBoundablePrimitive.cs" />
     <Compile Include="Graphics\InvariantEllipsePrimitive.cs" />
     <Compile Include="Graphics\IVectorGraphic.cs" />
+    <Compile Include="Graphics\SpatialTransformValidationPolicy.cs" />
     <Compile Include="Imaging\PaletteColorMap.cs" />
     <Compile Include="InteractiveGraphics\BoundableInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphic.cs" />
+    <Compile Include="InteractiveGraphics\RoiTransformPolicy.cs" />
     <Compile Include="InteractiveGraphics\Tests\EllipseInteractiveGraphicTest.cs" />
     <Compile Include="Mathematics\Tests\MatrixTests.cs" />
     <Compile Include="Mathematics\Tests\Vector3DTests.cs" />

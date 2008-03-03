@@ -156,6 +156,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_rows = rows;
 			_columns = columns;
 			_bitsPerPixel = bitsPerPixel;
+
+			this.SpatialTransform.ValidationPolicy = new ImageTransformPolicy();
 		}
 
 

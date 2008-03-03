@@ -275,6 +275,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 			Surface.FinalBuffer.Graphics.Transform = rect.SpatialTransform.CumulativeTransform;
 			rect.CoordinateSystem = CoordinateSystem.Source;
 
+			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
 			float offsetX = 0;
 			float offsetY = 0;
 

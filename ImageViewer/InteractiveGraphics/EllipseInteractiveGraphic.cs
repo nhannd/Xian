@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Drawing.Drawing2D;
-using System.Text;
-using ClearCanvas.ImageViewer.Graphics;
 using System.Drawing;
-using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -43,17 +39,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </remarks>
 		public override bool HitTest(Point point)
 		{
-			this.CoordinateSystem = CoordinateSystem.Destination;
+			this.CoordinateSystem = CoordinateSystem.Source;
 			RectangleF boundingBox = new RectangleF(this.Left, this.Top, this.Width, this.Height);
 
-			GraphicsPath path = new GraphicsPath();
-			path.AddRectangle(RectangleUtilities.ConvertToPositiveRectangle(boundingBox));
+			bool result = RectanglePrimitive.HitTest(this.SpatialTransform.ConvertToSource(point),
+			                           boundingBox, this.SpatialTransform);
 
-			Pen pen = new Pen(Brushes.White, VectorGraphic.HitTestDistance);
-			bool result = path.IsOutlineVisible(point, pen);
-
-			path.Dispose();
-			pen.Dispose();
 			this.ResetCoordinateSystem();
 
 			return result || base.HitTest(point);

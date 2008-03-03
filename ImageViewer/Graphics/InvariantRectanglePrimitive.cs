@@ -56,8 +56,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <returns></returns>
 		public override bool HitTest(Point point)
 		{
-			this.CoordinateSystem = CoordinateSystem.Destination;
-			bool result = RectanglePrimitive.HitTest(point, this.Rectangle);
+			this.CoordinateSystem = CoordinateSystem.Source;
+			bool result = RectanglePrimitive.HitTest(
+				this.SpatialTransform.ConvertToSource(point), 
+				this.Rectangle, 
+				this.SpatialTransform);
 			this.ResetCoordinateSystem();
 
 			return result;

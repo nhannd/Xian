@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Drawing;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Graphics
@@ -69,5 +70,30 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// Gets or sets the translation in the y-direction.
 		/// </summary>
 		float TranslationY { get; set; }
+
+		/// <summary>
+		/// Gets or sets the center of rotation.
+		/// </summary>
+		/// <remarks>
+		/// The point should be specified in terms of the coordinate system
+		/// of the parent graphic, i.e. source coordinates.
+		/// </remarks>
+		PointF CenterOfRotationXY { get; set; }
+
+		/// <summary>
+		/// Gets the cumulative scale.
+		/// </summary>
+		/// <remarks>
+		/// Gets the scale relative to the root of the scene graph.
+		/// </remarks>
+		float CumulativeScale { get; }
+
+		/// <summary>
+		/// Gets the cumulative rotation in the XY plane.
+		/// </summary>
+		/// <remarks>
+		/// Gets the rotation relative to the root of the scene graph.
+		/// </remarks>
+		int CumulativeRotationXY { get; }
 	}
 }
