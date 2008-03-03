@@ -32,23 +32,57 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
+using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using ClearCanvas.ImageServer.Web.Common.WebControls;
+
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Search.SearchPanel.js", "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Search
 {
-    public partial class SearchPanel : UserControl
+    [ClientScriptResource(ComponentType="ClearCanvas.ImageServer.Web.Application.Search.SearchPanel", ResourcePath="ClearCanvas.ImageServer.Web.Application.Search.SearchPanel.js")]
+    public partial class SearchPanel : ScriptUserControl
     {
         #region Private members
         private ServerPartition _serverPartition;
-        private StudyController _controller;
+        private StudyController _controller = new StudyController();
 
         #endregion Private members
 
         #region Public Properties
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("DeleteButtonClientID")]
+        public string DeleteButtonClientID
+        {
+            get { return this.DeleteToolbarButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("OpenButtonClientID")]
+        public string OpenButtonClientID
+        {
+            get { return this.ToolbarButton1.ClientID; }
+        }
+
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("StudyListClientID")]
+        public string StudyListClientID
+        {
+            get { return StudyListGridView1.StudyListGrid.ClientID; }
+        }
+
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("OpenStudyPageUrl")]
+        public string OpenStudyPageUrl
+        {
+            get { return Page.ResolveClientUrl("~/StudyDetails/StudyDetailsPage.aspx"); }
+        }
+
 
         public ServerPartition ServerPartition
         {
@@ -56,7 +90,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             set { _serverPartition = value; }
         }
 
-        #endregion Public Properties
+        #endregion Public Properties  
 
         #region Public Methods
 
@@ -81,6 +115,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
 
         #endregion Public Methods
+
+        #region Constructors
+        public SearchPanel()
+            : base(false, HtmlTextWriterTag.Div)
+            {
+            }
+
+        #endregion Constructors
 
         #region Protected Methods
 
@@ -126,20 +168,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             DataBind();
         }
 
-        
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
-            
-            // initialize the controller
-            _controller = new StudyController();
-
-
             // setup child controls
             GridPager1.ItemName = "Study";
             GridPager1.PuralItemName = "Studies";
-            GridPager1.Target = StudyListGridView1.TheGrid;
+            GridPager1.Target = StudyListGridView1.StudyListGrid;
             GridPager1.GetRecordCountMethod = delegate
                                                   {
                                                       return StudyListGridView1.Studies== null ? 0:StudyListGridView1.Studies.Count;
@@ -163,6 +199,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
                                     }
 
                                     LoadStudies();
+                                    UpdatePanel.Update(); // force refresh
                                 };
             
         }
@@ -178,38 +215,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
         protected override void OnPreRender(EventArgs e)
         {
-            base.OnPreRender(e);
-
-            // Register a script that setup the client-sider event handlers
-            ScriptTemplate template =
-                new ScriptTemplate(typeof(SearchPanel).Assembly, "ClearCanvas.ImageServer.Web.Application.Search.SearchPanel.js");
-
-            template.Replace("@@DELETE_BUTTON_CLIENTID@@", DeleteToolbarButton.ClientID);
-            template.Replace("@@STUDYLIST_GRIDVIEW_CLIENTID@@", StudyListGridView1.TheGrid.ClientID);
-            template.Replace("@@OPEN_STUDY_BASE_URL@@", Page.ResolveClientUrl("~/StudyDetails/StudyDetailsPage.aspx"));
-            template.Replace("@@PARTITION_AE@@", ServerPartition.AeTitle);
-            template.Replace("@@OPEN_STUDY_BUTTON_CLIENTID@@", ToolbarButton1.ClientID);
-            
-            ScriptManager.RegisterStartupScript(
-                                    this,
-                                    typeof(SearchPanel),
-                                    ClientID + "_OnLoad",
-                                    template.Script,
-                                    true);
-
             UpdateUI();
+            base.OnPreRender(e);
         }
 
         protected void UpdateUI()
         {
             UpdateToolbarButtonState();
-            UpdatePanel.Update(); // force refresh
+            
         }
         
         protected void FilterButton_Click(object sender, ImageClickEventArgs e)
         {
-            // reload the data
-            // LoadStudies(); this call is redundant since we have reloaded the data in OnInit()
+            StudyListGridView1.StudyListGrid.ClearSelections();
         }
 
         protected void OnDeleteToolbarButtonClick(object sender, ImageClickEventArgs e)
@@ -239,11 +257,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             IList<Study> studies = StudyListGridView1.SelectedStudies;
             if (studies != null)
             {
-                StudyController controller = new StudyController();
+                ToolbarButton1.Enabled = true;
+                
                 DeleteToolbarButton.Enabled = true;
                 foreach (Study study in studies)
                 {
-                    if (controller.IsScheduledForDelete(study))
+                    if (_controller.IsScheduledForDelete(study))
                     {
                         DeleteToolbarButton.Enabled = false;
                         break;
@@ -253,13 +272,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             }
             else
             {
+                ToolbarButton1.Enabled = false;
                 DeleteToolbarButton.Enabled = false;
             }
+
         }
 
 
         #endregion Protected Methods
-
-
     }
 }

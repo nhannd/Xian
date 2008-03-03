@@ -47,12 +47,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.WebControls.Panel Panel4;
         
         /// <summary>
-        /// GridView1 control.
+        /// StudyListControl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView GridView1;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView StudyListControl;
     }
 }

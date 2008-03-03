@@ -30,7 +30,6 @@
 #endregion
 
 
-using System;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
@@ -46,18 +45,17 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
         /// <remark>
         /// 
         /// </remark>
-        static public PatientSummary CreatePatientSummary(Model.Study study)
+        static public PatientSummary CreatePatientSummary(Study study)
         {
             PatientSummary patient = new PatientSummary();
 
-            DateTime bdate;
             patient.PatientId = study.PatientId;
             patient.Birthdate = study.PatientsBirthDate;
             patient.PatientName = study.PatientsName;
             patient.Sex = study.PatientsSex;
 
             PatientAdaptor adaptor = new PatientAdaptor();
-            Model.Patient pat = adaptor.Get(study.PatientKey);
+            Patient pat = adaptor.Get(study.PatientKey);
             patient.IssuerOfPatientId = pat.IssuerOfPatientId;
             return patient;
         }

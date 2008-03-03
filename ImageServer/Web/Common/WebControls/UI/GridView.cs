@@ -36,8 +36,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Text;
+using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+
+
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.js", "text/javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 {
@@ -51,16 +55,35 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
     [ToolboxData("<{0}:GridView runat=server></{0}:GridView>")]
     public class GridView : System.Web.UI.WebControls.GridView , IScriptControl
     {
+        public enum SelectionModeEnum
+        {
+            Disabled,
+            Single,
+            Multiple
+        }
+
         #region Private members
         private string _onClientRowClick;
         private string _onClientRowDblClick;
+        private SelectionModeEnum _selectionMode = SelectionModeEnum.Single;
         private Hashtable _selectedRows = new Hashtable();
         #endregion Private members
 
-
         #region Public Properties
         /// <summary>
-        /// Sets or gets the client-side script function name that will be called in the client browser when a row in selected.
+        /// Sets or gets the selection mode.
+        /// </summary>
+        /// <remark>
+        /// </remark>
+        public SelectionModeEnum SelectionMode
+        {
+            get { return _selectionMode; }
+            set { _selectionMode = value; }
+        }
+
+
+        /// <summary>
+        /// Sets or gets the client-side script function that will be called on the client when a row in selected.
         /// </summary>
         /// <remark>
         /// The row will be selected before the specified function is called.
@@ -75,7 +98,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         /// Sets or gets the client-side script function name that will be called in the client browser when users double-click on a row.
         /// </summary>
         /// <remark>
-        /// The row will be selected before the specified function is called.
+        /// 
         /// </remark>
         public string OnClientRowDblClick
         {
@@ -131,13 +154,37 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 
         public override void RenderControl(HtmlTextWriter writer)
         {
-            string value = Serialize(_selectedRows.Keys);
-
-
-            Page.ClientScript.RegisterHiddenField(ClientID + "SelectedRowIndices", value);
+            SaveState();
             base.RenderControl(writer);
-
         }
+
+        protected virtual void SaveState()
+        {
+            string stateValue = "";
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+
+            int[] rows = SelectedIndices;
+            if (rows != null)
+                stateValue = serializer.Serialize(rows);
+
+            Page.ClientScript.RegisterHiddenField(ClientID + "SelectedRowIndices", stateValue);
+        }
+
+        protected virtual void LoadState()
+        {
+            string statesValue = Page.Request[ClientID + "SelectedRowIndices"];
+            if (statesValue != null && statesValue != "")
+            {
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                int[] rows = serializer.Deserialize<int[]>(statesValue);
+                foreach (int r in rows)
+                {
+                    _selectedRows[r] = true;
+                }
+
+            }
+        }
+
 
         /// <summary>
         /// Clear the current selections.
@@ -162,12 +209,17 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         #endregion Public Methods
 
 
+        
         #region IScriptControl Members
 
+        
         public IEnumerable<ScriptDescriptor> GetScriptDescriptors()
         {
             ScriptControlDescriptor desc = new ScriptControlDescriptor(this.GetType().FullName, ClientID);
-            desc.AddProperty("SelectedRowIndicesField", ClientID + "SelectedRowIndices");
+
+            desc.AddProperty("clientStateFieldID", ClientID + "SelectedRowIndices");
+            desc.AddProperty("SelectionMode", SelectionMode.ToString());
+
             string style = StyleToString(SelectedRowStyle);
             desc.AddProperty("SelectedRowStyle", style);
             desc.AddProperty("SelectedRowCSS", SelectedRowStyle.CssClass);
@@ -192,7 +244,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 
             }
             
-            if (this.OnClientRowClick!=null)
+            if (OnClientRowClick!=null)
                 desc.AddEvent("onClientRowClick", this.OnClientRowClick);
 
             if (OnClientRowDblClick!=null)
@@ -217,6 +269,37 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
+            
+            foreach(GridViewRow row in Rows)
+            {
+                if (row.RowType==DataControlRowType.DataRow)
+                {
+                    // the following lines will disable text select on the row.
+                    // We need to disable it because IE and firefox interpret Ctrl-Click as text selection and will display
+                    // a box around the cell users click on.
+
+                    // Firefox way:
+                    row.Attributes["onmousedown"] = "if (event.ctrlKey && typeof (event.preventDefault) != 'undefined') {event.preventDefault();}";
+                    // IE way:
+                    row.Attributes["onselectstart"] = "return false;"; // disable select
+                    
+                    row.Attributes["isdatarow"] = "true";
+                    row.Attributes["rowIndex"] = (row.RowIndex).ToString();
+
+                    if (_selectedRows.ContainsKey(row.RowIndex))
+                    {
+                        row.RowState = DataControlRowState.Selected;
+                        row.Attributes["selected"] = "true";
+
+                    }
+                    else
+                    {
+                        row.Attributes["selected"] = "false";
+                    }
+
+                }
+            }
+            
             if (!DesignMode)
             {
                 ScriptManager sm = ScriptManager.GetCurrent(Page);
@@ -242,21 +325,20 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 
             int rowIndex = e.NewSelectedIndex;
 
-            Rows[rowIndex].RowState = DataControlRowState.Selected;
-            Rows[rowIndex].Attributes["selected"] = "true"; // custom attribute for the client-side script
-            _selectedRows[rowIndex] = true;
+            SelectRow(rowIndex);
         
         }
 
         
-        protected void SelectRow(int rowIndex)
+        public void SelectRow(int rowIndex)
         {
             Rows[rowIndex].RowState = DataControlRowState.Selected;
             Rows[rowIndex].Attributes["selected"] = "true";
+
+            
+             
             _selectedRows[rowIndex] = true;
         }
-
-        
 
         protected override void OnInit(EventArgs e)
         {
@@ -267,18 +349,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             {
                 if (Page.IsPostBack)
                 {
-                    string statesValue  = Page.Request[ClientID + "SelectedRowIndices"];
-                    if (statesValue != null && statesValue!="")
-                    {
-                        string[] states = statesValue.Split(',');
-                        
-                        for(int i=0; i<states.Length; i++)
-                        {
-                            int r = int.Parse(states[i]);
-                            _selectedRows[r] = true;
-                            
-                        }
-                    }
+                    LoadState();
                 }
                 else if (SelectedIndex>=0)
                 {
@@ -287,68 +358,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 }
             }
                     
-        }
-
-        private static string Serialize(ICollection array)
-        {
-            string value = "";
-            IEnumerator enumerator = array.GetEnumerator();
-            while (enumerator.MoveNext())
-            {
-                if (value == "")
-                    value = enumerator.Current.ToString();
-                else
-                    value += "," + enumerator.Current.ToString();
-
-            }
-            return value;
-        }
-
-        private static string Serialize(int[] array)
-        {
-            string value = "";
-            for (int i = 0; i < array.Length; i++)
-                if (value == "")
-                    value = array[i].ToString();
-                else
-                    value += "," + array[i].ToString();
-
-            return value;
-        }
-
-       
-
-        
-
-        protected override void OnRowDataBound(GridViewRowEventArgs e)
-        {
-            base.OnRowDataBound(e);
-            if (e.Row.RowType == DataControlRowType.DataRow)
-            {
-                e.Row.Attributes["isdatarow"] = "true";
-                e.Row.Attributes["rowIndex"] = (e.Row.RowIndex ).ToString();
-                //e.Row.Style.Add("cursor", "hand");
-                //e.Row.Style.Add("cursor", "pointer");
-
-                
-                if (_selectedRows.ContainsKey(e.Row.RowIndex))
-                {
-                    // SelectedIndex = e.Row.RowIndex; // can't use SelectedIndex, Rows doesn't include the new row yet
-                    e.Row.RowState = DataControlRowState.Selected;
-                    e.Row.Attributes["selected"] = "true";
-
-                }
-                else
-                {
-                    //e.Row.RowState = e.Row.RowIndex % 2 == 0 ? DataControlRowState.Normal : DataControlRowState.Alternate;
-                    e.Row.Attributes["selected"] = "false";
-
-                }
-                
-            }
-
-
-
         }
         
         #endregion Protected Methods

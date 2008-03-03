@@ -65,7 +65,4 @@ using System.Web.UI;
 // by using the '*' as shown below:
 [assembly: AssemblyVersion("0.90.0.0")]
 [assembly: AssemblyFileVersion("0.90.0.0")]
-[assembly: WebResource("ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton.js", "text/javascript")]
-[assembly: WebResource("ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.js", "text/javascript")]
-
 

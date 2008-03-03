@@ -34,6 +34,9 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton.js", "text/javascript")]
+
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 {
     [ToolboxData("<{0}:ToolbarButton runat=server></{0}:ToolbarButton>")]
@@ -75,6 +78,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             }
         }
 
+       
+
         /// <summary>
         /// Sets or gets the url of the image to be used when the button is disabled.
         /// </summary>
@@ -95,17 +100,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         #endregion Public Properties
 
         #region Protected Methods
-
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-            if (String.IsNullOrEmpty(EnabledHoverImageURL)==false && Enabled)
-            {
-                //Attributes["onMouseOver"] = String.Format("this.src='{0}';", Page.ResolveClientUrl(EnabledHoverImageURL));
-                //Attributes["onMouseOut"] = String.Format("this.src='{0}';", Page.ResolveClientUrl(EnabledImageURL));
-            }
-
-        }
 
 
         #endregion Protected Methods
@@ -128,6 +122,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             ScriptControlDescriptor desc = new ScriptControlDescriptor("ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton", ClientID);
             desc.AddProperty("EnabledImageUrl", Page.ResolveClientUrl(EnabledImageURL));
             desc.AddProperty("DisabledImageUrl", Page.ResolveClientUrl(DisabledImageURL));
+            if (!String.IsNullOrEmpty(OnClientClick))
+                desc.AddEvent("onClientClick", OnClientClick);
+            
             if (EnabledHoverImageURL!=null)
                 desc.AddProperty("HoverImageUrl", Page.ResolveClientUrl(EnabledHoverImageURL));
 

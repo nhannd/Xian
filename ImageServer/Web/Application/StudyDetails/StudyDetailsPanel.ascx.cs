@@ -46,7 +46,6 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
     {
         #region Private Members
         private Study _study;
-        private ServerPartition _partition;
         #endregion Private Members
 
 

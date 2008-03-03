@@ -6,6 +6,7 @@
 <%@ Register TagPrefix="clearcanvas" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" 
     Assembly="ClearCanvas.ImageServer.Web.Common" %>
 
+
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
@@ -13,32 +14,38 @@
                 <asp:ScriptReference Path="~/Search/SearchPanel.js" ResourceUICultures="it-IT" />
             </Scripts>
         </asp:ScriptManagerProxy>
+        
+        
+        
         <asp:Panel ID="PagePanel" runat="server">
             <asp:Table ID="Table" runat="server"  
                 CellPadding="0" CellSpacing="0"
                 BorderWidth="0px" Width="100%">
                 <asp:TableHeaderRow>
                     <asp:TableHeaderCell HorizontalAlign="Left">
-                        <asp:Panel ID="Panel1"  runat="server" CssClass="CSSToolbarPanelContainer">
-                            <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
-                                <asp:Panel ID="Panel4" runat="server" CssClass="CSSToolbarContent">
-                                    <clearcanvas:ToolbarButton 
-                                        ID="DeleteToolbarButton" runat="server" 
-                                        EnabledImageURL="~/images/icons/DeleteEnabled.png" 
-                                        DisabledImageURL="~/images/icons/DeleteDisabled.png"
-                                        AlternateText="Delete study"
-                                        OnClick="OnDeleteToolbarButtonClick"
-                                        />
-                                    <clearcanvas:ToolbarButton 
-                                        ID="ToolbarButton1" runat="server" 
-                                        EnabledImageURL="~/images/icons/OpenEnabled.png" 
-                                        DisabledImageURL="~/images/icons/OpenDisabled.png"
-                                        AlternateText="Open study"
-                                        OnClientClick="OpenSelectedStudies(event); return false;"
-                                        />
+                        <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
+                            <ContentTemplate>
+                                <asp:Panel ID="Panel1"  runat="server" CssClass="CSSToolbarPanelContainer">
+                                    <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
+                                        <asp:Panel ID="Panel4" runat="server" CssClass="CSSToolbarContent">
+                                            <clearcanvas:ToolbarButton 
+                                                ID="DeleteToolbarButton" runat="server" 
+                                                EnabledImageURL="~/images/icons/DeleteEnabled.png" 
+                                                DisabledImageURL="~/images/icons/DeleteDisabled.png"
+                                                AlternateText="Delete study"
+                                                OnClick="OnDeleteToolbarButtonClick"
+                                                />
+                                            <clearcanvas:ToolbarButton 
+                                                ID="ToolbarButton1" runat="server" 
+                                                EnabledImageURL="~/images/icons/OpenEnabled.png" 
+                                                DisabledImageURL="~/images/icons/OpenDisabled.png"
+                                                AlternateText="Open study"
+                                                />
+                                        </asp:Panel>
+                                    </asp:Panel>
                                 </asp:Panel>
-                            </asp:Panel>
-                        </asp:Panel>
+                             </ContentTemplate>
+                          </asp:UpdatePanel>
                     </asp:TableHeaderCell>
                     <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom" >
                         <table cellpadding="0" cellspacing="0">
