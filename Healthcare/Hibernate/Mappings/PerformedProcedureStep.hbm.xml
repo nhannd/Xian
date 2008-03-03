@@ -5,7 +5,7 @@
     <id name="OID" column="OID_" type="Guid">
       <generator class="guid.comb"/>
     </id>
-    <discriminator column="Discriminator_"  type="String" length="20"/>
+    <discriminator column="Discriminator_"  type="String"/>
     <version name="Version" column="Version_"/>
 
     <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>

@@ -2,18 +2,18 @@
 <!-- @codegen: ignore -->
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
   <!-- abstract intermediate classes -->
-  <subclass name="RegistrationWorklist" extends="Worklist" discriminator-value="REG"/>
-  <subclass name="RegistrationProtocolWorklist" extends="Worklist" discriminator-value="REGP"/>
+  <subclass name="RegistrationWorklist" extends="Worklist" discriminator-value="REGISTRATION"/>
+  <subclass name="RegistrationProtocolWorklist" extends="Worklist" discriminator-value="REGISTRATION_PROTOCOL"/>
 
   <!-- concrete classes -->
-  <subclass name="RegistrationScheduledWorklist" extends="RegistrationWorklist" discriminator-value="REG_SC"/>
-  <subclass name="RegistrationCheckedInWorklist" extends="RegistrationWorklist" discriminator-value="REG_CI"/>
-  <subclass name="RegistrationInProgressWorklist" extends="RegistrationWorklist" discriminator-value="REG_IP"/>
-  <subclass name="RegistrationCancelledWorklist" extends="RegistrationWorklist" discriminator-value="REG_CA"/>
-  <subclass name="RegistrationCompletedWorklist" extends="RegistrationWorklist" discriminator-value="REG_CM"/>
-  <subclass name="RegistrationToBeScheduledWorklist" extends="RegistrationWorklist" discriminator-value="REG_UNSC"/>
-  <subclass name="RegistrationCompletedProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REG_CMPROTO"/>
-  <subclass name="RegistrationSuspendedProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REG_SUPROTO"/>
-  <subclass name="RegistrationRejectedProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REG_RJPROTO"/>
-  <subclass name="RegistrationPendingProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REG_SCPROTO"/>
+  <subclass name="RegistrationScheduledWorklist" extends="RegistrationWorklist" discriminator-value="REGISTRATION_SCHEDULED"/>
+  <subclass name="RegistrationCheckedInWorklist" extends="RegistrationWorklist" discriminator-value="REGISTRATION_CHECKEDIN"/>
+  <subclass name="RegistrationInProgressWorklist" extends="RegistrationWorklist" discriminator-value="REGISTRATION_INPROGRESS"/>
+  <subclass name="RegistrationCancelledWorklist" extends="RegistrationWorklist" discriminator-value="REGISTRATION_CANCELLED"/>
+  <subclass name="RegistrationCompletedWorklist" extends="RegistrationWorklist" discriminator-value="REGISTRATION_COMPLETED"/>
+  <subclass name="RegistrationToBeScheduledWorklist" extends="RegistrationWorklist" discriminator-value="REGISTRATION_UNSCHEDULED"/>
+  <subclass name="RegistrationCompletedProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REGISTRATION_PROTOCOL_COMPLETED"/>
+  <subclass name="RegistrationSuspendedProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REGISTRATION_PROTOCOL_SUSPENDED"/>
+  <subclass name="RegistrationRejectedProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REGISTRATION_PROTOCOL_REJECTED"/>
+  <subclass name="RegistrationPendingProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REGISTRATION_PROTOCOL_PENDING"/>
 </hibernate-mapping>
