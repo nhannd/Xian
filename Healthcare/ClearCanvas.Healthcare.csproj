@@ -94,6 +94,12 @@
     <Compile Include="TechnologistWorklist.cs" />
     <Compile Include="Tests\TestExtensionFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />
+    <Compile Include="Workflow\Reporting\ReportingWorkflowSettings.cs" />
+    <Compile Include="Workflow\Reporting\ReportingWorkflowSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ReportingWorkflowSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="WorklistItemBase.cs" />
     <Compile Include="WorklistItemSearchCriteria.cs" />
     <Compile Include="ReportingWorklistItemSearchCriteria.cs" />
@@ -271,6 +277,10 @@
       <LastGenOutput>IncompleteDemographicDataAlertSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
+    <None Include="Workflow\Reporting\ReportingWorkflowSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ReportingWorkflowSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Alert\IncompleteDemographicDataAlert.val.xml" />
