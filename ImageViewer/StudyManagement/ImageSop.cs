@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <see cref="ClearCanvas.Dicom.PatientOrientation.Row"/> and 
 		/// <see cref="ClearCanvas.Dicom.PatientOrientation.Column"/> properties.
 		/// </remarks>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual PatientOrientation PatientOrientation
 		{
 			get { return this.Frames[1].PatientOrientation; }
@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the image type.  The entire Image Type value should be returned as a Dicom string array.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual string ImageType
 		{
 			get { return this.Frames[1].ImageType; }
@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the acquisition number.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual int AcquisitionNumber
 		{
 			get { return this.Frames[1].AcquisitionNumber; }
@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the acquisiton date.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual string AcquisitionDate
 		{
 			get { return this.Frames[1].AcquisitionDate; }
@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the acquisition time.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual string AcquisitionTime
 		{
 			get { return this.Frames[1].AcquisitionTime; }
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the acquisition date/time.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual string AcquisitionDateTime
 		{
 			get { return this.Frames[1].AcquisitionDateTime; }
@@ -139,7 +139,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the number of images in the acquisition.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual int ImagesInAcquisition
 		{
 			get { return this.Frames[1].ImagesInAcquisition; }
@@ -148,7 +148,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the image comments.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual string ImageComments
 		{
 			get { return this.Frames[1].ImageComments; }
@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the lossy image compression.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual string LossyImageCompression
 		{
 			get { return this.Frames[1].LossyImageCompression; }
@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <remarks>
 		/// Will return as many parsable values as possible up to the first non-parsable value.  For example, if there are 3 values, but the last one is poorly encoded, 2 values will be returned.
 		/// </remarks>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual double[] LossyImageCompressionRatio
 		{
 			get { return this.Frames[1].LossyImageCompressionRatio; }
@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// It is generally recommended that clients use <see cref="NormalizedPixelSpacing"/> when
 		/// in calculations that require the pixel spacing.
 		/// </remarks>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual PixelSpacing PixelSpacing
 		{
 			get { return this.Frames[1].PixelSpacing; }
@@ -198,7 +198,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <remarks>
 		/// Returns an <see cref="ImageOrientationPatient"/> object with zero for all its values when no data is available or the existing data is bad/incorrect.
 		/// </remarks>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual ImageOrientationPatient ImageOrientationPatient
 		{
 			get { return this.Frames[1].ImageOrientationPatient; }
@@ -210,7 +210,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <remarks>
 		/// Returns an <see cref="ImagePositionPatient"/> object with zero for all its values when no data is available or the existing data is bad/incorrect.
 		/// </remarks>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual ImagePositionPatient ImagePositionPatient
 		{
 			get { return this.Frames[1].ImagePositionPatient; }
@@ -219,7 +219,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the slice thickness.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual double SliceThickness
 		{
 			get { return this.Frames[1].SliceThickness; }
@@ -228,7 +228,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the slice location.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual double SliceLocation
 		{
 			get { return this.Frames[1].SliceLocation; }
@@ -243,7 +243,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the samples per pixel.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual int SamplesPerPixel
 		{
 			get { return this.Frames[1].SamplesPerPixel; }
@@ -252,7 +252,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the photometric interpretation.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual PhotometricInterpretation PhotometricInterpretation
 		{
 			get { return this.Frames[1].PhotometricInterpretation; }
@@ -261,7 +261,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the number of rows.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual int Rows
 		{
 			get { return this.Frames[1].Rows; }
@@ -270,7 +270,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the number of columns.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual int Columns
 		{
 			get { return this.Frames[1].Columns; }
@@ -279,7 +279,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the number of bits allocated.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual int BitsAllocated
 		{
 			get { return this.Frames[1].BitsAllocated; }
@@ -288,7 +288,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the number of bits stored.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual int BitsStored
 		{
 			get { return this.Frames[1].BitsStored; }
@@ -297,7 +297,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the high bit.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual int HighBit
 		{
 			get { return this.Frames[1].HighBit; }
@@ -306,7 +306,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the pixel representation.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual int PixelRepresentation
 		{
 			get { return this.Frames[1].PixelRepresentation; }
@@ -318,7 +318,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the planar configuration.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual int PlanarConfiguration
 		{
 			get { return this.Frames[1].PlanarConfiguration; }
@@ -330,7 +330,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <remarks>
 		/// A default value of 1/1 is returned if no data is available.
 		/// </remarks>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual PixelAspectRatio PixelAspectRatio
 		{
 			get { return this.Frames[1].PixelAspectRatio; }
@@ -344,7 +344,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the rescale intercept.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual double RescaleIntercept
 		{
 			get { return this.Frames[1].RescaleIntercept; }
@@ -356,7 +356,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <remarks>
 		/// 1.0 is returned if no data is available.
 		/// </remarks>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual double RescaleSlope
 		{
 			get { return this.Frames[1].RescaleSlope; }
@@ -365,7 +365,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the rescale type.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual string RescaleType
 		{
 			get { return this.Frames[1].RescaleType; }
@@ -381,7 +381,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <remarks>
 		/// Will return as many parsable values as possible up to the first non-parsable value.  For example, if there are 3 values, but the last one is poorly encoded, 2 values will be returned.
 		/// </remarks>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual Window[] WindowCenterAndWidth
 		{
 			get { return this.Frames[1].WindowCenterAndWidth; }
@@ -390,7 +390,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the window width and center explanation.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual string[] WindowCenterAndWidthExplanation
 		{
 			get { return this.Frames[1].WindowCenterAndWidthExplanation; }
@@ -403,7 +403,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the frame of reference uid for the image.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual string FrameOfReferenceUid
 		{
 			get { return this.Frames[1].FrameOfReferenceUid; }
@@ -458,7 +458,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// to worry about the the multitude of DICOM photometric interpretations
 		/// and transfer syntaxes.
 		/// </remarks>
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
+		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual byte[] GetNormalizedPixelData()
 		{
 			return this.Frames[1].GetNormalizedPixelData();
