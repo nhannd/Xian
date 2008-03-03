@@ -240,4 +240,7 @@
   <data name="ToolsMeasurementSetVertex" xml:space="preserve">
     <value>Set Vertex</value>
   </data>
+  <data name="ErrorCannotCalibrateZeroLengthRuler" xml:space="preserve">
+    <value>Cannot calibrate a ruler of zero-length.</value>
+  </data>
 </root>
