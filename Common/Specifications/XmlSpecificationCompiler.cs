@@ -289,9 +289,9 @@ namespace ClearCanvas.Common.Specifications
                 compiledSchema = schema;
             }
 
-            StringWriter sw = new StringWriter();
-            compiledSchema.Write(sw);
-            Platform.Log(LogLevel.Info, sw);
+            //StringWriter sw = new StringWriter();
+            //compiledSchema.Write(sw);
+            //Platform.Log(LogLevel.Info, sw);
 
             return compiledSchema;
         }
