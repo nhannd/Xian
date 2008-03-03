@@ -130,6 +130,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			double heightInPixels = line.PolyLine[1].Y - line.PolyLine[0].Y;
 			line.ResetCoordinateSystem();
 
+			if (widthInPixels == 0 && heightInPixels == 0)
+			{
+				this.Context.DesktopWindow.ShowMessageBox(SR.ErrorCannotCalibrateZeroLengthRuler, MessageBoxActions.Ok);
+				return;
+			}
+
 			double pixelSpacingWidth, pixelSpacingHeight;
 
 			CalculatePixelSpacing(
