@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="PublicationDelay" Description="Scheduling delay (in seconds) applied to report publication following verification." Type="System.UInt32" Scope="Application">
-      <Value Profile="(Default)">6000</Value>
+      <Value Profile="(Default)">600</Value>
     </Setting>
   </Settings>
 </SettingsFile>

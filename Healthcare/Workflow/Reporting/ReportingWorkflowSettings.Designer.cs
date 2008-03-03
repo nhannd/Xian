@@ -30,7 +30,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting {
         [global::System.Configuration.SettingsDescriptionAttribute("Scheduling delay (in seconds) applied to report publication following verificatio" +
             "n.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("6000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("600")]
         public uint PublicationDelay {
             get {
                 return ((uint)(this["PublicationDelay"]));
