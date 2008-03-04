@@ -50,6 +50,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			_points = new List<PointF>();
 		}
 
+		/// <summary>
+		/// Three points in destination coordinates that define the angle.
+		/// </summary>
 		public List<PointF> Points
 		{
 			get { return _points; }
@@ -74,7 +77,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		}
 	}
 
-	[MenuAction("activate", "imageviewer-contextmenu/MenuProtractor", "Select", Flags = ClickActionFlags.CheckAction)]
 	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuProtractor", "Select", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarProtractor", "Select", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
