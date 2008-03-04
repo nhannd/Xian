@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Graphics
@@ -23,8 +24,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public float StartAngle
 		{
-			get { return _startAngle; }
-			set { _startAngle = value; }
+			get
+			{
+				if (this.CoordinateSystem == CoordinateSystem.Source)
+					return _startAngle;
+				else
+					return ArcPrimitive.ConvertStartAngleToDestination(_startAngle, this.SpatialTransform);
+			}
+			set
+			{
+				if (this.CoordinateSystem == CoordinateSystem.Source)
+					_startAngle = value;
+				else
+					_startAngle = ArcPrimitive.ConvertStartAngleToSource(value, this.SpatialTransform);
+			}
 		}
 
 		/// <summary>
@@ -32,8 +45,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public float SweepAngle
 		{
-			get { return _sweepAngle; }
-			set { _sweepAngle = value; }
+			get
+			{
+				if (this.CoordinateSystem == CoordinateSystem.Source)
+					return _sweepAngle;
+				else
+					return ArcPrimitive.ConvertSweepAngleToDestination(_sweepAngle, this.SpatialTransform);
+			}
+			set
+			{
+				if (this.CoordinateSystem == CoordinateSystem.Source)
+					_sweepAngle = value;
+				else
+					_sweepAngle = ArcPrimitive.ConvertSweepAngleToSource(value, this.SpatialTransform);
+			}
 		}
 
 		/// <summary>

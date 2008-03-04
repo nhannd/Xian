@@ -58,13 +58,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private float _minimumScale = DefaultMinimumScale;
 		private float _scaleX = 1.0f;
 		private float _scaleY = 1.0f;
-		private float _cumulativeScale = 1.0f;
 		private float _translationX;
 		private float _translationY;
 		private float _rotationXY;
 		private bool _flipX;
 		private bool _flipY;
 		private PointF _centerOfRotationXY;
+		private float _cumulativeScale = 1.0f;
 		private Matrix _cumulativeTransform;
 		private Matrix _transform;
 		private bool _recalculationRequired;
@@ -350,8 +350,52 @@ namespace ClearCanvas.ImageViewer.Graphics
 				int cumulativeRotation = RotationXY;
 				if (OwnerGraphic != null && OwnerGraphic.ParentGraphic != null)
 					cumulativeRotation += OwnerGraphic.ParentGraphic.SpatialTransform.CumulativeRotationXY;
-
+				
 				return cumulativeRotation;
+			}
+		}
+
+		/// <summary>
+		/// Gets the cumulative flip about the x-axis.
+		/// </summary>
+		/// <remarks>
+		/// Gets the flip about the x-axis relative to the root of the scene graph.
+		/// </remarks>
+		public bool CumulativeFlipX
+		{
+			get
+			{
+				if (OwnerGraphic != null && OwnerGraphic.ParentGraphic != null)
+				{
+					if (FlipX != OwnerGraphic.ParentGraphic.SpatialTransform.CumulativeFlipX)
+						return true;
+					else
+						return false;
+				}
+
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Gets the cumulative flip about the y-axis.
+		/// </summary>
+		/// <remarks>
+		/// Gets the flip about the y-axis relative to the root of the scene graph.
+		/// </remarks>
+		public bool CumulativeFlipY
+		{
+			get
+			{
+				if (OwnerGraphic != null && OwnerGraphic.ParentGraphic != null)
+				{
+					if (FlipY != OwnerGraphic.ParentGraphic.SpatialTransform.CumulativeFlipY)
+						return true;
+					else
+						return false;
+				}
+
+				return false;
 			}
 		}
 

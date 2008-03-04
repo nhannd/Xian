@@ -32,8 +32,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public float StartAngle
 		{
-			get { return _startAngle; }
-			set { _startAngle = value; }
+			get
+			{
+				if (this.CoordinateSystem == CoordinateSystem.Source)
+					return _startAngle;
+				else
+					return ArcPrimitive.ConvertStartAngleToDestination(_startAngle, this.SpatialTransform);
+			}
+			set
+			{
+				if (this.CoordinateSystem == CoordinateSystem.Source)
+					_startAngle = value;
+				else
+					_startAngle = ArcPrimitive.ConvertStartAngleToSource(value, this.SpatialTransform);
+			}
 		}
 
 		/// <summary>
@@ -41,8 +53,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public float SweepAngle
 		{
-			get { return _sweepAngle; }
-			set { _sweepAngle = value; }
+			get
+			{
+				if (this.CoordinateSystem == CoordinateSystem.Source)
+					return _sweepAngle;
+				else
+					return ArcPrimitive.ConvertSweepAngleToDestination(_sweepAngle, this.SpatialTransform);
+			}
+			set
+			{
+				if (this.CoordinateSystem == CoordinateSystem.Source)
+					_sweepAngle = value;
+				else
+					_sweepAngle = ArcPrimitive.ConvertSweepAngleToSource(value, this.SpatialTransform);
+			}
 		}
 
 		/// <summary>
@@ -94,6 +118,56 @@ namespace ClearCanvas.ImageViewer.Graphics
 			pen.Dispose();
 
 			return result;
+		}
+
+		internal static float ConvertStartAngleToDestination(float startAngle, SpatialTransform transform)
+		{
+			if (transform.CumulativeFlipX)
+				startAngle = -startAngle;
+
+			if (transform.CumulativeFlipY)
+				startAngle = 180 - startAngle;
+
+			startAngle += transform.CumulativeRotationXY;
+
+			if (startAngle < 0)
+				startAngle += 360;
+
+			return startAngle;
+		}
+
+		internal static float ConvertStartAngleToSource(float startAngle, SpatialTransform transform)
+		{
+			startAngle -= transform.CumulativeRotationXY;
+
+			if (transform.CumulativeFlipY)
+				startAngle = 180 - startAngle;
+
+			if (transform.CumulativeFlipX)
+				startAngle = -startAngle;
+
+			if (startAngle < 0)
+				startAngle += 360;
+
+			return startAngle;
+		}
+
+		internal static float ConvertSweepAngleToDestination(float sweepAngle, SpatialTransform transform)
+		{
+			if ((transform.CumulativeFlipX && transform.CumulativeFlipY) ||
+			    (!transform.CumulativeFlipX && !transform.CumulativeFlipY))
+				return sweepAngle;
+			else
+				return -sweepAngle;
+		}
+
+		internal static float ConvertSweepAngleToSource(float sweepAngle, SpatialTransform transform)
+		{
+			if ((transform.CumulativeFlipX && transform.CumulativeFlipY) ||
+				(!transform.CumulativeFlipX && !transform.CumulativeFlipY))
+				return -sweepAngle;
+			else
+				return sweepAngle;
 		}
 	}
 }

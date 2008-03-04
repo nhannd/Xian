@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			PointF end = Roi.PolyLine[2];
 
 			double vectorAngle = Formula.SubtendedAngle(start, vertex, end);
-			vectorAngle = vectorAngle / 2 - 180;
+			vectorAngle = -vectorAngle / 2 + 180;
 
 			Matrix rotation = new Matrix();
 			rotation.Rotate((float)vectorAngle);

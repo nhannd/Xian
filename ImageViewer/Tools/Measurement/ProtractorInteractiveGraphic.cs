@@ -85,16 +85,17 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				this.PolyLine[1],
 				this.PolyLine[2]);
 
-			this.PolyLine.ResetCoordinateSystem();
 
 			// Define a horizontal ray
 			PointF zeroDegreePoint = this.PolyLine[1];
 			zeroDegreePoint.X += 50;
 
-			startAngle = -(float)Formula.SubtendedAngle(
-				this.PolyLine[0],
-				this.PolyLine[1],
-				zeroDegreePoint);
+			startAngle = (float) Formula.SubtendedAngle(
+			                      	this.PolyLine[0],
+			                      	this.PolyLine[1],
+			                      	zeroDegreePoint);
+
+			this.PolyLine.ResetCoordinateSystem();
 		}
 
 		private void AddArc()

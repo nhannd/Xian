@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			_points.Clear();
 
-			graphic.CoordinateSystem = CoordinateSystem.Source;
+			graphic.CoordinateSystem = CoordinateSystem.Destination;
 
 			PolyLineGraphic line = protractor.PolyLine;
 			for (int i = 0; i < line.Count; ++i)

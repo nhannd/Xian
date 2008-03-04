@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (cosTheta < -1.0f)
 				cosTheta = -1.0f;
 
-			double theta = Math.Acos(cosTheta)*(crossProduct.Z == 0 ? 1 : Math.Sign(crossProduct.Z));
+			double theta = Math.Acos(cosTheta)*(crossProduct.Z == 0 ? 1 : -Math.Sign(crossProduct.Z));
 			double thetaInDegrees = theta / Math.PI * 180;
 
 			return thetaInDegrees;

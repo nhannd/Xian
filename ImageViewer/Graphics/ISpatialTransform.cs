@@ -95,5 +95,21 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// Gets the rotation relative to the root of the scene graph.
 		/// </remarks>
 		int CumulativeRotationXY { get; }
+
+		/// <summary>
+		/// Gets the cumulative flip about the x-axis.
+		/// </summary>
+		/// <remarks>
+		/// Gets the flip about the x-axis relative to the root of the scene graph.
+		/// </remarks>
+		bool CumulativeFlipX { get; }
+
+		/// <summary>
+		/// Gets the cumulative flip about the y-axis.
+		/// </summary>
+		/// <remarks>
+		/// Gets the flip about the y-axis relative to the root of the scene graph.
+		/// </remarks>
+		bool CumulativeFlipY { get; }
 	}
 }

@@ -33,15 +33,17 @@
 
 #pragma warning disable 1591,0419,1574,1587
 
-using System.Drawing;
 using NUnit.Framework;
+using System.Drawing;
+using System;
+using ClearCanvas.ImageViewer.Mathematics;
 
-namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
+namespace ClearCanvas.ImageViewer.Graphics.Tests
 {
 	[TestFixture]
-	public class FormulaTest
+	public class InvariantArcPrimitiveTest
 	{
-		public FormulaTest()
+		public InvariantArcPrimitiveTest()
 		{
 		}
 
@@ -49,26 +51,30 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 		public void Init()
 		{
 		}
-		
+	
 		[TestFixtureTearDown]
 		public void Cleanup()
 		{
 		}
 
 		[Test]
-		public void SubtendedAngle()
+		public void CoordinateChange()
 		{
-			double angle = Formula.SubtendedAngle(new PointF(10, 0), new PointF(0, 0), new PointF(1, 0));
-			Assert.AreEqual(0, angle);
+			InvariantArcPrimitive arc = new InvariantArcPrimitive();
 
-			angle = Formula.SubtendedAngle(new PointF(10, 0), new PointF(0, 0), new PointF(0, 1));
-			Assert.AreEqual(-90, angle);
-
-			angle = Formula.SubtendedAngle(new PointF(0, 10), new PointF(0, 0), new PointF(1, 0));
-			Assert.AreEqual(90, angle);
-
-			angle = Formula.SubtendedAngle(new PointF(10, 0), new PointF(0, 0), new PointF(-1, 0));
-			Assert.AreEqual(180, angle);
+			for (int angle = 0; angle <= 360; angle += 90)
+			{
+				arc.SpatialTransform.RotationXY = angle;
+				arc.SpatialTransform.FlipX = true;
+				arc.SpatialTransform.FlipY = true;
+				arc.CoordinateSystem = CoordinateSystem.Source;
+				arc.StartAngle = 30;
+				arc.CoordinateSystem = CoordinateSystem.Destination;
+				float dstAngle = arc.StartAngle;
+				arc.StartAngle = dstAngle;
+				arc.CoordinateSystem = CoordinateSystem.Source;
+				Assert.AreEqual(30, arc.StartAngle);
+			}
 		}
 	}
 }
