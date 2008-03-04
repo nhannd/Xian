@@ -438,6 +438,7 @@
     <Content Include="FileBrowser\Images\BrowserBack.png" />
     <Content Include="FileBrowser\Images\BrowserForward.png" />
     <Content Include="FileBrowser\Images\BrowserUp.png" />
+    <None Include="Resources\navBackButton.Image.png" />
     <None Include="Resources\ClearFilterSmall.png" />
     <EmbeddedResource Include="DefaultCodeEditorComponentControl.resx">
       <SubType>Designer</SubType>
