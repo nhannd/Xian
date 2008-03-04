@@ -94,20 +94,6 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
             get { return GridView1.ClientID; }
         }
 
-        
-
-        [ExtenderControlProperty]
-        [ClientPropertyName("StudyInstanceUid")]
-        public string StudyInstanceUid
-        {
-            get
-            {
-                if (_study == null)
-                    return "";
-
-                return _study.StudyInstanceUid;
-            }
-        }
 
         
 
