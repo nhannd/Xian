@@ -72,12 +72,12 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
                 if (DateTimeFormatter.TryParseDA(_patientSummary.Birthdate, out bdate))
                 {
                     PatientBirthDate.Text =
-                        String.Format("Birthdate: {0}", DateTimeFormatter.Format(bdate, DateTimeFormatter.DateTimeUIStyles.DATE_ONLY));
+                        DateTimeFormatter.Format(bdate, DateTimeFormatter.DateTimeUIStyles.DATE_ONLY);
 
                     TimeSpan age = DateTime.Now - bdate;
                     if (age > TimeSpan.FromDays(365))
                     {
-                        PatientAge.Text = String.Format("{0:0} yrs old", age.TotalDays / 365);
+                        PatientAge.Text = String.Format("{0:0}", age.TotalDays / 365);
                     }
                     else if (age > TimeSpan.FromDays(30))
                     {

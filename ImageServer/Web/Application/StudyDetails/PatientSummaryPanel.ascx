@@ -10,15 +10,14 @@
                     <asp:Table ID="Table1" runat="server" Width="100%" Style="font-size: larger;">
                         <asp:TableRow>
                             <asp:TableCell>
-                                <asp:Label ID="Label1" runat="server" Text="Patient Name: " ForeColor="white" Style="white-space: nowrap"></asp:Label>
                                 <asp:Label ID="PatientName" runat="server" Text="PatientName" ForeColor="white"></asp:Label>
                             </asp:TableCell>
                             <asp:TableCell>
-                                <asp:Label ID="Label2" runat="server" Text="Patient ID: " ForeColor="white" Style="white-space: nowrap"></asp:Label>
+                                <asp:Label ID="Label2" runat="server" Text="ID: " ForeColor="white" Style="white-space: nowrap"></asp:Label>
                                 <asp:Label ID="PatientId" runat="server" Text="PatientId" ForeColor="white"></asp:Label>
                             </asp:TableCell>
                             <asp:TableCell Wrap="false">
-                                <asp:Label ID="Label3" runat="server" Text="Birthdate: " ForeColor="white" Style="white-space: nowrap"></asp:Label>
+                                <asp:Label ID="Label3" runat="server" Text="DOB: " ForeColor="white" Style="white-space: nowrap"></asp:Label>
                                 <asp:Label ID="PatientBirthDate" runat="server" Text="PatientBirthDate" ForeColor="white"></asp:Label>
                             </asp:TableCell>
                             <asp:TableCell Wrap="false">

@@ -2,21 +2,21 @@
     Inherits="ClearCanvas.ImageServer.Web.Application.SeriesDetails.StudySummaryPanel" %>
 <asp:Panel ID="StudySummaryPanelContainer" runat="server" Width="100%" 
     BorderStyle="solid" BorderWidth="0px" style="background-color: #ffffe8;">
-    <asp:Panel ID="Panel1" runat="server" Style="padding-right: 10px; padding-left: 10px;
-        padding-bottom: 10px; padding-top: 10px">
-    <asp:Table ID="Table1" runat="server" Width="100%" style="font-size:medium;">
+    <asp:Panel ID="Panel1" runat="server" Style="padding-right: 5px; padding-left: 5px;
+        padding-bottom: 5px; padding-top: 5px">
+    <asp:Table ID="Table1" runat="server" Width="100%"  CellSpacing="5">
         <asp:TableRow>
             <asp:TableCell>
                 <asp:Label ID="Label1" runat="server" Text="Accession #: " Style="white-space: nowrap"></asp:Label>                                
                 <asp:Label ID="AccessionNumber" runat="server" Text="" ></asp:Label>
             </asp:TableCell>
              <asp:TableCell>
-                <asp:Label ID="Label2" runat="server" Text="Study Description: "  Style="white-space: nowrap"></asp:Label>
+                <asp:Label ID="Label2" runat="server" Text="Description: "  Style="white-space: nowrap"></asp:Label>
                 <asp:Label ID="StudyDescription" runat="server" Text="Study Description" ></asp:Label>
             </asp:TableCell>
             
              <asp:TableCell>
-                <asp:Label ID="Label3" runat="server" Text="Study Date: "  Style="white-space: nowrap"></asp:Label>
+                <asp:Label ID="Label3" runat="server" Text="Date: "  Style="white-space: nowrap"></asp:Label>
                 <asp:Label ID="StudyDate" runat="server" Text="Study Date" ></asp:Label>
             </asp:TableCell>
             <asp:TableCell>
