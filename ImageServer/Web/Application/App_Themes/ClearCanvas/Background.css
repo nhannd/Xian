@@ -283,6 +283,10 @@ body
 /*****************************************************************************************
 	Study Details view styles
 *****************************************************************************************/
+.CSSStudyDetailsView
+{
+}
+
 .CSSStudyDetailsViewRowStyle
 {
 
@@ -310,7 +314,9 @@ body
 	Series grid view styles
 *****************************************************************************************/
 
-
+.CSSSeriesGridView
+{
+}
 
 .CSSSeriesGridViewHeaderStyle
 {

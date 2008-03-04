@@ -34,10 +34,10 @@ using System;
 using System.Web.UI;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 
-namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
+namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 {
     /// <summary>
-    /// Patient summary information panel within the <see cref="StudyDetailsPanel"/> 
+    /// Patient summary information panel within the <see cref="SeriesDetailsPanel"/> 
     /// </summary>
     public partial class PatientSummaryPanel : UserControl
     {
@@ -91,10 +91,10 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
                 else
                 {
                     PatientBirthDate.Text = "Unknown";
-                    PatientAge.Text = "Unknown";
+                    PatientAge.Text = "Unknown";                    
                 }
 
-
+                
 
                 if (String.IsNullOrEmpty(_patientSummary.Sex))
                     PatientSex.Text = "Unknown";

@@ -336,6 +336,14 @@
 /*****************************************************************************************
 	Study Details view styles
 *****************************************************************************************/
+.CSSStudyDetailsView
+{
+	border-right: #b0c4de 1px solid;
+	border-top: #b0c4de 1px solid;
+	border-left: #b0c4de 1px solid;
+	border-bottom: #b0c4de 1px solid;
+}
+
 .CSSStudyDetailsViewRowStyle
 {
 	border-right: #d2d2d2 1px solid;
@@ -375,7 +383,13 @@
 	Series grid view styles
 *****************************************************************************************/
 
-
+.CSSSeriesGridView
+{
+	border-right: #b0c4de 1px solid;
+	border-top: #b0c4de 1px solid;
+	border-left: #b0c4de 1px solid;
+	border-bottom: #b0c4de 1px solid;
+}
 
 .CSSSeriesGridViewHeaderStyle
 {

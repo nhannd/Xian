@@ -29,55 +29,35 @@
 
 #endregion
 
-using System;
+
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 {
-    /// <summary>
-    /// Panel within the <see cref="SeriesDetailsPage"/>
-    /// </summary>
-    public partial class SeriesDetailsPanel : System.Web.UI.UserControl
+    static public class PatientSummaryAssembler
     {
-        #region Private members
-        private Model.Study _study;
-        private Model.Series _series;
-        #endregion Private members
-
-
-        #region Public Properties
-
-        public Model.Study Study
+        /// <summary>
+        /// Returns an instance of <see cref="PatientSummary"/> for a <see cref="Study"/>.
+        /// </summary>
+        /// <param name="study"></param>
+        /// <returns></returns>
+        /// <remark>
+        /// 
+        /// </remark>
+        static public PatientSummary CreatePatientSummary(Study study)
         {
-            get { return _study; }
-            set { _study = value; }
+            PatientSummary patient = new PatientSummary();
+
+            patient.PatientId = study.PatientId;
+            patient.Birthdate = study.PatientsBirthDate;
+            patient.PatientName = study.PatientsName;
+            patient.Sex = study.PatientsSex;
+
+            PatientAdaptor adaptor = new PatientAdaptor();
+            Patient pat = adaptor.Get(study.PatientKey);
+            patient.IssuerOfPatientId = pat.IssuerOfPatientId;
+            return patient;
         }
-
-        public Model.Series Series
-        {
-            get { return _series; }
-            set { _series = value; }
-        }
-
-        #endregion Public Properties
-
-        #region Protected Properties
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            if (_study!=null)
-            {
-                PatientSummaryPanel1.PatientSummary = PatientSummaryAssembler.CreatePatientSummary(_study);
-
-                StudySummaryPanel summary = (StudySummaryPanel)StudySectionPanel.FindControl("StudySummaryPanel1");
-                summary.Study = _study;
-
-                if (Series != null)
-                    SeriesDetailsView1.Series = _series; 
-            }
-
-        }
-
-        #endregion Protected Properties
-
     }
 }

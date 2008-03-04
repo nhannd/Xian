@@ -239,6 +239,13 @@
     <Compile Include="Common\InvalidInputIndicator.ascx.designer.cs">
       <DependentUpon>InvalidInputIndicator.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Common\SectionPanel.ascx.cs">
+      <DependentUpon>SectionPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Common\SectionPanel.ascx.designer.cs">
+      <DependentUpon>SectionPanel.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Common\ServerPartitionTabs.ascx.cs">
       <DependentUpon>ServerPartitionTabs.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -303,11 +310,27 @@
     <Compile Include="Search\StudySummary.cs">
     </Compile>
     <Compile Include="Search\StudySummaryAssembler.cs" />
+    <Compile Include="SeriesDetails\StudySummaryPanel.ascx.cs">
+      <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SeriesDetails\StudySummaryPanel.ascx.designer.cs">
+      <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SeriesDetails\PatientSummary.cs" />
+    <Compile Include="SeriesDetails\PatientSummaryAssembler.cs" />
+    <Compile Include="SeriesDetails\PatientSummaryPanel.ascx.cs">
+      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SeriesDetails\PatientSummaryPanel.ascx.designer.cs">
+      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
+    </Compile>
     <Compile Include="SeriesDetails\SeriesDetailsAssembler.cs" />
     <Compile Include="SeriesDetails\SeriesDetails.cs" />
     <Compile Include="SeriesDetails\SeriesDetailsPage.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>SeriesDetailsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="SeriesDetails\SeriesDetailsPage.aspx.designer.cs">
       <DependentUpon>SeriesDetailsPage.aspx</DependentUpon>
@@ -456,10 +479,12 @@
     <Content Include="App_Themes\ClearCanvas\images\tab-right.gif" />
     <Content Include="App_Themes\ClearCanvas\images\tab.gif" />
     <Content Include="App_Themes\ClearCanvas\Layout.css" />
+    <Content Include="App_Themes\ClearCanvas\Section.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheet.css" />
     <Content Include="App_Themes\ClearCanvas\Tabs.css" />
     <Content Include="Common\BasePage.aspx" />
     <Content Include="Common\InvalidInputIndicator.ascx" />
+    <Content Include="Common\SectionPanel.ascx" />
     <Content Include="Common\ServerPartitionTabs.ascx" />
     <Content Include="images\blank.gif" />
     <Content Include="images\icons\OpenDisabled.png" />
@@ -524,12 +549,15 @@
     <Content Include="Search\SearchPage.aspx" />
     <Content Include="Search\SearchPanel.ascx" />
     <Content Include="Admin\Configuration\Preferences\Theme.aspx" />
+    <Content Include="SeriesDetails\StudySummaryPanel.ascx" />
+    <Content Include="SeriesDetails\PatientSummaryPanel.ascx" />
     <Content Include="SeriesDetails\SeriesDetailsPage.aspx" />
     <Content Include="SeriesDetails\SeriesDetailsPanel.ascx" />
     <Content Include="SeriesDetails\SeriesDetailsView.ascx" />
     <Content Include="Services\FilesystemInfoService.asmx" />
     <Content Include="Services\ValidationServices.asmx" />
     <EmbeddedResource Include="StudyDetails\SeriesGridView.js" />
+    <EmbeddedResource Include="StudyDetails\StudyDetailsPanel.js" />
     <Content Include="StudyDetails\PatientSummaryPanel.ascx" />
     <Content Include="StudyDetails\SeriesGridView.ascx" />
     <Content Include="StudyDetails\StudyDetailsPage.aspx" />

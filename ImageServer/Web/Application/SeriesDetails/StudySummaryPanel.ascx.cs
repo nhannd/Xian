@@ -32,17 +32,18 @@
 
 using System;
 using System.Web.UI;
+using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 
-namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
+namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 {
     /// <summary>
-    /// Patient summary information panel within the <see cref="StudyDetailsPanel"/> 
+    /// study summary information panel within the <see cref="SeriesDetailsPanel"/> 
     /// </summary>
-    public partial class PatientSummaryPanel : UserControl
+    public partial class StudySummaryPanel : UserControl
     {
         #region private members
-        private PatientSummary _patientSummary;
+        private Study _study;
         #endregion private members
 
 
@@ -50,10 +51,10 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
         /// <summary>
         /// Gets or sets the <see cref="PatientSummary"/> object used by the panel.
         /// </summary>
-        public PatientSummary PatientSummary
+        public Study Study
         {
-            get { return _patientSummary; }
-            set { _patientSummary = value; }
+            get { return _study; }
+            set { _study = value; }
         }
 
         #endregion Public Properties
@@ -63,49 +64,20 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (_patientSummary != null)
+            if (_study != null)
             {
-
-                PatientName.Text = _patientSummary.PatientName;
-
-                DateTime bdate;
-                if (DateTimeFormatter.TryParseDA(_patientSummary.Birthdate, out bdate))
+                AccessionNumber.Text =  _study.AccessionNumber;
+                StudyDescription.Text = _study.StudyDescription;
+                string dt;
+                if (DateTimeFormatter.TryFormatDA(_study.StudyDate, out dt))
                 {
-                    PatientBirthDate.Text =
-                        String.Format("Birthdate: {0}", DateTimeFormatter.Format(bdate, DateTimeFormatter.DateTimeUIStyles.DATE_ONLY));
-
-                    TimeSpan age = DateTime.Now - bdate;
-                    if (age > TimeSpan.FromDays(365))
-                    {
-                        PatientAge.Text = String.Format("{0:0} yrs old", age.TotalDays / 365);
-                    }
-                    else if (age > TimeSpan.FromDays(30))
-                    {
-                        PatientAge.Text = String.Format("{0:0} month(s)", age.TotalDays / 30);
-                    }
-                    else
-                    {
-                        PatientAge.Text = String.Format("{0:0} day(s)", age.TotalDays);
-                    }
+                    StudyDate.Text = dt;
                 }
                 else
-                {
-                    PatientBirthDate.Text = "Unknown";
-                    PatientAge.Text = "Unknown";
-                }
+                    StudyDate.Text = "Unknown";
 
 
-
-                if (String.IsNullOrEmpty(_patientSummary.Sex))
-                    PatientSex.Text = "Unknown";
-                else
-                {
-                    PatientSex.Text = PatientSex.Text == "F" ? "Female" : "Male";
-                }
-
-
-                PatientId.Text = _patientSummary.PatientId;
-
+                ReferringPhysician.Text = _study.ReferringPhysiciansName;
             }
 
         }

@@ -65,40 +65,40 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails {
         protected global::ClearCanvas.ImageServer.Web.Application.StudyDetails.PatientSummaryPanel PatientSummaryPanel;
         
         /// <summary>
-        /// Panel1 control.
+        /// StudySectionPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.SectionPanel StudySectionPanel;
         
         /// <summary>
-        /// Panel3 control.
+        /// Panel6 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel3;
+        protected global::System.Web.UI.WebControls.Panel Panel6;
         
         /// <summary>
-        /// Panel4 control.
+        /// Panel7 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel4;
+        protected global::System.Web.UI.WebControls.Panel Panel7;
         
         /// <summary>
-        /// Panel5 control.
+        /// Panel8 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel5;
+        protected global::System.Web.UI.WebControls.Panel Panel8;
         
         /// <summary>
         /// DeleteToolbarButton control.
@@ -110,22 +110,31 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails {
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteToolbarButton;
         
         /// <summary>
-        /// StudyDetailsViewPanel control.
+        /// StudyDetailsView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel StudyDetailsViewPanel;
+        protected global::ClearCanvas.ImageServer.Web.Application.StudyDetails.StudyDetailsView StudyDetailsView;
         
         /// <summary>
-        /// StudyDetailsView1 control.
+        /// SeriesSectionPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.StudyDetails.StudyDetailsView StudyDetailsView1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.SectionPanel SeriesSectionPanel;
+        
+        /// <summary>
+        /// Panel1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
         /// Panel2 control.
@@ -137,13 +146,31 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails {
         protected global::System.Web.UI.WebControls.Panel Panel2;
         
         /// <summary>
-        /// SeriesGridView1 control.
+        /// Panel3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.StudyDetails.SeriesGridView SeriesGridView1;
+        protected global::System.Web.UI.WebControls.Panel Panel3;
+        
+        /// <summary>
+        /// OpenSeriesButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OpenSeriesButton;
+        
+        /// <summary>
+        /// SeriesGridView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.StudyDetails.SeriesGridView SeriesGridView;
         
         /// <summary>
         /// ConfirmDialog1 control.

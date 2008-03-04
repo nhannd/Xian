@@ -32,17 +32,26 @@
 using System;
 using System.Drawing;
 using System.Web.UI;
+using System.Web.UI.WebControls;
+using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+
+
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.StudyDetails.StudyDetailsPanel.js", "application/x-javascript")]
+
 
 namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
 {
     /// <summary>
     /// Main panel within the <see cref="StudyDetailsPage"/>
     /// </summary>
-    public partial class StudyDetailsPanel : UserControl
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.StudyDetails.StudyDetailsPanel",
+                          ResourcePath = "ClearCanvas.ImageServer.Web.Application.StudyDetails.StudyDetailsPanel.js")]
+    public partial class StudyDetailsPanel : ScriptUserControl
     {
         #region Private Members
         private Study _study;
@@ -66,6 +75,44 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
 
         #region Protected Methods
 
+        
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("OpenSeriesButtonClientID")]
+        public string OpenSeriesButtonClientID
+        {
+            get
+            {
+                ToolbarButton openSeriesBtn= (ToolbarButton)SeriesSectionPanel.FindControl("OpenSeriesButton");
+
+                return openSeriesBtn.ClientID;
+            }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("SeriesListClientID")]
+        public string SeriesListClientID
+        {
+            get
+            {
+                SeriesGridView seriesView = (SeriesGridView)SeriesSectionPanel.FindControl("SeriesGridView");
+                return seriesView.SeriesListClientID;
+            }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("OpenSeriesPageUrl")]
+        public string OpenSeriesPageUrl
+        {
+            get { return Page.ResolveClientUrl("~/SeriesDetails/SeriesDetailsPage.aspx"); }
+        }
+        
+
+        public StudyDetailsPanel()
+            : base(false, HtmlTextWriterTag.Div)
+            {
+            }
+
 
         protected override void OnInit(EventArgs e)
         {
@@ -81,12 +128,15 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
                 ServerPartition partition = adaptor.Get(Study.ServerPartitionKey);
 
                 PatientSummaryPanel.PatientSummary = PatientSummaryAssembler.CreatePatientSummary(Study);
-                StudyDetailsView1.Studies.Add(Study);
-                SeriesSearchAdaptor seriesAdaptor = new SeriesSearchAdaptor();
-                SeriesSelectCriteria criteria = new SeriesSelectCriteria();
-                criteria.StudyKey.EqualTo(Study.GetKey());
-                criteria.ServerPartitionKey.EqualTo(partition.GetKey());
-                SeriesGridView1.Series = seriesAdaptor.Get(criteria); 
+
+
+                StudyDetailsView studyView = (StudyDetailsView)StudySectionPanel.FindControl("StudyDetailsView");
+                studyView.Studies.Add(Study);
+
+                SeriesGridView seriesView = (SeriesGridView)SeriesSectionPanel.FindControl("SeriesGridView");
+                seriesView.Partition = partition;
+                seriesView.Study = Study;
+
             }
            
             
@@ -105,8 +155,10 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
             bool scheduledForDelete = controller.IsScheduledForDelete(Study);
 
             //TODO: make Delete button enabled/disabled based on user permission too
-            DeleteToolbarButton.Enabled = !scheduledForDelete;
+            ToolbarButton deleteBtn = (ToolbarButton)StudySectionPanel.FindControl("DeleteToolbarButton");
 
+            deleteBtn.Enabled = !scheduledForDelete;
+            
             if (scheduledForDelete)
             {
                 ShowScheduledForDeleteAlert();
@@ -115,6 +167,15 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
             {
                 MessagePanel.Visible = false;
             }
+
+
+
+            ToolbarButton openSeriesBtn = (ToolbarButton)SeriesSectionPanel.FindControl("OpenSeriesButton");
+            SeriesGridView seriesView = (SeriesGridView)SeriesSectionPanel.FindControl("SeriesGridView");
+
+            int[] selectedSeriesIndices = seriesView.SeriesListControl.SelectedIndices;
+            openSeriesBtn.Enabled = selectedSeriesIndices != null && selectedSeriesIndices.Length > 0; 
+            
         }
 
         protected void DeleteToolbarButton_Click(object sender, ImageClickEventArgs e)

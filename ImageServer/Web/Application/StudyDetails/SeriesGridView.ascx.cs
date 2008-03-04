@@ -32,92 +32,185 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web.UI;
 using System.Web.UI.WebControls;
+using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.SeriesDetails;
+using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
+
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.StudyDetails.SeriesGridView.js", "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
 {
     /// <summary>
     /// Series list panel within the <see cref="SeriesDetailsPanel"/>
     /// </summary>
-    public partial class SeriesGridView : System.Web.UI.UserControl
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.StudyDetails.SeriesGridView",
+                           ResourcePath = "ClearCanvas.ImageServer.Web.Application.StudyDetails.SeriesGridView.js")]
+    public partial class SeriesGridView : ScriptUserControl
     {
         #region Private members
-        private IList<Model.Series> _series;
+
+        private ServerPartition _serverPartition = null;
+        private Study _study = null;
+        private IList<Series> _series;
         #endregion Private members
 
         #region Public properties
+        /// <summary>
+        /// Gets or sets the list of series to be displayed
+        /// </summary>
+        public ServerPartition Partition
+        {
+            get { return _serverPartition; }
+            set { _serverPartition = value; }
+        }
 
         /// <summary>
         /// Gets or sets the list of series to be displayed
         /// </summary>
-        public IList<Model.Series> Series
+        public Study Study
+        {
+            get { return _study; }
+            set { _study = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the list of series to be displayed
+        /// </summary>
+        protected IList<Series> Series
         {
             get { return _series; }
             set { _series = value; }
         }
 
+        [ExtenderControlProperty]
+        [ClientPropertyName("SeriesListClientID")]
+        public string SeriesListClientID
+        {
+            get { return GridView1.ClientID; }
+        }
+
+        
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("StudyInstanceUid")]
+        public string StudyInstanceUid
+        {
+            get
+            {
+                if (_study == null)
+                    return "";
+
+                return _study.StudyInstanceUid;
+            }
+        }
+
+        
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("OpenSeriesPageUrl")]
+        public string OpenSeriesPageUrl
+        {
+            get { return  Page.ResolveClientUrl("~/SeriesDetails/SeriesDetailsPage.aspx"); }
+        }
+        
+
+        public Web.Common.WebControls.UI.GridView SeriesListControl
+        {
+            get { return GridView1; }
+        }
+
+         
 
         #endregion Public properties
 
+        #region Constructors
+
+        public SeriesGridView()
+            : base(false, HtmlTextWriterTag.Div)
+            {
+            }
+
+        #endregion Constructors
+
+            
         #region Protected methods
 
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-        }
 
-        protected void Page_Load(object sender, EventArgs e)
+            protected void Page_Load(object sender, EventArgs e)
         {
-            
-            GridView1.DataSource = Series;
-            GridView1.DataBind();
-        }
-
-        protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            if (Study!=null && Partition!=null)
             {
-                Series series = e.Row.DataItem as Series;
+                SeriesSearchAdaptor seriesAdaptor = new SeriesSearchAdaptor();
+                SeriesSelectCriteria criteria = new SeriesSelectCriteria();
+                criteria.StudyKey.EqualTo(Study.GetKey());
+                criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
 
-                Label performedDateTime = e.Row.FindControl("SeriesPerformedDateTime") as Label;
+                Series = seriesAdaptor.Get(criteria);
 
-                if (!String.IsNullOrEmpty(series.PerformedProcedureStepStartDate))
-                {
-                    string dt;
-                    if (DateTimeFormatter.TryFormatDA(series.PerformedProcedureStepStartDate, out dt))
-                    {
-                        performedDateTime.Text = dt;
-                    }
-                    else
-                    {
-                        performedDateTime.Text =
-                            String.Format("<i style='color:red'>[Invalid date:{0}]</i>",
-                                          series.PerformedProcedureStepStartDate);
-                    }
-                }
-
-                if (!String.IsNullOrEmpty(series.PerformedProcedureStepStartTime))
-                {
-                    string dt;
-                    if (DateTimeFormatter.TryFormatTM(series.PerformedProcedureStepStartTime, out dt))
-                    {
-                        performedDateTime.Text += " " + dt;
-                    }
-                    else
-                    {
-                        performedDateTime.Text += " " + String.Format("<i style='color:red'>[Invalid time:{0}]</i>", series.PerformedProcedureStepStartTime);
-                    }
-                }
-                
-
-
-                e.Row.Attributes["seriesuid"] = series.SeriesInstanceUid;
+                GridView1.DataSource = Series;
+                GridView1.DataBind();
 
 
             }
+            
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+
+            foreach(GridViewRow row in GridView1.Rows)
+            {
+                if (row.RowType == DataControlRowType.DataRow)
+                {
+                    int index = GridView1.PageIndex * GridView1.PageSize + row.RowIndex;
+                    Series series = _series[index];
+
+                    Label performedDateTime = row.FindControl("SeriesPerformedDateTime") as Label;
+
+                    if (performedDateTime!=null)
+                    {
+                        if (!String.IsNullOrEmpty(series.PerformedProcedureStepStartDate))
+                        {
+                            string dt;
+                            if (DateTimeFormatter.TryFormatDA(series.PerformedProcedureStepStartDate, out dt))
+                            {
+                                performedDateTime.Text = dt;
+                            }
+                            else
+                            {
+                                performedDateTime.Text =
+                                    String.Format("<i style='color:red'>[Invalid date:{0}]</i>",
+                                                  series.PerformedProcedureStepStartDate);
+                            }
+                        }
+
+                        if (!String.IsNullOrEmpty(series.PerformedProcedureStepStartTime))
+                        {
+                            string dt;
+                            if (DateTimeFormatter.TryFormatTM(series.PerformedProcedureStepStartTime, out dt))
+                            {
+                                performedDateTime.Text += " " + dt;
+                            }
+                            else
+                            {
+                                performedDateTime.Text += " " + String.Format("<i style='color:red'>[Invalid time:{0}]</i>", series.PerformedProcedureStepStartTime);
+                            }
+                        } 
+                    }
+
+                    row.Attributes["serverae"] = _serverPartition.AeTitle;
+                    row.Attributes["studyuid"] = _study.StudyInstanceUid;
+                    row.Attributes["seriesuid"] = series.SeriesInstanceUid;
+                }
+            }
+
+            
         }
 
         protected void GridView1_PageIndexChanged(object sender, EventArgs e)

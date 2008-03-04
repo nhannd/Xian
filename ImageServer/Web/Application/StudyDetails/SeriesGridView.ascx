@@ -12,22 +12,34 @@
             <asp:Panel ID="Panel3" runat="server" CssClass="CSSGridViewPanelBorder" BorderWidth="0px">
                 <asp:Panel ID="Panel4" runat="server" CssClass="CSSGridViewPanelContent" Height="50%">
                     <clearcanvas:GridView ID="GridView1" runat="server" 
-                        AutoGenerateColumns="False" CssClass="CSSGridView" CellPadding="4" CaptionAlign="Top" Width="100%" 
-                        OnRowDataBound="GridView1_RowDataBound"
+                        AutoGenerateColumns="False" CssClass="CSSGridView" 
+                        CellPadding="4" CaptionAlign="Top" Width="100%" 
                         OnPageIndexChanged="GridView1_PageIndexChanged" 
-                        OnPageIndexChanging="GridView1_PageIndexChanging" 
+                        OnPageIndexChanging="GridView1_PageIndexChanging" SelectionMode="Multiple"
                         GridLines="Horizontal" BorderWidth="1px">
                         <Columns>
-                            <asp:BoundField DataField="SeriesNumber" HeaderText="Series#" />
-                            <asp:BoundField DataField="Modality" HeaderText="Modality"></asp:BoundField>
-                            <asp:BoundField DataField="SeriesDescription" HeaderText="Description" />
-                            <asp:BoundField DataField="NumberOfSeriesRelatedInstances" HeaderText="Images" />
-                            <asp:BoundField DataField="SeriesInstanceUid" HeaderText="Series Instance UID"></asp:BoundField>
+                            <asp:BoundField DataField="SeriesNumber" HeaderText="Series #">
+                                <HeaderStyle Wrap="False" />    
+                            </asp:BoundField>
+                            <asp:BoundField DataField="Modality" HeaderText="Modality">
+                                <HeaderStyle Wrap="False" />    
+                            </asp:BoundField>
+                            <asp:BoundField DataField="SeriesDescription" HeaderText="Description">
+                                <HeaderStyle Wrap="False" />    
+                            </asp:BoundField>
+                            <asp:BoundField DataField="NumberOfSeriesRelatedInstances" HeaderText="Images">
+                                <HeaderStyle Wrap="False" />    
+                            </asp:BoundField>
+                            <asp:BoundField DataField="SeriesInstanceUid" HeaderText="Series Instance UID">
+                                <HeaderStyle Wrap="False" />  
+                            </asp:BoundField>
                             <asp:TemplateField  HeaderText="Performed On">
                                 <ItemTemplate>
                                     <asp:Label runat="server" ID="SeriesPerformedDateTime" Text="" Nowrap="true" />
                                 </ItemTemplate>
+                                <HeaderStyle Wrap="False" />  
                             </asp:TemplateField>
+                             
                         </Columns>
                         <EmptyDataTemplate>
                             <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"

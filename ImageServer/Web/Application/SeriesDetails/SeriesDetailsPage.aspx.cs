@@ -34,24 +34,34 @@ using System.Collections.Generic;
 using System.Web.UI;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Application.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 {
-    public partial class SeriesDetailsPage : System.Web.UI.Page
+    public partial class SeriesDetailsPage : BasePage
     {
+        #region Constants
 
         private const string QUERY_KEY_SERVER_AE = "serverae";
         private const string QUERY_KEY_STUDY_INSTANCE_UID = "studyuid";
         private const string QUERY_KEY_SERIES_INSTANCE_UID = "seriesuid";
 
+        #endregion Constants
+
+        #region Private mmembers
+
         private string _serverae = null;
         private string _studyInstanceUid = null;
         private string _seriesInstanceUid = null;
 
-        private Model.ServerPartition _partition;
-        private Model.Study _study;
-        private Model.Series _series;
+        private ServerPartition _partition;
+        private Study _study;
+        private Series _series;
+
+        #endregion Private mmembers
+
+        #region Public Properties
 
         public ServerPartition Partition
         {
@@ -59,17 +69,21 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
             set { _partition = value; }
         }
 
-        public Model.Study Study
+        public Study Study
         {
             get { return _study; }
             set { _study = value; }
         }
 
-        public Model.Series Series
+        public Series Series
         {
             get { return _series; }
             set { _series = value; }
         }
+
+        #endregion Public Properties
+
+        #region Protected Methods
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -79,6 +93,10 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 
             LoadSeriesDetails();
         }
+
+        #endregion Protected Methods
+
+        #region Public Methods
 
         public override void RenderControl(HtmlTextWriter writer)
         {
@@ -90,10 +108,19 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
             }
         }
 
+        #endregion Public Methods
+
+
+        #region Private Methods
+
         private void LoadSeriesDetails()
         {
+
             if (!String.IsNullOrEmpty(_serverae) && !String.IsNullOrEmpty(_studyInstanceUid) && !String.IsNullOrEmpty(_seriesInstanceUid))
             {
+                StudyAdaptor studyAdaptor = new StudyAdaptor();
+                SeriesSearchAdaptor seriesAdaptor = new SeriesSearchAdaptor();
+                        
                 ServerPartitionDataAdapter adaptor = new ServerPartitionDataAdapter();
                 ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
                 criteria.AeTitle.EqualTo(_serverae);
@@ -103,7 +130,6 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
                 {
                     Partition = partitions[0];
 
-                    StudyAdaptor studyAdaptor = new StudyAdaptor();
                     StudySelectCriteria studyCriteria = new StudySelectCriteria();
                     studyCriteria.StudyInstanceUid.EqualTo(_studyInstanceUid);
                     studyCriteria.ServerPartitionKey.EqualTo(Partition.GetKey());
@@ -114,7 +140,6 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
                         // there should be only one study
                         _study = studies[0];
 
-                        SeriesSearchAdaptor seriesAdaptor = new SeriesSearchAdaptor();
                         SeriesSelectCriteria seriesCriteria = new SeriesSelectCriteria();
                         seriesCriteria.SeriesInstanceUid.EqualTo(_seriesInstanceUid);
                         IList<Model.Series> series = seriesAdaptor.Get(seriesCriteria);
@@ -128,12 +153,14 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
                 }
             }
 
-            if (_series != null)
+            if (_study!=null && _series != null)
             {
-                SeriesDetailsPanel1.Study = Study;
-                SeriesDetailsPanel1.Series = Series;
+                SeriesDetailsPanel1.Study = _study;
+                SeriesDetailsPanel1.Series = _series;
             }
         }
+
+        #endregion Private Methods
 
     }
 }

@@ -1,5 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="PatientSummaryPanel.ascx.cs"
-    Inherits="ClearCanvas.ImageServer.Web.Application.StudyDetails.PatientSummaryPanel" %>
+    Inherits="ClearCanvas.ImageServer.Web.Application.SeriesDetails.PatientSummaryPanel" %>
 <table border="0px" cellpadding="0" cellspacing="0" width="100%">
     <tr>
         <td>

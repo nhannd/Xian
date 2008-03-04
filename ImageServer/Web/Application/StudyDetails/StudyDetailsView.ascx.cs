@@ -44,6 +44,8 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
     {
         #region Private members
 
+        private Unit _width;
+
         private IList<Model.Study> _studies = new List<Model.Study>();
 
         #endregion Private members
@@ -59,6 +61,16 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
             get { return _studies; }
             set { _studies = value; }
         }
+
+        public Unit Width
+        {
+            get { return _width; }
+            set { _width = value;
+
+                DetailsView1.Width = value;
+            }
+        }
+
 
         #endregion Public Properties
 

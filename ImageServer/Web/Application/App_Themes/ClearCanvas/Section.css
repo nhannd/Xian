@@ -1,0 +1,12 @@
+.CSSSection
+{ 
+}
+
+.CSSStudyHeading
+{
+	background-color: #858585;
+	padding: 3px;
+	border-bottom: #3399cc 1px solid;
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr=#c2deff, endColorstr=#ffffff);
+	color: black;
+}

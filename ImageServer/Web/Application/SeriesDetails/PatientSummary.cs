@@ -29,55 +29,53 @@
 
 #endregion
 
-using System;
-
 namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 {
     /// <summary>
-    /// Panel within the <see cref="SeriesDetailsPage"/>
+    /// Model object behind the <see cref="PatientSummaryPanel"/>
     /// </summary>
-    public partial class SeriesDetailsPanel : System.Web.UI.UserControl
+    public class PatientSummary
     {
         #region Private members
-        private Model.Study _study;
-        private Model.Series _series;
+        private string _patientId;
+        private string _issuerOfPatientId;
+        private string _patientName;
+        private string _birthdate;
+        private string _sex;
+
         #endregion Private members
 
-
         #region Public Properties
-
-        public Model.Study Study
+        public string PatientId
         {
-            get { return _study; }
-            set { _study = value; }
+            get { return _patientId; }
+            set { _patientId = value; }
         }
 
-        public Model.Series Series
+        public string PatientName
         {
-            get { return _series; }
-            set { _series = value; }
+            get { return _patientName; }
+            set { _patientName = value; }
+        }
+
+        public string Birthdate
+        {
+            get { return _birthdate; }
+            set { _birthdate = value; }
+        }
+
+        public string Sex
+        {
+            get { return _sex; }
+            set { _sex = value; }
+        }
+
+        public string IssuerOfPatientId
+        {
+            get { return _issuerOfPatientId; }
+            set { _issuerOfPatientId = value; }
         }
 
         #endregion Public Properties
-
-        #region Protected Properties
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            if (_study!=null)
-            {
-                PatientSummaryPanel1.PatientSummary = PatientSummaryAssembler.CreatePatientSummary(_study);
-
-                StudySummaryPanel summary = (StudySummaryPanel)StudySectionPanel.FindControl("StudySummaryPanel1");
-                summary.Study = _study;
-
-                if (Series != null)
-                    SeriesDetailsView1.Series = _series; 
-            }
-
-        }
-
-        #endregion Protected Properties
-
     }
 }

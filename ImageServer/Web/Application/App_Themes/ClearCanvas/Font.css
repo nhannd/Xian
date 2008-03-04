@@ -324,6 +324,10 @@ body
 /*****************************************************************************************
 	Study Details view styles
 *****************************************************************************************/
+.CSSStudyDetailsView
+{
+}
+
 .CSSStudyDetailsViewRowStyle
 {
 
@@ -349,12 +353,20 @@ body
 /*****************************************************************************************
 	Series grid view styles
 *****************************************************************************************/
-
+.CSSSeriesGridView
+{
+}
 
 
 .CSSSeriesGridViewHeaderStyle
 {
 	
+}
+
+.CSSSeriesGridViewHeaderStyle th
+{
+	font-weight:normal;
+	text-align:left;
 }
 
 /* gridview control selected row */

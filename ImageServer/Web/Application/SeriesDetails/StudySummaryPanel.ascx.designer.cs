@@ -8,25 +8,25 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.StudyDetails {
+namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails {
     
     
     /// <summary>
-    /// PatientSummaryPanel class.
+    /// StudySummaryPanel class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class PatientSummaryPanel {
+    public partial class StudySummaryPanel {
         
         /// <summary>
-        /// PatientSummaryPanelContainer control.
+        /// StudySummaryPanelContainer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PatientSummaryPanelContainer;
+        protected global::System.Web.UI.WebControls.Panel StudySummaryPanelContainer;
         
         /// <summary>
         /// Panel1 control.
@@ -56,13 +56,13 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails {
         protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
-        /// PatientName control.
+        /// AccessionNumber control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label PatientName;
+        protected global::System.Web.UI.WebControls.Label AccessionNumber;
         
         /// <summary>
         /// Label2 control.
@@ -74,13 +74,13 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails {
         protected global::System.Web.UI.WebControls.Label Label2;
         
         /// <summary>
-        /// PatientId control.
+        /// StudyDescription control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label PatientId;
+        protected global::System.Web.UI.WebControls.Label StudyDescription;
         
         /// <summary>
         /// Label3 control.
@@ -92,13 +92,13 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails {
         protected global::System.Web.UI.WebControls.Label Label3;
         
         /// <summary>
-        /// PatientBirthDate control.
+        /// StudyDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label PatientBirthDate;
+        protected global::System.Web.UI.WebControls.Label StudyDate;
         
         /// <summary>
         /// Label4 control.
@@ -110,30 +110,12 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails {
         protected global::System.Web.UI.WebControls.Label Label4;
         
         /// <summary>
-        /// PatientAge control.
+        /// ReferringPhysician control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label PatientAge;
-        
-        /// <summary>
-        /// Label5 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label5;
-        
-        /// <summary>
-        /// PatientSex control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label PatientSex;
+        protected global::System.Web.UI.WebControls.Label ReferringPhysician;
     }
 }

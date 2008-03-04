@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.StudyDetails {
+namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails {
     
     
     /// <summary>
