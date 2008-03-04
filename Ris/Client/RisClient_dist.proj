@@ -8,7 +8,8 @@
 		<DistributionDirectory>$(ProjectDir)\$(OutDir)</DistributionDirectory>		
 		<TrunkDirectory>$(SolutionDir)..\..</TrunkDirectory>
 		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
-		<JscriptDirectory>$(ProjectDir)\..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
+    <CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
+    <JscriptDirectory>$(ProjectDir)\..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
 	</PropertyGroup>
 	
 	<ItemGroup>
@@ -22,11 +23,14 @@
     <SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Fax\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Common.dll" />
     <SharedLibraryFiles Include="$(TrunkDirectory)\Desktop\Applets\Scintilla\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.dll" />
     <SharedLibraryFiles Include="$(TrunkDirectory)\Desktop\Applets\Scintilla\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.View.WinForms.dll" />
-    <SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\ScintillaNet.dll" />
-    <SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer.dll" />
-  </ItemGroup>	
-	
-	<ItemGroup>
+  </ItemGroup>
+
+  <ItemGroup>
+    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\ScintillaNet.dll" />
+    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
 		<ClientModuleFiles Include="$(SolutionDir)\bin\$(Configuration)\ClearCanvas.Ris.Client.dll" />
 		<ClientModuleFiles Include="$(SolutionDir)\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.View.WinForms.dll" />
 		<ClientModuleFiles Include="$(SolutionDir)\Admin\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.dll" />
@@ -65,8 +69,9 @@
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
 		
 		<MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" ContinueOnError="true" />
-		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
-		<Copy SourceFiles="@(ClientModuleFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
+		<Copy SourceFiles="@(CommonFiles)" DestinationFolder="$(CommonDirectory)" ContinueOnError="true" />
+    <Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
+    <Copy SourceFiles="@(ClientModuleFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
 		<Copy SourceFiles="@(JscriptFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
 	</Target>
 	

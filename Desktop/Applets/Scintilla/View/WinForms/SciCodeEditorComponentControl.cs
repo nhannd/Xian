@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
 using ScintillaNet;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.Applets.Scintilla.View.WinForms
 {
@@ -32,8 +33,8 @@ namespace ClearCanvas.Desktop.Applets.Scintilla.View.WinForms
 
             // Scintilla control does not seem to get along with the designer very well,
             // so do everything manually
-
-            _editor = new ScintillaNet.Scintilla();
+            // when creating the control, need to specify the full path to the native DLL, otherwise it will not find it
+            _editor = new ScintillaNet.Scintilla(System.IO.Path.Combine(Platform.CommonDirectory, ScintillaNet.Scintilla.DefaultDllName));
             _editor.Dock = DockStyle.Fill;
             this.Controls.Add(_editor);
             _editor.ConfigurationManager.Language = _component.Language;

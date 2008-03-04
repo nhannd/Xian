@@ -138,11 +138,13 @@ namespace ClearCanvas.Common
     	private static readonly ILog _log = LogManager.GetLogger(typeof(Platform));
 
 		private static string _pluginSubFolder = "plugins";
-		private static string _logSubFolder = "logs";
+        private static string _commonSubFolder = "common";
+        private static string _logSubFolder = "logs";
 
 		private static volatile string _installDirectory = null;
 		private static volatile string _pluginsDirectory = null;
-		private static volatile string _logDirectory = null;
+        private static volatile string _commonDirectory = null;
+        private static volatile string _logDirectory = null;
 
 		private static volatile PluginManager _pluginManager;
 		private static volatile IApplicationRoot _applicationRoot;
@@ -276,8 +278,30 @@ namespace ClearCanvas.Common
 			}
 		}
 
+        /// <summary>
+        /// Gets the fully qualified common directory.
+        /// </summary>
+        /// <remarks>
+        /// This method is thread-safe.
+        /// </remarks>
+        public static string CommonDirectory
+        {
+            get
+            {
+                if (_commonDirectory == null)
+                {
+                    lock (_syncRoot)
+                    {
+                        if (_commonDirectory == null)
+                            _commonDirectory = string.Format("{0}{1}{2}", Platform.InstallDirectory, Platform.PathSeparator, _commonSubFolder);
+                    }
+                }
 
-		/// <summary>
+                return _commonDirectory;
+            }
+        }
+        
+        /// <summary>
 		/// Gets the fully qualified log directory.
 		/// </summary>
         /// <remarks>
