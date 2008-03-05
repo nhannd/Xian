@@ -266,9 +266,9 @@ namespace ClearCanvas.ImageViewer
 		/// <remarks>
 		/// For internal Framework use only.
 		/// </remarks>
-		public override void OnDraw(DrawArgs drawArgs)
+		public override void Draw(DrawArgs drawArgs)
 		{
-			base.OnDraw(drawArgs);
+			base.Draw(drawArgs);
 
 			CheckRendererInitializationError();
 		}

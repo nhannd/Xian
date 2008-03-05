@@ -135,5 +135,17 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		/// <returns></returns>
 		IPresentationImage CreateFreshCopy();
+
+		/// <summary>
+		/// Renders the <see cref="PresentationImage"/> to an offscreen <see cref="Bitmap"/>.
+		/// </summary>
+		/// <param name="width">Bitmap width.</param>
+		/// <param name="height">Bitmap height.</param>
+		/// <returns></returns>
+		/// <remarks>
+		/// This method can be used anywhere an offscreen bitmap is required, such as 
+		/// paper/DICOM printing, thumbnail generation, creation of new DICOM images, etc.
+		/// </remarks>
+		Bitmap DrawToBitmap(int width, int height);
 	}
 }

@@ -466,7 +466,7 @@ namespace ClearCanvas.ImageViewer
 				return;
 
 			_clientRectangle = drawArgs.RenderingSurface.ClientRectangle;
-			_presentationImage.OnDraw(drawArgs);
+			_presentationImage.Draw(drawArgs);
 		}
 
 		#endregion
