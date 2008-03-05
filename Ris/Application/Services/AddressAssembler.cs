@@ -85,22 +85,5 @@ namespace ClearCanvas.Ris.Application.Services
 
             return newAddress;
         }
-
-        public void AddAddress(AddressDetail addressDetail, IList<Address> addresses)
-        {
-            //TODO: Check automatic expiration of Address functionality
-            Address newAddress = CreateAddress(addressDetail);
-
-            foreach (Address address in addresses)
-            {
-                if (newAddress.Type.Equals(address.Type))
-                {
-                    // Automatically expired any previous address
-                    address.ValidRange.Until = Platform.Time.Date;
-                }
-            }
-
-            addresses.Add(newAddress);
-        }
     }
 }

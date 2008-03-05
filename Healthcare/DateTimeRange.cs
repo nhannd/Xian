@@ -35,13 +35,15 @@ using System.Text;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 
 
 namespace ClearCanvas.Healthcare {
 
     /// <summary>
     /// Represents a date/time range.  Either the From or Until property may be null, in which
-    /// case the range is open-ended.
+    /// case the range extends infinitely in that direction.
     /// </summary>
     [Serializable]
 	public class DateTimeRange : IEquatable<DateTimeRange>, ICloneable
@@ -66,6 +68,29 @@ namespace ClearCanvas.Healthcare {
             _from = from;
             _until = until;
         }
+       
+        /// <summary>
+        /// Gets a value indicating whether this range is empty.
+        /// </summary>
+        public bool IsEmpty
+        {
+            get { return (_from ?? DateTime.MinValue) > (_until ?? DateTime.MaxValue); }
+        }
+
+        public bool IsLowerBounded
+        {
+            get { return _from.HasValue; }
+        }
+
+        public bool IsUpperBounded
+        {
+            get { return _until.HasValue; }
+        }
+
+        public bool IsInfinite
+        {
+            get { return !_until.HasValue && !_from.HasValue; }
+        }
 
         /// <summary>
         /// Tests if this range includes the specified time
@@ -88,6 +113,44 @@ namespace ClearCanvas.Healthcare {
         public bool Excludes(DateTime time)
         {
             return !Includes(time);
+        }
+
+        /// <summary>
+        /// Returns a new instance of <see cref="DateTimeRange"/> representing the bounding range
+        /// of this and other.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public DateTimeRange GetBoundingRange(DateTimeRange other)
+        {
+            Platform.CheckForNullReference(other, "other");
+
+            DateTime?[] lowers = new DateTime?[] { this.From, other.From };
+            DateTime?[] uppers = new DateTime?[] { this.Until, other.Until };
+
+            DateTime? lower = CollectionUtils.Min(lowers, null, CompareLower);
+            DateTime? upper = CollectionUtils.Max(uppers, null, CompareUpper);
+
+            return new DateTimeRange(lower, upper);
+        }
+
+        /// <summary>
+        /// Returns a new instance of <see cref="DateTimeRange"/> representing the intersection
+        /// of this and other.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public DateTimeRange Intersect(DateTimeRange other)
+        {
+            Platform.CheckForNullReference(other, "other");
+
+            DateTime?[] lowers = new DateTime?[] { this.From, other.From };
+            DateTime?[] uppers = new DateTime?[] { this.Until, other.Until };
+
+            DateTime? lower = CollectionUtils.Max(lowers, null, CompareLower);
+            DateTime? upper = CollectionUtils.Min(uppers, null, CompareUpper);
+
+            return new DateTimeRange(lower, upper);
         }
 
         /// <summary>
@@ -145,5 +208,19 @@ namespace ClearCanvas.Healthcare {
         }
 
         #endregion
+
+        private static int CompareUpper(DateTime? x, DateTime? y)
+        {
+            DateTime x1 = x ?? DateTime.MaxValue;
+            DateTime y1 = y ?? DateTime.MaxValue;
+            return x1.CompareTo(y1);
+        }
+
+        private static int CompareLower(DateTime? x, DateTime? y)
+        {
+            DateTime x1 = x ?? DateTime.MinValue;
+            DateTime y1 = y ?? DateTime.MinValue;
+            return x1.CompareTo(y1);
+        }
     }
 }

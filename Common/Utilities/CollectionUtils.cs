@@ -664,8 +664,8 @@ namespace ClearCanvas.Common.Utilities
 		/// Returns the minimum value in the target collection, or the specified <paramref name="nullValue "/> if the target is empty.
 		/// </summary>
 		/// <remarks>
-		/// If the collection may contain nulls, the comparison must handle nulls.
-		/// </remarks>
+        /// <para>If the collection contains nulls, they are treated as less than any other value.</para>
+        /// </remarks>
 		public static TItem Min<TItem>(IEnumerable target, TItem nullValue)
         {
             return Min(target, nullValue, Comparer<TItem>.Default.Compare);
@@ -675,8 +675,8 @@ namespace ClearCanvas.Common.Utilities
 		/// Returns the minimum value in the target collection, or the specified <paramref name="nullValue "/> if the target is empty.
 		/// </summary>
 		/// <remarks>
-		/// If the collection may contain nulls, the comparison must handle nulls.
-		/// </remarks>
+        /// <para>If the collection contains nulls, they are treated as less than any other value.</para>
+        /// </remarks>
 		public static TItem Min<TItem>(IEnumerable<TItem> target, TItem nullValue)
         {
             return Min(target, nullValue, Comparer<TItem>.Default.Compare);
@@ -734,8 +734,8 @@ namespace ClearCanvas.Common.Utilities
 		/// Returns the maximum value in the target collection, or the specified <paramref name="nullValue"/> if the collection is empty.
 		/// </summary>
 		/// <remarks>
-		/// If the collection may contain nulls, the comparison must handle nulls.
-		/// </remarks>
+        /// <para>If the collection contains nulls, they are treated as less than any other value.</para>
+        /// </remarks>
 		public static TItem Max<TItem>(IEnumerable target, TItem nullValue)
         {
             return Max(target, nullValue, Comparer<TItem>.Default.Compare);
@@ -745,8 +745,8 @@ namespace ClearCanvas.Common.Utilities
 		/// Returns the maximum value in the target collection, or the specified <paramref name="nullValue"/> if the collection is empty.
 		/// </summary>
 		/// <remarks>
-		/// If the collection may contain nulls, the comparison must handle nulls.
-		/// </remarks>
+        /// <para>If the collection contains nulls, they are treated as less than any other value.</para>
+        /// </remarks>
 		public static TItem Max<TItem>(IEnumerable<TItem> target, TItem nullValue)
         {
             return Max(target, nullValue, Comparer<TItem>.Default.Compare);

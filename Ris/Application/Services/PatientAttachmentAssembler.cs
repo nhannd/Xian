@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
@@ -38,18 +39,16 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class PatientAttachmentAssembler
     {
-        class PatientAttachmentSynchronizeHelper : SynchronizeHelper<PatientAttachment, PatientAttachmentSummary>
+        class PatientAttachmentSynchronizeHelper : CollectionSynchronizeHelper<PatientAttachment, PatientAttachmentSummary>
         {
             private readonly PatientAttachmentAssembler _assembler;
             private readonly IPersistenceContext _context;
 
             public PatientAttachmentSynchronizeHelper(PatientAttachmentAssembler assembler, IPersistenceContext context)
+                :base(true, true)
             {
                 _assembler = assembler;
                 _context = context;
-
-                _allowUpdate = true;
-                _allowRemove = true;
             }
 
             protected override bool CompareItems(PatientAttachment domainItem, PatientAttachmentSummary sourceItem)
@@ -57,17 +56,17 @@ namespace ClearCanvas.Ris.Application.Services
                 return Equals(domainItem.Document.GetRef(), sourceItem.Document.DocumentRef);
             }
 
-            protected override PatientAttachment CreateDomainItem(PatientAttachmentSummary sourceItem)
+            protected override PatientAttachment CreateDestItem(PatientAttachmentSummary sourceItem)
             {
                 return _assembler.CreatePatientAttachment(sourceItem, _context);
             }
 
-            protected override void UpdateDomainItem(PatientAttachment domainItem, PatientAttachmentSummary sourceItem)
+            protected override void UpdateDestItem(PatientAttachment domainItem, PatientAttachmentSummary sourceItem)
             {
                 _assembler.UpdatePatientAttachment(domainItem, sourceItem, _context);
             }
 
-            protected override void RemoveDomainItem(IList<PatientAttachment> domainList, PatientAttachment domainItem)
+            protected override void RemoveDestItem(ICollection<PatientAttachment> domainList, PatientAttachment domainItem)
             {
                 domainList.Remove(domainItem);
             }

@@ -65,7 +65,7 @@ namespace ClearCanvas.Healthcare {
             Facility performingFacility,
             DateTime? schedulingRequestTime,
             ExternalPractitioner orderingPractitioner,
-            IList<ExternalPractitioner> copiesToPractitioners,
+            IList<ResultRecipient> resultRecipients,
             IList<OrderAttachment> attachments,
             IList<OrderNote> notes)
         {
@@ -79,7 +79,7 @@ namespace ClearCanvas.Healthcare {
                 });
 
             return NewOrder(accessionNumber, patient, visit, diagnosticService, reasonForStudy,
-                priority, orderingFacility, schedulingRequestTime, orderingPractitioner, copiesToPractitioners,
+                priority, orderingFacility, schedulingRequestTime, orderingPractitioner, resultRecipients,
                 procedures, attachments, notes);
         }
 
@@ -97,7 +97,7 @@ namespace ClearCanvas.Healthcare {
             Facility orderingFacility,
             DateTime? schedulingRequestTime,
             ExternalPractitioner orderingPractitioner,
-            IList<ExternalPractitioner> copiesToPractitioners,
+            IList<ResultRecipient> resultRecipients,
             IList<Procedure> procedures,
             IList<OrderAttachment> attachments,
             IList<OrderNote> notes)
@@ -115,7 +115,28 @@ namespace ClearCanvas.Healthcare {
             order.EnteredTime = Platform.Time;
             order.SchedulingRequestTime = schedulingRequestTime;
             order.OrderingPractitioner = orderingPractitioner;
-            order.ResultCopiesToPractitioners.AddAll(copiesToPractitioners);
+            order.ResultRecipients.AddAll(resultRecipients);
+
+            // if the result recipients collection does not contain the ordering practitioner, add it by force, using the default contact point
+            if(!CollectionUtils.Contains(order.ResultRecipients,
+                    delegate(ResultRecipient r) { return r.PractitionerContactPoint.Practitioner.Equals(orderingPractitioner); }))
+            {
+                // find the default
+                ExternalPractitionerContactPoint defaultContactPoint = CollectionUtils.SelectFirst(orderingPractitioner.ContactPoints,
+                    delegate(ExternalPractitionerContactPoint cp)
+                    {
+                        return cp.IsDefaultContactPoint;
+                    });
+
+                // if no default, use first available
+                if (defaultContactPoint == null)
+                    defaultContactPoint = CollectionUtils.FirstElement(orderingPractitioner.ContactPoints);
+
+                if(defaultContactPoint != null)
+                {
+                    order.ResultRecipients.Add(new ResultRecipient(defaultContactPoint, ResultCommunicationMode.ANY));
+                }
+            }
 
             // associate all procedures with the order
             foreach (Procedure rp in procedures)

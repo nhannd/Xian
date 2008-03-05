@@ -160,6 +160,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only one contact point can be set as the default..
+        /// </summary>
+        internal static string ExceptionOneDefaultContactPoint {
+            get {
+                return ResourceManager.GetString("ExceptionOneDefaultContactPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password has expired..
         /// </summary>
         internal static string ExceptionPasswordExpired {

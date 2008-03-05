@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             // force toolbars to be displayed (VS designer seems to have a bug with this)
             _proceduresTableView.ShowToolbar = true;
-            _consultantsTableView.ShowToolbar = true;
+            _recipientsTableView.ShowToolbar = true;
 
             _diagnosticService.LookupHandler = _component.DiagnosticServiceLookupHandler;
             _diagnosticService.DataBindings.Add("Value", _component, "SelectedDiagnosticService", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -80,19 +80,21 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _proceduresTableView.ToolbarModel = _component.ProceduresActionModel;
             _proceduresTableView.DataBindings.Add("Selection", _component, "SelectedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _consultantsTableView.Table = _component.Consultants;
-            _consultantsTableView.MenuModel = _component.ConsultantsActionModel;
-            _consultantsTableView.ToolbarModel = _component.ConsultantsActionModel;
-            _consultantsTableView.DataBindings.Add("Selection", _component, "SelectedConsultant", true, DataSourceUpdateMode.OnPropertyChanged);
-            _addConsultantButton.DataBindings.Add("Enabled", _component.ConsultantsActionModel.Add, "Enabled");
+            _recipientsTableView.Table = _component.Recipients;
+            _recipientsTableView.MenuModel = _component.RecipientsActionModel;
+            _recipientsTableView.ToolbarModel = _component.RecipientsActionModel;
+            _recipientsTableView.DataBindings.Add("Selection", _component, "SelectedRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
+            _addConsultantButton.DataBindings.Add("Enabled", _component.RecipientsActionModel.Add, "Enabled");
 
-            _consultantLookup.LookupHandler = _component.ConsultantsLookupHandler;
-            _consultantLookup.DataBindings.Add("Value", _component, "ConsultantToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
+            _consultantLookup.LookupHandler = _component.RecipientsLookupHandler;
+            _consultantLookup.DataBindings.Add("Value", _component, "RecipientToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
+            _consultantContactPoint.DataBindings.Add("DataSource", _component, "RecipientContactPointChoices", true, DataSourceUpdateMode.Never);
+            _consultantContactPoint.DataBindings.Add("Value", _component, "RecipientContactPointToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
+            _consultantContactPoint.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatContactPoint(e.ListItem); };
 
             _visit.DataBindings.Add("Value", _component, "SelectedVisit", true, DataSourceUpdateMode.OnPropertyChanged);
+            _visit.DataBindings.Add("DataSource", _component, "ActiveVisits", true, DataSourceUpdateMode.Never);
             _visit.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatVisit(e.ListItem); };
-            RefreshActiveVisit();
-            _component.ActiveVisitsChanged += _component_ActiveVisitsChanged;
 
             _priority.DataSource = _component.PriorityChoices;
             _priority.DataBindings.Add("Value", _component, "SelectedPriority", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -101,6 +103,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _orderingPractitioner.LookupHandler = _component.OrderingPractitionerLookupHandler;
             _orderingPractitioner.DataBindings.Add("Value", _component, "SelectedOrderingPractitioner", true, DataSourceUpdateMode.OnPropertyChanged);
+            _orderingPractitionerContactPoint.DataBindings.Add("DataSource", _component, "OrderingPractitionerContactPointChoices", true, DataSourceUpdateMode.Never);
+            _orderingPractitionerContactPoint.DataBindings.Add("Value", _component, "SelectedOrderingPractitionerContactPoint", true, DataSourceUpdateMode.OnPropertyChanged);
+            _orderingPractitionerContactPoint.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatContactPoint(e.ListItem); };
 
             // bind date and time to same property
             _schedulingRequestDate.DataBindings.Add("Value", _component, "SchedulingRequestTime", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -109,16 +114,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _reorderReason.DataSource = _component.CancelReasonChoices;
             _reorderReason.DataBindings.Add("Value", _component, "SelectedCancelReason", true, DataSourceUpdateMode.OnPropertyChanged);
             _reorderReason.DataBindings.Add("Visible", _component, "IsCancelReasonVisible");
-        }
-
-        void _component_ActiveVisitsChanged(object sender, EventArgs e)
-        {
-            RefreshActiveVisit();
-        }
-
-        void RefreshActiveVisit()
-        {
-            _visit.DataSource = _component.ActiveVisits;
         }
 
         private void _placeOrderButton_Click(object sender, EventArgs e)
@@ -136,7 +131,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void _addConsultantButton_Click(object sender, EventArgs e)
         {
-            _component.AddConsultant();
+            _component.AddRecipient();
         }
 
         private void _proceduresTableView_ItemDoubleClicked(object sender, EventArgs e)

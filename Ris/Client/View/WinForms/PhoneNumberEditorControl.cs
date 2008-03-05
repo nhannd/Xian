@@ -51,6 +51,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _phoneType.DataSource = _component.PhoneTypeChoices;
             _phoneType.DataBindings.Add("Value", _component, "PhoneType", true, DataSourceUpdateMode.OnPropertyChanged);
+            _phoneType.DataBindings.Add("Enabled", _component, "PhoneTypeEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _countryCode.DataBindings.Add("Value", _component, "CountryCode", true, DataSourceUpdateMode.OnPropertyChanged);
             _areaCode.DataBindings.Add("Value", _component, "AreaCode", true, DataSourceUpdateMode.OnPropertyChanged);

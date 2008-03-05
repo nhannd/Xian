@@ -205,6 +205,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private ExternalPractitionerLookupHandler _orderingPractitionerLookupHandler;
         private ExternalPractitionerSummary _selectedOrderingPractitioner;
+        private ExternalPractitionerContactPointDetail _selectedOrderingPractitionerContactPoint;
+        private List<ExternalPractitionerContactPointDetail> _orderingPractitionerContactPointChoices;
 
         private EnumValueInfo _selectedPriority;
         private EnumValueInfo _selectedCancelReason;
@@ -217,11 +219,13 @@ namespace ClearCanvas.Ris.Client.Adt
         private readonly CrudActionModel _proceduresActionModel;
         private ProcedureRequisition _selectedProcedure;
 
-        private readonly Table<ExternalPractitionerSummary> _consultantsTable;
-        private readonly CrudActionModel _consultantsActionModel;
-        private ExternalPractitionerSummary _selectedConsultant;
-        private ExternalPractitionerLookupHandler _consultantLookupHandler;
-        private ExternalPractitionerSummary _consultantToAdd;
+        private readonly Table<ResultRecipientSummary> _recipientsTable;
+        private readonly CrudActionModel _recipientsActionModel;
+        private ResultRecipientSummary _selectedRecipient;
+        private ExternalPractitionerLookupHandler _recipientLookupHandler;
+        private ExternalPractitionerSummary _recipientToAdd;
+        private ExternalPractitionerContactPointDetail _recipientContactPointToAdd;
+        private List<ExternalPractitionerContactPointDetail> _recipientContactPointChoices;
 
         private string _indication;
         private List<EnumValueInfo> _lateralityChoices;
@@ -310,15 +314,17 @@ namespace ClearCanvas.Ris.Client.Adt
             _proceduresActionModel.Delete.SetClickHandler(RemoveSelectedProcedure);
             UpdateProcedureActionModel();
 
-            _consultantsTable = new Table<ExternalPractitionerSummary>();
-            _consultantsTable.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>("Name",
-                                      delegate(ExternalPractitionerSummary item) { return PersonNameFormat.Format(item.Name); }));
+            _recipientsTable = new Table<ResultRecipientSummary>();
+            _recipientsTable.Columns.Add(new TableColumn<ResultRecipientSummary, string>("Practitioner",
+                                      delegate(ResultRecipientSummary item) { return PersonNameFormat.Format(item.Practitioner.Name); }));
+            _recipientsTable.Columns.Add(new TableColumn<ResultRecipientSummary, string>("Contact Point",
+                                      delegate(ResultRecipientSummary item) { return item.ContactPoint.Name; }));
 
-            _consultantsActionModel = new CrudActionModel(true, false, true);
-            _consultantsActionModel.Add.SetClickHandler(AddConsultant);
-            _consultantsActionModel.Add.Visible = false;    // hide this action on the menu/toolbar - we'll use a special button instead
-            _consultantsActionModel.Delete.SetClickHandler(RemoveSelectedConsultant);
-            UpdateConsultantActionModel();
+            _recipientsActionModel = new CrudActionModel(true, false, true);
+            _recipientsActionModel.Add.SetClickHandler(AddRecipient);
+            _recipientsActionModel.Add.Visible = false;    // hide this action on the menu/toolbar - we'll use a special button instead
+            _recipientsActionModel.Delete.SetClickHandler(RemoveSelectedRecipient);
+            UpdateRecipientsActionModel();
 
             this.Validation.Add(new ValidationRule("SelectedCancelReason",
                 delegate
@@ -332,7 +338,6 @@ namespace ClearCanvas.Ris.Client.Adt
             _attachmentSummaryComponent = new MimeDocumentPreviewComponent(true, true, MimeDocumentPreviewComponent.AttachmentMode.Order);
             this.ChangeCommitted += delegate { _attachmentSummaryComponent.SaveChanges(); };
             _orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
-
         }
 
         public override void Start()
@@ -341,7 +346,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _bannerComponentHost.StartComponent();
 
 
-            _consultantLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
+            _recipientLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
             _diagnosticServiceLookupHandler = new DiagnosticServiceLookupHandler(this.Host.DesktopWindow);
             _orderingPractitionerLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
 
@@ -445,8 +450,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string FormatVisit(object visit)
         {
-            // TODO this is kind of temporary - not sure what information should be presented
-            // in the dropdown
             VisitSummary v = (VisitSummary)visit;
 
             StringBuilder visitType = new StringBuilder();
@@ -490,6 +493,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             _activeVisits = response.Visits;
                         });
 
+                    NotifyPropertyChanged("ActiveVisits");
                     EventsHelper.Fire(_activeVisitsChanged, this, EventArgs.Empty);
 
                     if (existingSelectedVisitRef != null)
@@ -608,49 +612,102 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     _selectedOrderingPractitioner = value;
                     NotifyPropertyChanged("SelectedOrderingPractitioner");
+
+                    _selectedOrderingPractitionerContactPoint = null;
+                    UpdateOrderingPractitionerContactPointChoices();
+                    NotifyPropertyChanged("OrderingPractitionerContactPointChoices");
                 }
             }
         }
 
-        public ITable Consultants
+        public IList OrderingPractitionerContactPointChoices
         {
-            get { return _consultantsTable; }
+            get { return _orderingPractitionerContactPointChoices; }
         }
 
-        public CrudActionModel ConsultantsActionModel
+        [ValidateNotNull]
+        public ExternalPractitionerContactPointDetail SelectedOrderingPractitionerContactPoint
         {
-            get { return _consultantsActionModel; }
-        }
-
-        public ISelection SelectedConsultant
-        {
-            get { return new Selection(_selectedConsultant); }
+            get { return _selectedOrderingPractitionerContactPoint; }
             set
             {
-                if(!object.Equals(value, _selectedConsultant))
+                if (_selectedOrderingPractitionerContactPoint != value)
                 {
-                    _selectedConsultant = (ExternalPractitionerSummary)value.Item;
-                    UpdateConsultantActionModel();
-                    NotifyPropertyChanged("SelectedConsultant");
+                    _selectedOrderingPractitionerContactPoint = value;
+                    NotifyPropertyChanged("SelectedOrderingPractitionerContactPoint");
                 }
             }
         }
 
-        public ILookupHandler ConsultantsLookupHandler
+        public string FormatContactPoint(object cp)
         {
-            get { return _consultantLookupHandler; }
+            ExternalPractitionerContactPointDetail detail = (ExternalPractitionerContactPointDetail) cp;
+            return ExternalPractitionerContactPointFormat.Format(detail);
         }
 
-        public ExternalPractitionerSummary ConsultantToAdd
+        public ITable Recipients
         {
-            get { return _consultantToAdd; }
+            get { return _recipientsTable; }
+        }
+
+        public CrudActionModel RecipientsActionModel
+        {
+            get { return _recipientsActionModel; }
+        }
+
+        public ISelection SelectedRecipient
+        {
+            get { return new Selection(_selectedRecipient); }
             set
             {
-                if (!object.Equals(value, _consultantToAdd))
+                if(!object.Equals(value, _selectedRecipient))
                 {
-                    _consultantToAdd = value;
-                    UpdateConsultantActionModel();
-                    NotifyPropertyChanged("ConsultantToAdd");
+                    _selectedRecipient = (ResultRecipientSummary)value.Item;
+                    UpdateRecipientsActionModel();
+                    NotifyPropertyChanged("SelectedRecipient");
+                }
+            }
+        }
+
+        public ILookupHandler RecipientsLookupHandler
+        {
+            get { return _recipientLookupHandler; }
+        }
+
+        public ExternalPractitionerSummary RecipientToAdd
+        {
+            get { return _recipientToAdd; }
+            set
+            {
+                if (!object.Equals(value, _recipientToAdd))
+                {
+                    _recipientToAdd = value;
+                    NotifyPropertyChanged("RecipientToAdd");
+
+                    _recipientContactPointToAdd = null;
+                    UpdateConsultantContactPointChoices();
+                    NotifyPropertyChanged("RecipientContactPointChoices");
+
+                    // must do this after contact point choices have been updated
+                    UpdateRecipientsActionModel();
+                }
+            }
+        }
+
+        public IList RecipientContactPointChoices
+        {
+            get { return _recipientContactPointChoices; }
+        }
+
+        public ExternalPractitionerContactPointDetail RecipientContactPointToAdd
+        {
+            get { return _recipientContactPointToAdd; }
+            set
+            {
+                if (_recipientContactPointToAdd != value)
+                {
+                    _recipientContactPointToAdd = value;
+                    NotifyPropertyChanged("RecipientContactPointToAdd");
                 }
             }
         }
@@ -736,25 +793,25 @@ namespace ClearCanvas.Ris.Client.Adt
             _proceduresActionModel.Delete.Enabled = (_selectedProcedure != null && _selectedProcedure.CanModify);
         }
 
-        public void AddConsultant()
+        public void AddRecipient()
         {
-            if(_consultantToAdd != null)
+            if(_recipientToAdd != null && _recipientContactPointToAdd != null)
             {
-                _consultantsTable.Items.Add(_consultantToAdd);
+                _recipientsTable.Items.Add(new ResultRecipientSummary(_recipientToAdd, _recipientContactPointToAdd.GetSummary(), new EnumValueInfo("ANY", null, null)));
             }
         }
 
-        public void RemoveSelectedConsultant()
+        public void RemoveSelectedRecipient()
         {
-            _consultantsTable.Items.Remove(_selectedConsultant);
-            _selectedConsultant = null;
-            NotifyPropertyChanged("SelectedConsultant");
+            _recipientsTable.Items.Remove(_selectedRecipient);
+            _selectedRecipient = null;
+            NotifyPropertyChanged("SelectedRecipient");
         }
 
-        public void UpdateConsultantActionModel()
+        public void UpdateRecipientsActionModel()
         {
-            _consultantsActionModel.Add.Enabled = (_consultantToAdd != null);
-            _consultantsActionModel.Delete.Enabled = (_selectedConsultant != null);
+            _recipientsActionModel.Add.Enabled = (_recipientToAdd != null && _recipientContactPointToAdd != null);
+            _recipientsActionModel.Delete.Enabled = (_selectedRecipient != null);
         }
 
         public event EventHandler ChangeCommitted
@@ -824,10 +881,22 @@ namespace ClearCanvas.Ris.Client.Adt
             requisition.SchedulingRequestTime = _schedulingRequestTime;
             requisition.OrderingPractitioner = _selectedOrderingPractitioner;
             requisition.Procedures = new List<ProcedureRequisition>(_proceduresTable.Items);
-            requisition.CopiesToPractitioners = new List<ExternalPractitionerSummary>(_consultantsTable.Items);
             requisition.Attachments = new List<OrderAttachmentSummary>(_attachmentSummaryComponent.OrderAttachments);
             requisition.Notes = new List<OrderNoteDetail>(_noteSummaryComponent.Notes);
             requisition.ExtendedProperties = _extendedProperties;
+            requisition.ResultRecipients = new List<ResultRecipientSummary>(_recipientsTable.Items);
+
+            // there should always be a selected contact point, unless the ordering practitioner has 0 contact points
+            if (_selectedOrderingPractitionerContactPoint != null)
+            {
+                // add the ordering practitioner as a result recipient
+                requisition.ResultRecipients.Add(
+                    new ResultRecipientSummary(_selectedOrderingPractitioner,
+                                               _selectedOrderingPractitionerContactPoint.GetSummary(),
+                                               new EnumValueInfo("ANY", null)));
+            }
+
+
             return requisition;
         }
 
@@ -845,12 +914,55 @@ namespace ClearCanvas.Ris.Client.Adt
             _proceduresTable.Items.Clear();
             _proceduresTable.Items.AddRange(existingOrder.Procedures);
 
-            _consultantsTable.Items.Clear();
-            _consultantsTable.Items.AddRange(existingOrder.CopiesToPractitioners);
-
             _attachmentSummaryComponent.OrderAttachments = existingOrder.Attachments;
             _noteSummaryComponent.Notes = existingOrder.Notes;
             _orderAdditionalInfoComponent.OrderExtendedProperties = _extendedProperties = existingOrder.ExtendedProperties;
+
+            // initialize contact point choices for ordering practitioner
+            UpdateOrderingPractitionerContactPointChoices();
+
+            // what follows is some logic to try hide the ordering practitioner recipient from showing up in the
+            // recipients table, since he already appears on the main part of the screen
+
+            // select the recipient representing the ordering practitioner at the default contact point
+            ResultRecipientSummary orderingRecipient = CollectionUtils.SelectFirst(existingOrder.ResultRecipients,
+                delegate(ResultRecipientSummary r)
+                {
+                    return r.Practitioner.PractitionerRef == existingOrder.OrderingPractitioner.PractitionerRef
+                        && r.ContactPoint.IsDefaultContactPoint;
+                });
+
+            // if not found, then select the first recipient representing the ordering practitioner
+            if(orderingRecipient == null)
+            {
+                orderingRecipient = CollectionUtils.SelectFirst(existingOrder.ResultRecipients,
+                    delegate(ResultRecipientSummary r)
+                    {
+                        return r.Practitioner.PractitionerRef == existingOrder.OrderingPractitioner.PractitionerRef;
+                    });
+            }
+
+            // if the recipient object exists for the ordering practitioner (and this *should* always be the case)
+            if(orderingRecipient != null)
+            {
+                // initialize the ordering practitioner contact point
+                _selectedOrderingPractitionerContactPoint = CollectionUtils.SelectFirst(_orderingPractitionerContactPointChoices,
+                    delegate (ExternalPractitionerContactPointDetail d)
+                    {
+                        return d.ContactPointRef == orderingRecipient.ContactPoint.ContactPointRef;
+                    });
+
+                // populate the recipients table, excuding the orderingRecipient 
+                _recipientsTable.Items.Clear();
+                _recipientsTable.Items.AddRange(CollectionUtils.Reject(existingOrder.ResultRecipients,
+                    delegate (ResultRecipientSummary r) { return r == orderingRecipient; }));
+            }
+            else
+            {
+                // just add all recipients to the table
+                _recipientsTable.Items.Clear();
+                _recipientsTable.Items.AddRange(existingOrder.ResultRecipients);
+            }
         }
         
         private bool SubmitOrder()
@@ -929,6 +1041,32 @@ namespace ClearCanvas.Ris.Client.Adt
             _rightHandComponentContainerHost.StartComponent();
 
         }
-    
+
+        private void UpdateOrderingPractitionerContactPointChoices()
+        {
+            _orderingPractitionerContactPointChoices = GetPractitionerContactPoints(_selectedOrderingPractitioner);
+        }
+
+        private void UpdateConsultantContactPointChoices()
+        {
+            _recipientContactPointChoices = GetPractitionerContactPoints(_recipientToAdd);
+        }
+
+        private List<ExternalPractitionerContactPointDetail> GetPractitionerContactPoints(ExternalPractitionerSummary prac)
+        {
+            List<ExternalPractitionerContactPointDetail> choices = new List<ExternalPractitionerContactPointDetail>();
+            if (prac != null)
+            {
+                Platform.GetService<IOrderEntryService>(
+                    delegate(IOrderEntryService service)
+                    {
+                        GetExternalPractitionerContactPointsResponse response = service.GetExternalPractitionerContactPoints(
+                            new GetExternalPractitionerContactPointsRequest(prac.PractitionerRef));
+                        choices = response.ContactPoints;
+                    });
+            }
+            return choices;
+        }
+
     }
 }

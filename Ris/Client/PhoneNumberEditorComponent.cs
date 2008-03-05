@@ -49,12 +49,14 @@ namespace ClearCanvas.Ris.Client
     public class PhoneNumberEditorComponent : ApplicationComponent
     {
         private TelephoneDetail _phoneNumber;
-        private IList<EnumValueInfo> _phoneTypeChoices;
+        private readonly IList<EnumValueInfo> _phoneTypeChoices;
+        private bool _phoneTypeEnabled;
 
         public PhoneNumberEditorComponent(TelephoneDetail phoneNumber, IList<EnumValueInfo> phoneTypeChoices)
         {
             _phoneNumber = phoneNumber;
             _phoneTypeChoices = phoneTypeChoices;
+            _phoneTypeEnabled = phoneTypeChoices.Count > 1;
         }
 
         public override void Start()
@@ -115,6 +117,11 @@ namespace ClearCanvas.Ris.Client
                 _phoneNumber.Extension = value;
                 this.Modified = true;
             }
+        }
+
+        public bool PhoneTypeEnabled
+        {
+            get { return _phoneTypeEnabled; }
         }
 
         public string PhoneType

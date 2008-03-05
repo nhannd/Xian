@@ -76,7 +76,7 @@ namespace ClearCanvas.Healthcare.Tests
 
             Order order = Order.NewOrder(
                 accession, patient, visit, ds, reasonForStudy, OrderPriority.R, facility, facility,
-                scheduleTime, orderingPrac, new List<ExternalPractitioner>(), attachments, notes);
+                scheduleTime, orderingPrac, new List<ResultRecipient>(), attachments, notes);
 
             // check basics
             Assert.AreEqual(accession, order.AccessionNumber);

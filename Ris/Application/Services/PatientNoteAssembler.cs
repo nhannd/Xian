@@ -31,6 +31,7 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
@@ -39,20 +40,18 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class PatientNoteAssembler
     {
-        class PatientNoteSynchronizeHelper : SynchronizeHelper<PatientNote, PatientNoteDetail>
+        class PatientNoteSynchronizeHelper : CollectionSynchronizeHelper<PatientNote, PatientNoteDetail>
         {
             private readonly PatientNoteAssembler _assembler;
             private readonly Staff _currentUserStaff;
             private readonly IPersistenceContext _context;
 
             public PatientNoteSynchronizeHelper(PatientNoteAssembler assembler, Staff currentUserStaff, IPersistenceContext context)
+                :base(false, false)
             {
                 _assembler = assembler;
                 _currentUserStaff = currentUserStaff;
                 _context = context;
-
-                _allowUpdate = false;
-                _allowRemove = false;
             }
 
             protected override bool CompareItems(PatientNote domainItem, PatientNoteDetail sourceItem)
@@ -61,7 +60,7 @@ namespace ClearCanvas.Ris.Application.Services
                        Equals(domainItem.Author.GetRef(), sourceItem.Author.StaffRef);
             }
 
-            protected override PatientNote CreateDomainItem(PatientNoteDetail sourceItem)
+            protected override PatientNote CreateDestItem(PatientNoteDetail sourceItem)
             {
                 return _assembler.CreateNote(sourceItem, _currentUserStaff, _context);
             }

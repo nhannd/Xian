@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
@@ -38,18 +39,16 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class OrderAttachmentAssembler
     {
-        class OrderAttachmentSynchronizeHelper : SynchronizeHelper<OrderAttachment, OrderAttachmentSummary>
+        class OrderAttachmentSynchronizeHelper : CollectionSynchronizeHelper<OrderAttachment, OrderAttachmentSummary>
         {
             private readonly OrderAttachmentAssembler _assembler;
             private readonly IPersistenceContext _context;
 
             public OrderAttachmentSynchronizeHelper(OrderAttachmentAssembler assembler, IPersistenceContext context)
+                :base(true, true)
             {
                 _assembler = assembler;
                 _context = context;
-
-                _allowUpdate = true;
-                _allowRemove = true;
             }
 
             protected override bool CompareItems(OrderAttachment domainItem, OrderAttachmentSummary sourceItem)
@@ -57,17 +56,17 @@ namespace ClearCanvas.Ris.Application.Services
                 return Equals(domainItem.Document.GetRef(), sourceItem.Document.DocumentRef);
             }
 
-            protected override OrderAttachment CreateDomainItem(OrderAttachmentSummary sourceItem)
+            protected override OrderAttachment CreateDestItem(OrderAttachmentSummary sourceItem)
             {
                 return _assembler.CreateOrderAttachment(sourceItem, _context);
             }
 
-            protected override void UpdateDomainItem(OrderAttachment domainItem, OrderAttachmentSummary sourceItem)
+            protected override void UpdateDestItem(OrderAttachment domainItem, OrderAttachmentSummary sourceItem)
             {
                 _assembler.UpdateOrderAttachment(domainItem, sourceItem, _context);
             }
 
-            protected override void RemoveDomainItem(IList<OrderAttachment> domainList, OrderAttachment domainItem)
+            protected override void RemoveDestItem(ICollection<OrderAttachment> domainList, OrderAttachment domainItem)
             {
                 domainList.Remove(domainItem);
             }

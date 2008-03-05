@@ -61,11 +61,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             requisition.OrderingFacility = facilityAssembler.CreateFacilitySummary(order.OrderingFacility);
             requisition.ReasonForStudy = order.ReasonForStudy;
             requisition.Priority = EnumUtils.GetEnumValueInfo(order.Priority, context);
-            requisition.CopiesToPractitioners = CollectionUtils.Map<ExternalPractitioner, ExternalPractitionerSummary>(
-                order.ResultCopiesToPractitioners,
-                delegate(ExternalPractitioner p)
+            requisition.ResultRecipients = CollectionUtils.Map<ResultRecipient, ResultRecipientSummary>(
+                order.ResultRecipients,
+                delegate(ResultRecipient r)
                 {
-                    return pracAssembler.CreateExternalPractitionerSummary(p, context);
+                    return new ResultRecipientSummary(
+                        pracAssembler.CreateExternalPractitionerSummary(r.PractitionerContactPoint.Practitioner, context),
+                        pracAssembler.CreateExternalPractitionerContactPointSummary(r.PractitionerContactPoint),
+                        EnumUtils.GetEnumValueInfo(r.PreferredCommunicationMode, context));
                 });
 
             requisition.Procedures = CollectionUtils.Map<Procedure, ProcedureRequisition>(
@@ -110,13 +113,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             order.ReasonForStudy = requisition.ReasonForStudy;
             order.Priority = EnumUtils.GetEnumValue<OrderPriority>(requisition.Priority);
 
-            // wipe out and reset the copies to practitioners
-            order.ResultCopiesToPractitioners.Clear();
-            order.ResultCopiesToPractitioners.AddAll(CollectionUtils.Map<ExternalPractitionerSummary, ExternalPractitioner>(
-                requisition.CopiesToPractitioners,
-                delegate(ExternalPractitionerSummary s)
+            // wipe out and reset the result recipients
+            order.ResultRecipients.Clear();
+            order.ResultRecipients.AddAll(CollectionUtils.Map<ResultRecipientSummary, ResultRecipient>(
+                requisition.ResultRecipients,
+                delegate(ResultRecipientSummary s)
                 {
-                    return context.Load<ExternalPractitioner>(s.PractitionerRef, EntityLoadFlags.Proxy);
+                    return new ResultRecipient(
+                        context.Load<ExternalPractitionerContactPoint>(s.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy),
+                        EnumUtils.GetEnumValue<ResultCommunicationMode>(s.PreferredCommunicationMode));
                 }));
 
             // synchronize Order.Attachments from order requisition

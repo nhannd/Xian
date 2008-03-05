@@ -84,23 +84,5 @@ namespace ClearCanvas.Ris.Application.Services
 
             return telephoneNumber;
         }
-
-        public void AddTelephoneNumber(TelephoneDetail telephoneDetail, IList<TelephoneNumber> phoneNumbers)
-        {
-            //TODO: Check automatic expiration of Telephone functionality
-            TelephoneNumber newNumber = CreateTelephoneNumber(telephoneDetail);
-            
-            foreach (TelephoneNumber phone in phoneNumbers)
-            {
-                if (newNumber.Equipment.Equals(phone.Equipment) &&
-                    newNumber.Use.Equals(phone.Use))
-                {
-                    // Automatically expired any previous phone numbers
-                    phone.ValidRange.Until = Platform.Time.Date;
-                }
-            }
-
-            phoneNumbers.Add(newNumber);
-        }
     }
 }

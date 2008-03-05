@@ -335,7 +335,7 @@ namespace ClearCanvas.Ris.Client
                                return req;
                            }));
                    
-                    requisition.CopiesToPractitioners = new List<ExternalPractitionerSummary>();
+                    requisition.ResultRecipients = new List<ResultRecipientSummary>();
                     requisition.Attachments = new List<OrderAttachmentSummary>();
                     requisition.Notes = new List<OrderNoteDetail>();
 

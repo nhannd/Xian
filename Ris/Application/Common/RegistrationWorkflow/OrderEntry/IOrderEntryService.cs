@@ -105,6 +105,14 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         ListOrderableProcedureTypesResponse ListOrderableProcedureTypes(ListOrderableProcedureTypesRequest request);
 
         /// <summary>
+        /// Gets detailed information about all of the contact points associated with a specified external practitioner.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        GetExternalPractitionerContactPointsResponse GetExternalPractitionerContactPoints(GetExternalPractitionerContactPointsRequest request);
+
+        /// <summary>
         /// Places a new order based on the specified information.
         /// </summary>
         /// <param name="request"></param>

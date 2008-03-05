@@ -40,21 +40,24 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class ExternalPractitionerDetail : DataContractBase
     {
-        public ExternalPractitionerDetail(PersonNameDetail personNameDetail, string licenseNumber, string billingNumber, List<TelephoneDetail> phoneDetails, List<AddressDetail> addressDetails, Dictionary<string, string> extendedProperties)
+        public ExternalPractitionerDetail(
+            PersonNameDetail personNameDetail,
+            string licenseNumber,
+            string billingNumber,
+            List<ExternalPractitionerContactPointDetail> contactPoints,
+            Dictionary<string, string> extendedProperties)
         {
             this.Name = personNameDetail;
-            this.TelephoneNumbers = phoneDetails;
-            this.Addresses = addressDetails;
             this.LicenseNumber = licenseNumber;
             this.BillingNumber = billingNumber;
+            this.ContactPoints = contactPoints;
             this.ExtendedProperties = extendedProperties;
         }
 
         public ExternalPractitionerDetail()
         {
             this.Name = new PersonNameDetail();
-            this.TelephoneNumbers = new List<TelephoneDetail>();
-            this.Addresses = new List<AddressDetail>();
+            this.ContactPoints = new List<ExternalPractitionerContactPointDetail>();
             this.ExtendedProperties = new Dictionary<string, string>();
         }
 
@@ -62,16 +65,13 @@ namespace ClearCanvas.Ris.Application.Common
         public PersonNameDetail Name;
 
         [DataMember]
-        public List<TelephoneDetail> TelephoneNumbers;
-
-        [DataMember]
-        public List<AddressDetail> Addresses;
-
-        [DataMember]
         public string LicenseNumber;
 
         [DataMember]
         public string BillingNumber;
+
+        [DataMember]
+        public List<ExternalPractitionerContactPointDetail> ContactPoints;
 
         [DataMember]
         public Dictionary<string, string> ExtendedProperties;

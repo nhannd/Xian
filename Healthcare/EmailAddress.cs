@@ -32,9 +32,11 @@
 using System;
 using System.Collections;
 using System.Text;
-
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
+using System.Collections.Generic;
 
 
 namespace ClearCanvas.Healthcare {
@@ -45,13 +47,22 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class EmailAddress
 	{
-	
-		/// <summary>
+        /// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.
 		/// </summary>
 		private void CustomInitialize()
 		{
 		}
+
+        /// <summary>
+        /// Returns true if the objects represent the same email address, regardless of validity range.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <returns></returns>
+        public bool IsSameEmailAddress(EmailAddress that)
+        {
+            return that != null && this._address == that._address;
+        }
 	}
 }

@@ -414,7 +414,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     null);
                 _xmlDoc.Load(reader);
             }
-            catch (ConfigurationDocumentNotFoundException e)
+            catch (ConfigurationDocumentNotFoundException)
             {
                 // create blank document
                 _xmlDoc.LoadXml(string.Format("<{0}/>", tagValidationRules));

@@ -146,6 +146,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 
                     ep.Name = new PersonName(epFamilyName, epGivenName, epMiddlename, epPrefix, epSuffix, epDegree);
 
+                    // create a single default contact point
+                    ExternalPractitionerContactPoint contactPoint = new ExternalPractitionerContactPoint(ep);
+                    contactPoint.Name = "Default";
+                    contactPoint.IsDefaultContactPoint = true;
 
                     try
                     {
@@ -159,7 +163,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
                             AddressType.B,
                             new DateTimeRange(addressValidFrom, addressValidUntil));
                         Validation.Validate(epAddress);
-                        ep.Addresses.Add(epAddress);
+                        contactPoint.Addresses.Add(epAddress);
                     }
                     catch(EntityValidationException) { /* invalid address - ignore */ }
 
@@ -176,7 +180,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
                             new DateTimeRange(phoneValidFrom, phoneValidUntil));
 
                         Validation.Validate(epTelephone);
-                        ep.TelephoneNumbers.Add(epTelephone);
+                        contactPoint.TelephoneNumbers.Add(epTelephone);
                     }
                     catch (EntityValidationException) { /* invalid phone - ignore */ }
 
@@ -192,10 +196,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
                             new DateTimeRange(faxValidFrom, faxValidUntil));
 
                         Validation.Validate(epFax);
-                        ep.TelephoneNumbers.Add(epFax);
-
+                        contactPoint.TelephoneNumbers.Add(epFax);
                     }
-                    catch (EntityValidationException) { /* invalid phone - ignore */ }
+                    catch (EntityValidationException) { /* invalid fax - ignore */ }
 
                     _context.Lock(ep, DirtyState.New);
 

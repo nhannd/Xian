@@ -106,10 +106,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         public ExternalPractitionerSummary OrderingPractitioner;
 
         /// <summary>
-        /// Additional practitioners to whom copies of the results should be sent. Optional.
+        /// List of recipients to receive results of the order.
         /// </summary>
         [DataMember]
-        public List<ExternalPractitionerSummary> CopiesToPractitioners;
+        public List<ResultRecipientSummary> ResultRecipients;
 
         /// <summary>
         /// A list of attachments for this order.  Optional.

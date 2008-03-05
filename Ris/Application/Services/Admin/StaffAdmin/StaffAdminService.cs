@@ -99,10 +99,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             dummyProvinces.Add("Ontario");
 
             return new LoadStaffEditorFormDataResponse(
-                EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext),
-                dummyProvinces,
-                dummyCountries,
-                (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false),
                 EnumUtils.GetEnumValueList<StaffTypeEnum>(PersistenceContext)
                 );
 

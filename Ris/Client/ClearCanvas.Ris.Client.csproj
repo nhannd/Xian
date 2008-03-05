@@ -46,6 +46,10 @@
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
+    <Compile Include="ExternalPractitionerContactPointDetailsEditorComponent.cs" />
+    <Compile Include="ExternalPractitionerContactPointEditorComponent.cs" />
+    <Compile Include="ExternalPractitionerContactPointSummaryComponent.cs" />
+    <Compile Include="Formatting\ExternalPractitionerContactPointFormat.cs" />
     <Compile Include="HomePageSettings.cs" />
     <Compile Include="HomePageSettings.Designer.cs">
       <AutoGen>True</AutoGen>

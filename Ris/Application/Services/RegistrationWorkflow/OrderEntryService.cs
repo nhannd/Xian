@@ -204,6 +204,32 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
+        public GetExternalPractitionerContactPointsResponse GetExternalPractitionerContactPoints(GetExternalPractitionerContactPointsRequest request)
+        {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.PractitionerRef, "PractitionerRef");
+
+            ExternalPractitioner practitioner = PersistenceContext.Load<ExternalPractitioner>(request.PractitionerRef);
+            ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
+
+            // sort contact points such that default is first
+            List<ExternalPractitionerContactPoint> sortedContactPoints = CollectionUtils.Sort(practitioner.ContactPoints,
+                delegate(ExternalPractitionerContactPoint x, ExternalPractitionerContactPoint y)
+                {
+                    // descending sort
+                    return -x.IsDefaultContactPoint.CompareTo(y.IsDefaultContactPoint);
+                });
+
+            return new GetExternalPractitionerContactPointsResponse(
+                CollectionUtils.Map<ExternalPractitionerContactPoint, ExternalPractitionerContactPointDetail>(
+                    sortedContactPoints,
+                    delegate (ExternalPractitionerContactPoint cp)
+                    {
+                        return assembler.CreateExternalPractitionerContactPointDetail(cp, PersistenceContext);
+                    }));
+        }
+
+        [ReadOperation]
         public GetOrderRequisitionForEditResponse GetOrderRequisitionForEdit(GetOrderRequisitionForEditRequest request)
         {
             Platform.CheckForNullReference(request, "request");
@@ -315,11 +341,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             
             Facility orderingFacility = PersistenceContext.Load<Facility>(requisition.OrderingFacility.FacilityRef, EntityLoadFlags.Proxy);
 
-            List<ExternalPractitioner> consultingPractitioners = CollectionUtils.Map<ExternalPractitionerSummary, ExternalPractitioner>(
-                requisition.CopiesToPractitioners,
-                delegate (ExternalPractitionerSummary p)
+            List<ResultRecipient> resultRecipients = CollectionUtils.Map<ResultRecipientSummary, ResultRecipient>(
+                requisition.ResultRecipients,
+                delegate(ResultRecipientSummary s)
                     {
-                        return PersistenceContext.Load<ExternalPractitioner>(p.PractitionerRef, EntityLoadFlags.Proxy);
+                        return new ResultRecipient(
+                            PersistenceContext.Load<ExternalPractitionerContactPoint>(s.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy),
+                            EnumUtils.GetEnumValue<ResultCommunicationMode>(s.PreferredCommunicationMode));
                     });
 
             // generate set of procedures
@@ -359,7 +387,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     orderingFacility,
                     requisition.SchedulingRequestTime,
                     orderingPhysician,
-                    consultingPractitioners,
+                    resultRecipients,
                     procedures,
                     attachments,
                     notes);

@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -44,7 +45,7 @@ namespace ClearCanvas.Ris.Application.Services
     /// </summary>
     class SimplifiedPhoneTypeAssembler
     {
-        enum SimplifiedPhoneType
+        public enum SimplifiedPhoneType
         {
             Unknown,    // need this to deal with combinations that don't map to anything
 
@@ -108,21 +109,38 @@ namespace ClearCanvas.Ris.Application.Services
             }
         }
 
-        public List<EnumValueInfo> GetSimplifiedPhoneTypeChoices(bool includeFaxPager)
+        public List<EnumValueInfo> GetPatientPhoneTypeChoices()
         {
-            List<EnumValueInfo> choices = new List<EnumValueInfo>();
-            choices.Add(new EnumValueInfo(SimplifiedPhoneType.Home.ToString(), SimplifiedPhoneType.Home.ToString()));
-            choices.Add(new EnumValueInfo(SimplifiedPhoneType.Work.ToString(), SimplifiedPhoneType.Work.ToString()));
-            choices.Add(new EnumValueInfo(SimplifiedPhoneType.Mobile.ToString(), SimplifiedPhoneType.Mobile.ToString()));
-
-            if (includeFaxPager)
-            {
-                choices.Add(new EnumValueInfo(SimplifiedPhoneType.Fax.ToString(), SimplifiedPhoneType.Fax.ToString()));
-                choices.Add(new EnumValueInfo(SimplifiedPhoneType.Pager.ToString(), SimplifiedPhoneType.Pager.ToString()));
-            }
-
-            return choices;
+            // order is important because it is the order that things will show up in the UI by default
+            return GetPhoneTypeChoices(
+                new SimplifiedPhoneType[]
+                    {
+                        SimplifiedPhoneType.Home,
+                        SimplifiedPhoneType.Work,
+                        SimplifiedPhoneType.Mobile
+                    });
         }
+
+        public List<EnumValueInfo> GetPractitionerPhoneTypeChoices()
+        {
+            // order is important because it is the order that things will show up in the UI by default
+            return GetPhoneTypeChoices(
+                new SimplifiedPhoneType[]
+                    {
+                        SimplifiedPhoneType.Fax,
+                        SimplifiedPhoneType.Work,
+                        SimplifiedPhoneType.Mobile,
+                        SimplifiedPhoneType.Pager
+                    });
+        }
+
+        public List<EnumValueInfo> GetPhoneTypeChoices(SimplifiedPhoneType[] list)
+        {
+            return CollectionUtils.Map<SimplifiedPhoneType, EnumValueInfo>(list,
+                delegate(SimplifiedPhoneType t) { return new EnumValueInfo(t.ToString(), t.ToString()); });
+        }
+
+
 
     }
 }

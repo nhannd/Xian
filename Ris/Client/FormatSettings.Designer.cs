@@ -166,5 +166,14 @@ namespace ClearCanvas.Ris.Client {
                 return ((string)(this["VisitNumberDefaultFormat"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("%N (%A ph:%T fx:%F)")]
+        public string ExternalPractitionerContactPointDefaultFormat {
+            get {
+                return ((string)(this["ExternalPractitionerContactPointDefaultFormat"]));
+            }
+        }
     }
 }

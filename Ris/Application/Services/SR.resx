@@ -189,4 +189,7 @@
   <data name="ExceptionPasswordExpired" xml:space="preserve">
     <value>Password has expired.</value>
   </data>
+  <data name="ExceptionOneDefaultContactPoint" xml:space="preserve">
+    <value>Only one contact point can be set as the default.</value>
+  </data>
 </root>

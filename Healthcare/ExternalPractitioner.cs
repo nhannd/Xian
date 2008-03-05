@@ -34,6 +34,7 @@ using System.Collections;
 using System.Text;
 
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare {
 
@@ -43,7 +44,18 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class ExternalPractitioner : ClearCanvas.Enterprise.Core.Entity
 	{
-	
+        /// <summary>
+        /// Returns the default contact point, or null if no default contact point exists.
+        /// </summary>
+        public virtual ExternalPractitionerContactPoint DefaultContactPoint
+        {
+            get
+            {
+                return CollectionUtils.SelectFirst(_contactPoints,
+                    delegate(ExternalPractitionerContactPoint cp) { return cp.IsDefaultContactPoint; });
+            }
+        }
+
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.

@@ -98,7 +98,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
                 EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext),
                 dummyProvinces,
                 dummyCountries,
-                (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false));
+                (new SimplifiedPhoneTypeAssembler()).GetPractitionerPhoneTypeChoices(),
+                EnumUtils.GetEnumValueList<ResultCommunicationModeEnum>(PersistenceContext));
 
         }
 

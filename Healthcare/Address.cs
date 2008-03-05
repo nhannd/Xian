@@ -32,10 +32,11 @@
 using System;
 using System.Collections;
 using System.Text;
-
+using ClearCanvas.Common.Utilities;
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
+using System.Collections.Generic;
 
 
 namespace ClearCanvas.Healthcare {
@@ -60,7 +61,7 @@ namespace ClearCanvas.Healthcare {
         /// </summary>
         /// <param name="that">The Address to compare to</param>
         /// <returns>True if all fields other than the validity range are the same, False otherwise</returns>
-        public bool IsEquivalentTo(Address that)
+        public bool IsSameAddress(Address that)
         {
             return (that != null) &&
                 ((this._unit == default(string)) ? (that._unit == default(string)) : this._unit.Equals(that._unit, StringComparison.CurrentCultureIgnoreCase)) &&

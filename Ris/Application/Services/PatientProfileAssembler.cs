@@ -181,23 +181,22 @@ namespace ClearCanvas.Ris.Application.Services
 
             TelephoneNumberAssembler telephoneAssembler = new TelephoneNumberAssembler();
             profile.TelephoneNumbers.Clear();
-            foreach (TelephoneDetail t in detail.TelephoneNumbers)
+            if (detail.TelephoneNumbers != null)
             {
-                profile.TelephoneNumbers.Add(telephoneAssembler.CreateTelephoneNumber(t));
+                foreach (TelephoneDetail phoneDetail in detail.TelephoneNumbers)
+                {
+                    profile.TelephoneNumbers.Add(telephoneAssembler.CreateTelephoneNumber(phoneDetail));
+                }
             }
 
             AddressAssembler addressAssembler = new AddressAssembler();
             profile.Addresses.Clear();
-            foreach (AddressDetail a in detail.Addresses)
+            if (detail.Addresses != null)
             {
-                profile.Addresses.Add(addressAssembler.CreateAddress(a));
-            }
-
-            ContactPersonAssembler contactAssembler = new ContactPersonAssembler();
-            profile.ContactPersons.Clear();
-            foreach (ContactPersonDetail cp in detail.ContactPersons)
-            {
-                profile.ContactPersons.Add(contactAssembler.CreateContactPerson(cp));
+                foreach (AddressDetail addressDetail in detail.Addresses)
+                {
+                    profile.Addresses.Add(addressAssembler.CreateAddress(addressDetail));
+                }
             }
 
             EmailAddressAssembler emailAssembler = new EmailAddressAssembler();
@@ -205,6 +204,13 @@ namespace ClearCanvas.Ris.Application.Services
             foreach (EmailAddressDetail e in detail.EmailAddresses)
             {
                 profile.EmailAddresses.Add(emailAssembler.CreateEmailAddress(e));
+            }
+
+            ContactPersonAssembler contactAssembler = new ContactPersonAssembler();
+            profile.ContactPersons.Clear();
+            foreach (ContactPersonDetail cp in detail.ContactPersons)
+            {
+                profile.ContactPersons.Add(contactAssembler.CreateContactPerson(cp));
             }
 
             PatientNoteAssembler noteAssembler = new PatientNoteAssembler();

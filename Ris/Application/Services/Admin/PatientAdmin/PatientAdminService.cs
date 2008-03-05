@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             response.PrimaryLanguageChoices = EnumUtils.GetEnumValueList<SpokenLanguageEnum>(PersistenceContext);
             response.ReligionChoices = EnumUtils.GetEnumValueList<ReligionEnum>(PersistenceContext);
             response.SexChoices = EnumUtils.GetEnumValueList<SexEnum>(PersistenceContext);
-            response.PhoneTypeChoices = (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false);
+            response.PhoneTypeChoices = (new SimplifiedPhoneTypeAssembler()).GetPatientPhoneTypeChoices();
 
             return response;
         }

@@ -38,5 +38,8 @@
     <Setting Name="VisitNumberDefaultFormat" Type="System.String" Scope="Application">
       <Value Profile="(Default)">%A %N</Value>
     </Setting>
+    <Setting Name="ExternalPractitionerContactPointDefaultFormat" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">%N (%A ph:%T fx:%F)</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

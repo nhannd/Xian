@@ -86,11 +86,16 @@
     <Compile Include="BrowsePatientData\ReportListItem.cs" />
     <Compile Include="BrowsePatientData\ListReportsResponse.cs" />
     <Compile Include="BrowsePatientData\ListReportsRequest.cs" />
+    <Compile Include="ExternalPractitionerContactPointDetail.cs" />
+    <Compile Include="ExternalPractitionerContactPointSummary.cs" />
     <Compile Include="Login\ChangePasswordRequest.cs" />
     <Compile Include="Login\ChangePasswordResponse.cs" />
     <Compile Include="Login\LoginServiceRequestBase.cs" />
     <Compile Include="Login\LogoutRequest.cs" />
     <Compile Include="Login\LogoutResponse.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\GetExternalPractitionerContactPointsResponse.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\GetExternalPractitionerContactPointsRequest.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\ResultRecipientSummary.cs" />
     <Compile Include="ReportDetail.cs" />
     <Compile Include="OrderNoteDetail.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationRequestBase.cs" />

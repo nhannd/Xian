@@ -139,7 +139,7 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
             {
                 results.Add(GetResult<TelephoneNumber>(x, y, PatientProfileDiscrepancy.HomePhone,
                     delegate(PatientProfile p) { return p.CurrentHomePhone; },
-                    delegate(TelephoneNumber a, TelephoneNumber b) { return a.IsEquivalentTo(b); }));
+                    delegate(TelephoneNumber a, TelephoneNumber b) { return a.IsSameNumber(b); }));
             }
 
             // HomeAddress
@@ -147,7 +147,7 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
             {
                 results.Add(GetResult<Address>(x, y, PatientProfileDiscrepancy.HomeAddress,
                     delegate(PatientProfile p) { return p.CurrentHomeAddress; },
-                    delegate(Address a, Address b) { return a.IsEquivalentTo(b); }));
+                    delegate(Address a, Address b) { return a.IsSameAddress(b); }));
             }
 
             // WorkPhone
@@ -155,7 +155,7 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
             {
                 results.Add(GetResult<TelephoneNumber>(x, y, PatientProfileDiscrepancy.WorkPhone,
                     delegate(PatientProfile p) { return p.CurrentWorkPhone; },
-                    delegate(TelephoneNumber a, TelephoneNumber b) { return a.IsEquivalentTo(b); }));
+                    delegate(TelephoneNumber a, TelephoneNumber b) { return a.IsSameNumber(b); }));
             }
 
             // WorkAddress
@@ -163,7 +163,7 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
             {
                 results.Add(GetResult<Address>(x, y, PatientProfileDiscrepancy.WorkAddress,
                     delegate(PatientProfile p) { return p.CurrentWorkAddress; },
-                    delegate(Address a, Address b) { return a.IsEquivalentTo(b); }));
+                    delegate(Address a, Address b) { return a.IsSameAddress(b); }));
             }
 
             return results;

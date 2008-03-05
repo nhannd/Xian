@@ -49,8 +49,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _type.DataSource = _component.TypeChoices;
-            _type.DataBindings.Add("Value", _component, "Type", true, DataSourceUpdateMode.OnPropertyChanged);
+            _type.DataSource = _component.AddressTypeChoices;
+            _type.DataBindings.Add("Value", _component, "AddressType", true, DataSourceUpdateMode.OnPropertyChanged);
+            _type.DataBindings.Add("Enabled", _component, "AddressTypeEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _province.DataSource = _component.ProvinceChoices;
             _province.DataBindings.Add("Value", _component, "Province", true, DataSourceUpdateMode.OnPropertyChanged);

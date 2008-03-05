@@ -62,7 +62,7 @@ namespace ClearCanvas.Healthcare.Tests
                 facility,
                 scheduleTime,
                 orderingPrac,
-                new List<ExternalPractitioner>(),
+                new List<ResultRecipient>(),
                 attachments,
                 notes);
         }

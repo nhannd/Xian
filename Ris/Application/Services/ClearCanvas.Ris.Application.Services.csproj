@@ -73,7 +73,6 @@
     <Compile Include="PatientAttachmentAssembler.cs" />
     <Compile Include="ProtocolAssembler.cs" />
     <Compile Include="ReportAssembler.cs" />
-    <Compile Include="SynchronizeHelper.cs" />
     <Compile Include="MimeDocumentService\MimeDocumentService.cs" />
     <Compile Include="ExternalPractitionerAssembler.cs" />
     <Compile Include="Admin\DataExporterBase.cs" />

@@ -77,6 +77,7 @@
     <Compile Include="Alert\IAlert.cs" />
     <Compile Include="Alert\LanguageAlert.cs" />
     <Compile Include="Alert\NoteAlert.cs" />
+    <Compile Include="ExternalPractitionerContactPoint.cs" />
     <Compile Include="OrderNote.cs" />
     <Compile Include="PerformingGroup.cs" />
     <Compile Include="ProcedureBuilder.cs" />
@@ -91,6 +92,8 @@
     <Compile Include="RegistrationWorklist.cs" />
     <Compile Include="RelevanceGroup.cs" />
     <Compile Include="ReportingWorklist.cs" />
+    <Compile Include="ResultCommunicationMode.cs" />
+    <Compile Include="ResultRecipient.cs" />
     <Compile Include="TechnologistWorklist.cs" />
     <Compile Include="Tests\TestExtensionFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />

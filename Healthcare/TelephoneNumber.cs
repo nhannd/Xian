@@ -36,6 +36,8 @@ using System.Text;
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 
 namespace ClearCanvas.Healthcare {
@@ -60,7 +62,7 @@ namespace ClearCanvas.Healthcare {
         /// </summary>
         /// <param name="that">The TelephoneNumber to compare to</param>
         /// <returns>True if all fields other than the validity range are the same, False otherwise</returns>
-        public bool IsEquivalentTo(TelephoneNumber that)
+        public bool IsSameNumber(TelephoneNumber that)
         {
             return (that != null) &&
                 ((this._countryCode == default(string)) ? (that._countryCode == default(string)) : this._countryCode.Equals(that._countryCode)) &&

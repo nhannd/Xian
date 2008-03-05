@@ -40,6 +40,7 @@ using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -83,7 +84,7 @@ namespace ClearCanvas.Ris.Client
 
     public class ExternalPractitionerEditorComponent : NavigatorComponentContainer
     {
-        #region StaffEditorContext
+        #region EditorContext
 
         class EditorContext : IExternalPractitionerEditorContext
         {
@@ -116,8 +117,7 @@ namespace ClearCanvas.Ris.Client
         private readonly bool _isNew;
 
         private ExternalPractitionerDetailsEditorComponent _detailsEditor;
-        private AddressesSummaryComponent _addressesSummary;
-        private PhoneNumbersSummaryComponent _phoneNumbersSummary;
+        private ExternalPractitionerContactPointSummaryComponent _contactPointSummary;
 
         private List<IExternalPractitionerEditorPage> _extensionPages;
 
@@ -154,10 +154,12 @@ namespace ClearCanvas.Ris.Client
                 {
                     LoadExternalPractitionerEditorFormDataResponse formDataResponse = service.LoadExternalPractitionerEditorFormData(new LoadExternalPractitionerEditorFormDataRequest());
 
+                    _contactPointSummary = new ExternalPractitionerContactPointSummaryComponent(
+                        formDataResponse.AddressTypeChoices, formDataResponse.PhoneTypeChoices, formDataResponse.ResultCommunicationModeChoices);
+
                     string rootPath = SR.TitleExternalPractitioner;
                     this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new ExternalPractitionerDetailsEditorComponent(_isNew)));
-                    this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
-                    this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
+                    this.Pages.Add(new NavigatorPage(rootPath + "/Contact Points", _contactPointSummary));
 
                     this.ValidationStrategy = new AllComponentsValidationStrategy();
 
@@ -173,8 +175,10 @@ namespace ClearCanvas.Ris.Client
                     }
 
                     _detailsEditor.ExternalPractitionerDetail = _practitionerDetail;
-                    _addressesSummary.Subject = _practitionerDetail.Addresses;
-                    _phoneNumbersSummary.Subject = _practitionerDetail.TelephoneNumbers;
+                    _practitionerDetail.ContactPoints.ForEach(delegate(ExternalPractitionerContactPointDetail p)
+                                                              {
+                                                                  _contactPointSummary.Subject.Add(p);
+                                                              });
                 });
 
             // instantiate all extension pages
@@ -209,6 +213,12 @@ namespace ClearCanvas.Ris.Client
 
             try
             {
+                _practitionerDetail.ContactPoints.Clear();
+                foreach (ExternalPractitionerContactPointDetail detail in _contactPointSummary.Subject)
+                {
+                    _practitionerDetail.ContactPoints.Add(detail);
+                }
+
                 // give extension pages a chance to save data prior to commit
                 _extensionPages.ForEach(delegate(IExternalPractitionerEditorPage page) { page.Save(); });
 
