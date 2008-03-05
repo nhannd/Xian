@@ -83,12 +83,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			#endregion
 		}
 
-		private readonly ImageSop _imageSop;
+		private readonly Frame _frame;
 		private uint _index;
 
-		public AutoVoiLutLinear(ImageSop imageSop)
+		public AutoVoiLutLinear(Frame frame)
 		{
-			_imageSop = imageSop;
+			_frame = frame;
 			_index = 0;
 		}
 
@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		private Window[] WindowCenterAndWidth
 		{
-			get { return _imageSop.WindowCenterAndWidth; }
+			get { return _frame.WindowCenterAndWidth; }
 		}
 
 		private void SetIndex(uint newIndex)

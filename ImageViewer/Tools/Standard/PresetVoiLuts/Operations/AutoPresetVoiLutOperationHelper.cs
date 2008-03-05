@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 					if (currentLut is AutoVoiLutLinear)
 						((AutoVoiLutLinear)currentLut).ApplyNext();
 					else
-						manager.InstallLut(new AutoVoiLutLinear(sopProvider.ImageSop));
+						manager.InstallLut(new AutoVoiLutLinear(sopProvider.Frame));
 
 					return;
 				}
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			if (sopProvider != null)
 			{
 				if (sopProvider.Frame.WindowCenterAndWidth.Length > 0)
-					return new AutoVoiLutLinear(sopProvider.ImageSop);
+					return new AutoVoiLutLinear(sopProvider.Frame);
 			}
 
 			GrayscalePixelData pixelData = (GrayscalePixelData)((IImageGraphicProvider)presentationImage).ImageGraphic.PixelData;

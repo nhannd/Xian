@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private bool CalculateReferencePoint(IImageBox imageBox, Vector3D referencePositionPatient)
 		{
-			ImageSop referenceSop = base.SelectedImageSopProvider.ImageSop;
+			Frame referenceFrame = base.SelectedImageSopProvider.Frame;
 
 			int closestIndex = -1;
 			float closestDistanceMillimetres = float.MaxValue;
@@ -107,7 +107,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				{
 					Frame frame = ((IImageSopProvider)image).Frame;
 
-					if (referenceSop.StudyInstanceUID == frame.ParentImageSop.StudyInstanceUID && referenceSop.FrameOfReferenceUid == frame.FrameOfReferenceUid)
+					if (referenceFrame.ParentImageSop.StudyInstanceUID == frame.ParentImageSop.StudyInstanceUID && 
+						referenceFrame.FrameOfReferenceUid == frame.FrameOfReferenceUid)
 					{
 						ImageInfo info = _cache.GetImageInformation(frame);
 						if (info != null)
