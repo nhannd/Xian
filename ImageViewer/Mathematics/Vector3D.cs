@@ -76,14 +76,6 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Clones the vector.
-		/// </summary>
-		public Vector3D Clone()
-		{
-			return new Vector3D(_x, _y, _z);
-		}
-
-		/// <summary>
 		/// Normalizes the vector, or makes it a unit vector.
 		/// </summary>
 		public Vector3D Normalize()
@@ -116,14 +108,14 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// <summary>
 		/// Finds the intersection of the line segment defined by <paramref name="lineStart"/> and
 		/// <paramref name="lineEnd"/> with a plane described by it's normal (<paramref name="planeNormal"/>)
-		/// and an arbitrary point in the plane (<paramref name="pointInPlane/>).
+		/// and an arbitrary point in the plane (<paramref name="pointInPlane"/>).
 		/// </summary>
 		/// <param name="planeNormal">The normal vector of an arbitrary plane.</param>
 		/// <param name="pointInPlane">A point in space that lies on the plane whose normal is <paramref name="planeNormal"/>.</param>
 		/// <param name="lineStart">The position vector of the start of the line.</param>
 		/// <param name="lineEnd">The position vector of the end of the line.</param>
 		/// <param name="restrictToLineSegmentBoundaries">Specifies whether to restrict the point of intersection
-		/// to a point on the line segment, or allow the line to be extended beyond it's boundaries.
+		/// to a point on the line segment, or allow the line to be extended beyond it's boundaries.</param>
 		/// <returns>A position vector describing the point of intersection of the line with the plane, or null if the
 		/// line and plane do not intersect.</returns>
 		public static Vector3D GetIntersectionOfLineSegmentWithPlane(
