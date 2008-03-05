@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Mathematics;
 using System.Threading;
@@ -93,6 +94,20 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 				return info;
 			}
+		}
+
+		// helper method; don't want to add a new class just for this.
+		public static float ComputeAngleBetweenNormals(ImageInfo info1, ImageInfo info2)
+		{
+			// the vectors are already normalized, so we don't need to divide by the magnitudes.
+			float dot = info1.Normal.Dot(info2.Normal);
+
+			if (dot < -1F)
+				dot = -1F;
+			if (dot > 1F)
+				dot = 1F;
+
+			return Math.Abs((float)Math.Acos(dot));
 		}
 	}
 }

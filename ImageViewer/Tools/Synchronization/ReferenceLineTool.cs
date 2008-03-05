@@ -246,7 +246,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 						if (info != null)
 						{
 							// 2. Is the image within 1 degree of being in the same plane as the current reference image?
-							float angle = Math.Abs((float)Math.Acos(info.Normal.Dot(_currentReferenceImageInfo.Normal)));
+
+							float angle = SopInfoCache.ComputeAngleBetweenNormals(info, _currentReferenceImageInfo);
 							if (angle <= _oneDegreeInRadians || (Math.PI - angle) <= _oneDegreeInRadians)
 							{
 								// 3. Use the Image Position (in the coordinate system of the Image Plane without moving the origin!) 

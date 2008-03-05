@@ -417,7 +417,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private static bool NormalsWithinLimits(ImageInfo referenceImageInfo, ImageInfo compareImageInfo)
 		{
-			float angle = Math.Abs((float)Math.Acos(compareImageInfo.Normal.Dot(referenceImageInfo.Normal)));
+			float angle = SopInfoCache.ComputeAngleBetweenNormals(compareImageInfo, referenceImageInfo);
 			return (angle <= _fiveDegreesInRadians || (Math.PI - angle) <= _fiveDegreesInRadians);
 		}
 
