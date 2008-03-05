@@ -78,11 +78,17 @@ namespace ClearCanvas.Desktop
 
         #region overrides
 
+        /// <summary>
+        /// Starts the component.
+        /// </summary>
         public override void Start()
         {
             base.Start();
         }
 
+        /// <summary>
+        /// Stops the component.
+        /// </summary>
         public override void Stop()
         {
             base.Stop();
@@ -92,11 +98,18 @@ namespace ClearCanvas.Desktop
 
         #region Presentation Model
 
+        /// <summary>
+        /// Called by the view to set itself as the view for this component.
+        /// </summary>
+        /// <param name="view"></param>
         public void SetEditorView(IEditorView view)
         {
             _editorView = view;
         }
 
+        /// <summary>
+        /// Gets or sets the text that is displayed in the editor.
+        /// </summary>
         public string Text
         {
             get { return _text; }
