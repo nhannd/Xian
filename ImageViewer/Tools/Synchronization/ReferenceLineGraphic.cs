@@ -1,14 +1,22 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
 	internal class ReferenceLineCompositeGraphic : CompositeGraphic
 	{
+		private object _tag;
+
 		public ReferenceLineCompositeGraphic()
 		{
+		}
+
+		public object Tag
+		{
+			get { return _tag; }
+			set { _tag = value; }
 		}
 
 		public ReferenceLineGraphic this[int index]
@@ -27,11 +35,13 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	{
 		private readonly LinePrimitive _line;
 		private readonly InvariantTextPrimitive _text;
+		private PointF _point1;
+		private PointF _point2;
 
 		public ReferenceLineGraphic()
 		{
-			base.Graphics.Add(_line = new LinePrimitive());
 			base.Graphics.Add(_text = new InvariantTextPrimitive());
+			base.Graphics.Add(_line = new LinePrimitive());
 
 			_text.BoundingBoxChanged += OnTextBoundingBoxChanged;
 		}
@@ -47,100 +57,139 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		{
 			this.CoordinateSystem = CoordinateSystem.Destination;
 
-			PointF anchorPoint = new PointF();
-			Rectangle rectangle = base.ParentPresentationImage.ClientRectangle;
+			Rectangle clientRectangle = base.ParentPresentationImage.ClientRectangle;
 
-			float lineWidth = Math.Abs(_line.Pt1.X - _line.Pt2.X);
-			float lineHeight = Math.Abs(_line.Pt1.Y - _line.Pt2.Y);
+			PointF startPoint = Point1;
+			PointF endPoint = Point2;
 
-			float halfTextWidth = _text.Dimensions.Width / 2F;
-			float halfTextHeight = _text.Dimensions.Height / 2F;
+			Vector3D lineDirection = new Vector3D(endPoint.X - startPoint.X, endPoint.Y - startPoint.Y, 0F);
 
-			if (lineWidth >= lineHeight)
+			if (Vector3D.AreEqual(lineDirection, Vector3D.Empty))
 			{
-				if (_line.Pt1.X > rectangle.Right && _line.Pt2.X > rectangle.Right)
+				_line.Pt1 = Point1;
+				_line.Pt2 = Point2;
+				_text.AnchorPoint = Point1;
+				return;
+			}
+					
+			Vector3D lineUnit = lineDirection.Normalize();
+
+			Vector3D xUnit = new Vector3D(1F, 0, 0);
+			Vector3D yUnit = new Vector3D(0, 1F, 0);
+
+			float cosThetaX = Math.Abs(xUnit.Dot(lineUnit));
+			float cosThetaY = Math.Abs(yUnit.Dot(lineUnit));
+
+			PointF clientTopRight = new PointF(clientRectangle.Right, clientRectangle.Top);
+			PointF clientBottomLeft = new PointF(clientRectangle.Left, clientRectangle.Bottom);
+			PointF clientBottomRight = new PointF(clientRectangle.Right, clientRectangle.Bottom);
+
+			float textWidth = _text.BoundingBox.Width;
+			float textHeight = _text.BoundingBox.Height;
+
+			float lineDistanceToOutsideTextEdge;
+
+			if (cosThetaX >= cosThetaY)
+			{
+				// the distance along the line to where we want the outside right edge of the text to be.
+				lineDistanceToOutsideTextEdge = cosThetaX * textWidth;
+				if (lineDirection.X < 0)
 				{
-					//line is entirely outside the rectangle.
-					PointF leftMost = (_line.Pt1.X > _line.Pt2.X) ? _line.Pt2 : _line.Pt1;
-					anchorPoint = PointF.Subtract(leftMost, new SizeF(halfTextWidth, 0));
-				}
-				else if (_line.Pt1.X <= rectangle.Left && _line.Pt2.X <= rectangle.Left)
-				{
-					//line is entirely outside the rectangle.
-					PointF rightMost = (_line.Pt1.X > _line.Pt2.X) ? _line.Pt1 : _line.Pt2;
-					anchorPoint = PointF.Add(rightMost, new SizeF(halfTextWidth, 0));
-				}
-				else
-				{
-					if (_line.Pt1.X > _line.Pt2.X)
-					{
-						anchorPoint.X = Math.Min(_line.Pt1.X + halfTextWidth, rectangle.Right - halfTextWidth);
-						anchorPoint.Y = _line.Pt1.Y;
-						float lineX = Math.Min(_line.Pt1.X, rectangle.Right - halfTextWidth * 2F);
-						_line.Pt1 = new PointF(lineX, _line.Pt1.Y);
-					}
-					else
-					{
-						anchorPoint.X = Math.Min(_line.Pt2.X + halfTextWidth, rectangle.Right - halfTextWidth);
-						anchorPoint.Y = _line.Pt2.Y;
-						float lineX = Math.Min(_line.Pt2.X, rectangle.Right - halfTextWidth * 2F);
-						_line.Pt2 = new PointF(lineX, _line.Pt2.Y);
-					}
+					lineDirection *= -1F;
+					startPoint = Point2;
+					endPoint = Point1;
 				}
 			}
 			else
 			{
-				if (_line.Pt1.Y > rectangle.Bottom && _line.Pt2.Y > rectangle.Bottom)
+				// the distance along the line to where we want the outside bottom edge of the text to be.
+				lineDistanceToOutsideTextEdge = cosThetaY * textHeight;
+				if (lineDirection.Y < 0)
 				{
-					//line is entirely outside the rectangle.
-					PointF topMost = (_line.Pt1.Y > _line.Pt2.Y) ? _line.Pt2 : _line.Pt1;
-					anchorPoint = PointF.Subtract(topMost, new SizeF(0, halfTextHeight));
-				}
-				else if(_line.Pt1.Y < rectangle.Top && _line.Pt2.Y < rectangle.Top)
-				{
-					//line is entirely outside the rectangle.
-					PointF bottomMost = (_line.Pt1.Y > _line.Pt2.Y) ? _line.Pt1 : _line.Pt2;
-					anchorPoint = PointF.Add(bottomMost, new SizeF(0, halfTextHeight));
-				}
-				else
-				{
-					if (_line.Pt1.Y > _line.Pt2.Y)
-					{
-						anchorPoint.Y = Math.Min(_line.Pt1.Y + halfTextHeight, rectangle.Bottom - halfTextHeight);
-						anchorPoint.X = _line.Pt1.X;
-						float lineY = Math.Min(_line.Pt1.Y, rectangle.Bottom - halfTextHeight * 2F);
-						_line.Pt1 = new PointF(_line.Pt1.X, lineY);
-					}
-					else
-					{
-						anchorPoint.Y = Math.Min(_line.Pt2.Y + halfTextHeight, rectangle.Bottom - halfTextHeight);
-						anchorPoint.X = _line.Pt2.X;
-						float lineY = Math.Min(_line.Pt2.Y, rectangle.Bottom - halfTextHeight * 2F);
-						_line.Pt2 = new PointF(_line.Pt2.X, lineY);
-					}
+					lineDirection *= -1F;
+					startPoint = Point2;
+					endPoint = Point1;
 				}
 			}
 
-			_text.AnchorPoint = anchorPoint;
+			float lineDistanceToOutsideTextEdgeRatio = lineDistanceToOutsideTextEdge / lineDirection.Magnitude;
 
+			SizeF outsideTextEdgeOffset = new SizeF(lineDistanceToOutsideTextEdgeRatio * lineDirection.X,
+												   lineDistanceToOutsideTextEdgeRatio * lineDirection.Y);
+
+			SizeF textAnchorPointOffset = new SizeF(outsideTextEdgeOffset.Width / 2F, outsideTextEdgeOffset.Height / 2F);
+
+			// extend the endpoint of the line by the distance to the outside text edge.
+			endPoint = PointF.Add(endPoint, outsideTextEdgeOffset);
+			// add an additional 5 pixel offset so we don't push back as far as the start point.
+			endPoint = PointF.Add(endPoint, new SizeF(5F * lineUnit.X, 5F * lineUnit.Y));
+
+			SizeF clientEdgeOffset = Size.Empty;
+
+			// find the intersection of the extended line segment and either of the left or bottom client edge.
+			PointF intersectionPoint;
+			if (Vector.LineSegments.Intersect ==
+				Vector.LineSegmentIntersection(startPoint, endPoint, clientTopRight, clientBottomRight, out intersectionPoint) ||
+				Vector.LineSegments.Intersect ==
+				Vector.LineSegmentIntersection(startPoint, endPoint, clientBottomLeft, clientBottomRight, out intersectionPoint))
+			{
+				Vector3D clientEdgeOffsetVector = new Vector3D(endPoint.X - intersectionPoint.X, endPoint.Y - intersectionPoint.Y, 0);
+				//don't allow the text to be pushed back past the start point.
+				if (clientEdgeOffsetVector.Magnitude > lineDirection.Magnitude)
+					clientEdgeOffsetVector = lineDirection;
+
+				clientEdgeOffset = new SizeF(clientEdgeOffsetVector.X, clientEdgeOffsetVector.Y);
+			}
+			
+			_line.Pt1 = startPoint;
+
+			// offset by the distance from the extended endpoint to the client rectangle edge.
+			endPoint = PointF.Subtract(endPoint, clientEdgeOffset);
+			// offset again by half the distance necessary to keep the text box inside the client rectangle
+			endPoint = PointF.Subtract(endPoint, textAnchorPointOffset);
+
+			// this aligns the text edge with the client edge in the case where the line intersects the client edge.
+			_text.AnchorPoint = endPoint;
+			
+			// offset the line by half again the distance necessary to keep the text box inside the client rectangle.
+			_line.Pt2 = PointF.Subtract(endPoint, textAnchorPointOffset);
+			
 			base.ResetCoordinateSystem();
 		}
 
 		public PointF Point1
 		{
-			get { return _line.Pt1; }
+			get
+			{
+				if (base.CoordinateSystem == CoordinateSystem.Source)
+					return _point1;
+				else
+					return base.SpatialTransform.ConvertToDestination(_point1);
+			}
 			set
 			{
-				_line.Pt1 = value;
+				if (base.CoordinateSystem == CoordinateSystem.Source)
+					_point1 = value;
+				else
+					_point1 = base.SpatialTransform.ConvertToSource(_point1);
 			}
 		}
 
 		public PointF Point2
 		{
-			get { return _line.Pt2; }
+			get
+			{
+				if (base.CoordinateSystem == CoordinateSystem.Source)
+					return _point2;
+				else
+					return base.SpatialTransform.ConvertToDestination(_point2);
+			}
 			set
 			{
-				_line.Pt2 = value;
+				if (base.CoordinateSystem == CoordinateSystem.Source)
+					_point2 = value;
+				else
+					_point2 = base.SpatialTransform.ConvertToSource(_point2);
 			}
 		}
 

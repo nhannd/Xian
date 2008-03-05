@@ -10,8 +10,10 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	{
 		public Vector3D Normal;
 		public Vector3D PositionPatientTopLeft;
-		public Vector3D PositionPatientCenterOfImage;
+		public Vector3D PositionPatientTopRight;
+		public Vector3D PositionPatientBottomLeft;
 		public Vector3D PositionPatientBottomRight;
+		public Vector3D PositionPatientCenterOfImage;
 		public Vector3D PositionImagePlaneTopLeft;
 	}
 
@@ -61,14 +63,23 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 				if (!_sopInfoDictionary.ContainsKey(frame.ParentImageSop.SopInstanceUID))
 				{
+					int height = frame.Rows - 1;
+					int width = frame.Columns - 1;
+
 					info = new ImageInfo();
 					info.PositionPatientTopLeft = frame.ImagePlaneHelper.ConvertToPatient(PointF.Empty);
-					info.PositionPatientCenterOfImage = frame.ImagePlaneHelper.ConvertToPatient(new PointF((frame.Columns - 1) / 2F, (frame.Rows - 1) / 2F));
-					info.PositionPatientBottomRight = frame.ImagePlaneHelper.ConvertToPatient(new PointF(frame.Columns - 1, frame.Rows - 1));
+					info.PositionPatientTopRight = frame.ImagePlaneHelper.ConvertToPatient(new PointF(width, 0));
+					info.PositionPatientBottomLeft = frame.ImagePlaneHelper.ConvertToPatient(new PointF(0, height));
+					info.PositionPatientBottomRight = frame.ImagePlaneHelper.ConvertToPatient(new PointF(width, height));
+					info.PositionPatientCenterOfImage = frame.ImagePlaneHelper.ConvertToPatient(new PointF(width / 2F, height / 2F));
+					
 					info.Normal = frame.ImagePlaneHelper.GetNormalVector();
-
+					
 					if (info.PositionPatientCenterOfImage == null || info.Normal == null)
 						return null;
+
+					//force the normal vector to be a unit vector, just in case of bad/imprecise data.
+					info.Normal = info.Normal.Normalize();
 
 					// here, we want the position in the coordinate system of the image plane, without moving the origin.
 					info.PositionImagePlaneTopLeft = frame.ImagePlaneHelper.ConvertToImage(info.PositionPatientTopLeft, Vector3D.Empty);

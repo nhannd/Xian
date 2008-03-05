@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				return;
 			}
 
-			OnReferenceLinesCalculated(CalculateReferenceLines());
+			OnReferenceLinesRefreshed(CalculateReferenceLines());
 		}
 
 		private void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		{
 			if (_referenceLineTool != null)
 			{
-				foreach (IPresentationImage image in _referenceLineTool.CalculateReferenceLines())
+				foreach (IPresentationImage image in _referenceLineTool.GetRefreshedImages())
 					yield return image;
 			}
 			else
@@ -245,7 +245,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			Draw(ClearSpatialLocatorGraphics());
 		}
 
-		public void OnReferenceLinesCalculated(IEnumerable<IPresentationImage> affectedImages)
+		public void OnReferenceLinesRefreshed(IEnumerable<IPresentationImage> affectedImages)
 		{
 			Draw(affectedImages);
 		}
