@@ -205,7 +205,7 @@ namespace ClearCanvas.Common
                     if (attrs.Length > 0)
                     {
                         PluginAttribute a = (PluginAttribute)attrs[0];
-                        plugins.Add(new PluginInfo(assemblies[i], a.Name, a.Description));
+                        plugins.Add(new PluginInfo(assemblies[i], a.Name, a.Description, a.Icon));
                     }
 
                 }

@@ -103,7 +103,8 @@ namespace ClearCanvas.Common
         
         private string _name;
         private string _description;
-        private Assembly _assembly;
+		private string _icon;
+		private Assembly _assembly;
 
         private ExtensionPointInfo[] _extensionPoints;
         private ExtensionInfo[] _extensions;
@@ -111,11 +112,12 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Internal constructor.
         /// </summary>
-        internal PluginInfo(Assembly assembly, string name, string description)
+        internal PluginInfo(Assembly assembly, string name, string description, string icon)
         {
             _name = name;
             _description = description;
             _assembly = assembly;
+        	_icon = icon;
 
             _extensionPoints = DiscoverExtensionPoints(assembly);
             _extensions = DiscoverExtensions(assembly);
@@ -170,6 +172,14 @@ namespace ClearCanvas.Common
         {
             get { return _description; }
         }
+
+		/// <summary>
+		/// The name of an icon resource to associate with the plugin.
+		/// </summary>
+    	public string Icon
+    	{
+			get { return _icon; }	
+    	}
 
         #endregion
     }

@@ -41,6 +41,7 @@ namespace ClearCanvas.Common
     {
         private string _name;
         private string _description;
+    	private string _icon;
 
 		/// <summary>
 		/// Constructor.
@@ -72,5 +73,14 @@ namespace ClearCanvas.Common
             get { return _description; }
             set { _description = value; }
         }
+
+		/// <summary>
+		/// The name of an icon resource to associate with the plugin.
+		/// </summary>
+    	public string Icon
+    	{
+			get { return _icon; }
+			set { _icon = value; }
+    	}
     }
 }
