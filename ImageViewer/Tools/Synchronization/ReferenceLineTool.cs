@@ -37,10 +37,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
-using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
@@ -54,6 +52,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ReferenceLineTool : ImageViewerTool
 	{
+		#region ReferenceLineInfo struct
+
 		private struct ReferenceLineInfo
 		{
 			public readonly PointF StartPoint;
@@ -67,6 +67,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				this.Label = label;
 			}
 		}
+
+		#endregion
 
 		private ImageInfo _currentReferenceImageInfo;
 		private IPresentationImage _currentReferenceImage;
@@ -127,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private void OnImageDrawing(object sender, ImageDrawingEventArgs e)
 		{
-			RefreshTargetImage(e.PresentationImage);
+			RefreshImage(e.PresentationImage);
 		}
 
 		public void Toggle()
@@ -156,12 +158,14 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 					!String.IsNullOrEmpty(currentReferenceFrame.ParentImageSop.StudyInstanceUID))
 				{
 					_currentReferenceImageInfo = _cache.GetImageInformation(((IImageSopProvider)_currentReferenceImage).Frame);
-					valid = _currentReferenceImageInfo != null;
+					if (_currentReferenceImageInfo != null)
+						valid = true;
 				}
 			}
 
 			if (!valid)
 			{
+				// effectively, there is no reference image.
 				_currentReferenceImage = null;
 				_currentReferenceImageInfo = null;
 			}
@@ -172,6 +176,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			List<Vector3D> intersectionPoints = new List<Vector3D>();
 			Vector3D[,] lineSegments = new Vector3D[,]
 				{
+					// Bounding line segments of the reference image.
 					{ referenceImageInfo.PositionPatientTopLeft, referenceImageInfo.PositionPatientTopRight },
 					{ referenceImageInfo.PositionPatientTopLeft, referenceImageInfo.PositionPatientBottomLeft },
 					{ referenceImageInfo.PositionPatientBottomLeft, referenceImageInfo.PositionPatientBottomRight },
@@ -180,6 +185,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 			for (int i = 0; i < 4; ++i)
 			{
+				// Intersect the bounding line segments of the reference image with the plane of the target image.
 				Vector3D intersection = Vector3D.GetIntersectionOfLineSegmentWithPlane(targetImageInfo.Normal,
 																		targetImageInfo.PositionPatientCenterOfImage, 
 																		lineSegments[i, 0], lineSegments[i, 1], true);
@@ -202,14 +208,15 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			if (intersectionPoints.Count < 2)
 				return null;
 
-			Vector3D transformed1 = targetFrame.ImagePlaneHelper.ConvertToImage(intersectionPoints[0]);
-			Vector3D transformed2 = targetFrame.ImagePlaneHelper.ConvertToImage(intersectionPoints[1]);
+			Vector3D imagePoint1 = targetFrame.ImagePlaneHelper.ConvertToImage(intersectionPoints[0]);
+			Vector3D imagePoint2 = targetFrame.ImagePlaneHelper.ConvertToImage(intersectionPoints[1]);
 
 			//The coordinates need to be converted to pixel coordinates because right now they are in mm.
-			PointF point1 = (PointF)targetFrame.ImagePlaneHelper.ConvertToImagePixel(new PointF(transformed1.X, transformed1.Y));
-			PointF point2 = (PointF)targetFrame.ImagePlaneHelper.ConvertToImagePixel(new PointF(transformed2.X, transformed2.Y));
+			PointF imagePixelPoint1 = (PointF)targetFrame.ImagePlaneHelper.ConvertToImagePixel(new PointF(imagePoint1.X, imagePoint1.Y));
+			PointF imagePixelPoint2 = (PointF)targetFrame.ImagePlaneHelper.ConvertToImagePixel(new PointF(imagePoint2.X, imagePoint2.Y));
+			string label = referenceFrame.ParentImageSop.InstanceNumber.ToString();
 
-			return new ReferenceLineInfo(point1, point2, referenceFrame.ParentImageSop.InstanceNumber.ToString());
+			return new ReferenceLineInfo(imagePixelPoint1, imagePixelPoint2, label);
 		}
 
 		private void GetFirstAndLastReferenceLineInfo(IPresentationImage targetImage, 
@@ -219,7 +226,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			Frame currentReferenceFrame = ((IImageSopProvider)_currentReferenceImage).Frame;
 			Frame targetFrame = ((IImageSopProvider)targetImage).Frame;
 
-			firstReferenceLineInfo = lastReferenceLineInfo = null;
+			firstReferenceLineInfo = null;
+			lastReferenceLineInfo = null;
 
 			float firstReferenceImageZComponent = float.MaxValue;
 			float lastReferenceImageZComponent = float.MinValue;
@@ -230,13 +238,14 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				if (image is IImageSopProvider)
 				{
 					Frame frame = ((IImageSopProvider)image).Frame;
+
 					if (frame.FrameOfReferenceUid == currentReferenceFrame.FrameOfReferenceUid &&
 						frame.ParentImageSop.StudyInstanceUID == currentReferenceFrame.ParentImageSop.StudyInstanceUID)
 					{
 						ImageInfo info = _cache.GetImageInformation(frame);
 						if (info != null)
 						{
-							// 2. Is the image within 1 degree of being in the same plane as the current image?
+							// 2. Is the image within 1 degree of being in the same plane as the current reference image?
 							float angle = Math.Abs((float)Math.Acos(info.Normal.Dot(_currentReferenceImageInfo.Normal)));
 							if (angle <= _oneDegreeInRadians || (Math.PI - angle) <= _oneDegreeInRadians)
 							{
@@ -284,6 +293,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private IEnumerable<ReferenceLineInfo> GetAllReferenceLineInfo(IPresentationImage targetImage)
 		{
+			//Don't bother calculating for invalid images.
 			if (_currentReferenceImage != null && targetImage != null && targetImage is IImageSopProvider &&
 			    _currentReferenceImage.ParentDisplaySet.ImageBox != targetImage.ParentDisplaySet.ImageBox)
 			{
@@ -313,7 +323,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			}
 		}
 
-		private bool RefreshTargetImage(IPresentationImage targetImage)
+		private bool RefreshImage(IPresentationImage targetImage)
 		{
 			ReferenceLineCompositeGraphic referenceLineCompositeGraphic = GetReferenceLineCompositeGraphic(targetImage);
 			if (referenceLineCompositeGraphic == null)
@@ -337,6 +347,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 					needsRedraw = true;
 				}
 
+				// if the reference lines already correspond to the current reference image, don't compute them again.
 				if (referenceLineCompositeGraphic.Tag != _currentReferenceImageInfo)
 				{
 					needsRedraw = true;
@@ -368,16 +379,13 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		{
 			SetCurrentReferenceImage();
 
-			// Calculation of the reference lines is deferred until image drawing.  This method
-			// really only exists to determine which images should be drawn so that the coordinator/mediator
-			// can efficiently draw only the images that need to be redrawn.
 			foreach (IImageBox imageBox in this.Context.Viewer.PhysicalWorkspace.ImageBoxes)
 			{
 				foreach (ITile tile in imageBox.Tiles)
 				{
 					IPresentationImage targetImage = tile.PresentationImage;
 
-					if (targetImage != null && RefreshTargetImage(targetImage))
+					if (targetImage != null && RefreshImage(targetImage))
 						yield return targetImage;
 				}
 			}
