@@ -98,6 +98,7 @@
     <Compile Include="IDesktopObject.cs" />
     <Compile Include="IDesktopObjectView.cs" />
     <Compile Include="IDialogBoxHost.cs" />
+    <Compile Include="IGalleryItem.cs" />
     <Compile Include="IGuiToolkit.cs" />
     <Compile Include="ISessionManager.cs" />
     <Compile Include="IShelfHost.cs" />

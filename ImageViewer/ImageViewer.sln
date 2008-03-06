@@ -25,7 +25,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7} = {26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}
-		{5C17A246-C4AB-4D66-8715-425192D88D6E} = {5C17A246-C4AB-4D66-8715-425192D88D6E}
+		{44755126-5B83-43D1-AC83-621F5FCFBA67} = {44755126-5B83-43D1-AC83-621F5FCFBA67}
+		{98FE0932-F1F6-4125-BD0B-A8F781179AE9} = {98FE0932-F1F6-4125-BD0B-A8F781179AE9}
+		{4741DBA1-D9EC-443F-BF37-C3AAE89B1913} = {4741DBA1-D9EC-443F-BF37-C3AAE89B1913}
 		{109CD9CB-3A21-4D63-9B22-4FC9C3F38A52} = {109CD9CB-3A21-4D63-9B22-4FC9C3F38A52}
 		{EF1E3BC4-21CA-467A-B84F-9B692846F459} = {EF1E3BC4-21CA-467A-B84F-9B692846F459}
 		{9AF0770C-7E9F-483F-8429-D7894F06EB6C} = {9AF0770C-7E9F-483F-8429-D7894F06EB6C}
@@ -81,6 +83,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 		{2F464B93-3631-4886-96A0-D3F493536997} = {2F464B93-3631-4886-96A0-D3F493536997}
 		{1B8C0C00-F5E4-42B6-A389-B01717AF9460} = {1B8C0C00-F5E4-42B6-A389-B01717AF9460}
 		{86CD94ED-BB4C-46C0-B54D-5F1EAE5A18D7} = {86CD94ED-BB4C-46C0-B54D-5F1EAE5A18D7}
+		{8517089B-809E-4A62-9AB2-CFF8C72E1AEB} = {8517089B-809E-4A62-9AB2-CFF8C72E1AEB}
+		{5C17A246-C4AB-4D66-8715-425192D88D6E} = {5C17A246-C4AB-4D66-8715-425192D88D6E}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.ExtensionBrowser", "..\Desktop\ExtensionBrowser\ClearCanvas.Desktop.ExtensionBrowser.csproj", "{1BC2A9D5-E0F6-4ACC-876B-C219E0EA2561}"
@@ -321,6 +325,30 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Too
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Clipboard", "Clipboard\ClearCanvas.ImageViewer.Clipboard.csproj", "{8517089B-809E-4A62-9AB2-CFF8C72E1AEB}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Clipboard.View.WinForms", "Clipboard\View\WinForms\ClearCanvas.ImageViewer.Clipboard.View.WinForms.csproj", "{98FE0932-F1F6-4125-BD0B-A8F781179AE9}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Thumbnails", "Thumbnails\ClearCanvas.ImageViewer.Thumbnails.csproj", "{4741DBA1-D9EC-443F-BF37-C3AAE89B1913}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Thumbnails.View.WinForms", "Thumbnails\View\WinForms\ClearCanvas.ImageViewer.Thumbnails.View.WinForms.csproj", "{44755126-5B83-43D1-AC83-621F5FCFBA67}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -483,6 +511,22 @@ Global
 		{5C17A246-C4AB-4D66-8715-425192D88D6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C17A246-C4AB-4D66-8715-425192D88D6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C17A246-C4AB-4D66-8715-425192D88D6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8517089B-809E-4A62-9AB2-CFF8C72E1AEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8517089B-809E-4A62-9AB2-CFF8C72E1AEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8517089B-809E-4A62-9AB2-CFF8C72E1AEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8517089B-809E-4A62-9AB2-CFF8C72E1AEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98FE0932-F1F6-4125-BD0B-A8F781179AE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98FE0932-F1F6-4125-BD0B-A8F781179AE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98FE0932-F1F6-4125-BD0B-A8F781179AE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98FE0932-F1F6-4125-BD0B-A8F781179AE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4741DBA1-D9EC-443F-BF37-C3AAE89B1913}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4741DBA1-D9EC-443F-BF37-C3AAE89B1913}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4741DBA1-D9EC-443F-BF37-C3AAE89B1913}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4741DBA1-D9EC-443F-BF37-C3AAE89B1913}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44755126-5B83-43D1-AC83-621F5FCFBA67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44755126-5B83-43D1-AC83-621F5FCFBA67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44755126-5B83-43D1-AC83-621F5FCFBA67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44755126-5B83-43D1-AC83-621F5FCFBA67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

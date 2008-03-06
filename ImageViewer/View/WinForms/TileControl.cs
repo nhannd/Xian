@@ -36,6 +36,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.ImageViewer.InputManagement;
@@ -78,6 +79,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.BackColor = Color.Black;
 			this.Dock = DockStyle.None;
 			this.Anchor = AnchorStyles.None;
+			this.AllowDrop = true;
 
 			_tile.Drawing += new EventHandler(OnDrawing);
 			_tile.RendererChanged += new EventHandler(OnRendererChanged);
@@ -188,7 +190,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 		}
 
-    	private void OnDrawing(object sender, EventArgs e)
+		#region Overrides
+
+		private void OnDrawing(object sender, EventArgs e)
 		{
 			Draw();
 		}
@@ -253,6 +257,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			Draw();
 		}
 
+		#region Mouse/Keyboard Overrides
+
 		protected override void OnMouseLeave(EventArgs e)
 		{
 			base.OnMouseLeave(e);
@@ -307,7 +313,21 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				_tileController.ProcessMessage(message);
 		}
 
-		protected override void OnKeyDown(KeyEventArgs e)
+    	protected override void OnMouseCaptureChanged(EventArgs e)
+    	{
+    		base.OnMouseCaptureChanged(e);
+
+    		//This feels bad to me, but it's the only way to accomplish
+    		//keeping the capture when the mouse has come up.  .NET automatically handles
+    		//capture for you by turning it on on mouse down and off on mouse up, but
+    		//it does not allow you to keep capture when the mouse is not down.  Even
+    		// if you take out the calls to the base class OnMouseX handlers, it still
+    		// turns Capture back off although it has been turned on explicitly.
+    		if (this._currentMouseButtonHandler != null)
+    			this.Capture = true;
+    	}
+
+    	protected override void OnKeyDown(KeyEventArgs e)
 		{
 			object message = _inputTranslator.OnKeyDown(e);
 			if (message == null)
@@ -337,36 +357,56 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			return true;
 		}
 
-		public override bool PreProcessMessage(ref Message msg)
+    	public override bool PreProcessMessage(ref Message msg)
+    	{
+    		object message = _inputTranslator.PreProcessMessage(msg);
+    		if (message != null && _tileController != null)
+    			_tileController.ProcessMessage(message);
+
+    		bool returnValue = base.PreProcessMessage(ref msg);
+
+    		message = _inputTranslator.PostProcessMessage(msg, returnValue);
+    		if (message != null && _tileController != null)
+    			_tileController.ProcessMessage(message);
+
+    		return returnValue;
+    	}
+
+    	#endregion
+
+		#region Drag/Drop Overrides
+
+		protected override void OnDragOver(DragEventArgs drgevent)
 		{
-			object message = _inputTranslator.PreProcessMessage(msg);
-			if (message != null && _tileController != null)
-				_tileController.ProcessMessage(message);
+			if (drgevent.Data.GetDataPresent(typeof(DisplaySet)))
+				drgevent.Effect = DragDropEffects.Move;
+			else
+				drgevent.Effect = DragDropEffects.None;
 
-			bool returnValue = base.PreProcessMessage(ref msg);
-
-			message = _inputTranslator.PostProcessMessage(msg, returnValue);
-			if (message != null && _tileController != null)
-				_tileController.ProcessMessage(message);
-
-			return returnValue;
+			base.OnDragOver(drgevent);
 		}
 
-		protected override void OnMouseCaptureChanged(EventArgs e)
+		protected override void OnDragDrop(DragEventArgs drgevent)
 		{
-			base.OnMouseCaptureChanged(e);
+			_tile.Select();
 
-			//This feels bad to me, but it's the only way to accomplish
-			//keeping the capture when the mouse has come up.  .NET automatically handles
-			//capture for you by turning it on on mouse down and off on mouse up, but
-			//it does not allow you to keep capture when the mouse is not down.  Even
-			// if you take out the calls to the base class OnMouseX handlers, it still
-			// turns Capture back off although it has been turned on explicitly.
-			if (this._currentMouseButtonHandler != null)
-				this.Capture = true;
-			}
+			UndoableCommand command = new UndoableCommand(_tile.ParentImageBox);
+			command.BeginState = _tile.ParentImageBox.CreateMemento();
 
-		protected override void OnHandleDestroyed(EventArgs e)
+			IDisplaySet displaySet = (IDisplaySet) drgevent.Data.GetData(typeof (DisplaySet));
+			_tile.ParentImageBox.DisplaySet = displaySet.CreateFreshCopy();
+			_tile.ParentImageBox.Draw();
+
+			command.EndState = _tile.ParentImageBox.CreateMemento();
+
+			_tile.ImageViewer.CommandHistory.AddCommand(command);
+
+			base.OnDragDrop(drgevent);
+		}
+
+		#endregion
+
+    	protected override void OnHandleDestroyed(EventArgs e)
 		{
 			// Notify the surface that the tile control's window handle is
 			// about to be destroyed so that any objects using the handle have
@@ -376,6 +416,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			base.OnHandleDestroyed(e);
 		}
+
+		#endregion
 
 		private void OnCaptureChanging(object sender, ItemEventArgs<IMouseButtonHandler> e)
 		{
