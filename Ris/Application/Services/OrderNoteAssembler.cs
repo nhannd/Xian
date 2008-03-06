@@ -61,9 +61,9 @@ namespace ClearCanvas.Ris.Application.Services
                        Equals(domainItem.Author.GetRef(), sourceItem.Author.StaffRef);
             }
 
-            protected override OrderNote CreateDestItem(OrderNoteDetail sourceItem)
+            protected override void AddItem(OrderNoteDetail sourceItem, ICollection<OrderNote> notes)
             {
-                return _assembler.CreateOrderNote(sourceItem, _currentUserStaff, _context);
+                notes.Add( _assembler.CreateOrderNote(sourceItem, _currentUserStaff, _context));
             }
         }
 

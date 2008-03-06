@@ -56,17 +56,17 @@ namespace ClearCanvas.Ris.Application.Services
                 return Equals(domainItem.Document.GetRef(), sourceItem.Document.DocumentRef);
             }
 
-            protected override OrderAttachment CreateDestItem(OrderAttachmentSummary sourceItem)
+            protected override void AddItem(OrderAttachmentSummary sourceItem, ICollection<OrderAttachment> domainList)
             {
-                return _assembler.CreateOrderAttachment(sourceItem, _context);
+                domainList.Add(_assembler.CreateOrderAttachment(sourceItem, _context));
             }
 
-            protected override void UpdateDestItem(OrderAttachment domainItem, OrderAttachmentSummary sourceItem)
+            protected override void UpdateItem(OrderAttachment domainItem, OrderAttachmentSummary sourceItem, ICollection<OrderAttachment> domainList)
             {
                 _assembler.UpdateOrderAttachment(domainItem, sourceItem, _context);
             }
 
-            protected override void RemoveDestItem(ICollection<OrderAttachment> domainList, OrderAttachment domainItem)
+            protected override void RemoveItem(OrderAttachment domainItem, ICollection<OrderAttachment> domainList)
             {
                 domainList.Remove(domainItem);
             }

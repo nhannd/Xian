@@ -60,9 +60,9 @@ namespace ClearCanvas.Ris.Application.Services
                        Equals(domainItem.Author.GetRef(), sourceItem.Author.StaffRef);
             }
 
-            protected override PatientNote CreateDestItem(PatientNoteDetail sourceItem)
+            protected override void AddItem(PatientNoteDetail sourceItem, ICollection<PatientNote> notes)
             {
-                return _assembler.CreateNote(sourceItem, _currentUserStaff, _context);
+                notes.Add(_assembler.CreateNote(sourceItem, _currentUserStaff, _context));
             }
         }
 

@@ -42,11 +42,24 @@ namespace ClearCanvas.Common.Utilities
     /// <para>
     /// The term "synchronization" here has nothing to do with threads, but refers to updating the elements of
     /// one collection based on the elements contained in another collection.  The two collections need not 
-    /// have the same element type.
+    /// have the same element type.  
+    /// </para>
+    /// <para>
+    /// Call the <see cref="Synchronize"/> method to update the "destination" collection so that it matches
+    /// the contents of the "source" collection.  The <see cref="CompareItems"/> callback will be used to determine
+    /// if an item in the source collection represents the same item in the destination collection.  For items
+    /// that appear in the source but not the destination, the <see cref="AddItem"/> callback will be called.
+    /// For items that appear in the destination collection but not the source collection, the <see cref="RemoveItem"/>
+    /// callback will be called.  For items that appear in both collections, the <see cref="UpdateItem"/> callback
+    /// will be called in order to update the element in the destination collection based on the item in the source
+    /// collection.
     /// </para>
     /// <para>
     /// There are two ways to use this class.  Either instantiate it directly, providing a set of delegates
-    /// to customize the behaviour, or create a subclass and override methods to customize behaviour.
+    /// to implement the callbacks, or create a subclass and override the protected callback methods.
+    /// </para>
+    /// <para>
+    /// 
     /// </para>
     /// </remarks>
     /// <typeparam name="TDestItem"></typeparam>
@@ -54,22 +67,39 @@ namespace ClearCanvas.Common.Utilities
     public class CollectionSynchronizeHelper<TDestItem, TSourceItem>
         where TDestItem : class
     {
-        public delegate bool CompareItemsDelegate(TDestItem domainItem, TSourceItem sourceItem);
-        public delegate TDestItem CreateDestItemDelegate(TSourceItem item);
-        public delegate void UpdateDestItemDelegate(TDestItem domainItem, TSourceItem sourceItem);
-        public delegate void RemoveDestItemDelegate(ICollection<TDestItem> domainList, TDestItem domainItem);
+        /// <summary>
+        /// Delegate to compare identities of items in source and destination collections.
+        /// </summary>
+        public delegate bool CompareItemsDelegate(TDestItem destItem, TSourceItem sourceItem);
+
+        /// <summary>
+        /// Delegate to add an item to the destination collection based on a source item.
+        /// </summary>
+        public delegate void AddItemDelegate(TSourceItem item, ICollection<TDestItem> destList);
+
+        /// <summary>
+        /// Delegate to update an item in the destination collection based on a source item.
+        /// </summary>
+        public delegate void UpdateItemDelegate(TDestItem destItem, TSourceItem sourceItem, ICollection<TDestItem> destList);
+
+        /// <summary>
+        /// Delegate to remove an item from the destination collection.
+        /// </summary>
+        public delegate void RemoveItemDelegate(TDestItem destItem, ICollection<TDestItem> destList);
 
         private readonly CompareItemsDelegate _compareItemsCallback;
-        private readonly CreateDestItemDelegate _createDestItemCallback;
-        private readonly UpdateDestItemDelegate _updateDestItemCallback;
-        private readonly RemoveDestItemDelegate _removeDestItemCallback;
+        private readonly AddItemDelegate _addItemCallback;
+        private readonly UpdateItemDelegate _updateItemCallback;
+        private readonly RemoveItemDelegate _removeItemCallback;
 
         private readonly bool _allowUpdate = false;
         private readonly bool _allowRemove = false;
-
+        
         /// <summary>
-        /// Protected constructor for subclasses.
+        /// Protected constructor for creating subclasses.
         /// </summary>
+        /// <param name="allowUpdate">Indicates whether items in the destination collection can be updated.</param>
+        /// <param name="allowRemove">Indicates whether items can be removed from the destination collection.</param>
         protected CollectionSynchronizeHelper(bool allowUpdate, bool allowRemove)
         {
             _allowUpdate = allowUpdate;
@@ -77,49 +107,53 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Public constructor allows direct use of this class without the need to create a subclass.
+        /// Public constructor for direct use of this class.
         /// </summary>
+        /// <param name="compareItemsCallback">Delegate for comparing identity of items in the source and destination collections.</param>
+        /// <param name="addItemCallback">Delegate for adding items to the destination collection.</param>
+        /// <param name="updateItemCallback">Delegate for updating items in the destination collection, or null if items should not be updated.</param>
+        /// <param name="removeCallback">Delegate for removing items from the destination collection, or null if items should not be removed.</param>
         public CollectionSynchronizeHelper(
             CompareItemsDelegate compareItemsCallback,
-            CreateDestItemDelegate createDomainItemCallback,
-            UpdateDestItemDelegate updateDomainItemCallback,
-            RemoveDestItemDelegate removeDomainItemCallback)
+            AddItemDelegate addItemCallback,
+            UpdateItemDelegate updateItemCallback,
+            RemoveItemDelegate removeCallback)
         {
             _compareItemsCallback = compareItemsCallback;
-            _createDestItemCallback = createDomainItemCallback;
-            _updateDestItemCallback = updateDomainItemCallback;
-            _removeDestItemCallback = removeDomainItemCallback;
+            _addItemCallback = addItemCallback;
+            _updateItemCallback = updateItemCallback;
+            _removeItemCallback = removeCallback;
 
-            _allowUpdate = _updateDestItemCallback != null;
-            _allowRemove = _removeDestItemCallback != null;
+            _allowUpdate = _updateItemCallback != null;
+            _allowRemove = _removeItemCallback != null;
         }
 
         /// <summary>
-        /// Synchronize the destList to match the sourceList.
+        /// Synchronize the destination collection to match the source collection.
         /// </summary>
-        /// <param name="destList"></param>
-        /// <param name="sourceList"></param>
-        public void Synchronize(ICollection<TDestItem> destList, ICollection<TSourceItem> sourceList)
+        /// <param name="dest"></param>
+        /// <param name="source"></param>
+        public void Synchronize(ICollection<TDestItem> dest, ICollection<TSourceItem> source)
         {
-            IList<TDestItem> unProcessed = new List<TDestItem>(destList);
+            List<TDestItem> unProcessed = new List<TDestItem>(dest);
 
-            CollectionUtils.ForEach(sourceList,
+            CollectionUtils.ForEach(source,
                     delegate(TSourceItem sourceItem)
                     {
                         // Find a dest item that matches the source item
-                        TDestItem foundDestItem = CollectionUtils.SelectFirst(destList,
-                                                           delegate(TDestItem domainItem) { return CompareItems(domainItem, sourceItem); });
+                        TDestItem foundDestItem = CollectionUtils.SelectFirst(dest,
+                            delegate(TDestItem domainItem) { return CompareItems(domainItem, sourceItem); });
 
                         if (foundDestItem == null)
                         {
                             // Add a new dest item
-                            destList.Add(CreateDestItem(sourceItem));
+                            AddItem(sourceItem, dest);
                         }
                         else
                         {
                             // Update the existing attachment
                             if (_allowUpdate)
-                                UpdateDestItem(foundDestItem, sourceItem);
+                                UpdateItem(foundDestItem, sourceItem, dest);
 
                             // and remove from un-processed list
                             unProcessed.Remove(foundDestItem);
@@ -134,12 +168,18 @@ namespace ClearCanvas.Common.Utilities
                     CollectionUtils.ForEach(unProcessed,
                                             delegate(TDestItem destItem)
                                             {
-                                                RemoveDestItem(destList, destItem);
+                                                RemoveItem(destItem, dest);
                                             });
                 }
             }
         }
 
+        /// <summary>
+        /// Compare items in the source and destination collections to determine if they have the same identity.
+        /// </summary>
+        /// <param name="destItem"></param>
+        /// <param name="sourceItem"></param>
+        /// <returns>True if the item in the source collection represents the same item in the destination collection.</returns>
         protected virtual bool CompareItems(TDestItem destItem, TSourceItem sourceItem)
         {
             if (_compareItemsCallback == null)
@@ -148,28 +188,44 @@ namespace ClearCanvas.Common.Utilities
             return _compareItemsCallback(destItem, sourceItem);
         }
 
-        protected virtual TDestItem CreateDestItem(TSourceItem sourceItem)
+        /// <summary>
+        /// Called to add an item to the destination collection representing the specified source item.
+        /// </summary>
+        /// <param name="sourceItem"></param>
+        /// <param name="dest"></param>
+        protected virtual void AddItem(TSourceItem sourceItem, ICollection<TDestItem> dest)
         {
-            if (_createDestItemCallback == null)
+            if (_addItemCallback == null)
                 throw new NotImplementedException("Method must be overridden or a delegate supplied.");
 
-            return _createDestItemCallback(sourceItem);
+            _addItemCallback(sourceItem, dest);
         }
 
-        protected virtual void UpdateDestItem(TDestItem destItem, TSourceItem sourceItem)
+        /// <summary>
+        /// Called to update the specified destination item with the specified source item.
+        /// </summary>
+        /// <param name="destItem">The item to be updated.</param>
+        /// <param name="sourceItem">The item that is the source of the update.</param>
+        /// <param name="dest">The destination collection, typically not used here.</param>
+        protected virtual void UpdateItem(TDestItem destItem, TSourceItem sourceItem, ICollection<TDestItem> dest)
         {
-            if (_updateDestItemCallback == null)
+            if (_updateItemCallback == null)
                 throw new NotImplementedException("Method must be overridden or a delegate supplied.");
 
-            _updateDestItemCallback(destItem, sourceItem);
+            _updateItemCallback(destItem, sourceItem, dest);
         }
 
-        protected virtual void RemoveDestItem(ICollection<TDestItem> destList, TDestItem domainItem)
+        /// <summary>
+        /// Called to remove the specified item from the destination collection.
+        /// </summary>
+        /// <param name="destItem">The item to remove.</param>
+        /// <param name="dest">The destination collection.</param>
+        protected virtual void RemoveItem(TDestItem destItem, ICollection<TDestItem> dest)
         {
-            if (_removeDestItemCallback == null)
+            if (_removeItemCallback == null)
                 throw new NotImplementedException("Method must be overridden or a delegate supplied.");
 
-            _removeDestItemCallback(destList, domainItem);
+            _removeItemCallback(destItem, dest);
         }
     }
 }

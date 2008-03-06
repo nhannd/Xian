@@ -97,18 +97,18 @@ namespace ClearCanvas.Ris.Application.Services
                         // ignore version in this comparison - deal with this issue in the update delegate
                         return cp.GetRef().Equals(cpDetail.ContactPointRef, true);
                     },
-                    delegate (ExternalPractitionerContactPointDetail cpDetail)
+                    delegate (ExternalPractitionerContactPointDetail cpDetail, ICollection<ExternalPractitionerContactPoint> cps)
                     {
                         // create a new contact point
                         ExternalPractitionerContactPoint cp = new ExternalPractitionerContactPoint(prac);
                         UpdateExternalPractitionerContactPoint(cpDetail, cp, context);
-                        return cp;
+                        cps.Add(cp);
                     },
-                    delegate (ExternalPractitionerContactPoint cp, ExternalPractitionerContactPointDetail cpDetail)
+                    delegate(ExternalPractitionerContactPoint cp, ExternalPractitionerContactPointDetail cpDetail, ICollection<ExternalPractitionerContactPoint> cps)
                     {
                         UpdateExternalPractitionerContactPoint(cpDetail, cp, context);
                     },
-                    delegate(ICollection<ExternalPractitionerContactPoint> cps, ExternalPractitionerContactPoint cp)
+                    delegate(ExternalPractitionerContactPoint cp, ICollection<ExternalPractitionerContactPoint> cps)
                     {
                         cps.Remove(cp);
                     });
