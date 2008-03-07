@@ -69,7 +69,7 @@ function initTypeSelectionTable()
 			{
 				label: "Select report type and confirm",
 				cellType: "choice",
-				choices: ["T1", "T2", "T3"],
+				choices: ["T1 - Dating/Nuchal", "T2 - Anatomy", "T3 - Growth for obstetrical ultrasounds"],
 				getValue: function(item){ return item.obusReportType; },
 				setValue: function(item, value){ item.obusReportType = value; },
 				getError: function(item){ return null; }
