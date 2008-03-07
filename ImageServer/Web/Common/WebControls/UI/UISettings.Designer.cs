@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("MMM dd, yyyy")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string DateFormat {
             get {
                 return ((string)(this["DateFormat"]));
@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("hh:mm:ss tt")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string TimeFormat {
             get {
                 return ((string)(this["TimeFormat"]));
@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("MMM dd,yyyy hh:mm:ss tt")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string DateTimeFormat {
             get {
                 return ((string)(this["DateTimeFormat"]));
