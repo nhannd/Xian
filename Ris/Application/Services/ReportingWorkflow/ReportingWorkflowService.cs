@@ -347,6 +347,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             response.Report = assembler.CreateReportDetail(step.ReportPart.Report, this.PersistenceContext);
             response.ReportPartIndex = step.ReportPart.Index;
 
+            response.OrderExtendedProperties = new Dictionary<string, string>(step.Procedure.Order.ExtendedProperties);
+
             return response;
         }
 

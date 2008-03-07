@@ -29,11 +29,9 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
@@ -45,5 +43,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
         [DataMember]
         public ReportDetail Report;
+
+        [DataMember]
+        public Dictionary<string, string> OrderExtendedProperties;
     }
 }

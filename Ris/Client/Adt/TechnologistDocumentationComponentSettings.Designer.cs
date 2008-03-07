@@ -34,15 +34,6 @@ namespace ClearCanvas.Ris.Client.Adt {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS/forms/technologist/pre-exam.htm")]
-        public string PreExamDetailsPageUrl {
-            get {
-                return ((string)(this["PreExamDetailsPageUrl"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS/protocolsummary.htm")]
         public string ProtocolSummaryUrl {
             get {

@@ -57,6 +57,13 @@
       <DependentUpon>HomePageSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="IChangePasswordDialog.cs" />
+    <Compile Include="OrderAdditionalInfoComponent.cs" />
+    <Compile Include="OrderAdditionalInfoComponentSetting.cs" />
+    <Compile Include="OrderAdditionalInfoComponentSetting.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>OrderAdditionalInfoComponentSetting.settings</DependentUpon>
+    </Compile>
     <Compile Include="OrderDetailViewComponent.cs" />
     <Compile Include="OrderDetailViewComponentSettings.cs" />
     <Compile Include="OrderDetailViewComponentSettings.Designer.cs">
@@ -254,6 +261,10 @@
     <None Include="HomePageSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>HomePageSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="OrderAdditionalInfoComponentSetting.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>OrderAdditionalInfoComponentSetting.Designer.cs</LastGenOutput>
     </None>
     <None Include="OrderDetailViewComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -60,18 +60,19 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private void InitializeComponent()
         {
             this._reportEditorSplitContainer = new System.Windows.Forms.SplitContainer();
+            this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+            this._reportEditorPanel = new System.Windows.Forms.Panel();
+            this._cancelButton = new System.Windows.Forms.Button();
+            this._saveButton = new System.Windows.Forms.Button();
+            this._sendToTranscriptionButton = new System.Windows.Forms.Button();
+            this._sendToVerifyButton = new System.Windows.Forms.Button();
+            this._verifyButton = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this._orderDetailsTab = new System.Windows.Forms.TabPage();
             this._priorReportsTab = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._bannerPanel = new System.Windows.Forms.Panel();
-            this._reportEditorPanel = new System.Windows.Forms.Panel();
-            this._verifyButton = new System.Windows.Forms.Button();
-            this._sendToVerifyButton = new System.Windows.Forms.Button();
-            this._sendToTranscriptionButton = new System.Windows.Forms.Button();
-            this._saveButton = new System.Windows.Forms.Button();
-            this._cancelButton = new System.Windows.Forms.Button();
-            this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+            this._orderAdditionalInfoTab = new System.Windows.Forms.TabPage();
             this._reportEditorSplitContainer.Panel1.SuspendLayout();
             this._reportEditorSplitContainer.Panel2.SuspendLayout();
             this._reportEditorSplitContainer.SuspendLayout();
@@ -103,10 +104,86 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._reportEditorSplitContainer.TabIndex = 0;
             this._reportEditorSplitContainer.TabStop = false;
             // 
+            // _supervisor
+            // 
+            this._supervisor.LabelText = "Supervising Radiologist:";
+            this._supervisor.Location = new System.Drawing.Point(3, 349);
+            this._supervisor.Margin = new System.Windows.Forms.Padding(2);
+            this._supervisor.Name = "_supervisor";
+            this._supervisor.Size = new System.Drawing.Size(234, 49);
+            this._supervisor.TabIndex = 10;
+            this._supervisor.Value = null;
+            // 
+            // _reportEditorPanel
+            // 
+            this._reportEditorPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._reportEditorPanel.Location = new System.Drawing.Point(3, 3);
+            this._reportEditorPanel.Name = "_reportEditorPanel";
+            this._reportEditorPanel.Size = new System.Drawing.Size(463, 341);
+            this._reportEditorPanel.TabIndex = 0;
+            // 
+            // _cancelButton
+            // 
+            this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this._cancelButton.Location = new System.Drawing.Point(382, 403);
+            this._cancelButton.Name = "_cancelButton";
+            this._cancelButton.Size = new System.Drawing.Size(84, 37);
+            this._cancelButton.TabIndex = 9;
+            this._cancelButton.Text = "Cancel";
+            this._cancelButton.UseVisualStyleBackColor = true;
+            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+            // 
+            // _saveButton
+            // 
+            this._saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this._saveButton.Location = new System.Drawing.Point(273, 403);
+            this._saveButton.Name = "_saveButton";
+            this._saveButton.Size = new System.Drawing.Size(84, 37);
+            this._saveButton.TabIndex = 8;
+            this._saveButton.Text = "Save";
+            this._saveButton.UseVisualStyleBackColor = true;
+            this._saveButton.Click += new System.EventHandler(this._saveButton_Click);
+            // 
+            // _sendToTranscriptionButton
+            // 
+            this._sendToTranscriptionButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this._sendToTranscriptionButton.Location = new System.Drawing.Point(183, 403);
+            this._sendToTranscriptionButton.Name = "_sendToTranscriptionButton";
+            this._sendToTranscriptionButton.Size = new System.Drawing.Size(84, 37);
+            this._sendToTranscriptionButton.TabIndex = 7;
+            this._sendToTranscriptionButton.Text = "Send to Transcription";
+            this._sendToTranscriptionButton.UseVisualStyleBackColor = true;
+            this._sendToTranscriptionButton.Click += new System.EventHandler(this._sendToTranscriptionButton_Click);
+            // 
+            // _sendToVerifyButton
+            // 
+            this._sendToVerifyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this._sendToVerifyButton.Location = new System.Drawing.Point(93, 403);
+            this._sendToVerifyButton.Name = "_sendToVerifyButton";
+            this._sendToVerifyButton.Size = new System.Drawing.Size(84, 37);
+            this._sendToVerifyButton.TabIndex = 6;
+            this._sendToVerifyButton.Text = "To be Verified";
+            this._sendToVerifyButton.UseVisualStyleBackColor = true;
+            this._sendToVerifyButton.Click += new System.EventHandler(this._sendToVerifyButton_Click);
+            // 
+            // _verifyButton
+            // 
+            this._verifyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this._verifyButton.Location = new System.Drawing.Point(3, 403);
+            this._verifyButton.Name = "_verifyButton";
+            this._verifyButton.Size = new System.Drawing.Size(84, 37);
+            this._verifyButton.TabIndex = 5;
+            this._verifyButton.Text = "Verify";
+            this._verifyButton.UseVisualStyleBackColor = true;
+            this._verifyButton.Click += new System.EventHandler(this._verifyButton_Click);
+            // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this._orderDetailsTab);
             this.tabControl1.Controls.Add(this._priorReportsTab);
+            this.tabControl1.Controls.Add(this._orderAdditionalInfoTab);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -129,7 +206,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._priorReportsTab.Location = new System.Drawing.Point(4, 22);
             this._priorReportsTab.Name = "_priorReportsTab";
             this._priorReportsTab.Padding = new System.Windows.Forms.Padding(3);
-            this._priorReportsTab.Size = new System.Drawing.Size(287, 418);
+            this._priorReportsTab.Size = new System.Drawing.Size(465, 418);
             this._priorReportsTab.TabIndex = 0;
             this._priorReportsTab.Text = "Prior Reports";
             this._priorReportsTab.UseVisualStyleBackColor = true;
@@ -157,80 +234,15 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._bannerPanel.Size = new System.Drawing.Size(946, 79);
             this._bannerPanel.TabIndex = 0;
             // 
-            // _reportEditorPanel
+            // _orderAdditionalInfoTab
             // 
-            this._reportEditorPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._reportEditorPanel.Location = new System.Drawing.Point(3, 3);
-            this._reportEditorPanel.Name = "_reportEditorPanel";
-            this._reportEditorPanel.Size = new System.Drawing.Size(463, 341);
-            this._reportEditorPanel.TabIndex = 0;
-            // 
-            // _verifyButton
-            // 
-            this._verifyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this._verifyButton.Location = new System.Drawing.Point(3, 403);
-            this._verifyButton.Name = "_verifyButton";
-            this._verifyButton.Size = new System.Drawing.Size(84, 37);
-            this._verifyButton.TabIndex = 5;
-            this._verifyButton.Text = "Verify";
-            this._verifyButton.UseVisualStyleBackColor = true;
-            this._verifyButton.Click += new System.EventHandler(this._verifyButton_Click);
-            // 
-            // _sendToVerifyButton
-            // 
-            this._sendToVerifyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this._sendToVerifyButton.Location = new System.Drawing.Point(93, 403);
-            this._sendToVerifyButton.Name = "_sendToVerifyButton";
-            this._sendToVerifyButton.Size = new System.Drawing.Size(84, 37);
-            this._sendToVerifyButton.TabIndex = 6;
-            this._sendToVerifyButton.Text = "To be Verified";
-            this._sendToVerifyButton.UseVisualStyleBackColor = true;
-            this._sendToVerifyButton.Click += new System.EventHandler(this._sendToVerifyButton_Click);
-            // 
-            // _sendToTranscriptionButton
-            // 
-            this._sendToTranscriptionButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this._sendToTranscriptionButton.Location = new System.Drawing.Point(183, 403);
-            this._sendToTranscriptionButton.Name = "_sendToTranscriptionButton";
-            this._sendToTranscriptionButton.Size = new System.Drawing.Size(84, 37);
-            this._sendToTranscriptionButton.TabIndex = 7;
-            this._sendToTranscriptionButton.Text = "Send to Transcription";
-            this._sendToTranscriptionButton.UseVisualStyleBackColor = true;
-            this._sendToTranscriptionButton.Click += new System.EventHandler(this._sendToTranscriptionButton_Click);
-            // 
-            // _saveButton
-            // 
-            this._saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this._saveButton.Location = new System.Drawing.Point(273, 403);
-            this._saveButton.Name = "_saveButton";
-            this._saveButton.Size = new System.Drawing.Size(84, 37);
-            this._saveButton.TabIndex = 8;
-            this._saveButton.Text = "Save";
-            this._saveButton.UseVisualStyleBackColor = true;
-            this._saveButton.Click += new System.EventHandler(this._saveButton_Click);
-            // 
-            // _cancelButton
-            // 
-            this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._cancelButton.Location = new System.Drawing.Point(382, 403);
-            this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(84, 37);
-            this._cancelButton.TabIndex = 9;
-            this._cancelButton.Text = "Cancel";
-            this._cancelButton.UseVisualStyleBackColor = true;
-            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
-            // 
-            // _supervisor
-            // 
-            this._supervisor.LabelText = "Supervising Radiologist:";
-            this._supervisor.Location = new System.Drawing.Point(3, 349);
-            this._supervisor.Margin = new System.Windows.Forms.Padding(2);
-            this._supervisor.Name = "_supervisor";
-            this._supervisor.Size = new System.Drawing.Size(234, 49);
-            this._supervisor.TabIndex = 10;
-            this._supervisor.Value = null;
+            this._orderAdditionalInfoTab.Location = new System.Drawing.Point(4, 22);
+            this._orderAdditionalInfoTab.Name = "_orderAdditionalInfoTab";
+            this._orderAdditionalInfoTab.Padding = new System.Windows.Forms.Padding(3);
+            this._orderAdditionalInfoTab.Size = new System.Drawing.Size(465, 418);
+            this._orderAdditionalInfoTab.TabIndex = 2;
+            this._orderAdditionalInfoTab.Text = "Additional Info";
+            this._orderAdditionalInfoTab.UseVisualStyleBackColor = true;
             // 
             // ReportingComponentControl
             // 
@@ -263,5 +275,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private System.Windows.Forms.Button _saveButton;
         private System.Windows.Forms.Button _cancelButton;
         private ClearCanvas.Ris.Client.View.WinForms.LookupField _supervisor;
+        private System.Windows.Forms.TabPage _orderAdditionalInfoTab;
     }
 }

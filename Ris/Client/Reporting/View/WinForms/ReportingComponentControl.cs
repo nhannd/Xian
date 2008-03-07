@@ -66,6 +66,10 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             orderDetails.Dock = DockStyle.Fill;
             _orderDetailsTab.Controls.Add(orderDetails);
 
+            Control orderAdditionalInfo = (Control)_component.OrderAdditionalInfoHost.ComponentView.GuiElement;
+            orderAdditionalInfo.Dock = DockStyle.Fill;
+            _orderAdditionalInfoTab.Controls.Add(orderAdditionalInfo);
+
             _verifyButton.DataBindings.Add("Enabled", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
             _sendToVerifyButton.DataBindings.Add("Enabled", _component, "SendToVerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
             _sendToTranscriptionButton.DataBindings.Add("Enabled", _component, "SendToTranscriptionEnabled", false, DataSourceUpdateMode.OnPropertyChanged);

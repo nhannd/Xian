@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client
 {
     public class OrderAdditionalInfoComponent : DHtmlComponent
     {
@@ -30,7 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            SetUrl(TechnologistDocumentationComponentSettings.Default.PreExamDetailsPageUrl);
+            SetUrl(OrderAdditionalInfoComponentSetting.Default.OrderAdditionalInfoPageUrl);
             base.Start();
         }
 

@@ -255,6 +255,9 @@ namespace ClearCanvas.Ris.Client.Reporting
         private OrderDetailViewComponent _orderDetailComponent;
         private ChildComponentHost _orderDetailHost;
 
+        private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
+        private ChildComponentHost _orderAdditionalInfoHost;
+
         private bool _canCompleteInterpretationAndVerify;
         private bool _canCompleteVerification;
         private bool _canCompleteInterpretationForVerification;
@@ -288,6 +291,10 @@ namespace ClearCanvas.Ris.Client.Reporting
             _orderDetailHost = new ChildComponentHost(this.Host, _orderDetailComponent);
             _orderDetailHost.StartComponent();
 
+            _orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
+            _orderAdditionalInfoHost = new ChildComponentHost(this.Host, _orderAdditionalInfoComponent);
+            _orderAdditionalInfoHost.StartComponent();
+
             _supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, new string[] { "PRAD" });
 
             Platform.GetService<IReportingWorkflowService>(
@@ -302,6 +309,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_worklistItem.ProcedureStepRef));
                     _report = response.Report;
                     _activeReportPartIndex = response.ReportPartIndex;
+                    _orderAdditionalInfoComponent.OrderExtendedProperties = response.OrderExtendedProperties;
 
                     ReportPartDetail activePart = _report.GetPart(_activeReportPartIndex);
                     _reportContent = activePart == null ? null : activePart.Content;
@@ -364,6 +372,11 @@ namespace ClearCanvas.Ris.Client.Reporting
         public ApplicationComponentHost OrderDetailsHost
         {
             get { return _orderDetailHost; }
+        }
+
+        public ApplicationComponentHost OrderAdditionalInfoHost
+        {
+            get { return _orderAdditionalInfoHost; }
         }
 
         public StaffSummary Supervisor
