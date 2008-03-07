@@ -353,8 +353,9 @@ namespace ClearCanvas.Ris.Client.Adt
             Platform.GetService<IOrderEntryService>(
                 delegate(IOrderEntryService service)
                 {
-                    GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest(_patientRef));
-                    _activeVisits = formChoicesResponse.VisitChoices;
+                    _activeVisits = service.ListActiveVisitsForPatient(new ListActiveVisitsForPatientRequest(_patientRef)).Visits;
+
+                    GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
                     _facilityChoices = formChoicesResponse.FacilityChoices;
                     _priorityChoices = formChoicesResponse.OrderPriorityChoices;
                     _cancelReasonChoices = formChoicesResponse.CancelReasonChoices;

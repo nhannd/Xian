@@ -121,7 +121,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             assembler.UpdatePatientProfile(profile, request.PatientDetail, this.CurrentUserStaff, PersistenceContext);
 
-            return new UpdatePatientProfileResponse(profile.Patient.GetRef(), profile.GetRef());
+            return new UpdatePatientProfileResponse(assembler.CreatePatientProfileSummary(profile, PersistenceContext));
         }
 
         [UpdateOperation]
@@ -139,7 +139,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 
             PersistenceContext.SynchState();
 
-            return new AddPatientResponse(patient.GetRef(), profile.GetRef());
+            return new AddPatientResponse(assembler.CreatePatientProfileSummary(profile, PersistenceContext));
         }
 
         #endregion

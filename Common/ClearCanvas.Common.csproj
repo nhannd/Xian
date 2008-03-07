@@ -224,6 +224,9 @@
     <Compile Include="Utilities\BlockingQueue.cs" />
     <Compile Include="Utilities\CodeClock.cs" />
     <Compile Include="Utilities\CollectionSynchronizeHelper.cs" />
+    <Compile Include="Utilities\CommandLine.cs" />
+    <Compile Include="Utilities\CommandLineException.cs" />
+    <Compile Include="Utilities\CommandLineParameterAttribute.cs" />
     <Compile Include="Utilities\DateTimeUtils.cs" />
     <Compile Include="Utilities\DelayedEventPublisher.cs" />
     <Compile Include="Utilities\ListEventArgs.cs" />
@@ -231,11 +234,13 @@
     <Compile Include="Configuration\StandardSettingsProvider.cs" />
     <Compile Include="Utilities\DictionaryEventArgs.cs" />
     <Compile Include="Utilities\ItemEventArgs.cs" />
+    <Compile Include="Utilities\ObjectWalker.cs" />
     <Compile Include="Utilities\SimpleSerializer.cs" />
     <Compile Include="Utilities\StringDiff.cs" />
     <Compile Include="Utilities\BlockingThreadPool.cs" />
     <Compile Include="Utilities\StringUtilities.cs" />
     <Compile Include="Utilities\Tests\CollectionUtilsTests.cs" />
+    <Compile Include="Utilities\Tests\CommandLineTests.cs" />
     <Compile Include="Utilities\Tests\DateTimeUtilsTests.cs" />
     <Compile Include="Utilities\Tests\StringUtilitiesTests.cs" />
     <Compile Include="Utilities\Tests\ThreadPoolTests.cs" />

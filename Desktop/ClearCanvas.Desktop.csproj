@@ -63,6 +63,7 @@
     <Compile Include="Actions\ActionPermissionAttribute.cs" />
     <Compile Include="Actions\ActionSet.cs" />
     <Compile Include="Actions\DropDownButtonActionAttribute.cs" />
+    <Compile Include="Actions\CrudActionModel.cs" />
     <Compile Include="Actions\DynamicObservablePropertyBinding.cs" />
     <Compile Include="Actions\GroupHint.cs" />
     <Compile Include="Actions\GroupHintAttribute.cs" />
@@ -302,6 +303,15 @@
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ClassDiagrams\Tools.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AddToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\EditToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tools\Tests\" />

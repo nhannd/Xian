@@ -143,16 +143,16 @@ namespace ClearCanvas.Ris.Client.Adt
                         if (_isNew)
                         {
                             AddVisitResponse response = service.AddVisit(new AddVisitRequest(_visit));
-                            _addedVisit = response.AddedVisit;
-                            _patientRef = response.AddedVisit.PatientRef;
-                            _visitRef = response.AddedVisit.VisitRef;
+                            _addedVisit = response.Visit;
+                            _patientRef = response.Visit.PatientRef;
+                            _visitRef = response.Visit.VisitRef;
                         }
                         else
                         {
                             UpdateVisitResponse response = service.UpdateVisit(new UpdateVisitRequest(_visitRef, _visit));
-                            _addedVisit = response.AddedVisit;
-                            _patientRef = response.AddedVisit.PatientRef;
-                            _visitRef = response.AddedVisit.VisitRef;
+                            _addedVisit = response.Visit;
+                            _patientRef = response.Visit.PatientRef;
+                            _visitRef = response.Visit.VisitRef;
                         }
                     });
                 this.Exit(ApplicationComponentExitCode.Accepted);

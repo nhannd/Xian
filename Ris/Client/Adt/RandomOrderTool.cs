@@ -37,6 +37,8 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -83,25 +85,19 @@ namespace ClearCanvas.Ris.Client.Adt
 
             try
             {
-                EnumValueInfo informationAuthority;
-                VisitSummary randomVisit;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
                 if (item == null)
                 {
                     PatientProfileSummary profile = GetRandomPatient();
                     if (profile == null)
-                        profile = RandomUtils.RandomPatientProfile();
+                        profile = RandomUtils.CreatePatient();
 
-                    informationAuthority = profile.Mrn.AssigningAuthority;
-                    randomVisit = RandomUtils.RandomVisit(profile.PatientRef, profile.PatientProfileRef, informationAuthority);
+                    PlaceRandomOrderForPatient(profile.PatientRef, profile.PatientProfileRef, profile.Mrn.AssigningAuthority);
                 }
                 else
                 {
-                    informationAuthority = item.Mrn.AssigningAuthority;
-                    randomVisit = RandomUtils.RandomVisit(item.PatientRef, item.PatientRef, informationAuthority);
+                    PlaceRandomOrderForPatient(item.PatientRef, item.PatientProfileRef, item.Mrn.AssigningAuthority);
                 }
-
-                RandomUtils.RandomOrder(randomVisit, informationAuthority, null);
 
                 context.FolderSystem.InvalidateFolder(typeof(Folders.ScheduledFolder));
             }
@@ -111,9 +107,20 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        private void PlaceRandomOrderForPatient(EntityRef patientRef, EntityRef profileRef, EnumValueInfo informationAuthority)
+        {
+            // find a random active visit, or create one
+            VisitSummary randomVisit = GetActiveVisitForPatient(patientRef, informationAuthority);
+            if(randomVisit == null)
+                randomVisit = RandomUtils.CreateVisit(patientRef, informationAuthority, 0);
+
+            // create the order
+            RandomUtils.RandomOrder(randomVisit, informationAuthority, null, 0);
+        }
+
         private static PatientProfileSummary GetRandomPatient()
         {
-            char randomChar = RandomUtils.RandomAlphabet;
+            char randomChar = RandomUtils.GetRandomAlphaChar();
 
             PatientProfileSummary randomProfile = null;
 
@@ -139,6 +146,27 @@ namespace ClearCanvas.Ris.Client.Adt
                 });
 
             return randomProfile;
+        }
+
+        private static VisitSummary GetActiveVisitForPatient(EntityRef patientRef, EnumValueInfo assigningAuthority)
+        {
+            VisitSummary visit = null;
+
+            // choose from existing visits
+            Platform.GetService<IOrderEntryService>(
+                delegate(IOrderEntryService service)
+                {
+                    ListActiveVisitsForPatientRequest request = new ListActiveVisitsForPatientRequest(patientRef);
+
+                    ListActiveVisitsForPatientResponse visitResponse = service.ListActiveVisitsForPatient(request);
+                    visit = RandomUtils.ChooseRandom(CollectionUtils.Select(visitResponse.Visits,
+                        delegate(VisitSummary summary)
+                        {
+                            return Equals(summary.VisitNumber.AssigningAuthority, assigningAuthority);
+                        }));
+                });
+
+            return visit;
         }
 
     }

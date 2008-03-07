@@ -23,6 +23,9 @@
     <SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Fax\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Common.dll" />
     <SharedLibraryFiles Include="$(TrunkDirectory)\Desktop\Applets\Scintilla\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.dll" />
     <SharedLibraryFiles Include="$(TrunkDirectory)\Desktop\Applets\Scintilla\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.View.WinForms.dll" />
+    <SharedLibraryFiles Include="$(TrunkDirectory)\Oto\bin\$(Configuration)\ClearCanvas.Oto.dll" />
+    <SharedLibraryFiles Include="$(TrunkDirectory)\Oto\Ide\bin\$(Configuration)\ClearCanvas.Oto.Ide.dll" />
+    <SharedLibraryFiles Include="$(TrunkDirectory)\Oto\Ide\View\WinForms\bin\$(Configuration)\ClearCanvas.Oto.Ide.View.WinForms.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,7 +33,7 @@
     <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer.dll" />
   </ItemGroup>
 
-  <ItemGroup>
+	<ItemGroup>
 		<ClientModuleFiles Include="$(SolutionDir)\bin\$(Configuration)\ClearCanvas.Ris.Client.dll" />
 		<ClientModuleFiles Include="$(SolutionDir)\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.View.WinForms.dll" />
 		<ClientModuleFiles Include="$(SolutionDir)\Admin\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.dll" />
@@ -43,6 +46,7 @@
 		<ClientModuleFiles Include="$(SolutionDir)\Uhn\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.View.WinForms.dll" />
     <ClientModuleFiles Include="$(SolutionDir)\Fax\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.dll" />
     <ClientModuleFiles Include="$(SolutionDir)\Fax\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.View.WinForms.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\Oto\bin\$(Configuration)\ClearCanvas.Ris.Client.Oto.dll" />
   </ItemGroup>
 
   <ItemGroup>

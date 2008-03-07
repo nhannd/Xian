@@ -90,6 +90,7 @@ namespace ClearCanvas.Enterprise.Core
                 List<IInterceptor> interceptors = new List<IInterceptor>();
 
                 // add default interceptors in correct order
+                interceptors.Add(new PerformanceLoggingAdvice());
 
                 // exception logging occurs outside of the main persistence context
                 interceptors.Add(new ExceptionLoggingAdvice());

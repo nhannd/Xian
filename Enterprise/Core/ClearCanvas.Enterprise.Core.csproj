@@ -122,6 +122,7 @@
     <Compile Include="Modelling\ValidationBuilder.cs" />
     <Compile Include="Modelling\ValidationRuleSet.cs" />
     <Compile Include="Modelling\EmbeddedValueCollectionAttribute.cs" />
+    <Compile Include="PerformanceLoggingAdvice.cs" />
     <Compile Include="PersistenceContextAdvice.cs" />
     <Compile Include="PersistenceException.cs" />
     <Compile Include="PersistenceScope.cs" />

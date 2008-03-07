@@ -220,9 +220,6 @@
     </Compile>
     <Compile Include="StackTabComponentContainerView.cs" />
     <Compile Include="TabGroupComponentContainerView.cs" />
-    <Compile Include="CrudTableView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="CursorFactory.cs" />
     <Compile Include="DataGridViewWithDragSupport.cs">
       <SubType>Component</SubType>

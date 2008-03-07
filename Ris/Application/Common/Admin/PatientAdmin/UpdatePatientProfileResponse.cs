@@ -39,16 +39,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
     [DataContract]
     public class UpdatePatientProfileResponse : DataContractBase
     {
-        public UpdatePatientProfileResponse(EntityRef patientRef, EntityRef profileRef)
+        public UpdatePatientProfileResponse(PatientProfileSummary patientProfile)
         {
-            this.PatientRef = patientRef;
-            this.ProfileRef = profileRef;
+            this.PatientProfile = patientProfile;
         }
 
         [DataMember]
-        public EntityRef PatientRef;
-
-        [DataMember]
-        public EntityRef ProfileRef;
+        public PatientProfileSummary PatientProfile;
     }
 }

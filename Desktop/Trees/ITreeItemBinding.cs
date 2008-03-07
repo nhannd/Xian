@@ -97,8 +97,8 @@ namespace ClearCanvas.Desktop.Trees
         /// <summary>
         /// Asks the specified item if it can accept the specified drop data in a drag-drop operation.
         /// </summary>
-        /// <param name="item">The item being drag-dropped.</param>
-		/// <param name="dropData">Information about the item drag-dropped.</param>
+        /// <param name="item">The tree item that is being dropped on.</param>
+        /// <param name="dropData">The object being dropped.</param>
         /// <param name="kind">The drop kind being performed.</param>
         /// <returns>The drop kind that will be accepted.</returns>
         DragDropKind CanAcceptDrop(object item, object dropData, DragDropKind kind);
@@ -106,9 +106,9 @@ namespace ClearCanvas.Desktop.Trees
         /// <summary>
         /// Informs the specified item that it should accept a drop of the specified data, completing a drag-drop operation.
         /// </summary>
-		/// <param name="item">The item being drag-dropped.</param>
-		/// <param name="dropData">Information about the item being drag-dropped.</param>
-		/// <param name="kind">The drop kind being performed.</param>
+        /// <param name="item">The tree item that is being dropped on.</param>
+        /// <param name="dropData">The object being dropped.</param>
+        /// <param name="kind">The drop kind being performed.</param>
 		/// <returns>The drop kind that will be accepted.</returns>
 		DragDropKind AcceptDrop(object item, object dropData, DragDropKind kind);
     }

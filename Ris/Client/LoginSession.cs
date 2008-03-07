@@ -58,6 +58,11 @@ namespace ClearCanvas.Ris.Client
             get { return _current; }
         }
 
+        public static void Create(string userName, string password)
+        {
+            Create(userName, password, null);
+        }
+
         /// <summary>
         /// Creates a new <see cref="LoginSession"/>.
         /// </summary>
@@ -68,14 +73,15 @@ namespace ClearCanvas.Ris.Client
         /// <param name="userName"></param>
         /// <param name="password"></param>
         /// <param name="facility"></param>
-        internal static void Create(string userName, string password, FacilitySummary facility)
+        public static void Create(string userName, string password, FacilitySummary facility)
         {
             try
             {
                 Platform.GetService<ILoginService>(
                     delegate(ILoginService service)
                     {
-                        LoginResponse response = service.Login(new LoginRequest(userName, password, facility.FacilityRef, GetIPAddress()));
+                        LoginResponse response = service.Login(
+                            new LoginRequest(userName, password, facility == null ? null : facility.FacilityRef, GetIPAddress()));
 
                         // if the call succeeded, construct a generic principal object on this thread, containing
                         // the set of authority tokens for this user
@@ -129,6 +135,25 @@ namespace ClearCanvas.Ris.Client
         }
 
         /// <summary>
+        /// Terminates the current login session, setting the <see cref="Current"/> property to null.
+        /// </summary>
+        public void Terminate()
+        {
+            try
+            {
+                Platform.GetService<ILoginService>(
+                    delegate(ILoginService service)
+                    {
+                        service.Logout(new LogoutRequest(_userName, _sessionToken, GetIPAddress()));
+                    });
+            }
+            finally
+            {
+                _current = null;
+            }
+        }
+
+        /// <summary>
         /// Gets the user name of the logged on user.
         /// </summary>
         public string UserName
@@ -159,25 +184,6 @@ namespace ClearCanvas.Ris.Client
         internal string SessionToken
         {
             get { return _sessionToken; }
-        }
-
-        /// <summary>
-        /// Terminates the current login session, setting the <see cref="Current"/> property to null.
-        /// </summary>
-        internal void Terminate()
-        {
-            try
-            {
-                Platform.GetService<ILoginService>(
-                    delegate(ILoginService service)
-                    {
-                        service.Logout(new LogoutRequest(_userName, _sessionToken, GetIPAddress()));
-                    });
-            }
-            finally
-            {
-                _current = null;
-            }
         }
 
         /// <summary>

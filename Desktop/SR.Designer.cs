@@ -511,6 +511,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add.
+        /// </summary>
+        public static string TitleAdd {
+            get {
+                return ResourceManager.GetString("TitleAdd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string TitleCancel {
@@ -543,6 +552,24 @@ namespace ClearCanvas.Desktop {
         public static string TitleDateFormat {
             get {
                 return ResourceManager.GetString("TitleDateFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string TitleDelete {
+            get {
+                return ResourceManager.GetString("TitleDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string TitleEdit {
+            get {
+                return ResourceManager.GetString("TitleEdit", resourceCulture);
             }
         }
         

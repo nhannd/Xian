@@ -40,22 +40,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
     [DataContract]
     public class AddPatientResponse : DataContractBase
     {
-        public AddPatientResponse(EntityRef patientRef, EntityRef profileRef)
+        public AddPatientResponse(PatientProfileSummary patientProfile)
         {
-            this.PatientRef = patientRef;
-            this.PatientProfileRef = profileRef;
+            this.PatientProfile = patientProfile;
         }
 
-        /// <summary>
-        /// Ref to the newly created patient profile
-        /// </summary>
         [DataMember]
-        public EntityRef PatientProfileRef;
-
-        /// <summary>
-        /// Ref to the newly created patient
-        /// </summary>
-        [DataMember]
-        public EntityRef PatientRef;
+        public PatientProfileSummary PatientProfile;
     }
 }

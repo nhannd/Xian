@@ -40,21 +40,16 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     public class GetOrderEntryFormDataResponse : DataContractBase
     {
         public GetOrderEntryFormDataResponse(
-            List<VisitSummary> visitChoices,
             List<FacilitySummary> orderingFacilityChoices,
             List<EnumValueInfo> orderPriorityChoices,
             List<EnumValueInfo> cancelReasonChoices,
             List<EnumValueInfo> lateralityChoices)
         {
-            this.VisitChoices = visitChoices;
             this.FacilityChoices = orderingFacilityChoices;
             this.OrderPriorityChoices = orderPriorityChoices;
             this.CancelReasonChoices = cancelReasonChoices;
             this.LateralityChoices = lateralityChoices;
         }
-
-        [DataMember]
-        public List<VisitSummary> VisitChoices;
 
         [DataMember]
         public List<FacilitySummary> FacilityChoices;

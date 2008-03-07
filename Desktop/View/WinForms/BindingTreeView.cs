@@ -50,6 +50,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private BindingTreeLevelManager _rootLevelManager;
         private event EventHandler _selectionChanged;
         private event EventHandler _nodeMouseDoubleClicked;
+        private event EventHandler<ItemDragEventArgs> _itemDrag;
 
         private BindingTreeNode _dropTargetNode;
         private DragDropEffects _dropEffect;
@@ -256,6 +257,12 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             get { return _imageList.ColorDepth; }
             set { _imageList.ColorDepth = value; }
+        }
+
+        public event EventHandler<ItemDragEventArgs> ItemDrag
+        {
+            add { _itemDrag += value; }
+            remove { _itemDrag -= value; }
         }
 
         #endregion
@@ -624,6 +631,13 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         #endregion
+
+        private void _treeCtrl_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            ItemDragEventArgs args = new ItemDragEventArgs(e.Button, this.GetSelectionHelper());
+            EventsHelper.Fire(_itemDrag, this, args);
+        }
+
 
     }
 }

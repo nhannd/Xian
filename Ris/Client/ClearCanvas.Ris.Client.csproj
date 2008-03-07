@@ -152,7 +152,6 @@
     <Compile Include="ContactPersonEditorComponent.cs" />
     <Compile Include="ContactPersonsSummaryComponent.cs" />
     <Compile Include="ContactPersonTable.cs" />
-    <Compile Include="CrudActionModel.cs" />
     <Compile Include="EmailAddressEditorComponent.cs" />
     <Compile Include="EmailAddressesSummaryComponent.cs" />
     <Compile Include="EmailAddressTable.cs" />

@@ -192,16 +192,16 @@ namespace ClearCanvas.Ris.Client.Adt
                         AddPatientResponse response = service.AddPatient(
                             new AddPatientRequest(_profile));
 
-                        _patientRef = response.PatientRef;
-                        _profileRef = response.PatientProfileRef;
+                        _patientRef = response.PatientProfile.PatientRef;
+                        _profileRef = response.PatientProfile.PatientProfileRef;
                     }
                     else
                     {
                         UpdatePatientProfileResponse response = service.UpdatePatientProfile(
                             new UpdatePatientProfileRequest(_profileRef, _profile));
 
-                        _patientRef = response.PatientRef;
-                        _profileRef = response.ProfileRef;
+                        _patientRef = response.PatientProfile.PatientRef;
+                        _profileRef = response.PatientProfile.PatientProfileRef;
                     }
                 });
 

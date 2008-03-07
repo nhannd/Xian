@@ -32,18 +32,34 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Desktop.Actions
 {
+    /// <summary>
+    /// A convenience class for creating an action model with standard Add, Edit, and Delete actions.
+    /// </summary>
+    /// <remarks>
+    /// An instance of this class can be configured to have any or all of Add, Edit, and Delete actions.
+    /// Standard labels and icons will be used for these actions, however you can freely modify these values.
+    /// You may also add additional custom actions to an instance of this class.
+    /// </remarks>
     public class CrudActionModel : SimpleActionModel
     {
+        /// <summary>
+        /// Constructor that creates an instance with Add, Edit and Delete actions.
+        /// </summary>
         public CrudActionModel()
             :this(true, true, true)
         {
         }
 
+        /// <summary>
+        /// Constructor that allows specifying which of Add, Edit, and Delete actions should appear.
+        /// </summary>
+        /// <param name="add"></param>
+        /// <param name="edit"></param>
+        /// <param name="delete"></param>
         public CrudActionModel(bool add, bool edit, bool delete)
             :base(new ResourceResolver(typeof(CrudActionModel).Assembly))
         {
@@ -61,16 +77,25 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        /// <summary>
+        /// Gets the Add action.
+        /// </summary>
         public ClickAction Add
         {
             get { return this["Add"]; }
         }
 
+        /// <summary>
+        /// Gets the Edit action.
+        /// </summary>
         public ClickAction Edit
         {
             get { return this["Edit"]; }
         }
 
+        /// <summary>
+        /// Gets the Delete action.
+        /// </summary>
         public ClickAction Delete
         {
             get { return this["Delete"]; }

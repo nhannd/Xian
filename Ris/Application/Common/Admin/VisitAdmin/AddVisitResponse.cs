@@ -41,10 +41,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
     {
         public AddVisitResponse(VisitSummary addedVisit)
         {
-            this.AddedVisit = addedVisit;
+            this.Visit = addedVisit;
         }
 
         [DataMember]
-        public VisitSummary AddedVisit;
+        public VisitSummary Visit;
     }
 }

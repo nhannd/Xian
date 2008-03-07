@@ -267,6 +267,9 @@
   <data name="MessageValueRequired" xml:space="preserve">
     <value>Value required</value>
   </data>
+  <data name="TitleAdd" xml:space="preserve">
+    <value>Add</value>
+  </data>
   <data name="TitleCancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -278,6 +281,12 @@
   </data>
   <data name="TitleDateFormat" xml:space="preserve">
     <value>Date Format</value>
+  </data>
+  <data name="TitleDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="TitleEdit" xml:space="preserve">
+    <value>Edit</value>
   </data>
   <data name="TitleMenuOptions" xml:space="preserve">
     <value>Options</value>
