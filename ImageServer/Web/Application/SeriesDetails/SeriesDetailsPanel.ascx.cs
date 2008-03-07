@@ -62,9 +62,9 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 
         #region Protected Properties
 
-        protected void Page_Load(object sender, EventArgs e)
+        public override void DataBind()
         {
-            if (_study!=null)
+            if (_study != null)
             {
                 PatientSummaryPanel1.PatientSummary = PatientSummaryAssembler.CreatePatientSummary(_study);
 
@@ -72,11 +72,12 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
                 summary.Study = _study;
 
                 if (Series != null)
-                    SeriesDetailsView1.Series = _series; 
+                    SeriesDetailsView1.Series = _series;
+
             }
 
+            base.DataBind();
         }
-
         #endregion Protected Properties
 
     }

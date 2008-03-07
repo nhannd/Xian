@@ -50,7 +50,8 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 
             details.Modality = series.Modality;
             details.NumberOfSeriesRelatedInstances = series.NumberOfSeriesRelatedInstances;
-            details.PerformedDateTime = DateTime.Now;
+            details.PerformedDate = series.PerformedProcedureStepStartDate;
+            details.PerformedTime = series.PerformedProcedureStepStartTime;
             details.SeriesDescription = series.SeriesDescription;
             details.SeriesInstanceUid = series.SeriesInstanceUid;
             details.SeriesNumber = series.SeriesNumber;

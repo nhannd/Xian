@@ -29,6 +29,7 @@
 
 #endregion
 
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
@@ -52,6 +53,8 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
         /// </remark>
         static public StudyDetails CreateStudyDetails(Model.Study study)
         {
+            Platform.CheckForNullReference(study, "study");
+
             StudyDetails details = new StudyDetails();
 
             details.AccessionNumber = study.AccessionNumber;

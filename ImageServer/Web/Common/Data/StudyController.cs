@@ -99,6 +99,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns></returns>
         public bool IsScheduledForDelete(Study study)
         {
+            Platform.CheckForNullReference(study, "Study");
+            
             StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
             StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
             criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);

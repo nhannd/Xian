@@ -74,22 +74,22 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails {
         protected global::System.Web.UI.WebControls.Label PatientId;
         
         /// <summary>
-        /// Label3 control.
+        /// Label1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label3;
+        protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
-        /// PatientBirthDate control.
+        /// PatientDOB control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label PatientBirthDate;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.DALabel PatientDOB;
         
         /// <summary>
         /// Label4 control.

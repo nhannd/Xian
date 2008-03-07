@@ -33,8 +33,6 @@
 using System;
 using System.Web.UI;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
-
 namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 {
     /// <summary>
@@ -62,24 +60,21 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 
         #region Protected methods
 
-        protected void Page_Load(object sender, EventArgs e)
+
+        public override void DataBind()
         {
             if (_study != null)
             {
-                AccessionNumber.Text =  _study.AccessionNumber;
+                AccessionNumber.Text = _study.AccessionNumber;
                 StudyDescription.Text = _study.StudyDescription;
-                string dt;
-                if (DateTimeFormatter.TryFormatDA(_study.StudyDate, out dt))
-                {
-                    StudyDate.Text = dt;
-                }
-                else
-                    StudyDate.Text = "Unknown";
 
-
+                StudyDate.Value = _study.StudyDate;
+                
                 ReferringPhysician.Text = _study.ReferringPhysiciansName;
             }
 
+
+            base.DataBind();
         }
 
         #endregion Protected methods

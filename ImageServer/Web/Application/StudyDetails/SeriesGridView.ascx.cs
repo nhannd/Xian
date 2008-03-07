@@ -39,7 +39,6 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.SeriesDetails;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.StudyDetails.SeriesGridView.js", "application/x-javascript")]
 
@@ -127,9 +126,15 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
         #region Protected methods
 
 
-            protected void Page_Load(object sender, EventArgs e)
+        protected void Page_Load(object sender, EventArgs e)
         {
-            if (Study!=null && Partition!=null)
+           
+            
+        }
+
+        public override void DataBind()
+        {
+            if (Study != null && Partition != null)
             {
                 SeriesSearchAdaptor seriesAdaptor = new SeriesSearchAdaptor();
                 SeriesSelectCriteria criteria = new SeriesSelectCriteria();
@@ -139,11 +144,9 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
                 Series = seriesAdaptor.Get(criteria);
 
                 GridView1.DataSource = Series;
-                GridView1.DataBind();
-
-
             }
-            
+
+            base.DataBind();
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -156,39 +159,6 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
                 {
                     int index = GridView1.PageIndex * GridView1.PageSize + row.RowIndex;
                     Series series = _series[index];
-
-                    Label performedDateTime = row.FindControl("SeriesPerformedDateTime") as Label;
-
-                    if (performedDateTime!=null)
-                    {
-                        if (!String.IsNullOrEmpty(series.PerformedProcedureStepStartDate))
-                        {
-                            string dt;
-                            if (DateTimeFormatter.TryFormatDA(series.PerformedProcedureStepStartDate, out dt))
-                            {
-                                performedDateTime.Text = dt;
-                            }
-                            else
-                            {
-                                performedDateTime.Text =
-                                    String.Format("<i style='color:red'>[Invalid date:{0}]</i>",
-                                                  series.PerformedProcedureStepStartDate);
-                            }
-                        }
-
-                        if (!String.IsNullOrEmpty(series.PerformedProcedureStepStartTime))
-                        {
-                            string dt;
-                            if (DateTimeFormatter.TryFormatTM(series.PerformedProcedureStepStartTime, out dt))
-                            {
-                                performedDateTime.Text += " " + dt;
-                            }
-                            else
-                            {
-                                performedDateTime.Text += " " + String.Format("<i style='color:red'>[Invalid time:{0}]</i>", series.PerformedProcedureStepStartTime);
-                            }
-                        } 
-                    }
 
                     row.Attributes["serverae"] = _serverPartition.AeTitle;
                     row.Attributes["studyuid"] = _study.StudyInstanceUid;

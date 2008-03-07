@@ -1,5 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="PatientSummaryPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.StudyDetails.PatientSummaryPanel" %>
+<%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI"
+    TagPrefix="cc1" %>
 <table border="0px" cellpadding="0" cellspacing="0" width="100%">
     <tr>
         <td>
@@ -18,7 +20,7 @@
                             </asp:TableCell>
                             <asp:TableCell Wrap="false">
                                 <asp:Label ID="Label3" runat="server" Text="DOB: " ForeColor="white" Style="white-space: nowrap"></asp:Label>
-                                <asp:Label ID="PatientBirthDate" runat="server" Text="PatientBirthDate" ForeColor="white"></asp:Label>
+                                <cc1:DALabel ID="PatientDOB" runat="server" ForeColor="white" EmptyValueText="Unknown"></cc1:DALabel>
                             </asp:TableCell>
                             <asp:TableCell Wrap="false">
                                 <asp:Label ID="Label4" runat="server" Text="Age: " ForeColor="white" Style="white-space: nowrap"></asp:Label>

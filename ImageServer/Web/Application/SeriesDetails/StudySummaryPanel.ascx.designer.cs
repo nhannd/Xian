@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label StudyDate;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.DALabel StudyDate;
         
         /// <summary>
         /// Label4 control.

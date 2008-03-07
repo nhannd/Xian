@@ -35,7 +35,8 @@
                             </asp:BoundField>
                             <asp:TemplateField  HeaderText="Performed On">
                                 <ItemTemplate>
-                                    <asp:Label runat="server" ID="SeriesPerformedDateTime" Text="" Nowrap="true" />
+                                    <clearcanvas:DALabel ID="PerformedDate" runat="server" Text="{0}" Value='<%# Eval("PerformedProcedureStepStartDate") %>' InvalidValueText="<i style='color:red'>[Invalid date:{0}]</i>"></clearcanvas:DALabel>
+                                    <clearcanvas:TMLabel ID="PerformedTime" runat="server" Text="{0}" Value='<%# Eval("PerformedProcedureStepStartTime") %>' InvalidValueText="<i style='color:red'>[Invalid time:{0}]</i>"></clearcanvas:TMLabel>
                                 </ItemTemplate>
                                 <HeaderStyle Wrap="False" />  
                             </asp:TemplateField>

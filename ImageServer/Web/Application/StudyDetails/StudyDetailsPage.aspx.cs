@@ -88,9 +88,7 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
                     
                     Partition = partitions[0];
                     LoadStudy();
-                    RenderStudyDetails();
                 }
-                
             }
         }
 
@@ -115,19 +113,22 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
                 // there should be only one study
                 _study  = studies[0];
             }
+
+
+            StudyDetailsPanel.Study = _study;
+            StudyDetailsPanel.DataBind();
             
         }
 
-        protected void RenderStudyDetails()
+        protected override void OnPreRender(EventArgs e)
         {
-            if (_study!=null)
+            base.OnPreRender(e); 
+            
+            if (_study == null)
             {
-                StudyDetailsPanel.Study = _study;
-            }
-            else
-            {
-                Response.Write("<Br>NO MATCHING STUDY FOUND<Br>");
-            }
+                Response.Write("<Br>NO SUCH STUDY FOUND<Br>");
+                StudyDetailsPanel.Visible = false;
+            } 
         }
 
         #endregion Protected Methods

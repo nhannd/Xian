@@ -70,8 +70,16 @@
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\DateTimeFormatter.cs" />
+    <Compile Include="WebControls\UI\DateTimeFormatter.cs" />
+    <Compile Include="WebControls\UI\TMLabel.cs" />
+    <Compile Include="WebControls\UI\DALabel.cs" />
+    <Compile Include="WebControls\UI\DateTimeLabel.cs" />
     <Compile Include="WebControls\UI\GridView.cs" />
+    <Compile Include="WebControls\UI\UISettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>UISettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="WebControls\Validators\BaseValidator.cs" />
     <Compile Include="WebControls\Validators\ConditionalRequiredFieldValidator.cs" />
     <Compile Include="WebControls\Validators\RangeComparisonValidator.cs" />
@@ -90,6 +98,10 @@
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
+      <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
+      <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
@@ -112,6 +124,10 @@
     <None Include="app.config">
     </None>
     <None Include="Service References\FilesystemServiceProxy.map" />
+    <None Include="WebControls\UI\UISettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>UISettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="WebControls\Validators\LengthValidator.js" />

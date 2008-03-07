@@ -120,15 +120,15 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
             ConfirmDialog1.Confirmed += new ConfirmDialog.ConfirmedEventHandler(ConfirmDialog1_Confirmed);
         }
 
-        protected void Page_Load(object sender, EventArgs e)
+        public override void DataBind()
         {
-            if (Study!=null)
+            // setup the data for the child controls
+            if (Study != null)
             {
                 ServerPartitionDataAdapter adaptor = new ServerPartitionDataAdapter();
                 ServerPartition partition = adaptor.Get(Study.ServerPartitionKey);
 
                 PatientSummaryPanel.PatientSummary = PatientSummaryAssembler.CreatePatientSummary(Study);
-
 
                 StudyDetailsView studyView = (StudyDetailsView)StudySectionPanel.FindControl("StudyDetailsView");
                 studyView.Studies.Add(Study);
@@ -136,46 +136,49 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
                 SeriesGridView seriesView = (SeriesGridView)SeriesSectionPanel.FindControl("SeriesGridView");
                 seriesView.Partition = partition;
                 seriesView.Study = Study;
-
-            }
-           
+            } 
             
+            base.DataBind();
+
         }
 
         protected override void OnPreRender(EventArgs e)
         {
+            UpdateUI(); 
+            
             base.OnPreRender(e);
-            UpdateUI();
         }
 
         protected void UpdateUI()
         {
+            if (Study!=null)
+            {
+                StudyController controller = new StudyController();
+                bool scheduledForDelete = controller.IsScheduledForDelete(Study);
+
+                //TODO: make Delete button enabled/disabled based on user permission too
+                ToolbarButton deleteBtn = (ToolbarButton)StudySectionPanel.FindControl("DeleteToolbarButton");
+
+                deleteBtn.Enabled = !scheduledForDelete;
+
+                if (scheduledForDelete)
+                {
+                    ShowScheduledForDeleteAlert();
+                }
+                else
+                {
+                    MessagePanel.Visible = false;
+                }
+
+
+                ToolbarButton openSeriesBtn = (ToolbarButton)SeriesSectionPanel.FindControl("OpenSeriesButton");
+                SeriesGridView seriesView = (SeriesGridView)SeriesSectionPanel.FindControl("SeriesGridView");
+
+                int[] selectedSeriesIndices = seriesView.SeriesListControl.SelectedIndices;
+                openSeriesBtn.Enabled = selectedSeriesIndices != null && selectedSeriesIndices.Length > 0; 
+            
+            }
            
-            StudyController controller = new StudyController();
-            bool scheduledForDelete = controller.IsScheduledForDelete(Study);
-
-            //TODO: make Delete button enabled/disabled based on user permission too
-            ToolbarButton deleteBtn = (ToolbarButton)StudySectionPanel.FindControl("DeleteToolbarButton");
-
-            deleteBtn.Enabled = !scheduledForDelete;
-            
-            if (scheduledForDelete)
-            {
-                ShowScheduledForDeleteAlert();
-            }
-            else
-            {
-                MessagePanel.Visible = false;
-            }
-
-
-
-            ToolbarButton openSeriesBtn = (ToolbarButton)SeriesSectionPanel.FindControl("OpenSeriesButton");
-            SeriesGridView seriesView = (SeriesGridView)SeriesSectionPanel.FindControl("SeriesGridView");
-
-            int[] selectedSeriesIndices = seriesView.SeriesListControl.SelectedIndices;
-            openSeriesBtn.Enabled = selectedSeriesIndices != null && selectedSeriesIndices.Length > 0; 
-            
         }
 
         protected void DeleteToolbarButton_Click(object sender, ImageClickEventArgs e)

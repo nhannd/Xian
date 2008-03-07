@@ -43,7 +43,8 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
         private string _seriesNumber;
         private string _seriesDescription;
         private int _numberOfSeriesRelatedInstances;
-        private DateTime? _performedDateTime;
+        private string _performedDate;
+        private string _performedTime;
         private string _sourceApplicationEntityTitle;
 
         public string SeriesInstanceUid
@@ -76,16 +77,22 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
             set { _numberOfSeriesRelatedInstances = value; }
         }
 
-        public DateTime? PerformedDateTime
+        public string PerformedDate
         {
-            get { return _performedDateTime; }
-            set { _performedDateTime = value; }
+            get { return _performedDate; }
+            set { _performedDate = value; }
         }
 
         public string SourceApplicationEntityTitle
         {
             get { return _sourceApplicationEntityTitle; }
             set { _sourceApplicationEntityTitle = value; }
+        }
+
+        public string PerformedTime
+        {
+            get { return _performedTime; }
+            set { _performedTime = value; }
         }
     }
 }

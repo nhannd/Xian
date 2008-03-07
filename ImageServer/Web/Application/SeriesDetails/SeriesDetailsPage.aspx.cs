@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Web.UI;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -98,14 +99,16 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 
         #region Public Methods
 
-        public override void RenderControl(HtmlTextWriter writer)
+        protected override void  OnPreRender(EventArgs e)
         {
-            base.RenderControl(writer);
-
             if (_series==null)
             {
-                Response.Write("<Br>NO SERIES FOUND<Br>");
+                Response.Write("<Br>NO  SUCH SERIES FOUND<Br>");
+
+                SeriesDetailsPanel1.Visible = false;
             }
+ 	        
+            base.OnPreRender(e);
         }
 
         #endregion Public Methods
@@ -158,6 +161,8 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
                 SeriesDetailsPanel1.Study = _study;
                 SeriesDetailsPanel1.Series = _series;
             }
+
+            DataBind();
         }
 
         #endregion Private Methods

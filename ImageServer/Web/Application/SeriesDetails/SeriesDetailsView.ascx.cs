@@ -68,5 +68,10 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
         }
 
         #endregion Protected Methods
+
+        protected void DetailsView1_DataBound(object sender, EventArgs e)
+        {
+            SeriesDetails series = DetailsView1.DataItem as SeriesDetails;
+        }
     }
 }

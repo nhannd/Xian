@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
 {
@@ -90,40 +89,7 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
             Study study = (DetailsView1.DataItem) as Study;
             if (study != null)
             {
-                if (DetailsView1.CurrentMode == DetailsViewMode.ReadOnly)
-                {
-                    Label datetimeLabel = DetailsView1.FindControl("StudyDateTimeLabel") as Label;
-                    if (datetimeLabel != null)
-                    {
-                        string dt;
-                        if (!String.IsNullOrEmpty(study.StudyDate))
-                        {
-                            if (DateTimeFormatter.TryFormatDA(study.StudyDate, out dt))
-                            {
-                                datetimeLabel.Text += dt;
-                            }
-                            else
-                            {
-                                // can't be parsed. It's invalid format
-                                datetimeLabel.Text = String.Format("<i style='color:red'>[invalid study date: {0} ]</i>", study.StudyDate);
-                            }
-                        }
-
-                        if (!String.IsNullOrEmpty(study.StudyTime))
-                        {
-                            if (DateTimeFormatter.TryFormatTM(study.StudyTime, out dt))
-                            {
-                                datetimeLabel.Text += " " + dt;
-                            }
-                            else
-                            {
-                                // can't be parsed. It's invalid format
-                                datetimeLabel.Text += String.Format(" <i style='color:red'>[invalid study time: {0} ]</i>", study.StudyTime);
-                            }
-                        }
-
-                    }
-                }
+                
 
             }
 

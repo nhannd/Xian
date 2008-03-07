@@ -20,24 +20,19 @@
         </asp:BoundField>
         <asp:TemplateField HeaderText="Study Status">
             <ItemTemplate>
-                <asp:Label ID="Label1" runat="server" Text='<%# DataBinder.Eval(Container.DataItem, "StudyStatusEnum.Description") %>' />
+                <asp:Label ID="Label1" runat="server" Text='<%# Eval("StudyStatusEnum.Description") %>' />
             </ItemTemplate>
             <HeaderStyle Wrap="False" />
         </asp:TemplateField>
         
-        <asp:BoundField DataField="StudyDate"  HeaderText="Study Date" Visible="False">
-            <HeaderStyle Wrap="False" />
-        </asp:BoundField>
-        <asp:BoundField DataField="StudyTime"  HeaderText="Study Time" Visible="False">
-            <HeaderStyle Wrap="False" />
-        </asp:BoundField>
-        
-         <asp:TemplateField HeaderText="Study DateTime">
+        <asp:TemplateField HeaderText="Study Date/Time">
             <HeaderStyle Wrap="False" />
             <ItemTemplate>
-                <asp:Label runat="server" ID="StudyDateTimeLabel" />
+                <cc1:DALabel ID="StudyDate" runat="server"  Value='<%# Eval("StudyDate") %>' ></cc1:DALabel>
+                <cc1:TMLabel ID="StudyTime" runat="server"  Value='<%# Eval("StudyTime") %>' ></cc1:TMLabel>
             </ItemTemplate>
         </asp:TemplateField>
+
         
         <asp:BoundField DataField="StudyID" HeaderText="Study ID">
             <HeaderStyle Wrap="False" />

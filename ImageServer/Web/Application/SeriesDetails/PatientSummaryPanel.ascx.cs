@@ -32,7 +32,7 @@
 
 using System;
 using System.Web.UI;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 {
@@ -63,18 +63,22 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 
         protected void Page_Load(object sender, EventArgs e)
         {
+           
+
+        }
+
+        public override void DataBind()
+        {
             if (_patientSummary != null)
             {
-
                 PatientName.Text = _patientSummary.PatientName;
+                PatientDOB.Value = _patientSummary.Birthdate;
 
-                DateTime bdate;
-                if (DateTimeFormatter.TryParseDA(_patientSummary.Birthdate, out bdate))
+                DateTime? bdate = DateParser.Parse(_patientSummary.Birthdate);
+
+                if (bdate!=null)
                 {
-                    PatientBirthDate.Text =
-                        DateTimeFormatter.Format(bdate, DateTimeFormatter.DateTimeUIStyles.DATE_ONLY);
-
-                    TimeSpan age = DateTime.Now - bdate;
+                    TimeSpan age = DateTime.Now - bdate.Value;
                     if (age > TimeSpan.FromDays(365))
                     {
                         PatientAge.Text = String.Format("{0:0}", age.TotalDays / 365);
@@ -90,11 +94,10 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
                 }
                 else
                 {
-                    PatientBirthDate.Text = "Unknown";
-                    PatientAge.Text = "Unknown";                    
+                    PatientAge.Text = "Unknown";
                 }
 
-                
+
 
                 if (String.IsNullOrEmpty(_patientSummary.Sex))
                     PatientSex.Text = "Unknown";
@@ -108,6 +111,7 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 
             }
 
+            base.DataBind();
         }
 
         #endregion Protected methods
