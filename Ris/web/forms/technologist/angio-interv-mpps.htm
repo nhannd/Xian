@@ -260,31 +260,28 @@
          //////////////////////////////////////////////////////////////////////////
       </script>
    </head>
-   <body onload="javascript: onBodyLoad()">
+   <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
       <form id="myForm">
          <p class="sectionheading">Exam Acquisition/Mpps</p>
-         <p>&nbsp;</b>
          <table id="acquisitionTable" width="100%">
             <tr><td class="tableheading"></td></tr>
          </table>
-         <p>&nbsp;</b>
          <p class="sectionheading">Contrast/Injections</p>
-         <p>&nbsp;</b>
          <p class="sectionheading">IV - Access</p>
-         <p>
+         <div class="addDeleteButtons">
              <input type="button" value="Add" onclick="javascript: onAddIVAccess()" />
              <input type="button" value="Delete" onclick="javascript: onDeleteIVAccess()" />
-         </p>
+         </div>
          <table id="ivAccessTable" border="1" width="100%">
             <tr>
                <td colspan="2"><input id="ivAccessCheckAllNone" type="checkbox" onclick="javascript:onIVAccessCheckAllNone()">Select All/None</input></td>
             </tr>
          </table>
          <p class="sectionheading">IV - Contrast</p>
-         <p>
+         <div class="addDeleteButtons">
              <input type="button" value="Add" onclick="javascript: onAddIVContrast()" />
              <input type="button" value="Delete" onclick="javascript: onDeleteIVContrast()" />
-         </p>
+         </div>
          <table id="ivContrastTable" border="1" width="100%">
             <tr>
                <td colspan="2"><input id="ivContrastCheckAllNone" type="checkbox" onclick="javascript:onIVContrastCheckAllNone()">Select All/None</input></td>
