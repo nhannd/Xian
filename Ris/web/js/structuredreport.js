@@ -641,6 +641,22 @@ function OnBiometryChanged(show)
 
 function initAnatomy()
 {
+	function formatLikeTableHeading(label)
+	{
+		return "<span class=\"tableheading\">" + label + "</span>";
+	}
+
+	function StandardAnatomyCell(label, prop, formatLabelLikeTableHeading)
+	{
+		this.label = formatLabelLikeTableHeading ? formatLikeTableHeading(label) : label;
+		this.prop = prop;
+		this.cellType = "choice";
+		this.choices = ["Normal", "Not seen", "See comment"];
+		this.getValue = function(item) { return item[prop]; };
+		this.setValue = function(item, value) { item[prop] = value; };
+		this.getError = function(item) { return null; };
+	}
+
 	var standardAnswers = ["Normal", "Not seen", "See comment"];
 	var defaultAnswer = 0;
 
@@ -660,88 +676,32 @@ function initAnatomy()
 
 	var headShapeTable = Table.createTable($("headShapeTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
-		{
-			label: "Head shape",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.headShape; },
-			setValue: function(item, value) { item.headShape = value; },
-			getError: function(item) { return null; }
-		}
+		new StandardAnatomyCell("Head Shape", "headShape", true)
 	]);			
 	
 	headShapeTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 
 	var headTable = Table.createTable($("headTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 	[			
-		{
-			label: "Posterior horns",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.posteriorHorns; },
-			setValue: function(item, value) { item.posteriorHorns = value; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "Choroid plexi",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.choroidPlexi; },
-			setValue: function(item, value) { item.choroidPlexi = value; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "Cavum septi",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.cavumSepti; },
-			setValue: function(item, value) { item.cavumSepti = value; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "Cerebellum",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.cerebellum; },
-			setValue: function(item, value) { item.cerebellum = value; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "Cisterna magna",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.cisternaMagna; },
-			setValue: function(item, value) { item.cisternaMagna = value; },
-			getError: function(item) { return null; }
-		}
+		new StandardAnatomyCell("Posterior horns", "posteriorHorns"),
+		new StandardAnatomyCell("Choroid plexi", "choroidPlexi"),
+		new StandardAnatomyCell("Cavum septi", "cavumSepti"),
+		new StandardAnatomyCell("Cerebellum", "cerebellum"),
+		new StandardAnatomyCell("Cisterna magna", "cisternaMagna")
 	]);
 	
 	headTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 
 	var nuchalFoldTable = Table.createTable($("nuchalFoldTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
-		{
-			label: "Nuchal fold",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.nuchalFold; },
-			setValue: function(item, value) { item.nuchalFold = value; },
-			getError: function(item) { return null; }
-		}
+		new StandardAnatomyCell("Nuchal Fold", "nuchalFold", true)
 	]);
 	
 	nuchalFoldTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 
 	var faceTable = Table.createTable($("faceTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
-		{
-			label: "Eyes",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.eyes; },
-			setValue: function(item, value) { item.eyes = value; },
-			getError: function(item) { return null; }
-		},
+		new StandardAnatomyCell("Eyes", "eyes"),
 		{
 			label: "Orbital ratio (i/o)",
 			cellType: "text", 
@@ -749,58 +709,23 @@ function initAnatomy()
 			setValue: function(item, value) { item.orbitalRatio = value; },
 			getError: function(item) { return null; }
 		},
-		{
-			label: "Mouth",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.mouth; },
-			setValue: function(item, value) { item.mouth = value; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "Profile",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.profile; },
-			setValue: function(item, value) { item.profile = value; },
-			getError: function(item) { return null; }
-		}
+		new StandardAnatomyCell("Mouth", "mouth"),
+		new StandardAnatomyCell("Profile", "profile")
 	]);
 	
 	faceTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 
 	var spineTable = Table.createTable($("spineTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
-		{
-			label: "Spine",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.spine; },
-			setValue: function(item, value) { item.spine = value; },
-			getError: function(item) { return null; }
-		}
+		new StandardAnatomyCell("Spine", "spine", true)
 	]);
 
 	spineTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 
 	var heartTable = Table.createTable($("heartTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
-		{
-			label: "4 Chambers",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.fourChambers; },
-			setValue: function(item, value) { item.fourChambers = value; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "Great vessels",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.greatVessels; },
-			setValue: function(item, value) { item.greatVessels = value; },
-			getError: function(item) { return null; }
-		},
+		new StandardAnatomyCell("4 Chambers", "fourChambers"),
+		new StandardAnatomyCell("Great vessels", "greatVessels"),
 		{
 			label: "Detailed Cardiac",
 			cellType: "choice", 
@@ -818,68 +743,19 @@ function initAnatomy()
 
 	var chestTable = Table.createTable($("chestTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
-		{
-			label: "Chest",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.chest; },
-			setValue: function(item, value) { item.chest = value; },
-			getError: function(item) { return null; }
-		}
+		new StandardAnatomyCell("Chest", "chest", true)
 	]);
 	
 	chestTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 
 	var abdomenTable = Table.createTable($("abdomenTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
-		{
-			label: "Diaphragm",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.diaphragm; },
-			setValue: function(item, value) { item.diaphragm = value; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "Stomach",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.stomach; },
-			setValue: function(item, value) { item.stomach = value; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "Abdominal wall",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.abdominalWall; },
-			setValue: function(item, value) { item.abdominalWall = value; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "Kidneys - RT",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.kidneysRt; },
-			setValue: function(item, value) { item.kidneysRt = value; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "Kidneys - LT",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.kidneysLt; },
-			setValue: function(item, value) { item.kidneysLt = value; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "Bladder",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.bladder; },
-			setValue: function(item, value) { item.bladder = value; },
-			getError: function(item) { return null; }
-		}
+		new StandardAnatomyCell("Diaphragm", "diaphragm"),
+		new StandardAnatomyCell("Stomach", "stomach"),
+		new StandardAnatomyCell("Abdominal wall", "abdominalWall"),
+		new StandardAnatomyCell("Kidneys - RT", "kidneysRt"),
+		new StandardAnatomyCell("Kidneys - LT", "kidneysLt"),
+		new StandardAnatomyCell("Bladder", "bladder")
 	]);
 	
 	abdomenTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -887,7 +763,7 @@ function initAnatomy()
 	var genitaliaTable = Table.createTable($("genitaliaTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
 		{
-			label: "Genitalia",
+			label: formatLikeTableHeading("Genitalia"),
 			cellType: "choice", 
 			choices: ["Female", "Male", "Not seen", "See comment"],
 			getValue: function(item) { return item.genitalia = item.genitalia || "Female"; },
@@ -900,38 +776,10 @@ function initAnatomy()
 
 	var extremitiesTable = Table.createTable($("extremitiesTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
-		{
-			label: "Upper - RT",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.upperRt; },
-			setValue: function(item, value) { item.upperRt = value; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "Upper - LT",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.upperLt; },
-			setValue: function(item, value) { item.upperLt = value; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "Lower - RT",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.lowerRt; },
-			setValue: function(item, value) { item.lowerRt = value; },
-			getError: function(item) { return null; }
-		},
-		{
-			label: "Lower - LT",
-			cellType: "choice", 
-			choices: standardAnswers,
-			getValue: function(item) { return item.lowerLt; },
-			setValue: function(item, value) { item.lowerLt = value; },
-			getError: function(item) { return null; }
-		}
+		new StandardAnatomyCell("Upper - RT", "upperRt"),
+		new StandardAnatomyCell("Upper - LT", "upperLt"),
+		new StandardAnatomyCell("Lower - RT", "lowerRt"),
+		new StandardAnatomyCell("Lower - LT", "lowerLt")
 	]);
 	
 	extremitiesTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -939,7 +787,7 @@ function initAnatomy()
 	var cordVesselsTable = Table.createTable($("cordVesselsTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 	[
 		{
-			label: "Cord Vessels",
+			label: formatLikeTableHeading("Cord Vessels"),
 			cellType: "choice", 
 			choices: ["2", "3"],
 			getValue: function(item) { return item.cordVessels = item.cordVessels || "2"; },
@@ -1588,19 +1436,19 @@ function structuredReportHtml()
 	html+= 	"			</table>";
 	html+= 	"			<div style=\"{width:48%; float:left;}\">";
 	html+= 	"				<table id=\"headShapeTable\">";
-	html+= 	"					<tr><td class=\"tableheading\">Head Shape</td></tr>";
+	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";  // use cell label instead
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"headTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Head</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"nuchalFoldTable\">";
-	html+= 	"					<tr><td class=\"tableheading\">Nuchal Fold</td></tr>";
+	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";  // use cell label instead
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"faceTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Face</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"spineTable\">";
-	html+= 	"					<tr><td class=\"tableheading\">Spine</td></tr>";
+	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";  // use cell label instead
 	html+= 	"				</table>";
 	html+= 	"			</div>";
 	html+= 	"			<div style=\"{width:48%; float:right;}\">";
@@ -1614,13 +1462,13 @@ function structuredReportHtml()
 	html+= 	"					<tr><td class=\"tableheading\">Abdomen</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"genitaliaTable\">";
-	html+= 	"					<tr><td class=\"tableheading\">Genitalia</td></tr>";
+	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";   // use cell label instead
 	html+= 	"				</table>";
 	html+= 	"				<table class=\"extremitiesTable\" id=\"extremitiesTable\">";
 	html+= 	"					<tr><td class=\"tableheading\">Extremities</td></tr>";
 	html+= 	"				</table>";
 	html+= 	"				<table id=\"cordVesselsTable\">";
-	html+= 	"					<tr><td class=\"tableheading\">Cord Vessels</td></tr>";
+	html+= 	"					<tr><td class=\"tableheading\"></td></tr>";   // use cell label instead
 	html+= 	"				</table>";
 	html+= 	"			</div>";
 	html+= 	"			<div style=\"{clear:both;}\">&nbsp;</div>";
