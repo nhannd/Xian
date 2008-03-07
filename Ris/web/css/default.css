@@ -1,6 +1,10 @@
+html 
+{
+	font-size:100%;
+}
+
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	/* font-size: 14px; */
 }
 
 p  {
@@ -10,14 +14,20 @@ p  {
 
 table {
    border-collapse:collapse;
-   margin-left:10px;
+	width:98%;
+	margin-top: 0.5em;
+   margin-left:1em;
 }
 
 table td {
-   padding-top: 1px;
-   padding-bottom: 1px;
-   padding-left: 0px;
-   padding-right: 15px;
+	padding: 0.2em 0.5em 0.2em 0.5em;
+}
+
+div.addRemoveButtons
+{
+	margin-left:1em;
+	margin-top:1em;
+	margin-bottom:-0.25em;
 }
 
 .tableheading {
@@ -49,22 +59,13 @@ table td {
          * on top of one another. Having a top border will not work
          * since the padding occurs betwen the text and the border
          */
-	padding-top: 1em;
+	margin-top: 1em;
 	border-bottom: thin solid #A8D8F4;
 	/* border-top: thin solid #A8D8F4; */
 	/* background-color: #3D98D1; */
 	/* color: #FFFFFF; */
 	/*background-color: #A8D8F4; */
 }
-
-input[type="text"] {
-	font-size: 1em;
-}
-
-input[type="button"] {
-	font-size: 1em;
-}
-
 
 .sectionheading a:visited{
    color: #3D98D1;
@@ -166,8 +167,6 @@ a.collapsibleHeading span.plusMinus
    padding: 0;
    margin: 0;
    padding-right: 1.5em;
-   margin-bottom: 5px;
-   height:3.3em;
 }
 
 .divCell
@@ -178,6 +177,10 @@ a.collapsibleHeading span.plusMinus
 .divCell textarea
 {
 	width: 100%;
+}
+
+.divCell input[type="text"] {
+	vertical-align: top;
 }
 
 .checkedDivCell

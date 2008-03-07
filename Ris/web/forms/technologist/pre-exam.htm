@@ -160,12 +160,13 @@
 							cellType: "choice",
 							choices: ["No", "Yes"],
 							getValue: function(item) { return item.allergyStatus || "No"; },
-							setValue: function(item, value) { item.allergyStatus = value; Field.show($("drugAllergiesTable"), item.allergyStatus == "Yes"); },
+							setValue: function(item, value) { item.allergyStatus = value; Field.show($("drugAllergiesSection"), item.allergyStatus == "Yes"); },
 							getError: function(item) { return null; }
 						}
-					]);
+					]);					
 				drugAllergiesStatusTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				drugAllergiesStatusTable.bindItems([data.patientScreening]);
+				Field.show($("drugAllergiesSection"), data.patientScreening.allergyStatus == "Yes");
 
 				var drugAllergiesTable = Table.createTable($("drugAllergiesTable"), { editInPlace: true, flow: true, checkBoxes: true },
 					[
@@ -178,8 +179,6 @@
 					]);
 				drugAllergiesTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				drugAllergiesTable.bindItems(data.patientScreening.drugAllergies);
-
-				Field.show($("drugAllergiesTable"), item.allergyStatus == "Yes");
 
 				var renalDiseaseTable = Table.createTable($("renalDiseaseTable"), { editInPlace: true, flow: true, checkBoxes: false },
 					[
@@ -386,12 +385,13 @@
 							cellType: "choice",
 							choices: ["No", "Yes"],
 							getValue: function(item) { return item.creatinineStatus || "No"; },
-							setValue: function(item, value) { item.creatinineStatus = value; Field.show($("creatinineLevelTable"), item.creatinineStatus == "Yes"); },
+							setValue: function(item, value) { item.creatinineStatus = value; Field.show($("creatinineLevelSection"), item.creatinineStatus == "Yes"); },
 							getError: function(item) { return null; }
 						}
 					]);
 				creatinineStatusTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				creatinineStatusTable.bindItems([data.patientScreening]);
+				Field.show($("creatinineLevelSection"), data.patientScreening.creatinineStatus == "Yes");
 
 				var creatinineLevelTable = Table.createTable($("creatinineLevelTable"), { editInPlace: true, flow: true, checkBoxes: true },
 					[
@@ -417,7 +417,6 @@
 					]);
 				creatinineLevelTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				creatinineLevelTable.bindItems(data.labResults.creatinineLevel);
-				Field.show($("creatinineLevelTable"), item.creatinineStatus == "Yes");
 
 				var psaStatusTable = Table.createTable($("psaStatusTable"), { editInPlace: true, flow: true, checkBoxes: false },
 					[
@@ -425,12 +424,13 @@
 							cellType: "choice",
 							choices: ["No", "Yes"],
 							getValue: function(item) { return item.psaStatus || "No"; },
-							setValue: function(item, value) { item.psaStatus = value; Field.show($("psaTable"), item.psaStatus == "Yes"); },
+							setValue: function(item, value) { item.psaStatus = value; Field.show($("psaSection"), item.psaStatus == "Yes"); },
 							getError: function(item) { return null; }
 						}
 					]);
 				psaStatusTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				psaStatusTable.bindItems([data.patientScreening]);
+				Field.show($("psaSection"), data.patientScreening.psaStatus == "Yes");
 
 				var psaTable = Table.createTable($("psaTable"), { editInPlace: true, flow: true, checkBoxes: true },
 					[
@@ -455,7 +455,6 @@
 					]);
 				psaTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				psaTable.bindItems(data.labResults.psa);
-				Field.show($("psaTable"), item.psaStatus == "Yes");
 
 				var otherResultsTable = Table.createTable($("otherResultsTable"), { editInPlace: true, flow: true, checkBoxes: false },
 					[
@@ -780,17 +779,17 @@
 			<div id="PatientScreening" class="TabPage">
 				<p class="sectionheading">Drug Allergies</p>
 				<table id="drugAllergiesStatusTable"  width="100%">
-				<tr><td class="tableheading"></td></tr>
+					<tr><td class="tableheading"></td></tr>
 				</table>
-				<table id="drugAllergiesTable" border="1" width="100%">
-				<p>
-					<input type="button" value="Add" onclick="javascript: onAddDrugAllergies()" />
-					<input type="button" value="Delete" onclick="javascript: onDeleteDrugAllergies()" />
-				</p>
-				<tr>
-					<td colspan="2"><label><input id="drugAllergiesCheckAllNone" type="checkbox" onclick="javascript: onDrugAllergiesCheckAllNone()" />Select All/None</label></td>
-				</tr>
-				</table>
+				<div id="drugAllergiesSection">
+					<div class="addRemoveButtons">
+						<input type="button" value="Add" onclick="javascript: onAddDrugAllergies()" />
+						<input type="button" value="Delete" onclick="javascript: onDeleteDrugAllergies()" />
+					</div>
+					<table id="drugAllergiesTable" border="1" width="100%">
+						<tr><td colspan="2"><label><input id="drugAllergiesCheckAllNone" type="checkbox" onclick="javascript: onDrugAllergiesCheckAllNone()" />Select All/None</label></td></tr>
+					</table>
+				</div>
 
 				<p class="sectionheading">Renal Disease</p>
 				<table id="renalDiseaseTable"  width="100%">
@@ -830,31 +829,31 @@
 			<div id="LabResults" class="TabPage">
 				<p class="sectionheading">Creatinine Level</p>
 				<table id="creatinineStatusTable"  width="100%">
-				<tr><td class="tableheading"></td></tr>
+					<tr><td class="tableheading"></td></tr>
 				</table>
-				<table id="creatinineLevelTable" border="1" width="100%">
-				<p>
-					<input type="button" value="Add" onclick="javascript: onAddCreatinineLevel()" />
-					<input type="button" value="Delete" onclick="javascript: onDeleteCreatinineLevel()" />
-				</p>
-				<tr>
-					<td colspan="2"><label><input id="creatinineLevelCheckAllNone" type="checkbox" onclick="javascript: onCreatinineLevelCheckAllNone()" />Select All/None</label></td>
-				</tr>
-				</table>
+				<div id="creatinineLevelSection">
+					<div class="addRemoveButtons">
+						<input type="button" value="Add" onclick="javascript: onAddCreatinineLevel()" />
+						<input type="button" value="Delete" onclick="javascript: onDeleteCreatinineLevel()" />
+					</div>
+					<table id="creatinineLevelTable" border="1" width="100%">
+						<tr><td colspan="2"><label><input id="creatinineLevelCheckAllNone" type="checkbox" onclick="javascript: onCreatinineLevelCheckAllNone()" />Select All/None</label></td></tr>
+					</table>
+				</div>
 
 				<p class="sectionheading">PSA</p>
 				<table id="psaStatusTable"  width="100%">
 				<tr><td class="tableheading"></td></tr>
 				</table>
-				<table id="psaTable" border="1" width="100%">
-				<p>
-					<input type="button" value="Add" onclick="javascript: onAddPSA()" />
-					<input type="button" value="Delete" onclick="javascript: onDeletePSA()" />
-				</p>
-				<tr>
-					<td colspan="2"><label><input id="psaCheckAllNone" type="checkbox" onclick="javascript: onPSACheckAllNone()" />Select All/None</label></td>
-				</tr>
-				</table>
+				<div id="psaSection">
+					<div class="addRemoveButtons">
+						<input type="button" value="Add" onclick="javascript: onAddPSA()" />
+						<input type="button" value="Delete" onclick="javascript: onDeletePSA()" />
+					</div>
+					<table id="psaTable" border="1" width="100%">
+						<tr><td colspan="2"><label><input id="psaCheckAllNone" type="checkbox" onclick="javascript: onPSACheckAllNone()" />Select All/None</label></td></tr>
+					</table>
+				</div>
 
 				<p class="sectionheading">Other results</p>
 				<table id="otherResultsTable"  width="100%">
