@@ -18,7 +18,7 @@ namespace ClearCanvas.Desktop.Applets.Scintilla.View.WinForms
     public partial class SciCodeEditorComponentControl : ApplicationComponentUserControl
     {
         private SciCodeEditorComponent _component;
-        private ScintillaNet.Scintilla _editor;
+        private ScintillaNet.Scintilla _scintilla;
 
         /// <summary>
         /// Constructor
@@ -30,27 +30,61 @@ namespace ClearCanvas.Desktop.Applets.Scintilla.View.WinForms
 
             _component = component;
             _component.PropertyChanged += new PropertyChangedEventHandler(_component_PropertyChanged);
+            _component.InsertTextRequested += new EventHandler<SciCodeEditorComponent.InsertTextEventArgs>(_component_InsertTextRequested);
 
             // Scintilla control does not seem to get along with the designer very well,
             // so do everything manually
             // when creating the control, need to specify the full path to the native DLL, otherwise it will not find it
-            _editor = new ScintillaNet.Scintilla(System.IO.Path.Combine(Platform.CommonDirectory, ScintillaNet.Scintilla.DefaultDllName));
-            _editor.Dock = DockStyle.Fill;
-            this.Controls.Add(_editor);
-            _editor.ConfigurationManager.Language = _component.Language;
+            _scintilla = new ScintillaNet.Scintilla(System.IO.Path.Combine(Platform.CommonDirectory, ScintillaNet.Scintilla.DefaultDllName));
+            _scintilla.Dock = DockStyle.Fill;
+            this.Controls.Add(_scintilla);
+
+            // set the margin wide enough to display line numbers (set it to zero to hide line numbers)
+            _scintilla.Margins.Margin0.Width = 35;
+
+            // scintilla control "Text" property does not work with data-binding, because it does not fire the TextChanged event
+            // therefore need to subscribe manually to these two events
+            _scintilla.TextInserted += new EventHandler<TextModifiedEventArgs>(_scintilla_TextInserted);
+            _scintilla.TextDeleted += new EventHandler<TextModifiedEventArgs>(_scintilla_TextDeleted);
+
+            if (_component.Language != null)
+            {
+                _scintilla.ConfigurationManager.Language = _component.Language;
+            }
+            _scintilla.Text = _component.Text;
+        }
+
+        private void _scintilla_TextDeleted(object sender, TextModifiedEventArgs e)
+        {
+            _component.Text = _scintilla.Text;
+        }
+
+        private void _scintilla_TextInserted(object sender, TextModifiedEventArgs e)
+        {
+            _component.Text = _scintilla.Text;
         }
 
         private void _component_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Language")
             {
-                _editor.ConfigurationManager.Language = _component.Language;
+                _scintilla.ConfigurationManager.Language = _component.Language;
+            }
+            else if (e.PropertyName == "Text")
+            {
+                // setting _scintilla.Text causes its cursor to move to the beginning of the document
+                // therefore only do it if the text in the _component was changed programatically
+                if (_scintilla.Text != _component.Text)
+                {
+                    _scintilla.Text = _component.Text;
+                }
             }
         }
 
-        public ScintillaNet.Scintilla Editor
+        private void _component_InsertTextRequested(object sender, SciCodeEditorComponent.InsertTextEventArgs e)
         {
-            get { return _editor; }
+            _scintilla.Selection.Text = e.Text;
         }
+
     }
 }

@@ -195,7 +195,7 @@ namespace ClearCanvas.Ris.Client.Admin
             _rulesActionModel.Delete.Enabled = false;
 
             _editor = CodeEditorFactory.CreateCodeEditor();
-            _editor.SetLanguage("xml");
+            _editor.Language = "xml";
 
             _editorHost = new ChildComponentHost(this.Host, _editor.GetComponent());
             _editorHost.StartComponent();

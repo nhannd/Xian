@@ -4,6 +4,7 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Applets.Scintilla
 {
@@ -22,28 +23,25 @@ namespace ClearCanvas.Desktop.Applets.Scintilla
     [AssociateView(typeof(SciCodeEditorComponentViewExtensionPoint))]
     public class SciCodeEditorComponent : ApplicationComponent, ICodeEditor
     {
-        /// <summary>
-        /// In contrast to the usual pattern where the view simply observes changes in the application
-        /// component, in this case it is easier to have the view implement an interface such that
-        /// the component can control it directly.
-        /// </summary>
-        public interface IEditorView
+        public class InsertTextEventArgs : EventArgs
         {
-            /// <summary>
-            /// Gets or sets the text that appears in the editor.
-            /// </summary>
-            string Text { get; set; }
+            private string _text;
+            public InsertTextEventArgs(string text)
+            {
+                _text = text;
+            }
 
-            /// <summary>
-            /// Inserts the specified text at the current position in the editor.
-            /// </summary>
-            /// <param name="text"></param>
-            void InsertText(string text);
+            public string Text
+            {
+                get { return _text; }
+            }
         }
 
         private string _language;
+        private string _text;
 
-        private IEditorView _editorView;
+        private event EventHandler<InsertTextEventArgs> _insertTextRequested;
+        
 
         /// <summary>
         /// Constructor
@@ -68,9 +66,18 @@ namespace ClearCanvas.Desktop.Applets.Scintilla
 
         #region Presentation Model
 
-        public void SetEditorView(IEditorView view)
+        public string Text
         {
-            _editorView = view;
+            get { return _text; }
+            set
+            {
+                if (_text != value)
+                {
+                    _text = value;
+                    this.Modified = true;
+                    NotifyPropertyChanged("Text");
+                }
+            }
         }
 
         public string Language
@@ -81,6 +88,12 @@ namespace ClearCanvas.Desktop.Applets.Scintilla
                 _language = value;
                 NotifyPropertyChanged("Language");
             }
+        }
+
+        public event EventHandler<InsertTextEventArgs> InsertTextRequested
+        {
+            add { _insertTextRequested += value; }
+            remove { _insertTextRequested -= value; }
         }
 
         #endregion
@@ -94,18 +107,31 @@ namespace ClearCanvas.Desktop.Applets.Scintilla
 
         string ICodeEditor.Text
         {
-            get { return _editorView.Text; }
-            set { _editorView.Text = value; }
+            get { return this.Text; }
+            set { this.Text = value; }
         }
 
         void ICodeEditor.InsertText(string text)
         {
-            _editorView.InsertText(text);
+            EventsHelper.Fire(_insertTextRequested, this, new InsertTextEventArgs(text));
         }
 
-        void ICodeEditor.SetLanguage(string language)
+        string ICodeEditor.Language
         {
-            this.Language = language;
+            get { return this.Language; }
+            set { this.Language = value; }
+        }
+
+        bool ICodeEditor.Modified
+        {
+            get { return this.Modified; }
+            set { this.Modified = value; }
+        }
+
+        event EventHandler ICodeEditor.ModifiedChanged
+        {
+            add { this.ModifiedChanged += value; }
+            remove { this.ModifiedChanged -= value; }
         }
 
         #endregion

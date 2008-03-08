@@ -28,10 +28,19 @@ namespace ClearCanvas.Desktop
         void InsertText(string text);
 
         /// <summary>
-        /// Sets the language by file extension (e.g. xml, cs, js, rb).
+        /// Gets or sets the language by file extension (e.g. xml, cs, js, rb).
         /// </summary>
-        /// <param name="language"></param>
-        void SetLanguage(string language);
+        string Language { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether the contents of the editor have been modified.
+        /// </summary>
+        bool Modified { get; set; }
+
+        /// <summary>
+        /// Occurs when the value of the <see cref="Modified"/> property changes.
+        /// </summary>
+        event EventHandler ModifiedChanged;
     }
 
     /// <summary>

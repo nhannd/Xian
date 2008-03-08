@@ -12,7 +12,7 @@ namespace ClearCanvas.Desktop.Applets.Scintilla.View.WinForms
     /// Provides a Windows Forms view onto <see cref="SciCodeEditorComponent"/>
     /// </summary>
     [ExtensionOf(typeof(SciCodeEditorComponentViewExtensionPoint))]
-    public class SciCodeEditorComponentView : WinFormsView, IApplicationComponentView, SciCodeEditorComponent.IEditorView
+    public class SciCodeEditorComponentView : WinFormsView, IApplicationComponentView
     {
         private SciCodeEditorComponent _component;
         private SciCodeEditorComponentControl _control;
@@ -23,7 +23,6 @@ namespace ClearCanvas.Desktop.Applets.Scintilla.View.WinForms
         public void SetComponent(IApplicationComponent component)
         {
             _component = (SciCodeEditorComponent)component;
-            _component.SetEditorView(this);
         }
 
         #endregion
@@ -39,21 +38,5 @@ namespace ClearCanvas.Desktop.Applets.Scintilla.View.WinForms
                 return _control;
             }
         }
-
-        #region IEditorView Members
-
-        void SciCodeEditorComponent.IEditorView.InsertText(string text)
-        {
-            _control.Editor.Selection.Text = text;
-        }
-
-        string SciCodeEditorComponent.IEditorView.Text
-        {
-            get { return _control.Editor.Text; }
-            set { _control.Editor.Text = value; }
-        }
-        
-
-        #endregion
     }
 }

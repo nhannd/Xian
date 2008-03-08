@@ -13,7 +13,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// Provides a Windows Forms view onto <see cref="DefaultCodeEditorComponent"/>
     /// </summary>
     [ExtensionOf(typeof(DefaultCodeEditorComponentViewExtensionPoint))]
-    public class DefaultCodeEditorComponentView : WinFormsView, IApplicationComponentView, DefaultCodeEditorComponent.IEditorView
+    public class DefaultCodeEditorComponentView : WinFormsView, IApplicationComponentView
     {
         private DefaultCodeEditorComponent _component;
         private DefaultCodeEditorComponentControl _control;
@@ -24,7 +24,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         public void SetComponent(IApplicationComponent component)
         {
             _component = (DefaultCodeEditorComponent)component;
-            _component.SetEditorView(this);
         }
 
         #endregion
@@ -40,14 +39,5 @@ namespace ClearCanvas.Desktop.View.WinForms
                 return _control;
             }
         }
-
-        #region IDefaultCodeEditorControl Members
-
-        void DefaultCodeEditorComponent.IEditorView.InsertText(string text)
-        {
-            _control.Editor.SelectedText = text;
-        }
-
-        #endregion
     }
 }

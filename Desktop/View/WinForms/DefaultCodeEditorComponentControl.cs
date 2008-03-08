@@ -26,12 +26,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             InitializeComponent();
 
             _component = component;
+            _component.InsertTextRequested += new EventHandler<DefaultCodeEditorComponent.InsertTextEventArgs>(_component_InsertTextRequested);
             _editor.DataBindings.Add("Text", _component, "Text", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
-        public RichTextBox Editor
+        private void _component_InsertTextRequested(object sender, DefaultCodeEditorComponent.InsertTextEventArgs e)
         {
-            get { return _editor; }
+            _editor.SelectedText = e.Text;
         }
     }
 }

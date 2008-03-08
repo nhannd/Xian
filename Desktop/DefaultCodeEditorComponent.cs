@@ -25,22 +25,22 @@ namespace ClearCanvas.Desktop
     [AssociateView(typeof(DefaultCodeEditorComponentViewExtensionPoint))]
     public class DefaultCodeEditorComponent : ApplicationComponent, ICodeEditor
     {
-        /// <summary>
-        /// In contrast to the usual pattern where the view simply observes changes in the application
-        /// component, in this case it is easier to have the view implement an interface such that
-        /// the component can control it directly.
-        /// </summary>
-        public interface IEditorView
+        public class InsertTextEventArgs : EventArgs
         {
-            /// <summary>
-            /// Inserts the specified text at the current position in the editor.
-            /// </summary>
-            /// <param name="text"></param>
-            void InsertText(string text);
+            private string _text;
+            public InsertTextEventArgs(string text)
+            {
+                _text = text;
+            }
+
+            public string Text
+            {
+                get { return _text; }
+            }
         }
 
         private string _text;
-        private IEditorView _editorView;
+        private event EventHandler<InsertTextEventArgs> _insertTextRequested;
 
 
         /// <summary>
@@ -65,13 +65,25 @@ namespace ClearCanvas.Desktop
 
         void ICodeEditor.InsertText(string text)
         {
-            if (_editorView != null)
-                _editorView.InsertText(text);
+            EventsHelper.Fire(_insertTextRequested, this, new InsertTextEventArgs(text));
         }
 
-        void ICodeEditor.SetLanguage(string language)
+        string ICodeEditor.Language
         {
-            // not supported
+            get { return null; }
+            set { /* not supported */ }
+        }
+
+        bool ICodeEditor.Modified
+        {
+            get { return this.Modified; }
+            set { this.Modified = value; }
+        }
+
+        event EventHandler ICodeEditor.ModifiedChanged
+        {
+            add { this.ModifiedChanged += value; }
+            remove { this.ModifiedChanged -= value; }
         }
 
         #endregion
@@ -99,12 +111,12 @@ namespace ClearCanvas.Desktop
         #region Presentation Model
 
         /// <summary>
-        /// Called by the view to set itself as the view for this component.
+        /// Notifies the view that it should insert the specified text at the current location.
         /// </summary>
-        /// <param name="view"></param>
-        public void SetEditorView(IEditorView view)
+        public event EventHandler<InsertTextEventArgs> InsertTextRequested
         {
-            _editorView = view;
+            add { _insertTextRequested += value; }
+            remove { _insertTextRequested -= value; }
         }
 
         /// <summary>
