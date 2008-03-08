@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.ImageServer.TestApp
 {
-    partial class TestRuleForm
+    partial class TestDicomFileForm
     {
         /// <summary>
         /// Required designer variable.
@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageServer.TestApp
             this.openFileDialog.FileName = "openFileDialog";
             this.openFileDialog.Filter = "DICOM Files|*.dcm|All files|*.*";
             // 
-            // TestAppForm
+            // TestRuleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageServer.TestApp
             this.Controls.Add(this.button1);
             this.Controls.Add(this.buttonSelectDirectory);
             this.Controls.Add(this.checkBoxLoadTest);
-            this.Name = "TestAppForm";
+            this.Name = "TestRuleForm";
             this.Text = "Form1";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -35,6 +35,8 @@ using System.IO;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Codec;
+using ClearCanvas.Dicom.Codec.Jpeg2000;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
@@ -42,12 +44,13 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
+using ClearCanvas.Dicom.Codec.Jpeg;
 
 namespace ClearCanvas.ImageServer.TestApp
 {
-    public partial class TestRuleForm : Form
+    public partial class TestDicomFileForm : Form
     {
-        public TestRuleForm()
+        public TestDicomFileForm()
         {
             
             InitializeComponent();
@@ -196,21 +199,6 @@ namespace ClearCanvas.ImageServer.TestApp
             
         }
 
-        private void buttonLoadCompressed_Click(object sender, EventArgs e)
-        {
-            openFileDialog.ShowDialog();
-
-            DicomFile dicomFile = new DicomFile(openFileDialog.FileName);
-
-            dicomFile.Load();
-
-            double val;
-            dicomFile.DataSet[DicomTags.RescaleSlope].TryGetFloat64(0, out val);
-
-            dicomFile.Filename = "f:\\test.dcm";
-            dicomFile.Save();
-        }
-
         private void buttonReformatDirectories_Click(object sender, EventArgs e)
         {
             DicomFileCleanup cleanup = new DicomFileCleanup();
@@ -219,5 +207,7 @@ namespace ClearCanvas.ImageServer.TestApp
             cleanup.DestinationDirectory = "F:\\MedicalImages\\";
             cleanup.Scan();
         }
+
+
     }
 }

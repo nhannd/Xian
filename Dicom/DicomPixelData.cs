@@ -27,6 +27,27 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
 // OF SUCH DAMAGE.
 
+// mDCM: A C# DICOM library
+//
+// Copyright (c) 2006-2008  Colby Dillion
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//
+// Author:
+//    Colby Dillion (colby.dillion@gmail.com)
+
 #endregion
 
 using System;
@@ -61,10 +82,10 @@ namespace ClearCanvas.Dicom
         private ushort _planarConfiguration;
         private string _photometricInterpretation;
         private TransferSyntax _transferSyntax = TransferSyntax.ExplicitVrLittleEndian;
-        private string _lossyImageCompression;
-        private string _lossyImageCompressionMethod;
+        private string _lossyImageCompression = "";
+        private string _lossyImageCompressionMethod = "";
         private float _compressionRatio;
-        private string _derivationDescription;
+        private string _derivationDescription = "";
 
         #endregion
 
@@ -537,6 +558,46 @@ namespace ClearCanvas.Dicom
         }
 
         #endregion
+
+        #region Static Methods
+        public static void TogglePlanarConfiguration(byte[] pixelData, int numValues, int bitsAllocated,
+        int samplesPerPixel, int oldPlanerConfiguration)
+        {
+            int bytesAllocated = bitsAllocated / 8;
+            int numPixels = numValues / samplesPerPixel;
+            if (bytesAllocated == 1)
+            {
+                byte[] buffer = new byte[pixelData.Length];
+                if (oldPlanerConfiguration == 1)
+                {
+                    for (int n = 0; n < numPixels; n++)
+                    {
+                        for (int s = 0; s < samplesPerPixel; s++)
+                        {
+                            buffer[n * samplesPerPixel + s] = pixelData[n + numPixels * s];
+                        }
+                    }
+                }
+                else
+                {
+                    for (int n = 0; n < numPixels; n++)
+                    {
+                        for (int s = 0; s < samplesPerPixel; s++)
+                        {
+                            buffer[n + numPixels * s] = pixelData[n * samplesPerPixel + s];
+                        }
+                    }
+                }
+                Buffer.BlockCopy(buffer, 0, pixelData, 0, numValues);
+            }
+            else if (bytesAllocated == 2)
+            {
+                throw new DicomCodecException(String.Format("BitsAllocated={0} is not supported!", bitsAllocated));
+            }
+            else
+                throw new DicomCodecException(String.Format("BitsAllocated={0} is not supported!", bitsAllocated));
+        }
+        #endregion
     }
 
 
@@ -686,6 +747,32 @@ namespace ClearCanvas.Dicom
             ByteBuffer buffer = new ByteBuffer();
             buffer.Append(data, 0, data.Length);
             sequence.Fragments.Add(new DicomFragment(buffer));
+        }
+
+        public uint GetCompressedFrameSize(int frame)
+        {
+            List<DicomFragment> list = GetFrameFragments(frame);
+            uint length = 0;
+            foreach (DicomFragment frag in list)
+                length += frag.Length;
+            return length;
+        }
+
+        public byte[] GetFrameFragmentData(int frame)
+        {
+            List < DicomFragment > list = GetFrameFragments(frame);
+            uint length = 0;
+            foreach (DicomFragment frag in list)
+                length += frag.Length;
+
+            byte[] data = new byte[length];
+            uint offset = 0;
+            foreach (DicomFragment frag in list)
+            {
+                Buffer.BlockCopy(frag.GetByteArray(), 0, data, (int)offset, (int)frag.Length);
+                offset += frag.Length;
+            }
+            return data;
         }
 
         /// <summary>

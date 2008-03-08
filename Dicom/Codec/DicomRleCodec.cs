@@ -50,7 +50,7 @@ namespace ClearCanvas.Dicom.Codec
             get { return _name; }
         }
 
-        public TransferSyntax TransferSyntax
+        public TransferSyntax CodecTransferSyntax
         {
             get { return _transferSyntax; }
         }
@@ -109,7 +109,7 @@ namespace ClearCanvas.Dicom.Codec
             get { return "RLE Lossless"; }
         }
 
-        public TransferSyntax TransferSyntax
+        public TransferSyntax CodecTransferSyntax
         {
             get { return TransferSyntax.RleLossless; }
         }

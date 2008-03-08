@@ -18,13 +18,19 @@ namespace ClearCanvas.ImageServer.TestApp
 
         private void TestRule_Click(object sender, EventArgs e)
         {
-            TestRuleForm test = new TestRuleForm();
+            TestDicomFileForm test = new TestDicomFileForm();
             test.Show();
         }
 
         private void TestHeaderStreamButton_Click(object sender, EventArgs e)
         {
             TestHeaderStreamingForm test = new TestHeaderStreamingForm();
+            test.Show();
+        }
+
+        private void buttonCompression_Click(object sender, EventArgs e)
+        {
+            TestCompressionForm test = new TestCompressionForm();
             test.Show();
         }
     }

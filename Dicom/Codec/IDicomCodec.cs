@@ -48,9 +48,9 @@ namespace ClearCanvas.Dicom.Codec
         /// </summary>
         string Name { get; }
         /// <summary>
-        /// The <see cref="TransferSyntax"/> the codec supports.
+        /// The <see cref="CodecTransferSyntax"/> the codec supports.
         /// </summary>
-        TransferSyntax TransferSyntax { get; }
+        TransferSyntax CodecTransferSyntax { get; }
         /// <summary>
         /// Encode (compress) the entire pixel data.
         /// </summary>
@@ -101,7 +101,7 @@ namespace ClearCanvas.Dicom.Codec
         /// <summary>
         /// The transfer syntax associated with the factory.
         /// </summary>
-        TransferSyntax TransferSyntax { get; }
+        TransferSyntax CodecTransferSyntax { get; }
         /// <summary>
         /// Get the codec parameters.
         /// </summary>
