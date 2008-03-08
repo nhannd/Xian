@@ -652,7 +652,7 @@ namespace ClearCanvas.Desktop
             if(this.Host is IShelfHost || this.Host is IDialogBoxHost)
                 return true;
 
-            return !_modified;
+            return !this.Modified;
         }
 
         /// <summary>
@@ -680,7 +680,7 @@ namespace ClearCanvas.Desktop
             }
 
             // if modified, check if the user intended to discard the changes
-            if (_modified)
+            if (this.Modified)
             {
                 if(this.Host.ShowMessageBox(SR.MessageConfirmDiscardChangesBeforeClosing, MessageBoxActions.OkCancel) == DialogBoxAction.Cancel)
                 {
