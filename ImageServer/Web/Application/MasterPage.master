@@ -16,8 +16,8 @@
     <!-- this is special code that web service validation needs -->
 
         <div>
-            <form id="form1" runat="server">
-                <asp:ScriptManager ID="ScriptManager1" runat="server" />
+            <form id="form1" runat="server" submitdisabledcontrols="true">
+                <asp:ScriptManager ID="ScriptManager1" runat="server" EnableScriptGlobalization="true"  EnableScriptLocalization="true" />
                 <asp:Panel runat="server" CssClass="CSSPageWindow">
                     <asp:Table runat="server" Width="100%" CellPadding="0" CellSpacing="0" BorderWidth="0px">
                         <asp:TableHeaderRow>

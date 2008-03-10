@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
             if (_patientSummary != null)
             {
 
-                PatientName.Text = _patientSummary.PatientName;
+                personName.PersonName = _patientSummary.PatientName;
                 PatientDOB.Value = _patientSummary.Birthdate;
 
                 DateTime? bdate = DateParser.Parse(_patientSummary.Birthdate);

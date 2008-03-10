@@ -47,13 +47,13 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails {
         protected global::System.Web.UI.WebControls.Table Table1;
         
         /// <summary>
-        /// PatientName control.
+        /// personName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label PatientName;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PersonNameLabel personName;
         
         /// <summary>
         /// Label2 control.

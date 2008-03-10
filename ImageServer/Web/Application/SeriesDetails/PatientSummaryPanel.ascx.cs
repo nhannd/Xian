@@ -61,17 +61,11 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 
         #region Protected methods
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-           
-
-        }
-
         public override void DataBind()
         {
             if (_patientSummary != null)
             {
-                PatientName.Text = _patientSummary.PatientName;
+                personName.PersonName = _patientSummary.PatientName;
                 PatientDOB.Value = _patientSummary.Birthdate;
 
                 DateTime? bdate = DateParser.Parse(_patientSummary.Birthdate);

@@ -70,12 +70,14 @@
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
-    <Compile Include="WebControls\UI\DateTimeFormatter.cs" />
+    <Compile Include="Utilities\NameFormatter.cs" />
+    <Compile Include="WebControls\UI\PersonNameLabel.cs" />
+    <Compile Include="Utilities\DateTimeFormatter.cs" />
     <Compile Include="WebControls\UI\TMLabel.cs" />
     <Compile Include="WebControls\UI\DALabel.cs" />
     <Compile Include="WebControls\UI\DateTimeLabel.cs" />
     <Compile Include="WebControls\UI\GridView.cs" />
-    <Compile Include="WebControls\UI\UISettings.Designer.cs">
+    <Compile Include="UISettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>UISettings.settings</DependentUpon>
@@ -124,7 +126,7 @@
     <None Include="app.config">
     </None>
     <None Include="Service References\FilesystemServiceProxy.map" />
-    <None Include="WebControls\UI\UISettings.settings">
+    <None Include="UISettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>UISettings.Designer.cs</LastGenOutput>
     </None>

@@ -45,8 +45,6 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
     /// A <see cref="WorkQueueSummary"/> can be created using a <see cref="WorkQueueSummaryAssembler"/> object.
     /// </para>
     /// </remarks>
-    /// <seealso cref="WorkQueueDetails"/>
-    /// <seealso cref="WorkQueueSummaryPanel"/>
     public class WorkQueueSummary
     {
         #region Private members
@@ -82,12 +80,6 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             set { _status = value; }
         }
 
-        public ServerEntityKey GUID
-        {
-            get { return _ref; }
-            set { _ref = value; }
-        }
-
         public string PatientID
         {
             get { return _patientID; }
@@ -100,12 +92,6 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             set { _patientName = value; }
         }
 
-
-        public int NumInstancesPending
-        {
-            get { return _numInstancesPending; }
-            set { _numInstancesPending = value; }
-        }
 
         #endregion Public Properties
     }

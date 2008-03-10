@@ -33,6 +33,7 @@ using System;
 using System.ComponentModel;
 using System.Web.UI;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 {
@@ -126,7 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         }
 
 
-        protected override string GetValueRenderingText()
+        protected override string GetRenderedDateTimeText()
         {
             if (String.IsNullOrEmpty(Value))
                 return EmptyValueText;
@@ -136,7 +137,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             if (dt != null)
             {
                 if (String.IsNullOrEmpty(Format))
-                    return DateTimeFormatter.Format(dt.Value, DateTimeFormatter.Style.DateOnly);
+                    return DateTimeFormatter.Format(dt.Value, DateTimeFormatter.Style.Date);
                 else
                     return dt.Value.ToString(Format);
             }

@@ -19,10 +19,18 @@
                 SelectionMode="Multiple"
                 PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
                 <Columns>
-                    <asp:BoundField  DataField="PatientsName" HeaderText="Patient Name"></asp:BoundField>
+                    <asp:TemplateField HeaderText="Patient Name">
+                        <ItemTemplate>
+                            <clearcanvas:PersonNameLabel ID="PatientName" runat="server" PersonName='<%# Eval("PatientsName") %>' PersonNameType="Dicom"></clearcanvas:PersonNameLabel>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:BoundField DataField="PatientID" HeaderText="Patient ID"></asp:BoundField>
                     <asp:BoundField DataField="AccessionNumber" HeaderText="Accession #"></asp:BoundField>
-                    <asp:BoundField DataField="StudyDate" HeaderText="Study Date"></asp:BoundField>
+                    <asp:TemplateField HeaderText="Study Date">
+                        <ItemTemplate>
+                            <clearcanvas:DALabel ID="StudyDate" runat="server" Value='<%# Eval("StudyDate") %>'></clearcanvas:DALabel>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:BoundField DataField="StudyDescription" HeaderText="Description"></asp:BoundField>
                     <asp:BoundField DataField="NumberOfRelatedSeries" HeaderText="Series"></asp:BoundField>
                     <asp:BoundField DataField="NumberOfRelatedInstances" HeaderText="Instances"></asp:BoundField>

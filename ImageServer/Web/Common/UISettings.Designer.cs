@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI {
+namespace ClearCanvas.ImageServer.Web.Common {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -47,6 +47,15 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI {
         public string DateTimeFormat {
             get {
                 return ((string)(this["DateTimeFormat"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string NameFormat {
+            get {
+                return ((string)(this["NameFormat"]));
             }
         }
     }

@@ -400,13 +400,6 @@
     <Compile Include="StudyDetails\StudyDetailsView.ascx.designer.cs">
       <DependentUpon>StudyDetailsView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="WorkQueue\SearchResultAccordian.ascx.cs">
-      <DependentUpon>SearchResultAccordian.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\SearchResultAccordian.ascx.designer.cs">
-      <DependentUpon>SearchResultAccordian.ascx</DependentUpon>
-    </Compile>
     <Compile Include="WorkQueue\SearchPage.aspx.cs">
       <DependentUpon>SearchPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -421,26 +414,15 @@
     <Compile Include="WorkQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="WorkQueue\StudyDetailsAssembler.cs" />
-    <Compile Include="WorkQueue\StudyDetails.cs" />
-    <Compile Include="WorkQueue\WorkQueueDetails.cs" />
-    <Compile Include="WorkQueue\WorkQueueDetailsAssembler.cs" />
-    <Compile Include="WorkQueue\WorkQueueDetailsPanel.ascx.cs">
-      <DependentUpon>WorkQueueDetailsPanel.ascx</DependentUpon>
+    <Compile Include="WorkQueue\WorkQueueSearchResultPanel.ascx.cs">
+      <DependentUpon>WorkQueueSearchResultPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="WorkQueue\WorkQueueDetailsPanel.ascx.designer.cs">
-      <DependentUpon>WorkQueueDetailsPanel.ascx</DependentUpon>
+    <Compile Include="WorkQueue\WorkQueueSearchResultPanel.ascx.designer.cs">
+      <DependentUpon>WorkQueueSearchResultPanel.ascx</DependentUpon>
     </Compile>
     <Compile Include="WorkQueue\WorkQueueSummary.cs" />
     <Compile Include="WorkQueue\WorkQueueSummaryAssembler.cs" />
-    <Compile Include="WorkQueue\WorkQueueSummaryPanel.ascx.cs">
-      <DependentUpon>WorkQueueSummaryPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\WorkQueueSummaryPanel.ascx.designer.cs">
-      <DependentUpon>WorkQueueSummaryPanel.ascx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="About\About.aspx" />
@@ -487,6 +469,7 @@
     <Content Include="Common\SectionPanel.ascx" />
     <Content Include="Common\ServerPartitionTabs.ascx" />
     <Content Include="images\blank.gif" />
+    <Content Include="images\icons\EraserEnabled.png" />
     <Content Include="images\icons\OpenDisabled.png" />
     <Content Include="images\icons\OpenEnabled.png" />
     <Content Include="Scripts\NumberFormat154.js" />
@@ -566,11 +549,10 @@
     <Content Include="Web.sitemap" />
     <Content Include="Logging.config" />
     <Content Include="Services\webservice.htc" />
-    <Content Include="WorkQueue\SearchResultAccordian.ascx" />
+    <EmbeddedResource Include="WorkQueue\SearchPanel.js" />
     <Content Include="WorkQueue\SearchPage.aspx" />
     <Content Include="WorkQueue\SearchPanel.ascx" />
-    <Content Include="WorkQueue\WorkQueueDetailsPanel.ascx" />
-    <Content Include="WorkQueue\WorkQueueSummaryPanel.ascx" />
+    <Content Include="WorkQueue\WorkQueueSearchResultPanel.ascx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">

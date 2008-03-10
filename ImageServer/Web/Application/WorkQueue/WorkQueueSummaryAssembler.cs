@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
     /// <summary>
     /// Assembles an instance of  <see cref="WorkQueueDetails"/> based on a <see cref="Model.WorkQueue"/> or a <see cref="WorkQueueDetails"/> object.
     /// </summary>
-    public class WorkQueueSummaryAssembler
+    static public class WorkQueueSummaryAssembler
     {
         /// <summary>
         /// Returns an instance of <see cref="WorkQueueSummary"/> based on a <see cref="WorkQueue"/> object.
@@ -50,11 +50,10 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         /// <remark>
         /// 
         /// </remark>
-        public WorkQueueSummary CreateWorkQueueSummary(Model.WorkQueue workqueue)
+        static public WorkQueueSummary CreateWorkQueueSummary(Model.WorkQueue workqueue)
         {
             WorkQueueSummary summary = new WorkQueueSummary();
 
-            summary.GUID = workqueue.GetKey();
             summary.ScheduledDateTime = workqueue.ScheduledTime;
             summary.Type = workqueue.WorkQueueTypeEnum;
             summary.Status = workqueue.WorkQueueStatusEnum;
@@ -78,44 +77,6 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
                 summary.PatientID = studyList[0].PatientId;
                 summary.PatientName = studyList[0].PatientsName;
             }
-
-
-            // Fetch UIDs
-            WorkQueueUidAdaptor wqUidsAdaptor = new WorkQueueUidAdaptor();
-            WorkQueueUidSelectCriteria uidCriteria = new WorkQueueUidSelectCriteria();
-            uidCriteria.WorkQueueKey.EqualTo(workqueue.GetKey());
-            IList<Model.WorkQueueUid> uids = wqUidsAdaptor.Get(uidCriteria);
-
-            Hashtable mapSeries = new Hashtable();
-            foreach (Model.WorkQueueUid uid in uids)
-            {
-                if (mapSeries.ContainsKey(uid.SeriesInstanceUid) == false)
-                    mapSeries.Add(uid.SeriesInstanceUid, uid.SopInstanceUid);
-            }
-
-            summary.NumInstancesPending = uids.Count;
-
-            return summary;
-        }
-
-        /// <summary>
-        /// Returns an instance of <see cref="WorkQueueSummary"/> based on a <see cref="WorkQueueDetails"/> object.
-        /// </summary>
-        /// <param name="details"></param>
-        /// <returns></returns>
-        public WorkQueueSummary CreateWorkQueueSummary(WorkQueueDetails details)
-        {
-            WorkQueueSummary summary = new WorkQueueSummary();
-
-            summary.GUID = details.GUID;
-            summary.ScheduledDateTime = details.ScheduledDateTime;
-            summary.Type = details.Type;
-            summary.Status = details.Status;
-
-            summary.PatientID = (details.Study == null) ? "N/A" : details.Study.PatientID;
-            summary.PatientName = (details.Study == null) ? "N/A" : details.Study.PatientName;
-
-            summary.NumInstancesPending = (details.NumInstancesPending);
 
             return summary;
         }

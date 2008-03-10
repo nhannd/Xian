@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
 
                 StudyDate.Value = _study.StudyDate;
                 
-                ReferringPhysician.Text = _study.ReferringPhysiciansName;
+                ReferringPhysician.PersonName = _study.ReferringPhysiciansName;
             }
 
 

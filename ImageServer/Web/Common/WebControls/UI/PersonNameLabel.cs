@@ -33,16 +33,21 @@ using System;
 using System.ComponentModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 {
     /// <summary>
-    /// Represents a datetime label control, which displays date/time on a Web page.
+    /// Represents a label control which displays a person name on a Web page.
     /// </summary>
     /// <remarks>
-    /// Use the <see cref="DateTimeLabel"/> to display date time on a web page. The date/time to be displayed is set through 
-    /// the <see cref="Value"/> property. The format of the date/time can be set through the <see cref="Format"/> property. If <see cref="Format"/> 
+    /// Use the <see cref="PersonNameLabel"/> to display a person name on a web page. The person's name to be displayed is set through 
+    /// the <see cref="PersonName"/> property. <see cref="PersonNameLabel"/> accepts person name in dicom format. To indicate 
+    /// Dicom formatted name, set <see cref="PersonNameType"/> to <see cref="NameType.Dicom"/>. In such case, the The person name will be rendered 
+    /// in a human readable format (e.g., "Smith, John" )
+    /// 
+    ///  
     /// is not set, the date/time format will set to one of the followings, in the listed order:
     /// 
     /// - The date and time formats specified in the web configuration. 
@@ -52,53 +57,50 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
     /// 
     /// </remarks>
     /// <example>
-    /// The following example illustrate how to use <see cref="DateTimeLabel"/> to display a date in MMM/dd/yyyy format:
-    /// 
-    /// <code>
-    /// 
-    /// <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" TagPrefix="clearcanvas" %>
-    /// ...
-    /// <clearcanvas:DateTimeLabel ID="Today" runat="server" ForeColor="white" Format="MMM/dd/yyyy" EmptyValueText="Unknown"></clearcanvas:DateTimeLabel>
-    /// 
-    /// 
-    /// </code>
     /// </example>
     [DefaultProperty("Value")]
-    [ToolboxData("<{0}:DateTimeLabel runat=server></{0}:DateTimeLabel>")]
-    public class DateTimeLabel : Label
+    [ToolboxData("<{0}:PatientNameLabel runat=server></{0}:PatientNameLabel>")]
+    public class PersonNameLabel : Label
     {
+
+        public enum NameType
+        {
+            Normal,
+            Dicom
+        }
 
         [Bindable(true)]
         [Category("Appearance")]
         [DefaultValue("")]
         [Localizable(true)]
-        public DateTime? Value
+        public string PersonName
         {
             get
             {
-                return ViewState["Value"] as DateTime?;
+                return ViewState["PersonName"] as string;
             }
             set
             {
-                ViewState["Value"] = value;
+                ViewState["PersonName"] = value;
             }
         }
-
 
         [Bindable(true)]
         [Category("Appearance")]
         [DefaultValue("")]
         [Localizable(true)]
-        public string Format
+        public NameType PersonNameType
         {
-            get {
-                return ViewState["Format"] as string;
-                
+            get
+            {
+                return (NameType)ViewState["PersonNameType"];
             }
-            set {
-                ViewState["Format"] = value;
+            set
+            {
+                ViewState["PersonNameType"] = value;
             }
         }
+
 
         protected override void RenderContents(HtmlTextWriter writer)
         {
@@ -110,26 +112,27 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         protected string GetRenderText()
         {
             if (String.IsNullOrEmpty(Text))
-                return GetRenderedDateTimeText();
+                return GetRenderedPatientName();
             else
-                return String.Format(Text, GetRenderedDateTimeText());
+                return String.Format(Text, GetRenderedPatientName());
         }
 
-        protected virtual string GetRenderedDateTimeText()
+        protected virtual string GetRenderedPatientName()
         {
-            DateTime? datetime= Value;
+            string name = PersonName;
 
-            if (datetime != null)
+            switch (PersonNameType)
             {
-                if (!String.IsNullOrEmpty(Format))
-                    return DateTimeFormatter.Format(datetime.Value, Format);
-                else
-                    return DateTimeFormatter.Format(datetime.Value);
+                case NameType.Normal:
+                    return name;
+
+                case NameType.Dicom:
+                    PersonName pn = new PersonName(name);
+                    return NameFormatter.Format(name, UISettings.Default.NameFormat);
+
+                default:
+                    return name; // no formatting
             }
-            else
-                return null;
-            
-            
         }
     }
 }

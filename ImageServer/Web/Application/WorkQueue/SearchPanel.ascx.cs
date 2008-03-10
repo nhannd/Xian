@@ -31,11 +31,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 {
@@ -52,21 +55,9 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
         #endregion Private Members
 
-        #region Static Members
-
-        private static readonly IList<WorkQueueTypeEnum> WorkQueueTypes;
-        private static readonly IList<WorkQueueStatusEnum> WorkQueueStatuses;
-
-        #endregion Static Members
 
         #region Static Class Initializer
 
-        static SearchPanel()
-        {
-            // cache these lists
-            WorkQueueTypes = WorkQueueTypeEnum.GetAll();
-            WorkQueueStatuses = WorkQueueStatusEnum.GetAll();
-        }
 
         #endregion Static Class Initializer
 
@@ -93,10 +84,25 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
         protected override void OnInit(EventArgs e)
         {
+            
             base.OnInit(e);
 
             // initialize the controller
             _searchController = new WorkQueueController();
+
+            CalendarExtender1.Format = DateTimeFormatter.DefaultDateFormat;
+
+            ClearScheduleDateButton.OnClientClick = "document.getElementById('" + ScheduleDate.ClientID + "').value=''; return false;";
+
+            // setup child controls
+            GridPager1.ItemName = "Work Item";
+            GridPager1.PuralItemName = "Work Items";
+            GridPager1.Target = WorkQueueSearchResultPanel.WorkQueueListControl;
+            GridPager1.GetRecordCountMethod = delegate
+                                                  {
+                                                      return WorkQueueSearchResultPanel.WorkQueues == null ? 0 : WorkQueueSearchResultPanel.WorkQueues.Count;
+                                                  };
+            
         }
 
         /// <summary>
@@ -108,8 +114,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         {
             // reload the data
             // LoadWorkQueues(); NOTE: This line is commented out because the event is fired after the page and the list have been reloaded. There's no point of loading the lists again since the data is not changed in this scenario
-            searchResultAccordianControl.PageIndex = 0;
-                                                    
+            WorkQueueSearchResultPanel.PageIndex = 0;
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -117,66 +122,84 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             if (!Page.IsPostBack)
             {
                 // first time load
-                ScheduleDate.Text = DateTime.Today.ToString("MM/dd/yyyy");
+                CalendarExtender1.SelectedDate = DateTime.Today;
+            }
+            else
+            {
+                ScheduleDate.Text = Request[ScheduleDate.UniqueID];
+                if (!String.IsNullOrEmpty(ScheduleDate.Text))
+                    CalendarExtender1.SelectedDate = DateTime.ParseExact(ScheduleDate.Text, CalendarExtender1.Format, null);
+                else
+                    CalendarExtender1.SelectedDate = null;
+
             }
 
+            //
+            
             // re-populate the drop down lists and restore their states
+            IList<WorkQueueTypeEnum> workQueueTypes = WorkQueueTypeEnum.GetAll();
+            IList<WorkQueueStatusEnum> workQueueStatuses = WorkQueueStatusEnum.GetAll();
             int prevSelectedIndex = TypeDropDownList.SelectedIndex;
             TypeDropDownList.Items.Clear();
             TypeDropDownList.Items.Add(new ListItem("-- Any --", ""));
-            foreach (WorkQueueTypeEnum t in WorkQueueTypes)
+            foreach (WorkQueueTypeEnum t in workQueueTypes)
                 TypeDropDownList.Items.Add(new ListItem(t.Description, t.Lookup));
             TypeDropDownList.SelectedIndex = prevSelectedIndex;
 
             prevSelectedIndex = StatusDropDownList.SelectedIndex;
             StatusDropDownList.Items.Clear();
             StatusDropDownList.Items.Add(new ListItem("-- Any --", ""));
-            foreach (WorkQueueStatusEnum s in WorkQueueStatuses)
+            foreach (WorkQueueStatusEnum s in workQueueStatuses)
                 StatusDropDownList.Items.Add(new ListItem(s.Description, s.Lookup));
             StatusDropDownList.SelectedIndex = prevSelectedIndex;
 
-            if (searchResultAccordianControl.IsPostBack)
+            if (WorkQueueSearchResultPanel.IsPostBack)
                 LoadWorkQueues();
+            WorkQueueSearchResultPanel.DataBind();
+           
         }
 
         protected void LoadWorkQueues()
         {
-            WebWorkQueueQueryParameters parameters = new WebWorkQueueQueryParameters();
-            parameters.ServerPartitionKey = ServerPartition.GetKey();
-            parameters.Accession = AccessionNumber.Text;
-            parameters.PatientID = PatientId.Text;
-            if (ScheduleDate.Text == "")
-                parameters.ScheduledTime = null;
-            else
-                parameters.ScheduledTime = DateTime.Parse(ScheduleDate.Text);
+        
+            if (ServerPartition != null)
+            {
+                WebWorkQueueQueryParameters parameters = new WebWorkQueueQueryParameters();
+                parameters.ServerPartitionKey = ServerPartition.GetKey();
+                parameters.Accession = AccessionNumber.Text;
+                parameters.PatientID = PatientId.Text;
+                if (String.IsNullOrEmpty(ScheduleDate.Text ))
+                    parameters.ScheduledTime = null;
+                else
+                    parameters.ScheduledTime = DateTime.ParseExact(ScheduleDate.Text, CalendarExtender1.Format, null);// CalendarExtender1.SelectedDate;
 
-            parameters.Accession = AccessionNumber.Text;
-            parameters.StudyDescription = StudyDescription.Text;
-            parameters.Type = (TypeDropDownList.SelectedValue == "")
-                                ? null
-                                : WorkQueueTypeEnum.GetEnum(TypeDropDownList.SelectedValue);
-            parameters.Status = (StatusDropDownList.SelectedValue == "")
+                parameters.Accession = AccessionNumber.Text;
+                parameters.StudyDescription = StudyDescription.Text;
+                parameters.Type = (TypeDropDownList.SelectedValue == "")
                                     ? null
-                          
-                                    : WorkQueueStatusEnum.GetEnum(StatusDropDownList.SelectedValue);
+                                    : WorkQueueTypeEnum.GetEnum(TypeDropDownList.SelectedValue);
+                parameters.Status = (StatusDropDownList.SelectedValue == "")
+                                        ? null
 
+                                        : WorkQueueStatusEnum.GetEnum(StatusDropDownList.SelectedValue);
+
+                IList<Model.WorkQueue> list = _searchController.FindWorkQueue(parameters);
+
+                WorkQueueSearchResultPanel.WorkQueues = list;
+               
+            }
             
-            searchResultAccordianControl.WorkQueues = _searchController.FindWorkQueue(parameters);
-            searchResultAccordianControl.DataBind();
+            
+           
+            
         }
+
+
 
         #endregion Protected Methods
 
         #region Public Methods
 
-        /// <summary>
-        /// Remove all filter settings.
-        /// </summary>
-        public void Clear()
-        {
-            PatientId.Text = "";
-            AccessionNumber.Text = "";
-        }
 
         #endregion
     }

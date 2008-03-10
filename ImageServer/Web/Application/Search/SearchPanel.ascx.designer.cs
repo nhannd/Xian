@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
-        /// PatientName control.
+        /// PersonName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.

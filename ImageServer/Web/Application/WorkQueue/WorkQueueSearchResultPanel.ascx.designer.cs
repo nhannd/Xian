@@ -12,29 +12,47 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
     
     
     /// <summary>
-    /// WorkQueueDetailsPanel class.
+    /// WorkQueueSearchResultPanel class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class WorkQueueDetailsPanel {
+    public partial class WorkQueueSearchResultPanel {
         
         /// <summary>
-        /// DetailsPanel control.
+        /// Panel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel DetailsPanel;
+        protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// DetailsTable control.
+        /// Panel3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Table DetailsTable;
+        protected global::System.Web.UI.WebControls.Panel Panel3;
+        
+        /// <summary>
+        /// Panel4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel4;
+        
+        /// <summary>
+        /// GridView1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView GridView1;
     }
 }

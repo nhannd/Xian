@@ -1,6 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StudyDetailsView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.StudyDetails.StudyDetailsView" %>
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI"
-    TagPrefix="cc1" %>
+    TagPrefix="clearcanvas" %>
 <asp:DetailsView ID="DetailsView1" runat="server" AutoGenerateRows="False" CellPadding="4" 
     GridLines="Horizontal" CssClass="CSSStudyDetailsView" Width="100%">
     <Fields>
@@ -11,10 +11,13 @@
         <asp:BoundField DataField="AccessionNumber" HeaderText="Accession Number">
             <HeaderStyle Wrap="False" />
         </asp:BoundField>
-        <asp:BoundField DataField="ReferringPhysiciansName" HeaderText="Referring Physician">
+            
+        <asp:TemplateField HeaderText="Referring Physician">
             <HeaderStyle Wrap="False" />
-        </asp:BoundField>
-        
+            <ItemTemplate>
+                <clearcanvas:PersonNameLabel ID="ReferringPhysiciansName" runat="server" PersonName='<%# Eval("ReferringPhysiciansName") %>' PersonNameType="Dicom"></clearcanvas:PersonNameLabel>
+            </ItemTemplate>
+        </asp:TemplateField>
         <asp:BoundField DataField="StudyInstanceUid" HeaderText="Study Instance UID">
             <HeaderStyle Wrap="False" />
         </asp:BoundField>
@@ -28,8 +31,8 @@
         <asp:TemplateField HeaderText="Study Date/Time">
             <HeaderStyle Wrap="False" />
             <ItemTemplate>
-                <cc1:DALabel ID="StudyDate" runat="server"  Value='<%# Eval("StudyDate") %>' ></cc1:DALabel>
-                <cc1:TMLabel ID="StudyTime" runat="server"  Value='<%# Eval("StudyTime") %>' ></cc1:TMLabel>
+                <clearcanvas:DALabel ID="StudyDate" runat="server"  Value='<%# Eval("StudyDate") %>' ></clearcanvas:DALabel>
+                <clearcanvas:TMLabel ID="StudyTime" runat="server"  Value='<%# Eval("StudyTime") %>' ></clearcanvas:TMLabel>
             </ItemTemplate>
         </asp:TemplateField>
 

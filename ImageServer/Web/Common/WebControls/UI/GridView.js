@@ -179,7 +179,14 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         },
         
         _onCellDblClick : function(e) {
-            var row = e.target.parentNode;
+            var el = e.target;
+            // The event can be triggered by a descendant in the cell
+            // We have to traverse the tree to find the row element
+            while(el!=null && el.tagName!='TR')
+                el = el.parentNode;
+                
+            var row = el;
+            
             if (this.get_element() && !this.get_element().disabled) 
             {
                 this._selectRow(row);            
@@ -192,8 +199,14 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         
         
         _onCellClick : function(e) {
-            var row = e.target.parentNode ;
-
+            var el = e.target;
+            // The event can be triggered by a descendant in the cell
+            // We have to traverse the tree to find the row element
+            while(el!=null && el.tagName!='TR')
+                el = el.parentNode;
+                
+            var row = el;
+            
             if (this.get_element() && !this.get_element().disabled ) 
             {
                 var button = e.which || e.button;

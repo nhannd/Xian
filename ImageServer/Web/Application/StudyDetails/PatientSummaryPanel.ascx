@@ -1,7 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="PatientSummaryPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.StudyDetails.PatientSummaryPanel" %>
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI"
-    TagPrefix="cc1" %>
+    TagPrefix="clearcanvas" %>
 <table border="0px" cellpadding="0" cellspacing="0" width="100%">
     <tr>
         <td>
@@ -9,10 +9,10 @@
                 BorderWidth="1px" Style="background-color: #0099ff">
                 <asp:Panel ID="Panel1" runat="server" Style="padding-right: 10px; padding-left: 10px;
                     padding-bottom: 10px; padding-top: 10px">
-                    <asp:Table ID="Table1" runat="server" Width="100%" Style="font-size: larger;">
+                    <asp:Table ID="Table1" CellSpacing="5"  runat="server" Width="100%" Style="font-size: larger;">
                         <asp:TableRow>
                             <asp:TableCell>
-                                <asp:Label ID="PatientName" runat="server" Text="PatientName" ForeColor="white"></asp:Label>
+                                <clearcanvas:PersonNameLabel ID="personName" runat="server" PersonNameType="Dicom" ForeColor="white"></clearcanvas:PersonNameLabel>
                             </asp:TableCell>
                             <asp:TableCell>
                                 <asp:Label ID="Label2" runat="server" Text="ID: " ForeColor="white" Style="white-space: nowrap"></asp:Label>
@@ -20,7 +20,7 @@
                             </asp:TableCell>
                             <asp:TableCell Wrap="false">
                                 <asp:Label ID="Label3" runat="server" Text="DOB: " ForeColor="white" Style="white-space: nowrap"></asp:Label>
-                                <cc1:DALabel ID="PatientDOB" runat="server" ForeColor="white" EmptyValueText="Unknown"></cc1:DALabel>
+                                <clearcanvas:DALabel ID="PatientDOB" runat="server" ForeColor="white" EmptyValueText="Unknown"></clearcanvas:DALabel>
                             </asp:TableCell>
                             <asp:TableCell Wrap="false">
                                 <asp:Label ID="Label4" runat="server" Text="Age: " ForeColor="white" Style="white-space: nowrap"></asp:Label>

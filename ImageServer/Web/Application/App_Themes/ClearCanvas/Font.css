@@ -202,8 +202,7 @@ body
 /* gridview control header row */
 .CSSGridHeader th
 {	
-	font-weight: bold;
-	
+	font-weight:normal;
 }
 
 /* gridview control row */

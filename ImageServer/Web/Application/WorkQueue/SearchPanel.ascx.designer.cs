@@ -137,6 +137,15 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
         protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
+        /// ClearScheduleDateButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton ClearScheduleDateButton;
+        
+        /// <summary>
         /// ScheduleDate control.
         /// </summary>
         /// <remarks>
@@ -200,12 +209,21 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
         protected global::AjaxControlToolkit.CalendarExtender CalendarExtender1;
         
         /// <summary>
-        /// searchResultAccordianControl control.
+        /// WorkQueueSearchResultPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.SearchResultAccordian searchResultAccordianControl;
+        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.WorkQueueSearchResultPanel WorkQueueSearchResultPanel;
+        
+        /// <summary>
+        /// GridPager1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPager1;
     }
 }
