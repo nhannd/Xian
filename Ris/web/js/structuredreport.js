@@ -1,6 +1,7 @@
 var data = {};
 var reportType = "unknown";
 var fetus = 0;
+var reportTypes = ["T1 - Dating/Nuchal", "T2 - Anatomy", "T3 - Growth for obstetrical ultrasounds"];
 
 function initStructuredReport(source)
 {
@@ -69,7 +70,7 @@ function initTypeSelectionTable()
 			{
 				label: "Select report type and confirm",
 				cellType: "choice",
-				choices: ["T1 - Dating/Nuchal", "T2 - Anatomy", "T3 - Growth for obstetrical ultrasounds"],
+				choices: reportTypes,
 				getValue: function(item){ return item.obusReportType; },
 				setValue: function(item, value){ item.obusReportType = value; },
 				getError: function(item){ return null; }
@@ -83,11 +84,11 @@ function initTypeSelectionTable()
 function initIndicationsAndDates()
 {
 	var indicationChoices;
-	if(reportType == "T1")
+	if(reportType == reportTypes[0])
 	{
 		indicationChoices = ["Dating", "NT", "Other"];
 	}
-	else if(reportType == "T2")
+	else if(reportType == reportTypes[1])
 	{
 		indicationChoices = ["Anatomy", "Suspected Anomaly", "Other"];
 	}
@@ -313,7 +314,7 @@ function initGeneral()
 			getValue: function(item) { return item.rightAdnexa; },
 			setValue: function(item, value) { item.rightAdnexa = value; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T1"; }
+			getVisible: function(item) { return reportType == reportTypes[0]; }
 		},
 		{
 			label: "Left Adnexa",
@@ -322,7 +323,7 @@ function initGeneral()
 			getValue: function(item) { return item.leftAdnexa; },
 			setValue: function(item, value) { item.leftAdnexa = value; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T1"; }
+			getVisible: function(item) { return reportType == reportTypes[0]; }
 		},
 		{
 			label: "Yolk Sac",
@@ -331,7 +332,7 @@ function initGeneral()
 			getValue: function(item) { return item.yolkSac; },
 			setValue: function(item, value) { item.yolkSac = value; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T1"; }
+			getVisible: function(item) { return reportType == reportTypes[0]; }
 		},
 		{
 			label: "Presentation",
@@ -340,7 +341,7 @@ function initGeneral()
 			getValue: function(item) { return item.presentation; },
 			setValue: function(item, value) { item.presentation = value; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T3"; }
+			getVisible: function(item) { return reportType == reportTypes[2]; }
 		},
 		{
 			label: "AFV",
@@ -349,7 +350,7 @@ function initGeneral()
 			getValue: function(item) { return item.afv; },
 			setValue: function(item, value) { item.afv = value; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2"; }
+			getVisible: function(item) { return reportType == reportTypes[1]; }
 		},
 		{
 			label: "Cervix",
@@ -358,7 +359,7 @@ function initGeneral()
 			getValue: function(item) { return item.cervix; },
 			setValue: function(item, value) { item.cervix = value; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; }
 		},
 		{
 			label: "Apposed Length",
@@ -366,7 +367,7 @@ function initGeneral()
 			getValue: function(item) { return item.apposedLength; },
 			setValue: function(item, value) { item.apposedLength = value; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; }
 		},
 		{
 			label: "Cervix Assessed",
@@ -375,7 +376,7 @@ function initGeneral()
 			getValue: function(item) { return item.cervixAssessed; },
 			setValue: function(item, value) { item.cervixAssessed = value; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; }
 		}
 	]);
 
@@ -409,7 +410,7 @@ function initBiometry()
 			cellType: "text",
 			getValue: function(item) { return item.crl; },
 			setValue: function(item, value) { item.crl = value; },
-			getVisible: function(item) { return reportType == "T1"; },
+			getVisible: function(item) { return reportType == reportTypes[0]; },
 			getError: function(item) { return null; }
 		},
 		{
@@ -417,7 +418,7 @@ function initBiometry()
 			cellType: "readonly",
 			getValue: function(item) { return "CALC"; },
 			setValue: function(item, value) { return null; },
-			getVisible: function(item) { return reportType == "T1"; },
+			getVisible: function(item) { return reportType == reportTypes[0]; },
 			getError: function(item) { return null; }
 		}
 	]);
@@ -454,7 +455,7 @@ function initBiometry()
 			getValue: function(item) { return item.ofd; },
 			setValue: function(item, value) { item.ofd = value; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; }
 		}
 	]);
 
@@ -467,7 +468,7 @@ function initBiometry()
 			cellType: "readonly",
 			getValue: function(item) { return "CALC"; },
 			setValue: function(item, value) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; },
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; },
 			getError: function(item) { return null; }
 		},
 		{
@@ -475,7 +476,7 @@ function initBiometry()
 			cellType: "readonly",
 			getValue: function(item) { return "CALC"; },
 			setValue: function(item, value) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; },
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; },
 			getError: function(item) { return null; }
 		}
 	]);
@@ -491,14 +492,14 @@ function initBiometry()
 			getValue: function(item) { return item.hc; },
 			setValue: function(item, value) { item.hc = value; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; }
 		},
 		{
 			label: "wks", 
 			cellType: "readonly",
 			getValue: function(item) { return "CALC	"; },
 			setValue: function(item, value) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; },
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; },
 			getError: function(item) { return null; }
 		}
 	]);
@@ -514,7 +515,7 @@ function initBiometry()
 			getValue: function(item) { return item.abdX; },
 			setValue: function(item, value) { item.abdX = value; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; }
 		},
 		{
 			label: "", 
@@ -522,7 +523,7 @@ function initBiometry()
 			getValue: function(item) { return "+"; },
 			setValue: function(item, value) { return null; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; }
 		},
 		{
 			label: "", 
@@ -531,7 +532,7 @@ function initBiometry()
 			getValue: function(item) { return item.abdY; },
 			setValue: function(item, value) { item.abdY = value; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; }
 		},
 		{
 			label: "mm", 
@@ -540,7 +541,7 @@ function initBiometry()
 			getValue: function(item) { return item.abdAC; },
 			setValue: function(item, value) { item.abdAC = value; },
 			getError: function(item) { return item.abdAC; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; }
 		},
 		{
 			label: "wks", 
@@ -548,7 +549,7 @@ function initBiometry()
 			getValue: function(item) { return "CALC"; },
 			setValue: function(item, value) { return null; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; }
 		}
 	]);
 
@@ -563,7 +564,7 @@ function initBiometry()
 			getValue: function(item) { return item.fl; },
 			setValue: function(item, value) { item.fl = value; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; }
 		},
 		{
 			label: "wks", 
@@ -571,7 +572,7 @@ function initBiometry()
 			getValue: function(item) { return "CALC"; },
 			setValue: function(item, value) { return null; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; }
 		}
 	]);
 
@@ -584,7 +585,7 @@ function initBiometry()
 			cellType: "readonly",
 			getValue: function(item) { return "CALC"; },
 			setValue: function(item, value) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; },
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; },
 			getError: function(item) { return null; }
 		}
 	]);
@@ -599,7 +600,7 @@ function initBiometry()
 			getValue: function(item) { return item.nuchalTransparency; },
 			setValue: function(item, value) { item.nuchalTransparency = value; },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2"; }
+			getVisible: function(item) { return reportType == reportTypes[1]; }
 		}
 	]);
 
@@ -628,15 +629,15 @@ function bindBiometry()
 
 function OnBiometryChanged(show)
 {
-	document.getElementById("crlTable").style.display = (show && reportType == "T1") ? "block" : "none";
+	document.getElementById("crlTable").style.display = (show && reportType == reportTypes[0]) ? "block" : "none";
 	document.getElementById("bpdTable").style.display = (show) ? "block" : "none";
-	document.getElementById("ofdTable").style.display = (show && (reportType == "T2" || reportType == "T3")) ? "block" : "none";
-	document.getElementById("correctedBpdTable").style.display = (show && (reportType == "T2" || reportType == "T3")) ? "block" : "none";
-	document.getElementById("hcTable").style.display = (show && (reportType == "T2" || reportType == "T3")) ? "block" : "none";
-	document.getElementById("abdTable").style.display = (show && (reportType == "T2" || reportType == "T3")) ? "block" : "none";
-	document.getElementById("flTable").style.display = (show && (reportType == "T2" || reportType == "T3")) ? "block" : "none";
-	document.getElementById("averageSizeTable").style.display = (show && (reportType == "T2" || reportType == "T3")) ? "block" : "none";
-	document.getElementById("nuchalTransparencyTable").style.display = (show && reportType == "T2") ? "block" : "none";
+	document.getElementById("ofdTable").style.display = (show && (reportType == reportTypes[1] || reportType == reportTypes[2])) ? "block" : "none";
+	document.getElementById("correctedBpdTable").style.display = (show && (reportType == reportTypes[1] || reportType == reportTypes[2])) ? "block" : "none";
+	document.getElementById("hcTable").style.display = (show && (reportType == reportTypes[1] || reportType == reportTypes[2])) ? "block" : "none";
+	document.getElementById("abdTable").style.display = (show && (reportType == reportTypes[1] || reportType == reportTypes[2])) ? "block" : "none";
+	document.getElementById("flTable").style.display = (show && (reportType == reportTypes[1] || reportType == reportTypes[2])) ? "block" : "none";
+	document.getElementById("averageSizeTable").style.display = (show && (reportType == reportTypes[1] || reportType == reportTypes[2])) ? "block" : "none";
+	document.getElementById("nuchalTransparencyTable").style.display = (show && reportType == reportTypes[1]) ? "block" : "none";
 }
 
 function initAnatomy()
@@ -733,7 +734,7 @@ function initAnatomy()
 			getValue: function(item) { return item.detailedCardiac; },
 			setValue: function(item, value) { item.detailedCardiac = value; ShowDetailedCardiac(value == "Yes"); },
 			getError: function(item) { return null; },
-			getVisible: function(item) { return reportType == "T2" || reportType == "T3"; }
+			getVisible: function(item) { return reportType == reportTypes[1] || reportType == reportTypes[2]; }
 		}
 	]);
 	
@@ -1329,6 +1330,28 @@ function selectFetus(number)
 	bindWellBeing();
 }
 
+function resetStructuredReportType()
+{
+	if(confirm('Are you sure you would like to restart the current report?  All data will be lost.'))
+	{
+		data.indicationsAndDates = {};
+		data.indicationsAndDates.lmp = {};
+		data.indicationsAndDates.us = {};
+		data.indicationsAndDates.establishedEDC = {};
+		data.general = {};
+		data.biometry = [];
+		data.anatomy = [];
+		data.cardiac = [];
+		data.wellBeing = [];
+		data.commentsConclusion = {};
+		EnsurePerFetusDataExists();
+
+		data.obusReportType = null;
+
+		initStructuredReport(data);
+	}
+}
+
 function setAnatomyDefaults()
 {
 	if(!data.anatomy[fetus]) return;
@@ -1357,7 +1380,7 @@ function structuredReportHtml()
 	html+= 	"		<table id=\"typeSelectionTable\">";
 	html+= 	"			<tr><td class=\"tableheading\"></td></tr>";
 	html+= 	"		</table>";
-	html+= 	"		<input type=\"button\" value=\"Confirm\" onclick=\"javascript: onTypeSelected()\"/>";
+	html+= 	"		<input type=\"button\" value=\"Confirm\" onclick=\"javascript: onTypeSelected()\" style=\"margin-left:1.5em;\"/>";
 	html+= 	"	</div>";
 	html+= 	"	<div id=\"ObsrForm\" class=\"TabControl\">";
 	html+= 	"		<div class=\"TabList\">";
@@ -1370,7 +1393,8 @@ function structuredReportHtml()
 	html+= 	"			<label for=\"CommentsConclusion\" class=\"Tab\">Comments/Conclusion</label>";
 	html+= 	"		</div>";
 	html+= 	"		<div class=\"TabHeader\">";
-	html+= 	"			<select id=\"fetusSelect\" onChange=\"javascript: selectFetus(this.options[this.selectedIndex].value)\" style=\"{float:right;}\"></select>";
+	html+= 	"			<input type=\"button\" value=\"Start Over\" onclick=\"javascript: resetStructuredReportType()\" style=\"{float:right;vertical-align:top;}\" />";
+	html+= 	"			<select id=\"fetusSelect\" onChange=\"javascript: selectFetus(this.options[this.selectedIndex].value)\" style=\"{float:right; vertical-align:top;}\"></select>";
 	html+= 	"			Report Type:&nbsp;<span id=\"reportType\"></span>";
 	html+= 	"		</div>";
 	html+= 	"		<div id=\"IndicationsAndDates\" class=\"TabPage\">";
