@@ -50,6 +50,29 @@
 
 #endregion
 
+#region mDCM License
+// mDCM: A C# DICOM library
+//
+// Copyright (c) 2008  Colby Dillion
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//
+// Author:
+//    Colby Dillion (colby.dillion@gmail.com)
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -149,11 +172,24 @@ namespace ClearCanvas.Dicom
         #endregion
 
         /// <summary>
-        /// Get a specific uncompressed frame.
+        /// Get a specific frame's data in uncompressed format.
         /// </summary>
-        /// <param name="frame">A zero offset frame number</param>
+        /// <param name="frame">The zero offset frame to get.</param>
+        /// <returns>A byte array containing the pixel data.</returns>
+        public byte[] GetFrame(int frame)
+        {
+            string photometricInterpretation;
+
+            return GetFrame(frame, out photometricInterpretation);
+        }
+
+        /// <summary>
+        /// Get a specific uncompressed frame with the photometric interpretation.
+        /// </summary>
+        /// <param name="frame">A zero offset frame number.</param>
+        /// <param name="photometricInterpretation">The photometric interpretation of the pixel data.</param>
         /// <returns>A byte array containing the uncompressed pixel data.</returns>
-        public abstract byte[] GetFrame(int frame);
+        public abstract byte[] GetFrame(int frame, out string photometricInterpretation);
 
         /// <summary>
         /// Update the tags in an attribute collection.
@@ -453,11 +489,13 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="frame">The frame to retrieve</param>
         /// <returns>A byte array containing the frame data.</returns>
-        public override byte[] GetFrame(int frame)
+        public override byte[] GetFrame(int frame, out string photometricInterpretation)
+    
         {
             if (frame >= NumberOfFrames)
                 throw new ArgumentOutOfRangeException("frame");
 
+            photometricInterpretation = PhotometricInterpretation;
             if (_ms != null)
             {
                 _ms.Seek(0, SeekOrigin.Begin);
@@ -693,7 +731,7 @@ namespace ClearCanvas.Dicom
         /// <param name="frame">A zero offset frame to request.</param>
         /// <param name="photometricInterpretation">The photometric interpretation of the output data</param>
         /// <returns>A byte array containing the frame.</returns>
-        public byte[] GetFrame(int frame, out string photometricInterpretation)
+        public override byte[] GetFrame(int frame, out string photometricInterpretation)
         {
             DicomUncompressedPixelData pd = new DicomUncompressedPixelData(this);
 
@@ -714,18 +752,6 @@ namespace ClearCanvas.Dicom
             photometricInterpretation = pd.PhotometricInterpretation;
 
             return pd.GetData();
-        }
-
-        /// <summary>
-        /// Get a specific frame's data in uncompressed format.
-        /// </summary>
-        /// <param name="frame">The zero offset frame to get.</param>
-        /// <returns>A byte array containing the pixel data.</returns>
-        public override byte[] GetFrame(int frame)
-        {
-            string photometricInterpretation;
-
-            return GetFrame(frame, out photometricInterpretation);
         }
 
         /// <summary>
