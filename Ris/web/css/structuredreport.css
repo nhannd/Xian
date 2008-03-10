@@ -1,9 +1,3 @@
-#ObsrForm .TabPage
-{
-	height: 225px;
-	overflow:auto;
-}
-
 #ObsrForm .TabPage table{
 	width: 95%;
 }
@@ -35,7 +29,7 @@
 
 .extremitiesTable .divCell
 {
-	width:45%;
+	width:40%;
 }
 
 .extremitiesTable .divCell *
@@ -65,4 +59,10 @@
 #General.TabPage .divCell *
 {
 	width:100%;
+}
+
+#commentsConclusionTable .divCell
+{
+	width:95%;
+	margin-bottom:1em;
 }
