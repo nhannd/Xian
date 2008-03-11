@@ -30,6 +30,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ExecutableFiles Include="$(TrunkDirectory)\Oto\Executable\bin\$(Configuration)\ClearCanvas.Oto.Executable.exe" />
+    <ExecutableFiles Include="$(TrunkDirectory)\Oto\Executable\bin\$(Configuration)\ClearCanvas.Oto.Executable.exe.config" />
+  </ItemGroup>
+
+  <ItemGroup>
     <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\ScintillaNet.dll" />
     <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer.dll" />
   </ItemGroup>
@@ -84,6 +89,7 @@
     <Copy SourceFiles="@(ClientModuleFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
 		<Copy SourceFiles="@(JscriptFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
     <Copy SourceFiles="@(OtoScripts)" DestinationFolder="$(OtoScriptDirectory)" ContinueOnError="true" />
+    <Copy SourceFiles="@(ExecutableFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
   </Target>
 	
 </Project>
