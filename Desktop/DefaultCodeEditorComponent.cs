@@ -25,14 +25,25 @@ namespace ClearCanvas.Desktop
     [AssociateView(typeof(DefaultCodeEditorComponentViewExtensionPoint))]
     public class DefaultCodeEditorComponent : ApplicationComponent, ICodeEditor
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public class InsertTextEventArgs : EventArgs
         {
             private string _text;
+
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="text"></param>
             public InsertTextEventArgs(string text)
             {
                 _text = text;
             }
 
+            /// <summary>
+            /// Text to insert.
+            /// </summary>
             public string Text
             {
                 get { return _text; }
