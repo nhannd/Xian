@@ -18,11 +18,13 @@ namespace ClearCanvas.Common.Utilities
     {
         private readonly int _position = -1;
         private bool _required;
-        private readonly string[] _keys;
+        private readonly string _key;
+        private readonly string _keyShortForm;
+        private readonly string _usage;
         private readonly string _displayName;
 
         /// <summary>
-        /// Constructor
+        /// Constructor for declaring a positional parameter.
         /// </summary>
         /// <param name="position"></param>
         /// <param name="displayName"></param>
@@ -33,14 +35,27 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor for declaring a named parameter or boolean switch.
         /// </summary>
-        /// <param name="keys"></param>
-        /// <param name="displayName"></param>
-        public CommandLineParameterAttribute(string[] keys, string displayName)
+        /// <param name="key"></param>
+        /// <param name="usage"></param>
+        public CommandLineParameterAttribute(string key, string usage)
         {
-            _keys = keys;
-            _displayName = displayName;
+            _key = key;
+            _usage = usage;
+        }
+
+        /// <summary>
+        /// Constructor for declaring a named parameter or boolean switch.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="keyShortForm"></param>
+        /// <param name="usage"></param>
+        public CommandLineParameterAttribute(string key, string keyShortForm, string usage)
+        {
+            _key = key;
+            _keyShortForm = keyShortForm;
+            _usage = usage;
         }
 
         /// <summary>
@@ -52,19 +67,45 @@ namespace ClearCanvas.Common.Utilities
             set { _required = value; }
         }
 
+        /// <summary>
+        /// Gets the position of a positional parameter.
+        /// </summary>
         internal int Position
         {
             get { return _position; }
         }
 
-        internal string[] Keys
-        {
-            get { return _keys; }
-        }
-
+        /// <summary>
+        /// Gets the display name for a positional parameter.
+        /// </summary>
         internal string DisplayName
         {
             get { return _displayName; }
         }
+
+        /// <summary>
+        /// Gets the key (parameter name) for a named parameter.
+        /// </summary>
+        internal string Key
+        {
+            get { return _key; }
+        }
+
+        /// <summary>
+        /// Gets the key short-form for a named parameter.
+        /// </summary>
+        internal string KeyShortForm
+        {
+            get { return _keyShortForm; }
+        }
+
+        /// <summary>
+        /// Gets a message describing the usage of this parameter.
+        /// </summary>
+        internal string Usage
+        {
+            get { return _usage; }
+        }
+
     }
 }

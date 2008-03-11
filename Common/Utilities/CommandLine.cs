@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.IO;
+using System.Reflection;
 
 namespace ClearCanvas.Common.Utilities
 {
@@ -48,13 +50,19 @@ namespace ClearCanvas.Common.Utilities
         private readonly Regex _boolSwitchRegex = new Regex(@"^[\/\-](\w+)([\+\-]?)$", RegexOptions.Compiled);
 
         /// <summary>
-        /// Constructs an instance of this class for the specified set of arguments.
+        /// Constructor.
+        /// </summary>
+        public CommandLine()
+        {
+        }
+
+        /// <summary>
+        /// Constructs an instance of this class, parsing the specified argument list.
         /// </summary>
         /// <param name="args"></param>
         public CommandLine(string[] args)
         {
-            ProcessArgs(args);
-            ProcessAttributes();
+            Parse(args);
         }
 
         /// <summary>
@@ -79,6 +87,66 @@ namespace ClearCanvas.Common.Utilities
         public IDictionary<string, bool> Switches
         {
             get { return _switches; }
+        }
+
+        /// <summary>
+        /// Parses the specified argument list, using the results to populate the contents of this instance.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <exception cref="CommandLineException">
+        /// Thrown if any error occurs attempting to parse the arguments, or if required arguments 
+        /// are missing.
+        /// </exception>
+        public void Parse(string[] args)
+        {
+            ProcessArgs(args);
+            ProcessAttributes();
+        }
+
+        /// <summary>
+        /// Generates a usage message, based on meta-data supplied by <see cref="CommandLineParameterAttribute"/>s declared
+        /// on members of the subclass.
+        /// </summary>
+        /// <param name="writer"></param>
+        public void PrintUsage(TextWriter writer)
+        {
+            List<string> positionals = new List<string>();
+            List<string> options = new List<string>();
+
+            new ObjectWalker(
+                delegate(IObjectMemberContext context)
+                {
+                    CommandLineParameterAttribute a = AttributeUtils.GetAttribute<CommandLineParameterAttribute>(context.Member);
+                    if (a.Position > -1)
+                    {
+                        positionals.Add(string.Format(a.Required ? "{0}" : "[{0}]", a.DisplayName));
+                    }
+                    else
+                    {
+                        string format = context.MemberType == typeof(bool) ? "/{0}[+|-]\t{1}" : "/{0}:(value)\t{1}";
+                        string s = string.Format(format, a.Key, a.Usage);
+                        if (!string.IsNullOrEmpty(a.KeyShortForm))
+                            s += string.Format(" (Short form: /{0})", a.KeyShortForm);
+                        options.Add(s);
+                    }
+                },
+                delegate(MemberInfo member)
+                {
+                    return AttributeUtils.HasAttribute<CommandLineParameterAttribute>(member);
+                }).Walk(this.GetType());
+
+            writer.Write("Usage: ");
+            if (options.Count > 0)
+                writer.Write("[options] ");
+
+            positionals.ForEach(delegate(string s) { writer.Write("{0} ", s); });
+            writer.WriteLine();
+
+            if (options.Count > 0)
+            {
+                writer.WriteLine("Options:");
+                options.ForEach(delegate(string s) { writer.WriteLine(s); });
+            }
         }
 
         #region Private Helpers
@@ -111,7 +179,7 @@ namespace ClearCanvas.Common.Utilities
                         if(a.Position > -1)
                         {
                             // treat as positional
-                            ValidateType(context.Member.Name, new Type[]{typeof(string)}, context.MemberType);
+                            ValidateMemberType(context.Member.Name, new Type[]{typeof(string)}, context.MemberType);
                             if (_positionalArgs.Count > a.Position)
                                 context.MemberValue = _positionalArgs[a.Position];
                             else
@@ -125,12 +193,12 @@ namespace ClearCanvas.Common.Utilities
                             // treat as named/switch
                             if (context.MemberType == typeof(bool))
                             {
-                                ValidateType(context.Member.Name, new Type[] { typeof(bool) }, context.MemberType);
+                                ValidateMemberType(context.Member.Name, new Type[] { typeof(bool) }, context.MemberType);
                                 SetMemberValue(a, context, _switches);
                             }
                             else
                             {
-                                ValidateType(context.Member.Name, new Type[] { typeof(string), typeof(int), typeof(Enum) }, context.MemberType);
+                                ValidateMemberType(context.Member.Name, new Type[] { typeof(string), typeof(int), typeof(Enum) }, context.MemberType);
                                 SetMemberValue(a, context, _namedArgs);
                             }
                         }
@@ -151,19 +219,20 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="source"></param>
         private void SetMemberValue<T>(CommandLineParameterAttribute a, IObjectMemberContext context, IDictionary<string, T> source)
         {
+            string[] keys = new string[] { a.Key, a.KeyShortForm };
             // T will be either bool or string, depending on whether source is "Switches" or "Named"
-            foreach (string key in a.Keys)
+            foreach (string key in keys)
             {
-                if(source.ContainsKey(key))
+                if (source.ContainsKey(key))
                 {
                     T value = source[key];
-                    if(context.MemberType == typeof(T))
+                    if (context.MemberType == typeof(T))
                         context.MemberValue = value;
-                    else if(context.MemberType.IsEnum)
+                    else if (context.MemberType.IsEnum)
                     {
                         context.MemberValue = Enum.Parse(context.MemberType, value.ToString());
                     }
-                    else if(context.MemberType == typeof(int))
+                    else if (context.MemberType == typeof(int))
                     {
                         context.MemberValue = int.Parse(value.ToString());
                     }
@@ -173,11 +242,11 @@ namespace ClearCanvas.Common.Utilities
             if (a.Required)
                 throw new CommandLineException(
                     string.Format("Missing required command line argument <{0}> ({1})",
-                    a.DisplayName,
-                    StringUtilities.Combine(a.Keys, ", ")));
+                    a.Usage,
+                    StringUtilities.Combine(keys, ", ")));
         }
 
-        private void ValidateType(string memberName, Type[] allowable, Type actual)
+        private void ValidateMemberType(string memberName, Type[] allowable, Type actual)
         {
             if(!CollectionUtils.Contains(allowable, delegate (Type t) { return t.IsAssignableFrom(actual);}))
                 throw new InvalidOperationException(
