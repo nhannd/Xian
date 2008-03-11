@@ -10,7 +10,8 @@
 		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
     <CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
     <JscriptDirectory>$(ProjectDir)\..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
-	</PropertyGroup>
+    <OtoScriptDirectory>$(DistributionDirectory)\oto\scripts</OtoScriptDirectory>
+  </PropertyGroup>
 	
 	<ItemGroup>
 		<ConfigFiles Include="$(SolutionDir)\Adt\actionmodels.xml" />
@@ -31,6 +32,11 @@
   <ItemGroup>
     <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\ScintillaNet.dll" />
     <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <OtoScripts Include="$(TrunkDirectory)\Oto\scripts\*.js" />
+    <OtoScripts Include="$(SolutionDir)\Oto\scripts\*.js" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -77,6 +83,7 @@
     <Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
     <Copy SourceFiles="@(ClientModuleFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
 		<Copy SourceFiles="@(JscriptFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
-	</Target>
+    <Copy SourceFiles="@(OtoScripts)" DestinationFolder="$(OtoScriptDirectory)" ContinueOnError="true" />
+  </Target>
 	
 </Project>
