@@ -51,10 +51,10 @@ namespace Jpeg {
 		return ClearCanvas::Dicom::TransferSyntax::JpegBaselineProcess1->Name;	
 	}
 
-    TransferSyntax^ DicomJpegProcess4Codec::CodecTransferSyntax::get()  {
+    TransferSyntax^ DicomJpegProcess24Codec::CodecTransferSyntax::get()  {
 		return TransferSyntax::JpegExtendedProcess24;
 	}
-	String^ DicomJpegProcess4Codec::Name::get()  {
+	String^ DicomJpegProcess24Codec::Name::get()  {
 		return ClearCanvas::Dicom::TransferSyntax::JpegExtendedProcess24->Name;	
 	}
 
@@ -145,7 +145,7 @@ void DicomJpegCodec::DecodeFrame(int frame, DicomCompressedPixelData^ oldPixelDa
 
 //void DicomJpegCodec::Register() {
 	//DicomCodec::RegisterCodec(TransferSyntax::JpegBaselineProcess1, DicomJpegProcess1Codec::typeid);
-	//DicomCodec::RegisterCodec(TransferSyntax::JpegExtendedProcess24, DicomJpegProcess4Codec::typeid);
+	//DicomCodec::RegisterCodec(TransferSyntax::JpegExtendedProcess24, DicomJpegProcess24Codec::typeid);
 	//DicomCodec::RegisterCodec(TransferSyntax::JpegLosslessNonHierarchicalProcess14, DicomJpegLossless14Codec::typeid);
 	//DicomCodec::RegisterCodec(TransferSyntax::JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1, DicomJpegLossless14SV1Codec::typeid);
 //}

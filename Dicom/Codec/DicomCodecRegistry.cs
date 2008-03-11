@@ -45,7 +45,6 @@ namespace ClearCanvas.Dicom.Codec
         #region Static Constructor
         static DicomCodecRegistry()
         {
-            _dictionary.Add(TransferSyntax.RleLossless,new DicomRleCodecFactory());
         }
         #endregion
 

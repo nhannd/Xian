@@ -26,19 +26,25 @@ namespace Jpeg {
 	IDicomCodec^ DicomJpegProcess1CodecFactory::GetDicomCodec() {
 		return gcnew DicomJpegProcess1Codec();
 	}
+	void DicomJpegProcess1CodecFactory::Register() {
+		DicomCodecRegistry::RegisterCodec(TransferSyntax::JpegBaselineProcess1, gcnew DicomJpegProcess1CodecFactory());
+	}
 
 
-    TransferSyntax^ DicomJpegProcess4CodecFactory::CodecTransferSyntax::get()  {
+    TransferSyntax^ DicomJpegProcess24CodecFactory::CodecTransferSyntax::get()  {
 		return TransferSyntax::JpegExtendedProcess24;
 	}
-	String^ DicomJpegProcess4CodecFactory::Name::get()  {
+	String^ DicomJpegProcess24CodecFactory::Name::get()  {
 		return ClearCanvas::Dicom::TransferSyntax::JpegExtendedProcess24->Name;	
 	}
-	DicomCodecParameters^ DicomJpegProcess4CodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet) {
+	DicomCodecParameters^ DicomJpegProcess24CodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet) {
 		return gcnew DicomJpegParameters();
 	}
-	IDicomCodec^ DicomJpegProcess4CodecFactory::GetDicomCodec() {
-		return gcnew DicomJpegProcess4Codec();
+	IDicomCodec^ DicomJpegProcess24CodecFactory::GetDicomCodec() {
+		return gcnew DicomJpegProcess24Codec();
+	}
+	void DicomJpegProcess24CodecFactory::Register() {
+		DicomCodecRegistry::RegisterCodec(TransferSyntax::JpegExtendedProcess24, gcnew DicomJpegProcess24CodecFactory());
 	}
 
 
@@ -54,7 +60,9 @@ namespace Jpeg {
 	IDicomCodec^ DicomJpegLossless14CodecFactory::GetDicomCodec() {
 		return gcnew DicomJpegLossless14Codec();
 	}
-
+	void DicomJpegLossless14CodecFactory::Register() {
+		DicomCodecRegistry::RegisterCodec(TransferSyntax::JpegLosslessNonHierarchicalProcess14, gcnew DicomJpegLossless14CodecFactory());
+	}
 
     ClearCanvas::Dicom::TransferSyntax^ DicomJpegLossless14SV1CodecFactory::CodecTransferSyntax::get()  {
 		return ClearCanvas::Dicom::TransferSyntax::JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1;
@@ -67,6 +75,9 @@ namespace Jpeg {
 	}
 	IDicomCodec^ DicomJpegLossless14SV1CodecFactory::GetDicomCodec() {
 		return gcnew DicomJpegLossless14SV1Codec();
+	}
+	void DicomJpegLossless14SV1CodecFactory::Register() {
+		DicomCodecRegistry::RegisterCodec(TransferSyntax::JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1, gcnew DicomJpegLossless14SV1CodecFactory());
 	}
 
 } // Jpeg

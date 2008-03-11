@@ -489,6 +489,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="frame">The frame to retrieve</param>
         /// <returns>A byte array containing the frame data.</returns>
+        /// <param name="photometricInterpretation">The photometric interpretation of the pixel data.</param>
         public override byte[] GetFrame(int frame, out string photometricInterpretation)
     
         {
@@ -496,6 +497,7 @@ namespace ClearCanvas.Dicom
                 throw new ArgumentOutOfRangeException("frame");
 
             photometricInterpretation = PhotometricInterpretation;
+
             if (_ms != null)
             {
                 _ms.Seek(0, SeekOrigin.Begin);

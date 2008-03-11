@@ -96,6 +96,7 @@ copy $(ProjectDir)..\..\Dicom\$(OutDir)ClearCanvas.Dicom.dll $(TargetDir)common
 copy $(ProjectDir)..\..\DicomServices\$(OutDir)ClearCanvas.DicomServices.dll $(TargetDir)common
 copy $(ProjectDir)..\..\Server\ServiceModelEx\$(Outdir)ServiceModelEx.dll $(TargetDir)common
 copy $(ProjectDir)..\..\log4net\$(OutDir)ClearCanvas.log4net.dll $(TargetDir)common
+copy $(ProjectDir)..\..\Dicom\Codec\Rle\$(OutDir)ClearCanvas.Dicom.Codec.Rle.dll $(TargetDir)common
 
 rem copy plugins
 copy $(ProjectDir)..\..\Enterprise\Core\$(OutDir)ClearCanvas.Enterprise.Core.dll $(TargetDir)plugins
@@ -107,12 +108,17 @@ copy $(ProjectDir)..\..\ImageServer\Services\WorkQueue\$(OutDir)ClearCanvas.Imag
 copy $(ProjectDir)..\..\ImageServer\Services\Streaming\$(OutDir)ClearCanvas.ImageServer.Services.Streaming.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Services\ServiceLock\$(OutDir)ClearCanvas.ImageServer.Services.ServiceLock.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Rules\$(OutDir)ClearCanvas.ImageServer.Rules.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageServer\Codec\Rle\$(OutDir)ClearCanvas.ImageServer.Codec.Rle.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageServer\Codec\Jpeg\$(OutDir)ClearCanvas.ImageServer.Codec.Jpeg.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageServer\Codec\Jpeg2000\$(OutDir)ClearCanvas.ImageServer.Codec.Jpeg2000.dll $(TargetDir)plugins
 
 rem copy referenced assemblies
 copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\Iesi.Collections.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\Castle.DynamicProxy.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\log4net.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\nunit.framework.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg2000.dll $(TargetDir)common
 
 rem copy Offis dlls
 copy $(ProjectDir)..\..\Dicom\OffisWrapper\csharp\$(ConfigurationName)\ClearCanvas.Dicom.OffisWrapper.dll $(TargetDir)common

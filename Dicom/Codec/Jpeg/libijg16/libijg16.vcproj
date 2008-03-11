@@ -5,7 +5,6 @@
 	Name="libijg16"
 	ProjectGUID="{8BAE0115-0959-4AF8-82AD-7F599D5850AC}"
 	RootNamespace="libijg16"
-	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -101,6 +100,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				FavorSizeOrSpeed="1"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="0"
 				WarningLevel="3"

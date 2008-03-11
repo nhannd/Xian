@@ -24,6 +24,9 @@ namespace Jpeg2000 {
 	IDicomCodec^ DicomJpeg2000LosslessCodecFactory::GetDicomCodec() {
 		return gcnew DicomJpeg2000LosslessCodec();
 	}
+	void DicomJpeg2000LosslessCodecFactory::Register() {
+		DicomCodecRegistry::RegisterCodec(TransferSyntax::Jpeg2000ImageCompressionLosslessOnly, gcnew DicomJpeg2000LosslessCodecFactory());
+	}
 
 
 	TransferSyntax^ DicomJpeg2000LossyCodecFactory::CodecTransferSyntax::get()  {
@@ -39,6 +42,9 @@ namespace Jpeg2000 {
 		return gcnew DicomJpeg2000LossyCodec();
 	}
 
+	void DicomJpeg2000LossyCodecFactory::Register() {
+		DicomCodecRegistry::RegisterCodec(TransferSyntax::Jpeg2000ImageCompression, gcnew DicomJpeg2000LossyCodecFactory());
+	}
 
 } // Jpeg2000
 } // Codec

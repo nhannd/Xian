@@ -171,7 +171,6 @@
   <ItemGroup>
     <Compile Include="Codec\DicomCodecException.cs" />
     <Compile Include="Codec\DicomCodecRegistry.cs" />
-    <Compile Include="Codec\DicomRleCodec.cs" />
     <Compile Include="Codec\IDicomCodec.cs" />
     <Compile Include="DicomAttributeMultiValueText.cs" />
     <Compile Include="DicomDataException.cs" />

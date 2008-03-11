@@ -65,7 +65,7 @@ public:
 	}
 };
 
-public ref class DicomJpegProcess4Codec : public DicomJpegCodec {
+public ref class DicomJpegProcess24Codec : public DicomJpegCodec {
 public:
     property String^ Name { virtual String^ get() override;}
     property ClearCanvas::Dicom::TransferSyntax^ CodecTransferSyntax { virtual ClearCanvas::Dicom::TransferSyntax^ get() override; };

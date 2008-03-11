@@ -10,10 +10,6 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 {
-    internal class EntityBroker
-    {
-    }
-
     /// <summary>
     /// Provides base implementation of <see cref="IEntityBroker{TServerEntity,TSearchCriteria,TUpdateColumns}"/>.
     /// </summary>

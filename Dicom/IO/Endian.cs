@@ -60,7 +60,7 @@ using System.Text;
 namespace ClearCanvas.Dicom.IO
 {
     #region EndianBinaryReader
-    internal class EndianBinaryReader : BinaryReader
+    public class EndianBinaryReader : BinaryReader
     {
         #region Private Members
         private bool SwapBytes = false;
@@ -264,7 +264,7 @@ namespace ClearCanvas.Dicom.IO
     #endregion
 
     #region EndianBinaryWriter
-    internal class EndianBinaryWriter : BinaryWriter
+    public class EndianBinaryWriter : BinaryWriter
     {
         #region Private Members
         private bool SwapBytes = false;
