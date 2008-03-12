@@ -1,44 +1,106 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using AjaxControlToolkit;
 
 namespace ClearCanvas.ImageServer.Web.Application.Common
 {
     
     /// <summary>
-    /// A generic modal popup dialog box
+    /// A generic modal popup dialog box.
     /// </summary>
     /// <remarks>
-    /// A <see cref="ModalDialog"/> control provide a generic  has a <see cref="TitleBarTemplate"/> and a <see cref="ContentTemplate"/> sections. The content of the dialog can
-    /// be 
+    /// A <see cref="ModalDialog"/> control provide all basic functionalities of a modal dialog box such as <see cref="Show"/> and <see cref="Hide"/>.
+    /// The content of the dialog box can be specified at design time using the <see cref="ContentTemplate"/>. The title bar can also be customized by 
+    /// changing <see cref="TitleBarTemplate"/>. The default appearance of the title bar has a <see cref="Title"/> and an "X" button for closing.
+    /// <para>
+    /// Note <see cref="ModalDialog"/> doesn't fire any events. Customized dialog box control should implement event handlers according to its requirement.
+    /// </para> 
+    /// 
+    /// <example>
+    /// The following example illustrate how to define a dialogbox with a "OK" button.
+    /// 
+    /// aspx code:
+    /// 
+    /// <%@ Register Src="ModalDialog.ascx" TagName="ModalDialog" TagPrefix="clearcanvas" %>
+    /// 
+    /// <clearcanvas:ModalDialog ID="ModalDialog1" runat="server" Title="Please Press the button">
+    /// <ContentTemplate>
+    ///      <asp:Button ID="YesButton" runat="server" OnClick="Button_Click" Text="Click Me" />
+    /// </ContentTemplate>
+    /// </clearcanvas:ModalDialog>
+    /// 
+    /// C#:
+    /// 
+    ///  protected void Page_Load(object sender, EventArgs e)
+    ///  {
+    ///     ModalDialog1.Show();
+    ///  }
+    /// 
+    ///  protected void Button_Click(object sender, EventArgs e)
+    ///  {
+    ///        // do something...
+    ///        ModalDialog1.Close();
+    ///  }
+    /// 
+    /// 
+    /// 
+    /// </example>
+    ///
     /// </remarks>
-    public partial class ModalDialog : System.Web.UI.UserControl
+    public partial class ModalDialog : UserControl
     {
+        /// <summary>
+        /// State enumeration
+        /// </summary>
         public enum ShowState
         {
             Hide,
             Show
         }
+
+        /// <summary>
+        /// Template container classes
+        /// </summary>
         [ParseChildren(true)]
         public class DialogTitleBarContainer : Panel, INamingContainer { }
         
         [ParseChildren(true)]
         public class DialogContentContainer : Panel, INamingContainer { }
 
+        #region Private members
         private Dictionary<string, Control> _ctrlIDCache = new Dictionary<string, Control>();
-        
-        /// <summary>
-        /// The template container class
-        /// </summary>
         private Unit _width;
         private string _title;
         private string _titleBarCSS;
@@ -47,25 +109,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         private bool _dropShadow;
         private ITemplate _titleBarTemplate = null;
         private ITemplate _contentTemplate = null;
-        private DialogContentContainer _contentPanelContainer = new DialogContentContainer();
-        private DialogTitleBarContainer _titleBarPanelContainer = new DialogTitleBarContainer();
-        
-       
-        [TemplateContainer(typeof(DialogContentContainer))]
-        [PersistenceMode(PersistenceMode.InnerProperty)]
-        [TemplateInstance(TemplateInstance.Single)]
-        public ITemplate ContentTemplate
-        {
-            get
-            {
-                return _contentTemplate;
-            }
-            set
-            {
-                _contentTemplate = value;
-            }
-        }
+        private readonly DialogContentContainer _contentPanelContainer = new DialogContentContainer();
+        private readonly DialogTitleBarContainer _titleBarPanelContainer = new DialogTitleBarContainer();
+        #endregion Private members
 
+        #region Public Properties
+        /// <summary>
+        /// The customized titlebar template
+        /// </summary>
         [TemplateContainer(typeof(DialogTitleBarContainer))]
         [PersistenceMode(PersistenceMode.InnerProperty)]
         [TemplateInstance(TemplateInstance.Single)]
@@ -82,7 +133,42 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         }
 
 
+        /// <summary>
+        /// The content template
+        /// </summary>
+        [TemplateContainer(typeof(DialogContentContainer))]
+        [PersistenceMode(PersistenceMode.InnerProperty)]
+        [TemplateInstance(TemplateInstance.Single)]
+        public ITemplate ContentTemplate
+        {
+            get
+            {
+                return _contentTemplate;
+            }
+            set
+            {
+                _contentTemplate = value;
+            }
+        }
 
+        
+        /// <summary>
+        /// Sets/Gets the title of the dialog box
+        /// </summary>
+        public string Title
+        {
+            get { return _title; }
+            set
+            {
+                _title = value;
+                if (TitleLabel != null)
+                    TitleLabel.Text = value;
+            }
+        }
+
+        /// <summary>
+        /// Sets/Gets the size of the dialog box.
+        /// </summary>
         public Unit Width
         {
             get { return _width; }
@@ -92,7 +178,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             }
         }
 
-
+        /// <summary>
+        /// Sets/Gets the CSS for the title bar
+        /// </summary>
         public string TitleBarCSS
         {
             get { return _titleBarCSS; }
@@ -103,6 +191,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             }
         }
 
+        /// <summary>
+        /// Gets/Sets the CSS for the dialog box content
+        /// </summary>
         public string ContentCSS
         {
             get { return _dialogContentCSS; }
@@ -113,6 +204,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             }
         }
 
+        /// <summary>
+        /// Gets/Sets a value to indicate whether or not to drop shadow
+        /// </summary>
         public bool DropShadow
         {
             get { return _dropShadow; }
@@ -121,6 +215,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             }
         }
 
+        /// <summary>
+        /// Sets/Gets the CSS for the background area
+        /// </summary>
         public string BackgroundCSS
         {
             get { return _backgroundCSS; }
@@ -131,80 +228,44 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         }
 
         /// <summary>
-        /// The template container class
+        ///  Gets/Sets the current state of the dialog box.
         /// </summary>
-        public string Title
-        {
-            get { return _title; }
-            set { _title = value; 
-                if (TitleLabel!=null)
-                    TitleLabel.Text = value;
-            }
-        }
-
-        public DialogContentContainer ContentPanelContainer
-        {
-            get { return _contentPanelContainer; }
-            set { _contentPanelContainer = value; }
-        }
-
-        public DialogTitleBarContainer TitleBarPanelContainer
-        {
-            get { return _titleBarPanelContainer; }
-            set { _titleBarPanelContainer = value; }
-        }
-
         public ShowState State
         {
-            get {
+            get
+            {
                 if (ViewState[ClientID + "_State"] != null)
                     return (ShowState)ViewState[ClientID + "_State"];
                 else
                     return ShowState.Hide;
             }
-            set { ViewState[ClientID+"_State"] = value; }
+            set { ViewState[ClientID + "_State"] = value; }
         }
 
+        /// <summary>
+        /// Gets the container control that contains the content of the dialog box
+        /// </summary>
+        /// <remarks>
+        /// The content control contains everything defined in <see cref="ContentTemplate"/>
+        /// </remarks>
+        public DialogContentContainer ContentPanelContainer
+        {
+            get { return _contentPanelContainer; }
+        }
+
+        /// <summary>
+        /// Gets the container control that contains the content of the title bar
+        /// </summary>
+        /// <remarks>
+        /// The title bar container contains everything defined in <see cref="TitleBarTemplate"/>
+        /// </remarks>
+        public DialogTitleBarContainer TitleBarPanelContainer
+        {
+            get { return _titleBarPanelContainer; }
+        }
 
         
-        protected Control FindControlHelper(string id)
-        {
-            Control c = null;
-            if (_ctrlIDCache.ContainsKey(id))
-            {
-                c = _ctrlIDCache[id];
-            }
-            else
-            {
-                c = base.FindControl(id);  // Use "base." to avoid calling self in an infinite loop
-                Control nc = NamingContainer;
-                while ((null == c) && (null != nc))
-                {
-                    c = nc.FindControl(id);
-                    nc = nc.NamingContainer;
-                }
-
-                // search inside the template containers
-                if (c == null)
-                    c = ContentPanelContainer.FindControl(id);
-
-                if (c==null)
-                    c = TitleBarPanelContainer.FindControl(id);
-
-                
-                if (null != c)
-                {
-                    _ctrlIDCache[id] = c;
-                }
-            }
-            return c;
-        }
-
-        public override Control FindControl(string id)
-        {
-            return FindControlHelper(id);
-        }
-
+        #endregion Public Properties
 
         #region Protected Methods
         protected override void OnInit(EventArgs e)
@@ -256,25 +317,62 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             if (CloseButton.Visible)
             {
                 ModalPopupExtender1.CancelControlID = CloseButton.ClientID;
-                CloseButton.Click += new ImageClickEventHandler(CloseButton_Click);
+                CloseButton.Click += CloseButton_Click;
             }
             
             
             
         }
 
-        void CloseButton_Click(object sender, ImageClickEventArgs e)
+        protected Control FindControlHelper(string id)
+        {
+            Control ctrl = null;
+            if (_ctrlIDCache.ContainsKey(id))
+            {
+                ctrl = _ctrlIDCache[id];
+            }
+            else
+            {
+                ctrl = base.FindControl(id);
+                Control nc = NamingContainer;
+                while ((ctrl==null) && (nc!=null))
+                {
+                    ctrl = nc.FindControl(id);
+                    nc = nc.NamingContainer;
+                }
+
+                // search inside the template containers
+                if (ctrl == null)
+                    ctrl = ContentPanelContainer.FindControl(id);
+
+                if (ctrl == null)
+                    ctrl = TitleBarPanelContainer.FindControl(id);
+
+
+                if (null != ctrl)
+                {
+                    _ctrlIDCache[id] = ctrl;
+                }
+            }
+            return ctrl;
+        }
+
+        protected void CloseButton_Click(object sender, ImageClickEventArgs e)
         {
             Hide();
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-        }
-
         #endregion Protected Methods
 
+        #region Public Methods
+        public override Control FindControl(string id)
+        {
+            return FindControlHelper(id);
+        }
+
+        /// <summary>
+        /// Displays the dialog on the screen and wait for response from the users
+        /// </summary>
         public void Show()
         {
             ModalPopupExtender1.Show();
@@ -283,11 +381,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             State = ShowState.Show;
         }
 
+        /// <summary>
+        /// Closes the dialog box
+        /// </summary>
         public void Hide()
         {
             ModalPopupExtender1.Hide();
             UpdatePanel1.Update();
             State = ShowState.Hide;
         }
+
+        #endregion Public Methods
     }
 }
