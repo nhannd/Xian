@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common.Utilities;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -47,59 +48,41 @@ namespace ClearCanvas.Ris.Client
     [ExtensionOf(typeof(ClearCanvas.Common.ServiceProviderExtensionPoint))]
     public class RemoteServiceProvider : IServiceProvider
     {
+        public delegate object CreateChannelDelegate();
+
+        private static readonly Dictionary<Type, CreateChannelDelegate> _channelFactoryMethods = new Dictionary<Type, CreateChannelDelegate>();
         private const int OneMegaByte = 1048576;
 
         #region IServiceProvider Members
 
         public object GetService(Type serviceType)
         {
-            AuthenticationAttribute authAttr = AttributeUtils.GetAttribute<AuthenticationAttribute>(serviceType);
-            bool authenticationRequired = authAttr == null ? true : authAttr.AuthenticationRequired;
-
             try
             {
+                AuthenticationAttribute authAttr = AttributeUtils.GetAttribute<AuthenticationAttribute>(serviceType);
+                bool authenticationRequired = authAttr == null ? true : authAttr.AuthenticationRequired;
                 if (authenticationRequired && LoginSession.Current == null)
-                    throw new InvalidOperationException("User login credentials have not been provided");
+                    throw new InvalidOperationException("User login credentials have not been provided.");
 
-                string baseUrl = WebServicesSettings.Default.ApplicationServicesBaseUrl;
-
-                Uri uri = new Uri(new Uri(baseUrl), serviceType.FullName);
-                EndpointAddress endpoint = new EndpointAddress(uri);
-                WSHttpBinding binding = new WSHttpBinding();
-                binding.Security.Mode = SecurityMode.Message;
-                binding.Security.Message.ClientCredentialType = 
-                    authenticationRequired ? MessageCredentialType.UserName : MessageCredentialType.None;
-                binding.MaxReceivedMessageSize = OneMegaByte;
-                
-                // allow individual string content to be same size as entire message
-                binding.ReaderQuotas.MaxStringContentLength = OneMegaByte;
-                binding.ReaderQuotas.MaxArrayLength = OneMegaByte;
-
-                //binding.ReceiveTimeout = new TimeSpan(0, 0 , 20);
-                //binding.SendTimeout = new TimeSpan(0, 0, 10);
-
-                // create the channel factory
-                Type channelFactoryClass = typeof(ChannelFactory<>).MakeGenericType(new Type[] { serviceType });
-                ChannelFactory channelFactory = (ChannelFactory)Activator.CreateInstance(channelFactoryClass, binding, endpoint);
-                channelFactory.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.PeerOrChainTrust;
-                
-                if(authenticationRequired)
+                // obtain the channel factory method for this service
+                CreateChannelDelegate factoryMethod;
+                if(!_channelFactoryMethods.TryGetValue(serviceType, out factoryMethod))
                 {
-                    channelFactory.Credentials.UserName.UserName = LoginSession.Current.UserName;
-
-                    // use session token in place of password
-                    channelFactory.Credentials.UserName.Password = LoginSession.Current.SessionToken;
+                    lock (_channelFactoryMethods)
+                    {
+                        // don't need double-checked lock pattern here because who cares if multiple threads create the same channel
+                        _channelFactoryMethods.Add(serviceType,
+                                               factoryMethod = CreateChannelFactory(serviceType, authenticationRequired));
+                    }
                 }
 
-                // reflection is unfortunately the only way to create the service channel
-                MethodInfo createChannelMethod = channelFactoryClass.GetMethod("CreateChannel", Type.EmptyTypes);
-                object serviceProxy = createChannelMethod.Invoke(channelFactory, null);
+                // call the factory method to create the channel
+                object channel = factoryMethod();
 
                 Platform.Log(LogLevel.Debug, "Created WCF channel instance for service {0}, authenticated={1}.",
-                   serviceType.FullName, authenticationRequired);
+                             serviceType.FullName, authenticationRequired);
 
-                return serviceProxy;
-
+                return channel;
             }
             catch (Exception e)
             {
@@ -114,5 +97,43 @@ namespace ClearCanvas.Ris.Client
         }
 
         #endregion
+
+        private static CreateChannelDelegate CreateChannelFactory(Type serviceType, bool authenticationRequired)
+        {
+            string baseUrl = WebServicesSettings.Default.ApplicationServicesBaseUrl;
+
+            Uri uri = new Uri(new Uri(baseUrl), serviceType.FullName);
+            EndpointAddress endpoint = new EndpointAddress(uri);
+            WSHttpBinding binding = new WSHttpBinding();
+            binding.Security.Mode = SecurityMode.Message;
+            binding.Security.Message.ClientCredentialType =
+                authenticationRequired ? MessageCredentialType.UserName : MessageCredentialType.None;
+            binding.MaxReceivedMessageSize = OneMegaByte;
+
+            // allow individual string content to be same size as entire message
+            binding.ReaderQuotas.MaxStringContentLength = OneMegaByte;
+            binding.ReaderQuotas.MaxArrayLength = OneMegaByte;
+
+            //binding.ReceiveTimeout = new TimeSpan(0, 0 , 20);
+            //binding.SendTimeout = new TimeSpan(0, 0, 10);
+
+            // create the channel factory
+            Type channelFactoryClass = typeof(ChannelFactory<>).MakeGenericType(new Type[] { serviceType });
+            ChannelFactory channelFactory = (ChannelFactory)Activator.CreateInstance(channelFactoryClass, binding, endpoint);
+            channelFactory.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.PeerOrChainTrust;
+            if (authenticationRequired)
+            {
+                channelFactory.Credentials.UserName.UserName = LoginSession.Current.UserName;
+
+                // use session token in place of password
+                channelFactory.Credentials.UserName.Password = LoginSession.Current.SessionToken;
+            }
+
+            // create a delegate and bind it to the channelFactory instance
+            MethodInfo createChannelMethod = channelFactory.GetType().GetMethod("CreateChannel", Type.EmptyTypes);
+            CreateChannelDelegate createChannel = (CreateChannelDelegate)
+                Delegate.CreateDelegate(typeof(CreateChannelDelegate), channelFactory, createChannelMethod);
+            return createChannel;
+        }
     }
 }
