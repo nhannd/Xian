@@ -1,9 +1,9 @@
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="SearchPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.WorkQueue.SearchPanel" %>
-<%@ Register Src="WorkQueueSearchResultPanel.ascx" TagName="WorkQueueSearchResultPanel" TagPrefix="uc1" %>
-<%@ Register Src="~/Common/GridPager.ascx" TagName="GridPager" TagPrefix="uc2" %>
-<%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="uc5" %>
+<%@ Register Src="WorkQueueSearchResultPanel.ascx" TagName="WorkQueueSearchResultPanel" TagPrefix="clearcanvas" %>
+<%@ Register Src="~/Common/GridPager.ascx" TagName="GridPager" TagPrefix="clearcanvas" %>
+
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="AjaxControlToolkit" %>
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
@@ -63,15 +63,16 @@
                 </asp:TableHeaderRow>
                 <asp:TableRow>
                     <asp:TableCell ColumnSpan="2">
-                        <uc1:WorkQueueSearchResultPanel ID="WorkQueueSearchResultPanel" runat="server"></uc1:WorkQueueSearchResultPanel>
+                        <clearcanvas:WorkQueueSearchResultPanel ID="WorkQueueSearchResultPanel" runat="server"></clearcanvas:WorkQueueSearchResultPanel>
                     </asp:TableCell>
                 </asp:TableRow>
                  <asp:TableRow>
                     <asp:TableCell ColumnSpan="2">
-                        <uc2:GridPager ID="GridPager1" runat="server"></uc2:GridPager>
+                        <clearcanvas:GridPager ID="GridPager1" runat="server"></clearcanvas:GridPager>
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
         </asp:Panel>
     </ContentTemplate>
 </asp:UpdatePanel>
+

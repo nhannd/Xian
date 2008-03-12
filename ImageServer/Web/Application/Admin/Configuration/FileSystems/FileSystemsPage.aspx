@@ -5,7 +5,6 @@
 <%@ Register Src="AddEditFileSystemDialog.ascx" TagName="AddEditFileSystemDialog"
     TagPrefix="uc3" %>
 <%@ Register Src="FileSystemsPanel.ascx" TagName="FileSystemsPanel" TagPrefix="uc2" %>
-<%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="uc1" %>
 <asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
     File System Management
 </asp:Content>

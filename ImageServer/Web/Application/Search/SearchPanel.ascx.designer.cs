@@ -29,15 +29,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.UpdatePanel UpdatePanel;
         
         /// <summary>
-        /// ScriptManagerProxy1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.ScriptManagerProxy ScriptManagerProxy1;
-        
-        /// <summary>
         /// PagePanel control.
         /// </summary>
         /// <remarks>
@@ -146,7 +137,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
-        /// PersonName control.
+        /// PatientName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
@@ -236,12 +227,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPager1;
         
         /// <summary>
-        /// ConfirmDialog1 control.
+        /// ConfirmationDialog1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmDialog ConfirmDialog1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmationDialog1;
     }
 }

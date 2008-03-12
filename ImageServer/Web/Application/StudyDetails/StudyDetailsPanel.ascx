@@ -1,13 +1,14 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="StudyDetailsPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.StudyDetails.StudyDetailsPanel" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
-<%@ Register Src="~/Common/SectionPanel.ascx" TagName="SectionPanel" TagPrefix="uc4" %>
-<%@ Register Src="SeriesGridView.ascx" TagName="SeriesGridView" TagPrefix="uc3" %>
-<%@ Register Src="PatientSummaryPanel.ascx" TagName="PatientSummaryPanel" TagPrefix="uc2" %>
+<%@ Register Src="~/Common/SectionPanel.ascx" TagName="SectionPanel" TagPrefix="clearcanvas" %>
+<%@ Register Src="SeriesGridView.ascx" TagName="SeriesGridView" TagPrefix="clearcanvas" %>
+<%@ Register Src="PatientSummaryPanel.ascx" TagName="PatientSummaryPanel" TagPrefix="clearcanvas" %>
 <%@ Register Src="StudyDetailsView.ascx" TagName="StudyDetailsView" TagPrefix="clearcanvas" %>
 <%@ Register TagPrefix="clearcanvas" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI"
     Assembly="ClearCanvas.ImageServer.Web.Common" %>
-<%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="cc2" %>
+<%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog" TagPrefix="clearcanvas" %>
+
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
     <ContentTemplate>
         <asp:Panel runat="server" ID="StudyDetailsPanelContainer">
@@ -16,9 +17,9 @@
                  <asp:Label ID="ConfirmationMessage" runat="Server" Text="" />
             </asp:Panel>
             
-            <uc2:PatientSummaryPanel ID="PatientSummaryPanel" runat="server"></uc2:PatientSummaryPanel>
+            <clearcanvas:PatientSummaryPanel ID="PatientSummaryPanel" runat="server"></clearcanvas:PatientSummaryPanel>
             <br />             
-            <uc4:SectionPanel ID="StudySectionPanel" runat="server" HeadingText="STUDY" HeadingCSS="CSSStudyHeading" ContentAreaCSS="CSSSectionContent"
+            <clearcanvas:SectionPanel ID="StudySectionPanel" runat="server" HeadingText="STUDY" HeadingCSS="CSSStudyHeading" ContentAreaCSS="CSSSectionContent"
                 Width="100%" CssClass="CSSSection">
                 <SectionContentTemplate>
                     <asp:Panel ID="Panel6" runat="server" CssClass="CSSToolbarPanelContainer">
@@ -32,10 +33,10 @@
                     </asp:Panel>
                     <clearcanvas:StudyDetailsView ID="StudyDetailsView" runat="server" Width="50%"></clearcanvas:StudyDetailsView>
                 </SectionContentTemplate>
-            </uc4:SectionPanel>
+            </clearcanvas:SectionPanel>
             
             <br />
-            <uc4:SectionPanel ID="SeriesSectionPanel" runat="server" HeadingText="SERIES" HeadingCSS="CSSStudyHeading"
+            <clearcanvas:SectionPanel ID="SeriesSectionPanel" runat="server" HeadingText="SERIES" HeadingCSS="CSSStudyHeading"
                 Width="100%" CssClass="CSSSection">
                 <SectionContentTemplate>
                     <asp:Panel ID="Panel1" runat="server" CssClass="CSSToolbarPanelContainer">
@@ -47,9 +48,9 @@
                         </asp:Panel>
                     </asp:Panel>
                     
-                    <uc3:SeriesGridView ID="SeriesGridView" runat="server"></uc3:SeriesGridView>
+                    <clearcanvas:SeriesGridView ID="SeriesGridView" runat="server"></clearcanvas:SeriesGridView>
                 </SectionContentTemplate>
-            </uc4:SectionPanel>
+            </clearcanvas:SectionPanel>
             
             <%--
             
@@ -91,13 +92,13 @@
             <asp:Panel ID="Panel2" runat="server">
                 <strong>SERIES</strong>
             </asp:Panel>
-            <uc3:SeriesGridView ID="SeriesGridView1" runat="server"></uc3:SeriesGridView>
+            <clearcanvas:SeriesGridView ID="SeriesGridView1" runat="server"></clearcanvas:SeriesGridView>
             --%>
             
             
         </asp:Panel>
                  
-        <cc2:ConfirmDialog ID="ConfirmDialog1" runat="server" />
+        <clearcanvas:ConfirmationDialog ID="ConfirmDialog1" runat="server" />
         
     </ContentTemplate>
 </asp:UpdatePanel>

@@ -218,6 +218,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         protected void FilterButton_Click(object sender, ImageClickEventArgs e)
         {
             LoadDevices();
+
         }
 
         protected void AddButton_Click(object sender, ImageClickEventArgs e)

@@ -2,7 +2,6 @@
     EnableEventValidation="false" Codebehind="SearchPage.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.WorkQueue.SearchPage"
     Title="ImageServer Search" %>
 
-<%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="uc1" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 <%@ Register Src="~/Common/ServerPartitionTabs.ascx" TagName="ServerPartitionTabs"
     TagPrefix="ccPartitionTabs" %>

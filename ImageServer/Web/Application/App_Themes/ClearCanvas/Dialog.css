@@ -1,0 +1,57 @@
+.CSSDefaultPopupDialogTitleBarLeft
+{
+	background-image: url(images/DialogTitleBarBG-left.gif);
+	background-repeat:no-repeat;
+	width:5px;
+}
+
+
+.CSSDefaultPopupDialogTitleBarTitle
+{
+	cursor: move;
+	vertical-align: middle;
+	text-align: center;
+	color: #ffffff;
+	font-size: medium;
+	font-weight:normal;
+	padding:0px;
+	height:25px;
+	background-image: url(images/DialogTitleBarBG.gif);
+	background-repeat: repeat-x;
+}
+
+.CSSDefaultPopupDialogTitleBarControlBoxes
+{
+	cursor: move;
+	vertical-align: middle;
+	text-align: right;
+	color: #ffffff;
+	font-size: medium;
+	font-weight:normal;
+	padding:0px;
+	height:25px;
+	background-image: url(images/DialogTitleBarBG.gif);
+	background-repeat: repeat-x;
+	width:25px;
+}
+
+
+.CSSDefaultPopupDialogTitleBarRight
+{
+	text-align:right;
+	background-image: url(images/DialogTitleBarBG-right.gif);
+	background-repeat:no-repeat;
+	width:5px;
+}
+
+
+.CSSDefaultPopupDialogContent
+{
+	vertical-align: top;
+	padding: 15px;
+	background-color: #f8f8ff;
+	border-right: #ccccff 1px solid;
+	border-top: #ccccff 1px solid;
+	border-left: #ccccff 1px solid;
+	border-bottom: #ccccff 1px solid;
+}

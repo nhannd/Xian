@@ -123,16 +123,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         {
             base.OnInit(e);
 
-            // Set up the popup extender
-            // These settings could been done in the aspx page as well
-            // but if we are to javascript to display, that won't work.
-            ModalPopupExtender1.PopupControlID = DialogPanel.UniqueID;
-            ModalPopupExtender1.TargetControlID = DummyPanel.UniqueID;
-            ModalPopupExtender1.BehaviorID = ModalPopupExtender1.UniqueID;
-
-            ModalPopupExtender1.DropShadow = true;
-            ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
-
             RegisterClientSideScripts();
 
 
@@ -252,8 +242,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                 TabContainer1.ActiveTabIndex = 0;
             }
 
-            UpdatePanel.Update();
-            ModalPopupExtender1.Show();
+            ModalDialog1.Show();
         }
 
         private void UpdateUI()
@@ -261,13 +250,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             if (EditMode)
             {
                 // set the dialog box title and OK button text
-                TitleLabel.Text = "Edit Filesystem";
+                ModalDialog1.Title = "Edit Filesystem";
                 OKButton.Text = "Update";
             }
             else
             {
                 // set the dialog box title and OK button text
-                TitleLabel.Text = "Add Filesystem";
+                ModalDialog1.Title= "Add Filesystem";
                 OKButton.Text = "Add";
             }
 
@@ -308,24 +297,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// </summary>
         public void Close()
         {
-            // 
-            // Clear all boxes
-            //
-            // STRANGE AJAX BUG?: 
-            //      This block of code will cause 
-            //      WebForms.PageRequestManagerServerErrorException: Status code 500 
-            //      when other buttons are pressed AFTER the add device dialog box is dismissed.
-            //
-            //  Move the entire block into Show()
-            //
-            //  AETitleTextBox.Text = "<Enter AE Title>";
-            //  ActiveCheckBox.Checked = false;
-            //  DHCPCheckBox.Checked = false;
-            //  DescriptionTextBox.Text = "<Enter Description>";
-            //  PortTextBox.Text = "<Port #>";
+            
 
-
-            ModalPopupExtender1.Hide();
         }
 
         #endregion Public methods

@@ -122,15 +122,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
             ServerPartitionTabContainer.ActiveTabIndex = 0;
 
-            // Set up the popup extender
-            // These settings could been done in the aspx page as well
-            // but if we are to javascript to display, that won't work.
-            ModalPopupExtender1.PopupControlID = DialogPanel.UniqueID;
-            ModalPopupExtender1.TargetControlID = DummyPanel.UniqueID;
-            ModalPopupExtender1.BehaviorID = ModalPopupExtender1.UniqueID;
-
-            ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
-
             SampleRuleDropDownList.Attributes.Add("onchange", "webServiceScript(this, this.SelectedIndex);");
             RuleTypeDropDownList.Attributes.Add("onchange", "selectRuleType(this);");
 
@@ -347,7 +338,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
             if (EditMode)
             {
-                TitleLabel.Text = "Edit Server Rule";
+                ModalDialog1.Title = "Edit Server Rule";
                 OKButton.Text = "Update";
 
                 DefaultCheckBox.Checked = _rule.DefaultRule;
@@ -412,7 +403,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             }
             else
             {
-                TitleLabel.Text = "Add Server Rule";
+                ModalDialog1.Title = "Add Server Rule";
                 OKButton.Text = "Add";
 
                 DefaultCheckBox.Checked = false;
@@ -443,14 +434,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
                 SampleRuleDropDownList.Items.Add(new ListItem("Simple AutoRoute", "SimpleAutoRoute"));
             }
 
-            ModalPopupExtender1.Show();
-            AddEditUpdatePanel.Update();
+            ModalDialog1.Show();
             return;
         }
 
         public void Close()
         {
-            ModalPopupExtender1.Hide();
+            
         }
 
         #endregion

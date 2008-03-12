@@ -84,10 +84,18 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
                 IList<Model.ServerPartition> partitions = adaptor.Get(criteria);
                 if (partitions != null && partitions.Count>0)
                 {
-                    Platform.CheckArgumentRange(partitions.Count, 1, 1, "Number of partitions with matching AE Title");
-                    
-                    Partition = partitions[0];
-                    LoadStudy();
+                    if (partitions.Count==1)
+                    {
+                        Partition = partitions[0];
+
+                        //TODO: Do something if parition is inactive. Perhapse show an alert on the screen?
+
+                        LoadStudy();   
+                    }
+                    else
+                    {
+                        Response.Write("Unexpected Error: Multiple Partitions exist with AE title : " + _serverae);
+                    }
                 }
             }
         }
@@ -124,11 +132,15 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
         {
             base.OnPreRender(e); 
             
-            if (_study == null)
+            if (_partition!=null && _study == null)
             {
                 Response.Write("<Br>NO SUCH STUDY FOUND<Br>");
-                StudyDetailsPanel.Visible = false;
             } 
+
+            if (_study==null)
+            {
+                StudyDetailsPanel.Visible = false;
+            }
         }
 
         #endregion Protected Methods

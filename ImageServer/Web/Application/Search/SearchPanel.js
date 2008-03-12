@@ -11,8 +11,10 @@
 // is RE-define for the 2nd instance but registerClass() will fail so the type will be essential undefined when the object
 // is instantiated.
 //
+
 if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Search.SearchPanel']==null)
 {
+
     Type.registerNamespace('ClearCanvas.ImageServer.Web.Application.Search');
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

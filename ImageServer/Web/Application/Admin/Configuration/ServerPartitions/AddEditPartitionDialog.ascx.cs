@@ -99,16 +99,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
 
             ServerPartitionTabContainer.ActiveTabIndex = 0;
 
-            // Set up the popup extender
-            // These settings could been done in the aspx page as well
-            // but if we are to javascript to display, that won't work.
-            ModalPopupExtender1.PopupControlID = DialogPanel.UniqueID;
-            ModalPopupExtender1.TargetControlID = DummyPanel.UniqueID;
-            ModalPopupExtender1.BehaviorID = ModalPopupExtender1.UniqueID;
-
-            ModalPopupExtender1.DropShadow = true;
-            ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
-
             AutoInsertDeviceCheckBox.InputAttributes.Add("onclick", "EnableDisable();");
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID,
@@ -189,12 +179,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         {
             if (EditMode)
             {
-                TitleLabel.Text = "Edit Partition";
+                ModalDialog1.Title= "Edit Partition";
                 OKButton.Text = "Update";
             }
             else
             {
-                TitleLabel.Text = "Add Partition";
+                ModalDialog1.Title = "Add Partition";
                 OKButton.Text = "Add";
             }
 
@@ -247,8 +237,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             }
 
 
-            UpdatePanel.Update();
-            ModalPopupExtender1.Show();
+            ModalDialog1.Show();
         }
 
         /// <summary>
@@ -256,7 +245,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// </summary>
         public void Close()
         {
-            ModalPopupExtender1.Hide();
+            
         }
 
         #endregion Public methods

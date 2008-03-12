@@ -1,22 +1,15 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="SearchPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Search.SearchPanel" %>
-<%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="ccConfirm" %>
+<%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog" TagPrefix="clearcanvas" %>
+<%@ Register Src="~/Common/ModalDialog.ascx" TagName="ModalDialog" TagPrefix="clearcanvas" %>
 <%@ Register Src="~/Common/GridPager.ascx" TagName="GridPager" TagPrefix="uc2" %>
 <%@ Register Src="StudyListGridView.ascx" TagName="StudyListGridView" TagPrefix="uc1" %>
 <%@ Register TagPrefix="clearcanvas" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" 
     Assembly="ClearCanvas.ImageServer.Web.Common" %>
 
 
-<asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
+<asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
-        <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
-            <Scripts>
-                <asp:ScriptReference Path="~/Search/SearchPanel.js" ResourceUICultures="it-IT" />
-            </Scripts>
-        </asp:ScriptManagerProxy>
-        
-        
-        
         <asp:Panel ID="PagePanel" runat="server">
             <asp:Table ID="Table" runat="server"  
                 CellPadding="0" CellSpacing="0"
@@ -104,8 +97,6 @@
                 </asp:TableRow>
             </asp:Table>
         </asp:Panel>
+        <clearcanvas:ConfirmationDialog ID="ConfirmationDialog1" runat="server" />    
     </ContentTemplate>
 </asp:UpdatePanel>
-
-<ccConfirm:ConfirmDialog ID="ConfirmDialog1" runat="server" />
-

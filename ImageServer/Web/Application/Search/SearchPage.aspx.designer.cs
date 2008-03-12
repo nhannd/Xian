@@ -20,15 +20,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
     public partial class SearchPage {
         
         /// <summary>
-        /// ScriptManagerProxy1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.ScriptManagerProxy ScriptManagerProxy1;
-        
-        /// <summary>
         /// PageContent control.
         /// </summary>
         /// <remarks>

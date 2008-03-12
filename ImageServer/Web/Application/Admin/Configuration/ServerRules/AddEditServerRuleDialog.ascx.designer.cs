@@ -20,49 +20,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
     public partial class AddEditServerRuleDialog {
         
         /// <summary>
-        /// AddEditUpdatePanel control.
+        /// ModalDialog1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel AddEditUpdatePanel;
-        
-        /// <summary>
-        /// DialogPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel DialogPanel;
-        
-        /// <summary>
-        /// TitleBarPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel TitleBarPanel;
-        
-        /// <summary>
-        /// TitleLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label TitleLabel;
-        
-        /// <summary>
-        /// Panel3 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel3;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog1;
         
         /// <summary>
         /// ServerPartitionTabContainer control.
@@ -90,6 +54,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel Panel1;
+        
+        /// <summary>
+        /// Table1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTable Table1;
         
         /// <summary>
         /// Label1 control.
@@ -261,23 +234,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button CancelButton;
-        
-        /// <summary>
-        /// DummyPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel DummyPanel;
-        
-        /// <summary>
-        /// ModalPopupExtender1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtender1;
     }
 }

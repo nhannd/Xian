@@ -1,11 +1,10 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="DevicePanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices.DevicePanel" %>
 <%@ Register Src="~/Common/GridPager.ascx" TagName="GridPager" TagPrefix="uc8" %>
-<%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="uc5" %>
 <%@ Register Src="DeviceGridView.ascx" TagName="DeviceGridView" TagPrefix="uc1" %>
 <%@ Register TagPrefix="clearcanvas" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" 
     Assembly="ClearCanvas.ImageServer.Web.Common" %>
-    
+<%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog" TagPrefix="clearcanvas" %>
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="Panel1" runat="server">
@@ -90,5 +89,7 @@
                 </asp:TableRow>
             </asp:Table>
         </asp:Panel>
+        
+        <clearcanvas:ConfirmationDialog ID="ConfirmDialog1" runat="server" />
     </ContentTemplate>
 </asp:UpdatePanel>

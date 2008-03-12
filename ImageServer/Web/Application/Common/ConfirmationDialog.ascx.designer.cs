@@ -12,48 +12,39 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
     
     
     /// <summary>
-    /// ConfirmDialog class.
+    /// ConfirmationDialog class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class ConfirmDialog {
+    public partial class ConfirmationDialog {
         
         /// <summary>
-        /// UpdatePanel control.
+        /// ModalDialog1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog1;
         
         /// <summary>
-        /// DialogPanel control.
+        /// Panel3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel DialogPanel;
+        protected global::System.Web.UI.WebControls.Panel Panel3;
         
         /// <summary>
-        /// TitleLabel control.
+        /// Panel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label TitleLabel;
-        
-        /// <summary>
-        /// TABLE1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTable TABLE1;
+        protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
         /// IconImage control.
@@ -74,15 +65,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
         protected global::System.Web.UI.WebControls.Label MessageLabel;
         
         /// <summary>
-        /// DummyPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel DummyPanel;
-        
-        /// <summary>
         /// YesButton control.
         /// </summary>
         /// <remarks>
@@ -92,21 +74,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
         protected global::System.Web.UI.WebControls.Button YesButton;
         
         /// <summary>
-        /// CancelButton control.
+        /// NoButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button CancelButton;
-        
-        /// <summary>
-        /// ModalPopupExtender1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtender1;
+        protected global::System.Web.UI.WebControls.Button NoButton;
     }
 }

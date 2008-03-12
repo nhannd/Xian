@@ -179,6 +179,6 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmDialog ConfirmDialog1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmDialog1;
     }
 }

@@ -8,222 +8,204 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices {
+namespace ClearCanvas.ImageServer.Web.Application.Common {
     
     
     /// <summary>
-    /// DevicePanel class.
+    /// ModalDialog class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class DevicePanel {
+    public partial class ModalDialog {
         
         /// <summary>
-        /// UpdatePanel control.
+        /// UpdatePanel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// Panel1 control.
+        /// DialogContainer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
+        protected global::System.Web.UI.WebControls.Panel DialogContainer;
         
         /// <summary>
-        /// Table control.
+        /// Table5 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Table Table;
+        protected global::System.Web.UI.WebControls.Table Table5;
         
         /// <summary>
-        /// Panel2 control.
+        /// Table1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel2;
+        protected global::System.Web.UI.WebControls.Table Table1;
         
         /// <summary>
-        /// Panel3 control.
+        /// Container control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel3;
+        protected global::System.Web.UI.WebControls.Panel Container;
         
         /// <summary>
-        /// Panel4 control.
+        /// Table2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel4;
+        protected global::System.Web.UI.WebControls.Table Table2;
         
         /// <summary>
-        /// AddToolbarButton control.
+        /// TableRow1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton AddToolbarButton;
+        protected global::System.Web.UI.WebControls.TableRow TableRow1;
         
         /// <summary>
-        /// EditToolbarButton control.
+        /// TitleBarPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton EditToolbarButton;
+        protected global::System.Web.UI.WebControls.Panel TitleBarPanel;
         
         /// <summary>
-        /// DeleteToolbarButton control.
+        /// DefaultTitlePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteToolbarButton;
+        protected global::System.Web.UI.WebControls.Panel DefaultTitlePanel;
         
         /// <summary>
-        /// FilterPanel control.
+        /// Table3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel FilterPanel;
+        protected global::System.Web.UI.WebControls.Table Table3;
         
         /// <summary>
-        /// Panel5 control.
+        /// TitleBarLeft control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel5;
+        protected global::System.Web.UI.WebControls.TableCell TitleBarLeft;
         
         /// <summary>
-        /// Panel6 control.
+        /// TitleBarCenter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel6;
+        protected global::System.Web.UI.WebControls.TableCell TitleBarCenter;
         
         /// <summary>
-        /// Label1 control.
+        /// TitleLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label1;
+        protected global::System.Web.UI.WebControls.Label TitleLabel;
         
         /// <summary>
-        /// AETitleFilter control.
+        /// TitleBarRight control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox AETitleFilter;
+        protected global::System.Web.UI.WebControls.TableCell TitleBarRight;
         
         /// <summary>
-        /// Label2 control.
+        /// CloseButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label2;
+        protected global::System.Web.UI.WebControls.ImageButton CloseButton;
         
         /// <summary>
-        /// IPAddressFilter control.
+        /// CustomizedTitleBarPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox IPAddressFilter;
+        protected global::System.Web.UI.WebControls.Panel CustomizedTitleBarPanel;
         
         /// <summary>
-        /// EnabledOnlyFilter control.
+        /// TitlePanelPlaceHolder control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox EnabledOnlyFilter;
+        protected global::System.Web.UI.WebControls.PlaceHolder TitlePanelPlaceHolder;
         
         /// <summary>
-        /// DHCPOnlyFilter control.
+        /// ContentPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox DHCPOnlyFilter;
+        protected global::System.Web.UI.WebControls.Panel ContentPanel;
         
         /// <summary>
-        /// FilterButtonContainer control.
+        /// ContentPlaceHolder control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel FilterButtonContainer;
+        protected global::System.Web.UI.WebControls.PlaceHolder ContentPlaceHolder;
         
         /// <summary>
-        /// FilterToolbarButton control.
+        /// DummyPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton FilterToolbarButton;
+        protected global::System.Web.UI.WebControls.Panel DummyPanel;
         
         /// <summary>
-        /// DeviceGridViewControl1 control.
+        /// ModalPopupExtender1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices.DeviceGridView DeviceGridViewControl1;
-        
-        /// <summary>
-        /// GridPager1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPager1;
-        
-        /// <summary>
-        /// ConfirmDialog1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UserControl ConfirmDialog1;
+        protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtender1;
     }
 }

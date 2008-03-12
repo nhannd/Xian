@@ -39,7 +39,7 @@ namespace ClearCanvas.Dicom
     /// <summary>
     /// Encapsulates the DICOM Person's Name.
     /// </summary>
-    public class PersonName : IEquatable<PersonName>
+    public class PersonName : IEquatable<PersonName>, IFormattable
     {
 		private string _personsName;
 		private string _formattedName;
@@ -61,6 +61,13 @@ namespace ClearCanvas.Dicom
         public PersonName(string personsName)
         {
 			SetInternalPersonName(personsName);
+        }
+
+        public bool IsEmpty
+        {
+            get {
+                return String.IsNullOrEmpty(InternalPersonName);
+            }
         }
 
 		/// <summary>
@@ -192,5 +199,23 @@ namespace ClearCanvas.Dicom
         {
             return base.GetHashCode();
         }
-	}
+
+        #region IFormattable Members
+
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            if (formatProvider != null)
+            {
+                ICustomFormatter formatter = formatProvider.GetFormat(this.GetType()) as ICustomFormatter;
+                if (formatter != null)
+                    return formatter.Format(format, this, formatProvider);
+            }
+            
+            return ToString();
+            
+        }
+
+        #endregion
+    }
 }

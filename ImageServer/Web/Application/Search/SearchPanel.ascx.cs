@@ -182,7 +182,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
                                                   };
 
 
-            ConfirmDialog1.Confirmed += delegate(object data)
+            ConfirmationDialog1.Confirmed += delegate(object data)
                                 {
                                     if (data is IList<Study>)
                                     {
@@ -236,19 +236,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
             if (studies != null && studies.Count>0)
             {
-                ConfirmDialog1.Message = string.Format("Are you sure to remove the following studies?<BR/>");
-                ConfirmDialog1.Message += "<table>";
+                ConfirmationDialog1.Message = string.Format("Are you sure to remove the following studies?<BR/>");
+                ConfirmationDialog1.Message += "<table>";
                 foreach (Study study in studies)
                 {
                     String text = String.Format("<tr align='left'><td>Patient:{0}&nbsp;&nbsp;</td><td>Accession:{1}&nbsp;&nbsp;</td><td>Description:{2}</td></tr>", 
                                     study.PatientsName, study.AccessionNumber, study.StudyDescription);
-                    ConfirmDialog1.Message += text;
+                    ConfirmationDialog1.Message += text;
                 }
-                ConfirmDialog1.Message += "</table>";
+                ConfirmationDialog1.Message += "</table>";
 
-                ConfirmDialog1.MessageType = ConfirmDialog.MessageTypeEnum.WARNING;
-                ConfirmDialog1.Data = studies;
-                ConfirmDialog1.Show();
+                ConfirmationDialog1.MessageType = ConfirmationDialog.MessageTypeEnum.WARNING;
+                ConfirmationDialog1.Data = studies;
+                ConfirmationDialog1.Show();
+                
             }
         }
 

@@ -74,4 +74,5 @@ public partial class Admin_MasterPage : System.Web.UI.MasterPage
     {
         Response.Redirect("~/");
     }
+
 }

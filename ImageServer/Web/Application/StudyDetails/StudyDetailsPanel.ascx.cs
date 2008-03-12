@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            ConfirmDialog1.Confirmed += new ConfirmDialog.ConfirmedEventHandler(ConfirmDialog1_Confirmed);
+            ConfirmDialog1.Confirmed += new ConfirmationDialog.ConfirmedEventHandler(ConfirmDialog1_Confirmed);
         }
 
         public override void DataBind()
@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
 
         protected void DeleteToolbarButton_Click(object sender, ImageClickEventArgs e)
         {
-            ConfirmDialog1.MessageType = ConfirmDialog.MessageTypeEnum.WARNING;
+            ConfirmDialog1.MessageType = ConfirmationDialog.MessageTypeEnum.WARNING;
             ConfirmDialog1.Message = "Are you sure to delete this study?";
             ConfirmDialog1.Data = Study;
 

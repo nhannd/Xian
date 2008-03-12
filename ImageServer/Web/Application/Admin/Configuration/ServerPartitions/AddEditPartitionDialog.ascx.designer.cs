@@ -20,40 +20,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
     public partial class AddEditPartitionDialog {
         
         /// <summary>
-        /// UpdatePanel control.
+        /// ModalDialog1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
-        
-        /// <summary>
-        /// DialogPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel DialogPanel;
-        
-        /// <summary>
-        /// TitleBarPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel TitleBarPanel;
-        
-        /// <summary>
-        /// TitleLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label TitleLabel;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog1;
         
         /// <summary>
         /// Panel3 control.
@@ -101,6 +74,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         protected global::System.Web.UI.HtmlControls.HtmlTable GeneralTabTable;
         
         /// <summary>
+        /// Tr1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow Tr1;
+        
+        /// <summary>
+        /// Td1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td1;
+        
+        /// <summary>
         /// Label4 control.
         /// </summary>
         /// <remarks>
@@ -146,6 +137,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionFieldValidator RegularExpressionFieldValidator2;
         
         /// <summary>
+        /// Td2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td2;
+        
+        /// <summary>
         /// Label1 control.
         /// </summary>
         /// <remarks>
@@ -162,6 +162,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox DescriptionTextBox;
+        
+        /// <summary>
+        /// Tr2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow Tr2;
+        
+        /// <summary>
+        /// Td3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td3;
         
         /// <summary>
         /// Label2 control.
@@ -200,6 +218,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator PortHelp;
         
         /// <summary>
+        /// Td4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td4;
+        
+        /// <summary>
         /// Label3 control.
         /// </summary>
         /// <remarks>
@@ -236,6 +263,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator FolderHelp;
         
         /// <summary>
+        /// Tr3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow Tr3;
+        
+        /// <summary>
+        /// Td5 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td5;
+        
+        /// <summary>
         /// EnabledCheckBox control.
         /// </summary>
         /// <remarks>
@@ -243,6 +288,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox EnabledCheckBox;
+        
+        /// <summary>
+        /// Td6 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td6;
         
         /// <summary>
         /// TabPanel2 control.
@@ -333,23 +387,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button CancelButton;
-        
-        /// <summary>
-        /// DummyPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel DummyPanel;
-        
-        /// <summary>
-        /// ModalPopupExtender1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtender1;
     }
 }

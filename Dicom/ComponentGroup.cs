@@ -50,6 +50,11 @@ namespace ClearCanvas.Dicom
             return _emptyComponentGroup;
         }
 
+        public bool IsEmpty
+        {
+            get { return _rawString == null || _rawString == String.Empty; }
+        }
+
         public override string ToString()
         {
             return _rawString;

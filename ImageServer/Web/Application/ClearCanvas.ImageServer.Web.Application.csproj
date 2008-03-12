@@ -88,6 +88,13 @@
     <Compile Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx.designer.cs">
       <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Common\ConfirmationDialog.ascx.cs">
+      <DependentUpon>ConfirmationDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Common\ConfirmationDialog.ascx.designer.cs">
+      <DependentUpon>ConfirmationDialog.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Admin\Configuration\Devices\DevicePage.aspx.cs">
       <DependentUpon>DevicePage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -204,13 +211,6 @@
     <Compile Include="Common\BasePage.aspx.designer.cs">
       <DependentUpon>BasePage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Common\ConfirmDialog.ascx.cs">
-      <DependentUpon>ConfirmDialog.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Common\ConfirmDialog.ascx.designer.cs">
-      <DependentUpon>ConfirmDialog.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Admin\Configuration\Devices\DeviceGridView.ascx.cs">
       <DependentUpon>DeviceGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -238,6 +238,13 @@
     </Compile>
     <Compile Include="Common\InvalidInputIndicator.ascx.designer.cs">
       <DependentUpon>InvalidInputIndicator.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Common\ModalDialog.ascx.cs">
+      <DependentUpon>ModalDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Common\ModalDialog.ascx.designer.cs">
+      <DependentUpon>ModalDialog.ascx</DependentUpon>
     </Compile>
     <Compile Include="Common\SectionPanel.ascx.cs">
       <DependentUpon>SectionPanel.ascx</DependentUpon>
@@ -426,6 +433,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="About\About.aspx" />
+    <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-left.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-right.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG.gif" />
+    <Content Include="Common\ConfirmationDialog.ascx" />
     <Content Include="Admin\Configuration\Devices\DevicePage.aspx" />
     <Content Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx" />
     <EmbeddedResource Include="Admin\Configuration\FileSystems\Filesystem.js" />
@@ -446,6 +457,7 @@
     <Content Include="App_Themes\ClearCanvas\Background.css" />
     <Content Include="App_Themes\ClearCanvas\Border.css" />
     <Content Include="App_Themes\ClearCanvas\Calendar.css" />
+    <Content Include="App_Themes\ClearCanvas\Dialog.css" />
     <Content Include="App_Themes\ClearCanvas\Font.css" />
     <Content Include="App_Themes\ClearCanvas\images\gridheaderbackground.png" />
     <Content Include="App_Themes\ClearCanvas\images\icon_warning.gif" />
@@ -466,9 +478,14 @@
     <Content Include="App_Themes\ClearCanvas\Tabs.css" />
     <Content Include="Common\BasePage.aspx" />
     <Content Include="Common\InvalidInputIndicator.ascx" />
+    <Content Include="Common\ModalDialog.ascx" />
     <Content Include="Common\SectionPanel.ascx" />
     <Content Include="Common\ServerPartitionTabs.ascx" />
     <Content Include="images\blank.gif" />
+    <Content Include="images\icons\close.png" />
+    <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-left.png" />
+    <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-right.png" />
+    <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG.png" />
     <Content Include="images\icons\EraserEnabled.png" />
     <Content Include="images\icons\OpenDisabled.png" />
     <Content Include="images\icons\OpenEnabled.png" />
@@ -476,7 +493,6 @@
     <EmbeddedResource Include="Search\SearchPanel.js" />
     <Content Include="Search\StudyListGridView.ascx" />
     <Content Include="Common\BarChart.aspx" />
-    <Content Include="Common\ConfirmDialog.ascx" />
     <Content Include="Admin\Configuration\Devices\DevicePanel.ascx" />
     <Content Include="MasterPage.master" />
     <Content Include="App_Themes\ClearCanvas\logo.skin" />
@@ -619,7 +635,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>3201</DevelopmentServerPort>
+          <DevelopmentServerPort>4099</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

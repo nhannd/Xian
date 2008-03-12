@@ -4,9 +4,10 @@
 
 <%@ Register Src="~/Common/ServerPartitionTabs.ascx" TagName="ServerPartitionTabs"
     TagPrefix="ccPartitionTabs" %>
-<%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="ccConfirm" %>
+<%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog" TagPrefix="clearcanvas" %>
 <%@ Register Src="AddEditDeviceDialog.ascx" TagName="AddEditDeviceDialog" TagPrefix="ccAddEdit" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+
 <asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
     Device Management
 </asp:Content>
@@ -15,7 +16,9 @@
         <ContentTemplate>
             <ccPartitionTabs:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
             <ccAddEdit:AddEditDeviceDialog ID="AddEditDeviceControl1" runat="server" />
-            <ccConfirm:ConfirmDialog ID="ConfirmDialog1" runat="server" />
+            <clearcanvas:ConfirmationDialog ID="ConfirmationDialog1" runat="server" />
         </ContentTemplate>
     </asp:UpdatePanel>
+    
+    
 </asp:Content>

@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                                                    };
 
 
-            ConfirmDialog1.Confirmed += delegate(object data)
+            ConfirmationDialog1.Confirmed += delegate(object data)
                                             {
                                                 // delete the device and reload the affected partition.
 
@@ -163,11 +163,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
         public void OnDeleteDevice(DeviceConfigurationController controller, ServerPartition serverPartition, Device dev)
         {
-            ConfirmDialog1.Message =
-                string.Format("Are you sure to remove {0} from partition {1}?", dev.AeTitle, serverPartition.AeTitle);
-            ConfirmDialog1.MessageType = ConfirmDialog.MessageTypeEnum.WARNING;
-            ConfirmDialog1.Data = dev;
-            ConfirmDialog1.Show();
+            //ConfirmDialog1.Message =
+            //    string.Format("Are you sure to remove {0} from partition {1}?", dev.AeTitle, serverPartition.AeTitle);
+            //ConfirmDialog1.MessageType = ConfirmDialog.MessageTypeEnum.WARNING;
+            //ConfirmDialog1.Data = dev;
+            //ConfirmDialog1.Show();
+
+            ConfirmationDialog1.Message = string.Format("Are you sure to remove {0} from partition {1}?", dev.AeTitle, serverPartition.AeTitle);
+            ConfirmationDialog1.MessageType = ConfirmationDialog.MessageTypeEnum.WARNING;
+            ConfirmationDialog1.Data = dev;
+            ConfirmationDialog1.Show();
         }
 
         #endregion

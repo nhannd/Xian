@@ -50,23 +50,23 @@
   <ItemGroup>
     <Compile Include="Data\BaseAdaptor.cs" />
     <Compile Include="Data\BaseController.cs" />
-    <Compile Include="Data\PatientAdaptor.cs" />
-    <Compile Include="Data\WorkQueueUidAdaptor.cs" />
-    <Compile Include="Data\StudyStorageAdaptor.cs" />
-    <Compile Include="Data\WorkQueueController.cs" />
-    <Compile Include="Data\WorkQueueAdaptor.cs" />
     <Compile Include="Data\DeviceConfigurationController.cs" />
     <Compile Include="Data\DeviceDataAdapter.cs" />
-    <Compile Include="Data\StudyAdaptor.cs" />
-    <Compile Include="Data\StudyController.cs" />
-    <Compile Include="Data\SeriesSearchAdaptor.cs" />
-    <Compile Include="Data\ServerRuleController.cs" />
-    <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Data\FileSystemDataAdapter.cs" />
     <Compile Include="Data\FileSystemsConfigurationController.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Data\PatientAdaptor.cs" />
+    <Compile Include="Data\SeriesSearchAdaptor.cs" />
     <Compile Include="Data\ServerPartitionConfigController.cs" />
     <Compile Include="Data\ServerPartitionDataAdapter.cs" />
+    <Compile Include="Data\ServerRuleController.cs" />
+    <Compile Include="Data\StudyAdaptor.cs" />
+    <Compile Include="Data\StudyController.cs" />
+    <Compile Include="Data\StudyStorageAdaptor.cs" />
+    <Compile Include="Data\WorkQueueAdaptor.cs" />
+    <Compile Include="Data\WorkQueueController.cs" />
+    <Compile Include="Data\WorkQueueUidAdaptor.cs" />
+    <Compile Include="Modules\ErrorModule.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>

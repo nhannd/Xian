@@ -29,40 +29,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::System.Web.UI.ScriptManagerProxy ScriptManagerProxy1;
         
         /// <summary>
-        /// UpdatePanel control.
+        /// ModalDialog1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
-        
-        /// <summary>
-        /// DialogPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel DialogPanel;
-        
-        /// <summary>
-        /// TitleBarPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel TitleBarPanel;
-        
-        /// <summary>
-        /// TitleLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label TitleLabel;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog1;
         
         /// <summary>
         /// Panel2 control.
@@ -110,6 +83,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::System.Web.UI.HtmlControls.HtmlTable TABLE1;
         
         /// <summary>
+        /// Tr1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow Tr1;
+        
+        /// <summary>
+        /// Td1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td1;
+        
+        /// <summary>
         /// Label1 control.
         /// </summary>
         /// <remarks>
@@ -146,6 +137,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator ConditionalRequiredFieldValidator1;
         
         /// <summary>
+        /// Td2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td2;
+        
+        /// <summary>
         /// ReadCheckBox control.
         /// </summary>
         /// <remarks>
@@ -153,6 +153,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox ReadCheckBox;
+        
+        /// <summary>
+        /// Td3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td3;
         
         /// <summary>
         /// Label2 control.
@@ -189,6 +198,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.FilesystemPathValidator PathValidator;
+        
+        /// <summary>
+        /// Td4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td4;
         
         /// <summary>
         /// WriteCheckBox control.
@@ -380,13 +398,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeComparisonValidator HighWatermarkValidator;
         
         /// <summary>
-        /// Tr1 control.
+        /// Tr2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow Tr1;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow Tr2;
         
         /// <summary>
         /// Panel4 control.
@@ -461,15 +479,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::System.Web.UI.WebControls.Button CancelButton;
         
         /// <summary>
-        /// DummyPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel DummyPanel;
-        
-        /// <summary>
         /// TotalSize control.
         /// </summary>
         /// <remarks>
@@ -486,14 +495,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField AvailableSize;
-        
-        /// <summary>
-        /// ModalPopupExtender1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtender1;
     }
 }

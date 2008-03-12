@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmDialog ConfirmDialog;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmDialog;
         
         /// <summary>
         /// AddEditServerRuleControl control.
