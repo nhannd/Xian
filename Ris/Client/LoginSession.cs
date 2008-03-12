@@ -77,6 +77,8 @@ namespace ClearCanvas.Ris.Client
         {
             try
             {
+                Platform.Log(LogLevel.Debug, "Attempting login...");
+
                 Platform.GetService<ILoginService>(
                     delegate(ILoginService service)
                     {
@@ -92,13 +94,16 @@ namespace ClearCanvas.Ris.Client
                         _current = new LoginSession(userName, response.SessionToken, response.FullName, facility);
                     });
 
+                Platform.Log(LogLevel.Debug, "Login attempt was successful.");
             }
             catch (FaultException<RequestValidationException> e)
             {
+                Platform.Log(LogLevel.Debug, e.Detail, "Login attempt failed.");
                 throw e.Detail;
             }
             catch (FaultException<PasswordExpiredException> e)
             {
+                Platform.Log(LogLevel.Debug, e.Detail, "Login attempt failed.");
                 throw e.Detail;
             }
         }

@@ -95,6 +95,9 @@ namespace ClearCanvas.Ris.Client
                 MethodInfo createChannelMethod = channelFactoryClass.GetMethod("CreateChannel", Type.EmptyTypes);
                 object serviceProxy = createChannelMethod.Invoke(channelFactory, null);
 
+                Platform.Log(LogLevel.Debug, "Created WCF channel instance for service {0}, authenticated={1}.",
+                   serviceType.FullName, authenticationRequired);
+
                 return serviceProxy;
 
             }

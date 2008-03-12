@@ -127,7 +127,10 @@ namespace ClearCanvas.Ris.Client
             bool needLoginDialog = true;
             string password = null;
 
+            Platform.Log(LogLevel.Debug, "Contacting server to obtain facility choices for login dialog...");
             List<FacilitySummary> facilities = GetFacilityChoices();
+
+            Platform.Log(LogLevel.Debug, "Got facility choices for login dialog.");
             while (true)
             {
                 if (needLoginDialog)
@@ -190,6 +193,7 @@ namespace ClearCanvas.Ris.Client
                 loginDialog.Facility = initialFacilityCode;
                 loginDialog.UserName = userName;
 
+                Platform.Log(LogLevel.Debug, "Showing login dialog.");
                 if (loginDialog.Show())
                 {
                     // save selected facility
