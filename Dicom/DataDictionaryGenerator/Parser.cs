@@ -200,8 +200,10 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                                             {
                                                 thisTag.tag = columnArray[0];
                                                 thisTag.name = columnArray[1];
-                                                thisTag.vr = columnArray[2].Trim();
-                                                thisTag.vm = columnArray[3].Trim();
+                                                if (columnArray[2] != null)
+                                                    thisTag.vr = columnArray[2].Trim();
+                                                if (columnArray[3] != null)
+                                                    thisTag.vm = columnArray[3].Trim();
                                                 thisTag.retired = columnArray[4];
 
                                                 // Handle repeating groups

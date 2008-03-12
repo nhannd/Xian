@@ -2319,7 +2319,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly SopClass BasicColorPrintManagementMetaSopClass =
                              new SopClass("Basic Color Print Management Meta SOP Class", 
-                                          SopClass.BasicColorPrintManagementMetaSopClassUid, 
+                                          BasicColorPrintManagementMetaSopClassUid, 
                                           true);
         /// <summary>String UID for
         /// <para>Basic Grayscale Print Management Meta SOP Class</para>
@@ -2333,7 +2333,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly SopClass BasicGrayscalePrintManagementMetaSopClass =
                              new SopClass("Basic Grayscale Print Management Meta SOP Class", 
-                                          SopClass.BasicGrayscalePrintManagementMetaSopClassUid, 
+                                          BasicGrayscalePrintManagementMetaSopClassUid, 
                                           true);
         /// <summary>String UID for
         /// <para>Detached Patient Management Meta SOP Class (Retired)</para>
@@ -2347,7 +2347,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly SopClass DetachedPatientManagementMetaSopClassRetired =
                              new SopClass("Detached Patient Management Meta SOP Class (Retired)", 
-                                          SopClass.DetachedPatientManagementMetaSopClassRetiredUid, 
+                                          DetachedPatientManagementMetaSopClassRetiredUid, 
                                           true);
         /// <summary>String UID for
         /// <para>Detached Results Management Meta SOP Class (Retired)</para>
@@ -2361,7 +2361,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly SopClass DetachedResultsManagementMetaSopClassRetired =
                              new SopClass("Detached Results Management Meta SOP Class (Retired)", 
-                                          SopClass.DetachedResultsManagementMetaSopClassRetiredUid, 
+                                          DetachedResultsManagementMetaSopClassRetiredUid, 
                                           true);
         /// <summary>String UID for
         /// <para>Detached Study Management Meta SOP Class (Retired)</para>
@@ -2375,7 +2375,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly SopClass DetachedStudyManagementMetaSopClassRetired =
                              new SopClass("Detached Study Management Meta SOP Class (Retired)", 
-                                          SopClass.DetachedStudyManagementMetaSopClassRetiredUid, 
+                                          DetachedStudyManagementMetaSopClassRetiredUid, 
                                           true);
         /// <summary>String UID for
         /// <para>General Purpose Worklist Management Meta SOP Class</para>
@@ -2389,7 +2389,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly SopClass GeneralPurposeWorklistManagementMetaSopClass =
                              new SopClass("General Purpose Worklist Management Meta SOP Class", 
-                                          SopClass.GeneralPurposeWorklistManagementMetaSopClassUid, 
+                                          GeneralPurposeWorklistManagementMetaSopClassUid, 
                                           true);
         /// <summary>String UID for
         /// <para>Pull Stored Print Management Meta SOP Class (Retired)</para>
@@ -2403,7 +2403,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly SopClass PullStoredPrintManagementMetaSopClassRetired =
                              new SopClass("Pull Stored Print Management Meta SOP Class (Retired)", 
-                                          SopClass.PullStoredPrintManagementMetaSopClassRetiredUid, 
+                                          PullStoredPrintManagementMetaSopClassRetiredUid, 
                                           true);
         /// <summary>String UID for
         /// <para>Referenced Color Print Management Meta SOP Class (Retired)</para>
@@ -2417,7 +2417,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly SopClass ReferencedColorPrintManagementMetaSopClassRetired =
                              new SopClass("Referenced Color Print Management Meta SOP Class (Retired)", 
-                                          SopClass.ReferencedColorPrintManagementMetaSopClassRetiredUid, 
+                                          ReferencedColorPrintManagementMetaSopClassRetiredUid, 
                                           true);
         /// <summary>String UID for
         /// <para>Referenced Grayscale Print Management Meta SOP Class (Retired)</para>
@@ -2431,7 +2431,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly SopClass ReferencedGrayscalePrintManagementMetaSopClassRetired =
                              new SopClass("Referenced Grayscale Print Management Meta SOP Class (Retired)", 
-                                          SopClass.ReferencedGrayscalePrintManagementMetaSopClassRetiredUid, 
+                                          ReferencedGrayscalePrintManagementMetaSopClassRetiredUid, 
                                           true);
 
         private String _sopName;
@@ -2469,7 +2469,6 @@ namespace ClearCanvas.Dicom
         }
 
         private static Dictionary<String,SopClass> _sopList = new Dictionary<String,SopClass>();
-        private static bool _bIsFirst = true;
 
         /// <summary>Override that displays the name of the SOP Class.</summary>
         public override string ToString()
@@ -2480,495 +2479,494 @@ namespace ClearCanvas.Dicom
         /// <summary>Retrieve a SopClass object associated with the Uid.</summary>
         public static SopClass GetSopClass(String uid)
         {
-            if (_bIsFirst)
-            {
-                _bIsFirst = false;
-                _sopList.Add(SopClass.Sop12LeadEcgWaveformStorageUid, 
-                             SopClass.Sop12LeadEcgWaveformStorage);
-
-                _sopList.Add(SopClass.AmbulatoryEcgWaveformStorageUid, 
-                             SopClass.AmbulatoryEcgWaveformStorage);
-
-                _sopList.Add(SopClass.AudioSrStorageTrialRetiredUid, 
-                             SopClass.AudioSrStorageTrialRetired);
-
-                _sopList.Add(SopClass.BasicAnnotationBoxSopClassUid, 
-                             SopClass.BasicAnnotationBoxSopClass);
-
-                _sopList.Add(SopClass.BasicColorImageBoxSopClassUid, 
-                             SopClass.BasicColorImageBoxSopClass);
-
-                _sopList.Add(SopClass.BasicFilmBoxSopClassUid, 
-                             SopClass.BasicFilmBoxSopClass);
-
-                _sopList.Add(SopClass.BasicFilmSessionSopClassUid, 
-                             SopClass.BasicFilmSessionSopClass);
-
-                _sopList.Add(SopClass.BasicGrayscaleImageBoxSopClassUid, 
-                             SopClass.BasicGrayscaleImageBoxSopClass);
-
-                _sopList.Add(SopClass.BasicPrintImageOverlayBoxSopClassRetiredUid, 
-                             SopClass.BasicPrintImageOverlayBoxSopClassRetired);
-
-                _sopList.Add(SopClass.BasicStudyContentNotificationSopClassRetiredUid, 
-                             SopClass.BasicStudyContentNotificationSopClassRetired);
-
-                _sopList.Add(SopClass.BasicTextSrStorageUid, 
-                             SopClass.BasicTextSrStorage);
-
-                _sopList.Add(SopClass.BasicVoiceAudioWaveformStorageUid, 
-                             SopClass.BasicVoiceAudioWaveformStorage);
-
-                _sopList.Add(SopClass.BlendingSoftcopyPresentationStateStorageSopClassUid, 
-                             SopClass.BlendingSoftcopyPresentationStateStorageSopClass);
-
-                _sopList.Add(SopClass.BreastImagingRelevantPatientInformationQueryUid, 
-                             SopClass.BreastImagingRelevantPatientInformationQuery);
-
-                _sopList.Add(SopClass.CardiacElectrophysiologyWaveformStorageUid, 
-                             SopClass.CardiacElectrophysiologyWaveformStorage);
-
-                _sopList.Add(SopClass.CardiacRelevantPatientInformationQueryUid, 
-                             SopClass.CardiacRelevantPatientInformationQuery);
-
-                _sopList.Add(SopClass.ChestCadSrStorageUid, 
-                             SopClass.ChestCadSrStorage);
-
-                _sopList.Add(SopClass.ColorSoftcopyPresentationStateStorageSopClassUid, 
-                             SopClass.ColorSoftcopyPresentationStateStorageSopClass);
-
-                _sopList.Add(SopClass.ComprehensiveSrStorageUid, 
-                             SopClass.ComprehensiveSrStorage);
-
-                _sopList.Add(SopClass.ComprehensiveSrStorageTrialRetiredUid, 
-                             SopClass.ComprehensiveSrStorageTrialRetired);
-
-                _sopList.Add(SopClass.ComputedRadiographyImageStorageUid, 
-                             SopClass.ComputedRadiographyImageStorage);
-
-                _sopList.Add(SopClass.CtImageStorageUid, 
-                             SopClass.CtImageStorage);
-
-                _sopList.Add(SopClass.DeformableSpatialRegistrationStorageUid, 
-                             SopClass.DeformableSpatialRegistrationStorage);
-
-                _sopList.Add(SopClass.DetachedInterpretationManagementSopClassRetiredUid, 
-                             SopClass.DetachedInterpretationManagementSopClassRetired);
-
-                _sopList.Add(SopClass.DetachedPatientManagementSopClassRetiredUid, 
-                             SopClass.DetachedPatientManagementSopClassRetired);
-
-                _sopList.Add(SopClass.DetachedResultsManagementSopClassRetiredUid, 
-                             SopClass.DetachedResultsManagementSopClassRetired);
-
-                _sopList.Add(SopClass.DetachedStudyManagementSopClassRetiredUid, 
-                             SopClass.DetachedStudyManagementSopClassRetired);
-
-                _sopList.Add(SopClass.DetachedVisitManagementSopClassRetiredUid, 
-                             SopClass.DetachedVisitManagementSopClassRetired);
-
-                _sopList.Add(SopClass.DetailSrStorageTrialRetiredUid, 
-                             SopClass.DetailSrStorageTrialRetired);
-
-                _sopList.Add(SopClass.DigitalIntraOralXRayImageStorageForPresentationUid, 
-                             SopClass.DigitalIntraOralXRayImageStorageForPresentation);
-
-                _sopList.Add(SopClass.DigitalIntraOralXRayImageStorageForProcessingUid, 
-                             SopClass.DigitalIntraOralXRayImageStorageForProcessing);
-
-                _sopList.Add(SopClass.DigitalMammographyXRayImageStorageForPresentationUid, 
-                             SopClass.DigitalMammographyXRayImageStorageForPresentation);
-
-                _sopList.Add(SopClass.DigitalMammographyXRayImageStorageForProcessingUid, 
-                             SopClass.DigitalMammographyXRayImageStorageForProcessing);
-
-                _sopList.Add(SopClass.DigitalXRayImageStorageForPresentationUid, 
-                             SopClass.DigitalXRayImageStorageForPresentation);
-
-                _sopList.Add(SopClass.DigitalXRayImageStorageForProcessingUid, 
-                             SopClass.DigitalXRayImageStorageForProcessing);
-
-                _sopList.Add(SopClass.EncapsulatedCdaStorageUid, 
-                             SopClass.EncapsulatedCdaStorage);
-
-                _sopList.Add(SopClass.EncapsulatedPdfStorageUid, 
-                             SopClass.EncapsulatedPdfStorage);
-
-                _sopList.Add(SopClass.EnhancedCtImageStorageUid, 
-                             SopClass.EnhancedCtImageStorage);
-
-                _sopList.Add(SopClass.EnhancedMrImageStorageUid, 
-                             SopClass.EnhancedMrImageStorage);
-
-                _sopList.Add(SopClass.EnhancedSrStorageUid, 
-                             SopClass.EnhancedSrStorage);
-
-                _sopList.Add(SopClass.EnhancedXaImageStorageUid, 
-                             SopClass.EnhancedXaImageStorage);
-
-                _sopList.Add(SopClass.EnhancedXrfImageStorageUid, 
-                             SopClass.EnhancedXrfImageStorage);
-
-                _sopList.Add(SopClass.GeneralEcgWaveformStorageUid, 
-                             SopClass.GeneralEcgWaveformStorage);
-
-                _sopList.Add(SopClass.GeneralPurposePerformedProcedureStepSopClassUid, 
-                             SopClass.GeneralPurposePerformedProcedureStepSopClass);
-
-                _sopList.Add(SopClass.GeneralPurposeScheduledProcedureStepSopClassUid, 
-                             SopClass.GeneralPurposeScheduledProcedureStepSopClass);
-
-                _sopList.Add(SopClass.GeneralPurposeWorklistInformationModelFindUid, 
-                             SopClass.GeneralPurposeWorklistInformationModelFind);
-
-                _sopList.Add(SopClass.GeneralRelevantPatientInformationQueryUid, 
-                             SopClass.GeneralRelevantPatientInformationQuery);
-
-                _sopList.Add(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClassUid, 
-                             SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass);
-
-                _sopList.Add(SopClass.HangingProtocolInformationModelFindUid, 
-                             SopClass.HangingProtocolInformationModelFind);
-
-                _sopList.Add(SopClass.HangingProtocolInformationModelMoveUid, 
-                             SopClass.HangingProtocolInformationModelMove);
-
-                _sopList.Add(SopClass.HangingProtocolStorageUid, 
-                             SopClass.HangingProtocolStorage);
-
-                _sopList.Add(SopClass.HardcopyGrayscaleImageStorageSopClassRetiredUid, 
-                             SopClass.HardcopyGrayscaleImageStorageSopClassRetired);
-
-                _sopList.Add(SopClass.HardcopyColorImageStorageSopClassRetiredUid, 
-                             SopClass.HardcopyColorImageStorageSopClassRetired);
-
-                _sopList.Add(SopClass.HemodynamicWaveformStorageUid, 
-                             SopClass.HemodynamicWaveformStorage);
-
-                _sopList.Add(SopClass.ImageOverlayBoxSopClassRetiredUid, 
-                             SopClass.ImageOverlayBoxSopClassRetired);
-
-                _sopList.Add(SopClass.InstanceAvailabilityNotificationSopClassUid, 
-                             SopClass.InstanceAvailabilityNotificationSopClass);
-
-                _sopList.Add(SopClass.KeyObjectSelectionDocumentStorageUid, 
-                             SopClass.KeyObjectSelectionDocumentStorage);
-
-                _sopList.Add(SopClass.MammographyCadSrStorageUid, 
-                             SopClass.MammographyCadSrStorage);
-
-                _sopList.Add(SopClass.MediaCreationManagementSopClassUidUid, 
-                             SopClass.MediaCreationManagementSopClassUid);
-
-                _sopList.Add(SopClass.MediaStorageDirectoryStorageUid, 
-                             SopClass.MediaStorageDirectoryStorage);
-
-                _sopList.Add(SopClass.ModalityPerformedProcedureStepNotificationSopClassUid, 
-                             SopClass.ModalityPerformedProcedureStepNotificationSopClass);
-
-                _sopList.Add(SopClass.ModalityPerformedProcedureStepRetrieveSopClassUid, 
-                             SopClass.ModalityPerformedProcedureStepRetrieveSopClass);
-
-                _sopList.Add(SopClass.ModalityPerformedProcedureStepSopClassUid, 
-                             SopClass.ModalityPerformedProcedureStepSopClass);
-
-                _sopList.Add(SopClass.ModalityWorklistInformationModelFindUid, 
-                             SopClass.ModalityWorklistInformationModelFind);
-
-                _sopList.Add(SopClass.MrImageStorageUid, 
-                             SopClass.MrImageStorage);
-
-                _sopList.Add(SopClass.MrSpectroscopyStorageUid, 
-                             SopClass.MrSpectroscopyStorage);
-
-                _sopList.Add(SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorageUid, 
-                             SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorage);
-
-                _sopList.Add(SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorageUid, 
-                             SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage);
-
-                _sopList.Add(SopClass.MultiFrameSingleBitSecondaryCaptureImageStorageUid, 
-                             SopClass.MultiFrameSingleBitSecondaryCaptureImageStorage);
-
-                _sopList.Add(SopClass.MultiFrameTrueColorSecondaryCaptureImageStorageUid, 
-                             SopClass.MultiFrameTrueColorSecondaryCaptureImageStorage);
-
-                _sopList.Add(SopClass.NuclearMedicineImageStorageRetiredUid, 
-                             SopClass.NuclearMedicineImageStorageRetired);
-
-                _sopList.Add(SopClass.NuclearMedicineImageStorageUid, 
-                             SopClass.NuclearMedicineImageStorage);
-
-                _sopList.Add(SopClass.OphthalmicPhotography16BitImageStorageUid, 
-                             SopClass.OphthalmicPhotography16BitImageStorage);
-
-                _sopList.Add(SopClass.OphthalmicPhotography8BitImageStorageUid, 
-                             SopClass.OphthalmicPhotography8BitImageStorage);
-
-                _sopList.Add(SopClass.OphthalmicTomographyImageStorageUid, 
-                             SopClass.OphthalmicTomographyImageStorage);
-
-                _sopList.Add(SopClass.PatientRootQueryRetrieveInformationModelFindUid, 
-                             SopClass.PatientRootQueryRetrieveInformationModelFind);
-
-                _sopList.Add(SopClass.PatientRootQueryRetrieveInformationModelGetUid, 
-                             SopClass.PatientRootQueryRetrieveInformationModelGet);
-
-                _sopList.Add(SopClass.PatientRootQueryRetrieveInformationModelMoveUid, 
-                             SopClass.PatientRootQueryRetrieveInformationModelMove);
-
-                _sopList.Add(SopClass.PatientStudyOnlyQueryRetrieveInformationModelFindRetiredUid, 
-                             SopClass.PatientStudyOnlyQueryRetrieveInformationModelFindRetired);
-
-                _sopList.Add(SopClass.PatientStudyOnlyQueryRetrieveInformationModelGetRetiredUid, 
-                             SopClass.PatientStudyOnlyQueryRetrieveInformationModelGetRetired);
-
-                _sopList.Add(SopClass.PatientStudyOnlyQueryRetrieveInformationModelMoveRetiredUid, 
-                             SopClass.PatientStudyOnlyQueryRetrieveInformationModelMoveRetired);
-
-                _sopList.Add(SopClass.PositronEmissionTomographyImageStorageUid, 
-                             SopClass.PositronEmissionTomographyImageStorage);
-
-                _sopList.Add(SopClass.PresentationLutSopClassUid, 
-                             SopClass.PresentationLutSopClass);
-
-                _sopList.Add(SopClass.PrintJobSopClassUid, 
-                             SopClass.PrintJobSopClass);
-
-                _sopList.Add(SopClass.PrintQueueManagementSopClassRetiredUid, 
-                             SopClass.PrintQueueManagementSopClassRetired);
-
-                _sopList.Add(SopClass.PrinterConfigurationRetrievalSopClassUid, 
-                             SopClass.PrinterConfigurationRetrievalSopClass);
-
-                _sopList.Add(SopClass.PrinterSopClassUid, 
-                             SopClass.PrinterSopClass);
-
-                _sopList.Add(SopClass.ProceduralEventLoggingSopClassUid, 
-                             SopClass.ProceduralEventLoggingSopClass);
-
-                _sopList.Add(SopClass.ProcedureLogStorageUid, 
-                             SopClass.ProcedureLogStorage);
-
-                _sopList.Add(SopClass.ProductCharacteristicsQuerySopClassUid, 
-                             SopClass.ProductCharacteristicsQuerySopClass);
-
-                _sopList.Add(SopClass.PseudoColorSoftcopyPresentationStateStorageSopClassUid, 
-                             SopClass.PseudoColorSoftcopyPresentationStateStorageSopClass);
-
-                _sopList.Add(SopClass.PullPrintRequestSopClassRetiredUid, 
-                             SopClass.PullPrintRequestSopClassRetired);
-
-                _sopList.Add(SopClass.RawDataStorageUid, 
-                             SopClass.RawDataStorage);
-
-                _sopList.Add(SopClass.RealWorldValueMappingStorageUid, 
-                             SopClass.RealWorldValueMappingStorage);
-
-                _sopList.Add(SopClass.ReferencedImageBoxSopClassRetiredUid, 
-                             SopClass.ReferencedImageBoxSopClassRetired);
-
-                _sopList.Add(SopClass.RtBeamsDeliveryInstructionStorageSupplement74FrozenDraftUid, 
-                             SopClass.RtBeamsDeliveryInstructionStorageSupplement74FrozenDraft);
-
-                _sopList.Add(SopClass.RtBeamsTreatmentRecordStorageUid, 
-                             SopClass.RtBeamsTreatmentRecordStorage);
-
-                _sopList.Add(SopClass.RtBrachyTreatmentRecordStorageUid, 
-                             SopClass.RtBrachyTreatmentRecordStorage);
-
-                _sopList.Add(SopClass.RtConventionalMachineVerificationSupplement74FrozenDraftUid, 
-                             SopClass.RtConventionalMachineVerificationSupplement74FrozenDraft);
-
-                _sopList.Add(SopClass.RtDoseStorageUid, 
-                             SopClass.RtDoseStorage);
-
-                _sopList.Add(SopClass.RtImageStorageUid, 
-                             SopClass.RtImageStorage);
-
-                _sopList.Add(SopClass.RtIonBeamsTreatmentRecordStorageUid, 
-                             SopClass.RtIonBeamsTreatmentRecordStorage);
-
-                _sopList.Add(SopClass.RtIonMachineVerificationSupplement74FrozenDraftUid, 
-                             SopClass.RtIonMachineVerificationSupplement74FrozenDraft);
-
-                _sopList.Add(SopClass.RtIonPlanStorageUid, 
-                             SopClass.RtIonPlanStorage);
-
-                _sopList.Add(SopClass.RtPlanStorageUid, 
-                             SopClass.RtPlanStorage);
-
-                _sopList.Add(SopClass.RtStructureSetStorageUid, 
-                             SopClass.RtStructureSetStorage);
-
-                _sopList.Add(SopClass.RtTreatmentSummaryRecordStorageUid, 
-                             SopClass.RtTreatmentSummaryRecordStorage);
-
-                _sopList.Add(SopClass.SecondaryCaptureImageStorageUid, 
-                             SopClass.SecondaryCaptureImageStorage);
-
-                _sopList.Add(SopClass.SegmentationStorageUid, 
-                             SopClass.SegmentationStorage);
-
-                _sopList.Add(SopClass.SpatialFiducialsStorageUid, 
-                             SopClass.SpatialFiducialsStorage);
-
-                _sopList.Add(SopClass.SpatialRegistrationStorageUid, 
-                             SopClass.SpatialRegistrationStorage);
-
-                _sopList.Add(SopClass.StandaloneCurveStorageRetiredUid, 
-                             SopClass.StandaloneCurveStorageRetired);
-
-                _sopList.Add(SopClass.StandaloneModalityLutStorageRetiredUid, 
-                             SopClass.StandaloneModalityLutStorageRetired);
-
-                _sopList.Add(SopClass.StandaloneOverlayStorageRetiredUid, 
-                             SopClass.StandaloneOverlayStorageRetired);
-
-                _sopList.Add(SopClass.StandalonePetCurveStorageRetiredUid, 
-                             SopClass.StandalonePetCurveStorageRetired);
-
-                _sopList.Add(SopClass.StandaloneVoiLutStorageRetiredUid, 
-                             SopClass.StandaloneVoiLutStorageRetired);
-
-                _sopList.Add(SopClass.StereometricRelationshipStorageUid, 
-                             SopClass.StereometricRelationshipStorage);
-
-                _sopList.Add(SopClass.StorageCommitmentPullModelSopClassRetiredUid, 
-                             SopClass.StorageCommitmentPullModelSopClassRetired);
-
-                _sopList.Add(SopClass.StorageCommitmentPushModelSopClassUid, 
-                             SopClass.StorageCommitmentPushModelSopClass);
-
-                _sopList.Add(SopClass.StoredPrintStorageSopClassRetiredUid, 
-                             SopClass.StoredPrintStorageSopClassRetired);
-
-                _sopList.Add(SopClass.StudyComponentManagementSopClassRetiredUid, 
-                             SopClass.StudyComponentManagementSopClassRetired);
-
-                _sopList.Add(SopClass.StudyRootQueryRetrieveInformationModelFindUid, 
-                             SopClass.StudyRootQueryRetrieveInformationModelFind);
-
-                _sopList.Add(SopClass.StudyRootQueryRetrieveInformationModelGetUid, 
-                             SopClass.StudyRootQueryRetrieveInformationModelGet);
-
-                _sopList.Add(SopClass.StudyRootQueryRetrieveInformationModelMoveUid, 
-                             SopClass.StudyRootQueryRetrieveInformationModelMove);
-
-                _sopList.Add(SopClass.SubstanceAdministrationLoggingSopClassUid, 
-                             SopClass.SubstanceAdministrationLoggingSopClass);
-
-                _sopList.Add(SopClass.SubstanceApprovalQuerySopClassUid, 
-                             SopClass.SubstanceApprovalQuerySopClass);
-
-                _sopList.Add(SopClass.TextSrStorageTrialRetiredUid, 
-                             SopClass.TextSrStorageTrialRetired);
-
-                _sopList.Add(SopClass.UltrasoundImageStorageUid, 
-                             SopClass.UltrasoundImageStorage);
-
-                _sopList.Add(SopClass.UltrasoundImageStorageRetiredUid, 
-                             SopClass.UltrasoundImageStorageRetired);
-
-                _sopList.Add(SopClass.UltrasoundMultiFrameImageStorageUid, 
-                             SopClass.UltrasoundMultiFrameImageStorage);
-
-                _sopList.Add(SopClass.UltrasoundMultiFrameImageStorageRetiredUid, 
-                             SopClass.UltrasoundMultiFrameImageStorageRetired);
-
-                _sopList.Add(SopClass.UnifiedProcedureStepEventSopClassUid, 
-                             SopClass.UnifiedProcedureStepEventSopClass);
-
-                _sopList.Add(SopClass.UnifiedProcedureStepPullSopClassUid, 
-                             SopClass.UnifiedProcedureStepPullSopClass);
-
-                _sopList.Add(SopClass.UnifiedProcedureStepPushSopClassUid, 
-                             SopClass.UnifiedProcedureStepPushSopClass);
-
-                _sopList.Add(SopClass.UnifiedProcedureStepWatchSopClassUid, 
-                             SopClass.UnifiedProcedureStepWatchSopClass);
-
-                _sopList.Add(SopClass.VerificationSopClassUid, 
-                             SopClass.VerificationSopClass);
-
-                _sopList.Add(SopClass.VideoEndoscopicImageStorageUid, 
-                             SopClass.VideoEndoscopicImageStorage);
-
-                _sopList.Add(SopClass.VideoMicroscopicImageStorageUid, 
-                             SopClass.VideoMicroscopicImageStorage);
-
-                _sopList.Add(SopClass.VideoPhotographicImageStorageUid, 
-                             SopClass.VideoPhotographicImageStorage);
-
-                _sopList.Add(SopClass.VlEndoscopicImageStorageUid, 
-                             SopClass.VlEndoscopicImageStorage);
-
-                _sopList.Add(SopClass.VlMicroscopicImageStorageUid, 
-                             SopClass.VlMicroscopicImageStorage);
-
-                _sopList.Add(SopClass.VlPhotographicImageStorageUid, 
-                             SopClass.VlPhotographicImageStorage);
-
-                _sopList.Add(SopClass.VlSlideCoordinatesMicroscopicImageStorageUid, 
-                             SopClass.VlSlideCoordinatesMicroscopicImageStorage);
-
-                _sopList.Add(SopClass.VoiLutBoxSopClassUid, 
-                             SopClass.VoiLutBoxSopClass);
-
-                _sopList.Add(SopClass.WaveformStorageTrialRetiredUid, 
-                             SopClass.WaveformStorageTrialRetired);
-
-                _sopList.Add(SopClass.XRay3dAngiographicImageStorageUid, 
-                             SopClass.XRay3dAngiographicImageStorage);
-
-                _sopList.Add(SopClass.XRay3dCraniofacialImageStorageUid, 
-                             SopClass.XRay3dCraniofacialImageStorage);
-
-                _sopList.Add(SopClass.XRayAngiographicBiPlaneImageStorageRetiredUid, 
-                             SopClass.XRayAngiographicBiPlaneImageStorageRetired);
-
-                _sopList.Add(SopClass.XRayAngiographicImageStorageUid, 
-                             SopClass.XRayAngiographicImageStorage);
-
-                _sopList.Add(SopClass.XRayRadiationDoseSrStorageUid, 
-                             SopClass.XRayRadiationDoseSrStorage);
-
-                _sopList.Add(SopClass.XRayRadiofluoroscopicImageStorageUid, 
-                             SopClass.XRayRadiofluoroscopicImageStorage);
-
-                _sopList.Add(SopClass.BasicColorPrintManagementMetaSopClassUid, 
-                             SopClass.BasicColorPrintManagementMetaSopClass);
-
-                _sopList.Add(SopClass.BasicGrayscalePrintManagementMetaSopClassUid, 
-                             SopClass.BasicGrayscalePrintManagementMetaSopClass);
-
-                _sopList.Add(SopClass.DetachedPatientManagementMetaSopClassRetiredUid, 
-                             SopClass.DetachedPatientManagementMetaSopClassRetired);
-
-                _sopList.Add(SopClass.DetachedResultsManagementMetaSopClassRetiredUid, 
-                             SopClass.DetachedResultsManagementMetaSopClassRetired);
-
-                _sopList.Add(SopClass.DetachedStudyManagementMetaSopClassRetiredUid, 
-                             SopClass.DetachedStudyManagementMetaSopClassRetired);
-
-                _sopList.Add(SopClass.GeneralPurposeWorklistManagementMetaSopClassUid, 
-                             SopClass.GeneralPurposeWorklistManagementMetaSopClass);
-
-                _sopList.Add(SopClass.PullStoredPrintManagementMetaSopClassRetiredUid, 
-                             SopClass.PullStoredPrintManagementMetaSopClassRetired);
-
-                _sopList.Add(SopClass.ReferencedColorPrintManagementMetaSopClassRetiredUid, 
-                             SopClass.ReferencedColorPrintManagementMetaSopClassRetired);
-
-                _sopList.Add(SopClass.ReferencedGrayscalePrintManagementMetaSopClassRetiredUid, 
-                             SopClass.ReferencedGrayscalePrintManagementMetaSopClassRetired);
-
-            }
-
             if (!_sopList.ContainsKey(uid))
                 return null;
 
             return _sopList[uid];
         }
+        static SopClass()
+        {
+            _sopList.Add(Sop12LeadEcgWaveformStorageUid, 
+                         Sop12LeadEcgWaveformStorage);
+
+            _sopList.Add(AmbulatoryEcgWaveformStorageUid, 
+                         AmbulatoryEcgWaveformStorage);
+
+            _sopList.Add(AudioSrStorageTrialRetiredUid, 
+                         AudioSrStorageTrialRetired);
+
+            _sopList.Add(BasicAnnotationBoxSopClassUid, 
+                         BasicAnnotationBoxSopClass);
+
+            _sopList.Add(BasicColorImageBoxSopClassUid, 
+                         BasicColorImageBoxSopClass);
+
+            _sopList.Add(BasicFilmBoxSopClassUid, 
+                         BasicFilmBoxSopClass);
+
+            _sopList.Add(BasicFilmSessionSopClassUid, 
+                         BasicFilmSessionSopClass);
+
+            _sopList.Add(BasicGrayscaleImageBoxSopClassUid, 
+                         BasicGrayscaleImageBoxSopClass);
+
+            _sopList.Add(BasicPrintImageOverlayBoxSopClassRetiredUid, 
+                         BasicPrintImageOverlayBoxSopClassRetired);
+
+            _sopList.Add(BasicStudyContentNotificationSopClassRetiredUid, 
+                         BasicStudyContentNotificationSopClassRetired);
+
+            _sopList.Add(BasicTextSrStorageUid, 
+                         BasicTextSrStorage);
+
+            _sopList.Add(BasicVoiceAudioWaveformStorageUid, 
+                         BasicVoiceAudioWaveformStorage);
+
+            _sopList.Add(BlendingSoftcopyPresentationStateStorageSopClassUid, 
+                         BlendingSoftcopyPresentationStateStorageSopClass);
+
+            _sopList.Add(BreastImagingRelevantPatientInformationQueryUid, 
+                         BreastImagingRelevantPatientInformationQuery);
+
+            _sopList.Add(CardiacElectrophysiologyWaveformStorageUid, 
+                         CardiacElectrophysiologyWaveformStorage);
+
+            _sopList.Add(CardiacRelevantPatientInformationQueryUid, 
+                         CardiacRelevantPatientInformationQuery);
+
+            _sopList.Add(ChestCadSrStorageUid, 
+                         ChestCadSrStorage);
+
+            _sopList.Add(ColorSoftcopyPresentationStateStorageSopClassUid, 
+                         ColorSoftcopyPresentationStateStorageSopClass);
+
+            _sopList.Add(ComprehensiveSrStorageUid, 
+                         ComprehensiveSrStorage);
+
+            _sopList.Add(ComprehensiveSrStorageTrialRetiredUid, 
+                         ComprehensiveSrStorageTrialRetired);
+
+            _sopList.Add(ComputedRadiographyImageStorageUid, 
+                         ComputedRadiographyImageStorage);
+
+            _sopList.Add(CtImageStorageUid, 
+                         CtImageStorage);
+
+            _sopList.Add(DeformableSpatialRegistrationStorageUid, 
+                         DeformableSpatialRegistrationStorage);
+
+            _sopList.Add(DetachedInterpretationManagementSopClassRetiredUid, 
+                         DetachedInterpretationManagementSopClassRetired);
+
+            _sopList.Add(DetachedPatientManagementSopClassRetiredUid, 
+                         DetachedPatientManagementSopClassRetired);
+
+            _sopList.Add(DetachedResultsManagementSopClassRetiredUid, 
+                         DetachedResultsManagementSopClassRetired);
+
+            _sopList.Add(DetachedStudyManagementSopClassRetiredUid, 
+                         DetachedStudyManagementSopClassRetired);
+
+            _sopList.Add(DetachedVisitManagementSopClassRetiredUid, 
+                         DetachedVisitManagementSopClassRetired);
+
+            _sopList.Add(DetailSrStorageTrialRetiredUid, 
+                         DetailSrStorageTrialRetired);
+
+            _sopList.Add(DigitalIntraOralXRayImageStorageForPresentationUid, 
+                         DigitalIntraOralXRayImageStorageForPresentation);
+
+            _sopList.Add(DigitalIntraOralXRayImageStorageForProcessingUid, 
+                         DigitalIntraOralXRayImageStorageForProcessing);
+
+            _sopList.Add(DigitalMammographyXRayImageStorageForPresentationUid, 
+                         DigitalMammographyXRayImageStorageForPresentation);
+
+            _sopList.Add(DigitalMammographyXRayImageStorageForProcessingUid, 
+                         DigitalMammographyXRayImageStorageForProcessing);
+
+            _sopList.Add(DigitalXRayImageStorageForPresentationUid, 
+                         DigitalXRayImageStorageForPresentation);
+
+            _sopList.Add(DigitalXRayImageStorageForProcessingUid, 
+                         DigitalXRayImageStorageForProcessing);
+
+            _sopList.Add(EncapsulatedCdaStorageUid, 
+                         EncapsulatedCdaStorage);
+
+            _sopList.Add(EncapsulatedPdfStorageUid, 
+                         EncapsulatedPdfStorage);
+
+            _sopList.Add(EnhancedCtImageStorageUid, 
+                         EnhancedCtImageStorage);
+
+            _sopList.Add(EnhancedMrImageStorageUid, 
+                         EnhancedMrImageStorage);
+
+            _sopList.Add(EnhancedSrStorageUid, 
+                         EnhancedSrStorage);
+
+            _sopList.Add(EnhancedXaImageStorageUid, 
+                         EnhancedXaImageStorage);
+
+            _sopList.Add(EnhancedXrfImageStorageUid, 
+                         EnhancedXrfImageStorage);
+
+            _sopList.Add(GeneralEcgWaveformStorageUid, 
+                         GeneralEcgWaveformStorage);
+
+            _sopList.Add(GeneralPurposePerformedProcedureStepSopClassUid, 
+                         GeneralPurposePerformedProcedureStepSopClass);
+
+            _sopList.Add(GeneralPurposeScheduledProcedureStepSopClassUid, 
+                         GeneralPurposeScheduledProcedureStepSopClass);
+
+            _sopList.Add(GeneralPurposeWorklistInformationModelFindUid, 
+                         GeneralPurposeWorklistInformationModelFind);
+
+            _sopList.Add(GeneralRelevantPatientInformationQueryUid, 
+                         GeneralRelevantPatientInformationQuery);
+
+            _sopList.Add(GrayscaleSoftcopyPresentationStateStorageSopClassUid, 
+                         GrayscaleSoftcopyPresentationStateStorageSopClass);
+
+            _sopList.Add(HangingProtocolInformationModelFindUid, 
+                         HangingProtocolInformationModelFind);
+
+            _sopList.Add(HangingProtocolInformationModelMoveUid, 
+                         HangingProtocolInformationModelMove);
+
+            _sopList.Add(HangingProtocolStorageUid, 
+                         HangingProtocolStorage);
+
+            _sopList.Add(HardcopyGrayscaleImageStorageSopClassRetiredUid, 
+                         HardcopyGrayscaleImageStorageSopClassRetired);
+
+            _sopList.Add(HardcopyColorImageStorageSopClassRetiredUid, 
+                         HardcopyColorImageStorageSopClassRetired);
+
+            _sopList.Add(HemodynamicWaveformStorageUid, 
+                         HemodynamicWaveformStorage);
+
+            _sopList.Add(ImageOverlayBoxSopClassRetiredUid, 
+                         ImageOverlayBoxSopClassRetired);
+
+            _sopList.Add(InstanceAvailabilityNotificationSopClassUid, 
+                         InstanceAvailabilityNotificationSopClass);
+
+            _sopList.Add(KeyObjectSelectionDocumentStorageUid, 
+                         KeyObjectSelectionDocumentStorage);
+
+            _sopList.Add(MammographyCadSrStorageUid, 
+                         MammographyCadSrStorage);
+
+            _sopList.Add(MediaCreationManagementSopClassUidUid, 
+                         MediaCreationManagementSopClassUid);
+
+            _sopList.Add(MediaStorageDirectoryStorageUid, 
+                         MediaStorageDirectoryStorage);
+
+            _sopList.Add(ModalityPerformedProcedureStepNotificationSopClassUid, 
+                         ModalityPerformedProcedureStepNotificationSopClass);
+
+            _sopList.Add(ModalityPerformedProcedureStepRetrieveSopClassUid, 
+                         ModalityPerformedProcedureStepRetrieveSopClass);
+
+            _sopList.Add(ModalityPerformedProcedureStepSopClassUid, 
+                         ModalityPerformedProcedureStepSopClass);
+
+            _sopList.Add(ModalityWorklistInformationModelFindUid, 
+                         ModalityWorklistInformationModelFind);
+
+            _sopList.Add(MrImageStorageUid, 
+                         MrImageStorage);
+
+            _sopList.Add(MrSpectroscopyStorageUid, 
+                         MrSpectroscopyStorage);
+
+            _sopList.Add(MultiFrameGrayscaleByteSecondaryCaptureImageStorageUid, 
+                         MultiFrameGrayscaleByteSecondaryCaptureImageStorage);
+
+            _sopList.Add(MultiFrameGrayscaleWordSecondaryCaptureImageStorageUid, 
+                         MultiFrameGrayscaleWordSecondaryCaptureImageStorage);
+
+            _sopList.Add(MultiFrameSingleBitSecondaryCaptureImageStorageUid, 
+                         MultiFrameSingleBitSecondaryCaptureImageStorage);
+
+            _sopList.Add(MultiFrameTrueColorSecondaryCaptureImageStorageUid, 
+                         MultiFrameTrueColorSecondaryCaptureImageStorage);
+
+            _sopList.Add(NuclearMedicineImageStorageRetiredUid, 
+                         NuclearMedicineImageStorageRetired);
+
+            _sopList.Add(NuclearMedicineImageStorageUid, 
+                         NuclearMedicineImageStorage);
+
+            _sopList.Add(OphthalmicPhotography16BitImageStorageUid, 
+                         OphthalmicPhotography16BitImageStorage);
+
+            _sopList.Add(OphthalmicPhotography8BitImageStorageUid, 
+                         OphthalmicPhotography8BitImageStorage);
+
+            _sopList.Add(OphthalmicTomographyImageStorageUid, 
+                         OphthalmicTomographyImageStorage);
+
+            _sopList.Add(PatientRootQueryRetrieveInformationModelFindUid, 
+                         PatientRootQueryRetrieveInformationModelFind);
+
+            _sopList.Add(PatientRootQueryRetrieveInformationModelGetUid, 
+                         PatientRootQueryRetrieveInformationModelGet);
+
+            _sopList.Add(PatientRootQueryRetrieveInformationModelMoveUid, 
+                         PatientRootQueryRetrieveInformationModelMove);
+
+            _sopList.Add(PatientStudyOnlyQueryRetrieveInformationModelFindRetiredUid, 
+                         PatientStudyOnlyQueryRetrieveInformationModelFindRetired);
+
+            _sopList.Add(PatientStudyOnlyQueryRetrieveInformationModelGetRetiredUid, 
+                         PatientStudyOnlyQueryRetrieveInformationModelGetRetired);
+
+            _sopList.Add(PatientStudyOnlyQueryRetrieveInformationModelMoveRetiredUid, 
+                         PatientStudyOnlyQueryRetrieveInformationModelMoveRetired);
+
+            _sopList.Add(PositronEmissionTomographyImageStorageUid, 
+                         PositronEmissionTomographyImageStorage);
+
+            _sopList.Add(PresentationLutSopClassUid, 
+                         PresentationLutSopClass);
+
+            _sopList.Add(PrintJobSopClassUid, 
+                         PrintJobSopClass);
+
+            _sopList.Add(PrintQueueManagementSopClassRetiredUid, 
+                         PrintQueueManagementSopClassRetired);
+
+            _sopList.Add(PrinterConfigurationRetrievalSopClassUid, 
+                         PrinterConfigurationRetrievalSopClass);
+
+            _sopList.Add(PrinterSopClassUid, 
+                         PrinterSopClass);
+
+            _sopList.Add(ProceduralEventLoggingSopClassUid, 
+                         ProceduralEventLoggingSopClass);
+
+            _sopList.Add(ProcedureLogStorageUid, 
+                         ProcedureLogStorage);
+
+            _sopList.Add(ProductCharacteristicsQuerySopClassUid, 
+                         ProductCharacteristicsQuerySopClass);
+
+            _sopList.Add(PseudoColorSoftcopyPresentationStateStorageSopClassUid, 
+                         PseudoColorSoftcopyPresentationStateStorageSopClass);
+
+            _sopList.Add(PullPrintRequestSopClassRetiredUid, 
+                         PullPrintRequestSopClassRetired);
+
+            _sopList.Add(RawDataStorageUid, 
+                         RawDataStorage);
+
+            _sopList.Add(RealWorldValueMappingStorageUid, 
+                         RealWorldValueMappingStorage);
+
+            _sopList.Add(ReferencedImageBoxSopClassRetiredUid, 
+                         ReferencedImageBoxSopClassRetired);
+
+            _sopList.Add(RtBeamsDeliveryInstructionStorageSupplement74FrozenDraftUid, 
+                         RtBeamsDeliveryInstructionStorageSupplement74FrozenDraft);
+
+            _sopList.Add(RtBeamsTreatmentRecordStorageUid, 
+                         RtBeamsTreatmentRecordStorage);
+
+            _sopList.Add(RtBrachyTreatmentRecordStorageUid, 
+                         RtBrachyTreatmentRecordStorage);
+
+            _sopList.Add(RtConventionalMachineVerificationSupplement74FrozenDraftUid, 
+                         RtConventionalMachineVerificationSupplement74FrozenDraft);
+
+            _sopList.Add(RtDoseStorageUid, 
+                         RtDoseStorage);
+
+            _sopList.Add(RtImageStorageUid, 
+                         RtImageStorage);
+
+            _sopList.Add(RtIonBeamsTreatmentRecordStorageUid, 
+                         RtIonBeamsTreatmentRecordStorage);
+
+            _sopList.Add(RtIonMachineVerificationSupplement74FrozenDraftUid, 
+                         RtIonMachineVerificationSupplement74FrozenDraft);
+
+            _sopList.Add(RtIonPlanStorageUid, 
+                         RtIonPlanStorage);
+
+            _sopList.Add(RtPlanStorageUid, 
+                         RtPlanStorage);
+
+            _sopList.Add(RtStructureSetStorageUid, 
+                         RtStructureSetStorage);
+
+            _sopList.Add(RtTreatmentSummaryRecordStorageUid, 
+                         RtTreatmentSummaryRecordStorage);
+
+            _sopList.Add(SecondaryCaptureImageStorageUid, 
+                         SecondaryCaptureImageStorage);
+
+            _sopList.Add(SegmentationStorageUid, 
+                         SegmentationStorage);
+
+            _sopList.Add(SpatialFiducialsStorageUid, 
+                         SpatialFiducialsStorage);
+
+            _sopList.Add(SpatialRegistrationStorageUid, 
+                         SpatialRegistrationStorage);
+
+            _sopList.Add(StandaloneCurveStorageRetiredUid, 
+                         StandaloneCurveStorageRetired);
+
+            _sopList.Add(StandaloneModalityLutStorageRetiredUid, 
+                         StandaloneModalityLutStorageRetired);
+
+            _sopList.Add(StandaloneOverlayStorageRetiredUid, 
+                         StandaloneOverlayStorageRetired);
+
+            _sopList.Add(StandalonePetCurveStorageRetiredUid, 
+                         StandalonePetCurveStorageRetired);
+
+            _sopList.Add(StandaloneVoiLutStorageRetiredUid, 
+                         StandaloneVoiLutStorageRetired);
+
+            _sopList.Add(StereometricRelationshipStorageUid, 
+                         StereometricRelationshipStorage);
+
+            _sopList.Add(StorageCommitmentPullModelSopClassRetiredUid, 
+                         StorageCommitmentPullModelSopClassRetired);
+
+            _sopList.Add(StorageCommitmentPushModelSopClassUid, 
+                         StorageCommitmentPushModelSopClass);
+
+            _sopList.Add(StoredPrintStorageSopClassRetiredUid, 
+                         StoredPrintStorageSopClassRetired);
+
+            _sopList.Add(StudyComponentManagementSopClassRetiredUid, 
+                         StudyComponentManagementSopClassRetired);
+
+            _sopList.Add(StudyRootQueryRetrieveInformationModelFindUid, 
+                         StudyRootQueryRetrieveInformationModelFind);
+
+            _sopList.Add(StudyRootQueryRetrieveInformationModelGetUid, 
+                         StudyRootQueryRetrieveInformationModelGet);
+
+            _sopList.Add(StudyRootQueryRetrieveInformationModelMoveUid, 
+                         StudyRootQueryRetrieveInformationModelMove);
+
+            _sopList.Add(SubstanceAdministrationLoggingSopClassUid, 
+                         SubstanceAdministrationLoggingSopClass);
+
+            _sopList.Add(SubstanceApprovalQuerySopClassUid, 
+                         SubstanceApprovalQuerySopClass);
+
+            _sopList.Add(TextSrStorageTrialRetiredUid, 
+                         TextSrStorageTrialRetired);
+
+            _sopList.Add(UltrasoundImageStorageUid, 
+                         UltrasoundImageStorage);
+
+            _sopList.Add(UltrasoundImageStorageRetiredUid, 
+                         UltrasoundImageStorageRetired);
+
+            _sopList.Add(UltrasoundMultiFrameImageStorageUid, 
+                         UltrasoundMultiFrameImageStorage);
+
+            _sopList.Add(UltrasoundMultiFrameImageStorageRetiredUid, 
+                         UltrasoundMultiFrameImageStorageRetired);
+
+            _sopList.Add(UnifiedProcedureStepEventSopClassUid, 
+                         UnifiedProcedureStepEventSopClass);
+
+            _sopList.Add(UnifiedProcedureStepPullSopClassUid, 
+                         UnifiedProcedureStepPullSopClass);
+
+            _sopList.Add(UnifiedProcedureStepPushSopClassUid, 
+                         UnifiedProcedureStepPushSopClass);
+
+            _sopList.Add(UnifiedProcedureStepWatchSopClassUid, 
+                         UnifiedProcedureStepWatchSopClass);
+
+            _sopList.Add(VerificationSopClassUid, 
+                         VerificationSopClass);
+
+            _sopList.Add(VideoEndoscopicImageStorageUid, 
+                         VideoEndoscopicImageStorage);
+
+            _sopList.Add(VideoMicroscopicImageStorageUid, 
+                         VideoMicroscopicImageStorage);
+
+            _sopList.Add(VideoPhotographicImageStorageUid, 
+                         VideoPhotographicImageStorage);
+
+            _sopList.Add(VlEndoscopicImageStorageUid, 
+                         VlEndoscopicImageStorage);
+
+            _sopList.Add(VlMicroscopicImageStorageUid, 
+                         VlMicroscopicImageStorage);
+
+            _sopList.Add(VlPhotographicImageStorageUid, 
+                         VlPhotographicImageStorage);
+
+            _sopList.Add(VlSlideCoordinatesMicroscopicImageStorageUid, 
+                         VlSlideCoordinatesMicroscopicImageStorage);
+
+            _sopList.Add(VoiLutBoxSopClassUid, 
+                         VoiLutBoxSopClass);
+
+            _sopList.Add(WaveformStorageTrialRetiredUid, 
+                         WaveformStorageTrialRetired);
+
+            _sopList.Add(XRay3dAngiographicImageStorageUid, 
+                         XRay3dAngiographicImageStorage);
+
+            _sopList.Add(XRay3dCraniofacialImageStorageUid, 
+                         XRay3dCraniofacialImageStorage);
+
+            _sopList.Add(XRayAngiographicBiPlaneImageStorageRetiredUid, 
+                         XRayAngiographicBiPlaneImageStorageRetired);
+
+            _sopList.Add(XRayAngiographicImageStorageUid, 
+                         XRayAngiographicImageStorage);
+
+            _sopList.Add(XRayRadiationDoseSrStorageUid, 
+                         XRayRadiationDoseSrStorage);
+
+            _sopList.Add(XRayRadiofluoroscopicImageStorageUid, 
+                         XRayRadiofluoroscopicImageStorage);
+
+            _sopList.Add(BasicColorPrintManagementMetaSopClassUid, 
+                         BasicColorPrintManagementMetaSopClass);
+
+            _sopList.Add(BasicGrayscalePrintManagementMetaSopClassUid, 
+                         BasicGrayscalePrintManagementMetaSopClass);
+
+            _sopList.Add(DetachedPatientManagementMetaSopClassRetiredUid, 
+                         DetachedPatientManagementMetaSopClassRetired);
+
+            _sopList.Add(DetachedResultsManagementMetaSopClassRetiredUid, 
+                         DetachedResultsManagementMetaSopClassRetired);
+
+            _sopList.Add(DetachedStudyManagementMetaSopClassRetiredUid, 
+                         DetachedStudyManagementMetaSopClassRetired);
+
+            _sopList.Add(GeneralPurposeWorklistManagementMetaSopClassUid, 
+                         GeneralPurposeWorklistManagementMetaSopClass);
+
+            _sopList.Add(PullStoredPrintManagementMetaSopClassRetiredUid, 
+                         PullStoredPrintManagementMetaSopClassRetired);
+
+            _sopList.Add(ReferencedColorPrintManagementMetaSopClassRetiredUid, 
+                         ReferencedColorPrintManagementMetaSopClassRetired);
+
+            _sopList.Add(ReferencedGrayscalePrintManagementMetaSopClassRetiredUid, 
+                         ReferencedGrayscalePrintManagementMetaSopClassRetired);
+
+        }
+
     }
 }

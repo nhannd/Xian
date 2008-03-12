@@ -63,7 +63,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax DeflatedExplicitVrLittleEndian =
                     new TransferSyntax("Deflated Explicit VR Little Endian",
-                                 TransferSyntax.DeflatedExplicitVrLittleEndianUid,
+                                 DeflatedExplicitVrLittleEndianUid,
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
@@ -82,7 +82,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax ExplicitVrBigEndian =
                     new TransferSyntax("Explicit VR Big Endian",
-                                 TransferSyntax.ExplicitVrBigEndianUid,
+                                 ExplicitVrBigEndianUid,
                                  false, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
@@ -101,7 +101,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax ExplicitVrLittleEndian =
                     new TransferSyntax("Explicit VR Little Endian",
-                                 TransferSyntax.ExplicitVrLittleEndianUid,
+                                 ExplicitVrLittleEndianUid,
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
@@ -120,7 +120,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax ImplicitVrLittleEndian =
                     new TransferSyntax("Implicit VR Little Endian: Default Transfer Syntax for DICOM",
-                                 TransferSyntax.ImplicitVrLittleEndianUid,
+                                 ImplicitVrLittleEndianUid,
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  false, // Explicit VR?
@@ -139,7 +139,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax Jpeg2000ImageCompression =
                     new TransferSyntax("JPEG 2000 Image Compression",
-                                 TransferSyntax.Jpeg2000ImageCompressionUid,
+                                 Jpeg2000ImageCompressionUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -158,7 +158,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax Jpeg2000ImageCompressionLosslessOnly =
                     new TransferSyntax("JPEG 2000 Image Compression (Lossless Only)",
-                                 TransferSyntax.Jpeg2000ImageCompressionLosslessOnlyUid,
+                                 Jpeg2000ImageCompressionLosslessOnlyUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -177,7 +177,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax Jpeg2000Part2MultiComponentImageCompression =
                     new TransferSyntax("JPEG 2000 Part 2 Multi-component  Image Compression",
-                                 TransferSyntax.Jpeg2000Part2MultiComponentImageCompressionUid,
+                                 Jpeg2000Part2MultiComponentImageCompressionUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -196,7 +196,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax Jpeg2000Part2MultiComponentImageCompressionLosslessOnly =
                     new TransferSyntax("JPEG 2000 Part 2 Multi-component  Image Compression (Lossless Only)",
-                                 TransferSyntax.Jpeg2000Part2MultiComponentImageCompressionLosslessOnlyUid,
+                                 Jpeg2000Part2MultiComponentImageCompressionLosslessOnlyUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -215,7 +215,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegBaselineProcess1 =
                     new TransferSyntax("JPEG Baseline (Process 1): Default Transfer Syntax for Lossy JPEG 8 Bit Image Compression",
-                                 TransferSyntax.JpegBaselineProcess1Uid,
+                                 JpegBaselineProcess1Uid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -234,7 +234,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegExtendedProcess24 =
                     new TransferSyntax("JPEG Extended (Process 2 &amp; 4): Default Transfer Syntax for Lossy JPEG 12 Bit Image Compression (Process 4 only)",
-                                 TransferSyntax.JpegExtendedProcess24Uid,
+                                 JpegExtendedProcess24Uid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -253,7 +253,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegExtendedProcess35Retired =
                     new TransferSyntax("JPEG Extended (Process 3 &amp; 5) (Retired)",
-                                 TransferSyntax.JpegExtendedProcess35RetiredUid,
+                                 JpegExtendedProcess35RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -272,7 +272,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegExtendedHierarchicalProcess1618Retired =
                     new TransferSyntax("JPEG Extended, Hierarchical (Process 16 &amp; 18) (Retired)",
-                                 TransferSyntax.JpegExtendedHierarchicalProcess1618RetiredUid,
+                                 JpegExtendedHierarchicalProcess1618RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -291,7 +291,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegExtendedHierarchicalProcess1719Retired =
                     new TransferSyntax("JPEG Extended, Hierarchical (Process 17 &amp; 19) (Retired)",
-                                 TransferSyntax.JpegExtendedHierarchicalProcess1719RetiredUid,
+                                 JpegExtendedHierarchicalProcess1719RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -310,7 +310,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegFullProgressionHierarchicalProcess2426Retired =
                     new TransferSyntax("JPEG Full Progression, Hierarchical (Process 24 &amp; 26) (Retired)",
-                                 TransferSyntax.JpegFullProgressionHierarchicalProcess2426RetiredUid,
+                                 JpegFullProgressionHierarchicalProcess2426RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -329,7 +329,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegFullProgressionHierarchicalProcess2527Retired =
                     new TransferSyntax("JPEG Full Progression, Hierarchical (Process 25 &amp; 27) (Retired)",
-                                 TransferSyntax.JpegFullProgressionHierarchicalProcess2527RetiredUid,
+                                 JpegFullProgressionHierarchicalProcess2527RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -348,7 +348,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegFullProgressionNonHierarchicalProcess1012Retired =
                     new TransferSyntax("JPEG Full Progression, Non-Hierarchical (Process 10 &amp; 12) (Retired)",
-                                 TransferSyntax.JpegFullProgressionNonHierarchicalProcess1012RetiredUid,
+                                 JpegFullProgressionNonHierarchicalProcess1012RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -367,7 +367,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegFullProgressionNonHierarchicalProcess1113Retired =
                     new TransferSyntax("JPEG Full Progression, Non-Hierarchical (Process 11 &amp; 13) (Retired)",
-                                 TransferSyntax.JpegFullProgressionNonHierarchicalProcess1113RetiredUid,
+                                 JpegFullProgressionNonHierarchicalProcess1113RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -386,7 +386,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegLosslessHierarchicalProcess28Retired =
                     new TransferSyntax("JPEG Lossless, Hierarchical (Process 28) (Retired)",
-                                 TransferSyntax.JpegLosslessHierarchicalProcess28RetiredUid,
+                                 JpegLosslessHierarchicalProcess28RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -405,7 +405,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegLosslessHierarchicalProcess29Retired =
                     new TransferSyntax("JPEG Lossless, Hierarchical (Process 29) (Retired)",
-                                 TransferSyntax.JpegLosslessHierarchicalProcess29RetiredUid,
+                                 JpegLosslessHierarchicalProcess29RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -424,7 +424,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegLosslessNonHierarchicalProcess14 =
                     new TransferSyntax("JPEG Lossless, Non-Hierarchical (Process 14)",
-                                 TransferSyntax.JpegLosslessNonHierarchicalProcess14Uid,
+                                 JpegLosslessNonHierarchicalProcess14Uid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -443,7 +443,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegLosslessNonHierarchicalProcess15Retired =
                     new TransferSyntax("JPEG Lossless, Non-Hierarchical (Process 15) (Retired)",
-                                 TransferSyntax.JpegLosslessNonHierarchicalProcess15RetiredUid,
+                                 JpegLosslessNonHierarchicalProcess15RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -462,7 +462,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1 =
                     new TransferSyntax("JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1]): Default Transfer Syntax for Lossless JPEG Image Compression",
-                                 TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1Uid,
+                                 JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1Uid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -481,7 +481,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegSpectralSelectionHierarchicalProcess2022Retired =
                     new TransferSyntax("JPEG Spectral Selection, Hierarchical (Process 20 &amp; 22) (Retired)",
-                                 TransferSyntax.JpegSpectralSelectionHierarchicalProcess2022RetiredUid,
+                                 JpegSpectralSelectionHierarchicalProcess2022RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -500,7 +500,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegSpectralSelectionHierarchicalProcess2123Retired =
                     new TransferSyntax("JPEG Spectral Selection, Hierarchical (Process 21 &amp; 23) (Retired)",
-                                 TransferSyntax.JpegSpectralSelectionHierarchicalProcess2123RetiredUid,
+                                 JpegSpectralSelectionHierarchicalProcess2123RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -519,7 +519,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegSpectralSelectionNonHierarchicalProcess68Retired =
                     new TransferSyntax("JPEG Spectral Selection, Non-Hierarchical (Process 6 &amp; 8) (Retired)",
-                                 TransferSyntax.JpegSpectralSelectionNonHierarchicalProcess68RetiredUid,
+                                 JpegSpectralSelectionNonHierarchicalProcess68RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -538,7 +538,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegSpectralSelectionNonHierarchicalProcess79Retired =
                     new TransferSyntax("JPEG Spectral Selection, Non-Hierarchical (Process 7 &amp; 9) (Retired)",
-                                 TransferSyntax.JpegSpectralSelectionNonHierarchicalProcess79RetiredUid,
+                                 JpegSpectralSelectionNonHierarchicalProcess79RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -557,7 +557,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegLsLosslessImageCompression =
                     new TransferSyntax("JPEG-LS Lossless Image Compression",
-                                 TransferSyntax.JpegLsLosslessImageCompressionUid,
+                                 JpegLsLosslessImageCompressionUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -576,7 +576,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpegLsLossyNearLosslessImageCompression =
                     new TransferSyntax("JPEG-LS Lossy (Near-Lossless) Image Compression",
-                                 TransferSyntax.JpegLsLossyNearLosslessImageCompressionUid,
+                                 JpegLsLossyNearLosslessImageCompressionUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -595,7 +595,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpipReferenced =
                     new TransferSyntax("JPIP Referenced",
-                                 TransferSyntax.JpipReferencedUid,
+                                 JpipReferencedUid,
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
@@ -614,7 +614,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax JpipReferencedDeflate =
                     new TransferSyntax("JPIP Referenced Deflate",
-                                 TransferSyntax.JpipReferencedDeflateUid,
+                                 JpipReferencedDeflateUid,
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
@@ -633,7 +633,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax Mpeg2MainProfileMainLevel =
                     new TransferSyntax("MPEG2 Main Profile @ Main Level",
-                                 TransferSyntax.Mpeg2MainProfileMainLevelUid,
+                                 Mpeg2MainProfileMainLevelUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -652,7 +652,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax Rfc2557MimeEncapsulation =
                     new TransferSyntax("RFC 2557 MIME encapsulation",
-                                 TransferSyntax.Rfc2557MimeEncapsulationUid,
+                                 Rfc2557MimeEncapsulationUid,
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
@@ -671,7 +671,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax RleLossless =
                     new TransferSyntax("RLE Lossless",
-                                 TransferSyntax.RleLosslessUid,
+                                 RleLosslessUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -690,7 +690,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static readonly TransferSyntax XmlEncoding =
                     new TransferSyntax("XML Encoding",
-                                 TransferSyntax.XmlEncodingUid,
+                                 XmlEncodingUid,
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
@@ -698,14 +698,13 @@ namespace ClearCanvas.Dicom
                                  );
 
         // Internal members
-        private static Dictionary<String,TransferSyntax> _transferSyntaxes = new Dictionary<String,TransferSyntax>();
-        private static bool _listInit = false;
-        private bool _littleEndian;
-        private bool _encapsulated;
-        private bool _explicitVr;
-        private bool _deflate;
-        private String _name;
-        private String _uid;
+        private static readonly Dictionary<String,TransferSyntax> _transferSyntaxes = new Dictionary<String,TransferSyntax>();
+        private readonly bool _littleEndian;
+        private readonly bool _encapsulated;
+        private readonly bool _explicitVr;
+        private readonly bool _deflate;
+        private readonly String _name;
+        private readonly String _uid;
 
         ///<summary>
         /// Constructor for transfer syntax objects
@@ -754,7 +753,7 @@ namespace ClearCanvas.Dicom
         }
 
         ///<summary>Property representing the Endian enumerated value for the transfer syntax.</summary>
-          public Endian Endian
+        public Endian Endian
         {
             get
             {
@@ -788,118 +787,116 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static TransferSyntax GetTransferSyntax(String uid)
         {
-            if (_listInit == false)
-            {
-                _listInit = true;
-
-                _transferSyntaxes.Add(TransferSyntax.DeflatedExplicitVrLittleEndianUid,
-                                      TransferSyntax.DeflatedExplicitVrLittleEndian);
-
-                _transferSyntaxes.Add(TransferSyntax.ExplicitVrBigEndianUid,
-                                      TransferSyntax.ExplicitVrBigEndian);
-
-                _transferSyntaxes.Add(TransferSyntax.ExplicitVrLittleEndianUid,
-                                      TransferSyntax.ExplicitVrLittleEndian);
-
-                _transferSyntaxes.Add(TransferSyntax.ImplicitVrLittleEndianUid,
-                                      TransferSyntax.ImplicitVrLittleEndian);
-
-                _transferSyntaxes.Add(TransferSyntax.Jpeg2000ImageCompressionUid,
-                                      TransferSyntax.Jpeg2000ImageCompression);
-
-                _transferSyntaxes.Add(TransferSyntax.Jpeg2000ImageCompressionLosslessOnlyUid,
-                                      TransferSyntax.Jpeg2000ImageCompressionLosslessOnly);
-
-                _transferSyntaxes.Add(TransferSyntax.Jpeg2000Part2MultiComponentImageCompressionUid,
-                                      TransferSyntax.Jpeg2000Part2MultiComponentImageCompression);
-
-                _transferSyntaxes.Add(TransferSyntax.Jpeg2000Part2MultiComponentImageCompressionLosslessOnlyUid,
-                                      TransferSyntax.Jpeg2000Part2MultiComponentImageCompressionLosslessOnly);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegBaselineProcess1Uid,
-                                      TransferSyntax.JpegBaselineProcess1);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegExtendedProcess24Uid,
-                                      TransferSyntax.JpegExtendedProcess24);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegExtendedProcess35RetiredUid,
-                                      TransferSyntax.JpegExtendedProcess35Retired);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegExtendedHierarchicalProcess1618RetiredUid,
-                                      TransferSyntax.JpegExtendedHierarchicalProcess1618Retired);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegExtendedHierarchicalProcess1719RetiredUid,
-                                      TransferSyntax.JpegExtendedHierarchicalProcess1719Retired);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegFullProgressionHierarchicalProcess2426RetiredUid,
-                                      TransferSyntax.JpegFullProgressionHierarchicalProcess2426Retired);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegFullProgressionHierarchicalProcess2527RetiredUid,
-                                      TransferSyntax.JpegFullProgressionHierarchicalProcess2527Retired);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegFullProgressionNonHierarchicalProcess1012RetiredUid,
-                                      TransferSyntax.JpegFullProgressionNonHierarchicalProcess1012Retired);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegFullProgressionNonHierarchicalProcess1113RetiredUid,
-                                      TransferSyntax.JpegFullProgressionNonHierarchicalProcess1113Retired);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegLosslessHierarchicalProcess28RetiredUid,
-                                      TransferSyntax.JpegLosslessHierarchicalProcess28Retired);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegLosslessHierarchicalProcess29RetiredUid,
-                                      TransferSyntax.JpegLosslessHierarchicalProcess29Retired);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegLosslessNonHierarchicalProcess14Uid,
-                                      TransferSyntax.JpegLosslessNonHierarchicalProcess14);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegLosslessNonHierarchicalProcess15RetiredUid,
-                                      TransferSyntax.JpegLosslessNonHierarchicalProcess15Retired);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1Uid,
-                                      TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegSpectralSelectionHierarchicalProcess2022RetiredUid,
-                                      TransferSyntax.JpegSpectralSelectionHierarchicalProcess2022Retired);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegSpectralSelectionHierarchicalProcess2123RetiredUid,
-                                      TransferSyntax.JpegSpectralSelectionHierarchicalProcess2123Retired);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegSpectralSelectionNonHierarchicalProcess68RetiredUid,
-                                      TransferSyntax.JpegSpectralSelectionNonHierarchicalProcess68Retired);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegSpectralSelectionNonHierarchicalProcess79RetiredUid,
-                                      TransferSyntax.JpegSpectralSelectionNonHierarchicalProcess79Retired);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegLsLosslessImageCompressionUid,
-                                      TransferSyntax.JpegLsLosslessImageCompression);
-
-                _transferSyntaxes.Add(TransferSyntax.JpegLsLossyNearLosslessImageCompressionUid,
-                                      TransferSyntax.JpegLsLossyNearLosslessImageCompression);
-
-                _transferSyntaxes.Add(TransferSyntax.JpipReferencedUid,
-                                      TransferSyntax.JpipReferenced);
-
-                _transferSyntaxes.Add(TransferSyntax.JpipReferencedDeflateUid,
-                                      TransferSyntax.JpipReferencedDeflate);
-
-                _transferSyntaxes.Add(TransferSyntax.Mpeg2MainProfileMainLevelUid,
-                                      TransferSyntax.Mpeg2MainProfileMainLevel);
-
-                _transferSyntaxes.Add(TransferSyntax.Rfc2557MimeEncapsulationUid,
-                                      TransferSyntax.Rfc2557MimeEncapsulation);
-
-                _transferSyntaxes.Add(TransferSyntax.RleLosslessUid,
-                                      TransferSyntax.RleLossless);
-
-                _transferSyntaxes.Add(TransferSyntax.XmlEncodingUid,
-                                      TransferSyntax.XmlEncoding);
-
-            }
-
             if (!_transferSyntaxes.ContainsKey(uid))
                 return null;
 
             return _transferSyntaxes[uid];
+        }
+
+        static TransferSyntax()
+        {
+            _transferSyntaxes.Add(DeflatedExplicitVrLittleEndianUid,
+                                  DeflatedExplicitVrLittleEndian);
+
+            _transferSyntaxes.Add(ExplicitVrBigEndianUid,
+                                  ExplicitVrBigEndian);
+
+            _transferSyntaxes.Add(ExplicitVrLittleEndianUid,
+                                  ExplicitVrLittleEndian);
+
+            _transferSyntaxes.Add(ImplicitVrLittleEndianUid,
+                                  ImplicitVrLittleEndian);
+
+            _transferSyntaxes.Add(Jpeg2000ImageCompressionUid,
+                                  Jpeg2000ImageCompression);
+
+            _transferSyntaxes.Add(Jpeg2000ImageCompressionLosslessOnlyUid,
+                                  Jpeg2000ImageCompressionLosslessOnly);
+
+            _transferSyntaxes.Add(Jpeg2000Part2MultiComponentImageCompressionUid,
+                                  Jpeg2000Part2MultiComponentImageCompression);
+
+            _transferSyntaxes.Add(Jpeg2000Part2MultiComponentImageCompressionLosslessOnlyUid,
+                                  Jpeg2000Part2MultiComponentImageCompressionLosslessOnly);
+
+            _transferSyntaxes.Add(JpegBaselineProcess1Uid,
+                                  JpegBaselineProcess1);
+
+            _transferSyntaxes.Add(JpegExtendedProcess24Uid,
+                                  JpegExtendedProcess24);
+
+            _transferSyntaxes.Add(JpegExtendedProcess35RetiredUid,
+                                  JpegExtendedProcess35Retired);
+
+            _transferSyntaxes.Add(JpegExtendedHierarchicalProcess1618RetiredUid,
+                                  JpegExtendedHierarchicalProcess1618Retired);
+
+            _transferSyntaxes.Add(JpegExtendedHierarchicalProcess1719RetiredUid,
+                                  JpegExtendedHierarchicalProcess1719Retired);
+
+            _transferSyntaxes.Add(JpegFullProgressionHierarchicalProcess2426RetiredUid,
+                                  JpegFullProgressionHierarchicalProcess2426Retired);
+
+            _transferSyntaxes.Add(JpegFullProgressionHierarchicalProcess2527RetiredUid,
+                                  JpegFullProgressionHierarchicalProcess2527Retired);
+
+            _transferSyntaxes.Add(JpegFullProgressionNonHierarchicalProcess1012RetiredUid,
+                                  JpegFullProgressionNonHierarchicalProcess1012Retired);
+
+            _transferSyntaxes.Add(JpegFullProgressionNonHierarchicalProcess1113RetiredUid,
+                                  JpegFullProgressionNonHierarchicalProcess1113Retired);
+
+            _transferSyntaxes.Add(JpegLosslessHierarchicalProcess28RetiredUid,
+                                  JpegLosslessHierarchicalProcess28Retired);
+
+            _transferSyntaxes.Add(JpegLosslessHierarchicalProcess29RetiredUid,
+                                  JpegLosslessHierarchicalProcess29Retired);
+
+            _transferSyntaxes.Add(JpegLosslessNonHierarchicalProcess14Uid,
+                                  JpegLosslessNonHierarchicalProcess14);
+
+            _transferSyntaxes.Add(JpegLosslessNonHierarchicalProcess15RetiredUid,
+                                  JpegLosslessNonHierarchicalProcess15Retired);
+
+            _transferSyntaxes.Add(JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1Uid,
+                                  JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
+
+            _transferSyntaxes.Add(JpegSpectralSelectionHierarchicalProcess2022RetiredUid,
+                                  JpegSpectralSelectionHierarchicalProcess2022Retired);
+
+            _transferSyntaxes.Add(JpegSpectralSelectionHierarchicalProcess2123RetiredUid,
+                                  JpegSpectralSelectionHierarchicalProcess2123Retired);
+
+            _transferSyntaxes.Add(JpegSpectralSelectionNonHierarchicalProcess68RetiredUid,
+                                  JpegSpectralSelectionNonHierarchicalProcess68Retired);
+
+            _transferSyntaxes.Add(JpegSpectralSelectionNonHierarchicalProcess79RetiredUid,
+                                  JpegSpectralSelectionNonHierarchicalProcess79Retired);
+
+            _transferSyntaxes.Add(JpegLsLosslessImageCompressionUid,
+                                  JpegLsLosslessImageCompression);
+
+            _transferSyntaxes.Add(JpegLsLossyNearLosslessImageCompressionUid,
+                                  JpegLsLossyNearLosslessImageCompression);
+
+            _transferSyntaxes.Add(JpipReferencedUid,
+                                  JpipReferenced);
+
+            _transferSyntaxes.Add(JpipReferencedDeflateUid,
+                                  JpipReferencedDeflate);
+
+            _transferSyntaxes.Add(Mpeg2MainProfileMainLevelUid,
+                                  Mpeg2MainProfileMainLevel);
+
+            _transferSyntaxes.Add(Rfc2557MimeEncapsulationUid,
+                                  Rfc2557MimeEncapsulation);
+
+            _transferSyntaxes.Add(RleLosslessUid,
+                                  RleLossless);
+
+            _transferSyntaxes.Add(XmlEncodingUid,
+                                  XmlEncoding);
+
         }
     }
 }

@@ -390,7 +390,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                 writer.WriteLine("        /// </summary>");
                 writer.WriteLine("        public static readonly TransferSyntax " + tSyntax.varName + " =");
                 writer.WriteLine("                    new TransferSyntax(\"" + tSyntax.name + "\",");
-                writer.WriteLine("                                 TransferSyntax." + tSyntax.varName + "Uid,");
+                writer.WriteLine("                                 " + tSyntax.varName + "Uid,");
                 writer.WriteLine("                                 " + littleEndian + ", // Little Endian?");
                 writer.WriteLine("                                 " + encapsulated + ", // Encapsulated?");
                 writer.WriteLine("                                 " + explicitVR + ", // Explicit VR?");
@@ -400,14 +400,13 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             }
 
             writer.WriteLine("        // Internal members");
-            writer.WriteLine("        private static Dictionary<String,TransferSyntax> _transferSyntaxes = new Dictionary<String,TransferSyntax>();");
-            writer.WriteLine("        private static bool _listInit = false;");
-            writer.WriteLine("        private bool _littleEndian;");
-            writer.WriteLine("        private bool _encapsulated;");
-            writer.WriteLine("        private bool _explicitVr;");
-            writer.WriteLine("        private bool _deflate;");
-            writer.WriteLine("        private String _name;");
-            writer.WriteLine("        private String _uid;");
+            writer.WriteLine("        private static readonly Dictionary<String,TransferSyntax> _transferSyntaxes = new Dictionary<String,TransferSyntax>();");
+            writer.WriteLine("        private readonly bool _littleEndian;");
+            writer.WriteLine("        private readonly bool _encapsulated;");
+            writer.WriteLine("        private readonly bool _explicitVr;");
+            writer.WriteLine("        private readonly bool _deflate;");
+            writer.WriteLine("        private readonly String _name;");
+            writer.WriteLine("        private readonly String _uid;");
             writer.WriteLine("");
             writer.WriteLine("        ///<summary>");
             writer.WriteLine("        /// Constructor for transfer syntax objects");
@@ -456,7 +455,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             writer.WriteLine("        }");
             writer.WriteLine("");
             writer.WriteLine("        ///<summary>Property representing the Endian enumerated value for the transfer syntax.</summary>");
-            writer.WriteLine("          public Endian Endian");
+            writer.WriteLine("        public Endian Endian");
             writer.WriteLine("        {");
             writer.WriteLine("            get");
             writer.WriteLine("            {");
@@ -490,10 +489,15 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             writer.WriteLine("        /// </summary>");
             writer.WriteLine("        public static TransferSyntax GetTransferSyntax(String uid)");
             writer.WriteLine("        {");
-            writer.WriteLine("            if (_listInit == false)");
-            writer.WriteLine("            {");
-            writer.WriteLine("                _listInit = true;");
+            writer.WriteLine("            if (!_transferSyntaxes.ContainsKey(uid))");
+            writer.WriteLine("                return null;");
             writer.WriteLine("");
+            writer.WriteLine("            return _transferSyntaxes[uid];");
+            writer.WriteLine("        }");
+            writer.WriteLine("");
+            
+            writer.WriteLine("        static TransferSyntax()");
+            writer.WriteLine("        {");
 
             iter = _tSyntaxList.GetEnumerator();
 
@@ -501,17 +505,11 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             {
                 SopClass tSyntax = (SopClass)((DictionaryEntry)iter.Current).Value;
 
-                writer.WriteLine("                _transferSyntaxes.Add(TransferSyntax." + tSyntax.varName + "Uid,");
-                writer.WriteLine("                                      TransferSyntax." + tSyntax.varName + ");");
+                writer.WriteLine("            _transferSyntaxes.Add(" + tSyntax.varName + "Uid,");
+                writer.WriteLine("                                  " + tSyntax.varName + ");");
                 writer.WriteLine("");
             }
 
-            writer.WriteLine("            }");
-            writer.WriteLine("");
-            writer.WriteLine("            if (!_transferSyntaxes.ContainsKey(uid))");
-            writer.WriteLine("                return null;");
-            writer.WriteLine("");
-            writer.WriteLine("            return _transferSyntaxes[uid];");
             writer.WriteLine("        }");
 
             writer.WriteLine("    }");
@@ -608,7 +606,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                 writer.WriteLine("        /// </summary>");
                 writer.WriteLine("        public static readonly SopClass " + sopClass.varName + " =");
                 writer.WriteLine("                             new SopClass(\"" + sopClass.name + "\", ");
-                writer.WriteLine("                                          SopClass." + sopClass.varName + "Uid, ");
+                writer.WriteLine("                                          " + sopClass.varName + "Uid, ");
                 writer.WriteLine("                                          true);");
             }
 
@@ -652,7 +650,6 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             writer.WriteLine("        }");
             writer.WriteLine("");
             writer.WriteLine("        private static Dictionary<String,SopClass> _sopList = new Dictionary<String,SopClass>();");
-            writer.WriteLine("        private static bool _bIsFirst = true;");
             writer.WriteLine("");
             writer.WriteLine("        /// <summary>Override that displays the name of the SOP Class.</summary>");
             writer.WriteLine("        public override string ToString()");
@@ -663,9 +660,14 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             writer.WriteLine("        /// <summary>Retrieve a SopClass object associated with the Uid.</summary>");
             writer.WriteLine("        public static SopClass GetSopClass(String uid)");
             writer.WriteLine("        {");
-            writer.WriteLine("            if (_bIsFirst)");
-            writer.WriteLine("            {");
-            writer.WriteLine("                _bIsFirst = false;");
+            writer.WriteLine("            if (!_sopList.ContainsKey(uid))");
+            writer.WriteLine("                return null;");
+            writer.WriteLine("");
+            writer.WriteLine("            return _sopList[uid];");
+            writer.WriteLine("        }");
+
+            writer.WriteLine("        static SopClass()");
+            writer.WriteLine("        {");
 
             // Standard Sops
             iter = _sopList.GetEnumerator();
@@ -674,8 +676,8 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             {
                 SopClass sopClass = (SopClass)((DictionaryEntry)iter.Current).Value;
 
-                writer.WriteLine("                _sopList.Add(SopClass." + sopClass.varName + "Uid, ");
-                writer.WriteLine("                             SopClass." + sopClass.varName + ");");
+                writer.WriteLine("            _sopList.Add(" + sopClass.varName + "Uid, ");
+                writer.WriteLine("                         " + sopClass.varName + ");");
                 writer.WriteLine("");
             }
 
@@ -686,18 +688,13 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             {
                 SopClass sopClass = (SopClass)((DictionaryEntry)iter.Current).Value;
 
-                writer.WriteLine("                _sopList.Add(SopClass." + sopClass.varName + "Uid, ");
-                writer.WriteLine("                             SopClass." + sopClass.varName + ");");
+                writer.WriteLine("            _sopList.Add(" + sopClass.varName + "Uid, ");
+                writer.WriteLine("                         " + sopClass.varName + ");");
                 writer.WriteLine("");
             }
-            writer.WriteLine("            }");
-            writer.WriteLine("");
-            writer.WriteLine("            if (!_sopList.ContainsKey(uid))");
-            writer.WriteLine("                return null;");
-            writer.WriteLine("");
-            writer.WriteLine("            return _sopList[uid];");
             writer.WriteLine("        }");
-
+            writer.WriteLine("");
+            
             writer.WriteLine("    }");
             WriterFooter(writer);
 
