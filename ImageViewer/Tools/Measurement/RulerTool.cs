@@ -100,10 +100,5 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			return new PolyLineInteractiveGraphic(true, 2);
 		}
-
-		protected override void OnRoiCreation(RoiGraphic roiGraphic)
-		{
-			roiGraphic.Roi.ControlPoints.Visible = false;
-		}
 	}
 }

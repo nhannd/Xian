@@ -21,12 +21,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private BoundableGraphic _boundableGraphic;
 		private CursorToken _moveToken;
 
+		private bool _settingControlPoints;
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="InteractiveGraphic"/>.
 		/// </summary>
 		/// <param name="userCreated"></param>
 		protected BoundableInteractiveGraphic(bool userCreated) : base(userCreated)
 		{
+			_settingControlPoints = false;
 			AddControlPoints();
 
 			_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
@@ -244,9 +247,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			Trace.Write(String.Format("OnTopLeftChanged: {0}\n", e.Point.ToString()));
 
+			_settingControlPoints = true;
+
+			PointF bottomRight = this.BottomRight;
+
 			base.ControlPoints[_topLeft] = e.Point;
-			base.ControlPoints[_topRight] = new PointF(this.BottomRight.X, this.TopLeft.Y);
-			base.ControlPoints[_bottomLeft] = new PointF(this.TopLeft.X, this.BottomRight.Y);
+			base.ControlPoints[_topRight] = new PointF(bottomRight.X, e.Point.Y);
+			base.ControlPoints[_bottomLeft] = new PointF(e.Point.X, bottomRight.Y);
+
+			_settingControlPoints = false;
 		}
 
 		/// <summary>
@@ -262,9 +271,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			Trace.Write(String.Format("OnBottomRightChanged: {0}\n", e.Point.ToString()));
 
-			base.ControlPoints[_topRight] = new PointF(this.BottomRight.X, this.TopLeft.Y);
-			base.ControlPoints[_bottomLeft] = new PointF(this.TopLeft.X, this.BottomRight.Y);
+			_settingControlPoints = true;
+
+			PointF topLeft = this.TopLeft;
+
+			base.ControlPoints[_topRight] = new PointF(e.Point.X, topLeft.Y);
+			base.ControlPoints[_bottomLeft] = new PointF(topLeft.X, e.Point.Y);
 			base.ControlPoints[_bottomRight] = e.Point;
+
+			_settingControlPoints = false;
 		}
 
 		/// <summary>
@@ -274,6 +289,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="e"></param>
 		protected override void OnControlPointChanged(object sender, ListEventArgs<PointF> e)
 		{
+			// Don't set the TopLeft and BottomRight values when the control points
+			// are currently being set based on their values.
+			if (_settingControlPoints)
+				return;
+
 			Platform.CheckForNullReference(sender, "sender");
 			Platform.CheckForNullReference(e, "e");
 

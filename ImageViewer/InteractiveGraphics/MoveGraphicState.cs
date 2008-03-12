@@ -68,6 +68,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.LastPoint = this.StandardStatefulGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
 			_startPoint = _currentPoint = base.LastPoint;
 
+			this.StatefulGraphic.Draw();
 			return true;
 		}
 
@@ -102,6 +103,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			Cancel();
+
+			this.StatefulGraphic.Draw();
 			return false;
 		}
 

@@ -13,7 +13,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		public ProtractorInteractiveGraphic() : base(true, 3)
 		{
-
+			base.Graphics.Add(_arc = new InvariantArcPrimitive());
+			_arc.Visible = false;
 		}
 
 		public override Color Color
@@ -30,30 +31,23 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		}
 		protected override void OnControlPointChanged(object sender, ListEventArgs<PointF> e)
 		{
+			base.OnControlPointChanged(sender, e);
+
 			if (this.PolyLine.Count == 3)
 			{
-				AddArc();
-
 				_arc.Visible = IsArcVisible();
 				
 				if (_arc.Visible)
 					CalculateArc();
 			}
-
-			base.OnControlPointChanged(sender, e);
 		}
 
 		public override bool HitTest(Point point)
 		{
-			if (_arc == null)
-				return base.HitTest(point);
+			if (_arc.Visible)
+				return _arc.HitTest(point) || base.HitTest(point);
 			else
-			{
-				if (_arc.Visible)
-					return _arc.HitTest(point) || base.HitTest(point);
-				else
-					return base.HitTest(point);
-			}
+				return base.HitTest(point);
 		}
 
 		private void CalculateArc()
@@ -96,15 +90,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			                      	zeroDegreePoint);
 
 			this.PolyLine.ResetCoordinateSystem();
-		}
-
-		private void AddArc()
-		{
-			if (_arc != null)
-				return;
-
-			_arc = new InvariantArcPrimitive();
-			base.Graphics.Add(_arc);
 		}
 
 		private bool IsArcVisible()

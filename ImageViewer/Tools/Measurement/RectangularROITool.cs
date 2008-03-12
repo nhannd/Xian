@@ -69,10 +69,5 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			return new RectangleInteractiveGraphic(true);
 		}
-
-		protected override void OnRoiCreation(RoiGraphic roiGraphic)
-		{
-			roiGraphic.Roi.ControlPoints.Visible = false;
-		}
 	}
 }

@@ -67,6 +67,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							resolver,
 							delegate(Frame frame)
 							{
+								double thickness = frame.SliceThickness;
+
+								if (double.IsNaN(thickness) || thickness == 0)
+									return "";
+
 								return String.Format(SR.Formatmm1, frame.SliceThickness);
 							},
 							DicomDataFormatHelper.RawStringFormat

@@ -132,7 +132,6 @@
     <Compile Include="InteractiveGraphics\BoundableInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\RoiTransformPolicy.cs" />
-    <Compile Include="InteractiveGraphics\Tests\EllipseInteractiveGraphicTest.cs" />
     <Compile Include="Mathematics\Tests\MatrixTests.cs" />
     <Compile Include="Mathematics\Tests\Vector3DTests.cs" />
     <Compile Include="NamedCompositeGraphicSettings.cs" />

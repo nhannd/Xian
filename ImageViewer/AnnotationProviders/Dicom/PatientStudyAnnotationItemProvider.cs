@@ -101,6 +101,9 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							FrameDataRetrieverFactory.GetDoubleRetriever(DicomTags.PatientsSize),
 							delegate(double input)
 							{
+								if (double.IsNaN(input) || input == 0)
+									return "";
+
 								return String.Format("{0} {1}", input.ToString("F2"), SR.Label_metres);
 							}
 						)
@@ -115,6 +118,9 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							FrameDataRetrieverFactory.GetDoubleRetriever(DicomTags.PatientsWeight),
 							delegate(double input)
 							{
+								if (double.IsNaN(input) || input == 0)
+									return "";
+
 								return String.Format("{0} {1}", input.ToString("F2"), SR.Label_kilograms);
 							}
 						)

@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -75,66 +76,48 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Finds the intersection between an ellipse and a line that starts at the
 		/// center of the ellipse and ends at an aribtrary point.
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <param name="center"></param>
-		/// <param name="point"></param>
-		/// <returns></returns>
 		internal static PointF IntersectEllipseAndLine(float a, float b, PointF center, PointF point)
 		{
-			// Test point
-			float x2 = point.X;
-			float y2 = point.Y;
+			/*
+			 * The point of intersection (P) between the center of the ellipse and the test point (Pt)
+			 * where the center of the ellipse is at (0, 0) can be described by the vector equation:
+			 * _     __ 
+			 * P = m*Pt
+			 * 
+			 * which yields two equations:
+			 * 
+			 * x = m * xt (1)
+			 * y = m * yt (2)
+			 * 
+			 * An ellipse centered at (0, 0) is described by the equation:
+			 * 
+			 * x^2/a^2 + y^2/b^2 = 1 (3)
+			 * 
+			 * substituting (1) and (2) into (3) gives:
+			 * 
+			 * m^2*xt^2/a^2 + m^2*yt^2/b^2 = 1
+			 * m^2*(xt^2*b^2 + yt^2*a^2) = a*b
+			 * 
+			 * finally,
+			 * 
+			 * m = a*b/Sqrt(xt^2*b^2 + yt^2*a^2) (where a^2*yt^2 > 0 and/or b^2*yt^2 > 0)
+			 * 
+			 * which is a constant for a given ellipse.
+			 * 
+			 * The intersection point (x, y) can then be found by substituting m into (1) and (2).
+			*/
 
-			float a2 = a * a;
-			float b2 = b * b;
+			PointF testPoint = new PointF(point.X - center.X, point.Y - center.Y);
 
-			// Center of ellipse
-			float x1 = center.X;
-			float y1 = center.Y;
+			float denominator = (float)Math.Sqrt(	testPoint.X * testPoint.X * b * b +
+													testPoint.Y * testPoint.Y * a * a);
 
-			// If the ellipse is flat, just return center of ellipse
-			if (a == 0 || b == 0)
-				return new PointF(x1, y1);
+			if (FloatComparer.AreEqual(denominator, 0.0F, 0.001F))
+				return center;
 
-			// Account for case when point is directly above or below the
-			// center of the ellipse.  This prevents the slope calculation 
-			// from being undefined.
-			if (x2 == x1)
-			{
-				if (y2 > y1)
-					return new PointF(x1, y1 + b);
-				else
-					return new PointF(x1, y1 - b);
-			}
+			float m = Math.Abs(a*b/denominator);
 
-			// Rise and run
-			float dy = y2 - y1;
-			float dx = x2 - x1;
-
-			// Slope
-			float m = dy / dx;
-			float m2 = m * m;
-
-			// y-intercept
-			float c = y1 - m * x1;
-			float c2 = c * c;
-
-			float A = (m2 / b2) + (1 / a2);
-			float B = 2 * ((m / b2) * (c - y1) - (x1 / a2));
-			float C = (c2 - (2 * c * y1) + (y1 * y1)) / b2 + ((x1 * x1) / a2) - 1;
-
-			float x;
-
-			if (x2 >= x1)
-				x = (-B + (float)Math.Sqrt(B * B - 4 * A * C)) / (2 * A);
-			else
-				x = (-B - (float)Math.Sqrt(B * B - 4 * A * C)) / (2 * A);
-
-			float y = m * x + c;
-
-			return new PointF(x, y);
+			return new PointF(center.X + m*testPoint.X, center.Y + m*testPoint.Y);
 		}
-
 	}
 }

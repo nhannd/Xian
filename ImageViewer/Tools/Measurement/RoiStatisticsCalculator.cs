@@ -20,7 +20,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			{
 				if (roiInfo.Mode == RoiAnalysisMode.Responsive)
 				{
-					return String.Format("{0} {1}\n{2} {1}", SR.ToolsMeasurementMean, SR.ToolsMeasurementNoValue, SR.ToolsMeasurementStdev);
+					return String.Format("{0}\n{1}",
+					                     String.Format(SR.ToolsMeasurementFormatMean, SR.ToolsMeasurementNoValue),
+					                     String.Format(SR.ToolsMeasurementFormatStdDev, SR.ToolsMeasurementNoValue));
 				}
 
 				int mean = CalculateMean(

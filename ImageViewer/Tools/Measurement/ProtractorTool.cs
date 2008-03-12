@@ -107,10 +107,5 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			return new ProtractorRoiGraphic();
 		}
-
-		protected override void OnRoiCreation(RoiGraphic roiGraphic)
-		{
-			roiGraphic.Roi.ControlPoints.Visible = false;
-		}
 	}
 }

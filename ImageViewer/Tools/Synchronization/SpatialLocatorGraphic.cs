@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			base.Graphics.Add(_line3 = new LinePrimitive());
 			base.Graphics.Add(_line4 = new LinePrimitive());
 
-			this.Color = Color.Cyan;
+			this.Color = Color.LimeGreen;
 		}
 
 		public Color Color

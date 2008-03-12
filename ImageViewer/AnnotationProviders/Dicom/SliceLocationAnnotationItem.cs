@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Mathematics;
@@ -52,7 +53,12 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 				}
 				else
 				{
-					return frame.SliceLocation.ToString("F1");
+					// although the frame has a SliceLocation property, the existence of the tag is important in this case.
+					bool tagExists;
+					double sliceLocation;
+					frame.ParentImageSop.GetTag(DicomTags.SliceLocation, out sliceLocation, out tagExists);
+					if (tagExists)
+						return sliceLocation.ToString("F1");
 				}
 			}
 

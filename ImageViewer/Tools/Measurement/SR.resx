@@ -132,9 +132,6 @@
   <data name="NotApplicable" xml:space="preserve">
     <value>N/A</value>
   </data>
-  <data name="ToolsMeasurementArea" xml:space="preserve">
-    <value>Area:</value>
-  </data>
   <data name="ToolsMeasurementFormatAreaPixels" xml:space="preserve">
     <value>Area: {0:F0} pixels</value>
   </data>
@@ -227,12 +224,6 @@
   </data>
   <data name="ToolsMeasurementNoValue" xml:space="preserve">
     <value>---</value>
-  </data>
-  <data name="ToolsMeasurementMean" xml:space="preserve">
-    <value>Mean:</value>
-  </data>
-  <data name="ToolsMeasurementStdev" xml:space="preserve">
-    <value>Stdev:</value>
   </data>
   <data name="ToolsMeasurementFormatDegrees" xml:space="preserve">
     <value>{0:F0}°</value>

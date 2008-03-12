@@ -67,11 +67,13 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							resolver,
 							delegate(Frame frame)
 							{
-								double val;
+								double value;
 								bool tagExists;
-								frame.ParentImageSop.GetTag(DicomTags.Kvp, out val, out tagExists);
-								string str = String.Format(SR.FormatkV, val);
-								return str;
+								frame.ParentImageSop.GetTag(DicomTags.Kvp, out value, out tagExists);
+								if (tagExists)
+									return String.Format(SR.FormatkV, value);
+								
+								return "";
 							},
 							DicomDataFormatHelper.RawStringFormat
 						)
@@ -85,11 +87,13 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							resolver,
 							delegate(Frame frame)
 							{
-								int val;
+								int value;
 								bool tagExists;
-								frame.ParentImageSop.GetTag(DicomTags.XRayTubeCurrent, out val, out tagExists);
-								string str = String.Format(SR.FormatmA, val);
-								return str;
+								frame.ParentImageSop.GetTag(DicomTags.XRayTubeCurrent, out value, out tagExists);
+								if (tagExists)
+									return String.Format(SR.FormatmA, value);
+
+								return "";
 							},
 							DicomDataFormatHelper.RawStringFormat
 						)
@@ -103,11 +107,13 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							resolver,
 							delegate(Frame frame)
 							{
-								double val = double.NaN;
+								double value;
 								bool tagExists;
-								frame.ParentImageSop.GetTag(DicomTags.GantryDetectorTilt, out val, out tagExists);
-								string str = String.Format(SR.FormatDegrees, val);
-								return str;
+								frame.ParentImageSop.GetTag(DicomTags.GantryDetectorTilt, out value, out tagExists);
+								if (tagExists)
+									return String.Format(SR.FormatDegrees, value);
+
+								return "";
 							},
 							DicomDataFormatHelper.RawStringFormat
 						)
@@ -121,11 +127,13 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							resolver,
 							delegate(Frame frame)
 							{
-								int val;
+								int value;
 								bool tagExists;
-								frame.ParentImageSop.GetTag(DicomTags.ExposureTime, out val, out tagExists);
-								string str = String.Format(SR.Formatms, val);
-								return str;
+								frame.ParentImageSop.GetTag(DicomTags.ExposureTime, out value, out tagExists);
+								if (tagExists)
+									return String.Format(SR.Formatms, value);
+
+								return "";
 							},
 							DicomDataFormatHelper.RawStringFormat
 						)
@@ -139,10 +147,10 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							resolver,
 							delegate(Frame frame)
 							{
-								string val;
+								string value;
 								bool tagExists;
-								frame.ParentImageSop.GetTag(DicomTags.ConvolutionKernel, out val, out tagExists);
-								return val;
+								frame.ParentImageSop.GetTag(DicomTags.ConvolutionKernel, out value, out tagExists);
+								return value;
 							},
 							DicomDataFormatHelper.RawStringFormat
 						)

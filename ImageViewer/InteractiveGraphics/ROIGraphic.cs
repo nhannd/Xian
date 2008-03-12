@@ -127,6 +127,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				base.State = CreateCreateState();
 			else
 				base.State = CreateInactiveState();
+
+			Roi.ControlPoints.Visible = false;
 		}
 
 		/// <summary>
@@ -418,6 +420,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_calloutGraphic.LocationChanged += new EventHandler<PointChangedEventArgs>(OnCalloutLocationChanged);
 
 			this.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnROIGraphicStateChanged);
+			this.Roi.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnRoiStateChanged);
 		}
 
 		private static void SetTransformValidationPolicy(CompositeGraphic compositeGraphic)
@@ -443,6 +446,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				EnterFocusSelectedState(e.MouseInformation);
 		}
 
+		private void OnRoiStateChanged(object sender, GraphicStateChangedEventArgs e)
+		{
+			if (Roi.State is FocussedGraphicState || Roi.State is FocussedSelectedGraphicState)
+				Roi.ControlPoints.Visible = true;
+			else
+				Roi.ControlPoints.Visible = false;
+		}
+
 		private void EnterInactiveState(IMouseInformation mouseInformation)
 		{
 			// If the currently selected graphic is this one,
@@ -457,7 +468,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Roi.State = this.Roi.CreateInactiveState();
 			this.Callout.State = this.Callout.CreateInactiveState();
 
-			this.Roi.ControlPoints.Visible = false;
 			this.Color = Color.Yellow;
 			Draw();
 
@@ -467,11 +477,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private void EnterFocusState(IMouseInformation mouseInformation)
 		{
 			this.Focussed = true;
-
-			if (this.Roi.HitTest(mouseInformation.Location))
-				this.Roi.ControlPoints.Visible = true;
-			else
-				this.Roi.ControlPoints.Visible = false;
 
 			this.Roi.State = this.Roi.CreateFocussedState();
 			this.Callout.State = this.Callout.CreateFocussedState();
@@ -493,7 +498,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Roi.State = this.Roi.CreateSelectedState();
 			this.Callout.State = this.Callout.CreateSelectedState();
 
-			this.Roi.ControlPoints.Visible = false;
 			this.Color = Color.Tomato;
 			Draw();
 
@@ -509,7 +513,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Roi.State = this.Roi.CreateFocussedSelectedState();
 			this.Callout.State = this.Callout.CreateFocussedSelectedState();
 
-			this.Roi.ControlPoints.Visible = true;
 			this.Color = Color.Tomato;
 			Draw();
 
