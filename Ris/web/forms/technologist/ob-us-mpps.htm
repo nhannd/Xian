@@ -53,8 +53,7 @@
 				
 				initAcquisitionTable();  
 
-				$("structuredReport").innerHTML = structuredReportHtml();
-				initStructuredReport(data);
+				StructuredReportForm.create(data, $("structuredReport"));
 			}
 			catch(e)
 			{
