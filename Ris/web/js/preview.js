@@ -365,8 +365,7 @@ function createStructuredReportPreview(structuredReport)
 	if(!structuredReport)
 		return;
 
-	$("structuredReport").innerHTML = readonlyStructuredReportHtml(structuredReport);
-	initStructuredReportSummary(structuredReport);
+	StructuredReportPreview.create(structuredReport, $("structuredReport"));
 }
 
 function formatReportPerformer(reportPart)

@@ -52,6 +52,11 @@ var StructuredReportForm = {
 		WellBeingForm.showFetus(this._fetus);
 	},
 
+	refreshPreview : function()
+	{
+		StructuredReportPreview.create(this._data, $("Preview"));
+	},
+	
 	_initializeData : function(source)
 	{	
 		this._data = source || {};
@@ -216,7 +221,7 @@ var StructuredReportForm = {
 		html+= 	"			<label id=\"CardiacTab\" for=\"Cardiac\" class=\"Tab\">Cardiac</label>";
 		html+= 	"			<label for=\"WellBeing\" class=\"Tab\">Well-being</label>";
 		html+= 	"			<label for=\"CommentsConclusion\" class=\"Tab\">Comments/Conclusion</label>";
-		html+= 	"			<label for=\"Preview\" class=\"Tab\">Report Preview</label>";
+		html+= 	"			<label for=\"Preview\" class=\"Tab\" onclick=\"javascript: StructuredReportForm.refreshPreview();\">Report Preview</label>";
 		html+= 	"		</div>";
 		html+= 	"		<div class=\"TabHeader\">";
 		html+= 	"			<input type=\"button\" value=\"Start Over\" onclick=\"javascript: StructuredReportForm.startOver()\" style=\"{float:right;vertical-align:top;}\" />";

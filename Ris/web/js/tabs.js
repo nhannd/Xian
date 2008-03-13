@@ -33,7 +33,8 @@ function TabPage(tabControl, tabElement, pageElement)
 	this.pageElement = pageElement;
 	
 	var oThis = this;
-	oThis.tabElement.onclick = function() { oThis.Show() };
+	var oldOnClick = this.tabElement.onclick || function() {};
+	oThis.tabElement.onclick = function() { oldOnClick(); oThis.Show() };
 }
 
 TabPage.prototype.PageClassName = "TabPage";
