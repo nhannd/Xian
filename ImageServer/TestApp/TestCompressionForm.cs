@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageServer.TestApp
 
 
             DicomCodecRegistry.RegisterCodec(TransferSyntax.JpegExtendedProcess24,
-                                             new DicomJpegProcess4CodecFactory());
+                                             new DicomJpegProcess24CodecFactory());
 
 
             DicomCodecRegistry.RegisterCodec(TransferSyntax.JpegLosslessNonHierarchicalProcess14,
