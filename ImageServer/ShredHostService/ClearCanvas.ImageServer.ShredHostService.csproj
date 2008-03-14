@@ -95,7 +95,6 @@ copy $(ProjectDir)..\..\ImageServer\Enterprise\$(OutDir)ClearCanvas.ImageServer.
 copy $(ProjectDir)..\..\Dicom\$(OutDir)ClearCanvas.Dicom.dll $(TargetDir)common
 copy $(ProjectDir)..\..\DicomServices\$(OutDir)ClearCanvas.DicomServices.dll $(TargetDir)common
 copy $(ProjectDir)..\..\Server\ServiceModelEx\$(Outdir)ServiceModelEx.dll $(TargetDir)common
-copy $(ProjectDir)..\..\log4net\$(OutDir)ClearCanvas.log4net.dll $(TargetDir)common
 copy $(ProjectDir)..\..\Dicom\Codec\Rle\$(OutDir)ClearCanvas.Dicom.Codec.Rle.dll $(TargetDir)common
 
 rem copy plugins
