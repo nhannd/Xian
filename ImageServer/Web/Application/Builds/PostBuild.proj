@@ -4,7 +4,6 @@
 		<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll"/>
 		<PluginFiles Include="$(ProjectDir)\..\..\Rules\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.dll"/>
 		<BinFiles Include="$(ProjectDir)\..\..\..\DicomServices\bin\$(Configuration)\ClearCanvas.DicomServices.dll"/>
-		<BinFiles Include="$(ProjectDir)\..\..\..\log4net\bin\$(Configuration)\ClearCanvas.log4net.dll"/>
 		<BinFiles Include="$(ProjectDir)\..\..\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll"/>
 	</ItemGroup>
 	<Target Name="CopyPlugins">
