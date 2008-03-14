@@ -210,12 +210,19 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
                 UnlockServiceLock(item, true, Platform.Time.AddMinutes(5));
             }
+
+            _monitor.Dispose();
+            _monitor = null;
+
         }
 
         public new void Dispose()
         {
-            _monitor.Dispose();
-            _monitor = null;
+            if (_monitor != null)
+            {
+                _monitor.Dispose();
+                _monitor = null;
+            }
 
             base.Dispose();
         }

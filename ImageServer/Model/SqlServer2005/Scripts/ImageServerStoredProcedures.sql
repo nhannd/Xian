@@ -959,10 +959,12 @@ BEGIN
 	DECLARE @GUID uniqueidentifier
 	DECLARE @FilesystemDeleteServiceLockTypeEnum smallint
 	DECLARE @FilesystemReinventoryServiceLockTypeEnum smallint
+	DECLARE @FilesystemStudyProcessServiceLockTypeEnum smallint
 
 	SET @GUID = newid()
 	SELECT @FilesystemDeleteServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemDelete''
 	SELECT @FilesystemReinventoryServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemReinventory''
+	SELECT @FilesystemStudyProcessServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemStudyProcess''
 
     -- Insert statements
 	BEGIN TRANSACTION
@@ -978,6 +980,10 @@ BEGIN
 	INSERT INTO [ImageServer].[dbo].ServiceLock
 		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
 	VALUES (newid(),@FilesystemReinventoryServiceLockTypeEnum,0,getdate(),@GUID,0)
+
+	INSERT INTO [ImageServer].[dbo].ServiceLock
+		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+	VALUES (newid(),@FilesystemStudyProcessServiceLockTypeEnum,0,getdate(),@GUID,0)
 
 	COMMIT TRANSACTION
 

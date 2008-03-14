@@ -157,6 +157,13 @@ INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            (newid(),101,'FilesystemReinventory','Filesystem Reinventory','Re-inventory Data within a Filesystem')
 GO
 
+INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),102,'FilesystemStudyProcess','Filesystem Reprocess Studies','Reapply Study Processing rules within a Filesystem')
+GO
+
+
 -- ServerSopClass inserts
 INSERT INTO [ImageServer].[dbo].[ServerSopClass] ([GUID],[SopClassUid],[Description],[NonImage])
 VALUES (newid(), '1.2.840.10008.5.1.4.1.1.9.1.1', '12-lead ECG Waveform Storage', 1)

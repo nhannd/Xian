@@ -38,6 +38,7 @@ using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
+using ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {

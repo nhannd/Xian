@@ -29,48 +29,29 @@
 
 #endregion
 
-using ClearCanvas.Common.Statistics;
-using ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
+namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 {
     /// <summary>
-    /// Store performance statistics of a study processor.
+    /// Plugin for creating processors for 'FilesystemStudyProcess' <see cref="Model.ServiceLock"/> items.
     /// </summary>
-    internal class StudyProcessStatistics : CollectionAverageStatistics<InstanceStatistics>
+    [ExtensionOf(typeof(ServiceLockFactoryExtensionPoint))]
+    class FilesystemStudyProcessFactoryExtension : IServiceLockProcessorFactory
     {
-        #region Public Properties
+        #region IServiceLockProcessorFactory Members
 
-        public string StudyInstanceUid
+        public ServiceLockTypeEnum GetServiceLockType()
         {
-            set { this["StudyInstanceUid"] = new Statistics<string>("StudyInstanceUid", value); }
-            get { return (this["StudyInstanceUid"] as Statistics<string>).Value; }
+            return ServiceLockTypeEnum.GetEnum("FilesystemStudyProcess");
         }
 
-        public string Modality
+        public IServiceLockItemProcessor GetItemProcessor()
         {
-            set { this["Modality"] = new Statistics<string>("Modality", value); }
-            get { return (this["Modality"] as Statistics<string>).Value; }
+            return new FilesystemStudyProcessItemProcessor();
         }
 
-
-        public int NumInstances
-        {
-            set { this["NumInstances"] = new Statistics<int>("NumInstances", value); }
-            get { return (this["NumInstances"] as Statistics<int>).Value; }
-        }
-
-        #endregion Public Properties
-
-        #region Constructors
-
-        public StudyProcessStatistics() : base("Study Process")
-        {
-            AddField(new Statistics<string>("Modality"));
-            AddField(new Statistics<string>("StudyInstanceUid"));
-            AddField(new Statistics<int>("NumInstances"));
-        }
-
-        #endregion Constructors
+        #endregion
     }
 }

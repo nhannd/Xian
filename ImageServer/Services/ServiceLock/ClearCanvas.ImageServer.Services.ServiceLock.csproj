@@ -38,6 +38,10 @@
     <Compile Include="FilesystemDelete\FilesystemDeleteItemProcessor.cs" />
     <Compile Include="FilesystemReinventory\FilesystemReinventoryFactoryExtension.cs" />
     <Compile Include="FilesystemReinventory\FilesystemReinventoryItemProcessor.cs" />
+    <Compile Include="FilesystemStudyProcess\DeleteFilesystemQueueCommand.cs" />
+    <Compile Include="FilesystemStudyProcess\FilesystemReprocessStatistics.cs" />
+    <Compile Include="FilesystemStudyProcess\FilesystemStudyProcessFactoryExtension.cs" />
+    <Compile Include="FilesystemStudyProcess\FilesystemStudyProcessItemProcessor.cs" />
     <Compile Include="IServiceLockItemProcessor.cs" />
     <Compile Include="IServiceLockProcessorFactory.cs" />
     <Compile Include="ServiceLockSettings.Designer.cs">
@@ -53,6 +57,10 @@
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DicomServices\ClearCanvas.DicomServices.csproj">
+      <Project>{734E6EA2-DC6B-4387-B671-EED0A603D73E}</Project>
+      <Name>ClearCanvas.DicomServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
@@ -73,6 +81,10 @@
     <ProjectReference Include="..\..\Model\ClearCanvas.ImageServer.Model.csproj">
       <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>
       <Name>ClearCanvas.ImageServer.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Rules\ClearCanvas.ImageServer.Rules.csproj">
+      <Project>{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}</Project>
+      <Name>ClearCanvas.ImageServer.Rules</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

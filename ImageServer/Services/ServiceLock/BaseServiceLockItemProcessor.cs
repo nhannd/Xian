@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -75,6 +76,29 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             IList<FilesystemQueue> list = query.Execute(parms);
 
             return list;
+        }
+
+        /// <summary>
+        /// Load the storage location for a Study and partition.
+        /// </summary>
+        protected StudyStorageLocation LoadStorageLocation(ServerEntityKey serverPartitionKey, String studyInstanceUid)
+        {
+            IQueryStudyStorageLocation select = _readContext.GetBroker<IQueryStudyStorageLocation>();
+
+            StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
+            parms.StudyInstanceUid = studyInstanceUid;
+            parms.ServerPartitionKey = serverPartitionKey;
+
+            IList<StudyStorageLocation> storageLocationList = select.Execute(parms);
+
+            if (storageLocationList.Count == 0)
+            {
+                string error = String.Format("Unable to find storage location for study {0} on partition {1}",
+                                             studyInstanceUid, serverPartitionKey);
+                Platform.Log(LogLevel.Error, error);
+                throw new ApplicationException(error);
+            }
+            return storageLocationList[0];
         }
         #endregion
 

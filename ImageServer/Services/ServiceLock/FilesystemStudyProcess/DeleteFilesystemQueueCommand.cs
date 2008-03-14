@@ -29,48 +29,42 @@
 
 #endregion
 
-using ClearCanvas.Common.Statistics;
-using ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy;
+using System.Collections.Generic;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
+namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 {
     /// <summary>
-    /// Store performance statistics of a study processor.
+    /// <see cref="ServerDatabaseCommand"/> derived class for deleting <see cref="FilesystemQueue"/> entries for a
+    /// specific study from the database.
     /// </summary>
-    internal class StudyProcessStatistics : CollectionAverageStatistics<InstanceStatistics>
+    public class DeleteFilesystemQueueCommand : ServerDatabaseCommand
     {
-        #region Public Properties
+        private readonly ServerEntityKey _storageLocationKey;
 
-        public string StudyInstanceUid
+        public DeleteFilesystemQueueCommand(ServerEntityKey storageLocationKey)
+            : base("Delete FilesystemQueue", false)
         {
-            set { this["StudyInstanceUid"] = new Statistics<string>("StudyInstanceUid", value); }
-            get { return (this["StudyInstanceUid"] as Statistics<string>).Value; }
+            _storageLocationKey = storageLocationKey;
         }
 
-        public string Modality
+        protected override void OnExecute(IUpdateContext updateContext)
         {
-            set { this["Modality"] = new Statistics<string>("Modality", value); }
-            get { return (this["Modality"] as Statistics<string>).Value; }
+            IFilesystemQueueEntityBroker select = updateContext.GetBroker<IFilesystemQueueEntityBroker>();
+
+            FilesystemQueueSelectCriteria criteria = new FilesystemQueueSelectCriteria();
+
+            criteria.StudyStorageKey.EqualTo(_storageLocationKey);
+            IList<FilesystemQueue> list = select.Find(criteria);
+
+            foreach (FilesystemQueue queue in list)
+            {
+                select.Delete(queue.GetKey());
+            }
         }
-
-
-        public int NumInstances
-        {
-            set { this["NumInstances"] = new Statistics<int>("NumInstances", value); }
-            get { return (this["NumInstances"] as Statistics<int>).Value; }
-        }
-
-        #endregion Public Properties
-
-        #region Constructors
-
-        public StudyProcessStatistics() : base("Study Process")
-        {
-            AddField(new Statistics<string>("Modality"));
-            AddField(new Statistics<string>("StudyInstanceUid"));
-            AddField(new Statistics<int>("NumInstances"));
-        }
-
-        #endregion Constructors
     }
 }
