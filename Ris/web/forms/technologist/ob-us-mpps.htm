@@ -23,6 +23,34 @@
 		var data = {};
 		var errorProvider = new ErrorProvider();
 
+		var examLocations =
+		{
+			"MSH" : [
+				"CEOU 1",
+				"CEOU 3",
+				"CEOU 4",
+				"CEOU 5",
+				"CEOU 6",
+				"CEOU 7",
+				"CEOU 8",
+				"CEOU 9",
+				"CEOU 10",
+				"CEOU 11",
+				"CEOU 12",
+				"Bay",
+				"Room 2",
+				"Not Applicable"
+			],
+			"TGH" : [
+			],
+			"TWH" : [
+			],
+			"PMH" : [
+			],
+			"WCH" : [
+			]
+		}
+
 		function onBodyLoad()
 		{
 			try
@@ -31,14 +59,16 @@
 
 				var startTime;
 				var stopTime;
+				var facility;
 
 				if(Ris)
 				{
-					data = JSML.parse(Ris.getTag("Documentation")) ||{};
+					data = JSML.parse(Ris.getTag("Documentation")) || {};
 
-				  var mpps = Ris.getHealthcareContext();
-                  startTime = mpps.StartTime;
-                  stopTime = mpps.EndTime;
+					var mpps = Ris.getHealthcareContext();
+					startTime = mpps.StartTime;
+					stopTime = mpps.EndTime;
+					facility = mpps.ModalityProcedureSteps[0].Procedure.PerformingFacility.Code;
 				}
 
 				// redirect if this data was captured by a page other than this page
@@ -52,7 +82,7 @@
 				data.acquisition.startTime = data.acquisition.startTime || startTime;
 				data.acquisition.stopTime = data.acquisition.stopTime || stopTime;
 				
-				initAcquisitionTable();  
+				initAcquisitionTable(facility);  
 
 				StructuredReportForm.create(data, $("structuredReport"));
 			}
@@ -63,7 +93,7 @@
 			}
 		}
 
-		function initAcquisitionTable()
+		function initAcquisitionTable(facility)
 		{
 			var table = Table.createTable(
 				$("acquisitionTable"), 
@@ -81,8 +111,8 @@
 					},
 					{
 						label: "Equipment/Device ID/Location",
-						cellType: "text",
-						size: 30,
+						cellType: "choice",
+						choices: examLocations[facility],
 						getValue: function(item) { return item.equipment; },
 						setValue: function(item, value) { item.equipment = value; },
 						getError: function(item) { return null; }

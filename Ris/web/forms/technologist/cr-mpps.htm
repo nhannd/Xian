@@ -1,125 +1,227 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-   <head>
-      <title>Angio/Interventional Details</title>
-      <link href="../../css/default.css" rel="stylesheet" type="text/css" />
-      <link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
-      <script type="text/javascript" src="../../js/calendar/calendar.js"></script>
-      <script type="text/javascript" src="../../js/calendar/lang/calendar-en.js"></script>
-      <script type="text/javascript" src="../../js/jsx.js"></script>
-      <script type="text/javascript" src="../../js/jsml.js"></script>
-      <script type="text/javascript" src="../../js/ui.js"></script>
-      <script type="text/javascript" src="../../js/ris.js"></script>
-      <script type="text/javascript" src="../../js/preview.js"></script>
-      <script type="text/javascript" src="../../js/layout.js"></script>
-      <script type="text/javascript" >
-         var data = {};
-         var errorProvider = new ErrorProvider();
+<head>
+	<title>Angio/Interventional Details</title>
+	<link href="../../css/default.css" rel="stylesheet" type="text/css" />
+	<link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="../../js/calendar/calendar.js"></script>
+	<script type="text/javascript" src="../../js/calendar/lang/calendar-en.js"></script>
+	<script type="text/javascript" src="../../js/jsx.js"></script>
+	<script type="text/javascript" src="../../js/jsml.js"></script>
+	<script type="text/javascript" src="../../js/ui.js"></script>
+	<script type="text/javascript" src="../../js/ris.js"></script>
+	<script type="text/javascript" src="../../js/preview.js"></script>
+	<script type="text/javascript" src="../../js/layout.js"></script>
+	<script type="text/javascript" >
+		var data = {};
+		var errorProvider = new ErrorProvider();
 
-         function onBodyLoad()
-         {
-            try
-            {
-               scaleWidth();
-         
-               var startTime;
-               var stopTime;
-            
-               if(Ris)
-               {
-                  data = JSML.parse(Ris.getTag("Documentation")) || {};
+		var examLocations =
+		{
+			"General Radiography" : 
+			{
+				"MSH" : [
+					"BV 25",
+					"DR1",
+					"DR2",
+					"Emerg",
+					"F1",
+					"IT GE",
+					"Mobile 4",
+					"Mobile 7",
+					"Mobile 8",
+					"Mobile 9",
+					"Not Applicable"
+				],
+				"TGH" : [
+					"1C423",
+					"1C424",
+					"Emerg",
+					"II 15",
+					"II 9",
+					"Mobile H",
+					"Mobile L",
+					"Mobile M",
+					"Mobile P",
+					"Mobile R",
+					"Mobile U",
+					"Mobile V",
+					"Mobile W",
+					"Not Applicable"
+				],
+				"TWH" : [
+					"1-242",
+					"1-244",
+					"1-246",
+					"1F-404",
+					"1F-406",
+					"1F-584",
+					"1F-586",
+					"3-532",
+					"3-536",
+					"3-547",
+					"Cysto 4-502",
+					"Cysto 4-503",
+					"Cysto 4-507",
+					"Emerg 1-106",
+					"Emerg 1-109",
+					"II #10",
+					"II #11",
+					"II #12",
+					"II #6600",
+					"Mobile Q",
+					"Mobile S",
+					"Mobile T",
+					"Mobile X",
+					"Not Applicable"
+				],
+				"PMH" : [
+					"AMX4",
+					"DR3-674",
+					"Not Applicable",
+					"OEC"
+				],
+				"WCH" : [
+					"Portable",
+					"W285",
+					"W288",
+					"W290"
+				]
+			},
+			"GI/GU" : 
+			{
+				"MSH" : [
+					"F1",
+					"F2",
+					"Not Applicable"
+				],
+				"TGH" : [
+					"154",
+					"Cysto #6",
+					"Cysto #7",
+					"Cysto #8",
+					"Cysto #9",
+					"Not Applicable"
+				],
+				"TWH" : [
+					"3-528",
+					"3F-536",
+					"Not Applicable"
+				],
+				"PMH" : [
+				],
+				"WCH" : [
+					"W285",
+					"W288",
+					"W290"
+				]
+			}
+		}
 
-				  var mpps = Ris.getHealthcareContext();
-                  startTime = mpps.StartTime;
-                  stopTime = mpps.EndTime;
-               }
+		function onBodyLoad()
+		{
+			try
+			{
+				scaleWidth();
+		
+				var startTime;
+				var stopTime;
+				var facility;
+				var modality;
 
-               data.acquisition = data.acquisition || {};
-               data.acquisition.startTime = data.acquisition.startTime || startTime;
-               data.acquisition.stopTime = data.acquisition.stopTime || stopTime;
+				if(Ris)
+				{
+					data = JSML.parse(Ris.getTag("Documentation")) || {};
 
-               initAcquisitionTable();         
-            }
-            catch(e)
-            {
-               var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
-               Field.setValue($("myForm"), message);
-            }
-         }
-         
-         function initAcquisitionTable()
-         {
-            var table = Table.createTable(
-               $("acquisitionTable"), 
-               { editInPlace: true, flow: true, checkBoxes: false },
-               [
-                  {  label: "Valid",
-                     cellType: "choice",
-                     choices: ["Yes", "No"],
-                     getValue: function(item) { return item.valid; },
-                     setValue: function(item, value) { item.valid = value; },
-                     getError: function(item) { return item.valid == "Yes" ? null : "Invalid"; }
-                  },
-                  {  label: "Start Date/Time",
-                     cellType: "datetime",
-                     getValue: function(item) { return item.startTime; },
-                     setValue: function(item, value) { item.startTime = value; },
-                     getError: function(item) { return null; }
-                  },
-                  {  label: "Stop Date/Time",
-                     cellType: "datetime",
-                     getValue: function(item) { return item.stopTime; },
-                     setValue: function(item, value) { item.stopTime = value; },
-                     getError: function(item) { return null; }
-                  },
-                  {  label: "Equipment/Device ID/Location",
-                     cellType: "text",
-                     size: 30,
-                     getValue: function(item) { return item.equipment; },
-                     setValue: function(item, value) { item.equipment = value; },
-                     getError: function(item) { return null; }
-                  },
-                  {  label: "Radiation Dose",
-                     cellType: "text",
-                     size: 10,
-                     getValue: function(item) { return item.dose; },
-                     setValue: function(item, value) { item.dose = value; },
-                     getError: function(item) { return null; }
-                  }
-               ]);
-                
-           table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-           table.bindItems([data.acquisition]);
-         }
-         
-         //////////////////////////////////////////////////////////////////////////
-         // RIS integration API
-         function hasValidationErrors()
-         {
-            return errorProvider.hasErrors();
-         }
+					var mpps = Ris.getHealthcareContext();
+					startTime = mpps.StartTime;
+					stopTime = mpps.EndTime;
+					facility = mpps.ModalityProcedureSteps[0].Procedure.PerformingFacility.Code;
+					modality = mpps.ModalityProcedureSteps[0].ModalityName;
+				}
 
-         function showValidation(show)
-         {
-            errorProvider.setVisible(show);
-         }
+				data.acquisition = data.acquisition || {};
+				data.acquisition.startTime = data.acquisition.startTime || startTime;
+				data.acquisition.stopTime = data.acquisition.stopTime || stopTime;
 
-         function saveData()
-         {
-			data.capturePageUrl = window.location;
-            return Ris.setTag("Documentation", JSML.create(data, "data"));
-         }
-         //////////////////////////////////////////////////////////////////////////
-      </script>
-   </head>
-   <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
-      <form id="myForm">
-         <p class="sectionheading">Exam Acquisition/Mpps</p>
-         <p>&nbsp;</b>
-         <table id="acquisitionTable" width="100%">
-           <tr><td class="tableheading"></td></tr>
-         </table>
-      </form>         
-   </body>
+				initAcquisitionTable(facility, modality);
+			}
+			catch(e)
+			{
+				var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+				Field.setValue($("myForm"), message);
+			}
+		}
+
+		function initAcquisitionTable(facility, modality)
+		{
+			var table = Table.createTable(
+				$("acquisitionTable"), 
+				{ editInPlace: true, flow: true, checkBoxes: false },
+				[
+					{  label: "Valid",
+						cellType: "choice",
+						choices: ["Yes", "No"],
+						getValue: function(item) { return item.valid; },
+						setValue: function(item, value) { item.valid = value; },
+						getError: function(item) { return item.valid == "Yes" ? null : "Invalid"; }
+					},
+					{
+						label: "Start Date/Time",
+						cellType: "readonly",
+						getValue: function(item) { return Ris.formatDateTime(item.startTime); }
+					},
+					{
+						label: "Stop Date/Time",
+						cellType: "readonly",
+						getValue: function(item) { return Ris.formatDateTime(item.stopTime); }
+					},
+					{  label: "Equipment/Device ID/Location",
+						cellType: "choice",
+						choices: examLocations[modality][facility],
+						getValue: function(item) { return item.equipment; },
+						setValue: function(item, value) { item.equipment = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Radiation Dose",
+						cellType: "text",
+						size: 10,
+						getValue: function(item) { return item.dose; },
+						setValue: function(item, value) { item.dose = value; },
+						getError: function(item) { return null; }
+					}
+				]);
+
+			table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			table.bindItems([data.acquisition]);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// RIS integration API
+		function hasValidationErrors()
+		{
+			return errorProvider.hasErrors();
+		}
+
+		function showValidation(show)
+		{
+			errorProvider.setVisible(show);
+		}
+
+		function saveData()
+		{
+		data.capturePageUrl = window.location;
+			return Ris.setTag("Documentation", JSML.create(data, "data"));
+		}
+		//////////////////////////////////////////////////////////////////////////
+	</script>
+</head>
+<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
+	<form id="myForm">
+		<p class="sectionheading">Exam Acquisition/Mpps</p>
+		<table id="acquisitionTable" width="100%">
+		<tr><td class="tableheading"></td></tr>
+		</table>
+	</form>
+</body>
 </html>
-       

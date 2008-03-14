@@ -1,500 +1,546 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-   <head>
-      <title>Technologist Preview</title>
-      <link href="../../css/default.css" rel="stylesheet" type="text/css" />
-      <link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
-      <script type="text/javascript" src="../../js/calendar/calendar.js"></script>
-      <script type="text/javascript" src="../../js/calendar/lang/calendar-en.js"></script>
-      <script type="text/javascript" src="../../js/jsx.js"></script>
-      <script type="text/javascript" src="../../js/jsml.js"></script>
-      <script type="text/javascript" src="../../js/ui.js"></script>
-      <script type="text/javascript" src="../../js/ris.js"></script>
-      <script type="text/javascript" src="../../js/preview.js"></script>
-      <script type="text/javascript" src="../../js/layout.js"></script>
-      <script type="text/javascript" >
-         var data = {};
-         var errorProvider = new ErrorProvider();
+<head>
+	<title>Technologist Preview</title>
+	<link href="../../css/default.css" rel="stylesheet" type="text/css" />
+	<link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="../../js/calendar/calendar.js"></script>
+	<script type="text/javascript" src="../../js/calendar/lang/calendar-en.js"></script>
+	<script type="text/javascript" src="../../js/jsx.js"></script>
+	<script type="text/javascript" src="../../js/jsml.js"></script>
+	<script type="text/javascript" src="../../js/ui.js"></script>
+	<script type="text/javascript" src="../../js/ris.js"></script>
+	<script type="text/javascript" src="../../js/preview.js"></script>
+	<script type="text/javascript" src="../../js/layout.js"></script>
+	<script type="text/javascript" >
+		var data = {};
+		var errorProvider = new ErrorProvider();
 
-         var oralTypes = 
-         [
-            "air",
-            "barium",
-            "gas pills",
-            "gastrographin",
-            "water",
-            "water soluble",
-            "Telebrix"
-         ]
-         
-         var rectalTypes =
-         [
-            "air",
-            "barium",
-            "Hypaque 30%",
-            "Hypaque 60%",
-            "Kaopectate",
-            "Omnipaque",
-            "water",
-            "water soluble"           
-         ]
-         
-         var ivContrastTypes =
-         [
-            "air",
-            "barium",
-            "isovue",
-            "Visipaque 270",
-            "Visipaque 320",
-            "Omnipaque",
-            "water",
-            "water soluble",
-            "saline flush"
-         ]
-         
-         function onBodyLoad()
-         {		        
-            try
-            {
-               scaleWidth();
-            
-               var startTime;
-               var stopTime;
-               if(Ris)
-               {
-                  data = JSML.parse(Ris.getTag("Documentation")) || {};
+		var oralTypes = 
+		[
+			"air",
+			"barium",
+			"gas pills",
+			"gastrographin",
+			"water",
+			"water soluble",
+			"Telebrix"
+		]
 
-				  var mpps = Ris.getHealthcareContext();
-                  startTime = mpps.StartTime;
-                  stopTime = mpps.EndTime;
-               }
+		var rectalTypes =
+		[
+			"air",
+			"barium",
+			"Hypaque 30%",
+			"Hypaque 60%",
+			"Kaopectate",
+			"Omnipaque",
+			"water",
+			"water soluble"
+		]
 
-               data.acquisition = data.acquisition || {};
-               data.acquisition.startTime = data.acquisition.startTime || startTime;
-               data.acquisition.stopTime = data.acquisition.stopTime || stopTime;
+		var ivContrastTypes =
+		[
+			"air",
+			"barium",
+			"isovue",
+			"Visipaque 270",
+			"Visipaque 320",
+			"Omnipaque",
+			"water",
+			"water soluble",
+			"saline flush"
+		]
 
-               initAcquisitionTable();
-               
-               data.oral = data.oral || [];
-               data.rectal = data.rectal || [];
-               data.ivAccess = data.ivAccess || [];
-               data.ivContrast = data.ivContrast || [];
-               
-               initOralTable();
-               initRectalTable();
-               initIVAccessTable();
-               initIVContrastTable();                                           
-            }
-            catch(e)
-            {
-               var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
-               Field.setValue($("myForm"), message);
-            }
-         }
-         
-         function initAcquisitionTable()
-         {
-           var table = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
-             [
-               {  label: "Start Date/Time",
-                  cellType: "datetime",
-                  getValue: function(item) { return item.startTime; },
-                  setValue: function(item, value) { item.startTime = value; },
-                  getError: function(item) { return null; }
-               },
-               {  label: "Stop Date/Time",
-                  cellType: "datetime",
-                  getValue: function(item) { return item.stopTime; },
-                  setValue: function(item, value) { item.stopTime = value; },
-                  getError: function(item) { return null; }
-               },
-               {  label: "Equipment/Device ID/Location",
-                  cellType: "text",
-                  size: 30,
-                  getValue: function(item) { return item.equipment; },
-                  setValue: function(item, value) { item.equipment = value; },
-                  getError: function(item) { return null; }
-               },
-               {  label: "Radiation Dose",
-                  cellType: "text",
-                  size: 10,
-                  getValue: function(item) { return item.dose; },
-                  setValue: function(item, value) { item.dose = value; },
-                  getError: function(item) { return null; }
-               }
-             ]);
-                
-           table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-           table.bindItems([data.acquisition]);
-         }
-         
-         function initOralTable()
-         {
-            var oralTable = Table.createTable($("oralTable"), 
-                  {editInPlace: true, flow: true, checkBoxes: true },
-                  [
-		               {  label: "Type",
-		                  cellType: "choice",
-		                  choices: oralTypes,
-		                  getValue: function(item) { return item.type; },
-		                  setValue: function(item, value) { item.type = value; },
-		                  getError: function(item) { return null; }
-		               },
-		               {  label: "Amount",
-		                  cellType: "text",
-		                  size: 10,
-		                  getValue: function(item) { return item.amount; },
-		                  setValue: function(item, value) { item.amount = value; },
-		                  getError: function(item) { return null; }
-		               },
-		               {  label: "Measurement",
-		                  cellType: "text",
-		                  size: 10,
-		                  getValue: function(item) { return item.measurement; },
-		                  setValue: function(item, value) { item.measurement = value; },
-		                  getError: function(item) { return null; }
-		               },
-		               {  label: "Admin By",
-		                  cellType: "lookup",
-		                  lookup: function(query) { return Ris.resolveStaffName(query); },
-		                  getValue: function(item) { return item.staff; },
-		                  setValue: function(item, value) { item.staff = value; },
-		                  getError: function(item) { return null; }
-		               }
-                  ]);
-                  
-            oralTable.errorProvider = errorProvider;
-            oralTable.bindItems(data.oral);
-         }
+		var examLocations =
+		{
+			"MSH" : [
+				"#11 510CT",
+				"#11 510GR",
+				"#12 512CT",
+				"#12 512GR",
+				"#16 522CT",
+				"#16 522GR",
+				"#18 ERCT",
+				"#18 ERGR",
+				"Not Applicable"
+			],
+			"TGH" : [
+				"#1 519",
+				"#14 449A",
+				"#15 449C",
+				"#2 511",
+				"#3 422",
+				"#4 456CT",
+				"#4 456GR",
+				"Not Applicable"
+			],
+			"TWH" : [
+				"#10 454CT",
+				"#10 454GR",
+				"#8 410",
+				"#9 414",
+				"Not Applicable"
+			],
+			"PMH" : [
+				"#13 664CT",
+				"#13 664GR",
+				"#17 GR",
+				"#5 555",
+				"#6 557",
+				"#7 663CT",
+				"#7 663GR",
+				"Not Applicable"
+			],
+			"WCH" : [
+				"CT #19 W291CT",
+				"CT #19 W291GR"
+			]
+		}
 
-         function onAddOral()
-         {
-            data.oral.add( {} );
-         }
+		function onBodyLoad()
+		{
+			try
+			{
+				scaleWidth();
+			
+				var startTime;
+				var stopTime;
+				var facility;
 
-         function onDeleteOral()
-         {
-			    var checkedItems = $("oralTable").getCheckedItems();
-			    if(checkedItems.length > 0)
-			    {
-			        if(confirm("Deleted selected oral contrast documentation?"))
-			        {
-			            checkedItems.each(function(item) { data.oral.remove(item); });
-			            $("oralCheckAllNone").checked = false;
-			        }
-			    }
-			    else
-			    {
-			        alert("Nothing selected");
-			    }
-         }
+				if(Ris)
+				{
+					data = JSML.parse(Ris.getTag("Documentation")) || {};
 
-         function onOralCheckAllNone()
-         {
-			    data.oral.each(function(item) { $("oralTable").setItemCheckState(item, $("oralCheckAllNone").checked); });
-         }         
+					var mpps = Ris.getHealthcareContext();
+					startTime = mpps.StartTime;
+					stopTime = mpps.EndTime;
+					facility = mpps.ModalityProcedureSteps[0].Procedure.PerformingFacility.Code;
+				}
 
-         function initRectalTable()
-         {
-            var rectalTable = Table.createTable($("rectalTable"), 
-               {editInPlace: true, flow: true, checkBoxes: true },
-               [
-                  {  label: "Type",
-                     cellType: "choice",
-                     choices: rectalTypes,
-                     getValue: function(item) { return item.type; },
-                     setValue: function(item, value) { item.type = value; },
-                     getError: function(item) { return null; }
-                  },
-                  {  label: "Amount",
-                     cellType: "text",
-                     size: 10,
-                     getValue: function(item) { return item.amount; },
-                     setValue: function(item, value) { item.amount = value; },
-                     getError: function(item) { return null; }
-                  },
-                  {  label: "Measurement",
-                     cellType: "text",
-                     size: 10,
-                     getValue: function(item) { return item.measurement; },
-                     setValue: function(item, value) { item.measurement = value; },
-                     getError: function(item) { return null; }
-                  },
-                  {  label: "Admin By",
-                     cellType: "lookup",
-                     lookup: function(query) { return Ris.resolveStaffName(query); },
-                     getValue: function(item) { return item.staff; },
-                     setValue: function(item, value) { item.staff = value; },
-                     getError: function(item) { return null; }
-                  }
-               ]);
-            
-            rectalTable.errorProvider = errorProvider;
-            rectalTable.bindItems(data.rectal);
-         }
-         
-         function onAddRectal()
-         {
-            data.rectal.add( {} );
-         }
+				data.acquisition = data.acquisition || {};
+				data.acquisition.startTime = data.acquisition.startTime || startTime;
+				data.acquisition.stopTime = data.acquisition.stopTime || stopTime;
 
-         function onDeleteRectal()
-         {
-			    var checkedItems = $("rectalTable").getCheckedItems();
-			    if(checkedItems.length > 0)
-			    {
-			        if(confirm("Deleted selected rectal contrast documentation?"))
-			        {
-			            checkedItems.each(function(item) { data.rectal.remove(item); });
-			            $("rectalCheckAllNone").checked = false;
-			        }
-			    }
-			    else
-			    {
-			        alert("Nothing selected");
-			    }
-         }
+				initAcquisitionTable(facility);
 
-         function onRectalCheckAllNone()
-         {
-			    data.rectal.each(function(item) { $("rectalTable").setItemCheckState(item, $("rectalCheckAllNone").checked); });
-         }         
+				data.oral = data.oral || [];
+				data.rectal = data.rectal || [];
+				data.ivAccess = data.ivAccess || [];
+				data.ivContrast = data.ivContrast || [];
 
-         function initIVAccessTable()
-         {
-            var ivAccessTable = Table.createTable($("ivAccessTable"), 
-               {editInPlace: true, flow: true, checkBoxes: true },
-               [
-                  {  label: "Type",
-                     cellType: "choice",
-                     choices: ["New", "Existing"],
-                     getValue: function(item) { return item.type; },
-                     setValue: function(item, value) { item.type = value; },
-                     getError: function(item) { return null; }
-                  },
-                  {  label: "Side",
-                     cellType: "choice",
-                     choices: ["Right", "Left"],
-                     getValue: function(item) { return item.side; },
-                     setValue: function(item, value) { item.side = value; },
-                     getError: function(item) { return null; }
-                  },
-                  {  label: "Site",
-                     cellType: "choice",
-                     choices: ["Antecubital Fossa", "Forearm", "Hand", "Wrist"],
-                     getValue: function(item) { return item.bodySite; },
-                     setValue: function(item, value) { item.bodySite = value; },
-                     getError: function(item) { return null; }
-                  },
-                  {  label: "Accessed By",
-                     cellType: "lookup",
-                     lookup: function(query) { return Ris.resolveStaffName(query); },
-                     getValue: function(item) { return item.staff; },
-                     setValue: function(item, value) { item.staff = value; },
-                     getError: function(item) { return null; }
-                  }
-               ]);
-            
-            ivAccessTable.errorProvider = errorProvider;
-            ivAccessTable.bindItems(data.ivAccess);               
-         }
-         
-         function onAddIVAccess()
-         {
-            data.ivAccess.add( {} );
-         }
+				initOralTable();
+				initRectalTable();
+				initIVAccessTable();
+				initIVContrastTable();
+			}
+			catch(e)
+			{
+				var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+				Field.setValue($("myForm"), message);
+			}
+		}
 
-         function onDeleteIVAccess()
-         {
-			    var checkedItems = $("ivAccessTable").getCheckedItems();
-			    if(checkedItems.length > 0)
-			    {
-			        if(confirm("Deleted selected IV access documentation?"))
-			        {
-			            checkedItems.each(function(item) { data.ivAccess.remove(item); });
-			            $("ivAccessCheckAllNone").checked = false;
-			        }
-			    }
-			    else
-			    {
-			        alert("Nothing selected");
-			    }
-         }
+		function initAcquisitionTable(facility)
+		{
+			var table = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{
+					label: "Start Date/Time",
+					cellType: "readonly",
+					getValue: function(item) { return Ris.formatDateTime(item.startTime); }
+				},
+				{
+					label: "Stop Date/Time",
+					cellType: "readonly",
+					getValue: function(item) { return Ris.formatDateTime(item.stopTime); }
+				},
+				{  label: "Equipment/Device ID/Location",
+					cellType: "choice",
+					choices: examLocations[facility],
+					getValue: function(item) { return item.equipment; },
+					setValue: function(item, value) { item.equipment = value; },
+					getError: function(item) { return null; }
+				},
+				{  label: "Radiation Dose",
+					cellType: "text",
+					size: 10,
+					getValue: function(item) { return item.dose; },
+					setValue: function(item, value) { item.dose = value; },
+					getError: function(item) { return null; }
+				}
+			]);
 
-         function onIVAccessCheckAllNone()
-         {
-			    data.ivAccess.each(function(item) { $("ivAccessTable").setItemCheckState(item, $("ivAccessCheckAllNone").checked); });
-         }         
+			table.errorProvider = errorProvider;	// share errorProvider with the rest of the form
+			table.bindItems([data.acquisition]);
+		}
 
-         function initIVContrastTable()
-         {
-               var ivContrastTable = Table.createTable($("ivContrastTable"), 
-                  {editInPlace: true, flow: true, checkBoxes: true },
-                  [
-		               {  label: "Type",
-		                  cellType: "choice",
-		                  choices: ivContrastTypes,
-		                  getValue: function(item) { return item.type; },
-		                  setValue: function(item, value) { item.type = value; },
-		                  getError: function(item) { return null; }
-		               },
-		               {  label: "Amount",
-		                  cellType: "text",
-		                  size: 10,
-		                  getValue: function(item) { return item.amount; },
-		                  setValue: function(item, value) { item.amount = value; },
-		                  getError: function(item) { return null; }
-		               },
-		               {  label: "Measurement",
-		                  cellType: "text",
-		                  size: 10,
-		                  getValue: function(item) { return item.measurement; },
-		                  setValue: function(item, value) { item.measurement = value; },
-		                  getError: function(item) { return null; }
-		               },
-                     {  label: "Pump/Rate",
-                        cellType: "choice",
-                        choices: ["Yes", "No"],
-                        getValue: function(item) { return item.pumprate; },
-                        setValue: function(item, value) { item.pumprate = value; },
-                        getError: function(item) { return null; }
-                     },
-		               {  label: "Rate",
-		                  cellType: "text",
-		                  size: 10,
-		                  getValue: function(item) { return item.rate; },
-		                  setValue: function(item, value) { item.rate = value; },
-		                  getVisible: function(item) { return item.pumprate == "Yes"; },
-		                  getError: function(item) { return null; }
-		               },                    
-                     {  label: "Power Injection",
-                        cellType: "choice",
-                        choices: ["Yes", "No"],
-                        getValue: function(item) { return item.powerinjection; },
-                        setValue: function(item, value) { item.powerinjection = value; },
-                        getError: function(item) { return null; }
-                     },
-		               {  label: "Lot #",
-		                  cellType: "text",
-		                  size: 10,
-		                  getValue: function(item) { return item.lot; },
-		                  setValue: function(item, value) { item.lot = value; },
-		                  getError: function(item) { return null; }
-		               },
-		               {  label: "Admin By",
-		                  cellType: "lookup",
-		                  lookup: function(query) { return Ris.resolveStaffName(query); },
-		                  getValue: function(item) { return item.staff; },
-		                  setValue: function(item, value) { item.staff = value; },
-		                  getError: function(item) { return null; }
-		               },
-                     {  label: "Time",
-		                  cellType: "datetime",
-		                  getValue: function(item) { return item.time; },
-		                  setValue: function(item, value) { item.time = value; },
-		                  getError: function(item) { return null; }
-		               }
-                  ]);
-               
-               ivContrastTable.errorProvider = errorProvider;
-               ivContrastTable.bindItems(data.ivContrast);               
-         }
-         
-         function onAddIVContrast()
-         {
-            data.ivContrast.add( {} );
-         }
+		function initOralTable()
+		{
+			var oralTable = Table.createTable($("oralTable"), 
+					{editInPlace: true, flow: true, checkBoxes: true },
+					[
+						{  label: "Type",
+							cellType: "choice",
+							choices: oralTypes,
+							getValue: function(item) { return item.type; },
+							setValue: function(item, value) { item.type = value; },
+							getError: function(item) { return null; }
+						},
+						{  label: "Amount",
+							cellType: "text",
+							size: 10,
+							getValue: function(item) { return item.amount; },
+							setValue: function(item, value) { item.amount = value; },
+							getError: function(item) { return null; }
+						},
+						{  label: "Measurement",
+							cellType: "text",
+							size: 10,
+							getValue: function(item) { return item.measurement; },
+							setValue: function(item, value) { item.measurement = value; },
+							getError: function(item) { return null; }
+						},
+						{  label: "Admin By",
+							cellType: "lookup",
+							lookup: function(query) { return Ris.resolveStaffName(query); },
+							getValue: function(item) { return item.staff; },
+							setValue: function(item, value) { item.staff = value; },
+							getError: function(item) { return null; }
+						}
+					]);
+					
+			oralTable.errorProvider = errorProvider;
+			oralTable.bindItems(data.oral);
+		}
 
-         function onDeleteIVContrast()
-         {
-			    var checkedItems = $("ivContrastTable").getCheckedItems();
-			    if(checkedItems.length > 0)
-			    {
-			        if(confirm("Deleted selected IV contrasts documentation?"))
-			        {
-			            checkedItems.each(function(item) { data.ivContrast.remove(item); });
-			            $("ivContrastCheckAllNone").checked = false;
-			        }
-			    }
-			    else
-			    {
-			        alert("Nothing selected");
-			    }
-         }
+		function onAddOral()
+		{
+			data.oral.add( {} );
+		}
 
-         function onIVContrastCheckAllNone()
-         {
-			    data.ivContrast.each(function(item) { $("ivContrastTable").setItemCheckState(item, $("ivContrastCheckAllNone").checked); });
-         }         
+		function onDeleteOral()
+		{
+			var checkedItems = $("oralTable").getCheckedItems();
+			if(checkedItems.length > 0)
+			{
+				if(confirm("Deleted selected oral contrast documentation?"))
+				{
+					checkedItems.each(function(item) { data.oral.remove(item); });
+					$("oralCheckAllNone").checked = false;
+				}
+			}
+			else
+			{
+				alert("Nothing selected");
+			}
+		}
 
-         //////////////////////////////////////////////////////////////////////////
-         // RIS integration API
-         function hasValidationErrors()
-         {
-            return errorProvider.hasErrors();
-         }
+		function onOralCheckAllNone()
+		{
+			data.oral.each(function(item) { $("oralTable").setItemCheckState(item, $("oralCheckAllNone").checked); });
+		}
 
-         function showValidation(show)
-         {
-            errorProvider.setVisible(show);
-         }
+		function initRectalTable()
+		{
+			var rectalTable = Table.createTable($("rectalTable"), 
+				{editInPlace: true, flow: true, checkBoxes: true },
+				[
+					{  label: "Type",
+						cellType: "choice",
+						choices: rectalTypes,
+						getValue: function(item) { return item.type; },
+						setValue: function(item, value) { item.type = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Amount",
+						cellType: "text",
+						size: 10,
+						getValue: function(item) { return item.amount; },
+						setValue: function(item, value) { item.amount = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Measurement",
+						cellType: "text",
+						size: 10,
+						getValue: function(item) { return item.measurement; },
+						setValue: function(item, value) { item.measurement = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Admin By",
+						cellType: "lookup",
+						lookup: function(query) { return Ris.resolveStaffName(query); },
+						getValue: function(item) { return item.staff; },
+						setValue: function(item, value) { item.staff = value; },
+						getError: function(item) { return null; }
+					}
+				]);
 
-         function saveData()
-         {
+			rectalTable.errorProvider = errorProvider;
+			rectalTable.bindItems(data.rectal);
+		}
+
+		function onAddRectal()
+		{
+			data.rectal.add( {} );
+		}
+
+		function onDeleteRectal()
+		{
+			var checkedItems = $("rectalTable").getCheckedItems();
+			if(checkedItems.length > 0)
+			{
+				if(confirm("Deleted selected rectal contrast documentation?"))
+				{
+					checkedItems.each(function(item) { data.rectal.remove(item); });
+					$("rectalCheckAllNone").checked = false;
+				}
+			}
+			else
+			{
+				alert("Nothing selected");
+			}
+		}
+
+		function onRectalCheckAllNone()
+		{
+			data.rectal.each(function(item) { $("rectalTable").setItemCheckState(item, $("rectalCheckAllNone").checked); });
+		}
+
+		function initIVAccessTable()
+		{
+			var ivAccessTable = Table.createTable($("ivAccessTable"), 
+				{editInPlace: true, flow: true, checkBoxes: true },
+				[
+					{  label: "Type",
+						cellType: "choice",
+						choices: ["New", "Existing"],
+						getValue: function(item) { return item.type; },
+						setValue: function(item, value) { item.type = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Side",
+						cellType: "choice",
+						choices: ["Right", "Left"],
+						getValue: function(item) { return item.side; },
+						setValue: function(item, value) { item.side = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Site",
+						cellType: "choice",
+						choices: ["Antecubital Fossa", "Forearm", "Hand", "Wrist"],
+						getValue: function(item) { return item.bodySite; },
+						setValue: function(item, value) { item.bodySite = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Accessed By",
+						cellType: "lookup",
+						lookup: function(query) { return Ris.resolveStaffName(query); },
+						getValue: function(item) { return item.staff; },
+						setValue: function(item, value) { item.staff = value; },
+						getError: function(item) { return null; }
+					}
+				]);
+
+			ivAccessTable.errorProvider = errorProvider;
+			ivAccessTable.bindItems(data.ivAccess);
+		}
+		
+		function onAddIVAccess()
+		{
+			data.ivAccess.add( {} );
+		}
+
+		function onDeleteIVAccess()
+		{
+			var checkedItems = $("ivAccessTable").getCheckedItems();
+			if(checkedItems.length > 0)
+			{
+				if(confirm("Deleted selected IV access documentation?"))
+				{
+					checkedItems.each(function(item) { data.ivAccess.remove(item); });
+					$("ivAccessCheckAllNone").checked = false;
+				}
+			}
+			else
+			{
+				alert("Nothing selected");
+			}
+		}
+
+		function onIVAccessCheckAllNone()
+		{
+			data.ivAccess.each(function(item) { $("ivAccessTable").setItemCheckState(item, $("ivAccessCheckAllNone").checked); });
+		}			
+
+		function initIVContrastTable()
+		{
+			var ivContrastTable = Table.createTable($("ivContrastTable"), 
+				{editInPlace: true, flow: true, checkBoxes: true },
+				[
+					{  label: "Type",
+						cellType: "choice",
+						choices: ivContrastTypes,
+						getValue: function(item) { return item.type; },
+						setValue: function(item, value) { item.type = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Amount",
+						cellType: "text",
+						size: 10,
+						getValue: function(item) { return item.amount; },
+						setValue: function(item, value) { item.amount = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Measurement",
+						cellType: "text",
+						size: 10,
+						getValue: function(item) { return item.measurement; },
+						setValue: function(item, value) { item.measurement = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Pump/Rate",
+						cellType: "choice",
+						choices: ["Yes", "No"],
+						getValue: function(item) { return item.pumprate; },
+						setValue: function(item, value) { item.pumprate = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Rate",
+						cellType: "text",
+						size: 10,
+						getValue: function(item) { return item.rate; },
+						setValue: function(item, value) { item.rate = value; },
+						getVisible: function(item) { return item.pumprate == "Yes"; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Power Injection",
+						cellType: "choice",
+						choices: ["Yes", "No"],
+						getValue: function(item) { return item.powerinjection; },
+						setValue: function(item, value) { item.powerinjection = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Lot #",
+						cellType: "text",
+						size: 10,
+						getValue: function(item) { return item.lot; },
+						setValue: function(item, value) { item.lot = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Admin By",
+						cellType: "lookup",
+						lookup: function(query) { return Ris.resolveStaffName(query); },
+						getValue: function(item) { return item.staff; },
+						setValue: function(item, value) { item.staff = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Time",
+						cellType: "datetime",
+						getValue: function(item) { return item.time; },
+						setValue: function(item, value) { item.time = value; },
+						getError: function(item) { return null; }
+					}
+				]);
+
+			ivContrastTable.errorProvider = errorProvider;
+			ivContrastTable.bindItems(data.ivContrast);
+		}
+
+		function onAddIVContrast()
+		{
+			data.ivContrast.add( {} );
+		}
+
+		function onDeleteIVContrast()
+		{
+			var checkedItems = $("ivContrastTable").getCheckedItems();
+			if(checkedItems.length > 0)
+			{
+				if(confirm("Deleted selected IV contrasts documentation?"))
+				{
+					checkedItems.each(function(item) { data.ivContrast.remove(item); });
+					$("ivContrastCheckAllNone").checked = false;
+				}
+			}
+			else
+			{
+				alert("Nothing selected");
+			}
+		}
+
+		function onIVContrastCheckAllNone()
+		{
+			data.ivContrast.each(function(item) { $("ivContrastTable").setItemCheckState(item, $("ivContrastCheckAllNone").checked); });
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// RIS integration API
+		function hasValidationErrors()
+		{
+			return errorProvider.hasErrors();
+		}
+
+		function showValidation(show)
+		{
+			errorProvider.setVisible(show);
+		}
+
+		function saveData()
+		{
 			data.capturePageUrl = window.location;
-            return Ris.setTag("Documentation", JSML.create(data, "data"));
-         }
-         //////////////////////////////////////////////////////////////////////////
-      </script>
-   </head>
-   <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
-      <form id="myForm">
-         <p class="sectionheading">Exam Acquisition/Mpps</p>
-         <table id="acquisitionTable" width="100%">
-           <tr><td class="tableheading"></td></tr>
-         </table>
-
-         <p class="sectionheading">Oral</p>
-         <div class="addDeleteButtons">
-             <input type="button" value="Add" onclick="javascript: onAddOral()" />
-             <input type="button" value="Delete" onclick="javascript: onDeleteOral()" />
-         </div>
-         <table id="oralTable" border="1" width="100%">
-            <tr>
-               <td colspan="2"><input id="oralCheckAllNone" type="checkbox" onclick="javascript:onOralCheckAllNone()">Select All/None</input></td>
-            </tr>
-         </table>
-         <p class="sectionheading">Rectal</p>
-         <div class="addDeleteButtons">
-             <input type="button" value="Add" onclick="javascript: onAddRectal()" />
-             <input type="button" value="Delete" onclick="javascript: onDeleteRectal()" />
-         </div>
-         <table id="rectalTable" border="1" width="100%">
-            <tr>
-               <td colspan="2"><input id="rectalCheckAllNone" type="checkbox" onclick="javascript:onRectalCheckAllNone()">Select All/None</input></td>
-            </tr>
-         </table>
-         <p class="sectionheading">IV - Access</p>
-         <div class="addDeleteButtons">
-             <input type="button" value="Add" onclick="javascript: onAddIVAccess()" />
-             <input type="button" value="Delete" onclick="javascript: onDeleteIVAccess()" />
-         </div>
-         <table id="ivAccessTable" border="1" width="100%">
-            <tr>
-               <td colspan="2"><input id="ivAccessCheckAllNone" type="checkbox" onclick="javascript:onIVAccessCheckAllNone()">Select All/None</input></td>
-            </tr>
-         </table>
-         <p class="sectionheading">IV - Contrast</p>
-         <div class="addDeleteButtons">
-             <input type="button" value="Add" onclick="javascript: onAddIVContrast()" />
-             <input type="button" value="Delete" onclick="javascript: onDeleteIVContrast()" />
-         </div>
-         <table id="ivContrastTable" border="1" width="100%">
-            <tr>
-               <td colspan="2"><input id="ivContrastCheckAllNone" type="checkbox" onclick="javascript:onIVContrastCheckAllNone()">Select All/None</input></td>
-            </tr>
-         </table>
-      </form>         
-   </body>
+			return Ris.setTag("Documentation", JSML.create(data, "data"));
+		}
+		//////////////////////////////////////////////////////////////////////////
+	</script>
+</head>
+<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
+	<form id="myForm">
+		<p class="sectionheading">Exam Acquisition/Mpps</p>
+		<table id="acquisitionTable" width="100%">
+		<tr><td class="tableheading"></td></tr>
+		</table>
+		<p class="sectionheading">Oral</p>
+		<div class="addDeleteButtons">
+			<input type="button" value="Add" onclick="javascript: onAddOral()" />
+			<input type="button" value="Delete" onclick="javascript: onDeleteOral()" />
+		</div>
+		<table id="oralTable" border="1" width="100%">
+			<tr>
+				<td colspan="2"><input id="oralCheckAllNone" type="checkbox" onclick="javascript:onOralCheckAllNone()">Select All/None</input></td>
+			</tr>
+		</table>
+		<p class="sectionheading">Rectal</p>
+		<div class="addDeleteButtons">
+			<input type="button" value="Add" onclick="javascript: onAddRectal()" />
+			<input type="button" value="Delete" onclick="javascript: onDeleteRectal()" />
+		</div>
+		<table id="rectalTable" border="1" width="100%">
+			<tr>
+				<td colspan="2"><input id="rectalCheckAllNone" type="checkbox" onclick="javascript:onRectalCheckAllNone()">Select All/None</input></td>
+			</tr>
+		</table>
+		<p class="sectionheading">IV - Access</p>
+		<div class="addDeleteButtons">
+			<input type="button" value="Add" onclick="javascript: onAddIVAccess()" />
+			<input type="button" value="Delete" onclick="javascript: onDeleteIVAccess()" />
+		</div>
+		<table id="ivAccessTable" border="1" width="100%">
+			<tr>
+				<td colspan="2"><input id="ivAccessCheckAllNone" type="checkbox" onclick="javascript:onIVAccessCheckAllNone()">Select All/None</input></td>
+			</tr>
+		</table>
+		<p class="sectionheading">IV - Contrast</p>
+		<div class="addDeleteButtons">
+			<input type="button" value="Add" onclick="javascript: onAddIVContrast()" />
+			<input type="button" value="Delete" onclick="javascript: onDeleteIVContrast()" />
+		</div>
+		<table id="ivContrastTable" border="1" width="100%">
+			<tr>
+				<td colspan="2"><input id="ivContrastCheckAllNone" type="checkbox" onclick="javascript:onIVContrastCheckAllNone()">Select All/None</input></td>
+			</tr>
+		</table>
+	</form>
+</body>
 </html>
-       
+

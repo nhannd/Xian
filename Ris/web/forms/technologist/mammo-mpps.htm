@@ -1,116 +1,149 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-   <head>
-      <title>Angio/Interventional Details</title>
-      <link href="../../css/default.css" rel="stylesheet" type="text/css" />
-      <link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
-      <script type="text/javascript" src="../../js/calendar/calendar.js"></script>
-      <script type="text/javascript" src="../../js/calendar/lang/calendar-en.js"></script>
-      <script type="text/javascript" src="../../js/jsx.js"></script>
-      <script type="text/javascript" src="../../js/jsml.js"></script>
-      <script type="text/javascript" src="../../js/ui.js"></script>
-      <script type="text/javascript" src="../../js/ris.js"></script>
-      <script type="text/javascript" src="../../js/preview.js"></script>
-      <script type="text/javascript" src="../../js/layout.js"></script>
-      <script type="text/javascript" >
-         var data = {};
-         var errorProvider = new ErrorProvider();
+<head>
+	<title>Angio/Interventional Details</title>
+	<link href="../../css/default.css" rel="stylesheet" type="text/css" />
+	<link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="../../js/calendar/calendar.js"></script>
+	<script type="text/javascript" src="../../js/calendar/lang/calendar-en.js"></script>
+	<script type="text/javascript" src="../../js/jsx.js"></script>
+	<script type="text/javascript" src="../../js/jsml.js"></script>
+	<script type="text/javascript" src="../../js/ui.js"></script>
+	<script type="text/javascript" src="../../js/ris.js"></script>
+	<script type="text/javascript" src="../../js/preview.js"></script>
+	<script type="text/javascript" src="../../js/layout.js"></script>
+	<script type="text/javascript" >
+		var data = {};
+		var errorProvider = new ErrorProvider();
 
-         function onBodyLoad()
-         {
-            try
-            {
-               scaleWidth();
-               
-               var startTime;
-               var stopTime;
-            
-               if(Ris)
-               {
-                  data = JSML.parse(Ris.getTag("Documentation")) || {};
+		var examLocations =
+		{
+			"MSH" : [
+				"GE Essential",
+				"GE Seno DS",
+				"Mammo US - Toshiba 1",
+				"Mammo US - Toshiba 2",
+				"Mammo US - Toshiba 3",
+				"Stereo Biopsy - S. Mammomat",
+				"Not Applicable"
+			],
+			"TGH" : [
+			],
+			"TWH" : [
+			],
+			"PMH" : [
+				"GE Essential",
+				"GE Mammo 2000DS",
+				"PMH Breast Ultrasound 1",
+				"PMH Breast Ultrasound 2",
+				"PMH Breast Ultrasound 3",
+				"Siemens I",
+				"Not Applicable"
+			],
+			"WCH" : [
+				"W368B",
+				"W371",
+				"W375",
+				"W376",
+				"W377",
+				"W397",
+				"Not Applicable"
+			]
+		}
 
-				  var mpps = Ris.getHealthcareContext();
-                  startTime = mpps.StartTime;
-                  stopTime = mpps.EndTime;
-               }
+		function onBodyLoad()
+		{
+			try
+			{
+				scaleWidth();
 
-               data.acquisition = data.acquisition || {};
-               data.acquisition.startTime = data.acquisition.startTime || startTime;
-               data.acquisition.stopTime = data.acquisition.stopTime || stopTime;
+				var startTime;
+				var stopTime;
+				var facility;
 
-               initAcquisitionTable();
-            }
-            catch(e)
-            {
-               var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
-               Field.setValue($("myForm"), message);
-            }
-         }
-         
-         function initAcquisitionTable()
-         {
-           var table = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
-             [
-               {  label: "Start Date/Time",
-                  cellType: "datetime",
-                  getValue: function(item) { return item.startTime; },
-                  setValue: function(item, value) { item.startTime = value; },
-                  getError: function(item) { return null; }
-               },
-               {  label: "Stop Date/Time",
-                  cellType: "datetime",
-                  getValue: function(item) { return item.stopTime; },
-                  setValue: function(item, value) { item.stopTime = value; },
-                  getError: function(item) { return null; }
-               },
-               {  label: "Equipment/Device ID/Location",
-                  cellType: "text",
-                  size: 30,
-                  getValue: function(item) { return item.equipment; },
-                  setValue: function(item, value) { item.equipment = value; },
-                  getError: function(item) { return null; }
-               },
-               {  label: "Radiation Dose",
-                  cellType: "text",
-                  size: 10,
-                  getValue: function(item) { return item.dose; },
-                  setValue: function(item, value) { item.dose = value; },
-                  getError: function(item) { return null; }
-               }
-             ]);
-                
-           table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-           table.bindItems([data.acquisition]);
-         }
-         
-         //////////////////////////////////////////////////////////////////////////
-         // RIS integration API
-         function hasValidationErrors()
-         {
-            return errorProvider.hasErrors();
-         }
+				if(Ris)
+				{
+					data = JSML.parse(Ris.getTag("Documentation")) || {};
 
-         function showValidation(show)
-         {
-            errorProvider.setVisible(show);
-         }
+					var mpps = Ris.getHealthcareContext();
+					startTime = mpps.StartTime;
+					stopTime = mpps.EndTime;
+					facility = mpps.ModalityProcedureSteps[0].Procedure.PerformingFacility.Code;
+				}
 
-         function saveData()
-         {
-			data.capturePageUrl = window.location;
-            return Ris.setTag("Documentation", JSML.create(data, "data"));
-         }
-         //////////////////////////////////////////////////////////////////////////
-      </script>
-   </head>
-   <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
-      <form id="myForm">
-         <p class="sectionheading">Exam Acquisition/Mpps</p>
-         <p>&nbsp;</b>
-         <table id="acquisitionTable" width="100%">
-           <tr><td class="tableheading"></td></tr>
-         </table>
-      </form>         
-   </body>
+				data.acquisition = data.acquisition || {};
+				data.acquisition.startTime = data.acquisition.startTime || startTime;
+				data.acquisition.stopTime = data.acquisition.stopTime || stopTime;
+
+				initAcquisitionTable(facility);
+			}
+			catch(e)
+			{
+				var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+				Field.setValue($("myForm"), message);
+			}
+		}
+
+		function initAcquisitionTable(facility)
+		{
+		var table = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{
+					label: "Start Date/Time",
+					cellType: "readonly",
+					getValue: function(item) { return Ris.formatDateTime(item.startTime); }
+				},
+				{
+					label: "Stop Date/Time",
+					cellType: "readonly",
+					getValue: function(item) { return Ris.formatDateTime(item.stopTime); }
+				},
+				{  label: "Equipment/Device ID/Location",
+					cellType: "choice",
+					choices: examLocations[facility],
+					getValue: function(item) { return item.equipment; },
+					setValue: function(item, value) { item.equipment = value; },
+					getError: function(item) { return null; }
+				},
+				{  label: "Radiation Dose",
+					cellType: "text",
+					size: 10,
+					getValue: function(item) { return item.dose; },
+					setValue: function(item, value) { item.dose = value; },
+					getError: function(item) { return null; }
+				}
+			]);
+
+			table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			table.bindItems([data.acquisition]);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// RIS integration API
+		function hasValidationErrors()
+		{
+			return errorProvider.hasErrors();
+		}
+
+		function showValidation(show)
+		{
+			errorProvider.setVisible(show);
+		}
+
+		function saveData()
+		{
+		data.capturePageUrl = window.location;
+			return Ris.setTag("Documentation", JSML.create(data, "data"));
+		}
+		//////////////////////////////////////////////////////////////////////////
+	</script>
+</head>
+<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
+	<form id="myForm">
+		<p class="sectionheading">Exam Acquisition/Mpps</p>
+		<table id="acquisitionTable" width="100%">
+		<tr><td class="tableheading"></td></tr>
+		</table>
+	</form>         
+</body>
 </html>
-       
