@@ -30,56 +30,57 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
-
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class ModalityProcedureStepSummary : DataContractBase
-    {
-        public ModalityProcedureStepSummary(
-            EntityRef procedureStepRef,
-            string procedureStepName,
-            EnumValueInfo state,
-            DateTime? startTime,
-            DateTime? endTime,
-            string modalityId,
-            string modalityName
-            )
-        {
-            this.ProcedureStepRef = procedureStepRef;
-            this.ProcedureStepName = procedureStepName;
-            this.State = state;
-            this.StartTime = startTime;
-            this.EndTime = endTime;
-            this.ModalityId = modalityId;
-            this.ModalityName = modalityName;
-        }
+	[DataContract]
+	public class ModalityProcedureStepSummary : DataContractBase
+	{
+		public ModalityProcedureStepSummary(
+			EntityRef procedureStepRef,
+			string procedureStepName,
+			EnumValueInfo state,
+			DateTime? startTime,
+			DateTime? endTime,
+			string modalityId,
+			string modalityName,
+			ProcedureSummary procedure
+			)
+		{
+			this.ProcedureStepRef = procedureStepRef;
+			this.ProcedureStepName = procedureStepName;
+			this.State = state;
+			this.StartTime = startTime;
+			this.EndTime = endTime;
+			this.ModalityId = modalityId;
+			this.ModalityName = modalityName;
+			this.Procedure = procedure;
+		}
 
-        [DataMember]
-        public EntityRef ProcedureStepRef;
+		[DataMember]
+		public EntityRef ProcedureStepRef;
 
-        [DataMember]
-        public string ProcedureStepName;
+		[DataMember]
+		public string ProcedureStepName;
 
-        [DataMember]
-        public EnumValueInfo State;
+		[DataMember]
+		public EnumValueInfo State;
 
-        [DataMember]
-        public DateTime? StartTime;
+		[DataMember]
+		public DateTime? StartTime;
 
-        [DataMember]
-        public DateTime? EndTime;
+		[DataMember]
+		public DateTime? EndTime;
 
-        [DataMember]
-        public string ModalityId;
+		[DataMember]
+		public string ModalityId;
 
-        [DataMember]
-        public string ModalityName;
-    }
+		[DataMember]
+		public string ModalityName;
+
+		[DataMember]
+		public ProcedureSummary Procedure;
+	}
 }
