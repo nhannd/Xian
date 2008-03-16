@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         #region private members
 
         private IList<Filesystem> _fileSystems;
-
+        private Unit _height;
         #endregion Private members
 
         #region protected properties
@@ -61,6 +61,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         public GridView TheGrid
         {
             get { return GridView1; }
+        }
+
+        /// <summary>
+        /// Gets/Sets the height of the filesystem list panel.
+        /// </summary>
+        public Unit Height
+        {
+            get
+            {
+                if (ContainerTable != null)
+                    return ContainerTable.Height;
+                else
+                    return _height;
+            }
+            set
+            {
+                _height = value;
+                if (ContainerTable != null)
+                    ContainerTable.Height = value;
+            }
         }
 
         /// <summary>
@@ -135,6 +155,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             base.OnInit(e);
 
             // Set up the grid
+            if (Height != Unit.Empty)
+                ContainerTable.Height = _height;
 
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.

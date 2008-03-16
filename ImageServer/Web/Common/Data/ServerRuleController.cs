@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return _adaptor.Delete(rule.GetKey());
         }
 
-        public bool AddServerRule(ServerRule rule)
+        public ServerRule AddServerRule(ServerRule rule)
         {
             ServerRuleUpdateColumns parms = new ServerRuleUpdateColumns();
 

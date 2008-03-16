@@ -40,9 +40,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 {
     public partial class ServerRulePanel : UserControl
     {
+        #region Private Members
         private readonly ServerRuleController _controller = new ServerRuleController();
         private ServerPartition _partition;
         private ServerRulePage _enclosingPage;
+
+        #endregion Private Members
+
+
+        #region Public Properties
 
         public ServerPartition ServerPartition
         {
@@ -55,6 +61,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             get { return _enclosingPage; }
             set { _enclosingPage = value; }
         }
+
+        #endregion Public Properties
+
+        #region Public Methods
 
         public void LoadRules()
         {
@@ -112,6 +122,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             ServerRuleUpdatePanel.Update();
         }
 
+        public override void DataBind()
+        {
+            LoadRules();
+            base.DataBind();
+        }
+
+        public void OnRowSelected(int index)
+        {
+        }
+
+
+        #endregion Public Methods
+
+
+        #region Protected Methods
+
         protected void Page_Load(object sender, EventArgs e)
         {
             ServerRuleGridViewControl.ServerRulePanel = this;
@@ -121,7 +147,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             GridPager.PuralItemName = "Rules";
             GridPager.Target = ServerRuleGridViewControl.TheGrid;
 
-            GridPager.GetRecordCountMethod = delegate { return ServerRuleGridViewControl.ServerRules.Count; };
+            GridPager.GetRecordCountMethod = delegate { return ServerRuleGridViewControl.ServerRules==null? 0:ServerRuleGridViewControl.ServerRules.Count; };
 
             int prevSelectIndex = RuleApplyTimeDropDownList.SelectedIndex;
             RuleApplyTimeDropDownList.Items.Clear();
@@ -143,10 +169,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             }
             RuleTypeDropDownList.SelectedIndex = prevSelectIndex;
 
-
-            LoadRules();
+            if (Page.IsPostBack)
+                DataBind();
+            
         }
 
+       
 
         protected override void OnPreRender(EventArgs e)
         {
@@ -198,11 +226,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
         protected void FilterButton_Click(object sender, ImageClickEventArgs e)
         {
-            LoadRules();
+            DataBind();
         }
 
-        public void OnRowSelected(int index)
-        {
-        }
+        #endregion Protected Methods
+
     }
 }

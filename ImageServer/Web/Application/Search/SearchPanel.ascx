@@ -12,11 +12,11 @@
     <ContentTemplate>
         <asp:Panel ID="PagePanel" runat="server">
             <asp:Table ID="Table" runat="server"  
-                CellPadding="0" CellSpacing="0"
+                CellPadding="0"
                 BorderWidth="0px" Width="100%">
                 <asp:TableHeaderRow>
                     <asp:TableHeaderCell HorizontalAlign="Left">
-                        <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
+                        <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                             <ContentTemplate>
                                 <asp:Panel ID="Panel1"  runat="server" CssClass="CSSToolbarPanelContainer">
                                     <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
@@ -29,7 +29,7 @@
                                                 OnClick="OnDeleteToolbarButtonClick"
                                                 />
                                             <clearcanvas:ToolbarButton 
-                                                ID="ToolbarButton1" runat="server" 
+                                                ID="OpenStudyToolbarButton" runat="server" 
                                                 EnabledImageURL="~/images/icons/OpenEnabled.png" 
                                                 DisabledImageURL="~/images/icons/OpenDisabled.png"
                                                 AlternateText="Open study"
@@ -87,16 +87,23 @@
                 </asp:TableHeaderRow>
                 <asp:TableRow>
                     <asp:TableCell ColumnSpan="2">
-                        <uc1:StudyListGridView id="StudyListGridView1" runat="server"></uc1:StudyListGridView>
+                    
+                        <asp:Panel ID="Panel2" runat="server" CssClass="CSSGridViewPanelContainer" >
+                                <asp:Panel ID="Panel7" runat="server" CssClass="CSSGridViewPanelBorder" >
+                                    <uc1:StudyListGridView id="StudyListGridView" runat="server" Height="500px"></uc1:StudyListGridView>
+                                </asp:Panel>                        
+                        </asp:Panel>
+                        
+                        
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell ColumnSpan="2">
-                        <uc2:GridPager ID="GridPager1" runat="server"></uc2:GridPager>
+                        <uc2:GridPager ID="GridPager" runat="server"></uc2:GridPager>
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
         </asp:Panel>
-        <clearcanvas:ConfirmationDialog ID="ConfirmationDialog1" runat="server" />    
+        <clearcanvas:ConfirmationDialog ID="ConfirmationDialog" runat="server" />    
     </ContentTemplate>
 </asp:UpdatePanel>

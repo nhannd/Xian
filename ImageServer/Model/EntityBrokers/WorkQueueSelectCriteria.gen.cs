@@ -140,6 +140,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["StudyStorageKey"];
             } 
         }
+        public ISearchCondition<WorkQueuePriorityEnum> WorkQueuePriorityEnum
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("WorkQueuePriorityEnum"))
+              {
+                 SubCriteria["WorkQueuePriorityEnum"] = new SearchCondition<WorkQueuePriorityEnum>("WorkQueuePriorityEnum");
+              }
+              return (ISearchCondition<WorkQueuePriorityEnum>)SubCriteria["WorkQueuePriorityEnum"];
+            } 
+        }
         public ISearchCondition<WorkQueueStatusEnum> WorkQueueStatusEnum
         {
             get

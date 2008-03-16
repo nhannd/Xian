@@ -7,7 +7,7 @@
 <asp:UpdatePanel ID="ServerRuleUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="Panel1" runat="server">
-            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
+            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0"
                 BorderWidth="0px">
                 <asp:TableHeaderRow>
                     <asp:TableHeaderCell ColumnSpan="1" Width="100%" HorizontalAlign="Left" VerticalAlign="Bottom">
@@ -81,7 +81,12 @@
                 </asp:TableHeaderRow>
                 <asp:TableRow>
                     <asp:TableCell ColumnSpan="2" VerticalAlign="Top">
-                        <grid:ServerRuleGridView ID="ServerRuleGridViewControl" runat="server" />
+                        <asp:Panel ID="Panel7" runat="server" CssClass="CSSGridViewPanelContainer" >
+                                <asp:Panel ID="Panel8" runat="server" CssClass="CSSGridViewPanelBorder" >
+                                    <grid:ServerRuleGridView ID="ServerRuleGridViewControl" runat="server"  Height="500px"/>
+                                </asp:Panel>                        
+                        </asp:Panel>
+                        
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>

@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// list of partitions rendered on the screen.
         /// </summary>
         private IList<ServerPartition> _partitions;
-
+        private Unit _height;
         #endregion private Members
 
         #region Public Properties
@@ -90,6 +90,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             }
         }
 
+        /// <summary>
+        /// Gets/Sets the height of server partition list panel.
+        /// </summary>
+        public Unit Height
+        {
+            get
+            {
+                if (ContainerTable != null)
+                    return ContainerTable.Height;
+                else
+                    return _height;
+            }
+            set
+            {
+                _height = value;
+                if (ContainerTable != null)
+                    ContainerTable.Height = value;
+            }
+        }
+
         #endregion Public Properties
 
         #region Protected Methods
@@ -97,6 +117,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
+
+            if (Height != Unit.Empty)
+                ContainerTable.Height = _height;
+
 
             TheGrid.PagerSettings.Visible = false; // hide the paging control... we use a custom one outside this panel
         }

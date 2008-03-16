@@ -200,6 +200,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices {
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton FilterToolbarButton;
         
         /// <summary>
+        /// Panel7 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel7;
+        
+        /// <summary>
+        /// Panel8 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel8;
+        
+        /// <summary>
         /// DeviceGridViewControl1 control.
         /// </summary>
         /// <remarks>
@@ -224,6 +242,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UserControl ConfirmDialog1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmDialog1;
     }
 }

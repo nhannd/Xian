@@ -49,12 +49,12 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
     {
         #region Private members
 
-        private ServerEntityKey _ref;
+        private ServerEntityKey _workQueueGuid;
         private string _patientID;
         private string _patientName;
         private WorkQueueTypeEnum _type;
         private WorkQueueStatusEnum _status;
-        private int _numInstancesPending;
+        private WorkQueuePriorityEnum _priority;
         private DateTime _scheduledDateTime;
 
         #endregion Private members
@@ -92,6 +92,17 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             set { _patientName = value; }
         }
 
+        public ServerEntityKey WorkQueueGuid
+        {
+            get { return _workQueueGuid; }
+            set { _workQueueGuid = value; }
+        }
+
+        public WorkQueuePriorityEnum Priority
+        {
+            get { return _priority; }
+            set { _priority = value; }
+        }
 
         #endregion Public Properties
     }

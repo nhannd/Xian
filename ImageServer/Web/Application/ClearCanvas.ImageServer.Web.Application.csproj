@@ -88,6 +88,7 @@
     <Compile Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx.designer.cs">
       <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Common\KeyedCollectionBase.cs" />
     <Compile Include="Common\ConfirmationDialog.ascx.cs">
       <DependentUpon>ConfirmationDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -261,6 +262,7 @@
       <DependentUpon>ServerPartitionTabs.ascx</DependentUpon>
     </Compile>
     <Compile Include="Common\Themes.cs" />
+    <Compile Include="Common\EntityCollection.cs" />
     <Compile Include="MasterPage.master.cs">
       <DependentUpon>MasterPage.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -407,6 +409,45 @@
     <Compile Include="StudyDetails\StudyDetailsView.ascx.designer.cs">
       <DependentUpon>StudyDetailsView.ascx</DependentUpon>
     </Compile>
+    <Compile Include="WorkQueue\Edit\ScheduleWorkQueueDialog.ascx.cs">
+      <DependentUpon>ScheduleWorkQueueDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\ScheduleWorkQueueDialog.ascx.designer.cs">
+      <DependentUpon>ScheduleWorkQueueDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\WorkQueueDetailsView.ascx.cs">
+      <DependentUpon>WorkQueueDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\WorkQueueDetailsView.ascx.designer.cs">
+      <DependentUpon>WorkQueueDetailsView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.cs">
+      <DependentUpon>WorkQueueItemDetailsPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.designer.cs">
+      <DependentUpon>WorkQueueItemDetailsPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\StudyDetails.cs" />
+    <Compile Include="WorkQueue\Edit\StudyDetailsAssembler.cs" />
+    <Compile Include="WorkQueue\Edit\WorkQueueDetails.cs" />
+    <Compile Include="WorkQueue\Edit\WorkQueueDetailsAssembler.cs" />
+    <Compile Include="WorkQueue\Edit\ViewEdit.aspx.cs">
+      <DependentUpon>ViewEdit.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\ViewEdit.aspx.designer.cs">
+      <DependentUpon>ViewEdit.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\WorkQueueSettingsPanel.ascx.cs">
+      <DependentUpon>WorkQueueSettingsPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\WorkQueueSettingsPanel.ascx.designer.cs">
+      <DependentUpon>WorkQueueSettingsPanel.ascx</DependentUpon>
+    </Compile>
     <Compile Include="WorkQueue\SearchPage.aspx.cs">
       <DependentUpon>SearchPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -421,12 +462,18 @@
     <Compile Include="WorkQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="WorkQueue\WorkQueueSearchResultPanel.ascx.cs">
-      <DependentUpon>WorkQueueSearchResultPanel.ascx</DependentUpon>
+    <Compile Include="WorkQueue\WorkQueueItemCollection.cs" />
+    <Compile Include="WorkQueue\WorkQueueItemListPanel.ascx.cs">
+      <DependentUpon>WorkQueueItemListPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="WorkQueue\WorkQueueSearchResultPanel.ascx.designer.cs">
-      <DependentUpon>WorkQueueSearchResultPanel.ascx</DependentUpon>
+    <Compile Include="WorkQueue\WorkQueueItemListPanel.ascx.designer.cs">
+      <DependentUpon>WorkQueueItemListPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="WorkQueue\WorkQueueSettings.Designer.cs">
+      <DependentUpon>WorkQueueSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="WorkQueue\WorkQueueSummary.cs" />
     <Compile Include="WorkQueue\WorkQueueSummaryAssembler.cs" />
@@ -489,6 +536,8 @@
     <Content Include="images\icons\EraserEnabled.png" />
     <Content Include="images\icons\OpenDisabled.png" />
     <Content Include="images\icons\OpenEnabled.png" />
+    <Content Include="images\icons\ScheduleDisabled.png" />
+    <Content Include="images\icons\ScheduleEnabled.png" />
     <Content Include="Scripts\NumberFormat154.js" />
     <EmbeddedResource Include="Search\SearchPanel.js" />
     <Content Include="Search\StudyListGridView.ascx" />
@@ -504,6 +553,10 @@
     <None Include="Scripts\.svn\entries" />
     <None Include="Scripts\.svn\format" />
     <None Include="Service References\FilesystemServiceProxy.map" />
+    <None Include="WorkQueue\WorkQueueSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
+    </None>
     <Content Include="Common\GridPager.ascx" />
     <Content Include="Global.asax" />
     <Content Include="images\add_disabled.gif" />
@@ -566,9 +619,15 @@
     <Content Include="Logging.config" />
     <Content Include="Services\webservice.htc" />
     <EmbeddedResource Include="WorkQueue\SearchPanel.js" />
+    <Content Include="WorkQueue\Edit\ScheduleWorkQueueDialog.ascx" />
+    <Content Include="WorkQueue\Edit\ScheduleWorkQueueDialog.js" />
+    <Content Include="WorkQueue\Edit\WorkQueueDetailsView.ascx" />
+    <Content Include="WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx" />
+    <Content Include="WorkQueue\Edit\ViewEdit.aspx" />
+    <Content Include="WorkQueue\Edit\WorkQueueSettingsPanel.ascx" />
     <Content Include="WorkQueue\SearchPage.aspx" />
     <Content Include="WorkQueue\SearchPanel.ascx" />
-    <Content Include="WorkQueue\WorkQueueSearchResultPanel.ascx" />
+    <Content Include="WorkQueue\WorkQueueItemListPanel.ascx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -635,7 +694,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>4099</DevelopmentServerPort>
+          <DevelopmentServerPort>1280</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

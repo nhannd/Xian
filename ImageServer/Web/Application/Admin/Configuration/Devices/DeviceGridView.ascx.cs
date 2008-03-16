@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         private Dictionary<string, ServerPartition> _DictionaryPartitions = new Dictionary<string, ServerPartition>();
         // list of devices to display
         private IList<Device> _devices;
-
+        private Unit _height;
         #endregion Private members
 
         #region protected properties
@@ -111,6 +111,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             }
         }
 
+
+        /// <summary>
+        /// Gets/Sets the height of device list panel.
+        /// </summary>
+        public Unit Height
+        {
+            get
+            {
+                if (ContainerTable != null)
+                    return ContainerTable.Height;
+                else
+                    return _height;
+            }
+            set
+            {
+                _height = value;
+                if (ContainerTable != null)
+                    ContainerTable.Height = value;
+            }
+        }
         #endregion
 
         #region Events
@@ -144,6 +164,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             base.OnInit(e);
 
             // Set up the grid
+            if (Height != Unit.Empty)
+                ContainerTable.Height = _height;
+
 
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.

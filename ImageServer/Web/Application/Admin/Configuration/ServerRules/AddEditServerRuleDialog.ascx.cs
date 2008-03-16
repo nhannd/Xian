@@ -292,6 +292,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             }
         }
 
+        protected void CancelButton_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        
+
         private void SaveData()
         {
             if (_rule == null)
@@ -338,7 +345,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
             if (EditMode)
             {
-                ModalDialog1.Title = "Edit Server Rule";
+                ModalDialog.Title = "Edit Server Rule";
                 OKButton.Text = "Update";
 
                 DefaultCheckBox.Checked = _rule.DefaultRule;
@@ -403,7 +410,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             }
             else
             {
-                ModalDialog1.Title = "Add Server Rule";
+                ModalDialog.Title = "Add Server Rule";
                 OKButton.Text = "Add";
 
                 DefaultCheckBox.Checked = false;
@@ -434,13 +441,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
                 SampleRuleDropDownList.Items.Add(new ListItem("Simple AutoRoute", "SimpleAutoRoute"));
             }
 
-            ModalDialog1.Show();
+            ModalDialog.Show();
             return;
         }
 
         public void Close()
         {
-            
+            ModalDialog.Hide();
         }
 
         #endregion

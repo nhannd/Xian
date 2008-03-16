@@ -53,10 +53,12 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         static public WorkQueueSummary CreateWorkQueueSummary(Model.WorkQueue workqueue)
         {
             WorkQueueSummary summary = new WorkQueueSummary();
-
+            summary.WorkQueueGuid = workqueue.GUID;
             summary.ScheduledDateTime = workqueue.ScheduledTime;
             summary.Type = workqueue.WorkQueueTypeEnum;
             summary.Status = workqueue.WorkQueueStatusEnum;
+            summary.Priority = workqueue.WorkQueuePriorityEnum;
+
 
             // Fetch the patient info:
             StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();

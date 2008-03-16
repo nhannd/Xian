@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         [ClientPropertyName("OpenButtonClientID")]
         public string OpenButtonClientID
         {
-            get { return this.ToolbarButton1.ClientID; }
+            get { return this.OpenStudyToolbarButton.ClientID; }
         }
 
 
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         [ClientPropertyName("StudyListClientID")]
         public string StudyListClientID
         {
-            get { return StudyListGridView1.StudyListGrid.ClientID; }
+            get { return StudyListGridView.StudyListGrid.ClientID; }
         }
 
 
@@ -107,9 +107,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
         public override void DataBind()
         {
-            StudyListGridView1.Partition = ServerPartition;
+            StudyListGridView.Partition = ServerPartition;
             base.DataBind();
-            StudyListGridView1.DataBind();
+            StudyListGridView.DataBind();
         }
 
 
@@ -163,7 +163,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
                 criteria.StudyDescription.Like(key);
             }
 
-            StudyListGridView1.Studies = _controller.GetStudies(criteria);
+            StudyListGridView.Studies = _controller.GetStudies(criteria);
             
             DataBind();
         }
@@ -173,16 +173,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             base.OnInit(e);
 
             // setup child controls
-            GridPager1.ItemName = "Study";
-            GridPager1.PuralItemName = "Studies";
-            GridPager1.Target = StudyListGridView1.StudyListGrid;
-            GridPager1.GetRecordCountMethod = delegate
+            GridPager.ItemName = "Study";
+            GridPager.PuralItemName = "Studies";
+            GridPager.Target = StudyListGridView.StudyListGrid;
+            GridPager.GetRecordCountMethod = delegate
                                                   {
-                                                      return StudyListGridView1.Studies== null ? 0:StudyListGridView1.Studies.Count;
+                                                      return StudyListGridView.Studies== null ? 0:StudyListGridView.Studies.Count;
                                                   };
 
 
-            ConfirmationDialog1.Confirmed += delegate(object data)
+            ConfirmationDialog.Confirmed += delegate(object data)
                                 {
                                     if (data is IList<Study>)
                                     {
@@ -206,7 +206,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (StudyListGridView1.IsPostBack)
+            if (StudyListGridView.IsPostBack)
             {
                 LoadStudies();
             }
@@ -227,38 +227,38 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         
         protected void FilterButton_Click(object sender, ImageClickEventArgs e)
         {
-            StudyListGridView1.StudyListGrid.ClearSelections();
+            StudyListGridView.StudyListGrid.ClearSelections();
         }
 
         protected void OnDeleteToolbarButtonClick(object sender, ImageClickEventArgs e)
         {
-            IList<Study> studies = StudyListGridView1.SelectedStudies;
+            IList<Study> studies = StudyListGridView.SelectedStudies;
 
             if (studies != null && studies.Count>0)
             {
-                ConfirmationDialog1.Message = string.Format("Are you sure to remove the following studies?<BR/>");
-                ConfirmationDialog1.Message += "<table>";
+                ConfirmationDialog.Message = string.Format("Are you sure to remove the following studies?<BR/>");
+                ConfirmationDialog.Message += "<table>";
                 foreach (Study study in studies)
                 {
                     String text = String.Format("<tr align='left'><td>Patient:{0}&nbsp;&nbsp;</td><td>Accession:{1}&nbsp;&nbsp;</td><td>Description:{2}</td></tr>", 
                                     study.PatientsName, study.AccessionNumber, study.StudyDescription);
-                    ConfirmationDialog1.Message += text;
+                    ConfirmationDialog.Message += text;
                 }
-                ConfirmationDialog1.Message += "</table>";
+                ConfirmationDialog.Message += "</table>";
 
-                ConfirmationDialog1.MessageType = ConfirmationDialog.MessageTypeEnum.WARNING;
-                ConfirmationDialog1.Data = studies;
-                ConfirmationDialog1.Show();
+                ConfirmationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.YESNO;
+                ConfirmationDialog.Data = studies;
+                ConfirmationDialog.Show();
                 
             }
         }
 
         protected void UpdateToolbarButtonState()
         {
-            IList<Study> studies = StudyListGridView1.SelectedStudies;
+            IList<Study> studies = StudyListGridView.SelectedStudies;
             if (studies != null)
             {
-                ToolbarButton1.Enabled = true;
+                OpenStudyToolbarButton.Enabled = true;
                 
                 DeleteToolbarButton.Enabled = true;
                 foreach (Study study in studies)
@@ -273,7 +273,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             }
             else
             {
-                ToolbarButton1.Enabled = false;
+                OpenStudyToolbarButton.Enabled = false;
                 DeleteToolbarButton.Enabled = false;
             }
 

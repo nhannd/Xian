@@ -8,7 +8,7 @@
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="Panel1" runat="server">
-            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
+            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0"
                 BorderWidth="0px">
                 <asp:TableHeaderRow>
                     <asp:TableHeaderCell HorizontalAlign="left" VerticalAlign="Bottom" Wrap="false" Width="100%">
@@ -79,7 +79,13 @@
                 </asp:TableHeaderRow>
                 <asp:TableRow Height="100%">
                     <asp:TableCell ColumnSpan="2">
-                        <uc1:DeviceGridView ID="DeviceGridViewControl1" runat="server" />
+                        <asp:Panel ID="Panel7" runat="server" CssClass="CSSGridViewPanelContainer" >
+                                <asp:Panel ID="Panel8" runat="server" CssClass="CSSGridViewPanelBorder" >
+                                    <uc1:DeviceGridView ID="DeviceGridViewControl1" Height="500px" runat="server" />
+                                </asp:Panel>                        
+                        </asp:Panel>
+                        
+                        
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>

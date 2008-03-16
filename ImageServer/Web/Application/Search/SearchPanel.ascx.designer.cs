@@ -47,13 +47,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.WebControls.Table Table;
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// ToolBarUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        protected global::System.Web.UI.UpdatePanel ToolBarUpdatePanel;
         
         /// <summary>
         /// Panel1 control.
@@ -92,13 +92,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteToolbarButton;
         
         /// <summary>
-        /// ToolbarButton1 control.
+        /// OpenStudyToolbarButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton ToolbarButton1;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OpenStudyToolbarButton;
         
         /// <summary>
         /// FilterPanel control.
@@ -209,30 +209,48 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.WebControls.ImageButton FilterButton;
         
         /// <summary>
-        /// StudyListGridView1 control.
+        /// Panel2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Search.StudyListGridView StudyListGridView1;
+        protected global::System.Web.UI.WebControls.Panel Panel2;
         
         /// <summary>
-        /// GridPager1 control.
+        /// Panel7 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPager1;
+        protected global::System.Web.UI.WebControls.Panel Panel7;
         
         /// <summary>
-        /// ConfirmationDialog1 control.
+        /// StudyListGridView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmationDialog1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Search.StudyListGridView StudyListGridView;
+        
+        /// <summary>
+        /// GridPager control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPager;
+        
+        /// <summary>
+        /// ConfirmationDialog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmationDialog;
     }
 }

@@ -1,3 +1,9 @@
+.CSSDefaultPopupDialogBacground
+{
+   background-color:#000;
+   filter:alpha(opacity=85); opacity:0.85;
+}
+
 .CSSDefaultPopupDialogTitleBarLeft
 {
 	background-image: url(images/DialogTitleBarBG-left.gif);
@@ -12,8 +18,7 @@
 	vertical-align: middle;
 	text-align: center;
 	color: #ffffff;
-	font-size: medium;
-	font-weight:normal;
+	font-weight:bold;
 	padding:0px;
 	height:25px;
 	background-image: url(images/DialogTitleBarBG.gif);

@@ -43,22 +43,47 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
          // list of devices to display
         private IList<ServerRule> _serverRules;
         private ServerRulePanel _serverRulePanel;
-     
+        private Unit _height;
         #endregion Private members
 
      
         #region public properties
 
-     
+     	/// <summary>
+        /// Gets/Sets the server rule panel
+        /// </summary>
         public ServerRulePanel ServerRulePanel
         {
             get { return _serverRulePanel; }
             set { _serverRulePanel = value; }
         }
 
+		/// <summary>
+        /// Gets a reference to the server rule list grid control
+        /// </summary>
         public GridView TheGrid
         {
             get { return this.GridView; }
+        }
+
+		/// <summary>
+        /// Gets/Sets the height of the server rule list panel
+        /// </summary>
+        public Unit Height
+        {
+            get
+            {
+                if (ContainerTable != null)
+                    return ContainerTable.Height;
+                else
+                    return _height;
+            }
+            set
+            {
+                _height = value;
+                if (ContainerTable != null)
+                    ContainerTable.Height = value;
+            }
         }
 
         /// <summary>
@@ -68,7 +93,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         {
             get
             {
-                if (ServerRules.Count == 0 || GridView.SelectedIndex < 0)
+                if (ServerRules==null || ServerRules.Count == 0 || GridView.SelectedIndex < 0)
                     return null;
 
                 // SelectedIndex is for the current page. Must convert to the index of the entire list
@@ -104,6 +129,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             }
         }
         #endregion
+
+        #region Protected Methods
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            if (Height != Unit.Empty)
+                ContainerTable.Height = _height;
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -182,10 +216,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             DataBind();
         }
 
-        protected void GridView_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
-        {
-            ServerRulePanel.OnRowSelected(e.NewSelectedIndex);
-        }
+        #endregion Protected Methods
+
 
         #region public methods
         /// <summary>

@@ -50,8 +50,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         #region Private members
 
         // Map between the server partition and the panel
-        private readonly IDictionary<ServerEntityKey, UserControl> _mapPanel =
-            new Dictionary<ServerEntityKey, UserControl>();
+        private readonly IDictionary<ServerEntityKey, Control> _mapPanel =
+            new Dictionary<ServerEntityKey, Control>();
 
         private readonly ServerPartitionConfigController _controller = new ServerPartitionConfigController();
         private IList<ServerPartition> _partitionList;
@@ -74,7 +74,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
         #endregion
 
-        public UserControl GetUserControlForPartition(ServerEntityKey key)
+        #region Public Methods
+
+        public Control GetUserControlForPartition(ServerEntityKey key)
         {
             if (_mapPanel.ContainsKey(key))
                 return _mapPanel[key];
@@ -82,14 +84,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             return null;
         }
 
-        protected override void OnInit(EventArgs e)
-        {
- 
-        }
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-        }
 
         public void SetupLoadPartitionTabs(GetTabPanel tabDelegate)
         {
@@ -110,13 +104,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                     // create a device panel
                     UserControl panel = tabDelegate(part);
 
+                    // wrap an updatepanel around the tab
+                    UpdatePanel updatePanel = new UpdatePanel();
+                    updatePanel.ContentTemplateContainer.Controls.Add(panel);
+
                     // put the panel into a lookup table to be used later
-                    _mapPanel[part.GetKey()] = panel;
+                    _mapPanel[part.GetKey()] = updatePanel;
 
 
                     // Add the device panel into the tab
-                    tabPanel.Controls.Add(panel);
+                    tabPanel.Controls.Add(updatePanel);
                 }
+
+               
+
                 // Add the tab into the tabstrip
                 PartitionTabContainer.Tabs.Add(tabPanel);
             }
@@ -128,5 +129,33 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                 PartitionTabContainer.ActiveTabIndex = -1;
             }
         }
+
+        /// <summary>
+        /// Update the specified partition tab
+        /// </summary>
+        /// <param name="key">The server partition key</param>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        public void Update(ServerEntityKey key)
+        {
+            Control ctrl = GetUserControlForPartition(key);
+            if (ctrl != null)
+            {
+                ctrl.DataBind();
+
+                if (ctrl is UpdatePanel)
+                {
+                    UpdatePanel panel = ctrl as UpdatePanel;
+                    if (panel.UpdateMode == UpdatePanelUpdateMode.Conditional)
+                    {
+                        panel.Update();
+                    }
+                }
+            }
+
+        }
+
+        #endregion Public Methods
     }
 }

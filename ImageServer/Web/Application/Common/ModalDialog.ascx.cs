@@ -36,7 +36,7 @@ using System.Web.UI.WebControls;
 
 namespace ClearCanvas.ImageServer.Web.Application.Common
 {
-    
+
     /// <summary>
     /// A generic modal popup dialog box.
     /// </summary>
@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// </summary>
         [ParseChildren(true)]
         public class DialogTitleBarContainer : Panel, INamingContainer { }
-        
+
         [ParseChildren(true)]
         public class DialogContentContainer : Panel, INamingContainer { }
 
@@ -106,7 +106,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         private string _titleBarCSS;
         private string _dialogContentCSS;
         private string _backgroundCSS;
-        private bool _dropShadow;
+        private bool _dropShadow = true;
+        private bool _showCloseBox = true;
         private ITemplate _titleBarTemplate = null;
         private ITemplate _contentTemplate = null;
         private readonly DialogContentContainer _contentPanelContainer = new DialogContentContainer();
@@ -151,18 +152,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             }
         }
 
-        
+
         /// <summary>
         /// Sets/Gets the title of the dialog box
         /// </summary>
         public string Title
         {
-            get { return _title; }
+            get {
+                return _title;
+            }
             set
             {
                 _title = value;
-                if (TitleLabel != null)
-                    TitleLabel.Text = value;
+                if (TitleLabel!=null)
+                    TitleLabel.Text = String.IsNullOrEmpty(value) ? " " : value;
+                
+                
             }
         }
 
@@ -187,7 +192,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             set
             {
                 _titleBarCSS = value;
-                
+
             }
         }
 
@@ -200,7 +205,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             set
             {
                 _dialogContentCSS = value;
-                
+
             }
         }
 
@@ -210,7 +215,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         public bool DropShadow
         {
             get { return _dropShadow; }
-            set { 
+            set
+            {
                 _dropShadow = value;
             }
         }
@@ -221,15 +227,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         public string BackgroundCSS
         {
             get { return _backgroundCSS; }
-            set { 
+            set
+            {
                 _backgroundCSS = value;
-        
+
             }
         }
 
         /// <summary>
         ///  Gets/Sets the current state of the dialog box.
         /// </summary>
+        /// <remarks>
+        /// The dialog box will popup automatically when the value of <see cref="State"/> is <see cref="ShowState.Show"/>
+        /// </remarks>
         public ShowState State
         {
             get
@@ -240,6 +250,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                     return ShowState.Hide;
             }
             set { ViewState[ClientID + "_State"] = value; }
+           
         }
 
         /// <summary>
@@ -264,7 +275,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             get { return _titleBarPanelContainer; }
         }
 
-        
+        public bool ShowCloseBox
+        {
+            get { return _showCloseBox; }
+            set { _showCloseBox = value; }
+        }
+
         #endregion Public Properties
 
         #region Protected Methods
@@ -273,17 +289,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             base.OnInit(e);
 
             DialogContainer.Width = Width;
-            if (!String.IsNullOrEmpty(Title))
+            if (!String.IsNullOrEmpty(_title))
                 TitleLabel.Text = Title;
 
+            DialogContainer.Width = Width;
 
-            Container.Width = Width;
+            if (DialogContainer.Width!=Unit.Empty)
+            {
+                // this will make sure the dialog box 
+                //DialogSizeTable.Width = Unit.Percentage(100.0);
+            }
 
             bool useCustomizeTitleBar = _titleBarTemplate != null;
 
             if (useCustomizeTitleBar)
             {
-                CustomizedTitleBarPanel.Visible = true; 
+                CustomizedTitleBarPanel.Visible = true;
                 DefaultTitlePanel.Visible = false;
                 _titleBarTemplate.InstantiateIn(TitleBarPanelContainer);
                 TitlePanelPlaceHolder.Controls.Add(TitleBarPanelContainer);
@@ -294,11 +315,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             }
             else
             {
-                DefaultTitlePanel.Visible = true; 
+                DefaultTitlePanel.Visible = true;
                 CustomizedTitleBarPanel.Visible = false;
 
                 if (!String.IsNullOrEmpty(TitleBarCSS))
                     DefaultTitlePanel.CssClass = TitleBarCSS;
+
+                CloseButton.Visible = ShowCloseBox;
 
             }
 
@@ -311,17 +334,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                     ContentPanel.CssClass = ContentCSS;
             }
 
-            ModalPopupExtender1.BackgroundCssClass = BackgroundCSS;
-            ModalPopupExtender1.DropShadow = DropShadow;
-           
+
+
+            ModalPopupExtender.BackgroundCssClass = BackgroundCSS;
+            ModalPopupExtender.DropShadow = DropShadow;
             if (CloseButton.Visible)
             {
-                ModalPopupExtender1.CancelControlID = CloseButton.ClientID;
+                //ModalPopupExtender.CancelControlID = CloseButton.ClientID;
                 CloseButton.Click += CloseButton_Click;
             }
-            
-            
-            
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (State == ShowState.Show)
+                Show();
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+
+            if (String.IsNullOrEmpty(Title))
+                Title = "&nbsp;";
         }
 
         protected Control FindControlHelper(string id)
@@ -335,7 +372,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             {
                 ctrl = base.FindControl(id);
                 Control nc = NamingContainer;
-                while ((ctrl==null) && (nc!=null))
+                while ((ctrl == null) && (nc != null))
                 {
                     ctrl = nc.FindControl(id);
                     nc = nc.NamingContainer;
@@ -375,9 +412,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// </summary>
         public void Show()
         {
-            ModalPopupExtender1.Show();
-            UpdatePanel1.Update();
-
+            ModalPopupExtender.Show();
+            UpdatePanel.Update();
             State = ShowState.Show;
         }
 
@@ -386,8 +422,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// </summary>
         public void Hide()
         {
-            ModalPopupExtender1.Hide();
-            UpdatePanel1.Update();
+            ModalPopupExtender.Hide();
+            UpdatePanel.Update();
             State = ShowState.Hide;
         }
 

@@ -52,53 +52,10 @@
                 </SectionContentTemplate>
             </clearcanvas:SectionPanel>
             
-            <%--
-            
-            <asp:Panel ID="Panel1" runat="server">
-                <table width="100%" cellpadding="0" cellspacing="0">
-                    <tr>
-                        <td>
-                            <strong>STUDY</strong>
-                        </td>
-                        <td align="center">
-                            
-                        </td>
-                    </tr>
-                </table>
-                <hr />
-            </asp:Panel>
-            <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelContainer">
-                <asp:Panel ID="Panel4" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
-                    <asp:Panel ID="Panel5" runat="server" CssClass="CSSToolbarContent">
-                        <clearcanvas:ToolbarButton ID="DeleteToolbarButton" runat="server" EnabledImageURL="~/images/icons/DeleteEnabled.png"
-                            DisabledImageURL="~/images/icons/DeleteDisabled.png" AlternateText="Delete this study"
-                            OnClick="DeleteToolbarButton_Click" />
-                    </asp:Panel>
-                </asp:Panel>
-            </asp:Panel>
-            <asp:Panel runat="server" ID="StudyDetailsViewPanel">
-                <table width="100%" cellpadding="0" cellspacing="0">
-                    <tr valign="top">
-                        <td width="50%">
-                            <clearcanvas:StudyDetailsView ID="StudyDetailsView1" runat="server"></clearcanvas:StudyDetailsView>
-                        </td>
-                        <td width="50%" valign="top" align="right">
-                        </td>
-                    </tr>
-                </table>
-            </asp:Panel>
-            
-            <br />
-            <asp:Panel ID="Panel2" runat="server">
-                <strong>SERIES</strong>
-            </asp:Panel>
-            <clearcanvas:SeriesGridView ID="SeriesGridView1" runat="server"></clearcanvas:SeriesGridView>
-            --%>
-            
             
         </asp:Panel>
                  
-        <clearcanvas:ConfirmationDialog ID="ConfirmDialog1" runat="server" />
+        <clearcanvas:ConfirmationDialog ID="ConfirmDialog" runat="server" />
         
     </ContentTemplate>
 </asp:UpdatePanel>

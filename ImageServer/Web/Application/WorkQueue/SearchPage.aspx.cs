@@ -30,8 +30,14 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Web.UI;
+using System.Web.UI.MobileControls;
+using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Common;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 {
@@ -48,11 +54,16 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Page.IsPostBack)
+                DataBind();
         }
 
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
+
+            ConfirmationContinueDialog.Confirmed += ConfirmationContinueDialog_Confirmed;
+            ScheduleWorkQueueDialog.OnWorkQueueUpdated += ScheduleWorkQueueDialog_OnWorkQueueUpdated;
             ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
                                                            {
                                                                SearchPanel panel =
@@ -67,5 +78,114 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         }
 
         #endregion Protected Methods
+
+
+        #region Public Methods
+
+        /// <summary>
+        /// Open a new page to display the work queue item details.
+        /// </summary>
+        /// <param name="itemKey"></param>
+        public void ViewWorkQueueItem(ServerEntityKey itemKey)
+        {
+            string url = String.Format("{0}?uid={1}", ResolveClientUrl("~/WorkQueue/Edit/ViewEdit.aspx"), itemKey.Key);
+
+            string script =
+            @"      
+                    //note: this will not work with IE 7 tabs. Users must enable [Always switch to new tab] in IE settings
+                    popupWin = window.open('@@URL@@'); 
+                    setTimeout(""popupWin.focus()"", 500)
+                    
+            ";
+
+            script = script.Replace("@@URL@@", url);
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), itemKey.Key.ToString(), script, true);
+        }
+
+        /// <summary>
+        /// Popup a dialog to reschedule the work queue item.
+        /// </summary>
+        /// <param name="itemKey"></param>
+        public void RescheduleWorkQueueItem(ServerEntityKey itemKey)
+        {
+            if (itemKey == null)
+                return;
+
+            WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
+
+            Model.WorkQueue item = adaptor.Get(itemKey);
+
+            if (item==null)
+            {
+                InformationDialog.Message = "The work queue item is no longer available.";
+                InformationDialog.Show();
+
+            }
+            else
+            {
+                bool prompt = false;
+                if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress"))
+                {
+                    // prompt the user first
+                    InformationDialog.Message = @"This item is being processed. It cannot be rescheduled at this point.<br>
+                                              Please retry again later";
+                    InformationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.INFORMATION;
+                    InformationDialog.Show();
+                    return;
+
+                }
+                else if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("Failed"))
+                {
+                    InformationDialog.Message = "This item has already failed. It cannot be rescheduled.";
+                    InformationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.INFORMATION;
+                    InformationDialog.Show();
+                    return;
+                }
+
+
+                ScheduleWorkQueueDialog.WorkQueueKeys = new List<ServerEntityKey>();
+                ScheduleWorkQueueDialog.WorkQueueKeys.Add(itemKey);
+
+                if (!prompt)
+                {
+                    ScheduleWorkQueueDialog.Show();
+                }
+            }
+        
+            
+
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
+
+        private void ScheduleWorkQueueDialog_OnWorkQueueUpdated(List<ClearCanvas.ImageServer.Model.WorkQueue> workqueueItems)
+        {
+            List<ServerEntityKey> updatedPartitions = new List<ServerEntityKey>();
+            foreach (Model.WorkQueue item in workqueueItems)
+            {
+                ServerEntityKey partitionKey = item.ServerPartitionKey;
+                if (!updatedPartitions.Contains(partitionKey))
+                {
+                    updatedPartitions.Add(partitionKey);
+
+                    ServerPartitionTabs.Update(partitionKey);
+
+                }
+
+            }
+
+
+        }
+
+        void ConfirmationContinueDialog_Confirmed(object data)
+        {
+            DataBind();
+            ScheduleWorkQueueDialog.Show();
+        }
+
+        #endregion Private Methods
     }
 }

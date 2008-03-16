@@ -76,6 +76,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey", value); }
         }
+        public WorkQueuePriorityEnum WorkQueuePriorityEnum
+        {
+            set { SubParameters["WorkQueuePriorityEnum"] = new EntityUpdateColumn<WorkQueuePriorityEnum>("WorkQueuePriorityEnum", value); }
+        }
         public WorkQueueStatusEnum WorkQueueStatusEnum
         {
             set { SubParameters["WorkQueueStatusEnum"] = new EntityUpdateColumn<WorkQueueStatusEnum>("WorkQueueStatusEnum", value); }

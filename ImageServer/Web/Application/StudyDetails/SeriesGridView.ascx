@@ -8,9 +8,10 @@
 </asp:ScriptManagerProxy>
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="Panel1" runat="server" CssClass="CSSGridViewPanelContainer">
-            <asp:Panel ID="Panel3" runat="server" CssClass="CSSGridViewPanelBorder" BorderWidth="0px">
-                <asp:Panel ID="Panel4" runat="server" CssClass="CSSGridViewPanelContent" Height="50%">
+        <asp:Table runat="server" ID="ListContainerTable" Height="100%" CellPadding="0" CellSpacing="0" Width="100%" >
+            <asp:TableRow VerticalAlign="top">
+                <asp:TableCell ID="ListContainerCell" CssClass="CSSGridViewPanelContent" VerticalAlign="top">
+            
                     <clearcanvas:GridView ID="GridView1" runat="server" 
                         AutoGenerateColumns="False" CssClass="CSSGridView" 
                         CellPadding="4" CaptionAlign="Top" Width="100%" 
@@ -60,8 +61,8 @@
                         <AlternatingRowStyle CssClass="CSSSeriesGridViewAlternatingRowStyle" />
                         <SelectedRowStyle  CssClass="CSSSeriesGridSelectedRowStyle" />
                     </clearcanvas:GridView>
-                </asp:Panel>
-            </asp:Panel>
-        </asp:Panel>
+            </asp:TableCell>
+        </asp:TableRow>
+    </asp:Table>
     </ContentTemplate>
 </asp:UpdatePanel>

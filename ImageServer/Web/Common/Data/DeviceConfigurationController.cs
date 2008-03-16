@@ -36,22 +36,11 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    /// <summary>
-    /// Defines the interface of a device configuration controller.
-    /// </summary>
-    public interface IDeviceConfigurationController
-    {
-        bool AddDevice(Device device);
-        bool DeleteDevice(Device device);
-        IList<Device> GetDevices(DeviceSelectCriteria criteria);
-        bool UpdateDevice(Device device);
-        IList<ServerPartition> GetServerPartitions();
-    }
 
     /// <summary>
     /// Device configuration screen controller.
     /// </summary>
-    public class DeviceConfigurationController : IDeviceConfigurationController
+    public class DeviceConfigurationController
     {
         #region Private members
 
@@ -73,15 +62,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// Add a device in the database.
         /// </summary>
         /// <param name="device"></param>
-        public bool AddDevice(Device device)
+        public Device AddDevice(Device device)
         {
             Platform.Log(LogLevel.Info, "Adding new device : AETitle = {0}", device.AeTitle);
 
-            bool ok = _adapter.AddDevice(device);
+            Device dev = _adapter.AddDevice(device);
 
-            Platform.Log(LogLevel.Info, "New device added : AETitle = {0}", device.AeTitle);
+            if (dev!=null)
+                Platform.Log(LogLevel.Info, "New device added :AE={0}, GUID={1}",dev.AeTitle, dev.GUID);
+            else
+                Platform.Log(LogLevel.Info, "Failed to add new device : AETitle={0}", dev.AeTitle);
 
-            return ok;
+            return dev;
         }
 
         /// <summary>

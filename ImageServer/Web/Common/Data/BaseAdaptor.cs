@@ -90,24 +90,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
         }
 
-        public bool Add(TColumns param)
+        public TServerEntity Add(TColumns param)
         {
+            TServerEntity newEntity = null;
             try
             {
                 using (IUpdateContext context = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
                 {
                     TIEntity update = context.GetBroker<TIEntity>();
 
-                    update.Insert(param);
+                    newEntity = update.Insert(param);
 
                     context.Commit();
                 }
-                return true;
+                return newEntity;
             }
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Error, e, "Unexpected exception adding {0}", typeof (TServerEntity));
-                return false;
+                return null;
             }
         }
 

@@ -100,6 +100,27 @@ INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
 GO
 
 
+--  WorkQueuePriorityEnum inserts
+INSERT INTO [ImageServer].[dbo].WorkQueuePriorityEnum
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),100,'Low','Low','Low priority')
+GO
+
+INSERT INTO [ImageServer].[dbo].WorkQueuePriorityEnum
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),200,'Medium','Medium','Medium priority')
+GO
+
+INSERT INTO [ImageServer].[dbo].WorkQueuePriorityEnum
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),300,'High','High','High priority')
+GO
+
+
+
 -- ServerRuleApplyTimeEnum inserts
 INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])

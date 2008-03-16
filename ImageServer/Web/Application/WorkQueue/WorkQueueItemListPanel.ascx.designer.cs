@@ -12,47 +12,65 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
     
     
     /// <summary>
-    /// WorkQueueSearchResultPanel class.
+    /// WorkQueueItemListPanel class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class WorkQueueSearchResultPanel {
+    public partial class WorkQueueItemListPanel {
         
         /// <summary>
-        /// Panel1 control.
+        /// UpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
+        protected global::System.Web.UI.UpdatePanel UpdatePanel;
         
         /// <summary>
-        /// Panel3 control.
+        /// ListContainerTable control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel3;
+        protected global::System.Web.UI.WebControls.Table ListContainerTable;
         
         /// <summary>
-        /// Panel4 control.
+        /// ListContainerCell control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel4;
+        protected global::System.Web.UI.WebControls.TableCell ListContainerCell;
         
         /// <summary>
-        /// GridView1 control.
+        /// WorkQueueListView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView GridView1;
+        protected global::System.Web.UI.WebControls.GridView WorkQueueListView;
+        
+        /// <summary>
+        /// RefreshTimer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.Timer RefreshTimer;
+        
+        /// <summary>
+        /// ConfirmationDialog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmationDialog;
     }
 }

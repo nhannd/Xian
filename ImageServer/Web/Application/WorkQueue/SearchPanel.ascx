@@ -1,16 +1,37 @@
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="SearchPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.WorkQueue.SearchPanel" %>
-<%@ Register Src="WorkQueueSearchResultPanel.ascx" TagName="WorkQueueSearchResultPanel" TagPrefix="clearcanvas" %>
+<%@ Register Src="WorkQueueItemListPanel.ascx" TagName="WorkQueueSearchResultPanel" TagPrefix="clearcanvas" %>
+<%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog" TagPrefix="clearcanvas" %>
 <%@ Register Src="~/Common/GridPager.ascx" TagName="GridPager" TagPrefix="clearcanvas" %>
-
+<%@ Register TagPrefix="clearcanvas" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" 
+    Assembly="ClearCanvas.ImageServer.Web.Common" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="AjaxControlToolkit" %>
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="PagePanel" runat="server">
             <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0" BorderWidth="0px">
                 <asp:TableHeaderRow>
-                    <asp:TableHeaderCell HorizontalAlign="left" Width="100%" />
+                    <asp:TableHeaderCell HorizontalAlign="left" Width="100%">
+                        <asp:Panel ID="Panel2" runat="server" CssClass="CSSToolbarPanelContainer">
+                                <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
+                                    <clearcanvas:ToolbarButton
+                                            ID="ViewToolbarButton1" runat="server" 
+                                            EnabledImageURL="~/images/icons/OpenEnabled.png" 
+                                            DisabledImageURL="~/images/icons/OpenDisabled.png"
+                                            OnClick="ViewButton_Click" AlternateText="View Details" 
+                                            />
+                                     <clearcanvas:ToolbarButton
+                                            ID="RescheduleToolbarButton" runat="server" 
+                                            EnabledImageURL="~/images/icons/ScheduleEnabled.png" 
+                                            DisabledImageURL="~/images/icons/ScheduleDisabled.png"
+                                            OnClick="RescheduleButton_Click" AlternateText="Reschedule" 
+                                            />
+                                            
+                                    </asp:Panel>
+                                </asp:Panel>
+                            </asp:Panel>
+                    </asp:TableHeaderCell>
                     <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom">
                         <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
                             <asp:Panel ID="Panel5" runat="server" CssClass="CSSFilterPanelBorder">
@@ -63,7 +84,12 @@
                 </asp:TableHeaderRow>
                 <asp:TableRow>
                     <asp:TableCell ColumnSpan="2">
-                        <clearcanvas:WorkQueueSearchResultPanel ID="WorkQueueSearchResultPanel" runat="server"></clearcanvas:WorkQueueSearchResultPanel>
+                        <asp:Panel runat="server" CssClass="CSSGridViewPanelContainer">
+                                <asp:Panel runat="server" CssClass="CSSGridViewPanelBorder" >
+                                    <clearcanvas:WorkQueueSearchResultPanel ID="workQueueItemListPanel" Height="500px" AllowPaging="true" PageSize="30" runat="server"></clearcanvas:WorkQueueSearchResultPanel>
+                                </asp:Panel>                        
+                        </asp:Panel>
+                        
                     </asp:TableCell>
                 </asp:TableRow>
                  <asp:TableRow>
@@ -75,4 +101,6 @@
         </asp:Panel>
     </ContentTemplate>
 </asp:UpdatePanel>
+
+<clearcanvas:ConfirmationDialog runat="server" ID="ConfirmationDialog" />
 

@@ -173,12 +173,12 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails {
         protected global::ClearCanvas.ImageServer.Web.Application.StudyDetails.SeriesGridView SeriesGridView;
         
         /// <summary>
-        /// ConfirmDialog1 control.
+        /// ConfirmDialog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmDialog1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmDialog;
     }
 }

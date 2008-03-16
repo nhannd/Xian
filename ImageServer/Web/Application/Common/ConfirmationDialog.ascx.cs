@@ -49,14 +49,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// </summary>
         public enum MessageTypeEnum
         {
-            NONE,
-            WARNING
+            YESNO,
+            OKCANCEL,
+            INFORMATION,
+            ERROR,
+            NONE
         };
 
         #region Private Members
-        private object _data;
         private string _message;
-        private MessageTypeEnum _type = MessageTypeEnum.NONE;
+        private string _title;
+        private MessageTypeEnum _type = MessageTypeEnum.INFORMATION;
 
         #endregion Private Members
 
@@ -69,10 +72,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         {
             set
             {
-                _data = value;
-                ViewState["ConfirmDialog_Data"] = value;
+                ViewState[ClientID+"_Data"] = value;
             }
-            get { return _data; }
+            get
+            {
+                return ViewState[ClientID + "_Data"];
+            }
         }
 
         /// <summary>
@@ -80,8 +85,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// </summary>
         public MessageTypeEnum MessageType
         {
-            set { _type = value; }
-            get { return _type; }
+            set { 
+                ViewState[ClientID + "_MsgType"] = value;
+            }
+            get
+            {
+                if (ViewState[ClientID + "_MsgType"] == null)
+                    return MessageTypeEnum.NONE;
+                else
+                    return (MessageTypeEnum) ViewState[ClientID + "_MsgType"];
+            }
+        }
+
+        /// <summary>
+        /// Sets/Gets the a background css 
+        /// </summary>
+        public string BackgroundCSS
+        {
+            set {  ModalDialog.BackgroundCSS = value; }
+            get { return ModalDialog.BackgroundCSS; }
         }
 
 
@@ -90,9 +112,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// </summary>
         public string Message
         {
-            set { _message = value; MessageLabel.Text = _message; }
+            set { 
+                _message = value; 
+                MessageLabel.Text = _message; }
             get { 
                 return _message;
+            }
+        }
+
+		/// <summary>
+        /// Sets/Gets the title of the dialog box.
+        /// </summary>
+        public string Title
+        {
+            get { return _title; }
+            set { 
+                _title = value;
+                ModalDialog.Title = value;
             }
         }
 
@@ -117,25 +153,68 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
         #region Protected Methods
 
-        protected void Page_Load(object sender, EventArgs e)
+        protected override void OnInit(EventArgs e)
         {
-            if (Page.IsPostBack)
-            {
-                // Reload the data
-                _data = ViewState["ConfirmDialog_Data"];
-            }
+            base.OnInit(e);
         }
 
+        protected override void OnPreRender(EventArgs e)
+        {
+            YesButton.Visible = false;
+            NoButton.Visible = false;
+            OKButton.Visible = false;
+            CancelButton.Visible = false;
+
+            switch (MessageType)
+            {
+                case MessageTypeEnum.ERROR:
+                    OKButton.Visible = true;
+                    break;
+
+                case MessageTypeEnum.INFORMATION:
+                    OKButton.Visible = true;
+                    break;
+
+                case MessageTypeEnum.OKCANCEL:
+                    OKButton.Visible = true;
+                    CancelButton.Visible = true;
+                    break;
+
+                case MessageTypeEnum.YESNO:
+                    YesButton.Visible = true;
+                    NoButton.Visible = true;
+                    break;
+
+                default:
+                    break;
+            }
+
+            base.OnPreRender(e);
+        }
         
         protected void YesButton_Click(object sender, EventArgs e)
         {
             if (Confirmed != null)
-                Confirmed(_data);
+                Confirmed(Data);
 
             Close();
         }
 
+
         protected void NoButton_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        protected void OKButton_Click(object sender, EventArgs e)
+        {
+            if (Confirmed != null)
+                Confirmed(Data);
+
+            Close();
+        }
+
+        protected void CancelButton_Click(object sender, EventArgs e)
         {
             Close();
         }
@@ -150,7 +229,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// </summary>
         public void Close()
         {
-            ModalDialog1.Hide();
+            ModalDialog.Hide();
 
         }
 
@@ -159,18 +238,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// </summary>
         public void Show()
         {
-            switch (_type)
-            {
-                case MessageTypeEnum.NONE:
-                    IconImage.Visible = false;
-                    break;
-
-                case MessageTypeEnum.WARNING:
-                    IconImage.ImageUrl = "~/images/icons/icon_warning.png";
-                    break;
-            }
-
-            ModalDialog1.Show();
+            
+            ModalDialog.Show();
         }
 
         #endregion Public Methods

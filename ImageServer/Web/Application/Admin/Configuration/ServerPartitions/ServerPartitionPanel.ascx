@@ -10,7 +10,7 @@
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="Panel1" runat="server" Height="100%">
-            <asp:Table ID="Table" runat="server" Width="100%" Height="100%" CellPadding="0" CellSpacing="0"
+            <asp:Table ID="Table" runat="server" Width="100%" Height="100%" CellPadding="0"
                 BorderWidth="0px">
                 <asp:TableHeaderRow VerticalAlign="top">
                     <asp:TableHeaderCell HorizontalAlign="left" VerticalAlign="bottom" Width="100%">
@@ -74,7 +74,11 @@
                 </asp:TableHeaderRow>
                 <asp:TableRow VerticalAlign="Top">
                     <asp:TableCell ColumnSpan="2">
-                        <uc2:ServerPartitionGridPanel ID="ServerPartitionGridPanel" runat="server" />
+                        <asp:Panel ID="Panel7" runat="server" CssClass="CSSGridViewPanelContainer" >
+                                <asp:Panel ID="Panel8" runat="server" CssClass="CSSGridViewPanelBorder" >
+                                    <uc2:ServerPartitionGridPanel ID="ServerPartitionGridPanel" runat="server" Height="500px"/>
+                                </asp:Panel>                        
+                        </asp:Panel>
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableFooterRow VerticalAlign="bottom">

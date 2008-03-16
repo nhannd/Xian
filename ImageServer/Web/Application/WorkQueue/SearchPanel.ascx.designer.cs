@@ -47,6 +47,42 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
         protected global::System.Web.UI.WebControls.Table Table;
         
         /// <summary>
+        /// Panel2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel2;
+        
+        /// <summary>
+        /// Panel3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel3;
+        
+        /// <summary>
+        /// ViewToolbarButton1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton ViewToolbarButton1;
+        
+        /// <summary>
+        /// RescheduleToolbarButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton RescheduleToolbarButton;
+        
+        /// <summary>
         /// FilterPanel control.
         /// </summary>
         /// <remarks>
@@ -209,13 +245,13 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
         protected global::AjaxControlToolkit.CalendarExtender CalendarExtender1;
         
         /// <summary>
-        /// WorkQueueSearchResultPanel control.
+        /// workQueueItemListPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.WorkQueueSearchResultPanel WorkQueueSearchResultPanel;
+        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.WorkQueueItemListPanel workQueueItemListPanel;
         
         /// <summary>
         /// GridPager1 control.
@@ -225,5 +261,14 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPager1;
+        
+        /// <summary>
+        /// ConfirmationDialog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmationDialog;
     }
 }

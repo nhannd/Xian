@@ -12,7 +12,7 @@
     </Services>
 </asp:ScriptManagerProxy>
 
-<clearcanvas:ModalDialog ID="ModalDialog1" runat="server" BackgroundCSS="CSSModalBackground" Width="700px">
+<clearcanvas:ModalDialog ID="ModalDialog" runat="server" BackgroundCSS="CSSModalBackground" Width="700px">
     <ContentTemplate>
         <asp:Panel runat="server">
             <ajaxToolkit:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
@@ -27,7 +27,7 @@
                                         <table width="100%">
                                             <tr>
                                                 <td width="100%">
-                                                    <asp:Label ID="Label1" runat="server" Text="Name" CssClass="CSSTextLabel"></asp:Label><br />
+                                                    <asp:Label ID="RuleNameLabel" runat="server" Text="Name" CssClass="CSSTextLabel"></asp:Label><br />
                                                     <asp:TextBox ID="RuleNameTextBox" runat="server" Width="100%" ValidationGroup="vg1"></asp:TextBox>
                                                 </td>
                                                 <td>
@@ -138,7 +138,7 @@
                                 Text="Add" Width="77px" />
                         </td>
                         <td align="center">
-                            <asp:Button ID="CancelButton" runat="server" Text="Cancel" />
+                            <asp:Button ID="CancelButton" runat="server" Text="Cancel" OnClick="CancelButton_Click" />
                         </td>
                     </tr>
                 </table>

@@ -20,6 +20,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
     public partial class ServerPartitionGridPanel {
         
         /// <summary>
+        /// ContainerTable control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Table ContainerTable;
+        
+        /// <summary>
         /// PartitionGridView control.
         /// </summary>
         /// <remarks>

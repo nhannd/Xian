@@ -1,9 +1,11 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems.FileSystemsGridView"
     Codebehind="FileSystemsGridView.ascx.cs" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
-<asp:Panel ID="Panel1" runat="server" CssClass="CSSGridViewPanelContainer">
-    <asp:Panel ID="Panel3" runat="server" CssClass="CSSGridViewPanelBorder">
-        <asp:Panel ID="Panel4" runat="server" CssClass="CSSGridViewPanelContent">
+
+<asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
+    Width="100%">
+    <asp:TableRow VerticalAlign="top">
+        <asp:TableCell CssClass="CSSGridViewPanelContent" VerticalAlign="top">
             <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="CSSGridView"
                 Width="100%" OnRowDataBound="GridView1_RowDataBound" OnDataBound="GridView1_DataBound"
                 OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
@@ -83,6 +85,6 @@
                 <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
                 <HeaderStyle CssClass="CSSGridHeader" />
             </asp:GridView>
-        </asp:Panel>
-    </asp:Panel>
-</asp:Panel>
+        </asp:TableCell>
+    </asp:TableRow>
+</asp:Table>

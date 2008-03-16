@@ -1,8 +1,13 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ServerPartitionGridPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions.ServerPartitionGridPanel" %>
-<asp:Panel runat="server" CssClass="CSSGridViewPanelContainer">
-    <asp:Panel runat="server" CssClass="CSSGridViewPanelBorder">
-        <asp:Panel runat="server" CssClass="CSSGridViewPanelContent">
+
+
+<asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
+    Width="100%">
+    <asp:TableRow VerticalAlign="top">
+        <asp:TableCell CssClass="CSSGridViewPanelContent" VerticalAlign="top">
+        
+        
             <asp:GridView ID="PartitionGridView" runat="server" AutoGenerateColumns="False" CssClass="CSSGridView"
                 Width="100%" OnRowDataBound="PartitionGridView_RowDataBound" AllowSorting="True"
                 PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
@@ -62,6 +67,6 @@
                 <HeaderStyle CssClass="CSSGridHeader" />
                 <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
             </asp:GridView>
-        </asp:Panel>
-    </asp:Panel>
-</asp:Panel>
+        </asp:TableCell>
+    </asp:TableRow>
+</asp:Table>

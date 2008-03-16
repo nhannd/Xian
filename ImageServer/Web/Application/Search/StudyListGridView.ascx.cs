@@ -51,7 +51,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         private IList<Model.Study> _studies;
         private ServerPartition _partition;
         private StudyController _controller = new StudyController();
-                    
+
+        private Unit _height;
         #endregion Private members
 
         #region protected properties
@@ -123,7 +124,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             }
         }
 
-       
+        /// <summary>
+        /// Gets/Sets the height of the study list panel
+        /// </summary>
+        public Unit Height
+        {
+            get {
+                if (ContainerTable != null)
+                    return ContainerTable.Height;
+                else
+                    return _height; 
+            }
+            set
+            {
+                _height = value;
+                if (ContainerTable != null)
+                    ContainerTable.Height = value;
+            }
+        }
+
         #endregion
 
         #region Events
@@ -159,6 +178,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             base.OnInit(e);
 
             // Set up the grid
+            if (Height != Unit.Empty)
+                ContainerTable.Height = _height;
 
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.

@@ -193,18 +193,18 @@
 /* Container for the gridview */
 .CSSGridViewPanelContainer
 {
-	margin-top:3px;
+
 }
 
 /* border of the gridview */
 .CSSGridViewPanelBorder
 {
+	height:100%;
 }
 
 /* gridview content panel */
 .CSSGridViewPanelContent
 {
-	height:600px;
 	padding:1px;
 }
 

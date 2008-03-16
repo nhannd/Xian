@@ -20,13 +20,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
     public partial class AddEditServerRuleDialog {
         
         /// <summary>
-        /// ModalDialog1 control.
+        /// ModalDialog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog;
         
         /// <summary>
         /// ServerPartitionTabContainer control.
@@ -65,13 +65,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         protected global::System.Web.UI.HtmlControls.HtmlTable Table1;
         
         /// <summary>
-        /// Label1 control.
+        /// RuleNameLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label1;
+        protected global::System.Web.UI.WebControls.Label RuleNameLabel;
         
         /// <summary>
         /// RuleNameTextBox control.

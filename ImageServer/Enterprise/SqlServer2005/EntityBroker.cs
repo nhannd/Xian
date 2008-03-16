@@ -595,7 +595,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         /// <returns></returns>
         public TServerEntity Load(ServerEntityKey entityRef)
         {
-            TServerEntity row = new TServerEntity();
+            TServerEntity row = null; // new TServerEntity();
 
             SqlDataReader myReader = null;
             SqlCommand command = null;
@@ -624,6 +624,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     {
                         myReader.Read();
 
+                        row = new TServerEntity();
                         PopulateEntity(myReader, row, typeof (TServerEntity));
 
                         return row;

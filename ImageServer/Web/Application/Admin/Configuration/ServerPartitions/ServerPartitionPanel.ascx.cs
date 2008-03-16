@@ -121,6 +121,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             GridPager.GetRecordCountMethod = delegate { return Partitions.Count; };
         }
 
+        public override void DataBind()
+        {
+            LoadData();
+            base.DataBind();
+        }
+
+
         protected void Clear()
         {
             AETitleFilter.Text = "";
@@ -161,35 +168,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 _theController.GetPartitions(criteria);
         }
 
-        #endregion Protected Methods
-
-        #region Public Methods
-
-        public void UpdateUI()
-        {
-            LoadData();
-            ServerPartitionGridPanel.UpdateUI();
-
-            ServerPartition parition = ServerPartitionGridPanel.SelectedPartition;
-            if (parition == null)
-            {
-                // no Partition being selected
-                EditToolbarButton.Enabled = false;
-            }
-            else
-            {
-                EditToolbarButton.Enabled = true;
-            }
-
-            UpdatePanel1.Update();
-        }
-
-        #endregion Public methods
-
         protected void FilterButton_Click(object sender, ImageClickEventArgs e)
         {
-            LoadData();
-            UpdateUI();
+
         }
 
         protected void AddButton_Click(object sender, ImageClickEventArgs e)
@@ -215,5 +196,33 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             LoadData();
             UpdateUI();
         }
+
+        #endregion Protected Methods
+
+        #region Public Methods
+
+        public void UpdateUI()
+        {
+            LoadData();
+            ServerPartitionGridPanel.UpdateUI();
+
+            ServerPartition parition = ServerPartitionGridPanel.SelectedPartition;
+            if (parition == null)
+            {
+                // no Partition being selected
+                EditToolbarButton.Enabled = false;
+            }
+            else
+            {
+                EditToolbarButton.Enabled = true;
+            }
+
+            UpdatePanel1.Update();
+        }
+
+        #endregion Public methods
+
+       
+       
     }
 }

@@ -75,6 +75,9 @@ END
 GO
 SET ANSI_PADDING OFF
 GO
+
+
+
 /****** Object:  Table [dbo].[StudyStatusEnum]    Script Date: 01/09/2008 15:04:16 ******/
 SET ANSI_NULLS ON
 GO
@@ -272,6 +275,33 @@ END
 GO
 SET ANSI_PADDING OFF
 GO
+
+
+/****** Object:  Table [dbo].[WorkQueuePriorityEnum]    Script Date: 03/12/2008 14:30:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[[WorkQueuePriorityEnum]]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[WorkQueuePriorityEnum](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_WorkQueuePriorityEnum_GUID]  DEFAULT (newid()),
+	[Enum] [smallint] NOT NULL,
+	[Lookup] [varchar](32) NOT NULL,
+	[Description] [nvarchar](32) NOT NULL,
+	[LongDescription] [nvarchar](128) NOT NULL,
+ CONSTRAINT [PK_WorkQueuePriorityEnum] PRIMARY KEY CLUSTERED 
+(
+	[Enum] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [STATIC]
+) ON [STATIC]
+END
+GO
+SET ANSI_PADDING OFF
+GO
+
 /****** Object:  Table [dbo].[DevicePreferredTransferSyntax]    Script Date: 01/09/2008 15:03:27 ******/
 SET ANSI_NULLS ON
 GO
@@ -335,7 +365,8 @@ CREATE TABLE [dbo].[WorkQueue](
 	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
 	[DeviceGUID] [uniqueidentifier] NULL,
 	[WorkQueueTypeEnum] [smallint] NOT NULL,
-	[WorkQueueStatusEnum] [smallint] NOT NULL,
+	[WorkQueueStatusEnum] [smallint] NOT NULL, 
+	[WorkQueuePriorityEnum] [smallint] NOT NULL CONSTRAINT [DF_WorkQueue_WorkQueuePriorityEnum]  DEFAULT ((200)),
 	[ProcessorID] [varchar](256) NULL,
 	[ExpirationTime] [datetime] NULL,
 	[ScheduledTime] [datetime] NOT NULL,
@@ -364,6 +395,14 @@ CREATE NONCLUSTERED INDEX [IX_WorkQueue_StudyStorageGUID] ON [dbo].[WorkQueue]
 	[StudyStorageGUID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
 GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[WorkQueue]') AND name = N'IX_WorkQueue_WorkQueuePriorityEnum')
+CREATE NONCLUSTERED INDEX [IX_WorkQueue_WorkQueuePriorityEnum] ON [dbo].[WorkQueue] 
+(
+	[WorkQueuePriorityEnum] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [INDEXES]
+GO
+
 /****** Object:  Table [dbo].[Series]    Script Date: 01/09/2008 15:03:48 ******/
 SET ANSI_NULLS ON
 GO
@@ -770,6 +809,8 @@ CREATE TABLE [dbo].[Filesystem](
 ) ON [STATIC]
 END
 GO
+
+
 /****** Object:  ForeignKey [FK_Device_ServerPartition]    Script Date: 01/09/2008 15:03:26 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Device_ServerPartition]') AND parent_object_id = OBJECT_ID(N'[dbo].[Device]'))
 ALTER TABLE [dbo].[Device]  WITH CHECK ADD  CONSTRAINT [FK_Device_ServerPartition] FOREIGN KEY([ServerPartitionGUID])
@@ -994,6 +1035,12 @@ REFERENCES [dbo].[WorkQueueTypeEnum] ([Enum])
 GO
 ALTER TABLE [dbo].[WorkQueue] CHECK CONSTRAINT [FK_WorkQueue_WorkQueueTypeEnum]
 GO
+/****** Object:  ForeignKey [FK_WorkQueue_WorkQueuePriorityEnum]    Script Date: 01/09/2008 15:04:30 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueue_WorkQueuePriorityEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueue]'))
+ALTER TABLE [dbo].[WorkQueue]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueue_WorkQueuePriorityEnum] FOREIGN KEY([WorkQueuePriorityEnum])
+REFERENCES [dbo].[WorkQueuePriorityEnum] ([Enum])
+GO
+
 /****** Object:  ForeignKey [FK_WorkQueueUid_WorkQueue]    Script Date: 01/09/2008 15:04:30 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueueUid_WorkQueue]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueueUid]'))
 ALTER TABLE [dbo].[WorkQueueUid]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueueUid_WorkQueue] FOREIGN KEY([WorkQueueGUID])
@@ -1001,3 +1048,4 @@ REFERENCES [dbo].[WorkQueue] ([GUID])
 GO
 ALTER TABLE [dbo].[WorkQueueUid] CHECK CONSTRAINT [FK_WorkQueueUid_WorkQueue]
 GO
+

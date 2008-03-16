@@ -64,6 +64,11 @@ namespace ClearCanvas.ImageServer.Enterprise
             get { return _name; }
         }
 
+        public ServerEntityKey GUID
+        {
+            get { return _key; }
+        }
+
         #endregion
 
         #region Public Methods

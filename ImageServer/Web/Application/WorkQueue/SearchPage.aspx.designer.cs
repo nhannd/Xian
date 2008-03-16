@@ -29,13 +29,13 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
         protected global::System.Web.UI.WebControls.Panel PageContent;
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// UpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        protected global::System.Web.UI.UpdatePanel UpdatePanel;
         
         /// <summary>
         /// ServerPartitionTabs control.
@@ -54,5 +54,32 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label1;
+        
+        /// <summary>
+        /// ConfirmationContinueDialog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmationContinueDialog;
+        
+        /// <summary>
+        /// InformationDialog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog InformationDialog;
+        
+        /// <summary>
+        /// ScheduleWorkQueueDialog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.ScheduleWorkQueueDialog ScheduleWorkQueueDialog;
     }
 }

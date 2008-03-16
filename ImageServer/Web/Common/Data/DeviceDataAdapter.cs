@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// </summary>
         /// <param name="newDev"></param>
         /// <returns></returns>
-        public bool AddDevice(Device newDev)
+        public Device AddDevice(Device newDev)
         {
             DeviceUpdateColumns param = new DeviceUpdateColumns();
             param.ServerPartitionKey = newDev.ServerPartitionKey;

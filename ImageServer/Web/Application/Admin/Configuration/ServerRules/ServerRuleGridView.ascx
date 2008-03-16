@@ -1,11 +1,14 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ServerRuleGridView.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRules.ServerRuleGridView" %>
-<asp:Panel ID="Panel2" runat="server" CssClass="CSSGridViewPanelContainer">
-    <asp:Panel ID="Panel3" runat="server" CssClass="CSSGridViewPanelBorder">
-        <asp:Panel ID="Panel4" runat="server" CssClass="CSSGridViewPanelContent">
+
+<asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
+    Width="100%">
+    <asp:TableRow VerticalAlign="top">
+        <asp:TableCell CssClass="CSSGridViewPanelContent" VerticalAlign="top">
+        
             <asp:GridView ID="GridView" runat="server" AutoGenerateColumns="False" CssClass="CSSGridView"
                 Width="100%" OnRowDataBound="GridView_RowDataBound" OnDataBound="GridView_DataBound"
-                OnSelectedIndexChanged="GridView_SelectedIndexChanged" OnSelectedIndexChanging="GridView_SelectedIndexChanging"
+                OnSelectedIndexChanged="GridView_SelectedIndexChanged"
                 OnPageIndexChanging="GridView1_PageIndexChanging" PageSize="20" AllowSorting="True"
                 CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
                 <Columns>
@@ -69,6 +72,6 @@
                 <PagerTemplate>
                 </PagerTemplate>
             </asp:GridView>
-        </asp:Panel>
-    </asp:Panel>
-</asp:Panel>
+        </asp:TableCell>
+    </asp:TableRow>
+</asp:Table>

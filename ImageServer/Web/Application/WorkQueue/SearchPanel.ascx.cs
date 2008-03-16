@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -42,6 +43,7 @@ using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 {
+
     /// <summary>
     /// WorkQueue Search Panel
     /// </summary>
@@ -53,6 +55,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         private WorkQueueController _searchController;
         private SearchPage _enclosingPage;
 
+        private WorkQueueItemCollection _workQueueItems;
         #endregion Private Members
 
 
@@ -78,6 +81,15 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             set { _enclosingPage = value; }
         }
 
+        /// <summary>
+        /// Gets the <see cref="WorkQueueItemCollection"/> associated with this search panel.
+        /// </summary>
+        public WorkQueueItemCollection WorkQueueItems
+        {
+            get { return _workQueueItems; }
+            set { _workQueueItems = value; }
+        }
+
         #endregion Public Properties
 
         #region Protected Methods
@@ -97,10 +109,10 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             // setup child controls
             GridPager1.ItemName = "Work Item";
             GridPager1.PuralItemName = "Work Items";
-            GridPager1.Target = WorkQueueSearchResultPanel.WorkQueueListControl;
+            GridPager1.Target = workQueueItemListPanel.WorkQueueItemListControl;
             GridPager1.GetRecordCountMethod = delegate
                                                   {
-                                                      return WorkQueueSearchResultPanel.WorkQueues == null ? 0 : WorkQueueSearchResultPanel.WorkQueues.Count;
+                                                      return workQueueItemListPanel.WorkQueueItems == null ? 0 : workQueueItemListPanel.WorkQueueItems.Count;
                                                   };
             
         }
@@ -114,7 +126,8 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         {
             // reload the data
             // LoadWorkQueues(); NOTE: This line is commented out because the event is fired after the page and the list have been reloaded. There's no point of loading the lists again since the data is not changed in this scenario
-            WorkQueueSearchResultPanel.PageIndex = 0;
+            workQueueItemListPanel.PageIndex = 0;
+            DataBind();
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -153,11 +166,10 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
                 StatusDropDownList.Items.Add(new ListItem(s.Description, s.Lookup));
             StatusDropDownList.SelectedIndex = prevSelectedIndex;
 
-            if (WorkQueueSearchResultPanel.IsPostBack)
-                LoadWorkQueues();
-            WorkQueueSearchResultPanel.DataBind();
+            
            
         }
+
 
         protected void LoadWorkQueues()
         {
@@ -185,21 +197,79 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
                 IList<Model.WorkQueue> list = _searchController.FindWorkQueue(parameters);
 
-                WorkQueueSearchResultPanel.WorkQueues = list;
+                WorkQueueItems = new WorkQueueItemCollection();
+                foreach(Model.WorkQueue item in list)
+                {
+                    WorkQueueItems.Add(WorkQueueSummaryAssembler.CreateWorkQueueSummary(item));
+                }
+
+                workQueueItemListPanel.WorkQueueItems = WorkQueueItems;
                
             }
             
-            
-           
+        }
+
+        protected void ViewButton_Click(object sender, ImageClickEventArgs e)
+        {
+            WorkQueueSummary item = workQueueItemListPanel.SelectedWorkQueueItem;
+            if (item != null)
+            {
+               EnclosingPage.ViewWorkQueueItem(item.WorkQueueGuid);
+            }
             
         }
 
+        protected void RescheduleButton_Click(object sender, ImageClickEventArgs e)
+        {
+            
+            WorkQueueSummary item = workQueueItemListPanel.SelectedWorkQueueItem;
+            if (item != null)
+            {
+               EnclosingPage.RescheduleWorkQueueItem(item.WorkQueueGuid);
+            }
+            else 
+            {
+                // the item no longer exist on the list... 
+                ConfirmationDialog.Title = "";
+                ConfirmationDialog.BackgroundCSS = "";
+                ConfirmationDialog.Message = "The item you selected is no longer on the list. Please refresh the list.";
+                ConfirmationDialog.MessageType =
+                    ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.INFORMATION;
+                ConfirmationDialog.Show();
+            }
+        }
 
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
 
+            WorkQueueSummary selectedItem = workQueueItemListPanel.SelectedWorkQueueItem;
+            if (selectedItem==null)
+            {
+                ViewToolbarButton1.Enabled = false;
+                RescheduleToolbarButton.Enabled = false;
+            }
+            else
+            {
+                ViewToolbarButton1.Enabled = true;
+                RescheduleToolbarButton.Enabled = true;
+            }
+            
+        }
+            
         #endregion Protected Methods
+
 
         #region Public Methods
 
+        public override void DataBind()
+        {
+
+            if (workQueueItemListPanel.IsPostBack)
+                LoadWorkQueues();
+
+            base.DataBind();
+        }
 
         #endregion
     }

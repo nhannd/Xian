@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.DateTime _scheduledTime;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey;
+        private WorkQueuePriorityEnum _workQueuePriorityEnum;
         private WorkQueueStatusEnum _workQueueStatusEnum;
         private WorkQueueTypeEnum _workQueueTypeEnum;
         #endregion
@@ -105,6 +106,11 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _studyStorageKey; }
         set { _studyStorageKey = value; }
+        }
+        public WorkQueuePriorityEnum WorkQueuePriorityEnum
+        {
+        get { return _workQueuePriorityEnum; }
+        set { _workQueuePriorityEnum = value; }
         }
         public WorkQueueStatusEnum WorkQueueStatusEnum
         {

@@ -122,8 +122,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             ScriptControlDescriptor desc = new ScriptControlDescriptor("ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton", ClientID);
             desc.AddProperty("EnabledImageUrl", Page.ResolveClientUrl(EnabledImageURL));
             desc.AddProperty("DisabledImageUrl", Page.ResolveClientUrl(DisabledImageURL));
-            if (!String.IsNullOrEmpty(OnClientClick))
-                desc.AddEvent("onClientClick", OnClientClick);
+            
             
             if (EnabledHoverImageURL!=null)
                 desc.AddProperty("HoverImageUrl", Page.ResolveClientUrl(EnabledHoverImageURL));

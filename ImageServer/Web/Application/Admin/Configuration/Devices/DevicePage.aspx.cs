@@ -76,10 +76,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                                                        else
                                                        {
                                                            // Create new device in the database
-                                                           if (_controller.AddDevice(dev))
+                                                           Device newDev = _controller.AddDevice(dev);
+                                                           if (newDev!=null)
                                                            {
                                                                DevicePanel panel =
-                                                                   _mapDevicePanel[dev.ServerPartition.GetKey()];
+                                                                   _mapDevicePanel[newDev.ServerPartition.GetKey()];
                                                                panel.UpdateUI();
                                                            }
                                                        }
@@ -163,14 +164,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
         public void OnDeleteDevice(DeviceConfigurationController controller, ServerPartition serverPartition, Device dev)
         {
-            //ConfirmDialog1.Message =
-            //    string.Format("Are you sure to remove {0} from partition {1}?", dev.AeTitle, serverPartition.AeTitle);
-            //ConfirmDialog1.MessageType = ConfirmDialog.MessageTypeEnum.WARNING;
-            //ConfirmDialog1.Data = dev;
-            //ConfirmDialog1.Show();
-
             ConfirmationDialog1.Message = string.Format("Are you sure to remove {0} from partition {1}?", dev.AeTitle, serverPartition.AeTitle);
-            ConfirmationDialog1.MessageType = ConfirmationDialog.MessageTypeEnum.WARNING;
+            ConfirmationDialog1.MessageType = ConfirmationDialog.MessageTypeEnum.YESNO;
             ConfirmationDialog1.Data = dev;
             ConfirmationDialog1.Show();
         }

@@ -40,17 +40,23 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
             
             this._loadClientState();
             
-            // add click and double-click handlers on each row
-            for(i = 0; i < this.get_element().rows.length; i++)
+            if (this.get_element().rows!=null)
             {
-                var row =this.get_element().rows[i];
-                $addHandlers(row, {
-                                    'click' : this._onCellClick,
-                                    'dblclick' : this._onCellDblClick,
-                                    'contextmenu' : this._onContextMenuButtonClick
-                                  }, 
-                             this);
+            
+                // add click and double-click handlers on each row
+                for(i = 0; i < this.get_element().rows.length; i++)
+                {
+                    var row =this.get_element().rows[i];
+                    $addHandlers(row, {
+                                        'click' : this._onCellClick,
+                                        'dblclick' : this._onCellDblClick,
+                                        'contextmenu' : this._onContextMenuButtonClick
+                                      }, 
+                     this);
+                }
             }
+            
+            
             
             // attach an event to save the client state before a postback or updatepanel partial postback
             if (typeof(Sys.WebForms)!=="undefined" && typeof(Sys.WebForms.PageRequestManager)!=="undefined") {
@@ -81,15 +87,21 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         getSelectedRowElements : function() {
             var rows = this.get_element().rows;
-            var selectedRows = new Array();
             
-            for(var i=0; i< rows.length; i++)
+            if (rows!=undefined && rows!=null)
             {
-                if (rows[i].getAttribute('isdatarow')=='true' && rows[i].getAttribute('selected')=='true')
-                    selectedRows[selectedRows.length]=rows[i];
+                var selectedRows = new Array();                
+                for(var i=0; i< rows.length; i++)
+                {
+                    if (rows[i].getAttribute('isdatarow')=='true' && rows[i].getAttribute('selected')=='true')
+                        selectedRows[selectedRows.length]=rows[i];
+                }
+                
+                return selectedRows;
             }
             
-            return selectedRows;
+            return null;
+           
         },
         
         selectRow : function (rowIndex)
@@ -199,6 +211,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         
         
         _onCellClick : function(e) {
+
             var el = e.target;
             // The event can be triggered by a descendant in the cell
             // We have to traverse the tree to find the row element
@@ -344,6 +357,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
                     for(i=0;i <rows.length; i++)
                     {
                         selectedRowIndices[selectedRowIndices.length] = rows[i].getAttribute('rowIndex');
+                        //selectedRowIndices[selectedRowIndices.length] = rows[i].getAttribute('datakey');
                     }
                     stateField.value = Sys.Serialization.JavaScriptSerializer.serialize(selectedRowIndices);
                 }

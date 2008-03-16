@@ -40,12 +40,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 {
     public partial class ServerRulePage : BasePage
     {
+        #region Private Members
         private ServerRuleController _controller = new ServerRuleController();
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
+        #endregion Private Members
 
-        }
+        #region Protected Methods
 
         protected override void OnInit(EventArgs e)
         {            
@@ -68,14 +68,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
                                             ServerRule rule = ServerRule.Load(key);
 
-                                            UserControl control =
-                                                ServerPartitionTabs.GetUserControlForPartition(rule.ServerPartitionKey);
-
                                             _controller.DeleteServerRule(rule);
 
-                                            ServerRulePanel panel = control as ServerRulePanel;
-
-                                            panel.UpdateUI();
+                                            ServerPartitionTabs.Update(rule.ServerPartitionKey);
                                         };
             
             
@@ -86,29 +81,42 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
                                                        // Commit the change into database
                                                        if (_controller.UpdateServerRule(rule))
                                                        {
-                                                           ServerRulePanel panel =
-                                                               ServerPartitionTabs.GetUserControlForPartition(
-                                                                   rule.ServerPartitionKey) as ServerRulePanel;
-                                                           panel.UpdateUI();
+                                                       }
+                                                       else
+                                                       {
+                                                           // TODO: alert user
                                                        }
                                                    }
                                                    else
                                                    {
                                                        // Create new device in the database
-                                                       if (_controller.AddServerRule(rule))
+                                                       ServerRule newRule = _controller.AddServerRule(rule);
+                                                       if ( newRule!=null)
                                                        {
-                                                           ServerRulePanel panel = ServerPartitionTabs.GetUserControlForPartition(
-                                                               rule.ServerPartitionKey) as ServerRulePanel;
-                                                           panel.UpdateUI();
+                                                       }
+                                                       else
+                                                       {
+                                                           //TODO: alert user
                                                        }
                                                    }
 
-
+                                                   ServerPartitionTabs.Update(rule.ServerPartitionKey);
                                                };
             
-            base.OnInit(e);       
+            base.OnInit(e);
         }
 
+
+        #endregion Protected Methods
+
+
+        #region Public Methods
+
+        /// <summary>
+        /// Displays a popup dialog box for users to edit a rule
+        /// </summary>
+        /// <param name="rule"></param>
+        /// <param name="partition"></param>
         public void OnEditRule(ServerRule rule, ServerPartition partition)
         {
             AddEditServerRuleControl.EditMode = true;
@@ -117,14 +125,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             AddEditServerRuleControl.Show();
         }
 
+        /// <summary>
+        /// Displays a popup dialog box for users to delete a rule
+        /// </summary>
+        /// <param name="rule"></param>
+        /// <param name="partition"></param>
         public void OnDeleteRule(ServerRule rule, ServerPartition partition)
         {
             ConfirmDialog.Message = string.Format("Are you sure you want to remove rule \"{0}\" from partition {1}?", rule.RuleName, partition.AeTitle);
-            ConfirmDialog.MessageType = ConfirmationDialog.MessageTypeEnum.WARNING;
+            ConfirmDialog.MessageType = ConfirmationDialog.MessageTypeEnum.YESNO;
             ConfirmDialog.Data = rule.GetKey();
             ConfirmDialog.Show();
         }
 
+        /// <summary>
+        /// Displays a popup dialog box for users to add a new rule
+        /// </summary>
+        /// <param name="rule"></param>
+        /// <param name="partition"></param>
         public void OnAddRule(ServerRule rule, ServerPartition partition)
         {
             AddEditServerRuleControl.EditMode = false;
@@ -132,5 +150,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             AddEditServerRuleControl.Partition = partition;
             AddEditServerRuleControl.Show();
         }
+
+        #endregion Public Methods
     }
 }
