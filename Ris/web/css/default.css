@@ -20,7 +20,7 @@ table {
 }
 
 table td {
-	padding: 0.2em 0.5em 0.2em 0.5em;
+	padding: 0.2em 0.5em 0.2em 0.5em; 
 }
 
 div.addDeleteButtons
@@ -67,7 +67,7 @@ div.addDeleteButtons
 	/*background-color: #A8D8F4; */
 }
 
-.sectionheading a:visited{
+.sectionheading a:visited {
    color: #3D98D1;
 }
 
@@ -86,12 +86,14 @@ div.addDeleteButtons
 	font-family: Tahoma, Geneva, Arial;
 	font-size: 170%;
 	font-weight: bold;
+	padding-left: 8px;
 }
 
 .patientmrnheading {
 	font-family: Tahoma, Geneva, Arial;
 	font-size: 130%;
 	font-weight: bold;
+	padding-left: 8px;
 }
 
 .discrepancy {

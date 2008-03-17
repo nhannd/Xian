@@ -7,7 +7,7 @@ body {
 	font-family: Arial;
 	margin: 0px;
 	height: 100%;
-	filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#BAD2EC', endColorstr='#7CB1DD', gradientType='0');
+	/* filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#BAD2EC', endColorstr='#7CB1DD', gradientType='0'); */
 }
 
 table {
@@ -36,20 +36,20 @@ table td {
 	font-family: Tahoma, Geneva, Arial;
 	font-size: 170%;
 	font-weight: bold;
-	padding-top: 0.2em;
+	padding-top: 0.15em;
 	padding-right: 1em;
 	padding-bottom: 0.2em;
-	padding-left: 0.2em;
+	padding-left: 10px;
 }
 
 .patientmrnheading {
 	font-family: Tahoma, Geneva, Arial;
-	font-size: 130%;
+	font-size: 140%;
 	font-weight: bold;
-	padding-top: 0.2em;
+	padding-top: 0.15em;
 	padding-right: 1em;
 	padding-bottom: 0.2em;
-	padding-left: 0.2em;
+	padding-left: 10px;
 	white-space: nowrap;
 }
 
