@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         {
             base.OnInit(e);
 
-            ConfirmationContinueDialog.Confirmed += ConfirmationContinueDialog_Confirmed;
+            ConfirmRescheduleDialog.Confirmed += ConfirmationContinueDialog_Confirmed;
             ScheduleWorkQueueDialog.OnWorkQueueUpdated += ScheduleWorkQueueDialog_OnWorkQueueUpdated;
             ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
                                                            {

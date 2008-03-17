@@ -124,8 +124,6 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         /// <param name="e"></param>
         protected void FilterButton_Click(object sender, ImageClickEventArgs e)
         {
-            // reload the data
-            // LoadWorkQueues(); NOTE: This line is commented out because the event is fired after the page and the list have been reloaded. There's no point of loading the lists again since the data is not changed in this scenario
             workQueueItemListPanel.PageIndex = 0;
             DataBind();
         }
@@ -152,6 +150,8 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             // re-populate the drop down lists and restore their states
             IList<WorkQueueTypeEnum> workQueueTypes = WorkQueueTypeEnum.GetAll();
             IList<WorkQueueStatusEnum> workQueueStatuses = WorkQueueStatusEnum.GetAll();
+            IList<WorkQueuePriorityEnum> workQueuePriorities = WorkQueuePriorityEnum.GetAll();
+            
             int prevSelectedIndex = TypeDropDownList.SelectedIndex;
             TypeDropDownList.Items.Clear();
             TypeDropDownList.Items.Add(new ListItem("-- Any --", ""));
@@ -165,6 +165,14 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             foreach (WorkQueueStatusEnum s in workQueueStatuses)
                 StatusDropDownList.Items.Add(new ListItem(s.Description, s.Lookup));
             StatusDropDownList.SelectedIndex = prevSelectedIndex;
+
+
+            prevSelectedIndex = PriorityDropDownList.SelectedIndex;
+            PriorityDropDownList.Items.Clear();
+            PriorityDropDownList.Items.Add(new ListItem("-- Any --", ""));
+            foreach (WorkQueuePriorityEnum p in workQueuePriorities)
+                PriorityDropDownList.Items.Add(new ListItem(p.Description, p.Lookup));
+            PriorityDropDownList.SelectedIndex = prevSelectedIndex;
 
             
            
@@ -194,6 +202,10 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
                                         ? null
 
                                         : WorkQueueStatusEnum.GetEnum(StatusDropDownList.SelectedValue);
+
+                parameters.Priority = (PriorityDropDownList.SelectedValue == "")
+                                        ? null
+                                        : WorkQueuePriorityEnum.GetEnum(PriorityDropDownList.SelectedValue);
 
                 IList<Model.WorkQueue> list = _searchController.FindWorkQueue(parameters);
 

@@ -184,7 +184,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 }
                 else
                 {
-                    DateTime scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelaySeconds);
+                    DateTime scheduledTime = Platform.Time;
+
+                    if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("Low"))
+                    {
+                        scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayLowPrioritySeconds);
+                    }
+                    else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("High"))
+                    {
+                        scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayHighPrioritySeconds);
+                    }
+                    else 
+                    {
+                        scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayMedPrioritySeconds);
+                    }
+
+
                     if (scheduledTime > item.ExpirationTime)
                         scheduledTime = item.ExpirationTime;
 

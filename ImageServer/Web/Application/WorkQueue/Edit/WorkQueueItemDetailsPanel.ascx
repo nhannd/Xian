@@ -6,6 +6,9 @@
     Assembly="ClearCanvas.ImageServer.Web.Common" %>
 <asp:Panel ID="Panel1" runat="server">
     <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="conditional">
+        <Triggers>
+            <asp:AsyncPostBackTrigger ControlID="RefreshTimer" EventName="Tick"  />
+        </Triggers>
         <ContentTemplate>
             <asp:Panel runat="server" ID="WorkQueueDetailsPanelContainer">
                 <uc4:SectionPanel ID="WorkQueueDetailSectionPanel" runat="server" HeadingText="Work Queue Item Details"
@@ -21,11 +24,12 @@
                             </asp:Panel>
                         </asp:Panel>
                         <clearcanvas:WorkQueueDetailsView runat="server" ID="WorkQueueDetailsView" />
-                        <asp:Timer ID="RefreshTimer" runat="server" Interval="30000" OnTick="RefreshTimer_Tick">
-                        </asp:Timer>
                     </SectionContentTemplate>
                 </uc4:SectionPanel>
             </asp:Panel>
         </ContentTemplate>
     </asp:UpdatePanel>
+
+    <asp:Timer ID="RefreshTimer" runat="server" Interval="10000" OnTick="RefreshTimer_Tick">
+    </asp:Timer>
 </asp:Panel>

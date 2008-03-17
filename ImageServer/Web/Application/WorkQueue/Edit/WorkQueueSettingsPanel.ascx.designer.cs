@@ -8,43 +8,43 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
+namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit {
     
     
     /// <summary>
-    /// SearchPage class.
+    /// WorkQueueSettingsPanel class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class SearchPage {
+    public partial class WorkQueueSettingsPanel {
         
         /// <summary>
-        /// PageContent control.
+        /// Panel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PageContent;
+        protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// UpdatePanel control.
+        /// Label2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        protected global::System.Web.UI.WebControls.Label Label2;
         
         /// <summary>
-        /// ServerPartitionTabs control.
+        /// PriorityDropDownList control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ServerPartitionTabs ServerPartitionTabs;
+        protected global::System.Web.UI.WebControls.DropDownList PriorityDropDownList;
         
         /// <summary>
         /// Label1 control.
@@ -56,30 +56,39 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
         protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
-        /// ConfirmRescheduleDialog control.
+        /// NewScheduleDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmRescheduleDialog;
+        protected global::System.Web.UI.WebControls.TextBox NewScheduleDate;
         
         /// <summary>
-        /// InformationDialog control.
+        /// DatePickerButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog InformationDialog;
+        protected global::System.Web.UI.WebControls.Button DatePickerButton;
         
         /// <summary>
-        /// ScheduleWorkQueueDialog control.
+        /// CalendarExtender1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.ScheduleWorkQueueDialog ScheduleWorkQueueDialog;
+        protected global::AjaxControlToolkit.CalendarExtender CalendarExtender1;
+        
+        /// <summary>
+        /// NewScheduleTimeDropDownList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList NewScheduleTimeDropDownList;
     }
 }

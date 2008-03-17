@@ -116,7 +116,8 @@ CREATE PROCEDURE [dbo].[WebQueryWorkQueue]
 	@StudyDescription nvarchar(64) = null,
 	@ScheduledTime datetime = null,
 	@Type smallint = null,
-	@Status smallint = null
+	@Status smallint = null,
+	@Priority smallint = null
 AS
 BEGIN
 	Declare @stmt nvarchar(1024);
@@ -154,6 +155,14 @@ BEGIN
 			SET @where = @where + '' AND ''
 
 		SET @where = @where + ''WorkQueue.WorkQueueStatusEnum = '' +  CONVERT(varchar(10),@Status)
+	END
+
+	IF (@Priority IS NOT NULL)
+	BEGIN
+		IF (@where<>'''')
+			SET @where = @where + '' AND ''
+
+		SET @where = @where + ''WorkQueue.WorkQueuePriorityEnum = '' +  CONVERT(varchar(10),@Priority)
 	END
 
 	IF (@ScheduledTime IS NOT NULL)

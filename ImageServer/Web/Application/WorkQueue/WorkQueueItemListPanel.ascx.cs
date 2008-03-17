@@ -138,6 +138,19 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             }
         }
 
+
+        public bool AutoRefresh
+        {
+            get
+            {
+                if (ViewState[ClientID + "_AutoRefresh"] == null)
+                    return true;
+                else
+                    return (bool)ViewState[ClientID + "_AutoRefresh"];
+            }
+            set { ViewState[ClientID + "_AutoRefresh"] = value; }
+        }
+
         #endregion Public Properties
 
         #region Protected Methods
@@ -190,8 +203,16 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
                 WorkQueueListView.DataSource = WorkQueueItems.Values;
             }
 
+
             WorkQueueListView.PageIndex = PageIndex;
             base.DataBind();
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            RefreshTimer.Enabled = AutoRefresh && Visible;
+
+            base.OnPreRender(e);
         }
 
         protected ServerEntityKey GetRowItemKey(int rowIndex)
@@ -250,7 +271,6 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
             DataBind();
         }
-
 
 
         protected void RefreshTimer_Tick(object sender, EventArgs e)

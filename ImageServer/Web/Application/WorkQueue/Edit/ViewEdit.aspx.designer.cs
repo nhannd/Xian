@@ -8,61 +8,52 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
+namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit {
     
     
     /// <summary>
-    /// SearchPage class.
+    /// ViewEdit class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class SearchPage {
+    public partial class ViewEdit {
         
         /// <summary>
-        /// PageContent control.
+        /// form1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PageContent;
+        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
-        /// UpdatePanel control.
+        /// ScriptManager1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// ServerPartitionTabs control.
+        /// WorkQueueItemDetailsPanel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ServerPartitionTabs ServerPartitionTabs;
+        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.WorkQueueItemDetailsPanel WorkQueueItemDetailsPanel1;
         
         /// <summary>
-        /// Label1 control.
+        /// ScheduleWorkQueueDialog1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label1;
-        
-        /// <summary>
-        /// ConfirmRescheduleDialog control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmRescheduleDialog;
+        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.ScheduleWorkQueueDialog ScheduleWorkQueueDialog1;
         
         /// <summary>
         /// InformationDialog control.
@@ -72,14 +63,5 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog InformationDialog;
-        
-        /// <summary>
-        /// ScheduleWorkQueueDialog control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.ScheduleWorkQueueDialog ScheduleWorkQueueDialog;
     }
 }

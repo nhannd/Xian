@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Web.UI;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 {
@@ -56,6 +57,17 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             set { _workQueue = value; }
         }
 
+        public bool AutoRefresh
+        {
+            get
+            {
+                if (ViewState[ClientID+"_AutoRefresh"]==null)
+                    return true;
+                else
+                    return (bool)ViewState[ClientID + "_AutoRefresh"];
+            }
+            set { ViewState[ClientID + "_AutoRefresh"] = value; }
+        }
 
         #endregion Public Properties
 
@@ -75,18 +87,17 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
-            
         }
 
         protected override void OnPreRender(EventArgs e)
         {
             if (WorkQueue==null)
             {
-                WorkQueueDetailsPanelContainer.Visible = false;
+                this.Visible = false;
             }
 
-            RefreshTimer.Enabled = this.WorkQueueDetailSectionPanel.Visible;
+            RefreshTimer.Enabled = AutoRefresh && Visible && WorkQueue!=null;
+
             base.OnPreRender(e);
         }
 
@@ -103,13 +114,11 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 
         #endregion Protected Properties
 
+        
 
         public override void DataBind()
         {
-            if (WorkQueue != null)
-            {
-                WorkQueueDetailsView.WorkQueue = WorkQueue;
-            }
+            WorkQueueDetailsView.WorkQueue = WorkQueue;
 
             base.DataBind();
         }

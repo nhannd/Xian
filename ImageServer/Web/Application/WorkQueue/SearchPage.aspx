@@ -28,7 +28,7 @@
             </td>
         </tr>
     </table>
-    <clearcanvas:ConfirmationDialog runat="server" ID="ConfirmationContinueDialog"/>
+    <clearcanvas:ConfirmationDialog runat="server" ID="ConfirmRescheduleDialog"/>
     <clearcanvas:ConfirmationDialog runat="server" ID="InformationDialog" MessageType="INFORMATION" Title=""/>
     <clearcanvas:ScheduleWorkQueueDialog runat="server" ID="ScheduleWorkQueueDialog"/>
 </asp:Content>

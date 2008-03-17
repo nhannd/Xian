@@ -29,68 +29,49 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
-namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
+namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 {
-
-    public partial class WorkQueueDetailsView : System.Web.UI.UserControl
+    /// <summary>
+    /// Assembles an instance of  <see cref="StudyDetails"/> based on a <see cref="Study"/> object.
+    /// </summary>
+    public class StudyDetailsAssembler
     {
-        #region Private members
-
-        private Unit _width;
-
-        private Model.WorkQueue _workQueue;
-
-        #endregion Private members
-
-        #region Public Properties
-
         /// <summary>
-        /// Sets or gets the list of studies whose information are displayed
+        /// Creates an instance of <see cref="StudyDetails"/> base on a <see cref="Study"/> object.
         /// </summary>
-        public Model.WorkQueue WorkQueue
+        /// <param name="study"></param>
+        /// <returns></returns>
+        public StudyDetails CreateStudyDetail(Model.Study study)
         {
-            get { return _workQueue; }
-            set { _workQueue = value; }
-        }
+            StudyDetails details = new StudyDetails();
+            details.StudyInstanceUID = study.StudyInstanceUid;
+            details.Status = study.StudyStatusEnum.Description;
+            details.PatientName = study.PatientsName;
+            details.AccessionNumber = study.AccessionNumber;
+            details.PatientID = study.PatientId;
 
-		/// <summary>
-        /// Sets or gets the width of work queue details view panel
-        /// </summary>
-        public Unit Width
-        {
-            get { return _width; }
-            set { _width = value;
-
-                WorkQueueItemDetailsView.Width = value;
-            }
-        }
+            details.StudyDescription = study.StudyDescription;
 
 
-        #endregion Public Properties
-
-        #region Public Methods
-
-
-        public override void DataBind()
-        {
-            if (WorkQueue!=null)
+            if (study.StudyInstanceUid != null)
             {
-                List<WorkQueueDetails> detailsList = new List<WorkQueueDetails>();
-                detailsList.Add(WorkQueueDetailsAssembler.CreateWorkQueueDetail(WorkQueue));
-                WorkQueueItemDetailsView.DataSource = detailsList;
+                StudyStorageAdaptor adaptor = new StudyStorageAdaptor();
+                StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+                criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+                criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+
+                IList<StudyStorage> storages = adaptor.Get(criteria);
+                if (storages != null && storages.Count > 0)
+                    details.Lock = storages[0].Lock;
             }
-            else
-                WorkQueueItemDetailsView.DataSource = null;
-            
-            base.DataBind();
+
+
+            return details;
         }
-
-
-        #endregion Public Methods
-
     }
 }

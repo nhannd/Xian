@@ -61,12 +61,17 @@
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label5" runat="server" Text="Type" Width="68px" Style="padding-right: 5px"
                                                     EnableViewState="False" /><br />
-                                                <asp:DropDownList ID="TypeDropDownList" runat="server">
+                                                <asp:DropDownList ID="TypeDropDownList" runat="server" Width="120px">
                                                 </asp:DropDownList></td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label6" runat="server" Text="Status" Width="68px" Style="padding-right: 5px"
                                                     EnableViewState="False" /><br />
-                                                <asp:DropDownList ID="StatusDropDownList" runat="server">
+                                                <asp:DropDownList ID="StatusDropDownList" runat="server" Width="120px">
+                                                </asp:DropDownList></td>
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label7" runat="server" Text="Priority" Width="68px" Style="padding-right: 5px"
+                                                    EnableViewState="False" /><br />
+                                                <asp:DropDownList ID="PriorityDropDownList" runat="server" Width="120px">
                                                 </asp:DropDownList></td>
                                             <td align="right" valign="bottom" style="width: 57px">
                                                 <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png"
