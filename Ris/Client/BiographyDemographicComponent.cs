@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Client
                 set
                 {
                      _patientProfile = value;
-                     this.SetUrl("http://localhost/RIS/patientprofile.htm");
+                     this.SetUrl(BiographyDemographicComponentSettings.Default.PatientProfilePageUrl);
                  }
             }
 

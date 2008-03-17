@@ -46,6 +46,12 @@
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
+    <Compile Include="BiographyDemographicComponentSettings.cs" />
+    <Compile Include="BiographyDemographicComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>BiographyDemographicComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointSummaryComponent.cs" />
@@ -249,6 +255,10 @@
       <LastGenOutput>AddressEditorComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
+    <None Include="BiographyDemographicComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>BiographyDemographicComponentSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="FolderExplorerComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FolderExplorerComponentSettings.Designer.cs</LastGenOutput>
