@@ -1,10 +1,10 @@
 html {
+	font-size: 75%;
 	height: 100%;
 }
 
 body {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 12px;
+	font-family: Arial;
 	margin: 0px;
 	height: 100%;
 	filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#BAD2EC', endColorstr='#7CB1DD', gradientType='0');
@@ -12,7 +12,7 @@ body {
 
 table {
 	height: 100%;
-	border-collapse:collapse;
+	border-collapse:collapse; 
 	margin-top: 0px;
 	margin-bottom: 0px;
 	margin-left: 0px;
@@ -26,66 +26,59 @@ table {
 
 table td {
 	vertical-align: top;
-	padding-top: 0px;
+	padding-top: 2px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 	padding-right: 0px;
 }
 
-.tableheading {
-	vertical-align: top;
-	font-weight: bold;
-	background-color: #FFFFFF;
-	color: #000000;
-}
-
-.tabledefault {
-	border-top-style: none;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-}
-
-.pageheading {
-	font-size: 1.0em;
+.patientnameheading {
+	font-family: Tahoma, Geneva, Arial;
+	font-size: 170%;
 	font-weight: bold;
 	padding-top: 0.2em;
-	padding-right: 0.2em;
-	padding-bottom: 0em;
+	padding-right: 1em;
+	padding-bottom: 0.2em;
 	padding-left: 0.2em;
 }
 
-.pageheading2 {
-	font-size: 0.9em;
+.patientmrnheading {
+	font-family: Tahoma, Geneva, Arial;
+	font-size: 130%;
 	font-weight: bold;
-	padding-top: 0em;
-	padding-right: 0.2em;
-	padding-bottom: 0em;
+	padding-top: 0.2em;
+	padding-right: 1em;
+	padding-bottom: 0.2em;
 	padding-left: 0.2em;
 	white-space: nowrap;
 }
 
 .propertyname {
-	font-size: 0.7em;
 	font-weight: bold;
-	padding-top: 0.2em;
-	padding-right: 0.75em;
+	padding-top: 0.25em;
+	padding-right: 0.2em;
 	padding-bottom: 0em;
-	padding-left: 0.75em;
+	padding-left: 0.5em;
 	white-space: nowrap;
 }
 
 .propertyvalue {
-	font-size: 0.7em;
-	padding-top: 0.2em;
+	padding-top: 0.25em;
+	padding-right: 1em;
+	padding-bottom: 0em;
+	padding-left: 0.5em;
+}
+
+#myForm {
+	overflow: scroll;
 }
 
 .alerticons {
-	padding-top: 0.2em;
-	padding-right: 0.25em;
-	display: inline;
+	position: relative;
+	right: 2px;
+	top: 2px;
 }
 
 img.alert{
-   width: 2.2em;
+   width: 3em;
 }

@@ -146,8 +146,7 @@ div.alert{
 
 img.alert{
    text-align: right;
-   /* width: 50px; */
-   width: 4em;
+   width: 3em;
 }
 
 a.collapsibleHeading
