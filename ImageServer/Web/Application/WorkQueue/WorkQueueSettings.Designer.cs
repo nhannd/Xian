@@ -83,10 +83,19 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("15")]
-        public int RefreshIntervalSeconds {
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        public int NormalRefreshIntervalSeconds {
             get {
-                return ((int)(this["RefreshIntervalSeconds"]));
+                return ((int)(this["NormalRefreshIntervalSeconds"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int FastRefreshIntervalSeconds {
+            get {
+                return ((int)(this["FastRefreshIntervalSeconds"]));
             }
         }
     }

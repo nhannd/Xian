@@ -84,11 +84,6 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 
         #region Protected Methods
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-        }
-
         protected override void OnPreRender(EventArgs e)
         {
             if (WorkQueue==null)
@@ -96,7 +91,8 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
                 this.Visible = false;
             }
 
-            RefreshTimer.Enabled = AutoRefresh && Visible && WorkQueue!=null;
+            RefreshTimer.Enabled = AutoRefresh && Visible;
+
 
             base.OnPreRender(e);
         }
@@ -114,7 +110,8 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 
         #endregion Protected Properties
 
-        
+
+        #region Public Methods
 
         public override void DataBind()
         {
@@ -123,9 +120,15 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             base.DataBind();
         }
 
+        /// <summary>
+        /// Refreshes the Work Queue Item Details Panel UI
+        /// </summary>
         public void Refresh()
         {
             UpdatePanel.Update();
         }
+
+        #endregion Public Methods
+
     }
 }

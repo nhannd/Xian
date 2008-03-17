@@ -31,7 +31,7 @@
 
 using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
+namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 {
     /// <summary>
     /// Detailed view of a <see cref="Study"/> in the context of the WorkQueue configuration UI.

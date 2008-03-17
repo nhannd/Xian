@@ -1,6 +1,7 @@
 using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
@@ -138,7 +139,9 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             }
         }
 
-
+        /// <summary>
+        /// Sets/Gets a value which indicates whether auto refresh is on
+        /// </summary>
         public bool AutoRefresh
         {
             get
@@ -160,7 +163,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             base.OnInit(e);
             WorkQueueListView.DataKeyNames = new string[] { "WorkQueueGuid" };
 
-            RefreshTimer.Interval = Math.Max(WorkQueueSettings.Default.RefreshIntervalSeconds*1000, 5000);// max refresh rate: every 5 sec 
+            RefreshTimer.Interval = Math.Max(WorkQueueSettings.Default.NormalRefreshIntervalSeconds*1000, 5000);// max refresh rate: every 5 sec 
 
             if (_height!=Unit.Empty)
                 ListContainerTable.Height = _height;
@@ -196,22 +199,37 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             }
         }
 
-        public override void DataBind()
+        protected int GetRefreshInterval()
         {
+            int interval = WorkQueueSettings.Default.NormalRefreshIntervalSeconds * 1000;
+
             if (WorkQueueItems!=null)
             {
-                WorkQueueListView.DataSource = WorkQueueItems.Values;
+                // the refresh rate should be high if the item was scheduled to start soon..
+                foreach(WorkQueueSummary item in WorkQueueItems.Values)
+                {
+                    TimeSpan span = item.ScheduledDateTime.Subtract(Platform.Time);
+                    if (span < TimeSpan.FromMinutes(1))
+                    {
+                        interval = WorkQueueSettings.Default.FastRefreshIntervalSeconds * 1000; 
+                        break;
+                    }
+                }
             }
 
-
-            WorkQueueListView.PageIndex = PageIndex;
-            base.DataBind();
+            return interval;
         }
 
         protected override void OnPreRender(EventArgs e)
         {
             RefreshTimer.Enabled = AutoRefresh && Visible;
-
+            if (RefreshTimer.Enabled)
+            {
+                if (WorkQueueItems!=null)
+                {
+                    RefreshTimer.Interval = GetRefreshInterval();
+                }
+            }
             base.OnPreRender(e);
         }
 
@@ -279,6 +297,24 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         }
 
         #endregion Protected Methods
+
+
+        #region Public Methods
+
+        public override void DataBind()
+        {
+            if (WorkQueueItems != null)
+            {
+                WorkQueueListView.DataSource = WorkQueueItems.Values;
+            }
+
+
+            WorkQueueListView.PageIndex = PageIndex;
+            base.DataBind();
+        }
+
+
+        #endregion Public Methods
 
     }
 }

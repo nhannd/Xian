@@ -1,7 +1,39 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using AjaxControlToolkit;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -91,8 +123,10 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 
         protected override void OnPreRender(EventArgs e)
         {
-            WorkQueueItemListPanel.AutoRefresh = WorkQueueKeys!=null && WorkQueueItemListPanel.WorkQueueItems != null &&
-                                                 WorkQueueItemListPanel.WorkQueueItems.Count == WorkQueueKeys.Count;
+            WorkQueueItemListPanel.AutoRefresh = Visible 
+                            && ModalDialog1.State == ClearCanvas.ImageServer.Web.Application.Common.ModalDialog.ShowState.Show
+                            && WorkQueueKeys!=null && WorkQueueItemListPanel.WorkQueueItems != null;
+
             base.OnPreRender(e);
         }
 
@@ -194,13 +228,14 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             if (WorkQueues != null)
             {
                 List<Model.WorkQueue> updatedList = new List<ClearCanvas.ImageServer.Model.WorkQueue>();
-                bool someAreGone = false;
+
+                bool someAreNoLongerAvailable = false; // some items are no longer on the systems.
 
                 foreach (Model.WorkQueue item in WorkQueues)
                 {
                     if (item == null)
                     {
-                        someAreGone = true;
+                        someAreNoLongerAvailable = true;
                     }
                     else
                     {
@@ -210,9 +245,16 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
                         DateTime? newScheduleTime = WorkQueueSettingsPanel.NewScheduledDateTime;
                         if (newScheduleTime!= null)
                         {
+                            // It doesn't make sense to reschedule something to start in the past. 
+                            // 
+                            if (newScheduleTime < Platform.Time)
+                            {
+                                newScheduleTime = Platform.Time.AddSeconds(WorkQueueSettings.Default.WorkQueueProcessDelaySeconds);
+                            }
+
                             updatedColumns.ScheduledTime = newScheduleTime.Value;
-                            if (newScheduleTime != null)
-                                updatedColumns.ExpirationTime = newScheduleTime.Value.AddSeconds(WorkQueueSettings.Default.WorkQueueExpireDelaySeconds );//expire 90 seconds after that
+
+                            updatedColumns.ExpirationTime = newScheduleTime.Value.AddSeconds(WorkQueueSettings.Default.WorkQueueExpireDelaySeconds );//expire 90 seconds after that
 
                         }
 
@@ -226,14 +268,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
                         }
                     }
                 }
-
-                if (updatedList.Count != WorkQueues.Count)
-                {
-                    InformationDialog.Message = "One or more items could not be updated";
-                    InformationDialog.MessageType =
-                        ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.INFORMATION;
-                    InformationDialog.Show();
-                }
+                
 
                 if (OnWorkQueueUpdated != null)
                     OnWorkQueueUpdated(updatedList);
@@ -303,8 +338,11 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 
         }
 
-        
-        
+        public void Hide()
+        {
+            ModalDialog1.Hide();
+        }
+
         public void Show()
         {
             DataBind();

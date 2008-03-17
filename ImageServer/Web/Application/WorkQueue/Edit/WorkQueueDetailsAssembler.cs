@@ -36,7 +36,7 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
-namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
+namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 {
     /// <summary>
     /// Assembles an instance of  <see cref="WorkQueueDetails"/> based on a <see cref="WorkQueue"/> object.

@@ -413,8 +413,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         public void Show()
         {
             ModalPopupExtender.Show();
-            UpdatePanel.Update();
+            RefreshUI();
             State = ShowState.Show;
+        }
+
+        public void RefreshUI()
+        {
+            UpdatePanel.Update();
+            
         }
 
         /// <summary>
@@ -423,7 +429,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         public void Hide()
         {
             ModalPopupExtender.Hide();
-            UpdatePanel.Update();
+            RefreshUI();
             State = ShowState.Hide;
         }
 

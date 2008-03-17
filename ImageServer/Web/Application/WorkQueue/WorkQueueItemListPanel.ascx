@@ -7,10 +7,7 @@
 <%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog" TagPrefix="clearcanvas" %>
 
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
-    <Triggers>
-    <asp:AsyncPostBackTrigger ControlID="RefreshTimer"
-        EventName="Tick" />
-    </Triggers>
+    
     <ContentTemplate>
     
     <asp:Table runat="server" ID="ListContainerTable" Height="100%" CellPadding="0" CellSpacing="0" Width="100%" >

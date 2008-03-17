@@ -34,7 +34,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
-namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
+namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 {
     /// <summary>
     /// Assembles an instance of  <see cref="StudyDetails"/> based on a <see cref="Study"/> object.

@@ -8,6 +8,7 @@
 
 <uc1:ModalDialog ID="ModalDialog1" runat="server" Title="Schedule Work Queue Item" BackgroundCSS="CSSDefaultPopupDialogBacground" >
 <ContentTemplate>
+   
     <asp:Panel ID="Panel1" runat="server">
     
         <asp:Panel ID="Panel4" runat="server" CssClass="CSSGridViewPanelBorder">

@@ -6,9 +6,7 @@
     Assembly="ClearCanvas.ImageServer.Web.Common" %>
 <asp:Panel ID="Panel1" runat="server">
     <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="conditional">
-        <Triggers>
-            <asp:AsyncPostBackTrigger ControlID="RefreshTimer" EventName="Tick"  />
-        </Triggers>
+        
         <ContentTemplate>
             <asp:Panel runat="server" ID="WorkQueueDetailsPanelContainer">
                 <uc4:SectionPanel ID="WorkQueueDetailSectionPanel" runat="server" HeadingText="Work Queue Item Details"
