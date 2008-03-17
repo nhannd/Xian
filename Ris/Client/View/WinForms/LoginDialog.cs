@@ -29,82 +29,79 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    [ExtensionOf(typeof(LoginDialogExtensionPoint))]
-    public class LoginDialog : ILoginDialog
-    {
-        private LoginForm _form;
-        private LoginDialogMode _mode;
+	[ExtensionOf(typeof(LoginDialogExtensionPoint))]
+	public class LoginDialog : ILoginDialog
+	{
+		private LoginForm _form;
+		private LoginDialogMode _mode;
 
-        public LoginDialog()
-        {
-            _form = new LoginForm();
-        }
+		public LoginDialog()
+		{
+			_form = new LoginForm();
+		}
 
-        #region ILoginDialog Members
+		#region ILoginDialog Members
 
-        public bool Show()
-        {
-            System.Windows.Forms.Application.EnableVisualStyles();
+		public bool Show()
+		{
+			System.Windows.Forms.Application.EnableVisualStyles();
 
-            if (_form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+			if (_form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 
-        public LoginDialogMode Mode
-        {
-            get { return _mode; }
-            set
-            {
-                 _mode = value;
-                _form.SetMode(_mode);
-            }
-        }
+		public LoginDialogMode Mode
+		{
+			get { return _mode; }
+			set
+			{
+				_mode = value;
+				_form.SetMode(_mode);
+			}
+		}
 
-        public string UserName
-        {
-            get { return _form.UserName; }
-            set { _form.UserName = value; }
-        }
+		public string UserName
+		{
+			get { return _form.UserName; }
+			set { _form.UserName = value; }
+		}
 
-        public string Password
-        {
-            get { return _form.Password; }
-        }
+		public string Password
+		{
+			get { return _form.Password; }
+		}
 
-        public string Facility
-        {
-            get { return _form.SelectedFacility; }
-            set { _form.SelectedFacility = value; }
-        }
+		public string Facility
+		{
+			get { return _form.SelectedFacility; }
+			set { _form.SelectedFacility = value; }
+		}
 
-        public string[] FacilityChoices
-        {
-            get { return _form.FacilityChoices; }
-            set { _form.FacilityChoices = value; }
-        }
+		public string[] FacilityChoices
+		{
+			get { return _form.FacilityChoices; }
+			set { _form.FacilityChoices = value; }
+		}
 
-        #endregion
+		#endregion
 
-        #region IDisposable Members
+		#region IDisposable Members
 
-        public void Dispose()
-        {
-            // nothing to do
-        }
+		public void Dispose()
+		{
+			// nothing to do
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

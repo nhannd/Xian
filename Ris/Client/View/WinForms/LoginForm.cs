@@ -30,101 +30,103 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public partial class LoginForm : Form
-    {
-        private string[] _facilityChoices;
+	public partial class LoginForm : Form
+	{
+		private string[] _facilityChoices;
 
-        public LoginForm()
-        {
-            InitializeComponent();
-        }
+		public LoginForm()
+		{
+			// Need to explicitely dismiss the splash screen here, as the login dialog is shown before the desktop window, which is normally
+			// responsible for dismissing it.
+#if !MONO
+			SplashScreenManager.DismissSplashScreen(this);
+#endif
 
-        public void SetMode(LoginDialogMode mode)
-        {
-            _userName.Enabled = mode == LoginDialogMode.InitialLogin;
-            _facility.Enabled = mode == LoginDialogMode.InitialLogin;
-        }
+			InitializeComponent();
+		}
 
-        public string[] FacilityChoices
-        {
-            get { return _facilityChoices; }
-            set
-            {
-                _facilityChoices = value;
-                _facility.Items.Clear();
-                _facility.Items.AddRange(_facilityChoices);
-            }
-        }
+		public void SetMode(LoginDialogMode mode)
+		{
+			_userName.Enabled = mode == LoginDialogMode.InitialLogin;
+			_facility.Enabled = mode == LoginDialogMode.InitialLogin;
+		}
 
-        public string UserName
-        {
-            get { return _userName.Text; }
-            set { _userName.Text = value; }
-        }
+		public string[] FacilityChoices
+		{
+			get { return _facilityChoices; }
+			set
+			{
+				_facilityChoices = value;
+				_facility.Items.Clear();
+				_facility.Items.AddRange(_facilityChoices);
+			}
+		}
 
-        public string Password
-        {
-            get { return _password.Text; }
-        }
+		public string UserName
+		{
+			get { return _userName.Text; }
+			set { _userName.Text = value; }
+		}
 
-        public string SelectedFacility
-        {
-            get { return (string)_facility.SelectedItem; }
-            set
-            {
-                _facility.SelectedItem = value;
-            }
-        }
+		public string Password
+		{
+			get { return _password.Text; }
+		}
 
-        private void _loginButton_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.OK;
-        }
+		public string SelectedFacility
+		{
+			get { return (string)_facility.SelectedItem; }
+			set
+			{
+				_facility.SelectedItem = value;
+			}
+		}
 
-        private void _cancelButton_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.Cancel;
-        }
+		private void _loginButton_Click(object sender, EventArgs e)
+		{
+			this.DialogResult = DialogResult.OK;
+		}
 
-        private void LoginForm_Load(object sender, EventArgs e)
-        {
-            // depending on use-case, the username may already be filled in
-            if (string.IsNullOrEmpty(_userName.Text))
-                _userName.Select();
-            else
-                _password.Select();
-        }
+		private void _cancelButton_Click(object sender, EventArgs e)
+		{
+			this.DialogResult = DialogResult.Cancel;
+		}
 
-        private void _userName_TextChanged(object sender, EventArgs e)
-        {
-            UpdateButtonStates();
-        }
+		private void LoginForm_Load(object sender, EventArgs e)
+		{
+			// depending on use-case, the username may already be filled in
+			if (string.IsNullOrEmpty(_userName.Text))
+				_userName.Select();
+			else
+				_password.Select();
+		}
 
-        private void _password_TextChanged(object sender, EventArgs e)
-        {
-            UpdateButtonStates();
-        }
+		private void _userName_TextChanged(object sender, EventArgs e)
+		{
+			UpdateButtonStates();
+		}
 
-        private void _facility_SelectedValueChanged(object sender, EventArgs e)
-        {
-            UpdateButtonStates();
-        }
+		private void _password_TextChanged(object sender, EventArgs e)
+		{
+			UpdateButtonStates();
+		}
 
-        private void UpdateButtonStates()
-        {
-            bool ok = !string.IsNullOrEmpty(_userName.Text) && !string.IsNullOrEmpty(_password.Text) &&
-                         _facility.SelectedItem != null;
-            _loginButton.Enabled = ok;
-            this.AcceptButton = ok ? _loginButton : _cancelButton;
-        }
-    }
+		private void _facility_SelectedValueChanged(object sender, EventArgs e)
+		{
+			UpdateButtonStates();
+		}
+
+		private void UpdateButtonStates()
+		{
+			bool ok = !string.IsNullOrEmpty(_userName.Text) && !string.IsNullOrEmpty(_password.Text) &&
+						 _facility.SelectedItem != null;
+			_loginButton.Enabled = ok;
+			this.AcceptButton = ok ? _loginButton : _cancelButton;
+		}
+	}
 }
