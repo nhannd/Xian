@@ -36,25 +36,26 @@ using System.Text;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Healthcare {
+namespace ClearCanvas.Healthcare
+{
 
 
-    /// <summary>
-    /// ExternalPractitioner entity
-    /// </summary>
-	public partial class ExternalPractitioner : ClearCanvas.Enterprise.Core.Entity
+	/// <summary>
+	/// ExternalPractitioner entity
+	/// </summary>
+	public partial class ExternalPractitioner : ClearCanvas.Enterprise.Core.Entity, IEquatable<ExternalPractitioner>
 	{
-        /// <summary>
-        /// Returns the default contact point, or null if no default contact point exists.
-        /// </summary>
-        public virtual ExternalPractitionerContactPoint DefaultContactPoint
-        {
-            get
-            {
-                return CollectionUtils.SelectFirst(_contactPoints,
-                    delegate(ExternalPractitionerContactPoint cp) { return cp.IsDefaultContactPoint; });
-            }
-        }
+		/// <summary>
+		/// Returns the default contact point, or null if no default contact point exists.
+		/// </summary>
+		public virtual ExternalPractitionerContactPoint DefaultContactPoint
+		{
+			get
+			{
+				return CollectionUtils.SelectFirst(_contactPoints,
+					delegate(ExternalPractitionerContactPoint cp) { return cp.IsDefaultContactPoint; });
+			}
+		}
 
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
@@ -63,21 +64,26 @@ namespace ClearCanvas.Healthcare {
 		private void CustomInitialize()
 		{
 		}
-		
+
 		#region Object overrides
-		
-		public override bool Equals(object that)
+
+		public bool Equals(ExternalPractitioner externalPractitioner)
 		{
-			// TODO: implement a test for business-key equality
-			return base.Equals(that);
+			if (externalPractitioner == null) return false;
+			return Equals(_licenseNumber, externalPractitioner._licenseNumber) && Equals(_billingNumber, externalPractitioner._billingNumber);
 		}
-		
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(this, obj)) return true;
+			return Equals(obj as ExternalPractitioner);
+		}
+
 		public override int GetHashCode()
 		{
-			// TODO: implement a hash-code based on the business-key used in the Equals() method
-			return base.GetHashCode();
+			return (_licenseNumber != null ? _licenseNumber.GetHashCode() : 0) + 29 * (_billingNumber != null ? _billingNumber.GetHashCode() : 0);
 		}
-		
+
 		#endregion
 
 	}
