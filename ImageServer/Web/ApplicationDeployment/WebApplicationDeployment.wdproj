@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.60403</ProductVersion>
+    <ProductVersion>8.0.51103</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{77F5EB8A-9BC7-495C-B555-1DE6AF5AC83C}</ProjectGuid>
     <SourceWebPhysicalPath>..\Application</SourceWebPhysicalPath>
@@ -33,8 +33,10 @@
     <DebugSymbols>false</DebugSymbols>
     <OutputPath>.\Release</OutputPath>
     <EnableUpdateable>true</EnableUpdateable>
-    <UseMerge>true</UseMerge>
-    <SingleAssemblyName>ApplicationDeployment</SingleAssemblyName>
+    <UseMerge>false</UseMerge>
+    <SingleAssemblyName>
+    </SingleAssemblyName>
+    <UseFixedNames>true</UseFixedNames>
   </PropertyGroup>
   <ItemGroup>
   </ItemGroup>
