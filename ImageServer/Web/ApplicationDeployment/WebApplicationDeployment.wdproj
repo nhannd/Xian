@@ -17,11 +17,17 @@
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>.\Debug</OutputPath>
     <EnableUpdateable>true</EnableUpdateable>
-    <UseMerge>true</UseMerge>
-    <SingleAssemblyName>ClearCanvas.ImageServer.Web.Application</SingleAssemblyName>
+    <UseMerge>false</UseMerge>
+    <SingleAssemblyName>
+    </SingleAssemblyName>
     <VirtualDirectoryAlias>
     </VirtualDirectoryAlias>
     <ReplaceExistingVirtualDirectory>true</ReplaceExistingVirtualDirectory>
+    <ContentAssemblyName>
+    </ContentAssemblyName>
+    <AssemblyPrefixName>
+    </AssemblyPrefixName>
+    <UseFixedNames>true</UseFixedNames>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
@@ -50,7 +56,6 @@
       <Section>connectionStrings</Section>
     </WebConfigReplacementFiles>
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WebDeployment\v8.0\Microsoft.WebDeployment.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.WebDeployment.targets.
   -->
