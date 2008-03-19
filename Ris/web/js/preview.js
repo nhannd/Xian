@@ -13,17 +13,17 @@ function getAlertIcon(alertItem)
 	switch (alertItem.Type)
 	{
 		case "Note Alert":
-			return "Images/AlertNote.gif";
+			return "Images/AlertNote.png";
 		case "Language Alert":
-			return "Images/AlertLanguage.gif";
+			return "Images/AlertLanguage.png";
 		case "Reconciliation Alert":
-			return "Images/AlertReconcile.gif";
+			return "Images/AlertReconcile.png";
 		case "Incomplete Demographic Data Alert":
-			return "Images/AlertIncompleteData.gif";
+			return "Images/AlertIncompleteData.png";
 		case "Visit Alert":
-			return "Images/AlertVisit.gif";
+			return "Images/AlertVisit.png";
 		default:
-			return "Images/AlertGeneral.gif";
+			return "Images/AlertGeneral.png";
 	}
 }
 
