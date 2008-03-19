@@ -11,7 +11,7 @@
         <asp:ServiceReference Path="~/Services/FilesystemInfoService.asmx" />
     </Services>
 </asp:ScriptManagerProxy>
-<clearcanvas:ModalDialog ID="ModalDialog1" runat="server" BackgroundCSS="CSSModalBackground"
+<clearcanvas:ModalDialog ID="ModalDialog" runat="server" BackgroundCSS="CSSModalBackground"
     Width="450px">
     <ContentTemplate>
         <asp:Panel ID="Panel2" runat="server">
@@ -45,7 +45,7 @@
                                         <table width="100px">
                                             <tr>
                                                 <td>
-                                                    <asp:CheckBox ID="ReadCheckBox" runat="server" OnInit="ReadOnlyCheckBox_Init" Text="Read"
+                                                    <asp:CheckBox ID="ReadCheckBox" runat="server"  Text="Read"
                                                         Checked="True" TextAlign="Right" />
                                                 </td>
                                             </tr>

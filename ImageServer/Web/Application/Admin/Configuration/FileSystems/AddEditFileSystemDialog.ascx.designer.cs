@@ -29,13 +29,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::System.Web.UI.ScriptManagerProxy ScriptManagerProxy1;
         
         /// <summary>
-        /// ModalDialog1 control.
+        /// ModalDialog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog;
         
         /// <summary>
         /// Panel2 control.

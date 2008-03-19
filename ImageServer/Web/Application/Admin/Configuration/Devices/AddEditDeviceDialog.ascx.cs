@@ -184,6 +184,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             }
         }
 
+        /// <summary>
+        /// Handles event when user clicks on "Cancel" button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void CancelButton_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+
+        
         private void SaveData()
         {
             if (Device == null)

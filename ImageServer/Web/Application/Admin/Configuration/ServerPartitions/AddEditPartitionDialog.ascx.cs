@@ -116,7 +116,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 </script>");
         }
 
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Page.IsPostBack)
@@ -152,39 +151,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             }
         }
 
-        private void SaveData()
+        /// <summary>
+        /// Handles event when user clicks on "Cancel" button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void CancelButton_Click(object sender, EventArgs e)
         {
-            if (Partition == null)
-            {
-                Partition = new ServerPartition();
-            }
-
-
-            Partition.Enabled = EnabledCheckBox.Checked;
-            Partition.AeTitle = AETitleTextBox.Text;
-            Partition.Description = DescriptionTextBox.Text;
-            Partition.PartitionFolder = PartitionFolderTextBox.Text;
-
-            int port;
-            if (Int32.TryParse(PortTextBox.Text, out port))
-                Partition.Port = port;
-
-            Partition.AcceptAnyDevice = AcceptAnyDeviceCheckBox.Checked;
-            Partition.AutoInsertDevice = AutoInsertDeviceCheckBox.Checked;
-            if (Int32.TryParse(DefaultRemotePortTextBox.Text, out port))
-                Partition.DefaultRemotePort = port;
+            Close();
         }
+        
 
         protected void UpdateUI()
         {
             if (EditMode)
             {
-                ModalDialog1.Title= "Edit Partition";
+                ModalDialog.Title= "Edit Partition";
                 OKButton.Text = "Update";
             }
             else
             {
-                ModalDialog1.Title = "Add Partition";
+                ModalDialog.Title = "Add Partition";
                 OKButton.Text = "Add";
             }
 
@@ -219,6 +206,35 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             }
         }
 
+
+        #region Private Methods
+
+
+        private void SaveData()
+        {
+            if (Partition == null)
+            {
+                Partition = new ServerPartition();
+            }
+
+
+            Partition.Enabled = EnabledCheckBox.Checked;
+            Partition.AeTitle = AETitleTextBox.Text;
+            Partition.Description = DescriptionTextBox.Text;
+            Partition.PartitionFolder = PartitionFolderTextBox.Text;
+
+            int port;
+            if (Int32.TryParse(PortTextBox.Text, out port))
+                Partition.Port = port;
+
+            Partition.AcceptAnyDevice = AcceptAnyDeviceCheckBox.Checked;
+            Partition.AutoInsertDevice = AutoInsertDeviceCheckBox.Checked;
+            if (Int32.TryParse(DefaultRemotePortTextBox.Text, out port))
+                Partition.DefaultRemotePort = port;
+        }
+
+        #endregion Private Methods
+
         #endregion Protected methods
 
         #region Public Methods
@@ -237,7 +253,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             }
 
 
-            ModalDialog1.Show();
+            ModalDialog.Show();
         }
 
         /// <summary>
@@ -245,7 +261,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// </summary>
         public void Close()
         {
-            
+            ModalDialog.Hide();   
         }
 
         #endregion Public methods

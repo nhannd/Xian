@@ -174,7 +174,7 @@
                                 ValidationGroup="vg1" />
                         </td>
                         <td align="center">
-                            <asp:Button ID="CancelButton" runat="server" Text="Cancel" />
+                            <asp:Button ID="CancelButton" runat="server" Text="Cancel" OnClick="CancelButton_Click" />
                         </td>
                     </tr>
                 </table>

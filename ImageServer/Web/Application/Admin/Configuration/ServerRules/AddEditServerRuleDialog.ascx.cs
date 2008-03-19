@@ -296,8 +296,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         {
             Close();
         }
+        #endregion Protected Methods
 
-        
+
+        #region Private Methods
 
         private void SaveData()
         {
@@ -328,7 +330,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             _rule.ServerPartitionKey = Partition.GetKey();
         }
 
-        #endregion Protected Methods
+        #endregion Private Methods
 
         #region Public methods
 

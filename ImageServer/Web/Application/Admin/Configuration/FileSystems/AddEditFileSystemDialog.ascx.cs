@@ -31,13 +31,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.ServiceModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.WebControls;
-using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems
@@ -132,23 +129,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
         }
 
-        private void RegisterClientSideScripts()
-        {
-            ScriptTemplate template = new ScriptTemplate(typeof(AddFilesystemDialog).Assembly, "ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems.Filesystem.js");
-            template.Replace("@@HW_PERCENTAGE_INPUT_CLIENTID@@", HighWatermarkTextBox.ClientID);
-            template.Replace("@@HW_SIZE_CLIENTID@@", HighWatermarkSize.ClientID);
-            template.Replace("@@LW_PERCENTAGE_INPUT_CLIENTID@@", LowWatermarkTextBox.ClientID);
-            template.Replace("@@LW_SIZE_CLIENTID@@", LowWaterMarkSize.ClientID);
-            template.Replace("@@PATH_INPUT_CLIENTID@@", PathTextBox.ClientID);
-            template.Replace("@@TOTAL_SIZE_INDICATOR_CLIENTID@@", TotalSizeIndicator.ClientID);
-            template.Replace("@@AVAILABLE_SIZE_INDICATOR_CLIENTID@@", AvailableSizeIndicator.ClientID);
-            template.Replace("@@TOTAL_SIZE_CLIENTID@@", TotalSize.ClientID);
-            template.Replace("@@AVAILABLE_SIZE_CLIENTID@@", AvailableSize.ClientID);
-
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID+"_scripts", template.Script, true);
-        }
-
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Page.IsPostBack == false)
@@ -158,7 +138,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             {
                 // reload the filesystem information user is working on
                 if (ViewState[ClientID + "_EditMode"] != null)
-                    _editMode = (bool) ViewState[ClientID + "_EditMode"];
+                    _editMode = (bool)ViewState[ClientID + "_EditMode"];
 
                 FileSystem = ViewState[ClientID + "_FileSystem"] as Filesystem;
             }
@@ -187,76 +167,46 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             }
         }
 
-        private void SaveData()
-        {
-            
-            if (FileSystem == null)
-            {
-                // create a filesystem 
-                FileSystem = new Filesystem();
-                FileSystem.LowWatermark = 80.00M;
-                FileSystem.HighWatermark = 90.00M;
-            }
-
-            FileSystem.Description = DescriptionTextBox.Text;
-            FileSystem.FilesystemPath = PathTextBox.Text;
-            FileSystem.ReadOnly = ReadCheckBox.Checked && WriteCheckBox.Checked == false;
-            FileSystem.WriteOnly = WriteCheckBox.Checked && ReadCheckBox.Checked == false;
-            FileSystem.Enabled = ReadCheckBox.Checked || WriteCheckBox.Checked;
-
-            Decimal lowWatermark;
-            if (Decimal.TryParse(LowWatermarkTextBox.Text, out lowWatermark))
-                FileSystem.LowWatermark = lowWatermark;
-
-            Decimal highWatermark;
-            if (Decimal.TryParse(HighWatermarkTextBox.Text, out highWatermark))
-                FileSystem.HighWatermark = highWatermark;
-
-            FileSystem.FilesystemTierEnum = FilesystemTiers[TiersDropDownList.SelectedIndex];
-        }
-
-       
-
-        protected void ReadOnlyCheckBox_Init(object sender, EventArgs e)
-        {
-        }
+        
 
         protected void CancelButton_Click(object sender, EventArgs e)
         {
+            Close();
         }
 
         #endregion Protected methods
 
-        #region Public methods
+        #region Private methods
 
-        /// <summary>
-        /// Displays the add device dialog box.
-        /// </summary>
-        public void Show(bool updateUI)
+        private void RegisterClientSideScripts()
         {
-            if (updateUI)
-                UpdateUI();
+            ScriptTemplate template = new ScriptTemplate(typeof(AddFilesystemDialog).Assembly, "ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems.Filesystem.js");
+            template.Replace("@@HW_PERCENTAGE_INPUT_CLIENTID@@", HighWatermarkTextBox.ClientID);
+            template.Replace("@@HW_SIZE_CLIENTID@@", HighWatermarkSize.ClientID);
+            template.Replace("@@LW_PERCENTAGE_INPUT_CLIENTID@@", LowWatermarkTextBox.ClientID);
+            template.Replace("@@LW_SIZE_CLIENTID@@", LowWaterMarkSize.ClientID);
+            template.Replace("@@PATH_INPUT_CLIENTID@@", PathTextBox.ClientID);
+            template.Replace("@@TOTAL_SIZE_INDICATOR_CLIENTID@@", TotalSizeIndicator.ClientID);
+            template.Replace("@@AVAILABLE_SIZE_INDICATOR_CLIENTID@@", AvailableSizeIndicator.ClientID);
+            template.Replace("@@TOTAL_SIZE_CLIENTID@@", TotalSize.ClientID);
+            template.Replace("@@AVAILABLE_SIZE_CLIENTID@@", AvailableSize.ClientID);
 
-            if (Page.IsValid)
-            {
-                TabContainer1.ActiveTabIndex = 0;
-            }
-
-            ModalDialog1.Show();
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID+"_scripts", template.Script, true);
         }
+
 
         private void UpdateUI()
         {
             if (EditMode)
             {
                 // set the dialog box title and OK button text
-                ModalDialog1.Title = "Edit Filesystem";
+                ModalDialog.Title = "Edit Filesystem";
                 OKButton.Text = "Update";
             }
             else
             {
                 // set the dialog box title and OK button text
-                ModalDialog1.Title= "Add Filesystem";
+                ModalDialog.Title = "Add Filesystem";
                 OKButton.Text = "Add";
             }
 
@@ -292,12 +242,63 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             }
         }
 
+        private void SaveData()
+        {
+            
+            if (FileSystem == null)
+            {
+                // create a filesystem 
+                FileSystem = new Filesystem();
+                FileSystem.LowWatermark = 80.00M;
+                FileSystem.HighWatermark = 90.00M;
+            }
+
+            FileSystem.Description = DescriptionTextBox.Text;
+            FileSystem.FilesystemPath = PathTextBox.Text;
+            FileSystem.ReadOnly = ReadCheckBox.Checked && WriteCheckBox.Checked == false;
+            FileSystem.WriteOnly = WriteCheckBox.Checked && ReadCheckBox.Checked == false;
+            FileSystem.Enabled = ReadCheckBox.Checked || WriteCheckBox.Checked;
+
+            Decimal lowWatermark;
+            if (Decimal.TryParse(LowWatermarkTextBox.Text, out lowWatermark))
+                FileSystem.LowWatermark = lowWatermark;
+
+            Decimal highWatermark;
+            if (Decimal.TryParse(HighWatermarkTextBox.Text, out highWatermark))
+                FileSystem.HighWatermark = highWatermark;
+
+            FileSystem.FilesystemTierEnum = FilesystemTiers[TiersDropDownList.SelectedIndex];
+        }
+
+       
+
+        #endregion Private methods
+
+        #region Public methods
+
+        /// <summary>
+        /// Displays the add device dialog box.
+        /// </summary>
+        public void Show(bool updateUI)
+        {
+            if (updateUI)
+                UpdateUI();
+
+            if (Page.IsValid)
+            {
+                TabContainer1.ActiveTabIndex = 0;
+            }
+
+            ModalDialog.Show();
+        }
+
+        
         /// <summary>
         /// Dismisses the dialog box.
         /// </summary>
         public void Close()
         {
-            
+            ModalDialog.Hide();
 
         }
 

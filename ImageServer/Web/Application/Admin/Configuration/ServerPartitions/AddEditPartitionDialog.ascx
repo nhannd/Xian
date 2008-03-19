@@ -6,7 +6,7 @@
 <%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
     TagPrefix="CCCommon" %>
 <%@ Register Src="~/Common/ModalDialog.ascx" TagName="ModalDialog" TagPrefix="clearcanvas" %>
-<clearcanvas:ModalDialog ID="ModalDialog1" runat="server" BackgroundCSS="CSSModalBackground" Width="450px">
+<clearcanvas:ModalDialog ID="ModalDialog" runat="server" BackgroundCSS="CSSModalBackground" Width="450px">
     <ContentTemplate>
         <asp:Panel ID="Panel3" runat="server">
             <ajaxToolkit:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
@@ -183,7 +183,7 @@
                             ValidationGroup="vg1" />
                     </td>
                     <td>
-                        <asp:Button ID="CancelButton" runat="server" Text="Cancel" />
+                        <asp:Button ID="CancelButton" runat="server" Text="Cancel" OnClick="CancelButton_Click" />
                     </td>
                 </tr>
             </table>
