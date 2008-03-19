@@ -10,7 +10,8 @@
 				<siteMapNode url="~/Admin/Configuration/Devices/DevicePage.aspx" title="Devices"  description="Device Configuration"/>
 				<siteMapNode url="~/Admin/Configuration/ServerPartitions/ServerPartitionPage.aspx" title="Server Partitions"  description="Server Partition Configuration"/>
 				<siteMapNode url="~/Admin/Configuration/FileSystems/FileSystemsPage.aspx" title="Filesystems"  description="FileSystems Configuration"/>
-				<siteMapNode url="~/Admin/Configuration/ServerRules/ServerRulePage.aspx" title="Server Rules" description="Server Rule Configuration"/>
+			<siteMapNode url="~/Admin/Configuration/ServerRules/ServerRulePage.aspx" title="Server Rules" description="Server Rule Configuration"/>
+			<siteMapNode url="~/Admin/Configuration/ServiceLocks/ServiceLockPage.aspx" title="Service Locks" description="Service Locks Configuration"/>
 		</siteMapNode>
 	</siteMapNode>
 </siteMap>

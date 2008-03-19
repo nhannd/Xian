@@ -120,6 +120,12 @@
   <data name="SelectedWorkQueueNoLongerOnTheList" xml:space="preserve">
     <value>The item you selected is no longer on the list. It could have been modified by the system or another person. Please refresh the list.</value>
   </data>
+  <data name="ServiceLockUpdate_Confirm_ServiceIsLocked" xml:space="preserve">
+    <value>This service lock is being used by the server.  Are you sure you want to edit it ?</value>
+  </data>
+  <data name="ServiceLockUpdateFailed_ContactAdmin" xml:space="preserve">
+    <value>Unable to update this service lock. Please contact the server administrator.</value>
+  </data>
   <data name="WorkQueueBeingProcessed" xml:space="preserve">
     <value>This work queue item is being processed. Try again later.</value>
   </data>

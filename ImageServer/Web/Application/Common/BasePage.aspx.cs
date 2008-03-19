@@ -33,6 +33,12 @@ using System;
 
 namespace ClearCanvas.ImageServer.Web.Application.Common
 {
+    /// <summary>
+    /// Base class for all the pages.
+    /// </summary>
+    /// <remarks>
+    /// Derive new page from this class to ensure consistent look across all pages.
+    /// </remarks>
     public partial class BasePage : System.Web.UI.Page
     {
         protected void Page_PreInit(object sender, EventArgs e)

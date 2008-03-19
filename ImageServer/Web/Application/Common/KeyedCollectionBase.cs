@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             }
         }
 
-        public void Add(List<TData> items)
+        public void Add(IList<TData> items)
         {
             foreach (TData item in items)
                 Add(item);

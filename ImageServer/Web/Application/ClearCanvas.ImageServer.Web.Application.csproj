@@ -88,6 +88,35 @@
     <Compile Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx.designer.cs">
       <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Admin\Configuration\ServiceLocks\AddEditServiceLockDialog.ascx.cs">
+      <DependentUpon>AddEditServiceLockDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServiceLocks\AddEditServiceLockDialog.ascx.designer.cs">
+      <DependentUpon>AddEditServiceLockDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockCollection.cs" />
+    <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockGridView.ascx.cs">
+      <DependentUpon>ServiceLockGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockGridView.ascx.designer.cs">
+      <DependentUpon>ServiceLockGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockPanel.ascx.cs">
+      <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockPanel.ascx.designer.cs">
+      <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockPage.aspx.cs">
+      <DependentUpon>ServiceLockPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockPage.aspx.designer.cs">
+      <DependentUpon>ServiceLockPage.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Common\KeyedCollectionBase.cs" />
     <Compile Include="Common\ConfirmationDialog.ascx.cs">
       <DependentUpon>ConfirmationDialog.ascx</DependentUpon>
@@ -499,6 +528,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="About\About.aspx" />
+    <Content Include="Admin\Configuration\ServiceLocks\AddEditServiceLockDialog.ascx" />
+    <Content Include="Admin\Configuration\ServiceLocks\ServiceLockGridView.ascx" />
+    <Content Include="Admin\Configuration\ServiceLocks\ServiceLockPanel.ascx" />
+    <Content Include="Admin\Configuration\ServiceLocks\ServiceLockPage.aspx" />
     <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-left.gif" />
     <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-right.gif" />
     <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG.gif" />

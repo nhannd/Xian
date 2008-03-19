@@ -70,6 +70,24 @@ namespace ClearCanvas.ImageServer.Web.Application {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This service lock is being used by the server.  Are you sure you want to edit it ?.
+        /// </summary>
+        internal static string ServiceLockUpdate_Confirm_ServiceIsLocked {
+            get {
+                return ResourceManager.GetString("ServiceLockUpdate_Confirm_ServiceIsLocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to update this service lock. Please contact the server administrator..
+        /// </summary>
+        internal static string ServiceLockUpdateFailed_ContactAdmin {
+            get {
+                return ResourceManager.GetString("ServiceLockUpdateFailed_ContactAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This work queue item is being processed. Try again later..
         /// </summary>
         internal static string WorkQueueBeingProcessed {

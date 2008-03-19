@@ -50,6 +50,8 @@
   <ItemGroup>
     <Compile Include="Data\BaseAdaptor.cs" />
     <Compile Include="Data\BaseController.cs" />
+    <Compile Include="Data\ServiceLockDataAdapter.cs" />
+    <Compile Include="Data\ServiceLockConfigurationController.cs" />
     <Compile Include="Data\DeviceConfigurationController.cs" />
     <Compile Include="Data\DeviceDataAdapter.cs" />
     <Compile Include="Data\FileSystemDataAdapter.cs" />
