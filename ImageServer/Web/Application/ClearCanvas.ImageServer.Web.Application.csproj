@@ -555,6 +555,8 @@
     <Content Include="images\icons\EraserEnabled.png" />
     <Content Include="images\icons\OpenDisabled.png" />
     <Content Include="images\icons\OpenEnabled.png" />
+    <Content Include="images\icons\ResetDisabled.png" />
+    <Content Include="images\icons\ResetEnabled.png" />
     <Content Include="images\icons\ScheduleDisabled.png" />
     <Content Include="images\icons\ScheduleEnabled.png" />
     <Content Include="Scripts\NumberFormat154.js" />
