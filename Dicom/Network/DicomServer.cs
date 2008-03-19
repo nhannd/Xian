@@ -65,7 +65,7 @@ namespace ClearCanvas.Dicom.Network
     /// <summary>
     /// Class used by DICOM server applications for network related activites.
     /// </summary>
-    public sealed class DicomServer : NetworkBase
+    public sealed class DicomServer : NetworkBase, IDisposable
     {
 
         #region Static Public Methods
@@ -109,7 +109,7 @@ namespace ClearCanvas.Dicom.Network
 		private bool _closedOnError = false;
         IDicomServerHandler _handler;
         private Dictionary<string, ListenerInfo> _appList;
-
+        private bool _disposed = false;
 		#endregion
 
         #region Public Properties
@@ -138,7 +138,7 @@ namespace ClearCanvas.Dicom.Network
             _appList = appList;
 
             // Start background thread for incoming associations
-            InitializeNetwork(_network, "DicomServer Handler: " + remote.ToString());
+            InitializeNetwork(_network, "DicomServer Handler: " + remote);
         }
 		#endregion
 
@@ -154,7 +154,7 @@ namespace ClearCanvas.Dicom.Network
             _socket.NoDelay = false;
         }
 
-        private bool NegotiateAssociation(AssociationParameters cp, ServerAssociationParameters sp)
+        private static bool NegotiateAssociation(AssociationParameters cp, ServerAssociationParameters sp)
         {
             foreach (DicomPresContext clientContext in cp.GetPresentationContexts())
             {
@@ -198,9 +198,7 @@ namespace ClearCanvas.Dicom.Network
             if (anyValidContexts == false)
             {
                 return false;
-            }
-
-            
+            }      
 
             return true;
         }
@@ -329,7 +327,7 @@ namespace ClearCanvas.Dicom.Network
 
 
             // Setup Socketoptions based on the user's settings
-            SetSocketOptions(association as ServerAssociationParameters);
+            SetSocketOptions(association);
 
             // Select the presentation contexts
             bool anyValidContexts = NegotiateAssociation(association, info.Parameters);
@@ -395,8 +393,6 @@ namespace ClearCanvas.Dicom.Network
             SendReleaseResponse();
         }
 
-
-
         protected override void OnReceiveDimseRequest(byte pcid, DicomMessage msg)
         {
             try
@@ -409,6 +405,7 @@ namespace ClearCanvas.Dicom.Network
             }
             return ;
         }
+
         protected override void OnReceiveDimseResponse(byte pcid, DicomMessage msg)
         {
 
@@ -424,6 +421,43 @@ namespace ClearCanvas.Dicom.Network
 
         }
 
+        #endregion
+
+        #region IDisposable Members
+        ///
+        /// Releases unmanaged resources and performs other cleanup operations before the
+        /// object is reclaimed by garbage collection.
+        ///
+        ~DicomServer()
+        {
+            Dispose(false);
+        }
+
+        ///
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        ///
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(true);
+        }
+
+        ///
+        /// Disposes the specified disposing.
+        ///
+        /// if set to true [disposing].
+        private void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+            if (disposing)
+            {
+                // Dispose of other Managed objects, ie
+                CloseNetwork();
+            }
+            // FREE UNMANAGED RESOURCES
+            _disposed = true;
+        }
         #endregion
     }
 }

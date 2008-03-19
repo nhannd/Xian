@@ -64,7 +64,7 @@ namespace ClearCanvas.Dicom.Network
     /// <summary>
     /// Class used by DICOM Clients for all network functionality.
     /// </summary>
-    public sealed class DicomClient : NetworkBase
+    public sealed class DicomClient : NetworkBase, IDisposable
     {
         #region Private Members
 		private IPEndPoint _remoteEndPoint;
@@ -73,7 +73,8 @@ namespace ClearCanvas.Dicom.Network
 		private Stream _network;
 		private ManualResetEvent _closedEvent;
 		private bool _closedOnError;
-        IDicomClientHandler _handler;
+        readonly IDicomClientHandler _handler;
+        private bool _disposed = false;
 		#endregion
 
 		#region Public Constructors
@@ -215,7 +216,7 @@ namespace ClearCanvas.Dicom.Network
 
             _network = new SslStream(new NetworkStream(_socket));
 
-            InitializeNetwork(_network, "TLS Client handler to: " + _remoteEndPoint.ToString());
+            InitializeNetwork(_network, "TLS Client handler to: " + _remoteEndPoint);
 
             _closedEvent = new ManualResetEvent(false);
 
@@ -297,6 +298,7 @@ namespace ClearCanvas.Dicom.Network
                 {
                     if (_socket.Connected)
                         _socket.Close();
+
                     _socket = null;
                 }
                 if (_closedEvent != null)
@@ -424,7 +426,6 @@ namespace ClearCanvas.Dicom.Network
             CloseNetwork();
 		}
 
-
         protected override void OnReceiveDimseRequest(byte pcid, DicomMessage msg)
         {
             try
@@ -437,6 +438,7 @@ namespace ClearCanvas.Dicom.Network
             }
             return ;
         }
+
         protected override void OnReceiveDimseResponse(byte pcid, DicomMessage msg)
         {
 
@@ -452,5 +454,42 @@ namespace ClearCanvas.Dicom.Network
 
         }
 		#endregion
+
+        #region IDisposable Members
+        ///
+        /// Releases unmanaged resources and performs other cleanup operations before the
+        /// object is reclaimed by garbage collection.
+        ///
+        ~DicomClient()
+        {
+            Dispose(false);
+        }
+
+        ///
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        ///
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(true);
+        }
+
+        ///
+        /// Disposes the specified disposing.
+        ///
+        /// if set to true [disposing].
+        private void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+            if (disposing)
+            {
+                // Dispose of other Managed objects, ie
+                CloseNetwork();
+            }
+            // FREE UNMANAGED RESOURCES
+            _disposed = true;
+        }
+        #endregion
     }
 }
