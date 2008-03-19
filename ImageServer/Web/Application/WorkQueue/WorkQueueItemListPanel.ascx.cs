@@ -1,11 +1,55 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
-using System.Web.UI;
+using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 {
+    /// <summary>
+    /// A specialized panel that displays a list of <see cref="WorkQueue"/> entries.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="WorkQueueItemListPanel"/> wraps around <see cref="GridView"/> control to specifically display
+    /// <see cref="WorkQueue"/> entries on a web page. The <see cref="WorkQueue"/> entries are set through <see cref="WorkQueueItems"/>. 
+    /// User of this control can set the <see cref="Height"/> of the panel. The panel always expands to fit the width of the
+    /// parent control. To enable paging, <see cref="AllowPaging"/> must be set to <b>true</b> and the page size is set through <see cref="PageSize"/>.
+    /// 
+    /// By default, <see cref="AutoRefresh"/> is on. The panel periodically refreshes the list automatically. Any item that no longer
+    /// exists in the system will not be rendered on the screen.
+    /// 
+    /// </remarks>
     public partial class WorkQueueItemListPanel : System.Web.UI.UserControl
     {
         #region Private Members
@@ -120,7 +164,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         /// <summary>
         /// Gets/Sets a key of the selected work queue item.
         /// </summary>
-        public WorkQueueSummary SelectedWorkQueueItem
+        public Model.WorkQueue SelectedWorkQueueItem
         {
             get
             {
@@ -134,7 +178,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             set
             {
 
-                SelectedWorkQueueItemKey = value.WorkQueueGuid;
+                SelectedWorkQueueItemKey = value.GetKey();
                 WorkQueueListView.SelectedIndex = WorkQueueItems.RowIndexOf(SelectedWorkQueueItemKey, WorkQueueListView);
             }
         }
@@ -206,9 +250,9 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             if (WorkQueueItems!=null)
             {
                 // the refresh rate should be high if the item was scheduled to start soon..
-                foreach(WorkQueueSummary item in WorkQueueItems.Values)
+                foreach(Model.WorkQueue item in WorkQueueItems.Values)
                 {
-                    TimeSpan span = item.ScheduledDateTime.Subtract(Platform.Time);
+                    TimeSpan span = item.ScheduledTime.Subtract(Platform.Time);
                     if (span < TimeSpan.FromMinutes(1))
                     {
                         interval = WorkQueueSettings.Default.FastRefreshIntervalSeconds * 1000; 
@@ -244,7 +288,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             if (index < 0 || index >= WorkQueueItems.Count)
                 return null;
 
-            return WorkQueueItems[index].WorkQueueGuid;
+            return WorkQueueItems[index].GetKey();
         }
 
         protected void WorkQueueListView_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -305,7 +349,12 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         {
             if (WorkQueueItems != null)
             {
-                WorkQueueListView.DataSource = WorkQueueItems.Values;
+                List<WorkQueueSummary> workQueueItemSummaryList = new List<WorkQueueSummary>();
+                foreach(Model.WorkQueue item in WorkQueueItems.Values)
+                {
+                    workQueueItemSummaryList.Add(WorkQueueSummaryAssembler.CreateWorkQueueSummary(item));
+                }
+                WorkQueueListView.DataSource = workQueueItemSummaryList;
             }
 
 

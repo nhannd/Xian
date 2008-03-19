@@ -32,26 +32,28 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
-using AjaxControlToolkit;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
-[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.ScheduleWorkQueueDialog.js", "application/x-javascript")]
+
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 {
-    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.ScheduleWorkQueueDialog", 
-                            ResourcePath = "ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.ScheduleWorkQueueDialog.js")]
+    /// <summary>
+    /// A dialog box that prompts users to reschedule a work queue entry and reschedule it if users confirm to do so.
+    /// </summary>
+    /// <remarks>
+    /// To use this dialog, caller must indicate the <see cref="WorkQueue"/> entries to be rescheduled through the <see cref="WorkQueueKeys"/> property then
+    /// call <see cref="Show"/> to display the dialog. Optionally, caller can register an event listener for <see cref="ResetWorkQueueDialog.WorkQueueItemResetListener"/>
+    /// which is fired when users confirmed to reset the entry and it was sucessfully reset.
+    /// </remarks>
+    
     public partial class ScheduleWorkQueueDialog : UserControl
     {
 
         #region Private Members
-
         private List<Model.WorkQueue> _workQueues;
-        
-        
         #endregion
 
         #region Protected Properties
@@ -100,12 +102,16 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
         #endregion Public Properties
 
         #region Events
-        public delegate void OnWorkQueueUpdatedHandler(List<Model.WorkQueue> workqueueItems);
+        /// <summary>
+        /// Defines the event handler for <see cref="WorkQueueUpdated"/> event.
+        /// </summary>
+        /// <param name="workqueueItems"></param>
+        public delegate void WorkQueueUpdatedListener(List<Model.WorkQueue> workqueueItems);
 
         /// <summary>
         /// Fires after changes to the work queue items have been committed
         /// </summary>
-        public event OnWorkQueueUpdatedHandler OnWorkQueueUpdated;
+        public event WorkQueueUpdatedListener WorkQueueUpdated;
 
         #endregion Events
 
@@ -118,13 +124,13 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             PreOpenConfirmDialog.Confirmed += PreOpenConfirmDialog_Confirmed;
             PreApplyChangeConfirmDialog.Confirmed += PreApplyChangeConfirmDialog_Confirmed;
 
-            WorkQueueItemListPanel.WorkQueueItemListControl.SelectedIndexChanged += new EventHandler(WorkQueueListControl_SelectedIndexChanged);
+            WorkQueueItemListPanel.WorkQueueItemListControl.SelectedIndexChanged += WorkQueueListControl_SelectedIndexChanged;
         }
 
         protected override void OnPreRender(EventArgs e)
         {
             WorkQueueItemListPanel.AutoRefresh = Visible 
-                            && ModalDialog1.State == ClearCanvas.ImageServer.Web.Application.Common.ModalDialog.ShowState.Show
+                            && ModalDialog.State == ClearCanvas.ImageServer.Web.Application.Common.ModalDialog.ShowState.Show
                             && WorkQueueKeys!=null && WorkQueueItemListPanel.WorkQueueItems != null;
 
             base.OnPreRender(e);
@@ -137,9 +143,10 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
                 if (WorkQueueItemListPanel.WorkQueueItems!=null && 
                     WorkQueueItemListPanel.WorkQueueItems.Count != WorkQueueKeys.Count)
                 {
-                    InformationDialog.Message = "One or more items is no longer available.";
+                    InformationDialog.Message = SR.WorkQueueNoLongerAvailable;
+                    InformationDialog.MessageType =
+                        ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
-
                     
                 }
             }
@@ -148,18 +155,17 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 
         protected void OnApplyButtonClicked(object sender, EventArgs arg)
         {
-            //IList<Model.WorkQueue> workQueues = WorkQueues;
-
             bool prompt = false;
             foreach (Model.WorkQueue wq in WorkQueues)
             {
                 if (wq == null)
                 {
                     // the workqueue no longer exist in the db
-                    InformationDialog.Message =
-                        "One or more items you selected is no longer available and therefore will not be updated";
+                    InformationDialog.Message = SR.WorkQueueRescheduleFailed_ItemNotAvailable;
+                    InformationDialog.MessageType =
+                        ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
-                    break;
+                    return; // don't apply the changes
                 }
                 else
                 {
@@ -168,16 +174,11 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
                         // prompt the user first
                         if (_workQueues.Count > 1)
                         {
-                            PreApplyChangeConfirmDialog.Message = @"At least one of the workqueue items is being processed. <br>
-                                                                    Although you can save the changes you have made. They may be overwritten by the server when after the item has been processed.<P>
-
-                                                                    Do you want to continue ?";
+                            PreApplyChangeConfirmDialog.Message = SR.WorkQueueRescheduleConfirm_OneOrMoreAreBeingProcessed;
                         }
                         else
                         {
-                            PreApplyChangeConfirmDialog.Message = @"This workqueue item is being processed.<br>
-                                                                    Although you can save the changes you have made. They may be overwritten by the server when after the item has been processed.<P>
-                                                                    Do you want to continue ?";
+                            PreApplyChangeConfirmDialog.Message = SR.WorkQueueRescheduleConfirm_ItemBeingProcessed;
                         }
                         PreApplyChangeConfirmDialog.Title = "Warning";
                         PreApplyChangeConfirmDialog.MessageType =
@@ -188,27 +189,11 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
                     }
                     else if (wq.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("Failed"))
                     {
-                        // TODO: allow users to reset status
-                        if (_workQueues.Count > 1)
-                        {
-                            PreApplyChangeConfirmDialog.Message = @"At least one of the workqueue items has failed. Although you can save the changes you have made, <br>
-                                                                    failed items will not be processed by the server again.<P>
-
-                                                                    Do you want to continue ?";
-
-                        }
-                        else
-                        {
-                            PreApplyChangeConfirmDialog.Message = @"This workqueue item is already failed. Although you can save the changes you have made, <br>failed items will not be processed by the server again.<P>
-
-                                                                Do you want to continue ?";
-
-                            PreApplyChangeConfirmDialog.Title = "Warning";
-                            PreApplyChangeConfirmDialog.MessageType =
-                                ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.YESNO;
-                            PreApplyChangeConfirmDialog.Show();
-                            prompt = true;
-                        }
+                        InformationDialog.Message = SR.WorkQueueRescheduleFailed_ItemHasFailed;
+                        InformationDialog.MessageType =
+                            ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                        InformationDialog.Show();
+                        return; // don't apply the changes
                     }
                 }
             }
@@ -218,66 +203,77 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
                 ApplyChanges();
             }
 
-            ModalDialog1.Hide();
+            ModalDialog.Hide();
         }
 
         protected void ApplyChanges()
         {
-            WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
 
             if (WorkQueues != null)
             {
-                List<Model.WorkQueue> updatedList = new List<ClearCanvas.ImageServer.Model.WorkQueue>();
-
-                bool someAreNoLongerAvailable = false; // some items are no longer on the systems.
-
+                
+                List<Model.WorkQueue> toBeUpdatedList = new List<Model.WorkQueue>();
                 foreach (Model.WorkQueue item in WorkQueues)
                 {
-                    if (item == null)
+                    if (item != null)
                     {
-                        someAreNoLongerAvailable = true;
+                        toBeUpdatedList.Add(item);
                     }
-                    else
+                }
+
+                if (toBeUpdatedList.Count>0)
+                {
+                    DateTime newScheduleTime = Platform.Time;
+                    if (WorkQueueSettingsPanel.NewScheduledDateTime!=null)
                     {
-                        WorkQueueUpdateColumns updatedColumns = new WorkQueueUpdateColumns();
-                        updatedColumns.WorkQueuePriorityEnum = WorkQueueSettingsPanel.SelectedPriority;
+                        newScheduleTime = WorkQueueSettingsPanel.NewScheduledDateTime.Value;
+                    }
 
-                        DateTime? newScheduleTime = WorkQueueSettingsPanel.NewScheduledDateTime;
-                        if (newScheduleTime!= null)
+                    if (newScheduleTime < Platform.Time)
+                    {
+                        newScheduleTime = Platform.Time.AddSeconds(WorkQueueSettings.Default.WorkQueueProcessDelaySeconds);
+                    }
+
+                    DateTime expirationTime = newScheduleTime.AddSeconds(WorkQueueSettings.Default.WorkQueueExpireDelaySeconds);
+
+                    WorkQueuePriorityEnum priority = WorkQueueSettingsPanel.SelectedPriority;
+
+                    try
+                    {
+                        WorkQueueController controller = new WorkQueueController();
+                        bool result = controller.RescheduleWorkQueueItems(toBeUpdatedList, newScheduleTime, expirationTime, priority);
+                        if (result)
                         {
-                            // It doesn't make sense to reschedule something to start in the past. 
-                            // 
-                            if (newScheduleTime < Platform.Time)
-                            {
-                                newScheduleTime = Platform.Time.AddSeconds(WorkQueueSettings.Default.WorkQueueProcessDelaySeconds);
-                            }
-
-                            updatedColumns.ScheduledTime = newScheduleTime.Value;
-
-                            updatedColumns.ExpirationTime = newScheduleTime.Value.AddSeconds(WorkQueueSettings.Default.WorkQueueExpireDelaySeconds );//expire 90 seconds after that
-
+                            if (WorkQueueUpdated != null)
+                                WorkQueueUpdated(toBeUpdatedList);
                         }
-
-                        // the following fields should be reset too
-                        updatedColumns.FailureCount = 0;
-                        
-
-                        if (adaptor.Update(item.GetKey(), updatedColumns))
+                        else
                         {
-                            updatedList.Add(item);
+                            Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user");
+                            InformationDialog.MessageType =
+                                ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                            InformationDialog.Message = "Unable to reschedule this/these work queue items";
+                            InformationDialog.Show();
                         }
+                    }
+                    catch(Exception e)
+                    {
+                        Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user : {0}", e.StackTrace);
+
+                        InformationDialog.MessageType =
+                                ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                        InformationDialog.Message =
+                            String.Format(SR.WorkQueueRescheduleFailed_Exception, e.Message);
+                        InformationDialog.Show();
                     }
                 }
                 
-
-                if (OnWorkQueueUpdated != null)
-                    OnWorkQueueUpdated(updatedList);
             }
         }
 
         protected void OnCancelButtonClicked(object sender, EventArgs arg)
         {
-            ModalDialog1.Hide();
+            ModalDialog.Hide();
         }
 
         #endregion Protected Methods
@@ -304,10 +300,8 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             }
 
             
-            ModalDialog1.Show();
+            ModalDialog.Show();
         }
-
-
 
         #endregion Private Methods
 
@@ -317,20 +311,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
         {
             if (WorkQueues!=null)   
             {
-                WorkQueueItemCollection collection = new WorkQueueItemCollection();
-                foreach (Model.WorkQueue item in WorkQueues)
-                {
-                    if (item != null)
-                    {
-                        collection.Add(WorkQueueSummaryAssembler.CreateWorkQueueSummary(item));
-                        
-                    }
-                    else
-                    {
-                        // the work queue item is no longer available... don't show it on the list   
-                    }
-                }
-
+                WorkQueueItemCollection collection = new WorkQueueItemCollection(WorkQueues);
                 WorkQueueItemListPanel.WorkQueueItems = collection;
             }
 
@@ -338,11 +319,17 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 
         }
 
+        /// <summary>
+        /// Hides this dialog box
+        /// </summary>
         public void Hide()
         {
-            ModalDialog1.Hide();
+            ModalDialog.Hide();
         }
 
+        /// <summary>
+        /// Displays this dialog for rescheduling the work queue(s)
+        /// </summary>
         public void Show()
         {
             DataBind();
@@ -352,7 +339,9 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 
             if (WorkQueueItemListPanel.WorkQueueItems.Count != WorkQueueKeys.Count)
             {
-                InformationDialog.Message = "One or more items is no longer available and has been removed from the list.";
+                InformationDialog.Message = SR.WorkQueueNoLongerAvailable;
+                InformationDialog.MessageType =
+                    ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.INFORMATION;
                 InformationDialog.Show();    
             }
             

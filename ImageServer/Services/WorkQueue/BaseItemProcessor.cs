@@ -123,8 +123,65 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             WorkQueueUidQueryParameters parms = new WorkQueueUidQueryParameters();
 
             parms.WorkQueueKey = item.GetKey();
-
             _uidList = select.Execute(parms);
+
+            _uidList = TruncateList(item, _uidList);
+
+            Console.WriteLine("Truncated: size=" + _uidList.Count);
+        }
+
+        /// <summary>
+        /// Returns the max batch size for a <see cref="WorkQueue"/> item.
+        /// </summary>
+        /// <param name="item">The <see cref="WorkQueue"/> item to be processed</param>
+        /// <returns>The maximum batch size for the <see cref="WorkQueue"/> item</returns>
+        protected int GetMaxBatchSize(Model.WorkQueue item)
+        {
+            int maxSize = 0;
+
+            WorkQueueSettings settings = WorkQueueSettings.Default;
+
+            if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("Low"))
+            {
+                maxSize = settings.LowPriorityMaxBatchSize;
+            }
+            else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("Medium"))
+            {
+                maxSize = settings.MedPriorityMaxBatchSize;
+            }
+            else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("High"))
+            {
+                maxSize = settings.HighPriorityMaxBatchSize;
+            }
+            else
+            {
+                maxSize = settings.MedPriorityMaxBatchSize;
+            }
+
+            return maxSize;
+        }
+
+        /// <summary>
+        /// Truncate the SOP Instance Uid list
+        /// </summary>
+        /// <param name="item">The <see cref="WorkQueue"/> item to be processed</param>
+        /// <param name="list">The list of <see cref="WorkQueueUid"/> to be truncated, if needed</param>
+        /// <return>A truncated list of <see cref="WorkQueueUid"/></return>
+        protected IList<Model.WorkQueueUid> TruncateList(Model.WorkQueue item, IList<Model.WorkQueueUid> list)
+        {
+            if (item!=null && list!=null)
+            {
+                int maxSize = GetMaxBatchSize(item);
+                if (list.Count > maxSize)
+                {
+                    IList<Model.WorkQueueUid> newList = new List<Model.WorkQueueUid>();
+                    for (int i = 0; i < maxSize; i++)
+                        newList.Add(list[i]);
+                    return newList;
+                }
+            }
+
+            return list;
         }
 
         /// <summary>

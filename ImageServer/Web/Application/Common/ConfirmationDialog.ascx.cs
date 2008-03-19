@@ -37,10 +37,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
     /// A dialog box that displays a message on the screen and waits for users to accept or reject.
     /// </summary>
     /// <remark>
-    /// The confirmation dialog box presents users with two options: Yes and No. Applications should implement 
-    /// an event handler for the <see cref="Confirmed"/> event which is fired when users press "Yes". The dialog 
-    /// box will close automatically when users press "Yes" or "No".
-    /// 
+    /// <para>
+    /// The confirmation dialog box presents users with different buttons depending on the <see cref="MessageType"/>. For eg,
+    /// if  <see cref="MessageType"/> is set to <see cref="MessageTypeEnum.YESNO"/>, "Yes" and "No" buttons will be displayed
+    /// below the <see cref="Message"/>. If <see cref="MessageType"/> is set to <see cref="MessageTypeEnum.INFORMATION"/>, only
+    /// "OK" button will be displayed.
+    /// </para>
+    /// <para>
+    /// Unless explicitly set by the applications, the <see cref="Title"/> of the dialog box will be set based on the <see cref="MessageType"/>
+    /// </para>
+    /// <para>
+    /// Applications should implement an event handler for the <see cref="Confirmed"/> event which is fired 
+    /// when users press "Yes" (or equivalent buttons). The dialog box will close automatically when users press on the buttons.
+    /// </para>
     /// </remark>
     public partial class ConfirmationDialog : System.Web.UI.UserControl
     {
@@ -49,11 +58,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// </summary>
         public enum MessageTypeEnum
         {
-            YESNO,
-            OKCANCEL,
-            INFORMATION,
-            ERROR,
-            NONE
+            YESNO,  // displays "Yes" and "No" buttons
+            OKCANCEL, // displays "OK" and "Cancel" buttons
+            INFORMATION, // displays "OK" button.
+            ERROR,      // displays "OK" button
+            NONE            // do not display any button
         };
 
         #region Private Members
@@ -169,6 +178,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             {
                 case MessageTypeEnum.ERROR:
                     OKButton.Visible = true;
+                    if (String.IsNullOrEmpty(Title))
+                        Title = "Error";
                     break;
 
                 case MessageTypeEnum.INFORMATION:
@@ -178,11 +189,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                 case MessageTypeEnum.OKCANCEL:
                     OKButton.Visible = true;
                     CancelButton.Visible = true;
+                    if (String.IsNullOrEmpty(Title))
+                        Title = "Please confirm";
                     break;
 
                 case MessageTypeEnum.YESNO:
                     YesButton.Visible = true;
                     NoButton.Visible = true;
+                    if (String.IsNullOrEmpty(Title))
+                        Title = "Please confirm";
                     break;
 
                 default:

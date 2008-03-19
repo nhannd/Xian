@@ -29,8 +29,8 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices;
 using ClearCanvas.ImageServer.Web.Application.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
@@ -38,12 +38,16 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
     /// <summary>
     /// Encapsulates a collection of <see cref="WorkQueueSummary"/> which can be accessed based on the <see cref="ServerEntityKey"/>
     /// </summary>
-    public class WorkQueueItemCollection : KeyedCollectionBase<WorkQueueSummary, ServerEntityKey>
+    public class WorkQueueItemCollection : KeyedCollectionBase<Model.WorkQueue, ServerEntityKey>
     {
 
-        protected override ServerEntityKey GetKey(WorkQueueSummary item)
+        public WorkQueueItemCollection(IList<Model.WorkQueue> list):base(list)
         {
-            return item.WorkQueueGuid;
+        }
+
+        protected override ServerEntityKey GetKey(Model.WorkQueue item)
+        {
+            return item.GetKey();
         }
     }
 }

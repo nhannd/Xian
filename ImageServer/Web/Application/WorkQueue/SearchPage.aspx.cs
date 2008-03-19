@@ -32,8 +32,6 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
-using System.Web.UI.MobileControls;
-using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Common;
@@ -42,7 +40,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 {
     /// <summary>
-    /// WorkQueue Search Page
+    /// Work Queue Search Page
     /// </summary>
     public partial class SearchPage : BasePage
     {
@@ -63,7 +61,9 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             base.OnInit(e);
 
             ConfirmRescheduleDialog.Confirmed += ConfirmationContinueDialog_Confirmed;
-            ScheduleWorkQueueDialog.OnWorkQueueUpdated += ScheduleWorkQueueDialog_OnWorkQueueUpdated;
+            ScheduleWorkQueueDialog.WorkQueueUpdated += ScheduleWorkQueueDialog_OnWorkQueueUpdated;
+            ResetWorkQueueDialog.WorkQueueItemReseted += ResetWorkQueueDialog_WorkQueueItemReseted;
+            DeleteWorkQueueDialog.WorkQueueItemDeleted += DeleteWorkQueueDialog_WorkQueueItemDeleted;
             ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
                                                            {
                                                                SearchPanel panel =
@@ -77,6 +77,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
                                                            });
         }
 
+       
         #endregion Protected Methods
 
 
@@ -100,7 +101,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
             script = script.Replace("@@URL@@", url);
 
-            ScriptManager.RegisterStartupScript(this, this.GetType(), itemKey.Key.ToString(), script, true);
+            ScriptManager.RegisterStartupScript(this, GetType(), itemKey.Key.ToString(), script, true);
         }
 
         /// <summary>
@@ -118,27 +119,25 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
             if (item==null)
             {
-                InformationDialog.Message = "The work queue item is no longer available.";
+                InformationDialog.Message = SR.WorkQueueNotAvailable;
                 InformationDialog.Show();
 
             }
             else
             {
-                bool prompt = false;
                 if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress"))
                 {
                     // prompt the user first
-                    InformationDialog.Message = @"This item is being processed. It cannot be rescheduled at this point.<br>
-                                              Please retry again later";
-                    InformationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.INFORMATION;
+                    InformationDialog.Message = SR.WorkQueueBeingProcessed_CannotReschedule;
+                    InformationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
                     return;
 
                 }
                 else if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("Failed"))
                 {
-                    InformationDialog.Message = "This item has already failed. It cannot be rescheduled.";
-                    InformationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.INFORMATION;
+                    InformationDialog.Message = SR.WorkQueueFailed_CannotReschedule;
+                    InformationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
                     return;
                 }
@@ -146,22 +145,37 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
                 ScheduleWorkQueueDialog.WorkQueueKeys = new List<ServerEntityKey>();
                 ScheduleWorkQueueDialog.WorkQueueKeys.Add(itemKey);
-
-                if (!prompt)
-                {
-                    ScheduleWorkQueueDialog.Show();
-                }
+                ScheduleWorkQueueDialog.Show();
+                
             }
-        
-            
-
         }
+
+
+        public void ResetWorkQueueItem(ServerEntityKey itemKey)
+        {
+            if (itemKey != null)
+            {
+                ResetWorkQueueDialog.WorkQueueItemKey = itemKey;
+                ResetWorkQueueDialog.Show();
+            }
+        }
+
+        public void DeleteWorkQueueItem(ServerEntityKey itemKey)
+        {
+            if (itemKey != null)
+            {
+                DeleteWorkQueueDialog.WorkQueueItemKey = itemKey;
+                DeleteWorkQueueDialog.Show();
+            }
+        }
+
+        
 
         #endregion Public Methods
 
         #region Private Methods
 
-        private void ScheduleWorkQueueDialog_OnWorkQueueUpdated(List<ClearCanvas.ImageServer.Model.WorkQueue> workqueueItems)
+        private void ScheduleWorkQueueDialog_OnWorkQueueUpdated(List<Model.WorkQueue> workqueueItems)
         {
             List<ServerEntityKey> updatedPartitions = new List<ServerEntityKey>();
             foreach (Model.WorkQueue item in workqueueItems)
@@ -172,13 +186,25 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
                     updatedPartitions.Add(partitionKey);
 
                     ServerPartitionTabs.Update(partitionKey);
-
                 }
-
             }
-
-
         }
+
+        
+
+
+        void ResetWorkQueueDialog_WorkQueueItemReseted(Model.WorkQueue item)
+        {
+            ServerEntityKey partitionKey = item.ServerPartitionKey;
+            ServerPartitionTabs.Update(partitionKey);
+        }
+
+        void DeleteWorkQueueDialog_WorkQueueItemDeleted(Model.WorkQueue item)
+        {
+            ServerEntityKey partitionKey = item.ServerPartitionKey;
+            ServerPartitionTabs.Update(partitionKey);
+        }
+
 
         void ConfirmationContinueDialog_Confirmed(object data)
         {

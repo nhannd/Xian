@@ -3,12 +3,12 @@
     Title="ImageServer Search" %>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
-<%@ Register Src="~/Common/ServerPartitionTabs.ascx" TagName="ServerPartitionTabs"
-    TagPrefix="ccPartitionTabs" %>
-    
+<%@ Register Src="~/Common/ServerPartitionTabs.ascx" TagName="ServerPartitionTabs" TagPrefix="ccPartitionTabs" %>
 <%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog" TagPrefix="clearcanvas" %>
 <%@ Register Src="~/WorkQueue/Edit/ScheduleWorkQueueDialog.ascx" TagName="ScheduleWorkQueueDialog" TagPrefix="clearcanvas" %>
-    
+<%@ Register Src="~/WorkQueue/Edit/ResetWorkQueueDialog.ascx" TagName="ResetWorkQueueDialog"    TagPrefix="clearcanvas" %>        
+<%@ Register Src="~/WorkQueue/Edit/DeleteWorkQueueDialog.ascx" TagName="DeleteWorkQueueDialog"    TagPrefix="clearcanvas" %>        
+  
 <asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
     Work Queue
 </asp:Content>
@@ -31,4 +31,6 @@
     <clearcanvas:ConfirmationDialog runat="server" ID="ConfirmRescheduleDialog"/>
     <clearcanvas:ConfirmationDialog runat="server" ID="InformationDialog" MessageType="INFORMATION" Title=""/>
     <clearcanvas:ScheduleWorkQueueDialog runat="server" ID="ScheduleWorkQueueDialog"/>
+    <clearcanvas:ResetWorkQueueDialog ID="ResetWorkQueueDialog" runat="server" />
+    <clearcanvas:DeleteWorkQueueDialog ID="DeleteWorkQueueDialog" runat="server" />
 </asp:Content>

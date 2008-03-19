@@ -38,31 +38,49 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// UpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        protected global::System.Web.UI.UpdatePanel UpdatePanel;
         
         /// <summary>
-        /// WorkQueueItemDetailsPanel1 control.
+        /// WorkQueueItemDetailsPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.WorkQueueItemDetailsPanel WorkQueueItemDetailsPanel1;
+        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.WorkQueueItemDetailsPanel WorkQueueItemDetailsPanel;
         
         /// <summary>
-        /// ScheduleWorkQueueDialog1 control.
+        /// ScheduleWorkQueueDialog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.ScheduleWorkQueueDialog ScheduleWorkQueueDialog1;
+        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.ScheduleWorkQueueDialog ScheduleWorkQueueDialog;
+        
+        /// <summary>
+        /// ResetWorkQueueDialog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.ResetWorkQueueDialog ResetWorkQueueDialog;
+        
+        /// <summary>
+        /// DeleteWorkQueueDialog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.DeleteWorkQueueDialog DeleteWorkQueueDialog;
         
         /// <summary>
         /// InformationDialog control.

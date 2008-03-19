@@ -35,7 +35,9 @@ using System.Web.UI.WebControls;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 {
-
+    /// <summary>
+    /// The defails view control for the <see cref="WorkQueue"/> inside the <see cref="WorkQueueItemDetailsPanel"/>
+    /// </summary>
     public partial class WorkQueueDetailsView : System.Web.UI.UserControl
     {
         #region Private members

@@ -4,6 +4,8 @@
     TagPrefix="uc2" %>
 <%@ Register Src="ScheduleWorkQueueDialog.ascx" TagName="ScheduleWorkQueueDialog"
     TagPrefix="uc1" %>
+<%@ Register Src="ResetWorkQueueDialog.ascx" TagName="ResetWorkQueueDialog" TagPrefix="uc1" %>
+<%@ Register Src="DeleteWorkQueueDialog.ascx" TagName="DeleteWorkQueueDialog" TagPrefix="uc1" %>
 <%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog"
     TagPrefix="clearcanvas" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -16,12 +18,13 @@
         <div style="width: 1020px; height: 780px">
             <asp:ScriptManager ID="ScriptManager1" runat="server">
             </asp:ScriptManager>
-            <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
+            <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
                 <ContentTemplate>
-                    <uc2:WorkQueueItemDetailsPanel ID="WorkQueueItemDetailsPanel1" runat="server"></uc2:WorkQueueItemDetailsPanel>
-                    <uc1:ScheduleWorkQueueDialog ID="ScheduleWorkQueueDialog1" runat="server" />
-                    <clearcanvas:ConfirmationDialog runat="server" ID="InformationDialog" MessageType="INFORMATION"
-                        Title="" />
+                    <uc2:WorkQueueItemDetailsPanel ID="WorkQueueItemDetailsPanel" runat="server"></uc2:WorkQueueItemDetailsPanel>
+                    <uc1:ScheduleWorkQueueDialog ID="ScheduleWorkQueueDialog" runat="server" />
+                    <uc1:ResetWorkQueueDialog ID="ResetWorkQueueDialog" runat="server" />
+                    <uc1:DeleteWorkQueueDialog ID="DeleteWorkQueueDialog" runat="server" />
+                    <clearcanvas:ConfirmationDialog runat="server" ID="InformationDialog" MessageType="INFORMATION" Title="" />
                     <center>
                         <asp:Label ID="Message" runat="server" Text="Label"></asp:Label>
                     </center>

@@ -6,7 +6,10 @@
 <%@ Register Src="~/Common/GridPager.ascx" TagName="GridPager" TagPrefix="clearcanvas" %>
 <%@ Register TagPrefix="clearcanvas" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" 
     Assembly="ClearCanvas.ImageServer.Web.Common" %>
+    
+
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="AjaxControlToolkit" %>
+
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="PagePanel" runat="server">
@@ -27,10 +30,15 @@
                                             DisabledImageURL="~/images/icons/ScheduleDisabled.png"
                                             OnClick="RescheduleButton_Click" AlternateText="Reschedule" 
                                             />
-                                            
+                                      <clearcanvas:ToolbarButton ID="ResetButton" runat="server" EnabledImageURL="~/images/icons/ResetEnabled.png"
+                                        DisabledImageURL="~/images/icons/ResetDisabled.png" AlternateText="Reset this item" OnClick="Reset_Click"/>
+                                    
+                                      <clearcanvas:ToolbarButton ID="DeleteButton" runat="server" EnabledImageURL="~/images/icons/DeleteEnabled.png"
+                                        DisabledImageURL="~/images/icons/DeleteDisabled.png" AlternateText="Delete this item" OnClick="Delete_Click"/>
+                                    
                                     </asp:Panel>
                                 </asp:Panel>
-                            </asp:Panel>
+                            
                     </asp:TableHeaderCell>
                     <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom">
                         <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
@@ -91,7 +99,7 @@
                     <asp:TableCell ColumnSpan="2">
                         <asp:Panel runat="server" CssClass="CSSGridViewPanelContainer">
                                 <asp:Panel runat="server" CssClass="CSSGridViewPanelBorder" >
-                                    <clearcanvas:WorkQueueSearchResultPanel ID="workQueueItemListPanel" Height="500px" AllowPaging="true" PageSize="30" runat="server"></clearcanvas:WorkQueueSearchResultPanel>
+                                    <clearcanvas:WorkQueueSearchResultPanel ID="workQueueItemListPanel" Height="500px" AllowPaging="true" PageSize="20" runat="server"></clearcanvas:WorkQueueSearchResultPanel>
                                 </asp:Panel>                        
                         </asp:Panel>
                         
@@ -108,4 +116,3 @@
 </asp:UpdatePanel>
 
 <clearcanvas:ConfirmationDialog runat="server" ID="ConfirmationDialog" />
-

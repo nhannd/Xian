@@ -369,6 +369,11 @@
       <DependentUpon>ValidationServices.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
     <Compile Include="StudyDetails\PatientSummaryAssembler.cs" />
     <Compile Include="StudyDetails\PatientSummaryPanel.ascx.cs">
       <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
@@ -408,6 +413,20 @@
     </Compile>
     <Compile Include="StudyDetails\StudyDetailsView.ascx.designer.cs">
       <DependentUpon>StudyDetailsView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\DeleteWorkQueueDialog.ascx.cs">
+      <DependentUpon>DeleteWorkQueueDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\DeleteWorkQueueDialog.ascx.designer.cs">
+      <DependentUpon>DeleteWorkQueueDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\ResetWorkQueueDialog.ascx.cs">
+      <DependentUpon>ResetWorkQueueDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\ResetWorkQueueDialog.ascx.designer.cs">
+      <DependentUpon>ResetWorkQueueDialog.ascx</DependentUpon>
     </Compile>
     <Compile Include="WorkQueue\Edit\ScheduleWorkQueueDialog.ascx.cs">
       <DependentUpon>ScheduleWorkQueueDialog.ascx</DependentUpon>
@@ -608,6 +627,11 @@
     <Content Include="SeriesDetails\SeriesDetailsView.ascx" />
     <Content Include="Services\FilesystemInfoService.asmx" />
     <Content Include="Services\ValidationServices.asmx" />
+    <EmbeddedResource Include="SR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="StudyDetails\SeriesGridView.js" />
     <EmbeddedResource Include="StudyDetails\StudyDetailsPanel.js" />
     <Content Include="StudyDetails\PatientSummaryPanel.ascx" />
@@ -619,8 +643,9 @@
     <Content Include="Logging.config" />
     <Content Include="Services\webservice.htc" />
     <EmbeddedResource Include="WorkQueue\SearchPanel.js" />
+    <Content Include="WorkQueue\Edit\DeleteWorkQueueDialog.ascx" />
+    <Content Include="WorkQueue\Edit\ResetWorkQueueDialog.ascx" />
     <Content Include="WorkQueue\Edit\ScheduleWorkQueueDialog.ascx" />
-    <Content Include="WorkQueue\Edit\ScheduleWorkQueueDialog.js" />
     <Content Include="WorkQueue\Edit\WorkQueueDetailsView.ascx" />
     <Content Include="WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx" />
     <Content Include="WorkQueue\Edit\ViewEdit.aspx" />

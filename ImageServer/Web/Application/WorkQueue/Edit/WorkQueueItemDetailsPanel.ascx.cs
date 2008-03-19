@@ -31,17 +31,21 @@
 
 using System;
 using System.Web.UI;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 {
-
+    /// <summary>
+    /// The <see cref="WorkQueue"/> details panel
+    /// </summary>
     public partial class WorkQueueItemDetailsPanel : System.Web.UI.UserControl
     {
         #region Private members
 
         private Model.WorkQueue _workQueue;
         #endregion Private members
-
 
         #region Public Properties
 
@@ -73,34 +77,95 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 
         #region Events
 
-        public delegate void OnRescheduleButtonClickHandler();
+        public delegate void RescheduleButtonClickListener();
+        public delegate void ResetButtonClickListener();
+        public delegate void DeleteButtonClickListener();
 
         /// <summary>
         /// Fired when user clicks on the Reschedule button
         /// </summary>
-        public event OnRescheduleButtonClickHandler RescheduleButtonClick;
+        public event RescheduleButtonClickListener RescheduleButtonClick;
+        /// <summary>
+        /// Fired when user clicks on the Reset button
+        /// </summary>
+        public event ResetButtonClickListener ResetButtonClick;
+
+        /// <summary>
+        /// Fired when user clicks on the Delete button
+        /// </summary>
+        public event DeleteButtonClickListener DeleteButtonClick;
+        
 
         #endregion Events
 
         #region Protected Methods
 
+        protected int GetRefreshInterval()
+        {
+            int interval = WorkQueueSettings.Default.NormalRefreshIntervalSeconds * 1000;
+
+            if (WorkQueue != null)
+            {
+                // the refresh rate should be high if the item was scheduled to start soon..
+                TimeSpan span = WorkQueue.ScheduledTime.Subtract(Platform.Time);
+                if (span < TimeSpan.FromMinutes(1))
+                {
+                    interval = WorkQueueSettings.Default.FastRefreshIntervalSeconds * 1000;
+                }
+                
+            }
+
+            return interval;
+        }
+
         protected override void OnPreRender(EventArgs e)
         {
             if (WorkQueue==null)
             {
-                this.Visible = false;
+                Visible = false;
             }
 
             RefreshTimer.Enabled = AutoRefresh && Visible;
 
+            if (RefreshTimer.Enabled)
+            {
+                if (WorkQueue != null)
+                {
+                    RefreshTimer.Interval = GetRefreshInterval();
+                }
+            }
+
+
+            UpdateToolBarButtons();
 
             base.OnPreRender(e);
+        }
+
+        
+
+        protected void UpdateToolBarButtons()
+        {
+            RescheduleToolbarButton.Enabled = WorkQueue != null && WorkQueueController.CanReschedule(WorkQueue);
+            ResetButton.Enabled = WorkQueue != null && WorkQueueController.CanReset(WorkQueue);
+            DeleteButton.Enabled = WorkQueue != null && WorkQueueController.CanDelete(WorkQueue);
         }
 
         protected void Reschedule_Click(object sender, EventArgs arg)
         {
             if (RescheduleButtonClick != null)
                 RescheduleButtonClick();
+        }
+
+        protected void Delete_Click(object sender, EventArgs arg)
+        {
+            if (DeleteButtonClick != null)
+                DeleteButtonClick();
+        }
+
+        protected void Reset_Click(object sender, EventArgs arg)
+        {
+            if (ResetButtonClick != null)
+                ResetButtonClick();
         }
 
         protected void RefreshTimer_Tick(object sender, EventArgs arg)

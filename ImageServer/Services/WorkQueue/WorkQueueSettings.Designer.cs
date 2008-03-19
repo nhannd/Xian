@@ -98,5 +98,32 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
                 return ((int)(this["WorkQueueProcessDelayHighPrioritySeconds"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int LowPriorityMaxBatchSize {
+            get {
+                return ((int)(this["LowPriorityMaxBatchSize"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int MedPriorityMaxBatchSize {
+            get {
+                return ((int)(this["MedPriorityMaxBatchSize"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        public int HighPriorityMaxBatchSize {
+            get {
+                return ((int)(this["HighPriorityMaxBatchSize"]));
+            }
+        }
     }
 }

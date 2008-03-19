@@ -1,5 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WorkQueueSettingsPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.WorkQueueSettingsPanel" %>
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 
 <asp:Panel ID="Panel1" runat="server" style="padding:5px; text-align:center">
     <table width="100%">
@@ -15,8 +15,8 @@
                 <asp:Label ID="Label1" runat="server" Text="Schedule: "></asp:Label>
                 <asp:TextBox ID="NewScheduleDate" runat="server" Width="80px"></asp:TextBox>
                 <asp:Button ID="DatePickerButton" runat="server" Text="..." />
-                <cc1:CalendarExtender ID="CalendarExtender1" runat="server" TargetControlID="NewScheduleDate" PopupButtonID="DatePickerButton" CssClass="Calendar">
-                </cc1:CalendarExtender>
+                <ajaxToolkit:CalendarExtender ID="CalendarExtender1" runat="server" TargetControlID="NewScheduleDate" PopupButtonID="DatePickerButton" CssClass="Calendar">
+                </ajaxToolkit:CalendarExtender>
                 
                 <asp:DropDownList ID="NewScheduleTimeDropDownList" runat="server">
                     

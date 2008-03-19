@@ -83,6 +83,24 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton RescheduleToolbarButton;
         
         /// <summary>
+        /// ResetButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton ResetButton;
+        
+        /// <summary>
+        /// DeleteButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteButton;
+        
+        /// <summary>
         /// FilterPanel control.
         /// </summary>
         /// <remarks>

@@ -31,21 +31,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
-using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 {
 
     /// <summary>
-    /// WorkQueue Search Panel
+    /// Work Queue Search Panel
     /// </summary>
     public partial class SearchPanel : UserControl
     {
@@ -209,11 +206,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
                 IList<Model.WorkQueue> list = _searchController.FindWorkQueue(parameters);
 
-                WorkQueueItems = new WorkQueueItemCollection();
-                foreach(Model.WorkQueue item in list)
-                {
-                    WorkQueueItems.Add(WorkQueueSummaryAssembler.CreateWorkQueueSummary(item));
-                }
+                WorkQueueItems = new WorkQueueItemCollection(list);
 
                 workQueueItemListPanel.WorkQueueItems = WorkQueueItems;
                
@@ -223,51 +216,76 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
         protected void ViewButton_Click(object sender, ImageClickEventArgs e)
         {
-            WorkQueueSummary item = workQueueItemListPanel.SelectedWorkQueueItem;
+            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
             if (item != null)
             {
-               EnclosingPage.ViewWorkQueueItem(item.WorkQueueGuid);
+               EnclosingPage.ViewWorkQueueItem(item.GetKey());
             }
-            
         }
+
+
+        protected void Reset_Click(object sender, EventArgs arg)
+        {
+
+            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
+            if (item != null)
+            {
+                EnclosingPage.ResetWorkQueueItem(item.GetKey());
+            }
+
+        }
+
+        protected void Delete_Click(object sender, EventArgs arg)
+        {
+
+            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
+            if (item != null)
+            {
+                EnclosingPage.DeleteWorkQueueItem(item.GetKey());
+            }
+
+        }
+
 
         protected void RescheduleButton_Click(object sender, ImageClickEventArgs e)
         {
             
-            WorkQueueSummary item = workQueueItemListPanel.SelectedWorkQueueItem;
+            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
             if (item != null)
             {
-               EnclosingPage.RescheduleWorkQueueItem(item.WorkQueueGuid);
+               EnclosingPage.RescheduleWorkQueueItem(item.GetKey());
             }
             else 
             {
-                // the item no longer exist on the list... 
+                // the item no longer exist on the list... either it is deleted or filtered
                 ConfirmationDialog.Title = "";
                 ConfirmationDialog.BackgroundCSS = "";
-                ConfirmationDialog.Message = "The item you selected is no longer on the list. Please refresh the list.";
+                ConfirmationDialog.Message = SR.SelectedWorkQueueNoLongerOnTheList;
                 ConfirmationDialog.MessageType =
-                    ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.INFORMATION;
+                    ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                 ConfirmationDialog.Show();
             }
         }
 
         protected override void OnPreRender(EventArgs e)
         {
+            UpdateToolBarButtons(); 
+            
             base.OnPreRender(e);
 
-            WorkQueueSummary selectedItem = workQueueItemListPanel.SelectedWorkQueueItem;
-            if (selectedItem==null)
-            {
-                ViewToolbarButton1.Enabled = false;
-                RescheduleToolbarButton.Enabled = false;
-            }
-            else
-            {
-                ViewToolbarButton1.Enabled = true;
-                RescheduleToolbarButton.Enabled = true;
-            }
-            
         }
+
+        protected void UpdateToolBarButtons()
+        {
+            Model.WorkQueue selectedItem = workQueueItemListPanel.SelectedWorkQueueItem;
+
+            ViewToolbarButton1.Enabled = selectedItem != null;
+            RescheduleToolbarButton.Enabled = selectedItem != null && WorkQueueController.CanReschedule(selectedItem);
+            DeleteButton.Enabled = selectedItem != null && WorkQueueController.CanDelete(selectedItem);
+            ResetButton.Enabled = selectedItem != null && WorkQueueController.CanReset(selectedItem);
+        }
+
+
             
         #endregion Protected Methods
 
