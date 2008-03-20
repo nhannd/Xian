@@ -182,22 +182,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         protected global::System.Web.UI.WebControls.Panel Panel8;
         
         /// <summary>
-        /// ServiceLockGridViewControl1 control.
+        /// ServiceLockGridViewControl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLocks.ServiceLockGridView ServiceLockGridViewControl1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLocks.ServiceLockGridView ServiceLockGridViewControl;
         
         /// <summary>
-        /// GridPager1 control.
+        /// GridPager control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPager1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPager;
         
         /// <summary>
         /// ConfirmEditDialog control.
@@ -209,12 +209,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmEditDialog;
         
         /// <summary>
-        /// AddEditServiceLockDialog control.
+        /// EditServiceLockDialog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLocks.AddEditServiceLockDialog AddEditServiceLockDialog;
+        protected global::ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLocks.EditServiceLockDialog EditServiceLockDialog;
     }
 }

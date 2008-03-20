@@ -88,12 +88,12 @@
     <Compile Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx.designer.cs">
       <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\ServiceLocks\AddEditServiceLockDialog.ascx.cs">
-      <DependentUpon>AddEditServiceLockDialog.ascx</DependentUpon>
+    <Compile Include="Admin\Configuration\ServiceLocks\EditServiceLockDialog.ascx.cs">
+      <DependentUpon>EditServiceLockDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\ServiceLocks\AddEditServiceLockDialog.ascx.designer.cs">
-      <DependentUpon>AddEditServiceLockDialog.ascx</DependentUpon>
+    <Compile Include="Admin\Configuration\ServiceLocks\EditServiceLockDialog.ascx.designer.cs">
+      <DependentUpon>EditServiceLockDialog.ascx</DependentUpon>
     </Compile>
     <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockCollection.cs" />
     <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockGridView.ascx.cs">
@@ -528,7 +528,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="About\About.aspx" />
-    <Content Include="Admin\Configuration\ServiceLocks\AddEditServiceLockDialog.ascx" />
+    <Content Include="Admin\Configuration\ServiceLocks\EditServiceLockDialog.ascx" />
     <Content Include="Admin\Configuration\ServiceLocks\ServiceLockGridView.ascx" />
     <Content Include="Admin\Configuration\ServiceLocks\ServiceLockPanel.ascx" />
     <Content Include="Admin\Configuration\ServiceLocks\ServiceLockPage.aspx" />

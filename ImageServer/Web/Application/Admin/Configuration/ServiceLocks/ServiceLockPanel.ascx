@@ -2,7 +2,7 @@
     Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLocks.ServiceLockPanel" %>
 <%@ Register Src="~/Common/GridPager.ascx" TagName="GridPager" TagPrefix="uc8" %>
 <%@ Register Src="ServiceLockGridView.ascx" TagName="ServiceLockGridView" TagPrefix="uc1" %>
-<%@ Register Src="AddEditServiceLockDialog.ascx" TagName="AddEditServiceLockDialog" TagPrefix="clearcanvas" %>
+<%@ Register Src="EditServiceLockDialog.ascx" TagName="EditServiceLockDialog" TagPrefix="clearcanvas" %>
 <%@ Register TagPrefix="clearcanvas" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" 
     Assembly="ClearCanvas.ImageServer.Web.Common" %>
 <%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog" TagPrefix="clearcanvas" %>
@@ -68,7 +68,7 @@
                     <asp:TableCell ColumnSpan="2">
                         <asp:Panel ID="Panel7" runat="server" CssClass="CSSGridViewPanelContainer" >
                                 <asp:Panel ID="Panel8" runat="server" CssClass="CSSGridViewPanelBorder" >
-                                    <uc1:ServiceLockGridView  ID="ServiceLockGridViewControl1" Height="500px" runat="server" />
+                                    <uc1:ServiceLockGridView  ID="ServiceLockGridViewControl" Height="500px" runat="server" />
                                 </asp:Panel>                        
                         </asp:Panel>
                         
@@ -77,13 +77,13 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell ColumnSpan="2">
-                        <uc8:GridPager ID="GridPager1" runat="server"></uc8:GridPager>
+                        <uc8:GridPager ID="GridPager" runat="server"></uc8:GridPager>
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
         </asp:Panel>
         
         <clearcanvas:ConfirmationDialog ID="ConfirmEditDialog" runat="server" />
-        <clearcanvas:AddEditServiceLockDialog ID="AddEditServiceLockDialog" runat="server" />
+        <clearcanvas:EditServiceLockDialog ID="EditServiceLockDialog" runat="server" />
     </ContentTemplate>
 </asp:UpdatePanel>

@@ -20,13 +20,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
     public partial class ServiceLockGridView {
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// UpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        protected global::System.Web.UI.UpdatePanel UpdatePanel;
         
         /// <summary>
         /// ContainerTable control.
@@ -38,12 +38,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         protected global::System.Web.UI.WebControls.Table ContainerTable;
         
         /// <summary>
-        /// GridView1 control.
+        /// GridView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView GridView1;
+        protected global::System.Web.UI.WebControls.GridView GridView;
     }
 }

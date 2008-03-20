@@ -4,17 +4,17 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI"
     TagPrefix="clearcanvas" %>
-<asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
+<asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
 <ContentTemplate>
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
     Width="100%">
     <asp:TableRow VerticalAlign="top">
         <asp:TableCell CssClass="CSSGridViewPanelContent" VerticalAlign="top">
         
-            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="CSSGridView"
-                Width="100%" OnRowDataBound="GridView1_RowDataBound" OnDataBound="GridView1_DataBound"
-                OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
-                EmptyDataText="" OnPageIndexChanging="GridView1_PageIndexChanging" CellPadding="0"
+            <asp:GridView ID="GridView" runat="server" AutoGenerateColumns="False" CssClass="CSSGridView"
+                Width="100%" OnRowDataBound="GridView_RowDataBound" OnDataBound="GridView_DataBound"
+                OnSelectedIndexChanged="GridView_SelectedIndexChanged"
+                EmptyDataText="" OnPageIndexChanging="GridView_PageIndexChanging" CellPadding="0" PagerSettings-Visible="false"
                 PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
                 <Columns>
                     <asp:TemplateField HeaderText="Type">

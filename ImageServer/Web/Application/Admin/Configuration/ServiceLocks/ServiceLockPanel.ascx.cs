@@ -47,9 +47,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
     {
         #region Private members
 
-        // the partition whose information will be displayed in this panel
-        private ServiceLockPage _enclosingPage;
-
         #endregion Private members
 
         #region Events
@@ -64,37 +61,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
 
         #endregion
 
-        #region Protected Methods
 
-        /// <summary>
-        /// Set up event handlers for the child controls.
-        /// </summary>
-        protected void SetUpEventHandlers()
-        {
-            GridPager1.GetRecordCountMethod = delegate {
-                                                           return
-                                                               ServiceLockGridViewControl1.ServiceLocks != null
-                                                                   ? ServiceLockGridViewControl1.ServiceLocks.Count
-                                                                   : 0; };
-        }
+        #region protected methods
 
 
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-
-            AddEditServiceLockDialog.ServiceLockUpdated += new AddEditServiceLockDialog.ServiceLockUpdatedListener(AddEditServiceLockDialog_ServiceLockUpdated); 
-            // setup child controls
-            GridPager1.ItemName = "ServiceLock";
-            GridPager1.PuralItemName = "ServiceLocks";
-            GridPager1.Target = ServiceLockGridViewControl1.TheGrid;
-
-            ConfirmEditDialog.Confirmed += new ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.ConfirmedEventHandler(ConfirmEditDialog_Confirmed);
-
-            // setup event handler for child controls
-            SetUpEventHandlers();
-
-
             IList<ServiceLockTypeEnum> types = ServiceLockTypeEnum.GetAll();
             TypeDropDownList.Items.Add(new ListItem("-- All --")); 
             foreach (ServiceLockTypeEnum t in types)
@@ -102,9 +75,64 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
                 TypeDropDownList.Items.Add(new ListItem(t.Description, t.Lookup));
             }
 
+            EditServiceLockDialog.ServiceLockUpdated += AddEditServiceLockDialog_ServiceLockUpdated; 
+            // setup child controls
+            GridPager.ItemName = "ServiceLock";
+            GridPager.PuralItemName = "ServiceLocks";
+            GridPager.Target = ServiceLockGridViewControl.TheGrid;
+
+            ConfirmEditDialog.Confirmed += ConfirmEditDialog_Confirmed;
+
+            GridPager.GetRecordCountMethod = delegate {
+                                                           return
+                                                               ServiceLockGridViewControl.ServiceLocks != null
+                                                                   ? ServiceLockGridViewControl.ServiceLocks.Count
+                                                                   : 0; };
+        }
+
+        
+        protected override void OnPreRender(EventArgs e)
+        {
+            UpdateToolbarButtons();
+            UpdateListPanel();
+            base.OnPreRender(e);
             
         }
 
+
+
+        protected void UpdateListPanel()
+        {
+            ServiceLockGridViewControl.Refresh();
+        }
+
+        protected void FilterButton_Click(object sender, ImageClickEventArgs e)
+        {
+            LoadServiceLocks();
+
+        }
+
+
+        protected void EditButton_Click(object sender, ImageClickEventArgs e)
+        {
+            ServiceLock service = ServiceLockGridViewControl.SelectedServiceLock;
+            if (service != null)
+            {
+                EditServiceLock(service);
+            }
+        }
+
+
+
+        protected void RefreshButton_Click(object sender, ImageClickEventArgs e)
+        {
+            LoadServiceLocks();
+        }
+
+        #endregion Protected methods
+
+
+        #region Private Methods
         void AddEditServiceLockDialog_ServiceLockUpdated(ServiceLock serviceLock)
         {
             DataBind();
@@ -117,28 +145,42 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
             ShowEditServiceLockDialog();
         }
 
-        
 
-        protected override void OnPreRender(EventArgs e)
+
+        private void EditServiceLock(ServiceLock service)
         {
-            UpdateToolbarButtons();
-            UpdateListPanel();
-            base.OnPreRender(e);
-            
+            EditServiceLockDialog.ServiceLock = service;
+
+            if (service != null)
+            {
+                if (service.Lock)
+                {
+                    ConfirmEditDialog.Message = SR.ServiceLockUpdate_Confirm_ServiceIsLocked;
+                    ConfirmEditDialog.MessageType =
+                        ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.YESNO;
+                    ConfirmEditDialog.Show();
+                }
+                else
+                {
+                    ShowEditServiceLockDialog();
+                }
+
+            }
+
+
         }
 
-        
-        
 
-        protected void Page_Load(object sender, EventArgs e)
+        private void ShowEditServiceLockDialog()
         {
-            // This make sure we have the list to work with. 
-            // the list may be out-dated if the add/update event is fired later
-            // In those cases, the list must be refreshed again.
-            
+            EditServiceLockDialog.Show();
         }
 
-        #endregion Protected methods
+
+        #endregion Private Methods
+
+
+        #region Public methods
 
         public override void DataBind()
         {
@@ -179,9 +221,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
             ServiceLockCollection items = new ServiceLockCollection();
             items.Add(services);
 
-            ServiceLockGridViewControl1.ServiceLocks = items;
+            ServiceLockGridViewControl.ServiceLocks = items;
 
-            ServiceLockGridViewControl1.DataBind();
+            ServiceLockGridViewControl.DataBind();
         }
 
         /// <summary>
@@ -194,66 +236,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         public void UpdateToolbarButtons()
         {
 
-            ServiceLock service = ServiceLockGridViewControl1.SelectedServiceLock;
+            ServiceLock service = ServiceLockGridViewControl.SelectedServiceLock;
             EditToolbarButton.Enabled = service != null;
 
             ToolbarUpdatePanel.Update();
         }
 
 
-        protected void UpdateListPanel()
-        {
-            ServiceLockGridViewControl1.Refresh();
-        }
-
-        protected void FilterButton_Click(object sender, ImageClickEventArgs e)
-        {
-            LoadServiceLocks();
-
-        }
-
-
-        protected void EditButton_Click(object sender, ImageClickEventArgs e)
-        {
-            ServiceLock service = ServiceLockGridViewControl1.SelectedServiceLock;
-            if (service != null)
-            {
-                EditServiceLock(service);
-            }
-        }
-
-        private void EditServiceLock(ServiceLock service)
-        {
-            AddEditServiceLockDialog.ServiceLock = service;
-
-            if (service!=null)
-            {
-                if (service.Lock)
-                {
-                    ConfirmEditDialog.Message = SR.ServiceLockUpdate_Confirm_ServiceIsLocked;
-                    ConfirmEditDialog.MessageType =
-                        ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.YESNO;
-                    ConfirmEditDialog.Show();
-                }
-                else
-                {
-                    ShowEditServiceLockDialog();
-                }
-                
-            }
-
-            
-        }
-
-
-        private void ShowEditServiceLockDialog()
-        {
-            AddEditServiceLockDialog.Show();
-        }
-
-        protected void RefreshButton_Click(object sender, ImageClickEventArgs e)
-        {
-            LoadServiceLocks();
-        }
+        #endregion Public methods
     }
 }

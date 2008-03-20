@@ -12,21 +12,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
     
     
     /// <summary>
-    /// AddEditServiceLockDialog class.
+    /// EditServiceLockDialog class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class AddEditServiceLockDialog {
+    public partial class EditServiceLockDialog {
         
         /// <summary>
-        /// ModalDialog1 control.
+        /// ModalDialog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog;
         
         /// <summary>
         /// Panel3 control.
@@ -101,13 +101,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         protected global::System.Web.UI.WebControls.Button DatePickerButton;
         
         /// <summary>
-        /// CalendarExtender1 control.
+        /// CalendarExtender control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.CalendarExtender CalendarExtender1;
+        protected global::AjaxControlToolkit.CalendarExtender CalendarExtender;
         
         /// <summary>
         /// ScheduleTimeDropDownList control.

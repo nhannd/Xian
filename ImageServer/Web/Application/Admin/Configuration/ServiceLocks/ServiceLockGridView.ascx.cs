@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         /// </summary>
         public GridView TheGrid
         {
-            get { return GridView1; }
+            get { return GridView; }
         }
 
         /// <summary>
@@ -69,11 +69,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         {
             get
             {
-                if (ServiceLocks==null || ServiceLocks.Count == 0 || GridView1.SelectedIndex < 0)
+                if (ServiceLocks==null || ServiceLocks.Count == 0 || GridView.SelectedIndex < 0)
                     return null;
 
                 // SelectedIndex is for the current page. Must convert to the index of the entire list
-                int index = GridView1.PageIndex*GridView1.PageSize + GridView1.SelectedIndex;
+                int index = GridView.PageIndex*GridView.PageSize + GridView.SelectedIndex;
 
                 if (index < 0 || index > ServiceLocks.Count - 1)
                     return null;
@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
             }
             set
             {
-                GridView1.SelectedIndex = ServiceLocks.IndexOf(value);
+                GridView.SelectedIndex = ServiceLocks.IndexOf(value);
                 if (OnServiceLockSelectionChanged != null)
                     OnServiceLockSelectionChanged(this, value);
             }
@@ -97,7 +97,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
             set
             {
                 _services = value;
-                GridView1.DataSource = _services; // must manually call DataBind() later
             }
         }
 
@@ -144,10 +143,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
 
         #region protected methods
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-           
-        }
 
         protected override void OnInit(EventArgs e)
         {
@@ -156,11 +151,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
             // Set up the grid
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
-
-
-            // The embeded grid control will show pager control if "allow paging" is set to true
-            // We want to use our own pager control instead so let's hide it.
-            GridView1.PagerSettings.Visible = false;
         }
 
         /// <summary>
@@ -170,23 +160,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         {
             #region update pager of the gridview if it is used
 
-            if (GridView1.BottomPagerRow != null)
+            if (GridView.BottomPagerRow != null)
             {
                 // Show Number of services in the list
-                Label lbl = GridView1.BottomPagerRow.Cells[0].FindControl("PagerServiceLockCountLabel") as Label;
+                Label lbl = GridView.BottomPagerRow.Cells[0].FindControl("PagerServiceLockCountLabel") as Label;
                 if (lbl != null)
                     lbl.Text = string.Format("{0} service(s)", ServiceLocks.Count);
 
                 // Show current page and the number of pages for the list
-                lbl = GridView1.BottomPagerRow.Cells[0].FindControl("PagerPagingLabel") as Label;
+                lbl = GridView.BottomPagerRow.Cells[0].FindControl("PagerPagingLabel") as Label;
                 if (lbl != null)
-                    lbl.Text = string.Format("Page {0} of {1}", GridView1.PageIndex + 1, GridView1.PageCount);
+                    lbl.Text = string.Format("Page {0} of {1}", GridView.PageIndex + 1, GridView.PageCount);
 
                 // Enable/Disable the "Prev" page button
-                ImageButton btn = GridView1.BottomPagerRow.Cells[0].FindControl("PagerPrevImageButton") as ImageButton;
+                ImageButton btn = GridView.BottomPagerRow.Cells[0].FindControl("PagerPrevImageButton") as ImageButton;
                 if (btn != null)
                 {
-                    if (ServiceLocks.Count == 0 || GridView1.PageIndex == 0)
+                    if (ServiceLocks.Count == 0 || GridView.PageIndex == 0)
                     {
                         btn.ImageUrl = "~/images/prev_disabled.gif";
                         btn.Enabled = false;
@@ -201,10 +191,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
                 }
 
                 // Enable/Disable the "Next" page button
-                btn = GridView1.BottomPagerRow.Cells[0].FindControl("PagerNextImageButton") as ImageButton;
+                btn = GridView.BottomPagerRow.Cells[0].FindControl("PagerNextImageButton") as ImageButton;
                 if (btn != null)
                 {
-                    if (ServiceLocks.Count == 0 || GridView1.PageIndex == GridView1.PageCount - 1)
+                    if (ServiceLocks.Count == 0 || GridView.PageIndex == GridView.PageCount - 1)
                     {
                         btn.ImageUrl = "~/images/next_disabled.gif";
                         btn.Enabled = false;
@@ -223,16 +213,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         }
 
 
-        protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GridView_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (GridView1.EditIndex != e.Row.RowIndex)
+            if (GridView.EditIndex != e.Row.RowIndex)
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
                     // Add OnClick attribute to each row to make javascript call "Select$###" (where ### is the selected row)
                     // This method when posted back will be handled by the grid
                     e.Row.Attributes["OnClick"] =
-                        Page.ClientScript.GetPostBackEventReference(GridView1, "Select$" + e.Row.RowIndex);
+                        Page.ClientScript.GetPostBackEventReference(GridView, "Select$" + e.Row.RowIndex);
                     e.Row.Style["cursor"] = "hand";
 
                     CustomizeEnabledColumn(e.Row);
@@ -262,7 +252,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
             }
         }
 
-        protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
+        protected void GridView_SelectedIndexChanged(object sender, EventArgs e)
         {
             DataBind();
             ServiceLock dev = SelectedServiceLock;
@@ -271,48 +261,44 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
                     OnServiceLockSelectionChanged(this, dev);
         }
 
-        protected void GridView1_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
-        {
-        }
-
-        protected void GridView1_DataBound(object sender, EventArgs e)
+        protected void GridView_DataBound(object sender, EventArgs e)
         {
             // reselect the row based on the new order
             if (SelectedServiceLock != null)
             {
-                GridView1.SelectedIndex = ServiceLocks.RowIndexOf(SelectedServiceLock, GridView1);
+                GridView.SelectedIndex = ServiceLocks.RowIndexOf(SelectedServiceLock, GridView);
             }
         }
 
-        protected void GridView1_PageIndexChanged(object sender, EventArgs e)
+        protected void GridView_PageIndexChanged(object sender, EventArgs e)
         {
             DataBind();
         }
 
-        protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        protected void GridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            GridView1.PageIndex = e.NewPageIndex;
+            GridView.PageIndex = e.NewPageIndex;
             DataBind();
         }
 
         protected void ImageButton_Command(object sender, CommandEventArgs e)
         {
             // get the current page selected
-            int intCurIndex = GridView1.PageIndex;
+            int intCurIndex = GridView.PageIndex;
 
             switch (e.CommandArgument.ToString().ToLower())
             {
                 case "first":
-                    GridView1.PageIndex = 0;
+                    GridView.PageIndex = 0;
                     break;
                 case "prev":
-                    GridView1.PageIndex = intCurIndex - 1;
+                    GridView.PageIndex = intCurIndex - 1;
                     break;
                 case "next":
-                    GridView1.PageIndex = intCurIndex + 1;
+                    GridView.PageIndex = intCurIndex + 1;
                     break;
                 case "last":
-                    GridView1.PageIndex = GridView1.PageCount;
+                    GridView.PageIndex = GridView.PageCount;
                     break;
             }
 
@@ -331,17 +317,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         /// </remarks>
         public override void DataBind()
         {
-            GridView1.DataSource = ServiceLocks.Values;
+            if (ServiceLocks!=null)
+            {
+                GridView.DataSource = ServiceLocks.Values;
+            }
 
-
-            GridView1.PagerSettings.Visible = false;
             base.DataBind();
         }
 
 
         public void Refresh()
         {
-            UpdatePanel1.Update();
+            UpdatePanel.Update();
         }
 
         #endregion // public methods

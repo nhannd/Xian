@@ -30,12 +30,9 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
@@ -43,17 +40,20 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLocks
 {
     //
-    // Dialog for adding a new service or editting an existing service.
+    // Dialog for editting an existing service lock.
     //
-    public partial class AddEditServiceLockDialog : UserControl
+    public partial class EditServiceLockDialog : UserControl
     {
         #region Constants
-
+        private const string TIME_FORMAT = "hh:mm tt";
         private const int DEFAULT_TIME_GAP_MINS = 15; // minutes
 
         #endregion Constants
 
-        private List<DateTime> _defaultTimeList;
+        #region Private Members
+        private List<ListItem> _defaultTimeList;
+
+        #endregion Private Members
 
         #region Events
 
@@ -69,20 +69,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         /// <summary>
         /// Gets the default list of schedule times available for user selection
         /// </summary>
-        public List<DateTime> DefaultTimeList
+        public List<ListItem> DefaultTimeListItems
         {
             get
             {
                 if (_defaultTimeList != null)
                     return _defaultTimeList;
 
-                _defaultTimeList = new List<DateTime>();
+                _defaultTimeList = new List<ListItem>();
                 DateTime dt = DateTime.Today;
                 DateTime tomorrow = DateTime.Today.AddDays(1);
                 double scheduleTimeWindow = DEFAULT_TIME_GAP_MINS;
                 while (dt < tomorrow)
                 {
-                    _defaultTimeList.Add(dt);
+                    _defaultTimeList.Add(new ListItem(dt.ToString(TIME_FORMAT)));
                     dt = dt.AddMinutes(scheduleTimeWindow);
                 }
 
@@ -90,22 +90,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
             }
         }
 
-        /// <summary>
-        /// Sets or gets the value which indicates whether the dialog is in edit mode.
-        /// </summary>
-        public bool EditMode
-        {
-            get
-            {
-                if (ViewState[ClientID + "_EditMode"] == null)
-                    return false;
-                return (bool) ViewState[ClientID + "_EditMode"];
-            }
-            set
-            {
-                ViewState[ClientID + "_EditMode"] = value;
-            }
-        }
 
         /// <summary>
         /// Sets/Gets the current editing service.
@@ -140,48 +124,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         {
             base.OnInit(e);
 
-            foreach (DateTime dt in DefaultTimeList)
-            {
-                ListItem item = new ListItem(dt.ToString("hh:mm tt"), dt.ToString("hh:mm tt"));
-                ScheduleTimeDropDownList.Items.Add(item);
-            }
-
+            ScheduleTimeDropDownList.Items.Clear();
         }
 
-        public override void DataBind()
+        protected override void OnLoad(EventArgs e)
         {
-            ServiceLock service = ServiceLock;
+            base.OnLoad(e);
 
-            if (service!=null)
-            {
-                // only rebind the data if the dialog has closed 
-                if (ModalDialog1.State == ClearCanvas.ImageServer.Web.Application.Common.ModalDialog.ShowState.Hide)
-                {
-                    Type.Text = service.ServiceLockTypeEnum.Description;
-                    Description.Text = service.ServiceLockTypeEnum.LongDescription;
-                    Enabled.Checked = service.Enabled;
-
-                    if (service.FilesystemKey != null)
-                    {
-                        FileSystemDataAdapter adaptor = new FileSystemDataAdapter();
-                        Model.Filesystem fs = adaptor.Get(service.FilesystemKey);
-                        FileSystem.Text = fs.Description;
-                    }
-                    else
-                        FileSystem.Text = "";
-
-                    CalendarExtender1.SelectedDate = service.ScheduledTime;
-                    ListItem item = new ListItem(service.ScheduledTime.ToString("hh:mm tt"), service.ScheduledTime.ToString("hh:mm tt"));
-                    ScheduleTimeDropDownList.Items.Add(item);
-                    ScheduleTimeDropDownList.SelectedValue = item.Value;
-                
-                }
-                
-            }
-
-            base.DataBind();
+            ScheduleDate.Text = Request[ScheduleDate.UniqueID] ;
         }
-
 
         /// <summary>
         /// Handles event when user clicks on "OK" button.
@@ -212,7 +163,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         }
 
 
-        
+
+        #endregion Protected methods
+
+        #region Private Methods
+
+        private void AddCustomTime(DateTime customTime)
+        {
+            ScheduleTimeDropDownList.Items.Clear();
+            ScheduleTimeDropDownList.Items.AddRange(DefaultTimeListItems.ToArray());
+
+            string customTimeValue = customTime.ToString(TIME_FORMAT);
+            if (ScheduleTimeDropDownList.Items.FindByValue(customTimeValue)==null)
+            {
+                ScheduleTimeDropDownList.Items.Add(new ListItem(customTimeValue));
+            }
+
+            ScheduleTimeDropDownList.SelectedValue = customTimeValue;
+        }
+
         private void SaveData()
         {
             if (ServiceLock != null)
@@ -220,8 +189,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
                 ServiceLock.Enabled = Enabled.Checked;
 
                 ServiceLockConfigurationController controller = new ServiceLockConfigurationController();
-                DateTime scheduledDate = DateTime.ParseExact(ScheduleDate.Text, CalendarExtender1.Format, null);
-                DateTime scheduleTime = DateTime.ParseExact(ScheduleTimeDropDownList.SelectedValue, "hh:mm tt", null);
+                DateTime scheduledDate = DateTime.ParseExact(ScheduleDate.Text, CalendarExtender.Format, null);
+                DateTime scheduleTime = DateTime.ParseExact(ScheduleTimeDropDownList.SelectedValue, TIME_FORMAT, null);
                 scheduledDate = scheduledDate.Add(scheduleTime.TimeOfDay);
                 if (controller.UpdateServiceLock(ServiceLock.GetKey(), Enabled.Checked, scheduledDate))
                 {
@@ -239,9 +208,44 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
 
         }
 
-        #endregion Protected methods
+        #endregion Private Methods
 
         #region Public methods
+
+
+
+        public override void DataBind()
+        {
+            ServiceLock service = ServiceLock;
+
+            if (service != null)
+            {
+                // only rebind the data if the dialog has been closed
+                if (ModalDialog.State == ClearCanvas.ImageServer.Web.Application.Common.ModalDialog.ShowState.Hide)
+                {
+                    Type.Text = service.ServiceLockTypeEnum.Description;
+                    Description.Text = service.ServiceLockTypeEnum.LongDescription;
+                    Enabled.Checked = service.Enabled;
+
+                    if (service.FilesystemKey != null)
+                    {
+                        FileSystemDataAdapter adaptor = new FileSystemDataAdapter();
+                        Model.Filesystem fs = adaptor.Get(service.FilesystemKey);
+                        FileSystem.Text = fs.Description;
+                    }
+                    else
+                        FileSystem.Text = "";
+
+                    CalendarExtender.SelectedDate = service.ScheduledTime;
+                    
+                    AddCustomTime(service.ScheduledTime);
+
+                }
+
+            }
+
+            base.DataBind();
+        }
 
 
         /// <summary>
@@ -251,7 +255,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         {
             DataBind();
 
-            ModalDialog1.Show();
+            ModalDialog.Show();
         }
 
         /// <summary>
@@ -259,7 +263,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         /// </summary>
         public void Close()
         {
-            ModalDialog1.Hide();
+            ModalDialog.Hide();
         }
 
         #endregion Public methods
