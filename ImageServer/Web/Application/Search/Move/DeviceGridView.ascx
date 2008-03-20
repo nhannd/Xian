@@ -86,7 +86,6 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Search.Move.DeviceGridView" %>
                 <PagerTemplate>
                 </PagerTemplate>
             </asp:GridView>
-
         </asp:TableCell>
     </asp:TableRow>
 </asp:Table>

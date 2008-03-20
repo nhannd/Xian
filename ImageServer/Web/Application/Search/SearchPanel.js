@@ -176,9 +176,9 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Search.Sea
                         if (instanceuid!=undefined && serverae!=undefined)
                         {
                             if (urlCount == 1)
-                            url = String.format('{0}?serverae{3}={1}&studyuid{3}={2}', this._SendStudyPageUrl, serverae, instanceuid, urlCount);
+                            url = String.format('{0}?serverae={1}&studyuid{3}={2}', this._SendStudyPageUrl, serverae, instanceuid, urlCount);
                             else
-                            url = String.format('{0}&serverae{3}={1}&studyuid{3}={2}', url, serverae, instanceuid, urlCount);
+                            url = String.format('{0}&studyuid{3}={2}', url, serverae, instanceuid, urlCount);
                             urlCount++;
                         }
                     }

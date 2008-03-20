@@ -6,7 +6,7 @@
 <%@ Register Src="MovePanel.ascx" TagName="MovePanel" TagPrefix="move" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
-Move
+Study Move
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <asp:Panel runat="server" ID="PageContent">

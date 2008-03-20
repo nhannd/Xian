@@ -1,14 +1,5 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
 using System.Collections.Generic;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Common;
@@ -24,7 +15,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move
         #endregion constants
 
         #region Private Members
-        private IDictionary<string, string> _uids = new Dictionary<string, string>();
+        private readonly IDictionary<string, string> _uids = new Dictionary<string, string>();
         #endregion
 
         protected override void OnInit(EventArgs e)
@@ -33,35 +24,35 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move
             StudyController studyController = new StudyController();
             ServerPartitionConfigController partitionConfigController = new ServerPartitionConfigController();
 
-            for (int i = 1; ; i++)
+            string serverae = Request.QueryString[QUERY_KEY_SERVER_AE];
+            if (!String.IsNullOrEmpty(serverae))
             {
-                string serverae = Request.QueryString[String.Format("{0}{1}", QUERY_KEY_SERVER_AE, i)];
-                string studyuid = Request.QueryString[String.Format("{0}{1}", QUERY_KEY_STUDY_INSTANCE_UID, i)];
+                // Load the Partition
+                ServerPartitionSelectCriteria partitionCriteria = new ServerPartitionSelectCriteria();
+                partitionCriteria.AeTitle.EqualTo(serverae);
+                IList<ServerPartition> list = partitionConfigController.GetPartitions(partitionCriteria);
+                this.Move.Partition = list[0];
 
-                if (!String.IsNullOrEmpty(serverae) && !String.IsNullOrEmpty(studyuid))
+                for (int i = 1;; i++)
                 {
-                    string partitionae = serverae;
-                    ServerPartitionSelectCriteria partitionCriteria = new ServerPartitionSelectCriteria();
+                    string studyuid = Request.QueryString[String.Format("{0}{1}", QUERY_KEY_STUDY_INSTANCE_UID, i)];
 
-                    partitionCriteria.AeTitle.EqualTo(partitionae);
+                    if (!String.IsNullOrEmpty(studyuid))
+                    {
+                        _uids.Add(studyuid, serverae);
 
-                    IList<ServerPartition> list = partitionConfigController.GetPartitions(partitionCriteria);
+                        StudySelectCriteria studyCriteria = new StudySelectCriteria();
+                        studyCriteria.StudyInstanceUid.EqualTo(studyuid);
+                        studyCriteria.ServerPartitionKey.EqualTo(list[0].GetKey());
 
-                    this.Move.Partition = list[0];
+                        IList<Study> studyList = studyController.GetStudies(studyCriteria);
 
-                    _uids.Add(studyuid, serverae);
-
-                    StudySelectCriteria studyCriteria = new StudySelectCriteria();
-                    studyCriteria.StudyInstanceUid.EqualTo(studyuid);
-                    studyCriteria.ServerPartitionKey.EqualTo(list[0].GetKey());
-
-                    IList<Study> studyList = studyController.GetStudies(studyCriteria);
-
-                    this.Move.StudyGridView.StudyList.Add(studyList[0]);
-                    this.Move.StudyGridView.Partition = this.Move.Partition;
+                        this.Move.StudyGridView.StudyList.Add(studyList[0]);
+                        this.Move.StudyGridView.Partition = this.Move.Partition;
+                    }
+                    else
+                        break;
                 }
-                else
-                    break;
             }
         }
 
