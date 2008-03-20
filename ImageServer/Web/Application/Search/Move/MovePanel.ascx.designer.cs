@@ -8,52 +8,61 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Search {
+namespace ClearCanvas.ImageServer.Web.Application.Search.Move {
     
     
     /// <summary>
-    /// SearchPanel class.
+    /// MovePanel class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class SearchPanel {
+    public partial class MovePanel {
         
         /// <summary>
-        /// UpdatePanel control.
+        /// UpdatePanel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// PagePanel control.
+        /// StudySectionPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PagePanel;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.SectionPanel StudySectionPanel;
         
         /// <summary>
-        /// Table control.
+        /// Panel10 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Table Table;
+        protected global::System.Web.UI.WebControls.Panel Panel10;
         
         /// <summary>
-        /// ToolBarUpdatePanel control.
+        /// StudyGridPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel ToolBarUpdatePanel;
+        protected global::ClearCanvas.ImageServer.Web.Application.Search.Move.StudyGridView StudyGridPanel;
+        
+        /// <summary>
+        /// DeviceSectionPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.SectionPanel DeviceSectionPanel;
         
         /// <summary>
         /// Panel1 control.
@@ -65,31 +74,40 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// Panel3 control.
+        /// Table control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel3;
+        protected global::System.Web.UI.WebControls.Table Table;
         
         /// <summary>
-        /// Panel4 control.
+        /// Panel9 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel4;
+        protected global::System.Web.UI.WebControls.Panel Panel9;
         
         /// <summary>
-        /// DeleteToolbarButton control.
+        /// Panel11 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteToolbarButton;
+        protected global::System.Web.UI.WebControls.Panel Panel11;
+        
+        /// <summary>
+        /// Panel12 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel12;
         
         /// <summary>
         /// SendToolbarButton control.
@@ -101,15 +119,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton SendToolbarButton;
         
         /// <summary>
-        /// OpenStudyToolbarButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OpenStudyToolbarButton;
-        
-        /// <summary>
         /// FilterPanel control.
         /// </summary>
         /// <remarks>
@@ -119,13 +128,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.WebControls.Panel FilterPanel;
         
         /// <summary>
-        /// Panel5 control.
+        /// Panel3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel5;
+        protected global::System.Web.UI.WebControls.Panel Panel3;
         
         /// <summary>
         /// Panel6 control.
@@ -146,85 +155,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
-        /// PatientName control.
+        /// AETitleFilter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox PatientName;
+        protected global::System.Web.UI.WebControls.TextBox AETitleFilter;
         
         /// <summary>
-        /// Label2 control.
+        /// FilterButtonContainer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label2;
+        protected global::System.Web.UI.WebControls.Panel FilterButtonContainer;
         
         /// <summary>
-        /// PatientId control.
+        /// FilterToolbarButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox PatientId;
-        
-        /// <summary>
-        /// Label3 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label3;
-        
-        /// <summary>
-        /// AccessionNumber control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox AccessionNumber;
-        
-        /// <summary>
-        /// Label4 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label4;
-        
-        /// <summary>
-        /// StudyDescription control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox StudyDescription;
-        
-        /// <summary>
-        /// FilterButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton FilterButton;
-        
-        /// <summary>
-        /// Panel2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel2;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton FilterToolbarButton;
         
         /// <summary>
         /// Panel7 control.
@@ -236,13 +191,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.WebControls.Panel Panel7;
         
         /// <summary>
-        /// StudyListGridView control.
+        /// Panel8 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Search.StudyListGridView StudyListGridView;
+        protected global::System.Web.UI.WebControls.Panel Panel8;
+        
+        /// <summary>
+        /// DeviceGridPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Search.Move.DeviceGridView DeviceGridPanel;
         
         /// <summary>
         /// GridPager control.

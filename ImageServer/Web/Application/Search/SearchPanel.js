@@ -38,6 +38,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Search.Sea
             ClearCanvas.ImageServer.Web.Application.Search.SearchPanel.callBaseMethod(this, 'initialize');        
             
             this._OnOpenButtonClickedHandler = Function.createDelegate(this,this._OnOpenButtonClicked);
+            this._OnSendButtonClickedHandler = Function.createDelegate(this,this._OnSendButtonClicked);   
             this._OnStudyListRowClickedHandler = Function.createDelegate(this,this._OnStudyListRowClicked);
             this._OnStudyListRowDblClickedHandler = Function.createDelegate(this,this._OnStudyListRowDblClicked);
             this._OnLoadHandler = Function.createDelegate(this,this._OnLoad);
@@ -69,6 +70,9 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Search.Sea
             // may have been created as the result of the post-back
             var openButton = $find(this._OpenButtonClientID);
             openButton.add_onClientClick( this._OnOpenButtonClickedHandler );   
+
+            var sendButton = $find(this._SendButtonClientID);
+            sendButton.add_onClientClick( this._OnSendButtonClickedHandler );   
                  
             var studylist = $find(this._StudyListClientID);
             studylist.add_onClientRowClick(this._OnStudyListRowClickedHandler);
@@ -80,8 +84,13 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Search.Sea
         // called when the Open Study button is clicked
         _OnOpenButtonClicked : function(src, event)
         {
-            this._openSelectedStudies();
-            
+            this._openSelectedStudies();            
+        },
+        
+        // called when the Send Study button is clicked
+        _OnSendButtonClicked : function(src, event)
+        {
+            this._sendSelectedStudies();            
         },
         
         // called when user clicked on a row in the study list
@@ -147,6 +156,37 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Search.Sea
             }
         },
 
+        _sendSelectedStudies : function()
+        {
+            var studylist = $find(this._StudyListClientID);
+            // open the selected studies
+            if (studylist!=null )
+            {
+                var rows = studylist.getSelectedRowElements();
+                if (rows.length>0)
+                {
+                    var urlCount = 1;
+                    
+                    var url = "";
+                    
+                    for(i=0; i<rows.length; i++)
+                    {
+                        var instanceuid = this._getInstanceUid(rows[i]);
+                        var serverae = this._getServerPartitionAE(rows[i]);
+                        if (instanceuid!=undefined && serverae!=undefined)
+                        {
+                            if (urlCount == 1)
+                            url = String.format('{0}?serverae{3}={1}&studyuid{3}={2}', this._SendStudyPageUrl, serverae, instanceuid, urlCount);
+                            else
+                            url = String.format('{0}&serverae{3}={1}&studyuid{3}={2}', url, serverae, instanceuid, urlCount);
+                            urlCount++;
+                        }
+                    }
+                    // load in the current window
+                    window.navigate(url);
+                }
+            }
+        },
         
         _updateToolbarButtonStates : function()
         {
@@ -168,17 +208,20 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Search.Sea
                         }
                     }
                     this._enableDeleteButton(true);
+                    this._enableSendStudyButton(true);
                 }
                 else
                 {
                     this._enableDeleteButton(false);
                     this._enableOpenStudyButton(false);
+                    this._enableSendStudyButton(false);
                 }
             }
             else
             {
                 this._enableDeleteButton(false);
                 this._enableOpenStudyButton(false);
+                this._enableSendStudyButton(false);
             }
         },
         
@@ -194,6 +237,12 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Search.Sea
         {
             var openButton = $find(this._OpenButtonClientID);
             openButton.set_enable(en);
+        },
+        
+        _enableSendStudyButton : function(en)
+        {
+            var sendButton = $find(this._SendButtonClientID);
+            sendButton.set_enable(en);
         },
         
 
@@ -220,6 +269,14 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Search.Sea
             this.raisePropertyChanged('DeleteButtonClientID');
         },
         
+        get_SendButtonClientID : function() {
+            return this._SendButtonClientID;
+        },
+
+        set_SendButtonClientID : function(value) {
+            this._SendButtonClientID = value;
+            this.raisePropertyChanged('SendButtonClientID');
+        },
         
         get_OpenButtonClientID : function() {
             return this._OpenButtonClientID;
@@ -246,8 +303,16 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Search.Sea
         set_OpenStudyPageUrl : function(value) {
             this._OpenStudyPageUrl = value;
             this.raisePropertyChanged('OpenStudyPageUrl');
+        },
+        
+        get_SendStudyPageUrl : function() {
+            return this._SendStudyPageUrl;
+        },
+       
+        set_SendStudyPageUrl : function(value) {
+            this._SendStudyPageUrl = value;
+            this.raisePropertyChanged('SendStudyPageUrl');
         }
-
     }
 
     // Register the class as a type that inherits from Sys.UI.Control.

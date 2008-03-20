@@ -29,12 +29,18 @@
                                                 OnClick="OnDeleteToolbarButtonClick"
                                                 />
                                             <clearcanvas:ToolbarButton 
+                                                ID="SendToolbarButton" runat="server" 
+                                                EnabledImageURL="~/images/icons/SendEnabled.png" 
+                                                DisabledImageURL="~/images/icons/SendDisabled.png"
+                                                AlternateText="Send study" 
+                                                />
+                                            <clearcanvas:ToolbarButton 
                                                 ID="OpenStudyToolbarButton" runat="server" 
                                                 EnabledImageURL="~/images/icons/OpenEnabled.png" 
                                                 DisabledImageURL="~/images/icons/OpenDisabled.png"
                                                 AlternateText="Open study"
                                                 />
-                                        </asp:Panel>
+                                </asp:Panel>
                                     </asp:Panel>
                                 </asp:Panel>
                              </ContentTemplate>

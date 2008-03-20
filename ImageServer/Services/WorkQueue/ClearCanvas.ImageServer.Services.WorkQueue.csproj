@@ -42,6 +42,8 @@
     <Compile Include="StudyProcess\StudyProcessStatistics.cs" />
     <Compile Include="WebDeleteStudy\WebDeleteStudyItemProcessor.cs" />
     <Compile Include="WebDeleteStudy\WebDeleteStudyFactoryExtension.cs" />
+    <Compile Include="WebMoveStudy\WebMoveStudyFactoryExtension.cs" />
+    <Compile Include="WebMoveStudy\WebMoveStudyItemProcessor.cs" />
     <Compile Include="WorkQueueSettings.cs" />
     <Compile Include="WorkQueueSettings.Designer.cs">
       <AutoGen>True</AutoGen>

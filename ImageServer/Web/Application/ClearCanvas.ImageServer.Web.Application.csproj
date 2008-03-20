@@ -317,6 +317,34 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search\Move\DeviceGridView.ascx.cs">
+      <DependentUpon>DeviceGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Search\Move\DeviceGridView.ascx.designer.cs">
+      <DependentUpon>DeviceGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Search\Move\MovePage.aspx.cs">
+      <DependentUpon>MovePage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Search\Move\MovePage.aspx.designer.cs">
+      <DependentUpon>MovePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Search\Move\MovePanel.ascx.cs">
+      <DependentUpon>MovePanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Search\Move\MovePanel.ascx.designer.cs">
+      <DependentUpon>MovePanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Search\Move\StudyGridView.ascx.cs">
+      <DependentUpon>StudyGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Search\Move\StudyGridView.ascx.designer.cs">
+      <DependentUpon>StudyGridView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Search\StudyListGridView.ascx.cs">
       <DependentUpon>StudyListGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -592,9 +620,15 @@
     <Content Include="images\icons\ResetEnabled.png" />
     <Content Include="images\icons\ScheduleDisabled.png" />
     <Content Include="images\icons\ScheduleEnabled.png" />
+    <Content Include="images\icons\SendDisabled.png" />
     <Content Include="images\race.gif" />
+    <Content Include="images\icons\SendEnabled.png" />
     <Content Include="Scripts\NumberFormat154.js" />
     <EmbeddedResource Include="Search\SearchPanel.js" />
+    <Content Include="Search\Move\DeviceGridView.ascx" />
+    <Content Include="Search\Move\MovePage.aspx" />
+    <Content Include="Search\Move\MovePanel.ascx" />
+    <Content Include="Search\Move\StudyGridView.ascx" />
     <Content Include="Search\StudyListGridView.ascx" />
     <Content Include="Common\BarChart.aspx" />
     <Content Include="Admin\Configuration\Devices\DevicePanel.ascx" />

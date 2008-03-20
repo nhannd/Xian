@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -91,6 +92,34 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             return true;
         }
+
+        public bool MoveStudy(Study study, Device device)
+        {
+            WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
+            WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
+            columns.WorkQueueTypeEnum = WorkQueueTypeEnum.GetEnum("WebMoveStudy");
+            columns.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+            columns.ServerPartitionKey = study.ServerPartitionKey;
+
+            StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
+            StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+            criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+            criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+
+            IList<StudyStorage> storages = studyStorageAdaptor.Get(criteria);
+
+            columns.StudyStorageKey = storages[0].GetKey();
+            DateTime time = Platform.Time.AddSeconds(60);
+            columns.ScheduledTime = time;
+            columns.ExpirationTime = time;
+            columns.FailureCount = 0;
+            columns.DeviceKey = device.GetKey();
+
+            workqueueAdaptor.Add(columns);
+
+            return true;
+        }
+    
 
         /// <summary>
         /// Returns a value indicating whether the specified study has been scheduled for delete.

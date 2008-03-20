@@ -67,6 +67,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             get { return this.OpenStudyToolbarButton.ClientID; }
         }
 
+        [ExtenderControlProperty]
+        [ClientPropertyName("SendButtonClientID")]
+        public string SendButtonClientID
+        {
+            get { return this.SendToolbarButton.ClientID; }
+        }
 
         [ExtenderControlProperty]
         [ClientPropertyName("StudyListClientID")]
@@ -75,7 +81,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             get { return StudyListGridView.StudyListGrid.ClientID; }
         }
 
-
         [ExtenderControlProperty]
         [ClientPropertyName("OpenStudyPageUrl")]
         public string OpenStudyPageUrl
@@ -83,6 +88,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             get { return Page.ResolveClientUrl("~/StudyDetails/StudyDetailsPage.aspx"); }
         }
 
+        [ExtenderControlProperty]
+        [ClientPropertyName("SendStudyPageUrl")]
+        public string SendStudyPageUrl
+        {
+            get { return Page.ResolveClientUrl("~/Search/Move/MovePage.aspx"); }
+        }
 
         public ServerPartition ServerPartition
         {
@@ -112,15 +123,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             StudyListGridView.DataBind();
         }
 
-
-
         #endregion Public Methods
 
         #region Constructors
         public SearchPanel()
             : base(false, HtmlTextWriterTag.Div)
-            {
-            }
+        {
+        }
 
         #endregion Constructors
 
@@ -177,30 +186,30 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             GridPager.PuralItemName = "Studies";
             GridPager.Target = StudyListGridView.StudyListGrid;
             GridPager.GetRecordCountMethod = delegate
-                                                  {
-                                                      return StudyListGridView.Studies== null ? 0:StudyListGridView.Studies.Count;
-                                                  };
+                              {
+                                  return StudyListGridView.Studies== null ? 0:StudyListGridView.Studies.Count;
+                              };
 
 
             ConfirmationDialog.Confirmed += delegate(object data)
+                            {
+                                if (data is IList<Study>)
                                 {
-                                    if (data is IList<Study>)
+                                    IList<Study> studies = data as IList<Study>;
+                                    foreach (Study study in studies)
                                     {
-                                        IList<Study> studies = data as IList<Study>;
-                                        foreach (Study study in studies)
-                                        {
-                                            _controller.DeleteStudy(study);
-                                        }
-                                    }
-                                    else if (data is Study)
-                                    {
-                                        Study study = data as Study;
                                         _controller.DeleteStudy(study);
                                     }
+                                }
+                                else if (data is Study)
+                                {
+                                    Study study = data as Study;
+                                    _controller.DeleteStudy(study);
+                                }
 
-                                    LoadStudies();
-                                    UpdatePanel.Update(); // force refresh
-                                };
+                                LoadStudies();
+                                UpdatePanel.Update(); // force refresh
+                            };
             
         }
 
@@ -249,7 +258,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
                 ConfirmationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.YESNO;
                 ConfirmationDialog.Data = studies;
                 ConfirmationDialog.Show();
-                
             }
         }
 
@@ -261,6 +269,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
                 OpenStudyToolbarButton.Enabled = true;
                 
                 DeleteToolbarButton.Enabled = true;
+                SendToolbarButton.Enabled = true;
                 foreach (Study study in studies)
                 {
                     if (_controller.IsScheduledForDelete(study))
@@ -269,16 +278,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
                         break;
                     }
                 }
-
             }
             else
             {
                 OpenStudyToolbarButton.Enabled = false;
                 DeleteToolbarButton.Enabled = false;
+                SendToolbarButton.Enabled = false;
             }
-
         }
-
 
         #endregion Protected Methods
     }

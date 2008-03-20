@@ -44,13 +44,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
     /// </summary>
     public class AutoRouteItemProcessor : BaseItemProcessor, IWorkQueueItemProcessor
     {
-        #region Private Methods
+        #region Protected Methods
         /// <summary>
         /// Add the UIDs scheduled to be transfered to the SCU
         /// </summary>
         /// <param name="item">The <see cref="WorkQueue"/> item being processed</param>
         /// <param name="scu">The Storage SCU component doing an autoroute.</param>
-        private void AddWorkQueueUidsToSendList(Model.WorkQueue item, ImageServerStorageScu scu)
+        protected virtual void AddWorkQueueUidsToSendList(Model.WorkQueue item, ImageServerStorageScu scu)
         {
             LoadStorageLocation(item);
             string studyPath = StorageLocation.GetStudyPath();
@@ -62,6 +62,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 scu.LoadInstanceFromStudyXml(studyPath, uid.SeriesInstanceUid, uid.SopInstanceUid, studyXml);
             }
         }
+
         #endregion
 
         #region Public Methods
@@ -74,8 +75,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             LoadUids(item);
 
             // Intercept entries that don't have any UIDs associated with them, and just
-            // set them back to pending.
-            if (WorkQueueUidList.Count == 0)
+            // set them back to pending if its an AutoRoute request.
+            if (WorkQueueUidList.Count == 0 
+                && item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.GetEnum("AutoRoute")))
             {
                 PostProcessing(item, 0, false);
                 return;
@@ -147,6 +149,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
             // Join for the thread to exit
             scu.Join();
+
+            // Dispose to cleanup properly
+            scu.Dispose();
 
             // Reset the WorkQueue entry status
             if (WorkQueueUidList.Count > 0)

@@ -92,18 +92,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public TServerEntity Add(TColumns param)
         {
-            TServerEntity newEntity = null;
             try
             {
                 using (IUpdateContext context = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
                 {
-                    TIEntity update = context.GetBroker<TIEntity>();
-
-                    newEntity = update.Insert(param);
-
+                    TServerEntity entity =  Add(context, param);
                     context.Commit();
+                    return entity;
                 }
-                return newEntity;
             }
             catch (Exception e)
             {
@@ -111,6 +107,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 return null;
             }
         }
+
+        public TServerEntity Add(IUpdateContext context, TColumns param)
+        {
+            TServerEntity newEntity = null;
+
+            TIEntity update = context.GetBroker<TIEntity>();
+
+            newEntity = update.Insert(param);
+
+            return newEntity;
+        }
+
 
         public bool Update(ServerEntityKey key, TColumns param)
         {
