@@ -413,7 +413,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         public void Show()
         {
             ModalPopupExtender.Show();
-            RefreshUI();
+            
+            if (State==ShowState.Hide)
+            {
+                // need refresh
+                RefreshUI();
+            }
+
             State = ShowState.Show;
         }
 

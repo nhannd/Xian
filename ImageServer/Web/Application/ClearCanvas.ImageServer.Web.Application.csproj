@@ -592,6 +592,7 @@
     <Content Include="images\icons\ResetEnabled.png" />
     <Content Include="images\icons\ScheduleDisabled.png" />
     <Content Include="images\icons\ScheduleEnabled.png" />
+    <Content Include="images\race.gif" />
     <Content Include="Scripts\NumberFormat154.js" />
     <EmbeddedResource Include="Search\SearchPanel.js" />
     <Content Include="Search\StudyListGridView.ascx" />

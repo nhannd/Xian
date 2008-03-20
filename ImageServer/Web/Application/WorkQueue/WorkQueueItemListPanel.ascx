@@ -82,7 +82,15 @@
                         </asp:GridView>
             </asp:TableCell>
         </asp:TableRow>
+        
     </asp:Table>
+    <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel"  DynamicLayout="false">
+        <ProgressTemplate>
+            <asp:Panel ID="ProgressPanel" runat="server" HorizontalAlign="right">
+                <asp:Image ID="UpdatingImage" runat="server" ImageUrl="~/images/ajax-loader.gif" />
+            </asp:Panel>
+        </ProgressTemplate>
+    </asp:UpdateProgress>
     
     <asp:Timer ID="RefreshTimer" runat="server" OnTick="RefreshTimer_Tick" Interval="30000"></asp:Timer>
     

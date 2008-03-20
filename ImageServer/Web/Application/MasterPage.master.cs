@@ -61,10 +61,15 @@ public partial class Admin_MasterPage : System.Web.UI.MasterPage
         IE6PNGBugFixCSS.InnerHtml = @"
             input, img
             {
-                background-image: expression(
-                    this.runtimeStyle.backgroundImage = ""none"",
-                    this.runtimeStyle.filter = ""progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"" + this.src + ""', sizingMethod='image')"",
-                    this.src = """ + Page.ResolveClientUrl("~/images/blank.gif") + @"""
+                background-image: expression
+                (
+                        this.src.toLowerCase().indexOf('.png')>-1?
+                        (
+                            this.runtimeStyle.backgroundImage = ""none"",
+                            this.runtimeStyle.filter = ""progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"" + this.src + ""', sizingMethod='image')"",
+                            this.src = """ + Page.ResolveClientUrl("~/images/blank.gif") + @"""
+                        )
+                        
                 );
             }
         ";
