@@ -36,6 +36,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
 {
@@ -141,6 +142,11 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
             {
                 StudyDetailsPanel.Visible = false;
             }
+            else
+            {
+                Page.Title = String.Format("{0}:{1}", NameFormatter.Format(_study.PatientsName) , _study.PatientId);
+            }
+
         }
 
         #endregion Protected Methods
