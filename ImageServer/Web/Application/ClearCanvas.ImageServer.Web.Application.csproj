@@ -621,7 +621,6 @@
     <Content Include="images\icons\ScheduleDisabled.png" />
     <Content Include="images\icons\ScheduleEnabled.png" />
     <Content Include="images\icons\SendDisabled.png" />
-    <Content Include="images\race.gif" />
     <Content Include="images\icons\SendEnabled.png" />
     <Content Include="Scripts\NumberFormat154.js" />
     <EmbeddedResource Include="Search\SearchPanel.js" />

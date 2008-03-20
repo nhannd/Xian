@@ -156,6 +156,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
         }
 
+        /// <summary>
+        /// Update the specified partition tab
+        /// </summary>
+        /// <param name="tabIndex">The server partition tab index</param>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        public void Update(int tabIndex)
+        {
+            if (_partitionList == null || _partitionList.Count == 0)
+                return;
+
+            ServerPartition partition = _partitionList[0];
+
+            Update(partition.GetKey());
+        }
+
         #endregion Public Methods
     }
 }

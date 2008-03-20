@@ -106,6 +106,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             base.OnInit(e);
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (!Page.IsPostBack)
+            {
+                ServerPartitionTabs.Update(0);
+            }
+        }
 
         #endregion Protected Methods
 
