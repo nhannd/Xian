@@ -264,7 +264,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
                 _serviceIsOffline = false;
                 _lastServiceAvailableTime = DateTime.Now;
-                return ((float)fsInfo.FreeSizeInKB)/fsInfo.SizeInKB*100.0F;
+                return 100.0f - ((float)fsInfo.FreeSizeInKB)/fsInfo.SizeInKB*100.0F;
             }
             catch(Exception e)
             {
