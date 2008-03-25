@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>Technologist Preview</title>
+	<title>CT Documentation</title>
 	<link href="../../css/default.css" rel="stylesheet" type="text/css" />
 	<link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="../../js/calendar/calendar.js"></script>
@@ -18,12 +18,9 @@
 
 		var oralTypes = 
 		[
-			"air",
 			"barium",
 			"gas pills",
-			"gastrographin",
 			"water",
-			"water soluble",
 			"Telebrix"
 		]
 
@@ -31,10 +28,6 @@
 		[
 			"air",
 			"barium",
-			"Hypaque 30%",
-			"Hypaque 60%",
-			"Kaopectate",
-			"Omnipaque",
 			"water",
 			"water soluble"
 		]
@@ -133,6 +126,14 @@
 				initRectalTable();
 				initIVAccessTable();
 				initIVContrastTable();
+
+				data.pacs = data.pacs || {};
+				data.staff = data.staff || [];
+				data.postProcessing = data.postProcessing || {};
+
+				initPacsTable();
+				initStaffTable();
+				initPostProcessingTable();
 			}
 			catch(e)
 			{
@@ -194,11 +195,10 @@
 							setValue: function(item, value) { item.amount = value; },
 							getError: function(item) { return null; }
 						},
-						{  label: "Measurement",
-							cellType: "text",
-							size: 10,
-							getValue: function(item) { return item.measurement; },
-							setValue: function(item, value) { item.measurement = value; },
+						{  label: "Time Given",
+							cellType: "date",
+							getValue: function(item) { return item.timeGiven; },
+							setValue: function(item, value) { item.timeGiven = value; },
 							getError: function(item) { return null; }
 						},
 						{  label: "Admin By",
@@ -260,11 +260,10 @@
 						setValue: function(item, value) { item.amount = value; },
 						getError: function(item) { return null; }
 					},
-					{  label: "Measurement",
-						cellType: "text",
-						size: 10,
-						getValue: function(item) { return item.measurement; },
-						setValue: function(item, value) { item.measurement = value; },
+					{  label: "Time Given",
+						cellType: "date",
+						getValue: function(item) { return item.timeGiven; },
+						setValue: function(item, value) { item.timeGiven = value; },
 						getError: function(item) { return null; }
 					},
 					{  label: "Admin By",
@@ -319,25 +318,33 @@
 						setValue: function(item, value) { item.type = value; },
 						getError: function(item) { return null; }
 					},
-					{  label: "Side",
-						cellType: "choice",
-						choices: ["Right", "Left"],
-						getValue: function(item) { return item.side; },
-						setValue: function(item, value) { item.side = value; },
-						getError: function(item) { return null; }
-					},
-					{  label: "Site",
-						cellType: "choice",
-						choices: ["Antecubital Fossa", "Forearm", "Hand", "Wrist"],
-						getValue: function(item) { return item.bodySite; },
-						setValue: function(item, value) { item.bodySite = value; },
-						getError: function(item) { return null; }
-					},
 					{  label: "Accessed By",
 						cellType: "lookup",
 						lookup: function(query) { return Ris.resolveStaffName(query); },
 						getValue: function(item) { return item.staff; },
 						setValue: function(item, value) { item.staff = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Site",
+						cellType: "choice",
+						choices: ["Hand", "Antecubital", "Wrist", "Forearm", "Central Line", "Other"],
+						getValue: function(item) { return item.bodySite; },
+						setValue: function(item, value) { item.bodySite = value; },
+						getError: function(item) { return null; }
+					},
+					{
+						label: "Site (con'd)",
+						cellType: "text",
+						getValue: function(item) { return item.bodySiteOther; },
+						setValue: function(item, value) { item.bodySiteOther = value; },
+						getVisible: function(item) { return item.bodySite == "Other"; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Side",
+						cellType: "choice",
+						choices: ["RT", "LT", "Bilateral"],
+						getValue: function(item) { return item.side; },
+						setValue: function(item, value) { item.side = value; },
 						getError: function(item) { return null; }
 					}
 				]);
@@ -390,13 +397,6 @@
 						size: 10,
 						getValue: function(item) { return item.amount; },
 						setValue: function(item, value) { item.amount = value; },
-						getError: function(item) { return null; }
-					},
-					{  label: "Measurement",
-						cellType: "text",
-						size: 10,
-						getValue: function(item) { return item.measurement; },
-						setValue: function(item, value) { item.measurement = value; },
 						getError: function(item) { return null; }
 					},
 					{  label: "Pump/Rate",
@@ -474,6 +474,140 @@
 			data.ivContrast.each(function(item) { $("ivContrastTable").setItemCheckState(item, $("ivContrastCheckAllNone").checked); });
 		}
 
+		function initPacsTable()
+		{
+			var table = Table.createTable($("pacsTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{	label: "# of Exams",
+					cellType: "text",
+					getValue: function(item) { return item.numberOfExams; },
+					setValue: function(item, value) { item.numberOfExams = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "# of Series",
+					cellType: "text",
+					getValue: function(item) { return item.numberOfSeries; },
+					setValue: function(item, value) { item.numberOfSeries = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "Server Checked By",
+					cellType: "lookup",
+					lookup: function(query) { return Ris.resolveStaffName(query); },
+					getValue: function(item) { return item.serverCheckedBy; },
+					setValue: function(item, value) { item.serverCheckedBy = value; },
+					getError: function(item) { return null; }
+				}
+			]);
+
+			table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			table.bindItems([data.pacs]);
+		}
+
+		function initStaffTable()
+		{
+			var table = Table.createTable($("staffTable"), { editInPlace: true, flow: true, checkBoxes: true },
+			[
+				{	label: "Staff",
+					cellType: "lookup",
+					lookup: function(query) { return Ris.resolveStaffName(query); },
+					getValue: function(item) { return item.staffPerson; },
+					setValue: function(item, value) { item.staffPerson = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "Role",
+					cellType: "readonly",
+					getValue: function(item) { return item.staffPerson ? item.staffPerson.staffType : null; }
+				}
+			]);
+
+			table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			table.bindItems(data.staff);
+		}
+
+		function onAddStaff()
+		{
+			data.staff.add( {} );   // add an empty item
+		}
+
+		function onDeleteStaff()
+		{
+			var checkedItems = $("staffTable").getCheckedItems();
+			if(checkedItems.length > 0)
+			{
+				if(confirm("Deleted selected staff?"))
+				{
+					checkedItems.each(function(item) { data.staff.remove(item); });
+					$("staffCheckAllNone").checked = false;
+				}
+			}
+			else
+			{
+				alert("Nothing selected");
+			}
+		}
+
+		function onStaffCheckAllNone()
+		{
+			data.staff.each(function(item) { $("staffTable").setItemCheckState(item, $("staffCheckAllNone").checked); });
+		}
+
+		function initPostProcessingTable()
+		{
+			var postProcessingTable = Table.createTable($("postProcessingTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{	label: "Reconstructions Performed",
+					cellType: "choice",
+					choices: ["TODO"],
+					getValue: function(item) { return item.reconstructionsPerformed; },
+					setValue: function(item, value) { item.reconstructionsPerformed = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "3D Processing Protocol",
+					cellType: "choice",
+					choices: ["Ca Score", "Number of vessels probed", "Ejection Fractions done", "3D model", "measurements", "number of FCPC's"],
+					getValue: function(item) { return item.processingProtocol; },
+					setValue: function(item, value) { item.processingProtocol = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "Time Spent",
+					cellType: "text",
+					getValue: function(item) { return item.timeSpent; },
+					setValue: function(item, value) { item.timeSpent = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "Workstation",
+					cellType: "choice",
+					choices: ["Vitrea 1", "ADW 1", "Other"],
+					getValue: function(item) { return item.workstation; },
+					setValue: function(item, value) { item.workstation = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "Workstation (con'd)",
+					cellType: "text",
+					getValue: function(item) { return item.workstationOther; },
+					setValue: function(item, value) { item.workstationOther = value; },
+					getVisible: function(item) { return item.workstation == "Other"; },
+					getError: function(item) { return null; }
+				}
+			]);
+
+			postProcessingTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			postProcessingTable.bindItems([data.postProcessing]);
+
+			var postProcessingCommentsTable = Table.createTable($("postProcessingCommentsTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{	label: "Additional Comments",
+					cellType: "textarea",
+					getValue: function(item) { return item.additionalComments; },
+					setValue: function(item, value) { item.additionalComments = value; },
+					getError: function(item) { return null; }
+				}
+			]);
+
+			postProcessingCommentsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			postProcessingCommentsTable.bindItems([data.postProcessing]);
+		}
+
 		//////////////////////////////////////////////////////////////////////////
 		// RIS integration API
 		function hasValidationErrors()
@@ -496,11 +630,11 @@
 </head>
 <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 	<form id="myForm">
-		<p class="sectionheading">Exam Acquisition/Mpps</p>
+		<p class="sectionheading">Exam Acquisition</p>
 		<table id="acquisitionTable" width="100%">
-		<tr><td class="tableheading"></td></tr>
+			<tr><td class="tableheading"></td></tr>
 		</table>
-		<p class="sectionheading">Oral</p>
+		<p class="sectionheading">Oral Contrast</p>
 		<div class="addDeleteButtons">
 			<input type="button" value="Add" onclick="javascript: onAddOral()" />
 			<input type="button" value="Delete" onclick="javascript: onDeleteOral()" />
@@ -510,7 +644,7 @@
 				<td colspan="2"><input id="oralCheckAllNone" type="checkbox" onclick="javascript:onOralCheckAllNone()">Select All/None</input></td>
 			</tr>
 		</table>
-		<p class="sectionheading">Rectal</p>
+		<p class="sectionheading">Rectal Contrast</p>
 		<div class="addDeleteButtons">
 			<input type="button" value="Add" onclick="javascript: onAddRectal()" />
 			<input type="button" value="Delete" onclick="javascript: onDeleteRectal()" />
@@ -539,6 +673,30 @@
 			<tr>
 				<td colspan="2"><input id="ivContrastCheckAllNone" type="checkbox" onclick="javascript:onIVContrastCheckAllNone()">Select All/None</input></td>
 			</tr>
+		</table>
+		<p class="sectionheading">PACS</p>
+		<table id="pacsTable" width="100%">
+			<tr>
+				<td class="tableheading"></td>
+			</tr>
+		</table>
+		<p class="sectionheading">Cardiac/3D Processing</p>
+		<p class="subsectionheading">Staff</p>
+		<div class="addDeleteButtons">
+			<input type="button" value="Add" onclick="javascript: onAddStaff()" />
+			<input type="button" value="Delete" onclick="javascript: onDeleteStaff()" />
+		</div>
+		<table id="staffTable" border="1" width="100%">
+			<tr>
+				<td colspan="2"><label><input id="staffCheckAllNone" type="checkbox" onclick="javascript: onStaffCheckAllNone()" />Select All/None</label></td>
+			</tr>
+		</table>
+		<p class="subsectionheading">Post-Processing</p>
+		<table id="postProcessingTable" width="100%">
+			<tr><td class="tableheading"></td></tr>
+		</table>
+		<table id="postProcessingCommentsTable" width="100%">
+			<tr><td class="tableheading"></td></tr>
 		</table>
 	</form>
 </body>

@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>Angio/Interventional Details</title>
+	<title>Ultrasound Documentation</title>
 	<link href="../../css/default.css" rel="stylesheet" type="text/css" />
 	<link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="../../js/calendar/calendar.js"></script>
@@ -20,7 +20,7 @@
 		[
 			"Definity",
 			"Levovist",
-			"Optison"
+			"Other"
 		]
 		
 		var examLocations =
@@ -120,11 +120,13 @@
 
 				data.ivAccess = data.ivAccess || [];
 				data.ivContrast = data.ivContrast || [];
+				data.ultrasound = data.ultrasound || {};
 				
 				initAcquisitionTable(facility, modality);
 
 				initIVAccessTable();
 				initIVContrastTable();
+				initUltrasoundTable();
 			}
 			catch(e)
 			{
@@ -132,10 +134,10 @@
 				Field.setValue($("myForm"), message);
 			}
 		}
-		
+
 		function initAcquisitionTable(facility, modality)
 		{
-		var table = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			var acquisitionTable = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
 			[
 				{
 					label: "Start Date/Time",
@@ -156,8 +158,60 @@
 				}
 			]);
 				
-		table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-		table.bindItems([data.acquisition]);
+			acquisitionTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			acquisitionTable.bindItems([data.acquisition]);
+			
+			var chaperoneTable = Table.createTable($("chaperoneTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{	label: "Chaperones Used?",
+					cellType: "choice",
+					choices: ["Yes", "No"],
+					getValue: function(item) { return item.chaperonesUsed = item.chaperonesUsed || "No"; },
+					setValue: function(item, value) { item.chaperonesUsed = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "Staff Name",
+					cellType: "lookup",
+					lookup: function(query) { return Ris.resolveStaffName(query); },
+					getValue: function(item) { return item.chaperone; },
+					setValue: function(item, value) { item.chaperone = value; },
+					getVisible: function(item) { return item.chaperonesUsed == "Yes"; },
+					getError: function(item) { return null; }
+				},
+				{	label: "Position",
+					cellType: "text",
+					getValue: function(item) { return item.chaperonePosition; },
+					setValue: function(item, value) { item.chaperonePosition = value; },
+					getVisible: function(item) { return item.chaperonesUsed == "Yes"; },
+					getError: function(item) { return null; }
+				}
+			]);
+				
+			chaperoneTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			chaperoneTable.bindItems([data.acquisition]);
+			
+			var radiologistTable = Table.createTable($("radiologistTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{	label: "Radiologist Scanned?",
+					cellType: "choice",
+					choices: ["Yes", "No"],
+					getValue: function(item) { return item.radiologistScanned = item.radiologistScanned || "No"; },
+					setValue: function(item, value) { item.radiologistScanned = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "Staff Name",
+					cellType: "lookup",
+					lookup: function(query) { return Ris.resolveStaffName(query); },
+					getValue: function(item) { return item.radiologist; },
+					setValue: function(item, value) { item.radiologist = value; },
+					getVisible: function(item) { return item.radiologistScanned == "Yes"; },
+					getError: function(item) { return null; }
+				}
+			]);
+				
+			radiologistTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			radiologistTable.bindItems([data.acquisition]);
+			
 		}
 		
 		function initIVAccessTable()
@@ -172,25 +226,25 @@
 						setValue: function(item, value) { item.type = value; },
 						getError: function(item) { return null; }
 					},
-					{  label: "Side",
-						cellType: "choice",
-						choices: ["Right", "Left"],
-						getValue: function(item) { return item.side; },
-						setValue: function(item, value) { item.side = value; },
-						getError: function(item) { return null; }
-					},
-					{  label: "Site",
-						cellType: "choice",
-						choices: ["Antecubital Fossa", "Forearm", "Hand", "Wrist"],
-						getValue: function(item) { return item.bodySite; },
-						setValue: function(item, value) { item.bodySite = value; },
-						getError: function(item) { return null; }
-					},
 					{  label: "Accessed By",
 						cellType: "lookup",
 						lookup: function(query) { return Ris.resolveStaffName(query); },
 						getValue: function(item) { return item.staff; },
 						setValue: function(item, value) { item.staff = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Site",
+						cellType: "choice",
+						choices: ["Hand", "Antecubital", "Wrist", "Forearm"],
+						getValue: function(item) { return item.bodySite; },
+						setValue: function(item, value) { item.bodySite = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Side",
+						cellType: "choice",
+						choices: ["RT", "LT"],
+						getValue: function(item) { return item.side; },
+						setValue: function(item, value) { item.side = value; },
 						getError: function(item) { return null; }
 					}
 				]);
@@ -228,47 +282,54 @@
 
 		function initIVContrastTable()
 		{
-				var ivContrastTable = Table.createTable($("ivContrastTable"), 
-					{editInPlace: true, flow: true, checkBoxes: true },
-					[
-						{  label: "Type",
-							cellType: "choice",
-							choices: ivContrastTypes,
-							getValue: function(item) { return item.type; },
-							setValue: function(item, value) { item.type = value; },
-							getError: function(item) { return null; }
-						},
-						{  label: "Amount",
-							cellType: "text",
-							size: 10,
-							getValue: function(item) { return item.amount; },
-							setValue: function(item, value) { item.amount = value; },
-							getError: function(item) { return null; }
-						},
-						{  label: "Measurement",
-							cellType: "text",
-							size: 10,
-							getValue: function(item) { return item.measurement; },
-							setValue: function(item, value) { item.measurement = value; },
-							getError: function(item) { return null; }
-						},
-						{  label: "Admin By",
-							cellType: "lookup",
-							lookup: function(query) { return Ris.resolveStaffName(query); },
-							getValue: function(item) { return item.staff; },
-							setValue: function(item, value) { item.staff = value; },
-							getError: function(item) { return null; }
-						},
-						{  label: "Time",
-							cellType: "datetime",
-							getValue: function(item) { return item.time; },
-							setValue: function(item, value) { item.time = value; },
-							getError: function(item) { return null; }
-						}
-					]);
-				
-				ivContrastTable.errorProvider = errorProvider;
-				ivContrastTable.bindItems(data.ivContrast);
+			var ivContrastTable = Table.createTable($("ivContrastTable"), 
+				{editInPlace: true, flow: true, checkBoxes: true },
+				[
+					{  label: "Type",
+						cellType: "choice",
+						choices: ivContrastTypes,
+						getValue: function(item) { return item.type; },
+						setValue: function(item, value) { item.type = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Type (con'd)",
+						cellType: "text",
+						getValue: function(item) { return item.typeOther; },
+						setValue: function(item, value) { item.typeOther = value; },
+						getVisible: function(item) { return item.type == "Other"; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Amount",
+						cellType: "text",
+						size: 10,
+						getValue: function(item) { return item.amount; },
+						setValue: function(item, value) { item.amount = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Measurement",
+						cellType: "text",
+						size: 10,
+						getValue: function(item) { return item.measurement; },
+						setValue: function(item, value) { item.measurement = value; },
+						getError: function(item) { return null; }
+					},
+					/*{  label: "Administered By",
+						cellType: "lookup",
+						lookup: function(query) { return Ris.resolveStaffName(query); },
+						getValue: function(item) { return item.staff; },
+						setValue: function(item, value) { item.staff = value; },
+						getError: function(item) { return null; }
+					},*/
+					{  label: "Time",
+						cellType: "datetime",
+						getValue: function(item) { return item.time; },
+						setValue: function(item, value) { item.time = value; },
+						getError: function(item) { return null; }
+					}
+				]);
+			
+			ivContrastTable.errorProvider = errorProvider;
+			ivContrastTable.bindItems(data.ivContrast);
 		}
 		
 		function onAddIVContrast()
@@ -298,6 +359,38 @@
 			data.ivContrast.each(function(item) { $("ivContrastTable").setItemCheckState(item, $("ivContrastCheckAllNone").checked); });
 		}
 
+		function initUltrasoundTable()
+		{
+			var ultrasoundTable = Table.createTable($("ultrasoundTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{	label: "Performed?",
+					cellType: "choice",
+					choices: ["Yes", "No"],
+					getValue: function(item) { return item.performed = item.performed || "No"; },
+					setValue: function(item, value) { item.performed = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "Workstation",
+					cellType: "choice",
+					choices: ["IU22", "Toshiba", "Other"],
+					getValue: function(item) { return item.workstation; },
+					setValue: function(item, value) { item.workstation = value; },
+					getVisible: function(item) { return item.performed == "Yes"; },
+					getError: function(item) { return null; }
+				},
+				{	label: "Workstation (con'd)",
+					cellType: "text",
+					getValue: function(item) { return item.workstationOther; },
+					setValue: function(item, value) { item.workstationOther = value; },
+					getVisible: function(item) { return item.performed == "Yes" && item.workstation == "Other"; },
+					getError: function(item) { return null; }
+				}
+			]);
+				
+			ultrasoundTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			ultrasoundTable.bindItems([data.ultrasound]);
+		}
+
 		//////////////////////////////////////////////////////////////////////////
 		// RIS integration API
 		function hasValidationErrors()
@@ -312,7 +405,7 @@
 
 		function saveData()
 		{
-		data.capturePageUrl = window.location;
+			data.capturePageUrl = window.location;
 			return Ris.setTag("Documentation", JSML.create(data, "data"));
 		}
 		//////////////////////////////////////////////////////////////////////////
@@ -320,11 +413,16 @@
 </head>
 <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 	<form id="myForm">
-		<p class="sectionheading">Exam Acquisition/Mpps</p>
+		<p class="sectionheading">Exam Acquisition</p>
 		<table id="acquisitionTable" width="100%">
 			<tr><td class="tableheading"></td></tr>
 		</table>
-		<p class="sectionheading">Contrast/Injections</p>
+		<table id="chaperoneTable" width="100%">
+			<tr><td class="tableheading"></td></tr>
+		</table>
+		<table id="radiologistTable" width="100%">
+			<tr><td class="tableheading"></td></tr>
+		</table>
 		<p class="sectionheading">IV - Access</p>
 		<div class="addDeleteButtons">
 			<input type="button" value="Add" onclick="javascript: onAddIVAccess()" />
@@ -344,6 +442,10 @@
 			<tr>
 				<td colspan="2"><input id="ivContrastCheckAllNone" type="checkbox" onclick="javascript:onIVContrastCheckAllNone()">Select All/None</input></td>
 			</tr>
+		</table>
+		<p class="sectionheading">3D/4D Ultrasound</p>
+		<table id="ultrasoundTable" width="100%">
+			<tr><td class="tableheading"></td></tr>
 		</table>
 	</form>
 </body>

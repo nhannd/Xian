@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>Technologist Preview</title>
+	<title>PET/CT Documentation</title>
 	<link href="../../css/default.css" rel="stylesheet" type="text/css" />
 	<link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="../../js/calendar/calendar.js"></script>
@@ -230,7 +230,7 @@
 						setValue: function(item, value) { item.measurement = value; },
 						getError: function(item) { return null; }
 					},
-					{  label: "Admin By",
+					{  label: "Administered By",
 						cellType: "lookup",
 						lookup: function(query) { return Ris.resolveStaffName(query); },
 						getValue: function(item) { return item.staff; },
@@ -281,25 +281,32 @@
 						setValue: function(item, value) { item.type = value; },
 						getError: function(item) { return null; }
 					},
-					{  label: "Side",
-						cellType: "choice",
-						choices: ["Right", "Left"],
-						getValue: function(item) { return item.side; },
-						setValue: function(item, value) { item.side = value; },
-						getError: function(item) { return null; }
-					},
-					{  label: "Site",
-						cellType: "choice",
-						choices: ["Antecubital Fossa", "Forearm", "Hand", "Wrist"],
-						getValue: function(item) { return item.bodySite; },
-						setValue: function(item, value) { item.bodySite = value; },
-						getError: function(item) { return null; }
-					},
 					{  label: "Accessed By",
 						cellType: "lookup",
 						lookup: function(query) { return Ris.resolveStaffName(query); },
 						getValue: function(item) { return item.staff; },
 						setValue: function(item, value) { item.staff = value; },
+						getError: function(item) { return null; }
+					},
+					{  label: "Site",
+						cellType: "choice",
+						choices: ["Hand", "Antecubital", "Wrist", "Forearm", "Central Line", "Other"],
+						getValue: function(item) { return item.bodySite; },
+						setValue: function(item, value) { item.bodySite = value; },
+						getError: function(item) { return null; }
+					},
+					{	label: "Site (con'd)",
+						cellType: "text",
+						getValue: function(item) { return item.bodySiteOther; },
+						setValue: function(item, value) { item.bodySiteOther = value; },
+						getVisible: function(item) { return item.bodySite == "Other"; },
+						getError: function(item) { return null; }						
+					},
+					{  label: "Side",
+						cellType: "choice",
+						choices: ["RT", "LT"],
+						getValue: function(item) { return item.side; },
+						setValue: function(item, value) { item.side = value; },
 						getError: function(item) { return null; }
 					}
 				]);
@@ -389,7 +396,7 @@
 						setValue: function(item, value) { item.lot = value; },
 						getError: function(item) { return null; }
 					},
-					{  label: "Admin By",
+					{  label: "Administered By",
 						cellType: "lookup",
 						lookup: function(query) { return Ris.resolveStaffName(query); },
 						getValue: function(item) { return item.staff; },
@@ -474,7 +481,7 @@
 						setValue: function(item, value) { item.method = value; },
 						getError: function(item) { return null; }
 					},
-					{  label: "Admin By",
+					{  label: "Administered By",
 						cellType: "lookup",
 						lookup: function(query) { return Ris.resolveStaffName(query); },
 						getValue: function(item) { return item.staff; },
@@ -532,7 +539,7 @@
 						setValue: function(item, value) { item.name = value; },
 						getError: function(item) { return null; }
 					},
-					{  label: "Admin By",
+					{  label: "Administered By",
 						cellType: "lookup",
 						lookup: function(query) { return Ris.resolveStaffName(query); },
 						getValue: function(item) { return item.staff; },
@@ -600,17 +607,17 @@
 </head>
 <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 	<form id="myForm">
-		<p class="sectionheading">Exam Acquisition/Mpps</p>
+		<p class="sectionheading">Exam Acquisition</p>
 		<table id="acquisitionTable" width="100%">
 			<tr><td class="tableheading"></td></tr>
 		</table>
 
-		<p class="sectionheading">Scan Positioning</p>   
+		<p class="sectionheading">Scan Positioning Parameters</p>   
 		<table id="scanPositioningTable" width="100%">
 			<tr><td class="tableheading"></td></tr>
 		</table>
 
-		<p class="sectionheading">Oral</p>
+		<p class="sectionheading">Oral Contrast</p>
 		<div class="addDeleteButtons">
 			<input type="button" value="Add" onclick="javascript: onAddOral()" />
 			<input type="button" value="Delete" onclick="javascript: onDeleteOral()" />

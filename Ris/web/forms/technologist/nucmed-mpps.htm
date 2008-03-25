@@ -157,11 +157,13 @@
 				data.acquisition.startTime = data.acquisition.startTime || startTime;
 				data.acquisition.stopTime = data.acquisition.stopTime || stopTime;
 
-				data.injections = data.injections || [];
-
 				initAcquisitionTable(facility);
 
+				data.injections = data.injections || [];
+				data.pacs = data.pacs || {};
+
 				initInjectionsTable();
+				initPacsTable();
 			}
 			catch(e)
 			{
@@ -202,7 +204,7 @@
 			var injectionsTable = Table.createTable($("injectionsTable"), 
 				{editInPlace: true, flow: true, checkBoxes: true },
 				[
-					{   label: "Injection",
+					{	label: "Name",
 						cellType: "choice",
 						choices: [ { group: "Radiopharmaceuticals", choices: radioPharms }, { group: "Drugs", choices: drugs }],
 						getValue: function(item) { return item.injection; },
@@ -218,26 +220,48 @@
 					},
 					{   label: "Units",
 						cellType: "choice",
-						choices: ["capsule(s)", "GBq", "kBq", "MBq", "vial"],
+						choices: 
+						[ 
+							{ group: "Radiopharmaceuticals", choices: ["GBq", "kBq", "MBq"] }, 
+							{ group: "Drugs", choices: ["mg", "mls"] }
+						],
 						getValue: function(item) { return item.units; },
 						setValue: function(item, value) { item.units = value; },
 						getError: function(item) { return null; }
 					},
 					{   label: "Site",
 						cellType: "choice",
-						choices: ["Antecubital Fossa", "Buttocks", "Deltoid", "Foot", "Forearm", "Hand", "Wrist"],
+						choices: ["Antecubital Fossa", "Breast", "Buttocks", "Deltoid", "Foot", "Forearm", "Hand", "Wrist", "Mouth", "Other"],
 						getValue: function(item) { return item.bodySite; },
 						setValue: function(item, value) { item.bodySite = value; },
 						getError: function(item) { return null; }
 					},
+					{	label: "Site (con'd)",
+						cellType: "text",
+						getValue: function(item) { return item.bodySiteOther; },
+						setValue: function(item, value) { item.bodySiteOther = value; },
+						getVisible: function(item) { return item.bodySite == "Other"; },
+						getError: function(item) { return null; }
+					},
 					{   label: "Side",
 						cellType: "choice",
-						choices: ["Left", "Right"],
+						choices: ["RT", "LT", "Bilateral"],
 						getValue: function(item) { return item.side; },
 						setValue: function(item, value) { item.side = value; },
 						getError: function(item) { return null; }
 					},
-					{   label: "Admin By",
+					{	label: "Method",
+						cellType: "choice",
+						choices: 
+						[ 
+							{ group: "Radiopharmaceuticals", choices: ["IV", "Sublingual", "Unsuccessful", "Partially interstitial"] }, 
+							{ group: "Drugs", choices: ["IV", "IV port", "ID", "PO", "Inhalation"] }
+						],
+						getValue: function(item) { return item.method; },
+						setValue: function(item, value) { item.method = value; },
+						getError: function(item) { return null; }						
+					},
+					{   label: "Administered By",
 						cellType: "lookup",
 						lookup: function(query) { return Ris.resolveStaffName(query); },
 						getValue: function(item) { return item.staff; },
@@ -283,6 +307,35 @@
 			data.injections.each(function(item) { $("injectionsTable").setItemCheckState(item, $("injectionsCheckAllNone").checked); });
 		}
 
+		function initPacsTable()
+		{
+			var table = Table.createTable($("pacsTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{	label: "# of Exams",
+					cellType: "text",
+					getValue: function(item) { return item.numberOfExams; },
+					setValue: function(item, value) { item.numberOfExams = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "# of Series",
+					cellType: "text",
+					getValue: function(item) { return item.numberOfSeries; },
+					setValue: function(item, value) { item.numberOfSeries = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "Server Checked By",
+					cellType: "lookup",
+					lookup: function(query) { return Ris.resolveStaffName(query); },
+					getValue: function(item) { return item.serverCheckedBy; },
+					setValue: function(item, value) { item.serverCheckedBy = value; },
+					getError: function(item) { return null; }
+				}
+			]);
+
+			table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			table.bindItems([data.pacs]);
+		}
+
 		//////////////////////////////////////////////////////////////////////////
 		// RIS integration API
 		function hasValidationErrors()
@@ -305,11 +358,11 @@
 </head>
 <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 	<form id="myForm">
-		<p class="sectionheading">Exam Acquisition/Mpps</p>
+		<p class="sectionheading">Exam Acquisition</p>
 		<table id="acquisitionTable" width="100%">
 		<tr><td class="tableheading"></td></tr>
 		</table>
-		<p class="sectionheading">Injections</p>
+		<p class="sectionheading">Administration</p>
 		<div class="addDeleteButtons">
 			<input type="button" value="Add" onclick="javascript: onAddInjection()" />
 			<input type="button" value="Delete" onclick="javascript: onDeleteInjection()" />
@@ -317,6 +370,12 @@
 		<table id="injectionsTable" border="1" width="100%">
 			<tr>
 				<td colspan="2"><input id="injectionsCheckAllNone" type="checkbox" onclick="javascript:onInjectionCheckAllNone()">Select All/None</input></td>
+			</tr>
+		</table>
+		<p class="sectionheading">PACS</p>
+		<table id="pacsTable" width="100%">
+			<tr>
+				<td class="tableheading"></td>
 			</tr>
 		</table>
 	</form>

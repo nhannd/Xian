@@ -74,6 +74,7 @@
 				data.acquisition = data.acquisition || {};
 				data.acquisition.startTime = data.acquisition.startTime || startTime;
 				data.acquisition.stopTime = data.acquisition.stopTime || stopTime;
+				data.acquisition.repeatReasons = data.acquisition.repeatReasons || {};
 
 				initAcquisitionTable(facility);
 			}
@@ -86,7 +87,7 @@
 
 		function initAcquisitionTable(facility)
 		{
-		var table = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			var acquisitionTable = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
 			[
 				{
 					label: "Start Date/Time",
@@ -114,8 +115,49 @@
 				}
 			]);
 
-			table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-			table.bindItems([data.acquisition]);
+			acquisitionTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			acquisitionTable.bindItems([data.acquisition]);
+
+			var additionalAcquisitionTable = Table.createTable($("additionalAcquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{	label: "Number of Digital Images",
+					cellType: "text",
+					getValue: function(item) { return item.numberDigitalImages; },
+					setValue: function(item, value) { item.numberDigitalImages = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "Number of Repeats",
+					cellType: "text",
+					getValue: function(item) { return item.numberRepeats; },
+					setValue: function(item, value) { item.numberRepeats = value; },
+					getError: function(item) { return null; }
+				}
+			]);
+
+			additionalAcquisitionTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			additionalAcquisitionTable.bindItems([data.acquisition]);
+
+			var repeatReasonsTable = Table.createTable($("repeatReasonsTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			[
+				new RepeatReasonCell("Artifacts", "artifacts"),
+				new RepeatReasonCell("Equipment Failure", "equipmentFailure"),
+				new RepeatReasonCell("Motion", "motion"),
+				new RepeatReasonCell("Positioning", "positioning"),
+				new RepeatReasonCell("Technique", "technique")
+			]);
+
+			repeatReasonsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			repeatReasonsTable.bindItems([data.acquisition]);
+		}
+
+		function RepeatReasonCell(label, prop)
+		{
+			this.label = label;
+			this.cellType = "bool";
+			this.prop = prop;
+			this.getValue = function(item) { return item.repeatReasons[this.prop]; };
+			this.setValue = function(item, value) { item.repeatReasons[this.prop] = value; };
+			this.getError = function(item) { return null; };
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -140,9 +182,15 @@
 </head>
 <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 	<form id="myForm">
-		<p class="sectionheading">Exam Acquisition/Mpps</p>
-		<table id="acquisitionTable" width="100%">
-		<tr><td class="tableheading"></td></tr>
+		<p class="sectionheading">Exam Acquisition</p>
+		<table id="acquisitionTable">
+			<tr><td class="tableheading"></td></tr>
+		</table>
+		<table id="additionalAcquisitionTable">
+			<tr><td class="tableheading"></td></tr>
+		</table>
+		<table id="repeatReasonsTable">
+			<tr><td class="">Repeat Reasons</td></tr>
 		</table>
 	</form>         
 </body>
