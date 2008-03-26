@@ -12,6 +12,7 @@
         <clearcanvas:SectionPanel ID="StudySectionPanel" runat="server" HeadingText="Studies to Move"
             HeadingCSS="CSSStudyHeading" Width="100%" CssClass="CSSSection">
             <SectionContentTemplate>
+            <br />
                 <asp:Panel ID="Panel10" runat="server" CssClass="CSSGridViewPanelBorder">
                     <uc3:StudyGridView ID="StudyGridPanel" runat="server" Height="500px" />
                 </asp:Panel>

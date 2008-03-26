@@ -214,7 +214,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
 
             if (EnabledOnlyFilter.Checked)
                 criteria.Enabled.EqualTo(true);
-            
+
+            criteria.Enabled.SortDesc(1);
+            criteria.ServiceLockTypeEnum.SortAsc(2);
+            criteria.ScheduledTime.SortAsc(3);
 
             IList<Model.ServiceLock> services = controller.GetServiceLocks(criteria);
 

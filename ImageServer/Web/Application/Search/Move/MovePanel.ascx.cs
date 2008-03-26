@@ -62,6 +62,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move
             GridPager.PuralItemName = "Devices";
             GridPager.Target = DeviceGridPanel.TheGrid;
 
+            GridPager.GetRecordCountMethod = delegate { return DeviceGridPanel.Devices.Count; };
 
             ConfirmationDialog.Confirmed += delegate(object data)
                  {
@@ -78,8 +79,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move
                      Response.Redirect("~/Search/SearchPage.aspx"); 
                  };
 
-            // setup event handler for child controls
-            //SetUpEventHandlers();
         }
         /// <summary>
         /// Updates the device list window in the panel.
