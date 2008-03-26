@@ -44,10 +44,10 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this._protocolCodesSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
 			this._protocolGroup = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-			this._defaultGroupCheckBox = new System.Windows.Forms.CheckBox();
 			this._grpProcedures = new System.Windows.Forms.GroupBox();
 			this._procedurePlanSummary = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this._btnSetDefault = new System.Windows.Forms.Button();
 			this._tableLayouOuter.SuspendLayout();
 			this.flowLayoutPanel2.SuspendLayout();
 			this.flowLayoutPanel3.SuspendLayout();
@@ -216,7 +216,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel3.Controls.Add(this._protocolCodesSelector, 0, 1);
 			this.tableLayoutPanel3.Controls.Add(this._protocolGroup, 0, 0);
-			this.tableLayoutPanel3.Controls.Add(this._defaultGroupCheckBox, 1, 0);
+			this.tableLayoutPanel3.Controls.Add(this._btnSetDefault, 1, 0);
 			this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 16);
 			this.tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -258,20 +258,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._protocolGroup.TabIndex = 0;
 			this._protocolGroup.Value = null;
 			// 
-			// _defaultGroupCheckBox
-			// 
-			this._defaultGroupCheckBox.AutoSize = true;
-			this._defaultGroupCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._defaultGroupCheckBox.Location = new System.Drawing.Point(256, 3);
-			this._defaultGroupCheckBox.Name = "_defaultGroupCheckBox";
-			this._defaultGroupCheckBox.Padding = new System.Windows.Forms.Padding(0, 17, 0, 0);
-			this._defaultGroupCheckBox.Size = new System.Drawing.Size(247, 39);
-			this._defaultGroupCheckBox.TabIndex = 1;
-			this._defaultGroupCheckBox.Text = "Set as default";
-			this.toolTip1.SetToolTip(this._defaultGroupCheckBox, "Sets the selected protocol group as the default group for the selected procedure." +
-					"  This is a per user setting.");
-			this._defaultGroupCheckBox.UseVisualStyleBackColor = true;
-			// 
 			// _grpProcedures
 			// 
 			this._grpProcedures.AutoSize = true;
@@ -299,6 +285,18 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._procedurePlanSummary.Size = new System.Drawing.Size(506, 81);
 			this._procedurePlanSummary.TabIndex = 0;
 			this._procedurePlanSummary.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			// 
+			// _btnSetDefault
+			// 
+			this._btnSetDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._btnSetDefault.AutoSize = true;
+			this._btnSetDefault.Location = new System.Drawing.Point(256, 19);
+			this._btnSetDefault.Name = "_btnSetDefault";
+			this._btnSetDefault.Size = new System.Drawing.Size(85, 23);
+			this._btnSetDefault.TabIndex = 1;
+			this._btnSetDefault.Text = "Set As Default";
+			this._btnSetDefault.UseVisualStyleBackColor = true;
+			this._btnSetDefault.Click += new System.EventHandler(this._btnSetDefault_Click);
 			// 
 			// ProtocolEditorComponentControl
 			// 
@@ -343,8 +341,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private System.Windows.Forms.Button _btnSkip;
         private System.Windows.Forms.GroupBox _grpProcedures;
         private ClearCanvas.Desktop.View.WinForms.TableView _procedurePlanSummary;
-        private System.Windows.Forms.TableLayoutPanel _tableLayoutInner;
-		private System.Windows.Forms.CheckBox _defaultGroupCheckBox;
+		private System.Windows.Forms.TableLayoutPanel _tableLayoutInner;
 		private System.Windows.Forms.ToolTip toolTip1;
+		private System.Windows.Forms.Button _btnSetDefault;
     }
 }

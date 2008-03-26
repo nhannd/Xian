@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 		internal interface IDefaultProtocolGroupSettingsProvider
 		{
 			string this[string procedureName] { get; set; }
-			string GetSuggestedDefault(IEnumerable<string> availableProtocolGroupsList);
+			string GetSuggestedDefault(IEnumerable<string> eligibleProtocolGroups);
 		}
 
 		private class DefaultProtocolGroupSettingsProvider : IDefaultProtocolGroupSettingsProvider
@@ -81,15 +81,31 @@ namespace ClearCanvas.Ris.Client.Reporting
 				}
 				set
 				{
+					if (String.IsNullOrEmpty(value)) return;
+
 					ProtocolGroupSettings.Default.SetDefaultProtocolGroup(value, procedureName);
 				}
 			}
 
-			public string GetSuggestedDefault(IEnumerable<string> availableProtocolGroupsList)
+			public string GetSuggestedDefault(IEnumerable<string> eligibleProtocolGroups)
 			{
-				return CollectionUtils.SelectFirst(
-					availableProtocolGroupsList,
-					delegate(string protocolGroupName) { return ProtocolGroupSettings.Default.IsADefault(protocolGroupName); });
+				// Get an ordered list of all protocol groups which are specified as defaults (for any procedure)
+				IEnumerable<string> rankedDefaults = ProtocolGroupSettings.Default.GetRankedDefaults();
+
+				// Pick the first eligible protocol group which is in the ordered list of defaults.
+				foreach (string rankedDefault in rankedDefaults)
+				{
+					bool rankedDefaultIsEligible = CollectionUtils.Contains<string>(eligibleProtocolGroups, 
+						delegate(string availableProtocolGroup) { return string.Compare(availableProtocolGroup, rankedDefault) == 0; });
+
+					if (rankedDefaultIsEligible)
+					{
+						return rankedDefault;
+					}
+				}
+
+				// If none of the existing defaults are appropriate, just use the first eligible one.
+				return CollectionUtils.FirstElement(eligibleProtocolGroups);
 			}
 
 			#endregion
@@ -217,35 +233,56 @@ namespace ClearCanvas.Ris.Client.Reporting
 			{
 				return CollectionUtils.Map<ProtocolGroupSummary, string>(
 					_protocolGroupChoices,
-					delegate(ProtocolGroupSummary summary) { return summary.Name; });
+					delegate(ProtocolGroupSummary summary) { return AppendDefaultText(summary.Name); });
 			}
 		}
 
 		public string ProtocolGroup
 		{
-			get { return _protocolGroup == null ? "" : _protocolGroup.Name; }
+			get { return _protocolGroup == null ? "" : AppendDefaultText(_protocolGroup.Name); }
 			set
 			{
 				_protocolGroup = (value == null)
-					? null
-					: CollectionUtils.SelectFirst<ProtocolGroupSummary>(
-						_protocolGroupChoices,
-						delegate(ProtocolGroupSummary summary) { return summary.Name == value; });
+									? null
+									: CollectionUtils.SelectFirst<ProtocolGroupSummary>(
+										_protocolGroupChoices,
+										delegate(ProtocolGroupSummary summary) { return summary.Name == RemoveDefaultText(value); });
 
 				ProtocolGroupSelectionChanged();
 			}
 		}
 
-		public bool IsDefaultProtocolGroup
+		private string AppendDefaultText(string value)
 		{
-			get { return _protocolGroup == null ? false : _protocolGroup.Name == _defaultProtocolGroupName; }
-			set
+			if (value == _defaultProtocolGroupName)
+				return value + " (Default)";
+			else
+				return value;
+		}
+
+		private string RemoveDefaultText(string value)
+		{
+			if (value.EndsWith(" (Default)"))
+				value.Replace(" (Default)", "");
+
+			return value;
+		}
+
+		public bool SetDefaultProtocolGroupEnabled
+		{
+			get
 			{
-				if (value && _defaultProtocolGroupName != _protocolGroup.Name)
-				{
-					_defaultProtocolGroupProvider[_selectedProcodurePlanSummaryTableItem.ProcedureDetail.Type.Name] = _defaultProtocolGroupName = _protocolGroup.Name;
-				}
+				return _defaultProtocolGroupName != _protocolGroup.Name;
 			}
+		}
+
+		public void SetDefaultProtocolGroup()
+		{
+			_defaultProtocolGroupProvider[_selectedProcodurePlanSummaryTableItem.ProcedureDetail.Type.Name] = _defaultProtocolGroupName = _protocolGroup.Name;
+
+			NotifyPropertyChanged("ProtocolGroupChoices");
+			NotifyPropertyChanged("ProtocolGroup");
+			NotifyPropertyChanged("SetDefaultProtocolGroupEnabled");
 		}
 
 		public ITable AvailableProtocolCodesTable
@@ -621,7 +658,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 							_protocolGroupChoices = response.ProtocolGroups;
 							//_protocolGroup = response.InitialProtocolGroup;
-							_protocolGroup = GetDefaultProtocolGroup(item);
+							_protocolGroup = GetInitialProtocolGroup(item);
 
 							RefreshAvailableProtocolCodes(item.ProtocolDetail.Codes, service);
 
@@ -642,13 +679,18 @@ namespace ClearCanvas.Ris.Client.Reporting
 			NotifyPropertyChanged("ProtocolGroupChoices");
 		}
 
-		private ProtocolGroupSummary GetDefaultProtocolGroup(ProtocolEditorProcedurePlanSummaryTableItem item)
+		private ProtocolGroupSummary GetInitialProtocolGroup(ProtocolEditorProcedurePlanSummaryTableItem item)
 		{
 			ProtocolGroupSummary defaultProtocolGroup = null;
 
-			_defaultProtocolGroupName = _defaultProtocolGroupProvider[item.ProcedureDetail.Type.Name] 
-										?? _defaultProtocolGroupProvider.GetSuggestedDefault(
-											CollectionUtils.Map<ProtocolGroupSummary, string>(_protocolGroupChoices, delegate(ProtocolGroupSummary pgs) { return pgs.Name; }));
+			// Use the default if one exists for this procedure.
+			// Otherwise, get a suggested initial group and set the default to the suggested value
+			_defaultProtocolGroupName = _defaultProtocolGroupProvider[item.ProcedureDetail.Type.Name]
+									?? (_defaultProtocolGroupProvider[item.ProcedureDetail.Type.Name] = 
+											_defaultProtocolGroupProvider.GetSuggestedDefault(
+												CollectionUtils.Map<ProtocolGroupSummary, string>(
+													_protocolGroupChoices, 
+													delegate(ProtocolGroupSummary pgs) { return pgs.Name; })));
 
 			if (string.IsNullOrEmpty(_defaultProtocolGroupName) == false)
 			{

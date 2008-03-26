@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Xml;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -85,6 +87,34 @@ namespace ClearCanvas.Ris.Client.Reporting
 		public bool IsADefault(string protocolGroupName)
 		{
 			return Root.SelectSingleNode(String.Format("procedure-protocolgroup-default[@protocolGroupName='{0}']", protocolGroupName)) != null;
+		}
+
+		internal IEnumerable<string> GetRankedDefaults()
+		{
+			IDictionary<string, int> defaultProtocolGroups = new Dictionary<string, int>();
+
+			foreach (XmlElement element in this.Root.ChildNodes)
+			{
+				string protocolGroup = element.GetAttribute("protocolGroupName");
+
+				if(defaultProtocolGroups.ContainsKey(protocolGroup))
+				{
+					defaultProtocolGroups[protocolGroup]++;
+				}
+				else
+				{
+					defaultProtocolGroups[protocolGroup] = 1;
+				}
+			}
+
+			List<KeyValuePair<string, int>> sortedDefaultProtocolGroups = CollectionUtils.Sort(
+				defaultProtocolGroups, 
+				delegate(KeyValuePair<string, int> x, KeyValuePair<string, int> y) { return x.Value.CompareTo(y.Value); });
+			sortedDefaultProtocolGroups.Reverse();
+
+			return CollectionUtils.Map<KeyValuePair<string, int>, string>(
+				sortedDefaultProtocolGroups,
+				delegate(KeyValuePair<string, int> defaultProtocolGroup) { return defaultProtocolGroup.Key; });
 		}
 	}
 }

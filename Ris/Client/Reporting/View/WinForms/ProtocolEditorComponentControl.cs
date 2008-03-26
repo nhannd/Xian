@@ -54,7 +54,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 
 			_protocolGroup.DataSource = _component.ProtocolGroupChoices;
 			_protocolGroup.DataBindings.Add("Value", _component, "ProtocolGroup", true, DataSourceUpdateMode.OnPropertyChanged);
-			_defaultGroupCheckBox.DataBindings.Add("Checked", _component, "IsDefaultProtocolGroup", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnSetDefault.DataBindings.Add("Enabled", _component, "SetDefaultProtocolGroupEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_component.PropertyChanged += _component_PropertyChanged;
 
 			_procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
@@ -140,6 +140,14 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			using (new CursorManager(this, Cursors.WaitCursor))
 			{
 				_component.Skip();
+			}
+		}
+
+		private void _btnSetDefault_Click(object sender, EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.SetDefaultProtocolGroup();
 			}
 		}
 	}
