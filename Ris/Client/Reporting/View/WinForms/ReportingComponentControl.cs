@@ -34,98 +34,89 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="ReportingComponent"/>
-    /// </summary>
-    public partial class ReportingComponentControl : ApplicationComponentUserControl
-    {
-        private readonly ReportingComponent _component;
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="ReportingComponent"/>
+	/// </summary>
+	public partial class ReportingComponentControl : ApplicationComponentUserControl
+	{
+		private readonly ReportingComponent _component;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public ReportingComponentControl(ReportingComponent component)
-            :base(component)
-        {
-            InitializeComponent();
-            _component = component;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public ReportingComponentControl(ReportingComponent component)
+			: base(component)
+		{
+			InitializeComponent();
+			_component = component;
 
-            Control banner = (Control)_component.BannerHost.ComponentView.GuiElement;
-            banner.Dock = DockStyle.Fill;
-            _bannerPanel.Controls.Add(banner);
+			Control banner = (Control)_component.BannerHost.ComponentView.GuiElement;
+			banner.Dock = DockStyle.Fill;
+			_bannerPanel.Controls.Add(banner);
 
-            Control reportEditor = (Control)_component.ReportEditorHost.ComponentView.GuiElement;
-            reportEditor.Dock = DockStyle.Fill;
-            _reportEditorPanel.Controls.Add(reportEditor);
+			Control reportEditor = (Control)_component.ReportEditorHost.ComponentView.GuiElement;
+			reportEditor.Dock = DockStyle.Fill;
+			_reportEditorPanel.Controls.Add(reportEditor);
 
-            Control priorReports = (Control)_component.PriorReportsHost.ComponentView.GuiElement;
-            priorReports.Dock = DockStyle.Fill;
-            _priorReportsTab.Controls.Add(priorReports);
+			Control priorReports = (Control)_component.PriorReportsHost.ComponentView.GuiElement;
+			priorReports.Dock = DockStyle.Fill;
+			_priorReportsTab.Controls.Add(priorReports);
 
-            Control orderDetails = (Control)_component.OrderDetailsHost.ComponentView.GuiElement;
-            orderDetails.Dock = DockStyle.Fill;
-            _orderDetailsTab.Controls.Add(orderDetails);
+			Control orderDetails = (Control)_component.OrderDetailsHost.ComponentView.GuiElement;
+			orderDetails.Dock = DockStyle.Fill;
+			_orderDetailsTab.Controls.Add(orderDetails);
 
-            Control orderAdditionalInfo = (Control)_component.OrderAdditionalInfoHost.ComponentView.GuiElement;
-            orderAdditionalInfo.Dock = DockStyle.Fill;
-            _orderAdditionalInfoTab.Controls.Add(orderAdditionalInfo);
+			Control orderAdditionalInfo = (Control)_component.OrderAdditionalInfoHost.ComponentView.GuiElement;
+			orderAdditionalInfo.Dock = DockStyle.Fill;
+			_orderAdditionalInfoTab.Controls.Add(orderAdditionalInfo);
 
-            _verifyButton.DataBindings.Add("Enabled", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
-            _sendToVerifyButton.DataBindings.Add("Enabled", _component, "SendToVerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
-            _sendToTranscriptionButton.DataBindings.Add("Enabled", _component, "SendToTranscriptionEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
+			_verifyButton.DataBindings.Add("Enabled", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
+			_sendToVerifyButton.DataBindings.Add("Enabled", _component, "SendToVerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
+			_sendToTranscriptionButton.DataBindings.Add("Enabled", _component, "SendToTranscriptionEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 
-            _supervisor.LookupHandler = _component.SupervisorLookupHandler;
-            _supervisor.DataBindings.Add("Value", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
+			_supervisor.LookupHandler = _component.SupervisorLookupHandler;
+			_supervisor.DataBindings.Add("Value", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            if (_component.VerifyReportVisible)
-            {
-                //_residentPanel.Visible = false;
-                _supervisor.Visible = false;
-            }
-            else
-            {
-                _verifyButton.Visible = false;
-            }
+			_supervisor.Visible = _component.SupervisorVisible;
+			_verifyButton.Visible = _component.VerifyReportVisible;
+			_sendToTranscriptionButton.Visible = _component.SendToTranscriptionVisible;
+		}
 
-            if (_component.SendToTranscriptionVisible == false)
-                _sendToTranscriptionButton.Visible = false;
-        }
+		private void _verifyButton_Click(object sender, System.EventArgs e)
+		{
+			using (new CursorManager(Cursors.WaitCursor))
+			{
+				_component.Verify();
+			}
+		}
 
-        private void _verifyButton_Click(object sender, System.EventArgs e)
-        {
-            using(new CursorManager(Cursors.WaitCursor))
-            {
-                _component.Verify();
-            }
-        }
+		private void _sendToVerifyButton_Click(object sender, System.EventArgs e)
+		{
+			using (new CursorManager(Cursors.WaitCursor))
+			{
+				_component.SendToBeVerified();
+			}
+		}
 
-        private void _sendToVerifyButton_Click(object sender, System.EventArgs e)
-        {
-            using (new CursorManager(Cursors.WaitCursor))
-            {
-                _component.SendToBeVerified();
-            }
-        }
+		private void _sendToTranscriptionButton_Click(object sender, System.EventArgs e)
+		{
+			using (new CursorManager(Cursors.WaitCursor))
+			{
+				_component.SendToTranscription();
+			}
+		}
 
-        private void _sendToTranscriptionButton_Click(object sender, System.EventArgs e)
-        {
-            using (new CursorManager(Cursors.WaitCursor))
-            {
-                _component.SendToTranscription();
-            }
-        }
+		private void _saveButton_Click(object sender, System.EventArgs e)
+		{
+			using (new CursorManager(Cursors.WaitCursor))
+			{
+				_component.SaveReport();
+			}
+		}
 
-        private void _saveButton_Click(object sender, System.EventArgs e)
-        {
-            using (new CursorManager(Cursors.WaitCursor))
-            {
-                _component.SaveReport();
-            }
-        }
-
-        private void _cancelButton_Click(object sender, System.EventArgs e)
-        {
-            _component.CancelEditing();
-        }
-    }
+		private void _cancelButton_Click(object sender, System.EventArgs e)
+		{
+			_component.CancelEditing();
+		}
+	}
 }
