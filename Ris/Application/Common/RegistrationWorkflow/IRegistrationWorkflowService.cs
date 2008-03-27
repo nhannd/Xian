@@ -71,9 +71,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// Get items for a worklist
         /// </summary>
         /// <param name="request"><see cref="GetWorklistItemsRequest"/></param>
-        /// <returns><see cref="GetWorklistItemsResponse"/></returns>
         [OperationContract]
-        GetWorklistItemsResponse GetWorklistItems(GetWorklistItemsRequest request);
+        GetWorklistItemsResponse<RegistrationWorklistItem> GetWorklistItems(GetWorklistItemsRequest request);
 
         /// <summary>
         /// Get item count for a worklist

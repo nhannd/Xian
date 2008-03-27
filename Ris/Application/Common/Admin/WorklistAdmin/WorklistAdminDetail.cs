@@ -33,16 +33,49 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
+using System;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 {
+
+
     [DataContract]
     public class WorklistAdminDetail : DataContractBase
     {
+        [DataContract]
+        public class TimePoint
+        {
+            public TimePoint(DateTime? fixedTime, long resolution)
+            {
+                this.FixedTime = fixedTime;
+                this.Resolution = resolution;
+            }
+
+            public TimePoint(TimeSpan? relativeTime, long resolution)
+            {
+                this.RelativeTime = relativeTime;
+                this.Resolution = resolution;
+            }
+
+            [DataMember]
+            public DateTime? FixedTime;
+
+            [DataMember]
+            public TimeSpan? RelativeTime;
+
+            [DataMember]
+            public long Resolution;
+        }
+
+
         public WorklistAdminDetail()
         {
-            Users = new List<string>();
-            ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>();
+            this.Users = new List<string>();
+            this.ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>();
+            this.Facilities = new List<FacilitySummary>();
+            this.PatientClasses = new List<EnumValueInfo>();
+            this.OrderPriorities = new List<EnumValueInfo>();
+            this.Portabilities = new List<bool>();
         }
 
 
@@ -69,6 +102,27 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
         [DataMember]
         public List<ProcedureTypeGroupSummary> ProcedureTypeGroups;
+
+        [DataMember]
+        public List<FacilitySummary> Facilities;
+
+        [DataMember]
+        public bool FilterByWorkingFacility;
+
+        [DataMember]
+        public List<EnumValueInfo> OrderPriorities;
+
+        [DataMember]
+        public List<EnumValueInfo> PatientClasses;
+
+        [DataMember]
+        public List<bool> Portabilities;
+
+        [DataMember]
+        public TimePoint StartTime;
+
+        [DataMember]
+        public TimePoint EndTime;
 
         [DataMember]
         public List<string> Users;

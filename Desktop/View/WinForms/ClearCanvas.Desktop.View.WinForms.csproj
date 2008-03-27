@@ -80,6 +80,12 @@
     <Compile Include="GalleryView.Designer.cs">
       <DependentUpon>GalleryView.cs</DependentUpon>
     </Compile>
+    <Compile Include="DropListPickerField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DropListPickerField.designer.cs">
+      <DependentUpon>DropListPickerField.cs</DependentUpon>
+    </Compile>
     <Compile Include="SuggestComboField.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -449,6 +455,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GalleryView.resx">
       <DependentUpon>GalleryView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DropListPickerField.resx">
+      <DependentUpon>DropListPickerField.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SuggestComboField.resx">

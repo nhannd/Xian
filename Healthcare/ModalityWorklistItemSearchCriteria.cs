@@ -35,46 +35,15 @@ namespace ClearCanvas.Healthcare
 {
     public class ModalityWorklistItemSearchCriteria : WorklistItemSearchCriteria
     {
-        /// <summary>
-        /// Constructor for top-level search criteria (no key required)
-        /// </summary>
-        public ModalityWorklistItemSearchCriteria()
-        {
-        }
-
-        public ClearCanvas.Healthcare.ProcedureSearchCriteria Procedure
-        {
-            get
-            {
-                if (!this.SubCriteria.ContainsKey("Procedure"))
-                {
-                    this.SubCriteria["Procedure"] = new ClearCanvas.Healthcare.ProcedureSearchCriteria("Procedure");
-                }
-                return (ClearCanvas.Healthcare.ProcedureSearchCriteria)this.SubCriteria["Procedure"];
-            }
-        }
-
-        public ClearCanvas.Healthcare.ProcedureCheckInSearchCriteria ProcedureCheckIn
+        public ProcedureCheckInSearchCriteria ProcedureCheckIn
         {
             get
             {
                 if (!this.SubCriteria.ContainsKey("ProcedureCheckIn"))
                 {
-                    this.SubCriteria["ProcedureCheckIn"] = new ClearCanvas.Healthcare.ProcedureCheckInSearchCriteria("ProcedureCheckIn");
+                    this.SubCriteria["ProcedureCheckIn"] = new ProcedureCheckInSearchCriteria("ProcedureCheckIn");
                 }
-                return (ClearCanvas.Healthcare.ProcedureCheckInSearchCriteria)this.SubCriteria["ProcedureCheckIn"];
-            }
-        }
-
-        public ClearCanvas.Healthcare.ProcedureStepSearchCriteria ProcedureStep
-        {
-            get
-            {
-                if (!this.SubCriteria.ContainsKey("ProcedureStep"))
-                {
-                    this.SubCriteria["ProcedureStep"] = new ClearCanvas.Healthcare.ModalityProcedureStepSearchCriteria("ProcedureStep");
-                }
-                return (ClearCanvas.Healthcare.ModalityProcedureStepSearchCriteria)this.SubCriteria["ProcedureStep"];
+                return (ProcedureCheckInSearchCriteria)this.SubCriteria["ProcedureCheckIn"];
             }
         }
     }

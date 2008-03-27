@@ -197,6 +197,9 @@ namespace ClearCanvas.Healthcare {
                 if (ps.State == ActivityStatus.SC)
                     ps.Discontinue();
             }
+
+            // need to update the end-time again, after discontinuing procedure steps
+            UpdateEndTime();
         }
 
         /// <summary>
@@ -216,6 +219,9 @@ namespace ClearCanvas.Healthcare {
             {
                 ps.Discontinue();
             }
+
+            // need to update the end-time again, after discontinuing procedure steps
+            UpdateEndTime();
         }
 
         #endregion
@@ -254,12 +260,10 @@ namespace ClearCanvas.Healthcare {
         /// </summary>
         protected internal virtual void UpdateScheduling()
         {
-            // compute the earliest procedure step scheduled start time
-            _scheduledStartTime = CollectionUtils.Min<DateTime?>(
-                CollectionUtils.Select<DateTime?>(
-                    CollectionUtils.Map<ProcedureStep, DateTime?>(this.ProcedureSteps,
-                    delegate(ProcedureStep step) { return step.Scheduling == null ? null : step.Scheduling.StartTime; }),
-                            delegate(DateTime? startTime) { return startTime != null; }), null);
+            // compute the earliest procedure step scheduled start time (exclude pre-steps)
+            _scheduledStartTime = MinMaxHelper.MinValue<ProcedureStep, DateTime?>(_procedureSteps,
+                delegate(ProcedureStep ps) { return !ps.IsPreStep; },
+                delegate(ProcedureStep ps) { return ps.Scheduling == null ? null : ps.Scheduling.StartTime; }, null);
 
             // the order should never be null, unless this is a brand new instance that has not yet been assigned an order
             if(_order != null)
@@ -277,7 +281,7 @@ namespace ClearCanvas.Healthcare {
             if (_status == ProcedureStatus.SC || _status == ProcedureStatus.IP)
             {
                 // if all steps are discontinued, this procedure is automatically discontinued
-                if (CollectionUtils.TrueForAll<ProcedureStep>(_procedureSteps,
+                if (CollectionUtils.TrueForAll(_procedureSteps,
                     delegate(ProcedureStep step) { return step.State == ActivityStatus.DC; }))
                 {
                     SetStatus(ProcedureStatus.DC);
@@ -289,7 +293,7 @@ namespace ClearCanvas.Healthcare {
             {
                 // the condition for auto-starting the procedure is that it has a procedure step that has
                 // moved out of the scheduled status but not into the discontinued status
-                bool anyStepStartedNotDiscontinued = CollectionUtils.Contains<ProcedureStep>(_procedureSteps,
+                bool anyStepStartedNotDiscontinued = CollectionUtils.Contains(_procedureSteps,
                     delegate(ProcedureStep step)
                     {
                         return !step.IsInitial && step.State != ActivityStatus.DC;
@@ -304,7 +308,7 @@ namespace ClearCanvas.Healthcare {
             // check if the procedure should auto-completed
             if(_status == ProcedureStatus.IP)
             {
-                bool anyPublicationStepsCompleted = CollectionUtils.Contains<ProcedureStep>(_procedureSteps,
+                bool anyPublicationStepsCompleted = CollectionUtils.Contains(_procedureSteps,
                     delegate(ProcedureStep step)
                     {
                         return step.Is<PublicationStep>() && step.State == ActivityStatus.CM;
@@ -324,11 +328,36 @@ namespace ClearCanvas.Healthcare {
         /// <param name="status"></param>
         private void SetStatus(ProcedureStatus status)
         {
-            _status = status;
+            if (status != _status)
+            {
+                _status = status;
 
-            // the order should never be null, unless this is a brand new instance that has not yet been assigned an order
-            if (_order != null)
-                _order.UpdateStatus();
+                if(_status == ProcedureStatus.IP)
+                    UpdateStartTime();
+
+                if(this.IsTerminated)
+                    UpdateEndTime();
+
+                // the order should never be null, unless this is a brand new instance that has not yet been assigned an order
+                if (_order != null)
+                    _order.UpdateStatus();
+            }
+        }
+
+        private void UpdateStartTime()
+        {
+            // compute the earliest procedure step start time
+            _startTime = MinMaxHelper.MinValue<ProcedureStep, DateTime?>(_procedureSteps,
+                delegate(ProcedureStep ps) { return !ps.IsPreStep; },
+                delegate(ProcedureStep ps) { return ps.StartTime; }, null);
+        }
+
+        private void UpdateEndTime()
+        {
+            // compute the latest procedure step end time
+            _endTime = MinMaxHelper.MaxValue<ProcedureStep, DateTime?>(_procedureSteps,
+                delegate(ProcedureStep ps) { return true; },
+                delegate(ProcedureStep ps) { return ps.EndTime; }, null);
         }
 
         /// <summary>

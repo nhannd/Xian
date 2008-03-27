@@ -36,46 +36,27 @@ namespace ClearCanvas.Healthcare
 {
     public class ReportingWorklistItemSearchCriteria : WorklistItemSearchCriteria
     {
-        /// <summary>
-        /// Constructor for top-level search criteria (no key required)
-        /// </summary>
-        public ReportingWorklistItemSearchCriteria()
-        {
-        }
-
-        public ClearCanvas.Healthcare.ReportingProcedureStepSearchCriteria ReportingProcedureStep
-        {
-            get
-            {
-                if (!this.SubCriteria.ContainsKey("ReportingProcedureStep"))
-                {
-                    this.SubCriteria["ReportingProcedureStep"] = new ClearCanvas.Healthcare.ReportingProcedureStepSearchCriteria("ReportingProcedureStep");
-                }
-                return (ClearCanvas.Healthcare.ReportingProcedureStepSearchCriteria)this.SubCriteria["ReportingProcedureStep"];
-            }
-        }
-
-        public ClearCanvas.Healthcare.ReportPartSearchCriteria ReportPart
+        public ReportPartSearchCriteria ReportPart
         {
             get
             {
                 if (!this.SubCriteria.ContainsKey("ReportPart"))
                 {
-                    this.SubCriteria["ReportPart"] = new ClearCanvas.Healthcare.ReportPartSearchCriteria("ReportPart");
+                    this.SubCriteria["ReportPart"] = new ReportPartSearchCriteria("ReportPart");
                 }
-                return (ClearCanvas.Healthcare.ReportPartSearchCriteria)this.SubCriteria["ReportPart"];
+                return (ReportPartSearchCriteria)this.SubCriteria["ReportPart"];
             }
         }
 
-        public ClearCanvas.Healthcare.ProtocolSearchCriteria Protocol
+        public ProtocolSearchCriteria Protocol
         {
             get
             {
                 if (!this.SubCriteria.ContainsKey("Protocol"))
                 {
-                    this.SubCriteria["Protocol"] = new ClearCanvas.Healthcare.ProtocolSearchCriteria("Protocol");
+                    this.SubCriteria["Protocol"] = new ProtocolSearchCriteria("Protocol");
                 }
-                return (ClearCanvas.Healthcare.ProtocolSearchCriteria)this.SubCriteria["Protocol"];
+                return (ProtocolSearchCriteria)this.SubCriteria["Protocol"];
             }
         }
     }

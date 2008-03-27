@@ -68,7 +68,7 @@
     <Compile Include="Hql\HqlJoin.cs" />
     <Compile Include="Hql\HqlOr.cs" />
     <Compile Include="Hql\HqlQuery.cs" />
-    <Compile Include="Hql\HqlReportQuery.cs" />
+    <Compile Include="Hql\HqlProjectionQuery.cs" />
     <Compile Include="Hql\HqlSelect.cs" />
     <Compile Include="Hql\HqlSort.cs" />
     <Compile Include="Ddl\IDdlScriptGenerator.cs" />

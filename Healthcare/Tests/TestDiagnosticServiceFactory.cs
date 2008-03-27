@@ -41,27 +41,16 @@ namespace ClearCanvas.Healthcare.Tests
     {
         internal static DiagnosticService CreateDiagnosticService()
         {
-            return CreateDiagnosticService(1, 1);
+            return CreateDiagnosticService(1);
         }
 
-        internal static DiagnosticService CreateDiagnosticService(int numReqProcs, int numMpsPerReqProc)
+        internal static DiagnosticService CreateDiagnosticService(int numReqProcs)
         {
-            Modality m = new Modality("01", "CT");
-
+            // create a bunch of dummy procedure types (without procedure plans)
             HashedSet<ProcedureType> procedureTypes = new HashedSet<ProcedureType>();
             for (int p = 0; p < numReqProcs; p++)
             {
-                Procedure prototype = new Procedure();
-                for(int s = 0; s < numMpsPerReqProc; s++)
-                {
-                    ModalityProcedureStep step = new ModalityProcedureStep();
-                    step.Description = "MPS 10" + (s + p*numMpsPerReqProc);
-                    step.Modality = m;
-                    prototype.AddProcedureStep(step);
-                }
                 ProcedureType pt = new ProcedureType("20" + p, "Procedure 20" + p);
-                pt.SetPlanFromPrototype(prototype);
-
                 procedureTypes.Add(pt);
             }
             return new DiagnosticService("301", "Diagnostic Service 301", procedureTypes);

@@ -215,6 +215,11 @@ namespace ClearCanvas.Workflow
                 throw new WorkflowException("Performer must be assigned");
 
             _endTime = Platform.Time;
+
+            // if start-time was never set, make it equal to the end time
+            if(_startTime == null)
+                _startTime = _endTime;
+
             ChangeState(ActivityStatus.CM);
         }
 

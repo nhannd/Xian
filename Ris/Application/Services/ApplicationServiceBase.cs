@@ -30,12 +30,8 @@
 #endregion
 
 using System.Threading;
-using System.Collections.Generic;
-using ClearCanvas.Enterprise.Authentication;
-using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Alert;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 
@@ -52,12 +48,20 @@ namespace ClearCanvas.Ris.Application.Services
     public abstract class ApplicationServiceBase : IApplicationServiceLayer
     {
         /// <summary>
-        /// Cached current-user Staff object.  Caching is acceptable only if this service instance is never re-used.
+        /// Cached current-user Staff object.  Caching is acceptable assuming this service instance is not used for more than 1 call.
         /// </summary>
         private Staff _currentUserStaff;
+        /// <summary>
+        /// Cached working-facility Facility object.  Caching is acceptable assuming this service instance is not used for more than 1 call.
+        /// </summary>
+        private Facility _workingFacility;
 
+        private bool _workingFacilityLoaded = false;
 
-        protected string CurrentUser
+        /// <summary>
+        /// Gets the current user (on whose behalf this service call is executing).
+        /// </summary>
+        public string CurrentUser
         {
             get { return Thread.CurrentPrincipal.Identity.Name; }
         }
@@ -66,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Services
         /// Obtains the staff associated with the current user.  If no <see cref="Staff"/> is associated with the current user,
         /// a <see cref="RequestValidationException"/> is thrown.
         /// </summary>
-        protected Staff CurrentUserStaff
+        public Staff CurrentUserStaff
         {
             get
             {
@@ -89,9 +93,35 @@ namespace ClearCanvas.Ris.Application.Services
         }
 
         /// <summary>
+        /// Obtains the working facility associated with the current user, or null if 
+        /// there is no working facility associated with the current user.
+        /// </summary>
+        public Facility WorkingFacility
+        {
+            get
+            {
+                if(!_workingFacilityLoaded)
+                {
+                    WorkingFacilitySettings settings = new WorkingFacilitySettings();
+                    if (!string.IsNullOrEmpty(settings.WorkingFacilityCode))
+                    {
+                        FacilitySearchCriteria where = new FacilitySearchCriteria();
+                        where.Code.EqualTo(settings.WorkingFacilityCode);
+
+                        // this will throw if the working facility code is invalid, but this should not happen
+                        // (and if it does, there is nothing we can do about it)
+                        _workingFacility = PersistenceContext.GetBroker<IFacilityBroker>().FindOne(where);
+                    }
+                    _workingFacilityLoaded = true;
+                }
+                return _workingFacility;
+            }
+        }
+
+        /// <summary>
         /// Gets the current <see cref="IPersistenceContext"/>.
         /// </summary>
-        protected IPersistenceContext PersistenceContext
+        public IPersistenceContext PersistenceContext
         {
             get { return PersistenceScope.Current; }
         }

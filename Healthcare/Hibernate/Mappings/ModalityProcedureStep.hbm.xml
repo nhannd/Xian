@@ -4,7 +4,6 @@
   <subclass name="ModalityProcedureStep" proxy="ModalityProcedureStep" extends="ProcedureStep" discriminator-value="MODALITY">
     <property name="Description" type="String" column="Description_"/>
     <many-to-one name="Modality" class="Modality" column="ModalityOID_" not-null="false" fetch="join"/>
-    <property name="Portable" type="Boolean" column="Portable_"/>
     <set name="PerformedSteps" table="ProcedureStepPerformedProcedureStep_" lazy="true" cascade="all" access="nosetter.camelcase-underscore">
       <key column="ProcedureStepOID_"/>
       <many-to-many column="PerformedProcedureStepOID_" class="ModalityPerformedProcedureStep" fetch="join"/>

@@ -43,8 +43,8 @@ namespace ClearCanvas.Healthcare
 
     public interface IWorklist
     {
-        IList GetWorklistItems(Staff currentUserStaff, IPersistenceContext context);
-        int GetWorklistItemCount(Staff currentUserStaff, IPersistenceContext context);
+        IList GetWorklistItems(IWorklistQueryContext wqc);
+        int GetWorklistItemCount(IWorklistQueryContext wqc);
         string DisplayName { get; }
     }
 }

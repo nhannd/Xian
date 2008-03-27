@@ -56,9 +56,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// Get items for a worklist
         /// </summary>
         /// <param name="request"><see cref="GetWorklistItemsRequest"/></param>
-        /// <returns><see cref="GetWorklistItemsResponse"/></returns>
         [OperationContract]
-        GetWorklistItemsResponse GetWorklistItems(GetWorklistItemsRequest request);
+        GetWorklistItemsResponse<ReportingWorklistItem> GetWorklistItems(GetWorklistItemsRequest request);
 
         /// <summary>
         /// Get item count for a worklist

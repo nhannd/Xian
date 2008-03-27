@@ -799,5 +799,96 @@ namespace ClearCanvas.Common.Utilities
             }
             return memo;
         }
+
+        /// <summary>
+        /// Compares two collections to determine if they are equal, optionally considering the order of elements.
+        /// </summary>
+        /// <remarks>
+        /// Two collections are considered equal if they contain the same number of elements and every element
+        /// contained in one collection is contained in the other. If <paramref name="orderSensitive"/> is true,
+        /// the elements must also enumerate in the same order.  Equality of individual elements is determined
+        /// by their implementation of <see cref="object.Equals(object)"/>.
+        /// </remarks>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="orderSensitive"></param>
+        /// <returns></returns>
+        //TODO: write unit test
+        public static bool Equal<T>(ICollection<T> x, ICollection<T> y, bool orderSensitive)
+        {
+            if (ReferenceEquals(x, y))
+                return true;
+
+            if (x == null || y == null)
+                return false;
+
+            if (x.Count != y.Count)
+                return false;
+
+            // if order matters, compare each item one by one
+            if(orderSensitive)
+            {
+                IEnumerator<T> enumY = y.GetEnumerator();
+                foreach (T item in x)
+                {
+                    if(!enumY.MoveNext())
+                        return false;
+                    if(!Equals(enumY.Current, item))
+                        return false;
+                }
+                return true;
+            }
+
+            // order does not matter, so need to do an O(N2) comparison
+            return TrueForAll(x, delegate(T obj) { return y.Contains(obj); });
+        }
+
+        /// <summary>
+        /// Compares two collections to determine if they are equal, optionally considering the order of elements.
+        /// </summary>
+        /// <remarks>
+        /// Two collections are considered equal if they contain the same number of elements and every element
+        /// contained in one collection is contained in the other. If <paramref name="orderSensitive"/> is true,
+        /// the elements must also enumerate in the same order.  Equality of individual elements is determined
+        /// by their implementation of <see cref="object.Equals(object)"/>.
+        /// </remarks>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="orderSensitive"></param>
+        /// <returns></returns>
+        //TODO: write unit test
+        public static bool Equal(ICollection x, ICollection y, bool orderSensitive)
+        {
+            if (ReferenceEquals(x, y))
+                return true;
+
+            if (x == null || y == null)
+                return false;
+
+            if (x.Count != y.Count)
+                return false;
+
+            // if order matters, compare each item one by one
+            if (orderSensitive)
+            {
+                IEnumerator enumY = y.GetEnumerator();
+                foreach (object itemX in x)
+                {
+                    if (!enumY.MoveNext())
+                        return false;
+                    if (!Equals(enumY.Current, itemX))
+                        return false;
+                }
+                return true;
+            }
+
+            // order does not matter, so need to do an O(N2) comparison
+            return TrueForAll(x,
+                delegate(object itemX)
+                {
+                    return Contains(y, delegate(object itemY) { return Equals(itemY, itemX); });
+                });
+        }
     }
 }

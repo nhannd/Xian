@@ -70,6 +70,9 @@ namespace ClearCanvas.Ris.Application.Common
         [WorklistToken(Description = "Registration - Pending Protocol")]
         public const string RegistrationPendingProtocolWorklist = "RegistrationPendingProtocolWorklist";
 
+        [WorklistToken(Description = "Registration - ASAP Pending Protocol")]
+        public const string RegistrationAsapPendingProtocolWorklist = "RegistrationAsapPendingProtocolWorklist";
+
         [WorklistToken(Description = "Registration - To Be Scheduled")]
         public const string RegistrationToBeScheduledWorklist = "RegistrationToBeScheduledWorklist";
 

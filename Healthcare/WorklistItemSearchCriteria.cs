@@ -30,39 +30,57 @@
 #endregion
 
 using ClearCanvas.Enterprise.Core;
+using System;
 
 namespace ClearCanvas.Healthcare
 {
     public class WorklistItemSearchCriteria : SearchCriteria
     {
-        /// <summary>
-        /// Constructor for top-level search criteria (no key required)
-        /// </summary>
-        public WorklistItemSearchCriteria()
-        {
-        }
-
-        public ClearCanvas.Healthcare.PatientProfileSearchCriteria PatientProfile
+        public PatientProfileSearchCriteria PatientProfile
         {
             get
             {
                 if (!this.SubCriteria.ContainsKey("PatientProfile"))
                 {
-                    this.SubCriteria["PatientProfile"] = new ClearCanvas.Healthcare.PatientProfileSearchCriteria("PatientProfile");
+                    this.SubCriteria["PatientProfile"] = new PatientProfileSearchCriteria("PatientProfile");
                 }
-                return (ClearCanvas.Healthcare.PatientProfileSearchCriteria)this.SubCriteria["PatientProfile"];
+                return (PatientProfileSearchCriteria)this.SubCriteria["PatientProfile"];
             }
         }
 
-        public ClearCanvas.Healthcare.OrderSearchCriteria Order
+        public OrderSearchCriteria Order
         {
             get
             {
                 if (!this.SubCriteria.ContainsKey("Order"))
                 {
-                    this.SubCriteria["Order"] = new ClearCanvas.Healthcare.OrderSearchCriteria("Order");
+                    this.SubCriteria["Order"] = new OrderSearchCriteria("Order");
                 }
-                return (ClearCanvas.Healthcare.OrderSearchCriteria)this.SubCriteria["Order"];
+                return (OrderSearchCriteria)this.SubCriteria["Order"];
+            }
+        }
+
+        public ProcedureSearchCriteria Procedure
+        {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("Procedure"))
+                {
+                    this.SubCriteria["Procedure"] = new ProcedureSearchCriteria("Procedure");
+                }
+                return (ProcedureSearchCriteria)this.SubCriteria["Procedure"];
+            }
+        }
+
+        public ProcedureStepSearchCriteria ProcedureStep
+        {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("ProcedureStep"))
+                {
+                    this.SubCriteria["ProcedureStep"] = new ProcedureStepSearchCriteria("ProcedureStep");
+                }
+                return (ProcedureStepSearchCriteria)this.SubCriteria["ProcedureStep"];
             }
         }
     }

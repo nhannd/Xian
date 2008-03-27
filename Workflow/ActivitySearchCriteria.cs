@@ -78,6 +78,18 @@ namespace ClearCanvas.Workflow
 	  		}
 	  	}
 
+        public ISearchCondition<DateTime> CreationTime
+        {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("CreationTime"))
+                {
+                    this.SubCriteria["CreationTime"] = new SearchCondition<DateTime>("CreationTime");
+                }
+                return (ISearchCondition<DateTime>)this.SubCriteria["CreationTime"];
+            }
+        }
+        
         public ISearchCondition<DateTime?> StartTime
         {
             get
@@ -87,6 +99,18 @@ namespace ClearCanvas.Workflow
                     this.SubCriteria["StartTime"] = new SearchCondition<DateTime?>("StartTime");
                 }
                 return (ISearchCondition<DateTime?>)this.SubCriteria["StartTime"];
+            }
+        }
+
+        public ISearchCondition<DateTime?> EndTime
+        {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("EndTime"))
+                {
+                    this.SubCriteria["EndTime"] = new SearchCondition<DateTime?>("EndTime");
+                }
+                return (ISearchCondition<DateTime?>)this.SubCriteria["EndTime"];
             }
         }
     }

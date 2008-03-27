@@ -36,6 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Adt.Folders;
 
@@ -200,7 +201,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         ? new GetWorklistItemsRequest(this.WorklistType)
                         : new GetWorklistItemsRequest(_worklistRef);
 
-                    GetWorklistItemsResponse response = service.GetWorklistItems(request);
+                    GetWorklistItemsResponse<RegistrationWorklistItem> response = service.GetWorklistItems(request);
                     worklistItems = response.WorklistItems;
                 });
 

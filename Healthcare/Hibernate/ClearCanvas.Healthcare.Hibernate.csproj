@@ -49,13 +49,13 @@
     <Compile Include="Brokers\PreviewBroker.cs" />
     <Compile Include="Brokers\PriorReportBroker.cs" />
     <Compile Include="Brokers\ProtocolGroupBroker.cs" />
-    <Compile Include="Brokers\RegistrationWorklistBroker.cs" />
-    <Compile Include="Brokers\ModalityWorklistBroker.cs" />
+    <Compile Include="Brokers\RegistrationWorklistItemBroker.cs" />
+    <Compile Include="Brokers\ModalityWorklistItemBroker.cs" />
     <Compile Include="Brokers\LocationBroker.cs" />
     <Compile Include="Brokers\ModalityProcedureStepBroker.cs" />
     <Compile Include="Brokers\PatientProfileBroker.cs" />
     <Compile Include="Brokers\ReportingProcedureStepBroker.cs" />
-    <Compile Include="Brokers\ReportingWorklistBroker.cs" />
+    <Compile Include="Brokers\ReportingWorklistItemBroker.cs" />
     <Compile Include="Brokers\StaffBroker.cs" />
     <Compile Include="Brokers\WorklistBroker.cs" />
     <Compile Include="Brokers\WorklistItemBrokerBase.cs" />

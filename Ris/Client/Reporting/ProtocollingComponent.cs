@@ -313,13 +313,16 @@ namespace ClearCanvas.Ris.Client.Reporting
                         delegate(IReportingWorkflowService service)
                             {
                                 GetWorklistItemsRequest request = new GetWorklistItemsRequest(WorklistTokens.ReportingToBeProtocolledWorklist);
-                                GetWorklistItemsResponse response = service.GetWorklistItems(request);
+                                GetWorklistItemsResponse<ReportingWorklistItem> response = service.GetWorklistItems(request);
 
                                 foreach (ReportingWorklistItem item in response.WorklistItems)
                                 {
                                     // Remove any items that were previously skipped
-                                    bool itemSkipped = CollectionUtils.Contains<ReportingWorklistItem>(_skippedItems,
-                                                                                                       delegate(ReportingWorklistItem skippedItem) { return skippedItem.AccessionNumber == item.AccessionNumber; });
+                                    bool itemSkipped = CollectionUtils.Contains(_skippedItems,
+                                                            delegate(ReportingWorklistItem skippedItem)
+                                                            {
+                                                                 return skippedItem.AccessionNumber == item.AccessionNumber;
+                                                            });
 
                                     if (itemSkipped == false)
                                     {

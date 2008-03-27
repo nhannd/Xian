@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -183,7 +184,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         ? new GetWorklistItemsRequest(this.WorklistType)
                         : new GetWorklistItemsRequest(_worklistRef);
 
-                    GetWorklistItemsResponse response = service.GetWorklistItems(request);
+                    GetWorklistItemsResponse<ReportingWorklistItem> response = service.GetWorklistItems(request);
                     worklistItems = response.WorklistItems;
                 });
 

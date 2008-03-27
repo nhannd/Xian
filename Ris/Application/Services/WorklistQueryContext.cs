@@ -1,0 +1,67 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
+
+namespace ClearCanvas.Ris.Application.Services
+{
+    /// <summary>
+    /// Implementation of <see cref="IWorklistQueryContext"/>.
+    /// </summary>
+    class WorklistQueryContext : IWorklistQueryContext
+    {
+        private readonly ApplicationServiceBase _applicationService;
+        private readonly SearchResultPage _page;
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="page"></param>
+        public WorklistQueryContext(ApplicationServiceBase service, SearchResultPage page)
+        {
+            _applicationService = service;
+            _page = page;
+        }
+
+        #region IWorklistQueryContext Members
+
+        /// <summary>
+        /// Gets the current user <see cref="Healthcare.Staff"/> object.
+        /// </summary>
+        public Staff Staff
+        {
+            get { return _applicationService.CurrentUserStaff; }
+        }
+
+        /// <summary>
+        /// Gets the working <see cref="Facility"/> associated with the current user, or null if no facility is associated.
+        /// </summary>
+        public Facility WorkingFacility
+        {
+            get { return _applicationService.WorkingFacility; }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="SearchResultPage"/> that specifies which page of the worklist is requested.
+        /// </summary>
+        public SearchResultPage Page
+        {
+            get { return _page; }
+        }
+
+        /// <summary>
+        /// Obtains an instance of the specified broker.
+        /// </summary>
+        /// <typeparam name="TBrokerInterface"></typeparam>
+        /// <returns></returns>
+        public TBrokerInterface GetBroker<TBrokerInterface>() where TBrokerInterface : IPersistenceBroker
+        {
+            return _applicationService.PersistenceContext.GetBroker<TBrokerInterface>();
+        }
+
+        #endregion
+    }
+}

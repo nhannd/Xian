@@ -58,7 +58,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public TextQueryResponse<ReportingWorklistItem> Search(SearchRequest request)
         {
             ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
-            IReportingWorklistBroker broker = PersistenceContext.GetBroker<IReportingWorklistBroker>();
+            IReportingWorklistItemBroker broker = PersistenceContext.GetBroker<IReportingWorklistItemBroker>();
 
             WorklistTextQueryHelper<WorklistItem, ReportingWorklistItem> helper =
                 new WorklistTextQueryHelper<WorklistItem, ReportingWorklistItem>(
@@ -68,11 +68,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                     },
                     delegate(WorklistItemSearchCriteria[] criteria)
                     {
-                        return broker.SearchCount(criteria, request.ShowActivOnly);
+                        return broker.CountSearchResults(criteria, request.ShowActivOnly);
                     },
                     delegate(WorklistItemSearchCriteria[] criteria, SearchResultPage page)
                     {
-                        return broker.Search(criteria, page, request.ShowActivOnly);
+                        return broker.GetSearchResults(criteria, page, request.ShowActivOnly);
                     });
 
             return helper.Query(request);
@@ -93,15 +93,13 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 
         [ReadOperation]
-        public GetWorklistItemsResponse GetWorklistItems(GetWorklistItemsRequest request)
+        public GetWorklistItemsResponse<ReportingWorklistItem> GetWorklistItems(GetWorklistItemsRequest request)
         {
             ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
 
-            IList items = request.WorklistRef == null
-                  ? GetWorklistItems(request.WorklistType)
-                  : GetWorklistItems(request.WorklistRef);
+            IList items = GetWorklistItemsHelper(request);
 
-            return new GetWorklistItemsResponse(
+            return new GetWorklistItemsResponse<ReportingWorklistItem>(
                 CollectionUtils.Map<WorklistItem, ReportingWorklistItem, List<ReportingWorklistItem>>(
                     items,
                     delegate(WorklistItem item)
@@ -113,9 +111,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [ReadOperation]
         public GetWorklistItemCountResponse GetWorklistItemCount(GetWorklistItemCountRequest request)
         {
-            int count = request.WorklistRef == null
-                            ? GetWorklistItemCount(request.WorklistType)
-                            : GetWorklistItemCount(request.WorklistRef);
+            int count = GetWorklistItemCountHelper(request);
 
             return new GetWorklistItemCountResponse(count);
         }
@@ -448,23 +444,19 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             InterpretationStep step = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.Proxy);
 
-            IReportingWorklistBroker broker = PersistenceContext.GetBroker<IReportingWorklistBroker>();
+            IReportingWorklistItemBroker broker = PersistenceContext.GetBroker<IReportingWorklistItemBroker>();
             IList<InterpretationStep> candidateSteps = broker.GetLinkedInterpretationCandidates(step, this.CurrentUserStaff);
 
             // if any candidate steps were found, need to convert them to worklist items
             IList<WorklistItem> worklistItems;
             if(candidateSteps.Count > 0)
             {
-                ReportingWorklistItemSearchCriteria[] worklistItemCriteria =
-                    CollectionUtils.Map<InterpretationStep, ReportingWorklistItemSearchCriteria>(candidateSteps,
-                    delegate(InterpretationStep ps)
-                    {
-                        ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-                        criteria.ReportingProcedureStep.EqualTo(ps);
-                        return criteria;
-                    }).ToArray();
+                // because CLR does not support List co-variance, need to map to a list of the more general type (this seems silly!)
+                List<ReportingProcedureStep> reportingSteps =
+                    CollectionUtils.Map<InterpretationStep, ReportingProcedureStep>(
+                        candidateSteps, delegate(InterpretationStep s) { return s; });
 
-                worklistItems = broker.GetWorklistItems(typeof(InterpretationStep), worklistItemCriteria, null);
+                worklistItems = broker.GetWorklistItems(reportingSteps);
             }
             else
             {

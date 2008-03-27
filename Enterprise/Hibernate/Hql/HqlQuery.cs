@@ -76,7 +76,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// <param name="conditions"></param>
         /// <param name="sorts"></param>
         /// <param name="page"></param>
-        public HqlQuery(string baseHql, HqlCondition[] conditions, HqlSort[] sorts, SearchResultPage page)
+        public HqlQuery(string baseHql, IEnumerable<HqlCondition> conditions, IEnumerable<HqlSort> sorts, SearchResultPage page)
         {
             _baseQuery = baseHql;
             _page = page;
@@ -141,15 +141,6 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         }
 
         /// <summary>
-        /// Gets the base query.  Allows subclasses to set the base query.
-        /// </summary>
-        public string BaseQuery
-        {
-            get { return _baseQuery; }
-            protected set { _baseQuery = value; }
-        }
-
-        /// <summary>
         /// Returns the HQL text of this query.
         /// </summary>
         public override string Hql
@@ -171,7 +162,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
 
                 // append where and order by to base query
                 StringBuilder hql = new StringBuilder();
-                hql.Append(_baseQuery);
+                hql.Append(BaseQueryHql);
                 if (_where.Conditions.Count > 0)
                 {
                     hql.Append(" where ");
@@ -184,6 +175,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
                 }
                 return hql.ToString();
             }
+        }
+
+        protected virtual string BaseQueryHql
+        {
+            get { return _baseQuery; }
         }
 
         /// <summary>

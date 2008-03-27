@@ -103,7 +103,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             Order order,
             Patient patient,
             PatientProfile profile,
-            Report report,
             PatientIdentifier mrn,
             PersonName patientName,
             string accessionNumber,
@@ -112,7 +111,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             string diagnosticServiceName,
             string procedureName,
             DateTime? scheduledStartTime,
-            ActivityStatus activityStatus)
+            ActivityStatus activityStatus,
+            Report report)
             : base(
                 procedureStep,
                 procedure,

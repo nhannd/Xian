@@ -45,5 +45,14 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         // TODO: Strongly typed
         [DataMember]
         public List<string> WorklistTypes;
+
+        [DataMember]
+        public List<FacilitySummary> FacilityChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> PatientClassChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> OrderPriorityChoices;
     }
 }

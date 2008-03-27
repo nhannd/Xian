@@ -37,18 +37,42 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
 {
     public class HqlFrom : HqlElement
     {
-        private string _alias;
-        private string _entityClass;
+        private readonly string _alias;
+        private readonly string _entityClass;
+        private readonly List<HqlJoin> _joins;
 
-        public HqlFrom(string alias, string entityClass)
+
+        public HqlFrom(string entityClass, string alias)
+            :this(entityClass, alias, new HqlJoin[]{})
+        {
+        }
+
+        public HqlFrom(string entityClass, string alias, IEnumerable<HqlJoin> joins)
         {
             _alias = alias;
             _entityClass = entityClass;
+            _joins = new List<HqlJoin>(joins);
+        }
+
+        public List<HqlJoin> Joins
+        {
+            get { return _joins; }
         }
 
         public override string Hql
         {
-            get { return string.Format("{0} {1}", _entityClass, _alias); }
+            get
+            {
+                // build the joins clause
+                StringBuilder joins = new StringBuilder();
+                foreach (HqlJoin j in _joins)
+                {
+                    joins.Append(" ");
+                    joins.AppendLine(j.Hql);
+                }
+
+                return string.Format("{0} {1}\n{2}", _entityClass, _alias, joins);
+            }
         }
     }
 }

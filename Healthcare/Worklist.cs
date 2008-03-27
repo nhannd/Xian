@@ -29,11 +29,13 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using ClearCanvas.Enterprise.Core;
 using Iesi.Collections;
 using Iesi.Collections.Generic;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare
 {
@@ -41,18 +43,25 @@ namespace ClearCanvas.Healthcare
     {
         private string _name;
         private string _description;
-        private readonly ISet<ProcedureTypeGroup> _procedureTypeGroups;
         private readonly ISet<string> _users;
+        private WorklistProcedureTypeGroupFilter _procedureTypeGroupFilter;
+        private WorklistFacilityFilter _facilityFilter;
+        private WorklistPatientClassFilter _patientClassFilter;
+        private WorklistOrderPriorityFilter _orderPriorityFilter;
+        private WorklistPortableFilter _portableFilter;
+        private WorklistTimeFilter _timeFilter;
 
         public Worklist()
         {
-            _procedureTypeGroups = new HashedSet<ProcedureTypeGroup>();
             _users = new HashedSet<string>();
+
+            _procedureTypeGroupFilter = new WorklistProcedureTypeGroupFilter();
+            _facilityFilter = new WorklistFacilityFilter();
+            _patientClassFilter = new WorklistPatientClassFilter();
+            _orderPriorityFilter = new WorklistOrderPriorityFilter();
+            _portableFilter = new WorklistPortableFilter();
+            _timeFilter = new WorklistTimeFilter();
         }
-
-        public abstract IList GetWorklistItems(Staff currentUserStaff, IPersistenceContext context);
-
-        public abstract int GetWorklistItemCount(Staff currentUserStaff, IPersistenceContext context);
 
         public virtual string Name
         {
@@ -71,19 +80,96 @@ namespace ClearCanvas.Healthcare
             set { _description = value; }
         }
 
-        public virtual ISet<ProcedureTypeGroup> ProcedureTypeGroups
-        {
-            get { return _procedureTypeGroups; }
-        }
-
         public virtual ISet<string> Users
         {
             get { return _users; }
         }
 
-        protected static T GetBroker<T>(IPersistenceContext context) where T : IPersistenceBroker
+        #region Abstract members
+
+        public abstract IList GetWorklistItems(IWorklistQueryContext wqc);
+        public abstract int GetWorklistItemCount(IWorklistQueryContext wqc);
+        public abstract WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc);
+        public abstract Type ProcedureStepType { get; }
+
+        #endregion
+
+        #region Filters
+
+        public WorklistProcedureTypeGroupFilter ProcedureTypeGroupFilter
         {
-            return context.GetBroker<T>();
+            get { return _procedureTypeGroupFilter; }
+            set { _procedureTypeGroupFilter = value; }
         }
+
+        public WorklistFacilityFilter FacilityFilter
+        {
+            get { return _facilityFilter; }
+            set { _facilityFilter = value; }
+        }
+
+        public WorklistPatientClassFilter PatientClassFilter
+        {
+            get { return _patientClassFilter; }
+            set { _patientClassFilter = value; }
+        }
+
+        public WorklistOrderPriorityFilter OrderPriorityFilter
+        {
+            get { return _orderPriorityFilter; }
+            set { _orderPriorityFilter = value; }
+        }
+
+        public WorklistPortableFilter PortableFilter
+        {
+            get { return _portableFilter; }
+            set { _portableFilter = value; }
+        }
+
+        public WorklistTimeFilter TimeFilter
+        {
+            get { return _timeFilter; }
+            set { _timeFilter = value; }
+        }
+
+        #endregion
+
+        #region Helpers
+
+        /// <summary>
+        /// Applies the time-range for this worklist to the specified search-condition.
+        /// </summary>
+        /// <remarks>
+        /// If the <see cref="TimeFilter"/> is enabled, the range specified by the filter is applied.
+        /// If the filter is not enabled, then the specified <paramref name="defaultValue"/> is applied.
+        /// The <paramref name="defaultValue"/> may be null, in which case no time range is applied by default.
+        /// </remarks>
+        /// <param name="condition"></param>
+        /// <param name="defaultValue"></param>
+        protected void ApplyTimeRange(ISearchCondition<DateTime> condition, WorklistTimeRange defaultValue)
+        {
+            WorklistTimeRange range = _timeFilter.IsEnabled ? _timeFilter.Value : defaultValue;
+            if(range != null)
+                range.Apply(condition, Platform.Time);
+        }
+
+        /// <summary>
+        /// Applies the time-range for this worklist to the specified search-condition.
+        /// </summary>
+        /// <remarks>
+        /// If the <see cref="TimeFilter"/> is enabled, the range specified by the filter is applied.
+        /// If the filter is not enabled, then the specified <paramref name="defaultValue"/> is applied.
+        /// The <paramref name="defaultValue"/> may be null, in which case no time range is applied by default.
+        /// </remarks>
+        /// <param name="condition"></param>
+        /// <param name="defaultValue"></param>
+        protected void ApplyTimeRange(ISearchCondition<DateTime?> condition, WorklistTimeRange defaultValue)
+        {
+            WorklistTimeRange range = _timeFilter.IsEnabled ? _timeFilter.Value : defaultValue;
+            if (range != null)
+                range.Apply(condition, Platform.Time);
+        }
+
+        #endregion
     }
 }

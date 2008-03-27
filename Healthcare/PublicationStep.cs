@@ -62,12 +62,6 @@ namespace ClearCanvas.Healthcare {
             get { return "Publication"; }
         }
 
-        public override void Complete()
-        {
-            Start(this.AssignedStaff);
-            base.Complete();
-        }
-
         #region Object overrides
 		
 		public override bool Equals(object that)
@@ -87,7 +81,8 @@ namespace ClearCanvas.Healthcare {
         protected override void OnStateChanged(ActivityStatus previousState, ActivityStatus newState)
         {
             // complete the report part when publication is complete
-            if (newState == ActivityStatus.CM)
+            // (this.ReportPart != null) should always be true except perhaps during unit-tests
+            if (newState == ActivityStatus.CM && this.ReportPart != null)
                 this.ReportPart.Complete();
 
             base.OnStateChanged(previousState, newState);

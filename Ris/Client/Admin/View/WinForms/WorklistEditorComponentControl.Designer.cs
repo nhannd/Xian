@@ -70,13 +70,30 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this._procedureTypeGroupsSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this._fromCheckBox = new System.Windows.Forms.CheckBox();
+            this._toCheckBox = new System.Windows.Forms.CheckBox();
+            this._toSliding = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._fromSliding = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._toFixed = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._fromFixed = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._fixedWindowRadioButton = new System.Windows.Forms.RadioButton();
+            this._slidingWindowRadioButton = new System.Windows.Forms.RadioButton();
+            this._priority = new ClearCanvas.Desktop.View.WinForms.DropListPickerField();
+            this._patientClass = new ClearCanvas.Desktop.View.WinForms.DropListPickerField();
+            this._facilities = new ClearCanvas.Desktop.View.WinForms.DropListPickerField();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this._usersSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
+            this._portable = new ClearCanvas.Desktop.View.WinForms.DropListPickerField();
+            this._slidingScale = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this.tableLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -90,8 +107,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._name.Margin = new System.Windows.Forms.Padding(2);
             this._name.Mask = "";
             this._name.Name = "_name";
+            this._name.PasswordChar = '\0';
             this._name.Size = new System.Drawing.Size(325, 41);
             this._name.TabIndex = 0;
+            this._name.ToolTip = null;
             this._name.Value = null;
             // 
             // _type
@@ -198,6 +217,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(3, 127);
@@ -225,8 +245,164 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._procedureTypeGroupsSelector.Location = new System.Drawing.Point(3, 3);
             this._procedureTypeGroupsSelector.Name = "_procedureTypeGroupsSelector";
             this._procedureTypeGroupsSelector.SelectedItemsTable = null;
+            this._procedureTypeGroupsSelector.ShowToolbars = false;
             this._procedureTypeGroupsSelector.Size = new System.Drawing.Size(644, 372);
             this._procedureTypeGroupsSelector.TabIndex = 0;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this._portable);
+            this.tabPage3.Controls.Add(this.groupBox1);
+            this.tabPage3.Controls.Add(this._priority);
+            this.tabPage3.Controls.Add(this._patientClass);
+            this.tabPage3.Controls.Add(this._facilities);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(650, 378);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Filters";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this._slidingScale);
+            this.groupBox1.Controls.Add(this._fromCheckBox);
+            this.groupBox1.Controls.Add(this._toCheckBox);
+            this.groupBox1.Controls.Add(this._toSliding);
+            this.groupBox1.Controls.Add(this._fromSliding);
+            this.groupBox1.Controls.Add(this._toFixed);
+            this.groupBox1.Controls.Add(this._fromFixed);
+            this.groupBox1.Controls.Add(this._fixedWindowRadioButton);
+            this.groupBox1.Controls.Add(this._slidingWindowRadioButton);
+            this.groupBox1.Location = new System.Drawing.Point(19, 202);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(608, 170);
+            this.groupBox1.TabIndex = 5;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Time Window";
+            // 
+            // _fromCheckBox
+            // 
+            this._fromCheckBox.AutoSize = true;
+            this._fromCheckBox.Location = new System.Drawing.Point(199, 37);
+            this._fromCheckBox.Name = "_fromCheckBox";
+            this._fromCheckBox.Size = new System.Drawing.Size(49, 17);
+            this._fromCheckBox.TabIndex = 10;
+            this._fromCheckBox.Text = "From";
+            this._fromCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // _toCheckBox
+            // 
+            this._toCheckBox.AutoSize = true;
+            this._toCheckBox.Location = new System.Drawing.Point(410, 37);
+            this._toCheckBox.Name = "_toCheckBox";
+            this._toCheckBox.Size = new System.Drawing.Size(39, 17);
+            this._toCheckBox.TabIndex = 9;
+            this._toCheckBox.Text = "To";
+            this._toCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // _toSliding
+            // 
+            this._toSliding.DataSource = null;
+            this._toSliding.DisplayMember = "";
+            this._toSliding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._toSliding.LabelText = "To";
+            this._toSliding.Location = new System.Drawing.Point(425, 57);
+            this._toSliding.Margin = new System.Windows.Forms.Padding(2);
+            this._toSliding.Name = "_toSliding";
+            this._toSliding.Size = new System.Drawing.Size(150, 41);
+            this._toSliding.TabIndex = 8;
+            this._toSliding.Value = null;
+            // 
+            // _fromSliding
+            // 
+            this._fromSliding.DataSource = null;
+            this._fromSliding.DisplayMember = "";
+            this._fromSliding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._fromSliding.LabelText = "From";
+            this._fromSliding.Location = new System.Drawing.Point(213, 57);
+            this._fromSliding.Margin = new System.Windows.Forms.Padding(2);
+            this._fromSliding.Name = "_fromSliding";
+            this._fromSliding.Size = new System.Drawing.Size(150, 41);
+            this._fromSliding.TabIndex = 7;
+            this._fromSliding.Value = null;
+            // 
+            // _toFixed
+            // 
+            this._toFixed.LabelText = "To";
+            this._toFixed.Location = new System.Drawing.Point(425, 123);
+            this._toFixed.Margin = new System.Windows.Forms.Padding(2);
+            this._toFixed.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._toFixed.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+            this._toFixed.Name = "_toFixed";
+            this._toFixed.Size = new System.Drawing.Size(150, 41);
+            this._toFixed.TabIndex = 6;
+            this._toFixed.Value = new System.DateTime(2008, 3, 14, 10, 35, 2, 968);
+            // 
+            // _fromFixed
+            // 
+            this._fromFixed.LabelText = "From";
+            this._fromFixed.Location = new System.Drawing.Point(213, 123);
+            this._fromFixed.Margin = new System.Windows.Forms.Padding(2);
+            this._fromFixed.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._fromFixed.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+            this._fromFixed.Name = "_fromFixed";
+            this._fromFixed.Size = new System.Drawing.Size(150, 41);
+            this._fromFixed.TabIndex = 5;
+            this._fromFixed.Value = new System.DateTime(2008, 3, 14, 10, 35, 2, 968);
+            // 
+            // _fixedWindowRadioButton
+            // 
+            this._fixedWindowRadioButton.AutoSize = true;
+            this._fixedWindowRadioButton.Location = new System.Drawing.Point(23, 137);
+            this._fixedWindowRadioButton.Name = "_fixedWindowRadioButton";
+            this._fixedWindowRadioButton.Size = new System.Drawing.Size(50, 17);
+            this._fixedWindowRadioButton.TabIndex = 3;
+            this._fixedWindowRadioButton.TabStop = true;
+            this._fixedWindowRadioButton.Text = "Fixed";
+            this._fixedWindowRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // _slidingWindowRadioButton
+            // 
+            this._slidingWindowRadioButton.AutoSize = true;
+            this._slidingWindowRadioButton.Location = new System.Drawing.Point(23, 75);
+            this._slidingWindowRadioButton.Name = "_slidingWindowRadioButton";
+            this._slidingWindowRadioButton.Size = new System.Drawing.Size(56, 17);
+            this._slidingWindowRadioButton.TabIndex = 4;
+            this._slidingWindowRadioButton.TabStop = true;
+            this._slidingWindowRadioButton.Text = "Sliding";
+            this._slidingWindowRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // _priority
+            // 
+            this._priority.AutoSize = true;
+            this._priority.LabelText = "Order Priority";
+            this._priority.Location = new System.Drawing.Point(19, 96);
+            this._priority.Margin = new System.Windows.Forms.Padding(2);
+            this._priority.Name = "_priority";
+            this._priority.Size = new System.Drawing.Size(608, 40);
+            this._priority.TabIndex = 2;
+            // 
+            // _patientClass
+            // 
+            this._patientClass.AutoSize = true;
+            this._patientClass.LabelText = "Patient Class";
+            this._patientClass.Location = new System.Drawing.Point(19, 49);
+            this._patientClass.Margin = new System.Windows.Forms.Padding(2);
+            this._patientClass.Name = "_patientClass";
+            this._patientClass.Size = new System.Drawing.Size(608, 40);
+            this._patientClass.TabIndex = 1;
+            // 
+            // _facilities
+            // 
+            this._facilities.AutoSize = true;
+            this._facilities.LabelText = "Facility";
+            this._facilities.Location = new System.Drawing.Point(19, 5);
+            this._facilities.Margin = new System.Windows.Forms.Padding(2);
+            this._facilities.Name = "_facilities";
+            this._facilities.Size = new System.Drawing.Size(608, 40);
+            this._facilities.TabIndex = 0;
             // 
             // tabPage2
             // 
@@ -247,8 +423,32 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._usersSelector.Location = new System.Drawing.Point(3, 3);
             this._usersSelector.Name = "_usersSelector";
             this._usersSelector.SelectedItemsTable = null;
+            this._usersSelector.ShowToolbars = false;
             this._usersSelector.Size = new System.Drawing.Size(644, 372);
             this._usersSelector.TabIndex = 0;
+            // 
+            // _portable
+            // 
+            this._portable.AutoSize = true;
+            this._portable.LabelText = "Portable";
+            this._portable.Location = new System.Drawing.Point(19, 147);
+            this._portable.Margin = new System.Windows.Forms.Padding(2);
+            this._portable.Name = "_portable";
+            this._portable.Size = new System.Drawing.Size(304, 40);
+            this._portable.TabIndex = 6;
+            // 
+            // _slidingScale
+            // 
+            this._slidingScale.DataSource = null;
+            this._slidingScale.DisplayMember = "";
+            this._slidingScale.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._slidingScale.LabelText = "Scale";
+            this._slidingScale.Location = new System.Drawing.Point(94, 57);
+            this._slidingScale.Margin = new System.Windows.Forms.Padding(2);
+            this._slidingScale.Name = "_slidingScale";
+            this._slidingScale.Size = new System.Drawing.Size(91, 45);
+            this._slidingScale.TabIndex = 11;
+            this._slidingScale.Value = null;
             // 
             // WorklistEditorComponentControl
             // 
@@ -266,6 +466,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.ResumeLayout(false);
@@ -288,5 +492,20 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private System.Windows.Forms.TabPage tabPage2;
         private ClearCanvas.Desktop.View.WinForms.ListItemSelector _procedureTypeGroupsSelector;
         private ClearCanvas.Desktop.View.WinForms.ListItemSelector _usersSelector;
+        private System.Windows.Forms.TabPage tabPage3;
+        private ClearCanvas.Desktop.View.WinForms.DropListPickerField _patientClass;
+        private ClearCanvas.Desktop.View.WinForms.DropListPickerField _facilities;
+        private ClearCanvas.Desktop.View.WinForms.DropListPickerField _priority;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _toFixed;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _fromFixed;
+        private System.Windows.Forms.RadioButton _fixedWindowRadioButton;
+        private System.Windows.Forms.RadioButton _slidingWindowRadioButton;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _toSliding;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _fromSliding;
+        private System.Windows.Forms.CheckBox _fromCheckBox;
+        private System.Windows.Forms.CheckBox _toCheckBox;
+        private ClearCanvas.Desktop.View.WinForms.DropListPickerField _portable;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _slidingScale;
     }
 }

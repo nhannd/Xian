@@ -115,14 +115,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             // wipe out and reset the result recipients
             order.ResultRecipients.Clear();
-            order.ResultRecipients.AddAll(CollectionUtils.Map<ResultRecipientSummary, ResultRecipient>(
+
+            CollectionUtils.Map<ResultRecipientSummary, ResultRecipient>(
                 requisition.ResultRecipients,
                 delegate(ResultRecipientSummary s)
                 {
                     return new ResultRecipient(
                         context.Load<ExternalPractitionerContactPoint>(s.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy),
                         EnumUtils.GetEnumValue<ResultCommunicationMode>(s.PreferredCommunicationMode));
-                }));
+                }).ForEach(delegate (ResultRecipient r) { order.ResultRecipients.Add(r);});
 
             // synchronize Order.Attachments from order requisition
             OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
@@ -147,13 +148,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
 
-            // consider it portable if any MPS is portable
-            bool portable = CollectionUtils.Contains(rp.ModalityProcedureSteps,
-                delegate(ModalityProcedureStep mps)
-                {
-                    return mps.Portable;
-                });
-
             // create requisition
             return new ProcedureRequisition(
                 rptAssembler.CreateProcedureTypeSummary(rp.Type),
@@ -161,7 +155,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 rp.ScheduledStartTime,
                 rp.PerformingFacility == null ? null : facilityAssembler.CreateFacilitySummary(rp.PerformingFacility),
                 EnumUtils.GetEnumValueInfo(rp.Laterality, context),
-                portable,
+                rp.Portable,
                 EnumUtils.GetEnumValueInfo(rp.Status, context),
                 IsProcedureModifiable(rp));
         }
@@ -179,13 +173,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 if (step.State == ActivityStatus.SC)
                 {
                     step.Schedule(requisition.ScheduledTime);
-                    if(step.Is<ModalityProcedureStep>())
-                        step.As<ModalityProcedureStep>().Portable = requisition.PortableModality;
                 }
             }
 
             rp.PerformingFacility = context.Load<Facility>(requisition.PerformingFacility.FacilityRef, EntityLoadFlags.Proxy);
             rp.Laterality = EnumUtils.GetEnumValue<Laterality>(requisition.Laterality);
+            rp.Portable = requisition.PortableModality;
         }
 
         public DiagnosticServiceTreeItem CreateDiagnosticServiceTreeItem(DiagnosticServiceTreeNode node)

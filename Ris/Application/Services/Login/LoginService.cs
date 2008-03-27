@@ -109,15 +109,19 @@ namespace ClearCanvas.Ris.Application.Services.Login
                 throw new RequestValidationException(e.Message);
             }
 
+            // store the working facility in the user's profile
+            WorkingFacilitySettings settings = new WorkingFacilitySettings();
             if (request.WorkingFacility != null)
             {
                 Facility facility = PersistenceContext.Load<Facility>(request.WorkingFacility);
-
-                WorkingFacilitySettings settings = new WorkingFacilitySettings();
-                settings.WorkingFacility = facility.Code;
-                settings.WorkingInformationAuthority = facility.InformationAuthority.Code;
-                settings.Save();
+                settings.WorkingFacilityCode = facility.Code;
             }
+            else
+            {
+                // working facility not known
+                settings.WorkingFacilityCode = null;
+            }
+            settings.Save();
 
 
             // obtain full name information for the user

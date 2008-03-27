@@ -115,28 +115,6 @@ namespace ClearCanvas.Healthcare {
             order.EnteredTime = Platform.Time;
             order.SchedulingRequestTime = schedulingRequestTime;
             order.OrderingPractitioner = orderingPractitioner;
-            order.ResultRecipients.AddAll(resultRecipients);
-
-            // if the result recipients collection does not contain the ordering practitioner, add it by force, using the default contact point
-            if(!CollectionUtils.Contains(order.ResultRecipients,
-                    delegate(ResultRecipient r) { return r.PractitionerContactPoint.Practitioner.Equals(orderingPractitioner); }))
-            {
-                // find the default
-                ExternalPractitionerContactPoint defaultContactPoint = CollectionUtils.SelectFirst(orderingPractitioner.ContactPoints,
-                    delegate(ExternalPractitionerContactPoint cp)
-                    {
-                        return cp.IsDefaultContactPoint;
-                    });
-
-                // if no default, use first available
-                if (defaultContactPoint == null)
-                    defaultContactPoint = CollectionUtils.FirstElement(orderingPractitioner.ContactPoints);
-
-                if(defaultContactPoint != null)
-                {
-                    order.ResultRecipients.Add(new ResultRecipient(defaultContactPoint, ResultCommunicationMode.ANY));
-                }
-            }
 
             // associate all procedures with the order
             foreach (Procedure rp in procedures)
@@ -152,6 +130,32 @@ namespace ClearCanvas.Healthcare {
             foreach (OrderNote note in notes)
             {
                 order.Notes.Add(note);
+            }
+
+            foreach (ResultRecipient recipient in resultRecipients)
+            {
+                order.ResultRecipients.Add(recipient);
+            }
+
+            // if the result recipients collection does not contain the ordering practitioner, add it by force, using the default contact point
+            if (!CollectionUtils.Contains(order.ResultRecipients,
+                    delegate(ResultRecipient r) { return r.PractitionerContactPoint.Practitioner.Equals(orderingPractitioner); }))
+            {
+                // find the default
+                ExternalPractitionerContactPoint defaultContactPoint = CollectionUtils.SelectFirst(orderingPractitioner.ContactPoints,
+                    delegate(ExternalPractitionerContactPoint cp)
+                    {
+                        return cp.IsDefaultContactPoint;
+                    });
+
+                // if no default, use first available
+                if (defaultContactPoint == null)
+                    defaultContactPoint = CollectionUtils.FirstElement(orderingPractitioner.ContactPoints);
+
+                if (defaultContactPoint != null)
+                {
+                    order.ResultRecipients.Add(new ResultRecipient(defaultContactPoint, ResultCommunicationMode.ANY));
+                }
             }
 
             return order;
@@ -201,8 +205,6 @@ namespace ClearCanvas.Healthcare {
         }
 
         #endregion
-
-
 
         #region Public operations
 
@@ -272,13 +274,16 @@ namespace ClearCanvas.Healthcare {
 
             // update the status prior to cancelling the procedures
             // (otherwise cancelling the procedures will cause them to try and update the order status)
-            _status = OrderStatus.CA;
+            //SetStatus(OrderStatus.CA);
 
             // cancel all procedures
             foreach (Procedure rp in _procedures)
             {
                 rp.Cancel();
             }
+
+            // need to update the end-time again, after cacnelling procedures
+            UpdateEndTime();
         }
 
         /// <summary>
@@ -294,7 +299,7 @@ namespace ClearCanvas.Healthcare {
 
             // update the status prior to cancelling the procedures
             // (otherwise cancelling the procedures will cause them to try and update the order status)
-            _status = OrderStatus.DC;
+            SetStatus(OrderStatus.DC);
             
             // cancel any scheduled procedures
             foreach (Procedure rp in _procedures)
@@ -302,6 +307,9 @@ namespace ClearCanvas.Healthcare {
                 if (rp.Status == ProcedureStatus.SC)
                     rp.Cancel();
             }
+
+            // need to update the end-time again, after discontinuing procedures
+            UpdateEndTime();
         }
 
         #endregion
@@ -329,11 +337,9 @@ namespace ClearCanvas.Healthcare {
         protected internal virtual void UpdateScheduling()
         {
             // set the scheduled start time to the earliest non-null scheduled start time of any child procedure
-            _scheduledStartTime = CollectionUtils.Min<DateTime?>(
-                CollectionUtils.Select<DateTime?>(
-                    CollectionUtils.Map<Procedure, DateTime?>(this.Procedures,
-                        delegate(Procedure rp) { return rp.ScheduledStartTime; }),
-                            delegate(DateTime? startTime) { return startTime != null; }), null);
+            _scheduledStartTime = MinMaxHelper.MinValue<Procedure, DateTime?>(_procedures,
+                delegate { return true; },
+                delegate(Procedure rp) { return rp.ScheduledStartTime; }, null);
         }
 
         /// <summary>
@@ -350,21 +356,21 @@ namespace ClearCanvas.Healthcare {
                 if (CollectionUtils.TrueForAll(_procedures,
                     delegate(Procedure rp) { return rp.Status == ProcedureStatus.CA; }))
                 {
-                    _status = OrderStatus.CA;
+                    SetStatus(OrderStatus.CA);
                 }
                 else
                 // if all rp are cancelled or discontinued, the order is discontinued
                 if (CollectionUtils.TrueForAll(_procedures,
                    delegate(Procedure rp) { return rp.Status == ProcedureStatus.CA || rp.Status == ProcedureStatus.DC; }))
                 {
-                    _status = OrderStatus.DC;
+                    SetStatus(OrderStatus.DC);
                 }
                 else
                 // if all rp are cancelled, discontinued or completed, then the order is completed
                 if (CollectionUtils.TrueForAll(_procedures,
                    delegate(Procedure rp) { return rp.IsTerminated; }))
                 {
-                    _status = OrderStatus.CM;
+                    SetStatus(OrderStatus.CM);
                 }
             }
 
@@ -374,9 +380,39 @@ namespace ClearCanvas.Healthcare {
                 if (CollectionUtils.Contains(_procedures,
                    delegate(Procedure rp) { return rp.Status == ProcedureStatus.IP || rp.Status == ProcedureStatus.CM; }))
                 {
-                    _status = OrderStatus.IP;
+                    SetStatus(OrderStatus.IP);
                 }
             }
+        }
+
+        private void SetStatus(OrderStatus status)
+        {
+            if(_status != status)
+            {
+                _status = status;
+
+                if (_status == OrderStatus.IP)
+                    UpdateStartTime();
+
+                if (this.IsTerminated)
+                    UpdateEndTime();
+            }
+        }
+
+        private void UpdateStartTime()
+        {
+            // compute the earliest procedure start time
+            _startTime = MinMaxHelper.MinValue<Procedure, DateTime?>(_procedures,
+                delegate { return true; },
+                delegate(Procedure rp) { return rp.StartTime; }, null);
+        }
+
+        private void UpdateEndTime()
+        {
+            // compute the latest procedure end time
+            _endTime = MinMaxHelper.MaxValue<Procedure, DateTime?>(_procedures,
+                delegate { return true; },
+                delegate(Procedure rp) { return rp.EndTime; }, null);
         }
 
         /// <summary>

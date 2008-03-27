@@ -35,58 +35,27 @@ namespace ClearCanvas.Healthcare
 {
     public class RegistrationWorklistItemSearchCriteria : WorklistItemSearchCriteria
     {
-        /// <summary>
-        /// Constructor for top-level search criteria (no key required)
-        /// </summary>
-        public RegistrationWorklistItemSearchCriteria()
-        {
-        }
-
-        public ClearCanvas.Healthcare.ProcedureSearchCriteria Procedure
-        {
-            get
-            {
-                if (!this.SubCriteria.ContainsKey("Procedure"))
-                {
-                    this.SubCriteria["Procedure"] = new ClearCanvas.Healthcare.ProcedureSearchCriteria("Procedure");
-                }
-                return (ClearCanvas.Healthcare.ProcedureSearchCriteria)this.SubCriteria["Procedure"];
-            }
-        }
-
-        public ClearCanvas.Healthcare.ProcedureCheckInSearchCriteria ProcedureCheckIn
+        public ProcedureCheckInSearchCriteria ProcedureCheckIn
         {
             get
             {
                 if (!this.SubCriteria.ContainsKey("ProcedureCheckIn"))
                 {
-                    this.SubCriteria["ProcedureCheckIn"] = new ClearCanvas.Healthcare.ProcedureCheckInSearchCriteria("ProcedureCheckIn");
+                    this.SubCriteria["ProcedureCheckIn"] = new ProcedureCheckInSearchCriteria("ProcedureCheckIn");
                 }
-                return (ClearCanvas.Healthcare.ProcedureCheckInSearchCriteria)this.SubCriteria["ProcedureCheckIn"];
+                return (ProcedureCheckInSearchCriteria)this.SubCriteria["ProcedureCheckIn"];
             }
         }
 
-        public ClearCanvas.Healthcare.ProcedureStepSearchCriteria ProtocolProcedureStep
-        {
-            get
-            {
-                if (!this.SubCriteria.ContainsKey("ProtocolProcedureStep"))
-                {
-                    this.SubCriteria["ProtocolProcedureStep"] = new ClearCanvas.Healthcare.ProcedureStepSearchCriteria("ProtocolProcedureStep");
-                }
-                return (ClearCanvas.Healthcare.ProcedureStepSearchCriteria)this.SubCriteria["ProtocolProcedureStep"];
-            }
-        }
-
-        public ClearCanvas.Healthcare.ProtocolSearchCriteria Protocol
+        public ProtocolSearchCriteria Protocol
         {
             get
             {
                 if (!this.SubCriteria.ContainsKey("Protocol"))
                 {
-                    this.SubCriteria["Protocol"] = new ClearCanvas.Healthcare.ProtocolSearchCriteria("Protocol");
+                    this.SubCriteria["Protocol"] = new ProtocolSearchCriteria("Protocol");
                 }
-                return (ClearCanvas.Healthcare.ProtocolSearchCriteria)this.SubCriteria["Protocol"];
+                return (ProtocolSearchCriteria)this.SubCriteria["Protocol"];
             }
         }
     }

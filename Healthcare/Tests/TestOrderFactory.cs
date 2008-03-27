@@ -37,13 +37,17 @@ namespace ClearCanvas.Healthcare.Tests
 {
     internal static class TestOrderFactory
     {
-        internal static Order CreateOrder(int numProcedures, int numMpsPerProcedure, bool scheduleOrder)
+        internal static Order CreateOrder(int numProcedures, int numMpsPerProcedure, bool createProcedureSteps)
+        {
+            return CreateOrder(numProcedures, numMpsPerProcedure, createProcedureSteps, true);
+        }
+        internal static Order CreateOrder(int numProcedures, int numMpsPerProcedure, bool createProcedureSteps, bool schedule)
         {
             DateTime? scheduleTime = DateTime.Now;
 
             Patient patient = TestPatientFactory.CreatePatient();
             Visit visit = TestVisitFactory.CreateVisit(patient);
-            DiagnosticService ds = TestDiagnosticServiceFactory.CreateDiagnosticService(numProcedures, numMpsPerProcedure);
+            DiagnosticService ds = TestDiagnosticServiceFactory.CreateDiagnosticService(numProcedures);
             string accession = "10000001";
             string reasonForStudy = "Test";
             ExternalPractitioner orderingPrac = TestExternalPractitionerFactory.CreatePractitioner();
@@ -51,7 +55,7 @@ namespace ClearCanvas.Healthcare.Tests
             IList<OrderAttachment> attachments = TestOrderAttachmentFactory.CreateOrderAttachments();
             IList<OrderNote> notes = TestOrderNoteFactory.CreateOrderNotes();
 
-            return Order.NewOrder(
+            Order order =  Order.NewOrder(
                 accession,
                 patient,
                 visit,
@@ -65,6 +69,42 @@ namespace ClearCanvas.Healthcare.Tests
                 new List<ResultRecipient>(),
                 attachments,
                 notes);
+
+            if(createProcedureSteps)
+            {
+                foreach (Procedure proc in order.Procedures)
+                {
+                    AddProcedureSteps(proc, numMpsPerProcedure);
+                }
+            }
+
+            DateTime dt = DateTime.Now;
+            if(schedule)
+            {
+                foreach (Procedure proc in order.Procedures)
+                {
+                    foreach (ProcedureStep step in proc.ProcedureSteps)
+                    {
+                        if(!step.IsPreStep)
+                            step.Schedule(dt);
+                    }
+                }
+            }
+
+            return order;
+        }
+
+        private static void AddProcedureSteps(Procedure procedure, int numMps)
+        {
+            Modality m = new Modality("01", "CT");
+
+            for (int s = 0; s < numMps; s++)
+            {
+                ModalityProcedureStep step = new ModalityProcedureStep();
+                step.Description = "MPS 10" + s;
+                step.Modality = m;
+                procedure.AddProcedureStep(step);
+            }
         }
     }
 }

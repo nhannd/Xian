@@ -123,8 +123,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 		private void UpdateButtonStates()
 		{
-			bool ok = !string.IsNullOrEmpty(_userName.Text) && !string.IsNullOrEmpty(_password.Text) &&
-						 _facility.SelectedItem != null;
+		    bool ok = !string.IsNullOrEmpty(_userName.Text) && !string.IsNullOrEmpty(_password.Text);
 			_loginButton.Enabled = ok;
 			this.AcceptButton = ok ? _loginButton : _cancelButton;
 		}

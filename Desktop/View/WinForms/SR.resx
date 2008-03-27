@@ -175,4 +175,7 @@
   <data name="MessageSortBy" xml:space="preserve">
     <value>Sort by: {0}</value>
   </data>
+  <data name="ItemClear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
 </root>

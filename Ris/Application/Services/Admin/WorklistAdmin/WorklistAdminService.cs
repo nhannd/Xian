@@ -71,6 +71,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             response.WorklistTypes = new List<string>();
             response.WorklistTypes.AddRange(WorklistFactory.Instance.WorklistTypes);
 
+            FacilityAssembler facilityAssembler = new FacilityAssembler();
+            response.FacilityChoices = CollectionUtils.Map<Facility, FacilitySummary>(
+                this.PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
+                delegate(Facility f)
+                {
+                    return facilityAssembler.CreateFacilitySummary(f);
+                });
+
+            response.OrderPriorityChoices = EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext);
+            response.PatientClassChoices = EnumUtils.GetEnumValueList<PatientClassEnum>(PersistenceContext);
+
             return response;
         }
 

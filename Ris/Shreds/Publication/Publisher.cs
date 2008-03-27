@@ -111,7 +111,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
                 try
                 {
                     PersistenceScope.Current.Lock(publicationStep);
-                    publicationStep.Complete();
+                    publicationStep.Complete(publicationStep.AssignedStaff);
                 }
                 catch (Exception e)
                 {

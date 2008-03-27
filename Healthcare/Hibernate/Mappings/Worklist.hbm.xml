@@ -11,10 +11,59 @@
     <property name="Name" column="Name_" type="String" length="100" not-null="true"/>
     <property name="Description" column="Description_" type="String" length="1024"/>
 
-    <set name="ProcedureTypeGroups" table="WorklistProcedureTypeGroup_" lazy="true" access="nosetter.camelcase-underscore">
-      <key column="WorklistOID_"/>
-      <many-to-many column="ProcedureTypeGroupOID_" class="ProcedureTypeGroup" fetch="join"/>
-    </set>
+    <component name="ProcedureTypeGroupFilter" class="WorklistProcedureTypeGroupFilter">
+      <property name="IsEnabled" type="Boolean" column="ProcedureTypeGroupFilterIsEnabled_"/>
+      <set name="Values" table="WorklistProcedureTypeGroup_" lazy="true">
+        <key column="WorklistOID_"/>
+        <many-to-many column="ProcedureTypeGroupOID_" class="ProcedureTypeGroup" fetch="join"/>
+      </set>
+    </component>
+
+    <component name="FacilityFilter" class="WorklistFacilityFilter">
+      <property name="IsEnabled" type="Boolean" column="FacilityFilterIsEnabled_"/>
+      <property name="IncludeWorkingFacility" type="Boolean" column="FacilityFilterIncludeWorkingFacility_"/>
+      <set name="Values" table="WorklistFacility_" lazy="true">
+        <key column="WorklistOID_"/>
+        <many-to-many column="FacilityOID_" class="Facility" fetch="join"/>
+      </set>
+    </component>
+
+    <component name="PatientClassFilter" class="WorklistPatientClassFilter">
+      <property name="IsEnabled" type="Boolean" column="PatientClassFilterIsEnabled_"/>
+      <set name="Values" table="WorklistPatientClass_" lazy="true">
+        <key column="WorklistOID_"/>
+        <many-to-many column="PatientClassOID_" class="PatientClassEnum" fetch="join"/>
+      </set>
+    </component>
+    
+    <component name="OrderPriorityFilter" class="WorklistOrderPriorityFilter">
+      <property name="IsEnabled" type="Boolean" column="OrderPriorityFilterIsEnabled_"/>
+      <set name="Values" table="WorklistOrderPriority_" lazy="true">
+        <key column="WorklistOID_"/>
+        <many-to-many column="OrderPriorityOID_" class="OrderPriorityEnum" fetch="join"/>
+      </set>
+    </component>
+    
+    <component name="PortableFilter" class="WorklistPortableFilter">
+      <property name="IsEnabled" type="Boolean" column="PortableFilterIsEnabled_"/>
+      <property name="Value" type="Boolean" column="PortableFilterValue_"/>
+    </component>
+
+    <component name="TimeFilter" class="WorklistTimeFilter">
+      <property name="IsEnabled" type="Boolean" column="TimeFilterIsEnabled_"/>
+      <component name="Value" class="WorklistTimeRange">
+        <component name="Start" class="WorklistTimePoint">
+          <property name="FixedValue" column="StartTimeFilterFixedValue_" type="DateTime"/>
+          <property name="RelativeValue" column="StartTimeFilterRelativeValue_" type="TimeSpan"/>
+          <property name="Resolution" column="StartTimeFilterResolution_" type="Int64"/>
+        </component>
+        <component name="End" class="WorklistTimePoint">
+          <property name="FixedValue" column="EndTimeFilterFixedValue_" type="DateTime"/>
+          <property name="RelativeValue" column="EndTimeFilterRelativeValue_" type="TimeSpan"/>
+          <property name="Resolution" column="EndTimeFilterResolution_" type="Int64"/>
+        </component>
+      </component>
+    </component>
 
     <set name="Users" lazy="true" table="WorklistUsers_" access="nosetter.camelcase-underscore">
       <key column="WorklistOID_"/>

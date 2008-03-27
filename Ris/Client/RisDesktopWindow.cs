@@ -89,9 +89,12 @@ namespace ClearCanvas.Ris.Client
             string username = (currentSession.FullName == null) ? currentSession.UserName :
                 PersonNameFormat.Format(currentSession.FullName);
 
+            // show working facility if specified
+            if (currentSession.WorkingFacility != null)
+                username = string.Format("{0} @ {1}", username, currentSession.WorkingFacility.Code);
+
             // show the user name before the base title
-            return string.Format("{0} @ {1} - {2}", username,
-                currentSession.WorkingFacility.Code, base.MakeTitle(baseTitle, activeWorkspace));
+            return string.Format("{0} - {1}", username, base.MakeTitle(baseTitle, activeWorkspace));
         }
     }
 }

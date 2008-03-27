@@ -49,24 +49,31 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         private const string tagRoot = "worklists";
 
         private const string tagWorklist = "worklist";
-        private const string attrName = "name";
-        private const string attrDescription = "description";
-        private const string attrDiscriminator = "discriminator";
 
+        private const string tagFilters = "filters";
+        private const string tagValue = "value";
         private const string tagProcedureTypeGroups = "procedure-type-groups";
-        private const string tagProcedureTypeGroup = "procedure-type-group";
-        private const string attrGroupName = "name";
-        private const string attrGroupClass = "class";
+        private const string tagFacilities = "facilities";
+        private const string tagPriorities = "priorities";
+        private const string tagPatientClasses = "patient-classes";
+        private const string tagPortable = "portable";
+        private const string tagTimeRange = "time-range";
+        private const string tagStartTime = "start-time";
+        private const string tagEndTime = "end-time";
+        private const string attrFixedValue = "fixed-value";
+        private const string attrRelativeValue = "relative-value";
+        private const string attrResolution = "resolution";
+        private const string attrIncludeWorkingFacility = "includeWorkingFacility";
+        private const string attrName = "name";
+        private const string attrClass = "class";
+        private const string attrCode = "code";
+        private const string attrDescription = "description";
+        private const string attrEnabled = "enabled";
 
         private const string tagSubscribers = "subscribers";
         private const string tagSubscriber = "subscriber";
         private const string attrSubscriberName = "name";
         private const string attrSubscriberType = "type";
-
-        private const string tagWorklistCopies = "worklist-copies";
-        private const string tagCopy = "copy";
-        private const string attrCopyDiscriminator = "discriminator";
-
 
         private IUpdateContext _context;
         private IList<Type> _procedureTypeGroupClasses;
@@ -90,89 +97,170 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             {
                 if (reader.IsStartElement(tagRoot))
                 {
-                    ImportWorklists(reader.ReadSubtree());
+                    ReadWorklists(reader.ReadSubtree());
                 }
             }
         }
 
         #endregion
 
-        private void ImportWorklists(XmlReader xmlReader)
+        private void ReadWorklists(XmlReader xmlReader)
         {
             for (bool elementExists = xmlReader.ReadToDescendant(tagWorklist);
                 elementExists;
                 elementExists = xmlReader.ReadToNextSibling(tagWorklist))
             {
-                ProcessWorklistNode(xmlReader.ReadSubtree());
+                ReadWorklist(xmlReader.ReadSubtree());
             }
         }
 
-        private void ProcessWorklistNode(XmlReader reader)
+        private void ReadWorklist(XmlReader reader)
         {
             reader.Read();
 
             string name = reader.GetAttribute(attrName);
-            string discriminator = reader.GetAttribute(attrDiscriminator);
+            string className = reader.GetAttribute(attrClass);
 
-            Worklist worklist = LoadOrCreateWorklist(name, discriminator);
+            Worklist worklist = LoadOrCreateWorklist(name, className);
             if (worklist != null)
             {
-                string description = reader.GetAttribute(attrDescription);
+                worklist.Description = reader.GetAttribute(attrDescription);
 
-                reader.ReadToFollowing(tagProcedureTypeGroups);
-                ICollection<ProcedureTypeGroup> procedureTypeGroups = GetProcedureTypeGroups(reader.ReadSubtree());
+                reader.ReadToFollowing(tagFilters);
+                ReadFilters(worklist, reader.ReadSubtree());
 
                 reader.ReadToNextSibling(tagSubscribers);
                 ICollection<string> users = GetUsers(reader.ReadSubtree());
-
-                worklist.Description = description;
-                worklist.ProcedureTypeGroups.AddAll(procedureTypeGroups);
                 worklist.Users.AddAll(users);
-
-                if (reader.ReadToNextSibling(tagWorklistCopies))
-                {
-                    foreach (Worklist copy in GetWorklistCopies(reader.ReadSubtree(), name))
-                    {
-                        copy.Description = description;
-                        copy.ProcedureTypeGroups.AddAll(procedureTypeGroups);
-                        copy.Users.AddAll(users);
-                    }
-                }
             }
 
             while (reader.Read()) ;
             reader.Close();
         }
 
-        private ICollection<ProcedureTypeGroup> GetProcedureTypeGroups(XmlReader reader)
+        private void ReadFilters(Worklist worklist, XmlReader reader)
         {
-            reader.Read();
+            ReadFilter<ProcedureTypeGroup>(worklist.ProcedureTypeGroupFilter, reader, tagProcedureTypeGroups,
+                delegate
+                {
+                    ProcedureTypeGroupSearchCriteria criteria = new ProcedureTypeGroupSearchCriteria();
+                    criteria.Name.EqualTo(reader.GetAttribute(attrName));
 
-            List<ProcedureTypeGroup> groups = new List<ProcedureTypeGroup>();
+                    string groupClassName = reader.GetAttribute(attrClass);
+                    Type groupClass = CollectionUtils.SelectFirst(_procedureTypeGroupClasses,
+                       delegate(Type t)
+                       {
+                           return t.FullName.Equals(groupClassName, StringComparison.InvariantCultureIgnoreCase);
+                       });
 
-            for (bool elementExists = reader.ReadToDescendant(tagProcedureTypeGroup);
-                elementExists;
-                elementExists = reader.ReadToNextSibling(tagProcedureTypeGroup))
-            {
-                ProcedureTypeGroupSearchCriteria criteria = new ProcedureTypeGroupSearchCriteria();
-                criteria.Name.EqualTo(reader.GetAttribute(attrGroupName));
+                    IProcedureTypeGroupBroker broker = _context.GetBroker<IProcedureTypeGroupBroker>();
+                    return CollectionUtils.FirstElement(broker.Find(criteria, groupClass));
+                });
 
-                string groupClassName = reader.GetAttribute(attrGroupClass);
-                Type groupClass = CollectionUtils.SelectFirst(_procedureTypeGroupClasses,
-                   delegate(Type t)
-                   {
-                       return t.FullName.Equals(groupClassName, StringComparison.InvariantCultureIgnoreCase);
-                   });
+            ReadFilter<Facility>(worklist.FacilityFilter, reader, tagFacilities,
+                delegate
+                {
+                    FacilitySearchCriteria criteria = new FacilitySearchCriteria();
+                    criteria.Code.EqualTo(reader.GetAttribute(attrCode));
 
-                IProcedureTypeGroupBroker broker = _context.GetBroker<IProcedureTypeGroupBroker>();
-                ProcedureTypeGroup group = CollectionUtils.FirstElement(broker.Find(criteria, groupClass));
-                if (group != null) groups.Add(group);
-            }
+                    IFacilityBroker broker = _context.GetBroker<IFacilityBroker>();
+                    return CollectionUtils.FirstElement(broker.Find(criteria));
+                },
+                delegate
+                {
+                    string b = reader.GetAttribute(attrIncludeWorkingFacility);
+                    if(!string.IsNullOrEmpty(b))
+                        worklist.FacilityFilter.IncludeWorkingFacility = bool.Parse(b);
+                });
+
+            ReadFilter<OrderPriorityEnum>(worklist.OrderPriorityFilter, reader, tagPriorities,
+                delegate
+                {
+                    IEnumBroker broker = _context.GetBroker<IEnumBroker>();
+                    return broker.Find<OrderPriorityEnum>(reader.GetAttribute(attrCode));
+                });
+
+            ReadFilter<PatientClassEnum>(worklist.PatientClassFilter, reader, tagPatientClasses,
+                delegate
+                {
+                    IEnumBroker broker = _context.GetBroker<IEnumBroker>();
+                    return broker.Find<PatientClassEnum>(reader.GetAttribute(attrCode));
+                });
+
+            ReadFilter<bool>(worklist.PortableFilter, reader, tagPortable,
+                delegate
+                {
+                    return bool.Parse(reader.GetAttribute(tagPortable));
+                });
+
+            ReadFilter<WorklistTimeRange>(worklist.TimeFilter, reader, tagTimeRange,
+                delegate
+                {
+                    return ReadTimeRange(reader);
+                });
+
 
             while (reader.Read()) ;
             reader.Close();
+        }
 
-            return groups;
+        private delegate T ReadValueDelegate<T>();
+
+        private void ReadFilter<T>(WorklistFilter filter, XmlReader reader, string tagName, ReadValueDelegate<T> readValueCallback)
+        {
+            ReadFilter(filter, reader, tagName, readValueCallback, null);
+        }
+
+        private void ReadFilter<T>(WorklistFilter filter, XmlReader reader, string tagName, ReadValueDelegate<T> readValueCallback, Action<XmlReader> readFilterCallback)
+        {
+            if(reader.ReadToFollowing(tagName))
+            {
+                filter.IsEnabled = bool.Parse(reader.GetAttribute(attrEnabled));
+                if (readFilterCallback != null)
+                    readFilterCallback(reader);
+
+                if (filter.IsEnabled)
+                {
+                    for (bool elementExists = reader.ReadToDescendant(tagValue);
+                        elementExists;
+                        elementExists = reader.ReadToNextSibling(tagValue))
+                    {
+                        T value = readValueCallback();
+                        if (value != null)
+                        {
+                            if (filter is WorklistMultiValuedFilter<T>)
+                                (filter as WorklistMultiValuedFilter<T>).Values.Add(value);
+                            else if(filter is WorklistSingleValuedFilter<T>)
+                                (filter as WorklistSingleValuedFilter<T>).Value = value;
+                        }
+                    }
+                }
+            }
+        }
+
+        private WorklistTimeRange ReadTimeRange(XmlReader reader)
+        {
+            WorklistTimePoint startPoint = reader.ReadToFollowing(tagStartTime) ? ReadTimePoint(reader) : null;
+            WorklistTimePoint endPoint = reader.ReadToFollowing(tagEndTime) ? ReadTimePoint(reader) : null;
+
+            if(startPoint != null || endPoint != null)
+                return new WorklistTimeRange(startPoint, endPoint);
+            else
+                return null;
+        }
+
+        private WorklistTimePoint ReadTimePoint(XmlReader reader)
+        {
+            string relativeTimeString = reader.GetAttribute(attrRelativeValue);
+            string fixedTimeString = reader.GetAttribute(attrFixedValue);
+            int resolution = int.Parse(reader.GetAttribute(attrResolution));
+
+            if (!string.IsNullOrEmpty(relativeTimeString))
+                return new WorklistTimePoint(TimeSpan.Parse(relativeTimeString), resolution);
+            if (!string.IsNullOrEmpty(fixedTimeString))
+                return new WorklistTimePoint(DateTimeUtils.ParseISO(fixedTimeString).Value, resolution);
+
+            return null;
         }
 
         private ICollection<string> GetUsers(XmlReader reader)
@@ -209,23 +297,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             reader.Close();
 
             return users;
-        }
-
-        //TODO: this doesn't actually work correctly because it allows creating "copies"
-        //that are not valid (for example, a ReportingWorklist based on a PerformingGroup instead of a ReadingGroup)
-        private IEnumerable<Worklist> GetWorklistCopies(XmlReader reader, string name)
-        {
-            List<Worklist> copies = new List<Worklist>();
-
-            for (bool elementExists = reader.ReadToDescendant(tagCopy);
-                elementExists;
-                elementExists = reader.ReadToNextSibling(tagCopy))
-            {
-                string copyType = reader.GetAttribute(attrCopyDiscriminator);
-                copies.Add(LoadOrCreateWorklist(name, copyType));
-            }
-
-            return copies;
         }
 
         private Worklist LoadOrCreateWorklist(string name, string worklistClassName)

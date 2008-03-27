@@ -94,7 +94,6 @@ namespace ClearCanvas.Healthcare {
 	{
         private string _description;
         private Modality _modality;
-        private bool _portable;
 
         /// <summary>
         /// Constructor.
@@ -142,15 +141,6 @@ namespace ClearCanvas.Healthcare {
         {
             get { return _modality; }
             set { _modality = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether this step is to be performed on a portable modality.
-        /// </summary>
-        public virtual bool Portable
-        {
-            get { return _portable; }
-            set { _portable = value; }
         }
 
 		#region Object overrides

@@ -53,13 +53,26 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
         private const string tagWorklist = "worklist";
         private const string attrName = "name";
-        private const string attrDiscriminator = "discriminator";
         private const string attrDescription = "description";
+        private const string attrEnabled = "enabled";
 
+        private const string tagFilters = "filters";
+        private const string tagValue = "value";
         private const string tagProcedureTypeGroups = "procedure-type-groups";
-        private const string tagProcedureTypeGroup = "procedure-type-group";
-        private const string attrRptName = "name";
-        private const string attrRptClass = "class";
+        private const string tagFacilities = "facilities";
+        private const string tagPriorities = "priorities";
+        private const string tagPatientClasses = "patient-classes";
+        private const string tagPortable = "portable";
+        private const string tagTimeRange = "time-range";
+        private const string tagStartTime = "start-time";
+        private const string tagEndTime = "end-time";
+        private const string attrFixedValue = "fixed-value";
+        private const string attrRelativeValue = "relative-value";
+        private const string attrResolution = "resolution";
+        private const string attrIncludeWorkingFacility = "includeWorkingFacility";
+
+        private const string attrCode = "code";
+        private const string attrClass = "class";
 
         private const string tagSubscribers = "subscribers";
         private const string tagSubscriber = "subscriber";
@@ -82,7 +95,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             writer.WriteStartElement(tagWorklists);
 
             IList<Worklist> worklists = context.GetBroker<IWorklistBroker>().FindAll();
-            CollectionUtils.ForEach<Worklist>(worklists,
+            CollectionUtils.ForEach(worklists,
                 delegate(Worklist worklist) { WriteWorklistXml(worklist, writer); });
 
             writer.WriteEndElement();
@@ -96,51 +109,131 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         {
             writer.WriteStartElement(tagWorklist);
             writer.WriteAttributeString(attrName, worklist.Name);
-            writer.WriteAttributeString(attrDiscriminator, GetDiscriminator(worklist));
+            writer.WriteAttributeString(attrClass, worklist.GetClass().FullName);
             writer.WriteAttributeString(attrDescription, worklist.Description);
 
-            WriteProcedureTypeGroupsXml(worklist, writer);
-            WriteSubscribersXml(worklist, writer);
+            WriteFilters(worklist, writer);
+            WriteSubscribers(worklist, writer);
 
             writer.WriteEndElement();
         }
 
-        private void WriteSubscribersXml(Worklist worklist, XmlWriter writer)
+        private void WriteFilters(Worklist worklist, XmlWriter writer)
+        {
+            writer.WriteStartElement(tagFilters);
+
+            WriteFilter<ProcedureTypeGroup>(worklist.ProcedureTypeGroupFilter, writer, tagProcedureTypeGroups,
+                delegate(ProcedureTypeGroup value)
+                {
+                    writer.WriteAttributeString(attrName, value.Name);
+                    writer.WriteAttributeString(attrClass, value.GetClass().FullName);
+                });
+
+            WriteFilter<Facility>(worklist.FacilityFilter, writer, tagFacilities,
+                delegate(Facility value)
+                {
+                    writer.WriteAttributeString(attrCode, value.Code);
+                },
+                delegate
+                {
+                    if(worklist.FacilityFilter.IsEnabled)
+                        writer.WriteAttributeString(attrIncludeWorkingFacility, worklist.FacilityFilter.IncludeWorkingFacility.ToString());
+                });
+
+            WriteFilter<OrderPriorityEnum>(worklist.OrderPriorityFilter, writer, tagPriorities,
+                delegate(OrderPriorityEnum value)
+                {
+                    writer.WriteAttributeString(attrCode, value.Code);
+                });
+
+            WriteFilter<PatientClassEnum>(worklist.PatientClassFilter, writer, tagPatientClasses,
+               delegate(PatientClassEnum value)
+               {
+                   writer.WriteAttributeString(attrCode, value.Code);
+               });
+
+            WriteFilter<bool>(worklist.PortableFilter, writer, tagPortable,
+                delegate (bool value)
+                {
+                    writer.WriteAttributeString(tagPortable, value.ToString());
+                });
+
+            WriteFilter<WorklistTimeRange>(worklist.TimeFilter, writer, tagTimeRange,
+                delegate (WorklistTimeRange value)
+                {
+                    WriteTimeRange(value, writer);
+                });
+            
+            writer.WriteEndElement();
+        }
+
+        private void WriteFilter<T>(WorklistFilter filter, XmlWriter writer, string tagName, Action<T> writeValueCallback)
+        {
+            WriteFilter(filter, writer, tagName, writeValueCallback, null);
+        }
+
+        private void WriteFilter<T>(WorklistFilter filter, XmlWriter writer, string tagName, Action<T> writeValueCallback, Action<XmlWriter> writeFilterCallback)
+        {
+            writer.WriteStartElement(tagName);
+            writer.WriteAttributeString(attrEnabled, filter.IsEnabled.ToString());
+            if (writeFilterCallback != null)
+                writeFilterCallback(writer);
+            if (filter.IsEnabled)
+            {
+                if(filter is WorklistMultiValuedFilter<T>)
+                {
+                    WorklistMultiValuedFilter<T> multiFilter = (WorklistMultiValuedFilter<T>) filter;
+                    foreach (T value in multiFilter.Values)
+                    {
+                        writer.WriteStartElement(tagValue);
+                        writeValueCallback(value);
+                        writer.WriteEndElement();
+                    }
+                }
+                else if(filter is WorklistSingleValuedFilter<T>)
+                {
+                    WorklistSingleValuedFilter<T> singleFilter = (WorklistSingleValuedFilter<T>)filter;
+                    writer.WriteStartElement(tagValue);
+                    writeValueCallback(singleFilter.Value);
+                    writer.WriteEndElement();
+                }
+            }
+            writer.WriteEndElement();
+        }
+
+        private void WriteTimeRange(WorklistTimeRange range, XmlWriter writer)
+        {
+            if(range.Start != null)
+                WriteTimePoint(range.Start, writer, tagStartTime);
+            if(range.End != null)
+                WriteTimePoint(range.End, writer, tagEndTime);
+        }
+
+        private void WriteTimePoint(WorklistTimePoint point, XmlWriter writer, string tagName)
+        {
+            writer.WriteStartElement(tagName);
+            if(point.IsFixed)
+                writer.WriteAttributeString(attrFixedValue, DateTimeUtils.FormatISO(point.FixedValue.Value));
+            else 
+                writer.WriteAttributeString(attrRelativeValue, point.RelativeValue.Value.ToString());
+            writer.WriteAttributeString(attrResolution, point.Resolution.ToString());
+            writer.WriteEndElement();
+        }
+
+        private void WriteSubscribers(Worklist worklist, XmlWriter writer)
         {
             writer.WriteStartElement(tagSubscribers);
-            CollectionUtils.ForEach<User>(worklist.Users,
-                delegate(User user) { WriteSubscriberXml(user, writer); });
+            CollectionUtils.ForEach<string>(worklist.Users,
+                delegate(string user) { WriteSubscriber(user, writer); });
             writer.WriteEndElement();
         }
 
-        private void WriteSubscriberXml(User user, XmlWriter writer)
+        private void WriteSubscriber(string user, XmlWriter writer)
         {
             writer.WriteStartElement(tagSubscriber);
-            writer.WriteAttributeString(attrSubscriberName, user.UserName);
+            writer.WriteAttributeString(attrSubscriberName, user);
             writer.WriteAttributeString(attrSubscriberType, subscriberType);
             writer.WriteEndElement();
-        }
-
-        private void WriteProcedureTypeGroupsXml(Worklist worklist, XmlWriter writer)
-        {
-            writer.WriteStartElement(tagProcedureTypeGroups);
-            CollectionUtils.ForEach<ProcedureTypeGroup>(worklist.ProcedureTypeGroups,
-                delegate(ProcedureTypeGroup group) { WriteProcedureTypeGroupXml(group, writer); });
-            writer.WriteEndElement();
-
-        }
-
-        private void WriteProcedureTypeGroupXml(ProcedureTypeGroup group, XmlWriter writer)
-        {
-            writer.WriteStartElement(tagProcedureTypeGroup);
-            writer.WriteAttributeString(attrRptName, group.Name);
-            writer.WriteAttributeString(attrRptClass, group.GetType().FullName);
-            writer.WriteEndElement();
-        }
-
-        private string GetDiscriminator(Worklist worklist)
-        {
-            return worklist.GetType().Name;
         }
 
         #endregion

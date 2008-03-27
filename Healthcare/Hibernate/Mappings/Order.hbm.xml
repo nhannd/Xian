@@ -22,8 +22,14 @@
     <property name="SchedulingRequestTime" column="SchedulingRequestTime_" type="DateTime" not-null="false"/>
 
     <!-- Time the order is scheduled to start, if known -->
-    <property name="ScheduledStartTime" column="ScheduledStartTime_" type="DateTime" not-null="false"/>
+    <property name="ScheduledStartTime" column="ScheduledStartTime_" type="DateTime" not-null="false" access="nosetter.camelcase-underscore"/>
 
+    <!-- Time order status moved to IP -->
+    <property name="StartTime" column="StartTime_" type="DateTime" not-null="false" access="nosetter.camelcase-underscore"/>
+
+    <!-- Time order status moved to CM, CA, DC -->
+    <property name="EndTime" column="EndTime_" type="DateTime" not-null="false" access="nosetter.camelcase-underscore"/>
+    
     <many-to-one name="OrderingPractitioner" class="ExternalPractitioner" column="OrderingPractitionerOID_" not-null="true"/>
     <many-to-one name="OrderingFacility" class="Facility" column="FacilityOID_" not-null="true"/>
 
@@ -32,13 +38,16 @@
       <one-to-many class="Procedure"/>
     </set>
 
-    <set name="ResultRecipients" table="OrderResultRecipient_" lazy="true" access="nosetter.camelcase-underscore">
+    <idbag name="ResultRecipients" table="OrderResultRecipient_" lazy="true" access="nosetter.camelcase-underscore">
+      <collection-id column="OID_" type="Guid">
+        <generator class="guid.comb"/>
+      </collection-id>
       <key column="OrderOID_"/>
       <composite-element class="ResultRecipient">
         <many-to-one name="PractitionerContactPoint" column="PractitionerContactPointOID_" class="ExternalPractitionerContactPoint" fetch="join" not-null="true"/>
         <property name="PreferredCommunicationMode" column="PreferredCommunicationMode_" type="ClearCanvas.Healthcare.Hibernate.ResultCommunicationModeEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
       </composite-element>
-    </set>
+    </idbag>
 
     <idbag name="Attachments" table="OrderAttachment_" lazy="true" access="nosetter.camelcase-underscore">
       <collection-id column="OID_" type="Guid">
@@ -56,7 +65,7 @@
     <!-- Indications.... may need to be a coded-value, not sure yet -->
     <property name="ReasonForStudy" column="ReasonForStudy_" type="String" length="200"/>
     <property name="Priority" column="Priority_" type="ClearCanvas.Healthcare.Hibernate.OrderPriorityEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
-    <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.OrderStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+    <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.OrderStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true" access="nosetter.camelcase-underscore"/>
     <many-to-one name="CancelReason" class="OrderCancelReasonEnum" column="CancelReason_"/>
 
 

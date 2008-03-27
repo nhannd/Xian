@@ -93,28 +93,25 @@ namespace ClearCanvas.Ris.Application.Services
             _worklistExtPoint = new WorklistExtensionPoint();
         }
 
-        protected IList GetWorklistItems(string worklistType)
+        protected IList GetWorklistItemsHelper(GetWorklistItemsRequest request)
         {
-            IWorklist worklist = WorklistFactory.Instance.GetWorklist(worklistType);
-            return worklist.GetWorklistItems(this.CurrentUserStaff, this.PersistenceContext);
+            IWorklist worklist = request.WorklistRef != null ?
+                this.PersistenceContext.Load<Worklist>(request.WorklistRef) :
+                WorklistFactory.Instance.GetWorklist(request.WorklistType);
+
+            // if the page was not specified in the request, get the first page, up to the default max number of items
+            SearchResultPage page = request.Page ?? new SearchResultPage(0, new WorklistSettings().DefaultItemsPerPage);
+
+            return worklist.GetWorklistItems(new WorklistQueryContext(this, page));
         }
 
-        protected IList GetWorklistItems(EntityRef worklistRef)
+        protected int GetWorklistItemCountHelper(GetWorklistItemCountRequest request)
         {
-            IWorklist  worklist = this.PersistenceContext.Load<Worklist>(worklistRef);
-            return worklist.GetWorklistItems(this.CurrentUserStaff, this.PersistenceContext);
-        }
+            IWorklist worklist = request.WorklistRef != null ?
+                this.PersistenceContext.Load<Worklist>(request.WorklistRef) :
+                WorklistFactory.Instance.GetWorklist(request.WorklistType);
 
-        protected int GetWorklistItemCount(string worklistType)
-        {
-            IWorklist worklist = WorklistFactory.Instance.GetWorklist(worklistType);
-            return worklist.GetWorklistItemCount(this.CurrentUserStaff, this.PersistenceContext);
-        }
-
-        protected int GetWorklistItemCount(EntityRef worklistRef)
-        {
-            IWorklist worklist = this.PersistenceContext.Load<Worklist>(worklistRef);
-            return worklist.GetWorklistItemCount(this.CurrentUserStaff, this.PersistenceContext);
+            return worklist.GetWorklistItemCount(new WorklistQueryContext(this, null));
         }
 
         protected Dictionary<string, bool> GetOperationEnablement(object itemKey)

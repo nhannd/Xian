@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         public TextQueryResponse<ModalityWorklistItem> Search(SearchRequest request)
         {
             ModalityWorkflowAssembler assembler = new ModalityWorkflowAssembler();
-            IModalityWorklistBroker broker = PersistenceContext.GetBroker<IModalityWorklistBroker>();
+            IModalityWorklistItemBroker broker = PersistenceContext.GetBroker<IModalityWorklistItemBroker>();
 
             WorklistTextQueryHelper<WorklistItem, ModalityWorklistItem> helper =
                 new WorklistTextQueryHelper<WorklistItem, ModalityWorklistItem>(
@@ -69,11 +69,11 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                     },
                     delegate(WorklistItemSearchCriteria[] criteria)
                     {
-                        return broker.SearchCount(criteria, request.ShowActiveOnly);
+                        return broker.CountSearchResults(criteria, request.ShowActiveOnly);
                     },
                     delegate(WorklistItemSearchCriteria[] criteria, SearchResultPage page)
                     {
-                        return broker.Search(criteria, page, request.ShowActiveOnly);
+                        return broker.GetSearchResults(criteria, page, request.ShowActiveOnly);
                     });
 
             return helper.Query(request);
@@ -103,15 +103,13 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         /// <param name="request"></param>
         /// <returns></returns>
         [ReadOperation]
-        public GetWorklistItemsResponse GetWorklistItems(GetWorklistItemsRequest request)
+        public GetWorklistItemsResponse<ModalityWorklistItem> GetWorklistItems(GetWorklistItemsRequest request)
         {
             ModalityWorkflowAssembler assembler = new ModalityWorkflowAssembler();
 
-            IList items = request.WorklistRef == null
-                  ? GetWorklistItems(request.WorklistType)
-                  : GetWorklistItems(request.WorklistRef);
+            IList items = GetWorklistItemsHelper(request);
 
-            return new GetWorklistItemsResponse(
+            return new GetWorklistItemsResponse<ModalityWorklistItem>(
                 CollectionUtils.Map<WorklistItem, ModalityWorklistItem, List<ModalityWorklistItem>>(
                     items,
                     delegate(WorklistItem queryResult)
@@ -128,9 +126,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         [ReadOperation]
         public GetWorklistItemCountResponse GetWorklistItemCount(GetWorklistItemCountRequest request)
         {
-            int count = request.WorklistRef == null
-                            ? GetWorklistItemCount(request.WorklistType)
-                            : GetWorklistItemCount(request.WorklistRef);
+            int count = GetWorklistItemCountHelper(request);
 
             return new GetWorklistItemCountResponse(count);
         }

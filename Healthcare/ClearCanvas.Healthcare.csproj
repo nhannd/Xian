@@ -77,32 +77,35 @@
     <Compile Include="Alert\IAlert.cs" />
     <Compile Include="Alert\LanguageAlert.cs" />
     <Compile Include="Alert\NoteAlert.cs" />
+    <Compile Include="Brokers\IWorklistItemBroker.cs" />
+    <Compile Include="ReportingProtocolWorklists.cs" />
     <Compile Include="ExternalPractitionerContactPoint.cs" />
+    <Compile Include="IWorklistQueryContext.cs" />
+    <Compile Include="MinMaxHelper.cs" />
     <Compile Include="OrderNote.cs" />
     <Compile Include="PerformingGroup.cs" />
     <Compile Include="ProcedureBuilder.cs" />
     <Compile Include="ProcedureStepSchedulingSearchCriteria.cs" />
     <Compile Include="ReadingGroup.cs" />
-    <Compile Include="RegistrationProtocolWorklist.cs" />
-    <Compile Include="RegistrationRejectedProtocolWorklist.cs" />
-    <Compile Include="RegistrationToBeScheduledWorklist.cs" />
+    <Compile Include="RegistrationProtocolWorklists.cs" />
     <Compile Include="ProtocolAssignmentStep.cs" />
     <Compile Include="ProtocolProcedureStepSearchCriteria.cs" />
     <Compile Include="ProtocolResolutionStep.cs" />
-    <Compile Include="RegistrationWorklist.cs" />
     <Compile Include="RelevanceGroup.cs" />
-    <Compile Include="ReportingWorklist.cs" />
+    <Compile Include="ReportingWorklists.cs" />
     <Compile Include="ResultCommunicationMode.cs" />
     <Compile Include="ResultRecipient.cs" />
-    <Compile Include="TechnologistWorklist.cs" />
+    <Compile Include="TechnologistWorklists.cs" />
     <Compile Include="Tests\TestExtensionFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />
+    <Compile Include="Tests\WorklistTimePointTests.cs" />
     <Compile Include="Workflow\Reporting\ReportingWorkflowSettings.cs" />
     <Compile Include="Workflow\Reporting\ReportingWorkflowSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ReportingWorkflowSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="WorklistFilters.cs" />
     <Compile Include="WorklistItemBase.cs" />
     <Compile Include="WorklistItemSearchCriteria.cs" />
     <Compile Include="ReportingWorklistItemSearchCriteria.cs" />
@@ -124,10 +127,6 @@
     <Compile Include="ProtocolProcedureStep.cs" />
     <Compile Include="ProtocolStatus.cs" />
     <Compile Include="PublicationStep.cs" />
-    <Compile Include="RegistrationCompletedProtocolWorklist.cs" />
-    <Compile Include="RegistrationPendingProtocolWorklist.cs" />
-    <Compile Include="RegistrationSuspendedProtocolWorklist.cs" />
-    <Compile Include="ReportingToBeProtocolledWorklist.cs" />
     <Compile Include="Laterality.cs" />
     <Compile Include="ReportPartStatus.cs" />
     <Compile Include="ReportStatus.cs" />
@@ -145,14 +144,9 @@
     <Compile Include="PatientReconciliation\PatientProfileMatch.cs" />
     <Compile Include="PatientReconciliation\PatientReconciliationStrategyExtensionPoint.cs" />
     <Compile Include="PatientNote.cs" />
-    <Compile Include="RegistrationCancelledWorklist.cs" />
-    <Compile Include="RegistrationCheckedInWorklist.cs" />
-    <Compile Include="RegistrationCompletedWorklist.cs" />
-    <Compile Include="RegistrationInProgressWorklist.cs" />
-    <Compile Include="RegistrationScheduledWorklist.cs" />
+    <Compile Include="RegistrationWorklists.cs" />
     <Compile Include="Report.cs" />
     <Compile Include="ReportPart.cs" />
-    <Compile Include="ReportingToBeReportedWorklist.cs" />
     <Compile Include="ProcedureStatus.cs" />
     <Compile Include="ProcedureTypeGroup.cs" />
     <Compile Include="SR.Designer.cs">
@@ -161,12 +155,6 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="StaffType.cs" />
-    <Compile Include="TechnologistCancelledWorklist.cs" />
-    <Compile Include="TechnologistCheckedInWorklist.cs" />
-    <Compile Include="TechnologistCompletedWorklist.cs" />
-    <Compile Include="TechnologistInProgressWorklist.cs" />
-    <Compile Include="TechnologistScheduledWorklist.cs" />
-    <Compile Include="TechnologistUndocumentedWorklist.cs" />
     <Compile Include="Tests\TestMimeDocumentFactory.cs" />
     <Compile Include="Tests\TestOrderAttachmentFactory.cs" />
     <Compile Include="Tests\TestDiagnosticServiceFactory.cs" />
@@ -180,17 +168,16 @@
     <Compile Include="VisitNumber.cs" />
     <Compile Include="Workflow\CancelOrderOperation.cs" />
     <Compile Include="Workflow\Modality\WorklistItem.cs" />
-    <Compile Include="Workflow\Modality\Worklists.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Address.cs" />
     <Compile Include="AddressType.cs" />
     <Compile Include="Brokers\IAccessionNumberBroker.cs" />
-    <Compile Include="Brokers\IRegistrationWorklistBroker.cs" />
-    <Compile Include="Brokers\IModalityWorklistBroker.cs" />
+    <Compile Include="Brokers\IRegistrationWorklistItemBroker.cs" />
+    <Compile Include="Brokers\IModalityWorklistItemBroker.cs" />
     <Compile Include="Brokers\IModalityProcedureStepBroker.cs" />
     <Compile Include="Brokers\IPatientProfileBroker.cs" />
     <Compile Include="Brokers\IReportingProcedureStepBroker.cs" />
-    <Compile Include="Brokers\IReportingWorklistBroker.cs" />
+    <Compile Include="Brokers\IReportingWorklistItemBroker.cs" />
     <Compile Include="ContactPerson.cs" />
     <Compile Include="ContactPersonRelationship.cs" />
     <Compile Include="ContactPersonType.cs" />
@@ -243,15 +230,15 @@
     <Compile Include="Workflow\ProtocollingOperations.cs" />
     <Compile Include="Workflow\Registration\Operation.cs" />
     <Compile Include="Workflow\Registration\WorklistItem.cs" />
-    <Compile Include="Workflow\Registration\Worklists.cs" />
     <Compile Include="IWorklist.cs" />
     <Compile Include="Workflow\Modality\Operations.cs" />
     <Compile Include="Workflow\Reporting\Operations.cs" />
     <Compile Include="Workflow\Reporting\WorklistItem.cs" />
-    <Compile Include="Workflow\Reporting\Worklists.cs" />
     <Compile Include="Worklist.cs" />
-    <Compile Include="WorklistProcedureTypeGroupClassAttribute.cs" />
+    <Compile Include="WorklistAttributes.cs" />
     <Compile Include="WorklistSearchCriteria.cs" />
+    <Compile Include="WorklistTimePoint.cs" />
+    <Compile Include="WorklistTimeRange.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

@@ -35,20 +35,40 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Hibernate.Hql
 {
+    public enum HqlJoinMode
+    {
+        Inner,
+        Right,
+        Left
+    }
+
     public class HqlJoin : HqlElement
     {
-        private string _alias;
-        private string _source;
+        private readonly string _alias;
+        private readonly string _source;
+        private readonly HqlJoinMode _mode;
 
-        public HqlJoin(string alias, string source)
+        public HqlJoin(string source, string alias)
+            :this(source, alias, HqlJoinMode.Inner)
         {
-            _alias = alias;
+        }
+
+        public HqlJoin(string source, string alias, HqlJoinMode mode)
+        {
             _source = source;
+            _alias = alias;
+            _mode = mode;
         }
 
         public override string Hql
         {
-            get { return string.Format("join {0} {1}", _source, _alias); }
+            get
+            {
+                if (_mode == HqlJoinMode.Inner)
+                    return string.Format("join {0} {1}", _source, _alias);
+                else
+                    return string.Format("{0} join {1} {2}", _mode.ToString().ToLower(), _source, _alias);
+            }
         }
     }
 }

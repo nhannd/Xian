@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Healthcare;
 using NUnit.Framework;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -85,7 +86,9 @@ namespace ClearCanvas.Healthcare.Tests
             Assert.AreEqual(visit, order.Visit);
             Assert.AreEqual(ds, order.DiagnosticService);
             Assert.AreEqual(scheduleTime, order.SchedulingRequestTime);
-            Assert.AreEqual(scheduleTime, order.ScheduledStartTime);    // because the order was scheduled
+            Assert.AreEqual(null, order.ScheduledStartTime);    // because the order has not been scheduled
+            Assert.AreEqual(null, order.StartTime);    // because the order has not been started
+            Assert.AreEqual(null, order.EndTime);    // because the order has not been completed
             Assert.AreEqual(orderingPrac, order.OrderingPractitioner);
             Assert.AreEqual(facility, order.OrderingFacility);
             Assert.AreEqual(OrderPriority.R, order.Priority);
@@ -106,17 +109,6 @@ namespace ClearCanvas.Healthcare.Tests
                     CheckStatus(ActivityStatus.SC, mps);
                 }
             }
-
-
-            // check that scheduling time was propagated to all procedures and procedure steps
-            foreach (Procedure rp in order.Procedures)
-            {
-                Assert.AreEqual(scheduleTime, rp.ScheduledStartTime, "incorrect RP scheduled start time");
-                foreach (ProcedureStep ps in rp.ProcedureSteps)
-                {
-                    Assert.AreEqual(scheduleTime, ps.Scheduling.StartTime, "incorrect PS scheduled start time");
-                }
-            }
         }
 
         /// <summary>
@@ -127,13 +119,12 @@ namespace ClearCanvas.Healthcare.Tests
         public void ScheduleProcedureStep()
         {
             // create an unscheduled order
-            Order order = TestOrderFactory.CreateOrder(1, 1, false);
+            Order order = TestOrderFactory.CreateOrder(1, 1, true);
 
             DateTime scheduleTime = DateTime.Now;
 
-            // scheduled the check-in step
-            Procedure rp = CollectionUtils.FirstElement<Procedure>(order.Procedures);
-            ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
+            Procedure rp = CollectionUtils.FirstElement(order.Procedures);
+            ProcedureStep step = CollectionUtils.FirstElement(rp.ProcedureSteps);
             step.Schedule(scheduleTime);
 
             Assert.AreEqual(scheduleTime, step.Scheduling.StartTime);
@@ -175,13 +166,13 @@ namespace ClearCanvas.Healthcare.Tests
         [Test]
         public void RescheduleEarlier()
         {
-            Order order = TestOrderFactory.CreateOrder(2, 2, true);
+            Order order = TestOrderFactory.CreateOrder(2, 2, true, true);
 
             DateTime originalTime = (DateTime)order.ScheduledStartTime;
             DateTime newTime = originalTime - TimeSpan.FromDays(1);
 
-            Procedure rp = CollectionUtils.FirstElement<Procedure>(order.Procedures);
-            ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
+            Procedure rp = CollectionUtils.FirstElement(order.Procedures);
+            ProcedureStep step = CollectionUtils.FirstElement(rp.ProcedureSteps);
             step.Schedule(newTime);
 
             Assert.AreEqual(newTime, step.Scheduling.StartTime);
@@ -198,13 +189,13 @@ namespace ClearCanvas.Healthcare.Tests
         [Test]
         public void RescheduleLater()
         {
-            Order order = TestOrderFactory.CreateOrder(2, 2, true);
+            Order order = TestOrderFactory.CreateOrder(2, 2, true, true);
 
             DateTime originalTime = (DateTime)order.ScheduledStartTime;
             DateTime newTime = originalTime + TimeSpan.FromDays(1);
 
-            Procedure rp = CollectionUtils.FirstElement<Procedure>(order.Procedures);
-            ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
+            Procedure rp = CollectionUtils.FirstElement(order.Procedures);
+            ProcedureStep step = CollectionUtils.FirstElement(rp.ProcedureSteps);
             step.Schedule(newTime);
 
             Assert.AreEqual(newTime, step.Scheduling.StartTime);
@@ -222,12 +213,19 @@ namespace ClearCanvas.Healthcare.Tests
         public void CancelOrderFromScheduled()
         {
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
+            CheckStatus(OrderStatus.SC, order);
+
             order.Cancel(_defaultCancelReason);
 
             CheckStatus(OrderStatus.CA, order);
+            Assert.IsNull(order.StartTime);
+            Assert.IsNotNull(order.EndTime);
+
             foreach (Procedure rp in order.Procedures)
             {
                 CheckStatus(ProcedureStatus.CA, rp);
+                Assert.IsNull(rp.StartTime);
+                Assert.IsNotNull(rp.EndTime);
                 foreach (ProcedureStep step in rp.ProcedureSteps)
                 {
                     CheckStatus(ActivityStatus.DC, step);
@@ -244,8 +242,8 @@ namespace ClearCanvas.Healthcare.Tests
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
             // put the order in progress
-            Procedure rp = CollectionUtils.FirstElement<Procedure>(order.Procedures);
-            ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
+            Procedure rp = CollectionUtils.FirstElement(order.Procedures);
+            ProcedureStep step = CollectionUtils.FirstElement(rp.ProcedureSteps);
             step.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
 
             try
@@ -280,14 +278,21 @@ namespace ClearCanvas.Healthcare.Tests
 
             order.Discontinue(_defaultCancelReason);
 
-            // order is discontinued
-            CheckStatus(OrderStatus.DC, order);
-
             // rp 2 is canceled
             CheckStatus(ProcedureStatus.CA, rp2);
+            Assert.IsNull(rp2.StartTime);   // rp2 was never started
+            Assert.IsNotNull(rp2.EndTime);   
 
             // rp 1 is still in progress
             CheckStatus(ProcedureStatus.IP, rp1);
+            Assert.IsNotNull(rp1.StartTime);
+            Assert.IsNull(rp1.EndTime);
+
+            // order is discontinued
+            CheckStatus(OrderStatus.DC, order);
+            Assert.IsNotNull(order.StartTime);
+            Assert.IsNotNull(order.EndTime);   // end-time is set because order is discontinued, even though rp1 is still in progress
+
         }
 
         /// <summary>
@@ -307,12 +312,18 @@ namespace ClearCanvas.Healthcare.Tests
             // start and discontinue rp1
             rp1.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(StaffType.STEC));
             rp1.Discontinue();
+            Assert.IsNotNull(rp1.StartTime);
+            Assert.IsNotNull(rp1.EndTime);
 
             // cancel rp2
             rp2.Cancel();
+            Assert.IsNull(rp2.StartTime);
+            Assert.IsNotNull(rp2.EndTime);
 
             // order should be discontinued
             CheckStatus(OrderStatus.DC, order);
+            Assert.IsNotNull(order.StartTime);
+            Assert.IsNotNull(order.EndTime);
         }
 
         /// <summary>
@@ -326,9 +337,13 @@ namespace ClearCanvas.Healthcare.Tests
             foreach (Procedure rp in order.Procedures)
             {
                 rp.Cancel();
+                Assert.IsNull(rp.StartTime);
+                Assert.IsNotNull(rp.EndTime);
             }
 
             CheckStatus(OrderStatus.CA, order);
+            Assert.IsNull(order.StartTime);
+            Assert.IsNotNull(order.EndTime);
         }
 
         /// <summary>
@@ -341,16 +356,58 @@ namespace ClearCanvas.Healthcare.Tests
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
             // put the order in progress
-            Procedure rp = CollectionUtils.FirstElement<Procedure>(order.Procedures);
-            ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
+            Procedure rp = CollectionUtils.FirstElement(order.Procedures);
+            ProcedureStep step = CollectionUtils.FirstElement(rp.ProcedureSteps);
             step.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
 
             // procedure is in progress
             CheckStatus(ProcedureStatus.IP, rp);
+            Assert.IsNotNull(rp.StartTime);
 
             // order is in progress
             CheckStatus(OrderStatus.IP, order);
+            Assert.IsNotNull(order.StartTime);
         }
+
+        /// <summary>
+        /// Verify that an order and procedure automatically move to the CM status when a <see cref="PublicationStep"/>
+        /// is completed, and that the order is still completed even if another procedure was discontinued.
+        /// </summary>
+        [Test]
+        public void AutoCompleteOrderProcedure()
+        {
+            Order order = TestOrderFactory.CreateOrder(2, 1, true);
+            // copy req procs to a list so we can access them by index
+            List<Procedure> reqProcs = new List<Procedure>(
+                new TypeSafeEnumerableWrapper<Procedure>(order.Procedures));
+            Procedure rp1 = reqProcs[0];
+            Procedure rp2 = reqProcs[1];
+
+
+            // cancel rp2
+            rp2.Cancel();
+
+            // complete rp1 and publish it
+            rp1.ModalityProcedureSteps[0].Complete(TestStaffFactory.CreateStaff(StaffType.STEC));
+
+            PublicationStep pub1 = new PublicationStep();
+            rp1.AddProcedureStep(pub1);
+            
+            pub1.Complete(TestStaffFactory.CreateStaff(StaffType.PRAD));
+
+            CheckStatus(ProcedureStatus.CA, rp2);
+            Assert.IsNull(rp2.StartTime);
+            Assert.IsNotNull(rp2.EndTime);
+
+            CheckStatus(ProcedureStatus.CM, rp1);
+            Assert.IsNotNull(rp1.StartTime);
+            Assert.IsNotNull(rp1.EndTime);
+
+            CheckStatus(OrderStatus.CM, order);
+            Assert.IsNotNull(rp1.StartTime);
+            Assert.IsNotNull(rp1.EndTime);
+        }
+
 
         /// <summary>
         /// Verify that when a procedure is cancelled, all steps are discontinued.
@@ -367,11 +424,15 @@ namespace ClearCanvas.Healthcare.Tests
 
             rp1.Cancel();
             CheckStatus(ProcedureStatus.CA, rp1);
+            Assert.IsNull(rp1.StartTime);
+            Assert.IsNotNull(rp1.EndTime);
 
             foreach (ProcedureStep step in rp1.ProcedureSteps)
             {
                 // all steps were scheduled, so they should all be discontinued
                 CheckStatus(ActivityStatus.DC, step);
+                Assert.IsNull(step.StartTime);
+                Assert.IsNotNull(step.EndTime);
             }
         }
 
@@ -385,7 +446,7 @@ namespace ClearCanvas.Healthcare.Tests
             {
                 Order order = TestOrderFactory.CreateOrder(1, 1, true);
 
-                Procedure rp = CollectionUtils.FirstElement<Procedure>(order.Procedures);
+                Procedure rp = CollectionUtils.FirstElement(order.Procedures);
                 rp.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(StaffType.STEC));
 
                 CheckStatus(ProcedureStatus.IP, rp);
@@ -424,13 +485,22 @@ namespace ClearCanvas.Healthcare.Tests
             rp1.Discontinue();
 
             CheckStatus(ProcedureStatus.DC, rp1);
+            Assert.IsNotNull(rp1.StartTime);
+            Assert.IsNotNull(rp1.EndTime);
 
             // expect scheduled step was discontinued
             CheckStatus(ActivityStatus.DC, rp1.ModalityProcedureSteps[2]);
+            Assert.IsNull(rp1.ModalityProcedureSteps[2].StartTime);
+            Assert.IsNotNull(rp1.ModalityProcedureSteps[2].EndTime);
 
             // expect other steps unchanged
             CheckStatus(ActivityStatus.CM, rp1.ModalityProcedureSteps[1]);
+            Assert.IsNotNull(rp1.ModalityProcedureSteps[1].StartTime);
+            Assert.IsNotNull(rp1.ModalityProcedureSteps[1].EndTime);
+
             CheckStatus(ActivityStatus.IP, rp1.ModalityProcedureSteps[0]);
+            Assert.IsNotNull(rp1.ModalityProcedureSteps[0].StartTime);
+            Assert.IsNull(rp1.ModalityProcedureSteps[0].EndTime);
         }
 
         /// <summary>
@@ -441,15 +511,20 @@ namespace ClearCanvas.Healthcare.Tests
         {
             Order order = TestOrderFactory.CreateOrder(1, 1, true);
 
-            Procedure rp1 = CollectionUtils.FirstElement<Procedure>(order.Procedures);
+            Procedure rp1 = CollectionUtils.FirstElement(order.Procedures);
             ModalityProcedureStep mps1 = rp1.ModalityProcedureSteps[0];
             CheckStatus(ActivityStatus.SC, mps1);
 
             mps1.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
 
             CheckStatus(ActivityStatus.IP, mps1);
+            Assert.IsNotNull(mps1.StartTime);
+
             CheckStatus(ProcedureStatus.IP, rp1);
+            Assert.IsNotNull(rp1.StartTime);
+
             CheckStatus(OrderStatus.IP, order);
+            Assert.IsNotNull(order.StartTime);
         }
 
         /// <summary>
@@ -461,15 +536,23 @@ namespace ClearCanvas.Healthcare.Tests
         {
             Order order = TestOrderFactory.CreateOrder(1, 1, true);
 
-            Procedure rp1 = CollectionUtils.FirstElement<Procedure>(order.Procedures);
+            Procedure rp1 = CollectionUtils.FirstElement(order.Procedures);
             ModalityProcedureStep mps1 = rp1.ModalityProcedureSteps[0];
             CheckStatus(ActivityStatus.SC, mps1);
 
             mps1.Complete(TestStaffFactory.CreateStaff(StaffType.STEC));
 
             CheckStatus(ActivityStatus.CM, mps1);
+            Assert.IsNotNull(mps1.StartTime);
+            Assert.IsNotNull(mps1.EndTime);
+
             CheckStatus(ProcedureStatus.IP, rp1);
+            Assert.IsNotNull(rp1.StartTime);
+            Assert.IsNull(rp1.EndTime);
+
             CheckStatus(OrderStatus.IP, order);
+            Assert.IsNotNull(order.StartTime);
+            Assert.IsNull(order.EndTime);
         }
 
         /// <summary>
@@ -480,7 +563,7 @@ namespace ClearCanvas.Healthcare.Tests
         public void CompleteProcedureStepFromInProgress()
         {
             Order order = TestOrderFactory.CreateOrder(1, 1, true);
-            Procedure rp1 = CollectionUtils.FirstElement<Procedure>(order.Procedures);
+            Procedure rp1 = CollectionUtils.FirstElement(order.Procedures);
             ModalityProcedureStep mps1 = rp1.ModalityProcedureSteps[0];
             CheckStatus(ActivityStatus.SC, mps1);
 
@@ -488,11 +571,19 @@ namespace ClearCanvas.Healthcare.Tests
 
             CheckStatus(ActivityStatus.IP, mps1);
 
-            rp1.ModalityProcedureSteps[0].Complete();
+            mps1.Complete();
 
             CheckStatus(ActivityStatus.CM, mps1);
+            Assert.IsNotNull(mps1.StartTime);
+            Assert.IsNotNull(mps1.EndTime);
+
             CheckStatus(ProcedureStatus.IP, rp1);
+            Assert.IsNotNull(rp1.StartTime);
+            Assert.IsNull(rp1.EndTime);
+
             CheckStatus(OrderStatus.IP, order);
+            Assert.IsNotNull(order.StartTime);
+            Assert.IsNull(order.EndTime);
         }
 
         /// <summary>
@@ -507,16 +598,22 @@ namespace ClearCanvas.Healthcare.Tests
 
             CheckStatus(OrderStatus.SC, order);
 
-            Procedure rp1 = CollectionUtils.FirstElement<Procedure>(order.Procedures);
+            Procedure rp1 = CollectionUtils.FirstElement(order.Procedures);
             CheckStatus(ProcedureStatus.SC, rp1);
 
             rp1.ModalityProcedureSteps[0].Discontinue();
             CheckStatus(ActivityStatus.DC, rp1.ModalityProcedureSteps[0]);
+            Assert.IsNull(rp1.ModalityProcedureSteps[0].StartTime);
+            Assert.IsNotNull(rp1.ModalityProcedureSteps[0].EndTime);
 
             // rp and order status unchanged
             CheckStatus(ProcedureStatus.SC, rp1);
+            Assert.IsNull(rp1.StartTime);
+            Assert.IsNull(rp1.EndTime);
+
             CheckStatus(OrderStatus.SC, order);
-            Assert.IsNull(rp1.ProcedureCheckIn.CheckOutTime);
+            Assert.IsNull(order.StartTime);
+            Assert.IsNull(order.EndTime);
         }
 
         /// <summary>
@@ -538,9 +635,13 @@ namespace ClearCanvas.Healthcare.Tests
                     CheckStatus(ActivityStatus.DC, step);
                 }
                 CheckStatus(ProcedureStatus.DC, rp);
+                Assert.IsNull(rp.StartTime);
+                Assert.IsNotNull(rp.EndTime);
             }
 
             CheckStatus(OrderStatus.DC, order);
+            Assert.IsNull(order.StartTime);
+            Assert.IsNotNull(order.EndTime);
         }
 
         #region Helper methods

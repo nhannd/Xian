@@ -77,23 +77,24 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            if (_isNew)
-            {
-                _facilityDetail = new FacilityDetail();
-            }
-            else
-            {
-                Platform.GetService<IFacilityAdminService>(
-                    delegate(IFacilityAdminService service)
-                    {
-                        GetFacilityEditFormDataResponse formResponse = service.GetFacilityEditFormData(new GetFacilityEditFormDataRequest());
-                        _informationAuthorityChoices = formResponse.InformationAuthorityChoices;
+            Platform.GetService<IFacilityAdminService>(
+                delegate(IFacilityAdminService service)
+                {
+                    GetFacilityEditFormDataResponse formResponse = service.GetFacilityEditFormData(new GetFacilityEditFormDataRequest());
+                    _informationAuthorityChoices = formResponse.InformationAuthorityChoices;
 
+                    if (_isNew)
+                    {
+                        _facilityDetail = new FacilityDetail();
+                    }
+                    else
+                    {
                         LoadFacilityForEditResponse response = service.LoadFacilityForEdit(new LoadFacilityForEditRequest(_facilityRef));
                         _facilityRef = response.FacilityRef;
                         _facilityDetail = response.FacilityDetail;
-                    });
-            }
+                    }
+                });
+
             
             base.Start();
         }

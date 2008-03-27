@@ -30,28 +30,12 @@ namespace ClearCanvas.Ris.Application.Services {
         [global::System.Configuration.SettingsDescriptionAttribute("The facility code of the facility at which the user is currenlty working")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WorkingFacility {
+        public string WorkingFacilityCode {
             get {
-                return ((string)(this["WorkingFacility"]));
+                return ((string)(this["WorkingFacilityCode"]));
             }
             set {
-                this["WorkingFacility"] = value;
-            }
-        }
-        
-        /// <summary>
-        /// The information authority code associated with the working facility
-        /// </summary>
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("The information authority code associated with the working facility")]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WorkingInformationAuthority {
-            get {
-                return ((string)(this["WorkingInformationAuthority"]));
-            }
-            set {
-                this["WorkingInformationAuthority"] = value;
+                this["WorkingFacilityCode"] = value;
             }
         }
     }

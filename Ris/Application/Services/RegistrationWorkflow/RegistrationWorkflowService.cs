@@ -54,13 +54,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public TextQueryResponse<RegistrationWorklistItem> Search(SearchRequest request)
         {
-            WorkingFacilitySettings workingFacilitySettings = new WorkingFacilitySettings();
-            InformationAuthorityEnum workingInformationAuthority =
-                PersistenceContext.GetBroker<IEnumBroker>().Find<InformationAuthorityEnum>(
-                    workingFacilitySettings.WorkingInformationAuthority);
-
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
-            IRegistrationWorklistBroker broker = PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
+            IRegistrationWorklistItemBroker broker = PersistenceContext.GetBroker<IRegistrationWorklistItemBroker>();
 
             WorklistTextQueryHelper<WorklistItem, RegistrationWorklistItem> helper = 
                 new WorklistTextQueryHelper<WorklistItem, RegistrationWorklistItem>(
@@ -70,12 +65,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     },
                     delegate (WorklistItemSearchCriteria[] criteria)
                     {
-                        return broker.SearchCountApprox(criteria,request.ShowActiveOnly, workingInformationAuthority);
+                        return broker.CountSearchResultsApprox(criteria,request.ShowActiveOnly, this.WorkingFacility);
                     },
                     delegate(WorklistItemSearchCriteria[] criteria, SearchResultPage page)
                     {
-                        // paging is ignored because the broker does not support it
-                        return broker.Search(criteria, request.ShowActiveOnly, workingInformationAuthority);
+                        return broker.GetSearchResults(criteria, page, request.ShowActiveOnly, this.WorkingFacility);
                     });
 
             return helper.Query(request);
@@ -109,15 +103,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
-        public GetWorklistItemsResponse GetWorklistItems(GetWorklistItemsRequest request)
+        public GetWorklistItemsResponse<RegistrationWorklistItem> GetWorklistItems(GetWorklistItemsRequest request)
         {
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
 
-            IList items = request.WorklistRef == null
-                              ? GetWorklistItems(request.WorklistType)
-                              : GetWorklistItems(request.WorklistRef);
+            IList items = GetWorklistItemsHelper(request);
 
-            return new GetWorklistItemsResponse(
+            return new GetWorklistItemsResponse<RegistrationWorklistItem>(
                 CollectionUtils.Map<WorklistItem, RegistrationWorklistItem, List<RegistrationWorklistItem>>(
                     items,
                     delegate(WorklistItem item)
@@ -129,9 +121,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public GetWorklistItemCountResponse GetWorklistItemCount(GetWorklistItemCountRequest request)
         {
-            int count = request.WorklistRef == null
-                            ? GetWorklistItemCount(request.WorklistType)
-                            : GetWorklistItemCount(request.WorklistRef);
+            int count = GetWorklistItemCountHelper(request);
 
             return new GetWorklistItemCountResponse(count);
         }

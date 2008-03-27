@@ -85,6 +85,7 @@ namespace ClearCanvas.Ris.Application.Services
                     // TODO:  
                     WorklistTokenInfo tokenInfo = tokens[worklistTypeName];
                     _worklistTypeMapping.Add(tokenInfo.Name, worklistType);
+                    _worklistTypeMapping.Add(worklistType.FullName, worklistType);
                 }
                 catch (KeyNotFoundException)
                 {

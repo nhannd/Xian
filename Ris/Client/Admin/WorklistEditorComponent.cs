@@ -39,6 +39,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using ClearCanvas.Common.Utilities;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -56,6 +57,8 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(WorklistEditorComponentViewExtensionPoint))]
     public class WorklistEditorComponent : ApplicationComponent
     {
+        #region Helper classes
+
         class UserTable : Table<string>
         {
             public UserTable()
@@ -64,6 +67,86 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+        class DummyItem
+        {
+            private readonly string _displayString;
+
+            public DummyItem(string displayString)
+            {
+                _displayString = displayString;
+            }
+
+            public override string ToString()
+            {
+                return _displayString;
+            }
+        }
+
+        #endregion
+
+        #region Constants
+
+        private static readonly object _nullFilterItem = new DummyItem("(None)");
+        private static readonly object _workingFacilityItem = new DummyItem("(Working Facility)");
+        private static readonly object _portableItem = new DummyItem("Portable");
+        private static readonly object _nonPortableItem = new DummyItem("Non-portable");
+
+        private static readonly object[] _portableChoices = new object[] { _portableItem, _nonPortableItem };
+
+        private static readonly object Hours = new DummyItem("Hours");
+        private static readonly object Days = new DummyItem("Days");
+
+        private static readonly object[] _slidingScaleChoices = { Days, Hours };
+
+        private static readonly RelativeTime[] _slidingDayChoices = 
+            {
+                new RelativeTimeInDays(120),
+                new RelativeTimeInDays(90),
+                new RelativeTimeInDays(60),
+                new RelativeTimeInDays(45),
+                new RelativeTimeInDays(30),
+                new RelativeTimeInDays(21),
+                new RelativeTimeInDays(14),
+                new RelativeTimeInDays(7),
+                new RelativeTimeInDays(6),
+                new RelativeTimeInDays(5),
+                new RelativeTimeInDays(4),
+                new RelativeTimeInDays(3),
+                new RelativeTimeInDays(2),
+                new RelativeTimeInDays(1),
+                new RelativeTimeInDays(0),
+                new RelativeTimeInDays(-1),
+                new RelativeTimeInDays(-2),
+                new RelativeTimeInDays(-3),
+                new RelativeTimeInDays(-4),
+                new RelativeTimeInDays(-5),
+                new RelativeTimeInDays(-6),
+                new RelativeTimeInDays(-7),
+                new RelativeTimeInDays(-14),
+                new RelativeTimeInDays(-21),
+                new RelativeTimeInDays(-30),
+                new RelativeTimeInDays(-45),
+                new RelativeTimeInDays(-60),
+                new RelativeTimeInDays(-90),
+                new RelativeTimeInDays(-120)
+            };
+
+        private static readonly RelativeTime[] _slidingHourChoices = 
+            {
+                new RelativeTimeInHours(24),
+                new RelativeTimeInHours(18),
+                new RelativeTimeInHours(12),
+                new RelativeTimeInHours(8),
+                new RelativeTimeInHours(4),
+                new RelativeTimeInHours(0),
+                new RelativeTimeInHours(-4),
+                new RelativeTimeInHours(-8),
+                new RelativeTimeInHours(-12),
+                new RelativeTimeInHours(-18),
+                new RelativeTimeInHours(-24)
+            };
+
+        #endregion
 
         private readonly bool _isNew;
 
@@ -79,6 +162,25 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private UserTable _availableUsers;
         private UserTable _selectedUsers;
+
+
+        private ArrayList _facilityChoices;
+        private ArrayList _selectedFacilities;
+
+        private List<EnumValueInfo> _priorityChoices;
+        private List<EnumValueInfo> _patientClassChoices;
+        private ArrayList _selectedPortabilities;
+
+
+        private bool _startTimeChecked;
+        private bool _isFixedTimeWindow;
+        private bool _endTimeChecked;
+        private RelativeTime _slidingStartTime;
+        private RelativeTime _slidingEndTime;
+        private DateTime _fixedStartTime;
+        private DateTime _fixedEndTime;
+        private object _slidingScale;
+
 
         /// <summary>
         /// Constructor
@@ -105,11 +207,17 @@ namespace ClearCanvas.Ris.Client.Admin
             Platform.GetService<IWorklistAdminService>(
                 delegate(IWorklistAdminService service)
                 {
-                    GetWorklistEditFormDataRequest formDataRequest = new GetWorklistEditFormDataRequest();
-                    GetWorklistEditFormDataResponse formDataResponse = service.GetWorklistEditFormData(formDataRequest);
+                    GetWorklistEditFormDataResponse formDataResponse = service.GetWorklistEditFormData(new GetWorklistEditFormDataRequest());
 
                     _typeChoices = formDataResponse.WorklistTypes;
                     _availableUsers.Items.AddRange(formDataResponse.Users);
+
+                    _facilityChoices = new ArrayList();
+                    _facilityChoices.Add(_workingFacilityItem);
+                    _facilityChoices.AddRange(formDataResponse.FacilityChoices);
+
+                    _priorityChoices = formDataResponse.OrderPriorityChoices;
+                    _patientClassChoices = formDataResponse.PatientClassChoices;
 
                     if (_isNew)
                     {
@@ -125,7 +233,20 @@ namespace ClearCanvas.Ris.Client.Admin
 
                         _selectedProcedureTypeGroups.Items.AddRange(_editedItemDetail.ProcedureTypeGroups);
                         _selectedUsers.Items.AddRange(_editedItemDetail.Users);
+
+                        _selectedFacilities = new ArrayList();
+                        if (_editedItemDetail.FilterByWorkingFacility)
+                            _selectedFacilities.Add(_workingFacilityItem);
+                        _selectedFacilities.AddRange(_editedItemDetail.Facilities);
+
+                        _selectedPortabilities = new ArrayList();
+                        if (_editedItemDetail.Portabilities.Contains(true))
+                            _selectedPortabilities.Add(_portableItem);
+                        if(_editedItemDetail.Portabilities.Contains(false))
+                            _selectedPortabilities.Add(_nonPortableItem);
                     }
+
+                    InitializeTimeWindow();
 
                     ListProcedureTypeGroupsForWorklistCategoryRequest groupsRequest = new ListProcedureTypeGroupsForWorklistCategoryRequest(_editedItemDetail.WorklistType);
                     ListProcedureTypeGroupsForWorklistCategoryResponse groupsResponse = service.ListProcedureTypeGroupsForWorklistCategory(groupsRequest);
@@ -144,6 +265,48 @@ namespace ClearCanvas.Ris.Client.Admin
                 });
 
             base.Start();
+        }
+
+        private void InitializeTimeWindow()
+        {
+            // init both fixed and sliding times to "now"
+            _fixedStartTime = _fixedEndTime = Platform.Time;
+            _slidingStartTime = _slidingEndTime = new RelativeTimeInDays(0);
+
+            if(_editedItemDetail.StartTime != null)
+            {
+                _startTimeChecked = true;
+                if(_editedItemDetail.StartTime.FixedTime != null)
+                {
+                    _fixedStartTime = _editedItemDetail.StartTime.FixedTime.Value;
+                    _isFixedTimeWindow = true;
+                }
+
+                if (_editedItemDetail.StartTime.RelativeTime != null)
+                {
+                    _slidingStartTime = ConvertTimePointToRelativeTime(_editedItemDetail.StartTime);
+                }
+            }
+
+            if (_editedItemDetail.EndTime != null)
+            {
+                _endTimeChecked = true;
+                if (_editedItemDetail.EndTime.FixedTime != null)
+                {
+                    _fixedEndTime = _editedItemDetail.EndTime.FixedTime.Value;
+                    _isFixedTimeWindow = true;
+                }
+
+                if (_editedItemDetail.EndTime.RelativeTime != null)
+                {
+                    _slidingEndTime = ConvertTimePointToRelativeTime(_editedItemDetail.EndTime);
+                }
+            }
+
+            if(_slidingStartTime is RelativeTimeInHours || _slidingEndTime is RelativeTimeInHours)
+                _slidingScale = Hours;
+            else
+                _slidingScale = Days;
         }
 
         public override void Stop()
@@ -178,7 +341,6 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        #region Type
         public string Type
         {
             get { return _editedItemDetail.WorklistType; }
@@ -202,7 +364,6 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             get { return _isNew; }
         }
-        #endregion
 
         public ITable AvailableProcedureTypeGroups
         {
@@ -230,8 +391,289 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _selectedUsers; }
         }
 
-        #endregion
+        public object NullFilterItem
+        {
+            get { return _nullFilterItem; }
+        }
 
+        public IList FacilityChoices
+        {
+            get { return _facilityChoices; }
+        }
+
+        public string FormatFacility(object item)
+        {
+            if (item is FacilitySummary)
+            {
+                FacilitySummary facility = (FacilitySummary)item;
+                return facility.Code;
+            }
+            else
+                return item.ToString(); // place-holder items
+        }
+
+        public IList SelectedFacilities
+        {
+            get { return _selectedFacilities; }
+            set
+            {
+                if (!CollectionUtils.Equal(value, _selectedFacilities, false))
+                {
+                    _selectedFacilities = new ArrayList(value);
+                    this.Modified = true;
+                }
+            }
+        }
+
+        public IList PriorityChoices
+        {
+            get { return _priorityChoices; }
+        }
+
+        public IList SelectedPriorities
+        {
+            get { return _editedItemDetail.OrderPriorities; }
+            set
+            {
+                IList<EnumValueInfo> list = new TypeSafeListWrapper<EnumValueInfo>(value);
+                if (!CollectionUtils.Equal(list, _editedItemDetail.OrderPriorities, false))
+                {
+                    _editedItemDetail.OrderPriorities = new List<EnumValueInfo>(list);
+                    this.Modified = true;
+                }
+            }
+        }
+
+        public IList PatientClassChoices
+        {
+            get { return _patientClassChoices; }
+        }
+
+        public IList SelectedPatientClasses
+        {
+            get { return _editedItemDetail.PatientClasses; }
+            set
+            {
+                IList<EnumValueInfo> list = new TypeSafeListWrapper<EnumValueInfo>(value);
+                if (!CollectionUtils.Equal(list, _editedItemDetail.PatientClasses, false))
+                {
+                    _editedItemDetail.PatientClasses = new List<EnumValueInfo>(list);
+                    this.Modified = true;
+                }
+            }
+        }
+
+        public IList PortableChoices
+        {
+            get { return _portableChoices; }
+        }
+
+        public IList SelectedPortabilities
+        {
+            get { return _selectedPortabilities; }
+            set
+            {
+                if (!CollectionUtils.Equal(value, _selectedPortabilities, false))
+                {
+                    _selectedPortabilities = new ArrayList(value);
+                    this.Modified = true;
+                }
+            }
+        }
+
+        public bool IsFixedTimeWindow
+        {
+            get { return _isFixedTimeWindow;  }
+            set
+            {
+                if (value != _isFixedTimeWindow)
+                {
+                    _isFixedTimeWindow = value;
+                    this.Modified = true;
+
+                    NotifyPropertyChanged("SlidingStartTimeEnabled");
+                    NotifyPropertyChanged("FixedStartTimeEnabled");
+                    NotifyPropertyChanged("SlidingEndTimeEnabled");
+                    NotifyPropertyChanged("FixedEndTimeEnabled");
+                    NotifyPropertyChanged("SlidingScaleEnabled");
+                }
+            }
+        }
+
+        public bool IsSlidingTimeWindow
+        {
+            get { return !_isFixedTimeWindow; }
+            set
+            {
+                // do nothing - the reciprocal IsFixedTimeWindow takes care of it
+            }
+        }
+
+        public bool FixedSlidingChoiceEnabled
+        {
+            get { return _startTimeChecked || _endTimeChecked; }
+        }
+
+        public bool StartTimeChecked
+        {
+            get { return _startTimeChecked; }
+            set
+            {
+                if(value != _startTimeChecked)
+                {
+                    _startTimeChecked = value;
+                    this.Modified = true;
+
+                    NotifyPropertyChanged("SlidingStartTimeEnabled");
+                    NotifyPropertyChanged("FixedStartTimeEnabled");
+                    NotifyPropertyChanged("FixedSlidingChoiceEnabled");
+                    NotifyPropertyChanged("SlidingScaleEnabled");
+                }
+            }
+        }
+
+        public bool SlidingStartTimeEnabled
+        {
+            get { return _startTimeChecked && !_isFixedTimeWindow; }
+        }
+
+        public bool FixedStartTimeEnabled
+        {
+            get { return _startTimeChecked && _isFixedTimeWindow; }
+        }
+
+        public bool EndTimeChecked
+        {
+            get { return _endTimeChecked; }
+            set
+            {
+                if (value != _endTimeChecked)
+                {
+                    _endTimeChecked = value;
+                    this.Modified = true;
+
+                    NotifyPropertyChanged("SlidingEndTimeEnabled");
+                    NotifyPropertyChanged("FixedEndTimeEnabled");
+                    NotifyPropertyChanged("FixedSlidingChoiceEnabled");
+                    NotifyPropertyChanged("SlidingScaleEnabled");
+                }
+            }
+        }
+
+        public bool SlidingEndTimeEnabled
+        {
+            get { return _endTimeChecked && !_isFixedTimeWindow; }
+        }
+
+        public bool FixedEndTimeEnabled
+        {
+            get { return _endTimeChecked && _isFixedTimeWindow; }
+        }
+
+        public DateTime FixedStartTime
+        {
+            get { return _fixedStartTime; }
+            set
+            {
+                if(_fixedStartTime != value)
+                {
+                    _fixedStartTime = value;
+                    this.Modified = true;
+                }
+            }
+        }
+
+        public DateTime FixedEndTime
+        {
+            get { return _fixedEndTime; }
+            set
+            {
+                if (_fixedEndTime != value)
+                {
+                    _fixedEndTime = value;
+                    this.Modified = true;
+                }
+            }
+        }
+
+        public bool SlidingScaleEnabled
+        {
+            get { return !_isFixedTimeWindow && (_startTimeChecked || _endTimeChecked); }
+        }
+
+        public IList SlidingScaleChoices
+        {
+            get { return _slidingScaleChoices; }
+        }
+
+        public object SlidingScale
+        {
+            get { return _slidingScale; }
+            set
+            {
+                if(value != _slidingScale)
+                {
+                    _slidingScale = value;
+                    NotifyPropertyChanged("SlidingStartTimeChoices");
+                    NotifyPropertyChanged("SlidingEndTimeChoices");
+
+                    if (_slidingScale == Hours)
+                    {
+                        _slidingStartTime = _slidingEndTime = new RelativeTimeInHours(0);
+                    }
+                    else
+                    {
+                        _slidingStartTime = _slidingEndTime = new RelativeTimeInDays(0);
+                    }
+
+                    NotifyPropertyChanged("SlidingStartTime");
+                    NotifyPropertyChanged("SlidingEndTime");
+                }
+            }
+        }
+
+        public IList SlidingStartTimeChoices
+        {
+            get { return new ArrayList(SlidingTimeChoices); }
+        }
+
+        public IList SlidingEndTimeChoices
+        {
+            get { return new ArrayList(SlidingTimeChoices); }
+        }
+
+        public RelativeTime SlidingStartTime
+        {
+            get
+            {
+                 return _slidingStartTime;
+            }
+            set
+            {
+                if(!Equals(value, _slidingStartTime))
+                {
+                    _slidingStartTime = value;
+                    this.Modified = true;
+                }
+            }
+        }
+
+        public RelativeTime SlidingEndTime
+        {
+            get
+            {
+                 return _slidingEndTime;
+            }
+            set
+            {
+                if (!Equals(value, _slidingEndTime))
+                {
+                    _slidingEndTime = value;
+                    this.Modified = true;
+                }
+            }
+        }
+        
         public void Accept()
         {
             if (this.HasValidationErrors)
@@ -245,8 +687,38 @@ namespace ClearCanvas.Ris.Client.Admin
                     _editedItemDetail.ProcedureTypeGroups.Clear();
                     _editedItemDetail.ProcedureTypeGroups.AddRange(_selectedProcedureTypeGroups.Items);
 
+                    _editedItemDetail.Facilities = new List<FacilitySummary>();
+                    _editedItemDetail.Facilities.AddRange(
+                        new TypeSafeListWrapper<FacilitySummary>(
+                            CollectionUtils.Select(_selectedFacilities, delegate(object f) { return f is FacilitySummary; })));
+                    _editedItemDetail.FilterByWorkingFacility = 
+                        CollectionUtils.Contains(_selectedFacilities, delegate(object f) { return f == _workingFacilityItem; });
+
+                    _editedItemDetail.Portabilities = CollectionUtils.Map<object, bool>(_selectedPortabilities,
+                        delegate(object item) { return item == _portableItem ? true : false; });
+
                     _editedItemDetail.Users.Clear();
                     _editedItemDetail.Users.AddRange(_selectedUsers.Items);
+
+                    if(_startTimeChecked)
+                    {
+                        if (_isFixedTimeWindow)
+                            _editedItemDetail.StartTime = new WorklistAdminDetail.TimePoint(_fixedStartTime, 1440);
+                        else
+                            _editedItemDetail.StartTime = ConvertRelativeTimeToTimePoint(_slidingStartTime);
+                    }
+                    else
+                        _editedItemDetail.StartTime = null;
+
+                    if(_endTimeChecked)
+                    {
+                        if (_isFixedTimeWindow)
+                            _editedItemDetail.EndTime = new WorklistAdminDetail.TimePoint(_fixedEndTime, 1440);
+                        else
+                            _editedItemDetail.EndTime = ConvertRelativeTimeToTimePoint(_slidingEndTime);
+                    }
+                    else
+                        _editedItemDetail.EndTime = null;
 
                     Platform.GetService<IWorklistAdminService>(
                         delegate(IWorklistAdminService service)
@@ -274,8 +746,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     ExceptionHandler.Report(e, SR.ExceptionSaveWorklist, this.Host.DesktopWindow,
                         delegate()
                         {
-                            this.ExitCode = ApplicationComponentExitCode.Error;
-                            this.Host.Exit();
+                            this.Exit(ApplicationComponentExitCode.Error);
                         });
                 }
             }
@@ -320,5 +791,40 @@ namespace ClearCanvas.Ris.Client.Admin
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
+
+        #endregion
+
+        private RelativeTime ConvertTimePointToRelativeTime(WorklistAdminDetail.TimePoint ts)
+        {
+            // resolution 1440 minutes per day
+            if (ts.Resolution == 1440)
+                return new RelativeTimeInDays(ts.RelativeTime.Value.Days);
+            else
+                return new RelativeTimeInHours(ts.RelativeTime.Value.Hours);
+        }
+
+        private WorklistAdminDetail.TimePoint ConvertRelativeTimeToTimePoint(RelativeTime rt)
+        {
+            // in days, use a resolution of days (1440 mintues per day)
+            if (rt is RelativeTimeInDays)
+                return new WorklistAdminDetail.TimePoint(TimeSpan.FromDays(rt.Value), 1440);
+
+            // in hours, use real-time resolution
+            // (this was a User Experience decision - that it would be more intuitive to have a real-time window, rather than nearest-hour)
+            if (rt is RelativeTimeInHours)
+                return new WorklistAdminDetail.TimePoint(TimeSpan.FromHours(rt.Value), 0);
+
+            // no other types are currently implemented
+            throw new NotImplementedException();
+        }
+
+        private IList SlidingTimeChoices
+        {
+            get
+            {
+                 return _slidingScale == Hours ? _slidingHourChoices : _slidingDayChoices;
+            }
+        }
+
     }
 }
