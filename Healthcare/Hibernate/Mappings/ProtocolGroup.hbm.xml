@@ -16,7 +16,7 @@
       <many-to-many column="ProcedureTypeGroupOID_" class="ProcedureTypeGroup" fetch="join"/>
     </set>
 
-    <list name="Codes" table="ProtocolGroupProtocolCodes_" lazy="true" access="nosetter.camelcase-underscore">
+    <list name="Codes" table="ProtocolGroupProtocolCode_" lazy="true" access="nosetter.camelcase-underscore">
       <key column="ProtocolGroupOID_"/>
       <index column="Index_"/>
       <many-to-many column="ProtocolCodeOID_" class="ClearCanvas.Healthcare.ProtocolCode, ClearCanvas.Healthcare" fetch="join"/>
