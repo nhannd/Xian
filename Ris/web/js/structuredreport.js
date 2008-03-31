@@ -1105,9 +1105,8 @@ var AnatomyForm = {
 		cordVesselsTable.bindItems([this._data[fetus]]);
 	},
 	
-	setAnatomyDefaults : function(fetus)
+	setAnatomyDefaults : function()
 	{
-		alert(fetus);
 		if(!this._data[this._fetus]) return;
 
 		var anatomyProperties = ["headShape", "posteriorHorns", "choroidPlexi", "cavumSepti", "cerebellum", "cisternaMagna", "nuchalFold", "eyes", "mouth", 
@@ -1122,7 +1121,7 @@ var AnatomyForm = {
 			}
 		}
 		
-		this.showFetus(fetus);
+		this.showFetus(this._fetus);
 	},
 
 	_onAnatomyChanged : function(show)
