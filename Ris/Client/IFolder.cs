@@ -178,6 +178,14 @@ namespace ClearCanvas.Ris.Client
         bool RemoveFolder(IFolder subFolder);
 
         /// <summary>
+        /// Replace a sub folder with another in its place.  The order of the subfolders is retained
+        /// </summary>
+        /// <param name="oldSubFolder"></param>
+        /// <param name="newSubFolder"></param>
+        /// <returns></returns>
+        bool ReplaceFolder(IFolder oldSubFolder, IFolder newSubFolder);
+
+        /// <summary>
         /// Gets a value indicating whether or not the folder is 'static'.
         /// </summary>
         /// <remarks>

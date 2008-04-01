@@ -331,6 +331,19 @@ namespace ClearCanvas.Ris.Client
         }
 
         /// <summary>
+        /// Replace a sub folder with another in its place.  The order of the subfolders is retained
+        /// </summary>
+        /// <param name="oldSubFolder"></param>
+        /// <param name="newSubFolder"></param>
+        /// <returns></returns>
+        public bool ReplaceFolder(IFolder oldSubFolder, IFolder newSubFolder)
+        {
+            int oldFolderIndex = _subfolders.IndexOf(oldSubFolder);
+            _subfolders.Insert(oldFolderIndex, newSubFolder);
+            return _subfolders.Remove(oldSubFolder);
+        }
+
+        /// <summary>
         /// Gets a value indicating whether or not the folder is 'static'.
         /// </summary>
         /// <remarks>

@@ -292,7 +292,7 @@ namespace ClearCanvas.Ris.Client
 
                 if (folderWithCurrentPath != null)
                 {
-                    // If this is not the leaf folder, no need to replace ContainerFolder with ContainerFolder
+                    // If this is not the leaf folder, no need to replace ContainerFolder with the current folder
                     // if the original leaf folder is NOT a container folder, do not replace.  It's okay to have two leaf folders with the same name
                     // Only replace if the original leaf folder is a container folder
                     if (isLeaf && folderWithCurrentPath is ContainerFolder && !(folder is ContainerFolder))
@@ -355,6 +355,13 @@ namespace ClearCanvas.Ris.Client
             folder.IconChanged -= FolderChangedEventHandler;
         }
 
+        private void ReplaceFolder(IFolder oldFolder, IFolder newFolder, IFolder parentFolder)
+        {
+            parentFolder.ReplaceFolder(oldFolder, newFolder);
+            oldFolder.TextChanged -= FolderChangedEventHandler;
+            oldFolder.IconChanged -= FolderChangedEventHandler;
+        }
+
         private void ReplaceFolder(IFolder oldFolder, IFolder newFolder)
         {
             foreach (IFolder subFolder in oldFolder.Subfolders)
@@ -370,8 +377,7 @@ namespace ClearCanvas.Ris.Client
 
             if (parentFolder != null)
             {
-                RemoveFolder(oldFolder, parentFolder);
-                AddFolder(newFolder, parentFolder);
+                ReplaceFolder(oldFolder, newFolder, parentFolder);
             }
             else
             {
