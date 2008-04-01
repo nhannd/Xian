@@ -1,7 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ConfirmationDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog" %>
 <%@ Register Src="ModalDialog.ascx" TagName="ModalDialog" TagPrefix="uc1" %>
-<uc1:ModalDialog ID="ModalDialog" runat="server" Title="" BackgroundCSS="CSSDefaultPopupDialogBacground">
+<uc1:ModalDialog ID="ModalDialog" runat="server" Title="" BackgroundCSS="CSSDefaultPopupDialogBackground">
     <ContentTemplate>
         <asp:Panel ID="Panel3" runat="server">
             <asp:Panel ID="Panel1" runat="server">

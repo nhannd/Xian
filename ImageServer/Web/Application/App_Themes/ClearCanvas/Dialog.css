@@ -1,7 +1,7 @@
-.CSSDefaultPopupDialogBacground
+.CSSDefaultPopupDialogBackground
 {
-   background-color:#000;
-   filter:alpha(opacity=85); opacity:0.85;
+	background-color: #345;
+	filter:alpha(opacity=50); opacity:0.5;
 }
 
 .CSSDefaultPopupDialogTitleBarLeft

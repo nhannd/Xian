@@ -51,7 +51,7 @@
         <asp:Panel ID="DummyPanel" runat="server" Height="10px" Style="left: 26px; position: absolute;
             top: -5px" Width="115px">
         </asp:Panel>
-        <cc1:ModalPopupExtender ID="ModalPopupExtender" runat="server" TargetControlID="DummyPanel" BackgroundCssClass="CSSDefaultPopupDialogBacground"
+        <cc1:ModalPopupExtender ID="ModalPopupExtender" runat="server" TargetControlID="DummyPanel" BackgroundCssClass="CSSDefaultPopupDialogBackground"
             PopupControlID="DialogContainer" PopupDragHandleControlID="TitleBarPanel" RepositionMode="None" 
             >
         </cc1:ModalPopupExtender>

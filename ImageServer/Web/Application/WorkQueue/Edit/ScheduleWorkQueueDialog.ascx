@@ -7,7 +7,7 @@
 <%@ Register Src="~/WorkQueue/WorkQueueItemListPanel.ascx" TagName="WorkQueueItemListPanel"
     TagPrefix="clearcanvas" %>
 <clearcanvas:modaldialog id="ModalDialog" runat="server" title="Schedule Work Queue Item"
-    backgroundcss="CSSDefaultPopupDialogBacground">
+    backgroundcss="CSSDefaultPopupDialogBackground">
 <ContentTemplate>
    
     <asp:Panel ID="Panel1" runat="server">

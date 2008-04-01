@@ -6,7 +6,7 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.Validators"
     TagPrefix="CCValidators" %>
-<clearcanvas:ModalDialog ID="ModalDialog1" runat="server" BackgroundCSS="CSSModalBackground"
+<clearcanvas:ModalDialog ID="ModalDialog1" runat="server" BackgroundCSS="CSSDefaultPopupDialogBackground"
     Width="450px">
     <ContentTemplate>
         <asp:Panel ID="Panel3" runat="server">

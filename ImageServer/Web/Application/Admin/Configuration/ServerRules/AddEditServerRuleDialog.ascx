@@ -12,7 +12,7 @@
     </Services>
 </asp:ScriptManagerProxy>
 
-<clearcanvas:ModalDialog ID="ModalDialog" runat="server" BackgroundCSS="CSSModalBackground" Width="700px">
+<clearcanvas:ModalDialog ID="ModalDialog" runat="server" BackgroundCSS="CSSDefaultPopupDialogBackground" Width="700px">
     <ContentTemplate>
         <asp:Panel runat="server">
             <ajaxToolkit:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"

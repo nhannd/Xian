@@ -11,7 +11,7 @@
         <asp:ServiceReference Path="~/Services/FilesystemInfoService.asmx" />
     </Services>
 </asp:ScriptManagerProxy>
-<clearcanvas:ModalDialog ID="ModalDialog" runat="server" BackgroundCSS="CSSModalBackground"
+<clearcanvas:ModalDialog ID="ModalDialog" runat="server" BackgroundCSS="CSSDefaultPopupDialogBackground"
     Width="450px">
     <ContentTemplate>
         <asp:Panel ID="Panel2" runat="server">
