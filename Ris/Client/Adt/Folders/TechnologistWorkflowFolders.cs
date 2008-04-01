@@ -39,7 +39,7 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 namespace ClearCanvas.Ris.Client.Adt.Folders
 {
     [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.TechnologistScheduledWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.TechnologistScheduledWorklist)]
     [FolderPath("Scheduled", true)]
     public class ScheduledTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.TechnologistCheckedInWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.TechnologistCheckedInWorklist)]
     [FolderPath("Checked In")]
     public class CheckedInTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
@@ -86,7 +86,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.TechnologistInProgressWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.TechnologistInProgressWorklist)]
     [FolderPath("In Progress")]
     public class InProgressTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
@@ -112,7 +112,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.TechnologistCompletedWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.TechnologistCompletedWorklist)]
     [FolderPath("Completed")]
     public class CompletedTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
@@ -138,7 +138,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.TechnologistUndocumentedWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.TechnologistUndocumentedWorklist)]
     [FolderPath("Undocumented")]
     public class UndocumentedTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
@@ -159,7 +159,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     //[ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.TechnologistSuspendedWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.TechnologistSuspendedWorklist)]
     [FolderPath("Suspended")]
     public class SuspendedTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
@@ -185,7 +185,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.TechnologistCancelledWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.TechnologistCancelledWorklist)]
     [FolderPath("Cancelled")]
     public class CancelledTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {

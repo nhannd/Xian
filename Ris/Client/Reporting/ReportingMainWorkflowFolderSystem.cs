@@ -62,7 +62,11 @@ namespace ClearCanvas.Ris.Client.Reporting
             new ReportingMainWorkflowItemToolExtensionPoint(),
             new ReportingMainWorkflowFolderToolExtensionPoint())
         {
-            this.AddFolder(new Folders.ToBeReportedFolder(this));
+            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+            {
+                this.AddFolder(new Folders.ToBeReportedFolder(this));
+            }
+
             this.AddFolder(new Folders.DraftFolder(this));
 
             if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow))

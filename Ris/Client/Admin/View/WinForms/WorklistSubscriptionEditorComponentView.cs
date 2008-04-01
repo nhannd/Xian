@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,21 +29,45 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using System.Text;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    [DataContract]
-    public class ListProcedureTypeGroupsForWorklistCategoryResponse : DataContractBase
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="WorklistSubscriptionEditorComponent"/>
+    /// </summary>
+    [ExtensionOf(typeof(WorklistSubscriptionEditorComponentViewExtensionPoint))]
+    public class WorklistSubscriptionEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        public ListProcedureTypeGroupsForWorklistCategoryResponse()
+        private WorklistSubscriptionEditorComponent _component;
+        private WorklistSubscriptionEditorComponentControl _control;
+
+
+        #region IApplicationComponentView Members
+
+        public void SetComponent(IApplicationComponent component)
         {
-            ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>();
+            _component = (WorklistSubscriptionEditorComponent)component;
         }
 
-        [DataMember]
-        public List<ProcedureTypeGroupSummary> ProcedureTypeGroups;
+        #endregion
+
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new WorklistSubscriptionEditorComponentControl(_component);
+                }
+                return _control;
+            }
+        }
     }
 }

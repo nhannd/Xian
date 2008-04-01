@@ -54,6 +54,7 @@ namespace ClearCanvas.Ris.Application.Common
         private const string Technologists = "Technologists";
         private const string Radiologists = "Radiologists";
         private const string RadiologyResidents = "Radiology Residents";
+        private const string Engineers = "Engineers";
 
 
         #region IDefineAuthorityGroups Members
@@ -129,7 +130,28 @@ namespace ClearCanvas.Ris.Application.Common
                 new AuthorityGroupDefinition(RadiologyResidents,
                     new string[] 
                     {
-                    })
+                    }),
+
+                new AuthorityGroupDefinition(Engineers,
+                    new string[]
+                    {
+                        AuthorityTokens.PatientProfileAdmin,
+                        AuthorityTokens.ReconcilePatients,
+                        AuthorityTokens.DiagnosticServiceAdmin,
+                        AuthorityTokens.FacilityAdmin,
+                        AuthorityTokens.LocationAdmin,
+                        AuthorityTokens.ModalityAdmin,
+                        AuthorityTokens.HL7Admin,
+                        AuthorityTokens.NoteAdmin,
+                        AuthorityTokens.StaffAdmin,
+                        AuthorityTokens.ExternalPractitionerAdmin,
+                        AuthorityTokens.VisitAdmin,
+                        AuthorityTokens.UserAdmin,
+                        AuthorityTokens.AuthorityGroupAdmin,
+                        AuthorityTokens.ProcedureTypeGroupAdmin,
+                        AuthorityTokens.WorklistAdmin,
+                        AuthorityTokens.ViewUnfilteredWorkflowFolders
+                    }), 
 
             };
         }

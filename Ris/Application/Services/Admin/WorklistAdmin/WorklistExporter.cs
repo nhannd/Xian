@@ -55,6 +55,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         private const string attrName = "name";
         private const string attrDescription = "description";
         private const string attrEnabled = "enabled";
+        private const string attrId = "id";
 
         private const string tagFilters = "filters";
         private const string tagValue = "value";
@@ -74,11 +75,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         private const string attrCode = "code";
         private const string attrClass = "class";
 
-        private const string tagSubscribers = "subscribers";
-        private const string tagSubscriber = "subscriber";
-        private const string attrSubscriberName = "name";
-        private const string attrSubscriberType = "type";
-        private const string subscriberType = "user";
+        private const string tagStaffSubscribers = "staff-subscribers";
+        private const string tagGroupSubscribers = "group-subscribers";
 
         #region DateExporter overrides
 
@@ -113,7 +111,18 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             writer.WriteAttributeString(attrDescription, worklist.Description);
 
             WriteFilters(worklist, writer);
-            WriteSubscribers(worklist, writer);
+
+            WriteSubscribers(worklist.StaffSubscribers, writer, tagStaffSubscribers,
+                delegate (Staff item)
+                {
+                    writer.WriteAttributeString(attrId, item.Id);
+                });
+
+            WriteSubscribers(worklist.GroupSubscribers, writer, tagGroupSubscribers,
+                delegate(StaffGroup item)
+                {
+                    writer.WriteAttributeString(attrName, item.Name);
+                });
 
             writer.WriteEndElement();
         }
@@ -220,19 +229,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             writer.WriteEndElement();
         }
 
-        private void WriteSubscribers(Worklist worklist, XmlWriter writer)
+        private void WriteSubscribers<T>(IEnumerable<T> list, XmlWriter writer, string tagName, Action<T> writeValueCallback)
         {
-            writer.WriteStartElement(tagSubscribers);
-            CollectionUtils.ForEach<string>(worklist.Users,
-                delegate(string user) { WriteSubscriber(user, writer); });
-            writer.WriteEndElement();
-        }
-
-        private void WriteSubscriber(string user, XmlWriter writer)
-        {
-            writer.WriteStartElement(tagSubscriber);
-            writer.WriteAttributeString(attrSubscriberName, user);
-            writer.WriteAttributeString(attrSubscriberType, subscriberType);
+            writer.WriteStartElement(tagName);
+            CollectionUtils.ForEach(list,
+                delegate(T item)
+                {
+                    writer.WriteStartElement(tagValue);
+                    writeValueCallback(item);
+                    writer.WriteEndElement();
+                });
             writer.WriteEndElement();
         }
 

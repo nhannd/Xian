@@ -62,7 +62,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
         public static ValidationRuleSet GetInvariantRules(DomainObject obj)
         {
-            return GetInvariantRules(obj.GetType());
+            return GetInvariantRules(obj.GetClass());
         }
 
         public static void Validate(DomainObject obj, Predicate<ISpecification> ruleFilter)

@@ -45,6 +45,5 @@ namespace ClearCanvas.Healthcare
     {
         IList GetWorklistItems(IWorklistQueryContext wqc);
         int GetWorklistItemCount(IWorklistQueryContext wqc);
-        string DisplayName { get; }
     }
 }

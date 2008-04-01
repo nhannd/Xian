@@ -430,7 +430,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Registration - Cancelled.
+        ///   Looks up a localized string similar to Cancelled.
         /// </summary>
         internal static string RegistrationCancelledWorklist {
             get {
@@ -439,7 +439,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Registration - Checked In.
+        ///   Looks up a localized string similar to Checked In.
         /// </summary>
         internal static string RegistrationCheckedInWorklist {
             get {
@@ -448,7 +448,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Booking - Complete Protocol.
+        ///   Looks up a localized string similar to Complete Protocol.
         /// </summary>
         internal static string RegistrationCompletedProtocolWorklist {
             get {
@@ -457,7 +457,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Registration - Completed.
+        ///   Looks up a localized string similar to Completed.
         /// </summary>
         internal static string RegistrationCompletedWorklist {
             get {
@@ -466,7 +466,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Registration - In Progress.
+        ///   Looks up a localized string similar to In Progress.
         /// </summary>
         internal static string RegistrationInProgressWorklist {
             get {
@@ -475,7 +475,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Booking - Pending Protocol.
+        ///   Looks up a localized string similar to Pending Protocol.
         /// </summary>
         internal static string RegistrationPendingProtocolWorklist {
             get {
@@ -484,7 +484,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Booking - Rejected Protocol.
+        ///   Looks up a localized string similar to Rejected Protocol.
         /// </summary>
         internal static string RegistrationRejectedProtocolWorklist {
             get {
@@ -493,7 +493,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Registration - Scheduled.
+        ///   Looks up a localized string similar to Scheduled.
         /// </summary>
         internal static string RegistrationScheduledWorklist {
             get {
@@ -502,7 +502,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Booking - Suspended Protocol.
+        ///   Looks up a localized string similar to Suspended Protocol.
         /// </summary>
         internal static string RegistrationSuspendedProtocolWorklist {
             get {
@@ -511,7 +511,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Registration - To be Scheduled.
+        ///   Looks up a localized string similar to To be Scheduled.
         /// </summary>
         internal static string RegistrationToBeScheduledWorklist {
             get {
@@ -547,7 +547,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reporting - To be Protocolled.
+        ///   Looks up a localized string similar to To be Protocolled.
         /// </summary>
         internal static string ReportingToBeProtocolledWorklist {
             get {
@@ -556,7 +556,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reporting - To be Reported.
+        ///   Looks up a localized string similar to To be Reported.
         /// </summary>
         internal static string ReportingToBeReportedWorklist {
             get {
@@ -592,7 +592,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Technologist - Cancelled.
+        ///   Looks up a localized string similar to Cancelled.
         /// </summary>
         internal static string TechnologistCancelledWorklist {
             get {
@@ -601,7 +601,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Technologist - Checked In.
+        ///   Looks up a localized string similar to Checked In.
         /// </summary>
         internal static string TechnologistCheckedInWorklist {
             get {
@@ -610,7 +610,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Technologist - Completed.
+        ///   Looks up a localized string similar to Completed.
         /// </summary>
         internal static string TechnologistCompletedWorklist {
             get {
@@ -619,7 +619,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Technologist - In Progress.
+        ///   Looks up a localized string similar to In Progress.
         /// </summary>
         internal static string TechnologistInProgressWorklist {
             get {
@@ -628,7 +628,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Technologist - Scheduled.
+        ///   Looks up a localized string similar to Scheduled.
         /// </summary>
         internal static string TechnologistScheduledWorklist {
             get {
@@ -637,7 +637,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Technologist - Undocumented.
+        ///   Looks up a localized string similar to Undocumented.
         /// </summary>
         internal static string TechnologistUndocumentedWorklist {
             get {
@@ -669,6 +669,60 @@ namespace ClearCanvas.Healthcare {
         internal static string Visit {
             get {
                 return ResourceManager.GetString("Visit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Booking.
+        /// </summary>
+        internal static string WorklistCategoryBooking {
+            get {
+                return ResourceManager.GetString("WorklistCategoryBooking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Protocoling.
+        /// </summary>
+        internal static string WorklistCategoryProtocoling {
+            get {
+                return ResourceManager.GetString("WorklistCategoryProtocoling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registration.
+        /// </summary>
+        internal static string WorklistCategoryRegistration {
+            get {
+                return ResourceManager.GetString("WorklistCategoryRegistration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reporting.
+        /// </summary>
+        internal static string WorklistCategoryReporting {
+            get {
+                return ResourceManager.GetString("WorklistCategoryReporting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Technologist.
+        /// </summary>
+        internal static string WorklistCategoryTechnologist {
+            get {
+                return ResourceManager.GetString("WorklistCategoryTechnologist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Worklist Name/Class.
+        /// </summary>
+        internal static string WorklistClassAndName {
+            get {
+                return ResourceManager.GetString("WorklistClassAndName", resourceCulture);
             }
         }
     }

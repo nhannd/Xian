@@ -198,7 +198,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(IRegistrationWorkflowService service)
                 {
                     GetWorklistItemsRequest request = _worklistRef == null
-                        ? new GetWorklistItemsRequest(this.WorklistType)
+                        ? new GetWorklistItemsRequest(this.WorklistClassName)
                         : new GetWorklistItemsRequest(_worklistRef);
 
                     GetWorklistItemsResponse<RegistrationWorklistItem> response = service.GetWorklistItems(request);
@@ -216,7 +216,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(IRegistrationWorkflowService service)
                 {
                     GetWorklistItemCountRequest request = _worklistRef == null
-                        ? new GetWorklistItemCountRequest(this.WorklistType)
+                        ? new GetWorklistItemCountRequest(this.WorklistClassName)
                         : new GetWorklistItemCountRequest(_worklistRef);
 
                     GetWorklistItemCountResponse response = service.GetWorklistItemCount(request);

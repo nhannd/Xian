@@ -51,7 +51,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
             ProcessClassProperties(entityClass, rules);
 
             // process class-level attributes
-            foreach (Attribute attr in entityClass.GetCustomAttributes(false))
+            foreach (Attribute attr in entityClass.GetCustomAttributes(true))
             {
                 ProcessEntityAttribute(entityClass, attr, rules);
             }

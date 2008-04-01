@@ -3,36 +3,63 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare
 {
+    /// <summary>
+    /// Represents a time-range by which a worklist may be filtered.
+    /// </summary>
     public class WorklistTimeRange : ValueObject, IEquatable<WorklistTimeRange>
     {
+        /// <summary>
+        /// Defines a time-range that originates at midnight this morning and ends at midnight tonight.
+        /// </summary>
         public static readonly WorklistTimeRange Today = new WorklistTimeRange(WorklistTimePoint.Today, WorklistTimePoint.Today);
 
         private WorklistTimePoint _start;
         private WorklistTimePoint _end;
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public WorklistTimeRange()
         {
 
         }
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
         public WorklistTimeRange(WorklistTimePoint start, WorklistTimePoint end)
         {
             _start = start;
             _end = end;
         }
 
+        #region Public members
+
+        /// <summary>
+        /// Gets or sets the beginning of the time range.
+        /// </summary>
         public WorklistTimePoint Start
         {
             get { return _start; }
             set { _start = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the end of the time range.
+        /// </summary>
         public WorklistTimePoint End
         {
             get { return _end; }
             set { _end = value; }
         }
 
+        /// <summary>
+        /// Applies this time range to the specified <see cref="ISearchCondition{DateTime}"/>, using the specified current time.
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <param name="currentTime"></param>
         public void Apply(ISearchCondition<DateTime> condition, DateTime currentTime)
         {
             DateTime startTime, endTime;
@@ -41,6 +68,11 @@ namespace ClearCanvas.Healthcare
             ApplyRange(condition, _start != null, startTime, _end != null, endTime);
         }
 
+        /// <summary>
+        /// Applies this time range to the specified <see cref="ISearchCondition{DateTime}"/>, using the specified current time.
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <param name="currentTime"></param>
         public void Apply(ISearchCondition<DateTime?> condition, DateTime currentTime)
         {
             DateTime startTime, endTime;
@@ -49,6 +81,10 @@ namespace ClearCanvas.Healthcare
             ApplyRange<DateTime?>(condition, _start != null, startTime, _end != null, endTime);
 
         }
+
+        #endregion
+
+        #region Helpers
 
         private void Resolve(DateTime currentTime, out DateTime startTime, out DateTime endTime)
         {
@@ -71,6 +107,8 @@ namespace ClearCanvas.Healthcare
                 condition.LessThanOrEqualTo(upper);
             }
         }
+
+        #endregion
 
         #region overrides
 

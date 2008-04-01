@@ -9,11 +9,24 @@ using ClearCanvas.Workflow;
 namespace ClearCanvas.Healthcare
 {
     /// <summary>
+    /// Abstract base class for protocoling worklists.
+    /// </summary>
+    [WorklistCategory("WorklistCategoryProtocoling")]
+    public abstract class ProtocolingWorklist : ReportingWorklist
+    {
+        public override Type ProcedureStepType
+        {
+            get { return typeof(ProtocolAssignmentStep); }
+        }
+    }
+
+
+    /// <summary>
     /// ReportingToBeProtocolledWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingToBeProtocolledWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
-    public class ReportingToBeProtocolledWorklist : ReportingWorklist
+    public class ReportingToBeProtocolledWorklist : ProtocolingWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
@@ -23,16 +36,12 @@ namespace ClearCanvas.Healthcare
             ApplyTimeRange(criteria.ProcedureStep.Scheduling.StartTime, null);
             return new ReportingWorklistItemSearchCriteria[] { criteria };
         }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(ProtocolAssignmentStep); }
-        }
     }
 
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingDraftProtocolWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
-    public class ReportingDraftProtocolWorklist : ReportingWorklist
+    [WorklistSingleton(true)]
+    public class ReportingDraftProtocolWorklist : ProtocolingWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
@@ -41,16 +50,12 @@ namespace ClearCanvas.Healthcare
             criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.Staff);
             return new WorklistItemSearchCriteria[] { criteria };
         }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(ProtocolAssignmentStep); }
-        }
     }
 
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingCompletedProtocolWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
-    public class ReportingCompletedProtocolWorklist : ReportingWorklist
+    [WorklistSingleton(true)]
+    public class ReportingCompletedProtocolWorklist : ProtocolingWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
@@ -61,15 +66,12 @@ namespace ClearCanvas.Healthcare
             return new WorklistItemSearchCriteria[] { criteria };
         }
 
-        public override Type ProcedureStepType
-        {
-            get { return typeof(ProtocolAssignmentStep); }
-        }
     }
 
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingRejectedProtocolWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
-    public class ReportingRejectedProtocolWorklist : ReportingWorklist
+    [WorklistSingleton(true)]
+    public class ReportingRejectedProtocolWorklist : ProtocolingWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
@@ -80,16 +82,12 @@ namespace ClearCanvas.Healthcare
             ApplyTimeRange(criteria.ProcedureStep.EndTime, WorklistTimeRange.Today);
             return new WorklistItemSearchCriteria[] { criteria };
         }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(ProtocolAssignmentStep); }
-        }
     }
 
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingSuspendedProtocolWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
-    public class ReportingSuspendedProtocolWorklist : ReportingWorklist
+    [WorklistSingleton(true)]
+    public class ReportingSuspendedProtocolWorklist : ProtocolingWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
@@ -98,11 +96,6 @@ namespace ClearCanvas.Healthcare
             criteria.Protocol.Status.EqualTo(ProtocolStatus.SU);
             criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.Staff);
             return new WorklistItemSearchCriteria[] { criteria };
-        }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(ProtocolAssignmentStep); }
         }
     }
 }

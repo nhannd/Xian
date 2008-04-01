@@ -29,9 +29,11 @@
 
 #endregion
 
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -60,13 +62,16 @@ namespace ClearCanvas.Ris.Client.Adt
             new TechnologistMainWorkflowItemToolExtensionPoint(),
             new TechnologistMainWorkflowFolderToolExtensionPoint())
         {
-            this.AddFolder(new Folders.ScheduledTechnologistWorkflowFolder(this));
-            this.AddFolder(new Folders.CheckedInTechnologistWorkflowFolder(this));
-            this.AddFolder(new Folders.InProgressTechnologistWorkflowFolder(this));
-            this.AddFolder(new Folders.UndocumentedTechnologistWorkflowFolder(this));
-            //this.AddFolder(new Folders.SuspendedTechnologistWorkflowFolder(this));
-            this.AddFolder(new Folders.CancelledTechnologistWorkflowFolder(this));
-            this.AddFolder(new Folders.CompletedTechnologistWorkflowFolder(this));
+            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+            {
+                this.AddFolder(new Folders.ScheduledTechnologistWorkflowFolder(this));
+                this.AddFolder(new Folders.CheckedInTechnologistWorkflowFolder(this));
+                this.AddFolder(new Folders.InProgressTechnologistWorkflowFolder(this));
+                this.AddFolder(new Folders.UndocumentedTechnologistWorkflowFolder(this));
+                this.AddFolder(new Folders.CancelledTechnologistWorkflowFolder(this));
+                this.AddFolder(new Folders.CompletedTechnologistWorkflowFolder(this));
+                
+            }
             this.AddFolder(_searchFolder = new Folders.TechnologistSearchFolder(this));
             folderExplorer.RegisterSearchDataHandler(this);
         }

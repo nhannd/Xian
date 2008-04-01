@@ -33,112 +33,103 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [ExtensionPoint]
-    public class WorklistTokenExtensionPoint : ExtensionPoint<IWorklistTokens> { }
-
-    public interface IWorklistTokens { }
-
-    [ExtensionOf(typeof(WorklistTokenExtensionPoint))]
-    public class WorklistTokens : IWorklistTokens
+    public class WorklistClassNames
     {
-        #region Registration Worklist Tokens
+        #region Registration Worklist Class Names
 
-        [WorklistToken(Description = "Registration - Scheduled")]
+        [WorklistClassName]
         public const string RegistrationScheduledWorklist = "RegistrationScheduledWorklist";
 
-        [WorklistToken(Description = "Registration - Checked In")]
+        [WorklistClassName]
         public const string RegistrationCheckedInWorklist = "RegistrationCheckedInWorklist";
 
-        [WorklistToken(Description = "Registration - Cancelled")]
+        [WorklistClassName]
         public const string RegistrationCancelledWorklist = "RegistrationCancelledWorklist";
 
-        [WorklistToken(Description = "Registration - Completed")]
+        [WorklistClassName]
         public const string RegistrationCompletedWorklist = "RegistrationCompletedWorklist";
 
-        [WorklistToken(Description = "Registration - In Progress")]
+        [WorklistClassName]
         public const string RegistrationInProgressWorklist = "RegistrationInProgressWorklist";
 
-        [WorklistToken(Description = "Registration - Completed Protocol")]
+        [WorklistClassName]
         public const string RegistrationCompletedProtocolWorklist = "RegistrationCompletedProtocolWorklist";
 
-        [WorklistToken(Description = "Registration - Suspended Protocol")]
+        [WorklistClassName]
         public const string RegistrationSuspendedProtocolWorklist = "RegistrationSuspendedProtocolWorklist";
 
-        [WorklistToken(Description = "Registration - Rejected Protocol")]
+        [WorklistClassName]
         public const string RegistrationRejectedProtocolWorklist = "RegistrationRejectedProtocolWorklist";
 
-        [WorklistToken(Description = "Registration - Pending Protocol")]
+        [WorklistClassName]
         public const string RegistrationPendingProtocolWorklist = "RegistrationPendingProtocolWorklist";
 
-        [WorklistToken(Description = "Registration - ASAP Pending Protocol")]
+        [WorklistClassName]
         public const string RegistrationAsapPendingProtocolWorklist = "RegistrationAsapPendingProtocolWorklist";
 
-        [WorklistToken(Description = "Registration - To Be Scheduled")]
+        [WorklistClassName]
         public const string RegistrationToBeScheduledWorklist = "RegistrationToBeScheduledWorklist";
 
         #endregion
 
-        #region Technologist Worklist Tokens
+        #region Technologist Worklist Class Names
 
-        [WorklistToken(Description = "Technologist - Scheduled")]
+        [WorklistClassName]
         public const string TechnologistScheduledWorklist = "TechnologistScheduledWorklist";
 
-        [WorklistToken(Description = "Technologist - Checked In")]
+        [WorklistClassName]
         public const string TechnologistCheckedInWorklist = "TechnologistCheckedInWorklist";
 
-        [WorklistToken(Description = "Technologist - Cancelled")]
+        [WorklistClassName]
         public const string TechnologistCancelledWorklist = "TechnologistCancelledWorklist";
 
-        [WorklistToken(Description = "Technologist - Completed")]
+        [WorklistClassName]
         public const string TechnologistCompletedWorklist = "TechnologistCompletedWorklist";
 
-        [WorklistToken(Description = "Technologist - In Progress")]
+        [WorklistClassName]
         public const string TechnologistInProgressWorklist = "TechnologistInProgressWorklist";
 
-        [WorklistToken(Description = "Technologist - Suspended")]
+        [WorklistClassName]
         public const string TechnologistSuspendedWorklist = "TechnologistSuspendedWorklist";
 
-        [WorklistToken(Description = "Technologist - Undocumented")]
+        [WorklistClassName]
         public const string TechnologistUndocumentedWorklist = "TechnologistUndocumentedWorklist";
 
         #endregion
 
-        #region Reporting Worklist Tokens
+        #region Reporting Worklist Class Names
 
-        [WorklistToken(Description = "Reporting - To Be Reported")]
+        [WorklistClassName]
         public const string ReportingToBeReportedWorklist = "ReportingToBeReportedWorklist";
 
-        [WorklistToken(Description = "Reporting - To Be Protocolled")]
+        [WorklistClassName]
         public const string ReportingToBeProtocolledWorklist = "ReportingToBeProtocolledWorklist";
 
-        [WorklistToken(Description = "Reporting - Draft")]
+        [WorklistClassName]
         public const string ReportingDraftWorklist = "ReportingDraftWorklist";
-        
-        [WorklistToken(Description = "Reporting - In Transcription")]
+
+        [WorklistClassName]
         public const string ReportingInTranscriptionWorklist = "ReportingInTranscriptionWorklist";
 
-        [WorklistToken(Description = "Reporting - To Be Verified")]
+        [WorklistClassName]
         public const string ReportingToBeVerifiedWorklist = "ReportingToBeVerifiedWorklist";
 
-        [WorklistToken(Description = "Reporting - Verified")]
+        [WorklistClassName]
         public const string ReportingVerifiedWorklist = "ReportingVerifiedWorklist";
 
-        [WorklistToken(Description = "Reporting - Review Resident Report")]
+        [WorklistClassName]
         public const string ReportingReviewResidentReportWorklist = "ReportingReviewResidentReportWorklist";
 
-        [WorklistToken(Description = "Reporting - To Be Approved")]
-        public const string ReportingToBeApprovedWorklist = "ReportingToBeApprovedWorklist";
-
-        [WorklistToken(Description = "Reporting - Draft Protocol")]
+        [WorklistClassName]
         public const string ReportingDraftProtocolWorklist = "ReportingDraftProtocolWorklist";
 
-        [WorklistToken(Description = "Reporting - Completed Protocol")]
+        [WorklistClassName]
         public const string ReportingCompletedProtocolWorklist = "ReportingCompletedProtocolWorklist";
 
-        [WorklistToken(Description = "Reporting - Suspended Protocol")]
+        [WorklistClassName]
         public const string ReportingSuspendedProtocolWorklist = "ReportingSuspendedProtocolWorklist";
 
-        [WorklistToken(Description = "Reporting - Rejected Protocol")]
+        [WorklistClassName]
         public const string ReportingRejectedProtocolWorklist = "ReportingRejectedProtocolWorklist";
 
         #endregion

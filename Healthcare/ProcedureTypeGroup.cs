@@ -55,6 +55,18 @@ namespace ClearCanvas.Healthcare {
             return CollectionUtils.Select(context.GetBroker<IMetadataBroker>().ListEntityClasses(),
                 delegate(Type t) { return !t.IsAbstract && t.IsSubclassOf(typeof(ProcedureTypeGroup)); });
         }
+
+        /// <summary>
+        /// Gets the concrete subclass matching the specified name, which need not be fully qualified.
+        /// </summary>
+        /// <param name="subclassName"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static Type GetSubClass(string subclassName, IPersistenceContext context)
+        {
+            return CollectionUtils.SelectFirst(ListSubClasses(context),
+                delegate(Type t) { return t.FullName.Contains(subclassName); });
+        }
 	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom

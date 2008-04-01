@@ -59,7 +59,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this._worklistTable = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.SuspendLayout();
             // 
@@ -68,15 +67,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._worklistTable.AutoSize = true;
             this._worklistTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this._worklistTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._worklistTable.FilterTextBoxVisible = true;
             this._worklistTable.Location = new System.Drawing.Point(0, 0);
-            this._worklistTable.MenuModel = null;
             this._worklistTable.Name = "_worklistTable";
             this._worklistTable.ReadOnly = false;
-            this._worklistTable.Selection = selection1;
             this._worklistTable.Size = new System.Drawing.Size(235, 288);
             this._worklistTable.TabIndex = 2;
-            this._worklistTable.Table = null;
-            this._worklistTable.ToolbarModel = null;
             this._worklistTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._worklistTable.ItemDoubleClicked += new System.EventHandler(this._worklistTable_ItemDoubleClicked);
             // 

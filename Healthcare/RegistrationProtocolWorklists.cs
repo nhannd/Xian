@@ -9,6 +9,7 @@ using ClearCanvas.Workflow;
 namespace ClearCanvas.Healthcare
 {
     [WorklistProcedureTypeGroupClass(typeof(PerformingGroup))]
+    [WorklistCategory("WorklistCategoryBooking")]
     public abstract class RegistrationProtocolWorklist : RegistrationWorklist
     {
     }
@@ -16,7 +17,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// RegistrationPendingProtocolWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "RegistrationPendingProtocolWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
     public class RegistrationPendingProtocolWorklist : RegistrationProtocolWorklist
     {
@@ -38,7 +39,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// RegistrationAsapPendingProtocolWorklist entity 
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "RegistrationAsapPendingProtocolWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
     public class RegistrationAsapPendingProtocolWorklist : RegistrationProtocolWorklist
     {
@@ -61,7 +62,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// RegistrationRejectedProtocolWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "RegistrationRejectedProtocolWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
     public class RegistrationRejectedProtocolWorklist : RegistrationProtocolWorklist
     {
@@ -82,7 +83,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// RegistrationSuspendedProtocolWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "RegistrationSuspendedProtocolWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
     public class RegistrationSuspendedProtocolWorklist : RegistrationProtocolWorklist
     {
@@ -103,7 +104,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// RegistrationCompletedProtocolWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "RegistrationCompletedProtocolWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
     public class RegistrationCompletedProtocolWorklist : RegistrationProtocolWorklist
     {

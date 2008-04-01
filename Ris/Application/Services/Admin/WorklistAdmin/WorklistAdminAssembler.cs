@@ -45,9 +45,20 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 {
     internal class WorklistAdminAssembler
     {
+        public WorklistClassSummary CreateClassSummary(Type worklistClass)
+        {
+            return new WorklistClassSummary(
+                Worklist.GetClassName(worklistClass),
+                Worklist.GetDisplayName(worklistClass),
+                Worklist.GetCategory(worklistClass),
+                Worklist.GetProcedureTypeGroupClass(worklistClass).Name,
+                Worklist.GetSupportsTimeFilter(worklistClass));
+        }
+
         public WorklistAdminDetail GetWorklistDetail(Worklist worklist, IPersistenceContext context)
         {
-            WorklistAdminDetail detail = new WorklistAdminDetail(worklist.GetRef(), worklist.Name, worklist.Description, WorklistFactory.Instance.GetWorklistType(worklist));
+            WorklistAdminDetail detail = new WorklistAdminDetail(worklist.GetRef(), worklist.Name, worklist.Description,
+                CreateClassSummary(worklist.GetClass()));
 
             if (worklist.ProcedureTypeGroupFilter.IsEnabled)
             {
@@ -93,7 +104,19 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     detail.EndTime = CreateTimePointContract(worklist.TimeFilter.Value.End);
             }
 
-            detail.Users = new List<string>(worklist.Users);
+            StaffAssembler staffAssembler = new StaffAssembler();
+            detail.StaffSubscribers = CollectionUtils.Map<Staff, StaffSummary>(worklist.StaffSubscribers,
+                delegate(Staff staff)
+                {
+                    return staffAssembler.CreateStaffSummary(staff, context);
+                });
+
+            StaffGroupAssembler staffGroupAssembler = new StaffGroupAssembler();
+            detail.GroupSubscribers = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(worklist.GroupSubscribers,
+                delegate(StaffGroup group)
+                {
+                    return staffGroupAssembler.CreateSummary(group);
+                });
 
             return detail;
         }
@@ -106,7 +129,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
         public WorklistAdminSummary GetWorklistSummary(Worklist worklist, IPersistenceContext context)
         {
-            return new WorklistAdminSummary(worklist.GetRef(), worklist.Name, worklist.Description, WorklistFactory.Instance.GetWorklistType(worklist));
+            return new WorklistAdminSummary(worklist.GetRef(), worklist.Name, worklist.Description, CreateClassSummary(worklist.GetClass()));
         }
 
         public void UpdateWorklist(Worklist worklist, WorklistAdminDetail detail, IPersistenceContext context)
@@ -168,14 +191,35 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             }
 
             // time window filters
-            worklist.TimeFilter.Value = new WorklistTimeRange();
-            worklist.TimeFilter.Value.Start = CreateTimePoint(detail.StartTime);
-            worklist.TimeFilter.Value.End = CreateTimePoint(detail.EndTime);
-            worklist.TimeFilter.IsEnabled = worklist.TimeFilter.Value.Start != null || worklist.TimeFilter.Value.End != null;
+            if(Worklist.GetSupportsTimeFilter(worklist.GetClass()))
+            {
+                WorklistTimePoint start = CreateTimePoint(detail.StartTime);
+                WorklistTimePoint end = CreateTimePoint(detail.EndTime);
+                if(start != null || end != null)
+                {
+                    worklist.TimeFilter.Value = new WorklistTimeRange(start, end);
+                    worklist.TimeFilter.IsEnabled = true;
+                }
+                else
+                    worklist.TimeFilter.IsEnabled = false;
+            }
 
-            // process users
-            worklist.Users.Clear();
-            worklist.Users.AddAll(detail.Users);
+            // process subscriptions
+            worklist.StaffSubscribers.Clear();
+            worklist.StaffSubscribers.AddAll(
+                CollectionUtils.Map<StaffSummary, Staff>(detail.StaffSubscribers,
+                    delegate(StaffSummary summary)
+                    {
+                        return context.Load<Staff>(summary.StaffRef, EntityLoadFlags.Proxy);
+                    }));
+
+            worklist.GroupSubscribers.Clear();
+            worklist.GroupSubscribers.AddAll(
+                CollectionUtils.Map<StaffGroupSummary, StaffGroup>(detail.GroupSubscribers,
+                    delegate(StaffGroupSummary summary)
+                    {
+                        return context.Load<StaffGroup>(summary.StaffGroupRef, EntityLoadFlags.Proxy);
+                    }));
         }
 
         public WorklistTimePoint CreateTimePoint(WorklistAdminDetail.TimePoint contract)

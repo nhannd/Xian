@@ -37,12 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     [DataContract]
     public class WorklistAdminSummary : DataContractBase
     {
-        public WorklistAdminSummary(EntityRef entityRef, string name, string description, string worklistType)
+        public WorklistAdminSummary(EntityRef entityRef, string name, string description, WorklistClassSummary worklistClass)
         {
             EntityRef = entityRef;
             Name = name;
             Description = description;
-            WorklistType = worklistType;
+            WorklistClass = worklistClass;
         }
 
         [DataMember]
@@ -55,6 +55,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         public string Description;
 
         [DataMember]
-        public string WorklistType;
+        public WorklistClassSummary WorklistClass;
     }
 }

@@ -285,6 +285,12 @@
   <data name="MessageDuplicateModalityID" xml:space="preserve">
     <value>This modality ID already exist.  Your changes could not be saved.</value>
   </data>
+  <data name="MessageEndTimeMustBeGreaterOrEqualStartTime" xml:space="preserve">
+    <value>'To' must be later or equal to 'From'</value>
+  </data>
+  <data name="MessageEndTimeMustBeGreaterThanStartTime" xml:space="preserve">
+    <value>'To' must be later than 'From'</value>
+  </data>
   <data name="MessageEnumCodeContainsInvalidChars" xml:space="preserve">
     <value>Contains invalid characters</value>
   </data>

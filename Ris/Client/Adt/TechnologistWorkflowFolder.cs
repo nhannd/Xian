@@ -181,7 +181,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(IModalityWorkflowService service)
                 {
                     GetWorklistItemCountRequest request = _worklistRef == null
-                        ? new GetWorklistItemCountRequest(this.WorklistType)
+                        ? new GetWorklistItemCountRequest(this.WorklistClassName)
                         : new GetWorklistItemCountRequest(_worklistRef);
 
                     GetWorklistItemCountResponse response = service.GetWorklistItemCount(request);
@@ -199,7 +199,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(IModalityWorkflowService service)
                 {
                     GetWorklistItemsRequest request = _worklistRef == null
-                        ? new GetWorklistItemsRequest(this.WorklistType)
+                        ? new GetWorklistItemsRequest(this.WorklistClassName)
                         : new GetWorklistItemsRequest(_worklistRef);
 
                     GetWorklistItemsResponse<ModalityWorklistItem> response = service.GetWorklistItems(request);

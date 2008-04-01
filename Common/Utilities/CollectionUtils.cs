@@ -890,5 +890,50 @@ namespace ClearCanvas.Common.Utilities
                     return Contains(y, delegate(object itemY) { return Equals(itemY, itemX); });
                 });
         }
+
+        /// <summary>
+        /// Returns a new list containing only the unique elements of the target collection, preserving the order.
+        /// Relies on <see cref="object.Equals(object)"/> and <see cref="object.GetHashCode"/>, since a dictionary
+        /// is used internally to create the unique set of results.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static List<T> Unique<T>(IEnumerable<T> target)
+        {
+            Dictionary<T, T> set = new Dictionary<T, T>();
+            List<T> result = new List<T>();
+            foreach(T item in target)
+            {
+                if (!set.ContainsKey(item))
+                {
+                    set.Add(item, item);
+                    result.Add(item);
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Returns a new list containing only the unique elements of the target collection, preserving the order.
+        /// Relies on <see cref="object.Equals(object)"/> and <see cref="object.GetHashCode"/>, since a dictionary
+        /// is used internally to create the unique set of results.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static ArrayList Unique(IEnumerable target)
+        {
+            Hashtable set = new Hashtable();
+            ArrayList result = new ArrayList();
+            foreach (object item in target)
+            {
+                if (!set.ContainsKey(item))
+                {
+                    set.Add(item, item);
+                    result.Add(item);
+                }
+            }
+            return result;
+        }
     }
 }

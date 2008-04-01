@@ -40,7 +40,17 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public abstract class PagedDataContractBase : DataContractBase
     {
+        public PagedDataContractBase()
+        {
+            this.Page = new SearchResultPage();
+        }
+
+        public PagedDataContractBase(SearchResultPage page)
+        {
+            this.Page = page;
+        }
+
         [DataMember]
-        public SearchResultPage Page = new SearchResultPage();
+        public SearchResultPage Page;
     }
 }

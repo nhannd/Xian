@@ -56,9 +56,7 @@ namespace ClearCanvas.Ris.Client.Admin
         private WorklistAdminSummary _selectedWorklist;
         private WorklistAdminSummaryTable _worklistAdminSummaryTable;
 
-        private SimpleActionModel _worklistActionHandler;
-        private readonly string _addWorklistKey = "AddWorklist";
-        private readonly string _updateWorklistKey = "UpdateWorklist";
+        private CrudActionModel _worklistActionModel;
 
         private IPagingController<WorklistAdminSummary> _pagingController;
 
@@ -66,13 +64,12 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             _worklistAdminSummaryTable = new WorklistAdminSummaryTable();
 
-            _worklistActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _worklistActionHandler.AddAction(_addWorklistKey, SR.TitleAddWorklist, "Icons.AddToolSmall.png", SR.TitleAddWorklist, AddWorklist);
-            _worklistActionHandler.AddAction(_updateWorklistKey, SR.TitleUpdateWorklist, "Icons.EditToolSmall.png", SR.TitleUpdateWorklist, UpdateWorklist);
-            _worklistActionHandler[_addWorklistKey].Enabled = true;
-            _worklistActionHandler[_updateWorklistKey].Enabled = false;
+            _worklistActionModel = new CrudActionModel(true, true, true);
+            _worklistActionModel.Add.SetClickHandler(AddWorklist);
+            _worklistActionModel.Edit.SetClickHandler(UpdateWorklist);
+            _worklistActionModel.Delete.SetClickHandler(DeleteWorklist);
 
-            InitialisePaging(_worklistActionHandler);
+            InitialisePaging(_worklistActionModel);
 
             LoadWorklistTable();
 
@@ -112,13 +109,6 @@ namespace ClearCanvas.Ris.Client.Admin
             _worklistAdminSummaryTable.Items.AddRange(_pagingController.GetFirst());
         }
 
-        public override void Stop()
-        {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
-            base.Stop();
-        }
-
         #region Presentation Model
 
         public ITable Worklists
@@ -128,16 +118,14 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public ActionModelNode WorklistActionModel
         {
-            get { return _worklistActionHandler; }
+            get { return _worklistActionModel; }
         }
 
         public ISelection SelectedWorklist
         {
             get
             {
-                return _selectedWorklist == null
-                    ? Selection.Empty
-                    : new Selection(_selectedWorklist);
+                return new Selection(_selectedWorklist);
             }
             set
             {
@@ -148,8 +136,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private void SelectedWorklistChanged()
         {
-            _worklistActionHandler[_updateWorklistKey].Enabled = 
-                _selectedWorklist != null;
+            _worklistActionModel.Edit.Enabled = _selectedWorklist != null;
+            _worklistActionModel.Delete.Enabled = _selectedWorklist != null;
         }
 
         #endregion
@@ -161,11 +149,12 @@ namespace ClearCanvas.Ris.Client.Admin
             try
             {
                 WorklistEditorComponent editor = new WorklistEditorComponent();
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddWorklist);
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, 
+                    new DialogBoxCreationArgs(editor, SR.TitleAddWorklist, null, DialogSizeHint.Medium));
 
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    LoadWorklistTable();
+                    _worklistAdminSummaryTable.Items.AddRange(editor.EditedWorklistSummaries);
                 }
             }
             catch (Exception e)
@@ -181,11 +170,18 @@ namespace ClearCanvas.Ris.Client.Admin
                 if (_selectedWorklist == null) return;
 
                 WorklistEditorComponent editor = new WorklistEditorComponent(_selectedWorklist.EntityRef);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateWorklist);
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
+                    new DialogBoxCreationArgs(editor, SR.TitleUpdateWorklist, null, DialogSizeHint.Medium));
 
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    LoadWorklistTable();
+                    // only single-select editing is supported, so there is only one item
+                    WorklistAdminSummary editedItem = CollectionUtils.FirstElement(editor.EditedWorklistSummaries);
+                    _worklistAdminSummaryTable.Items.Replace(
+                        delegate(WorklistAdminSummary item) { return item.EntityRef.Equals(editedItem.EntityRef, true); },
+                        editedItem);
+                    _selectedWorklist = editedItem;
+                    NotifyPropertyChanged("SelectedWorklist");
                 }
             }
             catch (Exception e)
@@ -193,6 +189,36 @@ namespace ClearCanvas.Ris.Client.Admin
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
+
+        public void DeleteWorklist()
+        {
+            try
+            {
+                if (_selectedWorklist == null) return;
+
+                DialogBoxAction action = this.Host.ShowMessageBox("Are you sure you want to delete this worklist?", MessageBoxActions.YesNo);
+                if(action == DialogBoxAction.Yes)
+                {
+                    Platform.GetService<IWorklistAdminService>(
+                        delegate(IWorklistAdminService service)
+                        {
+                            service.DeleteWorklist(new DeleteWorklistRequest(_selectedWorklist.EntityRef));
+                        });
+
+                    WorklistAdminSummary deletedWorklist = _selectedWorklist;
+                    _selectedWorklist = null;
+                    NotifyPropertyChanged("SelectedWorklist");
+
+                    _worklistAdminSummaryTable.Items.Remove(deletedWorklist);
+                }
+
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+        }
+
 
         #endregion
     }

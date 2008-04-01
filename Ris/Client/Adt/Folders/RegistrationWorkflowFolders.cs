@@ -39,7 +39,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 namespace ClearCanvas.Ris.Client.Adt.Folders
 {
     [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationScheduledWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.RegistrationScheduledWorklist)]
     [FolderPath("Scheduled", true)]
     public class ScheduledFolder : RegistrationWorkflowFolder
     {
@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationCheckedInWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.RegistrationCheckedInWorklist)]
     [FolderPath("Checked In")]
     public class CheckedInFolder : RegistrationWorkflowFolder
     {
@@ -86,7 +86,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationInProgressWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.RegistrationInProgressWorklist)]
     [FolderPath("In Progress")]
     public class InProgressFolder : RegistrationWorkflowFolder
     {
@@ -107,7 +107,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationCompletedWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.RegistrationCompletedWorklist)]
     [FolderPath("Completed")]
     public class CompletedFolder : RegistrationWorkflowFolder
     {
@@ -128,7 +128,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationCancelledWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.RegistrationCancelledWorklist)]
     [FolderPath("Cancelled")]
     public class CancelledFolder : RegistrationWorkflowFolder
     {
@@ -154,7 +154,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationCompletedProtocolWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.RegistrationCompletedProtocolWorklist)]
     [FolderPath("Completed Protocol", true)]
     public class CompletedProtocolFolder : RegistrationWorkflowFolder
     {
@@ -175,7 +175,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationSuspendedProtocolWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.RegistrationSuspendedProtocolWorklist)]
     [FolderPath("Suspended Protocol")]
     public class SuspendedProtocolFolder : RegistrationWorkflowFolder
     {
@@ -196,7 +196,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationRejectedProtocolWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.RegistrationRejectedProtocolWorklist)]
     [FolderPath("Rejected Protocol")]
     public class RejectedProtocolFolder : RegistrationWorkflowFolder
     {
@@ -217,7 +217,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationPendingProtocolWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.RegistrationPendingProtocolWorklist)]
     [FolderPath("Pending Protocol")]
     public class PendingProtocolFolder : RegistrationWorkflowFolder
     {
@@ -238,7 +238,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationToBeScheduledWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.RegistrationToBeScheduledWorklist)]
     [FolderPath("To Be Scheduled")]
     public class ToBeScheduledFolder : RegistrationWorkflowFolder
     {

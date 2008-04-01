@@ -6,10 +6,20 @@ using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Healthcare
 {
+    /// <summary>
+    /// Abstract base-class for worklist filters.
+    /// </summary>
     public abstract class WorklistFilter : ValueObject
     {
         private bool _isEnabled;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this filter is enabled or not.
+        /// </summary>
+        /// <remarks>
+        /// This property is significant in that it may allow the worklist broker to make optimizations
+        /// when building the query by not loading the filter values for disabled filters.
+        /// </remarks>
         public bool IsEnabled
         {
             get { return _isEnabled; }
@@ -17,6 +27,10 @@ namespace ClearCanvas.Healthcare
         }
     }
 
+    /// <summary>
+    /// Abstract base-class for single-valued worklist filters.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public abstract class WorklistSingleValuedFilter<T> : WorklistFilter, IEquatable<WorklistSingleValuedFilter<T>>
     {
         private T _value;
@@ -28,6 +42,9 @@ namespace ClearCanvas.Healthcare
         {
         }
 
+        /// <summary>
+        /// Gets or sets the value of this filter.
+        /// </summary>
         public T Value
         {
             get { return _value; }
@@ -61,6 +78,10 @@ namespace ClearCanvas.Healthcare
         #endregion
     }
 
+    /// <summary>
+    /// Abstract base-class for multi-valued filters.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public abstract class WorklistMultiValuedFilter<T> : WorklistFilter, IEquatable<WorklistMultiValuedFilter<T>>
     {
         private ISet<T> _values;
@@ -73,6 +94,9 @@ namespace ClearCanvas.Healthcare
             _values = new HashedSet<T>();
 	    }
 
+        /// <summary>
+        /// Gets the set of values for this filter.
+        /// </summary>
         public ISet<T> Values
         {
             get { return _values; }
@@ -107,14 +131,26 @@ namespace ClearCanvas.Healthcare
         #endregion
     }
 
+    /// <summary>
+    /// Defines a filter that limits worklist items to procedures that fall into a specified
+    /// set of <see cref="ProcedureTypeGroup"/>s.
+    /// </summary>
     public class WorklistProcedureTypeGroupFilter : WorklistMultiValuedFilter<ProcedureTypeGroup>
     {
     }
 
+    /// <summary>
+    /// Defines a filter that limits worklist items to procedures that are to performed
+    /// at specified <see cref="Facility"/>s, or at the current working facility.
+    /// </summary>
     public class WorklistFacilityFilter : WorklistMultiValuedFilter<Facility>
     {
         private bool _includeWorkingFacility;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the current working facility should be included
+        /// in the worklist query.
+        /// </summary>
         public bool IncludeWorkingFacility
         {
             get { return _includeWorkingFacility; }
@@ -122,19 +158,35 @@ namespace ClearCanvas.Healthcare
         }
     }
 
+    /// <summary>
+    /// Defines a filter that limits worklist items to those visits that fall into a specified
+    /// set of <see cref="PatientClassEnum"/> values.
+    /// </summary>
     public class WorklistPatientClassFilter : WorklistMultiValuedFilter<PatientClassEnum>
     {
     }
 
+    /// <summary>
+    /// Defines a filter that limits worklist items to those orders that fall into a specified
+    /// set of <see cref="OrderPriorityEnum"/> values.
+    /// </summary>
     public class WorklistOrderPriorityFilter : WorklistMultiValuedFilter<OrderPriorityEnum>
     {
     }
 
+    /// <summary>
+    /// Defines a filter that limits worklist items to those procedures are either portable
+    /// or non-portable, according to the <see cref="Procedure.Portable"/> property.
+    /// </summary>
     public class WorklistPortableFilter : WorklistSingleValuedFilter<bool>
     {
     }
 
-    public class WorklistTimeFilter: WorklistSingleValuedFilter<WorklistTimeRange>
+    /// <summary>
+    /// Defines a filter that limits worklist items to those that fall into a specified
+    /// time-range.
+    /// </summary>
+    public class WorklistTimeFilter : WorklistSingleValuedFilter<WorklistTimeRange>
     {
     }
 

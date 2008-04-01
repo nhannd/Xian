@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Drawing;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
@@ -37,6 +38,8 @@ namespace ClearCanvas.Desktop
     public class DialogBoxCreationArgs : DesktopObjectCreationArgs
     {
         private IApplicationComponent _component;
+        private DialogSizeHint _sizeHint;
+        private Size _size = Size.Empty;
 
         /// <summary>
         /// Constructor.
@@ -51,8 +54,36 @@ namespace ClearCanvas.Desktop
         /// <param name="component">The component to be hosted in the dialog.</param>
         /// <param name="title">The title to assign to the dialog.</param>
         /// <param name="name">The name/identifier of the dialog.</param>
-        public DialogBoxCreationArgs(IApplicationComponent component, string title, string name)
+        /// <param name="sizeHint">The size hint for the dialog.</param>
+        public DialogBoxCreationArgs(IApplicationComponent component, string title, string name, DialogSizeHint sizeHint)
             :base(title, name)
+        {
+            _component = component;
+            _sizeHint = sizeHint;
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="component">The component to be hosted in the dialog.</param>
+        /// <param name="title">The title to assign to the dialog.</param>
+        /// <param name="name">The name/identifier of the dialog.</param>
+        /// <param name="size">The size of the dialog in pixels.</param>
+        public DialogBoxCreationArgs(IApplicationComponent component, string title, string name, Size size)
+            : base(title, name)
+        {
+            _component = component;
+            _size = size;
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="component">The component to be hosted in the dialog.</param>
+        /// <param name="title">The title to assign to the dialog.</param>
+        /// <param name="name">The name/identifier of the dialog.</param>
+        public DialogBoxCreationArgs(IApplicationComponent component, string title, string name)
+            : base(title, name)
         {
             _component = component;
         }
@@ -64,6 +95,25 @@ namespace ClearCanvas.Desktop
         {
             get { return _component; }
             set { _component = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the size hint for the dialog box.
+        /// </summary>
+        /// <seealso cref="Size"/>
+        public DialogSizeHint SizeHint
+        {
+            get { return _sizeHint; }
+            set { _sizeHint = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets an explicit size for the dialog in pixels.  If specified, this property will override <see cref="SizeHint"/>. 
+        /// </summary>
+        public Size Size
+        {
+            get { return _size; }
+            set { _size = value; }
         }
     }
 }

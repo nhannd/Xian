@@ -565,6 +565,24 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;To&apos; must be later or equal to &apos;From&apos;.
+        /// </summary>
+        internal static string MessageEndTimeMustBeGreaterOrEqualStartTime {
+            get {
+                return ResourceManager.GetString("MessageEndTimeMustBeGreaterOrEqualStartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;To&apos; must be later than &apos;From&apos;.
+        /// </summary>
+        internal static string MessageEndTimeMustBeGreaterThanStartTime {
+            get {
+                return ResourceManager.GetString("MessageEndTimeMustBeGreaterThanStartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Contains invalid characters.
         /// </summary>
         internal static string MessageEnumCodeContainsInvalidChars {

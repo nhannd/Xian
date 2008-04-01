@@ -32,67 +32,58 @@
 using System.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Authentication;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
 using NHibernate;
 using ClearCanvas.Common.Utilities;
+using System.Collections.Generic;
+using ClearCanvas.Enterprise.Hibernate.Hql;
+using System.Text;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
     public class WorklistBroker : EntityBroker<Worklist, WorklistSearchCriteria>, IWorklistBroker
     {
-        #region Private Fields
-
-        private readonly string _selectHql = "select w from Worklist w join w.Users u where u = :user ";
-
-        #endregion
 
         #region IWorklistBroker Members
 
-        public IList FindWorklistsForUser(string userName, IList classNames)
+        public IList<Worklist> FindWorklistsForStaff(Staff staff, IEnumerable<string> worklistClassNames)
         {
-            return DoQuery(userName, ConstructWorklistHql(classNames));
+            HqlProjectionQuery query = new HqlProjectionQuery(new HqlFrom("Worklist", "w"));
+            query.Selects.Add(new HqlSelect("w"));
+            query.SelectDistinct = true;
+
+            query.Froms.Add(new HqlFrom("Staff", "s"));
+            query.Conditions.Add(new HqlCondition("s = ?", staff));
+
+            HqlOr staffOr = new HqlOr();
+            staffOr.Conditions.Add(new HqlCondition("s in elements(w.StaffSubscribers)"));
+            staffOr.Conditions.Add(new HqlCondition("s in (select elements(sg.Members) from StaffGroup sg where sg in elements(w.GroupSubscribers))"));
+            query.Conditions.Add(staffOr);
+
+            HqlOr classOr = new HqlOr();
+            foreach (string className in worklistClassNames)
+            {
+                classOr.Conditions.Add(new HqlCondition("w.class = " + className));
+            }
+            query.Conditions.Add(classOr);
+
+            return ExecuteHql<Worklist>(query);
         }
 
-        public Worklist FindWorklist(string name, string type)
+        public Worklist FindWorklist(string name, string worklistClassName)
         {
-            IQuery query = this.Context.CreateHibernateQuery("select w from Worklist w where w.Name = :name and w.class = " + type);
-            query.SetParameter("name", name);
-            return CollectionUtils.FirstElement<Worklist>(query.List());
-        }
+            HqlQuery query = new HqlQuery("from Worklist w");
+            query.Conditions.Add(new HqlCondition("w.Name = ?", name));
+            query.Conditions.Add(new HqlCondition("w.class = " + worklistClassName));
 
-        public bool NameExistsForType(string name, string type)
-        {
-            IQuery query = this.Context.CreateHibernateQuery("select w from Worklist w where w.Name = :name and w.class = " + type);
-            query.SetParameter("name", name);
-            return query.List().Count > 0;
-        }
+            IList<Worklist> worklists = ExecuteHql<Worklist>(query);
+            if(worklists.Count == 0)
+                throw new EntityNotFoundException(string.Format("Worklist {0}, class {1} not found.", name, worklistClassName), null);
 
-        #endregion
-
-        #region Private Methods
-
-        private string ConstructWorklistHql(IList classNames)
-        {
-            // Construct a worklist hql that looks like the following
-            // " and (w.class = className1 or w.class = className2)"
-
-            string worklistCondition = string.Join(" or ",
-                CollectionUtils.Map<string, string>(classNames,
-                delegate(string className)
-                {
-                    return string.Format("w.class = {0}", className);
-                }).ToArray());
-
-            return string.Concat(" and (", worklistCondition, ")");
-        }
-
-        private IList DoQuery(string userName, string subCriteria)
-        {
-            IQuery query = this.Context.CreateHibernateQuery(_selectHql + subCriteria);
-            query.SetParameter("user", userName);
-            return query.List();
+            return CollectionUtils.FirstElement(worklists);
         }
 
         #endregion

@@ -38,6 +38,7 @@ using System;
 namespace ClearCanvas.Healthcare
 {
     [WorklistProcedureTypeGroupClass(typeof(PerformingGroup))]
+    [WorklistCategory("WorklistCategoryRegistration")]
     public abstract class RegistrationWorklist : Worklist
     {
         public override IList GetWorklistItems(IWorklistQueryContext wqc)
@@ -59,8 +60,9 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// RegistrationToBeScheduledWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "RegistrationToBeScheduledWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
+    [WorklistCategory("WorklistCategoryBooking")]
     public class RegistrationToBeScheduledWorklist : RegistrationWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
@@ -78,7 +80,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// RegistrationScheduledWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name="RegistrationScheduledWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
     public class RegistrationScheduledWorklist : RegistrationWorklist
     {
@@ -95,7 +97,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// RegistrationCheckedInWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "RegistrationCheckedInWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
     public class RegistrationCheckedInWorklist : RegistrationWorklist
     {
@@ -113,7 +115,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// RegistrationInProgessWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "RegistrationInProgressWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
     public class RegistrationInProgressWorklist : RegistrationWorklist
     {
@@ -130,7 +132,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// RegistrationCompletedWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "RegistrationCompletedWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
     public class RegistrationCompletedWorklist : RegistrationWorklist
     {
@@ -149,7 +151,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// RegistrationCancelledWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "RegistrationCancelledWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
     public class RegistrationCancelledWorklist : RegistrationWorklist
     {

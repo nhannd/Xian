@@ -167,6 +167,20 @@
       <DependentUpon>ProcedureTypeGroupSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ProcedureTypeGroupSummaryComponentView.cs" />
+    <Compile Include="StaffGroupEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StaffGroupEditorComponentControl.Designer.cs">
+      <DependentUpon>StaffGroupEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StaffGroupEditorComponentView.cs" />
+    <Compile Include="StaffGroupSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StaffGroupSummaryComponentControl.Designer.cs">
+      <DependentUpon>StaffGroupSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StaffGroupSummaryComponentView.cs" />
     <Compile Include="UserEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -195,13 +209,34 @@
       <DependentUpon>ValidationManagementComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ValidationManagementComponentView.cs" />
-    <Compile Include="WorklistEditorComponentControl.cs">
+    <Compile Include="WorklistDetailEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="WorklistEditorComponentControl.Designer.cs">
-      <DependentUpon>WorklistEditorComponentControl.cs</DependentUpon>
+    <Compile Include="WorklistDetailEditorComponentControl.Designer.cs">
+      <DependentUpon>WorklistDetailEditorComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="WorklistEditorComponentView.cs" />
+    <Compile Include="WorklistDetailEditorComponentView.cs" />
+    <Compile Include="WorklistFilterEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorklistFilterEditorComponentControl.Designer.cs">
+      <DependentUpon>WorklistFilterEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorklistFilterEditorComponentView.cs" />
+    <Compile Include="WorklistMultiDetailEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorklistMultiDetailEditorComponentControl.Designer.cs">
+      <DependentUpon>WorklistMultiDetailEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorklistMultiDetailEditorComponentView.cs" />
+    <Compile Include="WorklistSubscriptionEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorklistSubscriptionEditorComponentControl.Designer.cs">
+      <DependentUpon>WorklistSubscriptionEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorklistSubscriptionEditorComponentView.cs" />
     <Compile Include="WorklistSummaryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -209,6 +244,13 @@
       <DependentUpon>WorklistSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="WorklistSummaryComponentView.cs" />
+    <Compile Include="WorklistTimeWindowEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorklistTimeWindowEditorComponentControl.Designer.cs">
+      <DependentUpon>WorklistTimeWindowEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorklistTimeWindowEditorComponentView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common\ClearCanvas.Common.csproj">
@@ -309,6 +351,14 @@
       <SubType>Designer</SubType>
       <DependentUpon>ProcedureTypeGroupSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="StaffGroupEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>StaffGroupEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StaffGroupSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>StaffGroupSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>UserEditorComponentControl.cs</DependentUpon>
@@ -325,13 +375,29 @@
       <SubType>Designer</SubType>
       <DependentUpon>ValidationManagementComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="WorklistEditorComponentControl.resx">
+    <EmbeddedResource Include="WorklistDetailEditorComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>WorklistEditorComponentControl.cs</DependentUpon>
+      <DependentUpon>WorklistDetailEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorklistFilterEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WorklistFilterEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorklistMultiDetailEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WorklistMultiDetailEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorklistSubscriptionEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WorklistSubscriptionEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorklistSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>WorklistSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorklistTimeWindowEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WorklistTimeWindowEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

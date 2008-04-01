@@ -87,14 +87,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         [ReadOperation]
         public ListWorklistsResponse ListWorklists(ListWorklistsRequest request)
         {
-            WorklistAssembler assembler = new WorklistAssembler();
-            return new ListWorklistsResponse(
-                CollectionUtils.Map<Worklist, WorklistSummary, List<WorklistSummary>>(
-                    this.PersistenceContext.GetBroker<IWorklistBroker>().FindWorklistsForUser(this.CurrentUser, WorklistFactory.Instance.GetWorklistClassNames(request.WorklistTokens)),
-                    delegate(Worklist worklist)
-                    {
-                        return assembler.GetWorklistSummary(worklist);
-                    }));
+            return new ListWorklistsResponse(ListWorklistsHelper(request.WorklistTokens));
         }
 
         /// <summary>

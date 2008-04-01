@@ -40,11 +40,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     public class GetWorklistEditFormDataResponse : DataContractBase
     {
         [DataMember]
-        public List<string> Users;
+        public List<WorklistClassSummary> WorklistClasses;
 
-        // TODO: Strongly typed
         [DataMember]
-        public List<string> WorklistTypes;
+        public List<StaffSummary> StaffChoices;
+
+        [DataMember]
+        public List<StaffGroupSummary> StaffGroupChoices;
 
         [DataMember]
         public List<FacilitySummary> FacilityChoices;

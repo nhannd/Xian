@@ -29,9 +29,11 @@
 
 #endregion
 
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -58,11 +60,14 @@ namespace ClearCanvas.Ris.Client.Adt
             new RegistrationBookingWorkflowItemToolExtensionPoint(),
             new RegistrationBookingWorkflowFolderToolExtensionPoint())
         {
-            this.AddFolder(new Folders.CompletedProtocolFolder(this));
-            this.AddFolder(new Folders.SuspendedProtocolFolder(this));
-            this.AddFolder(new Folders.RejectedProtocolFolder(this));
-            this.AddFolder(new Folders.PendingProtocolFolder(this));
-            this.AddFolder(new Folders.ToBeScheduledFolder(this));
+            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+            {
+                this.AddFolder(new Folders.CompletedProtocolFolder(this));
+                this.AddFolder(new Folders.SuspendedProtocolFolder(this));
+                this.AddFolder(new Folders.RejectedProtocolFolder(this));
+                this.AddFolder(new Folders.PendingProtocolFolder(this));
+                this.AddFolder(new Folders.ToBeScheduledFolder(this));
+            }
         }
 
         public override string DisplayName

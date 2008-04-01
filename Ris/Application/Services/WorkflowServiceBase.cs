@@ -35,9 +35,11 @@ using System.Collections.Generic;
 using System.Reflection;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Workflow;
 
@@ -97,7 +99,7 @@ namespace ClearCanvas.Ris.Application.Services
         {
             IWorklist worklist = request.WorklistRef != null ?
                 this.PersistenceContext.Load<Worklist>(request.WorklistRef) :
-                WorklistFactory.Instance.GetWorklist(request.WorklistType);
+                WorklistFactory.Instance.CreateWorklist(request.WorklistType);
 
             // if the page was not specified in the request, get the first page, up to the default max number of items
             SearchResultPage page = request.Page ?? new SearchResultPage(0, new WorklistSettings().DefaultItemsPerPage);
@@ -109,9 +111,20 @@ namespace ClearCanvas.Ris.Application.Services
         {
             IWorklist worklist = request.WorklistRef != null ?
                 this.PersistenceContext.Load<Worklist>(request.WorklistRef) :
-                WorklistFactory.Instance.GetWorklist(request.WorklistType);
+                WorklistFactory.Instance.CreateWorklist(request.WorklistType);
 
             return worklist.GetWorklistItemCount(new WorklistQueryContext(this, null));
+        }
+
+        protected List<WorklistSummary> ListWorklistsHelper(List<string> worklistTokens)
+        {
+            WorklistAssembler assembler = new WorklistAssembler();
+            return CollectionUtils.Map<Worklist, WorklistSummary>(
+                    PersistenceContext.GetBroker<IWorklistBroker>().FindWorklistsForStaff(CurrentUserStaff, worklistTokens),
+                    delegate(Worklist worklist)
+                    {
+                        return assembler.GetWorklistSummary(worklist);
+                    });
         }
 
         protected Dictionary<string, bool> GetOperationEnablement(object itemKey)

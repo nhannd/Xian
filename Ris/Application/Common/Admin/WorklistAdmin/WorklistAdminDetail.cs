@@ -32,7 +32,6 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using System;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
@@ -70,22 +69,24 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
         public WorklistAdminDetail()
         {
-            this.Users = new List<string>();
             this.ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>();
             this.Facilities = new List<FacilitySummary>();
             this.PatientClasses = new List<EnumValueInfo>();
             this.OrderPriorities = new List<EnumValueInfo>();
             this.Portabilities = new List<bool>();
+
+            this.StaffSubscribers = new List<StaffSummary>();
+            this.GroupSubscribers = new List<StaffGroupSummary>();
         }
 
 
-        public WorklistAdminDetail(EntityRef entityRef, string name, string description, string worklistType)
+        public WorklistAdminDetail(EntityRef entityRef, string name, string description, WorklistClassSummary worklistClass)
             : this()
         {
             EntityRef = entityRef;
             Name = name;
             Description = description;
-            WorklistType = worklistType;
+            WorklistClass = worklistClass;
         }
 
         [DataMember]
@@ -98,7 +99,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         public string Description;
 
         [DataMember]
-        public string WorklistType;
+        public WorklistClassSummary WorklistClass;
 
         [DataMember]
         public List<ProcedureTypeGroupSummary> ProcedureTypeGroups;
@@ -125,6 +126,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         public TimePoint EndTime;
 
         [DataMember]
-        public List<string> Users;
+        public List<StaffSummary> StaffSubscribers;
+
+        [DataMember]
+        public List<StaffGroupSummary> GroupSubscribers;
     }
 }

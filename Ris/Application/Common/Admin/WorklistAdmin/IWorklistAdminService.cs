@@ -50,10 +50,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         /// <summary>
         /// Returns a list of ProcedureTypeGroups appropriate for a specific worklist type
         /// </summary>
-        /// <param name="request"><see cref="ListProcedureTypeGroupsForWorklistCategoryRequest"/></param>
-        /// <returns><see cref="ListProcedureTypeGroupsForWorklistCategoryResponse"/></returns>
+        /// <param name="request"><see cref="ListProcedureTypeGroupsRequest"/></param>
+        /// <returns><see cref="ListProcedureTypeGroupsResponse"/></returns>
         [OperationContract]
-        ListProcedureTypeGroupsForWorklistCategoryResponse ListProcedureTypeGroupsForWorklistCategory(ListProcedureTypeGroupsForWorklistCategoryRequest request);
+        ListProcedureTypeGroupsResponse ListProcedureTypeGroups(ListProcedureTypeGroupsRequest request);
 
         /// <summary>
         /// Returns a list of all persistent worklists
@@ -89,5 +89,15 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
         UpdateWorklistResponse UpdateWorklist(UpdateWorklistRequest request);
+
+        /// <summary>
+        /// Deletes an existing worklist.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        DeleteWorklistResponse DeleteWorklist(DeleteWorklistRequest request);
     }
 }

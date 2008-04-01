@@ -70,7 +70,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             // cache the app component - we'll need it later to get the ExitCode
             _component = (IApplicationComponent)dialogBox.Component;
 
-            _form = new DialogBoxForm(dialogBox.Title, (Control)componentView.GuiElement);
+            _form = CreateDialogBoxForm(dialogBox, (Control)componentView.GuiElement);
             _form.FormClosing += new FormClosingEventHandler(_form_FormClosing);
 
             _owner = owner.DesktopForm;
@@ -170,9 +170,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="title"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        protected virtual DialogBoxForm CreateDialogBoxForm(string title, Control content)
+        protected virtual DialogBoxForm CreateDialogBoxForm(DialogBox dialogBox, Control content)
         {
-            return new DialogBoxForm(title, content);
+            return new DialogBoxForm(dialogBox, content);
         }
     
         private void _form_FormClosing(object sender, FormClosingEventArgs e)

@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client
     public abstract class WorkflowFolderSystem<TItem> : IFolderSystem
     {
         private readonly IFolderExplorerToolContext _folderExplorer;
-        private readonly IDictionary<string, Type> _worklistType;
+        private readonly IDictionary<string, Type> _mapWorklistClassToFolderClass;
         private readonly IList<IFolder> _workflowFolders;
 
         private event EventHandler _selectedItemDoubleClicked;
@@ -78,8 +78,8 @@ namespace ClearCanvas.Ris.Client
 
             _folderExplorer = folderExplorer;
 
-            // Collect all worklist tokens
-            _worklistType = new Dictionary<string, Type>();
+            // Collect all worklist classes
+            _mapWorklistClassToFolderClass = new Dictionary<string, Type>();
             if (folderExtensionPoint != null)
             {
                 foreach (IFolder folder in folderExtensionPoint.CreateExtensions())
@@ -87,8 +87,8 @@ namespace ClearCanvas.Ris.Client
                     if (folder is WorkflowFolder<TItem>)
                     {
                         WorkflowFolder<TItem> workflowFolder = (WorkflowFolder<TItem>)folder;
-                        if (!string.IsNullOrEmpty(workflowFolder.WorklistType))
-                            _worklistType.Add(workflowFolder.WorklistType, workflowFolder.GetType());
+                        if (!string.IsNullOrEmpty(workflowFolder.WorklistClassName))
+                            _mapWorklistClassToFolderClass.Add(workflowFolder.WorklistClassName, workflowFolder.GetType());
                     }
                 }
             }
@@ -161,14 +161,14 @@ namespace ClearCanvas.Ris.Client
             _folderExplorer.SelectedFolder.Refresh();
         }
 
-        public Type GetWorklistType(string type)
+        public Type GetFolderClassForWorklistClass(string worklistClassName)
         {
-            return _worklistType.ContainsKey(type) ? _worklistType[type] : null;
+            return _mapWorklistClassToFolderClass.ContainsKey(worklistClassName) ? _mapWorklistClassToFolderClass[worklistClassName] : null;
         }
 
-        public List<string> WorklistTokens
+        public List<string> WorklistClassNames
         {
-            get { return new List<string>(_worklistType.Keys); }
+            get { return new List<string>(_mapWorklistClassToFolderClass.Keys); }
         }
 
         public IDesktopWindow DesktopWindow

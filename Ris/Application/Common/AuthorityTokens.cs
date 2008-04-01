@@ -97,5 +97,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[AuthorityToken(Description = "Allow administration of protocol groups and codes")]
 		public const string ProtocolGroupAdmin = "ProtocolGroupAdmin";
-	}
+
+        [AuthorityToken(Description = "Allows viewing of unfiltered workflow folders")]
+        public const string ViewUnfilteredWorkflowFolders = "ViewUnfilteredWorkflowFolders";
+
+    }
 }

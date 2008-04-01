@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    public abstract class RelativeTime : IComparable<RelativeTime>
+    public abstract class RelativeTime : IComparable<RelativeTime>, IComparable
     {
         private int _value;
 
@@ -39,6 +39,18 @@ namespace ClearCanvas.Ris.Client.Admin
             if (this.GetType() != other.GetType())
                 throw new InvalidOperationException("Only instances of the same class can be compared");
             return _value.CompareTo(other._value);
+        }
+
+        #endregion
+
+        #region IComparable Members
+
+        int IComparable.CompareTo(object obj)
+        {
+            RelativeTime that = obj as RelativeTime;
+            if(that == null)
+                throw new InvalidOperationException("Cannot compare to null.");
+            return CompareTo(that);
         }
 
         #endregion

@@ -65,15 +65,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         private const string attrResolution = "resolution";
         private const string attrIncludeWorkingFacility = "includeWorkingFacility";
         private const string attrName = "name";
+        private const string attrId = "id";
         private const string attrClass = "class";
         private const string attrCode = "code";
         private const string attrDescription = "description";
         private const string attrEnabled = "enabled";
 
-        private const string tagSubscribers = "subscribers";
-        private const string tagSubscriber = "subscriber";
-        private const string attrSubscriberName = "name";
-        private const string attrSubscriberType = "type";
+        private const string tagStaffSubscribers = "staff-subscribers";
+        private const string tagGroupSubscribers = "group-subscribers";
 
         private IUpdateContext _context;
         private IList<Type> _procedureTypeGroupClasses;
@@ -129,9 +128,25 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 reader.ReadToFollowing(tagFilters);
                 ReadFilters(worklist, reader.ReadSubtree());
 
-                reader.ReadToNextSibling(tagSubscribers);
-                ICollection<string> users = GetUsers(reader.ReadSubtree());
-                worklist.Users.AddAll(users);
+                ReadSubscribers(worklist.StaffSubscribers, reader, tagStaffSubscribers,
+                    delegate
+                    {
+                        StaffSearchCriteria criteria = new StaffSearchCriteria();
+                        criteria.Id.EqualTo(reader.GetAttribute(attrId));
+
+                        IStaffBroker broker = _context.GetBroker<IStaffBroker>();
+                        return CollectionUtils.FirstElement(broker.Find(criteria));
+                    });
+
+                ReadSubscribers(worklist.GroupSubscribers, reader, tagGroupSubscribers,
+                    delegate
+                    {
+                        StaffGroupSearchCriteria criteria = new StaffGroupSearchCriteria();
+                        criteria.Name.EqualTo(reader.GetAttribute(attrName));
+
+                        IStaffGroupBroker broker = _context.GetBroker<IStaffGroupBroker>();
+                        return CollectionUtils.FirstElement(broker.Find(criteria));
+                    });
             }
 
             while (reader.Read()) ;
@@ -263,51 +278,34 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             return null;
         }
 
-        private ICollection<string> GetUsers(XmlReader reader)
+        private void ReadSubscribers<T>(ICollection<T> subscribers, XmlReader reader, string tagName, ReadValueDelegate<T> readValueCallback)
         {
-            reader.Read();
-
-            List<string> users = new List<string>();
-
-            for (bool elementExists = reader.ReadToDescendant(tagSubscriber);
-                elementExists;
-                elementExists = reader.ReadToNextSibling(tagSubscriber))
+            if (reader.ReadToFollowing(tagName))
             {
-                string subscriberType = reader.GetAttribute(attrSubscriberType);
-                string userName = reader.GetAttribute(attrSubscriberName);
-
-                switch (subscriberType)
+                for (bool elementExists = reader.ReadToDescendant(tagValue);
+                    elementExists;
+                    elementExists = reader.ReadToNextSibling(tagValue))
                 {
-                    case "user":
-
-                        if (!string.IsNullOrEmpty(userName))
-                            users.Add(userName);
-                        break;
-                    case "user-group":
-                        // JR: disabled this functionality because I'm trying
-                        // to remove explicity coupling between Healthcare and Enterprise.Authentication
-                        // perhaps it could be re-implemented if needed
-                        throw new NotSupportedException();
-                    default:
-                        break;
+                    T value = readValueCallback();
+                    if (value != null)
+                    {
+                        subscribers.Add(value);
+                    }
                 }
             }
-
-            while (reader.Read()) ;
-            reader.Close();
-
-            return users;
         }
-
+        
         private Worklist LoadOrCreateWorklist(string name, string worklistClassName)
         {
             Worklist worklist;
 
-            worklist = _context.GetBroker<IWorklistBroker>().FindWorklist(name, worklistClassName);
-
-            if (worklist == null)
+            try
             {
-                worklist = WorklistFactory.Instance.GetWorklist(worklistClassName);
+                worklist = _context.GetBroker<IWorklistBroker>().FindWorklist(name, worklistClassName);
+            }
+            catch (EntityNotFoundException)
+            {
+                worklist = WorklistFactory.Instance.CreateWorklist(worklistClassName);
                 worklist.Name = name;
 
                 _context.Lock(worklist, DirtyState.New);

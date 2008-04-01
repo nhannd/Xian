@@ -31,6 +31,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Runtime.Serialization.dll</HintPath>
@@ -75,16 +76,23 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="StaffGroupEditorComponent.cs" />
+    <Compile Include="StaffGroupSummaryComponent.cs" />
     <Compile Include="UserEditorComponent.cs" />
     <Compile Include="UserSummaryComponent.cs" />
     <Compile Include="UserTable.cs" />
     <Compile Include="ValidationEditorComponent.cs" />
     <Compile Include="ValidationLiveEditTool.cs" />
     <Compile Include="ValidationManagementComponent.cs" />
+    <Compile Include="WorklistDetailEditorComponent.cs" />
     <Compile Include="WorklistEditorComponent.cs" />
+    <Compile Include="WorklistFilterEditorComponent.cs" />
+    <Compile Include="WorklistMultiDetailEditorComponent.cs" />
+    <Compile Include="WorklistSubscriptionEditorComponent.cs" />
     <Compile Include="WorklistSummaryComponent.cs" />
     <Compile Include="WorklistAdminSummaryTable.cs" />
     <Compile Include="WorklistSummaryTool.cs" />
+    <Compile Include="WorklistTimeWindowEditorComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

@@ -40,152 +40,66 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Services
 {
+    /// <summary>
+    /// Manages instantiation of worklists.
+    /// </summary>
     internal class WorklistFactory
     {
-        private readonly Dictionary <string, Type> _worklistTypeMapping;
-        private static readonly object _lock = new object();
-        private static WorklistFactory _theInstance;
+        #region Static members
 
-        private struct WorklistTokenInfo
+        private static readonly WorklistFactory _theInstance = new WorklistFactory();
+
+        /// <summary>
+        /// Gets the singleton instance.
+        /// </summary>
+        public static WorklistFactory Instance
         {
-            private string _name;
-            private string _description;
-
-            public WorklistTokenInfo(string name, string description)
-            {
-                _name = name;
-                _description = description;
-            }
-
-            public string Name
-            {
-                get { return _name; }
-            }
-
-            public string Description
-            {
-                get { return _description; }
-            }
+            get { return _theInstance; }
         }
+
+        #endregion
+
+        private readonly List<Type> _worklistClasses;
 
         private WorklistFactory()
         {
-            _worklistTypeMapping = new Dictionary<string, Type>();
-
-            IDictionary<string, WorklistTokenInfo> tokens = GetWorklistTokens();
-
-            WorklistExtensionPoint xp = new WorklistExtensionPoint();
-            foreach (IWorklist worklist in xp.CreateExtensions())
-            {
-                try
-                {
-                    Type worklistType = worklist.GetType();
-                    string worklistTypeName = GetNameParameterFromExtensionOfAttribute(worklistType);
-                    
-                    // TODO:  
-                    WorklistTokenInfo tokenInfo = tokens[worklistTypeName];
-                    _worklistTypeMapping.Add(tokenInfo.Name, worklistType);
-                    _worklistTypeMapping.Add(worklistType.FullName, worklistType);
-                }
-                catch (KeyNotFoundException)
-                {
-                    Platform.Log(LogLevel.Debug, "Worklist token not found for worklist {0}", worklist.GetType().Name);
-                }
-            }
+            _worklistClasses = CollectionUtils.Map<ExtensionInfo, Type>(new WorklistExtensionPoint().ListExtensions(),
+                delegate(ExtensionInfo info) { return info.ExtensionClass; });
         }
-
-        private string GetNameParameterFromExtensionOfAttribute(Type worklistType)
-        {
-            object[] attrs = worklistType.GetCustomAttributes(typeof(ExtensionOfAttribute), false);
-            return ((ExtensionOfAttribute)attrs[0]).Name;
-        }
-
 
         /// <summary>
-        /// Returns a list of all worklist tokens defined in installed plugins
+        /// Lists all known worklist classes (extensions of <see cref="WorklistExtensionPoint"/>), optionally
+        /// including those marked with the <see cref="WorklistSingletonAttribute"/>.
         /// </summary>
+        /// <param name="includeSingleton"></param>
         /// <returns></returns>
-        private static IDictionary<string, WorklistTokenInfo> GetWorklistTokens()
+        public Type[] ListWorklistClasses(bool includeSingleton)
         {
-            IDictionary<string, WorklistTokenInfo> tokens = new Dictionary<string, WorklistTokenInfo>();
-
-            WorklistTokenExtensionPoint tokenXp = new WorklistTokenExtensionPoint();
-            foreach (object o in tokenXp.CreateExtensions())
-            {
-                Type worklistTokenClass = o.GetType();
-                foreach (FieldInfo worklistTokenField in worklistTokenClass.GetFields())
-                {
-                    string tokenDescription = "";
-
-                    object[] attrs = worklistTokenField.GetCustomAttributes(typeof(WorklistTokenAttribute), false);
-                    if (attrs.Length == 1)
-                    {
-                        tokenDescription = ((WorklistTokenAttribute)attrs[0]).Description;
-                    }
-
-                    tokens.Add(worklistTokenField.Name, new WorklistTokenInfo(worklistTokenField.Name, tokenDescription));
-                }
-            }
-
-            return tokens;
+            return includeSingleton ? _worklistClasses.ToArray() :
+                CollectionUtils.Select(_worklistClasses,
+                    delegate(Type wc) { return !Worklist.GetIsSingleton(wc); }).ToArray();
         }
 
-        public static WorklistFactory Instance
+        /// <summary>
+        /// Creates an instance of the worklist class as specified by the class name, which may be fully or
+        /// only partially qualified.
+        /// </summary>
+        /// <param name="worklistClassName"></param>
+        /// <returns></returns>
+        public Worklist CreateWorklist(string worklistClassName)
         {
-            get
-            {
-                if(_theInstance == null)
-                {
-                    lock(_lock)
-                    {
-                        if(_theInstance == null) 
-                            _theInstance = new WorklistFactory();
-                    }
-                }
-                return _theInstance;
-            }
+            return (Worklist)Activator.CreateInstance(ResolvePartialClassName(worklistClassName));
         }
 
-        public ICollection<string> WorklistTypes
+        private Type ResolvePartialClassName(string worklistClassName)
         {
-            get { return _worklistTypeMapping.Keys; }
-        }
+            Type worklistClass = CollectionUtils.SelectFirst(_worklistClasses,
+                delegate(Type t) { return t.FullName.Contains(worklistClassName); });
 
-        public Worklist GetWorklist(string type)
-        {
-            return (Worklist)Activator.CreateInstance(GetWorklistType(type));
-        }
+            if(worklistClass == null)
+                throw new ArgumentException(string.Format("{0} is not a valid worklist class name.", worklistClassName));
 
-        public Type GetWorklistType(string type)
-        {
-            try
-            {
-                return _worklistTypeMapping[type];
-            }
-            catch(KeyNotFoundException)
-            {
-                throw new RequestValidationException("Invalid worklist type");
-            }
-        }
-
-        public List<string> GetWorklistClassNames(List<string> types)
-        {
-            return CollectionUtils.Map<string, string>(types,
-                delegate(string tokens)
-                {
-                    return GetWorklistType(tokens).Name;
-                });
-        }
-
-        public string GetWorklistType(Worklist worklist)
-        {
-            Type worklistType = worklist.GetType();
-            foreach (KeyValuePair<string, Type> pair in _worklistTypeMapping)
-            {
-                if (pair.Value == worklistType)
-                    return pair.Key;
-            }
-            return "";
+            return worklistClass;
         }
     }
 }

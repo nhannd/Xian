@@ -34,17 +34,11 @@ using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Authentication;
-using ClearCanvas.Enterprise.Authentication.Brokers;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
-using ClearCanvas.Ris.Application.Services.Admin.UserAdmin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 {
@@ -60,16 +54,29 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         {
             GetWorklistEditFormDataResponse response = new GetWorklistEditFormDataResponse();
 
-            response.Users = CollectionUtils.Map<User, string>(
-                this.PersistenceContext.GetBroker<IUserBroker>().FindAll(),
-                delegate(User user)
+            WorklistAdminAssembler assembler = new WorklistAdminAssembler();
+            response.WorklistClasses = CollectionUtils.Map<Type, WorklistClassSummary>(
+                WorklistFactory.Instance.ListWorklistClasses(false),
+                delegate(Type worklistClass)
                 {
-                    return user.UserName;
+                    return assembler.CreateClassSummary(worklistClass);
                 });
 
-            // TODO: Need stronger typed representation of worklist type options.  See bug #886
-            response.WorklistTypes = new List<string>();
-            response.WorklistTypes.AddRange(WorklistFactory.Instance.WorklistTypes);
+            StaffAssembler staffAssembler = new StaffAssembler();
+            response.StaffChoices = CollectionUtils.Map<Staff, StaffSummary>(
+                this.PersistenceContext.GetBroker<IStaffBroker>().FindAll(),
+                delegate(Staff item)
+                {
+                    return staffAssembler.CreateStaffSummary(item, PersistenceContext);
+                });
+
+            StaffGroupAssembler staffGroupAssembler = new StaffGroupAssembler();
+            response.StaffGroupChoices = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
+                this.PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(),
+                delegate(StaffGroup item)
+                {
+                    return staffGroupAssembler.CreateSummary(item);
+                });
 
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             response.FacilityChoices = CollectionUtils.Map<Facility, FacilitySummary>(
@@ -87,20 +94,25 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
         [ReadOperation]
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
-        public ListProcedureTypeGroupsForWorklistCategoryResponse ListProcedureTypeGroupsForWorklistCategory(ListProcedureTypeGroupsForWorklistCategoryRequest request)
+        public ListProcedureTypeGroupsResponse ListProcedureTypeGroups(ListProcedureTypeGroupsRequest request)
         {
-            ListProcedureTypeGroupsForWorklistCategoryResponse response = 
-                new ListProcedureTypeGroupsForWorklistCategoryResponse();
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.ProcedureTypeGroupClass, "request.ProcedureTypeGroupClass");
+
+            Type procedureTypeGroupClass = ProcedureTypeGroup.GetSubClass(request.ProcedureTypeGroupClass, PersistenceContext);
+            if (procedureTypeGroupClass == null)
+                throw new ArgumentException("Invalid ProcedureTypeGroupClass name");
+
+            ListProcedureTypeGroupsResponse response = 
+                new ListProcedureTypeGroupsResponse();
 
             ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
-            Type procedureTypeGroupClass = GetGroupCategoryFromWorklistType(request.WorklistType);
-
             response.ProcedureTypeGroups =
                 CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary>(
-                    this.PersistenceContext.GetBroker<IProcedureTypeGroupBroker>().Find(new ProcedureTypeGroupSearchCriteria(), procedureTypeGroupClass),
+                    PersistenceContext.GetBroker<IProcedureTypeGroupBroker>().Find(new ProcedureTypeGroupSearchCriteria(), procedureTypeGroupClass),
                     delegate(ProcedureTypeGroup group)
                     {
-                        return assembler.GetProcedureTypeGroupSummary(group, this.PersistenceContext);
+                        return assembler.GetProcedureTypeGroupSummary(group, PersistenceContext);
                     });
 
             return response;
@@ -144,13 +156,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 throw new RequestValidationException(SR.ExceptionWorklistNameRequired);
             }
 
-            if(WorklistExists(request.Detail.Name, request.Detail.WorklistType))
-            {
-                throw new RequestValidationException(string.Format(SR.ExceptionWorklistNameAlreadyExists, request.Detail.Name));
-            }
-
             WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
-            Worklist worklist = WorklistFactory.Instance.GetWorklist(request.Detail.WorklistType);
+            Worklist worklist = WorklistFactory.Instance.CreateWorklist(request.Detail.WorklistClass.ClassName);
             adminAssembler.UpdateWorklist(worklist, request.Detail, this.PersistenceContext);
 
             PersistenceContext.Lock(worklist, DirtyState.New);
@@ -165,33 +172,23 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         {
             Worklist worklist = this.PersistenceContext.Load<Worklist>(request.EntityRef);
 
-            if (worklist.Name != request.Detail.Name && WorklistExists(request.Detail.Name, request.Detail.WorklistType))
-            {
-                throw new RequestValidationException(string.Format(SR.ExceptionWorklistNameAlreadyExists, request.Detail.Name));
-            }
-
             WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
             adminAssembler.UpdateWorklist(worklist, request.Detail, this.PersistenceContext);
 
             return new UpdateWorklistResponse(adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext));
         }
 
+        [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
+        public DeleteWorklistResponse DeleteWorklist(DeleteWorklistRequest request)
+        {
+            Worklist worklist = this.PersistenceContext.Load<Worklist>(request.WorklistRef, EntityLoadFlags.Proxy);
+            PersistenceContext.GetBroker<IWorklistBroker>().Delete(worklist);
+
+            return new DeleteWorklistResponse();
+        }
+
         #endregion
 
-        private Type GetGroupCategoryFromWorklistType(string type)
-        {
-            Type worklistClass = WorklistFactory.Instance.GetWorklistType(type);
-
-            WorklistProcedureTypeGroupClassAttribute a = AttributeUtils.GetAttribute<WorklistProcedureTypeGroupClassAttribute>(worklistClass, true);
-            if(a == null)
-                throw new InvalidOperationException(string.Format("{0} worklist class does not have the WorklistProcedureTypeGroupClassAttribute applied", type));
-
-            return a.ProcedureTypeGroupClass;
-        }
-
-        private bool WorklistExists(string name, string type)
-        {
-            return this.PersistenceContext.GetBroker<IWorklistBroker>().NameExistsForType(name, type);
-        }
     }
 }

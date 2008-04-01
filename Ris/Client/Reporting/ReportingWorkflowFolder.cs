@@ -181,7 +181,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 delegate(IReportingWorkflowService service)
                 {
                     GetWorklistItemsRequest request = _worklistRef == null
-                        ? new GetWorklistItemsRequest(this.WorklistType)
+                        ? new GetWorklistItemsRequest(this.WorklistClassName)
                         : new GetWorklistItemsRequest(_worklistRef);
 
                     GetWorklistItemsResponse<ReportingWorklistItem> response = service.GetWorklistItems(request);
@@ -201,7 +201,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 delegate(IReportingWorkflowService service)
                 {
                     GetWorklistItemCountRequest request = _worklistRef == null
-                        ? new GetWorklistItemCountRequest(this.WorklistType)
+                        ? new GetWorklistItemCountRequest(this.WorklistClassName)
                         : new GetWorklistItemCountRequest(_worklistRef);
 
                     GetWorklistItemCountResponse response = service.GetWorklistItemCount(request);

@@ -9,6 +9,7 @@ using ClearCanvas.Workflow;
 namespace ClearCanvas.Healthcare
 {
     [WorklistProcedureTypeGroupClass(typeof(PerformingGroup))]
+    [WorklistCategory("WorklistCategoryTechnologist")]
     public abstract class TechnologistWorklist : Worklist
     {
         public override IList GetWorklistItems(IWorklistQueryContext wqc)
@@ -30,7 +31,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// TechnologistScheduledWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "TechnologistScheduledWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
     public class TechnologistScheduledWorklist : TechnologistWorklist
     {
@@ -47,7 +48,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// TechnologistCheckedInWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "TechnologistCheckedInWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
     public class TechnologistCheckedInWorklist : TechnologistWorklist
     {
@@ -65,7 +66,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// TechnologistInProgessWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "TechnologistInProgressWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
     public class TechnologistInProgressWorklist : TechnologistWorklist
     {
@@ -81,7 +82,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// TechnologistCompletedWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "TechnologistCompletedWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
     public class TechnologistCompletedWorklist : TechnologistWorklist
     {
@@ -97,7 +98,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// TechnologistCancelledWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "TechnologistCancelledWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
     public class TechnologistCancelledWorklist : TechnologistWorklist
     {
@@ -113,7 +114,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// TechnologistUndocumentedWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "TechnologistUndocumentedWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
     public class TechnologistUndocumentedWorklist : TechnologistWorklist
     {

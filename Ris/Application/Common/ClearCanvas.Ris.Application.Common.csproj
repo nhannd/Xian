@@ -42,6 +42,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressDetail.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\AddStaffGroupRequest.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\AddStaffGroupResponse.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\IStaffAdminService.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\ListStaffGroupsRequest.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\ListStaffGroupsResponse.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\LoadStaffGroupEditorFormDataRequest.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\LoadStaffGroupEditorFormDataResponse.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\LoadStaffGroupForEditRequest.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\LoadStaffGroupForEditResponse.cs" />
+    <Compile Include="Admin\WorklistAdmin\DeleteWorklistRequest.cs" />
+    <Compile Include="Admin\WorklistAdmin\DeleteWorklistResponse.cs" />
+    <Compile Include="Admin\WorklistAdmin\WorklistClassSummary.cs" />
+    <Compile Include="StaffGroupDetail.cs" />
+    <Compile Include="StaffGroupSummary.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\UpdateStaffGroupRequest.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\UpdateStaffGroupResponse.cs" />
     <Compile Include="Admin\UserAdmin\ResetUserPasswordRequest.cs" />
     <Compile Include="Admin\UserAdmin\ResetUserPasswordResponse.cs" />
     <Compile Include="Admin\UserAdmin\IUserAdminService.cs" />
@@ -305,8 +321,8 @@
     <Compile Include="Admin\WorklistAdmin\GetWorklistEditFormDataRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\GetWorklistEditFormDataResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\IWorklistAdminService.cs" />
-    <Compile Include="Admin\WorklistAdmin\ListProcedureTypeGroupsForWorklistCategoryRequest.cs" />
-    <Compile Include="Admin\WorklistAdmin\ListProcedureTypeGroupsForWorklistCategoryResponse.cs" />
+    <Compile Include="Admin\WorklistAdmin\ListProcedureTypeGroupsRequest.cs" />
+    <Compile Include="Admin\WorklistAdmin\ListProcedureTypeGroupsResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\ListWorklistsRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\ListWorklistsResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\LoadWorklistForEditRequest.cs" />
@@ -526,7 +542,7 @@
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ITechnologistDocumentationService.cs" />
     <Compile Include="TelephoneDetail.cs" />
     <Compile Include="WorklistTokenAttribute.cs" />
-    <Compile Include="WorklistTokens.cs" />
+    <Compile Include="WorklistClassNames.cs" />
     <Compile Include="WorklistSummary.cs" />
   </ItemGroup>
   <ItemGroup>

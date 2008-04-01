@@ -8,7 +8,15 @@
     <discriminator column="Discriminator_" type ="String"/>
     <version name="Version" column="Version_"/>
 
-    <property name="Name" column="Name_" type="String" length="100" not-null="true"/>
+    <!-- the ClassName is persisted only for the purpose of enforcing the unique constraint -->
+    <property name="FullClassName" type="String">
+      <column name="FullClassName_" unique-key="WorklistNameAndClassName" not-null="true" length="1024"/>
+    </property>
+    
+    <property name="Name" type="String">
+      <column name="Name_" unique-key="WorklistNameAndClassName" not-null="true" length="200"/>
+    </property>
+    
     <property name="Description" column="Description_" type="String" length="1024"/>
 
     <component name="ProcedureTypeGroupFilter" class="WorklistProcedureTypeGroupFilter">
@@ -65,9 +73,13 @@
       </component>
     </component>
 
-    <set name="Users" lazy="true" table="WorklistUsers_" access="nosetter.camelcase-underscore">
+    <set name="StaffSubscribers" lazy="true" table="WorklistStaffSubscriber_">
       <key column="WorklistOID_"/>
-      <element column="UserName_" type="String"/>
+      <many-to-many column="StaffOID_" class="Staff" fetch="join"/>
+    </set>
+    <set name="GroupSubscribers" lazy="true" table="WorklistGroupSubscriber_">
+      <key column="WorklistOID_"/>
+      <many-to-many column="StaffGroupOID_" class="StaffGroup" fetch="join"/>
     </set>
   </class>
 </hibernate-mapping>

@@ -205,6 +205,7 @@
     <EmbeddedResource Include="Brokers\ReportingWorklistBroker.hbm.xml" />
     <EmbeddedResource Include="Mappings\ExternalPractitionerContactPoint.hbm.xml" />
     <EmbeddedResource Include="Mappings\ResultCommunicationModeEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\StaffGroup.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />

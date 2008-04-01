@@ -29,9 +29,11 @@
 
 #endregion
 
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -58,8 +60,10 @@ namespace ClearCanvas.Ris.Client.Reporting
             new ReportingProtocolWorkflowItemToolExtensionPoint(),
             new ReportingProtocolWorkflowFolderToolExtensionPoint())
         {
-            this.AddFolder(new Folders.ToBeProtocolledFolder(this));
-            //this.AddFolder(new Folders.ToBeApprovedFolder(this));
+            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+            {
+                this.AddFolder(new Folders.ToBeProtocolledFolder(this));
+            }
             this.AddFolder(new Folders.DraftProtocolFolder(this));
             this.AddFolder(new Folders.CompletedProtocolFolder(this));
             this.AddFolder(new Folders.SuspendedProtocolFolder(this));

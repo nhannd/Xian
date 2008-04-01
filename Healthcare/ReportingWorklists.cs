@@ -12,6 +12,7 @@ using ClearCanvas.Workflow;
 namespace ClearCanvas.Healthcare
 {
     [WorklistProcedureTypeGroupClass(typeof(ReadingGroup))]
+    [WorklistCategory("WorklistCategoryReporting")]
     public abstract class ReportingWorklist : Worklist
     {
         public override IList GetWorklistItems(IWorklistQueryContext wqc)
@@ -28,7 +29,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// ReportingToBeReportedWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingToBeReportedWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
     public class ReportingToBeReportedWorklist : ReportingWorklist
     {
@@ -46,8 +47,9 @@ namespace ClearCanvas.Healthcare
         }
     }
 
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingDraftWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
+    [WorklistSingleton(true)]
     public class ReportingDraftWorklist : ReportingWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
@@ -64,8 +66,9 @@ namespace ClearCanvas.Healthcare
         }
     }
 
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingInTranscriptionWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
+    [WorklistSingleton(true)]
     public class ReportingInTranscriptionWorklist : ReportingWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
@@ -82,8 +85,9 @@ namespace ClearCanvas.Healthcare
         }
     }
 
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingToBeVerifiedWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
+    [WorklistSingleton(true)]
     public class ReportingToBeVerifiedWorklist : ReportingWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
@@ -109,8 +113,9 @@ namespace ClearCanvas.Healthcare
         }
     }
 
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingVerifiedWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
+    [WorklistSingleton(true)]
     public class ReportingVerifiedWorklist : ReportingWorklist
     {
         public override Type ProcedureStepType
@@ -160,8 +165,9 @@ namespace ClearCanvas.Healthcare
         }
     }
 
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingReviewResidentReportWorklist")]
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
+    [WorklistSingleton(true)]
     public class ReportingReviewResidentReportWorklist : ReportingWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)

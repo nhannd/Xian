@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,20 +29,45 @@
 
 #endregion
 
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    [DataContract]
-    public class ListProcedureTypeGroupsForWorklistCategoryRequest : DataContractBase
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="WorklistFilterEditorComponent"/>
+    /// </summary>
+    [ExtensionOf(typeof(WorklistFilterEditorComponentViewExtensionPoint))]
+    public class WorklistFilterEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        public ListProcedureTypeGroupsForWorklistCategoryRequest(string worklistType)
+        private WorklistFilterEditorComponent _component;
+        private WorklistFilterEditorComponentControl _control;
+
+
+        #region IApplicationComponentView Members
+
+        public void SetComponent(IApplicationComponent component)
         {
-            WorklistType = worklistType;
+            _component = (WorklistFilterEditorComponent)component;
         }
 
-        [DataMember]
-        public string WorklistType;
+        #endregion
+
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new WorklistFilterEditorComponentControl(_component);
+                }
+                return _control;
+            }
+        }
     }
 }

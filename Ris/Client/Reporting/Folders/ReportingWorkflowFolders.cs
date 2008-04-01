@@ -39,7 +39,7 @@ using ClearCanvas.Ris.Application.Common;
 namespace ClearCanvas.Ris.Client.Reporting.Folders
 {
     [ExtensionOf(typeof(ReportingMainWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.ReportingToBeReportedWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.ReportingToBeReportedWorklist)]
     [FolderPath("To be Reported", true)]
     public class ToBeReportedFolder : ReportingWorkflowFolder
     {
@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderForWorklistType(WorklistTokens.ReportingDraftWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.ReportingDraftWorklist)]
     [FolderPath("Draft")]
     public class DraftFolder : ReportingWorkflowFolder
     {
@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderForWorklistType(WorklistTokens.ReportingInTranscriptionWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.ReportingInTranscriptionWorklist)]
     [FolderPath("In Transcriptioin")]
     public class InTranscriptionFolder : ReportingWorkflowFolder
     {
@@ -89,7 +89,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderForWorklistType(WorklistTokens.ReportingToBeVerifiedWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.ReportingToBeVerifiedWorklist)]
     [FolderPath("To be Verified")]
     public class ToBeVerifiedFolder : ReportingWorkflowFolder
     {
@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderForWorklistType(WorklistTokens.ReportingReviewResidentReportWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.ReportingReviewResidentReportWorklist)]
     [FolderPath("Review Resident Report")]
     public class ReviewResidentReportFolder : ReportingWorkflowFolder
     {
@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderForWorklistType(WorklistTokens.ReportingVerifiedWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.ReportingVerifiedWorklist)]
     [FolderPath("Verified")]
     public class VerifiedFolder : ReportingWorkflowFolder
     {
@@ -135,7 +135,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     }
 
     [ExtensionOf(typeof(ReportingProtocolWorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.ReportingToBeProtocolledWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.ReportingToBeProtocolledWorklist)]
     [FolderPath("To be Protocolled", true)]
     public class ToBeProtocolledFolder : ReportingWorkflowFolder
     {
@@ -155,27 +155,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderForWorklistType(WorklistTokens.ReportingToBeApprovedWorklist)]
-    [FolderPath("To be Approved")]
-    public class ToBeApprovedFolder : ReportingWorkflowFolder
-    {
-        public ToBeApprovedFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
-        public ToBeApprovedFolder(ReportingWorkflowFolderSystemBase folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public ToBeApprovedFolder()
-            : this(null)
-        {
-        }
-    }
-
-    [FolderForWorklistType(WorklistTokens.ReportingDraftProtocolWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.ReportingDraftProtocolWorklist)]
     [FolderPath("Draft")]
     public class DraftProtocolFolder : ReportingWorkflowFolder
     {
@@ -195,7 +175,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderForWorklistType(WorklistTokens.ReportingCompletedProtocolWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.ReportingCompletedProtocolWorklist)]
     [FolderPath("Completed")]
     public class CompletedProtocolFolder : ReportingWorkflowFolder
     {
@@ -215,7 +195,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderForWorklistType(WorklistTokens.ReportingSuspendedProtocolWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.ReportingSuspendedProtocolWorklist)]
     [FolderPath("Suspended")]
     public class SuspendedProtocolFolder : ReportingWorkflowFolder
     {
@@ -235,7 +215,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderForWorklistType(WorklistTokens.ReportingRejectedProtocolWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.ReportingRejectedProtocolWorklist)]
     [FolderPath("Rejected")]
     public class RejectedProtocolFolder : ReportingWorkflowFolder
     {

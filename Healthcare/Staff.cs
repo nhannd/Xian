@@ -44,25 +44,23 @@ namespace ClearCanvas.Healthcare {
     /// Staff entity
     /// </summary>
 	public partial class Staff : Entity
-	{
+    {
         private void CustomInitialize()
         {
         }
 
-        #region Object overrides
-
-        public override bool Equals(object that)
+        public override bool Equals(object obj)
         {
-            // TODO: implement a test for business-key equality
-            return this.Name.Equals((that as Staff).Name);
+            if (ReferenceEquals(this, obj)) return true;
+            Staff that = obj as Staff;
+            if (that == null) return false;
+
+            return Equals(this.Id, that.Id);
         }
 
         public override int GetHashCode()
         {
-            // TODO: implement a hash-code based on the business-key used in the Equals() method
-            return this.Name.GetHashCode();
+            return this.Id.GetHashCode();
         }
-
-        #endregion
-    }
+	}
 }

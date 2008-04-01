@@ -50,12 +50,12 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="title"></param>
+        /// <param name="dialogBox"></param>
         /// <param name="content"></param>
-        public DialogBoxForm(string title, Control content)
+        public DialogBoxForm(DialogBox dialogBox, Control content)
         {
             InitializeComponent();
-            this.Text = title;
+            this.Text = dialogBox.Title;
 
             _content = content;
 
@@ -63,8 +63,33 @@ namespace ClearCanvas.Desktop.View.WinForms
             _content.MinimumSize = _content.Size;
             _content.Dock = DockStyle.Fill;
 
-            // force the dialog client size to the size of the content
-            this.ClientSize = _content.Size;
+            if(dialogBox.Size != System.Drawing.Size.Empty)
+            {
+                this.ClientSize = dialogBox.Size;
+            }
+            else
+            {
+                switch (dialogBox.DialogSizeHint)
+                {
+                    case DialogSizeHint.Auto:
+                        // force the dialog client size to the size of the content
+                        this.ClientSize = _content.Size;
+                        break;
+                    case DialogSizeHint.Small:
+                        this.ClientSize = new System.Drawing.Size(320, 240);
+                        break;
+                    case DialogSizeHint.Medium:
+                        this.ClientSize = new System.Drawing.Size(640, 480);
+                        break;
+                    case DialogSizeHint.Large:
+                        this.ClientSize = new System.Drawing.Size(800, 600);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+
             _contentPanel.Controls.Add(_content);
 
             // Resize the dialog if size of the underlying content changed

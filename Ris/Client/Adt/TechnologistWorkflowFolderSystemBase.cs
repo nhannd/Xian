@@ -150,18 +150,18 @@ namespace ClearCanvas.Ris.Client.Adt
             : base(folderExplorer, 
             folderExtensionPoint)
         {
-            if (this.WorklistTokens.Count > 0)
+            if (this.WorklistClassNames.Count > 0)
             {
                 Platform.GetService<IModalityWorkflowService>(
                     delegate(IModalityWorkflowService service)
                         {
                             ListWorklistsResponse response =
-                                service.ListWorklists(new ListWorklistsRequest(this.WorklistTokens));
+                                service.ListWorklists(new ListWorklistsRequest(this.WorklistClassNames));
                             foreach (WorklistSummary summary in response.Worklists)
                             {
-                                Type foundType = GetWorklistType(summary.Type);
+                                Type foundType = GetFolderClassForWorklistClass(summary.ClassName);
                                 WorkflowFolder<ModalityWorklistItem> folder =
-                                    (WorkflowFolder<ModalityWorklistItem>)Activator.CreateInstance(foundType, this, summary.DisplayName, summary.Description, summary.EntityRef);
+                                    (WorkflowFolder<ModalityWorklistItem>)Activator.CreateInstance(foundType, this, summary.DisplayName, summary.Description, summary.WorklistRef);
                                 if (folder != null)
                                 {
                                     folder.IsStatic = false;

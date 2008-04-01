@@ -59,6 +59,10 @@
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceImporter.cs" />
     <Compile Include="Admin\ProcedureTypeAdmin\ProcedureTypeExporter.cs" />
     <Compile Include="Admin\ProcedureTypeAdmin\ProcedureTypeImporter.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\StaffGroupExporter.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\StaffGroupAdminService.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\StaffGroupImporter.cs" />
+    <Compile Include="StaffGroupAssembler.cs" />
     <Compile Include="Admin\UserAdmin\UserAdminService.cs" />
     <Compile Include="Admin\UserAdmin\AuthorityGroupAssembler.cs" />
     <Compile Include="Admin\UserAdmin\AuthorityTokenAssembler.cs" />

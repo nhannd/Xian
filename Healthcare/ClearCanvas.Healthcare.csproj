@@ -95,6 +95,7 @@
     <Compile Include="ReportingWorklists.cs" />
     <Compile Include="ResultCommunicationMode.cs" />
     <Compile Include="ResultRecipient.cs" />
+    <Compile Include="StaffGroup.cs" />
     <Compile Include="TechnologistWorklists.cs" />
     <Compile Include="Tests\TestExtensionFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />

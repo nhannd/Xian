@@ -41,17 +41,16 @@ namespace ClearCanvas.Enterprise.Core.Modelling
     /// </summary>
     /// <remarks>
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class UniqueKeyAttribute : Attribute
     {
-        private string[] _memberProperties;
-        private string _logicalName;
+        private readonly string[] _memberProperties;
+        private readonly string _logicalName;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="logicalKeyName">The logical name of the key.
-        /// </param>
+        /// <param name="logicalName">The logical name of the key.</param>
         /// <param name="memberProperties">
         /// An array of property names that form the unique key for the class.  For example, a Person class
         /// might have a unique key consisting of "FirstName" and "LastName" properties.  Note that compound

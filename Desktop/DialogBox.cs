@@ -30,9 +30,36 @@
 #endregion
 
 using ClearCanvas.Common;
+using System.Drawing;
 
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// An enumeration that can be used to provide a <see cref="DialogBox"/> with a hint for what size it should display.
+    /// </summary>
+    public enum DialogSizeHint
+    {
+        /// <summary>
+        /// Indicates that the dialog should size itself to the content.
+        /// </summary>
+        Auto,
+
+        /// <summary>
+        /// Indicates that the dialog should be small.
+        /// </summary>
+        Small,
+
+        /// <summary>
+        /// Indicates that the dialog should be medium.
+        /// </summary>
+        Medium,
+
+        /// <summary>
+        /// Indicatest that the dialog should be large.
+        /// </summary>
+        Large
+    }
+
     /// <summary>
     /// Represents a dialog box.
     /// </summary>
@@ -41,7 +68,7 @@ namespace ClearCanvas.Desktop
         // implements the host interface, which is exposed to the hosted application component
         private class Host : ApplicationComponentHost, IDialogBoxHost
         {
-            private DialogBox _owner;
+            private readonly DialogBox _owner;
 
             internal Host(DialogBox owner, IApplicationComponent component)
                 :base(component)
@@ -71,10 +98,12 @@ namespace ClearCanvas.Desktop
 
         }
 
-        private DesktopWindow _desktopWindow;
-        private IApplicationComponent _component;
+        private readonly DesktopWindow _desktopWindow;
+        private readonly IApplicationComponent _component;
         private bool _exitRequestedByComponent;
         private Host _host;
+        private readonly DialogSizeHint _dialogSize;
+        private readonly Size _size;
 
         /// <summary>
         /// Constructor.
@@ -85,6 +114,8 @@ namespace ClearCanvas.Desktop
             :base(args)
         {
             _component = args.Component;
+            _dialogSize = args.SizeHint;
+            _size = args.Size;
             _desktopWindow = desktopWindow;
 
             _host = new Host(this, _component);
@@ -96,6 +127,22 @@ namespace ClearCanvas.Desktop
         public object Component
         {
             get { return _component; }
+        }
+
+        /// <summary>
+        /// Gets the dialog size hint.
+        /// </summary>
+        public DialogSizeHint DialogSizeHint
+        {
+            get { return _dialogSize; }
+        }
+
+        /// <summary>
+        /// Gets the explicit size of the dialog, if specified.
+        /// </summary>
+        public Size Size
+        {
+            get { return _size; }
         }
 
         /// <summary>

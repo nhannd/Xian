@@ -32,6 +32,8 @@
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
+using System.Threading;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -60,11 +62,14 @@ namespace ClearCanvas.Ris.Client.Adt
             new RegistrationMainWorkflowItemToolExtensionPoint(),
             new RegistrationMainWorkflowFolderToolExtensionPoint())
         {
-            this.AddFolder(new Folders.ScheduledFolder(this));
-            this.AddFolder(new Folders.CheckedInFolder(this));
-            this.AddFolder(new Folders.InProgressFolder(this));
-            this.AddFolder(new Folders.CompletedFolder(this));
-            this.AddFolder(new Folders.CancelledFolder(this));
+            if(Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+            {
+                this.AddFolder(new Folders.ScheduledFolder(this));
+                this.AddFolder(new Folders.CheckedInFolder(this));
+                this.AddFolder(new Folders.InProgressFolder(this));
+                this.AddFolder(new Folders.CompletedFolder(this));
+                this.AddFolder(new Folders.CancelledFolder(this));
+            }
             this.AddFolder(_searchFolder = new Folders.RegistrationSearchFolder(this));
             folderExplorer.RegisterSearchDataHandler(this);
         }

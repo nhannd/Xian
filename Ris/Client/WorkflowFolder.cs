@@ -39,18 +39,18 @@ using ClearCanvas.Desktop.Tables;
 namespace ClearCanvas.Ris.Client
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class FolderForWorklistTypeAttribute : Attribute
+    public class FolderForWorklistClassAttribute : Attribute
     {
-        private readonly string _worklistType;
+        private readonly string _worklistClassName;
 
-        public FolderForWorklistTypeAttribute(string worklistType)
+        public FolderForWorklistClassAttribute(string worklistClassName)
         {
-            _worklistType = worklistType;
+            _worklistClassName = worklistClassName;
         }
 
-        public string WorklistType
+        public string WorklistClassName
         {
-            get { return _worklistType; }
+            get { return _worklistClassName; }
         }
     }
 
@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client
         private bool _isPopulated;
         private int _itemCount = -1;
         private readonly WorkflowFolderSystem<TItem> _folderSystem;
-        private readonly string _worklistType;
+        private readonly string _worklistClassName;
 
         private Timer _refreshTimer;
         private int _refreshTime;
@@ -90,15 +90,15 @@ namespace ClearCanvas.Ris.Client
                 _folderPath = new Path(string.Concat(_folderPath.ToString(), "/", folderName), _resourceResolver);
 
             // Initialize worklist type
-            FolderForWorklistTypeAttribute attrib = (FolderForWorklistTypeAttribute) CollectionUtils.SelectFirst(
+            FolderForWorklistClassAttribute attrib = (FolderForWorklistClassAttribute) CollectionUtils.SelectFirst(
                 this.GetType().GetCustomAttributes(false),
                 delegate(object o)
                     {
-                        return o is FolderForWorklistTypeAttribute;
+                        return o is FolderForWorklistClassAttribute;
                     });
 
             if (attrib != null)
-                _worklistType = attrib.WorklistType;
+                _worklistClassName = attrib.WorklistClassName;
         }
 
         public void UpdateWorklistItem(TItem item)
@@ -144,9 +144,9 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public string WorklistType
+        public string WorklistClassName
         {
-            get { return _worklistType; }
+            get { return _worklistClassName; }
         }
 
         public override string Text

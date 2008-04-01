@@ -241,34 +241,34 @@
     <value>Reading Group</value>
   </data>
   <data name="RegistrationCancelledWorklist" xml:space="preserve">
-    <value>Registration - Cancelled</value>
+    <value>Cancelled</value>
   </data>
   <data name="RegistrationCheckedInWorklist" xml:space="preserve">
-    <value>Registration - Checked In</value>
+    <value>Checked In</value>
   </data>
   <data name="RegistrationCompletedProtocolWorklist" xml:space="preserve">
-    <value>Booking - Complete Protocol</value>
+    <value>Complete Protocol</value>
   </data>
   <data name="RegistrationCompletedWorklist" xml:space="preserve">
-    <value>Registration - Completed</value>
+    <value>Completed</value>
   </data>
   <data name="RegistrationInProgressWorklist" xml:space="preserve">
-    <value>Registration - In Progress</value>
+    <value>In Progress</value>
   </data>
   <data name="RegistrationPendingProtocolWorklist" xml:space="preserve">
-    <value>Booking - Pending Protocol</value>
+    <value>Pending Protocol</value>
   </data>
   <data name="RegistrationRejectedProtocolWorklist" xml:space="preserve">
-    <value>Booking - Rejected Protocol</value>
+    <value>Rejected Protocol</value>
   </data>
   <data name="RegistrationScheduledWorklist" xml:space="preserve">
-    <value>Registration - Scheduled</value>
+    <value>Scheduled</value>
   </data>
   <data name="RegistrationSuspendedProtocolWorklist" xml:space="preserve">
-    <value>Booking - Suspended Protocol</value>
+    <value>Suspended Protocol</value>
   </data>
   <data name="RegistrationToBeScheduledWorklist" xml:space="preserve">
-    <value>Registration - To be Scheduled</value>
+    <value>To be Scheduled</value>
   </data>
   <data name="RelevanceGroup" xml:space="preserve">
     <value>Relevance Group</value>
@@ -280,10 +280,10 @@
     <value>Report</value>
   </data>
   <data name="ReportingToBeProtocolledWorklist" xml:space="preserve">
-    <value>Reporting - To be Protocolled</value>
+    <value>To be Protocolled</value>
   </data>
   <data name="ReportingToBeReportedWorklist" xml:space="preserve">
-    <value>Reporting - To be Reported</value>
+    <value>To be Reported</value>
   </data>
   <data name="SexEnum" xml:space="preserve">
     <value>Sex</value>
@@ -295,22 +295,22 @@
     <value>Staff</value>
   </data>
   <data name="TechnologistCancelledWorklist" xml:space="preserve">
-    <value>Technologist - Cancelled</value>
+    <value>Cancelled</value>
   </data>
   <data name="TechnologistCheckedInWorklist" xml:space="preserve">
-    <value>Technologist - Checked In</value>
+    <value>Checked In</value>
   </data>
   <data name="TechnologistCompletedWorklist" xml:space="preserve">
-    <value>Technologist - Completed</value>
+    <value>Completed</value>
   </data>
   <data name="TechnologistInProgressWorklist" xml:space="preserve">
-    <value>Technologist - In Progress</value>
+    <value>In Progress</value>
   </data>
   <data name="TechnologistScheduledWorklist" xml:space="preserve">
-    <value>Technologist - Scheduled</value>
+    <value>Scheduled</value>
   </data>
   <data name="TechnologistUndocumentedWorklist" xml:space="preserve">
-    <value>Technologist - Undocumented</value>
+    <value>Undocumented</value>
   </data>
   <data name="TelephoneNumber" xml:space="preserve">
     <value>Telephone Number</value>
@@ -320,5 +320,23 @@
   </data>
   <data name="Visit" xml:space="preserve">
     <value>Visit</value>
+  </data>
+  <data name="WorklistCategoryBooking" xml:space="preserve">
+    <value>Booking</value>
+  </data>
+  <data name="WorklistCategoryProtocoling" xml:space="preserve">
+    <value>Protocoling</value>
+  </data>
+  <data name="WorklistCategoryRegistration" xml:space="preserve">
+    <value>Registration</value>
+  </data>
+  <data name="WorklistCategoryReporting" xml:space="preserve">
+    <value>Reporting</value>
+  </data>
+  <data name="WorklistCategoryTechnologist" xml:space="preserve">
+    <value>Technologist</value>
+  </data>
+  <data name="WorklistClassAndName" xml:space="preserve">
+    <value>Worklist Name/Class</value>
   </data>
 </root>

@@ -31,13 +31,13 @@
 
 using System.Collections;
 using ClearCanvas.Enterprise.Core;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IWorklistBroker : IEntityBroker<Worklist, WorklistSearchCriteria>
     {
-        IList FindWorklistsForUser(string userName, IList worklistClassNames);
-        Worklist FindWorklist(string name, string type);
-        bool NameExistsForType(string name, string type);
+        IList<Worklist> FindWorklistsForStaff(Staff staff, IEnumerable<string> worklistClassNames);
+        Worklist FindWorklist(string name, string worklistClassName);
     }
 }
