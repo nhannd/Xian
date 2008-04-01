@@ -58,11 +58,14 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class SaveReport : ReportingOperation
 		{
-			public void Execute(ReportingProcedureStep step, string reportContent, Staff supervisor, IPersistenceContext context)
+			public void Execute(ReportingProcedureStep step, Dictionary<string, string> reportPartExtendedProperties, Staff supervisor, IPersistenceContext context)
 			{
-				step.ReportPart.Content = reportContent;
-				step.ReportPart.Supervisor = supervisor;
-			}
+                step.ReportPart.Supervisor = supervisor;
+                foreach (KeyValuePair<string, string> pair in reportPartExtendedProperties)
+                {
+                    step.ReportPart.ExtendedProperties[pair.Key] = pair.Value;
+                }
+            }
 
 			public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
 			{

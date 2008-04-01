@@ -119,7 +119,7 @@ namespace ClearCanvas.Healthcare {
             if(this.ActivePart != null)
                 throw new WorkflowException("Cannot add an addendum because the report, or a previous addendum, has not been completed.");
 
-            ReportPart part = new ReportPart(_parts.Count, null, ReportPartStatus.P, null, null, null, null, this);
+            ReportPart part = new ReportPart(_parts.Count, ReportPartStatus.P, null, null, null, null, this, new Dictionary<string, string>());
             _parts.Add(part);
 
             UpdateStatus();

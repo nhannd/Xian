@@ -30,6 +30,7 @@
 #endregion
 
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
@@ -37,20 +38,22 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class ReportPartDetail : DataContractBase
     {
-        public ReportPartDetail(EntityRef reportPartRef, int index, bool isAddendum, string content, EnumValueInfo status,
-            StaffSummary supervisor, StaffSummary interpretedBy, StaffSummary transcribedBy, StaffSummary verifiedBy)
+        public ReportPartDetail(EntityRef reportPartRef, int index, bool isAddendum, EnumValueInfo status,
+            StaffSummary supervisor, StaffSummary interpretedBy, StaffSummary transcribedBy, StaffSummary verifiedBy,
+            Dictionary<string, string> extendedProperties)
         {
             this.ReportPartRef = reportPartRef;
             this.Index = index;
             this.IsAddendum = isAddendum;
-            this.Content = content;
             this.Status = status;
             this.Supervisor = supervisor;
             this.InterpretedBy = interpretedBy;
             this.TranscribedBy = transcribedBy;
             this.VerifiedBy = verifiedBy;
+            this.ExtendedProperties = extendedProperties;
         }
 
+        public static string ReportContentKey = "ReportContent";
 
         [DataMember]
         public EntityRef ReportPartRef;
@@ -60,9 +63,6 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public bool IsAddendum;
-
-        [DataMember]
-        public string Content;
 
         [DataMember]
         public EnumValueInfo Status;
@@ -78,5 +78,36 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public StaffSummary VerifiedBy;
+
+        [DataMember]
+        public Dictionary<string, string> ExtendedProperties;
+
+        public string Content
+        {
+            get
+            {
+                if (ExtendedProperties == null || !ExtendedProperties.ContainsKey(ReportContentKey))
+                    return null;
+
+                return ExtendedProperties[ReportContentKey];
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    if (ExtendedProperties != null && ExtendedProperties.ContainsKey(ReportContentKey))
+                    {
+                        ExtendedProperties.Remove(ReportContentKey);
+                    }
+                }
+                else
+                {
+                    if (ExtendedProperties == null)
+                        ExtendedProperties = new Dictionary<string, string>();
+
+                    ExtendedProperties[ReportContentKey] = value;                
+                }
+            }
+        }
     }
 }

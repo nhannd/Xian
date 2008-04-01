@@ -7,7 +7,6 @@
     <version name="Version" column="Version_"/>
 
     <property name="Index" column="Index_" type="int" not-null="true"/>
-    <property name="Content" column="Content_" type="StringClob" length="65000" not-null="false"/>
 
     <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ReportPartStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true" access="nosetter.camelcase-underscore"/>
 
@@ -17,5 +16,11 @@
     <many-to-one name="Verifier" class="Staff" column="VerifierOID_"/>
 
     <many-to-one name="Report" class="Report" column="ReportOID_" not-null="true" fetch="join"/>
+
+    <map name="ExtendedProperties" lazy="true" table="ReportPartExtendedProperties_">
+      <key column="ReportPartOID_"/>
+      <index column="Name_" type="String"/>
+      <element column="Value_" type="StringClob" length="65000"/>
+    </map>
   </class>
 </hibernate-mapping>

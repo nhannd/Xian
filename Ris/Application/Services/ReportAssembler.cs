@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
@@ -104,13 +102,12 @@ namespace ClearCanvas.Ris.Application.Services
                 reportPart.GetRef(),
                 reportPart.Index,
                 reportPart.Index > 0,
-                reportPart.Content,
                 EnumUtils.GetEnumValueInfo(reportPart.Status, context),
                 reportPart.Supervisor == null ? null : staffAssembler.CreateStaffSummary(reportPart.Supervisor, context),
                 reportPart.Interpreter == null ? null : staffAssembler.CreateStaffSummary(reportPart.Interpreter, context),
                 reportPart.Transcriber == null ? null : staffAssembler.CreateStaffSummary(reportPart.Transcriber, context),
-                reportPart.Verifier == null ? null : staffAssembler.CreateStaffSummary(reportPart.Verifier, context)
-                );
+                reportPart.Verifier == null ? null : staffAssembler.CreateStaffSummary(reportPart.Verifier, context),
+                new Dictionary<string, string>(reportPart.ExtendedProperties));
 
             return summary;
         }

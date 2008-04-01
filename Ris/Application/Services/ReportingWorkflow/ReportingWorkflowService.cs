@@ -153,7 +153,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             if (request.SkipSaveReport == false)
                 SaveReportHelper(request, interpretation, supervisor);
 
-            if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.Content))
+            if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.ExtendedProperties[ReportPartDetail.ReportContentKey]))
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
 
             Operations.CompleteInterpretationForTranscription op = new Operations.CompleteInterpretationForTranscription();
@@ -178,8 +178,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             if (request.SkipSaveReport == false)
                 SaveReportHelper(request, interpretation, supervisor);
-
-            if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.Content))
+            
+            if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.ExtendedProperties[ReportPartDetail.ReportContentKey]))
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
 
             Operations.CompleteInterpretationForVerification op = new Operations.CompleteInterpretationForVerification();
@@ -203,7 +203,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             if (request.SkipSaveReport == false)
                 SaveReportHelper(request, interpretation, supervisor);
 
-            if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.Content))
+            if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.ExtendedProperties[ReportPartDetail.ReportContentKey]))
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
 
             Operations.CompleteInterpretationAndVerify op = new Operations.CompleteInterpretationAndVerify();
@@ -272,7 +272,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             if (request.SkipSaveReport == false)
                 SaveReportHelper(request, verification, null);
 
-            if (verification.ReportPart == null || String.IsNullOrEmpty(verification.ReportPart.Content))
+            if (verification.ReportPart == null || String.IsNullOrEmpty(verification.ReportPart.ExtendedProperties[ReportPartDetail.ReportContentKey]))
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
 
             Operations.CompleteVerification op = new Operations.CompleteVerification();
@@ -585,7 +585,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         private void SaveReportHelper(SaveReportRequest request, ReportingProcedureStep step, Staff supervisor)
         {
             Operations.SaveReport saveReportOp = new Operations.SaveReport();
-            saveReportOp.Execute(step, request.ReportContent, supervisor, this.PersistenceContext);
+            saveReportOp.Execute(step, request.ReportPartExtendedProperties, supervisor, this.PersistenceContext);
         }
 
     }

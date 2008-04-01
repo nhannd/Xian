@@ -31,6 +31,7 @@
 
 using System;
 using System.Threading;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -88,7 +89,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 		/// </summary>
 		string ReportContent { get; set; }
 
-		/// <summary>
+        /// <summary>
+        /// Gets or sets the extended properties for the active report part.
+        /// </summary>
+        Dictionary<string, string> ExtendedProperties { get; set; }
+        
+        /// <summary>
 		/// Gets or sets the supervisor for the active report part.
 		/// </summary>
 		StaffSummary Supervisor { get; set; }
@@ -215,10 +221,16 @@ namespace ClearCanvas.Ris.Client.Reporting
 				get { return _owner.CanSendToTranscription; }
 			}
 
-			public string ReportContent
+            public string ReportContent
+            {
+                get { return _owner.ReportContent; }
+                set { _owner.ReportContent = value; }
+            }
+    
+            public Dictionary<string, string> ExtendedProperties
 			{
-				get { return _owner._reportContent; }
-				set { _owner._reportContent = value; }
+				get { return _owner._reportPartExtendedProperties; }
+				set { _owner._reportPartExtendedProperties = value; }
 			}
 
 			public StaffSummary Supervisor
@@ -264,7 +276,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 		private int _activeReportPartIndex;
 		private ILookupHandler _supervisorLookupHandler;
 		private StaffSummary _supervisor;
-		private string _reportContent;
+		private Dictionary<string, string> _reportPartExtendedProperties;
 
 		/// <summary>
 		/// Constructor
@@ -309,7 +321,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 					_orderAdditionalInfoComponent.OrderExtendedProperties = response.OrderExtendedProperties;
 
 					ReportPartDetail activePart = _report.GetPart(_activeReportPartIndex);
-					_reportContent = activePart == null ? null : activePart.Content;
+					_reportPartExtendedProperties = activePart == null ? null : activePart.ExtendedProperties;
 					if (activePart != null && activePart.Supervisor != null)
 					{
 						// active part already has a supervisor assigned
@@ -394,7 +406,35 @@ namespace ClearCanvas.Ris.Client.Reporting
 			get { return _supervisorLookupHandler; }
 		}
 
-		public bool VerifyEnabled
+        public string ReportContent
+        {
+            get
+            {
+                if (_reportPartExtendedProperties == null || !_reportPartExtendedProperties.ContainsKey(ReportPartDetail.ReportContentKey))
+                    return null;
+
+                return _reportPartExtendedProperties[ReportPartDetail.ReportContentKey];
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    if (_reportPartExtendedProperties != null && _reportPartExtendedProperties.ContainsKey(ReportPartDetail.ReportContentKey))
+                    {
+                        _reportPartExtendedProperties.Remove(ReportPartDetail.ReportContentKey);
+                    }
+                }
+                else
+                {
+                    if (_reportPartExtendedProperties == null)
+                        _reportPartExtendedProperties = new Dictionary<string, string>();
+
+                    _reportPartExtendedProperties[ReportPartDetail.ReportContentKey] = value;
+                }
+            }
+        }
+        
+        public bool VerifyEnabled
 		{
 			get { return CanVerify; }
 		}
@@ -438,7 +478,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 							service.CompleteInterpretationAndVerify(
 								new CompleteInterpretationAndVerifyRequest(
 								_worklistItem.ProcedureStepRef,
-								_reportContent,
+								_reportPartExtendedProperties,
 								_supervisor == null ? null : _supervisor.StaffRef));
 						});
 				}
@@ -447,7 +487,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 					Platform.GetService<IReportingWorkflowService>(
 						delegate(IReportingWorkflowService service)
 						{
-							service.CompleteVerification(new CompleteVerificationRequest(_worklistItem.ProcedureStepRef, _reportContent));
+							service.CompleteVerification(new CompleteVerificationRequest(_worklistItem.ProcedureStepRef, _reportPartExtendedProperties));
 						});
 				}
 
@@ -487,7 +527,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 						service.CompleteInterpretationForVerification(
 							new CompleteInterpretationForVerificationRequest(
 							_worklistItem.ProcedureStepRef,
-							_reportContent,
+							_reportPartExtendedProperties,
 							_supervisor == null ? null : _supervisor.StaffRef));
 					});
 
@@ -520,7 +560,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 						service.CompleteInterpretationForTranscription(
 							new CompleteInterpretationForTranscriptionRequest(
 							_worklistItem.ProcedureStepRef,
-							_reportContent,
+							_reportPartExtendedProperties,
 							_supervisor == null ? null : _supervisor.StaffRef));
 					});
 
@@ -553,7 +593,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 						service.SaveReport(
 							new SaveReportRequest(
 							_worklistItem.ProcedureStepRef,
-							_reportContent,
+							_reportPartExtendedProperties,
 							_supervisor == null ? null : _supervisor.StaffRef));
 					});
 

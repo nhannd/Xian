@@ -38,10 +38,10 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class SaveReportRequest : DataContractBase
     {
-        public SaveReportRequest(EntityRef reportingStepRef, string reportContent, EntityRef supervisorRef)
+        public SaveReportRequest(EntityRef reportingStepRef, Dictionary<string, string> reportPartExtendedProperties, EntityRef supervisorRef)
         {
             this.ReportingStepRef = reportingStepRef;
-            this.ReportContent = reportContent;
+            this.ReportPartExtendedProperties = reportPartExtendedProperties;
             this.SupervisorRef = supervisorRef;
         }
 
@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public EntityRef ReportingStepRef;
 
         [DataMember]
-        public string ReportContent;
+        public Dictionary<string, string> ReportPartExtendedProperties;
 
         [DataMember]
         public EntityRef SupervisorRef;

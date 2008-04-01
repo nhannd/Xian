@@ -30,6 +30,7 @@
 #endregion
 
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
@@ -43,8 +44,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             this.SkipSaveReport = true;
         }
 
-        public CompleteVerificationRequest(EntityRef verificationStepRef, string reportContent)
-            :base(verificationStepRef, reportContent, null)
+        public CompleteVerificationRequest(EntityRef verificationStepRef, Dictionary<string, string> reportPartExtendedProperties)
+            :base(verificationStepRef, reportPartExtendedProperties, null)
         {
         }
 

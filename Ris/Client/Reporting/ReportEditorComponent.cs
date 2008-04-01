@@ -62,7 +62,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         /// </summary>
         public class EditingComponent : DHtmlComponent
         {
-            private const string ReportContentTag = "ReportContent";
             private readonly ReportEditorComponent _owner;
 
             public EditingComponent(ReportEditorComponent owner)
@@ -77,7 +76,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             protected override string GetTag(string tag)
             {
-                if (tag == ReportContentTag)
+                if (tag == ReportPartDetail.ReportContentKey)
                     return _owner.ReportContent;
 
                 return base.GetTag(tag);
@@ -85,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             protected override void SetTag(string tag, string data)
             {
-                if (tag == ReportContentTag)
+                if (tag == ReportPartDetail.ReportContentKey)
                     _owner.ReportContent = data;
                 else
                     base.SetTag(tag, data);
