@@ -430,6 +430,15 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pending Protocol ASAP.
+        /// </summary>
+        internal static string RegistrationAsapPendingProtocolWorklist {
+            get {
+                return ResourceManager.GetString("RegistrationAsapPendingProtocolWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancelled.
         /// </summary>
         internal static string RegistrationCancelledWorklist {

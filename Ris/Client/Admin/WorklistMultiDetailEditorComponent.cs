@@ -40,6 +40,7 @@ using ClearCanvas.Common.Utilities;
 using System.Collections;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -124,15 +125,15 @@ namespace ClearCanvas.Ris.Client.Admin
             _worklistTable = new Table<WorklistTableEntry>();
             _worklistTable.Columns.Add(new TableColumn<WorklistTableEntry, bool>("Create",
                 delegate(WorklistTableEntry item) { return item.Checked; },
-                delegate(WorklistTableEntry item, bool value) { item.Checked = value; }));
+                delegate(WorklistTableEntry item, bool value) { item.Checked = value; }, 0.5f));
             _worklistTable.Columns.Add(new TableColumn<WorklistTableEntry, string>("Class",
-                delegate(WorklistTableEntry item) { return item.Class.DisplayName; }));
+                delegate(WorklistTableEntry item) { return item.Class.DisplayName; }, 1.0f));
             _worklistTable.Columns.Add(new TableColumn<WorklistTableEntry, string>("Name",
                 delegate(WorklistTableEntry item) { return item.Name; },
-                delegate(WorklistTableEntry item, string value) { item.Name = value; }));
+                delegate(WorklistTableEntry item, string value) { item.Name = value; }, 1.0f));
             _worklistTable.Columns.Add(new TableColumn<WorklistTableEntry, string>("Description",
                 delegate(WorklistTableEntry item) { return item.Description; },
-                delegate(WorklistTableEntry item, string value) { item.Description = value; }));
+                delegate(WorklistTableEntry item, string value) { item.Description = value; }, 1.0f));
 
 
             _categoryChoices = CollectionUtils.Unique(
@@ -150,6 +151,16 @@ namespace ClearCanvas.Ris.Client.Admin
             _worklistActionModel.Edit.SetClickHandler(EditSelectedWorklist);
 
             UpdateWorklistActionModel();
+
+            // add validation rule to ensure all worklists that will be created have a name
+            this.Validation.Add(new ValidationRule("SelectedWorklist",
+                delegate 
+                {
+                    bool allWorklistsHaveNames = CollectionUtils.TrueForAll(_worklistTable.Items,
+                        delegate(WorklistTableEntry item) { return !item.Checked || !string.IsNullOrEmpty(item.Name); });
+
+                    return new ValidationResult(allWorklistsHaveNames, SR.MessageWorklistMustHaveName);
+                }));
 
             base.Start();
         }
@@ -218,7 +229,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 if(value != _defaultWorklistName)
                 {
-                    UpdateWorklistNames(_defaultWorklistName, value);
+                    UpdateWorklistNamesAndDescriptions(_defaultWorklistName, value);
                     _defaultWorklistName = value;
                     this.Modified = true;
                     NotifyPropertyChanged("DefaultWorklistName");
@@ -283,12 +294,13 @@ namespace ClearCanvas.Ris.Client.Admin
                 CollectionUtils.Map<WorklistClassSummary, WorklistTableEntry>(worklistClassSubset,
                     delegate (WorklistClassSummary wc) { return new WorklistTableEntry(wc, _defaultWorklistName);}));
 
-            // all classes in subset should have the same procedureTypeGroupClass
+            // all classes in subset should have the same procedureTypeGroupClass, so just grab the first one
             this.ProcedureTypeGroupClass = CollectionUtils.FirstElement(worklistClassSubset).ProcedureTypeGroupClassName;
         }
 
-        private void UpdateWorklistNames(string oldName, string newName)
+        private void UpdateWorklistNamesAndDescriptions(string oldName, string newName)
         {
+            // only update the names and descriptions that the user has not explicitly modified
             foreach (WorklistTableEntry item in _worklistTable.Items)
             {
                 if(item.Name == oldName)

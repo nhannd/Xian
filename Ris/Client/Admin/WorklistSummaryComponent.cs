@@ -36,6 +36,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -53,7 +54,7 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(WorklistSummaryComponentViewExtensionPoint))]
     public class WorklistSummaryComponent : ApplicationComponent
     {
-        private WorklistAdminSummary _selectedWorklist;
+        private IList<WorklistAdminSummary> _selectedWorklists;
         private WorklistAdminSummaryTable _worklistAdminSummaryTable;
 
         private CrudActionModel _worklistActionModel;
@@ -63,6 +64,7 @@ namespace ClearCanvas.Ris.Client.Admin
         public override void Start()
         {
             _worklistAdminSummaryTable = new WorklistAdminSummaryTable();
+            _selectedWorklists = new List<WorklistAdminSummary>();
 
             _worklistActionModel = new CrudActionModel(true, true, true);
             _worklistActionModel.Add.SetClickHandler(AddWorklist);
@@ -125,19 +127,19 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             get
             {
-                return new Selection(_selectedWorklist);
+                return new Selection(_selectedWorklists);
             }
             set
             {
-                _selectedWorklist = (WorklistAdminSummary) value.Item;
+                _selectedWorklists = new TypeSafeListWrapper<WorklistAdminSummary>(value.Items);
                 SelectedWorklistChanged();
             }
         }
 
         private void SelectedWorklistChanged()
         {
-            _worklistActionModel.Edit.Enabled = _selectedWorklist != null;
-            _worklistActionModel.Delete.Enabled = _selectedWorklist != null;
+            _worklistActionModel.Edit.Enabled = _selectedWorklists.Count == 1;
+            _worklistActionModel.Delete.Enabled = _selectedWorklists.Count > 0;
         }
 
         #endregion
@@ -167,9 +169,10 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             try
             {
-                if (_selectedWorklist == null) return;
+                if (_selectedWorklists.Count != 1) return;
 
-                WorklistEditorComponent editor = new WorklistEditorComponent(_selectedWorklist.EntityRef);
+                WorklistAdminSummary worklist = CollectionUtils.FirstElement(_selectedWorklists);
+                WorklistEditorComponent editor = new WorklistEditorComponent(worklist.EntityRef);
                 ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
                     new DialogBoxCreationArgs(editor, SR.TitleUpdateWorklist, null, DialogSizeHint.Medium));
 
@@ -180,7 +183,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     _worklistAdminSummaryTable.Items.Replace(
                         delegate(WorklistAdminSummary item) { return item.EntityRef.Equals(editedItem.EntityRef, true); },
                         editedItem);
-                    _selectedWorklist = editedItem;
+                    _selectedWorklists = new List<WorklistAdminSummary>(new WorklistAdminSummary[] { editedItem });
                     NotifyPropertyChanged("SelectedWorklist");
                 }
             }
@@ -194,22 +197,25 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             try
             {
-                if (_selectedWorklist == null) return;
+                if (_selectedWorklists.Count == 0) return;
 
-                DialogBoxAction action = this.Host.ShowMessageBox("Are you sure you want to delete this worklist?", MessageBoxActions.YesNo);
+                DialogBoxAction action = this.Host.ShowMessageBox("Are you sure you want to delete the selected worklist(s)?", MessageBoxActions.YesNo);
                 if(action == DialogBoxAction.Yes)
                 {
-                    Platform.GetService<IWorklistAdminService>(
-                        delegate(IWorklistAdminService service)
-                        {
-                            service.DeleteWorklist(new DeleteWorklistRequest(_selectedWorklist.EntityRef));
-                        });
+                    foreach (WorklistAdminSummary worklist in _selectedWorklists)
+                    {
+                        Platform.GetService<IWorklistAdminService>(
+                            delegate(IWorklistAdminService service)
+                            {
+                                service.DeleteWorklist(new DeleteWorklistRequest(worklist.EntityRef));
+                            });
 
-                    WorklistAdminSummary deletedWorklist = _selectedWorklist;
-                    _selectedWorklist = null;
+                        _worklistAdminSummaryTable.Items.Remove(worklist);
+                    }
+
+                    // clear selection
+                    _selectedWorklists = new List<WorklistAdminSummary>();
                     NotifyPropertyChanged("SelectedWorklist");
-
-                    _worklistAdminSummaryTable.Items.Remove(deletedWorklist);
                 }
 
             }

@@ -297,6 +297,9 @@
   <data name="MessageEnumConfirmDelete" xml:space="preserve">
     <value>Warning: Attempting to delete this value will fail if the value has been referenced by another entity.  Delete?</value>
   </data>
+  <data name="MessageWorklistMustHaveName" xml:space="preserve">
+    <value>Worklist must have a name</value>
+  </data>
   <data name="TitleAddAuthorityGroup" xml:space="preserve">
     <value>Add Authority Group</value>
   </data>

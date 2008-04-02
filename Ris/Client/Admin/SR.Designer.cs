@@ -601,6 +601,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Worklist must have a name.
+        /// </summary>
+        internal static string MessageWorklistMustHaveName {
+            get {
+                return ResourceManager.GetString("MessageWorklistMustHaveName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Authority Group.
         /// </summary>
         internal static string TitleAddAuthorityGroup {

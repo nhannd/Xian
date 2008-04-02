@@ -240,6 +240,9 @@
   <data name="ReadingGroup" xml:space="preserve">
     <value>Reading Group</value>
   </data>
+  <data name="RegistrationAsapPendingProtocolWorklist" xml:space="preserve">
+    <value>Pending Protocol ASAP</value>
+  </data>
   <data name="RegistrationCancelledWorklist" xml:space="preserve">
     <value>Cancelled</value>
   </data>
