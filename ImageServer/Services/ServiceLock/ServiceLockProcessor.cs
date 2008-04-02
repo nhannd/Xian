@@ -274,14 +274,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 
                     if (!foundResult)
                     {
-                        _threadStop.WaitOne(1000*60, false); // once a minute
+                        _threadStop.WaitOne(1000*30, false); // twice a minute
                         _threadStop.Reset();
                     }
                 }
                 else
                 {
-                    // Wait for only 1 second when the thread pool is all in use.
-                    _threadStop.WaitOne(1000, false);
+                    // Wait for only 5 seconds when the thread pool is all in use.
+                    _threadStop.WaitOne(5000, false);
                     _threadStop.Reset();                    
                 }
                 if (_stop)

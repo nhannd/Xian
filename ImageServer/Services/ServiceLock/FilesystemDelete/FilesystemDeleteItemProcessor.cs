@@ -159,6 +159,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             //Platform.Log(LogLevel.Info, "Starting filesystem watermark check on filesystem {0} (High Watermark: {1}, Low Watermark: {2}",
               //           fs.Filesystem.Description, fs.Filesystem.HighWatermark, fs.Filesystem.LowWatermark);
 
+            ServiceLockSettings settings = ServiceLockSettings.Default;
+            
             if (_monitor.CheckFilesystemAboveHighWatermark(item.FilesystemKey))
             {
                 if (CheckWorkQueueDeleteCount(item) > 0)
@@ -171,7 +173,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 else
                 {
                     _bytesToRemove = _monitor.CheckFilesystemBytesToRemove(item.FilesystemKey);
-                    int delayMinutes = 8;
+
+                    int delayMinutes = settings.FilesystemDeleteRecheckDelay;
 
                     Platform.Log(LogLevel.Info,
                                  "Filesystem above high watermark (Current: {0}, High Watermark: {1}).  Starting query for Filesystem delete candidates on '{2}'.",
@@ -201,14 +204,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 Platform.Log(LogLevel.Info, "Filesystem below high watermark: {0} (Current: {1}, High Watermark: {2}",
                        fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
 
-                UnlockServiceLock(item, true, Platform.Time.AddMinutes(2));
+                UnlockServiceLock(item, true, Platform.Time.AddMinutes(settings.FilesystemDeleteCheckInterval/2));
             }
             else
             {
                 Platform.Log(LogLevel.Info, "Filesystem below watermarks: {0} (Current: {1}, High Watermark: {2}",
                        fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
 
-                UnlockServiceLock(item, true, Platform.Time.AddMinutes(5));
+                UnlockServiceLock(item, true, Platform.Time.AddMinutes(settings.FilesystemDeleteCheckInterval));
             }
 
             _monitor.Dispose();
