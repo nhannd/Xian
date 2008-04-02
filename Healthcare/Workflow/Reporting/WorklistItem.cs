@@ -72,7 +72,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             PatientClassEnum patientClass,
             string diagnosticServiceName,
             string procedureName,
-            DateTime? scheduledStartTime,
+            DateTime? time,
             ActivityStatus activityStatus)
             : base(
                 procedureStep,
@@ -87,11 +87,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 patientClass,
                 diagnosticServiceName,
                 procedureName,
-                scheduledStartTime
+                time
             )
         {
             _activityStatus = activityStatus;
-            _creationTime = procedureStep.CreationTime;
         }
 
         /// <summary>
@@ -131,7 +130,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             _reportRef = report == null ? null : report.GetRef();
             _activityStatus = activityStatus;
-            _creationTime = procedureStep.CreationTime;
         }
 
         #region Public Properties
@@ -144,11 +142,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         public ActivityStatus ActivityStatus
         {
             get { return _activityStatus; }
-        }
-
-        public DateTime CreationTime
-        {
-            get { return _creationTime; }
         }
 
         #endregion

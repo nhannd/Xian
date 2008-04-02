@@ -53,7 +53,7 @@ namespace ClearCanvas.Healthcare
         private readonly string _diagnosticServiceName;
         private readonly string _procedureName;
         private readonly string _procedureStepName;
-        private readonly DateTime? _scheduledStartTime;
+        private readonly DateTime? _time;
 
 
         protected WorklistItemBase()
@@ -74,7 +74,7 @@ namespace ClearCanvas.Healthcare
             PatientClassEnum patientClass,
             string diagnosticServiceName,
             string procedureName,
-            DateTime? scheduledStartTime
+            DateTime? time
             )
         {
             _procedureStepRef = procedureStep == null ? null : procedureStep.GetRef();
@@ -90,7 +90,7 @@ namespace ClearCanvas.Healthcare
             _diagnosticServiceName = diagnosticServiceName;
             _procedureName = procedureName;
             _procedureStepName = procedureStep == null ? null : procedureStep.Name;
-            _scheduledStartTime = scheduledStartTime;
+            _time = time;
         }
 
 
@@ -159,9 +159,9 @@ namespace ClearCanvas.Healthcare
             get { return _procedureStepName; }
         }
 
-        public DateTime? ScheduledStartTime
+        public DateTime? Time
         {
-            get { return _scheduledStartTime; }
+            get { return _time; }
         }
 
         #region object overrides

@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Enterprise.Hibernate.Hql;
@@ -58,9 +59,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// <returns></returns>
         public IList<WorklistItem> GetSearchResults(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly)
         {
-            HqlProjectionQuery query = CreateWorklistItemQuery(typeof(ModalityProcedureStep));
+            // ensure criteria are filtering on correct type of step
+            CollectionUtils.ForEach(where,
+                delegate(WorklistItemSearchCriteria sc) { sc.ProcedureStepClass = typeof(ModalityProcedureStep); });
+            HqlProjectionQuery query = CreateWorklistItemQuery(where);
             query.Page = page;
-            BuildSearchQuery(query, where, showActiveOnly);
+            BuildSearchQuery(query, where, showActiveOnly, false);
             return DoQuery(query);
         }
 
@@ -72,8 +76,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// <returns></returns>
         public int CountSearchResults(WorklistItemSearchCriteria[] where, bool showActiveOnly)
         {
-            HqlProjectionQuery query = CreateWorklistCountQuery(typeof(ModalityProcedureStep));
-            BuildSearchQuery(query, where, showActiveOnly);
+            // ensure criteria are filtering on correct type of step
+            CollectionUtils.ForEach(where,
+                delegate(WorklistItemSearchCriteria sc) { sc.ProcedureStepClass = typeof(ModalityProcedureStep); });
+            HqlProjectionQuery query = CreateWorklistCountQuery(where);
+            BuildSearchQuery(query, where, showActiveOnly, true);
             return DoQueryCount(query);
         }
 
@@ -81,14 +88,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region Private Helpers
 
-        private void BuildSearchQuery(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool showActiveOnly)
+        private void BuildSearchQuery(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool showActiveOnly, bool countQuery)
         {
             if (showActiveOnly)
             {
                 query.Conditions.Add(new HqlCondition("ps.State in (?, ?)", ActivityStatus.SC, ActivityStatus.IP));
             }
 
-            AddWorklistCriteria(query, where, true);
+            AddWorklistCriteria(query, where, true, countQuery);
         }
 
         #endregion

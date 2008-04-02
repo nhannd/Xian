@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     item.AccessionNumber, 
                     item.DiagnosticServiceName,
                     item.ProcedureName, 
-                    item.ScheduledStartTime); },
+                    item.Time); },
                 1.0f, DescriptionRow);
 
             // Invisible but sortable columns
@@ -98,8 +98,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             // Currently the creation time of the interpretation step
             TableColumn<ReportingWorklistItem, string> procedureEndTimeColumn =
-                new TableColumn<ReportingWorklistItem, string>(SR.ColumnProcedureEndTime,
-                delegate(ReportingWorklistItem item) { return Format.Time(item.ScheduledStartTime); }, 0.5f);
+                new TableColumn<ReportingWorklistItem, string>(SR.ColumnTime,
+                delegate(ReportingWorklistItem item) { return Format.Time(item.Time); }, 0.5f);
             procedureEndTimeColumn.Visible = false;
 
             // The order of the addition determines the order of SortBy dropdown
@@ -115,7 +115,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             // Sort by Scheduled Time initially
             int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<ReportingWorklistItem> column)
-                { return column.Name.Equals(SR.ColumnProcedureEndTime); });
+                { return column.Name.Equals(SR.ColumnTime); });
 
             this.Sort(new TableSortParams(this.Columns[sortColumnIndex], true));
         }

@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             string diagnosticServiceName,
             string procedureName,
             string procedureStepName,
-            DateTime? scheduledStartTime,
+            DateTime? time,
             EnumValueInfo activityStatus)
             : base(
                 procedureStepRef,
@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
                 diagnosticServiceName,
                 procedureName,
                 procedureStepName,
-                scheduledStartTime
+                time
             )
         {
             this.ReportRef = reportRef;

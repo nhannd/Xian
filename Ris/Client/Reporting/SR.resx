@@ -144,8 +144,8 @@
   <data name="ColumnProcedure" xml:space="preserve">
     <value>Procedure</value>
   </data>
-  <data name="ColumnProcedureEndTime" xml:space="preserve">
-    <value>Procedure End Time</value>
+  <data name="ColumnTime" xml:space="preserve">
+    <value>Time</value>
   </data>
   <data name="ExceptionFailedToPerformOperation" xml:space="preserve">
     <value>Failed to perform operation</value>

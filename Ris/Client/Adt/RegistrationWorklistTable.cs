@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     // if there is no accession number, this item represents a patient only, not an order
                     return item.AccessionNumber == null ? null : 
-                        string.Format("{0} {1} - {2}", item.AccessionNumber, item.DiagnosticServiceName, item.ScheduledStartTime);
+                        string.Format("{0} {1} - {2}", item.AccessionNumber, item.DiagnosticServiceName, item.Time);
                 },
                 1.0f, DescriptionRow);
             descriptionRow.Comparison = null;
@@ -97,8 +97,8 @@ namespace ClearCanvas.Ris.Client.Adt
             diagnosticServiceColumn.Visible = false;
 
             TableColumn<RegistrationWorklistItem, string> scheduledForColumn = 
-                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnScheduledFor,
-                delegate(RegistrationWorklistItem item) { return Format.Time(item.ScheduledStartTime); }, 1.0f);
+                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnTime,
+                delegate(RegistrationWorklistItem item) { return Format.Time(item.Time); }, 1.0f);
             scheduledForColumn.Visible = false;
 
             // The order of the addition determines the order of SortBy dropdown

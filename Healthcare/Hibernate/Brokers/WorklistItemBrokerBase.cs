@@ -38,6 +38,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -85,12 +86,22 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         protected static readonly HqlSelect SelectPatientClass = new HqlSelect("v.PatientClass");
         protected static readonly HqlSelect SelectDiagnosticServiceName = new HqlSelect("ds.Name");
         protected static readonly HqlSelect SelectProcedureTypeName = new HqlSelect("rpt.Name");
-        protected static readonly HqlSelect SelectOrderScheduledStartTime = new HqlSelect("o.ScheduledStartTime");
-        protected static readonly HqlSelect SelectProcedureStepScheduledStartTime = new HqlSelect("ps.Scheduling.StartTime");
         protected static readonly HqlSelect SelectProcedureStepState = new HqlSelect("ps.State");
         protected static readonly HqlSelect SelectHealthcard = new HqlSelect("pp.Healthcard");
         protected static readonly HqlSelect SelectDateOfBirth = new HqlSelect("pp.DateOfBirth");
         protected static readonly HqlSelect SelectSex = new HqlSelect("pp.Sex");
+
+        protected static readonly HqlSelect SelectOrderScheduledStartTime = new HqlSelect("o.ScheduledStartTime");
+        protected static readonly HqlSelect SelectOrderSchedulingRequestTime = new HqlSelect("o.SchedulingRequestTime");
+        protected static readonly HqlSelect SelectProcedureScheduledStartTime = new HqlSelect("rp.ScheduledStartTime");
+        protected static readonly HqlSelect SelectProcedureCheckInTime = new HqlSelect("rp.ProcedureCheckIn.CheckInTime");
+        protected static readonly HqlSelect SelectProcedureCheckOutTime = new HqlSelect("rp.ProcedureCheckIn.CheckOutTime");
+        protected static readonly HqlSelect SelectProcedureStartTime = new HqlSelect("rp.StartTime");
+        protected static readonly HqlSelect SelectProcedureEndTime = new HqlSelect("rp.EndTime");
+        protected static readonly HqlSelect SelectProcedureStepCreationTime = new HqlSelect("ps.CreationTime");
+        protected static readonly HqlSelect SelectProcedureStepScheduledStartTime = new HqlSelect("ps.Scheduling.StartTime");
+        protected static readonly HqlSelect SelectProcedureStepStartTime = new HqlSelect("ps.StartTime");
+        protected static readonly HqlSelect SelectProcedureStepEndTime = new HqlSelect("ps.EndTime");
 
         protected static readonly HqlJoin JoinProcedure = new HqlJoin("ps.Procedure", "rp");
         protected static readonly HqlJoin JoinProcedureType = new HqlJoin("rp.Type", "rpt");
@@ -101,22 +112,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         protected static readonly HqlJoin JoinPatient = new HqlJoin("o.Patient", "p");
         protected static readonly HqlJoin JoinPatientProfile = new HqlJoin("p.Profiles", "pp");
 
-        private static readonly HqlSelect[] WorklistItemProjection
-            = {
-                SelectProcedureStep,
-                SelectProcedure,
-                SelectOrder,
-                SelectPatient,
-                SelectPatientProfile,
-                SelectMrn,
-                SelectPatientName,
-                SelectAccessionNumber,
-                SelectPriority,
-                SelectPatientClass,
-                SelectDiagnosticServiceName,
-                SelectProcedureTypeName,
-                SelectProcedureStepScheduledStartTime
-              };
 
         private static readonly HqlSelect[] WorklistCountProjection
             = {
@@ -144,6 +139,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private static readonly Dictionary<string, string> _mapCriteriaKeyToHql = new Dictionary<string, string>();
 
         /// <summary>
+        /// Provides mappings from <see cref="WorklistTimeField"/> values to HQL expressions.
+        /// </summary>
+        private static readonly Dictionary<WorklistTimeField, HqlSelect> _mapTimeFieldToHqlSelect = new Dictionary<WorklistTimeField, HqlSelect>();
+
+        /// <summary>
         /// Class initializer.
         /// </summary>
         static WorklistItemBrokerBase()
@@ -156,7 +156,18 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             _mapCriteriaKeyToHql.Add("ProcedureCheckIn", "rp.ProcedureCheckIn");
             _mapCriteriaKeyToHql.Add("Protocol", "pr");
             _mapCriteriaKeyToHql.Add("ReportPart", "rpp");
-        }
+
+            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.OrderSchedulingRequestTime, SelectOrderSchedulingRequestTime);
+            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureScheduledStartTime, SelectProcedureScheduledStartTime);
+            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureCheckInTime, SelectProcedureCheckInTime);
+            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureCheckOutTime, SelectProcedureCheckOutTime);
+            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureStartTime, SelectProcedureStartTime);
+            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureEndTime, SelectProcedureEndTime);
+            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureStepCreationTime, SelectProcedureStepCreationTime);
+            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureStepScheduledStartTime, SelectProcedureStepScheduledStartTime);
+            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureStepStartTime, SelectProcedureStepStartTime);
+            _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureStepEndTime, SelectProcedureStepEndTime);
+       }
 
         #endregion
 
@@ -173,10 +184,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// </remarks>
         public virtual IList<TItem> GetWorklistItems(Worklist worklist, IWorklistQueryContext wqc)
         {
-            HqlProjectionQuery query = CreateWorklistItemQuery(worklist.ProcedureStepType);
-            BuildWorklistQuery(query, worklist, wqc);
-            query.Page = wqc.Page;
-
+            HqlProjectionQuery query = BuildWorklistQuery(worklist, wqc, false);
             return DoQuery(query);
         }
 
@@ -191,9 +199,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// </remarks>
         public virtual int CountWorklistItems(Worklist worklist, IWorklistQueryContext wqc)
         {
-            HqlProjectionQuery query = CreateWorklistCountQuery(worklist.ProcedureStepType);
-            BuildWorklistQuery(query, worklist, wqc);
-
+            HqlProjectionQuery query = BuildWorklistQuery(worklist, wqc, true);
             return DoQueryCount(query);
         }
 
@@ -203,30 +209,33 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         /// <summary>
         /// Creates an <see cref="HqlProjectionQuery"/> that queries for worklist items based on the specified
-        /// procedure-step class.
+        /// criteria.
         /// </summary>
-        /// <param name="procedureStepClass"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         /// <remarks>
         /// Subclasses may override this method to customize the query or return an entirely different query.
         /// </remarks>
-        protected virtual HqlProjectionQuery CreateWorklistItemQuery(Type procedureStepClass)
+        protected virtual HqlProjectionQuery CreateWorklistItemQuery(WorklistItemSearchCriteria[] criteria)
         {
-            return new HqlProjectionQuery(new HqlFrom(procedureStepClass.Name, "ps", WorklistJoins), WorklistItemProjection);
+            Type procStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
+            WorklistTimeField timeField = CollectionUtils.FirstElement(criteria).TimeField;
+            return new HqlProjectionQuery(new HqlFrom(procStepClass.Name, "ps", WorklistJoins), GetWorklistItemProjection(timeField));
         }
 
         /// <summary>
         /// Creates an <see cref="HqlProjectionQuery"/> that queries for the count of worklist items based on the specified
         /// procedure-step class.
         /// </summary>
-        /// <param name="procedureStepClass"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         /// <remarks>
         /// Subclasses may override this method to customize the query or return an entirely different query.
         /// </remarks>
-        protected virtual HqlProjectionQuery CreateWorklistCountQuery(Type procedureStepClass)
+        protected virtual HqlProjectionQuery CreateWorklistCountQuery(WorklistItemSearchCriteria[] criteria)
         {
-            return new HqlProjectionQuery(new HqlFrom(procedureStepClass.Name, "ps", WorklistJoins), WorklistCountProjection);
+            Type procStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
+            return new HqlProjectionQuery(new HqlFrom(procStepClass.Name, "ps", WorklistJoins), WorklistCountProjection);
         }
 
         /// <summary>
@@ -236,7 +245,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// <param name="alias"></param>
         /// <returns></returns>
         /// <remarks>
-        /// This method is used by the <see cref="AddWorklistInvariants"/> method to translate a set of
+        /// This method is used by the <see cref="AddWorklistCriteria"/> method to translate a set of
         /// <see cref="WorklistItemSearchCriteria"/> objects to a set of <see cref="HqlCondition"/> objects.
         /// Subclasses may override this method to provide additional mappings, and may delegate back to the
         /// base class to handle well-known mappings.
@@ -244,6 +253,26 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         protected virtual bool MapCriteriaKeyToHql(string criteriaKey, out string alias)
         {
             return _mapCriteriaKeyToHql.TryGetValue(criteriaKey, out alias);
+        }
+
+        /// <summary>
+        /// Maps the <see cref="WorklistTimeField"/> value to an <see cref="HqlSelect"/> object.
+        /// </summary>
+        /// <param name="timeField"></param>
+        /// <param name="hql"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// </remarks>
+        protected virtual bool MapTimeFieldToHqlSelect(WorklistTimeField timeField, out HqlSelect hql)
+        {
+            // if "none", just use procedure step creation time since it is guaranteed to exist
+            if (timeField == WorklistTimeField.None)
+            {
+                hql = SelectProcedureStepCreationTime;
+                return true;
+            }
+
+            return _mapTimeFieldToHqlSelect.TryGetValue(timeField, out hql);
         }
 
         /// <summary>
@@ -300,7 +329,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 query.Conditions.Add(new HqlCondition("rp.Portable = ?", worklist.PortableFilter.Value));
             }
 
-            //AddTimeWindowFilters(worklist, conditions);
+            // note: worklist.TimeFilter is processed by the worklist class itself, and built into the criteria
         }
 
         /// <summary>
@@ -315,7 +344,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// Callers should typically set <paramref name="constrainPatientProfile"/> to true, unless there is a specific
         /// reason not to constrain the patient profile.
         /// </remarks>
-        protected virtual void AddWorklistCriteria(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool constrainPatientProfile)
+        protected virtual void AddWorklistCriteria(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool constrainPatientProfile, bool countQuery)
         {
             HqlOr or = new HqlOr();
             foreach (WorklistItemSearchCriteria c in where)
@@ -330,11 +359,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 if (and.Conditions.Count > 0)
                     or.Conditions.Add(and);
 
-                foreach (KeyValuePair<string, SearchCriteria> kvp in c.SubCriteria)
+                // only add sorting if not a count query
+                if(!countQuery)
                 {
-                    string alias;
-                    if (MapCriteriaKeyToHql(kvp.Key, out alias))
-                        query.Sorts.AddRange(HqlSort.FromSearchCriteria(alias, kvp.Value));
+                    foreach (KeyValuePair<string, SearchCriteria> kvp in c.SubCriteria)
+                    {
+                        string alias;
+                        if (MapCriteriaKeyToHql(kvp.Key, out alias))
+                            query.Sorts.AddRange(HqlSort.FromSearchCriteria(alias, kvp.Value));
+                    }
                 }
             }
 
@@ -353,52 +386,44 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region Helpers
 
-        /// <summary>
-        /// Adds conditions to the specified query according to the invariant criteria defined by the specified worklist.
-        /// </summary>
-        /// <param name="query"></param>
-        /// <param name="worklist"></param>
-        /// <param name="wqc"></param>
-        /// <param name="constrainPatientProfile"></param>
-        /// <remarks>
-        /// This method calls <see cref="Worklist.GetInvariantCriteria"/> on the specified worklist to obtain the
-        /// set of invariant criteria defined by the worklist class, and passes the result to <see cref="AddWorklistCriteria"/>.
-        /// </remarks>
-        protected void AddWorklistInvariants(HqlQuery query, Worklist worklist, IWorklistQueryContext wqc, bool constrainPatientProfile)
+        private HqlProjectionQuery BuildWorklistQuery(Worklist worklist, IWorklistQueryContext wqc, bool countQuery)
         {
-            AddWorklistCriteria(query, worklist.GetInvariantCriteria(wqc), constrainPatientProfile);
-        }
-
-
-
-        private void BuildWorklistQuery(HqlProjectionQuery query, Worklist worklist, IWorklistQueryContext wqc)
-        {
-            AddWorklistInvariants(query, worklist, wqc, true);
+            WorklistItemSearchCriteria[] criteria = worklist.GetInvariantCriteria(wqc);
+            HqlProjectionQuery query = countQuery ?
+                CreateWorklistCountQuery(criteria) : CreateWorklistItemQuery(criteria);
+            AddWorklistCriteria(query, criteria, true, countQuery);
             AddWorklistFilters(query, worklist, wqc);
+
+            // add paging if not a count query
+            if (!countQuery)
+            {
+                query.Page = wqc.Page;
+            }
+
+            return query;
         }
 
-        //protected void AddTimeWindowFilters(Worklist worklist, List<HqlCondition> conditions)
-        //{
-        //    DateTime startTime = worklist.StartTimeFilter.IsEnabled ?
-        //        worklist.StartTimeFilter.Value.ResolveDown(Platform.Time) : DateTime.MinValue;
-
-        //    DateTime endTime = worklist.EndTimeFilter.IsEnabled ?
-        //        worklist.EndTimeFilter.Value.ResolveUp(Platform.Time) : DateTime.MaxValue;
-
-        //    if(worklist.StartTimeFilter.IsEnabled && worklist.EndTimeFilter.IsEnabled)
-        //    {
-        //        conditions.Add(new HqlCondition("ps.StartTime between (?, ?)", startTime, endTime));
-        //    }
-        //    else if(worklist.StartTimeFilter.IsEnabled)
-        //    {
-        //        conditions.Add(new HqlCondition("ps.StartTime >= ?", startTime));
-        //    }
-        //    else if(worklist.EndTimeFilter.IsEnabled)
-        //    {
-        //        conditions.Add(new HqlCondition("ps.StartTime <= ?", endTime));
-        //    }
-        //}
-
+        private HqlSelect[] GetWorklistItemProjection(WorklistTimeField timeField)
+        {
+            HqlSelect selectTime;
+            MapTimeFieldToHqlSelect(timeField, out selectTime);
+            return new HqlSelect[]
+                {
+                    SelectProcedureStep,
+                    SelectProcedure,
+                    SelectOrder,
+                    SelectPatient,
+                    SelectPatientProfile,
+                    SelectMrn,
+                    SelectPatientName,
+                    SelectAccessionNumber,
+                    SelectPriority,
+                    SelectPatientClass,
+                    SelectDiagnosticServiceName,
+                    SelectProcedureTypeName,
+                    selectTime
+                };
+        }
 
         protected List<TItem> DoQuery(HqlQuery query)
         {

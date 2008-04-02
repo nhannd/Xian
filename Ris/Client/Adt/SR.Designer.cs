@@ -448,15 +448,6 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Scheduled For.
-        /// </summary>
-        internal static string ColumnScheduledFor {
-            get {
-                return ResourceManager.GetString("ColumnScheduledFor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Scheduled Request Date.
         /// </summary>
         internal static string ColumnScheduledRequestDate {
@@ -525,6 +516,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string ColumnStatusDescription {
             get {
                 return ResourceManager.GetString("ColumnStatusDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time.
+        /// </summary>
+        internal static string ColumnTime {
+            get {
+                return ResourceManager.GetString("ColumnTime", resourceCulture);
             }
         }
         

@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
                 EnumUtils.GetEnumValueInfo(domainItem.PatientClass),
                 domainItem.DiagnosticServiceName,
-                domainItem.ScheduledStartTime,
+                domainItem.Time,
                 healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
                 domainItem.DateOfBirth,
                 EnumUtils.GetEnumValueInfo(domainItem.Sex, context)

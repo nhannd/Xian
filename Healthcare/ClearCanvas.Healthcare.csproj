@@ -237,6 +237,7 @@
     <Compile Include="Worklist.cs" />
     <Compile Include="WorklistAttributes.cs" />
     <Compile Include="WorklistSearchCriteria.cs" />
+    <Compile Include="WorklistTimeField.cs" />
     <Compile Include="WorklistTimePoint.cs" />
     <Compile Include="WorklistTimeRange.cs" />
   </ItemGroup>

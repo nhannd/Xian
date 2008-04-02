@@ -142,11 +142,11 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Procedure End Time.
+        ///   Looks up a localized string similar to Time.
         /// </summary>
-        internal static string ColumnProcedureEndTime {
+        internal static string ColumnTime {
             get {
-                return ResourceManager.GetString("ColumnProcedureEndTime", resourceCulture);
+                return ResourceManager.GetString("ColumnTime", resourceCulture);
             }
         }
         

@@ -49,23 +49,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     {
         #region HQL Constants
 
-        private static readonly HqlSelect[] WorklistItemProjection
-            = {
-                  SelectOrder,
-                  SelectPatient,
-                  SelectPatientProfile,
-                  SelectMrn,
-                  SelectPatientName,
-                  SelectAccessionNumber,
-                  SelectPriority,
-                  SelectPatientClass,
-                  SelectDiagnosticServiceName,
-                  SelectOrderScheduledStartTime,
-                  SelectHealthcard,
-                  SelectDateOfBirth,
-                  SelectSex
-              };
-
         private static readonly HqlSelect[] WorklistItemCount
             = {
                   new HqlSelect("count(distinct o)"),
@@ -121,14 +104,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             // note: use of the page here is somewhat meaningless given the way 2 result sets are being combined
             // may need to think about this some more
-            HqlProjectionQuery orderQuery = new HqlProjectionQuery(WorklistItemFrom, WorklistItemProjection);
+            // TODO: what WorklistTimeField should be used for searching???
+            HqlProjectionQuery orderQuery = new HqlProjectionQuery(WorklistItemFrom, GetWorklistItemProjection(WorklistTimeField.ProcedureScheduledStartTime));
             orderQuery.Page = page;
-            BuildOrderSearchQuery(orderQuery, where, activeOrdersOnly);
+            BuildOrderSearchQuery(orderQuery, where, activeOrdersOnly, false);
             List<WorklistItem> orders = DoQuery(orderQuery);
 
             HqlProjectionQuery patientQuery = new HqlProjectionQuery(PatientFrom, PatientItemProjection);
             patientQuery.Page = page;
-            BuildPatientSearchQuery(patientQuery, where, workingFacility);
+            BuildPatientSearchQuery(patientQuery, where, workingFacility, false);
             List<WorklistItem> patients = DoQuery(patientQuery);
 
             List<WorklistItem> results = new List<WorklistItem>(orders);
@@ -150,11 +134,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         public int CountSearchResultsApprox(WorklistItemSearchCriteria[] where, bool activeOrdersOnly, Facility workingFacility)
         {
             HqlProjectionQuery orderQuery = new HqlProjectionQuery(WorklistItemFrom, WorklistItemCount);
-            BuildOrderSearchQuery(orderQuery, where, activeOrdersOnly);
+            BuildOrderSearchQuery(orderQuery, where, activeOrdersOnly, true);
             int orderCount = DoQueryCount(orderQuery);
 
             HqlProjectionQuery patientQuery = new HqlProjectionQuery(PatientFrom, PatientCountProjection);
-            BuildPatientSearchQuery(patientQuery, where, workingFacility);
+            BuildPatientSearchQuery(patientQuery, where, workingFacility, true);
             int patientCount = DoQueryCount(patientQuery);
 
             // there is no clear way to combine these numbers, since the order count may include
@@ -175,14 +159,16 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// Creates an <see cref="HqlProjectionQuery"/> that queries for worklist items based on the specified
         /// procedure-step class.
         /// </summary>
-        /// <param name="procedureStepClass"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         /// <remarks>
         /// Subclasses may override this method to customize the query or return an entirely different query.
         /// </remarks>
-        protected override HqlProjectionQuery CreateWorklistItemQuery(Type procedureStepClass)
+        protected override HqlProjectionQuery CreateWorklistItemQuery(WorklistItemSearchCriteria[] criteria)
         {
-            HqlProjectionQuery query = new HqlProjectionQuery(GetFromClause(procedureStepClass), WorklistItemProjection);
+            Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
+            WorklistTimeField timeField = CollectionUtils.FirstElement(criteria).TimeField;
+            HqlProjectionQuery query = new HqlProjectionQuery(GetFromClause(procedureStepClass), GetWorklistItemProjection(timeField));
             query.SelectDistinct = true;
             return query;
         }
@@ -191,13 +177,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// Creates an <see cref="HqlProjectionQuery"/> that queries for the count of worklist items based on the specified
         /// procedure-step class.
         /// </summary>
-        /// <param name="procedureStepClass"></param>
+        /// <param name="criteria"></param>
         /// <returns></returns>
         /// <remarks>
         /// Subclasses may override this method to customize the query or return an entirely different query.
         /// </remarks>
-        protected override HqlProjectionQuery CreateWorklistCountQuery(Type procedureStepClass)
+        protected override HqlProjectionQuery CreateWorklistCountQuery(WorklistItemSearchCriteria[] criteria)
         {
+            Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
             return new HqlProjectionQuery(GetFromClause(procedureStepClass), WorklistItemCount);
         }
 
@@ -219,20 +206,43 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             }
         }
 
-        private void BuildOrderSearchQuery(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool showActiveOnly)
+        private HqlSelect[] GetWorklistItemProjection(WorklistTimeField timeField)
+        {
+            HqlSelect selectTime;
+            MapTimeFieldToHqlSelect(timeField, out selectTime);
+
+            return new HqlSelect[]
+                {
+                      SelectOrder,
+                      SelectPatient,
+                      SelectPatientProfile,
+                      SelectMrn,
+                      SelectPatientName,
+                      SelectAccessionNumber,
+                      SelectPriority,
+                      SelectPatientClass,
+                      SelectDiagnosticServiceName,
+                      selectTime,
+                      SelectHealthcard,
+                      SelectDateOfBirth,
+                      SelectSex
+                  };
+        }
+
+        private void BuildOrderSearchQuery(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool showActiveOnly, bool countQuery)
         {
             if (showActiveOnly)
             {
                 query.Conditions.Add(new HqlCondition("(o.Status in (?, ?))", OrderStatus.SC, OrderStatus.IP));
             }
 
-            AddWorklistCriteria(query, where, true);
+            AddWorklistCriteria(query, where, true, countQuery);
         }
 
-        private void BuildPatientSearchQuery(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, Facility workingFacility)
+        private void BuildPatientSearchQuery(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, Facility workingFacility, bool countQuery)
         {
             // add the criteria, but do not attempt to constrain the patient profile, as we do this differently in this case (see below)
-            AddWorklistCriteria(query, where, false);
+            AddWorklistCriteria(query, where, false, countQuery);
 
             // constrain patient profile to the working facility
             query.Conditions.Add(new HqlCondition("pp.Mrn.AssigningAuthority = ?", workingFacility.InformationAuthority));

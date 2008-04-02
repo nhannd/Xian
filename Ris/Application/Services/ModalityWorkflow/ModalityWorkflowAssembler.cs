@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                 domainItem.DiagnosticServiceName,
                 domainItem.ProcedureName,
                 domainItem.ProcedureStepName,
-                domainItem.ScheduledStartTime
+                domainItem.Time
                 );
         }
 

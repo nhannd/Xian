@@ -246,9 +246,6 @@
   <data name="ColumnRole" xml:space="preserve">
     <value>Role</value>
   </data>
-  <data name="ColumnScheduledFor" xml:space="preserve">
-    <value>Scheduled For</value>
-  </data>
   <data name="ColumnScheduledRequestDate" xml:space="preserve">
     <value>Scheduled Request Date</value>
   </data>
@@ -272,6 +269,9 @@
   </data>
   <data name="ColumnStatusDescription" xml:space="preserve">
     <value>Status Description</value>
+  </data>
+  <data name="ColumnTime" xml:space="preserve">
+    <value>Time</value>
   </data>
   <data name="ColumnType" xml:space="preserve">
     <value>Type</value>

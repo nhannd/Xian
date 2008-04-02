@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 domainItem.DiagnosticServiceName,
                 domainItem.ProcedureName,
                 domainItem.ProcedureStepName,
-                domainItem.ScheduledStartTime,
+                domainItem.Time,
                 EnumUtils.GetEnumValueInfo(domainItem.ActivityStatus, context)
                 );
         }

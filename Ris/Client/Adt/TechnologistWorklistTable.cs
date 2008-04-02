@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     item.AccessionNumber, 
                     item.DiagnosticServiceName, 
                     item.ProcedureName, 
-                    item.ScheduledStartTime); },
+                    item.Time); },
                 1.0f, DescriptionRow);
 
             // Invisible but sortable columns
@@ -97,8 +97,8 @@ namespace ClearCanvas.Ris.Client.Adt
             procedureNameColumn.Visible = false;
 
             TableColumn<ModalityWorklistItem, string> scheduledForColumn = 
-                new TableColumn<ModalityWorklistItem, string>(SR.ColumnScheduledFor,
-                delegate(ModalityWorklistItem item) { return Format.Time(item.ScheduledStartTime); }, 0.5f);
+                new TableColumn<ModalityWorklistItem, string>(SR.ColumnTime,
+                delegate(ModalityWorklistItem item) { return Format.Time(item.Time); }, 0.5f);
             scheduledForColumn.Visible = false;
 
             // The order of the addition determines the order of SortBy dropdown
@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             // Sort by Scheduled Time initially
             int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<ModalityWorklistItem> column)
-                { return column.Name.Equals(SR.ColumnScheduledFor); });
+                { return column.Name.Equals(SR.ColumnTime); });
 
             this.Sort(new TableSortParams(this.Columns[sortColumnIndex], true));
 

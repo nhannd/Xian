@@ -78,7 +78,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             OrderPriority orderPriority,
             PatientClassEnum patientClass,
             string diagnosticServiceName,
-            DateTime? scheduledStartTime,
+            DateTime? time,
             HealthcardNumber healthcardNumber,
             DateTime? dateOfBirth,
             Sex sex)
@@ -95,7 +95,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
                 patientClass,
                 diagnosticServiceName,
                 null,
-                scheduledStartTime
+                time
             )
         {
             _healthcardNumber = healthcardNumber;

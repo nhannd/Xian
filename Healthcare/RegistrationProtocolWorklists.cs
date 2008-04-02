@@ -25,14 +25,9 @@ namespace ClearCanvas.Healthcare
         {
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
-
-            ApplyTimeRange(criteria.ProcedureStep.Scheduling.StartTime, null);
+            criteria.ProcedureStepClass = typeof (ProtocolAssignmentStep);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
-        }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(ProtocolAssignmentStep); }
         }
     }
 
@@ -47,15 +42,11 @@ namespace ClearCanvas.Healthcare
         {
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
+            criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
 
             // any procedures with pending protocol assignment, where the procedure scheduled start time is filtered
-            ApplyTimeRange(criteria.Procedure.ScheduledStartTime, WorklistTimeRange.Today);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureScheduledStartTime, WorklistTimeRange.Today, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
-        }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(ProtocolAssignmentStep); }
         }
     }
 
@@ -69,14 +60,11 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof(ProtocolResolutionStep);
             criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
             criteria.Protocol.Status.EqualTo(ProtocolStatus.RJ);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
-        }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(ProtocolResolutionStep); }
         }
     }
 
@@ -90,14 +78,11 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof(ProtocolResolutionStep);
             criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
             criteria.Protocol.Status.EqualTo(ProtocolStatus.SU);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
-        }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(ProtocolResolutionStep); }
         }
     }
 
@@ -111,16 +96,13 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
             criteria.ProcedureStep.State.EqualTo(ActivityStatus.CM);
 
-            // no time bounds, but only unscheduled procedures should be in this list
-            criteria.Procedure.ScheduledStartTime.IsNull();     
+            // only unscheduled procedures should be in this list
+            criteria.Procedure.ScheduledStartTime.IsNull();
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, null, WorklistOrdering.NewestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
-        }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(ProtocolAssignmentStep); }
         }
     }
 }

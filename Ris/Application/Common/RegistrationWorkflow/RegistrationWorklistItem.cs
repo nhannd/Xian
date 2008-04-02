@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             EnumValueInfo orderPriority,
             EnumValueInfo patientClass,
             string diagnosticServiceName,
-            DateTime? scheduledStartTime,
+            DateTime? time,
             HealthcardDetail healthcard,
             DateTime? dateOfBirth,
             EnumValueInfo sex)
@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
                 diagnosticServiceName,
                 null,
                 null,
-                scheduledStartTime
+                time
             )
         {
             this.Healthcard = healthcard;

@@ -36,6 +36,9 @@ namespace ClearCanvas.Healthcare
 {
     public class WorklistItemSearchCriteria : SearchCriteria
     {
+        private Type _procedureStepClass;
+        private WorklistTimeField _timeField;
+
         public PatientProfileSearchCriteria PatientProfile
         {
             get
@@ -82,6 +85,18 @@ namespace ClearCanvas.Healthcare
                 }
                 return (ProcedureStepSearchCriteria)this.SubCriteria["ProcedureStep"];
             }
+        }
+
+        public Type ProcedureStepClass
+        {
+            get { return _procedureStepClass; }
+            set { _procedureStepClass = value; }
+        }
+
+        public WorklistTimeField TimeField
+        {
+            get { return _timeField; }
+            set { _timeField = value; }
         }
     }
 }

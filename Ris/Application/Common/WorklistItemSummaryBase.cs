@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Application.Common
             string diagnosticServiceName,
             string procedureName,
             string procedureStepName,
-            DateTime? scheduledStartTime)
+            DateTime? time)
         {
             this.ProcedureStepRef = procedureStepRef;
             this.ProcedureRef = procedureRef;
@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Common
             this.DiagnosticServiceName = diagnosticServiceName;
             this.ProcedureName = procedureName;
             this.ProcedureStepName = procedureStepName;
-            this.ScheduledStartTime = scheduledStartTime;
+            this.Time = time;
         }
 
         [DataMember]
@@ -113,7 +113,7 @@ namespace ClearCanvas.Ris.Application.Common
         public string ProcedureStepName;
 
         [DataMember]
-        public DateTime? ScheduledStartTime;
+        public DateTime? Time;
 
         /// <summary>
         /// Convenience method to support dynamic access to properties and fields of this class.

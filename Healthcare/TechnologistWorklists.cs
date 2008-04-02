@@ -21,11 +21,6 @@ namespace ClearCanvas.Healthcare
         {
             return wqc.GetBroker<IModalityWorklistItemBroker>().CountWorklistItems(this, wqc);
         }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(ModalityProcedureStep); }
-        }
     }
 
     /// <summary>
@@ -38,9 +33,10 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             ModalityWorklistItemSearchCriteria criteria = new ModalityWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof(ModalityProcedureStep);
             criteria.ProcedureCheckIn.CheckInTime.IsNull(); // not checked in
             criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
-            ApplyTimeRange(criteria.ProcedureStep.Scheduling.StartTime, WorklistTimeRange.Today);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepScheduledStartTime, WorklistTimeRange.Today, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -55,10 +51,11 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             ModalityWorklistItemSearchCriteria criteria = new ModalityWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof(ModalityProcedureStep);
             criteria.ProcedureCheckIn.CheckInTime.IsNotNull(); // checked-in
             criteria.ProcedureCheckIn.CheckOutTime.IsNull(); // but not checked-out
             criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);    // and not started
-            ApplyTimeRange(criteria.ProcedureStep.Scheduling.StartTime, WorklistTimeRange.Today);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureCheckInTime, WorklistTimeRange.Today, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -73,8 +70,9 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             ModalityWorklistItemSearchCriteria criteria = new ModalityWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof(ModalityProcedureStep);
             criteria.ProcedureStep.State.EqualTo(ActivityStatus.IP);
-            ApplyTimeRange(criteria.ProcedureStep.StartTime, WorklistTimeRange.Today);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepStartTime, WorklistTimeRange.Today, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -89,8 +87,9 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             ModalityWorklistItemSearchCriteria criteria = new ModalityWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof(ModalityProcedureStep);
             criteria.ProcedureStep.State.EqualTo(ActivityStatus.CM);
-            ApplyTimeRange(criteria.ProcedureStep.EndTime, WorklistTimeRange.Today);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, WorklistTimeRange.Today, WorklistOrdering.NewestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -105,8 +104,9 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             ModalityWorklistItemSearchCriteria criteria = new ModalityWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof(ModalityProcedureStep);
             criteria.ProcedureStep.State.EqualTo(ActivityStatus.DC);
-            ApplyTimeRange(criteria.ProcedureStep.EndTime, WorklistTimeRange.Today);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, WorklistTimeRange.Today, WorklistOrdering.NewestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -121,15 +121,10 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             ModalityWorklistItemSearchCriteria criteria = new ModalityWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof(DocumentationProcedureStep);
             criteria.ProcedureStep.State.EqualTo(ActivityStatus.IP);
-
-            // no time bounds
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, null, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
-        }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(DocumentationProcedureStep); }
         }
     }
 }

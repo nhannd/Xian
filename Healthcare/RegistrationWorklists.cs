@@ -50,11 +50,6 @@ namespace ClearCanvas.Healthcare
         {
             return wqc.GetBroker<IRegistrationWorklistItemBroker>().CountWorklistItems(this, wqc);
         }
-
-        public override Type ProcedureStepType
-        {
-            get { return null; }
-        }
     }
 
     /// <summary>
@@ -72,7 +67,8 @@ namespace ClearCanvas.Healthcare
 
             // only unscheduled items should appear in this list
             criteria.Procedure.ScheduledStartTime.IsNull();
-            ApplyTimeRange(criteria.Order.SchedulingRequestTime, null);
+
+            ApplyTimeCriteria(criteria, WorklistTimeField.OrderSchedulingRequestTime, null, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -89,7 +85,7 @@ namespace ClearCanvas.Healthcare
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.Order.Status.EqualTo(OrderStatus.SC);
             criteria.ProcedureCheckIn.CheckInTime.IsNull();     // exclude anything already checked-in
-            ApplyTimeRange(criteria.Procedure.ScheduledStartTime, WorklistTimeRange.Today);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureScheduledStartTime, WorklistTimeRange.Today, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -107,7 +103,7 @@ namespace ClearCanvas.Healthcare
             criteria.Order.Status.EqualTo(OrderStatus.SC);
             criteria.ProcedureCheckIn.CheckInTime.IsNotNull();  // include only items that have been checked-in
             criteria.ProcedureCheckIn.CheckOutTime.IsNull();
-            ApplyTimeRange(criteria.ProcedureCheckIn.CheckInTime, WorklistTimeRange.Today);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureCheckInTime, WorklistTimeRange.Today, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -124,7 +120,7 @@ namespace ClearCanvas.Healthcare
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.Order.Status.EqualTo(OrderStatus.IP);
             criteria.ProcedureCheckIn.CheckOutTime.IsNull();    // exclude any item already checked-out
-            ApplyTimeRange(criteria.Procedure.StartTime, WorklistTimeRange.Today);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStartTime, WorklistTimeRange.Today, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -143,7 +139,7 @@ namespace ClearCanvas.Healthcare
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.Order.Status.In(new OrderStatus[] { OrderStatus.IP, OrderStatus.CM });
             criteria.ProcedureCheckIn.CheckOutTime.IsNotNull();
-            ApplyTimeRange(criteria.ProcedureCheckIn.CheckOutTime, WorklistTimeRange.Today);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureCheckOutTime, WorklistTimeRange.Today, WorklistOrdering.NewestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -161,7 +157,7 @@ namespace ClearCanvas.Healthcare
             criteria.Order.Status.In(new OrderStatus[] { OrderStatus.DC, OrderStatus.CA });
 
             // apply filter to the end-time (time procedure was was cancelled)
-            ApplyTimeRange(criteria.Procedure.EndTime, WorklistTimeRange.Today);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureEndTime, WorklistTimeRange.Today, WorklistOrdering.NewestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }

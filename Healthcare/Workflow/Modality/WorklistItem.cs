@@ -67,7 +67,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             PatientClassEnum patientClass,
             string diagnosticServiceName,
             string procedureName,
-            DateTime? scheduledStartTime)
+            DateTime? time)
             : base(
                 procedureStep,
                 procedure,
@@ -81,7 +81,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
                 patientClass,
                 diagnosticServiceName,
                 procedureName,
-                scheduledStartTime
+                time
             )
         {
         }

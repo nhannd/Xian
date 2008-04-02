@@ -36,14 +36,11 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof (InterpretationStep);
             criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
             criteria.ProcedureStep.Scheduling.Performer.Staff.IsNull();
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.OldestItemsFirst);
             return new ReportingWorklistItemSearchCriteria[] { criteria };
-        }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(InterpretationStep); }
         }
     }
 
@@ -55,14 +52,11 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof (InterpretationStep);
             criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
             criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepStartTime, null, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
-        }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(InterpretationStep); }
         }
     }
 
@@ -74,14 +68,11 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof(TranscriptionStep);
             criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
             criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
-        }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(TranscriptionStep); }
         }
     }
 
@@ -93,6 +84,7 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof(VerificationStep);
             criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
             if (wqc.Staff.Type == StaffType.PRAR)
             {
@@ -104,12 +96,8 @@ namespace ClearCanvas.Healthcare
                 criteria.ReportPart.Interpreter.EqualTo(wqc.Staff);
                 criteria.ReportPart.Supervisor.IsNull();
             }
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
-        }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(VerificationStep); }
         }
     }
 
@@ -118,16 +106,11 @@ namespace ClearCanvas.Healthcare
     [WorklistSingleton(true)]
     public class ReportingVerifiedWorklist : ReportingWorklist
     {
-        public override Type ProcedureStepType
-        {
-            get { return typeof(PublicationStep); }
-        }
-
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof(PublicationStep);
             criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.CM });
-            ApplyTimeRange(criteria.ProcedureStep.CreationTime, WorklistTimeRange.Today);
             if (wqc.Staff.Type == StaffType.PRAR)
             {
                 criteria.ReportPart.Interpreter.EqualTo(wqc.Staff);
@@ -136,6 +119,7 @@ namespace ClearCanvas.Healthcare
             {
                 criteria.ReportPart.Verifier.EqualTo(wqc.Staff);
             }
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.NewestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
         }
 
@@ -156,7 +140,7 @@ namespace ClearCanvas.Healthcare
                 else
                 {
                     WorklistItem existingItem = filter[item.ProcedureRef];
-                    if (item.CreationTime > existingItem.CreationTime)
+                    if (item.Time > existingItem.Time)
                         filter[item.ProcedureRef] = item;
                 }
             }
@@ -173,14 +157,11 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof(VerificationStep);
             criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
             criteria.ReportPart.Supervisor.EqualTo(wqc.Staff);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.OldestItemsFirst);
             return new WorklistItemSearchCriteria[] { criteria };
-        }
-
-        public override Type ProcedureStepType
-        {
-            get { return typeof(VerificationStep); }
         }
     }
 }
