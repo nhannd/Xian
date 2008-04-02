@@ -319,7 +319,7 @@ namespace ClearCanvas.Ris.Client
             {
                 string path = xmlFolder.GetAttribute("path");
 
-                int currentScore = path.Contains(folderPath) ? folderPath.Length : 0;
+                int currentScore = folderPath.Contains(path) || path.Contains(folderPath) ? Math.Min(folderPath.Length, path.Length) : 0;
                 if (currentScore >= highestScore)
                 {
                     insertionPoint = xmlFolder;
