@@ -352,10 +352,15 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		public override void Stop()
 		{
-			if (_reportEditor != null && _reportEditor is IDisposable)
+			if (_reportEditor != null)
 			{
-				((IDisposable)_reportEditor).Dispose();
-				_reportEditor = null;
+                _reportEditorHost.StopComponent();
+
+                if (_reportEditor is IDisposable)
+                {
+                    ((IDisposable)_reportEditor).Dispose();
+                    _reportEditor = null;
+                }
 			}
 
 			base.Stop();

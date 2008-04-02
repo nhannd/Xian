@@ -124,12 +124,14 @@ namespace ClearCanvas.Ris.Application.Common
                 new AuthorityGroupDefinition(Radiologists,
                     new string[] 
                     {
-                        AuthorityTokens.VerifyReport
+                        AuthorityTokens.VerifyReport,
+                        AuthorityTokens.UseSpeechRecognitionWorkflow
                     }),
 
                 new AuthorityGroupDefinition(RadiologyResidents,
                     new string[] 
                     {
+                        AuthorityTokens.UseSpeechRecognitionWorkflow
                     }),
 
                 new AuthorityGroupDefinition(Engineers,
