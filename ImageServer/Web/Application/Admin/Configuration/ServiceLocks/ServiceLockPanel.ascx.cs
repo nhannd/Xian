@@ -77,8 +77,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
 
             EditServiceLockDialog.ServiceLockUpdated += AddEditServiceLockDialog_ServiceLockUpdated; 
             // setup child controls
-            GridPager.ItemName = "ServiceLock";
-            GridPager.PuralItemName = "ServiceLocks";
+            GridPager.ItemName = "Service";
+            GridPager.PuralItemName = "Services";
             GridPager.Target = ServiceLockGridViewControl.TheGrid;
 
             ConfirmEditDialog.Confirmed += ConfirmEditDialog_Confirmed;
