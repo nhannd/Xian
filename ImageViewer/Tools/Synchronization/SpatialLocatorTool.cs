@@ -87,9 +87,14 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			base.Dispose(disposing);
 		}
 
-		private SpatialLocatorGraphic GetSpatialLocatorGraphic(IPresentationImage image)
+		private SpatialLocatorGraphic ShowSpatialLocatorGraphic(IPresentationImage image)
 		{
-			return _coordinator.GetSpatialLocatorGraphic(image);
+			return _coordinator.ShowSpatialLocatorGraphic(image);
+		}
+
+		private bool HideSpatialLocatorGraphic(IPresentationImage image)
+		{
+			return _coordinator.HideSpatialLocatorGraphic(image);
 		}
 
 		private bool CalculateReferencePoint(IImageBox imageBox, Vector3D referencePositionPatient)
@@ -113,18 +118,22 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 						ImageInfo info = _cache.GetImageInformation(frame);
 						if (info != null)
 						{
-							Vector3D positionImage = frame.ImagePlaneHelper.ConvertToImage(referencePositionPatient, info.PositionPatientTopLeft);
+							float halfSliceThickness = Math.Abs((float)frame.SliceThickness/2);
+							float halfSpacingBetweenSlices = Math.Abs((float)frame.SpacingBetweenSlices/2);
+							float tolerance = Math.Max(halfSliceThickness, halfSpacingBetweenSlices);
 
-							float zDistanceMillimetres = Math.Abs(positionImage.Z);
-
-							//The coordinates need to be converted to pixel coordinates because right now they are in mm.
-							PointF positionImagePixels = (PointF)frame.ImagePlaneHelper.ConvertToImagePixel(new PointF(positionImage.X, positionImage.Y));
-
-							if (zDistanceMillimetres < closestDistanceMillimetres)
+							if (tolerance > 0)
 							{
-								closestIndex = i;
-								closestDistanceMillimetres = zDistanceMillimetres;
-								closestPointImage = positionImagePixels;
+								Vector3D positionImagePlane = frame.ImagePlaneHelper.ConvertToImagePlane(referencePositionPatient);
+								float zDistanceMillimetres = Math.Abs(positionImagePlane.Z);
+
+								if (zDistanceMillimetres <= tolerance && zDistanceMillimetres < closestDistanceMillimetres)
+								{
+									closestIndex = i;
+									closestDistanceMillimetres = zDistanceMillimetres;
+									//The coordinates need to be converted to pixel coordinates because right now they are in mm.
+									closestPointImage = (PointF) frame.ImagePlaneHelper.ConvertToImage(new PointF(positionImagePlane.X, positionImagePlane.Y));
+								}
 							}
 						}
 					}
@@ -134,18 +143,17 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			if (closestIndex >= 0)
 			{
 				imageBox.TopLeftPresentationImageIndex = closestIndex;
-
-				SpatialLocatorGraphic existingGraphic = GetSpatialLocatorGraphic(imageBox.TopLeftPresentationImage);
-				if (existingGraphic != null)
+				SpatialLocatorGraphic graphic = ShowSpatialLocatorGraphic(imageBox.TopLeftPresentationImage);
+				if (graphic != null)
 				{
-					existingGraphic.CoordinateSystem = CoordinateSystem.Source;
-					existingGraphic.Anchor = closestPointImage;
-					existingGraphic.ResetCoordinateSystem();
+					graphic.CoordinateSystem = CoordinateSystem.Source;
+					graphic.Anchor = closestPointImage;
+					graphic.ResetCoordinateSystem();
 					return true;
 				}
 			}
 
-			return false;
+			return HideSpatialLocatorGraphic(imageBox.TopLeftPresentationImage);
 		}
 
 		private IEnumerable<IImageBox> CalculateReferencePoints(Vector3D referencePositionPatient)

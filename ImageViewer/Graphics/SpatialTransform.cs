@@ -31,12 +31,14 @@
 
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using Matrix=System.Drawing.Drawing2D.Matrix;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	//TODO: the Matrix fields are not disposed although they are IDisposable
+
 	/// <summary>
 	/// Implements a 2D affine transformation
 	/// </summary>
@@ -53,6 +55,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Private fields
 
+		private bool _updatingScaleParameters;
 		private float _scale = 1.0f;
 		private float _maximumScale = DefaultMaximumScale;
 		private float _minimumScale = DefaultMinimumScale;
@@ -64,7 +67,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private bool _flipX;
 		private bool _flipY;
 		private PointF _centerOfRotationXY;
-		private float _cumulativeScale = 1.0f;
 		private Matrix _cumulativeTransform;
 		private Matrix _transform;
 		private bool _recalculationRequired;
@@ -80,18 +82,39 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			_ownerGraphic = ownerGraphic;
 			_recalculationRequired = true;
+			_updatingScaleParameters = false;
 			Initialize();
 		}
 
 		#region Properties
 
-		private bool RecalculationRequired
+		/// <summary>
+		/// Gets whether or not we need to recalculate the <see cref="CumulativeTransform"/>.
+		/// </summary>
+		protected bool RecalculationRequired
 		{
-			get { return _recalculationRequired; }
-			set
+			get 
+			{
+				//check if the scale values have changed before returning.
+				UpdateScaleInternal();
+
+				if (_recalculationRequired)
+				{
+					return true;
+				}
+				else if (OwnerGraphic != null && OwnerGraphic.ParentGraphic != null)
+				{
+					//If something above us in the hierarchy needs recalculating, so do we.
+					return OwnerGraphic.ParentGraphic.SpatialTransform.RecalculationRequired;
+				}
+
+				return false;
+			}
+			private set
 			{
 				if (value && OwnerGraphic is CompositeGraphic)
 				{
+					//If we need recalculation, so does everything below us.
 					foreach (Graphic graphic in ((CompositeGraphic)OwnerGraphic).Graphics)
 						graphic.SpatialTransform.ForceRecalculation();
 				}
@@ -107,6 +130,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get
 			{
+				UpdateScaleInternal();
 				return _scale;
 			}
 			set
@@ -121,8 +145,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 				_scale = value;
 				this.RecalculationRequired = true;
-
-				OnScaleChanged();
 			}
 		}
 
@@ -137,6 +159,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get
 			{
+				UpdateScaleInternal();
 				return _scaleX;
 			}
 			protected set 
@@ -160,6 +183,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get
 			{
+				UpdateScaleInternal();
 				return _scaleY;
 			}
 			protected set 
@@ -332,70 +356,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get
 			{
-				Calculate();
-				return _cumulativeScale;
-			}
-		}
-
-		/// <summary>
-		/// Gets the cumulative rotation in the XY plane.
-		/// </summary>
-		/// <remarks>
-		/// Gets the rotation relative to the root of the scene graph.
-		/// </remarks>
-		public int CumulativeRotationXY
-		{
-			get
-			{
-				int cumulativeRotation = RotationXY;
+				float cumulativeScale = Scale;
 				if (OwnerGraphic != null && OwnerGraphic.ParentGraphic != null)
-					cumulativeRotation += OwnerGraphic.ParentGraphic.SpatialTransform.CumulativeRotationXY;
-				
-				return cumulativeRotation;
-			}
-		}
+					cumulativeScale *= OwnerGraphic.ParentGraphic.SpatialTransform.CumulativeScale;
 
-		/// <summary>
-		/// Gets the cumulative flip about the x-axis.
-		/// </summary>
-		/// <remarks>
-		/// Gets the flip about the x-axis relative to the root of the scene graph.
-		/// </remarks>
-		public bool CumulativeFlipX
-		{
-			get
-			{
-				if (OwnerGraphic != null && OwnerGraphic.ParentGraphic != null)
-				{
-					if (FlipX != OwnerGraphic.ParentGraphic.SpatialTransform.CumulativeFlipX)
-						return true;
-					else
-						return false;
-				}
-
-				return false;
-			}
-		}
-
-		/// <summary>
-		/// Gets the cumulative flip about the y-axis.
-		/// </summary>
-		/// <remarks>
-		/// Gets the flip about the y-axis relative to the root of the scene graph.
-		/// </remarks>
-		public bool CumulativeFlipY
-		{
-			get
-			{
-				if (OwnerGraphic != null && OwnerGraphic.ParentGraphic != null)
-				{
-					if (FlipY != OwnerGraphic.ParentGraphic.SpatialTransform.CumulativeFlipY)
-						return true;
-					else
-						return false;
-				}
-
-				return false;
+				return cumulativeScale;
 			}
 		}
 
@@ -453,6 +418,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			this.RotationXY = 0;
 			this.FlipY = false;
 			this.FlipX = false;
+			ForceRecalculation();
 		}
 
 		/// <summary>
@@ -513,54 +479,35 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Converts an array of vectors from source to destination coordinates.
-		/// </summary>
-		/// <remarks>
-		/// The input array is modified directly, and contains the return values.
-		/// </remarks>
-		public void ConvertVectorsToDestination(PointF[] sourceVectors)
-		{
-			this.CumulativeTransform.TransformVectors(sourceVectors);
-		}
-
-		/// <summary>
-		/// Converts an array of vectors from destination to source coordinates.
-		/// </summary>
-		/// <remarks>
-		/// The input array is modified directly, and contains the return values.
-		/// </remarks>
-		public void ConvertVectorsToSource(PointF[] destinationVectors)
-		{
-			Matrix inverse = this.CumulativeTransform.Clone();
-			inverse.Invert();
-
-			inverse.TransformVectors(destinationVectors);
-		}
-
-		/// <summary>
 		/// Converts a <see cref="SizeF"/> from source to destination coordinates.
 		/// </summary>
-		/// <param name="sourceDimensions"></param>
-		/// <returns></returns>
+		/// <remarks>
+		/// Only scale and rotation are applied when converting sizes; this is equivalent
+		/// to converting a direction vector, as direction vectors have only magnitude
+		/// and direction information, but no position.
+		/// </remarks>
 		public SizeF ConvertToDestination(SizeF sourceDimensions)
 		{
-			float width = sourceDimensions.Width * this.ScaleX * (this.FlipY ? -1 : 1);
-			float height = sourceDimensions.Height * this.ScaleY * (this.FlipX ? -1 : 1);
-
-			return new SizeF(width, height);
+			PointF[] transformed = new PointF[] { sourceDimensions.ToPointF() };
+			this.CumulativeTransform.TransformVectors(transformed);
+			return new SizeF(transformed[0]);
 		}
 
 		/// <summary>
 		/// Converts a <see cref="SizeF"/> from destination to source coordinates.
 		/// </summary>
-		/// <param name="destinationDimensions"></param>
-		/// <returns></returns>
+		/// <remarks>
+		/// Only scale and rotation are applied when converting sizes; this is equivalent
+		/// to converting a direction vector, as direction vectors have only magnitude
+		/// and direction information, but no position.
+		/// </remarks>
 		public SizeF ConvertToSource(SizeF destinationDimensions)
 		{
-			float width = destinationDimensions.Width / this.ScaleX * (this.FlipY ? -1 : 1);
-			float height = destinationDimensions.Height / this.ScaleY * (this.FlipX ? -1 : 1);
-
-			return new SizeF(width, height);
+			PointF[] transformed = new PointF[] { destinationDimensions.ToPointF() };
+			Matrix inverse = this.CumulativeTransform.Clone();
+			inverse.Invert();
+			inverse.TransformVectors(transformed);
+			return new SizeF(transformed[0]);
 		}
 
 		#region IMemorable members
@@ -630,10 +577,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 			if (!this.RecalculationRequired)
 				return;
 
-			// Validate if there's a validation policy in place.  Otherwise, assume all is good.
-			if (_validationPolicy != null)
-				_validationPolicy.Validate(this);
-
 			// The cumulative transform is the product of the transform of the
 			// parent graphic and the transform of this graphic (i.e. the current transform)
 			// If there is no parent graphic, then the cumulative transform = current transform
@@ -651,12 +594,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_cumulativeTransform.Multiply(this.Transform);
 			CalculatePostTransform(_cumulativeTransform);
 
-			_cumulativeScale = _scale;
-
-			if (parentGraphic != null)
-				_cumulativeScale *= parentGraphic.SpatialTransform.CumulativeScale;
-
 			this.RecalculationRequired = false;
+
+			// Validate if there's a validation policy in place.  Otherwise, assume all is good.
+			if (_validationPolicy != null)
+				_validationPolicy.Validate(this);
 		}
 
 		/// <summary>
@@ -677,13 +619,26 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Called when the value of <see cref="Scale"/> changes, giving derived classes
-		/// a chance to modify the other scale parameters, such as <see cref="ScaleX"/> and <see cref="ScaleY"/>.
+		/// Gives derived classes an opportunity to update the scale parameters.
 		/// </summary>
-		protected virtual void OnScaleChanged()
+		/// <remarks>
+		/// By default, sets <see cref="ScaleX"/> and <see cref="ScaleY"/> to the value of <see cref="Scale"/>.
+		/// </remarks>
+		protected virtual void UpdateScaleParameters()
 		{
-			this.ScaleX = _scale;
-			this.ScaleY = _scale;
+			float scale = Scale;
+			this.ScaleX = scale;
+			this.ScaleY = scale;
+		}
+
+		private void UpdateScaleInternal()
+		{
+			if (_updatingScaleParameters)
+				return;
+
+			_updatingScaleParameters = true;
+			UpdateScaleParameters();
+			_updatingScaleParameters = false;
 		}
 
 		#endregion

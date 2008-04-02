@@ -36,6 +36,7 @@ using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Collections;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -81,9 +82,7 @@ namespace ClearCanvas.ImageViewer
 
 		private static void BuildFromStudy(IImageViewer imageViewer, Study study)
 		{
-			// Abort if study hasn't been loaded
-			if (study == null)
-				throw new ApplicationException(string.Format("Study {0} has not been loaded", study.StudyInstanceUID));
+			Platform.CheckForNullReference(study, "study");
 
 			IImageSet imageSet = GetImageSet(imageViewer.LogicalWorkspace, study.StudyInstanceUID);
 
@@ -105,8 +104,7 @@ namespace ClearCanvas.ImageViewer
 
 		private static void BuildFromSeries(IImageViewer imageViewer, Series series)
 		{
-			if (series == null)
-				throw new ApplicationException(string.Format("Series {0} has not been loaded", series.SeriesInstanceUID));
+			Platform.CheckForNullReference(series, "series");
 
 			string studyInstanceUID = series.ParentStudy.StudyInstanceUID;
 			IImageSet imageSet = GetImageSet(imageViewer.LogicalWorkspace, studyInstanceUID);
@@ -119,39 +117,38 @@ namespace ClearCanvas.ImageViewer
 			AddImages(displaySet, series);
 		}
 
-		private static void BuildFromImage(IImageViewer imageViewer, string sopInstanceUID)
+		private static void BuildFromImageSop(IImageViewer imageViewer, string sopInstanceUID)
 		{
 			ImageSop image = imageViewer.StudyTree.GetSop(sopInstanceUID) as ImageSop;
-			BuildFromImage(imageViewer, image);
+			BuildFromImageSop(imageViewer, image);
 		}
 
-		private static void BuildFromImage(IImageViewer imageViewer, ImageSop image)
+		private static void BuildFromImageSop(IImageViewer imageViewer, ImageSop imageSop)
 		{
+			Platform.CheckForNullReference(imageSop, "imageSop");
+
 			bool sortImageSets = false;
 			bool sortDisplaySets = false;
-
-			if (image == null)
-				throw new ApplicationException(string.Format("Image {0} has not been loaded", image.SopInstanceUID));
-
-			string studyInstanceUID = image.ParentSeries.ParentStudy.StudyInstanceUID;
+		
+			string studyInstanceUID = imageSop.ParentSeries.ParentStudy.StudyInstanceUID;
 			IImageSet imageSet = GetImageSet(imageViewer.LogicalWorkspace, studyInstanceUID);
 
 			if (imageSet == null)
 			{
-				imageSet = AddImageSet(imageViewer.LogicalWorkspace, image.ParentSeries.ParentStudy);
+				imageSet = AddImageSet(imageViewer.LogicalWorkspace, imageSop.ParentSeries.ParentStudy);
 				sortImageSets = true;
 			}
 
-			string seriesInstanceUID = image.ParentSeries.SeriesInstanceUID;
+			string seriesInstanceUID = imageSop.ParentSeries.SeriesInstanceUID;
 			IDisplaySet displaySet = GetDisplaySet(imageSet, seriesInstanceUID);
 
 			if (displaySet == null)
 			{
-				displaySet = AddDisplaySet(imageSet, image.ParentSeries);
+				displaySet = AddDisplaySet(imageSet, imageSop.ParentSeries);
 				sortDisplaySets = true;
 			}
 
-			AddImage(displaySet, image);
+			AddImages(displaySet, imageSop);
 
 			// Yes, all this sorting as each image is loaded is terribly inefficient,
 			// but seeing that this is not that common an operation, we'll live with
@@ -211,9 +208,18 @@ namespace ClearCanvas.ImageViewer
 		private static void AddImages(IDisplaySet displaySet, Series series)
 		{
 			foreach (ImageSop image in series.Sops.Values)
-				AddImage(displaySet, image);
+				AddImages(displaySet, image);
 
 			SortImages(displaySet);
+		}
+
+		private static void AddImages(IDisplaySet displaySet, ImageSop imageSop)
+		{
+			foreach (IPresentationImage image in PresentationImageFactory.Create(imageSop))
+			{
+				image.Uid = imageSop.SopInstanceUID;
+				displaySet.PresentationImages.Add(image);
+			}
 		}
 
 		private static void SortImages(IDisplaySet displaySet)
@@ -221,19 +227,6 @@ namespace ClearCanvas.ImageViewer
 			// This has been added so that the initial presentation of each display set has a reasonable 
 			// sort order.  When proper sorting support is added, the sorters will be extensions.
 			displaySet.PresentationImages.Sort(new InstanceAndFrameNumberComparer());
-		}
-
-		private static void AddImage(IDisplaySet displaySet, ImageSop imageSop)
-		{
-			IEnumerable<IPresentationImage> presentationImages = PresentationImageFactory.Create(imageSop);
-
-			foreach (IPresentationImage image in presentationImages)
-			{
-				image.Uid = imageSop.SopInstanceUID;
-				displaySet.PresentationImages.Add(image);
-			}
-
-			//return presentationImage;
 		}
 
 		private static IImageSet GetImageSet(ILogicalWorkspace logicalWorkspace, string studyInstanceUID)

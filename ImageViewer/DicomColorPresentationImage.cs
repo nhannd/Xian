@@ -54,10 +54,10 @@ namespace ClearCanvas.ImageViewer
 		public DicomColorPresentationImage(Frame frame)
 			: base(frame.Rows,
 			       frame.Columns,
-			       frame.PixelSpacing.Column,
-			       frame.PixelSpacing.Row,
-			       frame.PixelAspectRatio.Column,
-			       frame.PixelAspectRatio.Row,
+				   frame.NormalizedPixelSpacing.Column,
+				   frame.NormalizedPixelSpacing.Row,
+				   frame.PixelAspectRatio.Column,
+				   frame.PixelAspectRatio.Row,
 			       frame.GetNormalizedPixelData)
 		{
 			Platform.CheckForNullReference(frame, "frame");

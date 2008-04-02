@@ -38,6 +38,30 @@ namespace ClearCanvas.ImageViewer
 	/// <summary>
 	/// Defines a container for <see cref="IPresentationImage"/> objects.
 	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// <b>Disposal</b> of an <see cref="IDisplaySet"/> and it's contained <see cref="IPresentationImage"/>s
+	/// is handled by the framework when the <see cref="IDisplaySet"/> is part of the <see cref="IImageViewer"/>
+	/// hierarchy.  When an <see cref="IImageViewer"/> is disposed, all its contained objects are disposed
+	/// automatically.
+	/// </para>
+	/// <para>
+	/// You may create copies of <see cref="IDisplaySet"/>s and <see cref="IPresentationImage"/>s
+	/// (via the <see cref="CreateFreshCopy"/> mechanism) without keeping track of the objects and
+	/// disposing them, provided the following two conditions are met:
+	///  <list type="bullet">
+	/// <item>
+	/// The 'source' <see cref="IDisplaySet"/> (e.g. the one being copied) must be owned by an 
+	/// <see cref="IImageSet"/> at the time the copy is created; the owner <see cref="IImageSet"/> must
+	/// at some point become (or already be) part of the <see cref="IImageViewer"/> hierarchy.
+	/// </item>
+	/// <item>
+	/// Any <see cref="IPresentationImage"/>s that are copied directly must be added to an <see cref="IDisplaySet"/> 
+	/// that at some point becomes (or is already) part of the <see cref="IImageViewer"/> hierarchy.
+	/// </item>
+	/// </list>
+	/// </para>
+	/// </remarks>
 	public interface IDisplaySet : IDrawable, IDisposable
 	{
 		/// <summary>

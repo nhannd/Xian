@@ -255,6 +255,9 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (disposing)
 			{
+				if (ParentImageSet != null)
+					((ImageSet)ParentImageSet).RemoveCopy(this);
+
 				DisposePresentationImages();
 			}
 		}
@@ -285,6 +288,9 @@ namespace ClearCanvas.ImageViewer
 
 			foreach (IPresentationImage image in this.PresentationImages)
 				displaySet.PresentationImages.Add(image.CreateFreshCopy());
+
+			if (ParentImageSet != null)
+				((ImageSet)ParentImageSet).AddCopy(displaySet);
 
 			return displaySet;
 		}

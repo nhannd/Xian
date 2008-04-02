@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 	internal sealed class DirectionalMarkerAnnotationItem : AnnotationItem
 	{
 		public enum ImageEdge { Left = 0, Top = 1, Right = 2, Bottom = 3 };
-		private static readonly PointF[] _edgeVectors = new PointF[] { new PointF(-1, 0), new PointF(0, -1), new PointF(1, 0), new PointF(0, 1) };
+		private static readonly SizeF[] _edgeVectors = new SizeF[] { new SizeF(-1, 0), new SizeF(0, -1), new SizeF(1, 0), new SizeF(0, 1) };
 
 		private ImageEdge _viewportEdge;
 		
@@ -103,11 +103,10 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 		/// <returns></returns>
 		internal string GetAnnotationTextInternal(SpatialTransform imageTransform, ImageOrientationPatient imageOrientationPatient)
 		{
-			PointF[] imageEdgeVectors = (PointF[])_edgeVectors.Clone();
-
-			//convert the image vectors from source to destination.
-			imageTransform.ConvertVectorsToDestination(imageEdgeVectors);
-
+			SizeF[] imageEdgeVectors = new SizeF[4];
+			for (int i = 0; i < 4; ++i)
+				imageEdgeVectors[i] = imageTransform.ConvertToDestination(_edgeVectors[i]);
+			
 			//find out which source image edge got transformed to coincide with this viewport edge.
 			ImageEdge transformedEdge = GetTransformedEdge(imageEdgeVectors);
 
@@ -122,19 +121,21 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 		/// </summary>
 		/// <param name="transformedVectors">source vectors transformed to the destination coordinate system</param>
 		/// <returns>the source image edge that has effectively moved to this edge</returns>
-		private ImageEdge GetTransformedEdge(PointF[] transformedVectors)
+		private ImageEdge GetTransformedEdge(SizeF[] transformedVectors)
 		{
 			//the original (untransformed) vector for this viewport edge.
-			PointF thisViewportEdge = _edgeVectors[(int)_viewportEdge];
+			SizeF thisViewportEdge = _edgeVectors[(int)_viewportEdge];
 
 			//find out which edge in the source image has moved to this edge of the viewport.
 			for (int index = 0; index < transformedVectors.Length; ++index)
 			{
 				//normalize the vector before comparing.
-				PointF transformedVector = transformedVectors[index];
-				double magnitude = Math.Sqrt(Math.Pow((double)transformedVector.X, 2.0) + Math.Pow((double)transformedVector.Y, 2.0));
-				transformedVector.X = (float)Math.Round(transformedVector.X / magnitude);
-				transformedVector.Y = (float)Math.Round(transformedVector.Y / magnitude);
+				SizeF transformedVector = transformedVectors[index];
+				double magnitude = Math.Sqrt(transformedVector.Width * transformedVector.Width +
+												transformedVector.Height * transformedVector.Height);
+
+				transformedVector.Width = (float)Math.Round(transformedVector.Width / magnitude);
+				transformedVector.Height = (float)Math.Round(transformedVector.Height / magnitude);
 
 				//is it the same as the original vector for this edge?
 				if (transformedVector == thisViewportEdge)

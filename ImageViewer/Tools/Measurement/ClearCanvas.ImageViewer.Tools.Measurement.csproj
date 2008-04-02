@@ -109,7 +109,7 @@
     <Compile Include="MeasurementTool.cs" />
     <Compile Include="ProtractorAnalyzers.cs" />
     <Compile Include="ProtractorInteractiveGraphic.cs" />
-    <Compile Include="ProtractorRoiGraphic.cs" />
+    <Compile Include="ProtractorRoiCalloutLocationStrategy.cs" />
     <Compile Include="ProtractorTool.cs" />
     <Compile Include="DeleteGraphicTool.cs" />
     <Compile Include="RectangleAnalyzers.cs" />
@@ -124,7 +124,6 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="Tests\CalibrationTest.cs" />
-    <Compile Include="Tests\FormulaTest.cs" />
     <Compile Include="Units.cs" />
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>

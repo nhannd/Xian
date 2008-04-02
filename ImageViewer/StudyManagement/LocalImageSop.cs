@@ -173,12 +173,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// This method overrides <see cref="Sop.GetTagAsDicomStringArray"/>
+		/// This method overrides <see cref="Sop.GetMultiValuedTagRaw"/>
 		/// </summary>
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
-		public override void GetTagAsDicomStringArray(uint tag, out string value, out bool tagExists)
+		public override void GetMultiValuedTagRaw(uint tag, out string value, out bool tagExists)
 		{
 			GetTag<string>(tag, out value, 0, out tagExists, GetStringArrayFromAttribute);
 			value = value ?? "";
@@ -196,7 +196,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
-		public override void GetTagOBOW(uint tag, out byte[] value, out bool tagExists)
+		public override void GetTag(uint tag, out byte[] value, out bool tagExists)
 		{
 			GetTag<byte[]>(tag, out value, 0, out tagExists, GetAttributeValueOBOW);
 		}
@@ -262,12 +262,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Adds <see cref="Frame"/> objects to <see cref="ImageSop.Frames"/>.
+		/// Factory method that creates a <see cref="LocalFrame"/>.
 		/// </summary>
-		protected override void AddFrames()
+		/// <param name="index">The <b>one-based</b> index of the frame to create.</param>
+		protected override Frame CreateFrame(int index)
 		{
-			for (int i = 1; i <= this.NumberOfFrames; i++)
-				this.Frames.Add(new LocalFrame(this, i));
+			return new LocalFrame(this, index);
 		}
 
 		internal void Load()

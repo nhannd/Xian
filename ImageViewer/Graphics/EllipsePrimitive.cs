@@ -32,7 +32,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using ClearCanvas.ImageViewer.Mathematics;
-using Matrix=System.Drawing.Drawing2D.Matrix;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -81,7 +80,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 			GraphicsPath path = new GraphicsPath();
 			bool result;
 
+			this.CoordinateSystem = CoordinateSystem.Source;
 			path.AddEllipse(this.Rectangle);
+			this.ResetCoordinateSystem();
+
+			if (this.CoordinateSystem == CoordinateSystem.Destination)
+				path.Transform(SpatialTransform.CumulativeTransform);
+
 			result = path.IsVisible(point);
 
 			path.Dispose();
@@ -92,7 +97,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		internal static bool HitTest(PointF point, RectangleF boundingBox, SpatialTransform transform)
 		{
 			GraphicsPath path = new GraphicsPath();
-			path.Transform(transform.Transform);
 			path.AddEllipse(RectangleUtilities.ConvertToPositiveRectangle(boundingBox));
 
 			Pen pen = new Pen(Brushes.White, HitTestDistance/transform.CumulativeScale);

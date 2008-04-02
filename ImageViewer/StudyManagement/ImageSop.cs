@@ -398,19 +398,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
-		#region Frame of Reference Module
-
-		/// <summary>
-		/// Gets the frame of reference uid for the image.
-		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
-		public virtual string FrameOfReferenceUid
-		{
-			get { return this.Frames[1].FrameOfReferenceUid; }
-		}
-
-		#endregion
-
 		#region Multiframe Module
 
 		/// <summary>
@@ -470,7 +457,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <remarks>
 		/// It is the responsibility of the subclass to add the frames to the collection.
 		/// </remarks>
-		protected abstract void AddFrames();
+		protected void AddFrames()
+		{
+			for (int i = 1; i <= this.NumberOfFrames; i++)
+				this.Frames.Add(CreateFrame(i));
+
+		}
+
+		/// <summary>
+		/// Factory method to create the frame at <paramref name="index"/>.
+		/// </summary>
+		/// <param name="index">The <b>one-based</b> index of the frame to create.</param>
+		protected abstract Frame CreateFrame(int index);
 
 		/// <summary>
 		/// Validates the <see cref="ImageSop"/> object.

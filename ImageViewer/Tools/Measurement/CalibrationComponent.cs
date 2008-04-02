@@ -51,9 +51,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	public class CalibrationComponent : ApplicationComponent
 	{
 		private double _lengthInCm;
-		private readonly int _decimalPlaces = 1;
-		private readonly double _minimum = 0.1;
-		private readonly double _increment = 0.1;
+		private static readonly int _decimalPlaces = 1;
+		private static readonly double _minimum = 0.1;
+		private static readonly double _increment = 0.1;
 
 		public CalibrationComponent()
 		{

@@ -63,8 +63,8 @@ namespace ClearCanvas.ImageViewer
 				   frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ? true : false,
 				   frame.RescaleSlope,
 				   frame.RescaleIntercept,
-				   frame.PixelSpacing.Column,
-				   frame.PixelSpacing.Row,
+				   frame.NormalizedPixelSpacing.Column,
+				   frame.NormalizedPixelSpacing.Row,
 				   frame.PixelAspectRatio.Column,
 				   frame.PixelAspectRatio.Row,
 				   frame.GetNormalizedPixelData)

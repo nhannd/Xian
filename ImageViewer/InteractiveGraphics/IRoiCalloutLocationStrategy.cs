@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
@@ -29,48 +29,39 @@
 
 #endregion
 
-#if	UNIT_TESTS
-
-#pragma warning disable 1591,0419,1574,1587
-
 using System.Drawing;
-using NUnit.Framework;
+using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
+namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	[TestFixture]
-	public class FormulaTest
+	/// <summary>
+	/// A strategy for automatically calculating the location of a <see cref="RoiGraphic"/>'s callout.
+	/// </summary>
+	public interface IRoiCalloutLocationStrategy
 	{
-		public FormulaTest()
-		{
-		}
+		/// <summary>
+		/// Sets the <see cref="RoiGraphic"/> that owns this strategy.
+		/// </summary>
+		void SetRoiGraphic(RoiGraphic roiGraphic);
 
-		[TestFixtureSetUp]
-		public void Init()
-		{
-		}
-		
-		[TestFixtureTearDown]
-		public void Cleanup()
-		{
-		}
+		/// <summary>
+		/// Called when the <see cref="RoiGraphic"/>'s callout location has been changed externally; for example, by the user.
+		/// </summary>
+		void OnCalloutLocationChangedExternally();
 
-		[Test]
-		public void SubtendedAngle()
-		{
-			double angle = Formula.SubtendedAngle(new PointF(10, 0), new PointF(0, 0), new PointF(1, 0));
-			Assert.AreEqual(0, angle);
+		/// <summary>
+		/// Called by the owning <see cref="RoiGraphic"/> to get the callout's new location.
+		/// </summary>
+		/// <param name="location">The new location of the callout.</param>
+		/// <param name="coordinateSystem">The <see cref="CoordinateSystem"/> of <paramref name="location"/>.</param>
+		/// <returns>True if the callout location needs to change, false otherwise.</returns>
+		bool CalculateCalloutLocation(out PointF location, out CoordinateSystem coordinateSystem);
 
-			angle = Formula.SubtendedAngle(new PointF(10, 0), new PointF(0, 0), new PointF(0, 1));
-			Assert.AreEqual(-90, angle);
-
-			angle = Formula.SubtendedAngle(new PointF(0, 10), new PointF(0, 0), new PointF(1, 0));
-			Assert.AreEqual(90, angle);
-
-			angle = Formula.SubtendedAngle(new PointF(10, 0), new PointF(0, 0), new PointF(-1, 0));
-			Assert.AreEqual(180, angle);
-		}
+		/// <summary>
+		/// Called by the owning <see cref="RoiGraphic"/> to get the callout's end point.
+		/// </summary>
+		/// <param name="endPoint">The callout end point.</param>
+		/// <param name="coordinateSystem">The <see cref="CoordinateSystem"/> of <paramref name="endPoint"/>.</param>
+		void CalculateCalloutEndPoint(out PointF endPoint, out CoordinateSystem coordinateSystem);
 	}
 }
-
-#endif

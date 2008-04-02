@@ -48,10 +48,13 @@ namespace ClearCanvas.Dicom.DataStore
     	private int _rows;
     	private int _columns;
     	private PixelSpacing _pixelSpacing;
+    	private PixelSpacing _imagerPixelSpacing;
     	private PixelAspectRatio _pixelAspectRatio;
     	private ImagePositionPatient _imagePositionPatient;
     	private ImageOrientationPatient _imageOrientationPatient;
-    	private double _rescaleSlope;
+		private double _sliceThickness;
+		private double _spacingBetweenSlices;
+		private double _rescaleSlope;
     	private double _rescaleIntercept;
     	private int _numberOfFrames;
     	private readonly IList _windowValues;
@@ -125,7 +128,13 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetClassMember(ref _pixelSpacing, value); }
     	}
 
-    	public virtual PixelAspectRatio PixelAspectRatio
+		public virtual PixelSpacing ImagerPixelSpacing
+		{
+			get { return _imagerPixelSpacing; }
+			set { SetClassMember(ref _imagerPixelSpacing, value); }
+		}
+		
+		public virtual PixelAspectRatio PixelAspectRatio
     	{
     		get { return _pixelAspectRatio; }
 			set { SetClassMember(ref _pixelAspectRatio, value); }
@@ -141,6 +150,18 @@ namespace ClearCanvas.Dicom.DataStore
 		{
 			get { return _imagePositionPatient; }
 			set { SetClassMember(ref _imagePositionPatient, value); }
+		}
+
+		public virtual double SpacingBetweenSlices
+    	{
+			get { return _spacingBetweenSlices; }
+			set { SetValueTypeMember(ref _spacingBetweenSlices, value); }
+    	}
+
+		public virtual double SliceThickness
+		{
+			get { return _sliceThickness; }
+			set { SetValueTypeMember(ref _sliceThickness, value); }
 		}
 
 		public virtual double RescaleSlope
@@ -211,23 +232,32 @@ namespace ClearCanvas.Dicom.DataStore
 			attribute = sopInstanceDataset[DicomTags.Columns];
 			Columns = attribute.GetUInt16(0, 0);
 
-			double pixelSpacingX = 0, pixelSpacingY = 0;
+			double pixelSpacingRow = 0, pixelSpacingColumn = 0;
 			attribute = sopInstanceDataset[DicomTags.PixelSpacing];
 			if (attribute.Count == 2)
 			{
-				if (!attribute.TryGetFloat64(0, out pixelSpacingX) || !attribute.TryGetFloat64(1, out pixelSpacingY))
-					pixelSpacingX = pixelSpacingY = 0;
+				if (!attribute.TryGetFloat64(0, out pixelSpacingRow) || !attribute.TryGetFloat64(1, out pixelSpacingColumn))
+					pixelSpacingRow = pixelSpacingColumn = 0;
 			}
-			PixelSpacing = new PixelSpacing(pixelSpacingX, pixelSpacingY);
+			PixelSpacing = new PixelSpacing(pixelSpacingRow, pixelSpacingColumn);
 
-			double pixelAspectRatioX = 0, pixelAspectRatioY = 0;
+			double imagerPixelSpacingRow = 0, imagerPixelSpacingColumn = 0; 
+			attribute = sopInstanceDataset[DicomTags.ImagerPixelSpacing];
+			if (attribute.Count == 2)
+			{
+				if (!attribute.TryGetFloat64(0, out imagerPixelSpacingRow) || !attribute.TryGetFloat64(1, out imagerPixelSpacingColumn))
+					imagerPixelSpacingRow = imagerPixelSpacingColumn = 0;
+			}
+			ImagerPixelSpacing = new PixelSpacing(imagerPixelSpacingRow, imagerPixelSpacingColumn);
+
+			double pixelAspectRatioRow = 0, pixelAspectRatioColumn = 0;
 			attribute = sopInstanceDataset[DicomTags.PixelAspectRatio];
 			if (attribute.Count == 2)
 			{
-				if (!attribute.TryGetFloat64(0, out pixelAspectRatioX) || !attribute.TryGetFloat64(1, out pixelAspectRatioY))
-					pixelAspectRatioX = pixelAspectRatioY = 0;
+				if (!attribute.TryGetFloat64(0, out pixelAspectRatioRow) || !attribute.TryGetFloat64(1, out pixelAspectRatioColumn))
+					pixelAspectRatioRow = pixelAspectRatioColumn = 0;
 			}
-			PixelAspectRatio = new PixelAspectRatio(pixelAspectRatioX, pixelAspectRatioY);
+			PixelAspectRatio = new PixelAspectRatio(pixelAspectRatioRow, pixelAspectRatioColumn);
 
 			double imagePositionPatientX = 0, imagePositionPatientY = 0, imagePositionPatientZ = 0;
 			attribute = sopInstanceDataset[DicomTags.ImagePositionPatient];
@@ -260,6 +290,15 @@ namespace ClearCanvas.Dicom.DataStore
 				                            imageOrientationPatientColumnZ);
 
 			double doubleValue;
+
+			attribute = sopInstanceDataset[DicomTags.SliceThickness];
+			attribute.TryGetFloat64(0, out doubleValue);
+			SliceThickness = doubleValue;
+
+			attribute = sopInstanceDataset[DicomTags.SpacingBetweenSlices];
+			attribute.TryGetFloat64(0, out doubleValue);
+			SpacingBetweenSlices = doubleValue;
+
 			attribute = sopInstanceDataset[DicomTags.RescaleSlope];
 			attribute.TryGetFloat64(0, out doubleValue);
 			RescaleSlope = doubleValue;

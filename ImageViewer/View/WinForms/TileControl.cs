@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			try
 			{
-				_tile.OnDraw(args);
+				_tile.Draw(args);
 			}
 			catch (Exception ex)
 			{
@@ -226,7 +226,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 				try
 				{
-					_tile.OnDraw(args);
+					_tile.Draw(args);
 				}
 				catch (Exception ex)
 				{

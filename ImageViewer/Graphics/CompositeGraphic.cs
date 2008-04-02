@@ -215,6 +215,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 				((ISelectableGraphic) graphic).Selected = false;
 			if (graphic is IFocussableGraphic)
 				((IFocussableGraphic) graphic).Focussed = false;
+
+			graphic.SetParentGraphic(null);
+			graphic.SetParentPresentationImage(null);
+			graphic.SetImageViewer(null);
 		}
 	}
 }

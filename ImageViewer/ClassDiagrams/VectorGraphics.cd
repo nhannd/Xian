@@ -7,7 +7,7 @@
       <FileName>Graphics\VectorGraphic.cs</FileName>
       <HashCode>AAAAAAAAAAAIAAAAABAAAAAAAAAAAAAAAEAAgABAAAA=</HashCode>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
+    <Lollipop Position="1.036" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.LinePrimitive" Collapsed="true">
     <Position X="0.5" Y="3" Width="1.5" />
@@ -58,7 +58,7 @@
       <FileName>Graphics\BoundableGraphic.cs</FileName>
       <HashCode>AgAIAAAABIAAABAAAAIAAEAAAAQgACAAAAAAAAAQBAA=</HashCode>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
+    <Lollipop Position="1.02" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.PointPrimitive" Collapsed="true">
     <Position X="6.5" Y="3" Width="1.5" />
@@ -71,9 +71,9 @@
     <Position X="5.75" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Graphics\ArcPrimitive.cs</FileName>
-      <HashCode>AAAAAAAAAABAAAIAAAAAAAAAAAAAAAAAAAAAAIIUAAA=</HashCode>
+      <HashCode>AAAAAAAAAABAAAoAAAAEAAAIAAAAAAAAQAAAAIIUAAA=</HashCode>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
+    <Lollipop Position="0.981" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.EllipsePrimitive" Collapsed="true">
     <Position X="3.5" Y="4.5" Width="1.5" />
@@ -86,9 +86,9 @@
     <Position X="8" Y="4.5" Width="2.25" />
     <TypeIdentifier>
       <FileName>Graphics\InvariantBoundablePrimitive.cs</FileName>
-      <HashCode>AgAAAAAABAAAABAAAAAAAECAAAQgAAQAAAAAAAAAAAA=</HashCode>
+      <HashCode>AgAAAAAABAAAABAAAAAAAECAAAQgAAQAAAAABAAAAAA=</HashCode>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
+    <Lollipop Position="1.533" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.InvariantArcPrimitive" Collapsed="true">
     <Position X="10.5" Y="6" Width="1.75" />
@@ -96,7 +96,7 @@
       <FileName>Graphics\InvariantArcPrimitive.cs</FileName>
       <HashCode>AAAAAAAAAABAAAIAAAAAAAAAAAAAAAAAAAAAAIIEAAA=</HashCode>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
+    <Lollipop Position="1.137" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.InvariantEllipsePrimitive" Collapsed="true">
     <Position X="8" Y="6" Width="2" />

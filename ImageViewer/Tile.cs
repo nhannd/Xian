@@ -459,7 +459,7 @@ namespace ClearCanvas.ImageViewer
 		/// <remarks>This is called by the GUI control associated with this
 		/// component.  Never call this method directly.  Instead, use
 		/// <see cref="Draw()"/>.</remarks>
-		public void OnDraw(DrawArgs drawArgs)
+		public void Draw(DrawArgs drawArgs)
 		{
 			// No PresentationImage associated with this Tile, so nothing to draw
 			if (_presentationImage == null)

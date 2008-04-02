@@ -1,3 +1,34 @@
+﻿#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Mathematics;
@@ -68,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 					int width = frame.Columns - 1;
 
 					info = new ImageInfo();
-					info.PositionPatientTopLeft = frame.ImagePlaneHelper.ConvertToPatient(PointF.Empty);
+					info.PositionPatientTopLeft = frame.ImagePlaneHelper.ConvertToPatient(new PointF(0, 0));
 					info.PositionPatientTopRight = frame.ImagePlaneHelper.ConvertToPatient(new PointF(width, 0));
 					info.PositionPatientBottomLeft = frame.ImagePlaneHelper.ConvertToPatient(new PointF(0, height));
 					info.PositionPatientBottomRight = frame.ImagePlaneHelper.ConvertToPatient(new PointF(width, height));
@@ -79,11 +110,9 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 					if (info.PositionPatientCenterOfImage == null || info.Normal == null)
 						return null;
 
-					//force the normal vector to be a unit vector, just in case of bad/imprecise data.
-					info.Normal = info.Normal.Normalize();
-
-					// here, we want the position in the coordinate system of the image plane, without moving the origin.
-					info.PositionImagePlaneTopLeft = frame.ImagePlaneHelper.ConvertToImage(info.PositionPatientTopLeft, Vector3D.Empty);
+					// here, we want the position in the coordinate system of the image plane, 
+					// without moving the origin (e.g. leave it at the patient origin).
+					info.PositionImagePlaneTopLeft = frame.ImagePlaneHelper.ConvertToImagePlane(info.PositionPatientTopLeft, Vector3D.Empty);
 
 					_sopInfoDictionary[frame.ParentImageSop.SopInstanceUID] = info;
 				}
@@ -99,8 +128,11 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		// helper method; don't want to add a new class just for this.
 		public static float ComputeAngleBetweenNormals(ImageInfo info1, ImageInfo info2)
 		{
+			Vector3D n1 = info1.Normal.Normalize();
+			Vector3D n2 = info2.Normal.Normalize();
+
 			// the vectors are already normalized, so we don't need to divide by the magnitudes.
-			float dot = info1.Normal.Dot(info2.Normal);
+			float dot = n1.Dot(n2);
 
 			if (dot < -1F)
 				dot = -1F;

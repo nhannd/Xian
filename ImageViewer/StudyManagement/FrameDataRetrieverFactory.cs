@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					bool tagExists;
 					string value;
-					frame.ParentImageSop.GetTagAsDicomStringArray(dicomTag, out value, out tagExists);
+					frame.ParentImageSop.GetMultiValuedTagRaw(dicomTag, out value, out tagExists);
 					return DicomStringHelper.GetStringArray(value ?? "");
 				};
 		}
@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					bool tagExists;
 					string value;
-					frame.ParentImageSop.GetTagAsDicomStringArray(dicomTag, out value, out tagExists);
+					frame.ParentImageSop.GetMultiValuedTagRaw(dicomTag, out value, out tagExists);
 					
 					int[] values;
 					if (!DicomStringHelper.TryGetIntArray(value ?? "", out values))
@@ -167,7 +167,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					bool tagExists;
 					string value;
-					frame.ParentImageSop.GetTagAsDicomStringArray(dicomTag, out value, out tagExists);
+					frame.ParentImageSop.GetMultiValuedTagRaw(dicomTag, out value, out tagExists);
 					double[] values;
 					if (!DicomStringHelper.TryGetDoubleArray(value ?? "", out values))
 						values = new double[] { };

@@ -32,12 +32,24 @@
 using System.Configuration;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
+	public static class ViewerLaunchSettings
+	{
+		public static WindowBehaviour WindowBehaviour
+		{
+			get
+			{
+				return (WindowBehaviour)MonitorConfigurationSettings.Default.WindowBehaviour;
+			}
+		}
+	}
+
 	[SettingsGroupDescription("")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
-	public sealed class MonitorConfigurationSettings : ApplicationSettingsBase
+	internal sealed class MonitorConfigurationSettings : ApplicationSettingsBase
 	{
 		private MonitorConfigurationSettings()
 		{

@@ -40,6 +40,41 @@ namespace ClearCanvas.ImageViewer.Mathematics
 	public static class Vector
 	{
 		/// <summary>
+		/// Calculates the angle subtended by two line segments that meet at a vertex.
+		/// </summary>
+		public static double SubtendedAngle(PointF start, PointF vertex, PointF end)
+		{
+			Vector3D vertexPositionVector = new Vector3D(vertex.X, vertex.Y, 0);
+			Vector3D a = new Vector3D(start.X, start.Y, 0) - vertexPositionVector;
+			Vector3D b = new Vector3D(end.X, end.Y, 0) - vertexPositionVector;
+
+			float dotProduct = a.Dot(b);
+
+			Vector3D crossProduct = a.Cross(b);
+
+			float magA = a.Magnitude;
+			float magB = b.Magnitude;
+
+			if (FloatComparer.AreEqual(magA, 0F) || FloatComparer.AreEqual(magB, 0F))
+				return 0;
+
+			double cosTheta = dotProduct / magA / magB;
+
+			// Make sure cosTheta is within bounds so we don't
+			// get any errors when we take the acos.
+			if (cosTheta > 1.0f)
+				cosTheta = 1.0f;
+
+			if (cosTheta < -1.0f)
+				cosTheta = -1.0f;
+
+			double theta = Math.Acos(cosTheta) * (crossProduct.Z == 0 ? 1 : -Math.Sign(crossProduct.Z));
+			double thetaInDegrees = theta / Math.PI * 180;
+
+			return thetaInDegrees;
+		}
+
+		/// <summary>
 		/// Calculates the distance between two points.
 		/// </summary>
 		/// <param name="pt1"></param>

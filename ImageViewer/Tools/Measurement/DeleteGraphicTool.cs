@@ -31,7 +31,6 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 
@@ -54,22 +53,30 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		public void Delete()
 		{
 			IGraphic graphic = this.Context.Graphic;
-			
-			IOverlayGraphicsProvider image = graphic.ParentPresentationImage as IOverlayGraphicsProvider;
-
-			if (image == null)
+			if (graphic == null)
 				return;
 
-			int restoreIndex = image.OverlayGraphics.IndexOf(graphic);
+			IPresentationImage image = graphic.ParentPresentationImage;
+			if (image == null || !(image is IOverlayGraphicsProvider))
+				return;
+
+			IOverlayGraphicsProvider overlayProvider = (IOverlayGraphicsProvider) image;
+			int restoreIndex = overlayProvider.OverlayGraphics.IndexOf(graphic);
 			if (restoreIndex < 0)
 				return;
 
-			image.OverlayGraphics.Remove(graphic);
-			graphic.ParentPresentationImage.Draw();
+			//the parent image will be null once the graphic is removed, so we store the history
+			// and the presentation image first.
+			IImageViewer viewer = this.Context.Graphic.ImageViewer;
 
-			InsertRemoveGraphicUndoableCommand command = InsertRemoveGraphicUndoableCommand.GetInsertCommand(image.OverlayGraphics, graphic, restoreIndex);
+			overlayProvider.OverlayGraphics.Remove(graphic);
+			image.Draw();
+
+			InsertRemoveOverlayGraphicUndoableCommand command =
+				InsertRemoveOverlayGraphicUndoableCommand.GetInsertCommand(image, graphic, restoreIndex);
 			command.Name = SR.NameDeleteGraphic;
-			this.Context.Graphic.ImageViewer.CommandHistory.AddCommand(command);
+
+			viewer.CommandHistory.AddCommand(command);
 		}
 	}
 }

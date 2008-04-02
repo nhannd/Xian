@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageViewer
 	/// Instead, subclass <see cref="PresentationImage"/>.
 	/// </para>
 	/// </remarks>
+	/// <seealso cref="IDisplaySet">for more information on disposal of <see cref="IDisplaySet"/>s and <see cref="IPresentationImage"/>s.</seealso>
 	public interface IPresentationImage : IDrawable, IDisposable
 	{
 		/// <summary>

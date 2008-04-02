@@ -259,17 +259,6 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets the context-menu model. The menu is displayed when right-clicking on any tile.
-		/// </summary>
-		public ActionModelNode ContextMenuModel
-		{
-			get
-			{
-				return ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", _toolSet.Actions);
-			}
-		}
-
-		/// <summary>
 		/// Gets the command history.
 		/// </summary>
 		/// <remarks>
@@ -471,6 +460,14 @@ namespace ClearCanvas.ImageViewer
 					_studyLoaders = new StudyLoaderMap();
 
 				return _studyLoaders;
+			}
+		}
+
+		private ActionModelNode ContextMenuModel
+		{
+			get
+			{
+				return ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", _toolSet.Actions);
 			}
 		}
 

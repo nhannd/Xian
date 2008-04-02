@@ -33,10 +33,12 @@
 
 #pragma warning disable 1591,0419,1574,1587
 
+using ClearCanvas.ImageViewer.InteractiveGraphics;
 using NUnit.Framework;
 using System.Drawing;
 using System;
 using ClearCanvas.ImageViewer.Mathematics;
+using Matrix = System.Drawing.Drawing2D.Matrix;
 
 namespace ClearCanvas.ImageViewer.Graphics.Tests
 {
@@ -298,7 +300,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		}
 
 		[Test]
-		public void CumulativeTransform()
+		public void CumulativeScale()
 		{
 			CompositeGraphic sceneGraph = new CompositeGraphic();
 
@@ -338,39 +340,144 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			Assert.AreEqual(graphic3.SpatialTransform.CumulativeTransform.Elements[0], 24.0f);
 		}
 
+		[Test]
+		public void CumulativeRotation()
+		{
+			CompositeGraphic sceneGraph = new CompositeGraphic();
+			CompositeGraphic graphic1 = new CompositeGraphic();
+			CompositeGraphic graphic2 = new CompositeGraphic();
+			CompositeGraphic graphic3 = new CompositeGraphic();
+
+			sceneGraph.Graphics.Add(graphic1);
+			graphic1.Graphics.Add(graphic2);
+			graphic1.Graphics.Add(graphic3);
+
+			sceneGraph.SpatialTransform.RotationXY = 90;
+			graphic1.SpatialTransform.RotationXY = 90;
+			graphic2.SpatialTransform.RotationXY = 100;
+			graphic3.SpatialTransform.RotationXY = -270;
+
+			//90
+			Assert.AreEqual(sceneGraph.SpatialTransform.Transform.Elements[0], 0, 0.0001F);
+			Assert.AreEqual(sceneGraph.SpatialTransform.Transform.Elements[1], 1, 0.0001F);
+			Assert.AreEqual(sceneGraph.SpatialTransform.Transform.Elements[2], -1, 0.0001F);
+			Assert.AreEqual(sceneGraph.SpatialTransform.Transform.Elements[3], 0, 0.0001F);
+
+			//90 + 90
+			Assert.AreEqual(graphic1.SpatialTransform.Transform.Elements[0], 0, 0.0001F);
+			Assert.AreEqual(graphic1.SpatialTransform.Transform.Elements[1], 1, 0.0001F);
+			Assert.AreEqual(graphic1.SpatialTransform.Transform.Elements[2], -1, 0.0001F);
+			Assert.AreEqual(graphic1.SpatialTransform.Transform.Elements[3], 0, 0.0001F);
+			Assert.AreEqual(graphic1.SpatialTransform.CumulativeTransform.Elements[0], -1, 0.0001F);
+			Assert.AreEqual(graphic1.SpatialTransform.CumulativeTransform.Elements[1], 0, 0.0001F);
+			Assert.AreEqual(graphic1.SpatialTransform.CumulativeTransform.Elements[2], 0, 0.0001F);
+			Assert.AreEqual(graphic1.SpatialTransform.CumulativeTransform.Elements[3], -1, 0.0001F);
+
+			//90 + 90 - 270 (+ 360)
+			Assert.AreEqual(graphic3.SpatialTransform.Transform.Elements[0], 0, 0.0001F);
+			Assert.AreEqual(graphic3.SpatialTransform.Transform.Elements[1], 1, 0.0001F);
+			Assert.AreEqual(graphic3.SpatialTransform.Transform.Elements[2], -1, 0.0001F);
+			Assert.AreEqual(graphic3.SpatialTransform.Transform.Elements[3], 0, 0.0001F);
+			Assert.AreEqual(graphic3.SpatialTransform.CumulativeTransform.Elements[0], 0, 0.0001F);
+			Assert.AreEqual(graphic3.SpatialTransform.CumulativeTransform.Elements[1], -1, 0.0001F);
+			Assert.AreEqual(graphic3.SpatialTransform.CumulativeTransform.Elements[2], 1, 0.0001F);
+			Assert.AreEqual(graphic3.SpatialTransform.CumulativeTransform.Elements[3], 0, 0.0001F);
+
+			//90 + 90 + 100
+			Assert.AreEqual(graphic2.SpatialTransform.Transform.Elements[0], -0.1736, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.Transform.Elements[1], 0.9848, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.Transform.Elements[2], -0.9848, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.Transform.Elements[3], -0.1736, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[0], 0.1736, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[1], -0.9848, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[2], 0.9848, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[3], 0.1736, 0.0001F);
+
+			graphic2.SpatialTransform.FlipX = true;
+			Assert.AreEqual(graphic2.SpatialTransform.Transform.Elements[0], -0.1736, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.Transform.Elements[1], 0.9848, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.Transform.Elements[2], 0.9848, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.Transform.Elements[3], 0.1736, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[0], 0.1736, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[1], -0.9848, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[2], -0.9848, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[3], -0.1736, 0.0001F);
+
+			graphic2.SpatialTransform.FlipY = true;
+			Assert.AreEqual(graphic2.SpatialTransform.Transform.Elements[0], 0.1736, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.Transform.Elements[1], -0.9848, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.Transform.Elements[2], 0.9848, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.Transform.Elements[3], 0.1736, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[0], -0.1736, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[1], 0.9848, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[2], -0.9848, 0.0001F);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[3], -0.1736, 0.0001F);
+		}
+
+		[Test]
+		public void CumulativeTransform()
+		{
+			//this will cause a non-1:1 scale in y
+			CompositeImageGraphic composite = new CompositeImageGraphic(512, 384, 0, 0, 3, 4);
+			ImageSpatialTransform transform = (ImageSpatialTransform)composite.SpatialTransform;
+			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
+			transform.ScaleToFit = false;
+			transform.Scale = 2;
+
+			CompositeGraphic graphic = new CompositeGraphic();
+			composite.Graphics.Add(graphic);
+			graphic.SpatialTransform.RotationXY = 30;
+
+			Assert.AreEqual(graphic.SpatialTransform.Transform.Elements[0], 0.8660, 0.0001F);
+			Assert.AreEqual(graphic.SpatialTransform.Transform.Elements[1], 0.5, 0.0001F);
+			Assert.AreEqual(graphic.SpatialTransform.Transform.Elements[2], -0.5, 0.0001F);
+			Assert.AreEqual(graphic.SpatialTransform.Transform.Elements[3], 0.866, 0.0001F);
+			Assert.AreEqual(graphic.SpatialTransform.CumulativeTransform.Elements[0], 1.7321, 0.0001F);
+			Assert.AreEqual(graphic.SpatialTransform.CumulativeTransform.Elements[1], 1.3333, 0.0001F);
+			Assert.AreEqual(graphic.SpatialTransform.CumulativeTransform.Elements[2], -1, 0.0001F);
+			Assert.AreEqual(graphic.SpatialTransform.CumulativeTransform.Elements[3], 2.3094, 0.0001F);
+		}
+
 		[ExpectedException(typeof(ArgumentException))]
 		[Test]
 		public void TestRotationConstraints()
 		{
 			CompositeGraphic sceneGraph = CreateTestSceneGraph();
-			//set the image graphic rotation to 90.
-			sceneGraph.Graphics[0].SpatialTransform.RotationXY = 90;
-
-			CompositeImageGraphic imageGraphic = (CompositeImageGraphic)sceneGraph.Graphics[0];
-			CompositeGraphic primitiveOwner = (CompositeGraphic)imageGraphic.Graphics[0];
+			CompositeImageGraphic imageComposite = (CompositeImageGraphic)sceneGraph.Graphics[0];
+			ImageGraphic image = (ImageGraphic)imageComposite.Graphics[0];
+			CompositeGraphic primitiveOwner = (CompositeGraphic)imageComposite.Graphics[1];
 			Graphic primitive = (Graphic)primitiveOwner.Graphics[0];
 
-			sceneGraph.SpatialTransform.RotationXY = 90;
-			imageGraphic.SpatialTransform.RotationXY = 90;
-			primitiveOwner.SpatialTransform.RotationXY = 10;
-			primitive.SpatialTransform.RotationXY = 20;
-
-			Assert.AreEqual(sceneGraph.SpatialTransform.CumulativeRotationXY, 90); 
-			Assert.AreEqual(imageGraphic.SpatialTransform.CumulativeRotationXY, 180);
-			Assert.AreEqual(primitiveOwner.SpatialTransform.CumulativeRotationXY, 190);
-			Assert.AreEqual(primitive.SpatialTransform.CumulativeRotationXY, 210);
+			RoiGraphic roi = (RoiGraphic)imageComposite.Graphics[2];
 
 			try
 			{
-				//this will throw an exception.
-				sceneGraph.SpatialTransform.RotationXY = 30;
+				sceneGraph.SpatialTransform.RotationXY = 90;
+				imageComposite.SpatialTransform.RotationXY = 90;
+				primitiveOwner.SpatialTransform.RotationXY = 10;
+				primitive.SpatialTransform.RotationXY = -20;
 			}
-			catch
+			catch(Exception)
 			{
-				//rotation remains at 90.
-				Assert.AreEqual(sceneGraph.SpatialTransform.CumulativeRotationXY, 90);
-				throw;
+				Assert.Fail("These operations should not throw an exception!");
 			}
+
+			Matrix cumulativeTransform;
+			try
+			{
+				imageComposite.SpatialTransform.RotationXY = 30;
+				//should throw; no non-90 degree rotations allowed on an image
+				cumulativeTransform = image.SpatialTransform.CumulativeTransform;
+				Assert.Fail("expected exception not thrown!");
+			}
+			catch(ArgumentException)
+			{
+				imageComposite.SpatialTransform.RotationXY = 90;
+			}
+			
+			roi.SpatialTransform.RotationXY = 100;
+			//should throw; no rotation allowed on a roi
+			cumulativeTransform = roi.SpatialTransform.CumulativeTransform;
 		}
 
 		private static CompositeGraphic CreateTestSceneGraph()
@@ -383,8 +490,11 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			CompositeGraphic composite = new CompositeGraphic();
 			Graphic leaf = new LinePrimitive();
 			composite.Graphics.Add(leaf);
-
 			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(composite);
+
+			RoiGraphic roi = new RoiGraphic(new EllipseInteractiveGraphic(false), true);
+			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(composite);
+			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(roi);
 
 			return sceneGraph;
 		}
@@ -392,6 +502,9 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		private static ImageSpatialTransform CreateTransform()
 		{
 			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384);
+			GrayscaleImageGraphic image = new GrayscaleImageGraphic(512, 384);
+			graphic.Graphics.Add(image);
+
 			ImageSpatialTransform transform = (ImageSpatialTransform)graphic.SpatialTransform;
 			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
 			return transform;

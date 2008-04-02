@@ -1,10 +1,41 @@
+﻿#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-    public class Formula
+    internal class Formula
     {
         public static double AreaOfRectangle(double width, double height)
         {
@@ -16,48 +47,5 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
             // pi/4 = 0.7853981633
             return Math.Abs(0.7853981633 * width * height);
         }
-
-		/// <summary>
-		/// Calculates the angle subtended by two line segments.
-		/// </summary>
-		/// <param name="start"></param>
-		/// <param name="vertex"></param>
-		/// <param name="end"></param>
-		/// <returns></returns>
-		/// <remarks>
-		/// Line segment 1 is defined by points <paramref name="start"/> and <paramref name="vertex"/>.
-		/// Line segment 2 is defined by points <paramref name="end"/> and <paramref name="vertex"/>.
-		/// </remarks>
-		public static double SubtendedAngle(PointF start, PointF vertex, PointF end)
-		{
-			Vector3D vertexPositionVector = new Vector3D(vertex.X, vertex.Y, 0);
-			Vector3D a = new Vector3D(start.X, start.Y, 0) - vertexPositionVector;
-			Vector3D b = new Vector3D(end.X, end.Y, 0) - vertexPositionVector;
-
-			float dotProduct = a.Dot(b);
-
-			Vector3D crossProduct = a.Cross(b);
-
-			float magA = a.Magnitude;
-			float magB = b.Magnitude;
-
-			if (magA == 0 || magB == 0)
-				return 0;
-
-			double cosTheta = dotProduct / magA / magB;
-
-			// Make sure cosTheta is within bounds so we don't
-			// get any errors when we take the acos.
-			if (cosTheta > 1.0f)
-				cosTheta = 1.0f;
-
-			if (cosTheta < -1.0f)
-				cosTheta = -1.0f;
-
-			double theta = Math.Acos(cosTheta)*(crossProduct.Z == 0 ? 1 : -Math.Sign(crossProduct.Z));
-			double thetaInDegrees = theta / Math.PI * 180;
-
-			return thetaInDegrees;
-		}
     }
 }

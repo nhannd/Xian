@@ -187,7 +187,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string specificCharacterSet;
-				GetTagAsDicomStringArray(DicomTags.SpecificCharacterSet, out specificCharacterSet, out tagExists);
+				GetMultiValuedTagRaw(DicomTags.SpecificCharacterSet, out specificCharacterSet, out tagExists);
 
 				if (tagExists)
 				{
@@ -373,7 +373,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string nameOfPhysiciansReadingStudy;
-				GetTagAsDicomStringArray(DicomTags.NameOfPhysiciansReadingStudy, out nameOfPhysiciansReadingStudy, out tagExists);
+				GetMultiValuedTagRaw(DicomTags.NameOfPhysiciansReadingStudy, out nameOfPhysiciansReadingStudy, out tagExists);
 				return DicomStringHelper.GetPersonNameArray(nameOfPhysiciansReadingStudy);
 			}
 		}
@@ -391,7 +391,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string admittingDiagnosesDescription;
-				GetTagAsDicomStringArray(DicomTags.AdmittingDiagnosesDescription, out admittingDiagnosesDescription, out tagExists);
+				GetMultiValuedTagRaw(DicomTags.AdmittingDiagnosesDescription, out admittingDiagnosesDescription, out tagExists);
 				return DicomStringHelper.GetStringArray(admittingDiagnosesDescription);
 			}
 		}
@@ -595,7 +595,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string performingPhysiciansNames;
-				GetTagAsDicomStringArray(DicomTags.PerformingPhysiciansName, out performingPhysiciansNames, out tagExists);
+				GetMultiValuedTagRaw(DicomTags.PerformingPhysiciansName, out performingPhysiciansNames, out tagExists);
 				return DicomStringHelper.GetPersonNameArray(performingPhysiciansNames);
 			}
 		}
@@ -637,7 +637,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string operatorsNames;
-				GetTagAsDicomStringArray(DicomTags.OperatorsName, out operatorsNames, out tagExists);
+				GetMultiValuedTagRaw(DicomTags.OperatorsName, out operatorsNames, out tagExists);
 				return DicomStringHelper.GetPersonNameArray(operatorsNames);
 			}
 		}
@@ -803,7 +803,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTagAsDicomStringArray(uint tag, out string value, out bool tagExists);
+		public abstract void GetMultiValuedTagRaw(uint tag, out string value, out bool tagExists);
+
+		//TODO: Later, add GetMultiValuedTag(T[])
 
 		/// <summary>
 		/// Gets a DICOM OB or OW tag (byte[]), not including encapsulated pixel data.
@@ -817,7 +819,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTagOBOW(uint tag, out byte[] value, out bool tagExists);
+		public abstract void GetTag(uint tag, out byte[] value, out bool tagExists);
 
 		#endregion
 

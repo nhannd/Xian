@@ -38,6 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local
 {
@@ -97,44 +98,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 
 		public void Open()
 		{
-			ImageViewerComponent viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
-
 			string[] files = BuildFileList();
-
 			if (files.Length == 0)
 				return;
 
-			bool cancelled = false;
-			bool anyFailures = false;
-			int successfulImagesInLoadFailure = 0;
-			
 			try
 			{
-				viewer.LoadImages(files, this.Context.DesktopWindow, out cancelled);
+				OpenStudyHelper.OpenFiles(files, ViewerLaunchSettings.WindowBehaviour);
 			}
-			catch (OpenStudyException e)
+			catch(Exception e)
 			{
-				anyFailures = true;
-				successfulImagesInLoadFailure = e.SuccessfulImages;
 				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
-
-			if (cancelled || (anyFailures && successfulImagesInLoadFailure == 0))
-				return;
-
-			Launch(viewer);
-		}
-
-		private void Launch(ImageViewerComponent imageViewer)
-		{
-			WindowBehaviour windowBehaviour = (WindowBehaviour)MonitorConfigurationSettings.Default.WindowBehaviour;
-
-			// Open the images in a separate window
-			if (windowBehaviour == WindowBehaviour.Separate)
-				ImageViewerComponent.LaunchInSeparateWindow(imageViewer);
-			// Open the images in the same window
-			else
-				ImageViewerComponent.LaunchInActiveWindow(imageViewer);
 		}
 
 		private string[] BuildFileList()

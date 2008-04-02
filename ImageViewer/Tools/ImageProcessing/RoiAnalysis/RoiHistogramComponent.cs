@@ -38,6 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 {
@@ -55,12 +56,23 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 	[AssociateView(typeof(RoiHistogramComponentViewExtensionPoint))]
 	public class RoiHistogramComponent : RoiAnalysisComponent
 	{
+		private delegate void PrepareForAnalysisDelegate(int left, int top, int right, int bottom);
+		private delegate bool PointInRoiDelegate(int x, int y);
+
 		private int _minBin = -200;
 		private int _maxBin = 1000;
 		private int _numBins = 100;
 		private int[] _binLabels;
 		private int[] _bins;
 		private bool _autoscale;
+
+		private PrepareForAnalysisDelegate _prepareForAnalysisDelegate;
+		private PointInRoiDelegate _pointInRoiDelegate;
+
+		private float _a2;
+		private float _b2;
+		private float _cx;
+		private float _cy;
 
 		/// <summary>
 		/// Constructor
@@ -69,7 +81,6 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			: base(imageViewerToolContext)
 		{
 		}
-
 
 		public int MinBin
 		{
@@ -127,17 +138,30 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 
 		public bool ComputeHistogram()
 		{
-			RectangleInteractiveGraphic rectangle = GetSelectedRectangle();
+			RectangleInteractiveGraphic rectangle = GetRoi<RectangleInteractiveGraphic>();
+			EllipseInteractiveGraphic ellipse = GetRoi<EllipseInteractiveGraphic>();
 
-			// For now, make sure the ROI is a rectangle
-			if (rectangle == null)
+			if (rectangle != null)
 			{
-				this.Enabled = false;
-				return false;
+				_prepareForAnalysisDelegate = null;
+				_pointInRoiDelegate = PointInRectangle;
+				return ComputeHistogram(rectangle);
+			}
+			else if (ellipse != null)
+			{
+				_prepareForAnalysisDelegate = PrepareEllipseForAnalysis;
+				_pointInRoiDelegate = PointInEllipse;
+				return ComputeHistogram(ellipse);
 			}
 
+			this.Enabled = false;
+			return false;
+		}
+
+		private bool ComputeHistogram(BoundableInteractiveGraphic roi)
+		{
 			IImageGraphicProvider imageGraphicProvider =
-				rectangle.ParentPresentationImage as IImageGraphicProvider;
+				roi.ParentPresentationImage as IImageGraphicProvider;
 
 			if (imageGraphicProvider == null)
 			{
@@ -147,18 +171,18 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 
 			// For now, only allow ROIs of grayscale images
 			GrayscaleImageGraphic image = imageGraphicProvider.ImageGraphic as GrayscaleImageGraphic;
-
 			if (image == null)
 			{
 				this.Enabled = false;
 				return false;
 			}
 
-			rectangle.CoordinateSystem = CoordinateSystem.Source;
-			int left = (int)Math.Round(rectangle.Left);
-			int right = (int)Math.Round(rectangle.Right);
-			int top = (int)Math.Round(rectangle.Top);
-			int bottom = (int)Math.Round(rectangle.Bottom);
+			roi.CoordinateSystem = CoordinateSystem.Source;
+			int left = (int)Math.Round(roi.BoundingBox.Left);
+			int right = (int)Math.Round(roi.BoundingBox.Right);
+			int top = (int)Math.Round(roi.BoundingBox.Top);
+			int bottom = (int)Math.Round(roi.BoundingBox.Bottom);
+			roi.ResetCoordinateSystem();
 
 			// If any part of the ROI is outside the bounds of the image,
 			// don't allow a histogram to be displayed since it's invalid.
@@ -173,14 +197,27 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 
 			int width = Math.Abs(right - left) + 1;
 			int height = Math.Abs(bottom - top) + 1;
-			rectangle.ResetCoordinateSystem();
 
 			int[] roiPixelData = new int[width * height];
 
-			image.PixelData.ForEachPixel(left, top, right, bottom,
+			if (_prepareForAnalysisDelegate != null)
+				_prepareForAnalysisDelegate(left, top, right, bottom);
+
+			IModalityLut modalityLut = image.ModalityLut;
+			GrayscalePixelData pixelData = image.PixelData;
+
+			pixelData.ForEachPixel(left, top, right, bottom,
 				delegate(int i, int x, int y, int pixelIndex)
 				{
-					roiPixelData[i] = image.ModalityLut[image.PixelData.GetPixel(pixelIndex)];
+					if (_pointInRoiDelegate(x, y))
+					{
+						roiPixelData[i] = modalityLut[pixelData.GetPixel(pixelIndex)];
+					}
+					else
+					{
+						//this won't show up on the histogram plot.
+						roiPixelData[i] = int.MaxValue;
+					}
 				});
 
 			Histogram histogram = new Histogram(
@@ -197,25 +234,41 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			return true;
 		}
 
-		protected override bool CanAnalyzeSelectedRoi()
-		{
-			return GetSelectedRectangle() == null ? false : true;
-		}
-
-		private RectangleInteractiveGraphic GetSelectedRectangle()
+		private T GetRoi<T>() where T : BoundableInteractiveGraphic
 		{
 			RoiGraphic graphic = GetSelectedRoi();
-
 			if (graphic == null)
 				return null;
 
-			RectangleInteractiveGraphic rectangle = graphic.Roi as RectangleInteractiveGraphic;
-
-			if (rectangle == null)
-				return null;
-
-			return rectangle;
+			return graphic.Roi as T;
 		}
 
+		private void PrepareEllipseForAnalysis(int left, int top, int right, int bottom)
+		{
+			float a = (right - left) / 2;
+			_a2 = a * a;
+			float b = (bottom - top) / 2;
+			_b2 = b * b;
+			_cx = left + a;
+			_cy = top + b;
+		}
+
+		private bool PointInEllipse(int x, int y)
+		{
+			float xp = x - _cx;
+			float yp = y - _cy;
+			return (xp * xp / _a2 + yp * yp / _b2) <= 1;
+		}
+
+		private static bool PointInRectangle(int x, int y)
+		{
+			return true;
+		}
+
+		protected override bool CanAnalyzeSelectedRoi()
+		{
+			return GetRoi<EllipseInteractiveGraphic>() != null ||
+				   GetRoi<RectangleInteractiveGraphic>() != null;
+		}
 	}
 }

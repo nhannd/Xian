@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Gets the collection of <see cref="Series"/> objects that belong
+		/// Gets the collection of <see cref="StudyManagement.Series"/> objects that belong
 		/// to this <see cref="Study"/>.
 		/// </summary>
 		public SeriesCollection Series

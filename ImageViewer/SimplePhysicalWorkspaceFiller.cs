@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer
 						break;
 				}
 
-				imageBox.DisplaySet = logicalWorkspace.ImageSets[imageSetIndex].DisplaySets[displaySetIndex];
+				imageBox.DisplaySet = logicalWorkspace.ImageSets[imageSetIndex].DisplaySets[displaySetIndex].CreateFreshCopy();
 				displaySetIndex++;
 			}
 		}

@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -51,6 +50,7 @@ namespace ClearCanvas.ImageViewer
 		private string _patientInfo;
 		private string _uid;
 		private event EventHandler _drawing;
+		private List<IDisplaySet> _displaySetCopies;
 
 		#endregion
 		
@@ -59,7 +59,20 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public ImageSet()
 		{
+			_displaySetCopies = new List<IDisplaySet>();
+
 			_displaySets.ItemAdded += OnDisplaySetAdded;
+		}
+
+		internal void AddCopy(IDisplaySet copy)
+		{
+			_displaySetCopies.Add(copy);
+		}
+
+		internal void RemoveCopy(IDisplaySet copy)
+		{
+			if (_displaySetCopies != null)
+				_displaySetCopies.Remove(copy);
 		}
 
 		#region IImageSet Members
@@ -81,6 +94,9 @@ namespace ClearCanvas.ImageViewer
 				{
 					foreach (DisplaySet displaySet in this.DisplaySets)
 						displaySet.ImageViewer = value;
+
+					foreach (DisplaySet copy in _displaySetCopies)
+						copy.ImageViewer = value;
 				}
 			}
 		}
@@ -117,6 +133,12 @@ namespace ClearCanvas.ImageViewer
 				{
 					if (displaySet.Linked)
 						yield return displaySet;
+				}
+
+				foreach (DisplaySet copy in _displaySetCopies)
+				{
+					if (copy.Linked)
+						yield return copy;
 				}
 			}
 		}
@@ -166,6 +188,9 @@ namespace ClearCanvas.ImageViewer
 			OnDrawing();
 			foreach (DisplaySet displaySet in this.DisplaySets)
 				displaySet.Draw();
+
+			foreach (DisplaySet copy in _displaySetCopies)
+				copy.Draw();
 		}
 
 		#endregion
@@ -218,6 +243,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (this.DisplaySets == null)
 				return;
+
+			List<IDisplaySet> displaySetCopies = _displaySetCopies;
+			_displaySetCopies = null;
+
+			foreach (DisplaySet copy in displaySetCopies)
+				copy.Dispose();
 
 			foreach (DisplaySet displaySet in this.DisplaySets)
 				displaySet.Dispose();

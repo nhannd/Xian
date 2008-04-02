@@ -30,14 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Configuration;
-using ClearCanvas.ImageViewer.Explorer.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
@@ -81,7 +79,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			this.ClearAllEnabled = this.Context.NumberOfItems > 0;
 			this.ClearSelectedEnabled = this.Context.NumberSelected > 0;
-			this.OpenStudiesEnabled = this.Context.NumberSelected > 0 && CollectionUtils.TrueForAll(this.Context.SelectedItems,
+			this.OpenStudiesEnabled = this.Context.NumberSelected > 0 && 
+										CollectionUtils.TrueForAll(this.Context.SelectedItems,
 	                                                     delegate(ReceiveQueueItem item)
 	                                                     	{
 																return item.NumberOfFilesCommittedToDataStore > 0;
@@ -181,93 +180,26 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void OpenStudies()
 		{
-			BlockingOperation.Run(this.OpenStudiesInternal);
-		}
-
-		private void OpenStudiesInternal()
-		{
 			if (!OpenStudiesEnabled)
 				return;
 
-			if (this.Context.NumberSelected == 1)
-			{
-				OpenSingleStudyWithPriors();
-			}
-			else
-			{
-				OpenMultipleStudiesInSingleWorkspace();
-			}
-		}
-
-		private void OpenSingleStudyWithPriors()
-		{
-			// Okay, the method name is deceptive--it doesn't actually
-			// open priors yet
-			ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
-			string studyInstanceUid = CollectionUtils.FirstElement(GetSelectedStudyInstanceUids());
-
 			try
 			{
-				imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
+				OpenStudyHelper.OpenStudies("DICOM_LOCAL", GetStudyInstanceUids(), ViewerLaunchSettings.WindowBehaviour);
 			}
-			catch (OpenStudyException e)
+			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, this.Context.DesktopWindow);
-				if (e.SuccessfulImages == 0)
-					return;
 			}
-
-			Launch(imageViewer);
 		}
 
-		private void OpenMultipleStudiesInSingleWorkspace()
+		private string[] GetStudyInstanceUids()
 		{
-			ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
-			int completelySuccessfulStudies = 0;
-			int successfulImagesInLoadFailure = 0;
-
-			foreach (string studyInstanceUid in GetSelectedStudyInstanceUids())
-			{
-				try
-				{
-					imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
-					completelySuccessfulStudies++;
-				}
-				catch (OpenStudyException e)
-				{
-					// Study failed to load completely; keep track of how many
-					// images in the study actually did load
-					successfulImagesInLoadFailure += e.SuccessfulImages;
-					ExceptionHandler.Report(e, this.Context.DesktopWindow);
-				}
-			}
-
-			// If nothing at all was able to load, then don't bother trying to
-			// even open a workspace; just return
-			if (completelySuccessfulStudies == 0 && successfulImagesInLoadFailure == 0)
-				return;
-
-			Launch(imageViewer);
-		}
-
-		private void Launch(ImageViewerComponent imageViewer)
-		{
-			WindowBehaviour windowBehaviour = (WindowBehaviour)MonitorConfigurationSettings.Default.WindowBehaviour;
-
-			// Open the images in a separate window
-			if (windowBehaviour == WindowBehaviour.Separate)
-				ImageViewerComponent.LaunchInSeparateWindow(imageViewer);
-			// Open the images in the same window
-			else
-				ImageViewerComponent.LaunchInActiveWindow(imageViewer);
-		}
-
-		private IEnumerable<string> GetSelectedStudyInstanceUids()
-		{
-			foreach (ReceiveQueueItem item in this.Context.SelectedItems)
-			{
-				yield return item.StudyInformation.StudyInstanceUid;
-			}
+			return CollectionUtils.Map<ReceiveQueueItem, string>(this.Context.SelectedItems, 
+										delegate(ReceiveQueueItem item)
+											{
+												return item.StudyInformation.StudyInstanceUid;
+											}).ToArray();
 		}
 	}
 }

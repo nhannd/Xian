@@ -50,15 +50,21 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 		{
 			RoiHistogramComponent roiHistogramComponent = new RoiHistogramComponent(imageViewerToolContext);
 			roiHistogramComponent.Container = this;
-			_roiHistogramPage = new TabPage("Rectangle", roiHistogramComponent);
+			_roiHistogramPage = new TabPage("Roi", roiHistogramComponent);
 			this.Pages.Add(_roiHistogramPage);
-			roiHistogramComponent.Initialize();
 
 			PathProfileComponent pathProfileComponent = new PathProfileComponent(imageViewerToolContext);
 			pathProfileComponent.Container = this;
 			_pathProfilePage = new TabPage("Path", pathProfileComponent);
 			this.Pages.Add(_pathProfilePage);
-			pathProfileComponent.Initialize();
+		}
+
+		public override void Start()
+		{
+			base.Start();
+
+			((RoiHistogramComponent)_roiHistogramPage.Component).Initialize();
+			((PathProfileComponent)_pathProfilePage.Component).Initialize();
 		}
 
 		internal RoiAnalysisComponent SelectedComponent

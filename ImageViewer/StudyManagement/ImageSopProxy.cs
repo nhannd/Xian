@@ -218,15 +218,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
-		public override string  FrameOfReferenceUid
-		{
-			get 
-			{
-				return _realImageSop.FrameOfReferenceUid;
-			}
-		}
-
 		public override string Modality
 		{
 			get
@@ -649,8 +640,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		protected override void AddFrames()
+		protected override Frame CreateFrame(int index)
 		{
+			throw new InvalidOperationException("Cannot create frame with a proxy object.");
 		}
 
 		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
@@ -699,14 +691,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_realImageSop.GetTag(tag, out val, position, out tagExists);
 		}
 
-		public override void GetTagAsDicomStringArray(uint tag, out string val, out bool tagExists)
+		public override void GetMultiValuedTagRaw(uint tag, out string val, out bool tagExists)
 		{
-			_realImageSop.GetTagAsDicomStringArray(tag, out val, out tagExists);
+			_realImageSop.GetMultiValuedTagRaw(tag, out val, out tagExists);
 		}
 
-		public override void GetTagOBOW(uint tag, out byte[] value, out bool tagExists)
+		public override void GetTag(uint tag, out byte[] value, out bool tagExists)
 		{
-			_realImageSop.GetTagOBOW(tag, out value, out tagExists);
+			_realImageSop.GetTag(tag, out value, out tagExists);
 		}
 
 		protected override void Dispose(bool disposing)

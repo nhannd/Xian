@@ -119,9 +119,20 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			double aspectRatio;
 			
 			if (image.Frame.PixelAspectRatio.IsNull)
-				aspectRatio = 1;
+			{
+				// When there is no aspect ratio tag, the image is displayed with the aspect ratio
+				// of the pixel spacing, so just keep the aspect ratio the same as
+				// what's displayed.  Otherwise, after calibration, a 2cm line drawn horizontally
+				// would be visibly different from a 2cm line drawn vertically.
+				if (!image.Frame.NormalizedPixelSpacing.IsNull)
+					aspectRatio = image.Frame.NormalizedPixelSpacing.Row / image.Frame.NormalizedPixelSpacing.Column;
+				else 
+					aspectRatio = 1;
+			}
 			else
+			{
 				aspectRatio = image.Frame.PixelAspectRatio.Row / image.Frame.PixelAspectRatio.Column;
+			}
 
 			PolyLineInteractiveGraphic line = roiGraphic.Roi as PolyLineInteractiveGraphic;
 

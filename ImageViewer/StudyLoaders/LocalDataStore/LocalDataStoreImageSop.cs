@@ -153,15 +153,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             }
 		}
 
-		[Obsolete("This method has been deprecated and will be removed in v.1.2. Use equivalent method on Frame class instead.")]
-		public override string FrameOfReferenceUid
-		{
-			get
-			{
-				return this.Frames[1].FrameOfReferenceUid;
-			}
-		}
-
 		public override string Modality
 		{
             get 
@@ -359,10 +350,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             }
 		}
 
-		protected override void AddFrames()
+		/// <summary>
+		/// Factory method that creates a <see cref="LocalDataStoreFrame"/>.
+		/// </summary>
+		/// <param name="index">The <b>one-based</b> index of the frame to create.</param>
+		protected override Frame CreateFrame(int index)
 		{
-			for (int i = 1; i <= this.NumberOfFrames; i++)
-				this.Frames.Add(new LocalDataStoreFrame(_dataStoreImageSopInstance, this, i));
+			return new LocalDataStoreFrame(_dataStoreImageSopInstance, this, index);
 		}
 	}
 }

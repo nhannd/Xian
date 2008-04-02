@@ -39,7 +39,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
-using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -62,6 +62,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		  IContextMenuProvider,
 		  IMemorable
 	{
+		#region RoiGraphicMemento
+
 		private class RoiGraphicMemento : IEquatable<RoiGraphicMemento>
 		{
 			public readonly object RoiMemento;
@@ -99,6 +101,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			#endregion
 		}
 
+		#endregion
+
 		#region Private fields
 
 		private InteractiveGraphic _roiGraphic;
@@ -108,15 +112,23 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private bool _selected;
 		private bool _focussed;
 		private bool _raiseRoiChangedEvent = true;
+		private IRoiCalloutLocationStrategy _calloutLocationStrategy;
+		private bool _settingCalloutLocation = false;
 
 		#endregion
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="RoiGraphic"/>.
 		/// </summary>
-		/// <param name="graphic"></param>
-		/// <param name="userCreated"></param>
 		public RoiGraphic(InteractiveGraphic graphic, bool userCreated)
+			: this(graphic, null, userCreated)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="RoiGraphic"/> with the given <see cref="IRoiCalloutLocationStrategy"/>.
+		/// </summary>
+		public RoiGraphic(InteractiveGraphic graphic, IRoiCalloutLocationStrategy calloutLocationStrategy, bool userCreated)
 		{
 			_roiGraphic = graphic;
 
@@ -129,6 +141,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				base.State = CreateInactiveState();
 
 			Roi.ControlPoints.Visible = false;
+
+			_calloutLocationStrategy = calloutLocationStrategy ?? new RoiCalloutLocationStrategy();
+			_calloutLocationStrategy.SetRoiGraphic(this);
 		}
 
 		/// <summary>
@@ -373,42 +388,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
-		/// <summary>
-		/// Occurs when one of the <see cref="Roi"/>'s control points has changed.
-		/// </summary>
-		/// <remarks>
-		/// This method does nothing unless overridden.  Derived classes have an
-		/// opportunity to do things such as set the <see cref="Callout"/>'s location based on
-		/// some property of the <see cref="Roi"/>, for example.
-		/// </remarks>
-		protected virtual void OnControlPointChanged()
-		{
-		}
-
-		/// <summary>
-		/// Occurs when the <see cref="Callout"/>'s location has changed.
-		/// </summary>
-		/// <remarks>
-		/// This method does nothing unless overridden.
-		/// </remarks>
-		protected virtual void OnCalloutLocationChanged()
-		{
-		}
-
-		/// <summary>
-		/// Called when the <see cref="Callout"/>'s end point needs to be recalculated.
-		/// </summary>
-		/// <remarks>
-		/// The callout endpoint is automatically calculated based on the properties
-		/// of the <see cref="Roi"/> itself and the location of the <see cref="Callout"/>.
-		/// By default, the value is the closest point to the <see cref="Callout"/>'s 
-		/// location on the <see cref="Roi"/> (determined from <see cref="InteractiveGraphic.GetClosestPoint"/>).
-		/// </remarks>
-		protected virtual PointF CalculateCalloutEndPoint()
-		{
-			return _roiGraphic.GetClosestPoint(_calloutGraphic.StartPoint);
-		}
-
 		private void BuildGraphic()
 		{
 			base.Graphics.Add(_roiGraphic);
@@ -417,6 +396,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.Graphics.Add(_calloutGraphic);
 
 			_roiGraphic.ControlPoints.ControlPointChangedEvent += new EventHandler<ListEventArgs<PointF>>(OnControlPointChanged);
+			_roiGraphic.ControlPoints.Graphics.ItemAdded += new EventHandler<ListEventArgs<IGraphic>>(OnControlPointAdded);
 			_calloutGraphic.LocationChanged += new EventHandler<PointChangedEventArgs>(OnCalloutLocationChanged);
 
 			this.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnROIGraphicStateChanged);
@@ -523,24 +503,62 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			// We're attaching the callout to the ROI, so make sure the two
 			// graphics are in the same coordinate system before we do that.
-			_calloutGraphic.CoordinateSystem = _roiGraphic.CoordinateSystem;
-			_calloutGraphic.EndPoint = CalculateCalloutEndPoint();
+			// This sets all the graphics coordinate systems to be the same.
+			this.CoordinateSystem = Roi.CoordinateSystem;
+			
+			PointF endPoint;
+			CoordinateSystem coordinateSystem;
+			_calloutLocationStrategy.CalculateCalloutEndPoint(out endPoint, out coordinateSystem);
+			
+			this.ResetCoordinateSystem();
+
+			_calloutGraphic.CoordinateSystem = coordinateSystem;
+			_calloutGraphic.EndPoint = endPoint;
 			_calloutGraphic.ResetCoordinateSystem();
+		}
+
+		private void SetCalloutLocation()
+		{
+			this.CoordinateSystem = Roi.CoordinateSystem;
+
+			PointF location;
+			CoordinateSystem coordinateSystem;
+			if (_calloutLocationStrategy.CalculateCalloutLocation(out location, out coordinateSystem))
+			{
+				_settingCalloutLocation = true;
+
+				_calloutGraphic.CoordinateSystem = coordinateSystem;
+				_calloutGraphic.Location = location;
+				_calloutGraphic.ResetCoordinateSystem();
+
+				_settingCalloutLocation = false;
+			}
+
+			this.ResetCoordinateSystem();
+
+			SetCalloutEndPoint();
+		}
+
+		private void OnControlPointAdded(object sender, ListEventArgs<IGraphic> e)
+		{
+			SetCalloutLocation();
+			
+			if (_raiseRoiChangedEvent)
+				EventsHelper.Fire(_roiChangedEvent, this, EventArgs.Empty);
 		}
 
 		private void OnControlPointChanged(object sender, ListEventArgs<PointF> e)
 		{
-			OnControlPointChanged();
-
-			SetCalloutEndPoint();
-
+			SetCalloutLocation();
+			
 			if (_raiseRoiChangedEvent)
 				EventsHelper.Fire(_roiChangedEvent, this, EventArgs.Empty);
 		}
 
 		private void OnCalloutLocationChanged(object sender, PointChangedEventArgs e)
 		{
-			OnCalloutLocationChanged();
+			if (!_settingCalloutLocation)
+				_calloutLocationStrategy.OnCalloutLocationChangedExternally();
 
 			SetCalloutEndPoint();
 		}

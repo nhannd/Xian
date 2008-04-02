@@ -1,9 +1,49 @@
+﻿#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Graphics;
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
+	internal class SynchronizationToolCompositeGraphic : CompositeGraphic
+	{
+		public SynchronizationToolCompositeGraphic()
+		{
+			base.Graphics.Add(new ReferenceLineCompositeGraphic());
+		}
+	}
+
 	// NOTE: Because the synchronization tools act based on events coming from the viewer event broker,
 	// they cannot be responsible for drawing the images because that would result in repeated (unnecessary)
 	// Draw() calls.  The reference line tool is dependent on the stacking synchronization tool in that 
@@ -20,8 +60,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 	internal class SynchronizationToolCoordinator
 	{
-		private static readonly string _compositeGraphicName = "SynchronizationTools";
-		
 		private static readonly Dictionary<IImageViewer, SynchronizationToolCoordinator> _coordinators;
 
 		private readonly IImageViewer _viewer;
@@ -80,14 +118,19 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private static CompositeGraphic GetSynchronizationToolCompositeGraphic(IPresentationImage image)
 		{
-			if (image != null && image is INamedCompositeGraphicProvider)
+			if (image is IOverlayGraphicsProvider)
 			{
-				CompositeGraphic container = ((INamedCompositeGraphicProvider) image).GetNamedCompositeGraphic(_compositeGraphicName);
-				if (container != null)
-				{
-					container.Visible = true;
-					return container;
-				}
+				GraphicCollection overlayGraphics = ((IOverlayGraphicsProvider) image).OverlayGraphics;
+
+				IGraphic container = CollectionUtils.SelectFirst(overlayGraphics, delegate(IGraphic graphic)
+		                                             	{
+		                                             		return graphic is SynchronizationToolCompositeGraphic;
+		                                             	}); 
+				if (container == null)
+					overlayGraphics.Insert(0, container = new SynchronizationToolCompositeGraphic());
+
+				container.Visible = true;
+				return (CompositeGraphic)container;
 			}
 
 			return null;
@@ -135,6 +178,53 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			}
 		}
 
+		private SpatialLocatorGraphic GetSpatialLocatorGraphic(IPresentationImage image, bool findOnly)
+		{
+			CompositeGraphic container = GetSynchronizationToolCompositeGraphic(image);
+			if (container == null)
+				return null;
+
+			SpatialLocatorGraphic existingGraphic = _spatialLocatorGraphicCache.Find(delegate(SpatialLocatorGraphic graphic)
+										{
+											if (graphic.ParentPresentationImage == null)
+												return false;
+
+											return graphic.ParentPresentationImage.ParentDisplaySet.ImageBox == image.ParentDisplaySet.ImageBox;
+										});
+
+			if (findOnly)
+				return existingGraphic;
+
+			if (existingGraphic == null)
+			{
+				existingGraphic = _spatialLocatorGraphicCache.Find(delegate(SpatialLocatorGraphic graphic)
+										{
+											return graphic.ParentPresentationImage == null;
+										});
+
+				if (existingGraphic != null)
+				{
+					container.Graphics.Add(existingGraphic);
+				}
+			}
+			else
+			{
+				if (existingGraphic.ParentPresentationImage != image)
+				{
+					((CompositeGraphic)existingGraphic.ParentGraphic).Graphics.Remove(existingGraphic);
+					container.Graphics.Add(existingGraphic);
+				}
+			}
+
+			if (existingGraphic == null)
+			{
+				_spatialLocatorGraphicCache.Add(existingGraphic = new SpatialLocatorGraphic());
+				container.Graphics.Add(existingGraphic);
+			}
+
+			return existingGraphic;
+		}
+
 		public static SynchronizationToolCoordinator Get(IImageViewer viewer)
 		{
 			if (!_coordinators.ContainsKey(viewer))
@@ -169,56 +259,24 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			if (container == null)
 				return null;
 
-			// insert it at the beginning, because we want the spatial locator graphic on top.
-			if (container.Graphics.Count == 0 || !(container.Graphics[0] is ReferenceLineCompositeGraphic))
-				container.Graphics.Insert(0, new ReferenceLineCompositeGraphic());
-
 			return (ReferenceLineCompositeGraphic)container.Graphics[0];
 		}
 
-		public SpatialLocatorGraphic GetSpatialLocatorGraphic(IPresentationImage image)
+		public SpatialLocatorGraphic ShowSpatialLocatorGraphic(IPresentationImage image)
 		{
-			CompositeGraphic container = GetSynchronizationToolCompositeGraphic(image);
-			if (container == null)
-				return null;
+			return GetSpatialLocatorGraphic(image, false);
+		}
 
-			SpatialLocatorGraphic existingGraphic = _spatialLocatorGraphicCache.Find(delegate(SpatialLocatorGraphic graphic)
-										{
-											if (graphic.ParentPresentationImage == null)
-												return false;
-
-											return graphic.ParentPresentationImage.ParentDisplaySet.ImageBox == image.ParentDisplaySet.ImageBox;
-										});
-
-			if (existingGraphic == null)
+		public bool HideSpatialLocatorGraphic(IPresentationImage image)
+		{
+			SpatialLocatorGraphic existingGraphic = GetSpatialLocatorGraphic(image, true);
+			if (existingGraphic != null)
 			{
-				existingGraphic = _spatialLocatorGraphicCache.Find(delegate(SpatialLocatorGraphic graphic)
-										{
-											return graphic.ParentPresentationImage == null;
-										});
-
-				if (existingGraphic != null)
-				{
-					container.Graphics.Add(existingGraphic);
-				}
-			}
-			else
-			{
-				if (existingGraphic.ParentPresentationImage != image)
-				{
-					((CompositeGraphic)existingGraphic.ParentGraphic).Graphics.Remove(existingGraphic);
-					container.Graphics.Add(existingGraphic);
-				}
+				((CompositeGraphic)existingGraphic.ParentGraphic).Graphics.Remove(existingGraphic);
+				return true;
 			}
 
-			if (existingGraphic == null)
-			{
-				_spatialLocatorGraphicCache.Add(existingGraphic = new SpatialLocatorGraphic());
-				container.Graphics.Add(existingGraphic);
-			}
-
-			existingGraphic.SpatialTransform.Initialize();
-			return existingGraphic;
+			return false;
 		}
 
 		public void OnSpatialLocatorPointsCalculated(IEnumerable<IImageBox> affectedImageBoxes)

@@ -48,7 +48,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#region Private Fields
 
 		private bool _scaleToFit;
-		private bool _calculatingScaleToFit;
 
 		private int _columns;
 		private int _rows;
@@ -86,9 +85,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 			double pixelAspectRatioX,
 			double pixelAspectRatioY) : base(ownerGraphic)
 		{
-			if (ownerGraphic != null)
-				ownerGraphic.Drawing += OwnerGraphicDrawing;
-
 			_rows = rows;
 			_columns = columns;
 			_pixelSpacingX = pixelSpacingX;
@@ -96,7 +92,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_pixelAspectRatioX = pixelAspectRatioX;
 			_pixelAspectRatioY = pixelAspectRatioY;
 			_scaleToFit = true;
-			_calculatingScaleToFit = false;
 		}
 
 		/// <summary>
@@ -115,9 +110,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 					return;
 
 				_scaleToFit = value;
-				if (_scaleToFit)
-					CalculateScaleToFit();
-
 				base.ForceRecalculation();
 			}
 		}
@@ -147,9 +139,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 					return;
 
 				_clientRectangle = value;
-				if (_scaleToFit) 
-					CalculateScaleToFit();
-
 				base.ForceRecalculation();
 			}
 		}
@@ -246,17 +235,24 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Calculates the scale.
+		/// Updates the scale parameters based on the values of <see cref="ClientRectangle"/> and <see cref="ScaleToFit"/>.
 		/// </summary>
-		/// <remarks>
-		/// This scale calculation accounts for non-square pixels.
-		/// </remarks>
-		protected override void OnScaleChanged()
+		protected override void UpdateScaleParameters()
 		{
-			if (_calculatingScaleToFit)
+			if (base.OwnerGraphic != null && base.OwnerGraphic.ParentPresentationImage != null)
+				ClientRectangle = base.OwnerGraphic.ParentPresentationImage.ClientRectangle;
+
+			if (!base.RecalculationRequired)
 				return;
-			
-			this.ScaleToFit = false;
+
+			if (ScaleToFit)
+				CalculateScaleToFit();
+			else 
+				CalculateScaleXY();
+		}
+
+		private void CalculateScaleXY()
+		{
 			if (this.PixelAspectRatio >= 1)
 			{
 				this.ScaleX = this.Scale;
@@ -271,7 +267,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void CalculateScaleToFit()
 		{
-			_calculatingScaleToFit = true;
+			float scaleX, scaleY;
 
 			if (this.RotationXY == 90 || this.RotationXY == 270)
 			{
@@ -280,13 +276,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 				if (clientAspectRatio >= imageAspectRatio)
 				{
-					this.ScaleX = (float)this.DestinationWidth / this.AdjustedSourceHeight;
-					this.ScaleY = (float)this.DestinationWidth / this.SourceHeight;
+					scaleX = (float)this.DestinationWidth / this.AdjustedSourceHeight;
+					scaleY = (float)this.DestinationWidth / this.SourceHeight;
 				}
 				else
 				{
-					this.ScaleX = (float)this.DestinationHeight / (float)this.SourceWidth;
-					this.ScaleY = (float)this.DestinationHeight / (float)this.SourceWidth * this.PixelAspectRatio;
+					scaleX = (float)this.DestinationHeight / (float)this.SourceWidth;
+					scaleY = (float)this.DestinationHeight / (float)this.SourceWidth * this.PixelAspectRatio;
 				}
 			}
 			else
@@ -296,25 +292,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 				if (clientAspectRatio >= imageAspectRatio)
 				{
-					this.ScaleX = (float)this.DestinationWidth / (float)this.SourceWidth;
-					this.ScaleY = (float)this.DestinationWidth / (float)this.SourceWidth * this.PixelAspectRatio;
+					scaleX = (float)this.DestinationWidth / (float)this.SourceWidth;
+					scaleY = (float)this.DestinationWidth / (float)this.SourceWidth * this.PixelAspectRatio;
 				}
 				else
 				{
-					this.ScaleX = (float)this.DestinationHeight / this.AdjustedSourceHeight;
-					this.ScaleY = (float)this.DestinationHeight / this.SourceHeight;
+					scaleX = (float)this.DestinationHeight / this.AdjustedSourceHeight;
+					scaleY = (float)this.DestinationHeight / this.SourceHeight;
 				}
 			}
 
-			this.MinimumScale = Math.Min(this.ScaleX / 2, DefaultMinimumScale);
-			this.Scale = this.ScaleX;
-
-			_calculatingScaleToFit = false;
-		}
-
-		private void OwnerGraphicDrawing(object sender, EventArgs e)
-		{
-			this.ClientRectangle = OwnerGraphic.ParentPresentationImage.ClientRectangle;
+			this.MinimumScale = Math.Min(scaleX / 2, DefaultMinimumScale);
+			this.Scale = scaleX;
+			this.ScaleX = scaleX;
+			this.ScaleY = scaleY;
 		}
 	}
 }

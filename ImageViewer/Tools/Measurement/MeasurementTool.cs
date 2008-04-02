@@ -1,3 +1,34 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -94,9 +125,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			ResetActivelyChangingRoi();
 
-			IOverlayGraphicsProvider image = (IOverlayGraphicsProvider)mouseInformation.Tile.PresentationImage;
-
-			InsertRemoveGraphicUndoableCommand command = InsertRemoveGraphicUndoableCommand.GetRemoveCommand(image.OverlayGraphics, _createRoiGraphic);
+			InsertRemoveOverlayGraphicUndoableCommand command =
+				InsertRemoveOverlayGraphicUndoableCommand.GetRemoveCommand(mouseInformation.Tile.PresentationImage, _createRoiGraphic);
 			command.Name = this.CreationCommandName;
 			_createRoiGraphic.ImageViewer.CommandHistory.AddCommand(command);
 			_createRoiGraphic = null;
@@ -116,10 +146,10 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			// Cancel pending delayed event.
 			_roiChangedDelayedEventPublisher.Cancel();
 
-			IOverlayGraphicsProvider image = (IOverlayGraphicsProvider)_createRoiGraphic.ParentPresentationImage;
-			image.OverlayGraphics.Remove(_createRoiGraphic);
+			IPresentationImage parentImage = _createRoiGraphic.ParentPresentationImage;
+			((IOverlayGraphicsProvider)parentImage).OverlayGraphics.Remove(_createRoiGraphic);
 
-			_createRoiGraphic.ParentPresentationImage.Draw();
+			parentImage.Draw();
 			_createRoiGraphic = null;
 		}
 
@@ -131,20 +161,32 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			return null;
 		}
 
-		protected virtual RoiGraphic CreateRoiGraphic()
+		protected RoiGraphic CreateRoiGraphic()
 		{
 			//When you create a graphic from within a tool (particularly one that needs capture, like a multi-click graphic),
 			//see it through to the end of creation.  It's just cleaner, not to mention that if this tool knows how to create it,
 			//it should also know how to (and be responsible for) cancelling it and/or deleting it appropriately.
 			InteractiveGraphic interactiveGraphic = CreateInteractiveGraphic();
 
-			RoiGraphic roiGraphic = new RoiGraphic(interactiveGraphic, true);
+			IRoiCalloutLocationStrategy strategy = CreateCalloutLocationStrategy();
+
+			RoiGraphic roiGraphic;
+			if (strategy == null)
+				roiGraphic = new RoiGraphic(interactiveGraphic, true);
+			else
+				roiGraphic = new RoiGraphic(interactiveGraphic, strategy, true);
+
 			roiGraphic.Name = this.ToString();
 
 			return roiGraphic;
 		}
 
 		protected abstract InteractiveGraphic CreateInteractiveGraphic();
+
+		protected virtual IRoiCalloutLocationStrategy CreateCalloutLocationStrategy()
+		{
+			return null;
+		}
 
 		protected virtual IEnumerable<IRoiAnalyzer<T>> CreateAnalyzers()
 		{

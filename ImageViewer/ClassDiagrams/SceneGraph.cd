@@ -1,18 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Font Name="Tahoma" Size="8.25" />
-  <Class Name="ClearCanvas.ImageViewer.Graphics.SceneGraph" Collapsed="true">
-    <Position X="3.5" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <FileName>Graphics\SceneGraph.cs</FileName>
-      <HashCode>AAgAAAggAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
-    </TypeIdentifier>
-  </Class>
   <Class Name="ClearCanvas.ImageViewer.PresentationImage" Collapsed="true">
     <Position X="0.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <FileName>PresentationImage.cs</FileName>
-      <HashCode>QEMUAABAICBgAwAAAABCCABABAAACgEIAAAAAAAAATI=</HashCode>
+      <HashCode>UEMVACAgICBAAgAAABACAABAFACADgEIAABAAIAAASI=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="SceneGraph" />
@@ -23,7 +16,7 @@
     <Position X="3.5" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <FileName>Graphics\CompositeGraphic.cs</FileName>
-      <HashCode>CAKAAAAAAIBAAAAAAgAAAAAACAAAAAIKAAAAAAAAAAA=</HashCode>
+      <HashCode>CAKAAIAAAKBAAAAAAgAAAAAACAAAAAIKAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Class>
 </ClassDiagram>

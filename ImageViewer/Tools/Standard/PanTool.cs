@@ -151,11 +151,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			// Because the pan increment is in destination coordinates, we have to convert
 			// them to source coordinates, since the transform translation is in source coordinates.
 			// This will allow the pan to work properly irrespective of the zoom, flip and rotation.
-			PointF[] pt = {new PointF(xIncrement, yIncrement)};
-			transform.ConvertVectorsToSource(pt);
+			
+			SizeF sourceIncrement = transform.ConvertToSource(new SizeF(xIncrement, yIncrement));
 
-			transform.TranslationX += pt[0].X;
-			transform.TranslationY += pt[0].Y;
+			transform.TranslationX += sourceIncrement.Width;
+			transform.TranslationY += sourceIncrement.Height;
 
 			this.SelectedPresentationImage.Draw();
 		}

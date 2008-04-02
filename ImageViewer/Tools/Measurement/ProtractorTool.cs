@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			_points.Clear();
 
-			graphic.CoordinateSystem = CoordinateSystem.Destination;
+			graphic.CoordinateSystem = CoordinateSystem.Source;
 
 			PolyLineGraphic line = protractor.PolyLine;
 			for (int i = 0; i < line.Count; ++i)
@@ -100,12 +100,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected override InteractiveGraphic CreateInteractiveGraphic()
 		{
-			throw new NotImplementedException("This method should never be called since CreateRoiGraphic is overridden.");
+			return new ProtractorInteractiveGraphic();
 		}
 
-		protected override RoiGraphic CreateRoiGraphic()
+		protected override IRoiCalloutLocationStrategy CreateCalloutLocationStrategy()
 		{
-			return new ProtractorRoiGraphic();
+			return new ProtractorRoiCalloutLocationStrategy();
 		}
 	}
 }

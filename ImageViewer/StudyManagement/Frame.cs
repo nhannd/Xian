@@ -1,3 +1,34 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom;
@@ -66,7 +97,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string patientOrientation;
-				_parentImageSop.GetTagAsDicomStringArray(DicomTags.PatientOrientation, out patientOrientation, out tagExists);
+				_parentImageSop.GetMultiValuedTagRaw(DicomTags.PatientOrientation, out patientOrientation, out tagExists);
 				if (tagExists)
 				{
 					string[] values = DicomStringHelper.GetStringArray(patientOrientation);
@@ -87,7 +118,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string imageType;
-				_parentImageSop.GetTagAsDicomStringArray(DicomTags.ImageType, out imageType, out tagExists);
+				_parentImageSop.GetMultiValuedTagRaw(DicomTags.ImageType, out imageType, out tagExists);
 				return imageType ?? "";
 			}
 		}
@@ -202,7 +233,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string lossyImageCompressionRatios;
-				_parentImageSop.GetTagAsDicomStringArray(DicomTags.LossyImageCompressionRatio, out lossyImageCompressionRatios, out tagExists);
+				_parentImageSop.GetMultiValuedTagRaw(DicomTags.LossyImageCompressionRatio, out lossyImageCompressionRatios, out tagExists);
 
 				double[] values;
 				DicomStringHelper.TryGetDoubleArray(lossyImageCompressionRatios, out values);
@@ -227,7 +258,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string pixelSpacing;
-				_parentImageSop.GetTagAsDicomStringArray(DicomTags.PixelSpacing, out pixelSpacing, out tagExists);
+				_parentImageSop.GetMultiValuedTagRaw(DicomTags.PixelSpacing, out pixelSpacing, out tagExists);
 				if (tagExists)
 				{
 					double[] values;
@@ -251,7 +282,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string imageOrientationPatient;
-				_parentImageSop.GetTagAsDicomStringArray(DicomTags.ImageOrientationPatient, out imageOrientationPatient, out tagExists);
+				_parentImageSop.GetMultiValuedTagRaw(DicomTags.ImageOrientationPatient, out imageOrientationPatient, out tagExists);
 				if (tagExists)
 				{
 					double[] values;
@@ -275,7 +306,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string imagePositionPatient;
-				_parentImageSop.GetTagAsDicomStringArray(DicomTags.ImagePositionPatient, out imagePositionPatient, out tagExists);
+				_parentImageSop.GetMultiValuedTagRaw(DicomTags.ImagePositionPatient, out imagePositionPatient, out tagExists);
 				if (tagExists)
 				{
 					double[] values;
@@ -312,6 +343,35 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				double sliceLocation;
 				_parentImageSop.GetTag(DicomTags.SliceLocation, out sliceLocation, out tagExists);
 				return sliceLocation;
+			}
+		}
+
+		#endregion
+
+		#region X-ray Acquisition Module
+
+		/// <summary>
+		/// Gets the imager pixel spacing.
+		/// </summary>
+		/// <remarks>
+		/// It is generally recommended that clients use <see cref="NormalizedPixelSpacing"/> when
+		/// in calculations that require the imager pixel spacing.
+		/// </remarks>
+		public virtual PixelSpacing ImagerPixelSpacing
+		{
+			get
+			{
+				bool tagExists;
+				string imagerPixelSpacing;
+				_parentImageSop.GetMultiValuedTagRaw(DicomTags.ImagerPixelSpacing, out imagerPixelSpacing, out tagExists);
+				if (tagExists)
+				{
+					double[] values;
+					if (DicomStringHelper.TryGetDoubleArray(imagerPixelSpacing, out values) && values.Length == 2)
+						return new PixelSpacing(values[0], values[1]);
+				}
+
+				return new PixelSpacing(0, 0);
 			}
 		}
 
@@ -462,7 +522,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string pixelAspectRatio;
-				_parentImageSop.GetTagAsDicomStringArray(DicomTags.PixelAspectRatio, out pixelAspectRatio, out tagExists);
+				_parentImageSop.GetMultiValuedTagRaw(DicomTags.PixelAspectRatio, out pixelAspectRatio, out tagExists);
 				if (tagExists)
 				{
 					double[] values;
@@ -470,7 +530,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						return new PixelAspectRatio(values[0], values[1]);
 				}
 
-				return new PixelAspectRatio(1, 1);
+				return new PixelAspectRatio(0, 0);
 			}
 		}
 
@@ -543,11 +603,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string windowCenterValues;
-				_parentImageSop.GetTagAsDicomStringArray(DicomTags.WindowCenter, out windowCenterValues, out tagExists);
+				_parentImageSop.GetMultiValuedTagRaw(DicomTags.WindowCenter, out windowCenterValues, out tagExists);
 				if (tagExists)
 				{
 					string windowWidthValues;
-					_parentImageSop.GetTagAsDicomStringArray(DicomTags.WindowWidth, out windowWidthValues, out tagExists);
+					_parentImageSop.GetMultiValuedTagRaw(DicomTags.WindowWidth, out windowWidthValues, out tagExists);
 					if (tagExists)
 					{
 						if (!String.IsNullOrEmpty(windowCenterValues) && !String.IsNullOrEmpty(windowWidthValues))
@@ -583,7 +643,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string windowCenterAndWidthExplanations;
-				_parentImageSop.GetTagAsDicomStringArray(DicomTags.WindowCenterWidthExplanation, out windowCenterAndWidthExplanations, out tagExists);
+				_parentImageSop.GetMultiValuedTagRaw(DicomTags.WindowCenterWidthExplanation, out windowCenterAndWidthExplanations, out tagExists);
 				return DicomStringHelper.GetStringArray(windowCenterAndWidthExplanations);
 			}
 		}
@@ -603,6 +663,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				string frameOfReferenceUid;
 				_parentImageSop.GetTag(DicomTags.FrameOfReferenceUid, out frameOfReferenceUid, out tagExists);
 				return frameOfReferenceUid ?? "";
+			}
+		}
+
+		#endregion
+
+		#region MR Image Module
+
+		/// <summary>
+		/// Gets the spacing between the slices.
+		/// </summary>
+		public virtual double SpacingBetweenSlices
+		{
+			get
+			{
+				bool tagExists;
+				double spacingBetweenSlices;
+				_parentImageSop.GetTag(DicomTags.SpacingBetweenSlices, out spacingBetweenSlices, out tagExists);
+				return spacingBetweenSlices;
 			}
 		}
 
@@ -775,17 +853,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			byte[] redLut, greenLut, blueLut;
 
-			_parentImageSop.GetTagOBOW(DicomTags.RedPaletteColorLookupTableData, out redLut, out tagExists);
+			_parentImageSop.GetTag(DicomTags.RedPaletteColorLookupTableData, out redLut, out tagExists);
 
 			if (!tagExists)
 				throw new Exception("Red Palette Color LUT missing.");
 
-			_parentImageSop.GetTagOBOW(DicomTags.GreenPaletteColorLookupTableData, out greenLut, out tagExists);
+			_parentImageSop.GetTag(DicomTags.GreenPaletteColorLookupTableData, out greenLut, out tagExists);
 
 			if (!tagExists)
 				throw new Exception("Green Palette Color LUT missing.");
 
-			_parentImageSop.GetTagOBOW(DicomTags.BluePaletteColorLookupTableData, out blueLut, out tagExists);
+			_parentImageSop.GetTag(DicomTags.BluePaletteColorLookupTableData, out blueLut, out tagExists);
 
 			if (!tagExists)
 				throw new Exception("Blue Palette Color LUT missing.");

@@ -45,10 +45,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Initializes a new instance of <see cref="PointPrimitive"/>.
 		/// </summary>
-		/// <param name="point"></param>
-		public PointPrimitive(PointF point)
+		public PointPrimitive()
 		{
-			this.Point = point;
 		}
 
 		/// <summary>

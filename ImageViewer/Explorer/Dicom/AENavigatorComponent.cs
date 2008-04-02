@@ -145,7 +145,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             set { _updateType = value; }
         }
 
-        public ActionModelRoot ToolbarModel
+        public ActionModelNode ToolbarModel
         {
             get { return _toolbarModel; }
         }

@@ -52,9 +52,9 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ReferenceLineTool : ImageViewerTool
 	{
-		#region ReferenceLineInfo struct
+		#region ReferenceLineInfo class
 
-		private struct ReferenceLineInfo
+		private class ReferenceLineInfo
 		{
 			public readonly PointF StartPoint;
 			public readonly PointF EndPoint;
@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			for (int i = 0; i < 4; ++i)
 			{
 				// Intersect the bounding line segments of the reference image with the plane of the target image.
-				Vector3D intersection = Vector3D.GetIntersectionOfLineSegmentWithPlane(targetImageInfo.Normal,
+				Vector3D intersection = Vector3D.GetLinePlaneIntersection(targetImageInfo.Normal,
 																		targetImageInfo.PositionPatientCenterOfImage, 
 																		lineSegments[i, 0], lineSegments[i, 1], true);
 
@@ -197,7 +197,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			return intersectionPoints;
 		}
 
-		private ReferenceLineInfo? GetReferenceLineInfo(Frame referenceFrame, Frame targetFrame)
+		private ReferenceLineInfo GetReferenceLineInfo(Frame referenceFrame, Frame targetFrame)
 		{
 			ImageInfo referenceImageInfo = _cache.GetImageInformation(referenceFrame);
 			ImageInfo targetImageInfo = _cache.GetImageInformation(targetFrame);
@@ -208,20 +208,20 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			if (intersectionPoints.Count < 2)
 				return null;
 
-			Vector3D imagePoint1 = targetFrame.ImagePlaneHelper.ConvertToImage(intersectionPoints[0]);
-			Vector3D imagePoint2 = targetFrame.ImagePlaneHelper.ConvertToImage(intersectionPoints[1]);
+			Vector3D positionImagePlane1 = targetFrame.ImagePlaneHelper.ConvertToImagePlane(intersectionPoints[0]);
+			Vector3D positionImagePlane2 = targetFrame.ImagePlaneHelper.ConvertToImagePlane(intersectionPoints[1]);
 
 			//The coordinates need to be converted to pixel coordinates because right now they are in mm.
-			PointF imagePixelPoint1 = (PointF)targetFrame.ImagePlaneHelper.ConvertToImagePixel(new PointF(imagePoint1.X, imagePoint1.Y));
-			PointF imagePixelPoint2 = (PointF)targetFrame.ImagePlaneHelper.ConvertToImagePixel(new PointF(imagePoint2.X, imagePoint2.Y));
+			PointF imagePoint1 = (PointF)targetFrame.ImagePlaneHelper.ConvertToImage(new PointF(positionImagePlane1.X, positionImagePlane1.Y));
+			PointF imagePoint2 = (PointF)targetFrame.ImagePlaneHelper.ConvertToImage(new PointF(positionImagePlane2.X, positionImagePlane2.Y));
 			string label = referenceFrame.ParentImageSop.InstanceNumber.ToString();
 
-			return new ReferenceLineInfo(imagePixelPoint1, imagePixelPoint2, label);
+			return new ReferenceLineInfo(imagePoint1, imagePoint2, label);
 		}
 
 		private void GetFirstAndLastReferenceLineInfo(IPresentationImage targetImage, 
-						out ReferenceLineInfo? firstReferenceLineInfo,
-						out ReferenceLineInfo? lastReferenceLineInfo)
+						out ReferenceLineInfo firstReferenceLineInfo,
+						out ReferenceLineInfo lastReferenceLineInfo)
 		{
 			Frame currentReferenceFrame = ((IImageSopProvider)_currentReferenceImage).Frame;
 			Frame targetFrame = ((IImageSopProvider)targetImage).Frame;
@@ -259,7 +259,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 								// < keeps the first image as close to the beginning of the display set as possible.
 								if (imageZComponent < firstReferenceImageZComponent)
 								{
-									ReferenceLineInfo? referenceLineInfo = GetReferenceLineInfo(frame, targetFrame);
+									ReferenceLineInfo referenceLineInfo = GetReferenceLineInfo(frame, targetFrame);
 									if (referenceLineInfo != null)
 									{
 										firstReferenceLineInfo = referenceLineInfo;
@@ -270,7 +270,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 								// >= keeps the last image as close to the end of the display set as possible.
 								if (imageZComponent >= lastReferenceImageZComponent)
 								{
-									ReferenceLineInfo? referenceLineInfo = GetReferenceLineInfo(frame, targetFrame);
+									ReferenceLineInfo referenceLineInfo = GetReferenceLineInfo(frame, targetFrame);
 									if (referenceLineInfo != null)
 									{
 										lastReferenceLineInfo = referenceLineInfo;
@@ -284,7 +284,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			}
 		}
 
-		private ReferenceLineInfo? GetCurrentReferenceLineInfo(IPresentationImage targetImage)
+		private ReferenceLineInfo GetCurrentReferenceLineInfo(IPresentationImage targetImage)
 		{
 			Frame currentReferenceFrame = ((IImageSopProvider) _currentReferenceImage).Frame;
 			Frame targetFrame = ((IImageSopProvider) targetImage).Frame;
@@ -307,18 +307,18 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 					ImageInfo targetInfo = _cache.GetImageInformation(targetFrame);
 					if (targetInfo != null)
 					{
-						ReferenceLineInfo? firstReferenceLineInfo, lastReferenceLineInfo;
+						ReferenceLineInfo firstReferenceLineInfo, lastReferenceLineInfo;
 						GetFirstAndLastReferenceLineInfo(targetImage, out firstReferenceLineInfo, out lastReferenceLineInfo);
 
 						if (firstReferenceLineInfo != null && lastReferenceLineInfo != null)
 						{
-							yield return firstReferenceLineInfo.Value;
-							yield return lastReferenceLineInfo.Value;
+							yield return firstReferenceLineInfo;
+							yield return lastReferenceLineInfo;
 						}
 
-						ReferenceLineInfo? currentReferenceLineInfo = GetCurrentReferenceLineInfo(targetImage);
+						ReferenceLineInfo currentReferenceLineInfo = GetCurrentReferenceLineInfo(targetImage);
 						if (currentReferenceLineInfo != null)
-							yield return currentReferenceLineInfo.Value;
+							yield return currentReferenceLineInfo;
 					}
 				}
 			}

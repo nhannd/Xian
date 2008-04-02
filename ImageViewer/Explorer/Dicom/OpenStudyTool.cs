@@ -60,111 +60,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void OpenStudy()
 		{
-			BlockingOperation.Run(this.OpenStudyInternal);
-		}
-		
-		private void OpenStudyInternal()
-		{
-			if (this.Context.SelectedStudies == null)
-				return;
-
-			if (this.Context.SelectedStudies.Count == 1)
-			{
-				OpenSingleStudyWithPriors();
-			}
-			else
-			{
-				OpenMultipleStudiesInSingleWorkspace();
-				//OpenMultipleStudiesInIndividualWorkspaces();
-			}
-		}
-
-		private void OpenSingleStudyWithPriors()
-		{
-			// Okay, the method name is deceptive--it doesn't actually
-			// open priors yet
-			ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
-			StudyItem item = this.Context.SelectedStudy;
-			string studyInstanceUid = item.StudyInstanceUID;
-
 			try
 			{
-				imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
+				OpenStudyHelper.OpenStudies("DICOM_LOCAL", GetStudyInstanceUids(), ViewerLaunchSettings.WindowBehaviour);
 			}
-			catch (OpenStudyException e)
+			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, this.Context.DesktopWindow);
-				if (e.SuccessfulImages == 0)
-					return;
-			}
-
-			Launch(imageViewer);
-		}
-
-		private void OpenMultipleStudiesInSingleWorkspace()
-		{
-			ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
-			int completelySuccessfulStudies = 0;
-			int successfulImagesInLoadFailure = 0;
-
-			foreach (StudyItem item in this.Context.SelectedStudies)
-			{
-				string studyInstanceUid = item.StudyInstanceUID;
-
-				try
-				{
-					imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
-					completelySuccessfulStudies++;
-				}
-				catch (OpenStudyException e)
-				{
-					// Study failed to load completely; keep track of how many
-					// images in the study actually did load
-					successfulImagesInLoadFailure += e.SuccessfulImages;
-					ExceptionHandler.Report(e, this.Context.DesktopWindow);
-				}
-			}
-
-			// If nothing at all was able to load, then don't bother trying to
-			// even open a workspace; just return
-			if (completelySuccessfulStudies == 0 && successfulImagesInLoadFailure == 0)
-				return;
-
-			Launch(imageViewer);
-		}
-
-		private void OpenMultipleStudiesInIndividualWorkspaces()
-		{
-			foreach (StudyItem item in this.Context.SelectedStudies)
-			{
-				ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
-				string studyInstanceUid = item.StudyInstanceUID;
-
-				try
-				{
-					imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
-				}
-				catch (OpenStudyException e)
-				{
-					ExceptionHandler.Report(e, this.Context.DesktopWindow);
-					if (e.SuccessfulImages == 0)
-						continue;
-				}
-
-				Launch(imageViewer);
 			}
 		}
 
-		private void Launch(ImageViewerComponent imageViewer)
+		private string[] GetStudyInstanceUids()
 		{
-			WindowBehaviour windowBehaviour = (WindowBehaviour)MonitorConfigurationSettings.Default.WindowBehaviour;
+			string[] uids = new string[this.Context.SelectedStudies.Count];
+			for (int i = 0; i < this.Context.SelectedStudies.Count; ++i)
+				uids[i] = this.Context.SelectedStudies[i].StudyInstanceUID;
 
-			// Open the images in a separate window
-			if (windowBehaviour == WindowBehaviour.Separate)
-				ImageViewerComponent.LaunchInSeparateWindow(imageViewer);
-			// Open the images in the same window
-			else
-				ImageViewerComponent.LaunchInActiveWindow(imageViewer);
+			return uids;
 		}
 
 		private void SetDoubleClickHandler()

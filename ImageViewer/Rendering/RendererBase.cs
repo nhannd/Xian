@@ -168,13 +168,13 @@ namespace ClearCanvas.ImageViewer.Rendering
 					else if (graphic is LinePrimitive)
 						DrawLinePrimitive((LinePrimitive)graphic);
 					else if (graphic is RectanglePrimitive)
-						DrawRectanglePrimitive((IBoundableGraphic)graphic);
+						DrawRectanglePrimitive((RectanglePrimitive)graphic);
 					else if (graphic is InvariantRectanglePrimitive)
-						DrawRectanglePrimitive((IBoundableGraphic)graphic);
+						DrawInvariantRectanglePrimitive((InvariantRectanglePrimitive)graphic);
 					else if (graphic is EllipsePrimitive)
-						DrawEllipsePrimitive((IBoundableGraphic)graphic);
+						DrawEllipsePrimitive((EllipsePrimitive)graphic);
 					else if (graphic is InvariantEllipsePrimitive)
-						DrawEllipsePrimitive((IBoundableGraphic)graphic);
+						DrawInvariantEllipsePrimitive((InvariantEllipsePrimitive)graphic);
 					else if (graphic is ArcPrimitive)
 						DrawArcPrimitive((IArcGraphic)graphic);
 					else if (graphic is InvariantArcPrimitive)
@@ -226,12 +226,22 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// <summary>
 		/// Draws a <see cref="RectanglePrimitive"/>.  Must be overridden and implemented.
 		/// </summary>
-		protected abstract void DrawRectanglePrimitive(IBoundableGraphic rectangle);
+		protected abstract void DrawRectanglePrimitive(RectanglePrimitive rectangle);
+
+		/// <summary>
+		/// Draws a <see cref="InvariantRectanglePrimitive"/>.  Must be overridden and implemented.
+		/// </summary>
+		protected abstract void DrawInvariantRectanglePrimitive(InvariantRectanglePrimitive rectangle);
 
 		/// <summary>
 		/// Draws a <see cref="EllipsePrimitive"/>.  Must be overridden and implemented.
 		/// </summary>
-		protected abstract void DrawEllipsePrimitive(IBoundableGraphic ellipse);
+		protected abstract void DrawEllipsePrimitive(EllipsePrimitive ellipse);
+
+		/// <summary>
+		/// Draws a <see cref="InvariantEllipsePrimitive"/>.  Must be overridden and implemented.
+		/// </summary>
+		protected abstract void DrawInvariantEllipsePrimitive(InvariantEllipsePrimitive ellipse);
 
 		/// <summary>
 		/// Draws a <see cref="ArcPrimitive"/>.  Must be overridden and implemented.

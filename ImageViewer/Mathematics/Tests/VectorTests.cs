@@ -54,6 +54,22 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 		public void Cleanup()
 		{
 		}
+
+		[Test]
+		public void SubtendedAngle()
+		{
+			double angle = Vector.SubtendedAngle(new PointF(10, 0), new PointF(0, 0), new PointF(1, 0));
+			Assert.AreEqual(0, angle);
+
+			angle = Vector.SubtendedAngle(new PointF(10, 0), new PointF(0, 0), new PointF(0, 1));
+			Assert.AreEqual(-90, angle);
+
+			angle = Vector.SubtendedAngle(new PointF(0, 10), new PointF(0, 0), new PointF(1, 0));
+			Assert.AreEqual(90, angle);
+
+			angle = Vector.SubtendedAngle(new PointF(10, 0), new PointF(0, 0), new PointF(-1, 0));
+			Assert.AreEqual(180, angle);
+		}
 	}
 }
 

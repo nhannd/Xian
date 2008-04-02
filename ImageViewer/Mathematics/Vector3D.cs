@@ -1,3 +1,34 @@
+﻿#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -106,30 +137,30 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Finds the intersection of the line segment defined by <paramref name="lineStart"/> and
-		/// <paramref name="lineEnd"/> with a plane described by it's normal (<paramref name="planeNormal"/>)
+		/// Finds the intersection of the line segment defined by <paramref name="linePoint1"/> and
+		/// <paramref name="linePoint2"/> with a plane described by it's normal (<paramref name="planeNormal"/>)
 		/// and an arbitrary point in the plane (<paramref name="pointInPlane"/>).
 		/// </summary>
 		/// <param name="planeNormal">The normal vector of an arbitrary plane.</param>
 		/// <param name="pointInPlane">A point in space that lies on the plane whose normal is <paramref name="planeNormal"/>.</param>
-		/// <param name="lineStart">The position vector of the start of the line.</param>
-		/// <param name="lineEnd">The position vector of the end of the line.</param>
-		/// <param name="restrictToLineSegmentBoundaries">Specifies whether to restrict the point of intersection
-		/// to a point on the line segment, or allow the line to be extended beyond it's boundaries.</param>
+		/// <param name="linePoint1">The position vector of the start of the line.</param>
+		/// <param name="linePoint2">The position vector of the end of the line.</param>
+		/// <param name="isLineSegment">Specifies whether <paramref name="linePoint1"/> and <paramref name="linePoint2"/>
+		/// define a line segment, or simply 2 points on an infinite line.</param>
 		/// <returns>A position vector describing the point of intersection of the line with the plane, or null if the
 		/// line and plane do not intersect.</returns>
-		public static Vector3D GetIntersectionOfLineSegmentWithPlane(
+		public static Vector3D GetLinePlaneIntersection(
 			Vector3D planeNormal,
 			Vector3D pointInPlane,
-			Vector3D lineStart, 
-			Vector3D lineEnd, 
-			bool restrictToLineSegmentBoundaries)
+			Vector3D linePoint1, 
+			Vector3D linePoint2, 
+			bool isLineSegment)
 		{
 			if (Vector3D.AreEqual(planeNormal, Vector3D.Empty))
 				return null;
 
-			Vector3D line = lineEnd - lineStart;
-			Vector3D planeToLineStart = pointInPlane - lineStart;
+			Vector3D line = linePoint2 - linePoint1;
+			Vector3D planeToLineStart = pointInPlane - linePoint1;
 
 			float lineDotPlaneNormal = planeNormal.Dot(line);
 
@@ -138,10 +169,10 @@ namespace ClearCanvas.ImageViewer.Mathematics
 
 			float ratio = planeNormal.Dot(planeToLineStart) / lineDotPlaneNormal;
 
-			if (restrictToLineSegmentBoundaries && (ratio < 0F || ratio > 1F))
+			if (isLineSegment && (ratio < 0F || ratio > 1F))
 				return null;
 
-			return lineStart + ratio * line;
+			return linePoint1 + ratio * line;
 		}
 
 		/// <summary>
@@ -198,6 +229,14 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		public static Vector3D operator -(Vector3D left, Vector3D right)
 		{
 			return new Vector3D(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
+		}
+
+		/// <summary>
+		/// Returns the negative of the given vector.
+		/// </summary>
+		public static Vector3D operator -(Vector3D vector)
+		{
+			return -1 * vector;
 		}
 
 		/// <summary>

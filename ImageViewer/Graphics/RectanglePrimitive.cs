@@ -82,7 +82,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		internal static bool HitTest(PointF point, RectangleF rectangle, SpatialTransform transform)
 		{
 			GraphicsPath path = new GraphicsPath();
-			path.Transform(transform.Transform);
 			path.AddRectangle(RectangleUtilities.ConvertToPositiveRectangle(rectangle));
 
 			Pen pen = new Pen(Brushes.White, HitTestDistance/transform.CumulativeScale);

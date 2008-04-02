@@ -32,6 +32,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -41,13 +42,6 @@ namespace ClearCanvas.ImageViewer.Configuration
 	[ExtensionPoint]
 	public sealed class MonitorConfigurationApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
-	}
-
-	public enum WindowBehaviour
-	{
-		Auto,
-		Single,
-		Separate
 	}
 
 	/// <summary>

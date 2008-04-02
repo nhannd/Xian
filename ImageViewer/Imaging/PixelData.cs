@@ -291,7 +291,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 			int left, int top, int right, int bottom, 
 			PixelProcessor processor)
 		{
-			// TODO: check bounds of l,t,r,b
 			int i = 0;
 			int temp;
 
@@ -308,6 +307,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 				left = right;
 				right = temp;
 			}
+
+			Platform.CheckArgumentRange(left, 0, _columns - 1, "left");
+			Platform.CheckArgumentRange(right, 0, _columns - 1, "right");
+			Platform.CheckArgumentRange(top, 0, _rows - 1, "top");
+			Platform.CheckArgumentRange(bottom, 0, _rows - 1, "bottom");
 
 			int pixelIndex = top * _columns + left;
 			int offset = (_columns - right) + left - 1;

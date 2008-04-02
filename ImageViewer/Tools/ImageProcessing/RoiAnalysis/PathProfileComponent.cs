@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			PolyLineInteractiveGraphic polyLine = GetSelectedPolyLine();
 
 			// For now, make sure the ROI is a polyline
-			if (polyLine == null)
+			if (polyLine == null || polyLine.PolyLine.Count != 2)
 			{
 				this.Enabled = false;
 				return false;

@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -43,32 +44,36 @@ namespace ClearCanvas.ImageViewer
 	{
 		/// <summary>
 		/// Creates an appropriate subclass of <see cref="BasicPresentationImage"/>
-		/// based on the <see cref="ImageSop"/>'s photometric interpretation.
+		/// for each <see cref="Frame"/> in the input <see cref="ImageSop"/>.
 		/// </summary>
-		/// <param name="imageSop"></param>
-		/// <returns></returns>
-		public static IEnumerable<IPresentationImage> Create(ImageSop imageSop)
+		public static List<IPresentationImage> Create(ImageSop imageSop)
 		{
-			List<IPresentationImage> list = new List<IPresentationImage>();
+			return CollectionUtils.Map<Frame, IPresentationImage>(imageSop.Frames, 
+										delegate(Frame frame)
+											{
+												return Create(frame);
+											});
+		}
 
-			foreach (Frame frame in imageSop.Frames)
+		/// <summary>
+		/// Creates an appropriate subclass of <see cref="BasicPresentationImage"/>
+		/// based on the <see cref="Frame"/>'s photometric interpretation.
+		/// </summary>
+		public static IPresentationImage Create(Frame frame)
+		{
+			if (frame.PhotometricInterpretation == PhotometricInterpretation.Unknown)
 			{
-				if (frame.PhotometricInterpretation == PhotometricInterpretation.Unknown)
-				{
-					throw new Exception("Photometric interpretation is unknown.");
-				}
-				else if (frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ||
-						 frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome2)
-				{
-					list.Add(new DicomGrayscalePresentationImage(frame));
-				}
-				else
-				{
-					list.Add(new DicomColorPresentationImage(frame));
-				}
+				throw new Exception("Photometric interpretation is unknown.");
 			}
-
-			return list;
+			else if (frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ||
+					 frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome2)
+			{
+				return new DicomGrayscalePresentationImage(frame);
+			}
+			else
+			{
+				return new DicomColorPresentationImage(frame);
+			}
 		}
 	}
 }

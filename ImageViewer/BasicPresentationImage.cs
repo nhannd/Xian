@@ -69,8 +69,7 @@ namespace ClearCanvas.ImageViewer
 		IImageGraphicProvider,
 		ISpatialTransformProvider,
 		IOverlayGraphicsProvider,
-		IAnnotationLayoutProvider,
-		INamedCompositeGraphicProvider
+		IAnnotationLayoutProvider
 	{
 		#region Private fields
 
@@ -80,7 +79,6 @@ namespace ClearCanvas.ImageViewer
 
 		private CompositeGraphic _compositeImageGraphic;
 		private ImageGraphic _imageGraphic;
-		private Dictionary<string, CompositeGraphic> _namedCompositeGraphicDictionary;
 		private CompositeGraphic _overlayGraphics;
 		private IAnnotationLayoutProvider _annotationLayoutProvider;
 
@@ -180,21 +178,6 @@ namespace ClearCanvas.ImageViewer
 
 				return AnnotationLayoutProvider.AnnotationLayout ?? ClearCanvas.ImageViewer.Annotations.AnnotationLayout.Empty;
 			}
-		}
-
-		#endregion
-
-		#region INamedCompositeGraphicProvider Members
-
-		/// <summary>
-		/// Gets the <see cref="CompositeGraphic"/> with the given name, or null.
-		/// </summary>
-		public CompositeGraphic GetNamedCompositeGraphic(string name)
-		{
-			if (_namedCompositeGraphicDictionary.ContainsKey(name))
-				return _namedCompositeGraphicDictionary[name];
-
-			return null;
 		}
 
 		#endregion
@@ -319,16 +302,6 @@ namespace ClearCanvas.ImageViewer
 			_overlayGraphics = new CompositeGraphic();
 
 			_compositeImageGraphic.Graphics.Add(_imageGraphic);
-			
-			_namedCompositeGraphicDictionary = new Dictionary<string, CompositeGraphic>();
-			foreach (string compositeGraphic in NamedCompositeGraphicSettings.Default.NamedCompositeGraphics)
-			{
-				CompositeGraphic graphic = new CompositeGraphic();
-				graphic.Visible = false;
-				_namedCompositeGraphicDictionary.Add(compositeGraphic, graphic);
-				_compositeImageGraphic.Graphics.Add(graphic);
-			}
-
 			_compositeImageGraphic.Graphics.Add(_overlayGraphics);
 			this.SceneGraph.Graphics.Add(_compositeImageGraphic);
 		}

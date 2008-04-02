@@ -91,9 +91,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			_sopInstanceUID = sopInstanceUid;
 		}
 
-		protected override void AddFrames()
+		protected override Frame CreateFrame(int index)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			throw new InvalidOperationException("Cannot create frame with a mock object.");
 		}
 
 		protected override void ValidateInternal()
@@ -454,12 +454,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void GetTagAsDicomStringArray(uint tag, out string valueArray, out bool tagExists)
+		public override void GetMultiValuedTagRaw(uint tag, out string valueArray, out bool tagExists)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void GetTagOBOW(uint tag, out byte[] value, out bool tagExists)
+		public override void GetTag(uint tag, out byte[] value, out bool tagExists)
 		{
 			throw new NotImplementedException();
 		}

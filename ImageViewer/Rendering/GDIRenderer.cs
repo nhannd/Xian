@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
@@ -248,10 +249,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			SetDashStyle(line);
 
+			SizeF dropShadowOffset = GetDropShadowOffset(line);
 			Surface.FinalBuffer.Graphics.DrawLine(
 				_pen,
-				line.Pt1 + GetDropShadowOffset(line),
-				line.Pt2 + GetDropShadowOffset(line));
+				line.Pt1 + dropShadowOffset,
+				line.Pt2 + dropShadowOffset);
 
 			// Draw line
 			_pen.Color = line.Color;
@@ -270,93 +272,33 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// <summary>
 		/// Draws a <see cref="RectanglePrimitive"/>.
 		/// </summary>
-		protected override void DrawRectanglePrimitive(IBoundableGraphic rect)
+		protected override void DrawRectanglePrimitive(RectanglePrimitive rect)
 		{
-			Surface.FinalBuffer.Graphics.Transform = rect.SpatialTransform.CumulativeTransform;
-			rect.CoordinateSystem = CoordinateSystem.Source;
-
-			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-
-			float offsetX = 0;
-			float offsetY = 0;
-
-			if (rect.Width < 0)
-				offsetX = rect.Width;
-
-			if (rect.Height < 0)
-				offsetY = rect.Height;
-
-			// Draw drop shadow
-			_pen.Color = Color.Black;
-			_pen.Width = CalculateScaledPenWidth(rect, 1);
-
-			SetDashStyle(rect);
-
-			Surface.FinalBuffer.Graphics.DrawRectangle(
-				_pen,
-				rect.TopLeft.X + offsetX + GetDropShadowOffset(rect).Width,
-				rect.TopLeft.Y + offsetY + GetDropShadowOffset(rect).Height,
-				Math.Abs(rect.Width),
-				Math.Abs(rect.Height));
-
-			// Draw rectangle
-			_pen.Color = rect.Color;
-
-			Surface.FinalBuffer.Graphics.DrawRectangle(
-				_pen,
-				rect.TopLeft.X + offsetX,
-				rect.TopLeft.Y + offsetY,
-				Math.Abs(rect.Width),
-				Math.Abs(rect.Height));
-
-			rect.ResetCoordinateSystem();
-			Surface.FinalBuffer.Graphics.ResetTransform();
+			InternalDrawRectanglePrimitive(rect);
 		}
 
 		/// <summary>
-		/// Draws a <see cref="RectanglePrimitive"/>.
+		/// Draws a <see cref="InvariantRectanglePrimitive"/>.
 		/// </summary>
-		protected override void DrawEllipsePrimitive(IBoundableGraphic ellipse)
+		protected override void DrawInvariantRectanglePrimitive(InvariantRectanglePrimitive rect)
 		{
-			Surface.FinalBuffer.Graphics.Transform = ellipse.SpatialTransform.CumulativeTransform;
-			ellipse.CoordinateSystem = CoordinateSystem.Source;
+			InternalDrawRectanglePrimitive(rect);
+		}
 
-			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+		/// <summary>
+		/// Draws a <see cref="EllipsePrimitive"/>.
+		/// </summary>
+		protected override void DrawEllipsePrimitive(EllipsePrimitive ellipse)
+		{
+			InternalDrawEllipsePrimitive(ellipse);
+		}
 
-			float offsetX = 0;
-			float offsetY = 0;
-
-			if (ellipse.Width < 0)
-				offsetX = ellipse.Width;
-
-			if (ellipse.Height < 0)
-				offsetY = ellipse.Height;
-
-			// Draw drop shadow
-			_pen.Color = Color.Black;
-			_pen.Width = CalculateScaledPenWidth(ellipse, 1);
-
-			SetDashStyle(ellipse);
-
-			Surface.FinalBuffer.Graphics.DrawEllipse(
-				_pen,
-				ellipse.TopLeft.X + offsetX + GetDropShadowOffset(ellipse).Width,
-				ellipse.TopLeft.Y + offsetY + GetDropShadowOffset(ellipse).Height,
-				Math.Abs(ellipse.Width),
-				Math.Abs(ellipse.Height));
-
-			// Draw rectangle
-			_pen.Color = ellipse.Color;
-
-			Surface.FinalBuffer.Graphics.DrawEllipse(
-				_pen,
-				ellipse.TopLeft.X + offsetX,
-				ellipse.TopLeft.Y + offsetY,
-				Math.Abs(ellipse.Width),
-				Math.Abs(ellipse.Height));
-
-			ellipse.ResetCoordinateSystem();
-			Surface.FinalBuffer.Graphics.ResetTransform();
+		/// <summary>
+		/// Draws a <see cref="InvariantEllipsePrimitive"/>.
+		/// </summary>
+		protected override void DrawInvariantEllipsePrimitive(InvariantEllipsePrimitive ellipse)
+		{
+			InternalDrawEllipsePrimitive(ellipse);
 		}
 
 		/// <summary>
@@ -369,14 +311,9 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-			float offsetX = 0;
-			float offsetY = 0;
-
-			if (arc.Width < 0)
-				offsetX = arc.Width;
-
-			if (arc.Height < 0)
-				offsetY = arc.Height;
+			RectangleF rectangle = new RectangleF(arc.TopLeft.X, arc.TopLeft.Y, arc.Width, arc.Height);
+			rectangle = RectangleUtilities.ConvertToPositiveRectangle(rectangle);
+			SizeF dropShadowOffset = GetDropShadowOffset(arc);
 
 			// Draw drop shadow
 			_pen.Color = Color.Black;
@@ -384,12 +321,13 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			SetDashStyle(arc);
 
+			
 			Surface.FinalBuffer.Graphics.DrawArc(
 				_pen,
-				arc.TopLeft.X + offsetX + GetDropShadowOffset(arc).Width,
-				arc.TopLeft.Y + offsetY + GetDropShadowOffset(arc).Height,
-				Math.Abs(arc.Width),
-				Math.Abs(arc.Height),
+				rectangle.Left + dropShadowOffset.Width,
+				rectangle.Top + dropShadowOffset.Height,
+				rectangle.Width,
+				rectangle.Height,
 				arc.StartAngle,
 				arc.SweepAngle);
 
@@ -398,10 +336,10 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			Surface.FinalBuffer.Graphics.DrawArc(
 				_pen,
-				arc.TopLeft.X + offsetX,
-				arc.TopLeft.Y + offsetY,
-				Math.Abs(arc.Width),
-				Math.Abs(arc.Height),
+				rectangle.Left,
+				rectangle.Top,
+				rectangle.Width,
+				rectangle.Height,
 				arc.StartAngle,
 				arc.SweepAngle);
 
@@ -417,17 +355,10 @@ namespace ClearCanvas.ImageViewer.Rendering
 			Surface.FinalBuffer.Graphics.Transform = pointPrimitive.SpatialTransform.CumulativeTransform;
 			pointPrimitive.CoordinateSystem = CoordinateSystem.Source;
 
-			// Draw drop shadow
-			_pen.Color = Color.Black;
-			_pen.Width = 1;
+			_brush.Color = pointPrimitive.Color;
 
-			SetDashStyle(pointPrimitive);
-
-			// Draw rectangle
-			_pen.Color = pointPrimitive.Color;
-
-			Surface.FinalBuffer.Graphics.DrawRectangle(
-				_pen,
+			Surface.FinalBuffer.Graphics.FillRectangle(
+				_brush,
 				pointPrimitive.Point.X,
 				pointPrimitive.Point.Y,
 				1,
@@ -610,6 +541,82 @@ namespace ClearCanvas.ImageViewer.Rendering
 			Surface.FinalBuffer.Graphics.DrawString(message, font, _brush, Surface.ClipRectangle, format);
 
 			font.Dispose();
+		}
+
+		private void InternalDrawRectanglePrimitive(IBoundableGraphic rect)
+		{
+			Surface.FinalBuffer.Graphics.Transform = rect.SpatialTransform.CumulativeTransform;
+			rect.CoordinateSystem = CoordinateSystem.Source;
+
+			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+			RectangleF rectangle = new RectangleF(rect.TopLeft.X, rect.TopLeft.Y, rect.Width, rect.Height);
+			rectangle = RectangleUtilities.ConvertToPositiveRectangle(rectangle);
+			SizeF dropShadowOffset = GetDropShadowOffset(rect);
+
+			// Draw drop shadow
+			_pen.Color = Color.Black;
+			_pen.Width = CalculateScaledPenWidth(rect, 1);
+
+			SetDashStyle(rect);
+
+			Surface.FinalBuffer.Graphics.DrawRectangle(
+				_pen,
+				rectangle.Left + dropShadowOffset.Width,
+				rectangle.Top + dropShadowOffset.Height,
+				rectangle.Width,
+				rectangle.Height);
+
+			// Draw rectangle
+			_pen.Color = rect.Color;
+
+			Surface.FinalBuffer.Graphics.DrawRectangle(
+				_pen,
+				rectangle.Left,
+				rectangle.Top,
+				rectangle.Width,
+				rectangle.Height);
+
+			rect.ResetCoordinateSystem();
+			Surface.FinalBuffer.Graphics.ResetTransform();
+		}
+
+		private void InternalDrawEllipsePrimitive(IBoundableGraphic ellipse)
+		{
+			Surface.FinalBuffer.Graphics.Transform = ellipse.SpatialTransform.CumulativeTransform;
+			ellipse.CoordinateSystem = CoordinateSystem.Source;
+
+			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+			RectangleF rectangle = new RectangleF(ellipse.TopLeft.X, ellipse.TopLeft.Y, ellipse.Width, ellipse.Height);
+			rectangle = RectangleUtilities.ConvertToPositiveRectangle(rectangle);
+			SizeF dropShadowOffset = GetDropShadowOffset(ellipse);
+
+			// Draw drop shadow
+			_pen.Color = Color.Black;
+			_pen.Width = CalculateScaledPenWidth(ellipse, 1);
+
+			SetDashStyle(ellipse);
+
+			Surface.FinalBuffer.Graphics.DrawEllipse(
+				_pen,
+				rectangle.Left + dropShadowOffset.Width,
+				rectangle.Top + dropShadowOffset.Height,
+				rectangle.Width,
+				rectangle.Height);
+
+			// Draw rectangle
+			_pen.Color = ellipse.Color;
+
+			Surface.FinalBuffer.Graphics.DrawEllipse(
+				_pen,
+				rectangle.Left,
+				rectangle.Top,
+				rectangle.Width,
+				rectangle.Height);
+
+			ellipse.ResetCoordinateSystem();
+			Surface.FinalBuffer.Graphics.ResetTransform();
 		}
 
 		private void SetDashStyle(IVectorGraphic graphic)
