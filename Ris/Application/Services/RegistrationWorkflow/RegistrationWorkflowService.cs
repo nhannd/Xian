@@ -96,27 +96,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
-        public GetWorklistItemsResponse<RegistrationWorklistItem> GetWorklistItems(GetWorklistItemsRequest request)
+        public QueryWorklistResponse<RegistrationWorklistItem> QueryWorklist(QueryWorklistRequest request)
         {
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
 
-            IList items = GetWorklistItemsHelper(request);
-
-            return new GetWorklistItemsResponse<RegistrationWorklistItem>(
-                CollectionUtils.Map<WorklistItem, RegistrationWorklistItem, List<RegistrationWorklistItem>>(
-                    items,
-                    delegate(WorklistItem item)
-                    {
-                        return assembler.CreateRegistrationWorklistItem(item, this.PersistenceContext);
-                    }));
-        }
-
-        [ReadOperation]
-        public GetWorklistItemCountResponse GetWorklistItemCount(GetWorklistItemCountRequest request)
-        {
-            int count = GetWorklistItemCountHelper(request);
-
-            return new GetWorklistItemCountResponse(count);
+            return QueryWorklistHelper<WorklistItem, RegistrationWorklistItem>(request,
+                delegate(WorklistItem item)
+                {
+                    return assembler.CreateRegistrationWorklistItem(item, this.PersistenceContext);
+                });
         }
 
         [ReadOperation]

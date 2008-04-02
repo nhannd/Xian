@@ -91,37 +91,20 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         }
 
         /// <summary>
-        /// Get the specified worklist.
+        /// Query the specified worklist.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [ReadOperation]
-        public GetWorklistItemsResponse<ModalityWorklistItem> GetWorklistItems(GetWorklistItemsRequest request)
+        public QueryWorklistResponse<ModalityWorklistItem> QueryWorklist(QueryWorklistRequest request)
         {
             ModalityWorkflowAssembler assembler = new ModalityWorkflowAssembler();
 
-            IList items = GetWorklistItemsHelper(request);
-
-            return new GetWorklistItemsResponse<ModalityWorklistItem>(
-                CollectionUtils.Map<WorklistItem, ModalityWorklistItem, List<ModalityWorklistItem>>(
-                    items,
-                    delegate(WorklistItem queryResult)
-                    {
-                        return assembler.CreateModalityWorklistItem(queryResult, this.PersistenceContext);
-                    }));
-        }
-
-        /// <summary>
-        /// Get the item count for the specified worklist.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [ReadOperation]
-        public GetWorklistItemCountResponse GetWorklistItemCount(GetWorklistItemCountRequest request)
-        {
-            int count = GetWorklistItemCountHelper(request);
-
-            return new GetWorklistItemCountResponse(count);
+            return QueryWorklistHelper<WorklistItem, ModalityWorklistItem>(request,
+                delegate (WorklistItem item)
+                {
+                    return assembler.CreateModalityWorklistItem(item, this.PersistenceContext);
+                });
         }
 
         /// <summary>

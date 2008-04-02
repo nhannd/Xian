@@ -86,27 +86,15 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 
         [ReadOperation]
-        public GetWorklistItemsResponse<ReportingWorklistItem> GetWorklistItems(GetWorklistItemsRequest request)
+        public QueryWorklistResponse<ReportingWorklistItem> QueryWorklist(QueryWorklistRequest request)
         {
             ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
 
-            IList items = GetWorklistItemsHelper(request);
-
-            return new GetWorklistItemsResponse<ReportingWorklistItem>(
-                CollectionUtils.Map<WorklistItem, ReportingWorklistItem, List<ReportingWorklistItem>>(
-                    items,
-                    delegate(WorklistItem item)
-                    {
-                        return assembler.CreateReportingWorklistItem(item, this.PersistenceContext);
-                    }));
-        }
-
-        [ReadOperation]
-        public GetWorklistItemCountResponse GetWorklistItemCount(GetWorklistItemCountRequest request)
-        {
-            int count = GetWorklistItemCountHelper(request);
-
-            return new GetWorklistItemCountResponse(count);
+            return QueryWorklistHelper<WorklistItem, ReportingWorklistItem>(request,
+                delegate(WorklistItem item)
+                {
+                    return assembler.CreateReportingWorklistItem(item, this.PersistenceContext);
+                });
         }
 
         [ReadOperation]

@@ -30,6 +30,7 @@
 #endregion
 
 using System.ServiceModel;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
@@ -55,17 +56,9 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <summary>
         /// Get items for a worklist
         /// </summary>
-        /// <param name="request"><see cref="GetWorklistItemsRequest"/></param>
+        /// <param name="request"><see cref="QueryWorklistRequest"/></param>
         [OperationContract]
-        GetWorklistItemsResponse<ReportingWorklistItem> GetWorklistItems(GetWorklistItemsRequest request);
-
-        /// <summary>
-        /// Get item count for a worklist
-        /// </summary>
-        /// <param name="request"><see cref="GetWorklistItemCountRequest"/></param>
-        /// <returns><see cref="GetWorklistItemCountResponse"/></returns>
-        [OperationContract]
-        GetWorklistItemCountResponse GetWorklistItemCount(GetWorklistItemCountRequest request);
+        QueryWorklistResponse<ReportingWorklistItem> QueryWorklist(QueryWorklistRequest request);
 
         /// <summary>
         /// Get enablements for operations that can be applied to a worklist item

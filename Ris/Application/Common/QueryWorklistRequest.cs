@@ -35,16 +35,18 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class GetWorklistItemsRequest : DataContractBase
+    public class QueryWorklistRequest : DataContractBase
     {
-        public GetWorklistItemsRequest(string worklistType)
+        public QueryWorklistRequest(string worklistType, bool countOnly)
         {
             this.WorklistType = worklistType;
+            this.CountOnly = countOnly;
         }
 
-        public GetWorklistItemsRequest(EntityRef worklistRef)
+        public QueryWorklistRequest(EntityRef worklistRef, bool countOnly)
         {
             this.WorklistRef = worklistRef;
+            this.CountOnly = countOnly;
         }
 
         [DataMember]
@@ -53,7 +55,10 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public string WorklistType;
 
+        /// <summary>
+        /// If true, specifies that only an item count is being requested, and the items should not be returned.
+        /// </summary>
         [DataMember]
-        public SearchResultPage Page;
+        public bool CountOnly;
     }
 }

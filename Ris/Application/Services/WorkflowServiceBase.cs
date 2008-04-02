@@ -95,25 +95,35 @@ namespace ClearCanvas.Ris.Application.Services
             _worklistExtPoint = new WorklistExtensionPoint();
         }
 
-        protected IList GetWorklistItemsHelper(GetWorklistItemsRequest request)
+        protected QueryWorklistResponse<TSummary> QueryWorklistHelper<TItem, TSummary>(QueryWorklistRequest request,
+            Converter<TItem, TSummary> mapCallback)
         {
             IWorklist worklist = request.WorklistRef != null ?
                 this.PersistenceContext.Load<Worklist>(request.WorklistRef) :
                 WorklistFactory.Instance.CreateWorklist(request.WorklistType);
 
-            // if the page was not specified in the request, get the first page, up to the default max number of items
-            SearchResultPage page = request.Page ?? new SearchResultPage(0, new WorklistSettings().DefaultItemsPerPage);
+            if(request.CountOnly)
+            {
+                int count = worklist.GetWorklistItemCount(new WorklistQueryContext(this, null));
+                return new QueryWorklistResponse<TSummary>(new List<TSummary>(), count);
+            }
+            else
+            {
+                // get the first page, up to the default max number of items per page
+                SearchResultPage page = new SearchResultPage(0, new WorklistSettings().DefaultItemsPerPage);
+                IList results = worklist.GetWorklistItems(new WorklistQueryContext(this, page));
 
-            return worklist.GetWorklistItems(new WorklistQueryContext(this, page));
-        }
+                // if the number of items returned is equal to the max, then there may be more items in the list
+                // therefore need to do a count query to return the total number of items
+                int count = results.Count;
+                if (count == page.MaxRows)
+                {
+                    count = worklist.GetWorklistItemCount(new WorklistQueryContext(this, null));
+                }
 
-        protected int GetWorklistItemCountHelper(GetWorklistItemCountRequest request)
-        {
-            IWorklist worklist = request.WorklistRef != null ?
-                this.PersistenceContext.Load<Worklist>(request.WorklistRef) :
-                WorklistFactory.Instance.CreateWorklist(request.WorklistType);
-
-            return worklist.GetWorklistItemCount(new WorklistQueryContext(this, null));
+                return new QueryWorklistResponse<TSummary>(
+                    CollectionUtils.Map(results, mapCallback), count);
+            }
         }
 
         protected List<WorklistSummary> ListWorklistsHelper(List<string> worklistTokens)
