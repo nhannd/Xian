@@ -249,8 +249,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         private void BuildPatientSearchQuery(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, Facility workingFacility, bool countQuery)
         {
+            // create a copy of the criteria that contains only the patient profile criteria, as none of the others are relevant
+            List<WorklistItemSearchCriteria> patientCriteria = CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(where,
+                delegate(WorklistItemSearchCriteria criteria)
+                {
+                    WorklistItemSearchCriteria copy = new WorklistItemSearchCriteria();
+                    copy.SubCriteria["PatientProfile"] = criteria.PatientProfile;
+                    return copy;
+                });
+
             // add the criteria, but do not attempt to constrain the patient profile, as we do this differently in this case (see below)
-            AddWorklistCriteria(query, where, false, countQuery);
+            AddWorklistCriteria(query, patientCriteria, false, countQuery);
 
             // constrain patient profile to the working facility
             query.Conditions.Add(new HqlCondition("pp.Mrn.AssigningAuthority = ?", workingFacility.InformationAuthority));
