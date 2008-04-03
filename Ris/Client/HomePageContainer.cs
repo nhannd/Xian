@@ -190,7 +190,7 @@ namespace ClearCanvas.Ris.Client
                 {
                     _folderContentComponent.FolderSystem = null;
                     _previewComponent.SetUrl(null);
-                    _folderContentComponent.FolderContentsTable = null;
+                    _folderContentComponent.SelectedFolder = null;
                 }
                 else
                 {
@@ -198,7 +198,7 @@ namespace ClearCanvas.Ris.Client
                     _previewComponent.SetUrl(_selectedFolderExplorer.FolderSystem.PreviewUrl);
 
                     IFolder selectedFolder = ((IFolder)_selectedFolderExplorer.SelectedFolder.Item);
-                    _folderContentComponent.FolderContentsTable = selectedFolder == null ? null : selectedFolder.ItemsTable;
+                    _folderContentComponent.SelectedFolder = selectedFolder;
                 }
             }
         }
@@ -211,7 +211,7 @@ namespace ClearCanvas.Ris.Client
         void OnSelectedFolderChanged(object sender, EventArgs e)
         {
             IFolder selectedFolder = ((IFolder) _selectedFolderExplorer.SelectedFolder.Item);
-            _folderContentComponent.FolderContentsTable = selectedFolder == null ? null : selectedFolder.ItemsTable;
+            _folderContentComponent.SelectedFolder = selectedFolder;
         }
 
         public FolderContentsComponent ContentsComponent

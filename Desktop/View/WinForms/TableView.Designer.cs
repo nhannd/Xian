@@ -73,9 +73,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._sortSeparator = new System.Windows.Forms.ToolStripSeparator();
             this._filterTextBox = new System.Windows.Forms.ToolStripTextBox();
             this._clearFilterButton = new System.Windows.Forms.ToolStripButton();
+            this._statusStrip = new System.Windows.Forms.StatusStrip();
+            this._statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this._dataGridView = new ClearCanvas.Desktop.View.WinForms.DataGridViewWithDragSupport();
             ((System.ComponentModel.ISupportInitialize)(this._bindingSource)).BeginInit();
             this._toolStrip.SuspendLayout();
+            this._statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -105,7 +108,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._clearFilterButton});
             this._toolStrip.Location = new System.Drawing.Point(0, 0);
             this._toolStrip.Name = "_toolStrip";
-            this._toolStrip.Size = new System.Drawing.Size(540, 28);
+            this._toolStrip.Size = new System.Drawing.Size(540, 25);
             this._toolStrip.TabIndex = 1;
             this._toolStrip.Text = "toolStrip1";
             // 
@@ -128,21 +131,21 @@ namespace ClearCanvas.Desktop.View.WinForms
             // _sortAscendingButton
             // 
             this._sortAscendingButton.Name = "_sortAscendingButton";
-            this._sortAscendingButton.Size = new System.Drawing.Size(152, 22);
+            this._sortAscendingButton.Size = new System.Drawing.Size(163, 22);
             this._sortAscendingButton.Text = "Sort Ascending";
             this._sortAscendingButton.Click += new System.EventHandler(this.sortAscendingButton_Click);
             // 
             // _sortDescendingButton
             // 
             this._sortDescendingButton.Name = "_sortDescendingButton";
-            this._sortDescendingButton.Size = new System.Drawing.Size(152, 22);
+            this._sortDescendingButton.Size = new System.Drawing.Size(163, 22);
             this._sortDescendingButton.Text = "Sort Descending";
             this._sortDescendingButton.Click += new System.EventHandler(this.sortDescendingButton_Click);
             // 
             // _sortSeparator
             // 
             this._sortSeparator.Name = "_sortSeparator";
-            this._sortSeparator.Size = new System.Drawing.Size(149, 6);
+            this._sortSeparator.Size = new System.Drawing.Size(160, 6);
             // 
             // _filterTextBox
             // 
@@ -168,6 +171,23 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._clearFilterButton.Visible = false;
             this._clearFilterButton.Click += new System.EventHandler(this._clearFilterButton_Click);
             // 
+            // _statusStrip
+            // 
+            this._statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._statusLabel});
+            this._statusStrip.Location = new System.Drawing.Point(0, 206);
+            this._statusStrip.Name = "_statusStrip";
+            this._statusStrip.Size = new System.Drawing.Size(540, 22);
+            this._statusStrip.TabIndex = 3;
+            this._statusStrip.Text = "statusStrip1";
+            // 
+            // _statusLabel
+            // 
+            this._statusLabel.Name = "_statusLabel";
+            this._statusLabel.Size = new System.Drawing.Size(494, 17);
+            this._statusLabel.Spring = true;
+            this._statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // _dataGridView
             // 
             this._dataGridView.AllowUserToAddRows = false;
@@ -184,11 +204,11 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this._dataGridView.ContextMenuStrip = this._contextMenu;
             this._dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._dataGridView.Location = new System.Drawing.Point(0, 28);
+            this._dataGridView.Location = new System.Drawing.Point(0, 25);
             this._dataGridView.Name = "_dataGridView";
             this._dataGridView.RowHeadersVisible = false;
             this._dataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this._dataGridView.Size = new System.Drawing.Size(540, 200);
+            this._dataGridView.Size = new System.Drawing.Size(540, 181);
             this._dataGridView.TabIndex = 2;
             this._dataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this._dataGridView_CellDoubleClick);
             this._dataGridView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._dataGridView_ItemDrag);
@@ -200,6 +220,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._dataGridView);
+            this.Controls.Add(this._statusStrip);
             this.Controls.Add(this._toolStrip);
             this.Name = "TableView";
             this.Size = new System.Drawing.Size(540, 228);
@@ -207,6 +228,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             ((System.ComponentModel.ISupportInitialize)(this._bindingSource)).EndInit();
             this._toolStrip.ResumeLayout(false);
             this._toolStrip.PerformLayout();
+            this._statusStrip.ResumeLayout(false);
+            this._statusStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._dataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -227,5 +250,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.ToolStripSeparator _sortSeparator;
         private System.Windows.Forms.ToolStripTextBox _filterTextBox;
         private System.Windows.Forms.ToolStripButton _clearFilterButton;
+        private System.Windows.Forms.StatusStrip _statusStrip;
+        private System.Windows.Forms.ToolStripStatusLabel _statusLabel;
 	}
 }

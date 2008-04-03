@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client
         private event EventHandler _selectedItemsChanged;
 
         private IFolderSystem _folderSystem;
-        private ITable _folderContentsTable;
+        private IFolder _selectedFolder;
 
         public IFolderSystem FolderSystem
         {
@@ -86,6 +86,28 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        public IFolder SelectedFolder
+        {
+            get { return _selectedFolder; }
+            set
+            {
+                if (value != _selectedFolder)
+                {
+                    if (_selectedFolder != null)
+                        _selectedFolder.TotalItemCountChanged -= TotalItemCountChangedEventHandler;
+
+                    _selectedFolder = value;
+                    if (_selectedFolder != null)
+                        _selectedFolder.TotalItemCountChanged += TotalItemCountChangedEventHandler;
+
+                    // notify view
+                    EventsHelper.Fire(_tableChanged, this, EventArgs.Empty);
+
+                    NotifyPropertyChanged("StatusMessage");
+                }
+            }
+        }
+
         #region Application Component overrides
 
         public override IActionSet ExportedActions
@@ -104,11 +126,21 @@ namespace ClearCanvas.Ris.Client
 
         public ITable FolderContentsTable
         {
-            get { return _folderContentsTable; }
-            set
+            get { return _selectedFolder == null ? null : _selectedFolder.ItemsTable; }
+        }
+
+        public string StatusMessage
+        {
+            get
             {
-                _folderContentsTable = value;
-                EventsHelper.Fire(_tableChanged, this, EventArgs.Empty);
+                if (_selectedFolder == null || _selectedFolder.TotalItemCount == 0)
+                    return "";
+
+                if (_selectedFolder.TotalItemCount == _selectedFolder.ItemsTable.Items.Count)
+                    return string.Format("Showing all {0} item(s).", _selectedFolder.TotalItemCount);
+                else 
+                    return string.Format("Showing {0} of {1} item(s).",
+                                     _selectedFolder.ItemsTable.Items.Count, _selectedFolder.TotalItemCount);
             }
         }
 
@@ -179,5 +211,12 @@ namespace ClearCanvas.Ris.Client
         }
 
         #endregion
+
+        private void TotalItemCountChangedEventHandler(object sender, EventArgs e)
+        {
+            NotifyPropertyChanged("StatusMessage");
+        }
+
+
     }
 }

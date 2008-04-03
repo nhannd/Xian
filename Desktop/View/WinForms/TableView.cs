@@ -154,6 +154,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _toolStrip.Visible = value; }
         }
 
+        [DefaultValue(false)]
+        public bool StatusBarVisible
+	    {
+            get { return _statusStrip.Visible; }
+            set { _statusStrip.Visible = value; }
+	    }
+
 	    [DefaultValue(true)]
 	    public bool ShowColumnHeading
 	    {
@@ -227,6 +234,13 @@ namespace ClearCanvas.Desktop.View.WinForms
                 }
             }
         }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string StatusText
+	    {
+            get { return _statusLabel.Text; }
+            set { _statusLabel.Text = value; }
+	    }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ITable Table

@@ -174,9 +174,9 @@ namespace ClearCanvas.Ris.Client.Reporting
             return true;
         }
 
-        protected override IList<ReportingWorklistItem> QueryItems()
+        protected override QueryItemsResult QueryItems()
         {
-            List<ReportingWorklistItem> worklistItems = null;
+            QueryItemsResult result = null;
             Platform.GetService<IReportingWorkflowService>(
                 delegate(IReportingWorkflowService service)
                 {
@@ -185,13 +185,10 @@ namespace ClearCanvas.Ris.Client.Reporting
                         : new QueryWorklistRequest(_worklistRef, false);
 
                     QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);
-                    worklistItems = response.WorklistItems;
+                    result = new QueryItemsResult(response.WorklistItems, response.ItemCount);
                 });
 
-            if (worklistItems == null)
-                worklistItems = new List<ReportingWorklistItem>();
-
-            return worklistItems;
+            return result;
         }
 
         protected override int QueryCount()
@@ -209,11 +206,6 @@ namespace ClearCanvas.Ris.Client.Reporting
                 });
 
             return count;
-        }
-
-        protected override bool IsMember(ReportingWorklistItem item)
-        {
-            throw new NotImplementedException();
         }
 
         public bool GetOperationEnablement(string operationName)

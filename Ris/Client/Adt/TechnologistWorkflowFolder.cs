@@ -191,9 +191,9 @@ namespace ClearCanvas.Ris.Client.Adt
             return count;
         }
 
-        protected override IList<ModalityWorklistItem> QueryItems()
+        protected override QueryItemsResult QueryItems()
         {
-            List<ModalityWorklistItem> worklistItems = null;
+            QueryItemsResult result = null;
 
             Platform.GetService<IModalityWorkflowService>(
                 delegate(IModalityWorkflowService service)
@@ -203,30 +203,10 @@ namespace ClearCanvas.Ris.Client.Adt
                         : new QueryWorklistRequest(_worklistRef, false);
 
                     QueryWorklistResponse<ModalityWorklistItem> response = service.QueryWorklist(request);
-                    worklistItems = response.WorklistItems;
+                    result = new QueryItemsResult(response.WorklistItems, response.ItemCount);
                 });
 
-            return worklistItems ?? new List<ModalityWorklistItem>();
-        }
-
-        //protected override bool CanAcceptDrop(ModalityWorklistItem item)
-        //{
-        //    return false;
-        //}
-
-        //protected override bool ConfirmAcceptDrop(ICollection<ModalityWorklistItem> items)
-        //{
-        //    return true;
-        //}
-
-        //protected override bool ProcessDrop(ModalityWorklistItem item)
-        //{
-        //    return false;
-        //}
-
-        protected override bool IsMember(ModalityWorklistItem item)
-        {
-            return true;
+            return result;
         }
     }
 }

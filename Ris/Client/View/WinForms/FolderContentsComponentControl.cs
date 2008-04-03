@@ -60,6 +60,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _component.FolderSystemChanged += _component_FolderSystemChanged;
             
             _folderContentsTableView.DataBindings.Add("Selection", _component, "SelectedItems", true, DataSourceUpdateMode.OnPropertyChanged);
+            _folderContentsTableView.DataBindings.Add("StatusText", _component, "StatusMessage", true, DataSourceUpdateMode.Never);
         }
 
         void _component_TableChanged(object sender, EventArgs e)

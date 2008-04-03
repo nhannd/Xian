@@ -54,8 +54,39 @@ namespace ClearCanvas.Ris.Client
         }
     }
 
+    /// <summary>
+    /// Abstract base class for folders that display the contents of worklists.
+    /// </summary>
+    /// <typeparam name="TItem"></typeparam>
     public abstract class WorkflowFolder<TItem> : Folder, IDisposable
     {
+
+        #region QueryItemsResult class
+
+        protected class QueryItemsResult
+        {
+            private readonly IList<TItem> _items;
+            private readonly int _totalItemCount;
+
+            public QueryItemsResult(IList<TItem> items, int totalItemCount)
+            {
+                _items = items;
+                _totalItemCount = totalItemCount;
+            }
+
+            public IList<TItem> Items
+            {
+                get { return _items; }
+            }
+
+            public int TotalItemCount
+            {
+                get { return _totalItemCount; }
+            }
+        }
+
+        #endregion
+
         private readonly string _folderTooltip;
         private readonly Table<TItem> _itemsTable;
         private bool _isPopulated;
@@ -73,6 +104,13 @@ namespace ClearCanvas.Ris.Client
         private BackgroundTask _queryItemsTask;
         private BackgroundTask _queryCountTask;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="folderSystem"></param>
+        /// <param name="folderName"></param>
+        /// <param name="folderTooltip"></param>
+        /// <param name="itemsTable"></param>
         public WorkflowFolder(WorkflowFolderSystem<TItem> folderSystem, string folderName, string folderTooltip, Table<TItem> itemsTable)
         {
             _folderSystem = folderSystem;
@@ -99,39 +137,6 @@ namespace ClearCanvas.Ris.Client
 
             if (attrib != null)
                 _worklistClassName = attrib.WorklistClassName;
-        }
-
-        public void UpdateWorklistItem(TItem item)
-        {
-            // if the folder has not yet been populated, then nothing to do
-            if (!_isPopulated)
-                return;
-
-            // get the index of the item in this folder, if it exists
-            int i = _itemsTable.Items.FindIndex(delegate(TItem x) { return x.Equals(item); });
-
-            // is the item a member of this folder?
-            if (IsMember(item))
-            {
-                if (i > -1)
-                {
-                    // update the item that is already contained in this folder
-                    _itemsTable.Items[i] = item;
-                }
-                else
-                {
-                    // add the item, because it was not already contained in this folder
-                    _itemsTable.Items.Add(item);
-                }
-            }
-            else
-            {
-                if (i > -1)
-                {
-                    // remove the item from this folder, because it is no longer a member
-                    _itemsTable.Items.RemoveAt(i);
-                }
-            }
         }
 
         public override string Id
@@ -167,22 +172,17 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public int ItemCount
-        {
-            get { return _itemCount; }
-            set
-            {
-                _itemCount = value;
-                NotifyTextChanged();
-            }
-        }
-
         public override ITable ItemsTable
         {
             get
             {
                 return _itemsTable;
             }
+        }
+
+        public override int TotalItemCount
+        {
+            get { return _itemCount; }
         }
 
         public WorkflowFolderSystem<TItem> WorkflowFolderSystem
@@ -215,8 +215,8 @@ namespace ClearCanvas.Ris.Client
                     {
                         try
                         {
-                            IList<TItem> items = QueryItems();
-                            taskContext.Complete(items);
+                            QueryItemsResult result = QueryItems();
+                            taskContext.Complete(result);
                         }
                         catch (Exception e)
                         {
@@ -236,11 +236,13 @@ namespace ClearCanvas.Ris.Client
             {
                 NotifyRefreshBegin();
 
-                IList<TItem> items = (IList<TItem>)args.Result;
+                QueryItemsResult result = (QueryItemsResult)args.Result;
                 _isPopulated = true;
                 _itemsTable.Items.Clear();
-                _itemsTable.Items.AddRange(items);
+                _itemsTable.Items.AddRange(result.Items);
                 _itemsTable.Sort();
+
+                SetTotalItemCount(result.TotalItemCount);
 
                 NotifyRefreshFinish();
             }
@@ -298,11 +300,21 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        protected void SetTotalItemCount(int n)
+        {
+            if (n != _itemCount)
+            {
+                _itemCount = n;
+                NotifyTotalItemCountChanged();
+                NotifyTextChanged();
+            }
+        }
+
         private void OnQueryCountCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
         {
             if (args.Reason == BackgroundTaskTerminatedReason.Completed)
             {
-                this.ItemCount = (int)args.Result;
+                SetTotalItemCount((int)args.Result);
             }
             else
             {
@@ -402,8 +414,7 @@ namespace ClearCanvas.Ris.Client
 
         protected abstract bool CanQuery();
         protected abstract int QueryCount();
-        protected abstract IList<TItem> QueryItems();
-        protected abstract bool IsMember(TItem item);
+        protected abstract QueryItemsResult QueryItems();
 
         #region IDisposable Members
 

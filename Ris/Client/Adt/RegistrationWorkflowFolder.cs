@@ -190,9 +190,9 @@ namespace ClearCanvas.Ris.Client.Adt
             return true;
         }
 
-        protected override IList<RegistrationWorklistItem> QueryItems()
+        protected override QueryItemsResult QueryItems()
         {
-            List<RegistrationWorklistItem> worklistItems = null;
+            QueryItemsResult result = null;
 
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
@@ -202,10 +202,10 @@ namespace ClearCanvas.Ris.Client.Adt
                         : new QueryWorklistRequest(_worklistRef, false);
 
                     QueryWorklistResponse<RegistrationWorklistItem> response = service.QueryWorklist(request);
-                    worklistItems = response.WorklistItems;
+                    result = new QueryItemsResult(response.WorklistItems, response.ItemCount);
                 });
 
-            return worklistItems ?? new List<RegistrationWorklistItem>();
+            return result;
         }
 
         protected override int QueryCount()
@@ -224,11 +224,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 });
 
             return count;
-        }
-
-        protected override bool IsMember(RegistrationWorklistItem item)
-        {
-            throw new NotImplementedException();
         }
 
         public bool GetOperationEnablement(string operationName)

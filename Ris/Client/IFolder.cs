@@ -38,8 +38,13 @@ using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client
 {
+    /// <summary>
+    /// Defines the interface to a folder.
+    /// </summary>
     public interface IFolder
     {
+        #region Properties
+
         /// <summary>
         /// Gets the ID that identifies the folder
         /// </summary>
@@ -49,21 +54,11 @@ namespace ClearCanvas.Ris.Client
         /// Gets the text that should be displayed for the folder
         /// </summary>
         string Text { get; }
-        
-        /// <summary>
-        /// Allows the folder to notify that it's text has changed
-        /// </summary>
-        event EventHandler TextChanged;
 
         /// <summary>
         /// Gets the iconset that should be displayed for the folder
         /// </summary>
         IconSet IconSet { get; }
-
-        /// <summary>
-        /// Allows the folder to nofity that it's icon has changed
-        /// </summary>
-        event EventHandler IconChanged;
 
         /// <summary>
         /// Gets the resource resolver that is used to resolve the Icon
@@ -74,11 +69,6 @@ namespace ClearCanvas.Ris.Client
         /// Gets the tooltip that should be displayed for the folder
         /// </summary>
         string Tooltip { get; }
-
-        /// <summary>
-        /// Allows the folder to notify that it's tooltip has changed
-        /// </summary>
-        event EventHandler TooltipChanged;
 
         /// <summary>
         /// Gets the menu model for the context menu that should be displayed when the user right-clicks on the folder
@@ -96,6 +86,56 @@ namespace ClearCanvas.Ris.Client
         bool StartExpanded { get; }
 
         /// <summary>
+        /// Gets a table of the items that are contained in this folder
+        /// </summary>
+        ITable ItemsTable { get; }
+
+        /// <summary>
+        /// Gets the total number of items "contained" in this folder, which may be the same
+        /// as the number of items displayed in the <see cref="ItemsTable"/>, or may be larger
+        /// in the event the table is only showing a subset of the total number of items.
+        /// </summary>
+        int TotalItemCount { get; }
+
+        /// <summary>
+        /// Gets or sets the folder path which sets up the tree structure
+        /// </summary>
+        Path FolderPath { get; set; }
+
+        /// <summary>
+        /// Gets a list of sub folders
+        /// </summary>
+        IList<IFolder> Subfolders { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether or not the folder is 'static'.
+        /// </summary>
+        /// <remarks>
+        /// In the context of workflow, folders created via the normal constructor (new Folder(...)) are considered static and are
+        /// otherwise they are considered generated if created by Activator.CreateInstance.
+        /// </remarks>
+        bool IsStatic { get; set; }
+
+        #endregion
+
+        #region Events
+    
+        /// <summary>
+        /// Allows the folder to notify that it's text has changed
+        /// </summary>
+        event EventHandler TextChanged;
+
+        /// <summary>
+        /// Allows the folder to nofity that it's icon has changed
+        /// </summary>
+        event EventHandler IconChanged;
+
+        /// <summary>
+        /// Allows the folder to notify that it's tooltip has changed
+        /// </summary>
+        event EventHandler TooltipChanged;
+
+        /// <summary>
         /// Occurs when refresh is about to begin
         /// </summary>
         event EventHandler RefreshBegin;
@@ -104,6 +144,15 @@ namespace ClearCanvas.Ris.Client
         /// Occurs when refresh is about to finish
         /// </summary>
         event EventHandler RefreshFinish;
+
+        /// <summary>
+        /// Occurs when the value of the <see cref="TotalItemCount"/> property changes.
+        /// </summary>
+        event EventHandler TotalItemCountChanged;
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Asks the folder to refresh its contents.  The implementation may be asynchronous.
@@ -150,21 +199,6 @@ namespace ClearCanvas.Ris.Client
         void DragComplete(object[] items, DragDropKind result);
 
         /// <summary>
-        /// Gets a table of the items that are contained in this folder
-        /// </summary>
-        ITable ItemsTable { get; }
-
-        /// <summary>
-        /// Gets or sets the folder path which sets up the tree structure
-        /// </summary>
-        Path FolderPath { get; set; }
-
-        /// <summary>
-        /// Gets a list of sub folders
-        /// </summary>
-        IList<IFolder> Subfolders { get; }
-
-        /// <summary>
         /// Add a subfolder
         /// </summary>
         /// <param name="subFolder"></param>
@@ -185,13 +219,6 @@ namespace ClearCanvas.Ris.Client
         /// <returns></returns>
         bool ReplaceFolder(IFolder oldSubFolder, IFolder newSubFolder);
 
-        /// <summary>
-        /// Gets a value indicating whether or not the folder is 'static'.
-        /// </summary>
-        /// <remarks>
-        /// In the context of workflow, folders created via the normal constructor (new Folder(...)) are considered static and are
-        /// otherwise they are considered generated if created by Activator.CreateInstance.
-        /// </remarks>
-        bool IsStatic { get; set; }
+        #endregion
     }
 }

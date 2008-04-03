@@ -31,6 +31,7 @@
 
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -67,9 +68,14 @@ namespace ClearCanvas.Ris.Client
         {
         }
 
-        public override Desktop.Tables.ITable ItemsTable
+        public override ITable ItemsTable
         {
             get { return null; }
+        }
+
+        public override int TotalItemCount
+        {
+            get { return 0; }
         }
 
         public override DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)

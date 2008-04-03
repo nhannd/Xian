@@ -38,6 +38,9 @@ using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client
 {
+    /// <summary>
+    /// Specifies a folder's default path within its folder system.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class FolderPathAttribute : Attribute
     {
@@ -66,6 +69,9 @@ namespace ClearCanvas.Ris.Client
         }
     }
 
+    /// <summary>
+    /// Abstract base implementation of <see cref="IFolder"/>.
+    /// </summary>
     public abstract class Folder : IFolder
     {
         private event EventHandler _textChanged;
@@ -73,6 +79,7 @@ namespace ClearCanvas.Ris.Client
         private event EventHandler _tooltipChanged;
         private event EventHandler _refreshBegin;
         private event EventHandler _refreshFinish;
+        private event EventHandler _totalItemCountChanged;
 
         private ActionModelNode _menuModel;
 
@@ -295,6 +302,25 @@ namespace ClearCanvas.Ris.Client
         }
 
         /// <summary>
+        /// Gets the total number of items "contained" in this folder, which may be the same
+        /// as the number of items displayed in the <see cref="IFolder.ItemsTable"/>, or may be larger
+        /// in the event the table is only showing a subset of the total number of items.
+        /// </summary>
+        public abstract int TotalItemCount
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Occurs when the value of the <see cref="IFolder.TotalItemCount"/> property changes.
+        /// </summary>
+        public event EventHandler TotalItemCountChanged
+        {
+            add { _totalItemCountChanged += value; }
+            remove { _totalItemCountChanged -= value; }
+        }
+
+        /// <summary>
         /// Gets or sets the folder path which sets up the tree structure
         /// </summary>
         public Path FolderPath
@@ -373,6 +399,11 @@ namespace ClearCanvas.Ris.Client
         protected void NotifyRefreshFinish()
         {
             EventsHelper.Fire(_refreshFinish, this, EventArgs.Empty);
+        }
+
+        protected void NotifyTotalItemCountChanged()
+        {
+            EventsHelper.Fire(_totalItemCountChanged, this, EventArgs.Empty);
         }
 
         #endregion

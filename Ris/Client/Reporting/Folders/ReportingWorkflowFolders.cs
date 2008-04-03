@@ -267,7 +267,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
             return false;
         }
 
-        protected override IList<ReportingWorklistItem> QueryItems()
+        protected override QueryItemsResult QueryItems()
         {
             List<ReportingWorklistItem> worklistItems = null;
             Platform.GetService<IReportingWorkflowService>(
@@ -286,12 +286,12 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
             if (worklistItems == null)
                 worklistItems = new List<ReportingWorklistItem>();
 
-            return worklistItems;
+            return new QueryItemsResult(worklistItems, worklistItems.Count);
         }
 
-        protected override int QueryCount()
+        public override void RefreshCount()
         {
-            return this.ItemCount;
+            // do nothing
         }
     }
 }

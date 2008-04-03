@@ -242,7 +242,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             return false;
         }
 
-        protected override IList<ModalityWorklistItem> QueryItems()
+        protected override QueryItemsResult QueryItems()
         {
             List<ModalityWorklistItem> worklistItems = null;
             Platform.GetService<IModalityWorkflowService>(
@@ -261,13 +261,12 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             if (worklistItems == null)
                 worklistItems = new List<ModalityWorklistItem>();
 
-            return worklistItems;
+            return new QueryItemsResult(worklistItems, worklistItems.Count);
         }
 
-        protected override int QueryCount()
+        public override void RefreshCount()
         {
-            return this.ItemCount;
+            // do nothing
         }
-
     }
 }

@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -290,7 +291,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             return false;
         }
 
-        protected override IList<RegistrationWorklistItem> QueryItems()
+        protected override QueryItemsResult QueryItems()
         {
             List<RegistrationWorklistItem> worklistItems = null;
             Platform.GetService<IRegistrationWorkflowService>(
@@ -309,12 +310,12 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             if (worklistItems == null)
                 worklistItems = new List<RegistrationWorklistItem>();
 
-            return worklistItems;
+            return new QueryItemsResult(worklistItems, worklistItems.Count);
         }
 
-        protected override int QueryCount()
+        public override void RefreshCount()
         {
-            return this.ItemCount;
+            // do nothing
         }
 
     }

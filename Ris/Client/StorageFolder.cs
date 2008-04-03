@@ -67,6 +67,12 @@ namespace ClearCanvas.Ris.Client
             get { return _itemsTable; }
         }
 
+        public override int TotalItemCount
+        {
+            // assume all items are displayed
+            get { return _itemsTable.Items.Count; }
+        }
+
         public override void Refresh()
         {
             // do nothing
