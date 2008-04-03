@@ -50,7 +50,7 @@ namespace ClearCanvas.Dicom.Samples
         {
             public String filename;
             public SopClass sopClass;
-            public DicomUid transferSyntaxUid;
+            public TransferSyntax transferSyntax;
         }
         #endregion
 
@@ -109,12 +109,12 @@ namespace ClearCanvas.Dicom.Samples
 
                 fileStruct.filename = file;
                 fileStruct.sopClass = dicomFile.SopClass;
-                fileStruct.transferSyntaxUid = dicomFile.TransferSyntax.DicomUid;
-                if (dicomFile.TransferSyntax.Encapsulated)
-                {
-                    DicomLogger.LogError("Unsupported encapsulated transfer syntax in file: {0}.  Not sending file.", dicomFile.TransferSyntax.Name);
-                    return false;
-                }
+                fileStruct.transferSyntax = dicomFile.TransferSyntax;
+              //  if (dicomFile.TransferSyntax.Encapsulated)
+              //  {
+              //      DicomLogger.LogError("Unsupported encapsulated transfer syntax in file: {0}.  Not sending file.", dicomFile.TransferSyntax.Name);
+              //      return false;
+              //  }
 
                 _fileList.Add(fileStruct);
             }
@@ -145,14 +145,13 @@ namespace ClearCanvas.Dicom.Samples
         {
             foreach (FileToSend sendStruct in _fileList)
             {
-                byte pcid = _assocParams.FindAbstractSyntax(sendStruct.sopClass);
+                byte pcid =
+                    _assocParams.FindAbstractSyntaxWithTransferSyntax(sendStruct.sopClass, sendStruct.transferSyntax);
 
                 if (pcid == 0)
                 {
                     pcid = _assocParams.AddPresentationContext(sendStruct.sopClass);
-
-                    _assocParams.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
-                    _assocParams.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+                    _assocParams.AddTransferSyntax(pcid, sendStruct.transferSyntax);
                 }
             }
         }
@@ -220,8 +219,14 @@ namespace ClearCanvas.Dicom.Samples
 
             DicomMessage msg = new DicomMessage(dicomFile);
 
-            byte pcid = association.FindAbstractSyntax(fileToSend.sopClass);
-
+            byte pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.sopClass, dicomFile.TransferSyntax);
+            if (pcid == 0)
+            {
+                DicomLogger.LogError(
+                    "Unable to find matching negotiated presentation context for sop {0} and syntax {1}",
+                    dicomFile.SopClass.Name, dicomFile.TransferSyntax.Name);
+                return false;
+            }
             client.SendCStoreRequest(pcid, client.NextMessageID(), DicomPriority.Medium, msg);
             return true;
         }
@@ -286,16 +291,19 @@ namespace ClearCanvas.Dicom.Samples
         public void OnReceiveReleaseResponse(DicomClient client, ClientAssociationParameters association)
         {
             DicomLogger.LogInfo("Association released to {0}", association.CalledAE);
+            _dicomClient = null;
         }
 
         public void OnReceiveAbort(DicomClient client, ClientAssociationParameters association, DicomAbortSource source, DicomAbortReason reason)
         {
             DicomLogger.LogError("Unexpected association abort received from {0}", association.CalledAE);
+            _dicomClient = null;
         }
 
         public void OnNetworkError(DicomClient client, ClientAssociationParameters association, Exception e)
         {
             DicomLogger.LogErrorException(e, "Unexpected network error");
+            _dicomClient = null;
         }
 
         public void OnDimseTimeout(DicomClient client, ClientAssociationParameters association)

@@ -50,6 +50,7 @@ namespace ClearCanvas.ImageServer.Model
         #region Private Members
         private System.String _description;
         private System.Boolean _enabled;
+        private System.Boolean _lossless;
         private System.String _uid;
         #endregion
 
@@ -63,6 +64,11 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _enabled; }
         set { _enabled = value; }
+        }
+        public System.Boolean Lossless
+        {
+        get { return _lossless; }
+        set { _lossless = value; }
         }
         [DicomField(DicomTags.Uid, DefaultValue = DicomFieldDefault.Null)]
         public System.String Uid

@@ -837,7 +837,7 @@ namespace ClearCanvas.Dicom.Network
             // Handle compress/decompress if necessary
             TransferSyntax contextSyntax = _assoc.GetAcceptedTransferSyntax(presentationID);
             if ((contextSyntax != message.TransferSyntax)
-                && contextSyntax.Encapsulated || message.TransferSyntax.Encapsulated)
+                && (contextSyntax.Encapsulated || message.TransferSyntax.Encapsulated))
             {
                 if (overrideParameters != null)
                     message.ChangeTransferSyntax(contextSyntax, null, overrideParameters);

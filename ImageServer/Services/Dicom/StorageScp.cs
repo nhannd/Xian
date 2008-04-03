@@ -29,9 +29,13 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.DicomServices;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
@@ -45,7 +49,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// </remarks>
     public abstract class StorageScp : BaseScp
     {
-        #region Public Members
+        #region Protected Members
 
         /// <summary>
         /// Converts a <see cref="DicomMessage"/> instance into a <see cref="DicomFile"/>.
@@ -55,17 +59,49 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="filename"></param>
         /// <param name="assocParms"></param>
         /// <returns></returns>
-        public DicomFile ConvertToDicomFile(DicomMessage message, string filename, AssociationParameters assocParms)
+        protected static DicomFile ConvertToDicomFile(DicomMessage message, string filename, AssociationParameters assocParms)
         {
             // This routine sets some of the group 0x0002 elements.
             DicomFile file = new DicomFile(message, filename);
 
             file.SourceApplicationEntityTitle = assocParms.CallingAE;
-            file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+            if (message.TransferSyntax.Encapsulated)
+                file.TransferSyntax = message.TransferSyntax;
+            else
+                file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
 
             return file;
         }
 
+        /// <summary>
+        /// Load from the database the configured transfer syntaxes
+        /// </summary>
+        /// <param name="read">a Read context</param>
+        /// <param name="encapsulated">true if searching for encapsulated syntaxes only</param>
+        /// <returns>The list of syntaxes</returns>
+        protected static IList<ServerTransferSyntax> LoadTransferSyntaxes(IReadContext read, bool encapsulated)
+        {
+            IList<ServerTransferSyntax> list;
+
+            IServerTransferSyntaxEntityBroker broker = read.GetBroker<IServerTransferSyntaxEntityBroker>();
+
+            ServerTransferSyntaxSelectCriteria criteria = new ServerTransferSyntaxSelectCriteria();
+
+            criteria.Enabled.EqualTo(encapsulated);
+            // Make lossless come first in the list
+            criteria.Lossless.SortDesc(1);
+
+            list = broker.Find(criteria);
+
+            List<ServerTransferSyntax> returnList = new List<ServerTransferSyntax>();
+            foreach (ServerTransferSyntax syntax in list)
+            {
+                TransferSyntax dicomSyntax = TransferSyntax.GetTransferSyntax(syntax.Uid);
+                if (dicomSyntax.Encapsulated)
+                    returnList.Add(syntax);
+            }
+            return returnList;
+        }
         #endregion
 
         #region Overridden BaseSCP methods

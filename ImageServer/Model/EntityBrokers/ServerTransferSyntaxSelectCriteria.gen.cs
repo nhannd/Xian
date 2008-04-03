@@ -63,6 +63,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
             } 
         }
+        public ISearchCondition<System.Boolean> Lossless
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Lossless"))
+              {
+                 SubCriteria["Lossless"] = new SearchCondition<System.Boolean>("Lossless");
+              }
+              return (ISearchCondition<System.Boolean>)SubCriteria["Lossless"];
+            } 
+        }
         public ISearchCondition<System.String> Uid
         {
             get

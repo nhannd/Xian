@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Net;
 using ClearCanvas.Common;
 using ClearCanvas.DicomServices;
+using ClearCanvas.DicomServices.Codec;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
@@ -95,6 +96,10 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
         /// </remarks>
         public void Start()
         {
+            //Load Codecs
+            DicomCodecHelper.RegisterCodecExtensions();
+            
+            //Get partitions
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
             IList<ServerPartition> partitions;
             using (IReadContext read = store.OpenReadContext())

@@ -220,6 +220,7 @@ namespace ClearCanvas.Dicom.Samples
                 DicomLogger.LogInfo("Success status received in sending verification!");
                 _verificationResult = VerificationResult.Success;
             }
+            client.SendReleaseRequest();
             ProgressEvent.Set();
         }
 

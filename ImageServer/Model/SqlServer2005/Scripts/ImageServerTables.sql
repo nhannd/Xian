@@ -14,6 +14,7 @@ CREATE TABLE [dbo].[ServerTransferSyntax](
 	[Uid] [varchar](64) NOT NULL,
 	[Description] [nvarchar](256) NOT NULL,
 	[Enabled] [bit] NOT NULL,
+	[Lossless] [bit] NOT NULL,
  CONSTRAINT [PK_ServerTransferSyntax] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
