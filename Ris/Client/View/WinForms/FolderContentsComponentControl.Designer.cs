@@ -73,6 +73,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._folderContentsTableView.ReadOnly = false;
             this._folderContentsTableView.Size = new System.Drawing.Size(358, 500);
             this._folderContentsTableView.SortButtonVisible = true;
+            this._folderContentsTableView.StatusBarVisible = true;
             this._folderContentsTableView.TabIndex = 0;
             this._folderContentsTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
             this._folderContentsTableView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._folderContentsTableView_ItemDrag);

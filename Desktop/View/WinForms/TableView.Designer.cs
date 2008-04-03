@@ -180,6 +180,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._statusStrip.Size = new System.Drawing.Size(540, 22);
             this._statusStrip.TabIndex = 3;
             this._statusStrip.Text = "statusStrip1";
+            this._statusStrip.Visible = false;
             // 
             // _statusLabel
             // 
