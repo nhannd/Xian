@@ -172,7 +172,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// <remarks>
         /// Subclasses may override this method to customize the query or return an entirely different query.
         /// </remarks>
-        protected override HqlProjectionQuery CreateWorklistItemQuery(WorklistItemSearchCriteria[] criteria)
+        protected override HqlProjectionQuery CreateBaseItemQuery(WorklistItemSearchCriteria[] criteria)
         {
             Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
             WorklistTimeField timeField = CollectionUtils.FirstElement(criteria).TimeField;
@@ -190,7 +190,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// <remarks>
         /// Subclasses may override this method to customize the query or return an entirely different query.
         /// </remarks>
-        protected override HqlProjectionQuery CreateWorklistCountQuery(WorklistItemSearchCriteria[] criteria)
+        protected override HqlProjectionQuery CreateBaseCountQuery(WorklistItemSearchCriteria[] criteria)
         {
             Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
             return new HqlProjectionQuery(GetFromClause(procedureStepClass), WorklistItemCount);
@@ -244,7 +244,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 query.Conditions.Add(new HqlCondition("(o.Status in (?, ?))", OrderStatus.SC, OrderStatus.IP));
             }
 
-            AddWorklistCriteria(query, where, true, countQuery);
+            AddConditions(query, where, true, countQuery);
         }
 
         private void BuildPatientSearchQuery(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, Facility workingFacility, bool countQuery)
@@ -259,7 +259,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 });
 
             // add the criteria, but do not attempt to constrain the patient profile, as we do this differently in this case (see below)
-            AddWorklistCriteria(query, patientCriteria, false, countQuery);
+            AddConditions(query, patientCriteria, false, countQuery);
 
             // constrain patient profile to the working facility
             query.Conditions.Add(new HqlCondition("pp.Mrn.AssigningAuthority = ?", workingFacility.InformationAuthority));

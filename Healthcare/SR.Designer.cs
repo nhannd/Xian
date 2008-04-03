@@ -439,11 +439,29 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that have been scheduled and need to be protocoled ASAP..
+        /// </summary>
+        internal static string RegistrationAsapPendingProtocolWorklistDescription {
+            get {
+                return ResourceManager.GetString("RegistrationAsapPendingProtocolWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancelled.
         /// </summary>
         internal static string RegistrationCancelledWorklist {
             get {
                 return ResourceManager.GetString("RegistrationCancelledWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists orders that have been cancelled..
+        /// </summary>
+        internal static string RegistrationCancelledWorklistDescription {
+            get {
+                return ResourceManager.GetString("RegistrationCancelledWorklistDescription", resourceCulture);
             }
         }
         
@@ -457,11 +475,29 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lists orders where the patient has checked in..
+        /// </summary>
+        internal static string RegistrationCheckedInWorklistDescription {
+            get {
+                return ResourceManager.GetString("RegistrationCheckedInWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Complete Protocol.
         /// </summary>
         internal static string RegistrationCompletedProtocolWorklist {
             get {
                 return ResourceManager.GetString("RegistrationCompletedProtocolWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that have been protocoled but not scheduled..
+        /// </summary>
+        internal static string RegistrationCompletedProtocolWorklistDescription {
+            get {
+                return ResourceManager.GetString("RegistrationCompletedProtocolWorklistDescription", resourceCulture);
             }
         }
         
@@ -475,11 +511,29 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lists orders where the exam has been completed..
+        /// </summary>
+        internal static string RegistrationCompletedWorklistDescription {
+            get {
+                return ResourceManager.GetString("RegistrationCompletedWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to In Progress.
         /// </summary>
         internal static string RegistrationInProgressWorklist {
             get {
                 return ResourceManager.GetString("RegistrationInProgressWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists orders where the exam is in progress..
+        /// </summary>
+        internal static string RegistrationInProgressWorklistDescription {
+            get {
+                return ResourceManager.GetString("RegistrationInProgressWorklistDescription", resourceCulture);
             }
         }
         
@@ -493,11 +547,29 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that need to be protocoled..
+        /// </summary>
+        internal static string RegistrationPendingProtocolWorklistDescription {
+            get {
+                return ResourceManager.GetString("RegistrationPendingProtocolWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rejected Protocol.
         /// </summary>
         internal static string RegistrationRejectedProtocolWorklist {
             get {
                 return ResourceManager.GetString("RegistrationRejectedProtocolWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that have been rejected by the protocoling radiologist..
+        /// </summary>
+        internal static string RegistrationRejectedProtocolWorklistDescription {
+            get {
+                return ResourceManager.GetString("RegistrationRejectedProtocolWorklistDescription", resourceCulture);
             }
         }
         
@@ -511,6 +583,15 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lists scheduled orders..
+        /// </summary>
+        internal static string RegistrationScheduledWorklistDescription {
+            get {
+                return ResourceManager.GetString("RegistrationScheduledWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Suspended Protocol.
         /// </summary>
         internal static string RegistrationSuspendedProtocolWorklist {
@@ -520,11 +601,29 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that have been suspended by the protocoling radiologist..
+        /// </summary>
+        internal static string RegistrationSuspendedProtocolWorklistDescription {
+            get {
+                return ResourceManager.GetString("RegistrationSuspendedProtocolWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to To be Scheduled.
         /// </summary>
         internal static string RegistrationToBeScheduledWorklist {
             get {
                 return ResourceManager.GetString("RegistrationToBeScheduledWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists orders that need to be scheduled..
+        /// </summary>
+        internal static string RegistrationToBeScheduledWorklistDescription {
+            get {
+                return ResourceManager.GetString("RegistrationToBeScheduledWorklistDescription", resourceCulture);
             }
         }
         
@@ -565,11 +664,29 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that need to be protocoled..
+        /// </summary>
+        internal static string ReportingToBeProtocolledWorklistDescription {
+            get {
+                return ResourceManager.GetString("ReportingToBeProtocolledWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to To be Reported.
         /// </summary>
         internal static string ReportingToBeReportedWorklist {
             get {
                 return ResourceManager.GetString("ReportingToBeReportedWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that need to be reported..
+        /// </summary>
+        internal static string ReportingToBeReportedWorklistDescription {
+            get {
+                return ResourceManager.GetString("ReportingToBeReportedWorklistDescription", resourceCulture);
             }
         }
         
@@ -610,11 +727,29 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lists modality procedure steps that have been cancelled or discontinued..
+        /// </summary>
+        internal static string TechnologistCancelledWorklistDescription {
+            get {
+                return ResourceManager.GetString("TechnologistCancelledWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Checked In.
         /// </summary>
         internal static string TechnologistCheckedInWorklist {
             get {
                 return ResourceManager.GetString("TechnologistCheckedInWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists modality procedure steps where the patient has checked in..
+        /// </summary>
+        internal static string TechnologistCheckedInWorklistDescription {
+            get {
+                return ResourceManager.GetString("TechnologistCheckedInWorklistDescription", resourceCulture);
             }
         }
         
@@ -628,11 +763,29 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lists modality procedure steps that have been completed..
+        /// </summary>
+        internal static string TechnologistCompletedWorklistDescription {
+            get {
+                return ResourceManager.GetString("TechnologistCompletedWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to In Progress.
         /// </summary>
         internal static string TechnologistInProgressWorklist {
             get {
                 return ResourceManager.GetString("TechnologistInProgressWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists modality procedure steps that are in progress..
+        /// </summary>
+        internal static string TechnologistInProgressWorklistDescription {
+            get {
+                return ResourceManager.GetString("TechnologistInProgressWorklistDescription", resourceCulture);
             }
         }
         
@@ -646,11 +799,29 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lists scheduled modality procedure steps..
+        /// </summary>
+        internal static string TechnologistScheduledWorklistDescription {
+            get {
+                return ResourceManager.GetString("TechnologistScheduledWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undocumented.
         /// </summary>
         internal static string TechnologistUndocumentedWorklist {
             get {
                 return ResourceManager.GetString("TechnologistUndocumentedWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures where the technologist documentation is incomplete..
+        /// </summary>
+        internal static string TechnologistUndocumentedWorklistDescription {
+            get {
+                return ResourceManager.GetString("TechnologistUndocumentedWorklistDescription", resourceCulture);
             }
         }
         

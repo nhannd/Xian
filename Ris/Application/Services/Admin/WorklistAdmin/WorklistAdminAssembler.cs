@@ -51,6 +51,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 Worklist.GetClassName(worklistClass),
                 Worklist.GetDisplayName(worklistClass),
                 Worklist.GetCategory(worklistClass),
+                Worklist.GetDescription(worklistClass),
                 Worklist.GetProcedureTypeGroupClass(worklistClass).Name,
                 Worklist.GetSupportsTimeFilter(worklistClass));
         }

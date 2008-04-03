@@ -76,8 +76,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 }).ToArray();
 
 
-            HqlProjectionQuery query = CreateWorklistItemQuery(worklistItemCriteria);
-            AddWorklistCriteria(query, worklistItemCriteria, true, false);
+            HqlProjectionQuery query = CreateBaseItemQuery(worklistItemCriteria);
+            AddConditions(query, worklistItemCriteria, true, false);
 
             return DoQuery(query);
         }
@@ -101,7 +101,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                     sc.TimeField = WorklistTimeField.ProcedureStartTime;
                 });
 
-            HqlProjectionQuery query = CreateWorklistItemQuery(where);
+            HqlProjectionQuery query = CreateBaseItemQuery(where);
             query.Page = page;
             BuildSearchQuery(query, where, showActiveOnly, false);
             return DoQuery(query);
@@ -119,7 +119,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             CollectionUtils.ForEach(where,
                 delegate(WorklistItemSearchCriteria sc) { sc.ProcedureStepClass = typeof(ReportingProcedureStep); });
 
-            HqlProjectionQuery query = CreateWorklistCountQuery(where);
+            HqlProjectionQuery query = CreateBaseCountQuery(where);
             BuildSearchQuery(query, where, showActiveOnly, true);
             return DoQueryCount(query);
         }
@@ -151,10 +151,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// <remarks>
         /// Subclasses may override this method to customize the query or return an entirely different query.
         /// </remarks>
-        protected override HqlProjectionQuery CreateWorklistItemQuery(WorklistItemSearchCriteria[] criteria)
+        protected override HqlProjectionQuery CreateBaseItemQuery(WorklistItemSearchCriteria[] criteria)
         {
             Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
-            HqlProjectionQuery query = base.CreateWorklistItemQuery(criteria);
+            HqlProjectionQuery query = base.CreateBaseItemQuery(criteria);
             ModifyQuery(query, procedureStepClass, false);
             return query;
         }
@@ -168,10 +168,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// <remarks>
         /// Subclasses may override this method to customize the query or return an entirely different query.
         /// </remarks>
-        protected override HqlProjectionQuery CreateWorklistCountQuery(WorklistItemSearchCriteria[] criteria)
+        protected override HqlProjectionQuery CreateBaseCountQuery(WorklistItemSearchCriteria[] criteria)
         {
             Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
-            HqlProjectionQuery query = base.CreateWorklistCountQuery(criteria);
+            HqlProjectionQuery query = base.CreateBaseCountQuery(criteria);
             ModifyQuery(query, procedureStepClass, true);
             return query;
         }
@@ -213,7 +213,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                     ActivityStatus.SC, ActivityStatus.IP, ActivityStatus.CM));
             }
 
-            AddWorklistCriteria(query, where, true, countQuery);
+            AddConditions(query, where, true, countQuery);
         }
 
         #endregion

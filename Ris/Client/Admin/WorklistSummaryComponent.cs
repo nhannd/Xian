@@ -136,17 +136,7 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        private void SelectedWorklistChanged()
-        {
-            _worklistActionModel.Edit.Enabled = _selectedWorklists.Count == 1;
-            _worklistActionModel.Delete.Enabled = _selectedWorklists.Count > 0;
-        }
-
-        #endregion
-
-        #region Action Model Handlers
-
-        private void AddWorklist()
+        public void AddWorklist()
         {
             try
             {
@@ -157,6 +147,8 @@ namespace ClearCanvas.Ris.Client.Admin
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _worklistAdminSummaryTable.Items.AddRange(editor.EditedWorklistSummaries);
+                    _selectedWorklists = new List<WorklistAdminSummary>(editor.EditedWorklistSummaries);
+                    NotifyPropertyChanged("SelectedWorklist");
                 }
             }
             catch (Exception e)
@@ -183,7 +175,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     _worklistAdminSummaryTable.Items.Replace(
                         delegate(WorklistAdminSummary item) { return item.EntityRef.Equals(editedItem.EntityRef, true); },
                         editedItem);
-                    _selectedWorklists = new List<WorklistAdminSummary>(new WorklistAdminSummary[] { editedItem });
+                    _selectedWorklists = new List<WorklistAdminSummary>(editor.EditedWorklistSummaries);
                     NotifyPropertyChanged("SelectedWorklist");
                 }
             }
@@ -227,5 +219,12 @@ namespace ClearCanvas.Ris.Client.Admin
 
 
         #endregion
+
+        private void SelectedWorklistChanged()
+        {
+            _worklistActionModel.Edit.Enabled = _selectedWorklists.Count == 1;
+            _worklistActionModel.Delete.Enabled = _selectedWorklists.Count > 0;
+        }
+
     }
 }

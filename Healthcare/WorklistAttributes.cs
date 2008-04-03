@@ -13,19 +13,19 @@ namespace ClearCanvas.Healthcare
     }
 
     /// <summary>
-    /// When applied to a subclass of <see cref="Worklist"/>, indicates that the class is effectively a singleton,
+    /// When applied to a subclass of <see cref="Worklist"/>, indicates that the class is "static",
     /// in that it does not support creation of persistent instances.
-    /// If this attribute is not applied, it is assumed that the class <b>is not</b> a singleton.
+    /// If this attribute is not applied, it is assumed that the class is not static.
     /// </summary>
     /// <remarks>
     /// This attribute is inherited.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class WorklistSingletonAttribute : WorklistAttribute
+    public class StaticWorklistAttribute : WorklistAttribute
     {
         private readonly bool _isSingleton;
 
-        public WorklistSingletonAttribute(bool isSingleton)
+        public StaticWorklistAttribute(bool isSingleton)
         {
             _isSingleton = isSingleton;
         }
@@ -98,9 +98,62 @@ namespace ClearCanvas.Healthcare
             _category = category;
         }
 
+        /// <summary>
+        /// Gets the category name, which may be a resource key.
+        /// </summary>
         public string Category
         {
             get { return _category; }
+        }
+    }
+
+    /// <summary>
+    /// When applied to a subclass of <see cref="Worklist"/>, declares a display name for the class.
+    /// </summary>
+    /// <remarks>
+    /// This attribute is inherited.
+    /// </remarks>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public class WorklistClassDisplayNameAttribute : WorklistAttribute
+    {
+        private readonly string _displayName;
+
+        public WorklistClassDisplayNameAttribute(string displayName)
+        {
+            _displayName = displayName;
+        }
+
+        /// <summary>
+        /// Gets the display name, which may be a resource key.
+        /// </summary>
+        public string DisplayName
+        {
+            get { return _displayName; }
+        }
+    }
+
+    /// <summary>
+    /// When applied to a subclass of <see cref="Worklist"/>, declares a description for the class.
+    /// </summary>
+    /// <remarks>
+    /// This attribute is inherited.
+    /// </remarks>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public class WorklistClassDescriptionAttribute : WorklistAttribute
+    {
+        private readonly string _description;
+
+        public WorklistClassDescriptionAttribute(string description)
+        {
+            _description = description;
+        }
+
+        /// <summary>
+        /// Gets the description, which may be a resource key.
+        /// </summary>
+        public string Description
+        {
+            get { return _description; }
         }
     }
 }

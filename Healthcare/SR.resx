@@ -243,35 +243,68 @@
   <data name="RegistrationAsapPendingProtocolWorklist" xml:space="preserve">
     <value>Pending Protocol ASAP</value>
   </data>
+  <data name="RegistrationAsapPendingProtocolWorklistDescription" xml:space="preserve">
+    <value>Lists procedures that have been scheduled and need to be protocoled ASAP.</value>
+  </data>
   <data name="RegistrationCancelledWorklist" xml:space="preserve">
     <value>Cancelled</value>
+  </data>
+  <data name="RegistrationCancelledWorklistDescription" xml:space="preserve">
+    <value>Lists orders that have been cancelled.</value>
   </data>
   <data name="RegistrationCheckedInWorklist" xml:space="preserve">
     <value>Checked In</value>
   </data>
+  <data name="RegistrationCheckedInWorklistDescription" xml:space="preserve">
+    <value>Lists orders where the patient has checked in.</value>
+  </data>
   <data name="RegistrationCompletedProtocolWorklist" xml:space="preserve">
     <value>Complete Protocol</value>
+  </data>
+  <data name="RegistrationCompletedProtocolWorklistDescription" xml:space="preserve">
+    <value>Lists procedures that have been protocoled but not scheduled.</value>
   </data>
   <data name="RegistrationCompletedWorklist" xml:space="preserve">
     <value>Completed</value>
   </data>
+  <data name="RegistrationCompletedWorklistDescription" xml:space="preserve">
+    <value>Lists orders where the exam has been completed.</value>
+  </data>
   <data name="RegistrationInProgressWorklist" xml:space="preserve">
     <value>In Progress</value>
+  </data>
+  <data name="RegistrationInProgressWorklistDescription" xml:space="preserve">
+    <value>Lists orders where the exam is in progress.</value>
   </data>
   <data name="RegistrationPendingProtocolWorklist" xml:space="preserve">
     <value>Pending Protocol</value>
   </data>
+  <data name="RegistrationPendingProtocolWorklistDescription" xml:space="preserve">
+    <value>Lists procedures that need to be protocoled.</value>
+  </data>
   <data name="RegistrationRejectedProtocolWorklist" xml:space="preserve">
     <value>Rejected Protocol</value>
+  </data>
+  <data name="RegistrationRejectedProtocolWorklistDescription" xml:space="preserve">
+    <value>Lists procedures that have been rejected by the protocoling radiologist.</value>
   </data>
   <data name="RegistrationScheduledWorklist" xml:space="preserve">
     <value>Scheduled</value>
   </data>
+  <data name="RegistrationScheduledWorklistDescription" xml:space="preserve">
+    <value>Lists scheduled orders.</value>
+  </data>
   <data name="RegistrationSuspendedProtocolWorklist" xml:space="preserve">
     <value>Suspended Protocol</value>
   </data>
+  <data name="RegistrationSuspendedProtocolWorklistDescription" xml:space="preserve">
+    <value>Lists procedures that have been suspended by the protocoling radiologist.</value>
+  </data>
   <data name="RegistrationToBeScheduledWorklist" xml:space="preserve">
     <value>To be Scheduled</value>
+  </data>
+  <data name="RegistrationToBeScheduledWorklistDescription" xml:space="preserve">
+    <value>Lists orders that need to be scheduled.</value>
   </data>
   <data name="RelevanceGroup" xml:space="preserve">
     <value>Relevance Group</value>
@@ -285,8 +318,14 @@
   <data name="ReportingToBeProtocolledWorklist" xml:space="preserve">
     <value>To be Protocolled</value>
   </data>
+  <data name="ReportingToBeProtocolledWorklistDescription" xml:space="preserve">
+    <value>Lists procedures that need to be protocoled.</value>
+  </data>
   <data name="ReportingToBeReportedWorklist" xml:space="preserve">
     <value>To be Reported</value>
+  </data>
+  <data name="ReportingToBeReportedWorklistDescription" xml:space="preserve">
+    <value>Lists procedures that need to be reported.</value>
   </data>
   <data name="SexEnum" xml:space="preserve">
     <value>Sex</value>
@@ -300,20 +339,38 @@
   <data name="TechnologistCancelledWorklist" xml:space="preserve">
     <value>Cancelled</value>
   </data>
+  <data name="TechnologistCancelledWorklistDescription" xml:space="preserve">
+    <value>Lists modality procedure steps that have been cancelled or discontinued.</value>
+  </data>
   <data name="TechnologistCheckedInWorklist" xml:space="preserve">
     <value>Checked In</value>
+  </data>
+  <data name="TechnologistCheckedInWorklistDescription" xml:space="preserve">
+    <value>Lists modality procedure steps where the patient has checked in.</value>
   </data>
   <data name="TechnologistCompletedWorklist" xml:space="preserve">
     <value>Completed</value>
   </data>
+  <data name="TechnologistCompletedWorklistDescription" xml:space="preserve">
+    <value>Lists modality procedure steps that have been completed.</value>
+  </data>
   <data name="TechnologistInProgressWorklist" xml:space="preserve">
     <value>In Progress</value>
+  </data>
+  <data name="TechnologistInProgressWorklistDescription" xml:space="preserve">
+    <value>Lists modality procedure steps that are in progress.</value>
   </data>
   <data name="TechnologistScheduledWorklist" xml:space="preserve">
     <value>Scheduled</value>
   </data>
+  <data name="TechnologistScheduledWorklistDescription" xml:space="preserve">
+    <value>Lists scheduled modality procedure steps.</value>
+  </data>
   <data name="TechnologistUndocumentedWorklist" xml:space="preserve">
     <value>Undocumented</value>
+  </data>
+  <data name="TechnologistUndocumentedWorklistDescription" xml:space="preserve">
+    <value>Lists procedures where the technologist documentation is incomplete.</value>
   </data>
   <data name="TelephoneNumber" xml:space="preserve">
     <value>Telephone Number</value>

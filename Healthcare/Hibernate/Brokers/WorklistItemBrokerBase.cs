@@ -50,8 +50,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     /// <para>
     /// This class provides the basis functionality for worklist brokers.  Subclasses will typically need
     /// to override some virtual methods in order to customize the queries that are generated.  The most
-    /// common methods that need to be overridden are <see cref="CreateWorklistCountQuery"/> and 
-    /// <see cref="CreateWorklistItemQuery"/>.
+    /// common methods that need to be overridden are <see cref="CreateBaseCountQuery"/> and 
+    /// <see cref="CreateBaseItemQuery"/>.  Other methods may be overridden but this should not typically be necessary.
     /// </para>
     /// <para>
     /// The ability for subclasses to customize the queries relies on using an established set of HQL alias-variables
@@ -208,15 +208,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         #region Protected overridables
 
         /// <summary>
-        /// Creates an <see cref="HqlProjectionQuery"/> that queries for worklist items based on the specified
-        /// criteria.
+        /// Creates the base <see cref="HqlProjectionQuery"/> for worklist items queries, but does not apply
+        /// conditions or sorting.
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
         /// <remarks>
         /// Subclasses may override this method to customize the query or return an entirely different query.
         /// </remarks>
-        protected virtual HqlProjectionQuery CreateWorklistItemQuery(WorklistItemSearchCriteria[] criteria)
+        protected virtual HqlProjectionQuery CreateBaseItemQuery(WorklistItemSearchCriteria[] criteria)
         {
             Type procStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
             WorklistTimeField timeField = CollectionUtils.FirstElement(criteria).TimeField;
@@ -224,15 +224,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         }
 
         /// <summary>
-        /// Creates an <see cref="HqlProjectionQuery"/> that queries for the count of worklist items based on the specified
-        /// procedure-step class.
+        /// Creates the base <see cref="HqlProjectionQuery"/> for worklist item count queries, but does not apply
+        /// conditions.
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
         /// <remarks>
         /// Subclasses may override this method to customize the query or return an entirely different query.
         /// </remarks>
-        protected virtual HqlProjectionQuery CreateWorklistCountQuery(WorklistItemSearchCriteria[] criteria)
+        protected virtual HqlProjectionQuery CreateBaseCountQuery(WorklistItemSearchCriteria[] criteria)
         {
             Type procStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
             return new HqlProjectionQuery(new HqlFrom(procStepClass.Name, "ps", WorklistJoins), WorklistCountProjection);
@@ -278,7 +278,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// but should be sure to also call the base class in order to process all filters defined by the <see cref="Worklist"/>
         /// class itself.
         /// </remarks>
-        protected virtual void AddWorklistFilters(HqlProjectionQuery query, Worklist worklist, IWorklistQueryContext wqc)
+        protected virtual void AddFilters(HqlProjectionQuery query, Worklist worklist, IWorklistQueryContext wqc)
         {
             // note that for all multi-valued filters, we avoid loading the collection of filter values
             // instead, the HqlCondition is structured using the "elements" function, which essentially generates a subquery
@@ -332,12 +332,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// <param name="query"></param>
         /// <param name="where"></param>
         /// <param name="constrainPatientProfile"></param>
+        /// <param name="countQuery"></param>
         /// <remarks>
         /// Subclasses may override this method to customize processing, but this should typically not be necessary.
         /// Callers should typically set <paramref name="constrainPatientProfile"/> to true, unless there is a specific
         /// reason not to constrain the patient profile.
         /// </remarks>
-        protected virtual void AddWorklistCriteria(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool constrainPatientProfile, bool countQuery)
+        protected virtual void AddConditions(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool constrainPatientProfile, bool countQuery)
         {
             HqlOr or = new HqlOr();
             foreach (WorklistItemSearchCriteria c in where)
@@ -383,9 +384,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             WorklistItemSearchCriteria[] criteria = worklist.GetInvariantCriteria(wqc);
             HqlProjectionQuery query = countQuery ?
-                CreateWorklistCountQuery(criteria) : CreateWorklistItemQuery(criteria);
-            AddWorklistCriteria(query, criteria, true, countQuery);
-            AddWorklistFilters(query, worklist, wqc);
+                CreateBaseCountQuery(criteria) : CreateBaseItemQuery(criteria);
+            AddConditions(query, criteria, true, countQuery);
+            AddFilters(query, worklist, wqc);
 
             // add paging if not a count query
             if (!countQuery)

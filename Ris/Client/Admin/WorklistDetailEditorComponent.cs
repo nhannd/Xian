@@ -99,6 +99,14 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+        public string WorklistClassDescription
+        {
+            get
+            {
+                return _worklistDetail.WorklistClass.Description;
+            }
+        }
+
         public bool AcceptButtonVisible
         {
             get { return _dialogMode; }

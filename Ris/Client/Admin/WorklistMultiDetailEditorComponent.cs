@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 delegate(WorklistTableEntry item) { return item.Checked; },
                 delegate(WorklistTableEntry item, bool value) { item.Checked = value; }, 0.5f));
             _worklistTable.Columns.Add(new TableColumn<WorklistTableEntry, string>("Class",
-                delegate(WorklistTableEntry item) { return item.Class.DisplayName; }, 1.0f));
+                delegate(WorklistTableEntry item) { return string.Format("{0} - {1}", item.Class.DisplayName, item.Class.Description); }, 1.0f));
             _worklistTable.Columns.Add(new TableColumn<WorklistTableEntry, string>("Name",
                 delegate(WorklistTableEntry item) { return item.Name; },
                 delegate(WorklistTableEntry item, string value) { item.Name = value; }, 1.0f));

@@ -69,13 +69,13 @@ namespace ClearCanvas.Ris.Application.Services
 
         /// <summary>
         /// Lists all known worklist classes (extensions of <see cref="WorklistExtensionPoint"/>), optionally
-        /// including those marked with the <see cref="WorklistSingletonAttribute"/>.
+        /// including those marked with the <see cref="StaticWorklistAttribute"/>.
         /// </summary>
-        /// <param name="includeSingleton"></param>
+        /// <param name="includeStatic"></param>
         /// <returns></returns>
-        public Type[] ListWorklistClasses(bool includeSingleton)
+        public Type[] ListWorklistClasses(bool includeStatic)
         {
-            return includeSingleton ? _worklistClasses.ToArray() :
+            return includeStatic ? _worklistClasses.ToArray() :
                 CollectionUtils.Select(_worklistClasses,
                     delegate(Type wc) { return !Worklist.GetIsSingleton(wc); }).ToArray();
         }

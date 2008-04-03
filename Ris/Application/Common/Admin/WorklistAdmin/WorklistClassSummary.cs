@@ -9,7 +9,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     [DataContract]
     public class WorklistClassSummary : DataContractBase
     {
-        public WorklistClassSummary(string className, string displayName, string categoryName,
+        public WorklistClassSummary(string className, string displayName, string categoryName, string description,
             string procedureTypeGroupClassName, bool supportsTimeWindow)
         {
             ClassName = className;
@@ -17,6 +17,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
             CategoryName = categoryName;
             ProcedureTypeGroupClassName = procedureTypeGroupClassName;
             SupportsTimeWindow = supportsTimeWindow;
+            Description = description;
         }
 
         [DataMember]
@@ -27,6 +28,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
         [DataMember]
         public string CategoryName;
+
+        [DataMember]
+        public string Description;
 
         [DataMember]
         public string ProcedureTypeGroupClassName;

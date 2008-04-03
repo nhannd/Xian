@@ -47,10 +47,21 @@ namespace ClearCanvas.Healthcare
     [UniqueKey("WorklistClassAndName", new string[] { "Name", "FullClassName" })]
     public abstract class Worklist : Entity, IWorklist
     {
+        /// <summary>
+        /// Defines values for how a worklist is ordered in terms of which items are given priority
+        /// when the full worklist cannot be displayed.
+        /// </summary>
         protected enum WorklistOrdering
         {
-            OldestItemsFirst,
-            NewestItemsFirst
+            /// <summary>
+            /// Ensure the oldest items are given priority.
+            /// </summary>
+            PrioritizeOldestItems,
+
+            /// <summary>
+            /// Ensure the newest items are given priority.
+            /// </summary>
+            PrioritizeNewestItems
         }
 
         #region Static members
@@ -83,7 +94,7 @@ namespace ClearCanvas.Healthcare
 
         /// <summary>
         /// Gets the category for the specified worklist class, as specified by
-        /// the <see cref="WorklistCategoryAttribute"/>.
+        /// the <see cref="WorklistCategoryAttribute"/>, or null if not specified.
         /// </summary>
         /// <param name="worklistClass"></param>
         /// <returns></returns>
@@ -99,15 +110,38 @@ namespace ClearCanvas.Healthcare
         }
 
         /// <summary>
-        /// Gets the display name for the specified worklist class, obtained by attempting
+        /// Gets the display name for the specified worklist class, obtained either from
+        /// the <see cref="WorklistClassDisplayNameAttribute"/>, otherwise by attempting
         /// to localize the class name (<see cref="GetClassName"/>) of the worklist.
         /// </summary>
         /// <param name="worklistClass"></param>
         /// <returns></returns>
         public static string GetDisplayName(Type worklistClass)
         {
+            WorklistClassDisplayNameAttribute a =
+               AttributeUtils.GetAttribute<WorklistClassDisplayNameAttribute>(worklistClass, true);
+
+            string displayName = (a != null) ? a.DisplayName : GetClassName(worklistClass);
+
             ResourceResolver resolver = new ResourceResolver(worklistClass.Assembly);
-            return resolver.LocalizeString(GetClassName(worklistClass));
+            return resolver.LocalizeString(displayName);
+        }
+
+        /// <summary>
+        /// Gets the description for the specified worklist class, as specified by
+        /// the <see cref="WorklistCategoryAttribute"/>, or null if not specified.
+        /// </summary>
+        /// <param name="worklistClass"></param>
+        /// <returns></returns>
+        public static string GetDescription(Type worklistClass)
+        {
+            WorklistClassDescriptionAttribute a =
+                AttributeUtils.GetAttribute<WorklistClassDescriptionAttribute>(worklistClass, true);
+            if (a == null)
+                return null;
+
+            ResourceResolver resolver = new ResourceResolver(worklistClass.Assembly);
+            return resolver.LocalizeString(a.Description);
         }
 
         /// <summary>
@@ -125,14 +159,14 @@ namespace ClearCanvas.Healthcare
 
         /// <summary>
         /// Gets a value indicating whether the specified worklist class behaves as a singleton, as specified by
-        /// the <see cref="WorklistSingletonAttribute"/>.
+        /// the <see cref="StaticWorklistAttribute"/>.
         /// </summary>
         /// <param name="worklistClass"></param>
         /// <returns></returns>
         public static bool GetIsSingleton(Type worklistClass)
         {
-            WorklistSingletonAttribute a =
-                AttributeUtils.GetAttribute<WorklistSingletonAttribute>(worklistClass, true);
+            StaticWorklistAttribute a =
+                AttributeUtils.GetAttribute<StaticWorklistAttribute>(worklistClass, true);
             return a == null ? false : a.IsSingleton;
         }
 
@@ -352,7 +386,7 @@ namespace ClearCanvas.Healthcare
         private void ApplyTimeRange(ISearchCondition condition, WorklistTimeRange defaultValue, WorklistOrdering ordering)
         {
             // apply ordering
-            if (ordering == WorklistOrdering.OldestItemsFirst)
+            if (ordering == WorklistOrdering.PrioritizeOldestItems)
                 condition.SortAsc(0);
             else
                 condition.SortDesc(0);

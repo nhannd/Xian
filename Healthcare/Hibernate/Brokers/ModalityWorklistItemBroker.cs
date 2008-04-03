@@ -68,7 +68,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                     sc.ProcedureStepClass = typeof(ModalityProcedureStep);
                     sc.TimeField = WorklistTimeField.ProcedureScheduledStartTime;
                 });
-            HqlProjectionQuery query = CreateWorklistItemQuery(where);
+            HqlProjectionQuery query = CreateBaseItemQuery(where);
             query.Page = page;
             BuildSearchQuery(query, where, showActiveOnly, false);
             return DoQuery(query);
@@ -85,7 +85,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             // ensure criteria are filtering on correct type of step
             CollectionUtils.ForEach(where,
                 delegate(WorklistItemSearchCriteria sc) { sc.ProcedureStepClass = typeof(ModalityProcedureStep); });
-            HqlProjectionQuery query = CreateWorklistCountQuery(where);
+            HqlProjectionQuery query = CreateBaseCountQuery(where);
             BuildSearchQuery(query, where, showActiveOnly, true);
             return DoQueryCount(query);
         }
@@ -101,7 +101,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 query.Conditions.Add(new HqlCondition("ps.State in (?, ?)", ActivityStatus.SC, ActivityStatus.IP));
             }
 
-            AddWorklistCriteria(query, where, true, countQuery);
+            AddConditions(query, where, true, countQuery);
         }
 
         #endregion

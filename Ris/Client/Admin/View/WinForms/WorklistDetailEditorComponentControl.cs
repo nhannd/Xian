@@ -62,6 +62,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _description.DataBindings.Add("Value", _component, "Description", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _worklistClass.DataBindings.Add("Value", _component, "WorklistClassName", true, DataSourceUpdateMode.OnPropertyChanged);
+            _classDescription.DataBindings.Add("Value", _component, "WorklistClassDescription", true, DataSourceUpdateMode.OnPropertyChanged);
             _okButton.DataBindings.Add("Visible", _component, "AcceptButtonVisible", true, DataSourceUpdateMode.Never);
             _cancelButton.DataBindings.Add("Visible", _component, "CancelButtonVisible", true, DataSourceUpdateMode.Never);
 

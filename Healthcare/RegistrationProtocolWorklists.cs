@@ -19,6 +19,7 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
+    [WorklistClassDescription("RegistrationPendingProtocolWorklistDescription")]
     public class RegistrationPendingProtocolWorklist : RegistrationProtocolWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
@@ -26,7 +27,7 @@ namespace ClearCanvas.Healthcare
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
             criteria.ProcedureStepClass = typeof (ProtocolAssignmentStep);
-            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.OldestItemsFirst);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -36,6 +37,7 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
+    [WorklistClassDescription("RegistrationAsapPendingProtocolWorklistDescription")]
     public class RegistrationAsapPendingProtocolWorklist : RegistrationProtocolWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
@@ -45,7 +47,7 @@ namespace ClearCanvas.Healthcare
             criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
 
             // any procedures with pending protocol assignment, where the procedure scheduled start time is filtered
-            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureScheduledStartTime, WorklistTimeRange.Today, WorklistOrdering.OldestItemsFirst);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureScheduledStartTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeOldestItems);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -55,6 +57,7 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
+    [WorklistClassDescription("RegistrationRejectedProtocolWorklistDescription")]
     public class RegistrationRejectedProtocolWorklist : RegistrationProtocolWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
@@ -63,7 +66,7 @@ namespace ClearCanvas.Healthcare
             criteria.ProcedureStepClass = typeof(ProtocolResolutionStep);
             criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
             criteria.Protocol.Status.EqualTo(ProtocolStatus.RJ);
-            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.OldestItemsFirst);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -73,6 +76,7 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
+    [WorklistClassDescription("RegistrationSuspendedProtocolWorklistDescription")]
     public class RegistrationSuspendedProtocolWorklist : RegistrationProtocolWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
@@ -81,7 +85,7 @@ namespace ClearCanvas.Healthcare
             criteria.ProcedureStepClass = typeof(ProtocolResolutionStep);
             criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
             criteria.Protocol.Status.EqualTo(ProtocolStatus.SU);
-            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.OldestItemsFirst);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -91,6 +95,7 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
+    [WorklistClassDescription("RegistrationCompletedProtocolWorklistDescription")]
     public class RegistrationCompletedProtocolWorklist : RegistrationProtocolWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
@@ -101,7 +106,7 @@ namespace ClearCanvas.Healthcare
 
             // only unscheduled procedures should be in this list
             criteria.Procedure.ScheduledStartTime.IsNull();
-            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, null, WorklistOrdering.NewestItemsFirst);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, null, WorklistOrdering.PrioritizeNewestItems);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
