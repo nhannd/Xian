@@ -102,9 +102,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// <returns></returns>
         public IList<WorklistItem> GetSearchResults(WorklistItemSearchCriteria[] where, SearchResultPage page, bool activeOrdersOnly, Facility workingFacility)
         {
+            // ensure criteria are filtering on correct type of step, and display the correct time field
+            // ProcedureScheduledStartTime seems like a reasonable choice for registration homepage search,
+            // as it gives a general sense of when the procedure occurs in time
+            CollectionUtils.ForEach(where,
+                delegate(WorklistItemSearchCriteria sc)
+                {
+                    sc.TimeField = WorklistTimeField.ProcedureScheduledStartTime;
+                });
+
             // note: use of the page here is somewhat meaningless given the way 2 result sets are being combined
             // may need to think about this some more
-            // TODO: what WorklistTimeField should be used for searching???
             HqlProjectionQuery orderQuery = new HqlProjectionQuery(WorklistItemFrom, GetWorklistItemProjection(WorklistTimeField.ProcedureScheduledStartTime));
             orderQuery.Page = page;
             BuildOrderSearchQuery(orderQuery, where, activeOrdersOnly, false);

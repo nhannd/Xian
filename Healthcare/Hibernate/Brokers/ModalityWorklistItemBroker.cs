@@ -59,9 +59,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// <returns></returns>
         public IList<WorklistItem> GetSearchResults(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly)
         {
-            // ensure criteria are filtering on correct type of step
+            // ensure criteria are filtering on correct type of step, and display the correct time field
+            // ProcedureScheduledStartTime seems like a reasonable choice for tech homepage search,
+            // as it gives a general sense of when the procedure occurs in time, regardless of the procedure step
             CollectionUtils.ForEach(where,
-                delegate(WorklistItemSearchCriteria sc) { sc.ProcedureStepClass = typeof(ModalityProcedureStep); });
+                delegate(WorklistItemSearchCriteria sc)
+                {
+                    sc.ProcedureStepClass = typeof(ModalityProcedureStep);
+                    sc.TimeField = WorklistTimeField.ProcedureScheduledStartTime;
+                });
             HqlProjectionQuery query = CreateWorklistItemQuery(where);
             query.Page = page;
             BuildSearchQuery(query, where, showActiveOnly, false);

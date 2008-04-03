@@ -41,7 +41,7 @@ namespace ClearCanvas.Enterprise.Core
     /// usage of this class.
     /// </summary>
     /// <typeparam name="T">The type of the condition variable</typeparam>
-    public class SearchCondition<T> : SearchConditionBase, ISearchCondition<T>
+    public class SearchCondition<T> : SearchConditionBase, ISearchCondition<T>, ISearchCondition
     {
         public SearchCondition()
         {
@@ -120,5 +120,67 @@ namespace ClearCanvas.Enterprise.Core
             SetCondition(SearchConditionTest.NotNull);
         }
 
+
+        #region ISearchCondition Members
+
+        void ISearchCondition.EqualTo(object val)
+        {
+            SetCondition(SearchConditionTest.Equal, val);
+        }
+
+        void ISearchCondition.NotEqualTo(object val)
+        {
+            SetCondition(SearchConditionTest.NotEqual, val);
+        }
+
+        void ISearchCondition.Like(object val)
+        {
+            SetCondition(SearchConditionTest.Like, val);
+        }
+
+        void ISearchCondition.NotLike(object val)
+        {
+            SetCondition(SearchConditionTest.NotLike, val);
+        }
+
+        void ISearchCondition.StartsWith(object val)
+        {
+            SetCondition(SearchConditionTest.Like, val + "%");
+        }
+
+        void ISearchCondition.Between(object lower, object upper)
+        {
+            SetCondition(SearchConditionTest.Between, lower, upper);
+        }
+
+        void ISearchCondition.In(System.Collections.IEnumerable values)
+        {
+            // copy to an array of object
+            object[] vals = CollectionUtils.Map<T, object>(values, delegate(T val) { return val; }).ToArray();
+
+            SetCondition(SearchConditionTest.In, vals);
+        }
+
+        void ISearchCondition.LessThan(object val)
+        {
+            SetCondition(SearchConditionTest.LessThan, val);
+        }
+
+        void ISearchCondition.LessThanOrEqualTo(object val)
+        {
+            SetCondition(SearchConditionTest.LessThanOrEqual, val);
+        }
+
+        void ISearchCondition.MoreThan(object val)
+        {
+            SetCondition(SearchConditionTest.MoreThan, val);
+        }
+
+        void ISearchCondition.MoreThanOrEqualTo(object val)
+        {
+            SetCondition(SearchConditionTest.MoreThanOrEqual, val);
+        }
+
+        #endregion
     }
 }

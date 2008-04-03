@@ -53,7 +53,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
     public class WorklistItem : WorklistItemBase
     {
         private readonly ActivityStatus _activityStatus;
-        private readonly DateTime _creationTime;
         private readonly EntityRef _reportRef;
 
         /// <summary>

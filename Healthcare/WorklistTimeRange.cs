@@ -56,29 +56,19 @@ namespace ClearCanvas.Healthcare
         }
 
         /// <summary>
-        /// Applies this time range to the specified <see cref="ISearchCondition{DateTime}"/>, using the specified current time.
+        /// Applies this time range to the specified <see cref="ISearchCondition{T}"/>, using the specified current time.
         /// </summary>
+        /// <remarks>
+        /// T must be either a <see cref="DateTime"/> or a nullable <see cref="DateTime"/>.
+        /// </remarks>
         /// <param name="condition"></param>
         /// <param name="currentTime"></param>
-        public void Apply(ISearchCondition<DateTime> condition, DateTime currentTime)
+        public void Apply(ISearchCondition condition, DateTime currentTime)
         {
             DateTime startTime, endTime;
             Resolve(currentTime, out startTime, out endTime);
 
             ApplyRange(condition, _start != null, startTime, _end != null, endTime);
-        }
-
-        /// <summary>
-        /// Applies this time range to the specified <see cref="ISearchCondition{DateTime}"/>, using the specified current time.
-        /// </summary>
-        /// <param name="condition"></param>
-        /// <param name="currentTime"></param>
-        public void Apply(ISearchCondition<DateTime?> condition, DateTime currentTime)
-        {
-            DateTime startTime, endTime;
-            Resolve(currentTime, out startTime, out endTime);
-
-            ApplyRange<DateTime?>(condition, _start != null, startTime, _end != null, endTime);
 
         }
 
@@ -92,7 +82,7 @@ namespace ClearCanvas.Healthcare
             endTime = _end != null ? _end.ResolveUp(currentTime) : DateTime.MaxValue;
         }
 
-        private static void ApplyRange<T>(ISearchCondition<T> condition, bool hasLower, T lower, bool hasUpper, T upper)
+        private static void ApplyRange(ISearchCondition condition, bool hasLower, DateTime lower, bool hasUpper, DateTime upper)
         {
             if (hasLower && hasUpper)
             {

@@ -218,7 +218,6 @@ namespace ClearCanvas.Healthcare
         /// Gets the set of <see cref="Staff"/> that subscribe to this worklist.
         /// </summary>
         [PersistentProperty]
-        [EmbeddedValueCollection(typeof(Staff))]
         public virtual ISet<Staff> StaffSubscribers
         {
             get { return _staffSubscribers; }
@@ -229,7 +228,6 @@ namespace ClearCanvas.Healthcare
         /// Gets the set of <see cref="StaffGroup"/>s that subscribe to this worklist.
         /// </summary>
         [PersistentProperty]
-        [EmbeddedValueCollection(typeof(StaffGroup))]
         public virtual ISet<StaffGroup> GroupSubscribers
         {
             get { return _groupSubscribers; }
@@ -337,41 +335,8 @@ namespace ClearCanvas.Healthcare
         protected void ApplyTimeCriteria(WorklistItemSearchCriteria criteria, WorklistTimeField timeField, WorklistTimeRange defaultValue, WorklistOrdering ordering)
         {
             criteria.TimeField = timeField;
-            switch (timeField)
-            {
-                case WorklistTimeField.OrderSchedulingRequestTime:
-                    ApplyTimeRange(criteria.Order.SchedulingRequestTime, defaultValue, ordering);
-                    break;
-                case WorklistTimeField.ProcedureScheduledStartTime:
-                    ApplyTimeRange(criteria.Procedure.ScheduledStartTime, defaultValue, ordering);
-                    break;
-                case WorklistTimeField.ProcedureCheckInTime:
-                    ApplyTimeRange(criteria.Procedure.ProcedureCheckIn.CheckInTime, defaultValue, ordering);
-                    break;
-                case WorklistTimeField.ProcedureCheckOutTime:
-                    ApplyTimeRange(criteria.Procedure.ProcedureCheckIn.CheckOutTime, defaultValue, ordering);
-                    break;
-                case WorklistTimeField.ProcedureStartTime:
-                    ApplyTimeRange(criteria.Procedure.StartTime, defaultValue, ordering);
-                    break;
-                case WorklistTimeField.ProcedureEndTime:
-                    ApplyTimeRange(criteria.Procedure.EndTime, defaultValue, ordering);
-                    break;
-                case WorklistTimeField.ProcedureStepCreationTime:
-                    ApplyTimeRange(criteria.ProcedureStep.CreationTime, defaultValue, ordering);
-                    break;
-                case WorklistTimeField.ProcedureStepScheduledStartTime:
-                    ApplyTimeRange(criteria.ProcedureStep.Scheduling.StartTime, defaultValue, ordering);
-                    break;
-                case WorklistTimeField.ProcedureStepStartTime:
-                    ApplyTimeRange(criteria.ProcedureStep.StartTime, defaultValue, ordering);
-                    break;
-                case WorklistTimeField.ProcedureStepEndTime:
-                    ApplyTimeRange(criteria.ProcedureStep.EndTime, defaultValue, ordering);
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }           
+            ISearchCondition searchCondition = timeField.GetSearchCondition(criteria);
+            ApplyTimeRange(searchCondition, defaultValue, ordering);
         }
 
         /// <summary>
@@ -384,46 +349,21 @@ namespace ClearCanvas.Healthcare
         /// </remarks>
         /// <param name="condition"></param>
         /// <param name="defaultValue"></param>
-        private void ApplyTimeRange(ISearchCondition<DateTime> condition, WorklistTimeRange defaultValue, WorklistOrdering ordering)
+        private void ApplyTimeRange(ISearchCondition condition, WorklistTimeRange defaultValue, WorklistOrdering ordering)
         {
-            ApplyOrdering(condition, ordering);
+            // apply ordering
+            if (ordering == WorklistOrdering.OldestItemsFirst)
+                condition.SortAsc(0);
+            else
+                condition.SortDesc(0);
 
-            if(GetSupportsTimeFilter(this.GetClass()))
-            {
-                WorklistTimeRange range = _timeFilter.IsEnabled ? _timeFilter.Value : defaultValue;
-                if (range != null)
-                    range.Apply(condition, Platform.Time);
-            }
-        }
-
-        /// <summary>
-        /// Applies the time-range for this worklist to the specified search-condition.
-        /// </summary>
-        /// <remarks>
-        /// If the <see cref="TimeFilter"/> is enabled, the range specified by the filter is applied.
-        /// If the filter is not enabled, then the specified <paramref name="defaultValue"/> is applied.
-        /// The <paramref name="defaultValue"/> may be null, in which case no time range is applied by default.
-        /// </remarks>
-        /// <param name="condition"></param>
-        /// <param name="defaultValue"></param>
-        private void ApplyTimeRange(ISearchCondition<DateTime?> condition, WorklistTimeRange defaultValue, WorklistOrdering ordering)
-        {
-            ApplyOrdering(condition, ordering);
-
+            // apply range filtering, if supported by this class
             if (GetSupportsTimeFilter(this.GetClass()))
             {
                 WorklistTimeRange range = _timeFilter.IsEnabled ? _timeFilter.Value : defaultValue;
                 if (range != null)
                     range.Apply(condition, Platform.Time);
             }
-        }
-
-        private void ApplyOrdering(ISearchCondition condition, WorklistOrdering ordering)
-        {
-            if (ordering == WorklistOrdering.OldestItemsFirst)
-                condition.SortAsc(0);
-            else 
-                condition.SortDesc(0);
         }
 
         #endregion

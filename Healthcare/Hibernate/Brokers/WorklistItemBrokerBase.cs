@@ -265,13 +265,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// </remarks>
         protected virtual bool MapTimeFieldToHqlSelect(WorklistTimeField timeField, out HqlSelect hql)
         {
-            // if "none", just use procedure step creation time since it is guaranteed to exist
-            if (timeField == WorklistTimeField.None)
-            {
-                hql = SelectProcedureStepCreationTime;
-                return true;
-            }
-
             return _mapTimeFieldToHqlSelect.TryGetValue(timeField, out hql);
         }
 
