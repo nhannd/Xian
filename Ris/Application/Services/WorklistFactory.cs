@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Application.Services
         {
             return includeStatic ? _worklistClasses.ToArray() :
                 CollectionUtils.Select(_worklistClasses,
-                    delegate(Type wc) { return !Worklist.GetIsSingleton(wc); }).ToArray();
+                    delegate(Type wc) { return !Worklist.GetIsStatic(wc); }).ToArray();
         }
 
         /// <summary>
@@ -88,8 +88,19 @@ namespace ClearCanvas.Ris.Application.Services
         /// <returns></returns>
         public Worklist CreateWorklist(string worklistClassName)
         {
-            return (Worklist)Activator.CreateInstance(ResolvePartialClassName(worklistClassName));
+            return CreateWorklist(ResolvePartialClassName(worklistClassName));
         }
+
+        /// <summary>
+        /// Creates an instance of the specified worklist class.
+        /// </summary>
+        /// <param name="worklistClass"></param>
+        /// <returns></returns>
+        public Worklist CreateWorklist(Type worklistClass)
+        {
+            return (Worklist)Activator.CreateInstance(worklistClass);
+        }
+
 
         private Type ResolvePartialClassName(string worklistClassName)
         {

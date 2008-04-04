@@ -219,7 +219,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 if (_selectedWorklists.Count == 0) return;
 
-                DialogBoxAction action = this.Host.ShowMessageBox("Are you sure you want to delete the selected worklist(s)?", MessageBoxActions.YesNo);
+                DialogBoxAction action = this.Host.ShowMessageBox(SR.MessageConfirmDeleteWorklists, MessageBoxActions.YesNo);
                 if(action == DialogBoxAction.Yes)
                 {
                     foreach (WorklistAdminSummary worklist in _selectedWorklists)

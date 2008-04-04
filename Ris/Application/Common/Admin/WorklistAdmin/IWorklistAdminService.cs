@@ -41,15 +41,31 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     public interface IWorklistAdminService
     {
         /// <summary>
-        /// Returns data suitable for populating a form for the purpose of editing a worklist definition
+        /// Returns a list of worklist categories.
         /// </summary>
-        /// <param name="request"><see cref="GetWorklistEditFormDataRequest"/></param>
-        /// <returns><see cref="GetWorklistEditFormDataResponse"/></returns>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
-        GetWorklistEditFormDataResponse GetWorklistEditFormData(GetWorklistEditFormDataRequest request);
+        ListWorklistCategoriesResponse ListWorklistCategories(ListWorklistCategoriesRequest request);
 
         /// <summary>
-        /// Returns a list of ProcedureTypeGroups appropriate for a specific worklist type
+        /// Returns a list of worklists matching the specified criteria.
+        /// </summary>
+        /// <param name="request"><see cref="ListWorklistsRequest"/></param>
+        /// <returns><see cref="ListWorklistsResponse"/></returns>
+        [OperationContract]
+        ListWorklistClassesResponse ListWorklistClasses(ListWorklistClassesRequest request);
+        
+        /// <summary>
+        /// Returns a list of worklists matching the specified criteria.
+        /// </summary>
+        /// <param name="request"><see cref="ListWorklistsRequest"/></param>
+        /// <returns><see cref="ListWorklistsResponse"/></returns>
+        [OperationContract]
+        ListWorklistsResponse ListWorklists(ListWorklistsRequest request);
+
+        /// <summary>
+        /// Returns a list of ProcedureTypeGroups of a specified class.
         /// </summary>
         /// <param name="request"><see cref="ListProcedureTypeGroupsRequest"/></param>
         /// <returns><see cref="ListProcedureTypeGroupsResponse"/></returns>
@@ -57,12 +73,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         ListProcedureTypeGroupsResponse ListProcedureTypeGroups(ListProcedureTypeGroupsRequest request);
 
         /// <summary>
-        /// Returns a list of all persistent worklists
+        /// Returns data suitable for populating a form for the purpose of editing a worklist definition
         /// </summary>
-        /// <param name="request"><see cref="ListWorklistsRequest"/></param>
-        /// <returns><see cref="ListWorklistsResponse"/></returns>
+        /// <param name="request"><see cref="GetWorklistEditFormDataRequest"/></param>
+        /// <returns><see cref="GetWorklistEditFormDataResponse"/></returns>
         [OperationContract]
-        ListWorklistsResponse ListWorklists(ListWorklistsRequest request);
+        GetWorklistEditFormDataResponse GetWorklistEditFormData(GetWorklistEditFormDataRequest request);
 
         /// <summary>
         /// Loads a worklist definition for editing

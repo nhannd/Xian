@@ -49,6 +49,95 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         #region IWorklistAdminService Members
 
         [ReadOperation]
+        public ListWorklistCategoriesResponse ListWorklistCategories(ListWorklistCategoriesRequest request)
+        {
+            List<string> categories = CollectionUtils.Map<Type, string>(
+                WorklistFactory.Instance.ListWorklistClasses(true),
+                delegate(Type t) { return Worklist.GetCategory(t); });
+
+            return new ListWorklistCategoriesResponse(CollectionUtils.Unique(categories));
+        }
+
+        [ReadOperation]
+        public ListWorklistClassesResponse ListWorklistClasses(ListWorklistClassesRequest request)
+        {
+            Platform.CheckForNullReference(request, "request");
+
+            List<Type> worklistClasses =
+                ListClassesHelper(request.ClassNames, request.Categories, request.IncludeStatic);
+
+            WorklistAdminAssembler assembler = new WorklistAdminAssembler();
+            return new ListWorklistClassesResponse(
+                CollectionUtils.Map<Type, WorklistClassSummary>(worklistClasses,
+                    delegate(Type worklistClass)
+                    {
+                        return assembler.CreateClassSummary(worklistClass);
+                    }));
+        }
+
+        [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
+        public ListWorklistsResponse ListWorklists(ListWorklistsRequest request)
+        {
+            Platform.CheckForNullReference(request, "request");
+
+            List<Type> worklistClasses =
+                ListClassesHelper(request.ClassNames, request.Categories, request.IncludeStatic);
+            
+            // grab the persistent worklists
+            IWorklistBroker broker = PersistenceContext.GetBroker<IWorklistBroker>();
+            List<string> persistentClassNames = CollectionUtils.Select(worklistClasses,
+                delegate(Type t) { return !Worklist.GetIsStatic(t); })
+                .ConvertAll<string>(delegate(Type t) { return Worklist.GetClassName(t); });
+            IList<Worklist> worklists = broker.FindWorklists(persistentClassNames, request.Page);
+
+            // optionally include the static ones
+            if(request.IncludeStatic)
+            {
+                foreach (Type worklistClass in worklistClasses)
+                {
+                    if (Worklist.GetIsStatic(worklistClass))
+                        worklists.Add(WorklistFactory.Instance.CreateWorklist(worklistClass));
+                }
+            }
+
+            WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
+            return new ListWorklistsResponse(
+                CollectionUtils.Map<Worklist, WorklistAdminSummary, List<WorklistAdminSummary>>(
+                worklists,
+                delegate(Worklist worklist)
+                {
+                    return adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext);
+                }));
+        }
+
+        [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
+        public ListProcedureTypeGroupsResponse ListProcedureTypeGroups(ListProcedureTypeGroupsRequest request)
+        {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.ProcedureTypeGroupClass, "request.ProcedureTypeGroupClass");
+
+            Type procedureTypeGroupClass = ProcedureTypeGroup.GetSubClass(request.ProcedureTypeGroupClass, PersistenceContext);
+            if (procedureTypeGroupClass == null)
+                throw new ArgumentException("Invalid ProcedureTypeGroupClass name");
+
+            ListProcedureTypeGroupsResponse response =
+                new ListProcedureTypeGroupsResponse();
+
+            ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
+            response.ProcedureTypeGroups =
+                CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary>(
+                    PersistenceContext.GetBroker<IProcedureTypeGroupBroker>().Find(new ProcedureTypeGroupSearchCriteria(), procedureTypeGroupClass),
+                    delegate(ProcedureTypeGroup group)
+                    {
+                        return assembler.GetProcedureTypeGroupSummary(group, PersistenceContext);
+                    });
+
+            return response;
+        }
+
+        [ReadOperation]
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
         public GetWorklistEditFormDataResponse GetWorklistEditFormData(GetWorklistEditFormDataRequest request)
         {
@@ -92,50 +181,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             return response;
         }
 
-        [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
-        public ListProcedureTypeGroupsResponse ListProcedureTypeGroups(ListProcedureTypeGroupsRequest request)
-        {
-            Platform.CheckForNullReference(request, "request");
-            Platform.CheckMemberIsSet(request.ProcedureTypeGroupClass, "request.ProcedureTypeGroupClass");
 
-            Type procedureTypeGroupClass = ProcedureTypeGroup.GetSubClass(request.ProcedureTypeGroupClass, PersistenceContext);
-            if (procedureTypeGroupClass == null)
-                throw new ArgumentException("Invalid ProcedureTypeGroupClass name");
-
-            ListProcedureTypeGroupsResponse response = 
-                new ListProcedureTypeGroupsResponse();
-
-            ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
-            response.ProcedureTypeGroups =
-                CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary>(
-                    PersistenceContext.GetBroker<IProcedureTypeGroupBroker>().Find(new ProcedureTypeGroupSearchCriteria(), procedureTypeGroupClass),
-                    delegate(ProcedureTypeGroup group)
-                    {
-                        return assembler.GetProcedureTypeGroupSummary(group, PersistenceContext);
-                    });
-
-            return response;
-        }
-
-        [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
-        public ListWorklistsResponse ListWorklists(ListWorklistsRequest request)
-        {
-            ListWorklistsResponse response = new ListWorklistsResponse();
-            WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
-
-            response.WorklistSummaries = CollectionUtils.Map<Worklist, WorklistAdminSummary, List<WorklistAdminSummary>>(
-                this.PersistenceContext.GetBroker<IWorklistBroker>().Find(
-                    new WorklistSearchCriteria(),
-                    request.Page),
-                delegate(Worklist worklist)
-                {
-                    return adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext);
-                });
-
-            return response;
-        }
 
         [ReadOperation]
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
@@ -189,6 +235,35 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         }
 
         #endregion
+
+        private List<Type> ListClassesHelper(List<string> classNames, List<string> categories, bool includeStatic)
+        {
+            List<Type> worklistClasses = new List<Type>(WorklistFactory.Instance.ListWorklistClasses(true));
+
+            // optionally filter classes by class name
+            if (classNames != null && classNames.Count > 0)
+            {
+                worklistClasses = CollectionUtils.Select(worklistClasses,
+                    delegate(Type t) { return classNames.Contains(Worklist.GetClassName(t)); });
+            }
+
+            // optionally filter classes by category
+            if (categories != null && categories.Count > 0)
+            {
+                worklistClasses = CollectionUtils.Select(worklistClasses,
+                    delegate(Type t) { return categories.Contains(Worklist.GetCategory(t)); });
+            }
+
+            // optionally exclude static
+            if (!includeStatic)
+            {
+                worklistClasses = CollectionUtils.Select(worklistClasses,
+                    delegate(Type t) { return !Worklist.GetIsStatic(t); });
+            }
+
+            return worklistClasses;
+        }
+
 
     }
 }

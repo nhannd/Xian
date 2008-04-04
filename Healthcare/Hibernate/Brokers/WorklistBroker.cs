@@ -32,6 +32,7 @@
 using System.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Authentication;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
@@ -51,24 +52,18 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<Worklist> FindWorklistsForStaff(Staff staff, IEnumerable<string> worklistClassNames)
         {
-            HqlProjectionQuery query = new HqlProjectionQuery(new HqlFrom("Worklist", "w"));
-            query.Selects.Add(new HqlSelect("w"));
-            query.SelectDistinct = true;
+            HqlProjectionQuery query = GetBaseQuery();
+            AddStaffConditions(query, staff);
+            AddClassConditions(query, worklistClassNames);
 
-            query.Froms.Add(new HqlFrom("Staff", "s"));
-            query.Conditions.Add(new HqlCondition("s = ?", staff));
+            return ExecuteHql<Worklist>(query);
+        }
 
-            HqlOr staffOr = new HqlOr();
-            staffOr.Conditions.Add(new HqlCondition("s in elements(w.StaffSubscribers)"));
-            staffOr.Conditions.Add(new HqlCondition("s in (select elements(sg.Members) from StaffGroup sg where sg in elements(w.GroupSubscribers))"));
-            query.Conditions.Add(staffOr);
-
-            HqlOr classOr = new HqlOr();
-            foreach (string className in worklistClassNames)
-            {
-                classOr.Conditions.Add(new HqlCondition("w.class = " + className));
-            }
-            query.Conditions.Add(classOr);
+        public IList<Worklist> FindWorklists(IEnumerable<string> worklistClassNames, SearchResultPage page)
+        {
+            HqlProjectionQuery query = GetBaseQuery();
+            AddClassConditions(query, worklistClassNames);
+            query.Page = page;
 
             return ExecuteHql<Worklist>(query);
         }
@@ -87,5 +82,34 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         }
 
         #endregion
+
+        private HqlProjectionQuery GetBaseQuery()
+        {
+            HqlProjectionQuery query = new HqlProjectionQuery(new HqlFrom("Worklist", "w"));
+            query.Selects.Add(new HqlSelect("w"));
+            query.SelectDistinct = true;
+            return query;
+        }
+
+        private void AddClassConditions(HqlProjectionQuery query, IEnumerable<string> worklistClassNames)
+        {
+            HqlOr classOr = new HqlOr();
+            foreach (string className in worklistClassNames)
+            {
+                classOr.Conditions.Add(new HqlCondition("w.class = " + className));
+            }
+            query.Conditions.Add(classOr);
+        }
+
+        private void AddStaffConditions(HqlProjectionQuery query, Staff staff)
+        {
+            query.Froms.Add(new HqlFrom("Staff", "s"));
+            query.Conditions.Add(new HqlCondition("s = ?", staff));
+
+            HqlOr staffOr = new HqlOr();
+            staffOr.Conditions.Add(new HqlCondition("s in elements(w.StaffSubscribers)"));
+            staffOr.Conditions.Add(new HqlCondition("s in (select elements(sg.Members) from StaffGroup sg where sg in elements(w.GroupSubscribers))"));
+            query.Conditions.Add(staffOr);
+        }
     }
 }

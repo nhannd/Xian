@@ -502,6 +502,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the selected worklist(s)?.
+        /// </summary>
+        internal static string MessageConfirmDeleteWorklists {
+            get {
+                return ResourceManager.GetString("MessageConfirmDeleteWorklists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this diagnostic service?.
         /// </summary>
         internal static string MessageDeleteSelectedDiagnosticService {
@@ -606,6 +615,51 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string MessageWorklistMustHaveName {
             get {
                 return ResourceManager.GetString("MessageWorklistMustHaveName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filters.
+        /// </summary>
+        internal static string NodeFilters {
+            get {
+                return ResourceManager.GetString("NodeFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Group Subscribers.
+        /// </summary>
+        internal static string NodeGroupSubscribers {
+            get {
+                return ResourceManager.GetString("NodeGroupSubscribers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Individual Subscribers.
+        /// </summary>
+        internal static string NodeIndividualSubscribers {
+            get {
+                return ResourceManager.GetString("NodeIndividualSubscribers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time Window.
+        /// </summary>
+        internal static string NodeTimeWindow {
+            get {
+                return ResourceManager.GetString("NodeTimeWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Worklist.
+        /// </summary>
+        internal static string NodeWorklist {
+            get {
+                return ResourceManager.GetString("NodeWorklist", resourceCulture);
             }
         }
         
@@ -1008,9 +1062,9 @@ namespace ClearCanvas.Ris.Client.Admin {
         /// <summary>
         ///   Looks up a localized string similar to Worklists.
         /// </summary>
-        internal static string TitleWorklist {
+        internal static string TitleWorklists {
             get {
-                return ResourceManager.GetString("TitleWorklist", resourceCulture);
+                return ResourceManager.GetString("TitleWorklists", resourceCulture);
             }
         }
     }

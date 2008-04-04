@@ -134,7 +134,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
         public WorklistAdminSummary GetWorklistSummary(Worklist worklist, IPersistenceContext context)
         {
-            return new WorklistAdminSummary(worklist.GetRef(), worklist.Name, worklist.Description, CreateClassSummary(worklist.GetClass()));
+            bool isStatic = Worklist.GetIsStatic(worklist.GetClass());
+            return new WorklistAdminSummary(
+                isStatic ? null : worklist.GetRef(),
+                isStatic ? Worklist.GetDisplayName(worklist.GetClass()) : worklist.Name,
+                isStatic ? Worklist.GetDescription(worklist.GetClass()) : worklist.Description,
+                CreateClassSummary(worklist.GetClass()));
         }
 
         public void UpdateWorklist(Worklist worklist, WorklistAdminDetail detail, IPersistenceContext context)

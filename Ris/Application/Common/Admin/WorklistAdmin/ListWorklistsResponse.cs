@@ -38,9 +38,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     [DataContract]
     public class ListWorklistsResponse : DataContractBase
     {
-        public ListWorklistsResponse()
+        public ListWorklistsResponse(List<WorklistAdminSummary> worklistSummaries)
         {
-            WorklistSummaries = new List<WorklistAdminSummary>();
+            WorklistSummaries = worklistSummaries;
         }
 
         [DataMember]

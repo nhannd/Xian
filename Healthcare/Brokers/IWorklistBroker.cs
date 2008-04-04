@@ -32,12 +32,14 @@
 using System.Collections;
 using ClearCanvas.Enterprise.Core;
 using System.Collections.Generic;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IWorklistBroker : IEntityBroker<Worklist, WorklistSearchCriteria>
     {
         IList<Worklist> FindWorklistsForStaff(Staff staff, IEnumerable<string> worklistClassNames);
+        IList<Worklist> FindWorklists(IEnumerable<string> worklistClassNames, SearchResultPage page);
         Worklist FindWorklist(string name, string worklistClassName);
     }
 }

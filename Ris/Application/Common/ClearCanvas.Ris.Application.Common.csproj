@@ -53,6 +53,10 @@
     <Compile Include="Admin\StaffGroupAdmin\LoadStaffGroupForEditResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\DeleteWorklistRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\DeleteWorklistResponse.cs" />
+    <Compile Include="Admin\WorklistAdmin\ListWorklistCategoriesRequest.cs" />
+    <Compile Include="Admin\WorklistAdmin\ListWorklistCategoriesResponse.cs" />
+    <Compile Include="Admin\WorklistAdmin\ListWorklistClassesRequest.cs" />
+    <Compile Include="Admin\WorklistAdmin\ListWorklistClassesResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistClassSummary.cs" />
     <Compile Include="RisServiceProviderAttribute.cs" />
     <Compile Include="StaffGroupDetail.cs" />

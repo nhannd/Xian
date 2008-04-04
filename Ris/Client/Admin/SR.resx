@@ -264,6 +264,9 @@
   <data name="LabelSaveAll" xml:space="preserve">
     <value>Save All</value>
   </data>
+  <data name="MessageConfirmDeleteWorklists" xml:space="preserve">
+    <value>Are you sure you want to delete the selected worklist(s)?</value>
+  </data>
   <data name="MessageDeleteSelectedDiagnosticService" xml:space="preserve">
     <value>Are you sure you want to delete this diagnostic service?</value>
   </data>
@@ -299,6 +302,21 @@
   </data>
   <data name="MessageWorklistMustHaveName" xml:space="preserve">
     <value>Worklist must have a name</value>
+  </data>
+  <data name="NodeFilters" xml:space="preserve">
+    <value>Filters</value>
+  </data>
+  <data name="NodeGroupSubscribers" xml:space="preserve">
+    <value>Group Subscribers</value>
+  </data>
+  <data name="NodeIndividualSubscribers" xml:space="preserve">
+    <value>Individual Subscribers</value>
+  </data>
+  <data name="NodeTimeWindow" xml:space="preserve">
+    <value>Time Window</value>
+  </data>
+  <data name="NodeWorklist" xml:space="preserve">
+    <value>Worklist</value>
   </data>
   <data name="TitleAddAuthorityGroup" xml:space="preserve">
     <value>Add Authority Group</value>
@@ -432,7 +450,7 @@
   <data name="TitleUser" xml:space="preserve">
     <value>User Admin</value>
   </data>
-  <data name="TitleWorklist" xml:space="preserve">
+  <data name="TitleWorklists" xml:space="preserve">
     <value>Worklists</value>
   </data>
 </root>

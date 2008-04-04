@@ -158,17 +158,17 @@ namespace ClearCanvas.Ris.Client.Admin
                     _groupSubscribersComponent = new WorklistSubscriptionEditorComponent<StaffGroupSummary, StaffGroupTable>(
                         formDataResponse.StaffGroupChoices, _worklistDetail.GroupSubscribers, delegate(StaffGroupSummary s) { return s.StaffGroupRef; });
                 });
-            this.Pages.Add(new NavigatorPage("Worklist", _mode == Mode.Add ? (IApplicationComponent)_multiDetailComponent : (IApplicationComponent)_detailComponent));
-            this.Pages.Add(new NavigatorPage("Worklist/Filters", _filterComponent));
+            this.Pages.Add(new NavigatorPage("NodeWorklist", _mode == Mode.Add ? (IApplicationComponent)_multiDetailComponent : (IApplicationComponent)_detailComponent));
+            this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters", _filterComponent));
             
             // add the time filter page, if the class supports it (or if the class is not known, in the case of an add)
             if (_worklistDetail.WorklistClass == null || _worklistDetail.WorklistClass.SupportsTimeWindow)
             {
-                this.Pages.Add(new NavigatorPage("Worklist/Time Window", _timeWindowComponent));
+                this.Pages.Add(new NavigatorPage("NodeWorklist/NodeTimeWindow", _timeWindowComponent));
             }
-            
-            this.Pages.Add(new NavigatorPage("Worklist/Group Subscribers", _groupSubscribersComponent));
-            this.Pages.Add(new NavigatorPage("Worklist/Individual Subscribers", _staffSubscribersComponent));
+
+            this.Pages.Add(new NavigatorPage("NodeWorklist/NodeGroupSubscribers", _groupSubscribersComponent));
+            this.Pages.Add(new NavigatorPage("NodeWorklist/NodeIndividualSubscribers", _staffSubscribersComponent));
 
             this.ValidationStrategy = new AllComponentsValidationStrategy();
 

@@ -166,7 +166,7 @@ namespace ClearCanvas.Healthcare
         /// </summary>
         /// <param name="worklistClass"></param>
         /// <returns></returns>
-        public static bool GetIsSingleton(Type worklistClass)
+        public static bool GetIsStatic(Type worklistClass)
         {
             StaticWorklistAttribute a =
                 AttributeUtils.GetAttribute<StaticWorklistAttribute>(worklistClass, true);

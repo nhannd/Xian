@@ -29,12 +29,33 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 {
+    /// <summary>
+    /// Requests a list of worklist, according to the specified filters.
+    /// </summary>
     [DataContract]
     public class ListWorklistsRequest : PagedDataContractBase
     {
+        /// <summary>
+        /// Filters the results by the specified class names.
+        /// </summary>
+        [DataMember]
+        public List<string> ClassNames;
+
+        /// <summary>
+        /// Filters the results by the specified categories.
+        /// </summary>
+        [DataMember]
+        public List<string> Categories;
+
+        /// <summary>
+        /// Specifies whether static worklists should be returned in the results.
+        /// </summary>
+        [DataMember]
+        public bool IncludeStatic;
     }
 }
