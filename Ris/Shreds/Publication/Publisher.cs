@@ -10,6 +10,14 @@ using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Shreds.Publication
 {
+    /// <summary>
+    /// Defines an extension point for processing publication step
+    /// </summary>
+    [ExtensionPoint]
+    public class PublicationStepProcessorExtensionPoint : ExtensionPoint<IPublicationStepProcessor>
+    {
+    }
+
     public class Publisher : IPublisher
     {
         private volatile bool _shouldStop;
@@ -39,6 +47,8 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
         public void Start()
         {
+            object[] processors = new PublicationStepProcessorExtensionPoint().CreateExtensions();
+
             while (_shouldStop == false)
             {
                 IList<PublicationStep> publicationSteps = NextBatch();
@@ -54,9 +64,12 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
                 foreach (PublicationStep publicationStep in publicationSteps)
                 {
-                    // TODO:  Process the publication step
-
                     CompletePublicationStep(publicationStep);
+
+                    foreach (IPublicationStepProcessor processor in processors)
+                    {
+                        processor.Process(publicationStep);
+                    }
                 }
             }
         }

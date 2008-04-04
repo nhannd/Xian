@@ -33,6 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IPublicationStepProcessor.cs" />
     <Compile Include="IPublisher.cs" />
     <Compile Include="PublicationConsoleApp.cs" />
     <Compile Include="PublicationShred.cs" />
