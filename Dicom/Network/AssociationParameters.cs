@@ -101,6 +101,8 @@ namespace ClearCanvas.Dicom.Network
 			_result = DicomPresContextResult.Proposed;
 			_roles = DicomRoleSelection.Disabled;
 			_abstract = abstractSyntax;
+            if (abstractSyntax.Uid.Length == 0)
+                throw new DicomException("Invalid abstract syntax for presentation context, UID is zero length.");
 			_transfers = new List<TransferSyntax>();
 		}
 
@@ -109,7 +111,9 @@ namespace ClearCanvas.Dicom.Network
 			_result = result;
 			_roles = DicomRoleSelection.Disabled;
 			_abstract = abstractSyntax;
-			_transfers = new List<TransferSyntax>();
+            if (abstractSyntax.Uid.Length == 0)
+                throw new DicomException("Invalid abstract syntax for presentation context, UID is zero length.");
+            _transfers = new List<TransferSyntax>();
 			_transfers.Add(transferSyntax);
 		}
 		#endregion
@@ -139,6 +143,8 @@ namespace ClearCanvas.Dicom.Network
 
 		public TransferSyntax AcceptedTransferSyntax {
 			get {
+                if (this.Result != DicomPresContextResult.Accept)
+                    return null;
 				if (_transfers.Count > 0)
 					return _transfers[0];
 				return null;
@@ -177,7 +183,10 @@ namespace ClearCanvas.Dicom.Network
 		}
 
 		public bool HasTransfer(TransferSyntax ts) {
-			return _transfers.Contains(ts);
+            if (_result == DicomPresContextResult.Accept || _result == DicomPresContextResult.Proposed)
+                return _transfers.Contains(ts);
+            else
+                return false;
 		}
 
 		public string GetResultDescription() {

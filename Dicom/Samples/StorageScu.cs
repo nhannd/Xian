@@ -103,18 +103,24 @@ namespace ClearCanvas.Dicom.Samples
                 DicomFile dicomFile = new DicomFile(file);
 
                 // Only load to specific character set to reduce amount of data read from file
-                dicomFile.Load(DicomTags.SpecificCharacterSet, DicomReadOptions.Default);
+                dicomFile.Load(DicomTags.SopInstanceUid, DicomReadOptions.Default);
 
                 FileToSend fileStruct = new FileToSend();
 
                 fileStruct.filename = file;
-                fileStruct.sopClass = dicomFile.SopClass;
+                string sopClassInFile = dicomFile.DataSet[DicomTags.SopClassUid].ToString();
+                if (sopClassInFile.Length == 0)
+                    return false;
+
+                if (!sopClassInFile.Equals(dicomFile.SopClass.Uid))
+                {
+                    DicomLogger.LogError("SOP Class in Meta Info does not match SOP Class in DataSet");
+                    fileStruct.sopClass = SopClass.GetSopClass(sopClassInFile);
+                }
+                else
+                    fileStruct.sopClass = dicomFile.SopClass;
+
                 fileStruct.transferSyntax = dicomFile.TransferSyntax;
-              //  if (dicomFile.TransferSyntax.Encapsulated)
-              //  {
-              //      DicomLogger.LogError("Unsupported encapsulated transfer syntax in file: {0}.  Not sending file.", dicomFile.TransferSyntax.Name);
-              //      return false;
-              //  }
 
                 _fileList.Add(fileStruct);
             }
@@ -257,6 +263,7 @@ namespace ClearCanvas.Dicom.Samples
         public void OnReceiveAssociateReject(DicomClient client, ClientAssociationParameters association, DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason)
         {
             DicomLogger.LogInfo("Association Rejection when {0} connected to remote AE {1}", association.CallingAE, association.CalledAE);
+            _dicomClient = null;
         }
 
         public void OnReceiveRequestMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)

@@ -450,11 +450,17 @@ namespace ClearCanvas.Dicom.Network
                             string sx = raw.ReadString("Presentation Context Syntax UID", pl);
                             if (pt == 0x30)
                             {
-                                _assoc.AddPresentationContext(id, SopClass.GetSopClass(sx));
+                                SopClass sopClass = SopClass.GetSopClass(sx);
+                                if (sopClass == null)
+                                    sopClass = new SopClass("Private SOP Class", sx, false);
+                                _assoc.AddPresentationContext(id, sopClass);
                             }
                             else if (pt == 0x40)
                             {
-                                _assoc.AddTransferSyntax(id, TransferSyntax.GetTransferSyntax(sx));
+                                TransferSyntax transferSyntax = TransferSyntax.GetTransferSyntax(sx);
+                                if (transferSyntax == null)
+                                    transferSyntax = new TransferSyntax("Private Syntax", sx, true, false, true, false);
+                                _assoc.AddTransferSyntax(id, transferSyntax);
                             }
                             il -= (ushort)(4 + pl);
                         }

@@ -71,7 +71,14 @@ namespace ClearCanvas.Dicom.Samples
             foreach (String file in this.openFileDialogStorageScu.FileNames)
             {
                 if (file != null)
-                    _storageScu.AddFileToSend(file);
+                    try
+                    {
+                        _storageScu.AddFileToSend(file);
+                    }
+                    catch (FileNotFoundException ex)
+                    {
+                        DicomLogger.LogErrorException(ex, "Unexpectedly cannot find file: {0}", file);
+                    }
             }
             
         }
