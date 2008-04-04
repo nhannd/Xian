@@ -772,6 +772,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Duplicate.
+        /// </summary>
+        internal static string TitleDuplicate {
+            get {
+                return ResourceManager.GetString("TitleDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Protocol Group.
         /// </summary>
         internal static string TitleEditProtocolGroup {

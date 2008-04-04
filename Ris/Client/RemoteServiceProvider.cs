@@ -79,7 +79,7 @@ namespace ClearCanvas.Ris.Client
                 // call the factory method to create the channel
                 object channel = factoryMethod();
 
-                Platform.Log(LogLevel.Debug, "Created WCF channel instance for service {0}, authenticated={1}.",
+                Platform.Log(LogLevel.Debug, "Created WCF channel instance for service {0}, authenticationRequired={1}.",
                              serviceType.FullName, authenticationRequired);
 
                 return channel;

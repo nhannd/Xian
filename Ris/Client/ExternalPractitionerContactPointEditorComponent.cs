@@ -49,8 +49,6 @@ namespace ClearCanvas.Ris.Client
     {
         private readonly ExternalPractitionerContactPointDetail _contactPointDetail;
 
-        private readonly bool _isNew;
-
         private ExternalPractitionerContactPointDetailsEditorComponent _detailsEditor;
         private AddressesSummaryComponent _addressesSummary;
         private PhoneNumbersSummaryComponent _phoneNumbersSummary;

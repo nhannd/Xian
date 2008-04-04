@@ -70,8 +70,14 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+        enum Mode
+        {
+            Add,
+            Edit,
+            Duplicate
+        }
 
-        private readonly bool _isNew;
+        private readonly Mode _mode;
 
         private EntityRef _worklistRef;
         private readonly List<WorklistAdminSummary> _editedWorklistSummaries = new List<WorklistAdminSummary>();
@@ -85,16 +91,21 @@ namespace ClearCanvas.Ris.Client.Admin
         private WorklistSubscriptionEditorComponent<StaffGroupSummary, StaffGroupTable> _groupSubscribersComponent;
 
         /// <summary>
-        /// Constructor
+        /// Constructor to create a new worklist.
         /// </summary>
         public WorklistEditorComponent()
         {
-            _isNew = true;
+            _mode = Mode.Add;
         }
 
-        public WorklistEditorComponent(EntityRef entityRef)
+        /// <summary>
+        /// Constructor edit or duplicate a worklist.
+        /// </summary>
+        /// <param name="entityRef"></param>
+        /// <param name="duplicate">Specify true to duplicate the worklist, false to edit the existing copy.</param>
+        public WorklistEditorComponent(EntityRef entityRef, bool duplicate)
         {
-            _isNew = false;
+            _mode = duplicate ? Mode.Duplicate : Mode.Edit;
             _worklistRef = entityRef;
         }
 
@@ -107,7 +118,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     GetWorklistEditFormDataResponse formDataResponse = service.GetWorklistEditFormData(new GetWorklistEditFormDataRequest());
 
                     List<ProcedureTypeGroupSummary> procedureTypeGroups = new List<ProcedureTypeGroupSummary>();
-                    if (_isNew)
+                    if (_mode == Mode.Add)
                     {
                         _worklistDetail = new WorklistAdminDetail();
                         _multiDetailComponent = new WorklistMultiDetailEditorComponent(formDataResponse.WorklistClasses);
@@ -115,10 +126,18 @@ namespace ClearCanvas.Ris.Client.Admin
                     }
                     else
                     {
+                        // load the existing worklist
                         LoadWorklistForEditResponse response =
                             service.LoadWorklistForEdit(new LoadWorklistForEditRequest(_worklistRef));
 
                         _worklistDetail = response.Detail;
+
+                        if(_mode == Mode.Duplicate)
+                        {
+                            _worklistDetail.EntityRef = null;
+                            _worklistDetail.Name = _worklistDetail.Name + " copy";
+                        }
+
                         _worklistRef = response.Detail.EntityRef;
                         _detailComponent = new WorklistDetailEditorComponent(_worklistDetail, false);
 
@@ -139,7 +158,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     _groupSubscribersComponent = new WorklistSubscriptionEditorComponent<StaffGroupSummary, StaffGroupTable>(
                         formDataResponse.StaffGroupChoices, _worklistDetail.GroupSubscribers, delegate(StaffGroupSummary s) { return s.StaffGroupRef; });
                 });
-            this.Pages.Add(new NavigatorPage("Worklist", _isNew ? (IApplicationComponent)_multiDetailComponent : (IApplicationComponent)_detailComponent));
+            this.Pages.Add(new NavigatorPage("Worklist", _mode == Mode.Add ? (IApplicationComponent)_multiDetailComponent : (IApplicationComponent)_detailComponent));
             this.Pages.Add(new NavigatorPage("Worklist/Filters", _filterComponent));
             
             // add the time filter page, if the class supports it (or if the class is not known, in the case of an add)
@@ -197,7 +216,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 try
                 {
-                    if (_isNew)
+                    if (_mode == Mode.Add || _mode == Mode.Duplicate)
                     {
                         AddWorklists();
                     }
@@ -230,15 +249,24 @@ namespace ClearCanvas.Ris.Client.Admin
             Platform.GetService<IWorklistAdminService>(
                 delegate(IWorklistAdminService service)
                 {
-                    foreach (WorklistMultiDetailEditorComponent.WorklistTableEntry entry in _multiDetailComponent.WorklistsToCreate)
+                    if(_mode == Mode.Add)
                     {
-                        _worklistDetail.Name = entry.Name;
-                        _worklistDetail.Description = entry.Description;
-                        _worklistDetail.WorklistClass = entry.Class;
+                        foreach (WorklistMultiDetailEditorComponent.WorklistTableEntry entry in _multiDetailComponent.WorklistsToCreate)
+                        {
+                            _worklistDetail.Name = entry.Name;
+                            _worklistDetail.Description = entry.Description;
+                            _worklistDetail.WorklistClass = entry.Class;
 
+                            AddWorklistResponse response = service.AddWorklist(new AddWorklistRequest(_worklistDetail));
+                            _editedWorklistSummaries.Add(response.WorklistAdminSummary);
+                        }
+                    }
+                    else if(_mode == Mode.Duplicate)
+                    {
                         AddWorklistResponse response = service.AddWorklist(new AddWorklistRequest(_worklistDetail));
                         _editedWorklistSummaries.Add(response.WorklistAdminSummary);
                     }
+
                 });
         }
 

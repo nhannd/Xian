@@ -354,6 +354,9 @@
   <data name="TitleDiagnosticServices" xml:space="preserve">
     <value>Diagnostic Services</value>
   </data>
+  <data name="TitleDuplicate" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
   <data name="TitleEditProtocolGroup" xml:space="preserve">
     <value>Edit Protocol Group</value>
   </data>

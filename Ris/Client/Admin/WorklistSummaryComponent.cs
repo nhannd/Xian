@@ -58,6 +58,7 @@ namespace ClearCanvas.Ris.Client.Admin
         private WorklistAdminSummaryTable _worklistAdminSummaryTable;
 
         private CrudActionModel _worklistActionModel;
+        private readonly object _duplicateWorklistActionKey = new object();
 
         private IPagingController<WorklistAdminSummary> _pagingController;
 
@@ -70,6 +71,9 @@ namespace ClearCanvas.Ris.Client.Admin
             _worklistActionModel.Add.SetClickHandler(AddWorklist);
             _worklistActionModel.Edit.SetClickHandler(UpdateWorklist);
             _worklistActionModel.Delete.SetClickHandler(DeleteWorklist);
+
+            //TODO: change the icon
+            _worklistActionModel.AddAction(_duplicateWorklistActionKey, SR.TitleDuplicate, "Icons.EditToolSmall.png", DuplicateWorklist);
 
             InitialisePaging(_worklistActionModel);
 
@@ -157,6 +161,30 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+        public void DuplicateWorklist()
+        {
+            try
+            {
+                if (_selectedWorklists.Count != 1) return;
+
+                WorklistAdminSummary worklist = CollectionUtils.FirstElement(_selectedWorklists);
+                WorklistEditorComponent editor = new WorklistEditorComponent(worklist.EntityRef, true);
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
+                    new DialogBoxCreationArgs(editor, SR.TitleAddWorklist, null, DialogSizeHint.Medium));
+
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    _worklistAdminSummaryTable.Items.AddRange(editor.EditedWorklistSummaries);
+                    _selectedWorklists = new List<WorklistAdminSummary>(editor.EditedWorklistSummaries);
+                    NotifyPropertyChanged("SelectedWorklist");
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+        }
+        
         public void UpdateWorklist()
         {
             try
@@ -164,7 +192,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 if (_selectedWorklists.Count != 1) return;
 
                 WorklistAdminSummary worklist = CollectionUtils.FirstElement(_selectedWorklists);
-                WorklistEditorComponent editor = new WorklistEditorComponent(worklist.EntityRef);
+                WorklistEditorComponent editor = new WorklistEditorComponent(worklist.EntityRef, false);
                 ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
                     new DialogBoxCreationArgs(editor, SR.TitleUpdateWorklist, null, DialogSizeHint.Medium));
 
@@ -224,6 +252,7 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             _worklistActionModel.Edit.Enabled = _selectedWorklists.Count == 1;
             _worklistActionModel.Delete.Enabled = _selectedWorklists.Count > 0;
+            _worklistActionModel[_duplicateWorklistActionKey].Enabled = _selectedWorklists.Count == 1;
         }
 
     }

@@ -47,6 +47,26 @@ namespace ClearCanvas.Desktop.Actions
     public class CrudActionModel : SimpleActionModel
     {
         /// <summary>
+        /// Resource key for the "Add" icon.
+        /// </summary>
+        public const string IconAddResource = "Icons.AddToolSmall.png";
+
+        /// <summary>
+        /// Resource key for the "Edit" icon.
+        /// </summary>
+        public const string IconEditResource = "Icons.EditToolSmall.png";
+
+        /// <summary>
+        /// Resource key for the "Delete" icon.
+        /// </summary>
+        public const string IconDeleteResource = "Icons.DeleteToolSmall.png";
+
+        private static readonly object AddKey = new object();
+        private static readonly object EditKey = new object();
+        private static readonly object DeleteKey = new object();
+
+
+        /// <summary>
         /// Constructor that creates an instance with Add, Edit and Delete actions.
         /// </summary>
         public CrudActionModel()
@@ -65,15 +85,15 @@ namespace ClearCanvas.Desktop.Actions
         {
             if (add)
             {
-				this.AddAction("Add", SR.TitleAdd, "Icons.AddToolSmall.png");
+                this.AddAction(AddKey, SR.TitleAdd, IconAddResource);
             }
             if (edit)
             {
-				this.AddAction("Edit", SR.TitleEdit, "Icons.EditToolSmall.png");
+                this.AddAction(EditKey, SR.TitleEdit, IconEditResource);
             }
             if (delete)
             {
-				this.AddAction("Delete", SR.TitleDelete, "Icons.DeleteToolSmall.png");
+                this.AddAction(DeleteKey, SR.TitleDelete, IconDeleteResource);
             }
         }
 
@@ -82,7 +102,7 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         public ClickAction Add
         {
-            get { return this["Add"]; }
+            get { return this[AddKey]; }
         }
 
         /// <summary>
@@ -90,7 +110,7 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         public ClickAction Edit
         {
-            get { return this["Edit"]; }
+            get { return this[EditKey]; }
         }
 
         /// <summary>
@@ -98,7 +118,7 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         public ClickAction Delete
         {
-            get { return this["Delete"]; }
+            get { return this[DeleteKey]; }
         }
     }
 }
