@@ -83,6 +83,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _portable.DataBindings.Add("Items", _component, "PortableChoices", true, DataSourceUpdateMode.Never);
             _portable.DataBindings.Add("CheckedItems", _component, "SelectedPortabilities", true,
                                          DataSourceUpdateMode.OnPropertyChanged);
+
+            _procedureTypeGroupLabel.DataBindings.Add("Text", _component, "ProcedureTypeGroupClassName", true,
+                                                      DataSourceUpdateMode.Never);
         }
 
         private void OnItemsAddedOrRemoved(object sender, EventArgs args)

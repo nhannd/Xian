@@ -170,6 +170,11 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #region Presentation Model
 
+        public string ProcedureTypeGroupClassName
+        {
+            get { return _worklistDetail.WorklistClass.ProcedureTypeGroupClassDisplayName; }
+        }
+
         public ITable AvailableProcedureTypeGroups
         {
             get { return _availableProcedureTypeGroups; }

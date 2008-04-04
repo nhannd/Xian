@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._patientClass = new ClearCanvas.Desktop.View.WinForms.DropListPickerField();
             this._facilities = new ClearCanvas.Desktop.View.WinForms.DropListPickerField();
             this._procedureTypeGroupsSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
-            this.label1 = new System.Windows.Forms.Label();
+            this._procedureTypeGroupLabel = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel2.SuspendLayout();
@@ -132,20 +132,20 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._procedureTypeGroupsSelector.Size = new System.Drawing.Size(556, 254);
             this._procedureTypeGroupsSelector.TabIndex = 11;
             // 
-            // label1
+            // _procedureTypeGroupLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(93, 13);
-            this.label1.TabIndex = 12;
-            this.label1.Text = "Procedure Groups";
+            this._procedureTypeGroupLabel.AutoSize = true;
+            this._procedureTypeGroupLabel.Location = new System.Drawing.Point(3, 0);
+            this._procedureTypeGroupLabel.Name = "_procedureTypeGroupLabel";
+            this._procedureTypeGroupLabel.Size = new System.Drawing.Size(93, 13);
+            this._procedureTypeGroupLabel.TabIndex = 12;
+            this._procedureTypeGroupLabel.Text = "Procedure Groups";
             // 
             // panel2
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.panel2, 2);
             this.panel2.Controls.Add(this._procedureTypeGroupsSelector);
-            this.panel2.Controls.Add(this.label1);
+            this.panel2.Controls.Add(this._procedureTypeGroupLabel);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
@@ -195,7 +195,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.DropListPickerField _patientClass;
         private ClearCanvas.Desktop.View.WinForms.DropListPickerField _facilities;
         private ClearCanvas.Desktop.View.WinForms.ListItemSelector _procedureTypeGroupsSelector;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label _procedureTypeGroupLabel;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     }

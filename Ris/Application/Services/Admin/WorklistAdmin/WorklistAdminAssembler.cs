@@ -40,6 +40,7 @@ using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using ClearCanvas.Ris.Application.Services.Admin.UserAdmin;
 using System;
 using Iesi.Collections.Generic;
+using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 {
@@ -47,12 +48,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
     {
         public WorklistClassSummary CreateClassSummary(Type worklistClass)
         {
+            Type ptgClass = Worklist.GetProcedureTypeGroupClass(worklistClass);
+
             return new WorklistClassSummary(
                 Worklist.GetClassName(worklistClass),
                 Worklist.GetDisplayName(worklistClass),
                 Worklist.GetCategory(worklistClass),
                 Worklist.GetDescription(worklistClass),
-                Worklist.GetProcedureTypeGroupClass(worklistClass).Name,
+                ptgClass.Name,
+                TerminologyTranslator.Translate(ptgClass),
                 Worklist.GetSupportsTimeFilter(worklistClass));
         }
 

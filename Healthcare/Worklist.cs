@@ -111,8 +111,8 @@ namespace ClearCanvas.Healthcare
 
         /// <summary>
         /// Gets the display name for the specified worklist class, obtained either from
-        /// the <see cref="WorklistClassDisplayNameAttribute"/>, otherwise by attempting
-        /// to localize the class name (<see cref="GetClassName"/>) of the worklist.
+        /// the <see cref="WorklistClassDisplayNameAttribute"/>, otherwise via the
+        /// <see cref="TerminologyTranslator"/> class.
         /// </summary>
         /// <param name="worklistClass"></param>
         /// <returns></returns>
@@ -121,10 +121,13 @@ namespace ClearCanvas.Healthcare
             WorklistClassDisplayNameAttribute a =
                AttributeUtils.GetAttribute<WorklistClassDisplayNameAttribute>(worklistClass, true);
 
-            string displayName = (a != null) ? a.DisplayName : GetClassName(worklistClass);
-
-            ResourceResolver resolver = new ResourceResolver(worklistClass.Assembly);
-            return resolver.LocalizeString(displayName);
+            if (a != null)
+            {
+                ResourceResolver resolver = new ResourceResolver(worklistClass.Assembly);
+                return resolver.LocalizeString(a.DisplayName);
+            }
+            else
+                return TerminologyTranslator.Translate(worklistClass);
         }
 
         /// <summary>
