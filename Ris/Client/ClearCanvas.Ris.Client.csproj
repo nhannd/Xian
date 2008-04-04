@@ -52,6 +52,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>BiographyDemographicComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="CoreServiceProvider.cs" />
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointSummaryComponent.cs" />
@@ -186,7 +187,7 @@
     <Compile Include="PagingController.cs" />
     <Compile Include="Formatting\PersonNameFormat.cs" />
     <Compile Include="DHtmlComponent.cs" />
-    <Compile Include="RemoteServiceProvider.cs" />
+    <Compile Include="RisServiceProvider.cs" />
     <Compile Include="SessionManager.cs" />
     <Compile Include="Formatting\TelephoneFormat.cs" />
     <Compile Include="StaffDetailsEditorComponent.cs" />

@@ -36,6 +36,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin
     /// <summary>
     /// Provides operations to administer protocol codes and protocol groups
     /// </summary>
+    [RisServiceProvider]
     [ServiceContract]
     public interface IProtocolAdminService
     {

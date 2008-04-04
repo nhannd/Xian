@@ -34,6 +34,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
 {
+    [RisServiceProvider]
     [ServiceContract]
     public interface IVisitAdminService
     {

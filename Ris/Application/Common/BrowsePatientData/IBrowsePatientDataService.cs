@@ -33,6 +33,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
+    [RisServiceProvider]
     [ServiceContract]
     public interface IBrowsePatientDataService
     {

@@ -54,6 +54,7 @@
     <Compile Include="Admin\WorklistAdmin\DeleteWorklistRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\DeleteWorklistResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistClassSummary.cs" />
+    <Compile Include="RisServiceProviderAttribute.cs" />
     <Compile Include="StaffGroupDetail.cs" />
     <Compile Include="StaffGroupSummary.cs" />
     <Compile Include="Admin\StaffGroupAdmin\UpdateStaffGroupRequest.cs" />

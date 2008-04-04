@@ -39,6 +39,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
     /// <summary>
     /// Provides operations to administer staffs
     /// </summary>
+    [RisServiceProvider]
     [ServiceContract]
     public interface IExternalPractitionerAdminService
     {

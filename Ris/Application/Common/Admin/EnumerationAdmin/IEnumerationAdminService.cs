@@ -36,6 +36,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin
 {
+    [RisServiceProvider]
     [ServiceContract]
     public interface IEnumerationAdminService
     {

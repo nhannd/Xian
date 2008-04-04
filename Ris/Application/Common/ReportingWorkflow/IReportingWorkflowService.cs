@@ -34,6 +34,7 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
+    [RisServiceProvider]
     [ServiceContract]
     public interface IReportingWorkflowService
     {

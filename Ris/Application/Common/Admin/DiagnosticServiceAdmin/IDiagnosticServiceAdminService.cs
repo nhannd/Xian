@@ -34,6 +34,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin
 {
+    [RisServiceProvider]
     [ServiceContract]
     public interface IDiagnosticServiceAdminService
     {

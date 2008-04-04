@@ -38,6 +38,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     /// <summary>
     /// Provides operations to administer user accounts and authority groups
     /// </summary>
+    [RisServiceProvider]
     [ServiceContract]
     public interface IUserAdminService
     {

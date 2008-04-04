@@ -41,6 +41,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     /// <summary>
     /// Provides services for entering orders into the system, and modifying existing orders.
     /// </summary>
+    [RisServiceProvider]
     [ServiceContract]
     public interface IOrderEntryService
     {

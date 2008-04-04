@@ -37,6 +37,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
     /// <summary>
     /// Provides operations to administer staffs
     /// </summary>
+    [RisServiceProvider]
     [ServiceContract]
     [ServiceKnownType(typeof(StaffTextQueryRequest))]
     public interface IStaffAdminService

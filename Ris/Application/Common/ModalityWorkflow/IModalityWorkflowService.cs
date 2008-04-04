@@ -33,6 +33,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
+    [RisServiceProvider]
     [ServiceContract]
     public interface IModalityWorkflowService
     {

@@ -144,6 +144,7 @@ namespace ClearCanvas.Enterprise.Common
     /// <summary>
     /// Defines a service for saving/retrieving configuration data to/from a persistent store.
     /// </summary>
+    [CoreServiceProvider]
     [ServiceContract]
     public interface IConfigurationService : ICoreServiceLayer
     {

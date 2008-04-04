@@ -38,6 +38,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     /// Provides registration workflow related operations, including retrieving registration worklist, worklist preview, 
     /// patient search, cancel orders and check-in patients
     /// </summary>
+    [RisServiceProvider]
     [ServiceContract]
     public interface IRegistrationWorkflowService
     {

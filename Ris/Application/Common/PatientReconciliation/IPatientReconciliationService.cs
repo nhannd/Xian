@@ -37,6 +37,7 @@ namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
     /// <summary>
     /// Provides patient reconcilliation services
     /// </summary>
+    [RisServiceProvider]
     [ServiceContract]
     public interface IPatientReconciliationService
     {

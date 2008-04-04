@@ -37,6 +37,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin
     /// <summary>
     /// Provides operations to administer modaltiies
     /// </summary>
+    [RisServiceProvider]
     [ServiceContract]
     public interface IModalityAdminService
     {

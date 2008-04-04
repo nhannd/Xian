@@ -33,6 +33,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
+    [RisServiceProvider]
     [ServiceContract]
     public interface IProtocollingWorkflowService
     {

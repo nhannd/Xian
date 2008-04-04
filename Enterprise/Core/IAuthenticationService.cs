@@ -45,6 +45,7 @@ namespace ClearCanvas.Enterprise.Core
     /// <remarks>
     /// This service cannot itself be protected, because it is used to provide protection to other services.
     /// </remarks>
+    [CoreServiceProvider]
     [ServiceContract]
     public interface IAuthenticationService
     {

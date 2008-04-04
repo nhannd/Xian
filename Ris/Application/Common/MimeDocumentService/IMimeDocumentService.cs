@@ -33,6 +33,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.MimeDocumentService
 {
+    [RisServiceProvider]
     [ServiceContract]
     public interface IMimeDocumentService
     {

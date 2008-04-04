@@ -36,6 +36,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Enterprise.Common
 {
+    [CoreServiceProvider]
     [ServiceContract]
     [Authentication(false)]
     public interface ITimeService : ICoreServiceLayer
