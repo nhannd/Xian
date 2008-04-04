@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 
@@ -39,7 +36,7 @@ namespace ClearCanvas.ImageServer.Common
 {
     public class FilesystemSelector
     {
-        private FilesystemMonitor _monitor;
+        private readonly FilesystemMonitor _monitor;
 
         public FilesystemSelector(FilesystemMonitor monitor)
         {
@@ -64,6 +61,9 @@ namespace ClearCanvas.ImageServer.Common
             }
 
             if (selectedFilesystem == null)
+                return null;
+
+            if (selectedFilesystem.FreeBytes < 1024.0 * 1024.0 * 1024.0)
                 return null;
 
             return selectedFilesystem.Filesystem;
