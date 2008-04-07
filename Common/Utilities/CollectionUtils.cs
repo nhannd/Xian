@@ -903,14 +903,23 @@ namespace ClearCanvas.Common.Utilities
         {
             Dictionary<T, T> set = new Dictionary<T, T>();
             List<T> result = new List<T>();
+            bool resultContainsNull = false;
             foreach(T item in target)
             {
+                // handle null item as a special case, because cannot insert it as a key into the hash table
+                if(item == null)
+                {
+                    if(!resultContainsNull) result.Add(item);
+                    resultContainsNull = true;
+                }
+                else
                 if (!set.ContainsKey(item))
                 {
                     set.Add(item, item);
                     result.Add(item);
                 }
             }
+
             return result;
         }
 
@@ -925,9 +934,16 @@ namespace ClearCanvas.Common.Utilities
         {
             Hashtable set = new Hashtable();
             ArrayList result = new ArrayList();
+            bool resultContainsNull = false;
             foreach (object item in target)
             {
-                if (!set.ContainsKey(item))
+                // handle null item as a special case, because cannot insert it as a key into the hash table
+                if (item == null)
+                {
+                    if (!resultContainsNull) result.Add(item);
+                    resultContainsNull = true;
+                }
+                else if (!set.ContainsKey(item))
                 {
                     set.Add(item, item);
                     result.Add(item);
