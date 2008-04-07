@@ -55,6 +55,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 WorklistFactory.Instance.ListWorklistClasses(true),
                 delegate(Type t) { return Worklist.GetCategory(t); });
 
+            // in case some worklist classes did not have assigned categories
+            CollectionUtils.Remove(categories, delegate (string s) { return s == null;} );
+
             return new ListWorklistCategoriesResponse(CollectionUtils.Unique(categories));
         }
 

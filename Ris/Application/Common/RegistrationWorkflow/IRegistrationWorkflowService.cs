@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     /// </summary>
     [RisServiceProvider]
     [ServiceContract]
-    public interface IRegistrationWorkflowService
+    public interface IRegistrationWorkflowService : IWorklistService<RegistrationWorklistItem>
     {
         /// <summary>
         /// Search for registration worklist item
@@ -68,13 +68,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 
         [OperationContract]
         ListWorklistsResponse ListWorklists(ListWorklistsRequest request);
-
-        /// <summary>
-        /// Get items for a worklist
-        /// </summary>
-        /// <param name="request"><see cref="QueryWorklistRequest"/></param>
-        [OperationContract]
-        QueryWorklistResponse<RegistrationWorklistItem> QueryWorklist(QueryWorklistRequest request);
 
         /// <summary>
         /// Get enablements for operations that can be applied to a worklist item

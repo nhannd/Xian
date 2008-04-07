@@ -36,7 +36,8 @@
 
   <ItemGroup>
     <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\ScintillaNet.dll" />
-    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer.dll" />
+    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer32.dll" />
+    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer64.dll" />
   </ItemGroup>
 
   <ItemGroup>
