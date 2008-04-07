@@ -273,7 +273,6 @@ function groupDataToOrders(listData)
 
 function createReportPreview(element, report)
 {
-	alert(JSML.create(report, "report"));
 	if (element == null || report == null || report.Parts == null || report.Parts.length == 0)
 		return "";
 
