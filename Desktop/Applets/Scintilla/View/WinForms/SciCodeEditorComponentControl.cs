@@ -48,6 +48,10 @@ namespace ClearCanvas.Desktop.Applets.Scintilla.View.WinForms
     /// </summary>
     public partial class SciCodeEditorComponentControl : ApplicationComponentUserControl
     {
+        private const string NativeDll32Bit = "SciLexer32.dll";
+        private const string NativeDll64Bit = "SciLexer64.dll";
+
+
         private SciCodeEditorComponent _component;
         private ScintillaNet.Scintilla _scintilla;
 
@@ -66,7 +70,18 @@ namespace ClearCanvas.Desktop.Applets.Scintilla.View.WinForms
             // Scintilla control does not seem to get along with the designer very well,
             // so do everything manually
             // when creating the control, need to specify the full path to the native DLL, otherwise it will not find it
-            _scintilla = new ScintillaNet.Scintilla(System.IO.Path.Combine(Platform.CommonDirectory, ScintillaNet.Scintilla.DefaultDllName));
+            // also need to decide whether to load 32-bit or 64-bit
+            if(IntPtr.Size == 8)
+            {
+                // 64 bit
+                _scintilla = new ScintillaNet.Scintilla(System.IO.Path.Combine(Platform.CommonDirectory, NativeDll64Bit));
+            }
+            else
+            {   
+                // 32 bit
+                _scintilla = new ScintillaNet.Scintilla(System.IO.Path.Combine(Platform.CommonDirectory, NativeDll32Bit));
+            }
+
             _scintilla.Dock = DockStyle.Fill;
             this.Controls.Add(_scintilla);
 
