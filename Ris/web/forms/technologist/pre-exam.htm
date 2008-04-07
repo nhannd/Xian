@@ -115,7 +115,7 @@
 							choices: [ "mmol/L", "mg/DL" ],
 							getValue: function(item) { return item.bloodGlucoseLevelUnit; },
 							setValue: function(item, value) { item.bloodGlucoseLevelUnit = value; },
-							getError: function(item) { return bloodGlucoseLevel ? "Value Required" : null; }
+							getError: function(item) { return item.bloodGlucoseLevel ? "Value Required" : null; }
 						}
 					]);
 				bloodGlucosLevelTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
