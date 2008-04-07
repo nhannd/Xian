@@ -273,6 +273,7 @@ function groupDataToOrders(listData)
 
 function createReportPreview(element, report)
 {
+	alert(JSML.create(report, "report"));
 	if (element == null || report == null || report.Parts == null || report.Parts.length == 0)
 		return "";
 
@@ -283,7 +284,7 @@ function createReportPreview(element, report)
 		for (var i = report.Parts.length-1; i > 0; i--)
 		{
 			var addendumPart = report.Parts[i];
-			var addendumContent = addendumPart && addendumPart.Content ? addendumPart.Content : "";
+			var addendumContent = addendumPart && addendumPart.ExtendedProperties.ReportContent ? addendumPart.ExtendedProperties.ReportContent : "";
 			
 			if (addendumContent)
 			{
@@ -315,7 +316,8 @@ function createReportPreview(element, report)
 	var mainReportText = "";
 	try
 	{
-		var mainReport = JSML.parse(report.Parts[0].Content);
+		var mainReport = JSML.parse(report.Parts[0].ExtendedProperties.ReportContent);
+
 		// depending on how the report was captured, it may contain an Impression and Finding section (Default RIS report editor)
 		if(mainReport.Impression || mainReport.Finding)
 		{
@@ -330,7 +332,7 @@ function createReportPreview(element, report)
 	catch(e)
 	{
 		// the Content was not JSML, but just plain text
-		mainReportText = report.Parts[0].Content;
+		mainReportText = report.Parts[0].ExtendedProperties.ReportContent;
 		if (mainReportText == null)
 			mainReportText = "None";
 	}
