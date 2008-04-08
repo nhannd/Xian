@@ -29,6 +29,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
         private readonly static int _defaultBatchSize = 20;
         private readonly int _batchSize;
 
+        private object[] _publicationStepProcessors;
 
         public Publisher(int sleepDuration, int batchSize)
         {
@@ -47,7 +48,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
         public void Start()
         {
-            object[] processors = new PublicationStepProcessorExtensionPoint().CreateExtensions();
+            _publicationStepProcessors = new PublicationStepProcessorExtensionPoint().CreateExtensions();
 
             while (_shouldStop == false)
             {
@@ -65,11 +66,6 @@ namespace ClearCanvas.Ris.Shreds.Publication
                 foreach (PublicationStep publicationStep in publicationSteps)
                 {
                     CompletePublicationStep(publicationStep);
-
-                    foreach (IPublicationStepProcessor processor in processors)
-                    {
-                        processor.Process(publicationStep);
-                    }
                 }
             }
         }
@@ -124,6 +120,12 @@ namespace ClearCanvas.Ris.Shreds.Publication
                 try
                 {
                     PersistenceScope.Current.Lock(publicationStep);
+
+                    foreach (IPublicationStepProcessor processor in _publicationStepProcessors)
+                    {
+                        processor.Process(publicationStep);
+                    }
+
                     publicationStep.Complete(publicationStep.AssignedStaff);
                 }
                 catch (Exception e)
