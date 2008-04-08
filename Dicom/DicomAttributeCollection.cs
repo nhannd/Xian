@@ -125,6 +125,7 @@ namespace ClearCanvas.Dicom
                       (!(attrib is DicomAttributeOB)
                     && !(attrib is DicomAttributeOW)
                     && !(attrib is DicomAttributeOF)
+                    && !(attrib is DicomFragmentSequence)
                     && !(attrib is DicomAttributeUN)))
                 {
                     this[attrib.Tag] = attrib.Copy();

@@ -45,6 +45,7 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg
             DicomJpegParameters parms = new DicomJpegParameters();
 
             parms.Quality = 70;
+            parms.ConvertColorspaceToRGB = true;
 
             return parms;
         }

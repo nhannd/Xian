@@ -436,24 +436,15 @@ void JPEGCODEC::Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompressed
 	if (jpeg_read_header(&dinfo, TRUE) == JPEG_SUSPENDED)
 		throw gcnew DicomCodecException(gcnew String("Unable to decompress JPEG. Reason: Suspended"));
 
-	if (dinfo.output_components > 1 && params->ConvertColorspaceToRGB) {
-		if ((dinfo.out_color_space == JCS_YCbCr || dinfo.out_color_space == JCS_RGB) && oldPixelData->IsSigned)
-			throw gcnew DicomCodecException("JPEG codec unable to perform colorspace conversion on signed pixel data");
+    if (params->ConvertColorspaceToRGB) {
+        if (dinfo.out_color_space == JCS_YCbCr || dinfo.out_color_space == JCS_RGB)
+        {
+            if (oldPixelData->IsSigned)
+			    throw gcnew DicomCodecException(gcnew String("JPEG codec unable to perform colorspace conversion on signed pixel data"));
 
-		if (dinfo.out_color_space == JCS_YCbCr) {
-			dinfo.jpeg_color_space = JCS_YCbCr;
-			dinfo.out_color_space = JCS_RGB;
+    		dinfo.jpeg_color_space = JCS_YCbCr;
+		    dinfo.out_color_space = JCS_RGB;
 		}
-		else if (dinfo.out_color_space == JCS_RGB) {
-			dinfo.jpeg_color_space = JCS_YCbCr;
-		}
-		else {
-			dinfo.jpeg_color_space = JCS_UNKNOWN;
-			dinfo.out_color_space = JCS_UNKNOWN;
-		}
-	} else {
-		dinfo.jpeg_color_space = JCS_UNKNOWN;
-		dinfo.out_color_space = JCS_UNKNOWN;
 	}
 
 	jpeg_calc_output_dimensions(&dinfo);
