@@ -9,6 +9,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     [DataContract]
     public class WorklistClassSummary : DataContractBase
     {
+        /// <summary>
+        /// No-args constructor required by Oto scripts.
+        /// </summary>
+        public WorklistClassSummary()
+        {
+        }
+
         public WorklistClassSummary(string className, string displayName, string categoryName, string description,
             string procedureTypeGroupClassName, string procedureTypeGroupClassDisplayName, bool supportsTimeWindow)
         {

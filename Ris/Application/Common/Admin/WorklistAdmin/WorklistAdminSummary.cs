@@ -37,6 +37,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     [DataContract]
     public class WorklistAdminSummary : DataContractBase
     {
+        /// <summary>
+        /// No-args constructor needed by Oto scripts.
+        /// </summary>
+        public WorklistAdminSummary()
+        {
+        }
+
         public WorklistAdminSummary(EntityRef entityRef, string name, string description, WorklistClassSummary worklistClass)
         {
             EntityRef = entityRef;
