@@ -32,9 +32,9 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
@@ -47,13 +47,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// composed of a text label and a line that extends from the label
 	/// to some user defined point in the scene.
 	/// </remarks>
+	[Cloneable]
 	public class CalloutGraphic 
 		: StandardStatefulCompositeGraphic, IMemorable
 	{
 		#region Private fields
 
+		[CloneIgnore]
 		private InvariantTextPrimitive _textGraphic;
+		[CloneIgnore]
 		private LinePrimitive _lineGraphic;
+
+		[CloneCopyReference]
 		private CursorToken _moveToken;
 
 		#endregion
@@ -63,9 +68,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public CalloutGraphic()
         {
-			BuildGraphic();
-			base.State = new InactiveGraphicState(this);
-			_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
+			Initialize();
+		}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected CalloutGraphic(CalloutGraphic source, ICloningContext context)
+		{
+			context.CloneFields(source, this);
 		}
 
 		/// <summary>
@@ -217,15 +228,42 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return null;
 		}
 
-		private void BuildGraphic()
+		private void Initialize()
 		{
-			_textGraphic = new InvariantTextPrimitive();
-			this.Graphics.Add(_textGraphic);
+			if (_textGraphic == null)
+			{
+				_textGraphic = new InvariantTextPrimitive();
+				this.Graphics.Add(_textGraphic);
+			}
+			
 			_textGraphic.BoundingBoxChanged += new EventHandler<RectangleChangedEventArgs>(OnTextBoundingBoxChanged);
 
-			_lineGraphic = new LinePrimitive();
-			this.Graphics.Add(_lineGraphic);
-			_lineGraphic.LineStyle = LineStyle.Dash;
+			if (_lineGraphic == null)
+			{
+				_lineGraphic = new LinePrimitive();
+				this.Graphics.Add(_lineGraphic);
+				_lineGraphic.LineStyle = LineStyle.Dash;
+			}
+
+			base.State = new InactiveGraphicState(this);
+
+			if (_moveToken == null)
+				_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
+		}
+
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			_textGraphic = CollectionUtils.SelectFirst(base.Graphics,
+				delegate(IGraphic test) { return test is InvariantTextPrimitive; }) as InvariantTextPrimitive;
+
+			_lineGraphic = CollectionUtils.SelectFirst(base.Graphics,
+				delegate(IGraphic test) { return test is LinePrimitive; }) as LinePrimitive;
+
+			Platform.CheckForNullReference(_lineGraphic, "_lineGraphic");
+			Platform.CheckForNullReference(_textGraphic, "_textGraphic");
+
+			Initialize();
 		}
 
 		private void SetCalloutLineStart()

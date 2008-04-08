@@ -33,6 +33,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -43,6 +44,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// This <see cref="SpatialTransform"/> centers an image in a <see cref="Tile"/>
 	/// and provides <see cref="ScaleToFit"/> functionality.
 	/// </remarks>
+	[Cloneable]
 	public class ImageSpatialTransform : SpatialTransform, IImageSpatialTransform
 	{
 		#region Private Fields
@@ -92,6 +94,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_pixelAspectRatioX = pixelAspectRatioX;
 			_pixelAspectRatioY = pixelAspectRatioY;
 			_scaleToFit = true;
+		}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected ImageSpatialTransform(ImageSpatialTransform source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
 		}
 
 		/// <summary>

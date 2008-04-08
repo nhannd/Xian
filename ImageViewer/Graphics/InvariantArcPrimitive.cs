@@ -31,12 +31,14 @@
 
 using System;
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
 	/// An arc <see cref="InvariantPrimitive"/>.
 	/// </summary>
+	[Cloneable(true)]
 	public class InvariantArcPrimitive : InvariantBoundablePrimitive, IArcGraphic
 	{
 		private float _startAngle;

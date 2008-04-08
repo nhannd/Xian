@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Rendering;
@@ -64,6 +65,7 @@ namespace ClearCanvas.ImageViewer
 	/// A <see cref="PresentationImage"/> that encapsulates basic
 	/// 2D image functionality.
 	/// </summary>
+	[Cloneable]
 	public abstract class BasicPresentationImage :
 		PresentationImage, 
 		IImageGraphicProvider,
@@ -77,12 +79,23 @@ namespace ClearCanvas.ImageViewer
 		private static volatile IRendererFactory _rendererFactory;
 		private static volatile RendererFactoryInitializationException _rendererFactoryInitializationException;
 
+		[CloneIgnore]
 		private CompositeGraphic _compositeImageGraphic;
+		[CloneIgnore]
 		private ImageGraphic _imageGraphic;
+		[CloneIgnore]
 		private CompositeGraphic _overlayGraphics;
 		private IAnnotationLayoutProvider _annotationLayoutProvider;
 
 		#endregion
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected BasicPresentationImage(BasicPresentationImage source, ICloningContext context)
+		{
+			context.CloneFields(source, this);
+		}
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="BasicPresentationImage"/>.
@@ -300,10 +313,29 @@ namespace ClearCanvas.ImageViewer
 				pixelAspectRatioY);
 
 			_overlayGraphics = new CompositeGraphic();
+			_overlayGraphics.Name = "Overlay";
 
 			_compositeImageGraphic.Graphics.Add(_imageGraphic);
 			_compositeImageGraphic.Graphics.Add(_overlayGraphics);
 			this.SceneGraph.Graphics.Add(_compositeImageGraphic);
+		}
+
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			_compositeImageGraphic = CollectionUtils.SelectFirst(SceneGraph.Graphics,
+				delegate(IGraphic test) { return test is CompositeImageGraphic; }) as CompositeImageGraphic;
+
+			Platform.CheckForNullReference(_compositeImageGraphic, "_compositeImageGraphic");
+
+			_imageGraphic = CollectionUtils.SelectFirst(_compositeImageGraphic.Graphics,
+				delegate(IGraphic test) { return test is ImageGraphic; }) as ImageGraphic;
+
+			_overlayGraphics = CollectionUtils.SelectFirst(_compositeImageGraphic.Graphics,
+				delegate(IGraphic test) { return test.Name == "Overlay"; }) as CompositeGraphic;
+
+			Platform.CheckForNullReference(_imageGraphic, "_imageGraphic");
+			Platform.CheckForNullReference(_overlayGraphics, "_overlayGraphics");
 		}
 	}
 }

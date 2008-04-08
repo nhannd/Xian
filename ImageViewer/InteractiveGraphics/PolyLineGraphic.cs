@@ -46,14 +46,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// A polyline is specified by a series of <i>n</i> anchor points, which
 	/// are connected with a series of <i>n-1</i> line segments.
 	/// </remarks>
+	[Cloneable(true)]
 	public class PolyLineGraphic 
 		: CompositeGraphic, IMemorable
 	{
 		#region Private fields
 
 		private int _numberOfPoints = 0;
-		private event EventHandler<ListEventArgs<PointF>> _anchorPointChangedEvent;
 		private Color _color = Color.Yellow;
+		private event EventHandler<ListEventArgs<PointF>> _anchorPointChangedEvent;
 
 		#endregion
 

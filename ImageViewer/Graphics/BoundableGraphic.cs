@@ -45,11 +45,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// Rectangles and ellipses are examples of graphics that can be
 	/// described by a rectangular bounding box.
 	/// </remarks>
+	[Cloneable(true)]
 	public abstract class BoundableGraphic : VectorGraphic, IBoundableGraphic
 	{
 		private RectangleF _rectangle = new RectangleF(0,0,0,0);
 		private event EventHandler<PointChangedEventArgs> _topLeftChangedEvent;
 		private event EventHandler<PointChangedEventArgs> _bottomRightChangedEvent;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		protected BoundableGraphic()
+		{
+		}
 
 		/// <summary>
 		/// Gets or sets the top-left corner of the rectangle

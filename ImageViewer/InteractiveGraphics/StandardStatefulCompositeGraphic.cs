@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -41,6 +42,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// Factory methods can be overridden so that customized graphic states
 	/// can be created.
 	/// </remarks>
+	[Cloneable(true)]
 	public abstract class StandardStatefulCompositeGraphic 
 		: StatefulCompositeGraphic, IStandardStatefulGraphic
 	{

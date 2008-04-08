@@ -79,27 +79,45 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// An graphical object that can be rendered.
 	/// </summary>
+	[Cloneable(true)]
 	public abstract class Graphic : IGraphic
 	{
 		#region Private fields
 
+		[CloneIgnore]
 		private IGraphic _parentGraphic;
+		[CloneIgnore]
 		private IImageViewer _parentImageViewer;
+		[CloneIgnore]
 		private IPresentationImage _parentPresentationImage;
+		
+		private SpatialTransform _spatialTransform;
 
 		private string _name;
 		private bool _visible = true;
-		private SpatialTransform _spatialTransform;
-		private Stack<CoordinateSystem> _coordinateSystemStack = new Stack<CoordinateSystem>();
+		private Stack<CoordinateSystem> _coordinateSystemStack;
 		private event EventHandler _drawing;
 		#endregion
 
 		/// <summary>
-		/// 
+		/// Constructor.
 		/// </summary>
 		protected Graphic()
 		{
-			_coordinateSystemStack.Push(CoordinateSystem.Source);
+		}
+
+		private Stack<CoordinateSystem> CoordinateSystemStack
+		{
+			get
+			{
+				if (_coordinateSystemStack == null)
+				{
+					_coordinateSystemStack = new Stack<CoordinateSystem>();
+					_coordinateSystemStack.Push(CoordinateSystem.Source);
+				}
+
+				return _coordinateSystemStack;
+			}
 		}
 
 		/// <summary>
@@ -178,12 +196,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public virtual CoordinateSystem CoordinateSystem
 		{
-			get { return _coordinateSystemStack.Peek(); }
-			set
-			{
-				Platform.CheckForNullReference(value, "CoordinateSystem");
-				_coordinateSystemStack.Push(value);
-			}
+			get { return CoordinateSystemStack.Peek(); }
+			set { CoordinateSystemStack.Push(value); }
 		}
 
 		/// <summary>
@@ -237,10 +251,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public virtual void ResetCoordinateSystem()
 		{
-			if (_coordinateSystemStack.Count == 1)
+			if (CoordinateSystemStack.Count == 1)
 				return;
 
-			_coordinateSystemStack.Pop();
+			CoordinateSystemStack.Pop();
 		}
 
 		/// <summary>
@@ -257,8 +271,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public virtual void Draw()
 		{
-			Platform.CheckMemberIsSet(this.ParentPresentationImage, "PresentationImage");
-			this.ParentPresentationImage.Draw();
+			if (this.ParentPresentationImage != null)
+				this.ParentPresentationImage.Draw();
 		}
 
 		/// <summary>
@@ -268,6 +282,21 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public virtual void OnDrawing()
 		{
 			EventsHelper.Fire(_drawing, this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Creates a deep copy of the graphic.
+		/// </summary>
+		/// <remarks>
+		/// Graphic objects that are not cloneable may return null.
+		/// </remarks>
+		public IGraphic Clone()
+		{
+			IGraphic clone = CloneBuilder.Clone(this) as IGraphic;
+			if (clone != null && ImageViewer != null)
+				ImageViewer.EventBroker.OnCloneCreated(new CloneCreatedEventArgs(this, clone));
+			
+			return clone;
 		}
 
 		/// <summary>
@@ -318,5 +347,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		#endregion
+
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			if (_spatialTransform != null)
+				_spatialTransform.OwnerGraphic = this;
+		}
 	}
 }

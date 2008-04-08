@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
 
@@ -40,7 +41,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// A grayscale <see cref="ImageGraphic"/>.
 	/// </summary>
-	public class GrayscaleImageGraphic 
+	[Cloneable]
+	public class GrayscaleImageGraphic
 		: ImageGraphic, 
 		IModalityLutProvider, 
 		IVoiLutProvider, 
@@ -172,6 +174,23 @@ namespace ClearCanvas.ImageViewer.Graphics
 				pixelDataGetter)
 		{
 			Initialize(bitsStored, highBit, isSigned, rescaleSlope, rescaleIntercept, inverted);
+		}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected GrayscaleImageGraphic(GrayscaleImageGraphic source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
+
+			if (source.LutComposer.LutCollection.Count > 0) //modality lut is constant right now.
+				this.InitializeNecessaryLuts(Luts.Modality);
+
+			if (source.LutComposer.LutCollection.Count > 1) //clone the voi lut.
+				this.InstallVoiLut(source.VoiLut.Clone());
+
+			//color map has already been cloned.
 		}
 
 		#endregion

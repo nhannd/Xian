@@ -45,6 +45,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// rotation invariant.  That is, text always appears the same size irrespective of
 	/// the zoom, and <i>always</i> appears left to right irrespective of the rotation.
 	/// </remarks>
+	[Cloneable(true)]
 	public class InvariantTextPrimitive : InvariantPrimitive
 	{
 		private string _text;

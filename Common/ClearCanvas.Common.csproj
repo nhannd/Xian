@@ -224,6 +224,7 @@
     <Compile Include="UnknownServiceException.cs" />
     <Compile Include="Utilities\BackgroundTask.cs" />
     <Compile Include="Utilities\BlockingQueue.cs" />
+    <Compile Include="Utilities\CloneBuilder.cs" />
     <Compile Include="Utilities\CodeClock.cs" />
     <Compile Include="Utilities\CollectionSynchronizeHelper.cs" />
     <Compile Include="Utilities\CommandLine.cs" />
@@ -241,6 +242,7 @@
     <Compile Include="Utilities\StringDiff.cs" />
     <Compile Include="Utilities\BlockingThreadPool.cs" />
     <Compile Include="Utilities\StringUtilities.cs" />
+    <Compile Include="Utilities\Tests\CloningTests.cs" />
     <Compile Include="Utilities\Tests\CollectionUtilsTests.cs" />
     <Compile Include="Utilities\Tests\CommandLineTests.cs" />
     <Compile Include="Utilities\Tests\DateTimeUtilsTests.cs" />

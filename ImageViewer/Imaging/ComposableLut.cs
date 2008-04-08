@@ -31,7 +31,6 @@
 
 using System;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -39,6 +38,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// Abstract class providing base implementation for a Lut that can be added to a <see cref="LutCollection"/>.
 	/// </summary>
 	/// <seealso cref="IComposableLut"/>
+	[Cloneable(true)]
 	public abstract class ComposableLut : IComposableLut
 	{
 		#region Private Fields
@@ -165,5 +165,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Creates a deep-copy of the <see cref="IComposableLut"/>.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IComposableLut"/>s may return null from this method when appropriate.	
+		/// </remarks>
+		public IComposableLut Clone()
+		{
+			return CloneBuilder.Clone(this) as IComposableLut;
+		}
 	}
 }

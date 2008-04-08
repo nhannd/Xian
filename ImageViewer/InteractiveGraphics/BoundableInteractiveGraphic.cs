@@ -43,13 +43,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// An <see cref="InteractiveGraphic"/> that can be represented 
 	/// as a bounding rectangle.
 	/// </summary>
+	[Cloneable]
 	public abstract class BoundableInteractiveGraphic : InteractiveGraphic
 	{
 		private const int _topLeft = 0;
 		private const int _topRight = 1;
 		private const int _bottomLeft = 2;
 		private const int _bottomRight = 3;
+		
+		[CloneIgnore]
 		private BoundableGraphic _boundableGraphic;
+		[CloneCopyReference]
 		private CursorToken _moveToken;
 
 		private bool _settingControlPoints;
@@ -60,10 +64,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="userCreated"></param>
 		protected BoundableInteractiveGraphic(bool userCreated) : base(userCreated)
 		{
-			_settingControlPoints = false;
-			AddControlPoints();
+			Initialize();
+		}
 
-			_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected BoundableInteractiveGraphic(BoundableInteractiveGraphic source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
 		}
 
 		/// <summary>
@@ -165,18 +175,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private BoundableGraphic BoundableGraphic
 		{
-			get
-			{
-				if (_boundableGraphic == null)
-				{
-					_boundableGraphic = CreateBoundableGraphic();
-					base.Graphics.Add(_boundableGraphic);
-					_boundableGraphic.TopLeftChanged += new EventHandler<PointChangedEventArgs>(OnTopLeftChanged);
-					_boundableGraphic.BottomRightChanged += new EventHandler<PointChangedEventArgs>(OnBottomRightChanged);
-				}
-
-				return _boundableGraphic;
-			}
+			get { return _boundableGraphic; }
 		}
 
 		/// <summary>
@@ -359,11 +358,34 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return this.BoundableGraphic.HitTest(point);
 		}
 
-		private void AddControlPoints()
+		private void Initialize()
 		{
-			for (int i = 0; i < 4; i++)
+			for (int i = base.ControlPoints.Count; i < 4; i++)
 				base.ControlPoints.Add(new PointF(0, 0));
+
+			_settingControlPoints = false;
+
+			if (_moveToken == null)
+				_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
+
+			if (_boundableGraphic == null)
+			{
+				_boundableGraphic = CreateBoundableGraphic();
+				base.Graphics.Add(_boundableGraphic);
+			}
+
+			_boundableGraphic.TopLeftChanged += new EventHandler<PointChangedEventArgs>(OnTopLeftChanged);
+			_boundableGraphic.BottomRightChanged += new EventHandler<PointChangedEventArgs>(OnBottomRightChanged);
 		}
 
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			_boundableGraphic = CollectionUtils.SelectFirst(base.Graphics,
+				delegate(IGraphic test) { return test is BoundableGraphic; }) as BoundableGraphic;
+			
+			Platform.CheckForNullReference(_boundableGraphic, "_boundableGraphic");
+			Initialize();
+		}
 	}
 }

@@ -29,6 +29,7 @@
 
 #endregion
 
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 
@@ -37,6 +38,7 @@ namespace ClearCanvas.ImageViewer
 	/// <summary>
 	/// A colour <see cref="PresentationImage"/>.
 	/// </summary>
+	[Cloneable]
 	public class ColorPresentationImage : BasicPresentationImage
 	{
 		#region Private fields
@@ -49,6 +51,8 @@ namespace ClearCanvas.ImageViewer
 		private double _pixelSpacingY;
 		private double _pixelAspectRatioX;
 		private double _pixelAspectRatioY;
+
+		[CloneCopyReference]
 		private PixelDataGetter _pixelDataGetter;
 
 		private int _constructor;
@@ -108,6 +112,15 @@ namespace ClearCanvas.ImageViewer
 			_pixelAspectRatioX = pixelAspectRatioX;
 			_pixelAspectRatioY = pixelAspectRatioY;
 			_pixelDataGetter = pixelDataGetter;
+		}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected ColorPresentationImage(ColorPresentationImage source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
 		}
 
 		/// <summary>

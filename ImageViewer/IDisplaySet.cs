@@ -140,5 +140,13 @@ namespace ClearCanvas.ImageViewer
 		/// using the same construction parameters as the original.
 		/// </remarks>
 		IDisplaySet CreateFreshCopy();
+
+		/// <summary>
+		/// Creates a deep copy of the <see cref="IDisplaySet"/>.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IDisplaySet"/>s may not return null from this method.
+		/// </remarks>
+		IDisplaySet Clone();
 	}
 }

@@ -60,6 +60,8 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler<DisplaySetChangingEventArgs> _displaySetChanging;
 		private event EventHandler<DisplaySetChangedEventArgs> _displaySetChanged;
 
+		private event EventHandler<CloneCreatedEventArgs> _cloneCreated;
+
 		#endregion
 
 		/// <summary>
@@ -224,6 +226,21 @@ namespace ClearCanvas.ImageViewer
 		internal void OnDisplaySetChanged(DisplaySetChangedEventArgs args)
 		{
 			EventsHelper.Fire(_displaySetChanged, this, args);
+		}
+
+		/// <summary>
+		/// Fires when objects are cloned; only certain objects
+		/// publish the fact that they have been cloned.
+		/// </summary>
+		public event EventHandler<CloneCreatedEventArgs> CloneCreated
+		{
+			add { _cloneCreated += value; }
+			remove { _cloneCreated -= value; }
+		}
+
+		internal void OnCloneCreated(CloneCreatedEventArgs args)
+		{
+			EventsHelper.Fire(_cloneCreated, this, args);
 		}
 	}
 }

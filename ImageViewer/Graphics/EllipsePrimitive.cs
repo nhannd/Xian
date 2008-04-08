@@ -31,6 +31,7 @@
 
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
@@ -38,6 +39,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// A primitive ellipse graphic.
 	/// </summary>
+	[Cloneable(true)]
 	public class EllipsePrimitive : BoundableGraphic
 	{
 		/// <summary>

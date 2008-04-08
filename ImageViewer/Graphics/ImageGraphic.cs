@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
 
@@ -59,6 +60,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// 
 	/// An <see cref="ImageGraphic"/> is always a leaf in the scene graph.
 	/// </remarks>
+	[Cloneable]
 	public abstract class ImageGraphic : Graphic
 	{
 		#region Private fields
@@ -67,7 +69,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private int _columns;
 		private int _bitsPerPixel;
 
+		[CloneCopyReference]
 		private byte[] _pixelDataRaw;
+		[CloneCopyReference]
 		private PixelDataGetter _pixelDataGetter;
 		private PixelData _pixelDataWrapper;
 
@@ -148,6 +152,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 			Initialize(rows, columns, bitsPerPixel);
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected ImageGraphic(ImageGraphic source, ICloningContext context)
+		{
+			context.CloneFields(source, this);
+			SetValidationPolicy();
+		}
+
 		private void Initialize(int rows, int columns, int bitsPerPixel)
 		{
 			DicomValidator.ValidateRows(rows);
@@ -156,10 +169,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_rows = rows;
 			_columns = columns;
 			_bitsPerPixel = bitsPerPixel;
-
-			this.SpatialTransform.ValidationPolicy = new ImageTransformPolicy();
+			SetValidationPolicy();
 		}
 
+		private void SetValidationPolicy()
+		{
+			if (this.SpatialTransform.ValidationPolicy is ImageTransformPolicy)
+				return;
+			
+			this.SpatialTransform.ValidationPolicy = new ImageTransformPolicy();
+		}
 
 		#endregion
 

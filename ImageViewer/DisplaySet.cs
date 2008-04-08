@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -40,21 +39,27 @@ namespace ClearCanvas.ImageViewer
 	/// <summary>
 	/// A container for <see cref="IPresentationImage"/> objects.
 	/// </summary>
+	[Cloneable(true)]
 	public class DisplaySet : IDisplaySet
 	{
 		#region Private Fields
 
-		private PresentationImageCollection _presentationImages;
+		[CloneIgnore]
 		private IImageViewer _imageViewer;
+		//[CloneCopyReference]
+		[CloneIgnore]
 		private ImageSet _parentImageSet;
+		[CloneIgnore]
 		private ImageBox _imageBox;
-
+		[CloneIgnore]
 		private bool _selected = false;
+		[CloneIgnore]
 		private bool _linked = false;
 		private string _name;
 		private string _uid;
 		private event EventHandler _drawing;
-
+		private PresentationImageCollection _presentationImages;
+		
 		#endregion
 
 		/// <summary>
@@ -73,7 +78,6 @@ namespace ClearCanvas.ImageViewer
 		{
 			_name = name ?? "";
 			_uid = uid ?? "";
-			this.PresentationImages.ItemAdded += new EventHandler<ListEventArgs<IPresentationImage>>(OnPresentationImageAdded);
 		}
 
 		#region Properties
@@ -87,7 +91,10 @@ namespace ClearCanvas.ImageViewer
 			get 
 			{
 				if (_presentationImages == null)
+				{
 					_presentationImages = new PresentationImageCollection();
+					_presentationImages.ItemAdded += OnPresentationImageAdded;
+				}
 
 				return _presentationImages; 
 			}
@@ -270,7 +277,7 @@ namespace ClearCanvas.ImageViewer
 			foreach (PresentationImage image in this.PresentationImages)
 				image.Dispose();
 
-			_presentationImages.ItemAdded -= new EventHandler<ListEventArgs<IPresentationImage>>(OnPresentationImageAdded);
+			_presentationImages.ItemAdded -= OnPresentationImageAdded;
 			_presentationImages = null;
 		}
 
@@ -293,6 +300,32 @@ namespace ClearCanvas.ImageViewer
 				((ImageSet)ParentImageSet).AddCopy(displaySet);
 
 			return displaySet;
+		}
+
+		/// <summary>
+		/// Creates a deep copy of the <see cref="IDisplaySet"/>.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IDisplaySet"/>s may not return null from this method.
+		/// </remarks>
+		public IDisplaySet Clone()
+		{
+			// TODO: although there are unit tests for cloning, 
+			// we need to write extensive unit tests for cloning of 
+			// DisplaySets/PresentationImages/Graphics so we will know
+			// when one is broken.
+
+			DisplaySet clone = CloneBuilder.Clone(this) as DisplaySet;
+			//if (ParentImageSet != null)
+			//    ((ImageSet)ParentImageSet).AddCopy(clone);
+
+			if (clone != null)
+			{
+				if (ImageViewer != null)
+					ImageViewer.EventBroker.OnCloneCreated(new CloneCreatedEventArgs(this, clone));
+			}
+
+			return clone;
 		}
 
 		/// <summary>
@@ -341,6 +374,19 @@ namespace ClearCanvas.ImageViewer
 		protected virtual void OnDrawing()
 		{
 			EventsHelper.Fire(_drawing, this, EventArgs.Empty);
+		}
+
+		[CloneInitialize]
+		private void Initialize(DisplaySet source, ICloningContext context)
+		{
+			context.CloneFields(source, this);
+
+			foreach (IPresentationImage image in source.PresentationImages)
+			{
+				IPresentationImage clone = image.Clone();
+				if (clone != null)
+					PresentationImages.Add(clone);
+			}
 		}
 	}
 }

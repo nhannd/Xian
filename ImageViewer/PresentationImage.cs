@@ -46,21 +46,30 @@ namespace ClearCanvas.ImageViewer
 	/// composed of many parts, be they images, lines, text, etc.  It is the
 	/// image that is presented to the user in a <see cref="Tile"/>.
 	/// </remarks>
+	[Cloneable(true)]
 	public abstract class PresentationImage : IPresentationImage
 	{
 		#region Private Fields
 
+		[CloneIgnore]
 		private ImageViewerComponent _imageViewer;
+		[CloneIgnore]
 		private DisplaySet _parentDisplaySet;
+		[CloneIgnore]
 		private Tile _tile;
 		private Rectangle _clientRectangle;
 
+		[CloneIgnore]
 		private bool _selected = false;
+		[CloneIgnore]
 		private bool _linked = true;
 		private string _uid;
 		
 		private CompositeGraphic _sceneGraph;
+		
+		[CloneIgnore]
 		private ISelectableGraphic _selectedGraphic;
+		[CloneIgnore]
 		private IFocussableGraphic _focussedGraphic;
 
 		private IRenderer _renderer;
@@ -74,7 +83,7 @@ namespace ClearCanvas.ImageViewer
 		protected PresentationImage()
 		{
 		}
-
+		
 		#region Public Properties
 
 		/// <summary>
@@ -360,6 +369,25 @@ namespace ClearCanvas.ImageViewer
 		public abstract IPresentationImage CreateFreshCopy();
 
 		/// <summary>
+		/// Creates a deep copy of the <see cref="IPresentationImage"/>.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IPresentationImage"/>s should never return null from this method.
+		/// </remarks>
+		public IPresentationImage Clone()
+		{
+			PresentationImage clone = CloneBuilder.Clone(this) as PresentationImage;
+			if (clone != null)
+			{
+				clone.SceneGraph.SetParentPresentationImage(clone);
+				if (ImageViewer != null)
+					ImageViewer.EventBroker.OnCloneCreated(new CloneCreatedEventArgs(this, clone));
+			}
+
+			return clone;
+		}
+
+		/// <summary>
 		/// Fires just before the <see cref="PresentationImage"/> is actually drawn/rendered.
 		/// </summary>
 		public event EventHandler Drawing
@@ -373,7 +401,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public void Draw()
 		{
-			if (this.Visible)
+			if (this.Visible && this.Tile != null)
 				this.Tile.Draw();
 		}
 

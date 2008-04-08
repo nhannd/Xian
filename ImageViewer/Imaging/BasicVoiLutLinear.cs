@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
@@ -39,6 +40,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// The most basic of Linear Luts where the <see cref="WindowWidth"/> and <see cref="WindowCenter"/> can be directly set/manipulated.
 	/// </summary>
 	/// <seealso cref="IBasicVoiLutLinear"/>
+	[Cloneable(true)]
 	public sealed class BasicVoiLutLinear : VoiLutLinearBase, IBasicVoiLutLinear
 	{
 		#region Window/Level Memento class

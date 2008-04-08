@@ -39,10 +39,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// <summary>
 	/// A group of <see cref="ControlPoint"/>s. 
 	/// </summary>
+	[Cloneable(true)]
 	public class ControlPointGroup : CompositeGraphic
 	{
-		private event EventHandler<ListEventArgs<PointF>> _controlPointChangedEvent;
 		private Color _color = Color.Yellow;
+		private event EventHandler<ListEventArgs<PointF>> _controlPointChangedEvent;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ControlPointGroup"/>.
@@ -201,6 +202,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			ControlPoint controlPoint = (ControlPoint) sender;
 			EventsHelper.Fire(_controlPointChangedEvent, this, new ListEventArgs<PointF>(controlPoint.Location, this.Graphics.IndexOf(controlPoint)));
+		}
+
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			foreach (ControlPoint controlPoint in this.Graphics)
+				controlPoint.LocationChanged += OnControlPointChanged;
 		}
 	}
 }

@@ -31,6 +31,7 @@
 
 using System;
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
@@ -38,8 +39,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// Defines a <see cref="SpatialTransformValidationPolicy"/> for images.
 	/// </summary>
+	[Cloneable(true)]
 	public class ImageTransformPolicy : SpatialTransformValidationPolicy
 	{
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public ImageTransformPolicy()
+		{
+		}
+
 		/// <summary>
 		/// Performs validation on the specified <see cref="ISpatialTransform"/>.
 		/// </summary>

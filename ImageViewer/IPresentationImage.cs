@@ -138,6 +138,14 @@ namespace ClearCanvas.ImageViewer
 		IPresentationImage CreateFreshCopy();
 
 		/// <summary>
+		/// Creates a deep copy of the <see cref="IPresentationImage"/>.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IPresentationImage"/>s should never return null from this method.
+		/// </remarks>
+		IPresentationImage Clone();
+
+		/// <summary>
 		/// Renders the <see cref="PresentationImage"/> to an offscreen <see cref="Bitmap"/>.
 		/// </summary>
 		/// <param name="width">Bitmap width.</param>

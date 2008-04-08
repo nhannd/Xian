@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -39,13 +40,19 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		#region ColorMap Proxy Class
 
+		[Cloneable(true)]
 		private class ColorMapProxy : ComposableLut, IColorMap, IEquatable<ColorMapProxy>
 		{
 			private readonly string _factoryName;
 			private int _minInputValue;
 			private int _maxInputValue;
 
+			[CloneIgnore]
 			private IColorMap _realLut;
+
+			private ColorMapProxy()
+			{
+			}
 
 			public ColorMapProxy(string factoryName)
 			{
@@ -67,6 +74,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 					return _realLut;
 				}
 			}
+
 			public override int MinInputValue
 			{
 				get

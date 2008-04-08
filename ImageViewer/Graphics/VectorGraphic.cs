@@ -31,6 +31,7 @@
 
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.ImageViewer.Graphics
@@ -57,6 +58,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// An vector <see cref="Graphic"/>.
 	/// </summary>
+	[Cloneable(true)]
 	public abstract class VectorGraphic : Graphic, IVectorGraphic
 	{
 		/// <summary>

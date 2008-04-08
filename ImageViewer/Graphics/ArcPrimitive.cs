@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
 using Matrix = System.Drawing.Drawing2D.Matrix;
 
@@ -47,6 +48,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// ellipse is defined by the <see cref="ArcPrimitive.StartAngle"/>
 	/// and <see cref="ArcPrimitive.SweepAngle"/>.
 	/// </remarks>
+	[Cloneable(true)]
 	public class ArcPrimitive : BoundableGraphic, IArcGraphic
 	{
 		private float _startAngle;

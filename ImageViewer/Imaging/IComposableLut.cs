@@ -78,5 +78,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Gets an abbreviated description of the Lut.
 		/// </summary>
 		string GetDescription();
+
+		/// <summary>
+		/// Creates a deep-copy of the <see cref="IComposableLut"/>.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IComposableLut"/>s may return null from this method when appropriate.	
+		/// </remarks>
+		IComposableLut Clone();
 	}
 }

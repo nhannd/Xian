@@ -114,6 +114,8 @@
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\AnnotationProviders\bin\$(Configuration)\ClearCanvas.ImageViewer.AnnotationProviders.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.View.WinForms.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Clipboard\bin\$(Configuration)\ClearCanvas.ImageViewer.Clipboard.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Clipboard\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Clipboard.View.WinForms.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Utilities\DicomEditor\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Utilities\DicomEditor\View\WinForms\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.View.WinForms.dll" />
   </ItemGroup>

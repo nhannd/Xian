@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
@@ -43,6 +44,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		void ApplyNext();
 	}
 
+	[Cloneable(true)]
 	internal sealed class AutoVoiLutLinear : CalculatedVoiLutLinear, IAutoVoiLutLinear
 	{
 		private class AutoVoiLutLinearMemento : IEquatable<AutoVoiLutLinearMemento>
@@ -83,6 +85,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			#endregion
 		}
 
+		[CloneCopyReference]
 		private readonly Frame _frame;
 		private uint _index;
 
@@ -90,6 +93,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		{
 			_frame = frame;
 			_index = 0;
+		}
+
+		private AutoVoiLutLinear()
+		{
 		}
 
 		#region Private Properties/Methods

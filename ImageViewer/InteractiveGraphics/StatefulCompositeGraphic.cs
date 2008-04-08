@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
@@ -41,16 +42,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// <summary>
 	/// A <see cref="CompositeGraphic"/> with state.
 	/// </summary>
+	[Cloneable(true)]
 	public abstract class StatefulCompositeGraphic 
 		: CompositeGraphic, IStatefulGraphic, IMouseButtonHandler, ICursorTokenProvider
 	{
-		private GraphicStateManager _graphicStateManager = new GraphicStateManager();
+		[CloneIgnore] 
+		private GraphicStateManager _graphicStateManager;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="StatefulCompositeGraphic"/>.
 		/// </summary>
 		protected StatefulCompositeGraphic()
 		{
+			_graphicStateManager = new GraphicStateManager();
 		}
 
 		/// <summary>

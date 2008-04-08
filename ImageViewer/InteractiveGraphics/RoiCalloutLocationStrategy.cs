@@ -29,8 +29,9 @@
 
 #endregion
 
-
+using System;
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
@@ -38,8 +39,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// <summary>
 	/// The default strategy for automatically calculating the location of a <see cref="RoiGraphic"/>'s callout.
 	/// </summary>
+	[Cloneable(true)]
 	public class RoiCalloutLocationStrategy : IRoiCalloutLocationStrategy
 	{
+		[CloneIgnore]
 		private RoiGraphic _roiGraphic;
 		private bool _initialLocationSet;
 
@@ -124,6 +127,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			coordinateSystem = this.RoiGraphic.CoordinateSystem;
 			endPoint = RoiGraphic.Roi.GetClosestPoint(RoiGraphic.Callout.StartPoint);
+		}
+
+		/// <summary>
+		/// Creates a deep copy of this strategy object.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IRoiCalloutLocationStrategy"/>s should not return null from this method.
+		/// </remarks>
+		public IRoiCalloutLocationStrategy Clone()
+		{
+			return CloneBuilder.Clone(this) as IRoiCalloutLocationStrategy;
 		}
 
 		#endregion

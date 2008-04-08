@@ -186,13 +186,13 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		internal static void AddToClipboard(IPresentationImage image)
 		{
 			Bitmap bmp = IconCreator.CreatePresentationImageIcon(image);
-			_clipboardItems.Add(new ClipboardItem(image, bmp, ""));
+			_clipboardItems.Add(new ClipboardItem(image.Clone(), bmp, ""));
 		}
 
 		internal static void AddToClipboard(IDisplaySet displaySet)
 		{
 			Bitmap bmp = IconCreator.CreateDisplaySetIcon(displaySet);
-			_clipboardItems.Add(new ClipboardItem(displaySet, bmp, displaySet.Name));
+			_clipboardItems.Add(new ClipboardItem(displaySet.Clone(), bmp, displaySet.Name));
 		}
 	}
 }

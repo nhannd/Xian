@@ -30,6 +30,7 @@
 #endregion
 
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
@@ -37,22 +38,24 @@ using Matrix=System.Drawing.Drawing2D.Matrix;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
+	[Cloneable(true)]
 	internal class ProtractorRoiCalloutLocationStrategy : RoiCalloutLocationStrategy
 	{
-		private PointF? _lastVertexLocationSource;
+		private bool _firstCalculation;
+		private PointF _lastVertexLocationSource;
 		private bool _userMovedCallout;
 
 		public ProtractorRoiCalloutLocationStrategy()
 		{
-			_lastVertexLocationSource = null;
+			_firstCalculation = true;
 			_userMovedCallout = false;
 		}
 
 		public override void SetRoiGraphic(RoiGraphic roiGraphic)
 		{
 			base.SetRoiGraphic(roiGraphic);
-
-			base.Callout.Visible = false;
+			if (_firstCalculation)
+				base.Callout.Visible = false;
 		}
 
 		public override void OnCalloutLocationChangedExternally()
@@ -131,18 +134,19 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			SizeF calloutOffsetDestination = SizeF.Empty;
 
-			if (!_lastVertexLocationSource.HasValue)
+			if (_firstCalculation)
 			{
 				//on first calculation, move the callout to the vertex.
+				_firstCalculation = false;
 				_lastVertexLocationSource = base.Callout.EndPoint;
 			}
 
 			PointF currentVertexLocationSource = Roi.ControlPoints[1];
 
-			if (_lastVertexLocationSource.Value != currentVertexLocationSource)
+			if (_lastVertexLocationSource != currentVertexLocationSource)
 			{
 				PointF currentVertexLocationDestination = Roi.SpatialTransform.ConvertToDestination(currentVertexLocationSource);
-				PointF lastVertexLocationDestination = Roi.SpatialTransform.ConvertToDestination(_lastVertexLocationSource.Value);
+				PointF lastVertexLocationDestination = Roi.SpatialTransform.ConvertToDestination(_lastVertexLocationSource);
 
 				calloutOffsetDestination = new SizeF(
 					currentVertexLocationDestination.X - lastVertexLocationDestination.X,

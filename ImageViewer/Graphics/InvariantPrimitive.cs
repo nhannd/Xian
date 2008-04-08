@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// to "move" with the zoom of the image, but their size
 	/// in screen pixels remains the same.
 	/// </remarks>
+	[Cloneable(true)]
 	public abstract class InvariantPrimitive : VectorGraphic
 	{
 		private PointF _anchorPoint;

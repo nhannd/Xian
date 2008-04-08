@@ -29,6 +29,8 @@
 
 #endregion
 
+using ClearCanvas.Common.Utilities;
+
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
@@ -36,6 +38,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// and <see cref="WindowCenter"/> are calculated and/or retrieved from an external source.
 	/// </summary>
 	/// <seealso cref="IVoiLutLinear"/>
+	[Cloneable(true)]
 	public abstract class CalculatedVoiLutLinear : VoiLutLinearBase, IVoiLutLinear
 	{
 		#region Protected Constructor

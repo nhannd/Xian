@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -45,11 +46,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// the <see cref="WindowWidth"/> and <see cref="WindowCenter"/> values will be cached.
 	/// </remarks>
 	/// <seealso cref="CalculatedVoiLutLinear"/>
+	[Cloneable]
 	public abstract class AlgorithmCalculatedVoiLutLinear : CalculatedVoiLutLinear
 	{
 		#region Private Fields
 
+		[CloneCopyReference]
 		private readonly GrayscalePixelData _pixelData;
+		
+		//allow this to be cloned, since it will just clone the LutFactory's proxy object, anyway.
 		private readonly IModalityLut _modalityLut;
 
 		private double _windowWidth;
@@ -82,6 +87,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 		protected AlgorithmCalculatedVoiLutLinear(GrayscalePixelData pixelData)
 			: this(pixelData, null)
 		{
+		}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected AlgorithmCalculatedVoiLutLinear(AlgorithmCalculatedVoiLutLinear source, ICloningContext context)
+		{
+			context.CloneFields(source, this);
 		}
 
 		#endregion

@@ -35,18 +35,24 @@ using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
 	/// An interactive polyline graphic.
 	/// </summary>
+	[Cloneable]
 	public class PolyLineInteractiveGraphic : InteractiveGraphic
 	{
 		#region Private fields
 
-		private PolyLineGraphic _anchorPointsGraphic = new PolyLineGraphic();
+		[CloneIgnore]
+		private PolyLineGraphic _anchorPointsGraphic;
 		private int _maxAnchorPoints;
+		
+		[CloneCopyReference]
 		private CursorToken _moveToken;
 		private Color _color = Color.Yellow;
 
@@ -64,8 +70,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			: base(userCreated)
 		{
 			_maxAnchorPoints = maximumAnchorPoints;
-			BuildGraphic();
-			_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
+			Initialize();
+		}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected PolyLineInteractiveGraphic(PolyLineInteractiveGraphic source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
 		}
 
 		/// <summary>
@@ -268,16 +282,33 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return new CreatePolyLineGraphicState(this);
 		}
 
-		private void BuildGraphic()
+		private void Initialize()
 		{
-			base.Graphics.Add(_anchorPointsGraphic);
+			if (_anchorPointsGraphic == null)
+			{
+				_anchorPointsGraphic = new PolyLineGraphic();
+				base.Graphics.Add(_anchorPointsGraphic);
+				// Add two points to begin with
+				this.PolyLine.Add(new PointF(0, 0));
+				base.ControlPoints.Add(new PointF(0, 0));
+				this.PolyLine.Add(new PointF(0, 0));
+				base.ControlPoints.Add(new PointF(0, 0));
+			}
+
 			_anchorPointsGraphic.AnchorPointChangedEvent += new EventHandler<ListEventArgs<PointF>>(OnAnchorPointChanged);
 
-			// Add two points to begin with
-			this.PolyLine.Add(new PointF(0, 0));
-			base.ControlPoints.Add(new PointF(0, 0));
-			this.PolyLine.Add(new PointF(0, 0));
-			base.ControlPoints.Add(new PointF(0, 0));
+			if (_moveToken == null)
+				_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
+		}
+
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			_anchorPointsGraphic = CollectionUtils.SelectFirst(base.Graphics,
+				delegate(IGraphic test) { return test is PolyLineGraphic; }) as PolyLineGraphic;
+
+			Platform.CheckForNullReference(_anchorPointsGraphic, "_anchorPointsGraphic");
+			Initialize();
 		}
 	}
 }

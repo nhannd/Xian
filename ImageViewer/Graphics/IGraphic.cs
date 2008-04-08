@@ -122,5 +122,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </para>
 		/// </remarks>
 		void ResetCoordinateSystem();
+
+		/// <summary>
+		/// Creates a deep copy of the graphic.
+		/// </summary>
+		/// <remarks>
+		/// Graphic objects that are not cloneable may return null.
+		/// </remarks>
+		IGraphic Clone();
 	}
 }

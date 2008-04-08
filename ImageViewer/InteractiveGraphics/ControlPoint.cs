@@ -43,11 +43,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// A graphical representation of the "handles" that allow 
 	/// the user to move and resize <see cref="InteractiveGraphic"/>s.
 	/// </summary>
+	[Cloneable(true)]
 	public class ControlPoint : CompositeGraphic
 	{
 		#region Private fields
 
 		private PointF _location;
+		[CloneIgnore]
 		private InvariantRectanglePrimitive _rectangle;
 		private event EventHandler _locationChangedEvent;
 
@@ -58,10 +60,22 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		internal ControlPoint()
 		{
-			_rectangle = new InvariantRectanglePrimitive();
-			_rectangle.InvariantTopLeft = new PointF(-4, -4);
-			_rectangle.InvariantBottomRight = new PointF(4, 4);
-			this.Graphics.Add(_rectangle);
+		}
+		
+		private InvariantRectanglePrimitive Rectangle
+		{
+			get
+			{
+				if (_rectangle == null)
+				{
+					_rectangle = new InvariantRectanglePrimitive();
+					_rectangle.InvariantTopLeft = new PointF(-4, -4);
+					_rectangle.InvariantBottomRight = new PointF(4, 4);
+					this.Graphics.Add(_rectangle);
+				}
+
+				return _rectangle;
+			}
 		}
 
 		/// <summary>
@@ -89,7 +103,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 					Trace.Write(String.Format("Control Point: {0}\n", _location.ToString()));
 
-					_rectangle.AnchorPoint = this.Location;
+					Rectangle.AnchorPoint = this.Location;
 					EventsHelper.Fire(_locationChangedEvent, this, EventArgs.Empty);
 				}
 			}
@@ -100,8 +114,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public Color Color
 		{
-			get { return _rectangle.Color; }
-			set { _rectangle.Color = value; }
+			get { return Rectangle.Color; }
+			set { Rectangle.Color = value; }
 		}
 	
 		/// <summary>
@@ -120,7 +134,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns></returns>
 		public override bool HitTest(Point point)
 		{
-			return _rectangle.HitTest(point);
+			return Rectangle.HitTest(point);
+		}
+
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			_rectangle = CollectionUtils.SelectFirst(base.Graphics,
+				delegate(IGraphic test) { return test is InvariantRectanglePrimitive; }) as InvariantRectanglePrimitive;
 		}
 	}
 }

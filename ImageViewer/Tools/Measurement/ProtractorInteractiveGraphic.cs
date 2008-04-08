@@ -34,13 +34,22 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
+	[Cloneable]
 	internal class ProtractorInteractiveGraphic : PolyLineInteractiveGraphic
 	{
+		[CloneIgnore]
 		private InvariantArcPrimitive _arc;
 		private readonly int _arcRadius = 20;
+
+		protected ProtractorInteractiveGraphic (ProtractorInteractiveGraphic source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
+		}
 
 		public ProtractorInteractiveGraphic() : base(true, 3)
 		{
@@ -60,14 +69,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				base.Color = value;
 			}
 		}
-		protected override void OnControlPointChanged(object sender, ListEventArgs<PointF> e)
-		{
-			base.OnControlPointChanged(sender, e);
 
+		public override void OnDrawing()
+		{
+			base.OnDrawing();
+			
 			if (this.PolyLine.Count == 3)
 			{
 				_arc.Visible = IsArcVisible();
-				
+
 				if (_arc.Visible)
 					CalculateArc();
 			}
@@ -134,6 +144,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			this.PolyLine.ResetCoordinateSystem();
 
 			return a.Magnitude > _arcRadius && b.Magnitude > _arcRadius;
+		}
+
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			_arc = CollectionUtils.SelectFirst(base.Graphics,
+				delegate(IGraphic test) { return test is InvariantArcPrimitive; }) as InvariantArcPrimitive;
+
+			Platform.CheckForNullReference(_arc, "_arc");
 		}
 	}
 }

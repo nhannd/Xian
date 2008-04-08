@@ -31,12 +31,14 @@
 
 using System;
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
 	/// An ellipse <see cref="InvariantPrimitive"/>.
 	/// </summary>
+	[Cloneable(true)]
 	public class InvariantEllipsePrimitive : InvariantBoundablePrimitive
 	{
 		/// <summary>

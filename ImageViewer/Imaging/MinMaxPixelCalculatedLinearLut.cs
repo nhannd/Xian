@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -38,6 +39,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// are calculated based on the minimum and maximum pixel value in the pixel data.
 	/// </summary>
 	/// <seealso cref="AlgorithmCalculatedVoiLutLinear"/>
+	[Cloneable]
 	public sealed class MinMaxPixelCalculatedLinearLut : AlgorithmCalculatedVoiLutLinear
 	{
 		#region Public Constructors
@@ -63,6 +65,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public MinMaxPixelCalculatedLinearLut(GrayscalePixelData pixelData)
 			: base(pixelData)
 		{
+		}
+
+		private MinMaxPixelCalculatedLinearLut(MinMaxPixelCalculatedLinearLut source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
 		}
 
 		#endregion

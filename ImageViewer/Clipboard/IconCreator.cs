@@ -1,4 +1,5 @@
 using System.Drawing;
+using System;
 
 namespace ClearCanvas.ImageViewer.Clipboard
 {
@@ -9,9 +10,15 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		public static Bitmap CreatePresentationImageIcon(IPresentationImage image)
 		{
-			Bitmap bmp = image.DrawToBitmap(_iconWidth, _iconHeight);
-			System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp);
+			float aspectRatio = _iconHeight / (float)_iconWidth;
 
+			int dimension = Math.Max(image.ClientRectangle.Width, image.ClientRectangle.Height);
+			Bitmap img = image.DrawToBitmap(dimension, (int)(dimension * aspectRatio));
+			Bitmap bmp = new Bitmap(img, _iconWidth, _iconHeight);
+			
+			System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp);
+			img.Dispose();
+			
 			Pen pen = new Pen(Color.DarkGray);
 
 			g.DrawRectangle(pen, 0, 0, _iconWidth - 1, _iconHeight - 1);
@@ -34,7 +41,13 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 			System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp);
 
+			Rectangle imgRectangle = displaySet.ImageBox.SelectedTile.PresentationImage.ClientRectangle;
+			int dimension = Math.Max(imgRectangle.Width, imgRectangle.Height);
+
 			IPresentationImage image = displaySet.PresentationImages[displaySet.PresentationImages.Count / 2];
+			Bitmap img = image.DrawToBitmap(dimension, (int)(dimension * aspectRatio));
+			Bitmap iconBmp = new Bitmap(img, subIconWidth, subIconHeight);
+			img.Dispose();
 
 			Pen pen = new Pen(Color.DarkGray);
 
@@ -45,7 +58,8 @@ namespace ClearCanvas.ImageViewer.Clipboard
 				int x = offsetX * ((numImages - 1) - i);
 				int y = offsetY * i;
 
-				g.DrawImage(image.DrawToBitmap(subIconWidth, subIconHeight), new Point(x, y));
+
+				g.DrawImage(iconBmp, new Point(x, y));
 				g.DrawRectangle(pen, x, y, subIconWidth - 1, subIconHeight - 1);
 			}
 

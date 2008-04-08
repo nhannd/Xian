@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -44,6 +45,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// </remarks>
 	/// <seealso cref="ComposableLut"/>
 	/// <seealso cref="IComposableLut"/>
+	[Cloneable(true)]
 	public abstract class VoiLutLinearBase : ComposableLut
 	{
 		#region Private Fields

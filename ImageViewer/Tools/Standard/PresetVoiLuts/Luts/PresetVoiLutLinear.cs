@@ -31,13 +31,15 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 {
+	[Cloneable(true)]
 	internal sealed class PresetVoiLutLinear : CalculatedVoiLutLinear
 	{
+		[Cloneable(true)]
 		public sealed class PresetVoiLutLinearParameters : IEquatable<PresetVoiLutLinearParameters>
 		{
 			public readonly string Name;
@@ -98,6 +100,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		public PresetVoiLutLinear(PresetVoiLutLinearParameters parameters)
 		{
 			_parameters = parameters;
+		}
+
+		private PresetVoiLutLinear()
+		{
 		}
 
 		#region Public Properties

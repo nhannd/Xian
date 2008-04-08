@@ -45,6 +45,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	public abstract class MeasurementTool<T> : MouseImageViewerTool
 		where T : RoiInfo, new()
 	{
+		private Type _interactiveGraphicType = null;
 		private DelayedEventPublisher _roiChangedDelayedEventPublisher;
 
 		private RoiGraphic _createRoiGraphic;
@@ -68,15 +69,21 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			base.Initialize();
 
+			base.ImageViewer.EventBroker.CloneCreated += OnCloneCreated;
 			_roiChangedDelayedEventPublisher = new DelayedEventPublisher(OnDelayedRoiChanged);
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && _roiChangedDelayedEventPublisher != null)
+			if (disposing)
 			{
-				_roiChangedDelayedEventPublisher.Dispose();
-				_roiChangedDelayedEventPublisher = null;
+				if (_roiChangedDelayedEventPublisher != null)
+				{
+					_roiChangedDelayedEventPublisher.Dispose();
+					_roiChangedDelayedEventPublisher = null;
+				}
+				
+				base.ImageViewer.EventBroker.CloneCreated -= OnCloneCreated;
 			}
 
 			base.Dispose(disposing);
@@ -167,6 +174,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			//see it through to the end of creation.  It's just cleaner, not to mention that if this tool knows how to create it,
 			//it should also know how to (and be responsible for) cancelling it and/or deleting it appropriately.
 			InteractiveGraphic interactiveGraphic = CreateInteractiveGraphic();
+			_interactiveGraphicType = interactiveGraphic.GetType();
 
 			IRoiCalloutLocationStrategy strategy = CreateCalloutLocationStrategy();
 
@@ -298,6 +306,16 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				return;
 
 			_roiAnalyzers = new List<IRoiAnalyzer<T>>(CreateAnalyzers());
+		}
+
+		private void OnCloneCreated(object sender, CloneCreatedEventArgs e)
+		{
+			if (e.Clone is RoiGraphic)
+			{
+				RoiGraphic roiGraphic = (RoiGraphic)e.Clone;
+				if (roiGraphic.Roi.GetType() == _interactiveGraphicType)
+					roiGraphic.RoiChanged += OnRoiChanged;
+			}
 		}
 	}
 }

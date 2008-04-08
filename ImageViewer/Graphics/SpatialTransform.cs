@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using Matrix=System.Drawing.Drawing2D.Matrix;
 
@@ -42,6 +43,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// Implements a 2D affine transformation
 	/// </summary>
+	[Cloneable]
 	public class SpatialTransform : ISpatialTransform
 	{
 		/// <summary>
@@ -70,7 +72,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private Matrix _cumulativeTransform;
 		private Matrix _transform;
 		private bool _recalculationRequired;
-		private readonly IGraphic _ownerGraphic;
+		[CloneIgnore]
+		private IGraphic _ownerGraphic;
 		private SpatialTransformValidationPolicy _validationPolicy;
 
 		#endregion
@@ -84,6 +87,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_recalculationRequired = true;
 			_updatingScaleParameters = false;
 			Initialize();
+		}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected SpatialTransform(SpatialTransform source, ICloningContext context)
+		{
+			context.CloneFields(source, this);
+
+			if (source._cumulativeTransform != null)
+				_cumulativeTransform = source._cumulativeTransform.Clone();
+
+			if (source._transform != null)
+				_transform = source._transform.Clone();
 		}
 
 		#region Properties
@@ -401,6 +418,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		internal IGraphic OwnerGraphic
 		{
 			get { return _ownerGraphic; }
+			set { _ownerGraphic = value; }
 		}
 
 		#endregion

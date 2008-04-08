@@ -39,7 +39,6 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
-using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -55,6 +54,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// By default, the callout line will snap to the
 	/// nearest point on the <see cref="InteractiveGraphic"/>.
 	/// </remarks>
+	
+	[Cloneable]
 	public class RoiGraphic
 		: StandardStatefulCompositeGraphic, 
 		  ISelectableGraphic, 
@@ -105,15 +106,22 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region Private fields
 
+		[CloneIgnore]
 		private InteractiveGraphic _roiGraphic;
-        private CalloutGraphic _calloutGraphic;
-		private ToolSet _toolSet;
-		private event EventHandler _roiChangedEvent;
-		private bool _selected;
-		private bool _focussed;
+		[CloneIgnore]
+		private CalloutGraphic _calloutGraphic;
+		[CloneIgnore]
+		private bool _selected = false;
+		[CloneIgnore]
+		private bool _focussed = false;
+		[CloneIgnore]
 		private bool _raiseRoiChangedEvent = true;
-		private IRoiCalloutLocationStrategy _calloutLocationStrategy;
+		[CloneIgnore]
 		private bool _settingCalloutLocation = false;
+
+		private ToolSet _toolSet;
+		private IRoiCalloutLocationStrategy _calloutLocationStrategy;
+		private event EventHandler _roiChangedEvent;
 
 		#endregion
 
@@ -131,19 +139,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public RoiGraphic(InteractiveGraphic graphic, IRoiCalloutLocationStrategy calloutLocationStrategy, bool userCreated)
 		{
 			_roiGraphic = graphic;
+			Initialize(userCreated, calloutLocationStrategy);
+		}
 
-			BuildGraphic();
-			SetTransformValidationPolicy(this);
-
-			if (userCreated)
-				base.State = CreateCreateState();
-			else
-				base.State = CreateInactiveState();
-
-			Roi.ControlPoints.Visible = false;
-
-			_calloutLocationStrategy = calloutLocationStrategy ?? new RoiCalloutLocationStrategy();
-			_calloutLocationStrategy.SetRoiGraphic(this);
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected RoiGraphic(RoiGraphic source, ICloningContext context)
+		{
+			context.CloneFields(source, this);
 		}
 
 		/// <summary>
@@ -273,7 +277,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				{
 					_selected = value;
 
-					if (_selected)
+					if (_selected && this.ParentPresentationImage != null)
 						this.ParentPresentationImage.SelectedGraphic = this;
 
 					if (_focussed)
@@ -316,7 +320,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 					if (_focussed)
 					{
-						this.ParentPresentationImage.FocussedGraphic = this;
+						if (this.ParentPresentationImage != null)
+							this.ParentPresentationImage.FocussedGraphic = this;
 
 						if (this.Selected)
 							this.State = CreateFocussedSelectedState();
@@ -388,12 +393,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
-		private void BuildGraphic()
+		private void Initialize(bool userCreated, IRoiCalloutLocationStrategy calloutLocationStrategy)
 		{
-			base.Graphics.Add(_roiGraphic);
+			if (!base.Graphics.Contains(_roiGraphic))
+				base.Graphics.Add(_roiGraphic);
 
-			_calloutGraphic = new CalloutGraphic();
-			base.Graphics.Add(_calloutGraphic);
+			if (_calloutGraphic == null)
+			{
+				_calloutGraphic = new CalloutGraphic();
+				base.Graphics.Add(_calloutGraphic);
+			}
 
 			_roiGraphic.ControlPoints.ControlPointChangedEvent += new EventHandler<ListEventArgs<PointF>>(OnControlPointChanged);
 			_roiGraphic.ControlPoints.Graphics.ItemAdded += new EventHandler<ListEventArgs<IGraphic>>(OnControlPointAdded);
@@ -401,6 +410,38 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			this.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnROIGraphicStateChanged);
 			this.Roi.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnRoiStateChanged);
+
+			SetTransformValidationPolicy(this);
+
+			if (userCreated)
+				base.State = CreateCreateState();
+			else
+				base.State = CreateInactiveState();
+
+			Roi.ControlPoints.Visible = false;
+
+			if (_calloutLocationStrategy == null)
+				_calloutLocationStrategy = calloutLocationStrategy ?? new RoiCalloutLocationStrategy();
+
+			_calloutLocationStrategy.SetRoiGraphic(this);
+		}
+
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			_roiGraphic = CollectionUtils.SelectFirst(base.Graphics,
+				delegate(IGraphic test) { return test is InteractiveGraphic; }) as InteractiveGraphic;
+
+			_calloutGraphic = CollectionUtils.SelectFirst(base.Graphics,
+				delegate(IGraphic test) { return test is CalloutGraphic; }) as CalloutGraphic;
+
+			Platform.CheckForNullReference(_roiGraphic, "_roiGraphic");
+			Platform.CheckForNullReference(_calloutGraphic, "_calloutGraphic");
+
+			Initialize(false, null);
+
+			//the roi and callout may have been selected, so we force the color to be yellow.
+			this.Color = Color.Yellow;
 		}
 
 		private static void SetTransformValidationPolicy(CompositeGraphic compositeGraphic)
@@ -410,7 +451,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				if (graphic is CompositeGraphic)
 					SetTransformValidationPolicy(graphic as CompositeGraphic);
 
-				compositeGraphic.SpatialTransform.ValidationPolicy = new RoiTransformPolicy();
+				if (!(compositeGraphic.SpatialTransform.ValidationPolicy is RoiTransformPolicy))
+					compositeGraphic.SpatialTransform.ValidationPolicy = new RoiTransformPolicy();
 			}
 		}
 
@@ -439,11 +481,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			// If the currently selected graphic is this one,
 			// and we're about to go inactive, set the selected graphic
 			// to null, indicating that no graphic is currently selected
-			if (this.ParentPresentationImage.SelectedGraphic == this)
-				this.ParentPresentationImage.SelectedGraphic = null;
+			if (this.ParentPresentationImage != null)
+			{
+				if (this.ParentPresentationImage.SelectedGraphic == this)
+					this.ParentPresentationImage.SelectedGraphic = null;
 
-			if (this.ParentPresentationImage.FocussedGraphic == this)
-				this.ParentPresentationImage.FocussedGraphic = null;
+				if (this.ParentPresentationImage.FocussedGraphic == this)
+					this.ParentPresentationImage.FocussedGraphic = null;
+			}
 
 			this.Roi.State = this.Roi.CreateInactiveState();
 			this.Callout.State = this.Callout.CreateInactiveState();
@@ -471,7 +516,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			this.Selected = true;
 
-			if (this.ParentPresentationImage.FocussedGraphic == this)
+			if (this.ParentPresentationImage != null && this.ParentPresentationImage.FocussedGraphic == this)
 				this.ParentPresentationImage.FocussedGraphic = null;
 
 			//synchronize the states of the child graphics on entering this state so that everything works correctly.

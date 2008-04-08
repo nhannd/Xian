@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -38,11 +39,15 @@ namespace ClearCanvas.ImageViewer
 	/// <summary>
 	/// A DICOM colour <see cref="PresentationImage"/>.
 	/// </summary>
+	[Cloneable]
 	public class DicomColorPresentationImage
 		: ColorPresentationImage, IImageSopProvider
 	{
+		[CloneCopyReference]
 		private readonly ImageSop _imageSop;
+		[CloneCopyReference]
 		private readonly Frame _frame;
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="DicomColorPresentationImage"/>.
 		/// </summary>
@@ -64,6 +69,16 @@ namespace ClearCanvas.ImageViewer
 
 			_frame = frame;
 			_imageSop = frame.ParentImageSop;
+			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
+		}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected DicomColorPresentationImage(DicomColorPresentationImage source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
 			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 		}
 

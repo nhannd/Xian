@@ -33,6 +33,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using System;
 
 namespace ClearCanvas.ImageViewer.Clipboard
 {
@@ -50,12 +51,34 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		public void CopyImage()
 		{
-			Clipboard.Add(this.SelectedPresentationImage);
+			try
+			{
+				BlockingOperation.Run(
+					delegate
+						{
+							Clipboard.Add(this.SelectedPresentationImage);
+						});
+			}
+			catch(Exception e)
+			{
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+			}
 		}
 
 		public void CopyDisplaySet()
 		{
-			Clipboard.Add(this.SelectedPresentationImage.ParentDisplaySet);
+			try
+			{
+				BlockingOperation.Run(
+					delegate
+						{
+							Clipboard.Add(this.SelectedPresentationImage.ParentDisplaySet);
+						});
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+			}
 		}
 
 		protected override void OnTileSelected(object sender, TileSelectedEventArgs e)

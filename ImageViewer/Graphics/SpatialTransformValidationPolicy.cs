@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -42,6 +43,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// 90 degree increments.  This class allows a validation policy to be defined on a
 	/// per graphic basis.  If validation fails, an <see cref="ArgumentException"/> is thrown.
 	/// </remarks>
+	[Cloneable(true)]
 	public abstract class SpatialTransformValidationPolicy
 	{
 		/// <summary>

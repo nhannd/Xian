@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -39,10 +40,13 @@ namespace ClearCanvas.ImageViewer
 	/// <summary>
 	/// A DICOM grayscale <see cref="PresentationImage"/>.
 	/// </summary>
+	[Cloneable]
 	public class DicomGrayscalePresentationImage 
 		: GrayscalePresentationImage, IImageSopProvider
 	{
+		[CloneCopyReference]
 		private readonly ImageSop _imageSop;
+		[CloneCopyReference]
 		private readonly Frame _frame;
 
 		/// <summary>
@@ -74,6 +78,16 @@ namespace ClearCanvas.ImageViewer
 			_imageSop = frame.ParentImageSop;
 
 			base.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
+		}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected DicomGrayscalePresentationImage(DicomGrayscalePresentationImage source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
+			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 		}
 
 		/// <summary>

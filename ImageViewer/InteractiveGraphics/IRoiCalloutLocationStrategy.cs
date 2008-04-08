@@ -63,5 +63,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="endPoint">The callout end point.</param>
 		/// <param name="coordinateSystem">The <see cref="CoordinateSystem"/> of <paramref name="endPoint"/>.</param>
 		void CalculateCalloutEndPoint(out PointF endPoint, out CoordinateSystem coordinateSystem);
+
+		/// <summary>
+		/// Creates a deep copy of this strategy object.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IRoiCalloutLocationStrategy"/>s should not return null from this method.
+		/// </remarks>
+		IRoiCalloutLocationStrategy Clone();
 	}
 }

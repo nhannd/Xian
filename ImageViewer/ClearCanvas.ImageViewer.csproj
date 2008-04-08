@@ -131,6 +131,7 @@
     <Compile Include="Imaging\PaletteColorMap.cs" />
     <Compile Include="InteractiveGraphics\BoundableInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphic.cs" />
+    <Compile Include="InteractiveGraphics\IControlPointGroupCursorTokenProvider.cs" />
     <Compile Include="InteractiveGraphics\IRoiCalloutLocationStrategy.cs" />
     <Compile Include="InteractiveGraphics\RoiCalloutLocationStrategy.cs" />
     <Compile Include="InteractiveGraphics\RoiTransformPolicy.cs" />
@@ -247,7 +248,7 @@
     <Compile Include="Imaging\LutCollection.cs" />
     <Compile Include="Imaging\LutFactory.cs" />
     <Compile Include="Imaging\ColorMap.cs" />
-    <Compile Include="InteractiveGraphics\CompassStretchIndicatorCursorProvider.cs" />
+    <Compile Include="InteractiveGraphics\CompassCursorTokenProvider.cs" />
     <Compile Include="InteractiveGraphics\CreateGraphicState.cs" />
     <Compile Include="InteractiveGraphics\GraphicStateManager.cs" />
     <Compile Include="IDrawable.cs" />

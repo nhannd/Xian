@@ -32,12 +32,14 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
 	/// A primitive point graphic.
 	/// </summary>
+	[Cloneable(true)]
 	public class PointPrimitive : VectorGraphic
 	{
 		private PointF _point;

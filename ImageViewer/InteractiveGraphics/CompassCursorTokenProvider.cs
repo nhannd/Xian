@@ -32,9 +32,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
@@ -45,27 +45,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// purpose of the control points is to stretch the graphic that owns the control points (as will be
 	/// the case with most ROI graphic implementations).
 	/// </summary>
-	internal class CompassStretchIndicatorCursorProvider : ICursorTokenProvider
+	[Cloneable(true)]
+	internal class CompassCursorTokenProvider : IControlPointGroupCursorTokenProvider
 	{
 		private enum CompassPoints { NorthEast = 0, SouthEast = 1, SouthWest = 2, NorthWest = 3, North = 4, East = 5, South = 6, West = 7 };
 
+		[CloneIgnore]
 		private SortedList<CompassPoints, CursorToken> _stretchIndicatorTokens;
-
+		[CloneIgnore]
 		private ControlPointGroup _controlPoints;
 
-		public CompassStretchIndicatorCursorProvider(ControlPointGroup controlPoints)
-			: this(controlPoints, true)
+		public CompassCursorTokenProvider()
 		{
-		}
-
-		public CompassStretchIndicatorCursorProvider(ControlPointGroup controlPoints, bool installDefaults)
-		{
-			Platform.CheckForNullReference(controlPoints, "controlPoints");
-
-			_controlPoints = controlPoints;
-			_stretchIndicatorTokens = new SortedList<CompassPoints, CursorToken>();
-			if (installDefaults)
-				InstallDefaults();
+			InstallDefaults();
 		}
 
 		/// <summary>
@@ -116,6 +108,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		private void InstallDefaults()
 		{
+			_stretchIndicatorTokens = new SortedList<CompassPoints, CursorToken>();
+
 			_stretchIndicatorTokens[CompassPoints.East] =
 				_stretchIndicatorTokens[CompassPoints.West] = new CursorToken(CursorToken.SystemCursors.SizeWE);
 
@@ -186,6 +180,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region ICursorTokenProvider Members
 
+		public void SetControlPoints(ControlPointGroup controlPoints)
+		{
+			_controlPoints = controlPoints;
+		}
+
 		/// <summary>
 		/// Gets the appropriate <see cref="CursorToken"/> for a given point (in destination coordinates).
 		/// </summary>
@@ -195,6 +194,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			if (_stretchIndicatorTokens.Count == 0)
 				return null;
+
+			Platform.CheckForNullReference(_controlPoints, "_controlPoints");
 
 			int controlPointIndex = _controlPoints.HitTestControlPoint(point);
 			if (controlPointIndex < 0)

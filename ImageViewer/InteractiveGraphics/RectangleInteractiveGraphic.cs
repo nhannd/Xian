@@ -31,6 +31,7 @@
 
 using System;
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
@@ -40,6 +41,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// <summary>
 	/// A interactive rectangular graphic.
 	/// </summary>
+	[Cloneable]
 	public class RectangleInteractiveGraphic : BoundableInteractiveGraphic
 	{
 		/// <summary>
@@ -50,6 +52,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public RectangleInteractiveGraphic(bool userCreated)
 			: base(userCreated)
 		{
+		}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected RectangleInteractiveGraphic(RectangleInteractiveGraphic source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
 		}
 
 		/// <summary>

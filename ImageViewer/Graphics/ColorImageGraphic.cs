@@ -29,7 +29,7 @@
 
 #endregion
 
-
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Graphics
@@ -43,6 +43,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// Note that you can control not just the colour, but also the 
 	/// opacity (i.e. alpha) of each pixel.
 	/// </remarks>
+	[Cloneable]
 	public class ColorImageGraphic : ImageGraphic
 	{
 		/// <summary>
@@ -92,6 +93,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public ColorImageGraphic(int rows, int columns, PixelDataGetter pixelDataGetter)
 			: base(rows, columns, 32, pixelDataGetter)
 		{
+		}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected ColorImageGraphic(ColorImageGraphic source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
 		}
 
 		/// <summary>

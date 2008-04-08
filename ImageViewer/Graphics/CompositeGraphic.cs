@@ -38,6 +38,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// A <see cref="Graphic"/> that can group other <see cref="Graphic"/> objects.
 	/// </summary>
+	[Cloneable(true)]
 	public class CompositeGraphic : Graphic
 	{
 		private GraphicCollection _graphics;
@@ -47,8 +48,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public CompositeGraphic()
 		{
-			this.Graphics.ItemAdded += new EventHandler<ListEventArgs<IGraphic>>(OnGraphicAdded);
-			this.Graphics.ItemRemoved += new EventHandler<ListEventArgs<IGraphic>>(OnGraphicRemoved);
 		}
 
 		/// <summary>
@@ -59,7 +58,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get 
 			{
 				if (_graphics == null)
+				{
 					_graphics = new GraphicCollection();
+					_graphics.ItemAdded += new EventHandler<ListEventArgs<IGraphic>>(OnGraphicAdded);
+					_graphics.ItemRemoved += new EventHandler<ListEventArgs<IGraphic>>(OnGraphicRemoved);
+				}
 
 				return _graphics;
 			}
@@ -219,6 +222,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			graphic.SetParentGraphic(null);
 			graphic.SetParentPresentationImage(null);
 			graphic.SetImageViewer(null);
+		}
+
+		[CloneInitialize]
+		private void Initialize(CompositeGraphic source, ICloningContext context)
+		{
+			foreach (IGraphic graphic in source.Graphics)
+			{
+				IGraphic clone = graphic.Clone();
+				if (clone != null)
+					this.Graphics.Add(clone);
+			}
 		}
 	}
 }

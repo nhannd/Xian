@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
 using Matrix = System.Drawing.Drawing2D.Matrix;
 
@@ -41,9 +42,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// An <see cref="InvariantPrimitive"/> that can be described by a
 	/// rectangular bounding box.
 	/// </summary>
+	[Cloneable(true)]
 	public abstract class InvariantBoundablePrimitive : InvariantPrimitive, IBoundableGraphic
 	{
 		private RectangleF _rectangle = new RectangleF(0,0,0,0);
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		protected InvariantBoundablePrimitive()
+		{
+		}
 
 		/// <summary>
 		/// Gets the top left corner of the rectangle in either source or destination coordinates.

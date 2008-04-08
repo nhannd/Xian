@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
@@ -37,8 +38,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// <summary>
 	/// Defines a <see cref="SpatialTransformValidationPolicy"/> for <see cref="RoiGraphic"/>s.
 	/// </summary>
+	[Cloneable(true)]
 	public class RoiTransformPolicy : SpatialTransformValidationPolicy
 	{
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public RoiTransformPolicy()
+		{
+		}
+
 		/// <summary>
 		/// Performs validation on the specified <see cref="ISpatialTransform"/>.
 		/// </summary>

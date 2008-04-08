@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
@@ -39,6 +40,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// A rectangular <see cref="InvariantPrimitive"/>.
 	/// </summary>
+	[Cloneable(true)]
 	public class InvariantRectanglePrimitive : InvariantBoundablePrimitive
 	{
 		/// <summary>

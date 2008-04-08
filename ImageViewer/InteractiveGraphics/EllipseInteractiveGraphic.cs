@@ -31,6 +31,7 @@
 
 using System;
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 
@@ -39,6 +40,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// <summary>
 	/// A interactive elliptical graphic.
 	/// </summary>
+	[Cloneable]
 	public class EllipseInteractiveGraphic : BoundableInteractiveGraphic
 	{
 		/// <summary>
@@ -49,6 +51,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public EllipseInteractiveGraphic(bool userCreated)
 			: base(userCreated)
 		{
+		}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected EllipseInteractiveGraphic(EllipseInteractiveGraphic source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
 		}
 
 		/// <summary>

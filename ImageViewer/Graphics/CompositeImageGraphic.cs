@@ -29,6 +29,8 @@
 
 #endregion
 
+using ClearCanvas.Common.Utilities;
+
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
@@ -45,6 +47,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// "attached" to the <see cref="ImageGraphic"/>.
 	/// </para>
 	/// </remarks>
+	[Cloneable]
 	public class CompositeImageGraphic : CompositeGraphic
 	{
 		#region Private fields
@@ -111,7 +114,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_pixelAspectRatioX = pixelAspectRatioX;
 			_pixelAspectRatioY = pixelAspectRatioY;
 		}
-		
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected CompositeImageGraphic(CompositeImageGraphic source, ICloningContext context)
+		{
+			context.CloneFields(source, this);
+		}
+
 		/// <summary>
 		/// This member overrides <see cref="Graphic.CreateSpatialTransform"/>.
 		/// </summary>
