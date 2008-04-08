@@ -39,7 +39,7 @@
   <ItemGroup>
     <Compile Include="JpegBaselineFactory.cs" />
     <Compile Include="JpegExtendedProcess24Factory.cs" />
-    <Compile Include="JpegLosslessNonHierarchicalProcess14Factory.cs" />
+    <Compile Include="JpegLosslessNonHierarchicalProcess14SV1Factory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

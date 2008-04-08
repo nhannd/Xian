@@ -441,12 +441,16 @@ void JPEGCODEC::Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompressed
         {
             if (oldPixelData->IsSigned)
 			    throw gcnew DicomCodecException(gcnew String("JPEG codec unable to perform colorspace conversion on signed pixel data"));
-
-    		dinfo.jpeg_color_space = JCS_YCbCr;
-		    dinfo.out_color_space = JCS_RGB;
+  		    dinfo.jpeg_color_space = JCS_YCbCr;
+	        dinfo.out_color_space = JCS_RGB;
 		}
 	}
-
+    else 
+    {
+  		    dinfo.jpeg_color_space = JCS_UNKNOWN;
+	        dinfo.out_color_space = JCS_UNKNOWN;
+    }
+     
 	jpeg_calc_output_dimensions(&dinfo);
 
 	int bufsize = dinfo.output_width * dinfo.output_components;

@@ -89,8 +89,8 @@ void DicomJpegCodec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompr
 	if (codec->Mode != JpegMode::Lossless) {
 		newPixelData->LossyImageCompressionMethod = "ISO_10918_1";
 		
-		double oldSize = oldPixelData->UncompressedFrameSize;
-		double newSize = newPixelData->GetCompressedFrameSize(0);
+		float oldSize = oldPixelData->UncompressedFrameSize;
+		float newSize = newPixelData->GetCompressedFrameSize(0);
 		String^ ratio = String::Format("{0:0.000}", oldSize / newSize);
 		newPixelData->LossyImageCompressionRatio = (float) oldSize / newSize;
 	}

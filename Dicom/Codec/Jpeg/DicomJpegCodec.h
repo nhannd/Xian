@@ -58,7 +58,7 @@ public:
 
 
 	virtual IJpegCodec^ GetCodec(int bits, DicomJpegParameters^ jparams) override {
-		if (bits == 8)
+		if (bits <= 8)
 			return gcnew Jpeg8Codec(JpegMode::Baseline, 0, 0);
 		else
 			throw gcnew DicomCodecException(String::Format("Unable to create JPEG codec for bits stored == {0}", bits));
@@ -71,8 +71,12 @@ public:
     property ClearCanvas::Dicom::TransferSyntax^ CodecTransferSyntax { virtual ClearCanvas::Dicom::TransferSyntax^ get() override; };
 
 	virtual IJpegCodec^ GetCodec(int bits, DicomJpegParameters^ jparams) override {
-		if (bits == 12)
+		if (bits <= 8)
+			return gcnew Jpeg8Codec(JpegMode::Sequential, 0, 0);
+		else if (bits <= 12)
 			return gcnew Jpeg12Codec(JpegMode::Sequential, 0, 0);
+		else if (bits <= 16)
+			return gcnew Jpeg16Codec(JpegMode::Sequential, 0, 0);
 		else
 			throw gcnew DicomCodecException(String::Format("Unable to create JPEG codec for bits stored == {0}", bits));
 	}
@@ -84,12 +88,12 @@ public:
     property ClearCanvas::Dicom::TransferSyntax^ CodecTransferSyntax { virtual ClearCanvas::Dicom::TransferSyntax^ get() override; };
 
 	virtual IJpegCodec^ GetCodec(int bits, DicomJpegParameters^ jparams) override {
-		if (bits == 16)
-			return gcnew Jpeg16Codec(JpegMode::Lossless, jparams->Predictor, jparams->PointTransform);
-		else if (bits >= 12)
-			return gcnew Jpeg12Codec(JpegMode::Lossless, jparams->Predictor, jparams->PointTransform);
-		else if (bits >= 8)
+		if (bits <= 8)
 			return gcnew Jpeg8Codec(JpegMode::Lossless, jparams->Predictor, jparams->PointTransform);
+		else if (bits <= 12)
+			return gcnew Jpeg12Codec(JpegMode::Lossless, jparams->Predictor, jparams->PointTransform);
+		else if (bits <= 16)
+			return gcnew Jpeg16Codec(JpegMode::Lossless, jparams->Predictor, jparams->PointTransform);
 		else
 			throw gcnew DicomCodecException(String::Format("Unable to create JPEG codec for bits stored == {0}", bits));
 	}
@@ -101,12 +105,12 @@ public:
     property ClearCanvas::Dicom::TransferSyntax^ CodecTransferSyntax { virtual ClearCanvas::Dicom::TransferSyntax^ get() override; };
 
 	virtual IJpegCodec^ GetCodec(int bits, DicomJpegParameters^ jparams) override {
-		if (bits == 16)
-			return gcnew Jpeg16Codec(JpegMode::Lossless, 1, jparams->PointTransform);
-		else if (bits >= 12)
-			return gcnew Jpeg12Codec(JpegMode::Lossless, 1, jparams->PointTransform);
-		else if (bits >= 8)
+		if (bits <= 8)
 			return gcnew Jpeg8Codec(JpegMode::Lossless, 1, jparams->PointTransform);
+		else if (bits <= 12)
+			return gcnew Jpeg12Codec(JpegMode::Lossless, 1, jparams->PointTransform);
+		if (bits <= 16)
+			return gcnew Jpeg16Codec(JpegMode::Lossless, 1, jparams->PointTransform);
 		else
 			throw gcnew DicomCodecException(String::Format("Unable to create JPEG codec for bits stored == {0}", bits));
 	}

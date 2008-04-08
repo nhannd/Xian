@@ -38,13 +38,14 @@ using ClearCanvas.DicomServices.Codec;
 namespace ClearCanvas.ImageServer.Codec.Jpeg
 {
     [ExtensionOf(typeof(DicomCodecFactoryExtensionPoint))]
-    public class JpegLosslessNonHierarchicalProcess14Factory : DicomJpegProcess1CodecFactory
+    public class JpegLosslessNonHierarchicalProcess14SV1Factory : DicomJpegLossless14SV1CodecFactory
     {
         public override DicomCodecParameters GetCodecParameters(DicomAttributeCollection dataSet)
         {
             DicomJpegParameters parms = new DicomJpegParameters();
 
             parms.Quality = 1;
+            parms.ConvertColorspaceToRGB = false;
 
             return parms;
         }

@@ -38,7 +38,7 @@ using ClearCanvas.DicomServices.Codec;
 namespace ClearCanvas.ImageServer.Codec.Jpeg
 {
     [ExtensionOf(typeof(DicomCodecFactoryExtensionPoint))]
-    public class JpegExtendedProcess24Factory : DicomJpegProcess1CodecFactory
+    public class JpegExtendedProcess24Factory : DicomJpegProcess24CodecFactory
     {
         public override DicomCodecParameters GetCodecParameters(DicomAttributeCollection dataSet)
         {
