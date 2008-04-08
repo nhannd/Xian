@@ -116,9 +116,9 @@ namespace ClearCanvas.Ris.Application.Common
                     delegate(TelephoneDetail detail) { return (TelephoneDetail)detail.Clone(); }),
                 CollectionUtils.Map<AddressDetail, AddressDetail>(this.Addresses,
                     delegate(AddressDetail detail) { return (AddressDetail)detail.Clone(); }),
-                (TelephoneDetail) this.CurrentPhoneNumber.Clone(),
-                (TelephoneDetail) this.CurrentFaxNumber.Clone(),
-                (AddressDetail) this.CurrentAddress.Clone()
+                (TelephoneDetail)(this.CurrentPhoneNumber == null ? null : this.CurrentPhoneNumber.Clone()),
+                (TelephoneDetail) (this.CurrentFaxNumber == null ? null : this.CurrentFaxNumber.Clone()),
+                (AddressDetail) (this.CurrentAddress == null ? null : this.CurrentAddress.Clone())
             );
         }
 
