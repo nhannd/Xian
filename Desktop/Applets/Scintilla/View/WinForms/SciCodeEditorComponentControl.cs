@@ -87,6 +87,7 @@ namespace ClearCanvas.Desktop.Applets.Scintilla.View.WinForms
 
             // set the margin wide enough to display line numbers (set it to zero to hide line numbers)
             _scintilla.Margins.Margin0.Width = 35;
+            _scintilla.Snippets.IsOneKeySelectionEmbedEnabled = false;
 
             // scintilla control "Text" property does not work with data-binding, because it does not fire the TextChanged event
             // therefore need to subscribe manually to these two events
@@ -95,7 +96,7 @@ namespace ClearCanvas.Desktop.Applets.Scintilla.View.WinForms
 
             if (_component.Language != null)
             {
-                _scintilla.ConfigurationManager.Language = _component.Language;
+                SetLanguage(_component.Language);
             }
             _scintilla.Text = _component.Text;
         }
@@ -114,7 +115,7 @@ namespace ClearCanvas.Desktop.Applets.Scintilla.View.WinForms
         {
             if (e.PropertyName == "Language")
             {
-                _scintilla.ConfigurationManager.Language = _component.Language;
+                SetLanguage(_component.Language);
             }
             else if (e.PropertyName == "Text")
             {
@@ -130,6 +131,14 @@ namespace ClearCanvas.Desktop.Applets.Scintilla.View.WinForms
         private void _component_InsertTextRequested(object sender, SciCodeEditorComponent.InsertTextEventArgs e)
         {
             _scintilla.Selection.Text = e.Text;
+        }
+
+        private void SetLanguage(string lang)
+        {
+            _scintilla.ConfigurationManager.Language = lang;
+
+            // must reset this property to false, because changing the language may have modified it
+            _scintilla.Snippets.IsOneKeySelectionEmbedEnabled = false;
         }
 
     }
