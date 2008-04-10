@@ -111,13 +111,13 @@ namespace ClearCanvas.Ris.Client.Admin
         {
         }
 
-        protected override IList<StaffGroupSummary> ListItems(int firstRow, int maxRows)
+        protected override IList<StaffGroupSummary> ListItems(int firstItem, int maxItems)
         {
             ListStaffGroupsResponse listResponse = null;
             Platform.GetService<IStaffGroupAdminService>(
                 delegate(IStaffGroupAdminService service)
                 {
-                    listResponse = service.ListStaffGroups(new ListStaffGroupsRequest(new SearchResultPage(firstRow, maxRows)));
+                    listResponse = service.ListStaffGroups(new ListStaffGroupsRequest(new SearchResultPage(firstItem, maxItems)));
                 });
 
             return listResponse.StaffGroups;
