@@ -1446,12 +1446,14 @@ namespace ClearCanvas.Dicom
             if (!tag.VR.Equals(DicomVr.OBvr)
              && !tag.MultiVR)
                 throw new DicomException(SR.InvalidVR);
-
         }
 
         internal DicomAttributeOB(DicomTag tag, ByteBuffer item)
-            : base(tag, item)
+            : base(tag)
         {
+            _values = item.ToBytes();
+
+            SetStreamLength();
         }
 
         internal DicomAttributeOB(DicomAttributeOB attrib)
@@ -1720,12 +1722,10 @@ namespace ClearCanvas.Dicom
         internal DicomAttributeOW(DicomTag tag, ByteBuffer item)
             : base(tag)
         {
-
             if (ByteBuffer.LocalMachineEndian != item.Endian)
                 item.Swap(tag.VR.UnitSize);
 
-            _values = new byte[item.Length];
-            Buffer.BlockCopy(item.ToBytes(), 0, _values, 0, _values.Length);
+            _values = item.ToBytes();
 
             SetStreamLength();
         }
