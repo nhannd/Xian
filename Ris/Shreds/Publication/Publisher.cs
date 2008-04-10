@@ -123,7 +123,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
                     foreach (IPublicationStepProcessor processor in _publicationStepProcessors)
                     {
-                        processor.Process(publicationStep);
+                        processor.Process(publicationStep, PersistenceScope.Current);
                     }
 
                     publicationStep.Complete(publicationStep.AssignedStaff);

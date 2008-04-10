@@ -100,8 +100,5 @@ namespace ClearCanvas.Ris.Application.Common
 
         [AuthorityToken(Description = "Allows viewing of unfiltered workflow folders")]
         public const string ViewUnfilteredWorkflowFolders = "ViewUnfilteredWorkflowFolders";
-
-        [AuthorityToken(Description = "Enable speech recognition workflow features")]
-        public const string UseSpeechRecognitionWorkflow = "UseSpeechRecognitionWorkflow";
     }
 }

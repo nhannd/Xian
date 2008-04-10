@@ -1,3 +1,4 @@
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Shreds.Publication
@@ -7,6 +8,6 @@ namespace ClearCanvas.Ris.Shreds.Publication
     /// </summary>
     public interface IPublicationStepProcessor
     {
-        void Process(PublicationStep step);
+        void Process(PublicationStep step, IPersistenceContext context);
     }
 }
