@@ -31,9 +31,11 @@
 
 #if UNIT_TESTS
 using ClearCanvas.Dicom.Codec;
+using ClearCanvas.Dicom.Codec.Rle;
+using ClearCanvas.Dicom.Tests;
 using NUnit.Framework;
 
-namespace ClearCanvas.Dicom.Tests
+namespace ClearCanvas.Dicom.Codec.Rle.Tests
 {
     [TestFixture]
     public class CodecTest : AbstractTest
@@ -41,6 +43,9 @@ namespace ClearCanvas.Dicom.Tests
         [Test]
         public void RleTest()
         {
+            DicomCodecRegistry.RegisterCodec(TransferSyntax.RleLossless,
+                                             new DicomRleCodecFactory());
+
             DicomFile file = new DicomFile("RleCodecTest.dcm");
 
             SetupMR(file.DataSet);
@@ -135,4 +140,5 @@ namespace ClearCanvas.Dicom.Tests
 
     }
 }
+
 #endif

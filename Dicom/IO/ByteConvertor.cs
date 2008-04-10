@@ -91,8 +91,8 @@ namespace ClearCanvas.Dicom.IO
             byte[] bytes = new byte[words.Length * 2];
             for (int i = 0; i < count; i++)
             {
-                // slow as shit
-                Buffer.BlockCopy(BitConverter.GetBytes(words[i]), 0, bytes, i * 2, 2);
+                // slow as shit, should be able to use Buffer.BlockCopy for this
+                Array.Copy(BitConverter.GetBytes(words[i]), 0, bytes, i * 2, 2);
             }
             return bytes;
         }

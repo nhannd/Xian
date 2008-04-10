@@ -1823,10 +1823,7 @@ namespace ClearCanvas.Dicom
             if (ByteBuffer.LocalMachineEndian != _reference.Endian)
                 bb.Swap(Tag.VR.UnitSize);
 
-            byte[] values = new byte[bb.Length];
-            Buffer.BlockCopy(bb.ToBytes(), 0, values, 0, values.Length);
-
-            return values;
+            return bb.ToBytes();
         }
 
         protected override byte ParseNumber(string val)
@@ -1867,7 +1864,7 @@ namespace ClearCanvas.Dicom
                 {
                     byte[] byteVal = new byte[len];
 
-                    Buffer.BlockCopy(_values, 0, byteVal, 0, len);
+                    Array.Copy(_values, 0, byteVal, 0, len);
 
                     bb = new ByteBuffer(byteVal, syntax.Endian);
                     bb.Swap(Tag.VR.UnitSize);

@@ -438,6 +438,8 @@ namespace ClearCanvas.Dicom
                 dataset[DicomTags.NumberOfFrames].SetInt32(0, NumberOfFrames);
             if (dataset.Contains(DicomTags.PlanarConfiguration))
                 dataset[DicomTags.PlanarConfiguration].SetInt32(0, PlanarConfiguration);
+            if (dataset.Contains(DicomTags.LossyImageCompressionRatio))
+                dataset[DicomTags.LossyImageCompressionRatio].SetFloat32(0, this.LossyImageCompressionRatio);
 
             dataset[DicomTags.PixelData] = _pd;
 
@@ -530,7 +532,7 @@ namespace ClearCanvas.Dicom
 
                 byte[] pixels = new byte[UncompressedFrameSize];
 
-                Buffer.BlockCopy((byte[]) obAttrib.Values, frame*UncompressedFrameSize, pixels, 0, UncompressedFrameSize);
+                Array.Copy((byte[])obAttrib.Values, frame * UncompressedFrameSize, pixels, 0, UncompressedFrameSize);
 
                 return pixels;
             }
@@ -589,7 +591,7 @@ namespace ClearCanvas.Dicom
                 }
                 byte[] pixels = new byte[UncompressedFrameSize];
 
-                Buffer.BlockCopy((byte[]) owAttrib.Values, frame*UncompressedFrameSize, pixels, 0, UncompressedFrameSize);
+                Array.Copy((byte[])owAttrib.Values, frame * UncompressedFrameSize, pixels, 0, UncompressedFrameSize);
 
                 return pixels;
             }
@@ -628,7 +630,7 @@ namespace ClearCanvas.Dicom
                         }
                     }
                 }
-                Buffer.BlockCopy(buffer, 0, pixelData, 0, numValues);
+                Array.Copy(buffer, 0, pixelData, 0, numValues);
             }
             else if (bytesAllocated == 2)
             {
@@ -698,7 +700,7 @@ namespace ClearCanvas.Dicom
                 dataset[DicomTags.PlanarConfiguration].SetInt32(0, PlanarConfiguration);
             if (dataset.Contains(DicomTags.LossyImageCompression) || LossyImageCompression.Length > 0)
                 dataset[DicomTags.LossyImageCompression].SetString(0, LossyImageCompression);
-            if (dataset.Contains(DicomTags.LossyImageCompressionRatio) || LossyImageCompressionRatio != 1.0f)
+            if (dataset.Contains(DicomTags.LossyImageCompressionRatio) || (LossyImageCompressionRatio != 1.0f && LossyImageCompressionRatio != 0.0f)) 
                 dataset[DicomTags.LossyImageCompressionRatio].SetFloat32(0, LossyImageCompressionRatio);
             if (dataset.Contains(DicomTags.LossyImageCompressionMethod) || LossyImageCompressionMethod.Length > 0)
                 dataset[DicomTags.LossyImageCompressionMethod].SetString(0, LossyImageCompressionMethod);
@@ -797,7 +799,7 @@ namespace ClearCanvas.Dicom
             uint offset = 0;
             foreach (DicomFragment frag in list)
             {
-                Buffer.BlockCopy(frag.GetByteArray(), 0, data, (int)offset, (int)frag.Length);
+                Array.Copy(frag.GetByteArray(), 0, data, (int)offset, (int)frag.Length);
                 offset += frag.Length;
             }
             return data;

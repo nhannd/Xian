@@ -447,7 +447,7 @@ namespace ClearCanvas.Dicom.Codec.Rle
                             return;
                         }
 
-                        Buffer.BlockCopy(rleData, i, buffer, pos, c);
+                        Array.Copy(rleData, i, buffer, pos, c);
                         pos += c;
                         i += c;
                     }

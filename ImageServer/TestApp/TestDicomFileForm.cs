@@ -167,10 +167,99 @@ namespace ClearCanvas.ImageServer.TestApp
 
         }
 
+        public static unsafe class CopyClass
+        {
+            // The unsafe keyword allows pointers to be used within
+            // the following method:
+            static public void UnsafeCopy(byte[] src, int srcIndex,
+                byte[] dst, int dstIndex, int count)
+            {
+                if (src == null || srcIndex < 0 ||
+                    dst == null || dstIndex < 0 || count < 0)
+                {
+                    throw new ArgumentException();
+                }
+                int srcLen = src.Length;
+                int dstLen = dst.Length;
+                if (srcLen - srcIndex < count ||
+                    dstLen - dstIndex < count)
+                {
+                    throw new ArgumentException();
+                }
+
+
+                // The following fixed statement pins the location of
+                // the src and dst objects in memory so that they will
+                // not be moved by garbage collection.          
+                fixed (byte* pSrc = src, pDst = dst)
+                {
+                    byte* ps = pSrc;
+                    byte* pd = pDst;
+
+                    // Loop over the count in blocks of 4 bytes, copying an
+                    // integer (4 bytes) at a time:
+                    for (int n = 0; n < count / 4; n++)
+                    {
+                        *((int*)pd) = *((int*)ps);
+                        pd += 4;
+                        ps += 4;
+                    }
+
+                    // Complete the copy by moving any bytes that weren't
+                    // moved in blocks of 4:
+                    for (int n = 0; n < count % 4; n++)
+                    {
+                        *pd = *ps;
+                        pd++;
+                        ps++;
+                    }
+                }
+            }
+
+        }
+
+        private void CopyTest()
+        {
+            byte[] source = new byte[200*1024*1024];
+            byte[] dest = new byte[200*1024*1024];
+
+            for (int i = 0; i < source.Length; i++)
+                source[i] = (byte)(i%256);
+
+            long startTicks = DateTime.Now.Ticks;
+
+            Buffer.BlockCopy(source, 0, dest, 0, source.Length);
+
+            long endTicks = DateTime.Now.Ticks;
+
+            Platform.Log(LogLevel.Info, "BlockCopy : {0} ms", new TimeSpan(endTicks - startTicks).TotalMilliseconds);
+
+            startTicks = DateTime.Now.Ticks;
+
+            Array.Copy(source, dest, source.Length);
+
+            endTicks = DateTime.Now.Ticks;
+
+            Platform.Log(LogLevel.Info, "ArrayCopy : {0} ms", new TimeSpan(endTicks - startTicks).TotalMilliseconds);
+
+            startTicks = DateTime.Now.Ticks;
+
+            CopyClass.UnsafeCopy(source, 0, dest, 0, source.Length);
+
+            endTicks = DateTime.Now.Ticks;
+
+            Platform.Log(LogLevel.Info, "UnsafeCopy : {0} ms", new TimeSpan(endTicks - startTicks).TotalMilliseconds);
+
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
+            //CopyTest();
             
             openFileDialog.ShowDialog();
+
+            if (!File.Exists(openFileDialog.FileName))
+                return;
 
             DicomFile dicomFile = new DicomFile(openFileDialog.FileName);
 

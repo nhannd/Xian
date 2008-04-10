@@ -263,7 +263,7 @@ namespace ClearCanvas.Dicom.IO
             }
             if (_data != null)
             {
-                Buffer.BlockCopy(_data, offset, buffer, 0, count);
+                Array.Copy(_data, offset, buffer, 0, count);
             }
         }
 
@@ -299,7 +299,7 @@ namespace ClearCanvas.Dicom.IO
         public byte[] ToBytes(int offset, int count)
         {
             byte[] data = new byte[count];
-            Buffer.BlockCopy(ToBytes(), offset, data, 0, count);
+            Array.Copy(ToBytes(), offset, data, 0, count);
             return data;
         }
 

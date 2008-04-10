@@ -57,7 +57,7 @@ using System.Collections.Generic;
 using System.IO;
 
 namespace ClearCanvas.Dicom.IO
-{
+{   
     internal class ChunkStream : Stream
     {
         #region Private Members
@@ -65,12 +65,11 @@ namespace ClearCanvas.Dicom.IO
         private long _length;
         private int _current;
         private int _offset;
-        private List<byte[]> _chunks;
+        private readonly List<byte[]> _chunks;
         #endregion
 
         #region Public Constructors
         public ChunkStream()
-            : base()
         {
             _current = 0;
             _offset = 0;
@@ -96,7 +95,7 @@ namespace ClearCanvas.Dicom.IO
             _chunks.Clear();
         }
         #endregion
-
+     
         #region Stream Members
         public override bool CanRead
         {
@@ -138,14 +137,14 @@ namespace ClearCanvas.Dicom.IO
 
                 if (bytesInChunk > count)
                 {
-                    Buffer.BlockCopy(chunk, _offset, buffer, dstOffset, count);
+                    Array.Copy(chunk, _offset, buffer, dstOffset, count);
                     read += count;
                     _offset += count;
                     _position += count;
                     return read;
                 }
 
-                Buffer.BlockCopy(chunk, _offset, buffer, dstOffset, bytesInChunk);
+                Array.Copy(chunk, _offset, buffer, dstOffset, bytesInChunk);
 
                 read += bytesInChunk;
                 count -= bytesInChunk;

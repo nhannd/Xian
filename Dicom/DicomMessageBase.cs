@@ -92,14 +92,19 @@ namespace ClearCanvas.Dicom
                 if (parameters == null)
                     parameters = DicomCodecRegistry.GetCodecParameters(newTransferSyntax, DataSet);
 
-                DicomUncompressedPixelData pd = new DicomUncompressedPixelData(DataSet);
-                DicomCompressedPixelData fragments = new DicomCompressedPixelData(pd);
+                if (DataSet.Contains(DicomTags.PixelData))
+                {
+                    DicomUncompressedPixelData pd = new DicomUncompressedPixelData(DataSet);
+                    DicomCompressedPixelData fragments = new DicomCompressedPixelData(pd);
 
-                codec.Encode(pd, fragments, parameters);
+                    codec.Encode(pd, fragments, parameters);
 
-                fragments.TransferSyntax = newTransferSyntax;
+                    fragments.TransferSyntax = newTransferSyntax;
 
-                fragments.UpdateMessage(this);
+                    fragments.UpdateMessage(this);
+                }
+                else
+                    this.TransferSyntax = newTransferSyntax;
             }
             else
             {
@@ -116,14 +121,20 @@ namespace ClearCanvas.Dicom
                     if (parameters == null)
                         parameters = DicomCodecRegistry.GetCodecParameters(TransferSyntax, DataSet);
                 }
-                DicomCompressedPixelData fragments = new DicomCompressedPixelData(DataSet);
-                DicomUncompressedPixelData pd = new DicomUncompressedPixelData(fragments);
 
-                codec.Decode(fragments, pd, parameters);
+                if (DataSet.Contains(DicomTags.PixelData))
+                {
+                    DicomCompressedPixelData fragments = new DicomCompressedPixelData(DataSet);
+                    DicomUncompressedPixelData pd = new DicomUncompressedPixelData(fragments);
 
-                pd.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+                    codec.Decode(fragments, pd, parameters);
 
-                pd.UpdateMessage(this);                
+                    pd.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+
+                    pd.UpdateMessage(this);
+                }
+                else
+                    this.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
             }
         }
 
