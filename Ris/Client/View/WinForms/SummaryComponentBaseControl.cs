@@ -39,19 +39,19 @@ using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="StaffGroupSummaryComponent"/>
     /// </summary>
-    public partial class StaffGroupSummaryComponentControl : ApplicationComponentUserControl
+    public partial class SummaryComponentBaseControl : ApplicationComponentUserControl
     {
-        private StaffGroupSummaryComponent _component;
+        private SummaryComponentBase _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public StaffGroupSummaryComponentControl(StaffGroupSummaryComponent component)
+        public SummaryComponentBaseControl(SummaryComponentBase component)
             :base(component)
         {
             InitializeComponent();

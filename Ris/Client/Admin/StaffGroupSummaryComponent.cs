@@ -79,14 +79,6 @@ namespace ClearCanvas.Ris.Client.Admin
         }
     }
     
-    /// <summary>
-    /// Extension point for views onto <see cref="StaffGroupSummaryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class StaffGroupSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
-
     public class StaffGroupSummaryTable : Table<StaffGroupSummary>
     {
         public StaffGroupSummaryTable()
@@ -101,7 +93,6 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// StaffGroupSummaryComponent class
     /// </summary>
-    [AssociateView(typeof(StaffGroupSummaryComponentViewExtensionPoint))]
     public class StaffGroupSummaryComponent : SummaryComponentBase<StaffGroupSummary, StaffGroupSummaryTable>
     {
         /// <summary>

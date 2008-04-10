@@ -29,9 +29,9 @@
 
 #endregion
 
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    partial class StaffGroupSummaryComponentControl
+    partial class SummaryComponentBaseControl
     {
         /// <summary> 
         /// Required designer variable.

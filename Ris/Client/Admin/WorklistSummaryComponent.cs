@@ -41,17 +41,8 @@ using System.Collections.Generic;
 namespace ClearCanvas.Ris.Client.Admin
 {
     /// <summary>
-    /// Extension point for views onto <see cref="WorklistSummaryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class WorklistSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
-
-    /// <summary>
     /// WorklistSummaryComponent class
     /// </summary>
-    [AssociateView(typeof(WorklistSummaryComponentViewExtensionPoint))]
     public class WorklistSummaryComponent : SummaryComponentBase<WorklistAdminSummary, WorklistAdminSummaryTable>
     {
         private readonly object _duplicateWorklistActionKey = new object();

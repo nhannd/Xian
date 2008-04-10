@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -36,24 +36,25 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client;
 
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="WorklistSummaryComponent"/>
+    /// Provides a Windows Forms view onto subclasses of <see cref="SummaryComponentBase"/>
     /// </summary>
-    [ExtensionOf(typeof(WorklistSummaryComponentViewExtensionPoint))]
-    public class WorklistSummaryComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(SummaryComponentBaseViewExtensionPoint))]
+    public class StaffGroupSummaryComponentView : WinFormsView, IApplicationComponentView
     {
-        private WorklistSummaryComponent _component;
-        private WorklistSummaryComponentControl _control;
+        private SummaryComponentBase _component;
+        private SummaryComponentBaseControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (WorklistSummaryComponent)component;
+            _component = (SummaryComponentBase)component;
         }
 
         #endregion
@@ -64,7 +65,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new WorklistSummaryComponentControl(_component);
+                    _control = new SummaryComponentBaseControl(_component);
                 }
                 return _control;
             }

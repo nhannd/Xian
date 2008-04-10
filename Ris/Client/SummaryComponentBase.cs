@@ -9,9 +9,16 @@ using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client
 {
+    [ExtensionPoint]
+    public class SummaryComponentBaseViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    {
+    }
+
+
     /// <summary>
     /// Abstract base class for admin summary components.
     /// </summary>
+    [AssociateView(typeof(SummaryComponentBaseViewExtensionPoint))]
     public abstract class SummaryComponentBase : ApplicationComponent
     {
         #region Presentation Model
@@ -46,7 +53,7 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         public abstract void DeleteSelectedItems();
 
-    #endregion
+        #endregion
     }
 
     /// <summary>

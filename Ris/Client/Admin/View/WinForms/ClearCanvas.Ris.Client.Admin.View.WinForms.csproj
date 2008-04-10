@@ -174,13 +174,6 @@
       <DependentUpon>StaffGroupEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="StaffGroupEditorComponentView.cs" />
-    <Compile Include="StaffGroupSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="StaffGroupSummaryComponentControl.Designer.cs">
-      <DependentUpon>StaffGroupSummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="StaffGroupSummaryComponentView.cs" />
     <Compile Include="UserEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -237,13 +230,6 @@
       <DependentUpon>WorklistSubscriptionEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="WorklistSubscriptionEditorComponentView.cs" />
-    <Compile Include="WorklistSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="WorklistSummaryComponentControl.Designer.cs">
-      <DependentUpon>WorklistSummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="WorklistSummaryComponentView.cs" />
     <Compile Include="WorklistTimeWindowEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -359,10 +345,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>StaffGroupEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="StaffGroupSummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>StaffGroupSummaryComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UserEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>UserEditorComponentControl.cs</DependentUpon>
@@ -394,10 +376,6 @@
     <EmbeddedResource Include="WorklistSubscriptionEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>WorklistSubscriptionEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WorklistSummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>WorklistSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorklistTimeWindowEditorComponentControl.resx">
       <SubType>Designer</SubType>
