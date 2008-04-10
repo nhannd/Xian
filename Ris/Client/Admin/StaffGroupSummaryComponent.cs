@@ -111,6 +111,12 @@ namespace ClearCanvas.Ris.Client.Admin
         {
         }
 
+        /// <summary>
+        /// Gets the list of items to show in the table, according to the specifed first and max items.
+        /// </summary>
+        /// <param name="firstItem"></param>
+        /// <param name="maxItems"></param>
+        /// <returns></returns>
         protected override IList<StaffGroupSummary> ListItems(int firstItem, int maxItems)
         {
             ListStaffGroupsResponse listResponse = null;
@@ -123,6 +129,11 @@ namespace ClearCanvas.Ris.Client.Admin
             return listResponse.StaffGroups;
         }
 
+        /// <summary>
+        /// Called to handle the "add" action.
+        /// </summary>
+        /// <param name="addedItems"></param>
+        /// <returns>True if items were added, false otherwise.</returns>
         protected override bool AddItems(out IList<StaffGroupSummary> addedItems)
         {
             addedItems = new List<StaffGroupSummary>();
@@ -137,6 +148,12 @@ namespace ClearCanvas.Ris.Client.Admin
             return false;
         }
 
+        /// <summary>
+        /// Called to handle the "edit" action.
+        /// </summary>
+        /// <param name="items">A list of items to edit.</param>
+        /// <param name="editedItems">The list of items that were edited.</param>
+        /// <returns>True if items were edited, false otherwise.</returns>
         protected override bool EditItems(IList<StaffGroupSummary> items, out IList<StaffGroupSummary> editedItems)
         {
             editedItems = new List<StaffGroupSummary>();
@@ -153,11 +170,22 @@ namespace ClearCanvas.Ris.Client.Admin
             return false;
         }
 
+        /// <summary>
+        /// Called to handle the "delete" action, if supported.
+        /// </summary>
+        /// <param name="items"></param>
+        /// <returns>True if items were deleted, false otherwise.</returns>
         protected override bool DeleteItems(IList<StaffGroupSummary> items)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Compares two items to see if they represent the same item.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         protected override bool IsSameItem(StaffGroupSummary x, StaffGroupSummary y)
         {
             return x.StaffGroupRef.Equals(y.StaffGroupRef, true);
