@@ -59,27 +59,27 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._staffGroupTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this._summaryTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.SuspendLayout();
             // 
-            // _staffGroupTableView
+            // _summaryTableView
             // 
-            this._staffGroupTableView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._staffGroupTableView.FilterTextBoxVisible = true;
-            this._staffGroupTableView.Location = new System.Drawing.Point(0, 0);
-            this._staffGroupTableView.MultiSelect = false;
-            this._staffGroupTableView.Name = "_staffGroupTableView";
-            this._staffGroupTableView.ReadOnly = false;
-            this._staffGroupTableView.Size = new System.Drawing.Size(650, 492);
-            this._staffGroupTableView.TabIndex = 0;
-            this._staffGroupTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._staffGroupTableView.ItemDoubleClicked += new System.EventHandler(this._staffGroupTableView_ItemDoubleClicked);
+            this._summaryTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._summaryTableView.FilterTextBoxVisible = true;
+            this._summaryTableView.Location = new System.Drawing.Point(0, 0);
+            this._summaryTableView.MultiSelect = false;
+            this._summaryTableView.Name = "_summaryTableView";
+            this._summaryTableView.ReadOnly = false;
+            this._summaryTableView.Size = new System.Drawing.Size(650, 492);
+            this._summaryTableView.TabIndex = 0;
+            this._summaryTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._summaryTableView.ItemDoubleClicked += new System.EventHandler(this._staffGroupTableView_ItemDoubleClicked);
             // 
             // StaffGroupSummaryComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._staffGroupTableView);
+            this.Controls.Add(this._summaryTableView);
             this.Name = "StaffGroupSummaryComponentControl";
             this.Size = new System.Drawing.Size(650, 492);
             this.ResumeLayout(false);
@@ -88,6 +88,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Desktop.View.WinForms.TableView _staffGroupTableView;
+        private ClearCanvas.Desktop.View.WinForms.TableView _summaryTableView;
     }
 }

@@ -51,16 +51,16 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
             _component = component;
 
-            _worklistTable.MenuModel = _component.WorklistActionModel;
-            _worklistTable.ToolbarModel = _component.WorklistActionModel;
+            _worklistTable.MenuModel = _component.SummaryTableActionModel;
+            _worklistTable.ToolbarModel = _component.SummaryTableActionModel;
 
-            _worklistTable.Table = _component.Worklists;
-            _worklistTable.DataBindings.Add("Selection", _component, "SelectedWorklist", true, DataSourceUpdateMode.OnPropertyChanged);
+            _worklistTable.Table = _component.SummaryTable;
+            _worklistTable.DataBindings.Add("Selection", _component, "SummarySelection", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _worklistTable_ItemDoubleClicked(object sender, System.EventArgs e)
         {
-            _component.UpdateWorklist();
+            _component.EditSelectedItems();
         }
     }
 }

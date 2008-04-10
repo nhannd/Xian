@@ -41,6 +41,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -86,18 +87,23 @@ namespace ClearCanvas.Ris.Client.Admin
     {
     }
 
+    public class StaffGroupSummaryTable : Table<StaffGroupSummary>
+    {
+        public StaffGroupSummaryTable()
+        {
+            this.Columns.Add(new TableColumn<StaffGroupSummary, string>("Name",
+                delegate(StaffGroupSummary item) { return item.Name; }));
+            this.Columns.Add(new TableColumn<StaffGroupSummary, string>("Description",
+                delegate(StaffGroupSummary item) { return item.Description; }));
+        }
+    }
+
     /// <summary>
     /// StaffGroupSummaryComponent class
     /// </summary>
     [AssociateView(typeof(StaffGroupSummaryComponentViewExtensionPoint))]
-    public class StaffGroupSummaryComponent : ApplicationComponent
+    public class StaffGroupSummaryComponent : SummaryComponentBase<StaffGroupSummary, StaffGroupSummaryTable>
     {
-        private StaffGroupSummary _selectedStaffGroup;
-        private Table<StaffGroupSummary> _staffGroupTable;
-
-        private CrudActionModel _actionModel;
-        private PagingController<StaffGroupSummary> _pagingController;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -105,122 +111,56 @@ namespace ClearCanvas.Ris.Client.Admin
         {
         }
 
-        public override void Start()
+        protected override IList<StaffGroupSummary> ListItems(int firstRow, int maxRows)
         {
-            _staffGroupTable = new Table<StaffGroupSummary>();
-            _staffGroupTable.Columns.Add(new TableColumn<StaffGroupSummary, string>("Name",
-                delegate(StaffGroupSummary item) { return item.Name; }));
-            _staffGroupTable.Columns.Add(new TableColumn<StaffGroupSummary, string>("Description",
-                delegate(StaffGroupSummary item) { return item.Description; }));
-
-            _actionModel = new CrudActionModel(true, true, false);
-            _actionModel.Add.SetClickHandler(AddStaffGroup);
-            _actionModel.Edit.SetClickHandler(EditStaffGroup);
-
-            _pagingController = new PagingController<StaffGroupSummary>(
-                delegate(int firstRow, int maxRows)
+            ListStaffGroupsResponse listResponse = null;
+            Platform.GetService<IStaffGroupAdminService>(
+                delegate(IStaffGroupAdminService service)
                 {
-                    ListStaffGroupsResponse listResponse = null;
-                    Platform.GetService<IStaffGroupAdminService>(
-                        delegate(IStaffGroupAdminService service)
-                        {
-                            listResponse = service.ListStaffGroups(new ListStaffGroupsRequest(new SearchResultPage(firstRow, maxRows)));
-                        });
+                    listResponse = service.ListStaffGroups(new ListStaffGroupsRequest(new SearchResultPage(firstRow, maxRows)));
+                });
 
-                    return listResponse.StaffGroups;
-                }
-            );
-
-            _actionModel.Merge(new PagingActionModel<StaffGroupSummary>(_pagingController, _staffGroupTable, Host.DesktopWindow));
-
-            _staffGroupTable.Items.AddRange(_pagingController.GetFirst());
-
-            base.Start();
+            return listResponse.StaffGroups;
         }
 
-        public override void Stop()
+        protected override bool AddItems(out IList<StaffGroupSummary> addedItems)
         {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
-            base.Stop();
-        }
-
-        #region Presentation Model
-
-        public ActionModelNode ActionModel
-        {
-            get { return _actionModel; }
-        }
-
-        public ITable StaffGroupTable
-        {
-            get { return _staffGroupTable; }
-        }
-
-        public ISelection SelectedStaffGroup
-        {
-            get { return new Selection(_selectedStaffGroup); }
-            set
+            addedItems = new List<StaffGroupSummary>();
+            StaffGroupEditorComponent editor = new StaffGroupEditorComponent();
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                this.Host.DesktopWindow, editor, "Add Staff Group");
+            if (exitCode == ApplicationComponentExitCode.Accepted)
             {
-                if (!Equals(value.Item, _selectedStaffGroup))
-                {
-                    _selectedStaffGroup = (StaffGroupSummary)value.Item;
-
-                    UpdateActionModel();
-                    NotifyPropertyChanged("SelectedStaffGroup");
-                }
+                addedItems.Add(editor.StaffGroupSummary);
+                return true;
             }
+            return false;
         }
 
-        public void AddStaffGroup()
+        protected override bool EditItems(IList<StaffGroupSummary> items, out IList<StaffGroupSummary> editedItems)
         {
-            try
+            editedItems = new List<StaffGroupSummary>();
+            StaffGroupSummary item = CollectionUtils.FirstElement(items);
+
+            StaffGroupEditorComponent editor = new StaffGroupEditorComponent(item.StaffGroupRef);
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                this.Host.DesktopWindow, editor, "Edit Staff Group");
+            if (exitCode == ApplicationComponentExitCode.Accepted)
             {
-                StaffGroupEditorComponent editor = new StaffGroupEditorComponent();
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, "Add Staff Group");
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _staffGroupTable.Items.Add(editor.StaffGroupSummary);
-                }
+                editedItems.Add(editor.StaffGroupSummary);
+                return true;
             }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            return false;
         }
 
-        public void EditStaffGroup()
+        protected override bool DeleteItems(IList<StaffGroupSummary> items)
         {
-            try
-            {
-                // can occur if user double clicks while holding control, or double clicks when there is no selection
-                if (_selectedStaffGroup == null) return;
-
-                StaffGroupEditorComponent editor = new StaffGroupEditorComponent(_selectedStaffGroup.StaffGroupRef);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, "Edit Staff Group");
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _staffGroupTable.Items.Replace(
-                        delegate(StaffGroupSummary s) { return s.StaffGroupRef.Equals(editor.StaffGroupSummary.StaffGroupRef, true); },
-                        editor.StaffGroupSummary);
-                }
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            throw new NotImplementedException();
         }
 
-        #endregion
-
-        private void UpdateActionModel()
+        protected override bool IsSameItem(StaffGroupSummary x, StaffGroupSummary y)
         {
-            _actionModel.Edit.Enabled = (_selectedStaffGroup != null);
-            _actionModel.Delete.Enabled = (_selectedStaffGroup != null);
+            return x.StaffGroupRef.Equals(y.StaffGroupRef, true);
         }
     }
 }

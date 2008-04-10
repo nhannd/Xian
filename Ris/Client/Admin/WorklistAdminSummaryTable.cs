@@ -34,7 +34,7 @@ using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    internal class WorklistAdminSummaryTable : Table<WorklistAdminSummary>
+    public class WorklistAdminSummaryTable : Table<WorklistAdminSummary>
     {
         public WorklistAdminSummaryTable()
         {

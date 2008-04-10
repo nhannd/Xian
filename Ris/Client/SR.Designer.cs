@@ -745,6 +745,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the selected item(s)?.
+        /// </summary>
+        internal static string MessageConfirmDeleteSelectedItems {
+            get {
+                return ResourceManager.GetString("MessageConfirmDeleteSelectedItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this address?.
         /// </summary>
         internal static string MessageDeleteSelectedAddress {

@@ -58,15 +58,15 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
             _component = component;
 
-            _staffGroupTableView.Table = _component.StaffGroupTable;
-            _staffGroupTableView.MenuModel = _component.ActionModel;
-            _staffGroupTableView.ToolbarModel = _component.ActionModel;
-            _staffGroupTableView.DataBindings.Add("Selection", _component, "SelectedStaffGroup", true, DataSourceUpdateMode.OnPropertyChanged);
+            _summaryTableView.Table = _component.SummaryTable;
+            _summaryTableView.MenuModel = _component.SummaryTableActionModel;
+            _summaryTableView.ToolbarModel = _component.SummaryTableActionModel;
+            _summaryTableView.DataBindings.Add("Selection", _component, "SummarySelection", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _staffGroupTableView_ItemDoubleClicked(object sender, EventArgs e)
         {
-            _component.EditStaffGroup();
+            _component.EditSelectedItems();
         }
     }
 }

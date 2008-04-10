@@ -52,131 +52,36 @@ namespace ClearCanvas.Ris.Client.Admin
     /// WorklistSummaryComponent class
     /// </summary>
     [AssociateView(typeof(WorklistSummaryComponentViewExtensionPoint))]
-    public class WorklistSummaryComponent : ApplicationComponent
+    public class WorklistSummaryComponent : SummaryComponentBase<WorklistAdminSummary, WorklistAdminSummaryTable>
     {
-        private IList<WorklistAdminSummary> _selectedWorklists;
-        private WorklistAdminSummaryTable _worklistAdminSummaryTable;
-
-        private CrudActionModel _worklistActionModel;
         private readonly object _duplicateWorklistActionKey = new object();
-
-        private IPagingController<WorklistAdminSummary> _pagingController;
 
         public override void Start()
         {
-            _worklistAdminSummaryTable = new WorklistAdminSummaryTable();
-            _selectedWorklists = new List<WorklistAdminSummary>();
-
-            _worklistActionModel = new CrudActionModel(true, true, true);
-            _worklistActionModel.Add.SetClickHandler(AddWorklist);
-            _worklistActionModel.Edit.SetClickHandler(UpdateWorklist);
-            _worklistActionModel.Delete.SetClickHandler(DeleteWorklist);
-
-            //TODO: change the icon
-            _worklistActionModel.AddAction(_duplicateWorklistActionKey, SR.TitleDuplicate, "Icons.EditToolSmall.png", DuplicateWorklist);
-
-            InitialisePaging(_worklistActionModel);
-
-            LoadWorklistTable();
-
             base.Start();
-        }
 
-        private void InitialisePaging(ActionModelNode actionModelNode)
-        {
-            _pagingController = new PagingController<WorklistAdminSummary>(
-                delegate(int firstRow, int maxRows)
-                {
-                    ListWorklistsResponse listResponse = null;
-
-                    Platform.GetService<IWorklistAdminService>(
-                        delegate(IWorklistAdminService service)
-                        {
-                            ListWorklistsRequest listRequest = new ListWorklistsRequest();
-                            listRequest.Page.FirstRow = firstRow;
-                            listRequest.Page.MaxRows = maxRows;
-
-                            listResponse = service.ListWorklists(listRequest);
-                        });
-
-                    return listResponse.WorklistSummaries;
-                }
-            );
-
-            if (actionModelNode != null)
-            {
-                actionModelNode.Merge(new PagingActionModel<WorklistAdminSummary>(_pagingController, _worklistAdminSummaryTable, Host.DesktopWindow));
-            }
-        }
-
-        private void LoadWorklistTable()
-        {
-            _worklistAdminSummaryTable.Items.Clear();
-            _worklistAdminSummaryTable.Items.AddRange(_pagingController.GetFirst());
+            // add a "duplicate worklist" action 
+            //TODO: change the icon
+            this.ActionModel.AddAction(_duplicateWorklistActionKey, SR.TitleDuplicate, "Icons.EditToolSmall.png", DuplicateWorklist);
         }
 
         #region Presentation Model
-
-        public ITable Worklists
-        {
-            get { return _worklistAdminSummaryTable; }
-        }
-
-        public ActionModelNode WorklistActionModel
-        {
-            get { return _worklistActionModel; }
-        }
-
-        public ISelection SelectedWorklist
-        {
-            get
-            {
-                return new Selection(_selectedWorklists);
-            }
-            set
-            {
-                _selectedWorklists = new TypeSafeListWrapper<WorklistAdminSummary>(value.Items);
-                SelectedWorklistChanged();
-            }
-        }
-
-        public void AddWorklist()
-        {
-            try
-            {
-                WorklistEditorComponent editor = new WorklistEditorComponent();
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, 
-                    new DialogBoxCreationArgs(editor, SR.TitleAddWorklist, null, DialogSizeHint.Medium));
-
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _worklistAdminSummaryTable.Items.AddRange(editor.EditedWorklistSummaries);
-                    _selectedWorklists = new List<WorklistAdminSummary>(editor.EditedWorklistSummaries);
-                    NotifyPropertyChanged("SelectedWorklist");
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
 
         public void DuplicateWorklist()
         {
             try
             {
-                if (_selectedWorklists.Count != 1) return;
+                if (this.SelectedItems.Count != 1) return;
 
-                WorklistAdminSummary worklist = CollectionUtils.FirstElement(_selectedWorklists);
+                WorklistAdminSummary worklist = CollectionUtils.FirstElement(this.SelectedItems);
                 WorklistEditorComponent editor = new WorklistEditorComponent(worklist.EntityRef, true);
                 ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
                     new DialogBoxCreationArgs(editor, SR.TitleAddWorklist, null, DialogSizeHint.Medium));
 
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    _worklistAdminSummaryTable.Items.AddRange(editor.EditedWorklistSummaries);
-                    _selectedWorklists = new List<WorklistAdminSummary>(editor.EditedWorklistSummaries);
-                    NotifyPropertyChanged("SelectedWorklist");
+                    this.Table.Items.AddRange(editor.EditedWorklistSummaries);
+                    this.SummarySelection = new Selection(editor.EditedWorklistSummaries);
                 }
             }
             catch (Exception e)
@@ -185,75 +90,89 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
         
-        public void UpdateWorklist()
-        {
-            try
-            {
-                if (_selectedWorklists.Count != 1) return;
-
-                WorklistAdminSummary worklist = CollectionUtils.FirstElement(_selectedWorklists);
-                WorklistEditorComponent editor = new WorklistEditorComponent(worklist.EntityRef, false);
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
-                    new DialogBoxCreationArgs(editor, SR.TitleUpdateWorklist, null, DialogSizeHint.Medium));
-
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    // only single-select editing is supported, so there is only one item
-                    WorklistAdminSummary editedItem = CollectionUtils.FirstElement(editor.EditedWorklistSummaries);
-                    _worklistAdminSummaryTable.Items.Replace(
-                        delegate(WorklistAdminSummary item) { return item.EntityRef.Equals(editedItem.EntityRef, true); },
-                        editedItem);
-                    _selectedWorklists = new List<WorklistAdminSummary>(editor.EditedWorklistSummaries);
-                    NotifyPropertyChanged("SelectedWorklist");
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void DeleteWorklist()
-        {
-            try
-            {
-                if (_selectedWorklists.Count == 0) return;
-
-                DialogBoxAction action = this.Host.ShowMessageBox(SR.MessageConfirmDeleteWorklists, MessageBoxActions.YesNo);
-                if(action == DialogBoxAction.Yes)
-                {
-                    foreach (WorklistAdminSummary worklist in _selectedWorklists)
-                    {
-                        Platform.GetService<IWorklistAdminService>(
-                            delegate(IWorklistAdminService service)
-                            {
-                                service.DeleteWorklist(new DeleteWorklistRequest(worklist.EntityRef));
-                            });
-
-                        _worklistAdminSummaryTable.Items.Remove(worklist);
-                    }
-
-                    // clear selection
-                    _selectedWorklists = new List<WorklistAdminSummary>();
-                    NotifyPropertyChanged("SelectedWorklist");
-                }
-
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-
         #endregion
 
-        private void SelectedWorklistChanged()
+        protected override bool SupportsDelete
         {
-            _worklistActionModel.Edit.Enabled = _selectedWorklists.Count == 1;
-            _worklistActionModel.Delete.Enabled = _selectedWorklists.Count > 0;
-            _worklistActionModel[_duplicateWorklistActionKey].Enabled = _selectedWorklists.Count == 1;
+            get { return true; }
         }
 
+        protected override void OnSelectedItemsChanged()
+        {
+ 	        base.OnSelectedItemsChanged();
+            this.ActionModel[_duplicateWorklistActionKey].Enabled = this.SelectedItems.Count == 1;
+        }
+
+        protected override IList<WorklistAdminSummary> ListItems(int firstItem, int maxItems)
+        {
+            ListWorklistsResponse listResponse = null;
+
+            Platform.GetService<IWorklistAdminService>(
+                delegate(IWorklistAdminService service)
+                {
+                    ListWorklistsRequest listRequest = new ListWorklistsRequest();
+                    listRequest.Page.FirstRow = firstItem;
+                    listRequest.Page.MaxRows = maxItems;
+
+                    listResponse = service.ListWorklists(listRequest);
+                });
+
+            return listResponse.WorklistSummaries;
+        }
+
+        protected override bool AddItems(out IList<WorklistAdminSummary> addedItems)
+        {
+            WorklistEditorComponent editor = new WorklistEditorComponent();
+            ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
+                new DialogBoxCreationArgs(editor, SR.TitleAddWorklist, null, DialogSizeHint.Medium));
+
+            if (exitCode == ApplicationComponentExitCode.Accepted)
+            {
+                addedItems = editor.EditedWorklistSummaries;
+                return true;
+            }
+            else
+            {
+                addedItems = null;
+                return false;
+            }
+        }
+
+        protected override bool EditItems(IList<WorklistAdminSummary> items, out IList<WorklistAdminSummary> editedItems)
+        {
+            WorklistAdminSummary worklist = CollectionUtils.FirstElement(items);
+            WorklistEditorComponent editor = new WorklistEditorComponent(worklist.EntityRef, false);
+            ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
+                new DialogBoxCreationArgs(editor, SR.TitleUpdateWorklist, null, DialogSizeHint.Medium));
+
+            if (exitCode == ApplicationComponentExitCode.Accepted)
+            {
+                editedItems = editor.EditedWorklistSummaries;
+                return true;
+            }
+            else
+            {
+                editedItems = null;
+                return false;
+            }
+        }
+
+        protected override bool DeleteItems(IList<WorklistAdminSummary> items)
+        {
+            foreach (WorklistAdminSummary worklist in items)
+            {
+                Platform.GetService<IWorklistAdminService>(
+                    delegate(IWorklistAdminService service)
+                    {
+                        service.DeleteWorklist(new DeleteWorklistRequest(worklist.EntityRef));
+                    });
+            }
+            return true;
+        }
+
+        protected override bool IsSameItem(WorklistAdminSummary x, WorklistAdminSummary y)
+        {
+            return x.EntityRef.Equals(y.EntityRef, true);
+        }
     }
 }
