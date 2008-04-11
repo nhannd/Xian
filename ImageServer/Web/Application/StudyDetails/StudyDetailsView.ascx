@@ -43,7 +43,7 @@
         <asp:BoundField DataField="NumberOfStudyRelatedSeries" HeaderText="Series">
             <HeaderStyle Wrap="False" />
         </asp:BoundField>
-        <asp:BoundField DataField="NumberOfStudyRelatedInstances" HeaderText="Images">
+        <asp:BoundField DataField="NumberOfStudyRelatedInstances" HeaderText="Instances">
             <HeaderStyle Wrap="False" />
         </asp:BoundField>
         

@@ -28,7 +28,7 @@
                             <asp:BoundField DataField="SeriesDescription" HeaderText="Description">
                                 <HeaderStyle Wrap="False" />    
                             </asp:BoundField>
-                            <asp:BoundField DataField="NumberOfSeriesRelatedInstances" HeaderText="Images">
+                            <asp:BoundField DataField="NumberOfSeriesRelatedInstances" HeaderText="Instances">
                                 <HeaderStyle Wrap="False" />    
                             </asp:BoundField>
                             <asp:BoundField DataField="SeriesInstanceUid" HeaderText="Series Instance UID">
@@ -49,7 +49,7 @@
                                 <asp:TableHeaderRow>
                                     <asp:TableHeaderCell>Series#</asp:TableHeaderCell>
                                     <asp:TableHeaderCell>Modality</asp:TableHeaderCell>
-                                    <asp:TableHeaderCell>Images</asp:TableHeaderCell>
+                                    <asp:TableHeaderCell>Instances</asp:TableHeaderCell>
                                     <asp:TableHeaderCell>Series Instance UID</asp:TableHeaderCell>
                                     <asp:TableHeaderCell>Performed On</asp:TableHeaderCell>
                                 </asp:TableHeaderRow>
