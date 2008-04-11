@@ -261,8 +261,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             // add the criteria, but do not attempt to constrain the patient profile, as we do this differently in this case (see below)
             AddConditions(query, patientCriteria, false, countQuery);
 
-            // constrain patient profile to the working facility
-            query.Conditions.Add(new HqlCondition("pp.Mrn.AssigningAuthority = ?", workingFacility.InformationAuthority));
+            // constrain patient profile to the working facility, if known
+            if (workingFacility != null)
+            {
+                query.Conditions.Add(
+                    new HqlCondition("pp.Mrn.AssigningAuthority = ?", workingFacility.InformationAuthority));
+            }
         }
 
         #endregion

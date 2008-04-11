@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
             else
             {
                 // working facility not known
-                settings.WorkingFacilityCode = null;
+                settings.WorkingFacilityCode = "";
             }
             settings.Save();
 
