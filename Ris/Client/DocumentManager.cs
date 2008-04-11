@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Client
         {
             return subject == null
                 ? string.Format("{0}", documentType)
-                : string.Format("{0}+{1}", documentType, subject.ToString(true));
+                : string.Format("{0}+{1}", documentType, subject.ToString(false));
         }
 
         #endregion

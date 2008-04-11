@@ -154,43 +154,43 @@ namespace ClearCanvas.Enterprise.Common
         /// <summary>
         /// Provide a string representation of the reference.
         /// </summary>
-        /// <returns>Formatted string containing the type and OID of the referenced object</returns>
+        /// <returns>Formatted string containing the type, OID and version of the referenced object</returns>
         public override string ToString()
         {
-            return this.ToString(false);
+            return this.ToString(true, true);
         }
 
         /// <summary>
         /// Provide a string representation of the reference.
         /// </summary>
-        /// <param name="excludeVersion"></param>
-        /// <returns>Formatted string containing the type and OID of the referenced object</returns>
-        public string ToString(bool excludeVersion)
+        /// <param name="includeVersion"></param>
+        /// <returns>Formatted string containing the type, OID and version of the referenced object</returns>
+        public string ToString(bool includeVersion)
         {
-            return ToString(excludeVersion, false);
+            return ToString(includeVersion, true);
         }
 
         /// <summary>
         /// Provide a string representation of the reference.
         /// </summary>
-        /// <param name="excludeVersion"></param>
-        /// <param name="excludeEntityClass"></param>
-        /// <returns>Formatted string containing the type and OID of the referenced object</returns>
-        public string ToString(bool excludeVersion, bool excludeEntityClass)
+        /// <param name="includeVersion"></param>
+        /// <param name="includeEntityClass"></param>
+        /// <returns>Formatted string containing the type, OID and version of the referenced object</returns>
+        public string ToString(bool includeVersion, bool includeEntityClass)
         {
-            if (excludeVersion)
+            if (includeVersion)
             {
-                if (excludeEntityClass)
-                    return _entityOid.ToString();
+                if (includeEntityClass)
+                    return String.Format("{0}/{1}/{2}", _entityClass.ToString(), _entityOid.ToString(), _version.ToString());
                 else
-                    return String.Format("{0}/{1}", _entityClass.ToString(), _entityOid.ToString());
+                    return String.Format("{0}/{1}", _entityOid.ToString(), _version.ToString());
             }
             else
             {
-                if (excludeEntityClass)
-                    return String.Format("{0}/{1}", _entityOid.ToString(), _version.ToString());
+                if (includeEntityClass)
+                    return String.Format("{0}/{1}", _entityClass.ToString(), _entityOid.ToString());
                 else
-                    return String.Format("{0}/{1}/{2}", _entityClass.ToString(), _entityOid.ToString(), _version.ToString());
+                    return _entityOid.ToString();
             }
         }
 
