@@ -183,9 +183,21 @@ namespace ClearCanvas.ImageServer.Common
             {
                 using (IReadContext read = _store.OpenReadContext())
                 {
-                    foreach (ServerFilesystemInfo filesystemInfo in _filesystemList.Values)
+                    IFilesystemEntityBroker filesystemSelect = read.GetBroker<IFilesystemEntityBroker>();
+                    FilesystemSelectCriteria criteria = new FilesystemSelectCriteria();
+                    IList<Filesystem> filesystemList = filesystemSelect.Find(criteria);
+
+                    foreach (Filesystem filesystem in filesystemList)
                     {
-                        filesystemInfo.Filesystem = Filesystem.Load(read, filesystemInfo.Filesystem.GetKey());
+                        if (_filesystemList.ContainsKey(filesystem.GetKey()))
+                            _filesystemList[filesystem.GetKey()].Filesystem = filesystem;
+                        else
+                        {
+                            ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
+                            _filesystemList.Add(filesystem.GetKey(), info);
+
+                            info.LoadFreeSpace();
+                        }
                     }
                 }
             }
