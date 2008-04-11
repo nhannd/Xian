@@ -92,12 +92,16 @@ namespace ClearCanvas.ImageServer.Web.Application.SeriesDetails
                 }
 
 
-
                 if (String.IsNullOrEmpty(_patientSummary.Sex))
                     PatientSex.Text = "Unknown";
                 else
                 {
-                    PatientSex.Text = PatientSex.Text == "F" ? "Female" : "Male";
+                    if (_patientSummary.Sex.StartsWith("F"))
+                        PatientSex.Text = "Female";
+                    else if (_patientSummary.Sex.StartsWith("M"))
+                        PatientSex.Text = "Male";
+                    else
+                        PatientSex.Text = "Unknown";
                 }
 
 
