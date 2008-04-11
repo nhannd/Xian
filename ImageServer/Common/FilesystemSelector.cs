@@ -34,6 +34,10 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Common
 {
+    /// <summary>
+    /// Class used for incoming studies to select which filesystem the study should be 
+    /// stored to.
+    /// </summary>
     public class FilesystemSelector
     {
         private readonly FilesystemMonitor _monitor;
@@ -48,7 +52,7 @@ namespace ClearCanvas.ImageServer.Common
             ServerFilesystemInfo selectedFilesystem = null;
             float selectedFreeBytes = 0;
 
-            foreach (ServerFilesystemInfo info in _monitor.Filesystems.Values)
+            foreach (ServerFilesystemInfo info in _monitor.GetFilesystems())
             {
                 if (info.Online && info.Filesystem.Enabled && !info.Filesystem.ReadOnly)
                 {

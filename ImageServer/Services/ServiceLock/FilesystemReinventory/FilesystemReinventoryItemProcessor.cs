@@ -176,8 +176,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
             ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
             _partitions = broker.Find(criteria);
 
-            ServerFilesystemInfo info;
-            _monitor.Filesystems.TryGetValue(item.FilesystemKey, out info);
+            ServerFilesystemInfo info = _monitor.GetFilesystemInfo(item.FilesystemKey);
 
             Platform.Log(LogLevel.Info, "Starting reinventory of filesystem: {0}", info.Filesystem.Description);
 

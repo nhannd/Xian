@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             _monitor = new FilesystemMonitor();
             _monitor.Load();
 
-            ServerFilesystemInfo fs = _monitor.Filesystems[item.FilesystemKey];
+            ServerFilesystemInfo fs = _monitor.GetFilesystemInfo(item.FilesystemKey);
 
             //Platform.Log(LogLevel.Info, "Starting filesystem watermark check on filesystem {0} (High Watermark: {1}, Low Watermark: {2}",
               //           fs.Filesystem.Description, fs.Filesystem.HighWatermark, fs.Filesystem.LowWatermark);

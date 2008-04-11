@@ -102,8 +102,8 @@ namespace ClearCanvas.Dicom.Samples
             {
                 DicomFile dicomFile = new DicomFile(file);
 
-                // Only load to specific character set to reduce amount of data read from file
-                dicomFile.Load(DicomTags.SopInstanceUid, DicomReadOptions.Default);
+                // Only load to sopy instance uid to reduce amount of data read from file
+                dicomFile.Load(DicomTags.SopInstanceUid, DicomReadOptions.Default | DicomReadOptions.DoNotStorePixelDataInDataSet);
 
                 FileToSend fileStruct = new FileToSend();
 

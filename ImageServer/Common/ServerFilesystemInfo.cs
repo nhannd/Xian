@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageServer.Common
     public class ServerFilesystemInfo
     {
         #region Private Members
-        private readonly Filesystem _filesystem;
+        private Filesystem _filesystem;
         private object _lock = new object();
         private float _freeBytes;
         private float _totalBytes;
@@ -55,6 +55,7 @@ namespace ClearCanvas.ImageServer.Common
         public Filesystem Filesystem
         {
             get { return _filesystem; }
+            internal set { _filesystem = value; }
         }
 
         /// <summary>

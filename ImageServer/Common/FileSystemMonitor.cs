@@ -36,21 +36,22 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-
 
 namespace ClearCanvas.ImageServer.Common
 {
-
     /// <summary>
     /// Class for monitoring the status of filesystems.
     /// </summary>
+    /// <remarks>
+    /// The class creates a background thread that monitors the current usage of the filesystems.  
+    /// The class will also update itself and retrieve updated filesystem information from
+    /// the database periodically.
+    /// </remarks>
     public class FilesystemMonitor : IDisposable
     {
         #region Private Members
         private readonly Dictionary<ServerEntityKey, ServerFilesystemInfo> _filesystemList = new Dictionary<ServerEntityKey,ServerFilesystemInfo>();
-        private IList<ServerPartition> _partitionList;
         private readonly IPersistentStore _store;
         private Thread _theThread = null;
         private bool _stop = false;
@@ -64,18 +65,26 @@ namespace ClearCanvas.ImageServer.Common
         }
         #endregion
 
-        #region Public Properties
-        public IDictionary<ServerEntityKey,ServerFilesystemInfo> Filesystems
-        {
-            get { return _filesystemList; }
-        }
-        public IList<ServerPartition> Partitions
-        {
-            get { return _partitionList; }
-        }
-        #endregion
-
         #region Public Methods
+
+        public IEnumerable<ServerFilesystemInfo> GetFilesystems()
+        {
+            lock (_lock)
+            {
+                return _filesystemList.Values;
+            }
+        }
+        public ServerFilesystemInfo GetFilesystemInfo(ServerEntityKey filesystemKey)
+        {
+            lock(_lock)
+            {
+                if (_filesystemList.ContainsKey(filesystemKey))
+                {
+                    return _filesystemList[filesystemKey];
+                }                
+            }
+            return null;
+        }
         public bool CheckFilesystemAboveLowWatermark(ServerEntityKey filesystemKey)
         {
             lock (_lock)
@@ -145,29 +154,43 @@ namespace ClearCanvas.ImageServer.Common
             }
             return false;
         }
+
         public void Load()
         {
-            using (IReadContext read = _store.OpenReadContext())
+            lock (_lock)
             {
-                IServerPartitionEntityBroker broker = read.GetBroker<IServerPartitionEntityBroker>();
-                ServerPartitionSelectCriteria partitionCriteria = new ServerPartitionSelectCriteria();
-                _partitionList = broker.Find(partitionCriteria);
-
-                IFilesystemEntityBroker filesystemSelect = read.GetBroker<IFilesystemEntityBroker>();
-                FilesystemSelectCriteria criteria = new FilesystemSelectCriteria();
-                IList<Filesystem> filesystemList = filesystemSelect.Find(criteria);
-
-                foreach (Filesystem filesystem in filesystemList)
+                using (IReadContext read = _store.OpenReadContext())
                 {
-                    ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
-                    _filesystemList.Add(filesystem.GetKey(),info);
+                    IFilesystemEntityBroker filesystemSelect = read.GetBroker<IFilesystemEntityBroker>();
+                    FilesystemSelectCriteria criteria = new FilesystemSelectCriteria();
+                    IList<Filesystem> filesystemList = filesystemSelect.Find(criteria);
 
-                    info.LoadFreeSpace();
+                    foreach (Filesystem filesystem in filesystemList)
+                    {
+                        ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
+                        _filesystemList.Add(filesystem.GetKey(), info);
+
+                        info.LoadFreeSpace();
+                    }
+                }
+
+                StartThread();
+            }
+        }
+        public void ReLoad()
+        {
+            lock (_lock)
+            {
+                using (IReadContext read = _store.OpenReadContext())
+                {
+                    foreach (ServerFilesystemInfo filesystemInfo in _filesystemList.Values)
+                    {
+                        filesystemInfo.Filesystem = Filesystem.Load(read, filesystemInfo.Filesystem.GetKey());
+                    }
                 }
             }
-
-            StartThread();
         }
+
         #endregion
 
         #region Private Methods
@@ -198,12 +221,18 @@ namespace ClearCanvas.ImageServer.Common
         private void Run()
         {
             DateTime nextFilesystemCheck = Platform.Time;
+            DateTime nextDbCheck = nextFilesystemCheck.AddMinutes(2);
 
             while(_stop == false)
             {
                 DateTime now = Platform.Time;
 
-                if (now > nextFilesystemCheck)
+                if (now > nextDbCheck)
+                {
+                    nextDbCheck = now.AddMinutes(2);
+                    ReLoad();
+                }
+                else if (now > nextFilesystemCheck)
                 {
                     // Check very minute
                     nextFilesystemCheck = now.AddSeconds(30);
@@ -216,7 +245,7 @@ namespace ClearCanvas.ImageServer.Common
                         }
                     }
                 }
-                Thread.Sleep(5000);
+                Thread.Sleep(5000);               
             }            
         }
 
