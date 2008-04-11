@@ -112,10 +112,16 @@ namespace ClearCanvas.Ris.Application.Common
         public const string ReportingInTranscriptionWorklist = "ReportingInTranscriptionWorklist";
 
         [WorklistClassName]
-        public const string ReportingToBeVerifiedWorklist = "ReportingToBeVerifiedWorklist";
+        public const string ReportingRadiologistToBeVerifiedWorklist = "ReportingRadiologistToBeVerifiedWorklist";
 
         [WorklistClassName]
-        public const string ReportingVerifiedWorklist = "ReportingVerifiedWorklist";
+        public const string ReportingResidentToBeVerifiedWorklist = "ReportingResidentToBeVerifiedWorklist";
+
+        [WorklistClassName]
+        public const string ReportingRadiologistVerifiedWorklist = "ReportingRadiologistVerifiedWorklist";
+
+        [WorklistClassName]
+        public const string ReportingResidentVerifiedWorklist = "ReportingResidentVerifiedWorklist";
 
         [WorklistClassName]
         public const string ReportingReviewResidentReportWorklist = "ReportingReviewResidentReportWorklist";

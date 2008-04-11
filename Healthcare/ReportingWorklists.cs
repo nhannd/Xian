@@ -82,48 +82,47 @@ namespace ClearCanvas.Healthcare
     [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
     [StaticWorklist(true)]
-    [WorklistClassDescription("ReportingToBeVerifiedWorklistDescription")]
-    public class ReportingToBeVerifiedWorklist : ReportingWorklist
+    [WorklistClassDescription("ReportingRadiologistToBeVerifiedWorklistDescription")]
+    public class ReportingRadiologistToBeVerifiedWorklist : ReportingWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
             criteria.ProcedureStepClass = typeof(VerificationStep);
             criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
-            if (wqc.Staff.Type == StaffType.PRAR)
-            {
-                criteria.ReportPart.Interpreter.EqualTo(wqc.Staff);
-            }
-            else
-            {
-                criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
-                criteria.ReportPart.Interpreter.EqualTo(wqc.Staff);
-                criteria.ReportPart.Supervisor.IsNull();
-            }
+            criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+
             ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
 
     [ExtensionOf(typeof(WorklistExtensionPoint))]
-    [WorklistSupportsTimeFilter(true)]
+    [WorklistSupportsTimeFilter(false)]
     [StaticWorklist(true)]
-    [WorklistClassDescription("ReportingVerifiedWorklistDescription")]
-    public class ReportingVerifiedWorklist : ReportingWorklist
+    [WorklistClassDescription("ReportingResdientToBeVerifiedWorklistDescription")]
+    public class ReportingResdientToBeVerifiedWorklist : ReportingWorklist
+    {
+        public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+        {
+            ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+            criteria.ProcedureStepClass = typeof(VerificationStep);
+            criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
+            criteria.ReportPart.Interpreter.EqualTo(wqc.Staff);
+
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems);
+            return new WorklistItemSearchCriteria[] { criteria };
+        }
+    }
+
+    public abstract class ReportingVerifiedWorklist : ReportingWorklist
     {
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
             criteria.ProcedureStepClass = typeof(PublicationStep);
             criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.CM });
-            if (wqc.Staff.Type == StaffType.PRAR)
-            {
-                criteria.ReportPart.Interpreter.EqualTo(wqc.Staff);
-            }
-            else
-            {
-                criteria.ReportPart.Verifier.EqualTo(wqc.Staff);
-            }
+            GetStaffSearchCriteria(criteria).EqualTo(wqc.Staff);
             ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeNewestItems);
             return new WorklistItemSearchCriteria[] { criteria };
         }
@@ -151,6 +150,32 @@ namespace ClearCanvas.Healthcare
             }
 
             return new List<WorklistItem>(filter.Values);
+        }
+
+        protected abstract StaffSearchCriteria GetStaffSearchCriteria(ReportingWorklistItemSearchCriteria criteria);
+    }
+
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
+    [WorklistSupportsTimeFilter(true)]
+    [StaticWorklist(true)]
+    [WorklistClassDescription("ReportingRadiologistVerifiedWorklistDescription")]
+    public class ReportingRadiologistVerifiedWorklist : ReportingVerifiedWorklist
+    {
+        protected override StaffSearchCriteria GetStaffSearchCriteria(ReportingWorklistItemSearchCriteria criteria)
+        {
+            return criteria.ReportPart.Verifier;
+        }
+    }
+
+    [ExtensionOf(typeof(WorklistExtensionPoint))]
+    [WorklistSupportsTimeFilter(true)]
+    [StaticWorklist(true)]
+    [WorklistClassDescription("ReportingResidentVerifiedWorklistDescription")]
+    public class ReportingResidentVerifiedWorklist : ReportingVerifiedWorklist
+    {
+        protected override StaffSearchCriteria GetStaffSearchCriteria(ReportingWorklistItemSearchCriteria criteria)
+        {
+            return criteria.ReportPart.Interpreter;
         }
     }
 

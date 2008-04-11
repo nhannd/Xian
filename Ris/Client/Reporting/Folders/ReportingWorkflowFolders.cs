@@ -35,6 +35,8 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Common;
+using System.Threading;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Reporting.Folders
 {
@@ -75,7 +77,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     }
 
     [FolderForWorklistClass(WorklistClassNames.ReportingInTranscriptionWorklist)]
-    [FolderPath("In Transcriptioin")]
+    [FolderPath("In Transcription")]
     public class InTranscriptionFolder : ReportingWorkflowFolder
     {
         [ExtensionPoint]
@@ -89,7 +91,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderForWorklistClass(WorklistClassNames.ReportingToBeVerifiedWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.ReportingRadiologistToBeVerifiedWorklist)]
     [FolderPath("To be Verified")]
     public class ToBeVerifiedFolder : ReportingWorkflowFolder
     {
@@ -101,6 +103,19 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         public ToBeVerifiedFolder(ReportingWorkflowFolderSystemBase folderSystem)
             : base(folderSystem, null, new DropHandlerExtensionPoint())
         {
+        }
+
+        /// <summary>
+        /// Overridden to tweak behaviour based on user permissions.
+        /// </summary>
+        public override string WorklistClassName
+        {
+            get
+            {
+                return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) ?
+                    WorklistClassNames.ReportingRadiologistToBeVerifiedWorklist :
+                    WorklistClassNames.ReportingResidentToBeVerifiedWorklist;
+                }
         }
     }
 
@@ -119,7 +134,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderForWorklistClass(WorklistClassNames.ReportingVerifiedWorklist)]
+    [FolderForWorklistClass(WorklistClassNames.ReportingRadiologistVerifiedWorklist)]
     [FolderPath("Verified")]
     public class VerifiedFolder : ReportingWorkflowFolder
     {
@@ -131,6 +146,19 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         public VerifiedFolder(ReportingWorkflowFolderSystemBase folderSystem)
             : base(folderSystem, null, new DropHandlerExtensionPoint())
         {
+        }
+
+        /// <summary>
+        /// Overridden to tweak behaviour based on user permissions.
+        /// </summary>
+        public override string WorklistClassName
+        {
+            get
+            {
+                return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) ?
+                    WorklistClassNames.ReportingRadiologistVerifiedWorklist :
+                    WorklistClassNames.ReportingResidentVerifiedWorklist;
+            }
         }
     }
 

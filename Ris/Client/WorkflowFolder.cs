@@ -149,7 +149,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public string WorklistClassName
+        public virtual string WorklistClassName
         {
             get { return _worklistClassName; }
         }

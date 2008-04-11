@@ -73,11 +73,11 @@ namespace ClearCanvas.Ris.Client.Reporting
                 this.AddFolder(new Folders.InTranscriptionFolder(this));
 
             this.AddFolder(new Folders.ToBeVerifiedFolder(this));
+            this.AddFolder(new Folders.VerifiedFolder(this));
 
             if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
                 this.AddFolder(new Folders.ReviewResidentReportFolder(this));
 
-            this.AddFolder(new Folders.VerifiedFolder(this));
 
             this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
             folderExplorer.RegisterSearchDataHandler(this);
