@@ -35,12 +35,13 @@ using System.Text;
 using ClearCanvas.Common;
 using System.Xml;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Imex;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common.Utilities;
 using System.Collections;
 
-namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
+namespace ClearCanvas.Healthcare.Imex
 {
     [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "Diagnostic Service Tree Importer")]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]

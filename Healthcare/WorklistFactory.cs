@@ -32,18 +32,15 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Application.Common;
-using System.Reflection;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Application.Services
+namespace ClearCanvas.Healthcare
 {
     /// <summary>
     /// Manages instantiation of worklists.
     /// </summary>
-    internal class WorklistFactory
+    public class WorklistFactory
     {
         #region Static members
 

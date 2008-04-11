@@ -5,10 +5,11 @@ using System.Xml;
 using System.Xml.XPath;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Imex;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare;
 
-namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
+namespace ClearCanvas.Healthcare.Imex
 {
     [ExtensionOf(typeof(DataExporterExtensionPoint))]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]

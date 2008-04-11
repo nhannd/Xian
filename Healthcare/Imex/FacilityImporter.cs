@@ -32,13 +32,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Enterprise.Core.Imex;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
+namespace ClearCanvas.Healthcare.Imex
 {
     [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "Facility Importer")]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]

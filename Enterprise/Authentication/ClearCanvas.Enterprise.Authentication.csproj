@@ -45,9 +45,9 @@
     <Compile Include="*.gen.cs" />
     <Compile Include="AuthenticationService.cs" />
     <Compile Include="AuthorityGroup.cs" />
-    <Compile Include="AuthorityGroupImporter.cs" />
+    <Compile Include="Imex\AuthorityGroupImporter.cs" />
     <Compile Include="AuthorityToken.cs" />
-    <Compile Include="AuthorityTokenImporter.cs" />
+    <Compile Include="Imex\AuthorityTokenImporter.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Brokers\IAuthorityTokenBroker.cs" />
     <Compile Include="AuthenticationSettings.cs" />
@@ -56,6 +56,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>AuthenticationSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Imex\UserImporter.cs" />
     <Compile Include="Password.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setup\SetupApplication.cs" />

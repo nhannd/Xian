@@ -50,15 +50,5 @@ namespace ClearCanvas.Ris.Application.Services
                 procedureType.Id,
                 procedureType.Name);
         }
-
-        //TODO: should there be a separate assembler for this?
-        public ModalityProcedureStepTypeDetail CreateModalityProcedureStepTypeDetail(ModalityProcedureStepType modalityProcedureStepType)
-        {
-            ModalityAssembler assembler = new ModalityAssembler();
-            return new ModalityProcedureStepTypeDetail(
-                modalityProcedureStepType.Id,
-                modalityProcedureStepType.Name,
-                assembler.CreateModalityDetail(modalityProcedureStepType.DefaultModality));
-        }
     }
 }

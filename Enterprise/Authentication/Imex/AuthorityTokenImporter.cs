@@ -40,7 +40,7 @@ using System.Reflection;
 using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Enterprise.Authentication
+namespace ClearCanvas.Enterprise.Authentication.Imex
 {
     /// <summary>
     /// Scans the entire set of installed plugins for declared authority tokens (const string fields marked

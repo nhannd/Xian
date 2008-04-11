@@ -5,11 +5,12 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Imex;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using Iesi.Collections.Generic;
 
-namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
+namespace ClearCanvas.Healthcare.Imex
 {
     [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "Procedure Type Importer")]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]

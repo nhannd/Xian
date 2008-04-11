@@ -78,6 +78,24 @@
     <Compile Include="Alert\LanguageAlert.cs" />
     <Compile Include="Alert\NoteAlert.cs" />
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
+    <Compile Include="Imex\DiagnosticServiceExporter.cs" />
+    <Compile Include="Imex\DiagnosticServiceImporter.cs" />
+    <Compile Include="Imex\DiagnosticServiceTreeExporter.cs" />
+    <Compile Include="Imex\DiagnosticServiceTreeImporter.cs" />
+    <Compile Include="Imex\ExternalPractitionerImporter.cs" />
+    <Compile Include="Imex\FacilityImporter.cs" />
+    <Compile Include="Imex\ModalityImporter.cs" />
+    <Compile Include="Imex\ProcedureTypeExporter.cs" />
+    <Compile Include="Imex\ProcedureTypeGroupExporter.cs" />
+    <Compile Include="Imex\ProcedureTypeGroupImporter.cs" />
+    <Compile Include="Imex\ProcedureTypeImporter.cs" />
+    <Compile Include="Imex\ProtocolExporter.cs" />
+    <Compile Include="Imex\ProtocolImporter.cs" />
+    <Compile Include="Imex\StaffGroupExporter.cs" />
+    <Compile Include="Imex\StaffGroupImporter.cs" />
+    <Compile Include="Imex\StaffImporter.cs" />
+    <Compile Include="Imex\WorklistExporter.cs" />
+    <Compile Include="Imex\WorklistImporter.cs" />
     <Compile Include="ReportingProtocolWorklists.cs" />
     <Compile Include="ExternalPractitionerContactPoint.cs" />
     <Compile Include="IWorklistQueryContext.cs" />
@@ -106,6 +124,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ReportingWorkflowSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="WorklistFactory.cs" />
     <Compile Include="WorklistFilters.cs" />
     <Compile Include="WorklistItemBase.cs" />
     <Compile Include="WorklistItemSearchCriteria.cs" />
@@ -213,7 +232,6 @@
     <Compile Include="ReportingProcedureStepSearchCriteria.cs" />
     <Compile Include="Procedure.cs" />
     <Compile Include="ProcedureType.cs" />
-    <Compile Include="ModalityProcedureStepType.cs" />
     <Compile Include="Sex.cs" />
     <Compile Include="Staff.cs" />
     <Compile Include="TelephoneEquipment.cs" />

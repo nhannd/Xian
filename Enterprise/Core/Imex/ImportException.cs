@@ -30,44 +30,23 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
+using System.Runtime.Serialization;
 
-using Iesi.Collections;
-using ClearCanvas.Enterprise.Core;
-
-
-namespace ClearCanvas.Healthcare {
-
-
-    /// <summary>
-    /// ModalityProcedureStepType entity
-    /// </summary>
-	public partial class ModalityProcedureStepType : Entity
-	{
-	
-		/// <summary>
-		/// This method is called from the constructor.  Use this method to implement any custom
-		/// object initialization.
-		/// </summary>
-		private void CustomInitialize()
-		{
-		}
-
-        #region Object overrides
-
-        public override bool Equals(object that)
+namespace ClearCanvas.Enterprise.Core.Imex
+{
+    [Serializable]
+    public class ImportException : Exception
+    {
+        public ImportException(string message)
+            :base(message)
         {
-            ModalityProcedureStepType other = that as ModalityProcedureStepType;
-            return other != null && other.Id == this.Id;
         }
 
-        public override int GetHashCode()
+        public ImportException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
-            return this.Id.GetHashCode();
         }
-
-        #endregion
-
-	}
+    }
 }

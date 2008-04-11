@@ -34,13 +34,12 @@ using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Authentication;
-using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Imex;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 
-namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
+namespace ClearCanvas.Healthcare.Imex
 {
     [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "Worklist Importer")]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]

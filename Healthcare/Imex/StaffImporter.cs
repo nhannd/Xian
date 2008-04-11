@@ -33,18 +33,17 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core.Imex;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
+namespace ClearCanvas.Healthcare.Imex
 {
-    [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "Staff and User Importer")]
+    [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "Staff Importer")]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    class StaffUserImporter : DataImporterBase
+    class StaffImporter : DataImporterBase
     {
         private const int _numFields = 9;
 
@@ -58,7 +57,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         }
 
         /// <summary>
-        /// Import staff and user from CSV format.
+        /// Import staff from CSV format.
         /// </summary>
         /// <param name="rows">
         /// Each string in the list must contain 25 CSV fields, as follows:
@@ -77,7 +76,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         {
             _context = context;
 
-            List<User> importedUsers = new List<User>();
             List<Staff> importedStaff = new List<Staff>();
 
             foreach (string row in rows)
@@ -96,16 +94,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
                 string staffSuffix = fields[7];
                 string staffDegree = fields[8];
 
-                User user = GetUser(userName, importedUsers);
-
-                if (user == null)
-                {
-                    user = User.CreateNewUser(new UserInfo(userName, string.Format("{0} {1}", staffFamilyName, staffGivenName), null, null));
-                    _context.Lock(user, DirtyState.New);
-
-                    importedUsers.Add(user);
-                }
-
                 Staff staff = GetStaff(staffId, importedStaff);
 
                 if (staff == null)
@@ -115,39 +103,19 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
                     staff.Id = staffId;
                     staff.Type = staffType;
                     staff.Name = new PersonName(staffFamilyName, staffGivenName, staffMiddlename, staffPrefix, staffSuffix, staffDegree);
+                    staff.UserName = userName;
 
                     _context.Lock(staff, DirtyState.New);
 
                     importedStaff.Add(staff);
                 }
 
-                if (string.IsNullOrEmpty(staff.UserName))
-                    staff.UserName = userName;
             }
         }
 
         #endregion
 
         #region Private Methods
-
-        private User GetUser(string userName, IList<User> importedUsers)
-        {
-            User user = null;
-
-            user = CollectionUtils.SelectFirst(importedUsers,
-                delegate(User u) { return u.UserName == userName; });
-
-            if (user == null)
-            {
-                UserSearchCriteria criteria = new UserSearchCriteria();
-                criteria.UserName.EqualTo(userName);
-
-                IUserBroker broker = _context.GetBroker<IUserBroker>();
-                user = CollectionUtils.FirstElement(broker.Find(criteria));
-            }
-
-            return user;
-        }
 
         private Staff GetStaff(string staffId, IList<Staff> importedStaff)
         {

@@ -34,12 +34,13 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Imex;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core.Modelling;
 
-namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
+namespace ClearCanvas.Healthcare.Imex
 {
     [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "External Practitioner Importer")]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]

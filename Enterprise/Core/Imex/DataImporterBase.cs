@@ -36,9 +36,8 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Application.Services.Admin
+namespace ClearCanvas.Enterprise.Core.Imex
 {
     public abstract class DataImporterBase : IDataImporter, IApplicationRoot
     {

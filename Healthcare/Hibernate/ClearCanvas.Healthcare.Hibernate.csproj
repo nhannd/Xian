@@ -132,7 +132,6 @@
     <EmbeddedResource Include="Mappings\OrderPriorityEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\Procedure.hbm.xml" />
     <EmbeddedResource Include="Mappings\ProcedureType.hbm.xml" />
-    <EmbeddedResource Include="Mappings\ModalityProcedureStepType.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Mappings\ProcedureStep.hbm.xml" />

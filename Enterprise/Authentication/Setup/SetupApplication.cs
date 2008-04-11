@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Authentication.Imex;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Authentication.Brokers;
 using System.IO;

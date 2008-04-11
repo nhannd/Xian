@@ -34,12 +34,12 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Imex;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Healthcare.Brokers;
 
-namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
+namespace ClearCanvas.Healthcare.Imex
 {
     [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "Modality Importer")]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]

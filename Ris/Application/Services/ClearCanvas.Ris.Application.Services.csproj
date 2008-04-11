@@ -55,13 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
-    <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceExporter.cs" />
-    <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceImporter.cs" />
-    <Compile Include="Admin\ProcedureTypeAdmin\ProcedureTypeExporter.cs" />
-    <Compile Include="Admin\ProcedureTypeAdmin\ProcedureTypeImporter.cs" />
-    <Compile Include="Admin\StaffGroupAdmin\StaffGroupExporter.cs" />
     <Compile Include="Admin\StaffGroupAdmin\StaffGroupAdminService.cs" />
-    <Compile Include="Admin\StaffGroupAdmin\StaffGroupImporter.cs" />
     <Compile Include="StaffGroupAssembler.cs" />
     <Compile Include="Admin\UserAdmin\UserAdminService.cs" />
     <Compile Include="Admin\UserAdmin\AuthorityGroupAssembler.cs" />
@@ -69,8 +63,6 @@
     <Compile Include="Admin\UserAdmin\UserAssembler.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\ExternalPractitionerAdminService.cs" />
     <Compile Include="Admin\ProtocolAdmin\ProtocolAdminService.cs" />
-    <Compile Include="Admin\ProtocolAdmin\ProtocolExporter.cs" />
-    <Compile Include="Admin\ProtocolAdmin\ProtocolImporter.cs" />
     <Compile Include="Login\LoginServiceRecorder.cs" />
     <Compile Include="OrderAttachmentAssembler.cs" />
     <Compile Include="OrderNoteAssembler.cs" />
@@ -79,18 +71,8 @@
     <Compile Include="ReportAssembler.cs" />
     <Compile Include="MimeDocumentService\MimeDocumentService.cs" />
     <Compile Include="ExternalPractitionerAssembler.cs" />
-    <Compile Include="Admin\DataExporterBase.cs" />
-    <Compile Include="Admin\DataImporterBase.cs" />
-    <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceTreeExporter.cs" />
-    <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceTreeImporter.cs" />
-    <Compile Include="Admin\DiagnosticServiceAdmin\ProcedurePlanImporter.cs" />
     <Compile Include="Admin\EnumerationAdmin\EnumerationAdminService.cs" />
-    <Compile Include="Admin\ExternalPractitionerAdmin\ExternalPractitionerImporter.cs" />
-    <Compile Include="Admin\FacilityAdmin\FacilityImporter.cs" />
-    <Compile Include="Admin\IDataExporter.cs" />
-    <Compile Include="Admin\IDataImporter.cs" />
     <Compile Include="Admin\Import\ImportService.cs" />
-    <Compile Include="Admin\ModalityAdmin\ModalityImporter.cs" />
     <Compile Include="ModalityAssembler.cs" />
     <Compile Include="Admin\NoteCategoryAdmin\NoteCategoryAdminService.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceAdminService.cs" />
@@ -120,24 +102,18 @@
     <Compile Include="TextQueryHelper.cs" />
     <Compile Include="ProcedureTypeAssembler.cs" />
     <Compile Include="Admin\ProcedureTypeGroupAdmin\ProcedureTypeGroupAdminService.cs" />
-    <Compile Include="Admin\ProcedureTypeGroupAdmin\ProcedureTypeGroupExporter.cs" />
-    <Compile Include="Admin\ProcedureTypeGroupAdmin\ProcedureTypeGroupImporter.cs" />
     <Compile Include="ProcedureTypeGroupAssembler.cs" />
     <Compile Include="Admin\StaffAdmin\StaffAdminService.cs" />
-    <Compile Include="Admin\StaffAdmin\StaffUserImporter.cs" />
     <Compile Include="Admin\VisitAdmin\VisitAdminService.cs" />
     <Compile Include="VisitAssembler.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminService.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminAssembler.cs" />
-    <Compile Include="Admin\WorklistAdmin\WorklistExporter.cs" />
-    <Compile Include="Admin\WorklistAdmin\WorklistImporter.cs" />
     <Compile Include="MimeDocumentAssembler.cs" />
     <Compile Include="EnumUtils.cs" />
     <Compile Include="InProcessApplicationServiceProvider.cs" />
     <Compile Include="Jsml\JsmlShimService.cs" />
     <Compile Include="ProtocollingWorkflow\ProtocollingWorkflowService.cs" />
     <Compile Include="WorklistAssembler.cs" />
-    <Compile Include="WorklistFactory.cs" />
     <Compile Include="ApplicationServiceBase.cs" />
     <Compile Include="ApplicationServiceExtensionPoint.cs" />
     <Compile Include="Admin\HL7QueueItemAssembler.cs" />
@@ -240,6 +216,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Admin\ProcedureTypeAdmin\" />
     <Folder Include="Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

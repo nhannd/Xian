@@ -36,7 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using System.Xml;
 
-namespace ClearCanvas.Ris.Application.Services.Admin
+namespace ClearCanvas.Enterprise.Core.Imex
 {
     public interface IDataImporter
     {

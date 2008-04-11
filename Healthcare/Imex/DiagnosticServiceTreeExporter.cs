@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Imex;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Common;
@@ -40,7 +41,7 @@ using ClearCanvas.Common.Utilities;
 using System.Xml;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
+namespace ClearCanvas.Healthcare.Imex
 {
     [ExtensionOf(typeof(DataExporterExtensionPoint))]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]

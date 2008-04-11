@@ -38,7 +38,7 @@ using System.Xml;
 using System.IO;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Application.Services.Admin
+namespace ClearCanvas.Enterprise.Core.Imex
 {
     public abstract class DataExporterBase : IDataExporter, IApplicationRoot
     {

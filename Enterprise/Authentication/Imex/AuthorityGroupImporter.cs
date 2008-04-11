@@ -40,7 +40,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
 
-namespace ClearCanvas.Enterprise.Authentication
+namespace ClearCanvas.Enterprise.Authentication.Imex
 {
 
     /// <summary>
