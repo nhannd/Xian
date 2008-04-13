@@ -610,6 +610,24 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error has occured while attempting to clone a display set.  Please check the log for more details..
+        /// </summary>
+        public static string MessageErrorCloningDisplaySet {
+            get {
+                return ResourceManager.GetString("MessageErrorCloningDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error has occured while attempting to clone an image.  Please check the log for more details..
+        /// </summary>
+        public static string MessageErrorCloningPresentationImage {
+            get {
+                return ResourceManager.GetString("MessageErrorCloningPresentationImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An unrecoverable error occurred while attempting to load the text overlay.  Please see the log for details..
         /// </summary>
         public static string MessageErrorLoadingAnnotationLayout {

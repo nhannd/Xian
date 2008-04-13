@@ -29,6 +29,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
@@ -42,6 +43,18 @@
     <Compile Include="DeleteAllClipboardItemsTool.cs" />
     <Compile Include="IconCreator.cs" />
     <Compile Include="DeleteClipboardItemTool.cs" />
+    <Compile Include="ImageExport\FileUtilities.cs" />
+    <Compile Include="ImageExport\ImageExportSettings.cs" />
+    <Compile Include="ImageExport\ImageExportSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ImageExportSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ImageExport\MultipleImageExportFileNamingStrategy.cs" />
+    <Compile Include="ImageExport\IImageExporter.cs" />
+    <Compile Include="ImageExport\ImageExportComponent.cs" />
+    <Compile Include="ImageExport\ImageExporter.cs" />
+    <Compile Include="ImageExport\StandardImageExporters.cs" />
     <Compile Include="ShowClipboardTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CopyToClipboardTool.cs" />
@@ -98,6 +111,13 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ExportToImageToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="ImageExport\ImageExportSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ImageExportSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

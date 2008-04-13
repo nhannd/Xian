@@ -300,6 +300,12 @@
   <data name="LabelUnknown" xml:space="preserve">
     <value>Unknown</value>
   </data>
+  <data name="MessageErrorCloningDisplaySet" xml:space="preserve">
+    <value>An error has occured while attempting to clone a display set.  Please check the log for more details.</value>
+  </data>
+  <data name="MessageErrorCloningPresentationImage" xml:space="preserve">
+    <value>An error has occured while attempting to clone an image.  Please check the log for more details.</value>
+  </data>
   <data name="MessageErrorLoadingAnnotationLayout" xml:space="preserve">
     <value>An unrecoverable error occurred while attempting to load the text overlay.  Please see the log for details.</value>
   </data>

@@ -42,7 +42,13 @@
       <DependentUpon>ClipboardComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ClipboardComponentView.cs" />
-    <Compile Include="IconCreator.cs" />
+    <Compile Include="ImageExportComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ImageExportComponentControl.Designer.cs">
+      <DependentUpon>ImageExportComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ImageExportComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
@@ -72,6 +78,10 @@
     <EmbeddedResource Include="ClipboardComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ClipboardComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImageExportComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ImageExportComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

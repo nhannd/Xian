@@ -376,15 +376,22 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public IPresentationImage Clone()
 		{
-			PresentationImage clone = CloneBuilder.Clone(this) as PresentationImage;
-			if (clone != null)
+			try
 			{
-				clone.SceneGraph.SetParentPresentationImage(clone);
-				if (ImageViewer != null)
-					ImageViewer.EventBroker.OnCloneCreated(new CloneCreatedEventArgs(this, clone));
-			}
+				PresentationImage clone = CloneBuilder.Clone(this) as PresentationImage;
+				if (clone != null)
+				{
+					clone.SceneGraph.SetParentPresentationImage(clone);
+					if (ImageViewer != null)
+						ImageViewer.EventBroker.OnCloneCreated(new CloneCreatedEventArgs(this, clone));
+				}
 
-			return clone;
+				return clone;
+			}
+			catch (Exception e)
+			{
+				throw new PresentationImageCloningException(this, e);
+			}
 		}
 
 		/// <summary>

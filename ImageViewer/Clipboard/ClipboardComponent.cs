@@ -186,13 +186,23 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		internal static void AddToClipboard(IPresentationImage image)
 		{
 			Bitmap bmp = IconCreator.CreatePresentationImageIcon(image);
-			_clipboardItems.Add(new ClipboardItem(image.Clone(), bmp, ""));
+			_clipboardItems.Add(new ClipboardItem(image.Clone(), bmp, "", image.ClientRectangle));
 		}
 
 		internal static void AddToClipboard(IDisplaySet displaySet)
 		{
+			IPresentationImage selectedImage = CollectionUtils.SelectFirst(displaySet.PresentationImages,
+				delegate(IPresentationImage image)
+				{
+					return image.Selected;
+				});
+
+			if (selectedImage == null)
+				throw new ArgumentException("DisplaySet must have a selected image.");
+
 			Bitmap bmp = IconCreator.CreateDisplaySetIcon(displaySet);
-			_clipboardItems.Add(new ClipboardItem(displaySet.Clone(), bmp, displaySet.Name));
+			ClipboardItem item = new ClipboardItem(displaySet.Clone(), bmp, displaySet.Name, selectedImage.ClientRectangle);
+			_clipboardItems.Add(item);
 		}
 	}
 }

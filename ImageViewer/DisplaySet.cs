@@ -315,17 +315,24 @@ namespace ClearCanvas.ImageViewer
 			// DisplaySets/PresentationImages/Graphics so we will know
 			// when one is broken.
 
-			DisplaySet clone = CloneBuilder.Clone(this) as DisplaySet;
-			//if (ParentImageSet != null)
-			//    ((ImageSet)ParentImageSet).AddCopy(clone);
-
-			if (clone != null)
+			try
 			{
-				if (ImageViewer != null)
-					ImageViewer.EventBroker.OnCloneCreated(new CloneCreatedEventArgs(this, clone));
-			}
+				DisplaySet clone = CloneBuilder.Clone(this) as DisplaySet;
+				//if (ParentImageSet != null)
+				//    ((ImageSet)ParentImageSet).AddCopy(clone);
 
-			return clone;
+				if (clone != null)
+				{
+					if (ImageViewer != null)
+						ImageViewer.EventBroker.OnCloneCreated(new CloneCreatedEventArgs(this, clone));
+				}
+
+				return clone;
+			}
+			catch (Exception e)
+			{
+				throw new DisplaySetCloningException(this, e);
+			}
 		}
 
 		/// <summary>
