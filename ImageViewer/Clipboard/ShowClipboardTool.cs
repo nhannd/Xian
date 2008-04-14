@@ -80,22 +80,11 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			}
 		}
 
-		private void OnShelfClosed(object sender, ClosedEventArgs e)
+		private static void OnShelfClosed(object sender, ClosedEventArgs e)
 		{
+			_shelf.Closed -= OnShelfClosed;
 			_shelf = null;
 			_clipboardComponent = null;
 		}
-
-		/// <summary>
-		/// Called when the tool is disposed.
-		/// </summary>
-		protected override void Dispose(bool disposing)
-		{
-			if (_shelf != null)
-				_shelf.Closed -= OnShelfClosed;
-
-			base.Dispose(disposing);
-		}
-
 	}
 }
