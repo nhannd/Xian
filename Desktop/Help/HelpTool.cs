@@ -77,14 +77,19 @@ namespace ClearCanvas.Desktop.Help
 
 		public void ShowUsersGuide()
 		{
+			string helpPath = String.Format(
+				"{0}{1}{2}",
+				Platform.InstallDirectory,
+				System.IO.Path.DirectorySeparatorChar,
+				"CCWorkstationUsersGuide.chm");
+
 			try
 			{
-				Process.Start("https://mirror2.cvsdude.com/trac/clearcanvas/source/wiki/Users");
+				Process.Start(helpPath);
 			}
 			catch
 			{
 				this.Context.DesktopWindow.ShowMessageBox(SR.URLNotFound, MessageBoxActions.Ok);
-			
 			} 
 		}
 
@@ -102,7 +107,7 @@ namespace ClearCanvas.Desktop.Help
 			}
 			catch
 			{
-				this.Context.DesktopWindow.ShowMessageBox(SR.LicenseNotFound, MessageBoxActions.Ok);
+				this.Context.DesktopWindow.ShowMessageBox(SR.HelpNotFound, MessageBoxActions.Ok);
 			}
 		}
 	}

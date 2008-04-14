@@ -181,6 +181,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 			protected set 
 			{
+
+				if (value > _maximumScale)
+					value = _maximumScale;
+				else if (value < _minimumScale)
+					value = _minimumScale;
+
 				if (_scaleX == value)
 					return;
 				
@@ -205,6 +211,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 			protected set 
 			{
+				if (value > _maximumScale)
+					value = _maximumScale;
+				else if (value < _minimumScale)
+					value = _minimumScale;
+		
 				if (_scaleY == value)
 					return;
 
@@ -219,7 +230,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public float MinimumScale
 		{
 			get { return _minimumScale; }
-			protected set { _minimumScale = value; }
+			protected set { _minimumScale = (float)Math.Max(0.0001, value); }
 		}
 
 		/// <summary>

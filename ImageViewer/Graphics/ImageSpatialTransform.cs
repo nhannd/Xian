@@ -169,16 +169,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return this.SourceHeight * this.PixelAspectRatio; }
 		}
 
-		private int DestinationWidth
-		{
-			get { return this.ClientRectangle.Width; }
-		}
-
-		private int DestinationHeight
-		{
-			get { return this.ClientRectangle.Height; }
-		}
-
 		private float PixelAspectRatio
 		{
 			get
@@ -232,7 +222,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		protected override void CalculatePreTransform(Matrix cumulativeTransform)
 		{
 			// Move origin to center of tile before performing transform
-			cumulativeTransform.Translate(this.DestinationWidth / 2.0f, this.DestinationHeight / 2.0f);
+			cumulativeTransform.Translate(this.ClientRectangle.Width / 2.0f, this.ClientRectangle.Height/ 2.0f);
 		}
 
 		/// <summary>
@@ -251,72 +241,93 @@ namespace ClearCanvas.ImageViewer.Graphics
 		protected override void UpdateScaleParameters()
 		{
 			if (base.OwnerGraphic != null && base.OwnerGraphic.ParentPresentationImage != null)
-				ClientRectangle = base.OwnerGraphic.ParentPresentationImage.ClientRectangle;
+			{
+				if (base.OwnerGraphic.ParentPresentationImage.Visible)
+					ClientRectangle = base.OwnerGraphic.ParentPresentationImage.ClientRectangle;
+				else
+					ClientRectangle = Rectangle.Empty;
+			}
 
 			if (!base.RecalculationRequired)
 				return;
 
-			if (ScaleToFit)
-				CalculateScaleToFit();
-			else 
-				CalculateScaleXY();
-		}
+			// never allow the scale to be calculated for an empty rectangle; use 5x5 as the smallest allowed
+			int destinationWidth = Math.Max(5, this.ClientRectangle.Width);
+			int destinationHeight = Math.Max(5, this.ClientRectangle.Height);
+			
+			// always calculate the 'to fit' scale values so we can be consistent when setting the MinimumScale
+			float scaleX, scaleY;
+			CalculateScaleToFit(destinationWidth, destinationHeight, out scaleX, out scaleY);
 
-		private void CalculateScaleXY()
-		{
-			if (this.PixelAspectRatio >= 1)
+			// always try to set the MinimumScale as the minimum of 1/2 the scale to fit value, or .25
+			float minimumScale = Math.Min(scaleX, scaleY)/2;
+
+			if (ScaleToFit)
 			{
-				this.ScaleX = this.Scale;
-				this.ScaleY = this.Scale * this.PixelAspectRatio;
+				this.MinimumScale = Math.Min(minimumScale, DefaultMinimumScale);
+
+				this.Scale = scaleX;
+				this.ScaleX = scaleX;
+				this.ScaleY = scaleY;
 			}
 			else
 			{
-				this.ScaleX = this.Scale / this.PixelAspectRatio;
-				this.ScaleY = this.Scale;
-			}
-		}
-
-		private void CalculateScaleToFit()
-		{
-			float scaleX, scaleY;
-
-			if (this.RotationXY == 90 || this.RotationXY == 270)
-			{
-				float imageAspectRatio = (float)this.SourceWidth / this.AdjustedSourceHeight;
-				float clientAspectRatio = (float)this.DestinationHeight / (float)this.DestinationWidth;
-
-				if (clientAspectRatio >= imageAspectRatio)
+				if (this.PixelAspectRatio >= 1)
 				{
-					scaleX = (float)this.DestinationWidth / this.AdjustedSourceHeight;
-					scaleY = (float)this.DestinationWidth / this.SourceHeight;
+					scaleX = this.Scale;
+					scaleY = this.Scale * this.PixelAspectRatio;
 				}
 				else
 				{
-					scaleX = (float)this.DestinationHeight / (float)this.SourceWidth;
-					scaleY = (float)this.DestinationHeight / (float)this.SourceWidth * this.PixelAspectRatio;
+					scaleX = this.Scale / this.PixelAspectRatio;
+					scaleY = this.Scale;
+				}
+
+				// for the case where the 'scale to fit' caused a very small minimum scale,
+				// just don't allow it to get any smaller (allow only increases in scale).
+				float absoluteMinimum = Math.Min(scaleX, scaleY);
+				minimumScale = Math.Min(absoluteMinimum, minimumScale);
+				this.MinimumScale = Math.Min(minimumScale, DefaultMinimumScale);
+
+				this.ScaleX = scaleX;
+				this.ScaleY = scaleY;
+			}
+		}
+
+		private void CalculateScaleToFit(int destinationWidth, int destinationHeight, out float scaleX, out float scaleY)
+		{
+			if (this.RotationXY == 90 || this.RotationXY == 270)
+			{
+				float imageAspectRatio = (float)this.SourceWidth / this.AdjustedSourceHeight;
+				float clientAspectRatio = (float)destinationHeight / (float)destinationWidth;
+
+				if (clientAspectRatio >= imageAspectRatio)
+				{
+					scaleX = (float)destinationWidth / this.AdjustedSourceHeight;
+					scaleY = (float)destinationWidth / this.SourceHeight;
+				}
+				else
+				{
+					scaleX = (float)destinationHeight / (float)this.SourceWidth;
+					scaleY = (float)destinationHeight / (float)this.SourceWidth * this.PixelAspectRatio;
 				}
 			}
 			else
 			{
 				float imageAspectRatio = this.AdjustedSourceHeight / (float)this.SourceWidth;
-				float clientAspectRatio = (float)this.DestinationHeight / (float)this.DestinationWidth;
+				float clientAspectRatio = (float)destinationHeight / (float)destinationWidth;
 
 				if (clientAspectRatio >= imageAspectRatio)
 				{
-					scaleX = (float)this.DestinationWidth / (float)this.SourceWidth;
-					scaleY = (float)this.DestinationWidth / (float)this.SourceWidth * this.PixelAspectRatio;
+					scaleX = (float)destinationWidth / (float)this.SourceWidth;
+					scaleY = (float)destinationWidth / (float)this.SourceWidth * this.PixelAspectRatio;
 				}
 				else
 				{
-					scaleX = (float)this.DestinationHeight / this.AdjustedSourceHeight;
-					scaleY = (float)this.DestinationHeight / this.SourceHeight;
+					scaleX = (float)destinationHeight / this.AdjustedSourceHeight;
+					scaleY = (float)destinationHeight / this.SourceHeight;
 				}
 			}
-
-			this.MinimumScale = Math.Min(scaleX / 2, DefaultMinimumScale);
-			this.Scale = scaleX;
-			this.ScaleX = scaleX;
-			this.ScaleY = scaleY;
 		}
 	}
 }

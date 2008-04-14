@@ -131,6 +131,8 @@ namespace ClearCanvas.ImageViewer
 
 					if (_tile != null)
 						_tile.PresentationImage = this;
+					else
+						_clientRectangle = Rectangle.Empty;
 				}
 			}
 		}
