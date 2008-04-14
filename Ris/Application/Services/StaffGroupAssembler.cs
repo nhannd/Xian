@@ -39,12 +39,11 @@ namespace ClearCanvas.Ris.Application.Services
             group.Description = detail.Description;
 
             group.Members.Clear();
-            group.Members.AddAll(
-                CollectionUtils.Map<StaffSummary, Staff>(detail.Members,
-                                                         delegate(StaffSummary summary)
-                                                         {
-                                                             return context.Load<Staff>(summary.StaffRef, EntityLoadFlags.Proxy);
-                                                         }));
+            CollectionUtils.ForEach(detail.Members,
+                 delegate(StaffSummary summary)
+                 {
+                     group.AddMember(context.Load<Staff>(summary.StaffRef, EntityLoadFlags.Proxy));
+                 });
         }
     }
 }

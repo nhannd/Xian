@@ -27,5 +27,9 @@
       <index column="Name_" type="String"/>
       <element column="Value_" type="String" length="4000"/>
     </map>
+    <set name="Groups" table="StaffGroupStaff_" lazy="true" inverse="true">
+      <key column="StaffOID_"/>
+      <many-to-many column="StaffGroupOID_" class="StaffGroup" fetch="join"/>
+    </set>
   </class>
 </hibernate-mapping>

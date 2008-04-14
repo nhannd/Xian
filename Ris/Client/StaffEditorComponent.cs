@@ -121,6 +121,7 @@ namespace ClearCanvas.Ris.Client
         private readonly bool _isNew;
 
         private StaffDetailsEditorComponent _detailsEditor;
+        private StaffStaffGroupEditorComponent _groupsEditor;
 
         private List<IStaffEditorPage> _extensionPages;
 
@@ -157,9 +158,6 @@ namespace ClearCanvas.Ris.Client
                 {
                     LoadStaffEditorFormDataResponse formDataResponse = service.LoadStaffEditorFormData(new LoadStaffEditorFormDataRequest());
 
-                    string rootPath = SR.TitleStaff;
-                    this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new StaffDetailsEditorComponent(_isNew, formDataResponse.StaffTypeChoices)));
-
                     this.ValidationStrategy = new AllComponentsValidationStrategy();
 
                     if (_isNew)
@@ -174,7 +172,10 @@ namespace ClearCanvas.Ris.Client
                         _staffDetail = response.StaffDetail;
                     }
 
+                    this.Pages.Add(new NavigatorPage("Staff", _detailsEditor = new StaffDetailsEditorComponent(_isNew, formDataResponse.StaffTypeChoices)));
                     _detailsEditor.StaffDetail = _staffDetail;
+
+                    this.Pages.Add(new NavigatorPage("Staff/Groups", _groupsEditor = new StaffStaffGroupEditorComponent(_staffDetail.Groups, formDataResponse.StaffGroupChoices)));
                 });
 
             // instantiate all extension pages
@@ -211,6 +212,9 @@ namespace ClearCanvas.Ris.Client
             {
                 // give extension pages a chance to save data prior to commit
                 _extensionPages.ForEach(delegate (IStaffEditorPage page) { page.Save(); });
+
+                // update groups
+                _staffDetail.Groups = new List<StaffGroupSummary>(_groupsEditor.SelectedItems);
 
                 Platform.GetService<IStaffAdminService>(
                     delegate(IStaffAdminService service)

@@ -55,13 +55,16 @@ namespace ClearCanvas.Ris.Application.Services
         public StaffDetail CreateStaffDetail(Staff staff, IPersistenceContext context)
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
+            StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
 
             return new StaffDetail(staff.Id, EnumUtils.GetEnumValueInfo(staff.Type, context),
                 assembler.CreatePersonNameDetail(staff.Name), staff.LicenseNumber, staff.BillingNumber,
+                    CollectionUtils.Map<StaffGroup, StaffGroupSummary>(staff.Groups,
+                        delegate(StaffGroup group) { return groupAssembler.CreateSummary(group); }),
                     new Dictionary<string, string>(staff.ExtendedProperties));
         }
 
-        public void UpdateStaff(StaffDetail detail, Staff staff)
+        public void UpdateStaff(StaffDetail detail, Staff staff, IPersistenceContext context)
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
 
@@ -76,6 +79,30 @@ namespace ClearCanvas.Ris.Application.Services
             {
                 staff.ExtendedProperties[pair.Key] = pair.Value;
             }
+
+            // create a helper to sync staff group membership
+            CollectionSynchronizeHelper<StaffGroup, StaffGroupSummary> helper =
+                new CollectionSynchronizeHelper<StaffGroup, StaffGroupSummary>(
+                    delegate(StaffGroup group, StaffGroupSummary summary)
+                    {
+                        return group.GetRef().Equals(summary.StaffGroupRef, true);
+                    },
+                    delegate(StaffGroupSummary groupSummary, ICollection<StaffGroup> groups)
+                    {
+                        StaffGroup group = context.Load<StaffGroup>(groupSummary.StaffGroupRef, EntityLoadFlags.Proxy);
+                        group.AddMember(staff);
+                    },
+                    delegate
+                    {
+                        // do nothing
+                    },
+                    delegate(StaffGroup group, ICollection<StaffGroup> groups)
+                    {
+                        group.RemoveMember(staff);
+                    }
+                );
+
+            helper.Synchronize(staff.Groups, detail.Groups);
         }
     }
 }

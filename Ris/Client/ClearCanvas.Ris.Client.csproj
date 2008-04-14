@@ -91,6 +91,7 @@
       <DependentUpon>BannerComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="SessionManagerTool.cs" />
+    <Compile Include="StaffStaffGroupEditorComponent.cs" />
     <Compile Include="SummaryComponentBase.cs" />
     <Compile Include="WeakSearchCriteriaException.cs" />
     <Compile Include="WorklistPreviewComponent.cs" />

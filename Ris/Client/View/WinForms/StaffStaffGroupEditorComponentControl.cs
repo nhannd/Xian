@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -31,24 +31,42 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
 using System.Text;
-using Iesi.Collections.Generic;
+using System.Windows.Forms;
 
-namespace ClearCanvas.Healthcare.Tests
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    internal static class TestStaffFactory
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="StaffStaffGroupEditorComponent"/>
+    /// </summary>
+    public partial class StaffStaffGroupEditorComponentControl : ApplicationComponentUserControl
     {
-        internal static Staff CreateStaff(StaffType staffType)
+        private StaffStaffGroupEditorComponent _component;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public StaffStaffGroupEditorComponentControl(StaffStaffGroupEditorComponent component)
+            :base(component)
         {
-            return new Staff(
-                "01",
-                new PersonName("Simpson", "Bart", null, null, null, null),
-                null,   // license
-                null,   // billing
-                staffType,
-                null,
-                new Dictionary<string, string>(),
-                new HashedSet<StaffGroup>());
+            InitializeComponent();
+
+            _component = component;
+            _staffGroupSelector.AvailableItemsTable = _component.AvailableGroupsTable;
+            _staffGroupSelector.SelectedItemsTable = _component.SelectedGroupsTable;
+            _staffGroupSelector.ItemAdded += OnItemsAddedOrRemoved;
+            _staffGroupSelector.ItemRemoved += OnItemsAddedOrRemoved;
+
+        }
+
+        private void OnItemsAddedOrRemoved(object sender, EventArgs args)
+        {
+            _component.ItemsAddedOrRemoved();
         }
     }
 }

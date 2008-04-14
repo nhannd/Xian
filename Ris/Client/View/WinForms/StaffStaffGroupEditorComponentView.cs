@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -32,23 +32,42 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Iesi.Collections.Generic;
 
-namespace ClearCanvas.Healthcare.Tests
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    internal static class TestStaffFactory
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="StaffStaffGroupEditorComponent"/>
+    /// </summary>
+    [ExtensionOf(typeof(StaffStaffGroupEditorComponentViewExtensionPoint))]
+    public class StaffStaffGroupEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        internal static Staff CreateStaff(StaffType staffType)
+        private StaffStaffGroupEditorComponent _component;
+        private StaffStaffGroupEditorComponentControl _control;
+
+
+        #region IApplicationComponentView Members
+
+        public void SetComponent(IApplicationComponent component)
         {
-            return new Staff(
-                "01",
-                new PersonName("Simpson", "Bart", null, null, null, null),
-                null,   // license
-                null,   // billing
-                staffType,
-                null,
-                new Dictionary<string, string>(),
-                new HashedSet<StaffGroup>());
+            _component = (StaffStaffGroupEditorComponent)component;
+        }
+
+        #endregion
+
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new StaffStaffGroupEditorComponentControl(_component);
+                }
+                return _control;
+            }
         }
     }
 }

@@ -91,15 +91,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         [ReadOperation]
         public LoadStaffEditorFormDataResponse LoadStaffEditorFormData(LoadStaffEditorFormDataRequest request)
         {
-            //TODO:  replace "dummy" lists
-            List<string> dummyCountries = new List<string>();
-            dummyCountries.Add("Canada");
-
-            List<string> dummyProvinces = new List<string>();
-            dummyProvinces.Add("Ontario");
+            StaffGroupAssembler groupAssember = new StaffGroupAssembler();
+            
 
             return new LoadStaffEditorFormDataResponse(
-                EnumUtils.GetEnumValueList<StaffTypeEnum>(PersistenceContext)
+                EnumUtils.GetEnumValueList<StaffTypeEnum>(PersistenceContext), 
+                CollectionUtils.Map<StaffGroup, StaffGroupSummary>(PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(),
+                    delegate(StaffGroup group) { return groupAssember.CreateSummary(group); })
                 );
 
         }
@@ -112,7 +110,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             Staff staff = new Staff();
 
             StaffAssembler assembler = new StaffAssembler();
-            assembler.UpdateStaff(request.StaffDetail, staff);
+            assembler.UpdateStaff(request.StaffDetail, staff, PersistenceContext);
 
             PersistenceContext.Lock(staff, DirtyState.New);
 
@@ -129,7 +127,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             Staff staff = PersistenceContext.Load<Staff>(request.StaffRef, EntityLoadFlags.CheckVersion);
 
             StaffAssembler assembler = new StaffAssembler();
-            assembler.UpdateStaff(request.StaffDetail, staff);
+            assembler.UpdateStaff(request.StaffDetail, staff, PersistenceContext);
 
             return new UpdateStaffResponse(assembler.CreateStaffSummary(staff, PersistenceContext));
         }

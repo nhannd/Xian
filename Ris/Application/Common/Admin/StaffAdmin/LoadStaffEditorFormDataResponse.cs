@@ -41,12 +41,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
     public class LoadStaffEditorFormDataResponse : DataContractBase
     {
         public LoadStaffEditorFormDataResponse(
-            List<EnumValueInfo> staffTypeChoices)
+            List<EnumValueInfo> staffTypeChoices, List<StaffGroupSummary> groupChoices)
         {
             this.StaffTypeChoices = staffTypeChoices;
+            this.StaffGroupChoices = groupChoices;
         }
 
         [DataMember]
         public List<EnumValueInfo> StaffTypeChoices;
+
+        [DataMember]
+        public List<StaffGroupSummary> StaffGroupChoices;
     }
 }
