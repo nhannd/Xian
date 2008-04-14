@@ -142,6 +142,7 @@ var IndicationsAndDatesPreview = {
 		
 		lmpPreviewTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 		lmpPreviewTable.bindItems([this._data.lmp]);
+		lmpPreviewTable.style.display = this._data.lmp.LMP && this._data.lmp.LMP != null ? "block" : "none";
 
 		var usPreviewTable = Table.createTable($("usPreviewTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[						
@@ -151,12 +152,14 @@ var IndicationsAndDatesPreview = {
 			{
 				label: "EDC",
 				cellType: "readonly",
+				getVisible: function(item) { return item.firstUltrasound && item.firstUltrasound != null; },
 				getValue: function(item) { return "CALC"; }
 			}
 		]);
 		
 		usPreviewTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 		usPreviewTable.bindItems([this._data.us]);
+		usPreviewTable.style.display = this._data.us.firstUltrasound && this._data.us.firstUltrasound != null ? "block" : "none";
 
 		var establishedEDCPreviewTable = Table.createTable($("establishedEDCPreviewTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[			
@@ -174,6 +177,7 @@ var IndicationsAndDatesPreview = {
 
 		establishedEDCPreviewTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 		establishedEDCPreviewTable.bindItems([this._data.establishedEDC]);
+		establishedEDCPreviewTable.style.display = this._data.establishedEDC.establishedEDC && this._data.establishedEDC.establishedEDC != null ? "block" : "none";
 	},
 	
 	html : function()
@@ -185,15 +189,12 @@ var IndicationsAndDatesPreview = {
 		html+= 	"	<table id=\"indicationsAndDatesPreviewTable\">";
 		html+= 	"		<tr><td class=\"tableheading\"></td></tr>";
 		html+= 	"	</table>";
-		html+= 	"	<br />";
 		html+= 	"	<table id=\"lmpPreviewTable\">";
 		html+= 	"		<tr><td class=\"tableheading\">LMP</td></tr>";
 		html+= 	"	</table>";
-		html+= 	"	<br />";
 		html+= 	"	<table id=\"usPreviewTable\">";
 		html+= 	"		<tr><td class=\"tableheading\">US</td></tr>";
 		html+= 	"	</table>";
-		html+= 	"	<br />";
 		html+= 	"	<table id=\"establishedEDCPreviewTable\">";
 		html+= 	"		<tr><td class=\"tableheading\">Established EDC</td></tr>";
 		html+= 	"	</table>";
