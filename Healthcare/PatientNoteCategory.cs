@@ -56,22 +56,5 @@ namespace ClearCanvas.Healthcare {
         {
             return string.Format("{0}, {1}, {2}", _name, _description, _severity);
         }
-		
-		#region Object overrides
-		
-		public override bool Equals(object that)
-		{
-			// TODO: implement a test for business-key equality
-			return base.Equals(that);
-		}
-		
-		public override int GetHashCode()
-		{
-			// TODO: implement a hash-code based on the business-key used in the Equals() method
-			return base.GetHashCode();
-		}
-		
-		#endregion
-
 	}
 }

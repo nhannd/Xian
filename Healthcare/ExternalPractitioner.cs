@@ -43,7 +43,7 @@ namespace ClearCanvas.Healthcare
 	/// <summary>
 	/// ExternalPractitioner entity
 	/// </summary>
-	public partial class ExternalPractitioner : ClearCanvas.Enterprise.Core.Entity, IEquatable<ExternalPractitioner>
+	public partial class ExternalPractitioner : ClearCanvas.Enterprise.Core.Entity
 	{
 		/// <summary>
 		/// Returns the default contact point, or null if no default contact point exists.
@@ -64,27 +64,5 @@ namespace ClearCanvas.Healthcare
 		private void CustomInitialize()
 		{
 		}
-
-		#region Object overrides
-
-		public bool Equals(ExternalPractitioner externalPractitioner)
-		{
-			if (externalPractitioner == null) return false;
-			return Equals(_licenseNumber, externalPractitioner._licenseNumber) && Equals(_billingNumber, externalPractitioner._billingNumber);
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (ReferenceEquals(this, obj)) return true;
-			return Equals(obj as ExternalPractitioner);
-		}
-
-		public override int GetHashCode()
-		{
-			return (_licenseNumber != null ? _licenseNumber.GetHashCode() : 0) + 29 * (_billingNumber != null ? _billingNumber.GetHashCode() : 0);
-		}
-
-		#endregion
-
 	}
 }

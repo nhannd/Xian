@@ -100,21 +100,5 @@ namespace ClearCanvas.Healthcare {
 		private void CustomInitialize()
 		{
 		}
-
-        #region Object overrides
-		
-		public override bool Equals(object that)
-		{
-            ProcedureType other = that as ProcedureType;
-            return other != null && other.Id == this.Id;
-		}
-		
-		public override int GetHashCode()
-		{
-			return this.Id.GetHashCode();
-		}
-		
-		#endregion
-
 	}
 }

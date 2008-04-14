@@ -137,9 +137,11 @@ namespace ClearCanvas.Healthcare {
                 order.ResultRecipients.Add(recipient);
             }
 
+            bool recipientsContainsOrderingPractitioner = CollectionUtils.Contains(order.ResultRecipients,
+                    delegate(ResultRecipient r) { return r.PractitionerContactPoint.Practitioner.Equals(orderingPractitioner); });
+
             // if the result recipients collection does not contain the ordering practitioner, add it by force, using the default contact point
-            if (!CollectionUtils.Contains(order.ResultRecipients,
-                    delegate(ResultRecipient r) { return r.PractitionerContactPoint.Practitioner.Equals(orderingPractitioner); }))
+            if (!recipientsContainsOrderingPractitioner)
             {
                 // find the default
                 ExternalPractitionerContactPoint defaultContactPoint = CollectionUtils.SelectFirst(orderingPractitioner.ContactPoints,
@@ -313,21 +315,6 @@ namespace ClearCanvas.Healthcare {
         }
 
         #endregion
-
-        #region Object overrides
-
-        public override bool Equals(object that)
-		{
-            Order other = that as Order;
-			return other != null && other.AccessionNumber == this.AccessionNumber;
-		}
-		
-		public override int GetHashCode()
-		{
-            return this.AccessionNumber.GetHashCode();
-		}
-		
-		#endregion
 
         #region Helper methods
 

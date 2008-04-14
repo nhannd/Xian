@@ -48,19 +48,5 @@ namespace ClearCanvas.Healthcare {
         private void CustomInitialize()
         {
         }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(this, obj)) return true;
-            Staff that = obj as Staff;
-            if (that == null) return false;
-
-            return Equals(this.Id, that.Id);
-        }
-
-        public override int GetHashCode()
-        {
-            return this.Id.GetHashCode();
-        }
 	}
 }

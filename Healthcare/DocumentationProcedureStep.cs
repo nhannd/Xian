@@ -54,26 +54,5 @@ namespace ClearCanvas.Healthcare
         {
             get { return false; }
         }
-
-        #region Object overrides
-
-        public bool Equals(DocumentationProcedureStep documentationProcedureStep)
-        {
-            if (documentationProcedureStep == null) return false;
-            return true;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(this, obj)) return true;
-            return Equals(obj as DocumentationProcedureStep);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        #endregion
     }
 }

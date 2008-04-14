@@ -52,29 +52,6 @@ namespace ClearCanvas.Healthcare {
         {
         }
 
-        /// <summary>
-        /// Test for equality based on the MRN
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public override bool Equals(object obj)
-        {
-            PatientProfile that = obj as PatientProfile;
-            if (that == null)
-                return false;
-
-            return this.Mrn == null ? that.Mrn == null : this.Mrn.Equals(that.Mrn);
-        }
-
-        /// <summary>
-        /// Gets a hash code based on the MRN
-        /// </summary>
-        /// <returns></returns>
-        public override int GetHashCode()
-        {
-            return this.Mrn == null ? 0 : this.Mrn.GetHashCode();
-        }
-
         public virtual DateTime DateOfBirth
         {
             get { return _dateOfBirth.Date; }
@@ -85,7 +62,7 @@ namespace ClearCanvas.Healthcare {
         {
             get
             {
-                return CollectionUtils.SelectFirst<Address>(this.Addresses,
+                return CollectionUtils.SelectFirst(this.Addresses,
                     delegate(Address address) { return address.Type == AddressType.R && address.IsCurrent; });
             }
         }
@@ -94,7 +71,7 @@ namespace ClearCanvas.Healthcare {
         {
             get
             {
-                return CollectionUtils.SelectFirst<Address>(this.Addresses,
+                return CollectionUtils.SelectFirst(this.Addresses,
                    delegate(Address address) { return address.Type == AddressType.B && address.IsCurrent; });
             }
         }
@@ -103,7 +80,7 @@ namespace ClearCanvas.Healthcare {
         {
             get
             {
-                return CollectionUtils.SelectFirst<TelephoneNumber>(this.TelephoneNumbers,
+                return CollectionUtils.SelectFirst(this.TelephoneNumbers,
                   delegate(TelephoneNumber phone) { return phone.Use == TelephoneUse.PRN && phone.Equipment == TelephoneEquipment.PH && phone.IsCurrent; });
             }
         }
@@ -112,7 +89,7 @@ namespace ClearCanvas.Healthcare {
         {
             get
             {
-                return CollectionUtils.SelectFirst<TelephoneNumber>(this.TelephoneNumbers,
+                return CollectionUtils.SelectFirst(this.TelephoneNumbers,
                     delegate(TelephoneNumber phone) { return phone.Use == TelephoneUse.WPN && phone.Equipment == TelephoneEquipment.PH && phone.IsCurrent; });
             }
         }
