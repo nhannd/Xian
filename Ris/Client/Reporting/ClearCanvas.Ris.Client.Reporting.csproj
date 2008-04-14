@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditReportTool.cs" />
+    <Compile Include="EmergencyPhysicianHomeTool.cs" />
     <Compile Include="LinkedInterpretationComponent.cs" />
     <Compile Include="PriorReportComponentSettings.cs" />
     <Compile Include="PriorReportComponentSettings.Designer.cs">
@@ -65,7 +66,7 @@
     <Compile Include="ReportingMainWorkflowFolderSystem.cs" />
     <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\ReportingWorkflowFolders.cs" />
-    <Compile Include="HomeTool.cs" />
+    <Compile Include="RadiologistHomeTool.cs" />
     <Compile Include="PatientBiographyTool.cs" />
     <Compile Include="ProtocolEditorComponent.cs" />
     <Compile Include="ProtocollingComponentDocument.cs" />
@@ -240,6 +241,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\DoubleExclamation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\EmergencyPhysicianHomeToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\EmergencyPhysicianHomeToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\EmergencyPhysicianHomeToolMedium.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -168,6 +168,9 @@
   <data name="TitleEditReport" xml:space="preserve">
     <value>Edit Report</value>
   </data>
+  <data name="TitleEmergencyPhysicianHome" xml:space="preserve">
+    <value>Emergency Physician Home</value>
+  </data>
   <data name="TitleLinkProcedures" xml:space="preserve">
     <value>Link Procedures</value>
   </data>

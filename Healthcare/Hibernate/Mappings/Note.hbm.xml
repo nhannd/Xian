@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
+	<class name="Note" proxy="Note" table="Note_">
+		<id name="OID" column="OID_" type="Guid">
+			<generator class="guid.comb"/>
+		</id>
+		<discriminator column="Discriminator_"	type="String"/>
+		<version name="Version" column="Version_"/>
+
+		<property name="Category" column="Category_" type="String" length ="1024"/>
+		<property name="Body" column="Body_" type="String" length ="1024"/>
+		
+		<property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
+		<property name="SentTime" column="SentTime_" type="DateTime" not-null="false"/>
+		<many-to-one name="Sender" class="Staff" column="SenderStaffOID_" not-null="true"/>
+
+		<idbag name="NoteRecipients" table="NoteRecipient_" lazy="true" access="nosetter.camelcase-underscore">
+			<collection-id column="OID_" type="Guid">
+				<generator class="guid.comb"/>
+			</collection-id>
+			<key column="NoteOID_"/>
+			<composite-element class="NoteRecipient">
+				<many-to-one name="Staff" column="StaffOID_" class="Staff" fetch="join" not-null="false"/>
+				<many-to-one name="StaffGroup" column="StaffGroupOID_" class="StaffGroup" fetch="join" not-null="false"/>
+			</composite-element>
+		</idbag>
+	</class>
+</hibernate-mapping>

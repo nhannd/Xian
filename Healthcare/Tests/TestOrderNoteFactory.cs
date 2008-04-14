@@ -34,20 +34,25 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare.Tests
 {
-    internal static class TestOrderNoteFactory
-    {
-        internal static IList<OrderNote> CreateOrderNotes()
-        {
-            IList<OrderNote> notes = new List<OrderNote>();
+	internal static class TestOrderNoteFactory
+	{
+		internal static IList<OrderNote> CreateOrderNotes()
+		{
+			IList<OrderNote> notes = new List<OrderNote>();
 
-            notes.Add(CreateOrderNote("Test note"));
+			notes.Add(CreateOrderNote("Test note"));
 
-            return notes;
-        }
+			return notes;
+		}
 
-        internal static OrderNote CreateOrderNote(string comment)
-        {
-            return new OrderNote(Platform.Time, TestStaffFactory.CreateStaff(StaffType.STEC), comment);
-        }
-    }
+		internal static OrderNote CreateOrderNote(string comment)
+		{
+			//return new OrderNote(Platform.Time, TestStaffFactory.CreateStaff(StaffType.STEC), comment);
+			OrderNote note = new OrderNote();
+			note.CreationTime = Platform.Time;
+			note.Sender = TestStaffFactory.CreateStaff(StaffType.STEC);
+			note.Body = comment;
+			return note;
+		}
+	}
 }

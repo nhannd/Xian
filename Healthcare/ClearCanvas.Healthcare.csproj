@@ -78,6 +78,10 @@
     <Compile Include="Alert\LanguageAlert.cs" />
     <Compile Include="Alert\NoteAlert.cs" />
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
+    <Compile Include="Note.cs" />
+    <Compile Include="NoteReader.cs" />
+    <Compile Include="NoteRecipient.cs" />
+    <Compile Include="ReadNoteActivity.cs" />
     <Compile Include="Imex\DiagnosticServiceExporter.cs" />
     <Compile Include="Imex\DiagnosticServiceImporter.cs" />
     <Compile Include="Imex\DiagnosticServiceTreeExporter.cs" />

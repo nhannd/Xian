@@ -205,6 +205,9 @@
     <EmbeddedResource Include="Mappings\ExternalPractitionerContactPoint.hbm.xml" />
     <EmbeddedResource Include="Mappings\ResultCommunicationModeEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\StaffGroup.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Note.hbm.xml" />
+    <EmbeddedResource Include="Mappings\OrderNote.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ReadNoteActivity.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />

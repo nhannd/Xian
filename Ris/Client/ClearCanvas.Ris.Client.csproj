@@ -63,6 +63,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>HomePageSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="HomeTool.cs" />
     <Compile Include="IChangePasswordDialog.cs" />
     <Compile Include="OrderAdditionalInfoComponent.cs" />
     <Compile Include="OrderAdditionalInfoComponentSetting.cs" />

@@ -58,7 +58,7 @@ namespace ClearCanvas.Ris.Application.Services
             protected override bool CompareItems(OrderNote domainItem, OrderNoteDetail sourceItem)
             {
                 return Equals(domainItem.CreationTime, sourceItem.CreationTime) &&
-                       Equals(domainItem.Author.GetRef(), sourceItem.Author.StaffRef);
+                       Equals(domainItem.Sender.GetRef(), sourceItem.Author.StaffRef);
             }
 
             protected override void AddItem(OrderNoteDetail sourceItem, ICollection<OrderNote> notes)
@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Application.Services
             }
         }
 
-        public void Synchronize(IList<OrderNote> domainList, IList<OrderNoteDetail> sourceList, Staff currentUserStaff, IPersistenceContext context)
+        public void Synchronize(ICollection<OrderNote> domainList, IList<OrderNoteDetail> sourceList, Staff currentUserStaff, IPersistenceContext context)
         {
             OrderNoteSynchronizeHelper synchronizer = new OrderNoteSynchronizeHelper(this, currentUserStaff, context);
             synchronizer.Synchronize(domainList, sourceList);
@@ -78,11 +78,11 @@ namespace ClearCanvas.Ris.Application.Services
             OrderNote newNote = new OrderNote();
 
             if (detail.Author != null)
-                newNote.Author = context.Load<Staff>(detail.Author.StaffRef, EntityLoadFlags.Proxy);
+                newNote.Sender = context.Load<Staff>(detail.Author.StaffRef, EntityLoadFlags.Proxy);
             else
-                newNote.Author = currentStaff;
+                newNote.Sender = currentStaff;
 
-            newNote.Comment = detail.Comment;
+            newNote.Body = detail.Comment;
 
             return newNote;
         }
@@ -92,8 +92,8 @@ namespace ClearCanvas.Ris.Application.Services
             StaffAssembler staffAssembler = new StaffAssembler();
             return new OrderNoteDetail(
                 note.CreationTime,
-                staffAssembler.CreateStaffSummary(note.Author, context),
-                note.Comment);
+                staffAssembler.CreateStaffSummary(note.Sender, context),
+                note.Body);
         }
     }
 }

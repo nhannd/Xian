@@ -29,65 +29,28 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Client;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [ExtensionPoint]
-    public class TechnologistHomeFolderSystemToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class TechnologistHomeFolderSystemToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
-    [MenuAction("launch", "global-menus/Go/Technologist Home", "Launch")]
-    //[ButtonAction("launch", "global-toolbars/Go/Technologist Home", "Launch")]
-    [Tooltip("launch", "Technologist Home")]
+	[MenuAction("launch", "global-menus/Go/Technologist Home", "Launch")]
+	//[ButtonAction("launch", "global-toolbars/Go/Technologist Home", "Launch")]
+	[Tooltip("launch", "Technologist Home")]
 	[IconSet("launch", IconScheme.Colour, "Icons.TechnologistHomeToolSmall.png", "Icons.TechnologistHomeToolMedium.png", "Icons.TechnologistHomeToolLarge.png")]
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class TechnologistHomeTool : Tool<IDesktopToolContext>
-    {
-        private IWorkspace _workspace;
-
-        public void Launch()
-        {
-            try
-            {
-                if (_workspace == null)
-                {
-                    _workspace = ApplicationComponent.LaunchAsWorkspace(
-                        this.Context.DesktopWindow,
-                        BuildComponent(),
-                        SR.TitleTechnologistHome);
-                        _workspace.Closed += delegate { _workspace = null; };
-                }
-                else
-                {
-                    _workspace.Activate();
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Context.DesktopWindow);
-            }
-        }
-
-        private IApplicationComponent BuildComponent()
-        {
-            WorklistPreviewComponent previewComponent = new WorklistPreviewComponent();
-            HomePageContainer homePage = new HomePageContainer(new TechnologistHomeFolderSystemToolExtensionPoint(), previewComponent);
-
-            homePage.ContentsComponent.SelectedItemsChanged += delegate
-            {
-                WorklistItemSummaryBase item = homePage.ContentsComponent.SelectedItems.Item as WorklistItemSummaryBase;
-                previewComponent.WorklistItem = item;
-            };
-
-            return homePage;
-        }
-    }
+	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	public class TechnologistHomeTool : WorklistPreviewHomeTool<TechnologistHomeFolderSystemToolExtensionPoint>
+	{
+		public override string Title
+		{
+			get { return SR.TitleTechnologistHome; }
+		}
+	}
 }

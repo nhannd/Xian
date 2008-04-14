@@ -34,23 +34,23 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client.Reporting
 {
 	[ExtensionPoint]
-	public class RegistrationHomeFolderSystemToolExtensionPoint : ExtensionPoint<ITool>
+	public class ReportingHomeFolderSystemToolExtensionPoint : ExtensionPoint<ITool>
 	{
 	}
 
-	[MenuAction("launch", "global-menus/Go/Registration Home", "Launch")]
-	//[ButtonAction("launch", "global-toolbars/Go/Registration Home", "Launch")]
-	[Tooltip("launch", "Registration Home")]
-	[IconSet("launch", IconScheme.Colour, "Icons.RegistrationHomeToolSmall.png", "Icons.RegistrationHomeToolMedium.png", "Icons.RegistrationHomeToolLarge.png")]
+	[MenuAction("launch", "global-menus/Go/Radiologist Home", "Launch")]
+	//[ButtonAction("launch", "global-toolbars/Go/Radiologist Home", "Launch")]
+	[Tooltip("launch", "Radiologist Home")]
+	[IconSet("launch", IconScheme.Colour, "Icons.RadiologistHomeToolSmall.png", "Icons.RadiologistHomeToolMedium.png", "Icons.RadiologistHomeToolLarge.png")]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class RegistrationHomeTool : WorklistPreviewHomeTool<RegistrationHomeFolderSystemToolExtensionPoint>
+	public class RadiologistHomeTool : WorklistPreviewHomeTool<ReportingHomeFolderSystemToolExtensionPoint>
 	{
 		public override string Title
 		{
-			get { return SR.TitleRegistrationHome; }
+			get { return SR.TitleRadiologistHome; }
 		}
 	}
 }
