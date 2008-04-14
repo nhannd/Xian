@@ -311,7 +311,7 @@ var StructuredReportForm = {
 		html+= 	"					<tr><td class=\"tableheading\">Heart</td></tr>";
 		html+= 	"				</table>";
 		html+= 	"				<table id=\"chestTable\">";
-		html+= 	"					<tr><td class=\"tableheading\">Chest</td></tr>";
+		html+= 	"					<tr><td class=\"tableheading\"></td></tr>";  // use cell label instead
 		html+= 	"				</table>";
 		html+= 	"				<table id=\"abdomenTable\">";
 		html+= 	"					<tr><td class=\"tableheading\">Abdomen</td></tr>";
@@ -428,7 +428,7 @@ var IndicationsAndDatesForm = {
 		var lmpTable = Table.createTable($("lmpTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[			
 			{
-				label: "LMP",
+				label: "Date of LMP",
 				cellType: "datetime",
 				getValue: function(item) { return item.LMP; },
 				setValue: function(item, value) { item.LMP = value; },

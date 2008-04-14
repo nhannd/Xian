@@ -58,7 +58,7 @@ var StructuredReportPreview = {
 
 	_initSections : function()
 	{
-		if(document.getElementById("reportType")) document.getElementById("reportType").innerHTML = this._data.obusReportType;
+		if(document.getElementById("reportTypePreview")) document.getElementById("reportTypePreview").innerHTML = this._data.obusReportType;
 
 		IndicationsAndDatesPreview.initialize(this._data.indicationsAndDates);
 		GeneralPreview.initialize(this._data.general);
@@ -86,9 +86,9 @@ var StructuredReportPreview = {
 		var html = "";
 
 		html+= "<div class=\"ObsrSummary\">";
-		html+= "		<div>";
-		html+= "			<div class=\"sectionheading\">Structured Report Summary</div>";
-		html+= "			Report Type:&nbsp;<span id=\"reportType\"></span>";
+		html+= "		<div class=\"sectionheading\">Structured Report Summary</div>";
+		html+= "		<div style=\"{margin-top:0.5em;margin-left:1em;}\">";
+		html+= "			Report Type:&nbsp;<span id=\"reportTypePreview\"></span>";
 		html+= "		</div>";
 		html+= IndicationsAndDatesPreview.html();
 		html+= GeneralPreview.html();
@@ -123,7 +123,7 @@ var IndicationsAndDatesPreview = {
 		
 		var lmpPreviewTable = Table.createTable($("lmpPreviewTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[			
-			new readOnlyDateCell("LMP", "LMP"),
+			new readOnlyDateCell("Date of LMP", "LMP"),
 			{
 				label: "EDC",
 				cellType: "readonly",

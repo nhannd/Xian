@@ -61,7 +61,7 @@
 	width:100%;
 }
 
-#commentsConclusionTable .divCell
+#commentsConclusionTable .divCell, #commentsConclusionPreviewTable .divCell
 {
 	width:95%;
 	margin-bottom:1em;
