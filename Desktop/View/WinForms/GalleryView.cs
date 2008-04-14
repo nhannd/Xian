@@ -97,8 +97,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				List<object> selectedItems = new List<object>();
 
+				//when an item is removed from the list view, the 'selection changed' event fires
+				//before the item is removed, so the indices are out of sync and we can't rely on them
 				foreach (int index in _listView.SelectedIndices)
-					selectedItems.Add(_gallery[index]);
+				{
+					object item = _listView.Items[index].Tag;
+					selectedItems.Add(CollectionUtils.SelectFirst(_gallery, 
+										delegate(object test) { return ((IGalleryItem) test).Item == item;  }));
+				}
 
 				return new Selection(selectedItems);
 			}
