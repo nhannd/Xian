@@ -82,10 +82,10 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        private static readonly object _nullFilterItem = new DummyItem("(None)");
-        private static readonly object _workingFacilityItem = new DummyItem("(Working Facility)");
-        private static readonly object _portableItem = new DummyItem("Portable");
-        private static readonly object _nonPortableItem = new DummyItem("Non-portable");
+        private static readonly object _nullFilterItem = new DummyItem(SR.DummyItemNone);
+        private static readonly object _workingFacilityItem = new DummyItem(SR.DummyItemWorkingFacility);
+        private static readonly object _portableItem = new DummyItem(SR.DummyItemPortable);
+        private static readonly object _nonPortableItem = new DummyItem(SR.DummyItemNonPortable);
 
         private static readonly object[] _portableChoices = new object[] { _portableItem, _nonPortableItem };
 

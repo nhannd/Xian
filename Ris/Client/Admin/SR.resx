@@ -210,6 +210,24 @@
   <data name="ColumnUserName" xml:space="preserve">
     <value>Name</value>
   </data>
+  <data name="DummyItemDays" xml:space="preserve">
+    <value>Days</value>
+  </data>
+  <data name="DummyItemHours" xml:space="preserve">
+    <value>Hours</value>
+  </data>
+  <data name="DummyItemNone" xml:space="preserve">
+    <value>(None)</value>
+  </data>
+  <data name="DummyItemNonPortable" xml:space="preserve">
+    <value>Non-Portable</value>
+  </data>
+  <data name="DummyItemPortable" xml:space="preserve">
+    <value>Portable</value>
+  </data>
+  <data name="DummyItemWorkingFacility" xml:space="preserve">
+    <value>(Working Facility)</value>
+  </data>
   <data name="ExceptionEnumValueAdd" xml:space="preserve">
     <value>Unable to add value</value>
   </data>

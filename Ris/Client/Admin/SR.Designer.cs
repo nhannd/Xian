@@ -340,6 +340,60 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Days.
+        /// </summary>
+        internal static string DummyItemDays {
+            get {
+                return ResourceManager.GetString("DummyItemDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hours.
+        /// </summary>
+        internal static string DummyItemHours {
+            get {
+                return ResourceManager.GetString("DummyItemHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (None).
+        /// </summary>
+        internal static string DummyItemNone {
+            get {
+                return ResourceManager.GetString("DummyItemNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Non-Portable.
+        /// </summary>
+        internal static string DummyItemNonPortable {
+            get {
+                return ResourceManager.GetString("DummyItemNonPortable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Portable.
+        /// </summary>
+        internal static string DummyItemPortable {
+            get {
+                return ResourceManager.GetString("DummyItemPortable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (Working Facility).
+        /// </summary>
+        internal static string DummyItemWorkingFacility {
+            get {
+                return ResourceManager.GetString("DummyItemWorkingFacility", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to add value.
         /// </summary>
         internal static string ExceptionEnumValueAdd {

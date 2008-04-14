@@ -121,6 +121,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     if (_mode == Mode.Add)
                     {
                         _worklistDetail = new WorklistAdminDetail();
+                        _worklistDetail.FilterByWorkingFacility = true; // set this by default (Ticket #1848)
                         _multiDetailComponent = new WorklistMultiDetailEditorComponent(formDataResponse.WorklistClasses);
                         _multiDetailComponent.ProcedureTypeGroupClassChanged += ProcedureTypeGroupClassChangedEventHandler;
                     }

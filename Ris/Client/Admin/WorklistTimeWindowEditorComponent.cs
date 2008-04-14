@@ -69,8 +69,8 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        private static readonly object Hours = new DummyItem("Hours");
-        private static readonly object Days = new DummyItem("Days");
+        private static readonly object Hours = new DummyItem(SR.DummyItemHours);
+        private static readonly object Days = new DummyItem(SR.DummyItemDays);
 
         private static readonly object[] _slidingScaleChoices = { Days, Hours };
 
