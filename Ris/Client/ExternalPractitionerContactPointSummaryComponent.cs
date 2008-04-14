@@ -207,7 +207,7 @@ namespace ClearCanvas.Ris.Client
                 ExternalPractitionerContactPointDetail contactPoint = (ExternalPractitionerContactPointDetail)_selectedContactPoint.Clone();
                 ExternalPractitionerContactPointEditorComponent editor = new ExternalPractitionerContactPointEditorComponent(contactPoint, _addressTypeChoices, _phoneTypeChoices, _resultCommunicationModeChoices);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, "Edit Contact Point");
+                    this.Host.DesktopWindow, editor, string.Format("Edit Contact Point '{0}'", contactPoint.Name));
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     // replace row with updated item
