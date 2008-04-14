@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
@@ -31,6 +31,7 @@
 
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -90,20 +91,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				DicomMessageBase message = this.ParentLocalImageSop.NativeDicomObject;
 
-				DicomPixelData pixelData;
+				PhotometricInterpretation photometricInterpretation;
 
 				if (!message.TransferSyntax.Encapsulated)
-					pixelData = new DicomUncompressedPixelData(message);
-				else if (message.TransferSyntax.Equals(TransferSyntax.RleLossless))
-					pixelData = new DicomCompressedPixelData(message);
+				{
+					DicomUncompressedPixelData pixelData = new DicomUncompressedPixelData(message);
+					_pixelData = pixelData.GetFrame(this.FrameNumber - 1);
+					photometricInterpretation = this.PhotometricInterpretation;
+				}
+				else if (DicomCodecRegistry.GetCodec(message.TransferSyntax) != null)
+				{
+					DicomCompressedPixelData pixelData = new DicomCompressedPixelData(message);
+					string pi;
+					_pixelData = pixelData.GetFrame(this.FrameNumber - 1, out pi);
+					photometricInterpretation = PhotometricInterpretationHelper.FromString(pi);
+				}
 				else
 					throw new DicomCodecException("Unsupported transfer syntax");
 
 				// DICOM library uses zero-based frame numbers
-				_pixelData = pixelData.GetFrame(this.FrameNumber-1);
 
 				if (this.IsColor)
-					_pixelData = this.ToArgb(_pixelData);
+					_pixelData = this.ToArgb(_pixelData, photometricInterpretation);
 			}
 
 			return _pixelData;

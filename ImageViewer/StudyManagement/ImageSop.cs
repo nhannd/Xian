@@ -31,6 +31,8 @@
 
 using System;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Codec;
+using ClearCanvas.DicomServices.Codec;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -40,12 +42,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public abstract class ImageSop : Sop
 	{
 		private FrameCollection _frames;
+		private static bool _codecsRegistered = false;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ImageSop"/>.
 		/// </summary>
 		protected ImageSop()
 		{
+			RegisterCodecs();
 		}
 
 		/// <summary>
@@ -470,6 +474,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="index">The <b>one-based</b> index of the frame to create.</param>
 		protected abstract Frame CreateFrame(int index);
 
+		private void RegisterCodecs()
+		{
+			// TODO: When do threaded loading, we'll have to make this threadsafe
+			if (!_codecsRegistered)
+			{
+				DicomCodecHelper.RegisterCodecExtensions();
+				_codecsRegistered = true;
+			}
+		}
+
 		/// <summary>
 		/// Validates the <see cref="ImageSop"/> object.
 		/// </summary>
@@ -492,12 +506,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private void ValidateAllowableTransferSyntax()
 		{
-			//Right now, Dicom Images are restricted to these transfer syntaxes for viewing purposes.
-			if (this.TransferSyntaxUID != "1.2.840.10008.1.2" &&
-				this.TransferSyntaxUID != "1.2.840.10008.1.2.1" &&
-				this.TransferSyntaxUID != "1.2.840.10008.1.2.2" &&
-				this.TransferSyntaxUID != "1.2.840.10008.1.2.5")
-				throw new SopValidationException(SR.ExceptionInvalidTransferSyntaxUID);
+			// If it isn't one of the regular uncompressed transfer syntaxes, or if a codec does not
+			// exist to decompress one of the compressed syntaxes, then fail.
+			if (TransferSyntax.GetTransferSyntax(this.TransferSyntaxUID) != TransferSyntax.ImplicitVrLittleEndian &&
+				TransferSyntax.GetTransferSyntax(this.TransferSyntaxUID) != TransferSyntax.ExplicitVrLittleEndian &&
+				TransferSyntax.GetTransferSyntax(this.TransferSyntaxUID) != TransferSyntax.ExplicitVrBigEndian &&
+				DicomCodecRegistry.GetCodec(TransferSyntax.GetTransferSyntax(this.TransferSyntaxUID)) == null)
+			{
+				throw new SopValidationException(String.Format(SR.ExceptionInvalidTransferSyntaxUID, this.TransferSyntaxUID));
+			}
 		}
 	}
 }

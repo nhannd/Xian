@@ -772,7 +772,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </para>
 		/// </remarks>
 		/// <seealso cref="GetNormalizedPixelData()"/>
-		protected byte[] ToArgb(byte[] pixelData)
+		protected byte[] ToArgb(
+			byte[] pixelData, 
+			PhotometricInterpretation photometricInterpretation)
 		{
 			int sizeInBytes = this.Rows * this.Columns * 4;
 			byte[] argbPixelData = new byte[sizeInBytes];
@@ -792,7 +794,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			else
 			{
 				ColorSpaceConverter.ToArgb(
-					this.PhotometricInterpretation,
+					photometricInterpretation,
 					this.PlanarConfiguration,
 					pixelData,
 					argbPixelData);
