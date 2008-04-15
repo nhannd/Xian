@@ -761,7 +761,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Code\" />
     <Folder Include="App_Themes\ClearCanvas\images\logos\.svn\props\" />
     <Folder Include="App_Themes\ClearCanvas\images\logos\.svn\tmp\prop-base\" />
     <Folder Include="App_Themes\ClearCanvas\images\logos\.svn\tmp\props\" />
