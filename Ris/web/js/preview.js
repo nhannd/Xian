@@ -283,7 +283,7 @@ function createReportPreview(element, report)
 		for (var i = report.Parts.length-1; i > 0; i--)
 		{
 			var addendumPart = report.Parts[i];
-			var addendumContent = addendumPart && addendumPart.ExtendedProperties.ReportContent ? addendumPart.ExtendedProperties.ReportContent : "";
+			var addendumContent = addendumPart && addendumPart.ExtendedProperties && addendumPart.ExtendedProperties.ReportContent ? addendumPart.ExtendedProperties.ReportContent : "";
 			
 			if (addendumContent)
 			{
@@ -313,15 +313,16 @@ function createReportPreview(element, report)
 	}
 
 	var mainReportText = "";
+	var reportContent = report.Parts[0] && report.Parts[0].ExtendedProperties && report.Parts[0].ExtendedProperties.ReportContent ? report.Parts[0].ExtendedProperties.ReportContent : "";
 	try
 	{
-		var mainReport = JSML.parse(report.Parts[0].ExtendedProperties.ReportContent);
+		var mainReport = JSML.parse(reportContent);
 
 		// depending on how the report was captured, it may contain an Impression and Finding section (Default RIS report editor)
 		if(mainReport.Impression || mainReport.Finding)
 		{
 			mainReportText = "<B>Impression:</B> " + mainReport.Impression + "<br>" + "<B>Finding:</B> " + mainReport.Finding + "<br>";
-	}
+		}
 		else
 		{
 			// or it may simply contain a ReportText section (UHN report editor)
@@ -331,7 +332,7 @@ function createReportPreview(element, report)
 	catch(e)
 	{
 		// the Content was not JSML, but just plain text
-		mainReportText = report.Parts[0].ExtendedProperties.ReportContent;
+		mainReportText = reportContent;
 		if (mainReportText == null)
 			mainReportText = "None";
 	}
@@ -349,7 +350,7 @@ function createReportPreview(element, report)
 		formattedReport += mainReportText;
 	}
 
-		formattedReport += formatReportPerformer(report.Parts[0]);
+	formattedReport += formatReportPerformer(report.Parts[0]);
 
 	formattedReport += isDraft == true ? "</font>" : ""; 
 	element.innerHTML = formattedReport;
