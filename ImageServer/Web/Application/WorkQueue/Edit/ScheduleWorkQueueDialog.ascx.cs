@@ -143,10 +143,10 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
                 if (WorkQueueItemListPanel.WorkQueueItems!=null && 
                     WorkQueueItemListPanel.WorkQueueItems.Count != WorkQueueKeys.Count)
                 {
-                    InformationDialog.Message = SR.WorkQueueNoLongerAvailable;
-                    InformationDialog.MessageType =
+                    MessageDialog.Message = SR.WorkQueueNoLongerAvailable;
+                    MessageDialog.MessageType =
                         ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
-                    InformationDialog.Show();
+                    MessageDialog.Show();
                     
                 }
             }
@@ -155,16 +155,19 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 
         protected void OnApplyButtonClicked(object sender, EventArgs arg)
         {
+            ModalDialog.Hide();
+            
             bool prompt = false;
+            
             foreach (Model.WorkQueue wq in WorkQueues)
             {
                 if (wq == null)
                 {
                     // the workqueue no longer exist in the db
-                    InformationDialog.Message = SR.WorkQueueRescheduleFailed_ItemNotAvailable;
-                    InformationDialog.MessageType =
+                    MessageDialog.Message = SR.WorkQueueRescheduleFailed_ItemNotAvailable;
+                    MessageDialog.MessageType =
                         ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
-                    InformationDialog.Show();
+                    MessageDialog.Show();
                     return; // don't apply the changes
                 }
                 else
@@ -189,10 +192,10 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
                     }
                     else if (wq.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("Failed"))
                     {
-                        InformationDialog.Message = SR.WorkQueueRescheduleFailed_ItemHasFailed;
-                        InformationDialog.MessageType =
+                        MessageDialog.Message = SR.WorkQueueRescheduleFailed_ItemHasFailed;
+                        MessageDialog.MessageType =
                             ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
-                        InformationDialog.Show();
+                        MessageDialog.Show();
                         return; // don't apply the changes
                     }
                 }
@@ -203,7 +206,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
                 ApplyChanges();
             }
 
-            ModalDialog.Hide();
+            
         }
 
         protected void ApplyChanges()
@@ -231,41 +234,50 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 
                     if (newScheduleTime < Platform.Time)
                     {
-                        newScheduleTime = Platform.Time.AddSeconds(WorkQueueSettings.Default.WorkQueueProcessDelaySeconds);
-                    }
-
-                    DateTime expirationTime = newScheduleTime.AddSeconds(WorkQueueSettings.Default.WorkQueueExpireDelaySeconds);
-
-                    WorkQueuePriorityEnum priority = WorkQueueSettingsPanel.SelectedPriority;
-
-                    try
-                    {
-                        WorkQueueController controller = new WorkQueueController();
-                        bool result = controller.RescheduleWorkQueueItems(toBeUpdatedList, newScheduleTime, expirationTime, priority);
-                        if (result)
-                        {
-                            if (WorkQueueUpdated != null)
-                                WorkQueueUpdated(toBeUpdatedList);
-                        }
-                        else
-                        {
-                            Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user");
-                            InformationDialog.MessageType =
+                        MessageDialog.MessageType =
                                 ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
-                            InformationDialog.Message = "Unable to reschedule this/these work queue items";
-                            InformationDialog.Show();
-                        }
+                        MessageDialog.Message = SR.WorkQueueRescheduleFailed_MustBeInFuture;
+                        MessageDialog.Show();
+                        ModalDialog.Show(); 
+            
                     }
-                    catch(Exception e)
+                    else
                     {
-                        Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user : {0}", e.StackTrace);
+                        DateTime expirationTime = newScheduleTime.AddSeconds(WorkQueueSettings.Default.WorkQueueExpireDelaySeconds);
 
-                        InformationDialog.MessageType =
-                                ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
-                        InformationDialog.Message =
-                            String.Format(SR.WorkQueueRescheduleFailed_Exception, e.Message);
-                        InformationDialog.Show();
+                        WorkQueuePriorityEnum priority = WorkQueueSettingsPanel.SelectedPriority;
+
+                        try
+                        {
+                            WorkQueueController controller = new WorkQueueController();
+                            bool result = controller.RescheduleWorkQueueItems(toBeUpdatedList, newScheduleTime, expirationTime, priority);
+                            if (result)
+                            {
+                                if (WorkQueueUpdated != null)
+                                    WorkQueueUpdated(toBeUpdatedList);
+                            }
+                            else
+                            {
+                                Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user");
+                                MessageDialog.MessageType =
+                                    ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                                MessageDialog.Message = "Unable to reschedule this/these work queue items";
+                                MessageDialog.Show();
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user : {0}", e.StackTrace);
+
+                            MessageDialog.MessageType =
+                                    ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                            MessageDialog.Message =
+                                String.Format(SR.WorkQueueRescheduleFailed_Exception, e.Message);
+                            MessageDialog.Show();
+                        }    
                     }
+
+                    
                 }
                 
             }
@@ -339,10 +351,10 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 
             if (WorkQueueItemListPanel.WorkQueueItems.Count != WorkQueueKeys.Count)
             {
-                InformationDialog.Message = SR.WorkQueueNoLongerAvailable;
-                InformationDialog.MessageType =
+                MessageDialog.Message = SR.WorkQueueNoLongerAvailable;
+                MessageDialog.MessageType =
                     ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.INFORMATION;
-                InformationDialog.Show();    
+                MessageDialog.Show();    
             }
             
             Display();

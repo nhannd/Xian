@@ -214,6 +214,15 @@ namespace ClearCanvas.ImageServer.Web.Application {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Schedule start time must be in the future..
+        /// </summary>
+        internal static string WorkQueueRescheduleFailed_MustBeInFuture {
+            get {
+                return ResourceManager.GetString("WorkQueueRescheduleFailed_MustBeInFuture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to reset this item to Pending?.
         /// </summary>
         internal static string WorkQueueResetConfirm {

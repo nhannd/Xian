@@ -51,13 +51,13 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             get
             {
                 return (DateTime?) ViewState[ClientID + "_NewScheduledDateTime"];
-                //return CalendarExtender1.SelectedDate;
+                //return CalendarExtender.SelectedDate;
             }
             set
             {
                 ViewState[ClientID + "_NewScheduledDateTime"] = value;
-                CalendarExtender1.SelectedDate = value;
-                NewScheduleDate.Text = value == null ? "" : value.Value.ToString(CalendarExtender1.Format);
+                CalendarExtender.SelectedDate = value;
+                NewScheduleDate.Text = value == null ? "" : value.Value.ToString(CalendarExtender.Format);
                 if (value != null)
                 {
                     AddCustomTime(value.Value);
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             foreach(ListItem item in defaultList)
                 NewScheduleTimeDropDownList.Items.Add(item);
 
-            CalendarExtender1.Format = DateTimeFormatter.DefaultDateFormat;
+            CalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
 
             PriorityDropDownList.Items.Clear();
             IList<WorkQueuePriorityEnum> priorities = WorkQueuePriorityEnum.GetAll();
@@ -154,13 +154,13 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             {
                 if (!String.IsNullOrEmpty(NewScheduleDate.Text))
                 {
-                    DateTime dt = DateTime.ParseExact(NewScheduleDate.Text, CalendarExtender1.Format, null);
+                    DateTime dt = DateTime.ParseExact(NewScheduleDate.Text, CalendarExtender.Format, null);
 
                     DateTime time = DateTime.ParseExact(NewScheduleTimeDropDownList.Text, "hh:mm tt", null);
 
                     NewScheduledDateTime = dt.Add(time.TimeOfDay);
 
-                    CalendarExtender1.SelectedDate = NewScheduledDateTime;
+                    CalendarExtender.SelectedDate = NewScheduledDateTime;
                 }
                 else
                 {

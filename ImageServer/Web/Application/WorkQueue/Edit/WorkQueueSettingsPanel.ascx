@@ -15,7 +15,7 @@
                 <asp:Label ID="Label1" runat="server" Text="Schedule: "></asp:Label>
                 <asp:TextBox ID="NewScheduleDate" runat="server" Width="80px"></asp:TextBox>
                 <asp:Button ID="DatePickerButton" runat="server" Text="..." />
-                <ajaxToolkit:CalendarExtender ID="CalendarExtender1" runat="server" TargetControlID="NewScheduleDate" PopupButtonID="DatePickerButton" CssClass="Calendar">
+                <ajaxToolkit:CalendarExtender ID="CalendarExtender" runat="server" TargetControlID="NewScheduleDate" PopupButtonID="DatePickerButton" CssClass="Calendar">
                 </ajaxToolkit:CalendarExtender>
                 
                 <asp:DropDownList ID="NewScheduleTimeDropDownList" runat="server">

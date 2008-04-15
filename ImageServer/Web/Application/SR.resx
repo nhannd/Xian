@@ -168,6 +168,9 @@
   <data name="WorkQueueRescheduleFailed_ItemNotAvailable" xml:space="preserve">
     <value>One or more items you selected is no longer available and therefore will not be updated</value>
   </data>
+  <data name="WorkQueueRescheduleFailed_MustBeInFuture" xml:space="preserve">
+    <value>Schedule start time must be in the future.</value>
+  </data>
   <data name="WorkQueueResetConfirm" xml:space="preserve">
     <value>Are you sure you want to reset this item to Pending?</value>
   </data>

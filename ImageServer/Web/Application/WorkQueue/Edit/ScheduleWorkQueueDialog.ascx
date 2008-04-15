@@ -42,4 +42,4 @@
 </clearcanvas:modaldialog>
 <clearcanvas:confirmationdialog id="PreOpenConfirmDialog" runat="server" />
 <clearcanvas:confirmationdialog id="PreApplyChangeConfirmDialog" runat="server" />
-<clearcanvas:confirmationdialog id="InformationDialog" runat="server" />
+<clearcanvas:confirmationdialog id="MessageDialog" runat="server" />
