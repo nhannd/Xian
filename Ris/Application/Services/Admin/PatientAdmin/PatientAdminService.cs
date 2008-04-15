@@ -44,6 +44,8 @@ using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common.Utilities;
 using System.Security.Permissions;
+using System.Threading;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 {
@@ -113,14 +115,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientAdmin)]
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
         public UpdatePatientProfileResponse UpdatePatientProfile(UpdatePatientProfileRequest request)
         {
             PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef, EntityLoadFlags.CheckVersion);
 
-            PatientProfileAssembler assembler = new PatientProfileAssembler();
-            assembler.UpdatePatientProfile(profile, request.PatientDetail, this.CurrentUserStaff, PersistenceContext);
+            UpdateHelper(profile, request.PatientDetail);
 
+            PatientProfileAssembler assembler = new PatientProfileAssembler();
             return new UpdatePatientProfileResponse(assembler.CreatePatientProfileSummary(profile, PersistenceContext));
         }
 
@@ -132,16 +135,35 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             Patient patient = new Patient();
             patient.AddProfile(profile);
 
-            PatientProfileAssembler assembler = new PatientProfileAssembler();
-            assembler.UpdatePatientProfile(profile, request.PatientDetail, this.CurrentUserStaff, PersistenceContext);
+            UpdateHelper(profile, request.PatientDetail);
 
             PersistenceContext.Lock(patient, DirtyState.New);
-
             PersistenceContext.SynchState();
 
+            PatientProfileAssembler assembler = new PatientProfileAssembler();
             return new AddPatientResponse(assembler.CreatePatientProfileSummary(profile, PersistenceContext));
         }
 
         #endregion
+
+        private void UpdateHelper(PatientProfile profile, PatientProfileDetail detail)
+        {
+            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.PatientAdmin))
+            {
+                Patient patient = profile.Patient;
+
+                PatientNoteAssembler noteAssembler = new PatientNoteAssembler();
+                noteAssembler.Synchronize(patient.Notes, detail.Notes, CurrentUserStaff, PersistenceContext);
+
+                PatientAttachmentAssembler attachmentAssembler = new PatientAttachmentAssembler();
+                attachmentAssembler.Synchronize(patient.Attachments, detail.Attachments, PersistenceContext);
+            }
+
+            if(Thread.CurrentPrincipal.IsInRole(AuthorityTokens.PatientProfileAdmin))
+            {
+                PatientProfileAssembler assembler = new PatientProfileAssembler();
+                assembler.UpdatePatientProfile(profile, detail, PersistenceContext);
+            }
+        }
     }
 }

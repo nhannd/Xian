@@ -38,7 +38,7 @@ using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Adt.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
     public partial class PatientProfileDetailsEditorControl : ApplicationComponentUserControl
     {

@@ -52,10 +52,12 @@ namespace ClearCanvas.Healthcare {
         }
 
         /// <summary>
-        /// Adds a profile to this patient, setting the profile's <see cref="PatientProfile.Patient"/> property
-        /// to refer to this object.  Use this method rather than referring to the <see cref="Patient.Profiles"/>
-        /// collection directly.
+        /// Adds a <see cref="PatientProfile"/> to this patient.
         /// </summary>
+        /// <remarks>
+        /// Use this method rather than adding to the <see cref="Patient.Notes"/>
+        /// collection directly.
+        /// </remarks>
         /// <param name="profile"></param>
         public virtual void AddProfile(PatientProfile profile)
         {

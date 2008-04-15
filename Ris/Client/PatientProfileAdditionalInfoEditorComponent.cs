@@ -39,7 +39,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client
 {
     /// <summary>
     /// Extension point for views onto <see cref="PatientProfileAdditionalInfoEditorComponent"/>

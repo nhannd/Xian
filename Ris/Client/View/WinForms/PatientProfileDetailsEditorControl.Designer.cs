@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace ClearCanvas.Ris.Client.Adt.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
     partial class PatientProfileDetailsEditorControl
     {
@@ -223,7 +223,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _healthcard
             // 
             this._healthcard.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+                                                                            | System.Windows.Forms.AnchorStyles.Right)));
             this._healthcard.AutoSize = true;
             this._healthcard.LabelText = "Healthcard";
             this._healthcard.Location = new System.Drawing.Point(2, 47);
@@ -237,7 +237,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _mrnAuthority
             // 
             this._mrnAuthority.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+                                                                              | System.Windows.Forms.AnchorStyles.Right)));
             this._mrnAuthority.AutoSize = true;
             this._mrnAuthority.DataSource = null;
             this._mrnAuthority.DisplayMember = "";
@@ -253,7 +253,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _insurer
             // 
             this._insurer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+                                                                         | System.Windows.Forms.AnchorStyles.Right)));
             this._insurer.AutoSize = true;
             this._insurer.DataSource = null;
             this._insurer.DisplayMember = "";
@@ -269,7 +269,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _healthcardVersionCode
             // 
             this._healthcardVersionCode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+                                                                                       | System.Windows.Forms.AnchorStyles.Right)));
             this._healthcardVersionCode.AutoSize = true;
             this._healthcardVersionCode.LabelText = "Version Code";
             this._healthcardVersionCode.Location = new System.Drawing.Point(2, 92);
@@ -283,7 +283,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _healthcardExpiry
             // 
             this._healthcardExpiry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+                                                                                  | System.Windows.Forms.AnchorStyles.Right)));
             this._healthcardExpiry.AutoSize = true;
             this._healthcardExpiry.LabelText = "Healthcard Expiry Date";
             this._healthcardExpiry.Location = new System.Drawing.Point(211, 92);
@@ -299,7 +299,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _mrn
             // 
             this._mrn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+                                                                     | System.Windows.Forms.AnchorStyles.Right)));
             this._mrn.AutoSize = true;
             this._mrn.LabelText = "MRN";
             this._mrn.Location = new System.Drawing.Point(2, 2);

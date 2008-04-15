@@ -41,7 +41,7 @@ using ClearCanvas.Ris.Client;
 using System.Collections;
 using ClearCanvas.Desktop.Validation;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client
 {
     [ExtensionPoint()]
     public class PatientEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>

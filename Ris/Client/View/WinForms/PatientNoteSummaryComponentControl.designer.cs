@@ -59,7 +59,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this._noteList = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.SuspendLayout();
             // 
@@ -70,14 +69,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._noteList.AutoSize = true;
             this._noteList.Location = new System.Drawing.Point(0, 0);
-            this._noteList.MenuModel = null;
             this._noteList.Name = "_noteList";
             this._noteList.ReadOnly = false;
-            this._noteList.Selection = selection1;
-            this._noteList.Size = new System.Drawing.Size(152, 158);
+            this._noteList.Size = new System.Drawing.Size(305, 204);
             this._noteList.TabIndex = 0;
-            this._noteList.Table = null;
-            this._noteList.ToolbarModel = null;
             this._noteList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._noteList.ItemDoubleClicked += new System.EventHandler(this._noteList_ItemDoubleClicked);
             // 
@@ -88,7 +83,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.AutoSize = true;
             this.Controls.Add(this._noteList);
             this.Name = "PatientNoteSummaryComponentControl";
-            this.Size = new System.Drawing.Size(150, 158);
+            this.Size = new System.Drawing.Size(303, 204);
             this.ResumeLayout(false);
             this.PerformLayout();
 

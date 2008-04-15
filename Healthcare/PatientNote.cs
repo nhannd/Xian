@@ -42,17 +42,37 @@ namespace ClearCanvas.Healthcare {
 
 
     /// <summary>
-    /// Note entity
+    /// PatientNote
     /// </summary>
     public partial class PatientNote
 	{
-        private void CustomInitialize()
+        /// <summary>
+        /// Constructor for creating a new patient note.
+        /// </summary>
+        /// <param name="author"></param>
+        /// <param name="category"></param>
+        /// <param name="comment"></param>
+        public PatientNote(Staff author, PatientNoteCategory category, string comment)
         {
+            _author = author;
+            _category = category;
+            _comment = comment;
+
+            // valid from now indefinitely
+            _creationTime = Platform.Time;
+            _validRange = new DateTimeRange(_creationTime, null);
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="PatientNote"/> is currently valid.
+        /// </summary>
         public bool IsCurrent
         {
             get { return this.ValidRange == null || this.ValidRange.Includes(Platform.Time); }
+        }
+
+        private void CustomInitialize()
+        {
         }
     }
 }

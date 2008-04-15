@@ -69,7 +69,6 @@
     <Compile Include="HL7QueuePreviewTool.cs" />
     <Compile Include="HL7QueueProcessItemTool.cs" />
     <Compile Include="PatientEditTool.cs" />
-    <Compile Include="PatientProfileAdditionalInfoEditorComponent.cs" />
     <Compile Include="PatientProfileDiffComponent.cs" />
     <Compile Include="PatientReconciliation.cs" />
     <Compile Include="ProtocolTestTool.cs" />
@@ -78,8 +77,6 @@
     <Compile Include="JscriptComponent.cs" />
     <Compile Include="JscriptTool.cs" />
     <Compile Include="PatientAddTool.cs" />
-    <Compile Include="PatientProfileDetailsEditorComponent.cs" />
-    <Compile Include="PatientProfileEditorComponent.cs" />
     <Compile Include="ReconciliationComponent.cs" />
     <Compile Include="PatientReconcileTool.cs" />
     <Compile Include="RegistrationHomeTool.cs" />

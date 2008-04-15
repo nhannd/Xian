@@ -39,25 +39,23 @@ namespace ClearCanvas.Ris.Client
     public class PatientNoteTable : Table<PatientNoteDetail>
     {
         public PatientNoteTable()
+            :base(2)
         {
             this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnSeverity,
-                delegate(PatientNoteDetail n) { return (n.Category == null ? "" : n.Category.Severity.Code); },
+                delegate(PatientNoteDetail n) { return (n.Category == null ? "" : n.Category.Severity.Value); },
                 0.1f));
             this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnCategory,
                 delegate(PatientNoteDetail n) { return (n.Category == null ? "" : n.Category.Name); },
                 0.2f));
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnComments,
-                delegate(PatientNoteDetail n) { return n.Comment; },
-                0.45f));
             this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnCreatedOn,
                 delegate(PatientNoteDetail n) { return n.CreationTime == null ? SR.LabelNew : Format.Date(n.CreationTime); },
                 0.2f));
             this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnAuthor,
                 delegate(PatientNoteDetail n) { return n.Author == null ? SR.LabelMe : PersonNameFormat.Format(n.Author.Name); },
                 0.2f));
-            //this.Columns.Add(new TableColumn<NoteDetail, string>("Description",
-            //    delegate(NoteDetail n) { return (n.Category == null ? "" : n.Category.Description); },
-            //    1.0f));
+
+            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnComments,
+                delegate(PatientNoteDetail n) { return n.Comment; }, 1));
         }
     }
 }

@@ -90,6 +90,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>BannerComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="PatientProfileAdditionalInfoEditorComponent.cs" />
+    <Compile Include="PatientProfileDetailsEditorComponent.cs" />
+    <Compile Include="PatientProfileEditorComponent.cs" />
     <Compile Include="SessionManagerTool.cs" />
     <Compile Include="StaffStaffGroupEditorComponent.cs" />
     <Compile Include="SummaryComponentBase.cs" />

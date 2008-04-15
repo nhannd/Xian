@@ -93,28 +93,13 @@ namespace ClearCanvas.Ris.Application.Services
             return detail;
         }
 
-        public PatientNote CreateNote(PatientNoteDetail detail, Staff currentStaff, IPersistenceContext context)
+        public PatientNote CreateNote(PatientNoteDetail detail, Staff author, IPersistenceContext context)
         {
-            PatientNote newNote = new PatientNote();
+            PatientNoteCategory category = context.Load<PatientNoteCategory>(detail.Category.NoteCategoryRef, EntityLoadFlags.Proxy);
+            PatientNote note = new PatientNote(author, category, detail.Comment);
+            note.ValidRange.Until = detail.ValidRangeUntil;
 
-            newNote.Comment = detail.Comment;
-            newNote.ValidRange.From = detail.ValidRangeFrom;
-            newNote.ValidRange.Until = detail.ValidRangeUntil;
-
-            if (detail.CreationTime != null)
-                newNote.CreationTime = detail.CreationTime.Value;
-            else
-                newNote.CreationTime = Platform.Time;
-
-            if (detail.Category != null)
-                newNote.Category = context.Load<PatientNoteCategory>(detail.Category.NoteCategoryRef, EntityLoadFlags.Proxy);
-
-            if (detail.Author != null)
-                newNote.Author = context.Load<Staff>(detail.Author.StaffRef, EntityLoadFlags.Proxy);
-            else
-                newNote.Author = currentStaff;
-
-            return newNote;
+            return note;
         }
     }
 }

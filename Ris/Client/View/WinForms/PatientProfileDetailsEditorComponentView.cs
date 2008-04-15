@@ -31,37 +31,48 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Text;
-using System.Windows.Forms;
 
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Adt.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="PatientProfileAdditionalInfoEditorComponent"/>
-    /// </summary>
-    public partial class PatientProfileAdditionalInfoEditorComponentControl : CustomUserControl
+    [ExtensionOf(typeof(PatientEditorComponentViewExtensionPoint))]
+    public class PatientProfileDetailsEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        private PatientProfileAdditionalInfoEditorComponent _component;
+        private PatientProfileDetailsEditorControl _control;
+        private PatientProfileDetailsEditorComponent _component;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public PatientProfileAdditionalInfoEditorComponentControl(PatientProfileAdditionalInfoEditorComponent component)
+        public PatientProfileDetailsEditorComponentView()
         {
-            InitializeComponent();
-
-            _component = component;
-
-            _primaryLanguage.DataSource = _component.LanguageChoices;
-            _primaryLanguage.DataBindings.Add("Value", _component, "Language", true, DataSourceUpdateMode.OnPropertyChanged);
-
-            _religion.DataSource = _component.ReligionChoices;
-            _religion.DataBindings.Add("Value", _component, "Religion", true, DataSourceUpdateMode.OnPropertyChanged);
         }
+
+        protected PatientProfileDetailsEditorControl Control
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new PatientProfileDetailsEditorControl(_component);
+                }
+                return _control;
+            }
+        }
+
+        public override object GuiElement
+        {
+            get { return this.Control; }
+        }
+
+        #region IApplicationComponentView Members
+
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (PatientProfileDetailsEditorComponent)component;
+        }
+
+        #endregion
     }
 }

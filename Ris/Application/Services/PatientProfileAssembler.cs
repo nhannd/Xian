@@ -160,7 +160,7 @@ namespace ClearCanvas.Ris.Application.Services
             return detail;
         }
 
-        public void UpdatePatientProfile(PatientProfile profile, PatientProfileDetail detail, Staff currentUserStaff, IPersistenceContext context)
+        public void UpdatePatientProfile(PatientProfile profile, PatientProfileDetail detail, IPersistenceContext context)
         {
             profile.Mrn.Id = detail.Mrn.Id;
             profile.Mrn.AssigningAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.Mrn.AssigningAuthority, context);
@@ -213,11 +213,11 @@ namespace ClearCanvas.Ris.Application.Services
                 profile.ContactPersons.Add(contactAssembler.CreateContactPerson(cp));
             }
 
-            PatientNoteAssembler noteAssembler = new PatientNoteAssembler();
-            noteAssembler.Synchronize(profile.Patient.Notes, detail.Notes, currentUserStaff, context);
+        }
 
-            PatientAttachmentAssembler attachmentAssembler = new PatientAttachmentAssembler();
-            attachmentAssembler.Synchronize(profile.Patient.Attachments, detail.Attachments, context);
+        public void UpdatePatient(Patient patient, PatientProfileDetail detail, Staff currentUserStaff, IPersistenceContext context)
+        {
+            
         }
     }
 }

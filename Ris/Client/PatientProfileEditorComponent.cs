@@ -40,8 +40,10 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Client.Formatting;
+using System.Threading;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client
 {
     public class PatientProfileEditorComponent : NavigatorComponentContainer
     {
@@ -110,17 +112,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(IPatientAdminService service)
                 {
                     LoadPatientProfileEditorFormDataResponse formData = service.LoadPatientProfileEditorFormData(new LoadPatientProfileEditorFormDataRequest());
-                    
-                    this.Pages.Add(new NavigatorPage("Patient", _patientEditor = new PatientProfileDetailsEditorComponent(formData.SexChoices, formData.MrnAssigningAuthorityChoices, formData.HealthcardAssigningAuthorityChoices)));
-                    this.Pages.Add(new NavigatorPage("Patient/Addresses", _addressesSummary = new AddressesSummaryComponent(formData.AddressTypeChoices)));
-                    this.Pages.Add(new NavigatorPage("Patient/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formData.PhoneTypeChoices)));
-                    this.Pages.Add(new NavigatorPage("Patient/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
-                    this.Pages.Add(new NavigatorPage("Patient/Contact Persons", _contactPersonsSummary = new ContactPersonsSummaryComponent(formData.ContactPersonTypeChoices, formData.ContactPersonRelationshipChoices)));
-                    this.Pages.Add(new NavigatorPage("Patient/Additional Info", _additionalPatientInfoSummary = new PatientProfileAdditionalInfoEditorComponent(formData.ReligionChoices, formData.PrimaryLanguageChoices)));
-                    this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new PatientNoteSummaryComponent(formData.NoteCategoryChoices)));
-                    this.Pages.Add(new NavigatorPage("Patient/Documents", _documentSummary = new MimeDocumentPreviewComponent(true, true)));
-                    this.ValidationStrategy = new AllComponentsValidationStrategy();
-
                     if (_isNew)
                     {
                         _profile = new PatientProfileDetail();
@@ -140,19 +131,40 @@ namespace ClearCanvas.Ris.Client.Adt
                         _profileRef = response.PatientProfileRef;
                         _profile = response.PatientDetail;
 
-                        this.Host.Title = 
+                        this.Host.Title =
                             string.Format(SR.TitlePatientComponent, PersonNameFormat.Format(_profile.Name), MrnFormat.Format(_profile.Mrn));
                     }
+
+                    if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.PatientProfileAdmin))
+                    {
+                        this.Pages.Add(new NavigatorPage("Patient", _patientEditor = new PatientProfileDetailsEditorComponent(formData.SexChoices, formData.MrnAssigningAuthorityChoices, formData.HealthcardAssigningAuthorityChoices)));
+                        this.Pages.Add(new NavigatorPage("Patient/Addresses", _addressesSummary = new AddressesSummaryComponent(formData.AddressTypeChoices)));
+                        this.Pages.Add(new NavigatorPage("Patient/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formData.PhoneTypeChoices)));
+                        this.Pages.Add(new NavigatorPage("Patient/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
+                        this.Pages.Add(new NavigatorPage("Patient/Contact Persons", _contactPersonsSummary = new ContactPersonsSummaryComponent(formData.ContactPersonTypeChoices, formData.ContactPersonRelationshipChoices)));
+                        this.Pages.Add(new NavigatorPage("Patient/Additional Info", _additionalPatientInfoSummary = new PatientProfileAdditionalInfoEditorComponent(formData.ReligionChoices, formData.PrimaryLanguageChoices)));
+                        
+                        _patientEditor.Subject = _profile;
+                        _addressesSummary.Subject = _profile.Addresses;
+                        _phoneNumbersSummary.Subject = _profile.TelephoneNumbers;
+                        _emailAddressesSummary.Subject = _profile.EmailAddresses;
+                        _contactPersonsSummary.Subject = _profile.ContactPersons;
+                        _additionalPatientInfoSummary.Subject = _profile;
+                    }
+
+                    if(Thread.CurrentPrincipal.IsInRole(AuthorityTokens.PatientAdmin))
+                    {
+                        this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new PatientNoteSummaryComponent(formData.NoteCategoryChoices)));
+                        this.Pages.Add(new NavigatorPage("Patient/Documents", _documentSummary = new MimeDocumentPreviewComponent(true, true)));
+                        
+                        _notesSummary.Subject = _profile.Notes;
+                        _documentSummary.PatientAttachments = _profile.Attachments;
+                    }
+
+                    this.ValidationStrategy = new AllComponentsValidationStrategy();
+
                 });
 
-            _patientEditor.Subject = _profile;
-            _addressesSummary.Subject = _profile.Addresses;
-            _phoneNumbersSummary.Subject = _profile.TelephoneNumbers;
-            _emailAddressesSummary.Subject = _profile.EmailAddresses;
-            _contactPersonsSummary.Subject = _profile.ContactPersons;
-            _additionalPatientInfoSummary.Subject = _profile;
-            _notesSummary.Subject = _profile.Notes;
-            _documentSummary.PatientAttachments = _profile.Attachments;
 
             base.Start();
         }
@@ -173,11 +185,11 @@ namespace ClearCanvas.Ris.Client.Adt
                 catch (Exception e)
                 {
                     ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow, 
-                        delegate
-                        {
-                            this.ExitCode = ApplicationComponentExitCode.Error;
-                            this.Host.Exit();                            
-                        });
+                                            delegate
+                                            {
+                                                this.ExitCode = ApplicationComponentExitCode.Error;
+                                                this.Host.Exit();                            
+                                            });
                 }
             }
         }
@@ -205,7 +217,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     }
                 });
 
-            _documentSummary.SaveChanges();
+            if(_documentSummary != null)
+                _documentSummary.SaveChanges();
         }
 
     }

@@ -68,13 +68,6 @@
       <DependentUpon>HL7QueuePreviewComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="HL7QueuePreviewComponentView.cs" />
-    <Compile Include="PatientProfileAdditionalInfoEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PatientProfileAdditionalInfoEditorComponentControl.Designer.cs">
-      <DependentUpon>PatientProfileAdditionalInfoEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PatientProfileAdditionalInfoEditorComponentView.cs" />
     <Compile Include="PatientProfileDiffComponentView.cs" />
     <Compile Include="PerformedProcedureComponentControl.cs">
       <SubType>UserControl</SubType>
@@ -97,13 +90,6 @@
       <DependentUpon>JscriptComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="JscriptComponentView.cs" />
-    <Compile Include="PatientProfileDetailsEditorComponentView.cs" />
-    <Compile Include="PatientProfileDetailsEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PatientProfileDetailsEditorControl.Designer.cs">
-      <DependentUpon>PatientProfileDetailsEditorControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="ReconciliationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -219,10 +205,6 @@
       <DependentUpon>HL7QueuePreviewComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PatientProfileAdditionalInfoEditorComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>PatientProfileAdditionalInfoEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ReconciliationConfirmComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
@@ -230,10 +212,6 @@
     <EmbeddedResource Include="JscriptComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>JscriptComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PatientProfileDetailsEditorControl.resx">
-      <DependentUpon>PatientProfileDetailsEditorControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ReconciliationComponentControl.resx">
       <SubType>Designer</SubType>

@@ -161,5 +161,15 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             _component.CurrentPage = (NavigatorPage)e.Node.Tag;
         }
+
+        private void _treeView_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        {
+            NavigatorPage page = (NavigatorPage)e.Node.Tag;
+            if (page == null)
+            {
+                // no page associated with this node, select another node?
+                e.Cancel = true;
+            }
+        }
     }
 }

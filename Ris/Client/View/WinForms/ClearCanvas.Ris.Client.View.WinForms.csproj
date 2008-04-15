@@ -216,6 +216,20 @@
       <DependentUpon>PatientNoteSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PatientNoteSummaryComponentView.cs" />
+    <Compile Include="PatientProfileAdditionalInfoEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PatientProfileAdditionalInfoEditorComponentControl.Designer.cs">
+      <DependentUpon>PatientProfileAdditionalInfoEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PatientProfileAdditionalInfoEditorComponentView.cs" />
+    <Compile Include="PatientProfileDetailsEditorComponentView.cs" />
+    <Compile Include="PatientProfileDetailsEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PatientProfileDetailsEditorControl.Designer.cs">
+      <DependentUpon>PatientProfileDetailsEditorControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="PatientSearchComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -407,6 +421,14 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PatientNoteSummaryComponentControl.resx">
       <DependentUpon>PatientNoteSummaryComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatientProfileAdditionalInfoEditorComponentControl.resx">
+      <DependentUpon>PatientProfileAdditionalInfoEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatientProfileDetailsEditorControl.resx">
+      <DependentUpon>PatientProfileDetailsEditorControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PatientSearchComponentControl.resx">

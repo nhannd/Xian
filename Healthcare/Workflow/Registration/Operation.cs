@@ -74,22 +74,27 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
                 if (PatientIdentifierConflictsFound(thisPatient, otherPatient))
                     throw new PatientReconciliationException("assigning authority conflict - cannot reconcile");
 
-                foreach (PatientProfile profile in otherPatient.Profiles)
+                // copy the collection to iterate
+                List<PatientProfile> otherProfiles = new List<PatientProfile>(otherPatient.Profiles);
+                foreach (PatientProfile profile in otherProfiles)
                 {
                     thisPatient.AddProfile(profile);
                 }
 
-                foreach (PatientNote note in otherPatient.Notes)
+                // copy the collection to iterate
+                List<PatientNote> otherNotes = new List<PatientNote>(otherPatient.Notes);
+                foreach (PatientNote note in otherNotes)
                 {
-                    thisPatient.Notes.Add((PatientNote)note.Clone());
+                    otherPatient.Notes.Remove(note);
+                    thisPatient.Notes.Add(note);
                 }
 
-                OrderSearchCriteria orderCriteria = new OrderSearchCriteria();
-                orderCriteria.Patient.EqualTo(otherPatient);
-                IList<Order> otherOrders = context.GetBroker<IOrderBroker>().Find(orderCriteria);
-                foreach (Order order in otherOrders)
+                // copy the collection to iterate
+                List<PatientAttachment> otherAttachments = new List<PatientAttachment>(otherPatient.Attachments);
+                foreach (PatientAttachment attachment in otherAttachments)
                 {
-                    order.Patient = thisPatient;
+                    otherPatient.Attachments.Remove(attachment);
+                    thisPatient.Attachments.Add(attachment);
                 }
 
                 VisitSearchCriteria visitCriteria = new VisitSearchCriteria();
@@ -98,6 +103,14 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
                 foreach (Visit visit in otherVisits)
                 {
                     visit.Patient = thisPatient;
+                }
+
+                OrderSearchCriteria orderCriteria = new OrderSearchCriteria();
+                orderCriteria.Patient.EqualTo(otherPatient);
+                IList<Order> otherOrders = context.GetBroker<IOrderBroker>().Find(orderCriteria);
+                foreach (Order order in otherOrders)
+                {
+                    order.Patient = thisPatient;
                 }
             }
 
