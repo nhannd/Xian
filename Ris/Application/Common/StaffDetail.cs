@@ -56,6 +56,7 @@ namespace ClearCanvas.Ris.Application.Common
         public StaffDetail()
         {
             this.Name = new PersonNameDetail();
+            this.Groups = new List<StaffGroupSummary>();
             this.ExtendedProperties = new Dictionary<string, string>();
         }
 
