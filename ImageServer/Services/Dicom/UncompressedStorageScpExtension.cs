@@ -101,8 +101,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                 if (processor.Execute())
                 {
-                    Platform.Log(LogLevel.Info, "Received SOP Instance {0} from {1} to {2}", sopInstanceUid,
-                                 association.CallingAE, association.CalledAE);
+                    Platform.Log(LogLevel.Info, "Received SOP Instance {0} from {1} to {2} on context {3}", sopInstanceUid,
+                                 association.CallingAE, association.CalledAE, presentationID);
 
                     returnStatus = DicomStatuses.Success;
                 }
