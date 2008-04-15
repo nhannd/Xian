@@ -124,7 +124,11 @@ namespace ClearCanvas.Desktop
             {
                 _task.ProgressUpdated += ProgressHandler;
                 _task.Terminated += TerminatedHandler;
-                _task.Run();
+
+                if (_task.IsRunning)
+                    UpdateProgress(_task.LastBackgroundTaskProgress);
+                else
+                    _task.Run();                    
             }
 
             base.Start();
@@ -258,11 +262,19 @@ namespace ClearCanvas.Desktop
 
         #region Task EventHandler
 
-        private void ProgressHandler(object sender, BackgroundTaskProgressEventArgs e)
+        private void UpdateProgress(BackgroundTaskProgressEventArgs e)
         {
+            if (e == null)
+                return;
+
             _progressMessage = e.Progress.Message;
             _progressBar = e.Progress.Percent;
-            SignalProgressUpdate();
+            SignalProgressUpdate();            
+        }
+
+        private void ProgressHandler(object sender, BackgroundTaskProgressEventArgs e)
+        {
+            UpdateProgress(e);
         }
 
         private void TerminatedHandler(object sender, BackgroundTaskTerminatedEventArgs e)

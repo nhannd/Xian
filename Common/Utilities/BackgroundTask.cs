@@ -312,6 +312,7 @@ namespace ClearCanvas.Common.Utilities
         private Exception _error;
         private event EventHandler<BackgroundTaskProgressEventArgs> _progressUpdated;
         private event EventHandler<BackgroundTaskTerminatedEventArgs> _terminated;
+        private BackgroundTaskProgressEventArgs _lastBackgroundTaskProgress;
 
         /// <summary>
         /// Creates and executes a new <see cref="BackgroundTask"/> based on the specified arguments.
@@ -425,6 +426,14 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
+        /// Gets the last background task progress event args
+        /// </summary>
+        public BackgroundTaskProgressEventArgs LastBackgroundTaskProgress
+        {
+            get { return _lastBackgroundTaskProgress; }    
+        }
+
+        /// <summary>
         /// Notifies that the progress of the task has been updated.
         /// </summary>
         public event EventHandler<BackgroundTaskProgressEventArgs> ProgressUpdated
@@ -465,8 +474,8 @@ namespace ClearCanvas.Common.Utilities
 
         private void BackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            EventsHelper.Fire(_progressUpdated, this, new BackgroundTaskProgressEventArgs(_userState, 
-                (BackgroundTaskProgress)e.UserState));
+            _lastBackgroundTaskProgress = new BackgroundTaskProgressEventArgs(_userState, (BackgroundTaskProgress) e.UserState);
+            EventsHelper.Fire(_progressUpdated, this, _lastBackgroundTaskProgress);
         }
         
         private void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
