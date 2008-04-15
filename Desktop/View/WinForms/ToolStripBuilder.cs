@@ -162,7 +162,31 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                     BuildMenu(((ToolStripMenuItem)toolstripItem).DropDownItems, node.ChildNodes);
                 }
+
+                // When you get Visible, it refers to whether the object is really visible, as opposed to whether it _can_ be visible. 
+                // When you _set_ Visible, it affects whether it _can_ be visible.
+                // For example, an item is really invisible but _can_ be visible before it is actually drawn.
+                // This is why we use the Available property, which give us the information when we are interested in "_Could_ this be Visible?"
+                ToolStripMenuItem parent = toolstripItem.OwnerItem as ToolStripMenuItem;
+                if (parent != null)
+                {
+                    SetParentAvailability(parent);
+                    toolstripItem.AvailableChanged += delegate { SetParentAvailability(parent); };
+                }
             }
+        }
+
+        private static void SetParentAvailability(ToolStripMenuItem parent)
+        {
+            bool parentIsAvailable = false;
+            foreach (ToolStripMenuItem item in parent.DropDownItems)
+            {
+                if (item.Available)
+                    parentIsAvailable = true;
+            }
+
+            if (parent.Available != parentIsAvailable)
+                parent.Available = parentIsAvailable;
         }
 
         private static void CheckParentItems(ToolStripItem menuItem)
