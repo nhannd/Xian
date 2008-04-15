@@ -20,8 +20,8 @@
                                 <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
                                     <clearcanvas:ToolbarButton
                                             ID="ViewToolbarButton1" runat="server" 
-                                            EnabledImageURL="~/images/icons/OpenEnabled.png" 
-                                            DisabledImageURL="~/images/icons/OpenDisabled.png"
+                                            EnabledImageURL="~/images/icons/ViewDetailsEnabled.png" 
+                                            DisabledImageURL="~/images/icons/ViewDetailsDisabled.png"
                                             OnClick="ViewButton_Click" AlternateText="View Details" 
                                             />
                                      <clearcanvas:ToolbarButton
@@ -62,8 +62,8 @@
                                                 <asp:TextBox ID="StudyDescription" runat="server" Width="100px" ToolTip="Filter the list by Study Description" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label1" runat="server" Text="Schedule" Style="padding-right: 5px" />
-                                                <asp:ImageButton ID="ClearScheduleDateButton" runat="server" ImageUrl="~/images/icons/EraserEnabled.png" />
+                                                <asp:Label ID="Label1" runat="server" Text="Schedule" Style="padding-right: 0px" />
+                                                <asp:ImageButton ID="ClearScheduleDateButton" runat="server" ImageUrl="~/images/icons/ClearSchedule.png" AlternateText="Clear Date" />
                                                 <asp:TextBox ID="ScheduleDate" runat="server" Width="100px" ReadOnly="true" ToolTip="Filter the list by Scheduled Date [dd/mm/yyyy]" />
                                             </td>
                                             <td align="left" valign="bottom">

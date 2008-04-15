@@ -36,8 +36,8 @@
                                                 />
                                             <clearcanvas:ToolbarButton 
                                                 ID="OpenStudyToolbarButton" runat="server" 
-                                                EnabledImageURL="~/images/icons/OpenEnabled.png" 
-                                                DisabledImageURL="~/images/icons/OpenDisabled.png"
+                                                EnabledImageURL="~/images/icons/ViewDetailsEnabled.png" 
+                                                DisabledImageURL="~/images/icons/ViewDetailsDisabled.png"
                                                 AlternateText="Open study"
                                                 />
                                 </asp:Panel>

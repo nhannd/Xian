@@ -613,9 +613,10 @@
     <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-left.png" />
     <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-right.png" />
     <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG.png" />
+    <Content Include="images\icons\ClearSchedule.png" />
     <Content Include="images\icons\EraserEnabled.png" />
-    <Content Include="images\icons\OpenDisabled.png" />
-    <Content Include="images\icons\OpenEnabled.png" />
+    <Content Include="images\icons\ViewDetailsDisabled.png" />
+    <Content Include="images\icons\ViewDetailsEnabled.png" />
     <Content Include="images\icons\ResetDisabled.png" />
     <Content Include="images\icons\ResetEnabled.png" />
     <Content Include="images\icons\ScheduleDisabled.png" />
