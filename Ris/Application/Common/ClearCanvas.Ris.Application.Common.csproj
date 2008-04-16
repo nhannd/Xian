@@ -59,6 +59,15 @@
     <Compile Include="Admin\WorklistAdmin\ListWorklistClassesResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistClassSummary.cs" />
     <Compile Include="IWorklistService.cs" />
+    <Compile Include="OrderNotes\AcknowledgeAndReplyRequest.cs" />
+    <Compile Include="OrderNotes\AcknowledgeAndReplyResponse.cs" />
+    <Compile Include="OrderNotes\OrderNoteboxItemSummary.cs" />
+    <Compile Include="OrderNotes\GetConversationRequest.cs" />
+    <Compile Include="OrderNotes\GetConversationResponse.cs" />
+    <Compile Include="OrderNotes\IOrderNoteService.cs" />
+    <Compile Include="OrderNoteSummary.cs" />
+    <Compile Include="OrderNotes\QueryNoteboxRequest.cs" />
+    <Compile Include="OrderNotes\QueryNoteboxResponse.cs" />
     <Compile Include="RisServiceProviderAttribute.cs" />
     <Compile Include="StaffGroupDetail.cs" />
     <Compile Include="StaffGroupSummary.cs" />

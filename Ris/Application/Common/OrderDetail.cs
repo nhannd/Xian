@@ -87,6 +87,6 @@ namespace ClearCanvas.Ris.Application.Common
         public List<ProcedureDetail> Procedures;
 
         [DataMember]
-        public List<OrderNoteDetail> Notes;
+        public List<OrderNoteSummary> Notes;
     }
 }

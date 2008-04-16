@@ -87,10 +87,10 @@ namespace ClearCanvas.Ris.Application.Services
             if(includeNotes)
             {
                 OrderNoteAssembler orderNoteAssembler = new OrderNoteAssembler();
-                detail.Notes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(order.Notes,
+                detail.Notes = CollectionUtils.Map<OrderNote, OrderNoteSummary>(order.Notes,
                     delegate(OrderNote note)
                     {
-                        return orderNoteAssembler.CreateOrderNoteDetail(note, context);
+                        return orderNoteAssembler.CreateOrderNoteSummary(note, context);
                     });
             }
 

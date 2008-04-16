@@ -55,17 +55,17 @@ namespace ClearCanvas.Ris.Client
 
         public string Comment
         {
-            get { return _note.Comment; }
+            get { return _note.NoteBody; }
             set
             {
-                _note.Comment = value;
+                _note.NoteBody = value;
                 this.Modified = true;
             }
         }
 
         public bool IsNewItem
         {
-            get { return _note.CreationTime == null; }
+            get { return _note.OrderNoteRef == null; }
         }
 
         public void Accept()

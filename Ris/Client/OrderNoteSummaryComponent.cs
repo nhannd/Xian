@@ -111,7 +111,7 @@ namespace ClearCanvas.Ris.Client
 
         public void AddNote()
         {
-            OrderNoteDetail note = new OrderNoteDetail("");
+            OrderNoteDetail note = new OrderNoteDetail("OrderComment", "", null, null);
 
             try
             {
@@ -136,7 +136,11 @@ namespace ClearCanvas.Ris.Client
             // can occur if user double clicks while holding control
             if (_currentNoteSelection == null) return;
 
-            OrderNoteDetail note = (OrderNoteDetail)_currentNoteSelection.Clone();
+            // manually clone order note
+            OrderNoteDetail note = new OrderNoteDetail(
+                _currentNoteSelection.Category,
+                _currentNoteSelection.NoteBody,
+                null, null);
 
             try
             {

@@ -32,54 +32,142 @@
 using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class OrderNoteDetail : DataContractBase, ICloneable
+    public class OrderNoteDetail : DataContractBase
     {
-        /// <summary>
-        /// Constructor for use by client in creating a <see cref="OrderNoteDetail"/> for a new (never saved) note.
-        /// It will not have a creation time or author.
-        /// </summary>
-        /// <param name="comment"></param>
-        public OrderNoteDetail(string comment)
+        [DataContract]
+        public abstract class RecipientDetail : DataContractBase
         {
-            this.Comment = comment;
+            /// <summary>
+            /// Gets a value indicating whether the note has been acknowledged by the recipient.
+            /// (For a group recipient, indicates whether a member of the group has acknowledged the note on behalf of the group).
+            /// This field is ignored when creating a new note.
+            /// </summary>
+            [DataMember]
+            public bool IsAcknowledged;
+
+            /// <summary>
+            /// Gets the time that the note was acknowledged, or null if it was not acknowledged.
+            /// (For a group recipient, gets the time when a member of the group acknowledged the note on behalf of the group).
+            /// This field is ignored when creating a new note.
+            /// </summary>
+            [DataMember]
+            public DateTime? AcknowledgedTime;
+        }
+
+        [DataContract]
+        public class StaffRecipientDetail : RecipientDetail
+        {
+            /// <summary>
+            /// Gets the staff recipient.
+            /// </summary>
+            [DataMember]
+            public StaffSummary Staff;
+        }
+
+        [DataContract]
+        public class GroupRecipientDetail : RecipientDetail
+        {
+            /// <summary>
+            /// Gets the group recipient.
+            /// </summary>
+            [DataMember]
+            public StaffGroupSummary Group;
         }
 
         /// <summary>
-        /// Constructor for use by server in creating a <see cref="OrderNoteDetail"/> for an existing order note.
+        /// Constructor for creating detail for an existing order note.
         /// </summary>
+        /// <param name="orderNoteRef"></param>
+        /// <param name="category"></param>
         /// <param name="creationTime"></param>
+        /// <param name="sentTime"></param>
         /// <param name="author"></param>
-        /// <param name="comment"></param>
-        public OrderNoteDetail(DateTime? creationTime, StaffSummary author, string comment)
+        /// <param name="staffRecipients"></param>
+        /// <param name="groupRecipients"></param>
+        /// <param name="noteBody"></param>
+        public OrderNoteDetail(EntityRef orderNoteRef, string category, DateTime creationTime, DateTime? sentTime, StaffSummary author, List<StaffRecipientDetail> staffRecipients, List<GroupRecipientDetail> groupRecipients, string noteBody)
         {
-            this.CreationTime = creationTime;
-            this.Author = author;
-            this.Comment = comment;
+            OrderNoteRef = orderNoteRef;
+            Category = category;
+            CreationTime = creationTime;
+            SentTime = sentTime;
+            Author = author;
+            StaffRecipients = staffRecipients;
+            GroupRecipients = groupRecipients;
+            NoteBody = noteBody;
         }
 
-        [DataMember]
-        public DateTime? CreationTime;
+        /// <summary>
+        /// Constructor for generating a new order note.
+        /// </summary>
+        /// <param name="category"></param>
+        /// <param name="noteBody"></param>
+        /// <param name="staffRecipients"></param>
+        /// <param name="groupRecipients"></param>
+        public OrderNoteDetail(string category, string noteBody, List<StaffRecipientDetail> staffRecipients, List<GroupRecipientDetail> groupRecipients)
+        {
+            Category = category;
+            NoteBody = noteBody;
+            StaffRecipients = staffRecipients;
+            GroupRecipients = groupRecipients;
+        }
 
+        /// <summary>
+        /// Gets a reference to the order note.
+        /// This field is ignored when creating a new note.
+        /// </summary>
+        [DataMember]
+        public EntityRef OrderNoteRef;
+
+        /// <summary>
+        /// Gets the category of the note.
+        /// </summary>
+        [DataMember]
+        public string Category;
+
+        /// <summary>
+        /// Gets the time the note was created.
+        /// This field is ignored when creating a new note.
+        /// </summary>
+        [DataMember]
+        public DateTime CreationTime;
+
+        /// <summary>
+        /// Gets the time the note was sent (or posted, in the case where there are no recipients).
+        /// This field is ignored when creating a new note.
+        /// </summary>
+        [DataMember]
+        public DateTime? SentTime;
+
+        /// <summary>
+        /// Gets the note author.
+        /// This field is ignored when creating a new note.
+        /// </summary>
         [DataMember]
         public StaffSummary Author;
 
+        /// <summary>
+        /// Gets the note body text.
+        /// </summary>
         [DataMember]
-        public string Comment;
+        public string NoteBody;
 
-        #region ICloneable Members
+        /// <summary>
+        /// Gets the list of staff recipients.
+        /// </summary>
+        [DataMember]
+        public List<StaffRecipientDetail> StaffRecipients;
 
-        public object Clone()
-        {
-            return new OrderNoteDetail(
-                this.CreationTime,
-                this.Author == null ? null : (StaffSummary)this.Author.Clone(),
-                this.Comment);
-        }
+        /// <summary>
+        /// Gets the list of group recipients.
+        /// </summary>
+        [DataMember]
+        public List<GroupRecipientDetail> GroupRecipients;
 
-        #endregion
     }
 }

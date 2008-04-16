@@ -41,10 +41,10 @@ namespace ClearCanvas.Ris.Client
         public OrderNoteTable()
         {
             this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnComments,
-                delegate(OrderNoteDetail n) { return n.Comment; },
+                delegate(OrderNoteDetail n) { return n.NoteBody; },
                 0.5f));
             this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnCreatedOn,
-                delegate(OrderNoteDetail n) { return n.CreationTime == null ? SR.LabelNew : Format.Date(n.CreationTime); },
+                delegate(OrderNoteDetail n) { return n.SentTime == null ? SR.LabelNew : Format.Date(n.CreationTime); },
                 0.25f));
             this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnAuthor,
                 delegate(OrderNoteDetail n) { return n.Author == null ? SR.LabelMe : PersonNameFormat.Format(n.Author.Name); },

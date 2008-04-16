@@ -57,8 +57,7 @@ namespace ClearCanvas.Ris.Application.Services
 
             protected override bool CompareItems(OrderNote domainItem, OrderNoteDetail sourceItem)
             {
-                return Equals(domainItem.CreationTime, sourceItem.CreationTime) &&
-                       Equals(domainItem.Sender.GetRef(), sourceItem.Author.StaffRef);
+                return domainItem.GetRef().Equals(sourceItem.OrderNoteRef, true);
             }
 
             protected override void AddItem(OrderNoteDetail sourceItem, ICollection<OrderNote> notes)
@@ -73,6 +72,36 @@ namespace ClearCanvas.Ris.Application.Services
             synchronizer.Synchronize(domainList, sourceList);
         }
 
+        public OrderNoteDetail CreateOrderNoteDetail(OrderNote note, IPersistenceContext context)
+        {
+            StaffAssembler staffAssembler = new StaffAssembler();
+            StaffGroupAssembler staffGroupAssembler = new StaffGroupAssembler();
+
+            //TODO compute recipients
+            return new OrderNoteDetail(
+                note.GetRef(),
+                note.Category,
+                note.CreationTime,
+                note.SentTime,
+                staffAssembler.CreateStaffSummary(note.Sender, context),
+                new List<OrderNoteDetail.StaffRecipientDetail>(), 
+                new List<OrderNoteDetail.GroupRecipientDetail>(), 
+                note.Body);
+        }
+
+        public OrderNoteSummary CreateOrderNoteSummary(OrderNote note, IPersistenceContext context)
+        {
+            StaffAssembler staffAssembler = new StaffAssembler();
+            return new OrderNoteSummary(
+                note.GetRef(),
+                note.Category,
+                note.CreationTime,
+                note.SentTime,
+                staffAssembler.CreateStaffSummary(note.Sender, context),
+                false,  //TODO compute acknowledgement status
+                note.Body);
+        }
+
         public OrderNote CreateOrderNote(OrderNoteDetail detail, Staff currentStaff, IPersistenceContext context)
         {
             OrderNote newNote = new OrderNote();
@@ -82,18 +111,9 @@ namespace ClearCanvas.Ris.Application.Services
             else
                 newNote.Sender = currentStaff;
 
-            newNote.Body = detail.Comment;
+            newNote.Body = detail.NoteBody;
 
             return newNote;
-        }
-
-        public OrderNoteDetail CreateOrderNoteDetail(OrderNote note, IPersistenceContext context)
-        {
-            StaffAssembler staffAssembler = new StaffAssembler();
-            return new OrderNoteDetail(
-                note.CreationTime,
-                staffAssembler.CreateStaffSummary(note.Sender, context),
-                note.Body);
         }
     }
 }
