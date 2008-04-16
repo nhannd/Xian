@@ -10,17 +10,17 @@ function getAlertHtml(alertItem, patientName)
 
 function getAlertIcon(alertItem)
 {
-	switch (alertItem.Type)
+	switch (alertItem.AlertClassName)
 	{
-		case "Note Alert":
+		case "NoteAlert":
 			return "Images/AlertNote.png";
-		case "Language Alert":
+		case "LanguageAlert":
 			return "Images/AlertLanguage.png";
-		case "Reconciliation Alert":
+		case "ReconciliationAlert":
 			return "Images/AlertReconcile.png";
-		case "Incomplete Demographic Data Alert":
+		case "IncompleteDemographicDataAlert":
 			return "Images/AlertIncompleteData.png";
-		case "Visit Alert":
+		case "InvalidVisitAlert":
 			return "Images/AlertVisit.png";
 		default:
 			return "Images/AlertGeneral.png";
@@ -31,17 +31,17 @@ function getAlertTooltip(alertItem, patientName)
 {
 	var reasons = String.combine(alertItem.Reasons, ", ");
 
-	switch (alertItem.Type)
+	switch (alertItem.AlertClassName)
 	{
-		case "Note Alert":
+		case "NoteAlert":
 			return patientName + " has high severity notes: " + reasons;
-		case "Language Alert":
+		case "LanguageAlert":
 			return patientName + " speaks: " + reasons;
-		case "Reconciliation Alert":
+		case "ReconciliationAlert":
 			return patientName + " has unreconciled records";
-		case "Incomplete Demographic Data Alert":
+		case "IncompleteDemographicDataAlert":
 			return patientName + " has incomplete demographic data: " + reasons;
-		case "Visit Alert":
+		case "InvalidVisitAlert":
 			return "This order has invalid visit: " + reasons;
 		default:
 			return reasons;
