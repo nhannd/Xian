@@ -4,7 +4,7 @@
     TagPrefix="CCCommon" %>
 <%@ Register Src="~/Common/ModalDialog.ascx" TagName="ModalDialog" TagPrefix="clearcanvas" %>
 <%@ Register Assembly="Validators" Namespace="Sample.Web.UI.Compatibility" TagPrefix="CCValidators" %>
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.Validators" TagPrefix="clearcanvas" %>
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
     <Services>

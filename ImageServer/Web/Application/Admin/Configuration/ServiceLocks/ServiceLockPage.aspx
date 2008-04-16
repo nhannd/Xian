@@ -7,7 +7,7 @@
 <%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog" TagPrefix="clearcanvas" %>
 <%@ Register Src="ServiceLockPanel.ascx" TagName="ServiceLockPanel" TagPrefix="clearcanvas" %>
 
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+
 
 <asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
     Service Scheduling

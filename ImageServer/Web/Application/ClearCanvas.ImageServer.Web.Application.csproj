@@ -627,6 +627,7 @@
     <Content Include="Common\ModalDialog.ascx" />
     <Content Include="Common\SectionPanel.ascx" />
     <Content Include="Common\ServerPartitionTabs.ascx" />
+    <Content Include="Docs\About.htm" />
     <Content Include="images\blank.gif" />
     <Content Include="images\icons\close.png" />
     <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-left.png" />

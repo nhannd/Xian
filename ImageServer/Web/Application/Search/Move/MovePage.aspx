@@ -2,7 +2,7 @@
     EnableEventValidation="false" CodeBehind="MovePage.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Search.Move.MovePage" 
     Title="Move Studies" %>
 
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+
 <%@ Register Src="MovePanel.ascx" TagName="MovePanel" TagPrefix="move" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">

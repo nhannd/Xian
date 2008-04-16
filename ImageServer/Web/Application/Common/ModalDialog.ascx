@@ -2,7 +2,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ModalDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Common.ModalDialog" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+
 
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>

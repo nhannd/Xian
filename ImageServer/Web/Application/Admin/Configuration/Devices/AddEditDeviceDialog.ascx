@@ -3,7 +3,7 @@
 <%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
     TagPrefix="CCCommon" %>
 <%@ Register Src="~/Common/ModalDialog.ascx" TagName="ModalDialog" TagPrefix="clearcanvas" %>
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.Validators"
     TagPrefix="CCValidators" %>
 <clearcanvas:ModalDialog ID="ModalDialog1" runat="server" BackgroundCSS="CSSDefaultPopupDialogBackground"

@@ -1,6 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions.AddEditPartitionDialog"
     Codebehind="AddEditPartitionDialog.ascx.cs" %>
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.Validators"
     TagPrefix="CCValidators" %>
 <%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"

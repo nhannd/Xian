@@ -1,6 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="StudyDetailsPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.StudyDetails.StudyDetailsPanel" %>
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+
 <%@ Register Src="~/Common/SectionPanel.ascx" TagName="SectionPanel" TagPrefix="clearcanvas" %>
 <%@ Register Src="SeriesGridView.ascx" TagName="SeriesGridView" TagPrefix="clearcanvas" %>
 <%@ Register Src="PatientSummaryPanel.ascx" TagName="PatientSummaryPanel" TagPrefix="clearcanvas" %>
@@ -42,8 +42,8 @@
                     <asp:Panel ID="Panel1" runat="server" CssClass="CSSToolbarPanelContainer">
                     <asp:Panel ID="Panel2" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
                             <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarContent">
-                                <clearcanvas:ToolbarButton ID="OpenSeriesButton" runat="server" EnabledImageURL="~/images/icons/OpenEnabled.png"
-                                    DisabledImageURL="~/images/icons/OpenDisabled.png" AlternateText="Open" />
+                                <clearcanvas:ToolbarButton ID="OpenSeriesButton" runat="server" EnabledImageURL="~/images/icons/ViewDetailsEnabled.png"
+                                    DisabledImageURL="~/images/icons/ViewDetailsDisabled.png" AlternateText="Open" />
                             </asp:Panel>
                         </asp:Panel>
                     </asp:Panel>

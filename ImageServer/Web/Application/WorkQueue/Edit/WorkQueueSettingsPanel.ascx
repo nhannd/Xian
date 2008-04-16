@@ -1,5 +1,4 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WorkQueueSettingsPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.WorkQueueSettingsPanel" %>
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 
 <asp:Panel ID="Panel1" runat="server" style="padding:5px; text-align:center">
     <table width="100%">
