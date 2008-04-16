@@ -241,61 +241,44 @@ namespace ClearCanvas.ImageViewer.Graphics
 		protected override void UpdateScaleParameters()
 		{
 			if (base.OwnerGraphic != null && base.OwnerGraphic.ParentPresentationImage != null)
-			{
-				if (base.OwnerGraphic.ParentPresentationImage.Visible)
-					ClientRectangle = base.OwnerGraphic.ParentPresentationImage.ClientRectangle;
-				else
-					ClientRectangle = Rectangle.Empty;
-			}
+				ClientRectangle = base.OwnerGraphic.ParentPresentationImage.ClientRectangle;
 
 			if (!base.RecalculationRequired)
 				return;
 
-			// never allow the scale to be calculated for an empty rectangle; use 5x5 as the smallest allowed
-			int destinationWidth = Math.Max(5, this.ClientRectangle.Width);
-			int destinationHeight = Math.Max(5, this.ClientRectangle.Height);
-			
-			// always calculate the 'to fit' scale values so we can be consistent when setting the MinimumScale
-			float scaleX, scaleY;
-			CalculateScaleToFit(destinationWidth, destinationHeight, out scaleX, out scaleY);
-
-			// always try to set the MinimumScale as the minimum of 1/2 the scale to fit value, or .25
-			float minimumScale = Math.Min(scaleX, scaleY)/2;
-
 			if (ScaleToFit)
-			{
-				this.MinimumScale = Math.Min(minimumScale, DefaultMinimumScale);
+				CalculateScaleToFit();
+			else
+				CalculateScaleXY();
+		}
 
-				this.Scale = scaleX;
-				this.ScaleX = scaleX;
-				this.ScaleY = scaleY;
+		private void CalculateScaleXY()
+		{
+			float scaleX, scaleY;
+
+			if (this.PixelAspectRatio >= 1)
+			{
+				scaleX = this.Scale;
+				scaleY = this.Scale * this.PixelAspectRatio;
 			}
 			else
 			{
-				if (this.PixelAspectRatio >= 1)
-				{
-					scaleX = this.Scale;
-					scaleY = this.Scale * this.PixelAspectRatio;
-				}
-				else
-				{
-					scaleX = this.Scale / this.PixelAspectRatio;
-					scaleY = this.Scale;
-				}
-
-				// for the case where the 'scale to fit' caused a very small minimum scale,
-				// just don't allow it to get any smaller (allow only increases in scale).
-				float absoluteMinimum = Math.Min(scaleX, scaleY);
-				minimumScale = Math.Min(absoluteMinimum, minimumScale);
-				this.MinimumScale = Math.Min(minimumScale, DefaultMinimumScale);
-
-				this.ScaleX = scaleX;
-				this.ScaleY = scaleY;
+				scaleX = this.Scale / this.PixelAspectRatio;
+				scaleY = this.Scale;
 			}
+
+			this.ScaleX = scaleX;
+			this.ScaleY = scaleY;
 		}
 
-		private void CalculateScaleToFit(int destinationWidth, int destinationHeight, out float scaleX, out float scaleY)
+		private void CalculateScaleToFit()
 		{
+			//don't ever calculate the 'scale to fit' for an empty rectangle.
+			int destinationWidth = Math.Max(10, this.ClientRectangle.Width);
+			int destinationHeight = Math.Max(10, this.ClientRectangle.Height);
+
+			float scaleX, scaleY;
+
 			if (this.RotationXY == 90 || this.RotationXY == 270)
 			{
 				float imageAspectRatio = (float)this.SourceWidth / this.AdjustedSourceHeight;
@@ -328,6 +311,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 					scaleY = (float)destinationHeight / this.SourceHeight;
 				}
 			}
+
+			this.Scale = scaleX;
+			this.ScaleX = scaleX;
+			this.ScaleY = scaleY;
 		}
 	}
 }

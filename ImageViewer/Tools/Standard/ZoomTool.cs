@@ -61,6 +61,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ZoomTool : MouseImageViewerTool
 	{
+		internal static readonly float DefaultMinimumZoom = 0.25F;
+		internal static readonly float DefaultMaximumZoom = 64F;
+
 		private readonly ImageSpatialTransformImageOperation _operation; 
 		private UndoableCommand _command;
 		private ImageOperationApplicator _applicator;
@@ -131,8 +134,34 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			IImageSpatialTransform transform = (IImageSpatialTransform)this.SelectedSpatialTransformProvider.SpatialTransform;
+
+			float currentScale = transform.Scale;
+
+			// Use the 'to fit' scale value to calculate a minimum scale value.
+			transform.ScaleToFit = true;
+			float minimum = transform.Scale;
+			
+			// in the case of ridiculously small client rectangles, don't allow the scale to get any smaller than it is.
+			if (base.SelectedPresentationImage.ClientRectangle.Width > 32 && 
+				base.SelectedPresentationImage.ClientRectangle.Height > 32)
+				minimum /= 2;
+
+			// Set the minimum scale to 1/2 the size of the 'to fit' scale value, or the default, whichever is smaller.
+			minimum = Math.Min(minimum, DefaultMinimumZoom);
+			// When the scale is already smaller than the 'preferred' minimum, just don't let it get any smaller.
+			minimum = Math.Min(minimum, currentScale);
+
+			//make sure to reset the scale to what it was before we calculated the minimum.
 			transform.ScaleToFit = false;
-			transform.Scale += scaleIncrement;
+			transform.Scale = currentScale;
+
+			float newScale = currentScale + scaleIncrement;
+			if (newScale < minimum)
+				newScale = minimum;
+			else if (newScale > DefaultMaximumZoom)
+				newScale = DefaultMaximumZoom;
+
+			transform.Scale = newScale;
 
 			this.SelectedSpatialTransformProvider.Draw();
 		}

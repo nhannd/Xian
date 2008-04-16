@@ -34,6 +34,7 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Mathematics;
 using Matrix=System.Drawing.Drawing2D.Matrix;
 
 namespace ClearCanvas.ImageViewer.Graphics
@@ -46,21 +47,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 	[Cloneable]
 	public class SpatialTransform : ISpatialTransform
 	{
-		/// <summary>
-		/// The default minimum scale value.
-		/// </summary>
-		protected static readonly float DefaultMinimumScale = 0.25F;
-		/// <summary>
-		/// The default maximum scale value.
-		/// </summary>
-		protected static readonly float DefaultMaximumScale = 64.0F;
-
 		#region Private fields
 
 		private bool _updatingScaleParameters;
 		private float _scale = 1.0f;
-		private float _maximumScale = DefaultMaximumScale;
-		private float _minimumScale = DefaultMinimumScale;
 		private float _scaleX = 1.0f;
 		private float _scaleY = 1.0f;
 		private float _translationX;
@@ -152,13 +142,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 			set
 			{
-				if (value > _maximumScale)
-					value = _maximumScale;
-				else if (value < _minimumScale)
-					value = _minimumScale;
-
 				if (_scale == value)
 					return;
+
+				if (value < 0 || FloatComparer.AreEqual(value, 0F))
+					throw new ArgumentOutOfRangeException("Cannot set Scale to zero.");
 
 				_scale = value;
 				this.RecalculationRequired = true;
@@ -172,7 +160,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// However, when pixels are non-square, <see cref="ScaleX"/> and <see cref="ScaleY"/>
 		/// will differ.  Note that <see cref="ScaleX"/> does not account for flip and is
 		/// thus always positive.</remarks>
-		public float ScaleX
+		protected internal float ScaleX
 		{
 			get
 			{
@@ -181,15 +169,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 			protected set 
 			{
-
-				if (value > _maximumScale)
-					value = _maximumScale;
-				else if (value < _minimumScale)
-					value = _minimumScale;
-
 				if (_scaleX == value)
 					return;
-				
+
+				if (value < 0 || FloatComparer.AreEqual(value, 0F))
+					throw new ArgumentOutOfRangeException("Cannot set ScaleX to zero.");
+
 				_scaleX = value;
 				this.RecalculationRequired = true;
 			}
@@ -202,7 +187,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// However, when pixels are non-square, <see cref="ScaleX"/> and <see cref="ScaleY"/>
 		/// will differ.  Note that <see cref="ScaleY"/> does not account for flip and is
 		/// thus always positive.</remarks>
-		public float ScaleY
+		protected internal float ScaleY
 		{
 			get
 			{
@@ -211,35 +196,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 			protected set 
 			{
-				if (value > _maximumScale)
-					value = _maximumScale;
-				else if (value < _minimumScale)
-					value = _minimumScale;
-		
 				if (_scaleY == value)
 					return;
+
+				if (value < 0 || FloatComparer.AreEqual(value, 0F))
+					throw new ArgumentOutOfRangeException("Cannot set ScaleY to zero.");
 
 				_scaleY = value;
 				this.RecalculationRequired = true;
 			}
-		}
-
-		/// <summary>
-		/// Gets or sets the minimum allowable scale.
-		/// </summary>
-		public float MinimumScale
-		{
-			get { return _minimumScale; }
-			protected set { _minimumScale = (float)Math.Max(0.0001, value); }
-		}
-
-		/// <summary>
-		/// Gets or sets the maximum allowable scale.
-		/// </summary>
-		public float MaximumScale
-		{
-			get { return _maximumScale; }
-			protected set { _maximumScale = value; }
 		}
 
 		/// <summary>
@@ -580,6 +545,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			this.Scale = spatialTransformMemento.Scale;
 			this.TranslationX = spatialTransformMemento.TranslationX;
 			this.TranslationY = spatialTransformMemento.TranslationY;
+
+			this.RecalculationRequired = true;
 		}
 
 		#endregion

@@ -470,9 +470,19 @@ namespace ClearCanvas.ImageViewer
 		private void DrawNoEvents(DrawArgs drawArgs)
 		{
 			drawArgs.SceneGraph = this.SceneGraph;
+			Rectangle oldRectangle = _clientRectangle;
 			_clientRectangle = drawArgs.RenderingSurface.ClientRectangle;
-			this.ImageRenderer.Draw(drawArgs);
+
+			try
+			{
+				this.ImageRenderer.Draw(drawArgs);
+			}
+			finally
+			{
+				_clientRectangle = oldRectangle;
+			}
 		}
+
 		/// <summary>
 		/// Raises the <see cref="Drawing"/> event.
 		/// </summary>

@@ -44,12 +44,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 {
     public abstract class ZoomFixedTool : ImageViewerTool
     {
-    	private readonly SpatialTransformImageOperation _operation;
+    	private readonly ImageSpatialTransformImageOperation _operation;
 		private float _selectedScale;
 
         public ZoomFixedTool()
 		{
-			_operation = new SpatialTransformImageOperation(Apply);
+			_operation = new ImageSpatialTransformImageOperation(Apply);
 		}
 
 		public abstract void Activate();
@@ -57,6 +57,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
         protected void ApplyZoom(float scale)
         {
 			if (!_operation.AppliesTo(this.SelectedPresentationImage))
+				return;
+
+			if (scale < ZoomTool.DefaultMinimumZoom || scale > ZoomTool.DefaultMaximumZoom)
 				return;
 
         	_selectedScale = scale;
@@ -75,7 +78,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void Apply(IPresentationImage image)
 		{
-			ISpatialTransform transform = (ISpatialTransform)_operation.GetOriginator(image);
+			IImageSpatialTransform transform = (IImageSpatialTransform)_operation.GetOriginator(image);
+			transform.ScaleToFit = false;
 			transform.Scale = _selectedScale;
 		}
    }
