@@ -1,15 +1,13 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="WorkQueueItemDetailsPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.WorkQueueItemDetailsPanel" %>
-<%@ Register Src="~/Common/SectionPanel.ascx" TagName="SectionPanel" TagPrefix="uc4" %>
-<%@ Register Src="~/WorkQueue/Edit/WorkQueueDetailsView.ascx" TagName="WorkQueueDetailsView"
-    TagPrefix="clearcanvas" %>
+<%@ Register Src="~/Common/SectionPanel.ascx" TagName="SectionPanel" TagPrefix="clearcanvas" %>
 <%@ Register TagPrefix="clearcanvas" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI"
     Assembly="ClearCanvas.ImageServer.Web.Common" %>
 <asp:Panel ID="Panel1" runat="server">
     <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="conditional">
         <ContentTemplate>
             <asp:Panel runat="server" ID="WorkQueueDetailsPanelContainer">
-                <uc4:SectionPanel ID="WorkQueueDetailSectionPanel" runat="server" HeadingText="Work Queue Item Details"
+                <clearcanvas:SectionPanel ID="WorkQueueDetailSectionPanel" runat="server" HeadingText="Work Queue Item Details"
                     HeadingCSS="CSSWorkQueueDetailSectionHeading" Width="100%" CssClass="CSSSection">
                     <SectionContentTemplate>
                         <asp:Panel ID="Panel6" runat="server" CssClass="CSSToolbarPanelContainer">
@@ -27,9 +25,9 @@
                                 </asp:Panel>
                             </asp:Panel>
                         </asp:Panel>
-                        <clearcanvas:WorkQueueDetailsView runat="server" ID="WorkQueueDetailsView" />
+                        <asp:PlaceHolder ID="WorkQueueDetailsViewPlaceHolder" runat="server"></asp:PlaceHolder>
                     </SectionContentTemplate>
-                </uc4:SectionPanel>
+                </clearcanvas:SectionPanel>
             </asp:Panel>
         </ContentTemplate>
     </asp:UpdatePanel>

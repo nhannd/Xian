@@ -33,82 +33,30 @@ using System;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
+namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 {
     /// <summary>
-    /// Summary view of a <see cref="WorkQueue"/> item in the WorkQueue configuration UI.
+    /// Detailed view of a Web-Move-Study <see cref="WorkQueue"/> item in the context of a WorkQueue details page.
     /// </summary>
-    /// <remarks>
-    /// A <see cref="WorkQueueSummary"/> contains the summary of a <see cref="WorkQueue"/> and related information and is displayed
-    /// in the WorkQueue configuration UI.
-    /// <para>
-    /// A <see cref="WorkQueueSummary"/> can be created using a <see cref="WorkQueueSummaryAssembler"/> object.
-    /// </para>
-    /// </remarks>
-    public class WorkQueueSummary
+    public class WebMoveStudyWorkQueueDetails:WorkQueueDetails
     {
         #region Private members
-
-        private ServerEntityKey _workQueueGuid;
-        private string _patientID;
-        private string _patientName;
-        private WorkQueueTypeEnum _type;
-        private WorkQueueStatusEnum _status;
-        private WorkQueuePriorityEnum _priority;
-        private DateTime _scheduledDateTime;
-        private string _notes;
-
+        private string _destinationAE;
+        private string _studyInstanceUid;
         #endregion Private members
 
         #region Public Properties
 
-        public DateTime ScheduledDateTime
+        public string DestinationAE
         {
-            get { return _scheduledDateTime; }
-            set { _scheduledDateTime = value; }
+            get { return _destinationAE; }
+            set { _destinationAE = value; }
         }
 
-
-        public WorkQueueTypeEnum Type
+        public string StudyInstanceUid
         {
-            get { return _type; }
-            set { _type = value; }
-        }
-
-        public WorkQueueStatusEnum Status
-        {
-            get { return _status; }
-            set { _status = value; }
-        }
-
-        public string PatientID
-        {
-            get { return _patientID; }
-            set { _patientID = value; }
-        }
-
-        public string PatientName
-        {
-            get { return _patientName; }
-            set { _patientName = value; }
-        }
-
-        public ServerEntityKey WorkQueueGuid
-        {
-            get { return _workQueueGuid; }
-            set { _workQueueGuid = value; }
-        }
-
-        public WorkQueuePriorityEnum Priority
-        {
-            get { return _priority; }
-            set { _priority = value; }
-        }
-
-        public string Notes
-        {
-            get { return _notes; }
-            set { _notes = value; }
+            get { return _studyInstanceUid; }
+            set { _studyInstanceUid = value; }
         }
 
         #endregion Public Properties

@@ -40,11 +40,12 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
     /// <summary>
     /// The <see cref="WorkQueue"/> details panel
     /// </summary>
-    public partial class WorkQueueItemDetailsPanel : System.Web.UI.UserControl
+    public partial class WorkQueueItemDetailsPanel : UserControl
     {
         #region Private members
 
         private Model.WorkQueue _workQueue;
+        private WorkQueueDetailsViewBase _detailsView;
         #endregion Private members
 
         #region Public Properties
@@ -175,13 +176,30 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 
         #endregion Protected Properties
 
-
         #region Public Methods
 
         public override void DataBind()
         {
-            WorkQueueDetailsView.WorkQueue = WorkQueue;
-
+            if (_detailsView==null)
+            {
+                if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("AutoRoute"))
+                {
+                    _detailsView = LoadControl("AutoRouteWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
+                    WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
+                    
+                }
+                else if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("WebMoveStudy"))
+                {
+                    _detailsView = LoadControl("WebMoveStudyWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
+                    WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
+                }
+                else
+                {
+                    _detailsView = LoadControl("GeneralWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
+                    WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
+                }
+            }
+            _detailsView.WorkQueue = WorkQueue;
             base.DataBind();
         }
 

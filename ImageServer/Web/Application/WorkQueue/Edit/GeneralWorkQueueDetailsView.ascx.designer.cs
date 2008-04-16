@@ -12,20 +12,29 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit {
     
     
     /// <summary>
-    /// WorkQueueDetailsView class.
+    /// GeneralWorkQueueDetailsView class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class WorkQueueDetailsView {
+    public partial class GeneralWorkQueueDetailsView {
         
         /// <summary>
-        /// WorkQueueItemDetailsView control.
+        /// GeneralInfoSectionPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DetailsView WorkQueueItemDetailsView;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.SectionPanel GeneralInfoSectionPanel;
+        
+        /// <summary>
+        /// GeneralInfoDetailsView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DetailsView GeneralInfoDetailsView;
     }
 }

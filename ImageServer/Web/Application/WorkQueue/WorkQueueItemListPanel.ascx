@@ -61,6 +61,13 @@
                                         <asp:Label ID="Status" runat="server" Text='<%# Eval("Status.Description") %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
+                                <asp:TemplateField HeaderText="Notes">
+                                    <HeaderStyle Wrap="false" />
+                                    <ItemStyle Wrap="false" />
+                                    <ItemTemplate>
+                                        <asp:Label ID="Notes" runat="server" Text='<%# Eval("Notes") %>'></asp:Label>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
                             </Columns>
                             <EmptyDataTemplate>
                                 <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
@@ -72,6 +79,7 @@
                                         <asp:TableHeaderCell>Schedule</asp:TableHeaderCell>
                                         <asp:TableHeaderCell>Priority</asp:TableHeaderCell>
                                         <asp:TableHeaderCell>Status</asp:TableHeaderCell>
+                                        <asp:TableHeaderCell>Notes</asp:TableHeaderCell>
                                     </asp:TableHeaderRow>
                                 </asp:Table>
                             </EmptyDataTemplate>

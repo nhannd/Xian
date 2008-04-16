@@ -1,8 +1,12 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WorkQueueDetailsView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.WorkQueueDetailsView" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WebMoveStudyWorkQueueDetailsView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.WebMoveStudyWorkQueueDetailsView" %>
+<%@ Register Src="~/Common/SectionPanel.ascx" TagName="SectionPanel" TagPrefix="clearcanvas" %>
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI"
     TagPrefix="clearcanvas" %>
-<asp:DetailsView ID="WorkQueueItemDetailsView" runat="server" AutoGenerateRows="False" CellPadding="4" 
-    GridLines="Horizontal" CssClass="CSSStudyDetailsView" Width="80%">
+
+<clearcanvas:SectionPanel ID="WebMoveStudyInfoSectionPanel" runat="server" HeadingText="Study Move (Web)" HeadingCSS="CSSDefaultSectionHeading">
+<SectionContentTemplate>
+<asp:DetailsView ID="WebMoveStudyDetailsView" runat="server" AutoGenerateRows="False" CellPadding="4" 
+    GridLines="Horizontal" CssClass="CSSStudyDetailsView" Width="100%">
     <Fields>
         <asp:TemplateField HeaderText="Type">
             <HeaderStyle Wrap="False" />
@@ -11,7 +15,39 @@
             </ItemTemplate>
         </asp:TemplateField>
         
-         <asp:TemplateField HeaderText="Scheduled Date/Time">
+        <asp:TemplateField HeaderText="Destination">
+            <HeaderStyle Wrap="False" />
+            <ItemTemplate>
+                <asp:Label ID="Destination" runat="server" Text='<%# Eval("DestinationAE") %>' ></asp:Label>
+            </ItemTemplate>
+        </asp:TemplateField>  
+        <asp:TemplateField HeaderText="Study Instance UID">
+            <HeaderStyle Wrap="False" />
+            <ItemTemplate>
+                <asp:Label ID="StudyInstanceUid" runat="server" Text='<%# Eval("StudyInstanceUid") %>' ></asp:Label>
+            </ItemTemplate>
+        </asp:TemplateField>      
+    </Fields>
+    <RowStyle CssClass="CSSStudyDetailsViewRowStyle"/>
+    <FooterStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
+    <CommandRowStyle BackColor="#E2DED6" Font-Bold="True" />
+    <FieldHeaderStyle BackColor="#E9ECF1"  />
+    <PagerStyle BackColor="#284775" ForeColor="White" HorizontalAlign="Center" />
+    <HeaderStyle CssClass="CSSStudyDetailsViewHeaderStyle" Wrap="False" />
+    <EditRowStyle BackColor="#999999" />
+    <AlternatingRowStyle CssClass="CSSStudyDetailsViewAlternatingRowStyle" />
+    <FieldHeaderStyle Width="30%" />
+</asp:DetailsView>
+</SectionContentTemplate>
+</clearcanvas:SectionPanel>
+
+<clearcanvas:SectionPanel ID="GeneralInfoSectionPanel" runat="server" HeadingText="General Information" HeadingCSS="CSSDefaultSectionHeading">
+<SectionContentTemplate>
+<asp:DetailsView ID="DetailsView1" runat="server" AutoGenerateRows="False" CellPadding="4" 
+    GridLines="Horizontal" CssClass="CSSStudyDetailsView" Width="100%">
+    <Fields>
+    
+        <asp:TemplateField HeaderText="Scheduled Date/Time">
             <HeaderStyle Wrap="False" />
             <ItemTemplate>
                 <clearcanvas:DateTimeLabel ID="ScheduledDateTime" runat="server"  Value='<%# Eval("ScheduledDateTime") %>' ></clearcanvas:DateTimeLabel>
@@ -71,5 +107,9 @@
     <HeaderStyle CssClass="CSSStudyDetailsViewHeaderStyle" Wrap="False" />
     <EditRowStyle BackColor="#999999" />
     <AlternatingRowStyle CssClass="CSSStudyDetailsViewAlternatingRowStyle" />
-    
+    <FieldHeaderStyle Width="30%" />
 </asp:DetailsView>
+</SectionContentTemplate>
+</clearcanvas:SectionPanel>
+
+

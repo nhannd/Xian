@@ -29,40 +29,42 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 {
     /// <summary>
-    /// Assembles an instance of  <see cref="WorkQueueDetails"/> based on a <see cref="Model.WorkQueue"/> or a <see cref="WorkQueueDetails"/> object.
+    /// Assembles an instance of  <see cref="WorkQueueSummary"/> based on a <see cref="Model.WorkQueue"/>
     /// </summary>
     static public class WorkQueueSummaryAssembler
     {
         /// <summary>
-        /// Returns an instance of <see cref="WorkQueueSummary"/> based on a <see cref="WorkQueue"/> object.
+        /// Constructs an instance of <see cref="WorkQueueSummary"/> based on a <see cref="WorkQueue"/> object.
         /// </summary>
-        /// <param name="workqueue"></param>
+        /// <param name="item"></param>
         /// <returns></returns>
         /// <remark>
         /// 
         /// </remark>
-        static public WorkQueueSummary CreateWorkQueueSummary(Model.WorkQueue workqueue)
+        static public WorkQueueSummary CreateWorkQueueSummary(Model.WorkQueue item)
         {
             WorkQueueSummary summary = new WorkQueueSummary();
-            summary.WorkQueueGuid = workqueue.GUID;
-            summary.ScheduledDateTime = workqueue.ScheduledTime;
-            summary.Type = workqueue.WorkQueueTypeEnum;
-            summary.Status = workqueue.WorkQueueStatusEnum;
-            summary.Priority = workqueue.WorkQueuePriorityEnum;
+            summary.WorkQueueGuid = item.GUID;
+            summary.ScheduledDateTime = item.ScheduledTime;
+            summary.Type = item.WorkQueueTypeEnum;
+            summary.Status = item.WorkQueueStatusEnum;
+            summary.Priority = item.WorkQueuePriorityEnum;
 
 
             // Fetch the patient info:
             StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
-            StudyStorage storages = ssAdaptor.Get(workqueue.StudyStorageKey);
+            StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);
 
             StudyAdaptor studyAdaptor = new StudyAdaptor();
             StudySelectCriteria studycriteria = new StudySelectCriteria();
@@ -78,6 +80,21 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             {
                 summary.PatientID = studyList[0].PatientId;
                 summary.PatientName = studyList[0].PatientsName;
+            }
+
+            if (item.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("AutoRoute"))
+            {
+                DeviceDataAdapter deviceAdaptor = new DeviceDataAdapter();
+                Device dest = deviceAdaptor.Get(item.DeviceKey);
+
+                summary.Notes = String.Format("Destination AE : {0}", dest.AeTitle);
+            }
+            else if (item.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("WebMoveStudy"))
+            {
+                DeviceDataAdapter deviceAdaptor = new DeviceDataAdapter();
+                Device dest = deviceAdaptor.Get(item.DeviceKey);
+
+                summary.Notes = String.Format("Destination AE : {0}", dest.AeTitle);
             }
 
             return summary;

@@ -36,7 +36,7 @@ using ClearCanvas.ImageServer.Model;
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 {
     /// <summary>
-    /// Detailed view of a <see cref="WorkQueue"/> item in the context of a WorkQueue details page.
+    /// Base class encapsulating the detailed information of a <see cref="WorkQueue"/> item in the context of a WorkQueue details page.
     /// </summary>
     public class WorkQueueDetails
     {

@@ -31,48 +31,42 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 {
+
+    
     /// <summary>
     /// The defails view control for the <see cref="WorkQueue"/> inside the <see cref="WorkQueueItemDetailsPanel"/>
     /// </summary>
-    public partial class WorkQueueDetailsView : System.Web.UI.UserControl
+    public partial class GeneralWorkQueueDetailsView : WorkQueueDetailsViewBase
     {
         #region Private members
-
-        private Unit _width;
-
-        private Model.WorkQueue _workQueue;
 
         #endregion Private members
 
         #region Public Properties
-
         /// <summary>
-        /// Sets or gets the list of studies whose information are displayed
-        /// </summary>
-        public Model.WorkQueue WorkQueue
-        {
-            get { return _workQueue; }
-            set { _workQueue = value; }
-        }
-
-		/// <summary>
         /// Sets or gets the width of work queue details view panel
         /// </summary>
-        public Unit Width
+        public override Unit Width
         {
-            get { return _width; }
-            set { _width = value;
-
-                WorkQueueItemDetailsView.Width = value;
+            get { return base.Width; }
+            set
+            {
+                base.Width = value;
+                GeneralInfoDetailsView.Width = value;
+                
             }
         }
 
 
         #endregion Public Properties
+
+        #region Protected Methods
+        #endregion Protected Methods
 
         #region Public Methods
 
@@ -83,11 +77,12 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             {
                 List<WorkQueueDetails> detailsList = new List<WorkQueueDetails>();
                 detailsList.Add(WorkQueueDetailsAssembler.CreateWorkQueueDetail(WorkQueue));
-                WorkQueueItemDetailsView.DataSource = detailsList;
+                GeneralInfoDetailsView.DataSource = detailsList;
             }
             else
-                WorkQueueItemDetailsView.DataSource = null;
-            
+                GeneralInfoDetailsView.DataSource = null;
+
+
             base.DataBind();
         }
 

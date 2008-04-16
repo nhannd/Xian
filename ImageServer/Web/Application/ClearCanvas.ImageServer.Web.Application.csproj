@@ -471,6 +471,22 @@
     <Compile Include="StudyDetails\StudyDetailsView.ascx.designer.cs">
       <DependentUpon>StudyDetailsView.ascx</DependentUpon>
     </Compile>
+    <Compile Include="WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx.cs">
+      <DependentUpon>AutoRouteWorkQueueDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx.designer.cs">
+      <DependentUpon>AutoRouteWorkQueueDetailsView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\AutoRouteWorkQueueDetails.cs" />
+    <Compile Include="WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx.cs">
+      <DependentUpon>WebMoveStudyWorkQueueDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx.designer.cs">
+      <DependentUpon>WebMoveStudyWorkQueueDetailsView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\WebMoveStudyWorkQueueDetails.cs" />
     <Compile Include="WorkQueue\Edit\DeleteWorkQueueDialog.ascx.cs">
       <DependentUpon>DeleteWorkQueueDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -492,12 +508,15 @@
     <Compile Include="WorkQueue\Edit\ScheduleWorkQueueDialog.ascx.designer.cs">
       <DependentUpon>ScheduleWorkQueueDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="WorkQueue\Edit\WorkQueueDetailsView.ascx.cs">
-      <DependentUpon>WorkQueueDetailsView.ascx</DependentUpon>
+    <Compile Include="WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx.cs">
+      <DependentUpon>GeneralWorkQueueDetailsView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="WorkQueue\Edit\WorkQueueDetailsView.ascx.designer.cs">
-      <DependentUpon>WorkQueueDetailsView.ascx</DependentUpon>
+    <Compile Include="WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx.designer.cs">
+      <DependentUpon>GeneralWorkQueueDetailsView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="WorkQueue\Edit\WorkQueueDetailsViewBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.cs">
       <DependentUpon>WorkQueueItemDetailsPanel.ascx</DependentUpon>
@@ -713,10 +732,12 @@
     <Content Include="Logging.config" />
     <Content Include="Services\webservice.htc" />
     <EmbeddedResource Include="WorkQueue\SearchPanel.js" />
+    <Content Include="WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx" />
+    <Content Include="WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx" />
     <Content Include="WorkQueue\Edit\DeleteWorkQueueDialog.ascx" />
     <Content Include="WorkQueue\Edit\ResetWorkQueueDialog.ascx" />
     <Content Include="WorkQueue\Edit\ScheduleWorkQueueDialog.ascx" />
-    <Content Include="WorkQueue\Edit\WorkQueueDetailsView.ascx" />
+    <Content Include="WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />
     <Content Include="WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx" />
     <Content Include="WorkQueue\Edit\ViewEdit.aspx" />
     <Content Include="WorkQueue\Edit\WorkQueueSettingsPanel.ascx" />
