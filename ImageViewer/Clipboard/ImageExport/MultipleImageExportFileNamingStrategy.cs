@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		public string GetSingleImageFileName(IPresentationImage image, string fileExtension)
 		{
-			return GetImageFileName(_baseDirectory, "Image", fileExtension, ref _singleImageStartNumber);
+			return GetImageFileName(_baseDirectory, "Image", fileExtension, ref _singleImageStartNumber, 0);
 		}
 
 		public IEnumerable<ImageFileNamePair> GetImagesAndFileNames(IDisplaySet displaySet, string fileExtension)
@@ -39,10 +39,12 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			string displaySetDirectory = GetDisplaySetDirectory(displaySet, _baseDirectory);
 			Directory.CreateDirectory(displaySetDirectory);
 
+			int numberOfZeroes = displaySet.PresentationImages.Count.ToString().Length;
+
 			int startNumber = 1;
 			foreach(IPresentationImage image in displaySet.PresentationImages)
 			{
-				string filePath = GetImageFileName(displaySetDirectory, "Image", fileExtension, ref startNumber);
+				string filePath = GetImageFileName(displaySetDirectory, "Image", fileExtension, ref startNumber, numberOfZeroes);
 				yield return new ImageFileNamePair(image, filePath);
 			}
 		}
@@ -84,8 +86,6 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		private static string GetDisplaySetDirectory(IDisplaySet displaySet, string baseDirectory)
 		{
-			string[] existingDirectories = Directory.GetDirectories(baseDirectory);
-
 			string prefix = GetDisplaySetDirectoryPrefix(displaySet);
 
 			int i = 0;
@@ -93,39 +93,34 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 			while (true)
 			{
-				if (!CollectionUtils.Contains(existingDirectories,
-				                              delegate(string test)
-				                              	{
-													//this actually gives the directory name
-				                              		string testDirectory = Path.GetFileName(test); 
-													return String.Compare(testDirectory, directory, true) == 0;
-				                              	}))
-				{
-					return String.Format("{0}\\{1}", baseDirectory, directory);
-				}
+				string path = String.Format("{0}\\{1}", baseDirectory, directory);
+				if (!Directory.Exists(path))
+					return path;
 
 				directory = string.Format("{0}{1}", prefix, ++i);
 			}
 		}
 
-		private static string GetImageFileName(string baseDirectory, string prefix, string fileExtension, ref int startNumber)
+		private static string GetImageFileName(string baseDirectory, string prefix, string fileExtension, ref int startNumber, int numberOfZeros)
 		{
-			string[] existingFilePaths = Directory.GetFiles(baseDirectory);
-
 			do
 			{
-				string fileName = String.Format("{0}{1}.{2}", prefix, startNumber++, fileExtension);
-
-				if (!CollectionUtils.Contains(existingFilePaths,
-				                              delegate(string testFilePath)
-				                              	{
-				                              		string testFileName = Path.GetFileName(testFilePath);
-				                              		return String.Compare(testFileName, fileName, true) == 0;
-				                              	}))
+				string numericPortion;
+				if (numberOfZeros == 0)
 				{
-					return String.Format("{0}\\{1}", baseDirectory, fileName);
+					numericPortion = startNumber.ToString();
+				}
+				else
+				{
+					string format = new string('0', numberOfZeros);
+					numericPortion = startNumber.ToString(format);
 				}
 
+				string path = String.Format("{0}\\{1}{2}.{3}", baseDirectory, prefix, numericPortion, fileExtension);
+				if (!File.Exists(path))
+					return path;
+
+				++startNumber;
 
 			} while (true);
 		}
