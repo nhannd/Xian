@@ -59,10 +59,10 @@ namespace ClearCanvas.ImageViewer.Clipboard
 	{
 		IDesktopWindow DesktopWindow { get; }
 
-		BindingList<IClipboardItem> ClipboardItems { get; }
-		
+		IList<IClipboardItem> ClipboardItems { get; }
 		ReadOnlyCollection<IClipboardItem> SelectedClipboardItems { get; }
-		
+
+		event EventHandler ClipboardItemsChanged;
 		event EventHandler SelectedClipboardItemsChanged;
 	}
 
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 	[AssociateView(typeof(ClipboardComponentViewExtensionPoint))]
 	public class ClipboardComponent : ApplicationComponent
 	{
-		public class ClipboardToolContext : ToolContext, IClipboardToolContext
+		private class ClipboardToolContext : ToolContext, IClipboardToolContext
 		{
 			readonly ClipboardComponent _component;
 
@@ -87,14 +87,20 @@ namespace ClearCanvas.ImageViewer.Clipboard
 				get { return _component.Host.DesktopWindow; }
 			}
 
-			public BindingList<IClipboardItem> ClipboardItems
+			public IList<IClipboardItem> ClipboardItems
 			{
-				get { return _clipboardItems; }
+				get { return _component.ClipboardItemWrapper; }
 			}
 
 			public ReadOnlyCollection<IClipboardItem> SelectedClipboardItems
 			{
 				get { return _component.SelectedItems; }
+			}
+
+			public event EventHandler ClipboardItemsChanged
+			{
+				add { _component._clipboardItemsChanged += value; }
+				remove { _component._clipboardItemsChanged -= value; }
 			}
 
 			public event EventHandler SelectedClipboardItemsChanged
@@ -109,6 +115,9 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		private ActionModelRoot _contextMenuModel;
 		private ISelection _selection;
 		private event EventHandler _selectedClipboardItemsChanged;
+		private event EventHandler _clipboardItemsChanged;
+
+		private readonly ClipboardItemList _clipboardItemWrapper;
 
 		private static readonly BindingList<IClipboardItem> _clipboardItems
 			= new BindingList<IClipboardItem>();
@@ -116,13 +125,22 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public ClipboardComponent()
+		internal ClipboardComponent()
 		{
+			_clipboardItemWrapper = new ClipboardItemList(_clipboardItems);
 		}
+
+		// Specifically for tools to limit removal of clipboard items.
+		internal IList<IClipboardItem> ClipboardItemWrapper
+		{
+			get { return _clipboardItemWrapper; }
+		}
+
+		#region Presentation Model
 
 		public BindingList<IClipboardItem> ClipboardItems
 		{
-			get { return _clipboardItems; }
+			get { return _clipboardItemWrapper.BindingList; }
 		}
 
 		public ReadOnlyCollection<IClipboardItem> SelectedItems
@@ -160,6 +178,8 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			}
 		}
 
+		#endregion
+
 		/// <summary>
 		/// Called by the host to initialize the application component.
 		/// </summary>
@@ -170,6 +190,8 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			_toolSet = new ToolSet(new ClipboardToolExtensionPoint(), new ClipboardToolContext(this));
 			_toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "clipboard-toolbar", _toolSet.Actions);
 			_contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "clipboard-contextmenu", _toolSet.Actions);
+
+			_clipboardItems.ListChanged += OnBindingListChanged;
 		}
 
 		/// <summary>
@@ -177,10 +199,17 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		/// </summary>
 		public override void Stop()
 		{
+			_clipboardItems.ListChanged -= OnBindingListChanged;
+
 			_toolSet.Dispose();
 			_toolSet = null;
 
 			base.Stop();
+		}
+
+		private void OnBindingListChanged(object sender, ListChangedEventArgs e)
+		{
+			EventsHelper.Fire(_clipboardItemsChanged, this, EventArgs.Empty);
 		}
 
 		internal static void AddToClipboard(IPresentationImage image)

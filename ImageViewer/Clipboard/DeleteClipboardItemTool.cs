@@ -1,6 +1,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using System;
 
 namespace ClearCanvas.ImageViewer.Clipboard
 {
@@ -25,8 +26,25 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		public void Delete()
 		{
+			bool anyLocked = false;
+
 			foreach (IClipboardItem item in this.Context.SelectedClipboardItems)
-				this.Context.ClipboardItems.Remove(item);
+			{
+				if (item.Locked)
+				{
+					anyLocked = true;
+				}
+				else
+				{
+					if (item.Item is IDisposable)
+						((IDisposable)item.Item).Dispose();
+
+					this.Context.ClipboardItems.Remove(item);
+				}
+			}
+
+			if (anyLocked)
+				this.Context.DesktopWindow.ShowMessageBox(SR.MessageUnableToClearClipboardItems, MessageBoxActions.Ok);
 		}
 	}
 }

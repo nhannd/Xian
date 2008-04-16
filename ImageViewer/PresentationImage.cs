@@ -72,6 +72,7 @@ namespace ClearCanvas.ImageViewer
 		[CloneIgnore]
 		private IFocussableGraphic _focussedGraphic;
 
+		[CloneIgnore]
 		private IRenderer _renderer;
 		private event EventHandler _drawing;
 
@@ -462,6 +463,7 @@ namespace ClearCanvas.ImageViewer
 			g.ReleaseHdc(surface.ContextID);
 			g.Dispose();
 
+			surface.Dispose();
 			return bmp;
 		}
 

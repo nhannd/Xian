@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -27,8 +29,26 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		public void DeleteAll()
 		{
-			while (this.Context.ClipboardItems.Count > 0)
-				this.Context.ClipboardItems.RemoveAt(0);
+			bool anyLocked = false;
+			
+			List<IClipboardItem> items = new List<IClipboardItem>(this.Context.ClipboardItems);
+			foreach (IClipboardItem item in items)
+			{
+				if (item.Locked)
+				{
+					anyLocked = true;
+				}
+				else
+				{
+					if (item.Item is IDisposable)
+						((IDisposable)item.Item).Dispose();
+					
+					this.Context.ClipboardItems.Remove(item);
+				}
+			}
+
+			if (anyLocked)
+				this.Context.DesktopWindow.ShowMessageBox(SR.MessageUnableToClearClipboardItems, MessageBoxActions.Ok);
 		}
 	}
 }

@@ -186,6 +186,9 @@
   <data name="MessageInvalidFilePath" xml:space="preserve">
     <value>The specified file path is invalid.</value>
   </data>
+  <data name="MessageUnableToClearClipboardItems" xml:space="preserve">
+    <value>At least one of the items could not be removed from the clipboard because it is in use.</value>
+  </data>
   <data name="TitleClipboard" xml:space="preserve">
     <value>Clipboard</value>
   </data>

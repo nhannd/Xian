@@ -5,7 +5,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Clipboard.ImageExport;
 using System;
-using System.Threading;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Clipboard
@@ -14,7 +13,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 	[ButtonAction("export", "clipboard-toolbar/ToolbarExportToImage", "Export")]
 	[Tooltip("export", "TooltipExportToImage")]
 	[IconSet("export", IconScheme.Colour, "Icons.ExportToImageToolSmall.png", "Icons.ExportToImageToolSmall.png", "Icons.ExportToImageToolSmall.png")]
-	[EnabledStateObserver("delete", "Enabled", "EnabledChanged")]
+	[EnabledStateObserver("export", "Enabled", "EnabledChanged")]
 
 	[ExtensionOf(typeof(ClipboardToolExtensionPoint))]
 	public class ExportToImageTool : ClipboardTool
@@ -108,15 +107,16 @@ namespace ClearCanvas.ImageViewer.Clipboard
 				if (!Directory.Exists(component.ExportFilePath ?? ""))
 					throw new FileNotFoundException("The specified export directory does not exist.");
 
-				InitializeMultipleExportItems(component);
-
 				if (component.NumberOfImagesToExport <= 5)
 				{
+					InitializeMultipleExportItems(component, false);
 					BlockingOperation.Run(delegate { ExportMultipleImages(null); });
-					Cleanup();
+					Cleanup(false);
 				}
 				else
 				{
+					InitializeMultipleExportItems(component, true);
+
 					BackgroundTask task = new BackgroundTask(ExportMultipleImages, true);
 
 					_progressComponent = new ProgressDialogComponent(task, true, ProgressBarStyle.Blocks);
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 					_progressComponentShelf.Closed +=
 						delegate
 							{
-									Cleanup();
+									Cleanup(true);
 									task.Dispose();
 							};
 				}
@@ -141,6 +141,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		private static void ExportMultipleImages(IBackgroundTaskContext context)
 		{
 			int progress = 0;
+			List<IPresentationImage> imagesToDispose = new List<IPresentationImage>();
 
 			try
 			{
@@ -159,6 +160,16 @@ namespace ClearCanvas.ImageViewer.Clipboard
 					if (clipboardItem.Item is IPresentationImage)
 					{
 						IPresentationImage image = (IPresentationImage) clipboardItem.Item;
+						if (context != null)
+						{
+							// A graphic should belong to (and be disposed on) a single thread 
+							// and should not be rendered on multiple threads, so we clone it.
+							// Technically, we should be doing the clone on the main thread
+							// and then passing it to the worker, but that would require blocking
+							// the main thread while we cloned all the images.
+							imagesToDispose.Add(image = image.Clone());
+						}
+
 						string fileName = fileNamingStrategy.GetSingleImageFileName(image, fileExtension);
 						_exporter.Export(image, fileName, exportParams);
 
@@ -172,7 +183,18 @@ namespace ClearCanvas.ImageViewer.Clipboard
 							if (context != null && context.CancelRequested)
 								break;
 
-							_exporter.Export(pair.Image, pair.FileName, exportParams);
+							IPresentationImage image = pair.Image;
+							if (context != null)
+							{
+								// A graphic should belong to (and be disposed on) a single thread 
+								// and should not be rendered on multiple threads, so we clone it.
+								// Technically, we should be doing the clone on the main thread
+								// and then passing it to the worker, but that would require blocking
+								// the main thread while we cloned all the images.
+								imagesToDispose.Add(image = image.Clone());
+							}
+
+							_exporter.Export(image, pair.FileName, exportParams);
 
 							ReportProgress(context, pair.FileName, ++progress);
 						}
@@ -188,6 +210,10 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			{
 				_error = e;
 				Platform.Log(LogLevel.Error, e);
+			}
+			finally
+			{
+				imagesToDispose.ForEach(delegate (IPresentationImage image) { image.Dispose(); });
 			}
 
 			if (context != null)
@@ -207,17 +233,23 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		#endregion
 
-		private void InitializeMultipleExportItems(ImageExportComponent component)
+		private void InitializeMultipleExportItems(ImageExportComponent component, bool asynchronous)
 		{
 			_numberOfImagesToExport = component.NumberOfImagesToExport;
 			_exportItems = new List<IClipboardItem>(this.Context.SelectedClipboardItems);
 			_exporter = component.SelectedExporter;
 			_outputDirectory = component.ExportFilePath;
 			_exportOption = component.ExportOption;
+
+			if (asynchronous)
+				_exportItems.ForEach(delegate (IClipboardItem item) { item.Lock(); });
 		}
 
-		private void Cleanup()
+		private void Cleanup(bool asynchronous)
 		{
+			if (asynchronous)
+				_exportItems.ForEach(delegate(IClipboardItem item) { item.Unlock(); });
+
 			_progressComponentShelf = null;
 			_progressComponent = null;
 

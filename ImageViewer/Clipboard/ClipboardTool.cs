@@ -14,13 +14,13 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		public override void Initialize()
 		{
 			base.Initialize();
-			this.Context.ClipboardItems.ListChanged += OnClipboardItemsChanged;
+			this.Context.ClipboardItemsChanged += OnClipboardItemsChanged;
 			this.Context.SelectedClipboardItemsChanged += OnSelectionChanged;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			this.Context.ClipboardItems.ListChanged -= OnClipboardItemsChanged;
+			this.Context.ClipboardItemsChanged -= OnClipboardItemsChanged;
 			this.Context.SelectedClipboardItemsChanged -= OnSelectionChanged;
 
 			base.Dispose(disposing);
@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			remove { _enabledChanged -= value; }
 		}
 
-		private void OnClipboardItemsChanged(object sender, ListChangedEventArgs e)
+		private void OnClipboardItemsChanged(object sender, EventArgs e)
 		{
 			if (!_applyOnlyToSelected)
 			{

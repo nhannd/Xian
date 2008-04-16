@@ -38,6 +38,7 @@
     <Compile Include="Clipboard.cs" />
     <Compile Include="ClipboardComponent.cs" />
     <Compile Include="ClipboardItem.cs" />
+    <Compile Include="ClipboardItemList.cs" />
     <Compile Include="ClipboardTool.cs" />
     <Compile Include="ExportToImageTool.cs" />
     <Compile Include="DeleteAllClipboardItemsTool.cs" />

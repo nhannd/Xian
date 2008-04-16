@@ -87,14 +87,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 			_brush = new SolidBrush(Color.Black);
 		}
 
-		/// <summary>
-		/// Finalizer.  This should never get called, it is a fail-safe.
-		/// </summary>
-		~GdiRenderer()
-		{
-			Dispose(false);
-		}
-
 		private new GdiRenderingSurface Surface
 		{
 			get { return (GdiRenderingSurface) base.Surface; }	
@@ -109,15 +101,18 @@ namespace ClearCanvas.ImageViewer.Rendering
 		{
 			base.Dispose(disposing);
 
-			if (_pen != null)
+			if (disposing)
 			{
-				_pen.Dispose();
-				_pen = null;
-			}
-			if (_brush != null)
-			{
-				_brush.Dispose();
-				_brush = null;
+				if (_pen != null)
+				{
+					_pen.Dispose();
+					_pen = null;
+				}
+				if (_brush != null)
+				{
+					_brush.Dispose();
+					_brush = null;
+				}
 			}
 		}
 

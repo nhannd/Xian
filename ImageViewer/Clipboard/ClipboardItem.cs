@@ -1,11 +1,20 @@
 using System.Drawing;
 using ClearCanvas.Desktop;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Clipboard
 {
 	public interface IClipboardItem
 	{
 		object Item { get; }
+
+		// stops the user from clearing the item while it's in use,
+		// for example by another thread.
+		bool Locked { get; }
+
+		void Lock();
+		
+		void Unlock();
 	}
 
 	internal class ClipboardItem : IClipboardItem, IGalleryItem
@@ -14,6 +23,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		private readonly Image _image;
 		private readonly string _description;
 		private readonly Rectangle _displayRectangle;
+		private int _lockCount;
 
 		public ClipboardItem(object item, Image image, string description, Rectangle displayRectangle)
 		{
@@ -41,6 +51,21 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		public Rectangle DisplayRectangle
 		{
 			get { return _displayRectangle; }
+		}
+
+		public void Lock()
+		{
+			Interlocked.Increment(ref _lockCount);
+		}
+
+		public void Unlock()
+		{
+			Interlocked.Decrement(ref _lockCount);
+		}
+
+		public bool Locked
+		{
+			get { return Thread.VolatileRead(ref _lockCount) != 0; }
 		}
 	}
 }
