@@ -54,12 +54,6 @@
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
     <Compile Include="ITechnologistDocumentationPage.cs" />
     <Compile Include="PerformedProcedureComponent.cs" />
-    <Compile Include="PerformedProcedureComponentSettings.cs" />
-    <Compile Include="PerformedProcedureComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>PerformedProcedureComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="Folders\FolderOptionComponent.cs" />
     <Compile Include="Folders\RegistrationWorkflowFolders.cs" />
     <Compile Include="OrderEditorComponent.cs" />
@@ -84,12 +78,6 @@
     <Compile Include="RegistrationBookingWorkflowFolderSystemTool.cs" />
     <Compile Include="RegistrationMainWorkflowFolderSystem.cs" />
     <Compile Include="RegistrationMainWorkflowFolderSystemTool.cs" />
-    <Compile Include="RegistrationPreviewComponentSettings.cs" />
-    <Compile Include="RegistrationPreviewComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>RegistrationPreviewComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="RegistrationWorkflowFolder.cs" />
     <Compile Include="RegistrationWorkflowFolderSystemBase.cs" />
     <Compile Include="RegistrationWorkflowTool.cs" />
@@ -107,12 +95,6 @@
     <Compile Include="TechnologistDocumentationMppsSummaryTable.cs" />
     <Compile Include="TechnologistDocumentationTool.cs" />
     <Compile Include="TechnologistHomeTool.cs" />
-    <Compile Include="TechnologistPreviewComponentSettings.cs" />
-    <Compile Include="TechnologistPreviewComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>TechnologistPreviewComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="TechnologistWorkflowFolder.cs" />
     <Compile Include="TechnologistWorkflowFolderSystemBase.cs" />
     <Compile Include="TechnologistWorkflowTool.cs" />
@@ -233,21 +215,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="PerformedProcedureComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>PerformedProcedureComponentSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="RegistrationPreviewComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>RegistrationPreviewComponentSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="TechnologistDocumentationComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>TechnologistDocumentationComponentSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="TechnologistPreviewComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>TechnologistPreviewComponentSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -32,88 +32,87 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("launch", "global-menus/Patient/Search Patient", "Launch")]
-    //[ButtonAction("launch", "global-toolbars/Patient/Search Patient", "Launch")]
-    [Tooltip("launch", "Search Patient")]
-    [IconSet("launch", IconScheme.Colour, "Icons.SearchToolSmall.png", "Icons.SearchToolMedium.png", "Icons.SearchToolLarge.png")]
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class PatientSearchTool : Tool<IDesktopToolContext>
-    {
-        class PreviewComponent : DHtmlComponent
-        {
-            private PatientProfileSummary _patientProfile;
+	[MenuAction("launch", "global-menus/Patient/Search Patient", "Launch")]
+	//[ButtonAction("launch", "global-toolbars/Patient/Search Patient", "Launch")]
+	[Tooltip("launch", "Search Patient")]
+	[IconSet("launch", IconScheme.Colour, "Icons.SearchToolSmall.png", "Icons.SearchToolMedium.png", "Icons.SearchToolLarge.png")]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	public class PatientSearchTool : Tool<IDesktopToolContext>
+	{
+		class PreviewComponent : DHtmlComponent
+		{
+			private PatientProfileSummary _patientProfile;
 
-            public PatientProfileSummary PatientProfile
-            {
-                get { return _patientProfile; }
-                set
-                {
-                     _patientProfile = value;
-                    this.SetUrl(RegistrationPreviewComponentSettings.Default.RegistrationFolderSystemUrl);
-                }
-            }
+			public PatientProfileSummary PatientProfile
+			{
+				get { return _patientProfile; }
+				set
+				{
+					_patientProfile = value;
+					this.SetUrl(WebResourcesSettings.Default.RegistrationFolderSystemUrl);
+				}
+			}
 
-            protected override ActionModelNode GetActionModel()
-            {
-                return new ActionModelRoot();
-            }
+			protected override ActionModelNode GetActionModel()
+			{
+				return new ActionModelRoot();
+			}
 
-            protected override DataContractBase GetHealthcareContext()
-            {
-                return _patientProfile;
-            }
+			protected override DataContractBase GetHealthcareContext()
+			{
+				return _patientProfile;
+			}
 
-        }
+		}
 
 
-        private IWorkspace _workspace;
+		private IWorkspace _workspace;
 
-        public void Launch()
-        {
-            try
-            {
-                if (_workspace == null)
-                {
-                    _workspace = ApplicationComponent.LaunchAsWorkspace(
-                        this.Context.DesktopWindow,
-                        BuildComponent(),
-                        SR.TitleSearchPatients);
-                    _workspace.Closed += delegate { _workspace = null; };
-                }
-                else
-                {
-                    _workspace.Activate();
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Context.DesktopWindow);
-            }
-        }
+		public void Launch()
+		{
+			try
+			{
+				if (_workspace == null)
+				{
+					_workspace = ApplicationComponent.LaunchAsWorkspace(
+						this.Context.DesktopWindow,
+						BuildComponent(),
+						SR.TitleSearchPatients);
+					_workspace.Closed += delegate { _workspace = null; };
+				}
+				else
+				{
+					_workspace.Activate();
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+			}
+		}
 
-        private static IApplicationComponent BuildComponent()
-        {
-            PatientSearchComponent searchComponent = new PatientSearchComponent();
-            PreviewComponent previewComponent = new PreviewComponent();
+		private static IApplicationComponent BuildComponent()
+		{
+			PatientSearchComponent searchComponent = new PatientSearchComponent();
+			PreviewComponent previewComponent = new PreviewComponent();
 
-            searchComponent.SelectedProfileChanged += delegate
-            {
-                previewComponent.PatientProfile = (PatientProfileSummary)searchComponent.SelectedProfile.Item;
-            };
+			searchComponent.SelectedProfileChanged += delegate
+			{
+				previewComponent.PatientProfile = (PatientProfileSummary)searchComponent.SelectedProfile.Item;
+			};
 
-            SplitComponentContainer splitComponent = new SplitComponentContainer(SplitOrientation.Vertical);
-            splitComponent.Pane1 = new SplitPane("Search", searchComponent, 1.0f);
-            splitComponent.Pane2 = new SplitPane("Preview", previewComponent, 1.0f);
+			SplitComponentContainer splitComponent = new SplitComponentContainer(SplitOrientation.Vertical);
+			splitComponent.Pane1 = new SplitPane("Search", searchComponent, 1.0f);
+			splitComponent.Pane2 = new SplitPane("Preview", previewComponent, 1.0f);
 
-            return splitComponent;
-        }
-    }
+			return splitComponent;
+		}
+	}
 }

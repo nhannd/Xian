@@ -30,142 +30,138 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
-using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Client.Formatting;
-using ClearCanvas.Ris.Application.Common.Jsml;
-using System.Runtime.Serialization;
-using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="BiographyDemographicComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class BiographyDemographicComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="BiographyDemographicComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class BiographyDemographicComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// BiographyDemographicComponent class
-    /// </summary>
-    [AssociateView(typeof(BiographyDemographicComponentViewExtensionPoint))]
-    public class BiographyDemographicComponent : ApplicationComponent
-    {
-        class ProfileViewComponent : DHtmlComponent
-        {
-            private PatientProfileSummary _patientProfile;
+	/// <summary>
+	/// BiographyDemographicComponent class
+	/// </summary>
+	[AssociateView(typeof(BiographyDemographicComponentViewExtensionPoint))]
+	public class BiographyDemographicComponent : ApplicationComponent
+	{
+		class ProfileViewComponent : DHtmlComponent
+		{
+			private PatientProfileSummary _patientProfile;
 
-            public PatientProfileSummary PatientProfile
-            {
-                get { return _patientProfile; }
-                set
-                {
-                     _patientProfile = value;
-                     this.SetUrl(BiographyDemographicComponentSettings.Default.PatientProfilePageUrl);
-                 }
-            }
+			public PatientProfileSummary PatientProfile
+			{
+				get { return _patientProfile; }
+				set
+				{
+					_patientProfile = value;
+					this.SetUrl(WebResourcesSettings.Default.PatientProfilePageUrl);
+				}
+			}
 
-            protected override DataContractBase GetHealthcareContext()
-            {
-                return PatientProfile;
-            }
-        }
-
-
-        private readonly EntityRef _defaultProfileRef;
-        private readonly EntityRef _patientRef;
-
-        private PatientProfileSummary _selectedProfile;
-        private List<PatientProfileSummary> _profileChoices;
-
-        private ChildComponentHost _profileViewComponentHost;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public BiographyDemographicComponent(EntityRef patientRef, EntityRef defaultProfileRef)
-        {
-            Platform.CheckForNullReference(patientRef, "patientRef");
-            _patientRef = patientRef;
-
-            // default profile ref may be null
-            _defaultProfileRef = defaultProfileRef;
-
-            _profileChoices = new List<PatientProfileSummary>();
-        }
-
-        public override void Start()
-        {
-            Platform.GetService<IBrowsePatientDataService>(
-                delegate(IBrowsePatientDataService service)
-                {
-                    GetDataRequest request = new GetDataRequest();
-                    request.ListPatientProfilesRequest = new ListPatientProfilesRequest(_patientRef);
-
-                    GetDataResponse response = service.GetData(request);
-                    _profileChoices = response.ListPatientProfilesResponse.Profiles;
-                });
-
-            if (_defaultProfileRef != null)
-            {
-                _selectedProfile = CollectionUtils.SelectFirst(_profileChoices,
-                    delegate(PatientProfileSummary pp) { return pp.PatientProfileRef.Equals(_defaultProfileRef, true); });
-            }
-            else
-            {
-                _selectedProfile = CollectionUtils.FirstElement(_profileChoices);
-            }
-
-            ProfileViewComponent profileViewComponent = new ProfileViewComponent();
-            profileViewComponent.PatientProfile = _selectedProfile;
-
-            _profileViewComponentHost = new ChildComponentHost(this.Host, profileViewComponent);
-            _profileViewComponentHost.StartComponent();
-
-            base.Start();
-        }
+			protected override DataContractBase GetHealthcareContext()
+			{
+				return PatientProfile;
+			}
+		}
 
 
-        public string FormatPatientProfile(object item)
-        {
-            PatientProfileSummary summary = (PatientProfileSummary) item;
-            return String.Format("{0} - {1}", MrnFormat.Format(summary.Mrn), PersonNameFormat.Format(summary.Name));
-        }
+		private readonly EntityRef _defaultProfileRef;
+		private readonly EntityRef _patientRef;
 
-        #region Presentation Model
+		private PatientProfileSummary _selectedProfile;
+		private List<PatientProfileSummary> _profileChoices;
 
-        public ApplicationComponentHost ProfileViewComponentHost
-        {
-            get { return _profileViewComponentHost; }
-        }
-        
-        public IList ProfileChoices
-        {
-            get { return _profileChoices; }
-        }
+		private ChildComponentHost _profileViewComponentHost;
 
-        public PatientProfileSummary SelectedProfile
-        {
-            get { return _selectedProfile; }
-            set
-            {
-                if(!Equals(value, _selectedProfile))
-                {
-                    _selectedProfile = value;
-                    ((ProfileViewComponent) _profileViewComponentHost.Component).PatientProfile = _selectedProfile;
-                }
-            }
-        }
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public BiographyDemographicComponent(EntityRef patientRef, EntityRef defaultProfileRef)
+		{
+			Platform.CheckForNullReference(patientRef, "patientRef");
+			_patientRef = patientRef;
 
-        #endregion
-    }
+			// default profile ref may be null
+			_defaultProfileRef = defaultProfileRef;
+
+			_profileChoices = new List<PatientProfileSummary>();
+		}
+
+		public override void Start()
+		{
+			Platform.GetService<IBrowsePatientDataService>(
+				delegate(IBrowsePatientDataService service)
+				{
+					GetDataRequest request = new GetDataRequest();
+					request.ListPatientProfilesRequest = new ListPatientProfilesRequest(_patientRef);
+
+					GetDataResponse response = service.GetData(request);
+					_profileChoices = response.ListPatientProfilesResponse.Profiles;
+				});
+
+			if (_defaultProfileRef != null)
+			{
+				_selectedProfile = CollectionUtils.SelectFirst(_profileChoices,
+					delegate(PatientProfileSummary pp) { return pp.PatientProfileRef.Equals(_defaultProfileRef, true); });
+			}
+			else
+			{
+				_selectedProfile = CollectionUtils.FirstElement(_profileChoices);
+			}
+
+			ProfileViewComponent profileViewComponent = new ProfileViewComponent();
+			profileViewComponent.PatientProfile = _selectedProfile;
+
+			_profileViewComponentHost = new ChildComponentHost(this.Host, profileViewComponent);
+			_profileViewComponentHost.StartComponent();
+
+			base.Start();
+		}
+
+
+		public string FormatPatientProfile(object item)
+		{
+			PatientProfileSummary summary = (PatientProfileSummary)item;
+			return String.Format("{0} - {1}", MrnFormat.Format(summary.Mrn), PersonNameFormat.Format(summary.Name));
+		}
+
+		#region Presentation Model
+
+		public ApplicationComponentHost ProfileViewComponentHost
+		{
+			get { return _profileViewComponentHost; }
+		}
+
+		public IList ProfileChoices
+		{
+			get { return _profileChoices; }
+		}
+
+		public PatientProfileSummary SelectedProfile
+		{
+			get { return _selectedProfile; }
+			set
+			{
+				if (!Equals(value, _selectedProfile))
+				{
+					_selectedProfile = value;
+					((ProfileViewComponent)_profileViewComponentHost.Component).PatientProfile = _selectedProfile;
+				}
+			}
+		}
+
+		#endregion
+	}
 }

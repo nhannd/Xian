@@ -37,71 +37,71 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [ExtensionPoint]
-    public class RegistrationMainWorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
-    {
-    }
+	[ExtensionPoint]
+	public class RegistrationMainWorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
+	{
+	}
 
-    [ExtensionPoint]
-    public class RegistrationMainWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class RegistrationMainWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
-    [ExtensionPoint]
-    public class RegistrationMainWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class RegistrationMainWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
-    public class RegistrationMainWorkflowFolderSystem : RegistrationWorkflowFolderSystemBase, ISearchDataHandler
-    {
-        private readonly Folders.RegistrationSearchFolder _searchFolder;
+	public class RegistrationMainWorkflowFolderSystem : RegistrationWorkflowFolderSystemBase, ISearchDataHandler
+	{
+		private readonly Folders.RegistrationSearchFolder _searchFolder;
 
-        public RegistrationMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            : base(folderExplorer, 
-            new RegistrationMainWorkflowFolderExtensionPoint(),
-            new RegistrationMainWorkflowItemToolExtensionPoint(),
-            new RegistrationMainWorkflowFolderToolExtensionPoint())
-        {
-            if(Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
-            {
-                this.AddFolder(new Folders.ScheduledFolder(this));
-                this.AddFolder(new Folders.CheckedInFolder(this));
-                this.AddFolder(new Folders.InProgressFolder(this));
-                this.AddFolder(new Folders.CompletedFolder(this));
-                this.AddFolder(new Folders.CancelledFolder(this));
-            }
-            this.AddFolder(_searchFolder = new Folders.RegistrationSearchFolder(this));
-            folderExplorer.RegisterSearchDataHandler(this);
-        }
+		public RegistrationMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
+			: base(folderExplorer,
+			new RegistrationMainWorkflowFolderExtensionPoint(),
+			new RegistrationMainWorkflowItemToolExtensionPoint(),
+			new RegistrationMainWorkflowFolderToolExtensionPoint())
+		{
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+			{
+				this.AddFolder(new Folders.ScheduledFolder(this));
+				this.AddFolder(new Folders.CheckedInFolder(this));
+				this.AddFolder(new Folders.InProgressFolder(this));
+				this.AddFolder(new Folders.CompletedFolder(this));
+				this.AddFolder(new Folders.CancelledFolder(this));
+			}
+			this.AddFolder(_searchFolder = new Folders.RegistrationSearchFolder(this));
+			folderExplorer.RegisterSearchDataHandler(this);
+		}
 
-        public override string DisplayName
-        {
-            get { return "Registration"; }
-        }
+		public override string DisplayName
+		{
+			get { return "Registration"; }
+		}
 
-        public override string PreviewUrl
-        {
-            get { return RegistrationPreviewComponentSettings.Default.RegistrationFolderSystemUrl; }
-        }
+		public override string PreviewUrl
+		{
+			get { return WebResourcesSettings.Default.RegistrationFolderSystemUrl; }
+		}
 
-        public SearchData SearchData
-        {
-            set
-            {
-                _searchFolder.SearchData = value;
-                SelectedFolder = _searchFolder;
-            }
-        }
+		public SearchData SearchData
+		{
+			set
+			{
+				_searchFolder.SearchData = value;
+				SelectedFolder = _searchFolder;
+			}
+		}
 
-        public override void  SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
-        {
-            base.SelectedItemDoubleClickedEventHandler(sender, e);
+		public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
+		{
+			base.SelectedItemDoubleClickedEventHandler(sender, e);
 
-            PatientBiographyTool biographyTool = (PatientBiographyTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
-                delegate(ITool tool) { return tool is PatientBiographyTool; });
+			PatientBiographyTool biographyTool = (PatientBiographyTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
+				delegate(ITool tool) { return tool is PatientBiographyTool; });
 
-            if (biographyTool != null && biographyTool.Enabled)
-                biographyTool.View();
-        }
-    }
+			if (biographyTool != null && biographyTool.Enabled)
+				biographyTool.View();
+		}
+	}
 }

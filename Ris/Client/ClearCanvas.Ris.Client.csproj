@@ -46,12 +46,6 @@
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
-    <Compile Include="BiographyDemographicComponentSettings.cs" />
-    <Compile Include="BiographyDemographicComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>BiographyDemographicComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="CoreServiceProvider.cs" />
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointEditorComponent.cs" />
@@ -66,30 +60,12 @@
     <Compile Include="HomeTool.cs" />
     <Compile Include="IChangePasswordDialog.cs" />
     <Compile Include="OrderAdditionalInfoComponent.cs" />
-    <Compile Include="OrderAdditionalInfoComponentSetting.cs" />
-    <Compile Include="OrderAdditionalInfoComponentSetting.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>OrderAdditionalInfoComponentSetting.settings</DependentUpon>
-    </Compile>
     <Compile Include="OrderDetailViewComponent.cs" />
-    <Compile Include="OrderDetailViewComponentSettings.cs" />
-    <Compile Include="OrderDetailViewComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>OrderDetailViewComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="OrderNoteEditorComponent.cs" />
     <Compile Include="OrderNoteSummaryComponent.cs" />
     <Compile Include="OrderNoteTable.cs" />
     <Compile Include="HtmlActionModelRenderer.cs" />
     <Compile Include="BannerComponent.cs" />
-    <Compile Include="BannerComponentSettings.cs" />
-    <Compile Include="BannerComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>BannerComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="PatientProfileAdditionalInfoEditorComponent.cs" />
     <Compile Include="PatientProfileDetailsEditorComponent.cs" />
     <Compile Include="PatientProfileEditorComponent.cs" />
@@ -202,11 +178,6 @@
     <Compile Include="StaffSummaryComponent.cs" />
     <Compile Include="StaffTable.cs" />
     <Compile Include="WebResourcesSettings.cs" />
-    <Compile Include="WebResourcesSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>WebResourcesSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="WorkflowFolderSystem.cs" />
     <Compile Include="PhoneNumberEditorComponent.cs" />
     <Compile Include="PhoneNumbersSummaryComponent.cs" />
@@ -262,10 +233,6 @@
       <LastGenOutput>AddressEditorComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
-    <None Include="BiographyDemographicComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>BiographyDemographicComponentSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="FolderExplorerComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FolderExplorerComponentSettings.Designer.cs</LastGenOutput>
@@ -278,25 +245,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>HomePageSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="OrderAdditionalInfoComponentSetting.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>OrderAdditionalInfoComponentSetting.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="OrderDetailViewComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>OrderDetailViewComponentSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="BannerComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>BannerComponentSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="RandomUtilsSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>RandomUtilsSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="WebResourcesSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>WebResourcesSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="LoginDialogSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

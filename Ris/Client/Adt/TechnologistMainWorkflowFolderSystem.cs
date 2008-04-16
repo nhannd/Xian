@@ -37,73 +37,73 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [ExtensionPoint]
-    public class TechnologistMainWorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
-    {
-    }
+	[ExtensionPoint]
+	public class TechnologistMainWorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
+	{
+	}
 
-    [ExtensionPoint]
-    public class TechnologistMainWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class TechnologistMainWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
-    [ExtensionPoint]
-    public class TechnologistMainWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class TechnologistMainWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
-    public class TechnologistMainWorkflowFolderSystem : TechnologistWorkflowFolderSystemBase, ISearchDataHandler
-    {
-        private readonly Folders.TechnologistSearchFolder _searchFolder;
+	public class TechnologistMainWorkflowFolderSystem : TechnologistWorkflowFolderSystemBase, ISearchDataHandler
+	{
+		private readonly Folders.TechnologistSearchFolder _searchFolder;
 
-        public TechnologistMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            : base(folderExplorer, 
-            new TechnologistMainWorkflowFolderExtensionPoint(),
-            new TechnologistMainWorkflowItemToolExtensionPoint(),
-            new TechnologistMainWorkflowFolderToolExtensionPoint())
-        {
-            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
-            {
-                this.AddFolder(new Folders.ScheduledTechnologistWorkflowFolder(this));
-                this.AddFolder(new Folders.CheckedInTechnologistWorkflowFolder(this));
-                this.AddFolder(new Folders.InProgressTechnologistWorkflowFolder(this));
-                this.AddFolder(new Folders.UndocumentedTechnologistWorkflowFolder(this));
-                this.AddFolder(new Folders.CancelledTechnologistWorkflowFolder(this));
-                this.AddFolder(new Folders.CompletedTechnologistWorkflowFolder(this));
-                
-            }
-            this.AddFolder(_searchFolder = new Folders.TechnologistSearchFolder(this));
-            folderExplorer.RegisterSearchDataHandler(this);
-        }
+		public TechnologistMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
+			: base(folderExplorer,
+			new TechnologistMainWorkflowFolderExtensionPoint(),
+			new TechnologistMainWorkflowItemToolExtensionPoint(),
+			new TechnologistMainWorkflowFolderToolExtensionPoint())
+		{
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+			{
+				this.AddFolder(new Folders.ScheduledTechnologistWorkflowFolder(this));
+				this.AddFolder(new Folders.CheckedInTechnologistWorkflowFolder(this));
+				this.AddFolder(new Folders.InProgressTechnologistWorkflowFolder(this));
+				this.AddFolder(new Folders.UndocumentedTechnologistWorkflowFolder(this));
+				this.AddFolder(new Folders.CancelledTechnologistWorkflowFolder(this));
+				this.AddFolder(new Folders.CompletedTechnologistWorkflowFolder(this));
 
-        public override string DisplayName
-        {
-            get { return "Technologist"; }
-        }
+			}
+			this.AddFolder(_searchFolder = new Folders.TechnologistSearchFolder(this));
+			folderExplorer.RegisterSearchDataHandler(this);
+		}
 
-        public override string PreviewUrl
-        {
-            get { return TechnologistPreviewComponentSettings.Default.TechnologistFolderSystemUrl; }
-        }
+		public override string DisplayName
+		{
+			get { return "Technologist"; }
+		}
 
-        public SearchData SearchData
-        {
-            set
-            {
-                _searchFolder.SearchData = value;
-                SelectedFolder = _searchFolder;
-            }
-        }
+		public override string PreviewUrl
+		{
+			get { return WebResourcesSettings.Default.TechnologistFolderSystemUrl; }
+		}
 
-        public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
-        {
-            base.SelectedItemDoubleClickedEventHandler(sender, e);
+		public SearchData SearchData
+		{
+			set
+			{
+				_searchFolder.SearchData = value;
+				SelectedFolder = _searchFolder;
+			}
+		}
 
-            TechnologistDocumentationTool documentationTool = (TechnologistDocumentationTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
-                delegate(ITool tool) { return tool is TechnologistDocumentationTool; });
+		public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
+		{
+			base.SelectedItemDoubleClickedEventHandler(sender, e);
 
-            if (documentationTool != null && documentationTool.Enabled)
-                documentationTool.Apply();
-        }
-    }
+			TechnologistDocumentationTool documentationTool = (TechnologistDocumentationTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
+				delegate(ITool tool) { return tool is TechnologistDocumentationTool; });
+
+			if (documentationTool != null && documentationTool.Enabled)
+				documentationTool.Apply();
+		}
+	}
 }

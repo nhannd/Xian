@@ -29,193 +29,188 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="ReportEditorComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class ReportEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="ReportEditorComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class ReportEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// Default ReportEditorComponent class
-    /// </summary>
-    [AssociateView(typeof (ReportEditorComponentViewExtensionPoint))]
-    public class ReportEditorComponent : ApplicationComponent, IReportEditor
-    {
-        #region EditingComponent
+	/// <summary>
+	/// Default ReportEditorComponent class
+	/// </summary>
+	[AssociateView(typeof(ReportEditorComponentViewExtensionPoint))]
+	public class ReportEditorComponent : ApplicationComponent, IReportEditor
+	{
+		#region EditingComponent
 
-        /// <summary>
-        /// A DHMTL component that allows editing of the report content.
-        /// </summary>
-        public class EditingComponent : DHtmlComponent
-        {
-            private readonly ReportEditorComponent _owner;
+		/// <summary>
+		/// A DHMTL component that allows editing of the report content.
+		/// </summary>
+		public class EditingComponent : DHtmlComponent
+		{
+			private readonly ReportEditorComponent _owner;
 
-            public EditingComponent(ReportEditorComponent owner)
-            {
-                _owner = owner;
-            }
+			public EditingComponent(ReportEditorComponent owner)
+			{
+				_owner = owner;
+			}
 
-            public void Refresh()
-            {
-                NotifyAllPropertiesChanged();
-            }
+			public void Refresh()
+			{
+				NotifyAllPropertiesChanged();
+			}
 
-            protected override string GetTag(string tag)
-            {
-                if (tag == ReportPartDetail.ReportContentKey)
-                    return _owner.ReportContent;
+			protected override string GetTag(string tag)
+			{
+				if (tag == ReportPartDetail.ReportContentKey)
+					return _owner.ReportContent;
 
-                return base.GetTag(tag);
-            }
+				return base.GetTag(tag);
+			}
 
-            protected override void SetTag(string tag, string data)
-            {
-                if (tag == ReportPartDetail.ReportContentKey)
-                    _owner.ReportContent = data;
-                else
-                    base.SetTag(tag, data);
-            }
+			protected override void SetTag(string tag, string data)
+			{
+				if (tag == ReportPartDetail.ReportContentKey)
+					_owner.ReportContent = data;
+				else
+					base.SetTag(tag, data);
+			}
 
-            protected override DataContractBase GetHealthcareContext()
-            {
-                return _owner._reportingContext.WorklistItem;
-            }
-        }
+			protected override DataContractBase GetHealthcareContext()
+			{
+				return _owner._reportingContext.WorklistItem;
+			}
+		}
 
-        #endregion
+		#endregion
 
-        #region PreviewComponent
+		#region PreviewComponent
 
-        /// <summary>
-        /// A DHMTL component that shows a preview of the existing report parts.
-        /// </summary>
-        public class PreviewComponent : DHtmlComponent
-        {
-            private readonly ReportEditorComponent _owner;
+		/// <summary>
+		/// A DHMTL component that shows a preview of the existing report parts.
+		/// </summary>
+		public class PreviewComponent : DHtmlComponent
+		{
+			private readonly ReportEditorComponent _owner;
 
-            public PreviewComponent(ReportEditorComponent owner)
-            {
-                _owner = owner;
-            }
+			public PreviewComponent(ReportEditorComponent owner)
+			{
+				_owner = owner;
+			}
 
-            public void Refresh()
-            {
-                NotifyAllPropertiesChanged();
-            }
+			public void Refresh()
+			{
+				NotifyAllPropertiesChanged();
+			}
 
-            protected override DataContractBase GetHealthcareContext()
-            {
-                return _owner._reportingContext.Report;
-            }
-        }
+			protected override DataContractBase GetHealthcareContext()
+			{
+				return _owner._reportingContext.Report;
+			}
+		}
 
-        #endregion
+		#endregion
 
-        private readonly EditingComponent _editingComponent;
-        private ChildComponentHost _editingHost;
+		private readonly EditingComponent _editingComponent;
+		private ChildComponentHost _editingHost;
 
-        private readonly PreviewComponent _previewComponent;
-        private ChildComponentHost _previewHost;
+		private readonly PreviewComponent _previewComponent;
+		private ChildComponentHost _previewHost;
 
-        private readonly IReportingContext _reportingContext;
+		private readonly IReportingContext _reportingContext;
 
 
-        public ReportEditorComponent(IReportingContext context)
-        {
-            _reportingContext = context;
-            _editingComponent = new EditingComponent(this);
-            _previewComponent = new PreviewComponent(this);
-        }
+		public ReportEditorComponent(IReportingContext context)
+		{
+			_reportingContext = context;
+			_editingComponent = new EditingComponent(this);
+			_previewComponent = new PreviewComponent(this);
+		}
 
-        public override void Start()
-        {
-            _editingComponent.SetUrl(this.EditorUrl);
-            _editingHost = new ChildComponentHost(this.Host, _editingComponent);
-            _editingHost.StartComponent();
+		public override void Start()
+		{
+			_editingComponent.SetUrl(this.EditorUrl);
+			_editingHost = new ChildComponentHost(this.Host, _editingComponent);
+			_editingHost.StartComponent();
 
-            _previewComponent.SetUrl(this.PreviewUrl);
-            _previewHost = new ChildComponentHost(this.Host, _previewComponent);
-            _previewHost.StartComponent();
+			_previewComponent.SetUrl(this.PreviewUrl);
+			_previewHost = new ChildComponentHost(this.Host, _previewComponent);
+			_previewHost.StartComponent();
 
-            base.Start();
-        }
+			base.Start();
+		}
 
-        #region IReportEditor Members
+		#region IReportEditor Members
 
-        IApplicationComponent IReportEditor.GetComponent()
-        {
-            return this;
-        }
+		IApplicationComponent IReportEditor.GetComponent()
+		{
+			return this;
+		}
 
-        bool IReportEditor.Save(ReportEditorCloseReason reason)
-        {
-            _editingComponent.SaveData();
-            return true;
-        }
+		bool IReportEditor.Save(ReportEditorCloseReason reason)
+		{
+			_editingComponent.SaveData();
+			return true;
+		}
 
-        #endregion
+		#endregion
 
-        #region Presentation Model
+		#region Presentation Model
 
-        public virtual bool PreviewVisible
-        {
-            get { return IsAddendum; }
-        }
+		public virtual bool PreviewVisible
+		{
+			get { return IsAddendum; }
+		}
 
-        public ApplicationComponentHost ReportEditorHost
-        {
-            get { return _editingHost; }
-        }
+		public ApplicationComponentHost ReportEditorHost
+		{
+			get { return _editingHost; }
+		}
 
-        public ApplicationComponentHost ReportPreviewHost
-        {
-            get { return _previewHost; }
-        }
+		public ApplicationComponentHost ReportPreviewHost
+		{
+			get { return _previewHost; }
+		}
 
-        public string ReportContent
-        {
-            get { return _reportingContext.ReportContent; }
-            set { _reportingContext.ReportContent = value; }
-        }
+		public string ReportContent
+		{
+			get { return _reportingContext.ReportContent; }
+			set { _reportingContext.ReportContent = value; }
+		}
 
-        #endregion
+		#endregion
 
-        private string EditorUrl
-        {
-            get
-            {
-                return IsAddendum
-                        ? ReportEditorComponentSettings.Default.AddendumEditorPageUrl
-                        : ReportEditorComponentSettings.Default.ReportEditorPageUrl;
-            }
-        }
+		private string EditorUrl
+		{
+			get
+			{
+				return IsAddendum
+						? WebResourcesSettings.Default.AddendumEditorPageUrl
+						: WebResourcesSettings.Default.ReportEditorPageUrl;
+			}
+		}
 
-        private string PreviewUrl
-        {
-            get
-            {
-                return IsAddendum ? ReportEditorComponentSettings.Default.ReportPreviewPageUrl : "about:blank";
-            }
-        }
+		private string PreviewUrl
+		{
+			get
+			{
+				return IsAddendum ? WebResourcesSettings.Default.ReportPreviewPageUrl : "about:blank";
+			}
+		}
 
-        private bool IsAddendum
-        {
-            get { return _reportingContext.ActiveReportPartIndex > 0; }
-        }
+		private bool IsAddendum
+		{
+			get { return _reportingContext.ActiveReportPartIndex > 0; }
+		}
 
-    }
+	}
 }

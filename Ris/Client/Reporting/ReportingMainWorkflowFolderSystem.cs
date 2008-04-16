@@ -90,7 +90,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override string PreviewUrl
         {
-            get { return ReportingPreviewComponentSettings.Default.RadiologistFolderSystemUrl; }
+            get { return WebResourcesSettings.Default.RadiologistFolderSystemUrl; }
         }
 
         public SearchData SearchData

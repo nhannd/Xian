@@ -37,58 +37,58 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    [ExtensionPoint]
-    public class ReportingProtocolWorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
-    {
-    }
+	[ExtensionPoint]
+	public class ReportingProtocolWorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
+	{
+	}
 
-    [ExtensionPoint]
-    public class ReportingProtocolWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class ReportingProtocolWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
-    [ExtensionPoint]
-    public class ReportingProtocolWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class ReportingProtocolWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
-    public class ReportingProtocolWorkflowFolderSystem : ReportingWorkflowFolderSystemBase
-    {
-        public ReportingProtocolWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            : base(folderExplorer,
-            new ReportingProtocolWorkflowFolderExtensionPoint(),
-            new ReportingProtocolWorkflowItemToolExtensionPoint(),
-            new ReportingProtocolWorkflowFolderToolExtensionPoint())
-        {
-            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
-            {
-                this.AddFolder(new Folders.ToBeProtocolledFolder(this));
-            }
-            this.AddFolder(new Folders.DraftProtocolFolder(this));
-            this.AddFolder(new Folders.CompletedProtocolFolder(this));
-            this.AddFolder(new Folders.SuspendedProtocolFolder(this));
-            this.AddFolder(new Folders.RejectedProtocolFolder(this));
-        }
+	public class ReportingProtocolWorkflowFolderSystem : ReportingWorkflowFolderSystemBase
+	{
+		public ReportingProtocolWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
+			: base(folderExplorer,
+			new ReportingProtocolWorkflowFolderExtensionPoint(),
+			new ReportingProtocolWorkflowItemToolExtensionPoint(),
+			new ReportingProtocolWorkflowFolderToolExtensionPoint())
+		{
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+			{
+				this.AddFolder(new Folders.ToBeProtocolledFolder(this));
+			}
+			this.AddFolder(new Folders.DraftProtocolFolder(this));
+			this.AddFolder(new Folders.CompletedProtocolFolder(this));
+			this.AddFolder(new Folders.SuspendedProtocolFolder(this));
+			this.AddFolder(new Folders.RejectedProtocolFolder(this));
+		}
 
-        public override string DisplayName
-        {
-            get { return "Protocolling"; }
-        }
+		public override string DisplayName
+		{
+			get { return "Protocolling"; }
+		}
 
-        public override string PreviewUrl
-        {
-            get { return ReportingPreviewComponentSettings.Default.ProtocollingFolderSystemUrl; }
-        }
+		public override string PreviewUrl
+		{
+			get { return WebResourcesSettings.Default.ProtocollingFolderSystemUrl; }
+		}
 
-        public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
-        {
-            base.SelectedItemDoubleClickedEventHandler(sender, e);
+		public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
+		{
+			base.SelectedItemDoubleClickedEventHandler(sender, e);
 
-            ProtocollingTool protocollingTool = (ProtocollingTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
-                delegate(ITool tool) { return tool is ProtocollingTool; });
+			ProtocollingTool protocollingTool = (ProtocollingTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
+				delegate(ITool tool) { return tool is ProtocollingTool; });
 
-            if (protocollingTool != null && protocollingTool.Enabled)
-                protocollingTool.Apply();
-        }
-    }
+			if (protocollingTool != null && protocollingTool.Enabled)
+				protocollingTool.Apply();
+		}
+	}
 }

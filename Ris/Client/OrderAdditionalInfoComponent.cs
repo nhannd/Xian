@@ -2,43 +2,43 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class OrderAdditionalInfoComponent : DHtmlComponent
-    {
-        private IDictionary<string, string> _orderExtendedProperties;
+	public class OrderAdditionalInfoComponent : DHtmlComponent
+	{
+		private IDictionary<string, string> _orderExtendedProperties;
 
-        public OrderAdditionalInfoComponent(IDictionary<string, string> orderExtendedProperties)
-        {
-            _orderExtendedProperties = orderExtendedProperties;
-        }
+		public OrderAdditionalInfoComponent(IDictionary<string, string> orderExtendedProperties)
+		{
+			_orderExtendedProperties = orderExtendedProperties;
+		}
 
-        public OrderAdditionalInfoComponent()
-        {
-            _orderExtendedProperties = new Dictionary<string, string>();
-        }
+		public OrderAdditionalInfoComponent()
+		{
+			_orderExtendedProperties = new Dictionary<string, string>();
+		}
 
-        /// <summary>
-        /// Gets or sets the dictionary of order extended properties that this component will
-        /// use to store data.
-        /// </summary>
-        public IDictionary<string, string> OrderExtendedProperties
-        {
-            get { return _orderExtendedProperties; }
-            set { _orderExtendedProperties = value; }
-        }
+		/// <summary>
+		/// Gets or sets the dictionary of order extended properties that this component will
+		/// use to store data.
+		/// </summary>
+		public IDictionary<string, string> OrderExtendedProperties
+		{
+			get { return _orderExtendedProperties; }
+			set { _orderExtendedProperties = value; }
+		}
 
-        public override void Start()
-        {
-            SetUrl(OrderAdditionalInfoComponentSetting.Default.OrderAdditionalInfoPageUrl);
-            base.Start();
-        }
+		public override void Start()
+		{
+			SetUrl(WebResourcesSettings.Default.OrderAdditionalInfoPageUrl);
+			base.Start();
+		}
 
-        protected override IDictionary<string, string> TagData
-        {
-            get
-            {
-                return _orderExtendedProperties;
-            }
-        }
+		protected override IDictionary<string, string> TagData
+		{
+			get
+			{
+				return _orderExtendedProperties;
+			}
+		}
 
-    }
+	}
 }

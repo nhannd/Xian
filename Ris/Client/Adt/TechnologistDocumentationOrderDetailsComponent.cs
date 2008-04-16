@@ -6,91 +6,91 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="TechnologistDocumentationOrderDetailsComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class TechnologistDocumentationOrderDetailsComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="TechnologistDocumentationOrderDetailsComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class TechnologistDocumentationOrderDetailsComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// TechnologistDocumentationOrderDetailsComponent class
-    /// </summary>
-    [AssociateView(typeof(TechnologistDocumentationOrderDetailsComponentViewExtensionPoint))]
-    public class TechnologistDocumentationOrderDetailsComponent : ApplicationComponent
-    {
-        public class ProtocolSummaryComponent : DHtmlComponent
-        {
-            private readonly WorklistItemSummaryBase _worklistItem;
+	/// <summary>
+	/// TechnologistDocumentationOrderDetailsComponent class
+	/// </summary>
+	[AssociateView(typeof(TechnologistDocumentationOrderDetailsComponentViewExtensionPoint))]
+	public class TechnologistDocumentationOrderDetailsComponent : ApplicationComponent
+	{
+		public class ProtocolSummaryComponent : DHtmlComponent
+		{
+			private readonly WorklistItemSummaryBase _worklistItem;
 
-            public ProtocolSummaryComponent(WorklistItemSummaryBase worklistItem)
-            {
-                _worklistItem = worklistItem;
-            }
+			public ProtocolSummaryComponent(WorklistItemSummaryBase worklistItem)
+			{
+				_worklistItem = worklistItem;
+			}
 
-            public override void Start()
-            {
-                SetUrl(TechnologistDocumentationComponentSettings.Default.ProtocolSummaryUrl);
-                base.Start();
-            }
+			public override void Start()
+			{
+				SetUrl(WebResourcesSettings.Default.ProtocolSummaryUrl);
+				base.Start();
+			}
 
-            protected override DataContractBase GetHealthcareContext()
-            {
-                return _worklistItem;
-            }
-        }
+			protected override DataContractBase GetHealthcareContext()
+			{
+				return _worklistItem;
+			}
+		}
 
-        private ChildComponentHost _orderNotesComponentHost;
-        private ChildComponentHost _protocolSummaryComponentHost;
-        private ChildComponentHost _additionalInfoComponentHost;
-        private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
-       
-        private readonly WorklistItemSummaryBase _worklistItem;
-        private readonly IDictionary<string, string> _orderExtendedProperties;
+		private ChildComponentHost _orderNotesComponentHost;
+		private ChildComponentHost _protocolSummaryComponentHost;
+		private ChildComponentHost _additionalInfoComponentHost;
+		private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public TechnologistDocumentationOrderDetailsComponent(WorklistItemSummaryBase worklistItem, IDictionary<string, string> orderExtendedProperties)
-        {
-            _worklistItem = worklistItem;
-            _orderExtendedProperties = orderExtendedProperties;
-        }
+		private readonly WorklistItemSummaryBase _worklistItem;
+		private readonly IDictionary<string, string> _orderExtendedProperties;
 
-        public override void Start()
-        {
-            _orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent());
-            _orderNotesComponentHost.StartComponent();
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public TechnologistDocumentationOrderDetailsComponent(WorklistItemSummaryBase worklistItem, IDictionary<string, string> orderExtendedProperties)
+		{
+			_worklistItem = worklistItem;
+			_orderExtendedProperties = orderExtendedProperties;
+		}
 
-            _protocolSummaryComponentHost = new ChildComponentHost(this.Host, new ProtocolSummaryComponent(_worklistItem));
-            _protocolSummaryComponentHost.StartComponent();
+		public override void Start()
+		{
+			_orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent());
+			_orderNotesComponentHost.StartComponent();
 
-            _orderAdditionalInfoComponent = new OrderAdditionalInfoComponent(_orderExtendedProperties);
-            _additionalInfoComponentHost = new ChildComponentHost(this.Host, _orderAdditionalInfoComponent);
-            _additionalInfoComponentHost.StartComponent();
+			_protocolSummaryComponentHost = new ChildComponentHost(this.Host, new ProtocolSummaryComponent(_worklistItem));
+			_protocolSummaryComponentHost.StartComponent();
 
-            base.Start();
-        }
+			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent(_orderExtendedProperties);
+			_additionalInfoComponentHost = new ChildComponentHost(this.Host, _orderAdditionalInfoComponent);
+			_additionalInfoComponentHost.StartComponent();
 
-        public ApplicationComponentHost AdditionalInfoHost
-        {
-            get { return _additionalInfoComponentHost; }
-        }
+			base.Start();
+		}
 
-        public ApplicationComponentHost ProtocolHost
-        {
-            get { return _protocolSummaryComponentHost; }
-        }
+		public ApplicationComponentHost AdditionalInfoHost
+		{
+			get { return _additionalInfoComponentHost; }
+		}
 
-        public ApplicationComponentHost NotesHost
-        {
-            get { return _orderNotesComponentHost; }
-        }
+		public ApplicationComponentHost ProtocolHost
+		{
+			get { return _protocolSummaryComponentHost; }
+		}
 
-        internal void SaveData()
-        {
-            _orderAdditionalInfoComponent.SaveData();
-        }
-    }
+		public ApplicationComponentHost NotesHost
+		{
+			get { return _orderNotesComponentHost; }
+		}
+
+		internal void SaveData()
+		{
+			_orderAdditionalInfoComponent.SaveData();
+		}
+	}
 }

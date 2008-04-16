@@ -40,308 +40,308 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    public class ProtocollingOrderDetailViewComponent : DHtmlComponent
-    {
-        private WorklistItemSummaryBase _worklistItem;
+	public class ProtocollingOrderDetailViewComponent : DHtmlComponent
+	{
+		private WorklistItemSummaryBase _worklistItem;
 
-        public ProtocollingOrderDetailViewComponent(WorklistItemSummaryBase worklistItem)
-        {
-            _worklistItem = worklistItem;
-        }
+		public ProtocollingOrderDetailViewComponent(WorklistItemSummaryBase worklistItem)
+		{
+			_worklistItem = worklistItem;
+		}
 
-        public override void Start()
-        {
-            SetUrl(ProtocollingComponentSettings.Default.OrderDetailPageUrl);
-            base.Start();
-        }
+		public override void Start()
+		{
+			SetUrl(WebResourcesSettings.Default.ProtocollingOrderDetailPageUrl);
+			base.Start();
+		}
 
-        public WorklistItemSummaryBase WorklistItem
-        {
-            get { return _worklistItem; }
-            set
-            {
-                _worklistItem = value;
-                Refresh();
-            }
-        }
+		public WorklistItemSummaryBase WorklistItem
+		{
+			get { return _worklistItem; }
+			set
+			{
+				_worklistItem = value;
+				Refresh();
+			}
+		}
 
-        public void Refresh()
-        {
-            NotifyAllPropertiesChanged();
-        }
+		public void Refresh()
+		{
+			NotifyAllPropertiesChanged();
+		}
 
-        protected override DataContractBase GetHealthcareContext()
-        {
-            return _worklistItem;
-        }
-    }
+		protected override DataContractBase GetHealthcareContext()
+		{
+			return _worklistItem;
+		}
+	}
 
-    /// <summary>
-    /// Extension point for views onto <see cref="ProtocollingComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class ProtocollingComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="ProtocollingComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class ProtocollingComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// ProtocollingComponent class
-    /// </summary>
-    [AssociateView(typeof(ProtocollingComponentViewExtensionPoint))]
-    public class ProtocollingComponent : ApplicationComponent
-    {
-        #region Private Fields
+	/// <summary>
+	/// ProtocollingComponent class
+	/// </summary>
+	[AssociateView(typeof(ProtocollingComponentViewExtensionPoint))]
+	public class ProtocollingComponent : ApplicationComponent
+	{
+		#region Private Fields
 
-        private readonly ProtocollingComponentMode _componentMode;
+		private readonly ProtocollingComponentMode _componentMode;
 
-        private ReportingWorklistItem _worklistItem;
+		private ReportingWorklistItem _worklistItem;
 
-        private readonly List<ReportingWorklistItem> _skippedItems;
-        private readonly Stack<ReportingWorklistItem> _worklistCache;
+		private readonly List<ReportingWorklistItem> _skippedItems;
+		private readonly Stack<ReportingWorklistItem> _worklistCache;
 
-        private ChildComponentHost _bannerComponentHost;
-        private ChildComponentHost _protocolEditorComponentHost;
-        private ProtocolEditorComponent _protocolEditorComponent;
-        private ChildComponentHost _orderDetailViewComponentHost;
-        private ChildComponentHost _priorReportsComponentHost;
-        private ApplicationComponentHost _orderNotesComponentHost;
+		private ChildComponentHost _bannerComponentHost;
+		private ChildComponentHost _protocolEditorComponentHost;
+		private ProtocolEditorComponent _protocolEditorComponent;
+		private ChildComponentHost _orderDetailViewComponentHost;
+		private ChildComponentHost _priorReportsComponentHost;
+		private ApplicationComponentHost _orderNotesComponentHost;
 
-        #endregion
+		#endregion
 
-        #region Constructor
+		#region Constructor
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public ProtocollingComponent(ReportingWorklistItem worklistItem, ProtocollingComponentMode mode)
-        {
-            _worklistItem = worklistItem;
-            _componentMode = mode;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public ProtocollingComponent(ReportingWorklistItem worklistItem, ProtocollingComponentMode mode)
+		{
+			_worklistItem = worklistItem;
+			_componentMode = mode;
 
-            _skippedItems = new List<ReportingWorklistItem>();
-            _worklistCache = new Stack<ReportingWorklistItem>();
-        }
+			_skippedItems = new List<ReportingWorklistItem>();
+			_worklistCache = new Stack<ReportingWorklistItem>();
+		}
 
-        #endregion
+		#endregion
 
-        #region ApplicationComponent overrides
+		#region ApplicationComponent overrides
 
-        public override void Start()
-        {
-            _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
-            _bannerComponentHost.StartComponent();
+		public override void Start()
+		{
+			_bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
+			_bannerComponentHost.StartComponent();
 
-            _orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent());
-            _orderNotesComponentHost.StartComponent();
+			_orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent());
+			_orderNotesComponentHost.StartComponent();
 
-            _protocolEditorComponent = new ProtocolEditorComponent(_worklistItem, _componentMode);
+			_protocolEditorComponent = new ProtocolEditorComponent(_worklistItem, _componentMode);
 
-            _protocolEditorComponent.ProtocolAccepted += OnProtocolAccepted;
-            _protocolEditorComponent.ProtocolRejected += OnProtocolRejected;
-            _protocolEditorComponent.ProtocolSuspended += OnProtocolSuspended;
-            _protocolEditorComponent.ProtocolSaved += OnProtocolSaved;
-            _protocolEditorComponent.ProtocolSkipped += OnProtocolSkipped;
-            _protocolEditorComponent.ProtocolCancelled += OnProtocolCancelled;
+			_protocolEditorComponent.ProtocolAccepted += OnProtocolAccepted;
+			_protocolEditorComponent.ProtocolRejected += OnProtocolRejected;
+			_protocolEditorComponent.ProtocolSuspended += OnProtocolSuspended;
+			_protocolEditorComponent.ProtocolSaved += OnProtocolSaved;
+			_protocolEditorComponent.ProtocolSkipped += OnProtocolSkipped;
+			_protocolEditorComponent.ProtocolCancelled += OnProtocolCancelled;
 
-            _protocolEditorComponentHost = new ChildComponentHost(this.Host, _protocolEditorComponent);
-            _protocolEditorComponentHost.StartComponent();
+			_protocolEditorComponentHost = new ChildComponentHost(this.Host, _protocolEditorComponent);
+			_protocolEditorComponentHost.StartComponent();
 
-            _priorReportsComponentHost = new ChildComponentHost(this.Host, new PriorReportComponent(_worklistItem));
-            _priorReportsComponentHost.StartComponent();
+			_priorReportsComponentHost = new ChildComponentHost(this.Host, new PriorReportComponent(_worklistItem));
+			_priorReportsComponentHost.StartComponent();
 
-            _orderDetailViewComponentHost = new ChildComponentHost(this.Host, new ProtocollingOrderDetailViewComponent(_worklistItem));
-            _orderDetailViewComponentHost.StartComponent();
+			_orderDetailViewComponentHost = new ChildComponentHost(this.Host, new ProtocollingOrderDetailViewComponent(_worklistItem));
+			_orderDetailViewComponentHost.StartComponent();
 
-            this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);
+			this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);
 
-            base.Start();
-        }
+			base.Start();
+		}
 
-        #endregion
+		#endregion
 
-        #region Public members
+		#region Public members
 
-        public ApplicationComponentHost BannerComponentHost
-        {
-            get { return _bannerComponentHost; }
-        }
+		public ApplicationComponentHost BannerComponentHost
+		{
+			get { return _bannerComponentHost; }
+		}
 
-        public ApplicationComponentHost ProtocolEditorComponentHost
-        {
-            get { return _protocolEditorComponentHost; }
-        }
+		public ApplicationComponentHost ProtocolEditorComponentHost
+		{
+			get { return _protocolEditorComponentHost; }
+		}
 
-        public ApplicationComponentHost OrderNotesComponentHost
-        {
-            get { return _orderNotesComponentHost; }
-        }
+		public ApplicationComponentHost OrderNotesComponentHost
+		{
+			get { return _orderNotesComponentHost; }
+		}
 
-        public ApplicationComponentHost OrderDetailViewComponentHost
-        {
-            get { return _orderDetailViewComponentHost; }
-        }
+		public ApplicationComponentHost OrderDetailViewComponentHost
+		{
+			get { return _orderDetailViewComponentHost; }
+		}
 
-        public ApplicationComponentHost PriorReportsComponentHost
-        {
-            get { return _priorReportsComponentHost; }
-        }
+		public ApplicationComponentHost PriorReportsComponentHost
+		{
+			get { return _priorReportsComponentHost; }
+		}
 
-        #endregion
+		#endregion
 
-        #region ProtocolEditorComponent event handlers
+		#region ProtocolEditorComponent event handlers
 
-        private void OnProtocolAccepted(object sender, EventArgs e)
-        {
-            DocumentManager.InvalidateFolder(typeof(Folders.CompletedProtocolFolder));
-            OnProtocolEndedHelper();
-        }
+		private void OnProtocolAccepted(object sender, EventArgs e)
+		{
+			DocumentManager.InvalidateFolder(typeof(Folders.CompletedProtocolFolder));
+			OnProtocolEndedHelper();
+		}
 
-        private void OnProtocolRejected(object sender, EventArgs e)
-        {
-            DocumentManager.InvalidateFolder(typeof(Folders.RejectedProtocolFolder));
-            OnProtocolEndedHelper();
-        }
+		private void OnProtocolRejected(object sender, EventArgs e)
+		{
+			DocumentManager.InvalidateFolder(typeof(Folders.RejectedProtocolFolder));
+			OnProtocolEndedHelper();
+		}
 
-        private void OnProtocolSuspended(object sender, EventArgs e)
-        {
-            DocumentManager.InvalidateFolder(typeof(Folders.SuspendedProtocolFolder));
-            OnProtocolEndedHelper();
-        }
+		private void OnProtocolSuspended(object sender, EventArgs e)
+		{
+			DocumentManager.InvalidateFolder(typeof(Folders.SuspendedProtocolFolder));
+			OnProtocolEndedHelper();
+		}
 
-        private void OnProtocolEndedHelper()
-        {
-            if (_componentMode == ProtocollingComponentMode.Assign)
-            {
-                DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
-            }
-            else if (_componentMode == ProtocollingComponentMode.Edit)
-            {
-                DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
-            }
+		private void OnProtocolEndedHelper()
+		{
+			if (_componentMode == ProtocollingComponentMode.Assign)
+			{
+				DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+			}
+			else if (_componentMode == ProtocollingComponentMode.Edit)
+			{
+				DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+			}
 
-            if (_protocolEditorComponent.ProtocolNextItem)
-            {
-                LoadNextProtocol();
-            }
-            else
-            {
-                this.Exit(ApplicationComponentExitCode.Accepted);
-            }
-        }
+			if (_protocolEditorComponent.ProtocolNextItem)
+			{
+				LoadNextProtocol();
+			}
+			else
+			{
+				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
+		}
 
-        private void OnProtocolSaved(object sender, EventArgs e)
-        {
-            DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
-            DocumentManager.InvalidateFolder(typeof(Folders.DraftProtocolFolder));
+		private void OnProtocolSaved(object sender, EventArgs e)
+		{
+			DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+			DocumentManager.InvalidateFolder(typeof(Folders.DraftProtocolFolder));
 
-            if (_protocolEditorComponent.ProtocolNextItem)
-            {
-                LoadNextProtocol();
-            }
-            else
-            {
-                this.Exit(ApplicationComponentExitCode.Accepted);
-            }
-        }
+			if (_protocolEditorComponent.ProtocolNextItem)
+			{
+				LoadNextProtocol();
+			}
+			else
+			{
+				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
+		}
 
-        private void OnProtocolSkipped(object sender, EventArgs e)
-        {
+		private void OnProtocolSkipped(object sender, EventArgs e)
+		{
 
-            // To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
-            // discontinued with a new scheduled one replacing it
-            DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+			// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
+			// discontinued with a new scheduled one replacing it
+			DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
 
-            _skippedItems.Add(_worklistItem);
-            LoadNextProtocol();
-        }
+			_skippedItems.Add(_worklistItem);
+			LoadNextProtocol();
+		}
 
-        private void OnProtocolCancelled(object sender, EventArgs e)
-        {
+		private void OnProtocolCancelled(object sender, EventArgs e)
+		{
 
-            // To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
-            // discontinued with a new scheduled one replacing it
-            DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+			// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
+			// discontinued with a new scheduled one replacing it
+			DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
 
-            this.Exit(ApplicationComponentExitCode.None);
-        }
+			this.Exit(ApplicationComponentExitCode.None);
+		}
 
-        #endregion
+		#endregion
 
-        #region Private methods
+		#region Private methods
 
-        private void LoadNextProtocol()
-        {
-            try
-            {
-                _worklistItem = GetNextWorklistItem();
-                if (_worklistItem != null)
-                {
-                    ((BannerComponent) _bannerComponentHost.Component).HealthcareContext = _worklistItem;
-                    ((PriorReportComponent) _priorReportsComponentHost.Component).WorklistItem = _worklistItem;
-                    ((ProtocolEditorComponent) _protocolEditorComponentHost.Component).WorklistItem = _worklistItem;
-                    ((ProtocollingOrderDetailViewComponent) _orderDetailViewComponentHost.Component).WorklistItem = _worklistItem;
-                    _orderNotesComponentHost.StopComponent();
-                    _orderNotesComponentHost.StartComponent();
+		private void LoadNextProtocol()
+		{
+			try
+			{
+				_worklistItem = GetNextWorklistItem();
+				if (_worklistItem != null)
+				{
+					((BannerComponent)_bannerComponentHost.Component).HealthcareContext = _worklistItem;
+					((PriorReportComponent)_priorReportsComponentHost.Component).WorklistItem = _worklistItem;
+					((ProtocolEditorComponent)_protocolEditorComponentHost.Component).WorklistItem = _worklistItem;
+					((ProtocollingOrderDetailViewComponent)_orderDetailViewComponentHost.Component).WorklistItem = _worklistItem;
+					_orderNotesComponentHost.StopComponent();
+					_orderNotesComponentHost.StartComponent();
 
-                    // Update title
-                    this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);
-                }
-                else
-                {
-                    // TODO : Dialog "No more"
-                    this.Exit(ApplicationComponentExitCode.None);
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+					// Update title
+					this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);
+				}
+				else
+				{
+					// TODO : Dialog "No more"
+					this.Exit(ApplicationComponentExitCode.None);
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
 
-        }
+		}
 
-        private ReportingWorklistItem GetNextWorklistItem()
-        {
-            // Use next item from cached worklist if one exists
-            ReportingWorklistItem worklistItem = _worklistCache.Count > 0 ? _worklistCache.Pop() : null;
+		private ReportingWorklistItem GetNextWorklistItem()
+		{
+			// Use next item from cached worklist if one exists
+			ReportingWorklistItem worklistItem = _worklistCache.Count > 0 ? _worklistCache.Pop() : null;
 
-            // Otherwise, re-populate the cached worklist
-            if (worklistItem == null)
-            {
-                try
-                {
-                    Platform.GetService<IReportingWorkflowService>(
-                        delegate(IReportingWorkflowService service)
-                            {
-                                QueryWorklistRequest request = new QueryWorklistRequest(WorklistClassNames.ReportingToBeProtocolledWorklist, false);
-                                QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);
+			// Otherwise, re-populate the cached worklist
+			if (worklistItem == null)
+			{
+				try
+				{
+					Platform.GetService<IReportingWorkflowService>(
+						delegate(IReportingWorkflowService service)
+						{
+							QueryWorklistRequest request = new QueryWorklistRequest(WorklistClassNames.ReportingToBeProtocolledWorklist, false);
+							QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);
 
-                                foreach (ReportingWorklistItem item in response.WorklistItems)
-                                {
-                                    // Remove any items that were previously skipped
-                                    bool itemSkipped = CollectionUtils.Contains(_skippedItems,
-                                                            delegate(ReportingWorklistItem skippedItem)
-                                                            {
-                                                                 return skippedItem.AccessionNumber == item.AccessionNumber;
-                                                            });
+							foreach (ReportingWorklistItem item in response.WorklistItems)
+							{
+								// Remove any items that were previously skipped
+								bool itemSkipped = CollectionUtils.Contains(_skippedItems,
+														delegate(ReportingWorklistItem skippedItem)
+														{
+															return skippedItem.AccessionNumber == item.AccessionNumber;
+														});
 
-                                    if (itemSkipped == false)
-                                    {
-                                        _worklistCache.Push(item);
-                                    }
-                                }
+								if (itemSkipped == false)
+								{
+									_worklistCache.Push(item);
+								}
+							}
 
-                                worklistItem = _worklistCache.Count > 0 ? _worklistCache.Pop() : null;
-                            });
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                }
-            }
+							worklistItem = _worklistCache.Count > 0 ? _worklistCache.Pop() : null;
+						});
+				}
+				catch (Exception e)
+				{
+					ExceptionHandler.Report(e, this.Host.DesktopWindow);
+				}
+			}
 
-            return worklistItem;
-        }
+			return worklistItem;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

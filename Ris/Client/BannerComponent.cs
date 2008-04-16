@@ -33,44 +33,44 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class BannerComponent : DHtmlComponent
-    {
-        private DataContractBase _healthcareContext;
+	public class BannerComponent : DHtmlComponent
+	{
+		private DataContractBase _healthcareContext;
 
-        public BannerComponent(DataContractBase healthcareContext)
-        {
-            _healthcareContext = healthcareContext;
-        }
+		public BannerComponent(DataContractBase healthcareContext)
+		{
+			_healthcareContext = healthcareContext;
+		}
 
-        public override void Start()
-        {
-            SetUrl(BannerComponentSettings.Default.BannerPageUrl);
-            base.Start();
-        }
+		public override void Start()
+		{
+			SetUrl(WebResourcesSettings.Default.BannerPageUrl);
+			base.Start();
+		}
 
-        public override bool ScrollBarsEnabled
-        {
-            get { return false; }
-        }
+		public override bool ScrollBarsEnabled
+		{
+			get { return false; }
+		}
 
-        public void Refresh()
-        {
-            NotifyAllPropertiesChanged();
-        }
+		public void Refresh()
+		{
+			NotifyAllPropertiesChanged();
+		}
 
-        protected override DataContractBase GetHealthcareContext()
-        {
-            return _healthcareContext;
-        }
+		protected override DataContractBase GetHealthcareContext()
+		{
+			return _healthcareContext;
+		}
 
-        public DataContractBase HealthcareContext
-        {
-            get { return _healthcareContext; }
-            set
-            {
-                _healthcareContext = value;
-                Refresh();
-            }
-        }
-    }
+		public DataContractBase HealthcareContext
+		{
+			get { return _healthcareContext; }
+			set
+			{
+				_healthcareContext = value;
+				Refresh();
+			}
+		}
+	}
 }

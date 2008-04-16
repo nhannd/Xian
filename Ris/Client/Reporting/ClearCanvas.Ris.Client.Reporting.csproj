@@ -41,12 +41,6 @@
     <Compile Include="EditReportTool.cs" />
     <Compile Include="EmergencyPhysicianHomeTool.cs" />
     <Compile Include="LinkedInterpretationComponent.cs" />
-    <Compile Include="PriorReportComponentSettings.cs" />
-    <Compile Include="PriorReportComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>PriorReportComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="ProtocolGroupSettings.cs" />
     <Compile Include="ProtocolGroupSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -55,12 +49,6 @@
     </Compile>
     <Compile Include="ProtocollingComponent.cs" />
     <Compile Include="ProtocollingComponentMode.cs" />
-    <Compile Include="ProtocollingComponentSettings.cs" />
-    <Compile Include="ProtocollingComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ProtocollingComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="ReportingProtocolWorkflowFolderSystem.cs" />
     <Compile Include="ReportingProtocolWorkflowFolderSystemTool.cs" />
     <Compile Include="ReportingMainWorkflowFolderSystem.cs" />
@@ -74,19 +62,7 @@
     <Compile Include="ProtocolEditorProcedurePlanSummaryTable.cs" />
     <Compile Include="ProtocolEditorProcedurePlanSummaryTableItem.cs" />
     <Compile Include="ProtocolReasonComponent.cs" />
-    <Compile Include="ReportEditorComponentSettings.cs" />
-    <Compile Include="ReportEditorComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ReportEditorComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="ReportingComponent.cs" />
-    <Compile Include="ReportingPreviewComponentSettings.cs" />
-    <Compile Include="ReportingPreviewComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ReportingPreviewComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="PriorSummaryTable.cs" />
     <Compile Include="ReportDocument.cs" />
     <Compile Include="PriorReportComponent.cs" />
@@ -192,25 +168,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="PriorReportComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>PriorReportComponentSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="ProtocolGroupSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ProtocolGroupSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="ProtocollingComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>ProtocollingComponentSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="ReportEditorComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>ReportEditorComponentSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="ReportingPreviewComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>ReportingPreviewComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="SupervisorSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

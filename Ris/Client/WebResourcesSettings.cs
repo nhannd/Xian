@@ -29,21 +29,238 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Configuration;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client
 {
-    [SettingsGroupDescriptionAttribute("Provides base URL for HtmlApplicationComponent web resources.  URL should specify protocol (i.e. http://server, file:///C:/directory, etc.)")]
-    [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-    internal sealed partial class WebResourcesSettings
-    {
-        private WebResourcesSettings()
-        {
-            ApplicationSettingsRegistry.Instance.RegisterInstance(this);
-        }
-    }
+	/// <summary>
+	/// Provides application settings for all core RIS web content URLss
+	/// </summary>
+	/// <remarks>
+	/// This code is adapted from the Visual Studio generated template code;  the generated code has been removed from the project.  Additional 
+	/// settings need to be manually added to this class.
+	/// </remarks>
+	[SettingsGroupDescription("Provides application settings for all core RIS web content URLs.")]
+	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	public sealed class WebResourcesSettings : global::System.Configuration.ApplicationSettingsBase
+	{
+		private static WebResourcesSettings defaultInstance = ((WebResourcesSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new WebResourcesSettings())));
+
+		public WebResourcesSettings()
+		{
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+		}
+
+		public static WebResourcesSettings Default
+		{
+			get
+			{
+				return defaultInstance;
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS")]
+		[global::System.Configuration.SettingsDescription(" Provides base URL for HtmlApplicationComponent web resources.  URL should specify protocol (i.e. http://server, file:///C:/directory, etc.)")]
+		public string BaseUrl
+		{
+			get
+			{
+				return ((string)(this["BaseUrl"]));
+			}
+		}
+
+		#region ClearCanvas.Ris.Client component settings
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("banner.htm")]
+		public string BannerPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["BannerPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("forms/technologist/pre-exam.htm")]
+		public string OrderAdditionalInfoPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderAdditionalInfoPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("orderdetail.htm")]
+		public string OrderDetailPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderDetailPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("technologistdocumentation-ordersummary.htm")]
+		public string OrderSummaryUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderSummaryUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("patientprofile.htm")]
+		public string PatientProfilePageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["PatientProfilePageUrl"]));
+			}
+		}
+
+		#endregion
+
+		#region ClearCanvas.Ris.Client.Adt component settings
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("bookingpreview.htm")]
+		public string BookingFolderSystemUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["BookingFolderSystemUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("forms/technologist/mpps.htm")]
+		public string DetailsPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["DetailsPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("protocolsummary.htm")]
+		public string ProtocolSummaryUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ProtocolSummaryUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("registrationpreview.htm")]
+		public string RegistrationFolderSystemUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["RegistrationFolderSystemUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("technologistpreview.htm")]
+		public string TechnologistFolderSystemUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["TechnologistFolderSystemUrl"]));
+			}
+		}
+
+		#endregion
+
+		#region ClearCanvas.Ris.Client.Reporting component settings
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("addendumeditor.htm")]
+		public string AddendumEditorPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["AddendumEditorPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("protocollingpreview.htm")]
+		public string ProtocollingFolderSystemUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ProtocollingFolderSystemUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("protocollingorderdetail.htm")]
+		public string ProtocollingOrderDetailPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ProtocollingOrderDetailPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("radiologistpreview.htm")]
+		public string RadiologistFolderSystemUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["RadiologistFolderSystemUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("reporteditor.htm")]
+		public string ReportEditorPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ReportEditorPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("reportpreview.htm")]
+		public string ReportPreviewPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ReportPreviewPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("priorreport.htm")]
+		public string ReportViewPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ReportViewPageUrl"]));
+			}
+		}
+
+		#endregion
+	}
+
+	public static class WebResourceAbsoluteUrlHelper
+	{
+		private static readonly char[] _slash = new char[] {'/'};
+
+		public static string FromRelative(string relativeUrl)
+		{
+			return WebResourcesSettings.Default.BaseUrl.TrimEnd(_slash) + '/' + relativeUrl.TrimStart(_slash);
+		}
+	}
 }

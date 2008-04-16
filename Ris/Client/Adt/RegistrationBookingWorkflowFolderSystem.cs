@@ -37,58 +37,58 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [ExtensionPoint]
-    public class RegistrationBookingWorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
-    {
-    }
+	[ExtensionPoint]
+	public class RegistrationBookingWorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
+	{
+	}
 
-    [ExtensionPoint]
-    public class RegistrationBookingWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class RegistrationBookingWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
-    [ExtensionPoint]
-    public class RegistrationBookingWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class RegistrationBookingWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
-    public class RegistrationBookingWorkflowFolderSystem : RegistrationWorkflowFolderSystemBase
-    {
-        public RegistrationBookingWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            : base(folderExplorer, 
-            new RegistrationBookingWorkflowFolderExtensionPoint(),
-            new RegistrationBookingWorkflowItemToolExtensionPoint(),
-            new RegistrationBookingWorkflowFolderToolExtensionPoint())
-        {
-            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
-            {
-                this.AddFolder(new Folders.CompletedProtocolFolder(this));
-                this.AddFolder(new Folders.SuspendedProtocolFolder(this));
-                this.AddFolder(new Folders.RejectedProtocolFolder(this));
-                this.AddFolder(new Folders.PendingProtocolFolder(this));
-                this.AddFolder(new Folders.ToBeScheduledFolder(this));
-            }
-        }
+	public class RegistrationBookingWorkflowFolderSystem : RegistrationWorkflowFolderSystemBase
+	{
+		public RegistrationBookingWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
+			: base(folderExplorer,
+			new RegistrationBookingWorkflowFolderExtensionPoint(),
+			new RegistrationBookingWorkflowItemToolExtensionPoint(),
+			new RegistrationBookingWorkflowFolderToolExtensionPoint())
+		{
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+			{
+				this.AddFolder(new Folders.CompletedProtocolFolder(this));
+				this.AddFolder(new Folders.SuspendedProtocolFolder(this));
+				this.AddFolder(new Folders.RejectedProtocolFolder(this));
+				this.AddFolder(new Folders.PendingProtocolFolder(this));
+				this.AddFolder(new Folders.ToBeScheduledFolder(this));
+			}
+		}
 
-        public override string DisplayName
-        {
-            get { return "Booking"; }
-        }
+		public override string DisplayName
+		{
+			get { return "Booking"; }
+		}
 
-        public override string PreviewUrl
-        {
-            get { return RegistrationPreviewComponentSettings.Default.BookingFolderSystemUrl; }
-        }
+		public override string PreviewUrl
+		{
+			get { return WebResourcesSettings.Default.BookingFolderSystemUrl; }
+		}
 
-        public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
-        {
-            base.SelectedItemDoubleClickedEventHandler(sender, e);
+		public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
+		{
+			base.SelectedItemDoubleClickedEventHandler(sender, e);
 
-            PatientBiographyTool biographyTool = (PatientBiographyTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
-               delegate(ITool tool) { return tool is PatientBiographyTool; });
+			PatientBiographyTool biographyTool = (PatientBiographyTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
+			   delegate(ITool tool) { return tool is PatientBiographyTool; });
 
-            if (biographyTool != null && biographyTool.Enabled)
-                biographyTool.View();
-        }
-    }
+			if (biographyTool != null && biographyTool.Enabled)
+				biographyTool.View();
+		}
+	}
 }

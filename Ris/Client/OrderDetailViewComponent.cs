@@ -34,29 +34,29 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class OrderDetailViewComponent : DHtmlComponent
-    {
-        private readonly WorklistItemSummaryBase _worklistItem;
+	public class OrderDetailViewComponent : DHtmlComponent
+	{
+		private readonly WorklistItemSummaryBase _worklistItem;
 
-        public OrderDetailViewComponent(WorklistItemSummaryBase worklistItem)
-        {
-            _worklistItem = worklistItem;
-        }
+		public OrderDetailViewComponent(WorklistItemSummaryBase worklistItem)
+		{
+			_worklistItem = worklistItem;
+		}
 
-        public override void Start()
-        {
-            SetUrl(OrderDetailViewComponentSettings.Default.OrderDetailPageUrl);
-            base.Start();
-        }
+		public override void Start()
+		{
+			SetUrl(WebResourcesSettings.Default.OrderDetailPageUrl);
+			base.Start();
+		}
 
-        public void Refresh()
-        {
-            NotifyAllPropertiesChanged();
-        }
+		public void Refresh()
+		{
+			NotifyAllPropertiesChanged();
+		}
 
-        protected override DataContractBase GetHealthcareContext()
-        {
-            return _worklistItem;
-        }
-    }
+		protected override DataContractBase GetHealthcareContext()
+		{
+			return _worklistItem;
+		}
+	}
 }
