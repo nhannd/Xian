@@ -45,23 +45,14 @@ namespace ClearCanvas.Healthcare.Alert
     [ExtensionOf(typeof(PatientProfileAlertExtensionPoint))]
     public class ReconciliationAlert : PatientProfileAlertBase
     {
-        private class ReconciliationAlertNotification : AlertNotification
+        public override AlertNotification Test(PatientProfile profile, IPersistenceContext context)
         {
-            public ReconciliationAlertNotification()
-                : base ("Patient has unreconciled records", "High", "Reconciliation Alert")
-            {
-            }
-        }
-
-        public override IAlertNotification Test(PatientProfile profile, IPersistenceContext context)
-        {
-            ReconciliationAlertNotification alertNotification = new ReconciliationAlertNotification();
             IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)(new PatientReconciliationStrategyExtensionPoint()).CreateExtension();
 
             IList<PatientProfileMatch> matches = strategy.FindReconciliationMatches(profile, context);
             if (matches.Count > 0)
             {
-                return alertNotification;
+                return new AlertNotification(this.GetType(), new string[]{});
             }
 
             return null;

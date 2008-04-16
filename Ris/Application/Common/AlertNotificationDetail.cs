@@ -40,26 +40,18 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class AlertNotificationDetail : DataContractBase
     {
-        public AlertNotificationDetail(string representation, string severity, string type, List<string> reasons)
+        public AlertNotificationDetail(string alertClassName, string alertClassDisplayName, List<string> reasons)
         {
-            this.Representation = representation;
-            this.Severity = severity;
-            this.Type = type;
+            this.AlertClassName = alertClassName;
+            this.AlertClassDisplayName = alertClassDisplayName;
             this.Reasons = reasons;
         }
 
-        public AlertNotificationDetail()
-        {
-        }
+        [DataMember]
+        public string AlertClassName;
 
         [DataMember]
-        public string Representation;
-
-        [DataMember]
-        public string Severity;
-
-        [DataMember]
-        public string Type;
+        public string AlertClassDisplayName;
 
         [DataMember]
         public List<string> Reasons;

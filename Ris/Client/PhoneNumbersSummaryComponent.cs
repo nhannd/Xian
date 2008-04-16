@@ -171,7 +171,7 @@ namespace ClearCanvas.Ris.Client
 
         public void DeleteSelectedPhoneNumber()
         {
-            if (this.Host.ShowMessageBox(SR.MessageDeleteSelectedPhoneNumber, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+            if (this.Host.ShowMessageBox(SR.MessageConfirmDeleteSelectedPhoneNumber, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 //  Must use temporary TelephoneNumber otherwise as a side effect TableDate.Remove() will change the current selection 
                 //  resulting in the wrong TelephoneNumber being removed from the PatientProfile

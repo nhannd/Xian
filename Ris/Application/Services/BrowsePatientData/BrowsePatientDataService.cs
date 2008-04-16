@@ -107,14 +107,14 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
                                                                                  request.IncludeAttachments);
             if (request.IncludeAlerts)
             {
-                List<IAlertNotification> alerts = new List<IAlertNotification>();
+                List<AlertNotification> alerts = new List<AlertNotification>();
                 alerts.AddRange(AlertHelper.Instance.Test(profile.Patient, this.PersistenceContext));
                 alerts.AddRange(AlertHelper.Instance.Test(profile, this.PersistenceContext));
 
                 AlertAssembler alertAssembler = new AlertAssembler();
                 response.PatientAlerts =
-                    CollectionUtils.Map<IAlertNotification, AlertNotificationDetail>(alerts,
-                    delegate(IAlertNotification alert)
+                    CollectionUtils.Map<AlertNotification, AlertNotificationDetail>(alerts,
+                    delegate(AlertNotification alert)
                     {
                         return alertAssembler.CreateAlertNotification(alert);
                     });
@@ -169,9 +169,9 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             {
                 AlertAssembler alertAssembler = new AlertAssembler();
                 response.OrderAlerts =
-                    CollectionUtils.Map<IAlertNotification, AlertNotificationDetail>(
+                    CollectionUtils.Map<AlertNotification, AlertNotificationDetail>(
                     AlertHelper.Instance.Test(order, this.PersistenceContext),
-                    delegate(IAlertNotification alert)
+                    delegate(AlertNotification alert)
                     {
                         return alertAssembler.CreateAlertNotification(alert);
                     });

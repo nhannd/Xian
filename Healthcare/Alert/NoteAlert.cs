@@ -44,28 +44,21 @@ namespace ClearCanvas.Healthcare.Alert
     [ExtensionOf(typeof(PatientAlertExtensionPoint))]
     public class NoteAlert : PatientAlertBase
     {
-        private class NoteAlertNotification : AlertNotification
+        public override AlertNotification Test(Patient patient, IPersistenceContext context)
         {
-            public NoteAlertNotification()
-                : base ("Patient contains high severity notes", "High", "Note Alert")
-            {
-            }
-        }
-
-        public override IAlertNotification Test(Patient patient, IPersistenceContext context)
-        {
-            NoteAlertNotification alertNotification = new NoteAlertNotification();
-
+            List<string> reasons = new List<string>();
             foreach (PatientNote note in patient.Notes)
             {
-                if (note.Category.Severity == NoteSeverity.H)
-                    alertNotification.Reasons.Add(note.Category.Name);
+                if (note.IsCurrent && note.Category.Severity == NoteSeverity.H)
+                {
+                    if(!string.IsNullOrEmpty(note.Comment))
+                       reasons.Add(string.Format("{0}: {1}", note.Category.Name, note.Comment));
+                    else
+                       reasons.Add(note.Category.Name);
+                }
             }
 
-            if (alertNotification.Reasons.Count > 0)
-                return alertNotification;
-
-            return null;
+            return reasons.Count > 0 ? new AlertNotification(this.GetType(), reasons) : null; 
         }
     }
 }

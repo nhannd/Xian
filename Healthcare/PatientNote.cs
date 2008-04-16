@@ -71,6 +71,14 @@ namespace ClearCanvas.Healthcare {
             get { return this.ValidRange == null || this.ValidRange.Includes(Platform.Time); }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="PatientNote"/> has expired.
+        /// </summary>
+        public bool IsExpired
+        {
+            get { return _validRange != null && _validRange.Until < Platform.Time; }
+        }
+
         private void CustomInitialize()
         {
         }

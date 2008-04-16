@@ -47,15 +47,30 @@ namespace ClearCanvas.Ris.Client
             this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnCategory,
                 delegate(PatientNoteDetail n) { return (n.Category == null ? "" : n.Category.Name); },
                 0.2f));
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnCreatedOn,
-                delegate(PatientNoteDetail n) { return n.CreationTime == null ? SR.LabelNew : Format.Date(n.CreationTime); },
-                0.2f));
             this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnAuthor,
                 delegate(PatientNoteDetail n) { return n.Author == null ? SR.LabelMe : PersonNameFormat.Format(n.Author.Name); },
                 0.2f));
 
+            ITableColumn _createdOnColumn;
+            this.Columns.Add(_createdOnColumn = new TableColumn<PatientNoteDetail, string>(SR.ColumnCreatedOn,
+                delegate(PatientNoteDetail n) { return n.CreationTime == null ? SR.LabelNew : Format.DateTime(n.CreationTime); },
+                0.2f));
+            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnExpiryDate,
+                delegate(PatientNoteDetail n)
+                {
+                    return n.ValidRangeUntil == null ? "" : Format.DateTime(n.ValidRangeUntil);
+                },
+                0.2f));
+
             this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnComments,
                 delegate(PatientNoteDetail n) { return n.Comment; }, 1));
+            
+
+            // there aren't any items to sort right now, but calling this sets the default sort parameters to "Created" column desc
+            this.Sort(new TableSortParams(_createdOnColumn, false));
         }
+
+
+
     }
 }

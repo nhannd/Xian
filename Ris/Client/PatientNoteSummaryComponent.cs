@@ -85,6 +85,7 @@ namespace ClearCanvas.Ris.Client
                 _notes = value;
                 _noteTable.Items.Clear();
                 _noteTable.Items.AddRange(_notes);
+                _noteTable.Sort();
             }
         }
 
@@ -106,13 +107,14 @@ namespace ClearCanvas.Ris.Client
             set
             {
                 _currentNoteSelection = (PatientNoteDetail)value.Item;
-                NoteSelectionChanged();
+                UpdateNoteActionEnablement();
             }
         }
 
         public void AddNote()
         {
             PatientNoteDetail note = new PatientNoteDetail();
+            note.Category = _noteCategoryChoices.Count == 0 ? null : _noteCategoryChoices[0];
 
             try
             {
@@ -138,6 +140,10 @@ namespace ClearCanvas.Ris.Client
             // can occur if user double clicks while holding control
             if (_currentNoteSelection == null) return;
 
+            // don't allow editing of expired notes
+            if(_currentNoteSelection.IsExpired)
+                return;
+
             PatientNoteDetail note = (PatientNoteDetail)_currentNoteSelection.Clone();
 
             try
@@ -146,13 +152,15 @@ namespace ClearCanvas.Ris.Client
                 ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateNote);
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    // delete and re-insert to ensure that TableView updates correctly
-                    PatientNoteDetail toBeRemoved = _currentNoteSelection;
-                    _noteTable.Items.Remove(toBeRemoved);
-                    _notes.Remove(toBeRemoved);
-
-                    _noteTable.Items.Add(note);
+                    _notes.Remove(_currentNoteSelection);
                     _notes.Add(note);
+
+                    // update table
+                    int i = _noteTable.Items.IndexOf(_currentNoteSelection);
+                    _noteTable.Items[i] = note;
+
+                    _currentNoteSelection = note;
+                    NotifyPropertyChanged("SelectedNote");
 
                     this.Modified = true;
                 }
@@ -167,23 +175,31 @@ namespace ClearCanvas.Ris.Client
 
         public void DeleteSelectedNote()
         {
-            if (this.Host.ShowMessageBox(SR.MessageDeleteSelectedNote, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+            if(_currentNoteSelection == null || !IsNewNote(_currentNoteSelection))
+                return;
+
+            if (this.Host.ShowMessageBox(SR.MessageConfirmDeleteSelectedNote, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 //  Must use temporary note otherwise as a side effect TableDate.Remove() will change the current selection 
                 //  resulting in the wrong note being removed from the Patient
                 PatientNoteDetail toBeRemoved = _currentNoteSelection;
                 _noteTable.Items.Remove(toBeRemoved);
                 _notes.Remove(toBeRemoved);
-                this.Modified = true;
             }
         }
 
         #endregion
 
-        private void NoteSelectionChanged()
+        private void UpdateNoteActionEnablement()
         {
-            _noteActionHandler.Edit.Enabled = _currentNoteSelection != null;
-            _noteActionHandler.Delete.Enabled = (_currentNoteSelection != null && _currentNoteSelection.CreationTime == null);
+            // don't allow editing of expired notes
+            _noteActionHandler.Edit.Enabled = _currentNoteSelection != null && !_currentNoteSelection.IsExpired;
+            _noteActionHandler.Delete.Enabled = (_currentNoteSelection != null) && IsNewNote(_currentNoteSelection);
+        }
+
+        private bool IsNewNote(PatientNoteDetail note)
+        {
+            return note.CreationTime == null;
         }
     }
 }

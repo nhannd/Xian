@@ -45,7 +45,8 @@ namespace ClearCanvas.Ris.Application.Common
             StaffSummary createdBy, 
             DateTime? creationTime,
             DateTime? validRangeFrom,
-            DateTime? validRangeUntil)
+            DateTime? validRangeUntil,
+            bool isExpired)
         {
             this.Comment = comment;
             this.Category = category;
@@ -53,6 +54,7 @@ namespace ClearCanvas.Ris.Application.Common
             this.CreationTime = creationTime;
             this.ValidRangeFrom = validRangeFrom;
             this.ValidRangeUntil = validRangeUntil;
+            this.IsExpired = isExpired;
         }
 
         public PatientNoteDetail()
@@ -77,6 +79,9 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public DateTime? ValidRangeUntil;
 
+        [DataMember]
+        public bool IsExpired;
+
         #region ICloneable Members
 
         public object Clone()
@@ -88,7 +93,7 @@ namespace ClearCanvas.Ris.Application.Common
             clone.CreationTime = this.CreationTime;
             clone.ValidRangeFrom = this.ValidRangeFrom;
             clone.ValidRangeUntil = this.ValidRangeUntil;
-
+            clone.IsExpired = this.IsExpired;
             return clone;
         }
 

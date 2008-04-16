@@ -38,7 +38,7 @@ using ClearCanvas.Ris.Application.Common.Admin;
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class PatientNoteCategorySummary : DataContractBase, ICloneable
+    public class PatientNoteCategorySummary : DataContractBase, ICloneable, IEquatable<PatientNoteCategorySummary>
     {
         public PatientNoteCategorySummary(EntityRef noteCategoryRef, string name, string description, EnumValueInfo severity)
         {
@@ -77,5 +77,22 @@ namespace ClearCanvas.Ris.Application.Common
         }
 
         #endregion
+
+        public bool Equals(PatientNoteCategorySummary patientNoteCategorySummary)
+        {
+            if (patientNoteCategorySummary == null) return false;
+            return Equals(NoteCategoryRef, patientNoteCategorySummary.NoteCategoryRef);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj)) return true;
+            return Equals(obj as PatientNoteCategorySummary);
+        }
+
+        public override int GetHashCode()
+        {
+            return NoteCategoryRef.GetHashCode();
+        }
     }
 }

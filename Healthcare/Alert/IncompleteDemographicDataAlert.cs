@@ -46,18 +46,8 @@ namespace ClearCanvas.Healthcare.Alert
     [ExtensionOf(typeof(PatientProfileAlertExtensionPoint))]
     class IncompleteDemographicDataAlert : PatientProfileAlertBase
     {
-        private class IncompleteDemographicDataAlertNotification : AlertNotification
+        public override AlertNotification Test(PatientProfile profile, IPersistenceContext context)
         {
-            public IncompleteDemographicDataAlertNotification()
-                : base("Patient has incomplete demographic data", "High", "Incomplete Demographic Data Alert")
-            {
-            }
-        }
-
-        public override IAlertNotification Test(PatientProfile profile, IPersistenceContext context)
-        {
-            IncompleteDemographicDataAlertNotification alertNotification = new IncompleteDemographicDataAlertNotification();
-
             IDictionary<string, ISpecification> specs;
 
             try
@@ -75,6 +65,7 @@ namespace ClearCanvas.Healthcare.Alert
                 specs = new Dictionary<string, ISpecification>();
             }
             
+            List<string> reasons = new List<string>();
             foreach (KeyValuePair<string, ISpecification> kvp in specs)
             {
                 TestResult result = kvp.Value.Test(profile);
@@ -82,12 +73,12 @@ namespace ClearCanvas.Healthcare.Alert
                 {
                     List<string> failureMessages = new List<string>();
                     ExtractFailureMessage(result.Reasons, failureMessages);
-                    alertNotification.Reasons.AddRange(failureMessages);
+                    reasons.AddRange(failureMessages);
                 }
             }
 
-            if (alertNotification.Reasons.Count > 0)
-                return alertNotification;
+            if (reasons.Count > 0)
+                return new AlertNotification(this.GetType(), reasons);
 
             return null;
         }

@@ -35,44 +35,25 @@ using System.Text;
 
 namespace ClearCanvas.Healthcare.Alert
 {
-    public abstract class AlertNotification : IAlertNotification
+    public class AlertNotification
     {
-        private string _rep;
-        private string _sev;
-        private string _type;
-        private List<string> _details;
+        private readonly Type _alertClass;
+        private readonly List<string> _reasons;
 
-        protected AlertNotification(string representation, string severity, string type)
+        public AlertNotification(Type alertClass, IEnumerable<string> reasons)
         {
-            _rep = representation;
-            _sev = severity;
-            _type = type;
-            _details = new List<string>();
+            _alertClass = alertClass;
+            _reasons = new List<string>(reasons);
         }
 
-        #region IAlertNotification Members
-
-        public string Representation
+        public Type AlertClass
         {
-            get { return _rep; }
+            get { return _alertClass; }
         }
 
-        public string Severity
+        public IEnumerable<string> Reasons
         {
-            get { return _sev; }
+            get { return _reasons; }
         }
-
-        public string Type
-        {
-            get { return _type; }
-        }
-
-        public List<string> Reasons
-        {
-            get { return _details; }
-            set { _details = value; }
-        }
-
-        #endregion
     }
 }

@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Application.Services
             private readonly IPersistenceContext _context;
 
             public PatientNoteSynchronizeHelper(PatientNoteAssembler assembler, Staff currentUserStaff, IPersistenceContext context)
-                :base(false, false)
+                :base(true, false)
             {
                 _assembler = assembler;
                 _currentUserStaff = currentUserStaff;
@@ -63,6 +63,11 @@ namespace ClearCanvas.Ris.Application.Services
             protected override void AddItem(PatientNoteDetail sourceItem, ICollection<PatientNote> notes)
             {
                 notes.Add(_assembler.CreateNote(sourceItem, _currentUserStaff, _context));
+            }
+
+            protected override void UpdateItem(PatientNote destItem, PatientNoteDetail sourceItem, ICollection<PatientNote> dest)
+            {
+                _assembler.UpdateNote(destItem, sourceItem);
             }
         }
 
@@ -83,6 +88,7 @@ namespace ClearCanvas.Ris.Application.Services
             detail.CreationTime = note.CreationTime;
             detail.ValidRangeFrom = note.ValidRange.From;
             detail.ValidRangeUntil = note.ValidRange.Until;
+            detail.IsExpired = note.IsExpired;
 
             PatientNoteCategoryAssembler categoryAssembler = new PatientNoteCategoryAssembler();
             detail.Category = categoryAssembler.CreateNoteCategorySummary(note.Category, context);
@@ -100,6 +106,14 @@ namespace ClearCanvas.Ris.Application.Services
             note.ValidRange.Until = detail.ValidRangeUntil;
 
             return note;
+        }
+
+        public void UpdateNote(PatientNote note, PatientNoteDetail detail)
+        {
+            // the only properties of the note that can be updated is the ValidRange
+            // and only if it is not already expired
+            if (!note.IsExpired)
+                note.ValidRange.Until = detail.ValidRangeUntil;
         }
     }
 }

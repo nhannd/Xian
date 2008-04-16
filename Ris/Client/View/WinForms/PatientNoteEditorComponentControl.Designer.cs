@@ -68,6 +68,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
+            this._expiryDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
@@ -80,15 +81,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel3, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel3, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this._expiryDate, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(341, 318);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(341, 364);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // flowLayoutPanel1
@@ -120,7 +123,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // 
             this._description.LabelText = "Description";
             this._description.Location = new System.Drawing.Point(2, 47);
-            this._description.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._description.Margin = new System.Windows.Forms.Padding(2);
             this._description.Name = "_description";
             this._description.ReadOnly = true;
             this._description.Size = new System.Drawing.Size(330, 69);
@@ -143,7 +146,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // 
             this._comment.LabelText = "Comment";
             this._comment.Location = new System.Drawing.Point(2, 2);
-            this._comment.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._comment.Margin = new System.Windows.Forms.Padding(2);
             this._comment.Name = "_comment";
             this._comment.Size = new System.Drawing.Size(330, 149);
             this._comment.TabIndex = 0;
@@ -156,10 +159,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.flowLayoutPanel3.Controls.Add(this._cancelButton);
             this.flowLayoutPanel3.Controls.Add(this._acceptButton);
             this.flowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel3.Location = new System.Drawing.Point(3, 286);
+            this.flowLayoutPanel3.Location = new System.Drawing.Point(3, 331);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
             this.flowLayoutPanel3.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowLayoutPanel3.Size = new System.Drawing.Size(335, 29);
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(335, 30);
             this.flowLayoutPanel3.TabIndex = 2;
             // 
             // _cancelButton
@@ -182,6 +185,19 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._acceptButton.UseVisualStyleBackColor = true;
             this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
             // 
+            // _expiryDate
+            // 
+            this._expiryDate.LabelText = "Expiry Date";
+            this._expiryDate.Location = new System.Drawing.Point(2, 285);
+            this._expiryDate.Margin = new System.Windows.Forms.Padding(2);
+            this._expiryDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._expiryDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+            this._expiryDate.Name = "_expiryDate";
+            this._expiryDate.Nullable = true;
+            this._expiryDate.Size = new System.Drawing.Size(150, 41);
+            this._expiryDate.TabIndex = 0;
+            this._expiryDate.Value = new System.DateTime(2008, 4, 16, 12, 51, 2, 187);
+            // 
             // PatientNoteEditorComponentControl
             // 
             this.AcceptButton = this._acceptButton;
@@ -190,7 +206,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.CancelButton = this._cancelButton;
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "PatientNoteEditorComponentControl";
-            this.Size = new System.Drawing.Size(341, 318);
+            this.Size = new System.Drawing.Size(341, 364);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
@@ -211,6 +227,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _category;
         private ClearCanvas.Desktop.View.WinForms.TextAreaField _comment;
         private ClearCanvas.Desktop.View.WinForms.TextAreaField _description;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _expiryDate;
 
     }
 }

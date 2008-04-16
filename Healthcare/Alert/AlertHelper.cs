@@ -80,15 +80,15 @@ namespace ClearCanvas.Healthcare.Alert
         /// <param name="subject"></param>
         /// <param name="context"></param>
         /// <returns>A list of alert notifications on this subject</returns>
-        public IList<IAlertNotification> Test(Entity subject, IPersistenceContext context)
+        public IList<AlertNotification> Test(Entity subject, IPersistenceContext context)
         {
-            IList<IAlertNotification> alertNotifications = new List<IAlertNotification>();
+            List<AlertNotification> alertNotifications = new List<AlertNotification>();
 
             if (subject.Is<Patient>())
             {
                 foreach (IPatientAlert test in _patientAlertTests)
                 {
-                    IAlertNotification result = test.Test(subject.Downcast<Patient>(), context);
+                    AlertNotification result = test.Test(subject.Downcast<Patient>(), context);
                     if (result != null)
                         alertNotifications.Add(result);
                 }
@@ -97,7 +97,7 @@ namespace ClearCanvas.Healthcare.Alert
             {
                 foreach (IPatientProfileAlert test in _patientProfileAlertTests)
                 {
-                    IAlertNotification result = test.Test(subject.Downcast<PatientProfile>(), context);
+                    AlertNotification result = test.Test(subject.Downcast<PatientProfile>(), context);
                     if (result != null)
                         alertNotifications.Add(result);
                 }
@@ -106,7 +106,7 @@ namespace ClearCanvas.Healthcare.Alert
             {
                 foreach (IOrderAlert test in _orderAlertTests)
                 {
-                    IAlertNotification result = test.Test(subject.Downcast<Order>(), context);
+                    AlertNotification result = test.Test(subject.Downcast<Order>(), context);
                     if (result != null)
                         alertNotifications.Add(result);
                 }

@@ -43,26 +43,7 @@ namespace ClearCanvas.Healthcare.Alert
     {
     }
 
-    public abstract class OrderAlertBase : IOrderAlert
+    public abstract class OrderAlertBase : AlertBase<Order>, IOrderAlert
     {
-        #region IOrderAlert Members
-
-        public string Name
-        {
-            get { return "OrderAlert"; }
-        }
-
-        /// <summary>
-        /// Test the order for any alert conditions.  This method must be thread-safe
-        /// </summary>
-        /// <param name="order"></param>
-        /// <param name="context"></param>
-        /// <returns>NULL if the test does not trigger an alert </returns>
-        public virtual IAlertNotification Test(Order order, IPersistenceContext context)
-        {
-            return null;
-        }
-
-        #endregion
     }
 }

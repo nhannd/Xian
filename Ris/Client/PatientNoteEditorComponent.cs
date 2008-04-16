@@ -36,6 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop.Validation;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -48,12 +49,20 @@ namespace ClearCanvas.Ris.Client
     public class PatientNoteEditorComponent : ApplicationComponent
     {
         private readonly PatientNoteDetail _note;
-        private readonly IList<PatientNoteCategorySummary> _noteCategoryChoices;
+        private readonly List<PatientNoteCategorySummary> _noteCategoryChoices;
+        private readonly DateTime? _today;
 
-        public PatientNoteEditorComponent(PatientNoteDetail noteDetail, IList<PatientNoteCategorySummary> noteCategoryChoices)
+        public PatientNoteEditorComponent(PatientNoteDetail noteDetail, List<PatientNoteCategorySummary> noteCategoryChoices)
         {
             _note = noteDetail;
             _noteCategoryChoices = noteCategoryChoices;
+
+            this.Validation.Add(new ValidationRule("ExpiryDate",
+                delegate
+                {
+                    bool valid = _note.ValidRangeUntil == null || _note.ValidRangeUntil >= Platform.Time.Date;
+                    return new ValidationResult(valid, "Expiry date cannot be in the past.");
+                }));
         }
 
         public override void Start()
@@ -74,38 +83,40 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public DateTime? ValidRangeFrom
+        public DateTime? ExpiryDate
         {
-            get { return _note.ValidRangeFrom; }
-            set { _note.ValidRangeFrom = value; }
-        }
-
-        public DateTime? ValidRangeUntil
-        {
-            get { return _note.ValidRangeUntil; }
-            set { _note.ValidRangeUntil = value; }
+            get { return _note.ValidRangeUntil == null ? null : (DateTime?)_note.ValidRangeUntil.Value.Date; }
+            set
+            {
+                _note.ValidRangeUntil = (value == null) ? null : (DateTime?)value.Value.Date;
+                this.Modified = true;
+            }
         }
 
         [ValidateNotNull]
-        public string Category
+        public PatientNoteCategorySummary Category
         {
             get 
-            { 
-                return _note.Category == null ? "" :
-                    String.Format(SR.FormatNoteCategory, _note.Category.Name, _note.Category.Severity.Value); 
+            {
+                return _note.Category;
             }
             set
             {
-                _note.Category = (value == "") ? null :
-                    CollectionUtils.SelectFirst(_noteCategoryChoices,
-                        delegate(PatientNoteCategorySummary category) 
-                        {
-                            return (String.Format(SR.FormatNoteCategory, category.Name, category.Severity.Value) == value); 
-                        });
+                if (_note.Category != value)
+                {
+                    _note.Category = value;
 
-                SignalCategoryChanged();
-                this.Modified = true;
+                    NotifyPropertyChanged("Category");
+                    NotifyPropertyChanged("CategoryDescription");
+                    this.Modified = true;
+                }
             }
+        }
+
+        public string FormatNoteCategory(object item)
+        {
+            PatientNoteCategorySummary noteCategory = (PatientNoteCategorySummary) item;
+            return String.Format(SR.FormatNoteCategory, noteCategory.Name, noteCategory.Severity.Value);
         }
 
         public string CategoryDescription
@@ -113,21 +124,11 @@ namespace ClearCanvas.Ris.Client
             get { return _note.Category == null ? "" : _note.Category.Description; }
         }
 
-        public List<string> CategoryChoices
+        public IList CategoryChoices
         {
             get 
             {
-                List<string> categoryStrings = new List<string>();
-                categoryStrings.Add("");
-                categoryStrings.AddRange(
-                    CollectionUtils.Map<PatientNoteCategorySummary, string>(
-                        _noteCategoryChoices,
-                        delegate(PatientNoteCategorySummary category) 
-                        {
-                            return String.Format(SR.FormatNoteCategory, category.Name, category.Severity.Value);
-                        }));
-
-                return categoryStrings;
+                return _noteCategoryChoices;
             }
         }
 
@@ -157,7 +158,7 @@ namespace ClearCanvas.Ris.Client
 
         public bool AcceptEnabled
         {
-            get { return this.Modified && this.IsNewItem; }
+            get { return this.Modified; }
         }
 
         public event EventHandler AcceptEnabledChanged
@@ -168,9 +169,5 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-        private void SignalCategoryChanged()
-        {
-            NotifyPropertyChanged("CategoryDescription");
-        }
     }
 }

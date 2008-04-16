@@ -187,7 +187,7 @@ namespace ClearCanvas.Ris.Client
 
         public void DeleteSelectedContactPerson()
         {
-            if (this.Host.ShowMessageBox(SR.MessageDeleteSelectedAddress, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+            if (this.Host.ShowMessageBox(SR.MessageConfirmDeleteSelectedAddress, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 //  Must use temporary Address otherwise as a side effect TableDate.Remove() will change the current selection 
                 //  resulting in the wrong Address being removed from the PatientProfile

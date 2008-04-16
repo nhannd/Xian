@@ -47,15 +47,12 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class AlertAssembler
     {
-        public AlertNotificationDetail CreateAlertNotification(IAlertNotification alertNotification)
+        public AlertNotificationDetail CreateAlertNotification(AlertNotification alertNotification)
         {
-            AlertNotificationDetail detail = new AlertNotificationDetail();
-            detail.Representation = alertNotification.Representation;
-            detail.Severity = alertNotification.Severity;
-            detail.Type = alertNotification.Type;
-            detail.Reasons = alertNotification.Reasons;
-
-            return detail;
+            return new AlertNotificationDetail(
+                alertNotification.AlertClass.Name,
+                alertNotification.AlertClass.Name,  //TODO: this is supposed to be a display name - put an attribute on Alert classes to have a display name
+                new List<string>(alertNotification.Reasons));
         }
     }
 }

@@ -35,14 +35,12 @@ namespace ClearCanvas.Healthcare.Alert
 {
     public interface IAlert<TEntity>
     {
-        string Name { get; }
-
         /// <summary>
         /// Test the entity for any alert conditions.  This method must be thread-safe
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="context"></param>
         /// <returns>NULL if the test does not trigger an alert </returns>
-        IAlertNotification Test(TEntity entity, IPersistenceContext context);
+        AlertNotification Test(TEntity entity, IPersistenceContext context);
     }
 }

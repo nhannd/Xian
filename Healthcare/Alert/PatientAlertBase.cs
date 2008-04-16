@@ -43,26 +43,7 @@ namespace ClearCanvas.Healthcare.Alert
     {
     }
 
-    public abstract class PatientAlertBase : IPatientAlert
+    public abstract class PatientAlertBase : AlertBase<Patient>, IPatientAlert
     {
-        #region IPatientAlert Members
-
-        public string Name
-        {
-            get { return "PatientAlert"; }
-        }
-
-        /// <summary>
-        /// Test the patient for any alert conditions.  This method must be thread-safe
-        /// </summary>
-        /// <param name="patient"></param>
-        /// <param name="context"></param>
-        /// <returns>NULL if the test does not trigger an alert </returns>
-        public virtual IAlertNotification Test(Patient patient, IPersistenceContext context)
-        {
-            return null;
-        }
-
-        #endregion
     }
 }

@@ -43,21 +43,11 @@ namespace ClearCanvas.Healthcare.Alert
     [ExtensionOf(typeof(PatientProfileAlertExtensionPoint))]
     class LanguageAlert : PatientProfileAlertBase
     {
-        private class LanguageAlertNotification : AlertNotification
+        public override AlertNotification Test(PatientProfile profile, IPersistenceContext context)
         {
-            public LanguageAlertNotification()
-                : base("Patient may not speak English", "High", "Language Alert")
-            {
-            }
-        }
-
-        public override IAlertNotification Test(PatientProfile profile, IPersistenceContext context)
-        {
-            LanguageAlertNotification alertNotification = new LanguageAlertNotification();
             if (profile.PrimaryLanguage != null && profile.PrimaryLanguage.Code != "en")
             {
-                alertNotification.Reasons.Add(profile.PrimaryLanguage.Value);
-                return alertNotification;
+                return new AlertNotification(this.GetType(), new string[] { profile.PrimaryLanguage.Value });
             }
 
             return null;

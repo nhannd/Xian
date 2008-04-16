@@ -151,7 +151,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created On.
+        ///   Looks up a localized string similar to Created.
         /// </summary>
         internal static string ColumnCreatedOn {
             get {
@@ -745,6 +745,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete this address?.
+        /// </summary>
+        internal static string MessageConfirmDeleteSelectedAddress {
+            get {
+                return ResourceManager.GetString("MessageConfirmDeleteSelectedAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete the selected item(s)?.
         /// </summary>
         internal static string MessageConfirmDeleteSelectedItems {
@@ -754,29 +763,29 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete this address?.
-        /// </summary>
-        internal static string MessageDeleteSelectedAddress {
-            get {
-                return ResourceManager.GetString("MessageDeleteSelectedAddress", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this note?.
         /// </summary>
-        internal static string MessageDeleteSelectedNote {
+        internal static string MessageConfirmDeleteSelectedNote {
             get {
-                return ResourceManager.GetString("MessageDeleteSelectedNote", resourceCulture);
+                return ResourceManager.GetString("MessageConfirmDeleteSelectedNote", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this phone number?.
         /// </summary>
-        internal static string MessageDeleteSelectedPhoneNumber {
+        internal static string MessageConfirmDeleteSelectedPhoneNumber {
             get {
-                return ResourceManager.GetString("MessageDeleteSelectedPhoneNumber", resourceCulture);
+                return ResourceManager.GetString("MessageConfirmDeleteSelectedPhoneNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to permanently expire the selected note?.
+        /// </summary>
+        internal static string MessageConfirmExpireSelectedNote {
+            get {
+                return ResourceManager.GetString("MessageConfirmExpireSelectedNote", resourceCulture);
             }
         }
         

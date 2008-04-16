@@ -165,7 +165,7 @@ namespace ClearCanvas.Ris.Client
 
         public void DeleteSelectedNote()
         {
-            if (this.Host.ShowMessageBox(SR.MessageDeleteSelectedNote, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+            if (this.Host.ShowMessageBox(SR.MessageConfirmDeleteSelectedNote, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 //  Must use temporary note otherwise as a side effect TableDate.Remove() will change the current selection 
                 //  resulting in the wrong note being removed from the Patient
