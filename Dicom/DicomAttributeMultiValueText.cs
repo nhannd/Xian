@@ -167,19 +167,22 @@ namespace ClearCanvas.Dicom
             if (value == null)
                 return;
 
-            if (DicomSettings.Default.ValidateVrLengths)
+            if (DicomSettings.Default.ValidateVrLengths || DicomImplementation.UnitTest)
             {
                 if (Tag.VR.MaximumLength != 0)
                 {
                     string[] valueArray = value.Trim().Split('\\');
                     foreach (string subVal in valueArray)
-                        if (subVal.Length > Tag.VR.MaximumLength)
+                    {
+                        string trimmedVal = subVal.Trim();
+                        if (trimmedVal.Length > Tag.VR.MaximumLength)
                             throw new DicomDataException(
                                 String.Format("Invalid value length ({0}) for tag {1} of VR {2} of max size {3}", subVal, Tag, Tag.VR, Tag.VR.MaximumLength));
+                    }
                 }
             }
 
-            if (DicomSettings.Default.ValidateVrValues && Validator != null)
+            if ((DicomSettings.Default.ValidateVrValues || DicomImplementation.UnitTest) && Validator != null)
             {
                 Validator.ValidateString(Tag, value);
             }

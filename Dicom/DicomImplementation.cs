@@ -63,9 +63,18 @@ namespace ClearCanvas.Dicom
         private static DicomUid _classUid = new DicomUid("1.3.6.1.4.1.25403.1.1.1", "Implementation Class UID", UidType.Unknown);
         private static string _version = "Dicom 0.1";
         private static IDicomCharacterSetParser _characterParser = new SpecificCharacterSetParser();
+        private static bool _unitTest = false;
         #endregion
 
         #region Public Static Properties
+        /// <summary>
+        /// Unit tests are currently being run.
+        /// </summary>
+        public static bool UnitTest
+        {
+            get { return _unitTest; }
+            set { _unitTest = value; }
+        }
         /// <summary>
         /// The DICOM Implementation Class UID.
         /// </summary>

@@ -136,6 +136,10 @@ namespace ClearCanvas.Dicom.Tests
 
             SetupMR(dataSet);
 
+
+            string studyId = file.DataSet[DicomTags.StudyId].GetString(0, "");
+            Assert.AreEqual(studyId, "1933");
+
             SetupMetaInfo(file);
 
             // Little Endian Tests

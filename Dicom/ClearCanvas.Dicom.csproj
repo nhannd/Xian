@@ -207,6 +207,7 @@
     <Compile Include="OffisNetwork\OffisDicomHelper.cs" />
     <Compile Include="OffisNetwork\Tests\DcmNetTest.cs" />
     <Compile Include="Tests\AbstractTest.cs" />
+    <Compile Include="Tests\AssociationTests.cs" />
     <Compile Include="Tests\AttributeTests.cs" />
     <Compile Include="Tests\DicomFieldTests.cs" />
     <Compile Include="Tests\DicomStringHelperTests.cs" />

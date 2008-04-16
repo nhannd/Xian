@@ -30,20 +30,14 @@
 #endregion
 
 #if UNIT_TESTS
+
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net;
 using System.Threading;
-
+using ClearCanvas.Dicom.Network;
 using NUnit.Framework;
 
-using ClearCanvas.ImageServer.Dicom;
-using ClearCanvas.ImageServer.Dicom.Network;
-using ClearCanvas.ImageServer.Dicom.Exceptions;
-
-
-namespace ClearCanvas.ImageServer.Dicom.Tests
+namespace ClearCanvas.Dicom.Tests
 {
     public enum TestTypes
     {
@@ -94,7 +88,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
                 DicomMessage msg = new DicomMessage();
 
                 _test.SetupMR(msg.DataSet);
-                byte id = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass, TransferSyntax.ExplicitVRLittleEndian);
+                byte id = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass, TransferSyntax.ExplicitVrLittleEndian);
 
                 client.SendCStoreRequest(id, client.NextMessageID(), DicomPriority.Medium, msg);
             }
@@ -188,8 +182,13 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
             bool same = testSet.Equals(message.DataSet);
 
+
+            string studyId = message.DataSet[DicomTags.StudyId].GetString(0, "");
+            Assert.AreEqual(studyId, "1933");
+
+
             DicomUid sopInstanceUid;
-            bool ok = message.DataSet[DicomTags.SOPInstanceUID].TryGetUid(0, out sopInstanceUid);
+            bool ok = message.DataSet[DicomTags.SopInstanceUid].TryGetUid(0, out sopInstanceUid);
             if (!ok)
             {
                 DicomLogger.LogError("Unable to retrieve SOP Instance UID from request message.  Aborting association.");
@@ -197,7 +196,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
                 return;
             }
 
-            server.SendCStoreResponse(presentationID, message.MessageId,sopInstanceUid, DicomStatuses.Success);
+            server.SendCStoreResponse(presentationID, message.MessageId,sopInstanceUid.UID, DicomStatuses.Success);
 
         }
 
@@ -221,13 +220,12 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
         #endregion
     }
 
-       
     [TestFixture]
     public class AssociationTests : AbstractTest
     {
         TestTypes _serverType;
 
-        public IDicomServerHandler ServerHandlerCreator(AssociationParameters assoc)
+        public IDicomServerHandler ServerHandlerCreator(DicomServer server, ServerAssociationParameters assoc)
         {
             return new ServerHandler(this,_serverType);
         }  
@@ -239,20 +237,20 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
             /* Setup the Server */
             ServerAssociationParameters serverParameters = new ServerAssociationParameters("AssocTestServer", new IPEndPoint(IPAddress.Any, port));
-            byte pcid = serverParameters.AddPresentationContext(SopClass.MRImageStorage);
-            serverParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            serverParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRBigEndian);
-            serverParameters.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            byte pcid = serverParameters.AddPresentationContext(SopClass.MrImageStorage);
+            serverParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            serverParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrBigEndian);
+            serverParameters.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             _serverType = TestTypes.AssociationReject;
             DicomServer.StartListening(serverParameters, ServerHandlerCreator);
 
             /* Setup the client */
             ClientAssociationParameters clientParameters = new ClientAssociationParameters("AssocTestClient", "AssocTestServer",
-                                                                                new System.Net.IPEndPoint(IPAddress.Loopback, port));
-            pcid = clientParameters.AddPresentationContext(SopClass.CTImageStorage);
-            clientParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            clientParameters.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+                                                                                           new System.Net.IPEndPoint(IPAddress.Loopback, port));
+            pcid = clientParameters.AddPresentationContext(SopClass.CtImageStorage);
+            clientParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            clientParameters.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             /* Open the association */
             ClientHandler handler = new ClientHandler(this, TestTypes.AssociationReject);
@@ -266,9 +264,9 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
             /* Setup the client */
             clientParameters = new ClientAssociationParameters("AssocTestClient", "AssocTestServer",
-                                                                new System.Net.IPEndPoint(IPAddress.Loopback, port));
-            pcid = clientParameters.AddPresentationContext(SopClass.MRImageStorage);
-            clientParameters.AddTransferSyntax(pcid, TransferSyntax.JPEG2000ImageCompressionLosslessOnly);
+                                                               new System.Net.IPEndPoint(IPAddress.Loopback, port));
+            pcid = clientParameters.AddPresentationContext(SopClass.MrImageStorage);
+            clientParameters.AddTransferSyntax(pcid, TransferSyntax.Jpeg2000ImageCompressionLosslessOnly);
 
 
             /* Open the association */
@@ -292,24 +290,24 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
             /* Setup the Server */
             ServerAssociationParameters serverParameters = new ServerAssociationParameters("AssocTestServer",new IPEndPoint(IPAddress.Any,port));
-            byte pcid = serverParameters.AddPresentationContext(SopClass.MRImageStorage);
-            serverParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            serverParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRBigEndian);
-            serverParameters.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            byte pcid = serverParameters.AddPresentationContext(SopClass.MrImageStorage);
+            serverParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            serverParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrBigEndian);
+            serverParameters.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             _serverType = TestTypes.SendMR;
             DicomServer.StartListening(serverParameters, ServerHandlerCreator);
 
             /* Setup the client */
             ClientAssociationParameters clientParameters = new ClientAssociationParameters("AssocTestClient","AssocTestServer",
-                                                                                new System.Net.IPEndPoint(IPAddress.Loopback,port));
-            pcid = clientParameters.AddPresentationContext(SopClass.MRImageStorage);
-            clientParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            clientParameters.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+                                                                                           new System.Net.IPEndPoint(IPAddress.Loopback,port));
+            pcid = clientParameters.AddPresentationContext(SopClass.MrImageStorage);
+            clientParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            clientParameters.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = clientParameters.AddPresentationContext(SopClass.CTImageStorage);
-            clientParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            clientParameters.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            pcid = clientParameters.AddPresentationContext(SopClass.CtImageStorage);
+            clientParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            clientParameters.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             /* Open the association */
             ClientHandler handler = new ClientHandler(this,TestTypes.SendMR);
@@ -325,4 +323,5 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
     }
 }
+
 #endif

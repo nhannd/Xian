@@ -979,6 +979,8 @@ namespace ClearCanvas.Dicom.Tests
         [Test]
         public void AttributeDATest()
         {
+            DicomImplementation.UnitTest = true;
+
             AttributeDATestSuite test = new AttributeDATestSuite();
             test.TestConstructors();
             test.TestSet();
@@ -1013,6 +1015,8 @@ namespace ClearCanvas.Dicom.Tests
             }
             public void TestSet()
             {
+                DicomImplementation.UnitTest = true;
+
                 DicomAttributeDA attrib;
                 #region Set from string
 
