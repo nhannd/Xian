@@ -83,13 +83,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.WebControls.Panel Panel4;
         
         /// <summary>
-        /// DeleteToolbarButton control.
+        /// OpenStudyToolbarButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteToolbarButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OpenStudyToolbarButton;
         
         /// <summary>
         /// SendToolbarButton control.
@@ -101,13 +101,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton SendToolbarButton;
         
         /// <summary>
-        /// OpenStudyToolbarButton control.
+        /// DeleteToolbarButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OpenStudyToolbarButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteToolbarButton;
         
         /// <summary>
         /// FilterPanel control.

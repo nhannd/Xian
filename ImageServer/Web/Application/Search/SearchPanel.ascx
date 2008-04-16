@@ -7,7 +7,6 @@
 <%@ Register TagPrefix="clearcanvas" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" 
     Assembly="ClearCanvas.ImageServer.Web.Common" %>
 
-
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
         <asp:Panel ID="PagePanel" runat="server">
@@ -22,12 +21,11 @@
                                     <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
                                         <asp:Panel ID="Panel4" runat="server" CssClass="CSSToolbarContent">
                                             <clearcanvas:ToolbarButton 
-                                                ID="DeleteToolbarButton" runat="server" 
-                                                EnabledImageURL="~/images/icons/DeleteEnabled.png" 
-                                                DisabledImageURL="~/images/icons/DeleteDisabled.png"
-                                                AlternateText="Delete study"
-                                                OnClick="OnDeleteToolbarButtonClick"
-                                                />
+                                                ID="OpenStudyToolbarButton" runat="server" 
+                                                EnabledImageURL="~/images/icons/ViewDetailsEnabled.png" 
+                                                DisabledImageURL="~/images/icons/ViewDetailsDisabled.png"
+                                                AlternateText="Open study"
+                                                />                                            
                                             <clearcanvas:ToolbarButton 
                                                 ID="SendToolbarButton" runat="server" 
                                                 EnabledImageURL="~/images/icons/SendEnabled.png" 
@@ -35,10 +33,11 @@
                                                 AlternateText="Send study" 
                                                 />
                                             <clearcanvas:ToolbarButton 
-                                                ID="OpenStudyToolbarButton" runat="server" 
-                                                EnabledImageURL="~/images/icons/ViewDetailsEnabled.png" 
-                                                DisabledImageURL="~/images/icons/ViewDetailsDisabled.png"
-                                                AlternateText="Open study"
+                                                ID="DeleteToolbarButton" runat="server" 
+                                                EnabledImageURL="~/images/icons/DeleteEnabled.png" 
+                                                DisabledImageURL="~/images/icons/DeleteDisabled.png"
+                                                AlternateText="Delete study"
+                                                OnClick="OnDeleteToolbarButtonClick"
                                                 />
                                 </asp:Panel>
                                     </asp:Panel>
@@ -53,7 +52,7 @@
                                 <td>
                                 <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
                             <asp:Panel ID="Panel5" runat="server" CssClass="CSSFilterPanelBorder">
-                                <asp:Panel ID="Panel6" runat="server"  CssClass="CSSFilterPanelContent">
+                                <asp:Panel ID="Panel6" runat="server"  CssClass="CSSFilterPanelContent" DefaultButton="FilterButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                             <td align="left" valign="bottom">
@@ -74,10 +73,10 @@
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label4" runat="server" Text="Description" CssClass="CSSTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="StudyDescription" runat="server" CssClass="CSSFilterTextBox" ToolTip="Filter the list by Study Description" />
+                                                <asp:TextBox ID="StudyDescription" runat="server"  CssClass="CSSFilterTextBox" ToolTip="Filter the list by Study Description" />
                                             </td>
                                             <td align="right" valign="bottom" style="width: 57px">
-                                                <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png"
+                                                <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png" 
                                                     OnClick="FilterButton_Click" ToolTip="Filter" />
                                             </td>
                                         </tr>
