@@ -31,230 +31,226 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Defines an interface for providing custom editing pages to be displayed in the staff editor.
-    /// </summary>
-    public interface IExternalPractitionerEditorPageProvider
-    {
-        IExternalPractitionerEditorPage[] GetEditorPages(IExternalPractitionerEditorContext context);
-    }
+	/// <summary>
+	/// Defines an interface for providing custom editing pages to be displayed in the staff editor.
+	/// </summary>
+	public interface IExternalPractitionerEditorPageProvider
+	{
+		IExternalPractitionerEditorPage[] GetEditorPages(IExternalPractitionerEditorContext context);
+	}
 
-    /// <summary>
-    /// Defines an interface for providing a custom editor page with access to the editor
-    /// context.
-    /// </summary>
-    public interface IExternalPractitionerEditorContext
-    {
-        EntityRef PractitionerRef { get; }
+	/// <summary>
+	/// Defines an interface for providing a custom editor page with access to the editor
+	/// context.
+	/// </summary>
+	public interface IExternalPractitionerEditorContext
+	{
+		EntityRef PractitionerRef { get; }
 
-        IDictionary<string, string> PractitionerExtendedProperties { get; }
-    }
+		IDictionary<string, string> PractitionerExtendedProperties { get; }
+	}
 
-    /// <summary>
-    /// Defines an interface to a custom staff editor page.
-    /// </summary>
-    public interface IExternalPractitionerEditorPage
-    {
-        Path Path { get; }
-        IApplicationComponent GetComponent();
+	/// <summary>
+	/// Defines an interface to a custom staff editor page.
+	/// </summary>
+	public interface IExternalPractitionerEditorPage
+	{
+		Path Path { get; }
+		IApplicationComponent GetComponent();
 
-        void Save();
-    }
+		void Save();
+	}
 
-    /// <summary>
-    /// Defines an extension point for adding custom pages to the staff editor.
-    /// </summary>
-    public class ExternalPractitionerEditorPageProviderExtensionPoint : ExtensionPoint<IExternalPractitionerEditorPageProvider>
-    {
-    }
+	/// <summary>
+	/// Defines an extension point for adding custom pages to the staff editor.
+	/// </summary>
+	public class ExternalPractitionerEditorPageProviderExtensionPoint : ExtensionPoint<IExternalPractitionerEditorPageProvider>
+	{
+	}
 
 
-    public class ExternalPractitionerEditorComponent : NavigatorComponentContainer
-    {
-        #region EditorContext
+	public class ExternalPractitionerEditorComponent : NavigatorComponentContainer
+	{
+		#region EditorContext
 
-        class EditorContext : IExternalPractitionerEditorContext
-        {
-            private readonly ExternalPractitionerEditorComponent _owner;
+		class EditorContext : IExternalPractitionerEditorContext
+		{
+			private readonly ExternalPractitionerEditorComponent _owner;
 
-            public EditorContext(ExternalPractitionerEditorComponent owner)
-            {
-                _owner = owner;
-            }
+			public EditorContext(ExternalPractitionerEditorComponent owner)
+			{
+				_owner = owner;
+			}
 
-            public EntityRef PractitionerRef
-            {
-                get { return _owner._practitionerRef; }
-            }
+			public EntityRef PractitionerRef
+			{
+				get { return _owner._practitionerRef; }
+			}
 
-            public IDictionary<string, string> PractitionerExtendedProperties
-            {
-                get { return _owner._practitionerDetail.ExtendedProperties; }
-            }
-        }
+			public IDictionary<string, string> PractitionerExtendedProperties
+			{
+				get { return _owner._practitionerDetail.ExtendedProperties; }
+			}
+		}
 
-        #endregion
+		#endregion
 
-        private EntityRef _practitionerRef;
-        private ExternalPractitionerDetail _practitionerDetail;
+		private EntityRef _practitionerRef;
+		private ExternalPractitionerDetail _practitionerDetail;
 
-        // return values for staff
-        private ExternalPractitionerSummary _practitionerSummary;
+		// return values for staff
+		private ExternalPractitionerSummary _practitionerSummary;
 
-        private readonly bool _isNew;
+		private readonly bool _isNew;
 
-        private ExternalPractitionerDetailsEditorComponent _detailsEditor;
-        private ExternalPractitionerContactPointSummaryComponent _contactPointSummary;
+		private ExternalPractitionerDetailsEditorComponent _detailsEditor;
+		private ExternalPractitionerContactPointSummaryComponent _contactPointSummary;
 
-        private List<IExternalPractitionerEditorPage> _extensionPages;
+		private List<IExternalPractitionerEditorPage> _extensionPages;
 
-        /// <summary>
-        /// Constructs an editor to edit a new staff
-        /// </summary>
-        public ExternalPractitionerEditorComponent()
-        {
-            _isNew = true;
-        }
+		/// <summary>
+		/// Constructs an editor to edit a new staff
+		/// </summary>
+		public ExternalPractitionerEditorComponent()
+		{
+			_isNew = true;
+		}
 
-        /// <summary>
-        /// Constructs an editor to edit an existing staff profile
-        /// </summary>
-        /// <param name="reference"></param>
-        public ExternalPractitionerEditorComponent(EntityRef reference)
-        {
-            _isNew = false;
-            _practitionerRef = reference;
-        }
+		/// <summary>
+		/// Constructs an editor to edit an existing staff profile
+		/// </summary>
+		/// <param name="reference"></param>
+		public ExternalPractitionerEditorComponent(EntityRef reference)
+		{
+			_isNew = false;
+			_practitionerRef = reference;
+		}
 
-        /// <summary>
-        /// Gets summary of staff that was added or edited
-        /// </summary>
-        public ExternalPractitionerSummary ExternalPractitionerSummary
-        {
-            get { return _practitionerSummary; }
-        }
+		/// <summary>
+		/// Gets summary of staff that was added or edited
+		/// </summary>
+		public ExternalPractitionerSummary ExternalPractitionerSummary
+		{
+			get { return _practitionerSummary; }
+		}
 
-        public override void Start()
-        {
-            Platform.GetService<IExternalPractitionerAdminService>(
-                delegate(IExternalPractitionerAdminService service)
-                {
-                    LoadExternalPractitionerEditorFormDataResponse formDataResponse = service.LoadExternalPractitionerEditorFormData(new LoadExternalPractitionerEditorFormDataRequest());
+		public override void Start()
+		{
+			Platform.GetService<IExternalPractitionerAdminService>(
+				delegate(IExternalPractitionerAdminService service)
+				{
+					LoadExternalPractitionerEditorFormDataResponse formDataResponse = service.LoadExternalPractitionerEditorFormData(new LoadExternalPractitionerEditorFormDataRequest());
 
-                    _contactPointSummary = new ExternalPractitionerContactPointSummaryComponent(
-                        formDataResponse.AddressTypeChoices, formDataResponse.PhoneTypeChoices, formDataResponse.ResultCommunicationModeChoices);
+					_contactPointSummary = new ExternalPractitionerContactPointSummaryComponent(
+						formDataResponse.AddressTypeChoices, formDataResponse.PhoneTypeChoices, formDataResponse.ResultCommunicationModeChoices);
 
-                    string rootPath = SR.TitleExternalPractitioner;
-                    this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new ExternalPractitionerDetailsEditorComponent(_isNew)));
-                    this.Pages.Add(new NavigatorPage(rootPath + "/Contact Points", _contactPointSummary));
+					string rootPath = SR.TitleExternalPractitioner;
+					this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new ExternalPractitionerDetailsEditorComponent(_isNew)));
+					this.Pages.Add(new NavigatorPage(rootPath + "/Contact Points", _contactPointSummary));
 
-                    this.ValidationStrategy = new AllComponentsValidationStrategy();
+					this.ValidationStrategy = new AllComponentsValidationStrategy();
 
-                    if (_isNew)
-                    {
-                        _practitionerDetail = new ExternalPractitionerDetail();
-                    }
-                    else
-                    {
-                        LoadExternalPractitionerForEditResponse response = service.LoadExternalPractitionerForEdit(new LoadExternalPractitionerForEditRequest(_practitionerRef));
-                        _practitionerRef = response.PractitionerRef;
-                        _practitionerDetail = response.PractitionerDetail;
-                    }
+					if (_isNew)
+					{
+						_practitionerDetail = new ExternalPractitionerDetail();
+					}
+					else
+					{
+						LoadExternalPractitionerForEditResponse response = service.LoadExternalPractitionerForEdit(new LoadExternalPractitionerForEditRequest(_practitionerRef));
+						_practitionerRef = response.PractitionerRef;
+						_practitionerDetail = response.PractitionerDetail;
+					}
 
-                    _detailsEditor.ExternalPractitionerDetail = _practitionerDetail;
-                    _practitionerDetail.ContactPoints.ForEach(delegate(ExternalPractitionerContactPointDetail p)
-                                                              {
-                                                                  _contactPointSummary.Subject.Add(p);
-                                                              });
-                });
+					_detailsEditor.ExternalPractitionerDetail = _practitionerDetail;
+					_practitionerDetail.ContactPoints.ForEach(delegate(ExternalPractitionerContactPointDetail p)
+															  {
+																  _contactPointSummary.Subject.Add(p);
+															  });
+				});
 
-            // instantiate all extension pages
-            _extensionPages = new List<IExternalPractitionerEditorPage>();
-            foreach (IExternalPractitionerEditorPageProvider pageProvider in new ExternalPractitionerEditorPageProviderExtensionPoint().CreateExtensions())
-            {
-                _extensionPages.AddRange(pageProvider.GetEditorPages(new EditorContext(this)));
-            }
+			// instantiate all extension pages
+			_extensionPages = new List<IExternalPractitionerEditorPage>();
+			foreach (IExternalPractitionerEditorPageProvider pageProvider in new ExternalPractitionerEditorPageProviderExtensionPoint().CreateExtensions())
+			{
+				_extensionPages.AddRange(pageProvider.GetEditorPages(new EditorContext(this)));
+			}
 
-            // add extension pages to navigator
-            // the navigator will start those components if the user goes to that page
-            foreach (IStaffEditorPage page in _extensionPages)
-            {
-                this.Pages.Add(new NavigatorPage(page.Path.LocalizedPath, page.GetComponent()));
-            }
+			// add extension pages to navigator
+			// the navigator will start those components if the user goes to that page
+			foreach (IExternalPractitionerEditorPage page in _extensionPages)
+			{
+				this.Pages.Add(new NavigatorPage(page.Path.LocalizedPath, page.GetComponent()));
+			}
 
-            base.Start();
-        }
+			base.Start();
+		}
 
-        public override void Stop()
-        {
-            base.Stop();
-        }
+		public override void Stop()
+		{
+			base.Stop();
+		}
 
-        public override void Accept()
-        {
-            if (this.HasValidationErrors)
-            {
-                this.ShowValidation(true);
-                return;
-            }
+		public override void Accept()
+		{
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+				return;
+			}
 
-            try
-            {
-                _practitionerDetail.ContactPoints.Clear();
-                foreach (ExternalPractitionerContactPointDetail detail in _contactPointSummary.Subject)
-                {
-                    _practitionerDetail.ContactPoints.Add(detail);
-                }
+			try
+			{
+				_practitionerDetail.ContactPoints.Clear();
+				foreach (ExternalPractitionerContactPointDetail detail in _contactPointSummary.Subject)
+				{
+					_practitionerDetail.ContactPoints.Add(detail);
+				}
 
-                // give extension pages a chance to save data prior to commit
-                _extensionPages.ForEach(delegate(IExternalPractitionerEditorPage page) { page.Save(); });
+				// give extension pages a chance to save data prior to commit
+				_extensionPages.ForEach(delegate(IExternalPractitionerEditorPage page) { page.Save(); });
 
-                Platform.GetService<IExternalPractitionerAdminService>(
-                    delegate(IExternalPractitionerAdminService service)
-                    {
-                        if (_isNew)
-                        {
-                            AddExternalPractitionerResponse response = service.AddExternalPractitioner(new AddExternalPractitionerRequest(_practitionerDetail));
-                            _practitionerRef = response.Practitioner.PractitionerRef;
-                            _practitionerSummary = response.Practitioner;
-                        }
-                        else
-                        {
-                            UpdateExternalPractitionerResponse response = service.UpdateExternalPractitioner(new UpdateExternalPractitionerRequest(_practitionerRef, _practitionerDetail));
-                            _practitionerRef = response.Practitioner.PractitionerRef;
-                            _practitionerSummary = response.Practitioner;
-                        }
-                    });
+				Platform.GetService<IExternalPractitionerAdminService>(
+					delegate(IExternalPractitionerAdminService service)
+					{
+						if (_isNew)
+						{
+							AddExternalPractitionerResponse response = service.AddExternalPractitioner(new AddExternalPractitionerRequest(_practitionerDetail));
+							_practitionerRef = response.Practitioner.PractitionerRef;
+							_practitionerSummary = response.Practitioner;
+						}
+						else
+						{
+							UpdateExternalPractitionerResponse response = service.UpdateExternalPractitioner(new UpdateExternalPractitionerRequest(_practitionerRef, _practitionerDetail));
+							_practitionerRef = response.Practitioner.PractitionerRef;
+							_practitionerSummary = response.Practitioner;
+						}
+					});
 
-                this.Exit(ApplicationComponentExitCode.Accepted);
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, SR.ExceptionSaveExternalPractitioner, this.Host.DesktopWindow,
-                    delegate()
-                    {
-                        this.ExitCode = ApplicationComponentExitCode.Error;
-                        this.Host.Exit();
-                    });
-            }
-        }
+				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, SR.ExceptionSaveExternalPractitioner, this.Host.DesktopWindow,
+					delegate()
+					{
+						this.ExitCode = ApplicationComponentExitCode.Error;
+						this.Host.Exit();
+					});
+			}
+		}
 
-        public override void Cancel()
-        {
-            base.Cancel();
-        }
-    }
+		public override void Cancel()
+		{
+			base.Cancel();
+		}
+	}
 }
