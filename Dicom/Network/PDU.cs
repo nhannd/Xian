@@ -124,10 +124,19 @@ namespace ClearCanvas.Dicom.Network
 
         public void WritePDU(Stream s)
         {
-            BinaryWriter bw = EndianBinaryWriter.Create(s, Endian.Big);
+            // Ran into a problem when the BinaryWriter was writing
+            // directly to the stream where we would send just the "type" of the
+            // PDU in its own packet, and an implementation was aborting the connection
+            // after receiving this one packet w/ one byte.  Buffering up the data
+            // caused it to be written at least in 6 bytes and it eliminated the problems.
+            MemoryStream ms = new MemoryStream();
+
+            BinaryWriter bw = EndianBinaryWriter.Create(ms, Endian.Big);
             bw.Write(_type);
             bw.Write((byte)0);
             bw.Write((uint)_ms.Length);
+
+            ms.WriteTo(s);
             _ms.WriteTo(s);
             s.Flush();
         }
