@@ -111,6 +111,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			}
 			catch (Exception e)
 			{
+				Platform.Log(LogLevel.Error, e);
 				ShowErrorMessage(e.Message);
 			}
 		}
