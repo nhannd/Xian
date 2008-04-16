@@ -183,8 +183,11 @@ namespace ClearCanvas.ImageViewer
 				// If the display set has changed, remember the change
 				if (_displaySet != value)
 				{
-					eventArgs = new DisplaySetChangedEventArgs(_displaySet, value);
-					ImageViewer.EventBroker.OnDisplaySetChanging(new DisplaySetChangingEventArgs(_displaySet, value));
+					if (ImageViewer != null)
+					{
+						eventArgs = new DisplaySetChangedEventArgs(_displaySet, value);
+						ImageViewer.EventBroker.OnDisplaySetChanging(new DisplaySetChangingEventArgs(_displaySet, value));
+					}
 				}
 
 				// Break association with the old display set (should we dispose too?)

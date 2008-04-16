@@ -49,27 +49,109 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 
 		int InstanceNumber { set; }
 		int SeriesNumber { set; }
+	}
 
-		int PixelRepresentation { set; }
-		int BitsStored { set; }
-		int BitsAllocated { set; }
-		int HighBit { set; }
-		Window[] WindowCenterAndWidth { set; }
+	internal class MockFrame : Frame
+	{
+		public MockFrame(MockImageSop parent, int frameNumber)
+			: base(parent, frameNumber)
+		{
+		}
+
+		public override byte[] GetNormalizedPixelData()
+		{
+			return new byte[]{0};
+
+		}
+		public override int Rows
+		{
+			get
+			{
+				return 512;
+			}
+		}
+
+		public override int Columns
+		{
+			get
+			{
+				return 512;
+			}
+		}
+
+		public override int BitsAllocated
+		{
+			get
+			{
+				return 16;
+			}
+		}
+		
+		public override int BitsStored
+		{
+			get
+			{
+				return 12;
+			}
+		}
+		
+		public override int HighBit
+		{
+			get
+			{
+				return 11;
+			}
+		}
+		
+		public override int PixelRepresentation
+		{
+			get
+			{
+				return 1;
+			}
+		}
+		
+		public override PhotometricInterpretation PhotometricInterpretation
+		{
+			get { return PhotometricInterpretation.Monochrome2; }	
+		}
+		public override double RescaleSlope
+		{
+			get
+			{
+				return 1.0;
+			}
+		}
+
+		public override double RescaleIntercept
+		{
+			get
+			{
+				return 0;
+			}
+		}
+
+		public override PixelAspectRatio PixelAspectRatio
+		{
+			get
+			{
+				return new PixelAspectRatio(1, 1);
+			}
+		}
+
+		public override PixelSpacing PixelSpacing
+		{
+			get
+			{
+				return new PixelSpacing(1, 1);
+			}
+		}
 	}
 
 	// This mock IImageSop only implements the bare minimum of the overridden properties
 	// in order to perform unit tests.
 	internal class MockImageSop : ImageSop, IMockImageSopSetters
 	{
-		private int _bitsAllocated = 16;
-		private int _bitsStored = 16;
-		private int _highBit = 15;
-		private int _pixelRepresentation = 0;
-		private Window[] _windowCentersAndWidths;
-
-		private PixelSpacing _pixelSpacing = new PixelSpacing(1.0, 1.0);
-		private PixelAspectRatio _pixelAspectRatio = new PixelAspectRatio(1, 1);
-
 		private string _patientID;
 		private string _studyInstanceUID;
 		private string _seriesInstanceUID;
@@ -93,7 +175,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 
 		protected override Frame CreateFrame(int index)
 		{
-			throw new InvalidOperationException("Cannot create frame with a mock object.");
+			return new MockFrame(this, 1);
 		}
 
 		protected override void ValidateInternal()
@@ -170,31 +252,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		int IMockImageSopSetters.SeriesNumber
 		{
 			set { _seriesNumber = value; }	
-		}
-
-		int IMockImageSopSetters.PixelRepresentation
-		{ 
-			set { _pixelRepresentation = value; } 
-		}
-
-		int IMockImageSopSetters.BitsStored
-		{
-			set { _bitsStored = value; }
-		}
-
-		int IMockImageSopSetters.HighBit
-		{
-			set { _highBit = value; }	
-		}
-
-		int IMockImageSopSetters.BitsAllocated
-		{
-			set { _bitsAllocated = value; }	
-		}
-
-		Window[] IMockImageSopSetters.WindowCenterAndWidth
-		{
-			set { _windowCentersAndWidths = value; }
 		}
 
 		string IMockImageSopSetters.StudyDate
@@ -298,7 +355,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		{
 			get
 			{
-				throw new Exception("The method or operation is not implemented.");
+				return "MR";
 			}
 		}
 
@@ -469,6 +526,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			get
 			{
 				throw new Exception("The method or operation is not implemented.");
+			}
+		}
+
+		public override int NumberOfFrames
+		{
+			get
+			{
+				return 1;
 			}
 		}
 

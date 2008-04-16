@@ -43,6 +43,7 @@ using ClearCanvas.ImageViewer.StudyManagement.Tests;
 using ClearCanvas.ImageViewer.Tests;
 using NUnit.Framework;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Comparers.Tests
 {
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 		[TestFixtureSetUp]
 		public void Init()
 		{
+			Platform.SetExtensionFactory(new NullExtensionFactory());
 		}
 
 		[TestFixtureTearDown]

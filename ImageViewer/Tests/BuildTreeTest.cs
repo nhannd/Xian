@@ -34,6 +34,8 @@
 #pragma warning disable 1591,0419,1574,1587
 
 using NUnit.Framework;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Tests
 {
@@ -69,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[TestFixtureSetUp]
 		public void Init()
 		{
-
+			Platform.SetExtensionFactory(new NullExtensionFactory());
 		}
 
 		[TestFixtureTearDown]
