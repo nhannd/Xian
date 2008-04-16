@@ -30,30 +30,32 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Healthcare.Alert
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare.PatientReconciliation;
+
+namespace ClearCanvas.Healthcare.Alerts
 {
-    public class AlertNotification
+    [ExtensionOf(typeof(PatientProfileAlertExtensionPoint))]
+    public class ReconciliationAlert : PatientProfileAlertBase
     {
-        private readonly Type _alertClass;
-        private readonly List<string> _reasons;
-
-        public AlertNotification(Type alertClass, IEnumerable<string> reasons)
+        public override AlertNotification Test(PatientProfile profile, IPersistenceContext context)
         {
-            _alertClass = alertClass;
-            _reasons = new List<string>(reasons);
-        }
+            IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)(new PatientReconciliationStrategyExtensionPoint()).CreateExtension();
 
-        public Type AlertClass
-        {
-            get { return _alertClass; }
-        }
+            IList<PatientProfileMatch> matches = strategy.FindReconciliationMatches(profile, context);
+            if (matches.Count > 0)
+            {
+                return new AlertNotification(this.GetType(), new string[]{});
+            }
 
-        public IEnumerable<string> Reasons
-        {
-            get { return _reasons; }
+            return null;
         }
     }
 }

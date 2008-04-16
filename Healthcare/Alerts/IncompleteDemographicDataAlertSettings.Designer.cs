@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Healthcare.Alert {
+namespace ClearCanvas.Healthcare.Alerts {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

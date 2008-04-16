@@ -29,21 +29,18 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
+using System;
+using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
-namespace ClearCanvas.Healthcare.Alert
+namespace ClearCanvas.Healthcare.Alerts
 {
-    [ExtensionPoint]
-    public class PatientProfileAlertExtensionPoint : ExtensionPoint<IPatientProfileAlert>
+    [SettingsGroupDescription("Configures the Incomplete Patient Demographic Data alert")]
+    [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+    internal sealed partial class IncompleteDemographicDataAlertSettings
     {
-    }
-
-    public interface IPatientProfileAlert : IAlert<PatientProfile>
-    {
-    }
-
-    public abstract class PatientProfileAlertBase : AlertBase<PatientProfile>, IPatientProfileAlert
-    {
+        public IncompleteDemographicDataAlertSettings()
+        {
+        }
     }
 }

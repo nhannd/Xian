@@ -32,7 +32,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Healthcare.Alert
+namespace ClearCanvas.Healthcare.Alerts
 {
     [ExtensionPoint]
     public class OrderAlertExtensionPoint : ExtensionPoint<IOrderAlert>

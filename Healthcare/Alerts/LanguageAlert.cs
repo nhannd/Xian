@@ -29,21 +29,28 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise;
+using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare.Brokers;
 
-namespace ClearCanvas.Healthcare.Alert
+namespace ClearCanvas.Healthcare.Alerts
 {
-    [ExtensionPoint]
-    public class PatientAlertExtensionPoint : ExtensionPoint<IPatientAlert>
+    [ExtensionOf(typeof(PatientProfileAlertExtensionPoint))]
+    class LanguageAlert : PatientProfileAlertBase
     {
-    }
+        public override AlertNotification Test(PatientProfile profile, IPersistenceContext context)
+        {
+            if (profile.PrimaryLanguage != null && profile.PrimaryLanguage.Code != "en")
+            {
+                return new AlertNotification(this.GetType(), new string[] { profile.PrimaryLanguage.Value });
+            }
 
-    public interface IPatientAlert : IAlert<Patient>
-    {
-    }
-
-    public abstract class PatientAlertBase : AlertBase<Patient>, IPatientAlert
-    {
+            return null;
+        }
     }
 }

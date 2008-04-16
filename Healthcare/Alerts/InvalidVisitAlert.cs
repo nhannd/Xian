@@ -29,51 +29,42 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Specifications;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Healthcare.Alert
+namespace ClearCanvas.Healthcare.Alerts
 {
-    [ExtensionOf(typeof(PatientProfileAlertExtensionPoint))]
-    class IncompleteDemographicDataAlert : PatientProfileAlertBase
+    [ExtensionOf(typeof(OrderAlertExtensionPoint))]
+    public class InvalidVisitAlert : OrderAlertBase
     {
-        public override AlertNotification Test(PatientProfile profile, IPersistenceContext context)
+        public override AlertNotification Test(Order order, IPersistenceContext context)
         {
-            IDictionary<string, ISpecification> specs;
-
-            try
-            {
-                IncompleteDemographicDataAlertSettings settings = new IncompleteDemographicDataAlertSettings();
-                using (TextReader xml = new StringReader(settings.ValidationRules))
-                {
-                    SpecificationFactory specFactory = new SpecificationFactory(xml);
-                    specs = specFactory.GetAllSpecifications();
-                }
-            }
-            catch (Exception)
-            {
-                // no cfg file for this component
-                specs = new Dictionary<string, ISpecification>();
-            }
-            
             List<string> reasons = new List<string>();
-            foreach (KeyValuePair<string, ISpecification> kvp in specs)
+            if (order.Visit == null)
             {
-                TestResult result = kvp.Value.Test(profile);
-                if (result.Success == false)
+                // This should never happen in production because an order must have a visit
+                reasons.Add("This order is missing a visit");
+            }
+            else
+            {
+                // Check Visit status
+                if (order.Visit.VisitStatus != VisitStatus.AA)
+                    reasons.Add("Visit Status is not active");
+
+                // Check Visit date
+                if (order.Visit.AdmitTime == null)
                 {
-                    List<string> failureMessages = new List<string>();
-                    ExtractFailureMessage(result.Reasons, failureMessages);
-                    reasons.AddRange(failureMessages);
+                    // This should never happen in production since visit admit date should always be created from HIS
+                    reasons.Add("Visit date is missing");                    
+                }
+                else if (order.ScheduledStartTime != null)
+                {
+                    if (order.Visit.AdmitTime.Value.Date > order.ScheduledStartTime.Value.Date)
+                        reasons.Add("Visit date is in the future");
+                    else if (order.Visit.AdmitTime.Value.Date < order.ScheduledStartTime.Value.Date)
+                        reasons.Add("Visit date is in the past");
                 }
             }
 
@@ -82,21 +73,5 @@ namespace ClearCanvas.Healthcare.Alert
 
             return null;
         }
-
-        #region Private Helpers
-
-        private void ExtractFailureMessage(TestResultReason[] reasons, List<string> failureMessages)
-        {
-            foreach (TestResultReason reason in reasons)
-            {
-                if (!string.IsNullOrEmpty(reason.Message))
-                    failureMessages.Add(reason.Message);
-
-                ExtractFailureMessage(reason.Reasons, failureMessages);
-            }
-        }
-
-        #endregion
-
     }
 }

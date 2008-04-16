@@ -29,18 +29,21 @@
 
 #endregion
 
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Healthcare.Alert
+namespace ClearCanvas.Healthcare.Alerts
 {
-    public interface IAlert<TEntity>
+    [ExtensionPoint]
+    public class PatientAlertExtensionPoint : ExtensionPoint<IPatientAlert>
     {
-        /// <summary>
-        /// Test the entity for any alert conditions.  This method must be thread-safe
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="context"></param>
-        /// <returns>NULL if the test does not trigger an alert </returns>
-        AlertNotification Test(TEntity entity, IPersistenceContext context);
+    }
+
+    public interface IPatientAlert : IAlert<Patient>
+    {
+    }
+
+    public abstract class PatientAlertBase : AlertBase<Patient>, IPatientAlert
+    {
     }
 }

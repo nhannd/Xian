@@ -29,49 +29,21 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Healthcare.Alert
+namespace ClearCanvas.Healthcare.Alerts
 {
-    [ExtensionOf(typeof(OrderAlertExtensionPoint))]
-    public class InvalidVisitAlert : OrderAlertBase
+    [ExtensionPoint]
+    public class PatientProfileAlertExtensionPoint : ExtensionPoint<IPatientProfileAlert>
     {
-        public override AlertNotification Test(Order order, IPersistenceContext context)
-        {
-            List<string> reasons = new List<string>();
-            if (order.Visit == null)
-            {
-                // This should never happen in production because an order must have a visit
-                reasons.Add("This order is missing a visit");
-            }
-            else
-            {
-                // Check Visit status
-                if (order.Visit.VisitStatus != VisitStatus.AA)
-                    reasons.Add("Visit Status is not active");
+    }
 
-                // Check Visit date
-                if (order.Visit.AdmitTime == null)
-                {
-                    // This should never happen in production since visit admit date should always be created from HIS
-                    reasons.Add("Visit date is missing");                    
-                }
-                else if (order.ScheduledStartTime != null)
-                {
-                    if (order.Visit.AdmitTime.Value.Date > order.ScheduledStartTime.Value.Date)
-                        reasons.Add("Visit date is in the future");
-                    else if (order.Visit.AdmitTime.Value.Date < order.ScheduledStartTime.Value.Date)
-                        reasons.Add("Visit date is in the past");
-                }
-            }
+    public interface IPatientProfileAlert : IAlert<PatientProfile>
+    {
+    }
 
-            if (reasons.Count > 0)
-                return new AlertNotification(this.GetType(), reasons);
-
-            return null;
-        }
+    public abstract class PatientProfileAlertBase : AlertBase<PatientProfile>, IPatientProfileAlert
+    {
     }
 }

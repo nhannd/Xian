@@ -32,7 +32,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Healthcare.Alert
+namespace ClearCanvas.Healthcare.Alerts
 {
     /// <summary>
     /// A thread-safe singleton class that help to test a domain entity of alerts.
