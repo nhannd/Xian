@@ -43,15 +43,17 @@ namespace ClearCanvas.Ris.Application.Services
     {
         class OrderNoteSynchronizeHelper : CollectionSynchronizeHelper<OrderNote, OrderNoteDetail>
         {
+            private readonly Order _order;
             private readonly OrderNoteAssembler _assembler;
-            private readonly Staff _currentUserStaff;
+            private readonly Staff _newNoteAuthor;
             private readonly IPersistenceContext _context;
 
-            public OrderNoteSynchronizeHelper(OrderNoteAssembler assembler, Staff currentUserStaff, IPersistenceContext context)
+            public OrderNoteSynchronizeHelper(OrderNoteAssembler assembler, Order order, Staff newNoteAuthor, IPersistenceContext context)
                 :base(false, false)
             {
                 _assembler = assembler;
-                _currentUserStaff = currentUserStaff;
+                _order = order;
+                _newNoteAuthor = newNoteAuthor;
                 _context = context;
             }
 
@@ -62,14 +64,22 @@ namespace ClearCanvas.Ris.Application.Services
 
             protected override void AddItem(OrderNoteDetail sourceItem, ICollection<OrderNote> notes)
             {
-                notes.Add( _assembler.CreateOrderNote(sourceItem, _currentUserStaff, _context));
+                notes.Add( _assembler.CreateOrderNote(sourceItem, _order, _newNoteAuthor, true, _context));
             }
         }
 
-        public void Synchronize(ICollection<OrderNote> domainList, IList<OrderNoteDetail> sourceList, Staff currentUserStaff, IPersistenceContext context)
+        /// <summary>
+        /// Synchronizes an order's Notes collection, adding any notes that don't already exist in the collection,
+        /// using the specified author.  The notes are posted immediately.
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="sourceList"></param>
+        /// <param name="newNoteAuthor"></param>
+        /// <param name="context"></param>
+        public void SynchronizeOrderNotes(Order order, IList<OrderNoteDetail> sourceList, Staff newNoteAuthor, IPersistenceContext context)
         {
-            OrderNoteSynchronizeHelper synchronizer = new OrderNoteSynchronizeHelper(this, currentUserStaff, context);
-            synchronizer.Synchronize(domainList, sourceList);
+            OrderNoteSynchronizeHelper synchronizer = new OrderNoteSynchronizeHelper(this, order, newNoteAuthor, context);
+            synchronizer.Synchronize(order.Notes, sourceList);
         }
 
         public OrderNoteDetail CreateOrderNoteDetail(OrderNote note, IPersistenceContext context)
@@ -77,15 +87,61 @@ namespace ClearCanvas.Ris.Application.Services
             StaffAssembler staffAssembler = new StaffAssembler();
             StaffGroupAssembler staffGroupAssembler = new StaffGroupAssembler();
 
-            //TODO compute recipients
+            List<OrderNoteDetail.StaffRecipientDetail> staffRecipients = new List<OrderNoteDetail.StaffRecipientDetail>();
+            List<OrderNoteDetail.GroupRecipientDetail> groupRecipients = new List<OrderNoteDetail.GroupRecipientDetail>();
+            if (note.IsPosted)
+            {
+                foreach (NoteReadActivity readActivity in note.ReadActivities)
+                {
+                    if(readActivity.Recipient.Group != null)
+                    {
+                        groupRecipients.Add(
+                            new OrderNoteDetail.GroupRecipientDetail(
+                                staffGroupAssembler.CreateSummary(readActivity.Recipient.Group),
+                                readActivity.IsAcknowledged,
+                                readActivity.AcknowledgedBy.Time));
+                    }
+                    else
+                    {
+                        staffRecipients.Add(
+                            new OrderNoteDetail.StaffRecipientDetail(
+                                staffAssembler.CreateStaffSummary(readActivity.Recipient.Staff, context),
+                                readActivity.IsAcknowledged,
+                                readActivity.AcknowledgedBy.Time));
+                    }
+                }
+            }
+            else
+            {
+                foreach (NoteRecipient recipient in note.Recipients)
+                {
+                    if(recipient.Group != null)
+                    {
+                        groupRecipients.Add(
+                            new OrderNoteDetail.GroupRecipientDetail(
+                                staffGroupAssembler.CreateSummary(recipient.Group),
+                                false,
+                                null));
+                    }
+                    else
+                    {
+                        staffRecipients.Add(
+                            new OrderNoteDetail.StaffRecipientDetail(
+                                staffAssembler.CreateStaffSummary(recipient.Staff, context),
+                                false,
+                                null));
+                    }
+                }    
+            }
+
             return new OrderNoteDetail(
                 note.GetRef(),
                 note.Category,
                 note.CreationTime,
-                note.SentTime,
-                staffAssembler.CreateStaffSummary(note.Sender, context),
-                new List<OrderNoteDetail.StaffRecipientDetail>(), 
-                new List<OrderNoteDetail.GroupRecipientDetail>(), 
+                note.PostTime,
+                staffAssembler.CreateStaffSummary(note.Author, context),
+                staffRecipients, 
+                groupRecipients, 
                 note.Body);
         }
 
@@ -96,24 +152,16 @@ namespace ClearCanvas.Ris.Application.Services
                 note.GetRef(),
                 note.Category,
                 note.CreationTime,
-                note.SentTime,
-                staffAssembler.CreateStaffSummary(note.Sender, context),
-                false,  //TODO compute acknowledgement status
+                note.PostTime,
+                staffAssembler.CreateStaffSummary(note.Author, context),
+                note.IsFullyAcknowledged,
                 note.Body);
         }
 
-        public OrderNote CreateOrderNote(OrderNoteDetail detail, Staff currentStaff, IPersistenceContext context)
+        public OrderNote CreateOrderNote(OrderNoteDetail detail, Order order, Staff author, bool post, IPersistenceContext context)
         {
-            OrderNote newNote = new OrderNote();
-
-            if (detail.Author != null)
-                newNote.Sender = context.Load<Staff>(detail.Author.StaffRef, EntityLoadFlags.Proxy);
-            else
-                newNote.Sender = currentStaff;
-
-            newNote.Body = detail.NoteBody;
-
-            return newNote;
+            return new OrderNote(order, detail.Category, author, detail.NoteBody, post);
         }
+
     }
 }

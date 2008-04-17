@@ -68,21 +68,6 @@
 		<property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.OrderStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true" access="nosetter.camelcase-underscore"/>
 		<many-to-one name="CancelReason" class="OrderCancelReasonEnum" column="CancelReason_"/>
 
-
-		<!--
-		<idbag name="Notes" table="OrderNote_" lazy="true">
-			<collection-id column="OID_" type="Guid">
-				<generator class="guid.comb"/>
-			</collection-id>
-			<key column="OrderOID_"/>
-			 <composite-element class="OrderNote">
-				<property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
-				<many-to-one name="Author" class="Staff" column="Author_" not-null="true" fetch="join"/>
-				<property name="Comment" column="Comment_" type="String" length ="1024"/>
-			</composite-element>
-		</idbag>
-		-->
-
 		<set name="Notes" lazy="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
 			<key column="OrderOID_"/>
 			<one-to-many class="OrderNote"/>

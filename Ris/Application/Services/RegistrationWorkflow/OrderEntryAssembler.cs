@@ -131,7 +131,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             // synchronize Order.Notes from order requisition
             OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
-            noteAssembler.Synchronize(order.Notes, requisition.Notes, currentStaff, context);
+            noteAssembler.SynchronizeOrderNotes(order, requisition.Notes, currentStaff, context);
 
             if(requisition.ExtendedProperties != null)
             {

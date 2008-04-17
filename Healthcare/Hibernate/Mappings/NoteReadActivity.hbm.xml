@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
+	<class name="NoteReadActivity" proxy="NoteReadActivity" table="NoteReadActivity_">
+		<id name="OID" column="OID_" type="Guid">
+			<generator class="guid.comb"/>
+		</id>
+		<version name="Version" column="Version_"/>
+
+    <many-to-one name="Note" class="Note" column="NoteOID_" not-null="true"/>
+    <component name="Recipient" class="NoteRecipient">
+      <many-to-one name="Staff" column="RecipientStaffOID_" class="Staff" fetch="join" not-null="false"/>
+      <many-to-one name="Group" column="RecipientGroupOID_" class="StaffGroup" fetch="join" not-null="false"/>
+    </component>
+    <property name="IsAcknowledged" column="IsAcknowledged_" type="Boolean"/>
+		<component name="AcknowledgedBy" class="NoteReader">
+			<many-to-one name="Staff" class="Staff" column="AcknowledgedByStaffOID_" not-null="false"/>
+			<property name="Time" column="AcknowledgedByTime_" type="DateTime" not-null="false"/>
+		</component>
+
+	</class>
+</hibernate-mapping>

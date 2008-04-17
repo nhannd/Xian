@@ -8,9 +8,9 @@ namespace ClearCanvas.Healthcare {
 
 
     /// <summary>
-    /// ReadNoteActivity entity
+    /// NoteReadActivity entity
     /// </summary>
-	public partial class ReadNoteActivity : ClearCanvas.Enterprise.Core.Entity
+	public partial class NoteReadActivity : ClearCanvas.Enterprise.Core.Entity
 	{
 	
 		/// <summary>

@@ -72,12 +72,10 @@ namespace ClearCanvas.Healthcare.Tests
             string reasonForStudy = "Test";
             ExternalPractitioner orderingPrac = TestExternalPractitionerFactory.CreatePractitioner();
             Facility facility = TestFacilityFactory.CreateFacility();
-            IList<OrderAttachment> attachments = TestOrderAttachmentFactory.CreateOrderAttachments();
-            IList<OrderNote> notes = TestOrderNoteFactory.CreateOrderNotes();
 
             Order order = Order.NewOrder(
                 accession, patient, visit, ds, reasonForStudy, OrderPriority.R, facility, facility,
-                scheduleTime, orderingPrac, new List<ResultRecipient>(), attachments, notes);
+                scheduleTime, orderingPrac, new List<ResultRecipient>());
 
             // check basics
             Assert.AreEqual(accession, order.AccessionNumber);

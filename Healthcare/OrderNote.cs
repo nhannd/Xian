@@ -32,6 +32,7 @@
 using System;
 using System.Collections;
 using System.Text;
+using System.Collections.Generic;
 
 
 namespace ClearCanvas.Healthcare {
@@ -42,7 +43,38 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class OrderNote
 	{
-	
+        /// <summary>
+        /// Constructor for creating a new note with recipients.
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="category"></param>
+        /// <param name="author"></param>
+        /// <param name="body"></param>
+        /// <param name="recipients"></param>
+        /// <param name="post"></param>
+        public OrderNote(Order order, string category, Staff author, string body, IEnumerable<NoteRecipient> recipients, bool post)
+            :base(category, author, body, recipients, post)
+        {
+            _order = order;
+            _order.Notes.Add(this);
+        }
+
+        /// <summary>
+        /// Constructor for creating a new note.
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="category"></param>
+        /// <param name="author"></param>
+        /// <param name="body"></param>
+        /// <param name="post"></param>
+        public OrderNote(Order order, string category, Staff author, string body, bool post)
+            : base(category, author, body, post)
+        {
+            _order = order;
+            _order.Notes.Add(this);
+        }
+
+
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.

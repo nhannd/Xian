@@ -348,14 +348,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         return rp;
                     });
 
-            OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
-            List<OrderAttachment> attachments = new List<OrderAttachment>();
-            attachmentAssembler.Synchronize(attachments, requisition.Attachments, this.PersistenceContext);
-
-            OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
-            List<OrderNote> notes = new List<OrderNote>();
-            noteAssembler.Synchronize(notes, requisition.Notes, this.CurrentUserStaff, this.PersistenceContext);
-
             // obtain a new acc number
             IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
             string accNum = broker.GetNextAccessionNumber();
@@ -372,9 +364,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     requisition.SchedulingRequestTime,
                     orderingPhysician,
                     resultRecipients,
-                    procedures,
-                    attachments,
-                    notes);
+                    procedures);
 
             // note: need to lock the new order now, prior to creating the procedure steps
             // otherwise may get exceptions saying the Procedure is a transient object
@@ -386,6 +376,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 procedure.CreateProcedureSteps();
                 orderAssembler.UpdateProcedureFromRequisition(procedure, mapProcToReq[procedure], PersistenceContext);
             }
+
+            // add order notes
+            OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
+            noteAssembler.SynchronizeOrderNotes(order, requisition.Notes, this.CurrentUserStaff, this.PersistenceContext);
+
+            // add attachments
+            OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
+            attachmentAssembler.Synchronize(order.Attachments, requisition.Attachments, this.PersistenceContext);
 
             return order;
         }

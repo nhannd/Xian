@@ -11,18 +11,23 @@
 		<property name="Body" column="Body_" type="String" length ="1024"/>
 		
 		<property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
-		<property name="SentTime" column="SentTime_" type="DateTime" not-null="false"/>
-		<many-to-one name="Sender" class="Staff" column="SenderStaffOID_" not-null="true"/>
+    <many-to-one name="Author" class="Staff" column="AuthorOID_" not-null="true"/>
+    <property name="PostTime" column="PostTime_" type="DateTime" not-null="false"/>
 
-		<idbag name="NoteRecipients" table="NoteRecipient_" lazy="true" access="nosetter.camelcase-underscore">
+		<idbag name="Recipients" table="NoteRecipient_" lazy="true">
 			<collection-id column="OID_" type="Guid">
 				<generator class="guid.comb"/>
 			</collection-id>
 			<key column="NoteOID_"/>
 			<composite-element class="NoteRecipient">
 				<many-to-one name="Staff" column="StaffOID_" class="Staff" fetch="join" not-null="false"/>
-				<many-to-one name="StaffGroup" column="StaffGroupOID_" class="StaffGroup" fetch="join" not-null="false"/>
+				<many-to-one name="Group" column="GroupOID_" class="StaffGroup" fetch="join" not-null="false"/>
 			</composite-element>
 		</idbag>
-	</class>
+    
+    <set name="ReadActivities" lazy="true" cascade="all-delete-orphan">
+      <key column="NoteOID_"/>
+      <one-to-many class="NoteReadActivity"/>
+    </set>
+  </class>
 </hibernate-mapping>

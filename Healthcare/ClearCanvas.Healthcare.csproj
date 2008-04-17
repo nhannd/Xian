@@ -81,7 +81,7 @@
     <Compile Include="Note.cs" />
     <Compile Include="NoteReader.cs" />
     <Compile Include="NoteRecipient.cs" />
-    <Compile Include="ReadNoteActivity.cs" />
+    <Compile Include="NoteReadActivity.cs" />
     <Compile Include="Imex\DiagnosticServiceExporter.cs" />
     <Compile Include="Imex\DiagnosticServiceImporter.cs" />
     <Compile Include="Imex\DiagnosticServiceTreeExporter.cs" />

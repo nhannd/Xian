@@ -52,8 +52,6 @@ namespace ClearCanvas.Healthcare.Tests
             string reasonForStudy = "Test";
             ExternalPractitioner orderingPrac = TestExternalPractitionerFactory.CreatePractitioner();
             Facility facility = TestFacilityFactory.CreateFacility();
-            IList<OrderAttachment> attachments = TestOrderAttachmentFactory.CreateOrderAttachments();
-            IList<OrderNote> notes = TestOrderNoteFactory.CreateOrderNotes();
 
             Order order =  Order.NewOrder(
                 accession,
@@ -66,9 +64,7 @@ namespace ClearCanvas.Healthcare.Tests
                 facility,
                 scheduleTime,
                 orderingPrac,
-                new List<ResultRecipient>(),
-                attachments,
-                notes);
+                new List<ResultRecipient>());
 
             if(createProcedureSteps)
             {
