@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
     <Compile Include="Admin\StaffGroupAdmin\StaffGroupAdminService.cs" />
+    <Compile Include="OrderNotes\OrderNoteService.cs" />
     <Compile Include="StaffGroupAssembler.cs" />
     <Compile Include="Admin\UserAdmin\UserAdminService.cs" />
     <Compile Include="Admin\UserAdmin\AuthorityGroupAssembler.cs" />

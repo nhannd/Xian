@@ -5,6 +5,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
 using System.Collections.Generic;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare {
 
@@ -14,6 +15,8 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class Note : ClearCanvas.Enterprise.Core.Entity
 	{
+        #region Constructors
+
         /// <summary>
         /// Constructor for creating a new note.
         /// </summary>
@@ -22,7 +25,7 @@ namespace ClearCanvas.Healthcare {
         /// <param name="body"></param>
         /// <param name="post"></param>
         public Note(string category, Staff author, string body, bool post)
-            : this(category, author, body, new NoteRecipient[]{}, post)
+            : this(category, author, body, new NoteRecipient[] { }, post)
         {
         }
 
@@ -43,9 +46,13 @@ namespace ClearCanvas.Healthcare {
 
             _creationTime = Platform.Time;
 
-            if(post)
+            if (post)
                 Post(_creationTime);
         }
+
+        #endregion
+
+        #region Public Properties
 
         /// <summary>
         /// Gets a value indicating whether this note has been posted.
@@ -68,6 +75,10 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
+        #endregion
+
+        #region Public Methods
+
         /// <summary>
         /// Posts the note.
         /// </summary>
@@ -75,6 +86,44 @@ namespace ClearCanvas.Healthcare {
         {
             Post(Platform.Time);
         }
+
+        /// <summary>
+        /// Marks this note as being acknowledged by the specified staff.
+        /// </summary>
+        /// <remarks>
+        /// If the specified staff is not a recipient of the note,
+        /// and is not a member of a <see cref="StaffGroup"/> that is a recipient,
+        /// a <see cref="WorkflowException"/> will be thrown.
+        /// </remarks>
+        /// <param name="staff"></param>
+        public virtual void Acknowledge(Staff staff)
+        {
+            // cannot acknowledge if not posted
+            if(!IsPosted)
+                throw new WorkflowException("Cannot acknowledge a note that has not been posted.");
+
+
+            // find all un-acknowledged reading that this staff person could acknowledge
+            List<NoteReadActivity> acknowledgeableActivities = CollectionUtils.Select(_readActivities,
+                delegate(NoteReadActivity a)
+                {
+                    return !a.IsAcknowledged && (a.Recipient.Staff.Equals(staff) || a.Recipient.Group.Members.Contains(staff));
+                });
+
+            // if none, this is a workflow exception
+            if(acknowledgeableActivities.Count == 0)
+                throw new WorkflowException("The specified staff was either not a recipient of this note, or the note has already been acknowledged.");
+
+            // acknowledge the reading
+            foreach (NoteReadActivity readActivity in acknowledgeableActivities)
+            {
+                readActivity.Acknowledge(staff);
+            }
+        }
+
+        #endregion
+
+        #region Helpers
 
         /// <summary>
         /// Posts the note with the specified post-time.
@@ -99,6 +148,8 @@ namespace ClearCanvas.Healthcare {
 		/// </summary>
 		private void CustomInitialize()
 		{
-		}
-	}
+        }
+
+        #endregion
+    }
 }

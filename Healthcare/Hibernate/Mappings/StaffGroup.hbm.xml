@@ -10,6 +10,7 @@
     <property name="Description" column="Description_" type="String" length="1024"/>
     
     <set name="Members" table="StaffGroupStaff_" lazy="true">
+      <cache usage="nonstrict-read-write"/>
       <key column="StaffGroupOID_"/>
       <many-to-many column="StaffOID_" class="Staff" fetch="join"/>
     </set>
