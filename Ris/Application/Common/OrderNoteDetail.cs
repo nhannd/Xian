@@ -43,6 +43,17 @@ namespace ClearCanvas.Ris.Application.Common
         public abstract class RecipientDetail : DataContractBase
         {
             /// <summary>
+            /// Constructor.
+            /// </summary>
+            /// <param name="isAcknowledged"></param>
+            /// <param name="acknowledgedTime"></param>
+            protected RecipientDetail(bool isAcknowledged, DateTime? acknowledgedTime)
+            {
+                IsAcknowledged = isAcknowledged;
+                AcknowledgedTime = acknowledgedTime;
+            }
+
+            /// <summary>
             /// Gets a value indicating whether the note has been acknowledged by the recipient.
             /// (For a group recipient, indicates whether a member of the group has acknowledged the note on behalf of the group).
             /// This field is ignored when creating a new note.
@@ -63,6 +74,18 @@ namespace ClearCanvas.Ris.Application.Common
         public class StaffRecipientDetail : RecipientDetail
         {
             /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="staff"></param>
+            /// <param name="isAcknowledged"></param>
+            /// <param name="acknowledgedTime"></param>
+            public StaffRecipientDetail(StaffSummary staff, bool isAcknowledged, DateTime? acknowledgedTime)
+                : base(isAcknowledged, acknowledgedTime)
+            {
+                Staff = staff;
+            }
+
+            /// <summary>
             /// Gets the staff recipient.
             /// </summary>
             [DataMember]
@@ -72,6 +95,18 @@ namespace ClearCanvas.Ris.Application.Common
         [DataContract]
         public class GroupRecipientDetail : RecipientDetail
         {
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="isAcknowledged"></param>
+            /// <param name="acknowledgedTime"></param>
+            /// <param name="group"></param>
+            public GroupRecipientDetail(StaffGroupSummary group, bool isAcknowledged, DateTime? acknowledgedTime)
+                : base(isAcknowledged, acknowledgedTime)
+            {
+                Group = group;
+            }
+
             /// <summary>
             /// Gets the group recipient.
             /// </summary>
@@ -85,17 +120,17 @@ namespace ClearCanvas.Ris.Application.Common
         /// <param name="orderNoteRef"></param>
         /// <param name="category"></param>
         /// <param name="creationTime"></param>
-        /// <param name="sentTime"></param>
+        /// <param name="postTime"></param>
         /// <param name="author"></param>
         /// <param name="staffRecipients"></param>
         /// <param name="groupRecipients"></param>
         /// <param name="noteBody"></param>
-        public OrderNoteDetail(EntityRef orderNoteRef, string category, DateTime creationTime, DateTime? sentTime, StaffSummary author, List<StaffRecipientDetail> staffRecipients, List<GroupRecipientDetail> groupRecipients, string noteBody)
+        public OrderNoteDetail(EntityRef orderNoteRef, string category, DateTime creationTime, DateTime? postTime, StaffSummary author, List<StaffRecipientDetail> staffRecipients, List<GroupRecipientDetail> groupRecipients, string noteBody)
         {
             OrderNoteRef = orderNoteRef;
             Category = category;
             CreationTime = creationTime;
-            SentTime = sentTime;
+            PostTime = postTime;
             Author = author;
             StaffRecipients = staffRecipients;
             GroupRecipients = groupRecipients;
@@ -138,11 +173,11 @@ namespace ClearCanvas.Ris.Application.Common
         public DateTime CreationTime;
 
         /// <summary>
-        /// Gets the time the note was sent (or posted, in the case where there are no recipients).
+        /// Gets the time the note was posted.
         /// This field is ignored when creating a new note.
         /// </summary>
         [DataMember]
-        public DateTime? SentTime;
+        public DateTime? PostTime;
 
         /// <summary>
         /// Gets the note author.

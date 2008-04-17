@@ -222,6 +222,9 @@
   <data name="ColumnPeer" xml:space="preserve">
     <value>Peer</value>
   </data>
+  <data name="ColumnPostTime" xml:space="preserve">
+    <value>Time</value>
+  </data>
   <data name="ColumnPractitioner" xml:space="preserve">
     <value>Practitioner</value>
   </data>

@@ -376,6 +376,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Time.
+        /// </summary>
+        internal static string ColumnPostTime {
+            get {
+                return ResourceManager.GetString("ColumnPostTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Practitioner.
         /// </summary>
         internal static string ColumnPractitioner {

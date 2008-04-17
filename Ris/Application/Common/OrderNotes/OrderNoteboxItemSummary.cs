@@ -10,6 +10,39 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
     public class OrderNoteboxItemSummary : DataContractBase
     {
         /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="orderNoteRef"></param>
+        /// <param name="orderRef"></param>
+        /// <param name="patientRef"></param>
+        /// <param name="mrn"></param>
+        /// <param name="patientName"></param>
+        /// <param name="dateOfBirth"></param>
+        /// <param name="accessionNumber"></param>
+        /// <param name="diagnosticServiceName"></param>
+        /// <param name="category"></param>
+        /// <param name="postTime"></param>
+        /// <param name="author"></param>
+        /// <param name="isAcknowledged"></param>
+        public OrderNoteboxItemSummary(EntityRef orderNoteRef, EntityRef orderRef, EntityRef patientRef,
+            CompositeIdentifierDetail mrn, PersonNameDetail patientName, DateTime? dateOfBirth, string accessionNumber,
+            string diagnosticServiceName, string category, DateTime? postTime, StaffSummary author, bool isAcknowledged)
+        {
+            OrderNoteRef = orderNoteRef;
+            OrderRef = orderRef;
+            PatientRef = patientRef;
+            Mrn = mrn;
+            PatientName = patientName;
+            DateOfBirth = dateOfBirth;
+            AccessionNumber = accessionNumber;
+            DiagnosticServiceName = diagnosticServiceName;
+            Category = category;
+            PostTime = postTime;
+            Author = author;
+            IsAcknowledged = isAcknowledged;
+        }
+
+        /// <summary>
         /// Gets a reference to the order note.
         /// </summary>
         [DataMember]
@@ -64,10 +97,10 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
         public string Category;
         
         /// <summary>
-        /// Gets the time the note was sent.
+        /// Gets the time the note was posted.
         /// </summary>
         [DataMember]
-        public DateTime? SentTime;
+        public DateTime? PostTime;
 
         /// <summary>
         /// Gets the note author.
