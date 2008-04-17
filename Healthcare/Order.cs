@@ -166,34 +166,6 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
-        public virtual bool CanCompleteDocumentation
-        {
-            get
-            {
-                // All mps and mpps must be completed or discontinued
-                foreach (Procedure procedure in Procedures)
-                {
-                    foreach (ModalityProcedureStep modalityProcedureStep in procedure.ModalityProcedureSteps)
-                    {
-                        if(modalityProcedureStep.State != ActivityStatus.CM && modalityProcedureStep.State != ActivityStatus.DC)
-                        {
-                            return false;
-                        }
-
-                        foreach (PerformedStep performedStep in modalityProcedureStep.PerformedSteps)
-                        {
-                            if (performedStep.State == PerformedStepStatus.IP)
-                            {
-                                return false;
-                            }
-                        }
-                    }
-                }
-
-                return true;
-            }
-        }
-
         #endregion
 
         #region Public operations

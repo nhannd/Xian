@@ -96,6 +96,9 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
+        /// <summary>
+        /// Gets the documentation procedure step, or null if it does not exist.
+        /// </summary>
         public virtual DocumentationProcedureStep DocumentationProcedureStep
         {
             get
@@ -125,6 +128,26 @@ namespace ClearCanvas.Healthcare {
         #endregion
 
         #region Public Operations
+
+        /// <summary>
+        /// Gets all procedure steps matching the specified predicate.
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public virtual List<ProcedureStep> GetProcedureSteps(Predicate<ProcedureStep> predicate)
+        {
+            return CollectionUtils.Select(_procedureSteps, predicate);
+        }
+
+        /// <summary>
+        /// Gets the first procedure step matching the specified predicate.
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public virtual ProcedureStep GetProcedureStep(Predicate<ProcedureStep> predicate)
+        {
+            return CollectionUtils.SelectFirst(_procedureSteps, predicate);
+        }
 
         /// <summary>
         /// Creates the procedure steps specified in the procedure plan of the associated

@@ -60,13 +60,14 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void InitializeComponent()
         {
             this._tableLayoutPanelRoot = new System.Windows.Forms.TableLayoutPanel();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._btnSave = new System.Windows.Forms.Button();
             this._btnComplete = new System.Windows.Forms.Button();
             this._bannerPanel = new System.Windows.Forms.Panel();
             this._orderDocumentationPanel = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this._assignedRadiologistLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this._tableLayoutPanelRoot.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // _tableLayoutPanelRoot
@@ -74,9 +75,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._tableLayoutPanelRoot.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this._tableLayoutPanelRoot.ColumnCount = 1;
             this._tableLayoutPanelRoot.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this._tableLayoutPanelRoot.Controls.Add(this.flowLayoutPanel1, 0, 2);
             this._tableLayoutPanelRoot.Controls.Add(this._bannerPanel, 0, 0);
             this._tableLayoutPanelRoot.Controls.Add(this._orderDocumentationPanel, 0, 1);
+            this._tableLayoutPanelRoot.Controls.Add(this.panel1, 0, 2);
             this._tableLayoutPanelRoot.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tableLayoutPanelRoot.Location = new System.Drawing.Point(0, 0);
             this._tableLayoutPanelRoot.Name = "_tableLayoutPanelRoot";
@@ -84,25 +85,14 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._tableLayoutPanelRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 85F));
             this._tableLayoutPanelRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this._tableLayoutPanelRoot.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this._tableLayoutPanelRoot.Size = new System.Drawing.Size(1033, 650);
+            this._tableLayoutPanelRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this._tableLayoutPanelRoot.Size = new System.Drawing.Size(1033, 628);
             this._tableLayoutPanelRoot.TabIndex = 0;
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.AutoSize = true;
-            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanel1.Controls.Add(this._btnSave);
-            this.flowLayoutPanel1.Controls.Add(this._btnComplete);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 618);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1027, 29);
-            this.flowLayoutPanel1.TabIndex = 0;
             // 
             // _btnSave
             // 
-            this._btnSave.Location = new System.Drawing.Point(949, 3);
+            this._btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this._btnSave.Location = new System.Drawing.Point(949, 19);
             this._btnSave.Name = "_btnSave";
             this._btnSave.Size = new System.Drawing.Size(75, 23);
             this._btnSave.TabIndex = 1;
@@ -112,7 +102,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _btnComplete
             // 
-            this._btnComplete.Location = new System.Drawing.Point(838, 3);
+            this._btnComplete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this._btnComplete.Location = new System.Drawing.Point(838, 19);
             this._btnComplete.Name = "_btnComplete";
             this._btnComplete.Size = new System.Drawing.Size(105, 23);
             this._btnComplete.TabIndex = 0;
@@ -135,8 +126,32 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderDocumentationPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this._orderDocumentationPanel.Location = new System.Drawing.Point(3, 88);
             this._orderDocumentationPanel.Name = "_orderDocumentationPanel";
-            this._orderDocumentationPanel.Size = new System.Drawing.Size(1027, 524);
+            this._orderDocumentationPanel.Size = new System.Drawing.Size(1027, 486);
             this._orderDocumentationPanel.TabIndex = 2;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this._btnComplete);
+            this.panel1.Controls.Add(this._btnSave);
+            this.panel1.Controls.Add(this._assignedRadiologistLookup);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 580);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1027, 45);
+            this.panel1.TabIndex = 3;
+            // 
+            // _assignedRadiologistLookup
+            // 
+            this._assignedRadiologistLookup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this._assignedRadiologistLookup.AutoSize = true;
+            this._assignedRadiologistLookup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._assignedRadiologistLookup.LabelText = "Supervising Radiologist:";
+            this._assignedRadiologistLookup.Location = new System.Drawing.Point(576, 2);
+            this._assignedRadiologistLookup.Margin = new System.Windows.Forms.Padding(2);
+            this._assignedRadiologistLookup.Name = "_assignedRadiologistLookup";
+            this._assignedRadiologistLookup.Size = new System.Drawing.Size(230, 41);
+            this._assignedRadiologistLookup.TabIndex = 12;
+            this._assignedRadiologistLookup.Value = null;
             // 
             // TechnologistDocumentationComponentControl
             // 
@@ -145,10 +160,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.Controls.Add(this._tableLayoutPanelRoot);
             this.Name = "TechnologistDocumentationComponentControl";
-            this.Size = new System.Drawing.Size(1033, 650);
+            this.Size = new System.Drawing.Size(1033, 628);
             this._tableLayoutPanelRoot.ResumeLayout(false);
             this._tableLayoutPanelRoot.PerformLayout();
-            this.flowLayoutPanel1.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -156,10 +172,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel _tableLayoutPanelRoot;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button _btnComplete;
         private System.Windows.Forms.Button _btnSave;
         private System.Windows.Forms.Panel _bannerPanel;
         private System.Windows.Forms.Panel _orderDocumentationPanel;
+        private System.Windows.Forms.Panel panel1;
+        private ClearCanvas.Ris.Client.View.WinForms.LookupField _assignedRadiologistLookup;
     }
 }

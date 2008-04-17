@@ -26,6 +26,7 @@
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Reporting.ReportingMainWorkflowFolderSystem">
     <folder id="ToBeReportedFolder" path="To be Reported" />
+    <folder id="AssignedFolder" path="Assigned" />
     <folder id="DraftFolder" path="Draft" />
     <folder id="InTranscriptionFolder" path="In Transcriptioin" />
     <folder id="ToBeVerifiedFolder" path="To be Verified" />

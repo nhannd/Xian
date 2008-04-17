@@ -42,6 +42,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
             OrderRef = orderRef;
         }
 
+        /// <summary>
+        /// Specifies order for which documentation is to be marked complete.
+        /// </summary>
         [DataMember]
         public EntityRef OrderRef;
     }

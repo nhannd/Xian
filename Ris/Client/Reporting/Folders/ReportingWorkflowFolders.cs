@@ -61,6 +61,21 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
+    [FolderForWorklistClass(WorklistClassNames.ReportingAssignedWorklist)]
+    [FolderPath("Assigned")]
+    public class AssignedFolder : ReportingWorkflowFolder
+    {
+        [ExtensionPoint]
+        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
+        {
+        }
+
+        public AssignedFolder(ReportingWorkflowFolderSystemBase folderSystem)
+            : base(folderSystem, null, new DropHandlerExtensionPoint())
+        {
+        }
+    }
+
     [FolderForWorklistClass(WorklistClassNames.ReportingDraftWorklist)]
     [FolderPath("Draft")]
     public class DraftFolder : ReportingWorkflowFolder

@@ -40,11 +40,15 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
     [DataContract]
     public class SaveDataRequest : DataContractBase
     {
-        public SaveDataRequest(EntityRef orderRef, Dictionary<string, string> orderExtendedProperties, Dictionary<EntityRef, Dictionary<string, string>> performedProcedureStepExtendedProperties)
+        public SaveDataRequest(EntityRef orderRef,
+            Dictionary<string, string> orderExtendedProperties,
+            Dictionary<EntityRef, Dictionary<string, string>> performedProcedureStepExtendedProperties,
+            StaffSummary assignedInterpreter)
         {
             this.OrderRef = orderRef;
             this.OrderExtendedProperties = orderExtendedProperties;
             this.PerformedProcedureStepExtendedProperties = performedProcedureStepExtendedProperties;
+            this.AssignedInterpreter = assignedInterpreter;
         }
 
         [DataMember]
@@ -55,5 +59,11 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
 
         [DataMember]
         public Dictionary<EntityRef, Dictionary<string, string>> PerformedProcedureStepExtendedProperties;
+
+        /// <summary>
+        /// Specifies a radiologist to which these procedures should be assigned for interpretation. Optional.
+        /// </summary>
+        [DataMember]
+        public StaffSummary AssignedInterpreter;
     }
 }

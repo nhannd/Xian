@@ -78,12 +78,12 @@ namespace ClearCanvas.Healthcare
 
         /// <summary>
         /// Assigns the specified staff as the scheduled performer of this step.  Note that this operation is only valid
-        /// while the step is in the scheduled state.
+        /// while the step is in the scheduled state.  The value may be null, in which case the step is unassigned.
         /// </summary>
         /// <param name="performer"></param>
         public virtual void Assign(Staff performer)
         {
-            Assign(new ProcedureStepPerformer(performer));
+            Assign(performer == null ? null : new ProcedureStepPerformer(performer));
         }
 
         /// <summary>

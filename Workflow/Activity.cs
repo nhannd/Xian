@@ -150,6 +150,11 @@ namespace ClearCanvas.Workflow
             OnSchedulingChanged();
         }
 
+        /// <summary>
+        /// Assigns this activity to be performed by the specified performer.  The value may be null,
+        /// in which case the activity is un-assigned.
+        /// </summary>
+        /// <param name="performer"></param>
         public virtual void Assign(ActivityPerformer performer)
         {
             if (this.State != ActivityStatus.SC)

@@ -29,10 +29,13 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Workflow;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -43,6 +46,7 @@ namespace ClearCanvas.Ris.Application.Services
             ProcedurePlanDetail detail = new ProcedurePlanDetail();
 
             ProcedureAssembler assembler = new ProcedureAssembler();
+            StaffAssembler staffAssembler = new StaffAssembler();
 
             detail.OrderRef = order.GetRef();
             detail.Procedures = CollectionUtils.Map<Procedure, ProcedureDetail>(
@@ -50,6 +54,20 @@ namespace ClearCanvas.Ris.Application.Services
                 delegate(Procedure rp) { return assembler.CreateProcedureDetail(rp, context); });
             detail.DiagnosticServiceSummary =
                 new DiagnosticServiceSummary(order.DiagnosticService.GetRef(), order.DiagnosticService.Id, order.DiagnosticService.Name);
+
+            // establish whether there is a unique assigned interpreter for all procedures
+            HashedSet<Staff> interpreters = new HashedSet<Staff>();
+            foreach (Procedure procedure in order.Procedures)
+            {
+                ProcedureStep pendingInterpretationStep = procedure.GetProcedureStep(
+                    delegate (ProcedureStep ps) { return ps.Is<InterpretationStep>() && ps.State == ActivityStatus.SC; });
+
+                if(pendingInterpretationStep != null && pendingInterpretationStep.AssignedStaff != null)
+                    interpreters.Add(pendingInterpretationStep.AssignedStaff);
+            }
+
+            if (interpreters.Count == 1)
+                detail.AssignedInterpreter = staffAssembler.CreateStaffSummary(CollectionUtils.FirstElement(interpreters), context);
 
             return detail;
         }

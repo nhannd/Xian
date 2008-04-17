@@ -150,6 +150,9 @@ namespace ClearCanvas.Ris.Client.Adt
         private ChildComponentHost _documentationHost;
         private TabComponentContainer _documentationTabContainer;
 
+        private ILookupHandler _radiologistLookupHandler;
+        private StaffSummary _assignedRadiologist;
+
         private readonly List<ITechnologistDocumentationPage> _extensionPages = new List<ITechnologistDocumentationPage>();
 
         private PerformedProcedureComponent _ppsComponent;
@@ -174,6 +177,9 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             InitializeProcedurePlanSummary();
             InitializeDocumentationTabPages();
+
+            // allow assignment to radiologists and residents
+            _radiologistLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, new string[] {"PRAD", "PRAR"});
 
             base.Start();
         }
@@ -220,6 +226,24 @@ namespace ClearCanvas.Ris.Client.Adt
         public ActionModelNode ProcedurePlanTreeActionModel
         {
             get { return _procedurePlanActionHandler; }
+        }
+
+        public ILookupHandler RadiologistLookupHandler
+        {
+            get { return _radiologistLookupHandler; }
+        }
+
+        public StaffSummary AssignedRadiologist
+        {
+            get { return _assignedRadiologist; }
+            set
+            {
+                if(!Equals(value, _assignedRadiologist))
+                {
+                    _assignedRadiologist = value;
+                    NotifyPropertyChanged("AssignedRadiologist");
+                }
+            }
         }
 
         public void SaveDocumentation()
@@ -373,7 +397,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
 
                             SaveDataRequest saveRequest =
-                                new SaveDataRequest(_procedurePlan.OrderRef, _orderExtendedProperties, ppsExtendedProperties);
+                                new SaveDataRequest(_procedurePlan.OrderRef, _orderExtendedProperties, ppsExtendedProperties, _assignedRadiologist);
                             SaveDataResponse saveResponse = service.SaveData(saveRequest);
 
                             if (completeDocumentation)
@@ -534,6 +558,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 }
             }
             _procedurePlanSummaryTable.Sort();
+
+            this.AssignedRadiologist = procedurePlanDetail.AssignedInterpreter;
 
             EventsHelper.Fire(_procedurePlanChanged, this, EventArgs.Empty);
         }

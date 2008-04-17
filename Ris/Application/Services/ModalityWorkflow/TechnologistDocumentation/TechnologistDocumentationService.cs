@@ -39,6 +39,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 using ClearCanvas.Workflow;
 using Iesi.Collections.Generic;
+using System;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocumentation
 {
@@ -53,7 +54,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         public CanCompleteOrderDocumentationResponse CanCompleteOrderDocumentation(CanCompleteOrderDocumentationRequest request)
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-            return new CanCompleteOrderDocumentationResponse(order.CanCompleteDocumentation);
+            return new CanCompleteOrderDocumentationResponse(CollectionUtils.TrueForAll(order.Procedures,
+                delegate(Procedure p) { return AreAllModalityStepsTerminated(p); }));
         }
 
 
@@ -73,6 +75,18 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
                 CopyProperties(pps.ExtendedProperties, extendedProperties);
             }
 
+            // assign all procedures for this order to the specified interpreter (or unassign them, if null)
+            Staff interpreter = request.AssignedInterpreter == null ? null 
+                : PersistenceContext.Load<Staff>(request.AssignedInterpreter.StaffRef, EntityLoadFlags.Proxy);
+            foreach (Procedure procedure in order.Procedures)
+            {
+                InterpretationStep interpretationStep = GetPendingInterpretationStep(procedure);
+                if(interpretationStep != null)
+                {
+                    interpretationStep.Assign(interpreter);
+                }
+            }
+
             this.PersistenceContext.SynchState();
 
             SaveDataResponse response = new SaveDataResponse();
@@ -87,11 +101,22 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
+            DateTime now = Platform.Time;
             foreach (Procedure procedure in order.Procedures)
             {
                 if(procedure.DocumentationProcedureStep != null && procedure.DocumentationProcedureStep.State != ActivityStatus.CM)
                 {
                     procedure.DocumentationProcedureStep.Complete();
+                }
+
+                // schedule the interpretation step if the procedure was performed
+                // Note: this logic is probably UHN-specific... ideally this aspect of the workflow should be configurable,
+                // because it may be desirable to scheduled the interpretation prior to completing the documentation
+                if (IsProcedurePerformed(procedure))
+                {
+                    InterpretationStep interpretationStep = GetPendingInterpretationStep(procedure);
+                    if(interpretationStep != null)
+                        interpretationStep.Schedule(now);
                 }
             }
 
@@ -107,12 +132,45 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         #endregion
 
 
-        private void CopyProperties(IDictionary<string, string> dest, IDictionary<string, string> source)
+        private static void CopyProperties(IDictionary<string, string> dest, IDictionary<string, string> source)
         {
             foreach (KeyValuePair<string, string> kvp in source)
             {
                 dest[kvp.Key] = kvp.Value;
             }
+        }
+
+        private static bool AreAllModalityStepsTerminated(Procedure rp)
+        {
+            return rp.ModalityProcedureSteps.TrueForAll(
+                    delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
+        }
+
+        private static bool IsProcedurePerformed(Procedure rp)
+        {
+            // return true if all MPS are terminated and at least one is completed
+            return AreAllModalityStepsTerminated(rp) && rp.ModalityProcedureSteps.Exists(
+                delegate(ModalityProcedureStep ps) { return ps.State == ActivityStatus.CM; });
+        }
+
+        private InterpretationStep GetPendingInterpretationStep(Procedure procedure)
+        {
+            List<ProcedureStep> interpretationSteps = CollectionUtils.Select(procedure.ProcedureSteps,
+                delegate(ProcedureStep ps) { return ps.Is<InterpretationStep>(); });
+
+            // no interp step, so create one
+            if (interpretationSteps.Count == 0)
+            {
+                InterpretationStep interpretationStep = new InterpretationStep(procedure);
+                PersistenceContext.Lock(interpretationStep, DirtyState.New);
+                return interpretationStep;
+            }
+
+            // may be multiple interp steps (eg maybe one was started and discontinued), so find the one that is scheduled
+            ProcedureStep pendingStep = CollectionUtils.SelectFirst(interpretationSteps,
+                delegate(ProcedureStep ps) { return ps.State == ActivityStatus.SC; });
+
+            return pendingStep == null ? null : pendingStep.As<InterpretationStep>();
         }
     }
 }

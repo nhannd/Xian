@@ -106,6 +106,9 @@ namespace ClearCanvas.Ris.Application.Common
         public const string ReportingToBeProtocolledWorklist = "ReportingToBeProtocolledWorklist";
 
         [WorklistClassName]
+        public const string ReportingAssignedWorklist = "ReportingAssignedWorklist";
+
+        [WorklistClassName]
         public const string ReportingDraftWorklist = "ReportingDraftWorklist";
 
         [WorklistClassName]

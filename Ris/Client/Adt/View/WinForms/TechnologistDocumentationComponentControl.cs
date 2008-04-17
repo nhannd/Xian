@@ -62,6 +62,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _btnComplete.DataBindings.Add("Enabled", _component, "CompleteEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _assignedRadiologistLookup.LookupHandler = _component.RadiologistLookupHandler;
+            _assignedRadiologistLookup.DataBindings.Add("Value", _component, "AssignedRadiologist", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _btnSave_Click(object sender, EventArgs e)
