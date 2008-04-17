@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                 _instanceStats.FileLoadTime.Start();
                 file = new DicomFile(path);
-                file.Load();
+                file.Load(DicomReadOptions.StorePixelDataReferences | DicomReadOptions.Default);
                 _instanceStats.FileLoadTime.End();
                 _instanceStats.FileSize = (ulong) fileSize;
 
