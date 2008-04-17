@@ -41,6 +41,8 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class OrderNoteAssembler
     {
+        #region OrderNoteSynchronizeHelper
+
         class OrderNoteSynchronizeHelper : CollectionSynchronizeHelper<OrderNote, OrderNoteDetail>
         {
             private readonly Order _order;
@@ -49,7 +51,7 @@ namespace ClearCanvas.Ris.Application.Services
             private readonly IPersistenceContext _context;
 
             public OrderNoteSynchronizeHelper(OrderNoteAssembler assembler, Order order, Staff newNoteAuthor, IPersistenceContext context)
-                :base(false, false)
+                : base(false, false)
             {
                 _assembler = assembler;
                 _order = order;
@@ -64,9 +66,11 @@ namespace ClearCanvas.Ris.Application.Services
 
             protected override void AddItem(OrderNoteDetail sourceItem, ICollection<OrderNote> notes)
             {
-                notes.Add( _assembler.CreateOrderNote(sourceItem, _order, _newNoteAuthor, true, _context));
+                notes.Add(_assembler.CreateOrderNote(sourceItem, _order, _newNoteAuthor, true, _context));
             }
         }
+
+        #endregion
 
         /// <summary>
         /// Synchronizes an order's Notes collection, adding any notes that don't already exist in the collection,
@@ -82,86 +86,134 @@ namespace ClearCanvas.Ris.Application.Services
             synchronizer.Synchronize(order.Notes, sourceList);
         }
 
-        public OrderNoteDetail CreateOrderNoteDetail(OrderNote note, IPersistenceContext context)
+        /// <summary>
+        /// Creates an <see cref="OrderNoteDetail"/> from a <see cref="OrderNote"/>.
+        /// </summary>
+        /// <param name="orderNote"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public OrderNoteDetail CreateOrderNoteDetail(OrderNote orderNote, IPersistenceContext context)
         {
-            StaffAssembler staffAssembler = new StaffAssembler();
-            StaffGroupAssembler staffGroupAssembler = new StaffGroupAssembler();
-
             List<OrderNoteDetail.StaffRecipientDetail> staffRecipients = new List<OrderNoteDetail.StaffRecipientDetail>();
             List<OrderNoteDetail.GroupRecipientDetail> groupRecipients = new List<OrderNoteDetail.GroupRecipientDetail>();
-            if (note.IsPosted)
+
+            // if the note has been posted, construct the recipients list from the ReadActivites, so we can get the ACK status
+            if (orderNote.IsPosted)
             {
-                foreach (NoteReadActivity readActivity in note.ReadActivities)
+                foreach (NoteReadActivity readActivity in orderNote.ReadActivities)
                 {
-                    if(readActivity.Recipient.Group != null)
+                    if(readActivity.Recipient.IsGroupRecipient)
                     {
                         groupRecipients.Add(
-                            new OrderNoteDetail.GroupRecipientDetail(
-                                staffGroupAssembler.CreateSummary(readActivity.Recipient.Group),
-                                readActivity.IsAcknowledged,
-                                readActivity.AcknowledgedBy.Time));
+                            CreateGroupRecipientDetail(readActivity.Recipient.Group,
+                                                       readActivity.IsAcknowledged,
+                                                       readActivity.AcknowledgedBy.Time,
+                                                       readActivity.AcknowledgedBy.Staff, context));
                     }
                     else
                     {
                         staffRecipients.Add(
-                            new OrderNoteDetail.StaffRecipientDetail(
-                                staffAssembler.CreateStaffSummary(readActivity.Recipient.Staff, context),
-                                readActivity.IsAcknowledged,
-                                readActivity.AcknowledgedBy.Time));
+                            CreateStaffRecipientDetail(readActivity.Recipient.Staff, readActivity.IsAcknowledged, readActivity.AcknowledgedBy.Time, context));
                     }
                 }
             }
             else
             {
-                foreach (NoteRecipient recipient in note.Recipients)
+                // the note has not been posted, so use the Recipients collection
+                foreach (NoteRecipient recipient in orderNote.Recipients)
                 {
                     if(recipient.Group != null)
-                    {
-                        groupRecipients.Add(
-                            new OrderNoteDetail.GroupRecipientDetail(
-                                staffGroupAssembler.CreateSummary(recipient.Group),
-                                false,
-                                null));
-                    }
+                        groupRecipients.Add(CreateGroupRecipientDetail(recipient.Group, false, null, null, context));
                     else
-                    {
-                        staffRecipients.Add(
-                            new OrderNoteDetail.StaffRecipientDetail(
-                                staffAssembler.CreateStaffSummary(recipient.Staff, context),
-                                false,
-                                null));
-                    }
+                        staffRecipients.Add(CreateStaffRecipientDetail(recipient.Staff, false, null, context));
                 }    
             }
 
+            StaffAssembler staffAssembler = new StaffAssembler();
             return new OrderNoteDetail(
-                note.GetRef(),
-                note.Category,
-                note.CreationTime,
-                note.PostTime,
-                staffAssembler.CreateStaffSummary(note.Author, context),
+                orderNote.GetRef(),
+                orderNote.Category,
+                orderNote.CreationTime,
+                orderNote.PostTime,
+                staffAssembler.CreateStaffSummary(orderNote.Author, context),
                 staffRecipients, 
                 groupRecipients, 
-                note.Body);
+                orderNote.Body);
         }
 
-        public OrderNoteSummary CreateOrderNoteSummary(OrderNote note, IPersistenceContext context)
+        /// <summary>
+        /// Creates an <see cref="OrderNoteSummary"/> from a <see cref="OrderNote"/>.
+        /// </summary>
+        /// <param name="orderNote"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public OrderNoteSummary CreateOrderNoteSummary(OrderNote orderNote, IPersistenceContext context)
         {
             StaffAssembler staffAssembler = new StaffAssembler();
             return new OrderNoteSummary(
-                note.GetRef(),
-                note.Category,
-                note.CreationTime,
-                note.PostTime,
-                staffAssembler.CreateStaffSummary(note.Author, context),
-                note.IsFullyAcknowledged,
-                note.Body);
+                orderNote.GetRef(),
+                orderNote.Category,
+                orderNote.CreationTime,
+                orderNote.PostTime,
+                staffAssembler.CreateStaffSummary(orderNote.Author, context),
+                orderNote.IsFullyAcknowledged,
+                orderNote.Body);
         }
 
+        /// <summary>
+        /// Creates a new <see cref="OrderNote"/> based on the information provided in the specified detail object.
+        /// </summary>
+        /// <param name="detail"></param>
+        /// <param name="order"></param>
+        /// <param name="author"></param>
+        /// <param name="post"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public OrderNote CreateOrderNote(OrderNoteDetail detail, Order order, Staff author, bool post, IPersistenceContext context)
         {
+            List<NoteRecipient> recipients = new List<NoteRecipient>();
+            recipients.AddRange(
+                CollectionUtils.Map<OrderNoteDetail.StaffRecipientDetail, NoteRecipient>(detail.StaffRecipients,
+                    delegate(OrderNoteDetail.StaffRecipientDetail item)
+                    {
+                        return new NoteRecipient(context.Load<Staff>(item.Staff.StaffRef, EntityLoadFlags.Proxy));
+                    }));
+
+            recipients.AddRange(
+                CollectionUtils.Map<OrderNoteDetail.GroupRecipientDetail, NoteRecipient>(detail.GroupRecipients,
+                    delegate(OrderNoteDetail.GroupRecipientDetail item)
+                    {
+                        return new NoteRecipient(context.Load<StaffGroup>(item.Group.StaffGroupRef, EntityLoadFlags.Proxy));
+                    }));
+
             return new OrderNote(order, detail.Category, author, detail.NoteBody, post);
         }
+
+        #region Helpers
+
+        private OrderNoteDetail.GroupRecipientDetail CreateGroupRecipientDetail(StaffGroup group, bool acknowledged,
+            DateTime? acknowlegedTime, Staff acknowledgedBy, IPersistenceContext context)
+        {
+            StaffAssembler staffAssembler = new StaffAssembler();
+            StaffGroupAssembler staffGroupAssembler = new StaffGroupAssembler();
+            return new OrderNoteDetail.GroupRecipientDetail(
+                                staffGroupAssembler.CreateSummary(group),
+                                acknowledged,
+                                acknowledged ? acknowlegedTime : null,
+                                acknowledged ? staffAssembler.CreateStaffSummary(acknowledgedBy, context) : null);
+        }
+
+        private OrderNoteDetail.StaffRecipientDetail CreateStaffRecipientDetail(Staff staff, bool acknowledged,
+            DateTime? acknowlegedTime, IPersistenceContext context)
+        {
+            StaffAssembler staffAssembler = new StaffAssembler();
+            return new OrderNoteDetail.StaffRecipientDetail(
+                                staffAssembler.CreateStaffSummary(staff, context),
+                                acknowledged,
+                                acknowledged ? acknowlegedTime : null);
+        }
+
+        #endregion
 
     }
 }

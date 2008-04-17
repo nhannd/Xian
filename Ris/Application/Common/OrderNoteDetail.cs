@@ -101,10 +101,12 @@ namespace ClearCanvas.Ris.Application.Common
             /// <param name="isAcknowledged"></param>
             /// <param name="acknowledgedTime"></param>
             /// <param name="group"></param>
-            public GroupRecipientDetail(StaffGroupSummary group, bool isAcknowledged, DateTime? acknowledgedTime)
+            /// <param name="acknowledgedBy"></param>
+            public GroupRecipientDetail(StaffGroupSummary group, bool isAcknowledged, DateTime? acknowledgedTime, StaffSummary acknowledgedBy)
                 : base(isAcknowledged, acknowledgedTime)
             {
                 Group = group;
+                AcknowledgedByStaff = acknowledgedBy;
             }
 
             /// <summary>
@@ -112,6 +114,12 @@ namespace ClearCanvas.Ris.Application.Common
             /// </summary>
             [DataMember]
             public StaffGroupSummary Group;
+
+            /// <summary>
+            /// Gets the staff that acknowledged on behalf of the group, if <see cref="RecipientDetail.IsAcknowledged"/> is true.
+            /// </summary>
+            [DataMember]
+            public StaffSummary AcknowledgedByStaff;
         }
 
         /// <summary>

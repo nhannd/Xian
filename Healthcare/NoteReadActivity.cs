@@ -19,7 +19,7 @@ namespace ClearCanvas.Healthcare {
         /// Marks this read-activity as being acknowledged.
         /// </summary>
         /// <param name="acknowledgedBy"></param>
-        public virtual void Acknowledge(Staff acknowledgedBy)
+        protected virtual internal void Acknowledge(Staff acknowledgedBy)
         {
             if(_isAcknowledged)
                 throw new WorkflowException("Already acknowledged.");
