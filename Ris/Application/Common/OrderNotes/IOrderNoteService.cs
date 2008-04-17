@@ -16,6 +16,7 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [OperationContract]
         QueryNoteboxResponse QueryNotebox(QueryNoteboxRequest request);
 
         /// <summary>
@@ -23,6 +24,7 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [OperationContract]
         GetConversationResponse GetConversation(GetConversationRequest request);
 
         /// <summary>
@@ -31,6 +33,7 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [OperationContract]
         AcknowledgeAndReplyResponse AcknowledgeAndReply(AcknowledgeAndReplyRequest request);
     }
 }
