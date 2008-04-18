@@ -24,9 +24,8 @@ namespace ClearCanvas.Healthcare {
         /// <param name="category"></param>
         /// <param name="author"></param>
         /// <param name="body"></param>
-        /// <param name="post"></param>
-        public Note(string category, Staff author, string body, bool post)
-            : this(category, author, body, new NoteRecipient[] { }, post)
+        public Note(string category, Staff author, string body)
+            : this(category, author, body, new NoteRecipient[] { })
         {
         }
 
@@ -37,8 +36,7 @@ namespace ClearCanvas.Healthcare {
         /// <param name="author"></param>
         /// <param name="body"></param>
         /// <param name="recipients"></param>
-        /// <param name="post"></param>
-        public Note(string category, Staff author, string body, IEnumerable<NoteRecipient> recipients, bool post)
+        public Note(string category, Staff author, string body, IEnumerable<NoteRecipient> recipients)
         {
             _category = category;
             _author = author;
@@ -47,9 +45,6 @@ namespace ClearCanvas.Healthcare {
             _readActivities = new HashedSet<NoteReadActivity>();
 
             _creationTime = Platform.Time;
-
-            if (post)
-                Post(_creationTime);
         }
 
         #endregion
@@ -156,10 +151,11 @@ namespace ClearCanvas.Healthcare {
                 _readActivities.Add(readActivity);
             }
 
+            // give subclass a chance to do some processing
+            BeforePost();
+
             // set the post time
             _postTime = postTime;
-
-            BeforePost();
         }
 	
 		/// <summary>

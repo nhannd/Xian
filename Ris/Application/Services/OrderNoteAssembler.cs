@@ -187,7 +187,12 @@ namespace ClearCanvas.Ris.Application.Services
                         return new NoteRecipient(context.Load<StaffGroup>(item.Group.StaffGroupRef, EntityLoadFlags.Proxy));
                     }));
 
-            return new OrderNote(order, detail.Category, author, detail.NoteBody, recipients, post);
+            OrderNote note = new OrderNote(order, detail.Category, author, detail.NoteBody, recipients);
+
+            if(post)
+                note.Post();
+
+            return note;
         }
 
         #region Helpers

@@ -53,9 +53,8 @@ namespace ClearCanvas.Healthcare {
         /// <param name="author"></param>
         /// <param name="body"></param>
         /// <param name="recipients"></param>
-        /// <param name="post"></param>
-        public OrderNote(Order order, string category, Staff author, string body, IEnumerable<NoteRecipient> recipients, bool post)
-            :base(category, author, body, recipients, post)
+        public OrderNote(Order order, string category, Staff author, string body, IEnumerable<NoteRecipient> recipients)
+            :base(category, author, body, recipients)
         {
             _order = order;
             _order.Notes.Add(this);
@@ -68,9 +67,8 @@ namespace ClearCanvas.Healthcare {
         /// <param name="category"></param>
         /// <param name="author"></param>
         /// <param name="body"></param>
-        /// <param name="post"></param>
-        public OrderNote(Order order, string category, Staff author, string body, bool post)
-            : base(category, author, body, post)
+        public OrderNote(Order order, string category, Staff author, string body)
+            : base(category, author, body)
         {
             _order = order;
             _order.Notes.Add(this);
