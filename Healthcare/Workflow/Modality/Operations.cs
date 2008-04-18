@@ -49,21 +49,8 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             bool allMpsScheduled = rp.ModalityProcedureSteps.TrueForAll(
                 delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.SC; });
 
-            bool allMpsComplete = rp.ModalityProcedureSteps.TrueForAll(
-                delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.CM; });
-
             bool allMpsTerminated = rp.ModalityProcedureSteps.TrueForAll(
                 delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
-
-            // schedule an interpretation if all mps were completed, or terminated, as long as procedure was not aborted
-            // Note: in reality, we may want to create the Interpretation step earlier (perhaps when an MPS starts)
-            // so the radiologist can start interpreting as soon as the technologist finishes some part of the scan
-            if (allMpsComplete || (allMpsTerminated && !procedureAborted))
-            {
-                bool hasInterpretationStep = CollectionUtils.Contains(rp.ProcedureSteps, delegate(ProcedureStep ps) { return ps.Is<InterpretationStep>(); });
-                if(!hasInterpretationStep)
-                    workflow.AddActivity(new InterpretationStep(rp));
-            }
 
             // auto- check-in/check-out
             // Note: this behaviour may need to be disabled in future - ideally check-in/check-out should be done

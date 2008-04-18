@@ -223,6 +223,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					foreach (Procedure procedure in procedures)
 					{
 						InterpretationStep interpretation = new InterpretationStep(procedure);
+                        interpretation.Schedule(Platform.Time);
 						interpretations.Add(interpretation);
 						workflow.AddActivity(interpretation);
 					}
