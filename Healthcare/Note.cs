@@ -6,6 +6,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
 using System.Collections.Generic;
 using ClearCanvas.Workflow;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Healthcare {
 
@@ -43,6 +44,7 @@ namespace ClearCanvas.Healthcare {
             _author = author;
             _body = body;
             _recipients = new List<NoteRecipient>(recipients);
+            _readActivities = new HashedSet<NoteReadActivity>();
 
             _creationTime = Platform.Time;
 

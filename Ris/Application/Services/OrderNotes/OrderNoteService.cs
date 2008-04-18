@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
                 where1.Recipient.Staff.EqualTo(CurrentUserStaff);
 
                 NoteReadActivitySearchCriteria where2 = new NoteReadActivitySearchCriteria();
-                where1.Recipient.Group.In(CurrentUserStaff.Groups);
+                where2.Recipient.Group.In(CurrentUserStaff.Groups);
 
                 IList<NoteReadActivity> activities = PersistenceContext.GetBroker<INoteReadActivityBroker>().Find(
                     new NoteReadActivitySearchCriteria[] {where1, where2});
@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
                 items = CollectionUtils.Map<NoteReadActivity, OrderNoteboxItemSummary>(activities,
                     delegate(NoteReadActivity a)
                     {
-                        OrderNote note = (OrderNote)a.Note;
+                        OrderNote note = a.Note.As<OrderNote>();
                         return new OrderNoteboxItemSummary(
                             note.GetRef(),
                             note.Order.GetRef(),

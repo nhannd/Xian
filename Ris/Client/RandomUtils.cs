@@ -306,7 +306,7 @@ namespace ClearCanvas.Ris.Client
         /// <param name="informationAuthority">Performing facility will be selected to match this information authority.</param>
         /// <param name="schedulingOffsetDays">A positive or negative number of days from today.</param>
         /// <returns></returns>
-        public static EntityRef RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, int schedulingOffsetDays)
+        public static OrderSummary RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, int schedulingOffsetDays)
         {
             return RandomOrder(visit, informationAuthority, null, schedulingOffsetDays);
         }
@@ -319,13 +319,13 @@ namespace ClearCanvas.Ris.Client
         /// <param name="diagnosticServiceName">Name of the diagnostic service to order.</param>
         /// <param name="schedulingOffsetDays">A positive or negative number of days from today.</param>
         /// <returns></returns>
-        public static EntityRef RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, string diagnosticServiceName, int schedulingOffsetDays)
+        public static OrderSummary RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, string diagnosticServiceName, int schedulingOffsetDays)
         {
             InitReferenceDataCacheOnce();
 
             DateTime scheduledTime = Platform.Time + TimeSpan.FromDays(schedulingOffsetDays);
 
-            EntityRef orderRef = null;
+            OrderSummary orderSummary = null;
             Platform.GetService<IOrderEntryService>(
                 delegate(IOrderEntryService service)
                 {
@@ -385,10 +385,10 @@ namespace ClearCanvas.Ris.Client
 
                     PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(requisition));
 
-                    orderRef = response.OrderRef;
+                    orderSummary = response.Order;
                 });
 
-            return orderRef;
+            return orderSummary;
         }
     }
 }

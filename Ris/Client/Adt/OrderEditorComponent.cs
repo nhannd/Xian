@@ -984,18 +984,18 @@ namespace ClearCanvas.Ris.Client.Adt
                         if (_mode == Mode.NewOrder)
                         {
                             PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(requisition));
-                            _orderRef = response.OrderRef;
+                            _orderRef = response.Order.OrderRef;
                         }
                         else if (_mode == Mode.ModifyOrder)
                         {
                             ModifyOrderResponse response = service.ModifyOrder(new ModifyOrderRequest(_orderRef, requisition));
-                            _orderRef = response.OrderRef;
+                            _orderRef = response.Order.OrderRef;
                         }
                         else if (_mode == Mode.ReplaceOrder)
                         {
                             ReplaceOrderRequest request = new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition);
                             ReplaceOrderResponse response = service.ReplaceOrder(request);
-                            _orderRef = response.OrderRef;
+                            _orderRef = response.Order.OrderRef;
                         }
                     });
 

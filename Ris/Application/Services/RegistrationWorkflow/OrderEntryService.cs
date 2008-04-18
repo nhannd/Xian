@@ -240,7 +240,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             // ensure the new order is assigned an OID before using it in the return value
             PersistenceContext.SynchState();
 
-            return new PlaceOrderResponse(order.GetRef());
+            OrderAssembler orderAssembler = new OrderAssembler();
+            return new PlaceOrderResponse(orderAssembler.CreateOrderSummary(order, PersistenceContext));
         }
 
         [UpdateOperation]
@@ -261,7 +262,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             PersistenceContext.SynchState();
 
-            return new ModifyOrderResponse(order.GetRef());
+            OrderAssembler orderAssembler = new OrderAssembler();
+            return new ModifyOrderResponse(orderAssembler.CreateOrderSummary(order, PersistenceContext));
         }
 
         [UpdateOperation]
@@ -287,7 +289,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             PersistenceContext.SynchState();
 
-            return new ReplaceOrderResponse(newOrder.GetRef());
+            OrderAssembler orderAssembler = new OrderAssembler();
+            return new ReplaceOrderResponse(orderAssembler.CreateOrderSummary(newOrder, PersistenceContext));
         }
 
         #endregion

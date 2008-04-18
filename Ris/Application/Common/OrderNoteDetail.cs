@@ -33,6 +33,7 @@ using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Common
 {
@@ -152,12 +153,24 @@ namespace ClearCanvas.Ris.Application.Common
         /// <param name="noteBody"></param>
         /// <param name="staffRecipients"></param>
         /// <param name="groupRecipients"></param>
-        public OrderNoteDetail(string category, string noteBody, List<StaffRecipientDetail> staffRecipients, List<GroupRecipientDetail> groupRecipients)
+        public OrderNoteDetail(string category, string noteBody, List<StaffSummary> staffRecipients, List<StaffGroupSummary> groupRecipients)
         {
             Category = category;
             NoteBody = noteBody;
-            StaffRecipients = staffRecipients;
-            GroupRecipients = groupRecipients;
+            StaffRecipients = staffRecipients == null ? null :
+                CollectionUtils.Map<StaffSummary, StaffRecipientDetail>(staffRecipients,
+                    delegate(StaffSummary staff)
+                    {
+                        return new StaffRecipientDetail(staff, false, null);
+                    });
+
+
+            GroupRecipients = groupRecipients == null ? null :
+                CollectionUtils.Map<StaffGroupSummary, GroupRecipientDetail>(groupRecipients,
+                    delegate(StaffGroupSummary group)
+                    {
+                        return new GroupRecipientDetail(group, false, null, null);
+                    });
         }
 
         /// <summary>

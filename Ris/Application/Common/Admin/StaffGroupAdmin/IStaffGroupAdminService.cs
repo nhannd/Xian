@@ -42,6 +42,14 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin
     public interface IStaffGroupAdminService
     {
         /// <summary>
+        /// Lists staff groups based on a text query.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        TextQueryResponse<StaffGroupSummary> TextQuery(TextQueryRequest request);
+
+        /// <summary>
         /// Summary list of all staff groups.
         /// </summary>
         [OperationContract]

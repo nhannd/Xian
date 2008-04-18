@@ -52,6 +52,38 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
         #region IStaffGroupAdminService Members
 
         [ReadOperation]
+        public TextQueryResponse<StaffGroupSummary> TextQuery(TextQueryRequest request)
+        {
+            IStaffGroupBroker broker = PersistenceContext.GetBroker<IStaffGroupBroker>();
+            StaffGroupAssembler assembler = new StaffGroupAssembler();
+
+            TextQueryHelper<StaffGroup, StaffGroupSearchCriteria, StaffGroupSummary> helper
+                = new TextQueryHelper<StaffGroup, StaffGroupSearchCriteria, StaffGroupSummary>(
+                    delegate(string rawQuery)
+                    {
+                        // allow matching on name (assume entire query is a name which may contain spaces)
+                        StaffGroupSearchCriteria nameCriteria = new StaffGroupSearchCriteria();
+                        nameCriteria.Name.StartsWith(rawQuery);
+
+                        return new StaffGroupSearchCriteria[]{ nameCriteria };
+                    },
+                    delegate(StaffGroup group)
+                    {
+                        return assembler.CreateSummary(group);
+                    },
+                    delegate(StaffGroupSearchCriteria[] criteria)
+                    {
+                        return broker.Count(criteria);
+                    },
+                    delegate(StaffGroupSearchCriteria[] criteria, SearchResultPage page)
+                    {
+                        return broker.Find(criteria, page);
+                    });
+
+            return helper.Query(request);
+        }
+
+        [ReadOperation]
         public ListStaffGroupsResponse ListStaffGroups(ListStaffGroupsRequest request)
         {
             Platform.CheckForNullReference(request, "request");

@@ -107,13 +107,14 @@ namespace ClearCanvas.Ris.Application.Services
                         groupRecipients.Add(
                             CreateGroupRecipientDetail(readActivity.Recipient.Group,
                                                        readActivity.IsAcknowledged,
-                                                       readActivity.AcknowledgedBy.Time,
-                                                       readActivity.AcknowledgedBy.Staff, context));
+                                                       readActivity.AcknowledgedBy, context));
                     }
                     else
                     {
                         staffRecipients.Add(
-                            CreateStaffRecipientDetail(readActivity.Recipient.Staff, readActivity.IsAcknowledged, readActivity.AcknowledgedBy.Time, context));
+                            CreateStaffRecipientDetail(readActivity.Recipient.Staff,
+                                                       readActivity.IsAcknowledged,
+                                                       readActivity.AcknowledgedBy, context));
                     }
                 }
             }
@@ -123,7 +124,7 @@ namespace ClearCanvas.Ris.Application.Services
                 foreach (NoteRecipient recipient in orderNote.Recipients)
                 {
                     if(recipient.Group != null)
-                        groupRecipients.Add(CreateGroupRecipientDetail(recipient.Group, false, null, null, context));
+                        groupRecipients.Add(CreateGroupRecipientDetail(recipient.Group, false, null, context));
                     else
                         staffRecipients.Add(CreateStaffRecipientDetail(recipient.Staff, false, null, context));
                 }    
@@ -186,31 +187,31 @@ namespace ClearCanvas.Ris.Application.Services
                         return new NoteRecipient(context.Load<StaffGroup>(item.Group.StaffGroupRef, EntityLoadFlags.Proxy));
                     }));
 
-            return new OrderNote(order, detail.Category, author, detail.NoteBody, post);
+            return new OrderNote(order, detail.Category, author, detail.NoteBody, recipients, post);
         }
 
         #region Helpers
 
         private OrderNoteDetail.GroupRecipientDetail CreateGroupRecipientDetail(StaffGroup group, bool acknowledged,
-            DateTime? acknowlegedTime, Staff acknowledgedBy, IPersistenceContext context)
+            NoteReader acknowledgement, IPersistenceContext context)
         {
             StaffAssembler staffAssembler = new StaffAssembler();
             StaffGroupAssembler staffGroupAssembler = new StaffGroupAssembler();
             return new OrderNoteDetail.GroupRecipientDetail(
                                 staffGroupAssembler.CreateSummary(group),
                                 acknowledged,
-                                acknowledged ? acknowlegedTime : null,
-                                acknowledged ? staffAssembler.CreateStaffSummary(acknowledgedBy, context) : null);
+                                acknowledged ? acknowledgement.Time : null,
+                                acknowledged ? staffAssembler.CreateStaffSummary(acknowledgement.Staff, context) : null);
         }
 
         private OrderNoteDetail.StaffRecipientDetail CreateStaffRecipientDetail(Staff staff, bool acknowledged,
-            DateTime? acknowlegedTime, IPersistenceContext context)
+            NoteReader acknowledgement, IPersistenceContext context)
         {
             StaffAssembler staffAssembler = new StaffAssembler();
             return new OrderNoteDetail.StaffRecipientDetail(
                                 staffAssembler.CreateStaffSummary(staff, context),
                                 acknowledged,
-                                acknowledged ? acknowlegedTime : null);
+                                acknowledged ? acknowledgement.Time : null);
         }
 
         #endregion

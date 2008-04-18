@@ -44,7 +44,7 @@
     <Compile Include="AddressDetail.cs" />
     <Compile Include="Admin\StaffGroupAdmin\AddStaffGroupRequest.cs" />
     <Compile Include="Admin\StaffGroupAdmin\AddStaffGroupResponse.cs" />
-    <Compile Include="Admin\StaffGroupAdmin\IStaffAdminService.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\IStaffGroupAdminService.cs" />
     <Compile Include="Admin\StaffGroupAdmin\ListStaffGroupsRequest.cs" />
     <Compile Include="Admin\StaffGroupAdmin\ListStaffGroupsResponse.cs" />
     <Compile Include="Admin\StaffGroupAdmin\LoadStaffGroupEditorFormDataRequest.cs" />

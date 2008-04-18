@@ -37,12 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class ReplaceOrderResponse : DataContractBase
     {
-        public ReplaceOrderResponse(EntityRef orderRef)
+        public ReplaceOrderResponse(OrderSummary summary)
         {
-            this.OrderRef = orderRef;
+            this.Order = summary;
         }
 
         [DataMember]
-        public EntityRef OrderRef;
+        public OrderSummary Order;
     }
 }
