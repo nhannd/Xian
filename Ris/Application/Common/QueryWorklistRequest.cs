@@ -37,28 +37,42 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class QueryWorklistRequest : DataContractBase
     {
-        public QueryWorklistRequest(string worklistType, bool countOnly)
+        public QueryWorklistRequest(string worklistType, bool queryItems, bool queryCount)
         {
-            this.WorklistType = worklistType;
-            this.CountOnly = countOnly;
+            this.WorklistClass = worklistType;
+            this.QueryItems = queryItems;
+            this.QueryCount = queryCount;
         }
 
-        public QueryWorklistRequest(EntityRef worklistRef, bool countOnly)
+        public QueryWorklistRequest(EntityRef worklistRef, bool queryItems, bool queryCount)
         {
             this.WorklistRef = worklistRef;
-            this.CountOnly = countOnly;
+            this.QueryItems = queryItems;
+            this.QueryCount = queryCount;
         }
 
+        /// <summary>
+        /// Specifies the worklist instance to query, for instanced worklists.
+        /// </summary>
         [DataMember]
         public EntityRef WorklistRef;
 
-        [DataMember]
-        public string WorklistType;
-
         /// <summary>
-        /// If true, specifies that only an item count is being requested, and the items should not be returned.
+        /// Specifies the class of worklist to query, for singleton worklists.
         /// </summary>
         [DataMember]
-        public bool CountOnly;
+        public string WorklistClass;
+
+        /// <summary>
+        /// Specifies whether to return a count of the total number of items in the notebox.
+        /// </summary>
+        [DataMember]
+        public bool QueryCount;
+
+        /// <summary>
+        /// Specifies whether to return the list of items in the notebox.
+        /// </summary>
+        [DataMember]
+        public bool QueryItems;
     }
 }

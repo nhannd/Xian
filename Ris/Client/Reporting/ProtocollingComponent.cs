@@ -312,7 +312,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 					Platform.GetService<IReportingWorkflowService>(
 						delegate(IReportingWorkflowService service)
 						{
-							QueryWorklistRequest request = new QueryWorklistRequest(WorklistClassNames.ReportingToBeProtocolledWorklist, false);
+                            QueryWorklistRequest request = new QueryWorklistRequest(WorklistClassNames.ReportingToBeProtocolledWorklist, true, true);
 							QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);
 
 							foreach (ReportingWorklistItem item in response.WorklistItems)

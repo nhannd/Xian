@@ -100,30 +100,29 @@ namespace ClearCanvas.Ris.Application.Services
         {
             IWorklist worklist = request.WorklistRef != null ?
                 this.PersistenceContext.Load<Worklist>(request.WorklistRef) :
-                WorklistFactory.Instance.CreateWorklist(request.WorklistType);
+                WorklistFactory.Instance.CreateWorklist(request.WorklistClass);
 
-            if(request.CountOnly)
-            {
-                int count = worklist.GetWorklistItemCount(new WorklistQueryContext(this, null));
-                return new QueryWorklistResponse<TSummary>(new List<TSummary>(), count);
-            }
-            else
+            IList results = null;
+            SearchResultPage page = new SearchResultPage(0, new WorklistSettings().DefaultItemsPerPage);
+            if(request.QueryItems)
             {
                 // get the first page, up to the default max number of items per page
-                SearchResultPage page = new SearchResultPage(0, new WorklistSettings().DefaultItemsPerPage);
-                IList results = worklist.GetWorklistItems(new WorklistQueryContext(this, page));
-
-                // if the number of items returned is equal to the max, then there may be more items in the list
-                // therefore need to do a count query to return the total number of items
-                int count = results.Count;
-                if (count == page.MaxRows)
-                {
-                    count = worklist.GetWorklistItemCount(new WorklistQueryContext(this, null));
-                }
-
-                return new QueryWorklistResponse<TSummary>(
-                    CollectionUtils.Map(results, mapCallback), count);
+                results = worklist.GetWorklistItems(new WorklistQueryContext(this, page));
             }
+
+            int count = -1;
+            if(request.QueryCount)
+            {
+                // if the items were already queried, and the number returned is less than the max per page,
+                // then there is no need to do a separate count query
+                if (results != null && results.Count < page.MaxRows)
+                    count = results.Count;
+                else
+                    count = worklist.GetWorklistItemCount(new WorklistQueryContext(this, null));
+            }
+
+            return new QueryWorklistResponse<TSummary>(
+                request.QueryItems ? CollectionUtils.Map(results, mapCallback) : null, count);
         }
 
         protected List<WorklistSummary> ListWorklistsHelper(List<string> worklistTokens)
