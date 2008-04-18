@@ -55,6 +55,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.String _patientId;
         private System.String _patientsName;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
+        private System.String _specificCharacterSet;
         #endregion
 
         #region Public Properties
@@ -98,6 +99,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
+        }
+        [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
+        public System.String SpecificCharacterSet
+        {
+        get { return _specificCharacterSet; }
+        set { _specificCharacterSet = value; }
         }
         #endregion
 

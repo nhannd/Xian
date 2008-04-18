@@ -68,5 +68,9 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }
         }
+        public System.String SpecificCharacterSet
+        {
+            set { SubParameters["SpecificCharacterSet"] = new EntityUpdateColumn<System.String>("SpecificCharacterSet", value); }
+        }
     }
 }

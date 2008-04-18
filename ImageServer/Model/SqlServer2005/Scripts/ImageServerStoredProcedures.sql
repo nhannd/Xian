@@ -1545,7 +1545,8 @@ CREATE PROCEDURE [dbo].[InsertInstance]
 	@SeriesDescription nvarchar(64) = null,
 	@PerformedProcedureStepStartDate varchar(8) = null,
 	@PerformedProcedureStepStartTime varchar(16) = null,
-	@SourceApplicationEntityTitle varchar(16) = null
+	@SourceApplicationEntityTitle varchar(16) = null,
+	@SpecificCharacterSet varchar(128) = null
 	
 AS
 BEGIN
@@ -1599,9 +1600,9 @@ BEGIN
 			set @PatientGUID = newid()
 			set @InsertPatient = 1
 
-			INSERT into Patient (GUID, ServerPartitionGUID, PatientsName, PatientId, IssuerOfPatientId, NumberOfPatientRelatedStudies, NumberOfPatientRelatedSeries, NumberOfPatientRelatedInstances)
+			INSERT into Patient (GUID, ServerPartitionGUID, PatientsName, PatientId, IssuerOfPatientId, NumberOfPatientRelatedStudies, NumberOfPatientRelatedSeries, NumberOfPatientRelatedInstances,SpecificCharacterSet)
 			VALUES
-				(@PatientGUID, @ServerPartitionGUID, @PatientsName, @PatientId, @IssuerOfPatientId, 0,0,1)
+				(@PatientGUID, @ServerPartitionGUID, @PatientsName, @PatientId, @IssuerOfPatientId, 0,0,1,@SpecificCharacterSet)
 		END
 		ELSE
 		BEGIN
@@ -1617,12 +1618,12 @@ BEGIN
 				StudyInstanceUid, PatientsName, PatientId, PatientsBirthDate,
 				PatientsSex, StudyDate, StudyTime, AccessionNumber, StudyId,
 				StudyDescription, ReferringPhysiciansName, NumberOfStudyRelatedSeries,
-				NumberOfStudyRelatedInstances, StudyStatusEnum)
+				NumberOfStudyRelatedInstances, StudyStatusEnum,SpecificCharacterSet)
 		VALUES
 				(@StudyGUID, @ServerPartitionGUID, @PatientGUID, 
 				@StudyInstanceUid, @PatientsName, @PatientId, @PatientsBirthDate,
 				@PatientsSex, @StudyDate, @StudyTime, @AccessionNumber, @StudyId,
-				@StudyDescription, @ReferringPhysiciansName, 0, 1, @StudyStatusEnum)
+				@StudyDescription, @ReferringPhysiciansName, 0, 1, @StudyStatusEnum,@SpecificCharacterSet)
 
 		UPDATE Patient 
 		SET NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies + 1

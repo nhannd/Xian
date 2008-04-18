@@ -118,5 +118,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerPartitionKey"];
             } 
         }
+        public ISearchCondition<System.String> SpecificCharacterSet
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("SpecificCharacterSet"))
+              {
+                 SubCriteria["SpecificCharacterSet"] = new SearchCondition<System.String>("SpecificCharacterSet");
+              }
+              return (ISearchCondition<System.String>)SubCriteria["SpecificCharacterSet"];
+            } 
+        }
     }
 }

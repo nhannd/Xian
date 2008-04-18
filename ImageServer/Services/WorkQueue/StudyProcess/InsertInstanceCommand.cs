@@ -79,6 +79,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             // Get the Insert Instance broker and do the insert
             IInsertInstance insert = updateContext.GetBroker<IInsertInstance>();
+
+            if (_file.DataSet.Contains(DicomTags.SpecificCharacterSet))
+            {
+                string cs = _file.DataSet[DicomTags.SpecificCharacterSet].ToString();;
+                parms.SpecificCharacterSet = cs;
+            }
+
             _insertKey = CollectionUtils.FirstElement<InstanceKeys>(insert.Execute(parms));
 
             // If the Request Attributes Sequence is in the dataset, do an insert.

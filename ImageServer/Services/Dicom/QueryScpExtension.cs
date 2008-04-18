@@ -185,6 +185,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             dataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
             dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
 
+            if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
+            {
+                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(row.SpecificCharacterSet);
+                dataSet.SpecificCharacterSet = row.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
+            }
+
             foreach (uint tag in tagList)
             {
                 try
@@ -241,6 +247,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             dataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
             dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
 
+            if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
+            {
+                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(row.SpecificCharacterSet);
+                dataSet.SpecificCharacterSet = row.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
+            }
             foreach (uint tag in tagList)
             {
                 try

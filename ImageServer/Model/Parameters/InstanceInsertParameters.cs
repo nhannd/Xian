@@ -164,5 +164,11 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { this.SubCriteria["SourceApplicationEntityTitle"] = new ProcedureParameter<string>("SourceApplicationEntityTitle", value); }
         }
+
+        [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
+        public string SpecificCharacterSet
+        {
+            set { this.SubCriteria["SpecificCharacterSet"] = new ProcedureParameter<string>("SpecificCharacterSet", value); }
+        }
     }
 }

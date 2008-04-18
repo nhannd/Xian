@@ -461,6 +461,7 @@ CREATE TABLE [dbo].[Study](
 	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_Study_GUID]  DEFAULT (newid()),
 	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
 	[PatientGUID] [uniqueidentifier] NOT NULL,
+	[SpecificCharacterSet] varchar(128) NULL,
 	[StudyInstanceUid] [varchar](64) NOT NULL,
 	[PatientsName] [nvarchar](64) NULL,
 	[PatientId] [nvarchar](64) NULL,
@@ -595,6 +596,7 @@ CREATE TABLE [dbo].[Patient](
 	[NumberOfPatientRelatedStudies] [int] NOT NULL,
 	[NumberOfPatientRelatedSeries] [int] NOT NULL,
 	[NumberOfPatientRelatedInstances] [int] NOT NULL,
+	[SpecificCharacterSet] varchar(128) NULL
  CONSTRAINT [PK_Patient] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC

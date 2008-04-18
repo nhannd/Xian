@@ -58,6 +58,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.String _patientsSex;
         private System.String _referringPhysiciansName;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
+        private System.String _specificCharacterSet;
         private System.String _studyDate;
         private System.String _studyDescription;
         private System.String _studyId;
@@ -124,6 +125,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
+        }
+        [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
+        public System.String SpecificCharacterSet
+        {
+        get { return _specificCharacterSet; }
+        set { _specificCharacterSet = value; }
         }
         [DicomField(DicomTags.StudyDate, DefaultValue = DicomFieldDefault.Null)]
         public System.String StudyDate
