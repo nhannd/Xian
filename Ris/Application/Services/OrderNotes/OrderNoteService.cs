@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
             Order order = PersistenceContext.Load<Order>(request.OrderRef);
 
             // process acknowledgements first
-            if(request.OrderNotesToAcknowledge != null)
+            if (request.OrderNotesToAcknowledge != null)
             {
                 List<OrderNote> notes = CollectionUtils.Map<EntityRef, OrderNote>(request.OrderNotesToAcknowledge,
                     delegate(EntityRef noteRef)
@@ -136,30 +136,35 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
                 foreach (OrderNote note in notes)
                 {
                     //validate that the note is actually associated with the correct order
-                    if(!order.Notes.Contains(note))
-                        throw new Exception();  //TODO better exception
+                    if (Equals(note.Order, order))
+                        throw new ArgumentException("Attempt to acknowledge a note that is not associated with this order.");
 
                     note.Acknowledge(CurrentUserStaff);
                 }
             }
 
-            //TODO: ensure all required ack's have been made
-
-            // process reply note
-            OrderNote replyNote = null;
-            OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
-            if(request.OrderNote != null)
+            try
             {
-                replyNote = noteAssembler.CreateOrderNote(
-                    request.OrderNote, order, CurrentUserStaff, true, PersistenceContext);
+                // process reply note
+                OrderNote replyNote = null;
+                OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
+                if (request.OrderNote != null)
+                {
+                    replyNote = noteAssembler.CreateOrderNote(
+                        request.OrderNote, order, CurrentUserStaff, true, PersistenceContext);
+                }
+                PersistenceContext.SynchState();
+
+                if (replyNote != null)
+                    return new AcknowledgeAndReplyResponse(noteAssembler.CreateOrderNoteDetail(replyNote, PersistenceContext));
+                else
+                    return new AcknowledgeAndReplyResponse(null);
             }
-
-            PersistenceContext.SynchState();
-
-            if(replyNote != null)
-                return new AcknowledgeAndReplyResponse(noteAssembler.CreateOrderNoteDetail(replyNote, PersistenceContext));
-            else
-                return new AcknowledgeAndReplyResponse(null);
+            catch (NoteAcknowledgementException e)
+            {
+                // occurs when there are notes that this author must ack prior to posting a new note
+                throw new RequestValidationException(e.Message);
+            }
         }
 
         #endregion

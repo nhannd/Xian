@@ -79,6 +79,7 @@
     <Compile Include="Alerts\NoteAlert.cs" />
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
     <Compile Include="Note.cs" />
+    <Compile Include="NoteAcknowledgementException.cs" />
     <Compile Include="NoteReader.cs" />
     <Compile Include="NoteRecipient.cs" />
     <Compile Include="NoteReadActivity.cs" />

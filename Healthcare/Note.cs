@@ -114,7 +114,7 @@ namespace ClearCanvas.Healthcare {
 
             // if none, this is a workflow exception
             if(acknowledgeableActivities.Count == 0)
-                throw new WorkflowException("The specified staff was either not a recipient of this note, or the note has already been acknowledged.");
+                throw new NoteAcknowledgementException("The specified staff was either not a recipient of this note, or the note has already been acknowledged.");
 
             // acknowledge the reading
             foreach (NoteReadActivity readActivity in acknowledgeableActivities)
@@ -124,6 +124,22 @@ namespace ClearCanvas.Healthcare {
         }
 
         #endregion
+
+        #region Overridables
+
+        /// <summary>
+        /// Called from <see cref="Post"/>, allowing subclasses to cancel the post operation by throwing an exception.
+        /// </summary>
+        /// <remarks>
+        /// Override this method to perform validation prior to posting.  Throw an exception to cancel the post.
+        /// </remarks>
+        protected virtual void BeforePost()
+        {
+
+        }
+
+        #endregion
+
 
         #region Helpers
 
@@ -142,6 +158,8 @@ namespace ClearCanvas.Healthcare {
 
             // set the post time
             _postTime = postTime;
+
+            BeforePost();
         }
 	
 		/// <summary>

@@ -33,6 +33,8 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Workflow;
 
 
 namespace ClearCanvas.Healthcare {
@@ -72,6 +74,37 @@ namespace ClearCanvas.Healthcare {
         {
             _order = order;
             _order.Notes.Add(this);
+        }
+
+        /// <summary>
+        /// Overridden to validate that the order does not have any notes that are pending acknowledgement
+        /// that could be acknowledged by the author of this note.
+        /// </summary>
+        protected override void BeforePost()
+        {
+            // does the order have any notes, in the same category as this note,
+            // that could have been acknowledged by the author of this note but haven't been?
+
+            bool unAckedNotes = CollectionUtils.Contains(_order.Notes,
+                delegate(OrderNote note)
+                {
+                    // ignore notes that haven't been posted and notes in other categories
+                    if(!note.IsPosted || note.Category != this.Category)
+                        return false;
+
+                    return CollectionUtils.Contains(note.ReadActivities,
+                        delegate(NoteReadActivity reading)
+                        {
+                            return !reading.IsAcknowledged &&
+                                   (Equals(reading.Recipient.Staff, this.Author) ||
+                                    (reading.Recipient.Group != null && reading.Recipient.Group.Members.Contains(this.Author)));
+                        });
+                });
+
+            if(unAckedNotes)
+                throw new NoteAcknowledgementException("Order has associated notes that must be acknowledged by this author prior to posting a new note.");
+
+            base.BeforePost();
         }
 
 
