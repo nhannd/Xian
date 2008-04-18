@@ -227,7 +227,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
         {
             if (ActivateIfAlreadyOpen(item))
-                return false;
+                return true;
 
             try
             {

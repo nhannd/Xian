@@ -187,6 +187,15 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are already editing a report.  Do you want to close it and open the new one?.
+        /// </summary>
+        internal static string MessageReportingComponentAlreadyOpened {
+            get {
+                return ResourceManager.GetString("MessageReportingComponentAlreadyOpened", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose Radiologist.
         /// </summary>
         internal static string TitleChooseRadiologist {

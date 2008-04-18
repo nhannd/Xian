@@ -30,9 +30,7 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -111,6 +109,29 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             if(!ActivateIfAlreadyOpen(item))
             {
+                if (ReportDocumentSettings.Default.AllowOnlyOneReportingComponent)
+                {
+                    List<Workspace> documents = DocumentManager.GetAll<ReportDocument>();
+
+                    // Show warning message and ask if the existing document should be closed or not
+                    if (documents.Count > 0)
+                    {
+                        Workspace firstDocument = CollectionUtils.FirstElement(documents);
+                        firstDocument.Activate();
+
+                        if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(SR.MessageReportingComponentAlreadyOpened, MessageBoxActions.YesNo))
+                        {
+                            // Leave the existing document open
+                            return;                            
+                        }
+                        else
+                        {
+                            // close documents and continue
+                            CollectionUtils.ForEach(documents, delegate(Workspace document) { document.Close(); });
+                        }
+                    }
+                }
+
                 // open the report editor
                 ReportDocument doc = new ReportDocument(item, this.Context.DesktopWindow);
                 doc.Open();

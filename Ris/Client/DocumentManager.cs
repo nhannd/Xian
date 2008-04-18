@@ -48,6 +48,24 @@ namespace ClearCanvas.Ris.Client
             return Get(documentKey);
         }
 
+        public static List<Workspace> GetAll<TDocument>()
+            where TDocument : Document
+        {
+            List<Workspace> documents = new List<Workspace>();
+            string documentKeyBase = GenerateDocumentKey(typeof(TDocument), null);
+
+            foreach (DesktopWindow window in Desktop.Application.DesktopWindows)
+            {
+                foreach (Workspace workspace in window.Workspaces)
+                {
+                    if (!string.IsNullOrEmpty(workspace.Name) && workspace.Name.Contains(documentKeyBase))
+                        documents.Add(workspace);
+                }
+            }
+
+            return documents;
+        }
+
         public static Workspace Get(string documentKey)
         {
             foreach (DesktopWindow window in Desktop.Application.DesktopWindows)
