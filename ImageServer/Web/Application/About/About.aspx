@@ -1,8 +1,6 @@
 <%@ Page Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeBehind="About.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.About.About" Title="About ClearCanvas ImageServer" %>
-<asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
-    About
-</asp:Content>
-<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
  <asp:Panel runat="server" ID="PageContent">
     <asp:Panel ID="Panel1" runat="server" CssClass="CSSAboutPanelContainer">
     <asp:Panel ID="Panel3" runat="server" CssClass="CSSAboutPanelBorder">

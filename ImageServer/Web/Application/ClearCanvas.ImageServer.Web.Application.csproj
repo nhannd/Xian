@@ -582,6 +582,9 @@
     <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-left.gif" />
     <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-right.gif" />
     <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\logos\ClearCanvasLogo.png" />
+    <Content Include="App_Themes\ClearCanvas\images\MenuBackground.png" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Global.css" />
     <Content Include="Common\ConfirmationDialog.ascx" />
     <Content Include="Admin\Configuration\Devices\DevicePage.aspx" />
     <Content Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx" />

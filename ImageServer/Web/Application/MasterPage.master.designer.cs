@@ -37,13 +37,13 @@ public partial class Admin_MasterPage {
     protected global::System.Web.UI.HtmlControls.HtmlForm form1;
     
     /// <summary>
-    /// ScriptManager1 control.
+    /// MainScriptManager control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.ScriptManager ScriptManager1;
+    protected global::System.Web.UI.ScriptManager MainScriptManager;
     
     /// <summary>
     /// Image1 control.
@@ -53,24 +53,6 @@ public partial class Admin_MasterPage {
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
     protected global::System.Web.UI.WebControls.ImageButton Image1;
-    
-    /// <summary>
-    /// VersionLabel control.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated field.
-    /// To modify move field declaration from designer file to code-behind file.
-    /// </remarks>
-    protected global::System.Web.UI.WebControls.Label VersionLabel;
-    
-    /// <summary>
-    /// Panel1 control.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated field.
-    /// To modify move field declaration from designer file to code-behind file.
-    /// </remarks>
-    protected global::System.Web.UI.WebControls.Panel Panel1;
     
     /// <summary>
     /// menutitlebar control.
@@ -100,22 +82,13 @@ public partial class Admin_MasterPage {
     protected global::System.Web.UI.WebControls.Menu Menu1;
     
     /// <summary>
-    /// ContentPlaceHolderTitle control.
+    /// MainContentUpdatePanel control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.ContentPlaceHolder ContentPlaceHolderTitle;
-    
-    /// <summary>
-    /// UpdatePanel2 control.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated field.
-    /// To modify move field declaration from designer file to code-behind file.
-    /// </remarks>
-    protected global::System.Web.UI.UpdatePanel UpdatePanel2;
+    protected global::System.Web.UI.UpdatePanel MainContentUpdatePanel;
     
     /// <summary>
     /// PageContentPanel control.
@@ -127,11 +100,11 @@ public partial class Admin_MasterPage {
     protected global::System.Web.UI.WebControls.Panel PageContentPanel;
     
     /// <summary>
-    /// ContentPlaceHolder1 control.
+    /// MainContentPlaceHolder control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.ContentPlaceHolder ContentPlaceHolder1;
+    protected global::System.Web.UI.WebControls.ContentPlaceHolder MainContentPlaceHolder;
 }

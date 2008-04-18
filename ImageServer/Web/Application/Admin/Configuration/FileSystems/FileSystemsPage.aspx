@@ -5,9 +5,7 @@
 <%@ Register Src="AddEditFileSystemDialog.ascx" TagName="AddEditFileSystemDialog"
     TagPrefix="uc3" %>
 <%@ Register Src="FileSystemsPanel.ascx" TagName="FileSystemsPanel" TagPrefix="uc2" %>
-<asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
-    File System Management
-</asp:Content>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
         <ContentTemplate>

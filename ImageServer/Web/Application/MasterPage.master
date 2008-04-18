@@ -5,41 +5,34 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Untitled Page</title>
-    <style runat="server" type="text/css" id="IE6PNGBugFixCSS"/>
-    
-    
+    <style runat="server" type="text/css" id="IE6PNGBugFixCSS"/>    
 </head>
-<body>
-<script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/NumberFormat154.js") %>" ></script>
+<body class="GlobalBody">
+
+    <script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/NumberFormat154.js") %>" ></script>
     
     <!-- this is special code that web service validation needs -->
     <div id="service" style="behavior:url(<%= ResolveClientUrl("~/Services/webservice.htc") %>);" />
     <!-- this is special code that web service validation needs -->
 
-        <div>
-            <form id="form1" runat="server" submitdisabledcontrols="true">
-                <asp:ScriptManager ID="ScriptManager1" runat="server" EnableScriptGlobalization="true"  EnableScriptLocalization="true" />
-                <asp:Panel runat="server" CssClass="CSSPageWindow">
-                    <asp:Table runat="server" Width="100%" CellPadding="0" CellSpacing="0" BorderWidth="0px">
-                        <asp:TableHeaderRow>
-                            <asp:TableHeaderCell HorizontalAlign="Left">
-                                <asp:Panel runat="server" CssClass="CSSLogoImagePanel">
-                                    <asp:ImageButton runat="server" ID="Image1" SkinID="logo" OnClick="OnLogoButtonClick" />
-                                </asp:Panel>
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell runat="server" VerticalAlign="Top" HorizontalAlign="Right">
-                                <asp:Label ID="VersionLabel" runat="server" CssClass="CSSVersionLabel" Text="Version 1.0.0.0"></asp:Label>
-                            </asp:TableHeaderCell>
-                        </asp:TableHeaderRow>
-                        <asp:TableRow>
-                            <asp:TableCell ColumnSpan="2">
-                                <asp:Panel runat="server" CssClass="CSSMainMenuBarContainer">
-                                    <asp:Panel ID="Panel1" runat="server" CssClass="CSSMenuBarBorder">
-                                        <asp:Panel runat="server" CssClass="CSSMenuBarContent">
-                                            <asp:Table ID="menutitlebar" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                                                BorderWidth="0px">
+    <form id="form1" runat="server" submitdisabledcontrols="true">
+        
+        <asp:ScriptManager ID="MainScriptManager" runat="server" EnableScriptGlobalization="true"  EnableScriptLocalization="true" />
+        
+        <asp:Panel runat="server" CssClass="GlobalContentPanel">
+            <asp:Table runat="server" Width="100%" CellPadding="0" CellSpacing="0" BorderWidth="0px">
+                <asp:TableHeaderRow>
+                    
+                    <asp:TableHeaderCell HorizontalAlign="Left">
+                        <asp:ImageButton runat="server" ID="Image1" SkinID="logo" OnClick="OnLogoButtonClick" />
+                    </asp:TableHeaderCell>
+                    
+                    <asp:TableHeaderCell runat="server" VerticalAlign="Bottom" HorizontalAlign="Right" Width="100%" BackColor="Transparent">
+                        <asp:Panel runat="server" CssClass="CSSMainMenuBarContainer">
+                            <asp:Panel runat="server">
+                                    <asp:Table ID="menutitlebar" runat="server" Width="100%" CellPadding="0" CellSpacing="0" BorderWidth="0px">
                                                 <asp:TableRow>
-                                                    <asp:TableCell>
+                                                    <asp:TableCell Width="100%">
                                                         <asp:SiteMapDataSource ID="SiteMapDataSource1" runat="server" ShowStartingNode="False" />
                                                         <asp:Menu ID="Menu1" runat="server" CssClass="CSSMainMenu" Orientation="Horizontal"
                                                             DynamicVerticalOffset="7" StaticEnableDefaultPopOutImage="false" DataSourceID="SiteMapDataSource1">
@@ -54,23 +47,18 @@
                                                             </DynamicItemTemplate>
                                                         </asp:Menu>
                                                     </asp:TableCell>
-                                                    <asp:TableCell BorderColor="Red" BorderWidth="0px" HorizontalAlign="right" CssClass="CSSPageTitle">
-                                                        <asp:ContentPlaceHolder ID="ContentPlaceHolderTitle" runat="server">
-                                                        </asp:ContentPlaceHolder>
-                                                    </asp:TableCell>
                                                 </asp:TableRow>
                                             </asp:Table>
-                                        </asp:Panel>
-                                    </asp:Panel>
+                                      </asp:Panel>
                                 </asp:Panel>
-                            </asp:TableCell>
-                        </asp:TableRow>
+                            </asp:TableHeaderCell>
+                        </asp:TableHeaderRow>
                         <asp:TableRow>
                             <asp:TableCell ColumnSpan="2">
-                                <asp:UpdatePanel ID="UpdatePanel2" runat="server" UpdateMode="Conditional">
+                                <asp:UpdatePanel ID="MainContentUpdatePanel" runat="server" UpdateMode="Conditional">
                                     <ContentTemplate>
-                                        <asp:Panel ID="PageContentPanel" CssClass="CSSPageContentMainWindow" runat="server">
-                                            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server" />
+                                        <asp:Panel ID="PageContentPanel" CssClass="MainContentPanel" runat="server">
+                                            <asp:ContentPlaceHolder ID="MainContentPlaceHolder" runat="server" />
                                         </asp:Panel>
                                     </ContentTemplate>
                                 </asp:UpdatePanel>
@@ -79,7 +67,6 @@
                     </asp:Table>
                 </asp:Panel>
             </form>
-        </div>
 
 </body>
 </html>

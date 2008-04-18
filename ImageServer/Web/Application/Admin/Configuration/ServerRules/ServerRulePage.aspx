@@ -5,9 +5,7 @@
 <%@ Register Src="~/Common/ServerPartitionTabs.ascx" TagName="ServerPartitionTabs" TagPrefix="uc1" %>
 <%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog" TagPrefix="clearcanvas" %>
 <%@ Register Src="AddEditServerRuleDialog.ascx" TagName="AddEditServerRuleDialog"TagPrefix="uc3" %>
-<asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
-    Rules Engine Management
-</asp:Content>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
     <asp:Panel runat="server" ID="PageContent">
         <asp:UpdatePanel ID="ServerRulePageUpdatePanel" runat="server" UpdateMode="Conditional">

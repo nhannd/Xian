@@ -2,17 +2,13 @@
     EnableEventValidation="false" Codebehind="SearchPage.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.WorkQueue.SearchPage"
     Title="ImageServer Search" %>
 
-
 <%@ Register Src="~/Common/ServerPartitionTabs.ascx" TagName="ServerPartitionTabs" TagPrefix="ccPartitionTabs" %>
 <%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog" TagPrefix="clearcanvas" %>
 <%@ Register Src="~/WorkQueue/Edit/ScheduleWorkQueueDialog.ascx" TagName="ScheduleWorkQueueDialog" TagPrefix="clearcanvas" %>
 <%@ Register Src="~/WorkQueue/Edit/ResetWorkQueueDialog.ascx" TagName="ResetWorkQueueDialog"    TagPrefix="clearcanvas" %>        
 <%@ Register Src="~/WorkQueue/Edit/DeleteWorkQueueDialog.ascx" TagName="DeleteWorkQueueDialog"    TagPrefix="clearcanvas" %>        
   
-<asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
-    Work Queue
-</asp:Content>
-<asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
     <table cellpadding="0" cellspacing="0" width="100%">
         <tr>
             <td>
