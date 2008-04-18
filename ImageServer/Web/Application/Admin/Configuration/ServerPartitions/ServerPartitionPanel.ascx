@@ -37,7 +37,7 @@
                     <asp:TableHeaderCell HorizontalAlign="right" Width="100%" Wrap="false">
                         <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
                             <asp:Panel ID="Panel3" runat="server" CssClass="CSSFilterPanelBorder">
-                                <asp:Panel ID="Panel6" runat="server" CssClass="CSSFilterPanelContent">
+                                <asp:Panel ID="Panel6" runat="server" CssClass="CSSFilterPanelContent" DefaultButton="FilterToolbarButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                             <td align="left">
