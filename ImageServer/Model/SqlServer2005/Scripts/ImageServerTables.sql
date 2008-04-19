@@ -50,6 +50,12 @@ CREATE TABLE [dbo].[ServerPartition](
 ) ON [PRIMARY]
 END
 GO
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[ServerPartition]') AND name = N'IX_ServerPartition')
+CREATE UNIQUE NONCLUSTERED INDEX [IX_ServerPartition] ON [dbo].[ServerPartition] 
+(
+	[AeTitle] ASC
+)WITH (PAD_INDEX  = OFF, IGNORE_DUP_KEY = OFF) ON [INDEXES]
+GO
 SET ANSI_PADDING OFF
 GO
 /****** Object:  Table [dbo].[WorkQueueStatusEnum]    Script Date: 01/09/2008 15:04:27 ******/

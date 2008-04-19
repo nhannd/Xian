@@ -30,11 +30,15 @@
                                                     </CCCommon:InvalidInputIndicator>
                                                     <CCValidators:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                         ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="true" ErrorMessage="AE Title is required"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AETitleHelp"></CCValidators:ConditionalRequiredFieldValidator>
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AETitleHelp"/>
                                                     <CCValidators:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator2"
                                                         runat="server" ControlToValidate="AETitleTextBox" Display="None" ErrorMessage="The AE Title is not valid."
                                                         InvalidInputColor="#FAFFB5" ValidationExpression="^([^\\]){1,16}$" ValidationGroup="vg1"
-                                                        InvalidInputIndicatorID="AETitleHelp"></CCValidators:RegularExpressionFieldValidator>
+                                                        InvalidInputIndicatorID="AETitleHelp"/>
+                                                    <CCValidators:ServerPartitionValidator ID="ServerPartitionValidator" runat="server"
+                                                        ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="false" ErrorMessage="The AE Title is not valid." 
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                        InvalidInputIndicatorID="AETitleHelp" />
                                                 </td>
                                             </tr>
                                         </table>

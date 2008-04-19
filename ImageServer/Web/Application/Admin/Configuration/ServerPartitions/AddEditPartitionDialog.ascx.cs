@@ -70,6 +70,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 _partition = value;
                 // put into viewstate to retrieve later
                 ViewState[ClientID + "_EdittedPartition"] = _partition;
+                if (value != null && !Page.IsPostBack)
+                    ServerPartitionValidator.OriginalAeTitle =  value.AeTitle;
             }
             get { return _partition; }
         }
@@ -124,7 +126,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                     _editMode = (bool) ViewState[ClientID + "_EditMode"];
 
                 if (ViewState[ClientID + "_EdittedPartition"] != null)
+                {
                     _partition = ViewState[ClientID + "_EdittedPartition"] as ServerPartition;
+                    ServerPartitionValidator.OriginalAeTitle = _partition.AeTitle;
+                }
             }
         }
 
@@ -181,7 +186,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 AETitleTextBox.Text = "SERVERAE";
                 DescriptionTextBox.Text = "";
                 PortTextBox.Text = "104";
-                PartitionFolderTextBox.Text = "";
+                PartitionFolderTextBox.Text = "SERVERAE";
                 EnabledCheckBox.Checked = true;
                 AutoInsertDeviceCheckBox.Checked = true;
                 AcceptAnyDeviceCheckBox.Checked = true;

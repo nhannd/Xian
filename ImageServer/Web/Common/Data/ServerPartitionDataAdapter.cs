@@ -29,7 +29,9 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -82,9 +84,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 parms.DefaultRemotePort = partition.DefaultRemotePort;
                 parms.AutoInsertDevice = partition.AutoInsertDevice;
                 parms.AcceptAnyDevice = partition.AcceptAnyDevice;
-
-                list = insert.Execute(parms);
-                ok = list != null && list.Count > 0;
+                try
+                {
+                    list = insert.Execute(parms);
+                    ok = list != null && list.Count > 0;
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e, "Error while inserting server partition.");
+                    ok = false;
+                }
 
                 if (ok)
                     ctx.Commit();
