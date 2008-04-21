@@ -160,11 +160,11 @@
     <Compile Include="Admin\Configuration\FileSystems\FileSystemsPage.aspx.designer.cs">
       <DependentUpon>FileSystemsPage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\Preferences\Default.aspx.cs">
+    <Compile Include="Admin\Configuration\Preferences\Default.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\Preferences\Default.aspx.designer.cs">
+    <Compile Include="Admin\Configuration\Preferences\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Admin\Configuration\ServerPartitions\AddEditPartitionDialog.ascx.cs">
@@ -366,11 +366,11 @@
     <Compile Include="Search\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\Preferences\Theme.aspx.cs">
+    <Compile Include="Admin\Configuration\Preferences\Theme.aspx.cs">
       <DependentUpon>Theme.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\Preferences\Theme.aspx.designer.cs">
+    <Compile Include="Admin\Configuration\Preferences\Theme.aspx.designer.cs">
       <DependentUpon>Theme.aspx</DependentUpon>
     </Compile>
     <Compile Include="Search\StudySummary.cs">
@@ -592,7 +592,7 @@
     <Content Include="Admin\Configuration\FileSystems\FileSystemsGridView.ascx" />
     <Content Include="Admin\Configuration\FileSystems\FileSystemsPanel.ascx" />
     <Content Include="Admin\Configuration\FileSystems\FileSystemsPage.aspx" />
-    <Content Include="Admin\Configuration\FileSystems\Preferences\Default.aspx" />
+    <Content Include="Admin\Configuration\Preferences\Default.aspx" />
     <Content Include="Admin\Configuration\ServerPartitions\AddEditPartitionDialog.ascx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionGridPanel.ascx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionPage.aspx" />
@@ -712,7 +712,7 @@
     <Content Include="images\usage.png" />
     <Content Include="Search\SearchPage.aspx" />
     <Content Include="Search\SearchPanel.ascx" />
-    <Content Include="Admin\Configuration\FileSystems\Preferences\Theme.aspx" />
+    <Content Include="Admin\Configuration\Preferences\Theme.aspx" />
     <Content Include="SeriesDetails\StudySummaryPanel.ascx" />
     <Content Include="SeriesDetails\PatientSummaryPanel.ascx" />
     <Content Include="SeriesDetails\SeriesDetailsPage.aspx" />
