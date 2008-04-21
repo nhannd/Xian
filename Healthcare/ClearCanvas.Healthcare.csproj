@@ -123,7 +123,7 @@
     <Compile Include="ResultCommunicationMode.cs" />
     <Compile Include="ResultRecipient.cs" />
     <Compile Include="StaffGroup.cs" />
-    <Compile Include="StaffGroupImex.cs" />
+    <Compile Include="Imex\StaffGroupImex.cs" />
     <Compile Include="TechnologistWorklists.cs" />
     <Compile Include="Tests\TestExtensionFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />
