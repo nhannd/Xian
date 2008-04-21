@@ -78,6 +78,10 @@
     <Compile Include="Alerts\LanguageAlert.cs" />
     <Compile Include="Alerts\NoteAlert.cs" />
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
+    <Compile Include="Imex\DiagnosticServiceImex.cs" />
+    <Compile Include="Imex\ProcedureTypeGroupImex.cs" />
+    <Compile Include="Imex\StaffImex.cs" />
+    <Compile Include="Imex\WorklistImex.cs" />
     <Compile Include="Note.cs" />
     <Compile Include="NoteAcknowledgementException.cs" />
     <Compile Include="NoteReader.cs" />
@@ -119,6 +123,7 @@
     <Compile Include="ResultCommunicationMode.cs" />
     <Compile Include="ResultRecipient.cs" />
     <Compile Include="StaffGroup.cs" />
+    <Compile Include="StaffGroupImex.cs" />
     <Compile Include="TechnologistWorklists.cs" />
     <Compile Include="Tests\TestExtensionFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />
