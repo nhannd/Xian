@@ -117,7 +117,7 @@ namespace ClearCanvas.Healthcare.Imex
                 ICollection<ProtocolCode> protocolCodes = GetProtocolCodes(reader.ReadSubtree());
 
                 reader.ReadToNextSibling(tagReadingGroups);
-                ICollection<ProcedureTypeGroup> readingGroups = GetReadingGroups(reader.ReadSubtree());
+                ICollection<ReadingGroup> readingGroups = GetReadingGroups(reader.ReadSubtree());
 
                 protocolGroup.Description = description;
 
@@ -152,11 +152,11 @@ namespace ClearCanvas.Healthcare.Imex
             return protocolGroup;
         }
 
-        private ICollection<ProcedureTypeGroup> GetReadingGroups(XmlReader xmlReader)
+        private ICollection<ReadingGroup> GetReadingGroups(XmlReader xmlReader)
         {
             xmlReader.Read();
 
-            List<ProcedureTypeGroup> readingGroups = new List<ProcedureTypeGroup>();
+            List<ReadingGroup> readingGroups = new List<ReadingGroup>();
 
             for (bool elementExists = xmlReader.ReadToDescendant(tagReadingGroup);
                 elementExists;

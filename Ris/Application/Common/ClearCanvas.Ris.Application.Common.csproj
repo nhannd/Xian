@@ -354,7 +354,6 @@
     <Compile Include="Jsml\InvokeOperationRequest.cs" />
     <Compile Include="Jsml\InvokeOperationResponse.cs" />
     <Compile Include="Jsml\JsmlBlob.cs" />
-    <Compile Include="Jsml\JsmlSerializer.cs" />
     <Compile Include="ModalityWorkflow\ReplaceOrderRequest.cs" />
     <Compile Include="ModalityWorkflow\ReplaceOrderResponse.cs" />
     <Compile Include="ModalityWorkflow\SearchRequest.cs" />

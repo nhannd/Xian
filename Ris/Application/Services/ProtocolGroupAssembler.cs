@@ -72,7 +72,7 @@ namespace ClearCanvas.Ris.Application.Services
             group.ReadingGroups.Clear();
             detail.ReadingGroups.ForEach(delegate(ProcedureTypeGroupSummary procedureTypeGroupSummary)
             {
-                group.ReadingGroups.Add(context.Load<ProcedureTypeGroup>(procedureTypeGroupSummary.EntityRef));
+                group.ReadingGroups.Add(context.Load<ReadingGroup>(procedureTypeGroupSummary.EntityRef));
             });
         }
     }

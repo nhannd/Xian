@@ -41,7 +41,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Ris.Application.Common.Jsml
+namespace ClearCanvas.Enterprise.Common
 {
     public static class JsmlSerializer
     {
