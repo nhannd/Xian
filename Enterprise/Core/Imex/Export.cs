@@ -30,8 +30,14 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
         private void ExportOneClass(ImexCommandLine cmdLine)
         {
+            string path = cmdLine.Path;
+            string dir = Path.GetDirectoryName(path);
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
 
-            ImexUtils.ExportToSingleFile(FindImexForDataClass(cmdLine.DataClass), cmdLine.Path);
+            ImexUtils.ExportToSingleFile(FindImexForDataClass(cmdLine.DataClass), path);
         }
 
         private void ExportAllClasses(ImexCommandLine cmdLine)
