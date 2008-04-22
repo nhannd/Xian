@@ -320,9 +320,6 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\Move\DeviceGridView.ascx.cs">
       <DependentUpon>DeviceGridView.ascx</DependentUpon>
@@ -589,8 +586,16 @@
     <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-left.gif" />
     <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-right.gif" />
     <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG.gif" />
-    <Content Include="App_Themes\ClearCanvas\images\logos\ClearCanvasLogo.png" />
-    <Content Include="App_Themes\ClearCanvas\images\MenuBackground.png" />
+    <Content Include="App_Themes\ClearCanvas\images\Header\ClearCanvasLogo.png" />
+    <Content Include="App_Themes\ClearCanvas\images\Header\LocationEdge.png" />
+    <Content Include="App_Themes\ClearCanvas\images\MainContent\MainContentBottom.png" />
+    <Content Include="App_Themes\ClearCanvas\images\MainContent\MainContentBottomLeftCorner.png" />
+    <Content Include="App_Themes\ClearCanvas\images\MainContent\MainContentBottomRightCorner.png" />
+    <Content Include="App_Themes\ClearCanvas\images\MainContent\MainContentLeftEdge.png" />
+    <Content Include="App_Themes\ClearCanvas\images\MainContent\MainContentRightEdge.png" />
+    <Content Include="App_Themes\ClearCanvas\images\Header\MenuBackground.png" />
+    <Content Include="App_Themes\ClearCanvas\images\Header\LocationBackground.png" />
+    <Content Include="App_Themes\ClearCanvas\images\Header\MenuEdge.png" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Global.css" />
     <Content Include="Common\ConfirmationDialog.ascx" />
     <Content Include="Admin\Configuration\Devices\DevicePage.aspx" />
@@ -609,29 +614,23 @@
     <Content Include="Admin\Configuration\ServerRules\ServerRulePage.aspx" />
     <Content Include="Admin\Configuration\ServerRules\ServerRulePanel.ascx" />
     <Content Include="Admin\Configuration\ServerRules\ServerRuleSamples.asmx" />
-    <Content Include="App_Themes\ClearCanvas\Accordian.css" />
-    <Content Include="App_Themes\ClearCanvas\Background.css" />
-    <Content Include="App_Themes\ClearCanvas\Border.css" />
-    <Content Include="App_Themes\ClearCanvas\Calendar.css" />
-    <Content Include="App_Themes\ClearCanvas\Dialog.css" />
-    <Content Include="App_Themes\ClearCanvas\Font.css" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Accordian.css" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Calendar.css" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Dialog.css" />
     <Content Include="App_Themes\ClearCanvas\images\gridheaderbackground.png" />
     <Content Include="App_Themes\ClearCanvas\images\icon_warning.gif" />
-    <Content Include="App_Themes\ClearCanvas\images\logos\ImageServerLogo.png" />
-    <Content Include="App_Themes\ClearCanvas\images\tab-active-left.gif" />
-    <Content Include="App_Themes\ClearCanvas\images\tab-active-right.gif" />
-    <Content Include="App_Themes\ClearCanvas\images\tab-active.gif" />
-    <Content Include="App_Themes\ClearCanvas\images\tab-hover-left.gif" />
-    <Content Include="App_Themes\ClearCanvas\images\tab-hover-right.gif" />
-    <Content Include="App_Themes\ClearCanvas\images\tab-hover.gif" />
-    <Content Include="App_Themes\ClearCanvas\images\tab-left.gif" />
-    <Content Include="App_Themes\ClearCanvas\images\tab-line.gif" />
-    <Content Include="App_Themes\ClearCanvas\images\tab-right.gif" />
-    <Content Include="App_Themes\ClearCanvas\images\tab.gif" />
-    <Content Include="App_Themes\ClearCanvas\Layout.css" />
-    <Content Include="App_Themes\ClearCanvas\Section.css" />
-    <Content Include="App_Themes\ClearCanvas\StyleSheet.css" />
-    <Content Include="App_Themes\ClearCanvas\Tabs.css" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-active-left.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-active-right.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-active.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-hover-left.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-hover-right.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-hover.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-left.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-line.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-right.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab.gif" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Section.css" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Tabs.css" />
     <Content Include="Common\BasePage.aspx" />
     <Content Include="Common\InvalidInputIndicator.ascx" />
     <Content Include="Common\ModalDialog.ascx" />
@@ -655,6 +654,7 @@
     <Content Include="images\icons\ScheduleEnabled.png" />
     <Content Include="images\icons\SendDisabled.png" />
     <Content Include="images\icons\SendEnabled.png" />
+    <Content Include="images\Splash.png" />
     <Content Include="Scripts\NumberFormat154.js" />
     <EmbeddedResource Include="Search\SearchPanel.js" />
     <Content Include="Search\Move\DeviceGridView.ascx" />
@@ -665,12 +665,7 @@
     <Content Include="Common\BarChart.aspx" />
     <Content Include="Admin\Configuration\Devices\DevicePanel.ascx" />
     <Content Include="MasterPage.master" />
-    <Content Include="App_Themes\ClearCanvas\logo.skin" />
-    <None Include="App_Themes\ClearCanvas\images\logos\.svn\all-wcprops" />
-    <None Include="App_Themes\ClearCanvas\images\logos\.svn\entries" />
-    <None Include="App_Themes\ClearCanvas\images\logos\.svn\format" />
-    <None Include="App_Themes\ClearCanvas\images\logos\.svn\prop-base\ImageServerLogo.png.svn-base" />
-    <None Include="App_Themes\ClearCanvas\images\logos\.svn\text-base\ImageServerLogo.png.svn-base" />
+    <Content Include="App_Themes\ClearCanvas\Global.skin" />
     <None Include="Scripts\.svn\entries" />
     <None Include="Scripts\.svn\format" />
     <None Include="Service References\FilesystemServiceProxy.map" />
@@ -679,7 +674,6 @@
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
     </None>
     <Content Include="Common\GridPager.ascx" />
-    <Content Include="Global.asax" />
     <Content Include="images\add_disabled.gif" />
     <Content Include="images\ajax-loader.gif" />
     <Content Include="images\blankfeature.gif" />
@@ -795,10 +789,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Themes\ClearCanvas\images\logos\.svn\props\" />
-    <Folder Include="App_Themes\ClearCanvas\images\logos\.svn\tmp\prop-base\" />
-    <Folder Include="App_Themes\ClearCanvas\images\logos\.svn\tmp\props\" />
-    <Folder Include="App_Themes\ClearCanvas\images\logos\.svn\tmp\text-base\" />
     <Folder Include="plugins\" />
     <Folder Include="Scripts\.svn\prop-base\" />
     <Folder Include="Scripts\.svn\props\" />
