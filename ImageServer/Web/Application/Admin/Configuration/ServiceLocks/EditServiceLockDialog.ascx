@@ -12,7 +12,7 @@
     TagPrefix="clearcanvas" %>
  
  
-<clearcanvas:ModalDialog ID="ModalDialog" runat="server" Title="Edit Service Lock" BackgroundCSS="CSSDefaultPopupDialogBackground"
+<clearcanvas:ModalDialog ID="ModalDialog" runat="server" Title="Edit Service Schedule" BackgroundCSS="CSSDefaultPopupDialogBackground"
     Width="450px">
     <ContentTemplate>
         <asp:Panel ID="Panel3" runat="server" style="border-width:1px; border-color:#b0c4de; border-style:solid; padding:10px;">

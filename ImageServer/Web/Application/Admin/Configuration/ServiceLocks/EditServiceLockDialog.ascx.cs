@@ -123,7 +123,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-
             ScheduleTimeDropDownList.Items.Clear();
         }
 
