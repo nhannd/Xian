@@ -84,11 +84,12 @@
     <Compile Include="IAuthenticationService.cs" />
     <Compile Include="IEntityBroker.cs" />
     <Compile Include="IExceptionRecorder.cs" />
+    <Compile Include="Imex\ImportCommandLine.cs" />
     <Compile Include="Imex\DataExporterBase.cs" />
     <Compile Include="Imex\DataImporterBase.cs" />
     <Compile Include="Imex\Export.cs" />
     <Compile Include="Imex\ImexApplicationBase.cs" />
-    <Compile Include="Imex\ImexCommandLine.cs" />
+    <Compile Include="Imex\ExportCommandLine.cs" />
     <Compile Include="Imex\ImexDataClassAttribute.cs" />
     <Compile Include="Imex\ImexUtils.cs" />
     <Compile Include="Imex\IDataExporter.cs" />

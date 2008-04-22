@@ -15,7 +15,8 @@ namespace ClearCanvas.Enterprise.Core.Imex
     [AttributeUsage(AttributeTargets.Class, AllowMultiple=false, Inherited=true)]
     public class ImexDataClassAttribute : Attribute
     {
-        private string _dataClass;
+        private readonly string _dataClass;
+        private int _itemsPerFile;
 
         public ImexDataClassAttribute(string dataClass)
         {
@@ -25,6 +26,12 @@ namespace ClearCanvas.Enterprise.Core.Imex
         public string DataClass
         {
             get { return _dataClass; }
+        }
+
+        public int ItemsPerFile
+        {
+            get { return _itemsPerFile; }
+            set { _itemsPerFile = value; }
         }
     }
 }

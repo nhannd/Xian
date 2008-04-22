@@ -7,13 +7,14 @@ using System.IO;
 
 namespace ClearCanvas.Enterprise.Core.Imex
 {
-    public abstract class ImexApplicationBase : IApplicationRoot
+    public abstract class ImexApplicationBase<TCmdLine> : IApplicationRoot
+        where TCmdLine : CommandLine, new()
     {
         #region IApplicationRoot Members
 
         public void RunApplication(string[] args)
         {
-            ImexCommandLine cmdLine = new ImexCommandLine();
+            TCmdLine cmdLine = new TCmdLine();
 
             try
             {
@@ -25,38 +26,25 @@ namespace ClearCanvas.Enterprise.Core.Imex
                 Console.WriteLine(e.Message);
                 cmdLine.PrintUsage(Console.Out);
                 Console.WriteLine("List of supported data-classes:");
-                ImexUtils.PrintImexDataClasses(Console.Out);
+                PrintImexDataClasses(Console.Out);
             }
             catch (NotSupportedException e)
             {
                 Console.WriteLine("Invalid data class: " + e.Message);
                 Console.WriteLine("List of supported data-classes:");
-                ImexUtils.PrintImexDataClasses(Console.Out);
+                PrintImexDataClasses(Console.Out);
             }
         }
 
         #endregion
 
-        /// <summary>
-        /// Finds the imex that supports the specified data-class.
-        /// </summary>
-        /// <param name="dataClass"></param>
-        /// <returns></returns>
-        /// <exception cref="NotSupportedException">Indicates that no imex was found that supports the specified data-class.</exception>
-        protected IXmDataImex FindImexForDataClass(string dataClass)
+        private void PrintImexDataClasses(TextWriter writer)
         {
-            return (IXmDataImex)new XmlDataImexExtensionPoint().CreateExtension(
-                delegate(ExtensionInfo info)
-                {
-                    return CollectionUtils.Contains(AttributeUtils.GetAttributes<ImexDataClassAttribute>(info.ExtensionClass),
-                        delegate(ImexDataClassAttribute a)
-                        {
-                            return a != null && a.DataClass.Equals(
-                                dataClass, StringComparison.InvariantCultureIgnoreCase);
-                        });
-                });
+            foreach (string w in ImexUtils.ListImexDataClasses())
+                writer.WriteLine(w);
         }
 
-        protected abstract void Execute(ImexCommandLine cmdLine);
+
+        protected abstract void Execute(TCmdLine cmdLine);
     }
 }

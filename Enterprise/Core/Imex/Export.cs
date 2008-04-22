@@ -14,9 +14,9 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
 
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    public class Export : ImexApplicationBase
+    public class Export : ImexApplicationBase<ExportCommandLine>
     {
-        protected override void Execute(ImexCommandLine cmdLine)
+        protected override void Execute(ExportCommandLine cmdLine)
         {
             if (cmdLine.AllClasses)
             {
@@ -26,21 +26,27 @@ namespace ClearCanvas.Enterprise.Core.Imex
             {
                 ExportOneClass(cmdLine);
             }
+            else 
+                throw new CommandLineException("Must specify either /class:[data-class] or /all.");
         }
 
-        private void ExportOneClass(ImexCommandLine cmdLine)
+        private void ExportOneClass(ExportCommandLine cmdLine)
         {
-            string path = cmdLine.Path;
-            string dir = Path.GetDirectoryName(path);
-            if (!Directory.Exists(dir))
+            IXmDataImex imex = ImexUtils.FindImexForDataClass(cmdLine.DataClass);
+            int itemsPerFile = cmdLine.ItemsPerFile > 0
+                                   ? cmdLine.ItemsPerFile
+                                   : ImexUtils.GetItemsPerFile(imex.GetType());
+            if (cmdLine.ItemsPerFile == 0)
             {
-                Directory.CreateDirectory(dir);
+                ImexUtils.ExportToSingleFile(imex, cmdLine.Path);
             }
-
-            ImexUtils.ExportToSingleFile(FindImexForDataClass(cmdLine.DataClass), path);
+            else
+            {
+                ImexUtils.Export(imex, cmdLine.Path, cmdLine.DataClass, itemsPerFile);
+            }
         }
 
-        private void ExportAllClasses(ImexCommandLine cmdLine)
+        private void ExportAllClasses(ExportCommandLine cmdLine)
         {
             string path = cmdLine.Path;
 
@@ -55,7 +61,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
                 ImexDataClassAttribute a = AttributeUtils.GetAttribute<ImexDataClassAttribute>(imex.GetType());
                 if (a != null)
                 {
-                    ImexUtils.ExportToSingleFile(imex, Path.Combine(path, a.DataClass + ".xml"));
+                    ImexUtils.Export(imex, Path.Combine(path, a.DataClass), a.DataClass, a.ItemsPerFile);
                 }
             }
         }

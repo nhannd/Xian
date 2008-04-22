@@ -219,7 +219,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="source"></param>
         private void SetMemberValue<T>(CommandLineParameterAttribute a, IObjectMemberContext context, IDictionary<string, T> source)
         {
-            string[] keys = new string[] { a.Key, a.KeyShortForm };
+            string[] keys = new string[] { a.Key, a.KeyShortForm ?? "" };
             // T will be either bool or string, depending on whether source is "Switches" or "Named"
             foreach (string key in keys)
             {
