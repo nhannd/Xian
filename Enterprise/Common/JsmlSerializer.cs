@@ -75,12 +75,20 @@ namespace ClearCanvas.Enterprise.Common
             {
                 XmlTextWriter writer = new XmlTextWriter(sw);
                 writer.Formatting = Formatting.Indented;
-                SerializeHelper(dataObject, objectName, writer, false);
+                SerializeHelper(dataObject, objectName, writer, includeEmptyTags);
                 writer.Close();
                 jsml = sw.ToString();
             }
 
             return jsml;
+        }
+
+        public static void Serialize(XmlWriter writer, object obj, string objectName, bool includeEmptyTags)
+        {
+            if (obj != null)
+            {
+                SerializeHelper(obj, objectName, writer, includeEmptyTags);
+            }
         }
 
 
@@ -113,6 +121,19 @@ namespace ClearCanvas.Enterprise.Common
             return DeserializeHelper(dataContract, xmlDoc.DocumentElement);
         }
 
+        public static object Deserialize<TDataContract>(XmlReader reader)
+        {
+            return Deserialize(reader, typeof(TDataContract));
+        }
+
+        public static object Deserialize(XmlReader reader, Type dataContract)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(reader);
+
+            return DeserializeHelper(dataContract, xmlDoc.DocumentElement);
+        }
+
 
         #region Private Helpers
 
@@ -123,7 +144,7 @@ namespace ClearCanvas.Enterprise.Common
         /// <param name="objectName"></param>
         /// <param name="writer"></param>
         /// <param name="includeEmptyTags"></param>
-        private static void SerializeHelper(object dataObject, string objectName, XmlTextWriter writer, bool includeEmptyTags)
+        private static void SerializeHelper(object dataObject, string objectName, XmlWriter writer, bool includeEmptyTags)
         {
             if (dataObject == null)
             {
@@ -287,7 +308,7 @@ namespace ClearCanvas.Enterprise.Common
                 dataObject = Activator.CreateInstance(dataType);
                 Type[] genericTypes = dataType.GetGenericArguments();
 
-                XmlNodeList nodeList = xmlElement.GetElementsByTagName("item");
+                XmlNodeList nodeList = xmlElement.SelectNodes("item");
                 foreach (XmlNode node in nodeList)
                 {
                     object iteratorObject = DeserializeHelper(genericTypes[0], (XmlElement)node);
@@ -304,6 +325,10 @@ namespace ClearCanvas.Enterprise.Common
                     doc.LoadXml(xml);
                     dataObject = doc;
                 }
+            }
+            else if (dataType.GetInterface("IConvertible") == typeof(IConvertible))
+            {
+                dataObject = Convert.ChangeType(xmlElement.InnerText, dataType);
             }
             else
             {
@@ -331,7 +356,7 @@ namespace ClearCanvas.Enterprise.Common
 
         private static XmlElement GetFirstElementWithTagName(XmlElement xmlElement, string tagName)
         {
-            return (XmlElement)CollectionUtils.FirstElement<XmlNode>(xmlElement.GetElementsByTagName(tagName));
+            return (XmlElement)CollectionUtils.FirstElement(xmlElement.SelectNodes(tagName));
         }
 
         private static bool IsDataContract(Type t)

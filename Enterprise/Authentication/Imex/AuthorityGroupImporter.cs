@@ -44,7 +44,7 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
 {
 
     /// <summary>
-    /// Imports authority groups from an XML document.
+    /// Imports authority groups from plugins that define extensions to <see cref="DefineAuthorityGroupsExtensionPoint"/>.
     /// </summary>
     /// <remarks>
     /// This class implements <see cref="IApplicationRoot"/> so that it may be run stand-alone from a console.  However,
@@ -53,10 +53,6 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class AuthorityGroupImporter : IApplicationRoot
     {
-        private const string GroupTag = "group";
-        private const string TokenTag = "token";
-        private const string NameAttr = "name";
-
         /// <summary>
         /// Import authority groups from extensions of <see cref="DefineAuthorityGroupsExtensionPoint"/>.
         /// </summary>
@@ -70,43 +66,6 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
         public IList<AuthorityGroup> ImportFromPlugins(IUpdateContext context, TextWriter statusLog)
         {
             AuthorityGroupDefinition[] groupDefs = AuthorityGroupSetup.GetDefaultAuthorityGroups();
-            return Import(groupDefs, context, statusLog);
-        }
-
-        /// <summary>
-        /// Imports authority groups from an XML document.
-        /// </summary>
-        /// <remarks>
-        /// Creates any authority groups defined in the document
-        /// that do not already exist, and adds any authority tokens specified in the document to the groups.
-        /// This method performs an additive import.  It will never remove an existing authority group or
-        /// remove authority tokens from an existing group.
-        /// </remarks>
-        /// <param name="xmlDoc">The document to import</param>
-        /// <param name="context">Persistence context</param>
-        /// <param name="statusLog">A log to which the import process will write status messages</param>
-        public IList<AuthorityGroup> ImportFromXml(XmlDocument xmlDoc, IUpdateContext context, TextWriter statusLog)
-        {
-            List<AuthorityGroupDefinition> groupDefs = new List<AuthorityGroupDefinition>();
-
-            // process the xml document
-            foreach (XmlElement groupNode in xmlDoc.GetElementsByTagName(GroupTag))
-            {
-                string groupName = groupNode.GetAttribute(NameAttr);
-                if (!string.IsNullOrEmpty(groupName))
-                {
-
-                    // process all token nodes contained in group
-                    string[] tokens = CollectionUtils.Map<XmlElement, string, List<string>>(groupNode.GetElementsByTagName(TokenTag),
-                        delegate(XmlElement tokenNode)
-                        {
-                            return tokenNode.GetAttribute(NameAttr);
-                        }).ToArray();
-
-                    groupDefs.Add(new AuthorityGroupDefinition(groupName, tokens));
-                }
-            }
-
             return Import(groupDefs, context, statusLog);
         }
 
@@ -165,17 +124,7 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
             using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
             {
                 ((IUpdateContext) PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
-                if (args.Length > 0)
-                {
-                    // assume the first arg is the name of an xml file
-                    XmlDocument xmlDoc = new XmlDocument();
-                    xmlDoc.Load(args[0]);
-                    ImportFromXml(xmlDoc, (IUpdateContext)PersistenceScope.Current, Console.Out);
-                }
-                else
-                {
-                    ImportFromPlugins((IUpdateContext)PersistenceScope.Current, Console.Out);
-                }
+                ImportFromPlugins((IUpdateContext)PersistenceScope.Current, Console.Out);
 
                 scope.Complete();
             }

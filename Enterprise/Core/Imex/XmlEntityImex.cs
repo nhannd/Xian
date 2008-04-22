@@ -6,6 +6,7 @@ using System.Collections;
 using System.Runtime.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Core.Imex
 {
@@ -56,7 +57,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
             foreach (IImportItem item in items)
             {
                 TDataContract data = Read(item.Read());
-               Import(data, context);
+                Import(data, context);
             }
         }
 
@@ -81,7 +82,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
                 }
                 else
                 {
-                    // TODO
+                    ImexUtils.ImportFromSingleFile(this, cmdLine.Path);
                 }
 
             }
@@ -95,14 +96,18 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
         private static void Write(XmlWriter writer, TDataContract data)
         {
-            DataContractSerializer serializer = new DataContractSerializer(typeof(TDataContract));
-            serializer.WriteObject(writer, data);
+            //DataContractSerializer serializer = new DataContractSerializer(typeof(TDataContract));
+            //serializer.WriteObject(writer, data);
+
+            JsmlSerializer.Serialize(writer, data, data.GetType().Name, false);
         }
 
         private static TDataContract Read(XmlReader reader)
         {
-            DataContractSerializer serializer = new DataContractSerializer(typeof(TDataContract));
-            return (TDataContract)serializer.ReadObject(reader);
+            //DataContractSerializer serializer = new DataContractSerializer(typeof(TDataContract));
+            //return (TDataContract)serializer.ReadObject(reader);
+
+            return (TDataContract)JsmlSerializer.Deserialize<TDataContract>(reader);
         }
     }
 }
