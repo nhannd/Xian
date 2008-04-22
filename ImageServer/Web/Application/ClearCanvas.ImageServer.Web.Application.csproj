@@ -292,6 +292,13 @@
     </Compile>
     <Compile Include="Common\Themes.cs" />
     <Compile Include="Common\EntityCollection.cs" />
+    <Compile Include="Common\TimedDialog.ascx.cs">
+      <DependentUpon>TimedDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Common\TimedDialog.ascx.designer.cs">
+      <DependentUpon>TimedDialog.ascx</DependentUpon>
+    </Compile>
     <Compile Include="MasterPage.master.cs">
       <DependentUpon>MasterPage.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -630,6 +637,8 @@
     <Content Include="Common\ModalDialog.ascx" />
     <Content Include="Common\SectionPanel.ascx" />
     <Content Include="Common\ServerPartitionTabs.ascx" />
+    <Content Include="Common\TimedDialog.ascx" />
+    <Content Include="Common\TimedDialog.js" />
     <Content Include="Docs\About.htm" />
     <Content Include="images\blank.gif" />
     <Content Include="images\icons\close.png" />

@@ -218,12 +218,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move {
         protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPager;
         
         /// <summary>
-        /// ConfirmationDialog control.
+        /// TimedDialog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmationDialog;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.TimedDialog TimedDialog;
     }
 }

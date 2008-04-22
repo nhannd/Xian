@@ -8,34 +8,34 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Search.Move {
+namespace ClearCanvas.ImageServer.Web.Application.Common {
     
     
     /// <summary>
-    /// MovePage class.
+    /// TimedDialog class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class MovePage {
+    public partial class TimedDialog {
         
         /// <summary>
-        /// PageContent control.
+        /// ModalDialog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PageContent;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog;
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// Panel3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        protected global::System.Web.UI.WebControls.Panel Panel3;
         
         /// <summary>
         /// Panel1 control.
@@ -47,12 +47,39 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move {
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// Move control.
+        /// IconImage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Search.Move.MovePanel Move;
+        protected global::System.Web.UI.WebControls.Image IconImage;
+        
+        /// <summary>
+        /// MessageLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label MessageLabel;
+        
+        /// <summary>
+        /// ButtonPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel ButtonPanel;
+        
+        /// <summary>
+        /// OKButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button OKButton;
     }
 }

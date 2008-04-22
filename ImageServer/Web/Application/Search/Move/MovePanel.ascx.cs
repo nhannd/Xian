@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move
 
             GridPager.GetRecordCountMethod = delegate { return DeviceGridPanel.Devices.Count; };
 
-            ConfirmationDialog.Confirmed += delegate(object data)
+            TimedDialog.Confirmed += delegate(object data)
                  {
                      StudyController studyController = new StudyController();
                      if (data is MoveRequest)
@@ -156,28 +156,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move
         {
             if (this.DeviceGridPanel.SelectedDevice != null)
             {
-                ConfirmationDialog.Message =
-                    string.Format("Are you sure you want to move the following studies to {0}?<BR/>",
+                TimedDialog.Message =
+                    string.Format("The following studies have been placed in the WorkQueue to transfer to {0}:<BR/>",
                                   this.DeviceGridPanel.SelectedDevice.AeTitle);
-                ConfirmationDialog.Message += "<table>";
+                TimedDialog.Message += "<table>";
                 foreach (Study study in StudyGridView.StudyList)
                 {
                     String text =
                         String.Format(
                             "<tr align='left'><td>Patient:{0}&nbsp;&nbsp;</td><td>Accession:{1}&nbsp;&nbsp;</td><td>Description:{2}</td></tr>",
                             study.PatientsName, study.AccessionNumber, study.StudyDescription);
-                    ConfirmationDialog.Message += text;
+                    TimedDialog.Message += text;
                 }
-                ConfirmationDialog.Message += "</table>";
+                TimedDialog.Message += "</table>";
 
-                ConfirmationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.YESNO;
 
                 MoveRequest data = new MoveRequest();
                 data.Studies = StudyGridView.StudyList;
                 data.DestinationDevice = DeviceGridPanel.SelectedDevice;
-                ConfirmationDialog.Data = data;
+                TimedDialog.Data = data;
 
-                ConfirmationDialog.Show();
+                TimedDialog.Show();
             }
         }
     }

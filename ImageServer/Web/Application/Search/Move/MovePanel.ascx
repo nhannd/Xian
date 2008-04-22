@@ -5,7 +5,7 @@
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI"
     TagPrefix="clearcanvas" %>
 <%@ Register Src="~/Common/SectionPanel.ascx" TagName="SectionPanel" TagPrefix="clearcanvas" %>
-<%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog" TagPrefix="clearcanvas" %>
+<%@ Register Src="~/Common/TimedDialog.ascx" TagName="TimedDialog" TagPrefix="clearcanvas" %>
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
@@ -78,7 +78,7 @@
                 </asp:Panel>
             </SectionContentTemplate>
         </clearcanvas:SectionPanel>
-                <clearcanvas:ConfirmationDialog ID="ConfirmationDialog" runat="server" />    
+                <clearcanvas:TimedDialog ID="TimedDialog" runat="server" />    
 
     </ContentTemplate>
 </asp:UpdatePanel>
