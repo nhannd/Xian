@@ -15,8 +15,8 @@
     Width="450px">
     <ContentTemplate>
         <asp:Panel ID="Panel2" runat="server">
-            <ajaxToolkit:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
-                <ajaxToolkit:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
+            <aspAjax:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
+                <aspAjax:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
                     <ContentTemplate>
                         <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
                             <table id="TABLE1" runat="server" cellspacing="4" width="100%">
@@ -103,8 +103,8 @@
                     <HeaderTemplate>
                         General
                     </HeaderTemplate>
-                </ajaxToolkit:TabPanel>
-                <ajaxToolkit:TabPanel ID="TabPanel2" runat="server" HeaderText="Watermarks Tab" OnClientClick="LoadFilesystemInfo">
+                </aspAjax:TabPanel>
+                <aspAjax:TabPanel ID="TabPanel2" runat="server" HeaderText="Watermarks Tab" OnClientClick="LoadFilesystemInfo">
                     <ContentTemplate>
                         <asp:Panel ID="Panel3" runat="server" CssClass="CSSDialogTabPanelContent" Width="100%">
                             <table id="TABLE2" runat="server" cellspacing="4">
@@ -206,8 +206,8 @@
                     <HeaderTemplate>
                         Watermarks
                     </HeaderTemplate>
-                </ajaxToolkit:TabPanel>
-            </ajaxToolkit:TabContainer>
+                </aspAjax:TabPanel>
+            </aspAjax:TabContainer>
         </asp:Panel>
         <center>
             <br />

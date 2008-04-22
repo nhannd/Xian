@@ -10,8 +10,8 @@
     Width="450px">
     <ContentTemplate>
         <asp:Panel ID="Panel3" runat="server">
-            <ajaxToolkit:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
-                <ajaxToolkit:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
+            <aspAjax:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
+                <aspAjax:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
                     <ContentTemplate>
                         <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
                             <table id="Table2" runat="server">
@@ -128,8 +128,8 @@
                     <HeaderTemplate>
                         General
                     </HeaderTemplate>
-                </ajaxToolkit:TabPanel>
-                <ajaxToolkit:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2" Height="200px">
+                </aspAjax:TabPanel>
+                <aspAjax:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2" Height="200px">
                     <ContentTemplate>
                         <asp:Panel ID="Panel2" runat="server" CssClass="CSSDialogTabPanelContent">
                             <table width="100%">
@@ -163,8 +163,8 @@
                     <HeaderTemplate>
                         Features
                     </HeaderTemplate>
-                </ajaxToolkit:TabPanel>
-            </ajaxToolkit:TabContainer>
+                </aspAjax:TabPanel>
+            </aspAjax:TabContainer>
             <center>
                 <br />
                 <table width="80%">

@@ -15,9 +15,9 @@
 <clearcanvas:ModalDialog ID="ModalDialog" runat="server" BackgroundCSS="CSSDefaultPopupDialogBackground" Width="700px">
     <ContentTemplate>
         <asp:Panel runat="server">
-            <ajaxToolkit:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
+            <aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
                 CssClass="CSSDialogTabControl">
-                <ajaxToolkit:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel"
+                <aspAjax:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel"
                     TabIndex="0" CssClass="CSSTabPanel">
                     <ContentTemplate>
                         <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
@@ -95,8 +95,8 @@
                     <HeaderTemplate>
                         General
                     </HeaderTemplate>
-                </ajaxToolkit:TabPanel>
-                <ajaxToolkit:TabPanel ID="RuleXmlTabPanel" runat="server" HeaderText="TabPanel2">
+                </aspAjax:TabPanel>
+                <aspAjax:TabPanel ID="RuleXmlTabPanel" runat="server" HeaderText="TabPanel2">
                     <ContentTemplate>
                         <asp:Panel ID="Panel2" runat="server" CssClass="CSSDialogTabPanelContent">
                             <table width="100%" cellpadding="5" cellspacing="5">
@@ -127,8 +127,8 @@
                     <HeaderTemplate>
                         Rule XML
                     </HeaderTemplate>
-                </ajaxToolkit:TabPanel>
-            </ajaxToolkit:TabContainer>
+                </aspAjax:TabPanel>
+            </aspAjax:TabContainer>
             <center>
                 <br />
                 <table width="60%">

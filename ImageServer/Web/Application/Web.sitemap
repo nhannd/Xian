@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
 	<siteMapNode url="" title="Root"  description="">
-		<siteMapNode url="" title="General"  description="General">
-			<siteMapNode url="~/Search/SearchPage.aspx" title="Search"  description="Search"/>
-			<siteMapNode url="~/WorkQueue/SearchPage.aspx" title="Work Queue"  description="Work Queue"/>
-			<siteMapNode url="~/About/About.aspx" title="About"  description="About ClearCanvas ImageServer"/>
-		</siteMapNode>
-		<siteMapNode url="" title="Configuration"  description="System Configuration">
-				<siteMapNode url="~/Admin/Configuration/Devices/DevicePage.aspx" title="Devices"  description="Device Configuration"/>
-				<siteMapNode url="~/Admin/Configuration/ServerPartitions/ServerPartitionPage.aspx" title="Server Partitions"  description="Server Partition Configuration"/>
-				<siteMapNode url="~/Admin/Configuration/FileSystems/FileSystemsPage.aspx" title="Filesystems"  description="Filesystem Configuration"/>
-			<siteMapNode url="~/Admin/Configuration/ServerRules/ServerRulePage.aspx" title="Server Rules" description="Server Rule Configuration"/>
-			<siteMapNode url="~/Admin/Configuration/ServiceLocks/ServiceLockPage.aspx" title="Service Scheduling" description="Service Scheduling Configuration"/>
+		<siteMapNode url="~/Search/SearchPage.aspx" title="Search"  />
+		<siteMapNode url="~/WorkQueue/SearchPage.aspx" title="Work Queue"  />
+		
+		<siteMapNode url="" title="Configure">
+				<siteMapNode url="~/Admin/Configuration/Devices/DevicePage.aspx" title="Devices"  />
+				<siteMapNode url="~/Admin/Configuration/ServerPartitions/ServerPartitionPage.aspx" title="Server Partitions"  />
+				<siteMapNode url="~/Admin/Configuration/FileSystems/FileSystemsPage.aspx" title="Filesystems"  />
+			<siteMapNode url="~/Admin/Configuration/ServerRules/ServerRulePage.aspx" title="Server Rules" />
+			<siteMapNode url="~/Admin/Configuration/ServiceLocks/ServiceLockPage.aspx" title="Service Scheduling" />
 		</siteMapNode>
 	</siteMapNode>
 </siteMap>

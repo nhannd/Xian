@@ -1,0 +1,21 @@
+<asp:Image runat="server" SkinID="Spacer" ImageUrl="~/images/blank.gif" />
+
+<%-- Header and Menu Images --%>
+
+<asp:ImageButton runat="server" SkinID="Logo" ImageUrl="images/Header/ClearCanvasLogo.png" Height="62" Width="185" />
+<asp:Image runat="server" SkinID="MenuEdge" ImageUrl="images/Header/MenuEdge.png" />
+<asp:Image runat="server" SkinID="LocationEdge" ImageUrl="images/Header/LocationEdge.png" />
+<asp:Image runat="server" SkinID="MainContentBottomLeftCorner" ImageUrl="images/MainContent/MainContentBottomLeftCorner.png" Height="14" Width="14"/>
+<asp:Image runat="server" SkinID="MainContentBottomRightCorner" ImageUrl="images/MainContent/MainContentBottomRightCorner.png" Height="14" Width="14" /> 
+
+<asp:Menu runat="server" SkinID="MainMenu" CssClass="MainMenuContent" Orientation="Horizontal"
+          StaticSubMenuIndent="1" DynamicVerticalOffset="0" StaticEnableDefaultPopOutImage="false">
+    <DynamicMenuStyle CssClass="DynamicMenu" />
+    <DynamicHoverStyle CssClass="DynamicHover" />
+    <DynamicMenuItemStyle CssClass="DynamicMenuItem" />
+    <DynamicSelectedStyle CssClass="DynamicSelected" />
+    <StaticHoverStyle CssClass="StaticHover" />
+    <StaticMenuItemStyle CssClass="StaticMenuItem" />
+    <StaticMenuStyle CssClass="StaticMenu" />
+    <StaticSelectedStyle CssClass="StaticSelected" />
+</asp:Menu>

@@ -1,2 +1,0 @@
-
-<asp:ImageButton runat="server" skinid="logo" ImageUrl="images/logos/ClearCanvasLogo.png"/>

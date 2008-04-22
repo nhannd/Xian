@@ -61,9 +61,9 @@
                     <asp:TableCell>
                         <asp:TextBox ID="ScheduleDate" runat="server" Width="80px" ReadOnly="true"></asp:TextBox>
                         <asp:Button ID="DatePickerButton" runat="server" Text="..."/>
-                        <ajaxToolkit:CalendarExtender ID="CalendarExtender" runat="server" 
+                        <aspAjax:CalendarExtender ID="CalendarExtender" runat="server" 
                                     TargetControlID="ScheduleDate" PopupButtonID="DatePickerButton" CssClass="Calendar" >
-                        </ajaxToolkit:CalendarExtender>&nbsp;
+                        </aspAjax:CalendarExtender>&nbsp;
                         <asp:DropDownList ID="ScheduleTimeDropDownList" runat="server"></asp:DropDownList>
                     </asp:TableCell>
                 </asp:TableRow>

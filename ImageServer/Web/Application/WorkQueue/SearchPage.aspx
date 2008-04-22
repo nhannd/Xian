@@ -7,6 +7,8 @@
 <%@ Register Src="~/WorkQueue/Edit/ScheduleWorkQueueDialog.ascx" TagName="ScheduleWorkQueueDialog" TagPrefix="clearcanvas" %>
 <%@ Register Src="~/WorkQueue/Edit/ResetWorkQueueDialog.ascx" TagName="ResetWorkQueueDialog"    TagPrefix="clearcanvas" %>        
 <%@ Register Src="~/WorkQueue/Edit/DeleteWorkQueueDialog.ascx" TagName="DeleteWorkQueueDialog"    TagPrefix="clearcanvas" %>        
+
+<asp:Content ID="LocationName" ContentPlaceHolderID="LocationNamePlaceHolder" runat="server">Work Queue</asp:Content>
   
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
     <table cellpadding="0" cellspacing="0" width="100%">

@@ -46,40 +46,40 @@ public partial class Admin_MasterPage {
     protected global::System.Web.UI.ScriptManager MainScriptManager;
     
     /// <summary>
-    /// Image1 control.
+    /// LogoImage control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.ImageButton Image1;
+    protected global::System.Web.UI.WebControls.ImageButton LogoImage;
     
     /// <summary>
-    /// menutitlebar control.
+    /// MainMenuSiteMapDataSource control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.Table menutitlebar;
+    protected global::System.Web.UI.WebControls.SiteMapDataSource MainMenuSiteMapDataSource;
     
     /// <summary>
-    /// SiteMapDataSource1 control.
+    /// MainMenu control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.SiteMapDataSource SiteMapDataSource1;
+    protected global::System.Web.UI.WebControls.Menu MainMenu;
     
     /// <summary>
-    /// Menu1 control.
+    /// LocationNamePlaceHolder control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.Menu Menu1;
+    protected global::System.Web.UI.WebControls.ContentPlaceHolder LocationNamePlaceHolder;
     
     /// <summary>
     /// MainContentUpdatePanel control.
@@ -107,4 +107,13 @@ public partial class Admin_MasterPage {
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
     protected global::System.Web.UI.WebControls.ContentPlaceHolder MainContentPlaceHolder;
+    
+    /// <summary>
+    /// Panel2 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Panel Panel2;
 }
