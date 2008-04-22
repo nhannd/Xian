@@ -61,6 +61,24 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to resolve application root class {0} - multiple matches..
+        /// </summary>
+        public static string ExceptionApplicationRootMultipleMatches {
+            get {
+                return ResourceManager.GetString("ExceptionApplicationRootMultipleMatches", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to resolve application root class {0} - no matches..
+        /// </summary>
+        public static string ExceptionApplicationRootNoMatches {
+            get {
+                return ResourceManager.GetString("ExceptionApplicationRootNoMatches", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Value must be non-negative..
         /// </summary>
         public static string ExceptionArgumentNegative {

@@ -33,6 +33,8 @@ using System;
 using System.Text;
 using ClearCanvas.Common.Auditing;
 using log4net;
+using ClearCanvas.Common.Utilities;
+using System.Collections.Generic;
 
 // Configure log4net using the .log4net file
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Logging.config", Watch = true)]
@@ -446,10 +448,45 @@ namespace ClearCanvas.Common
 		/// </remarks>
 		public static void StartApp()
 		{
-            StartApp(null, new string[] { });
+            StartApp((ExtensionFilter)null, new string[] { });
 		}
 
         /// <summary>
+        /// Starts the application matching the specified fully or partially qualified class name.
+        /// </summary>
+        /// <param name="appRootClassName">The name of an application root class, which need not be fully qualified.</param>
+        /// <param name="args"></param>
+        public static void StartApp(string appRootClassName, string[] args)
+        {
+            ExtensionInfo[] appRoots = new ApplicationRootExtensionPoint().ListExtensions();
+
+            // try an exact match
+            List<ExtensionInfo> matchingRoots = CollectionUtils.Select(appRoots,
+                delegate(ExtensionInfo info) { return info.ExtensionClass.FullName == appRootClassName; });
+
+            if (matchingRoots.Count == 0)
+            {
+                // try a partial match
+                matchingRoots = CollectionUtils.Select(appRoots,
+                    delegate(ExtensionInfo info)
+                    {
+                         return info.ExtensionClass.FullName.EndsWith(
+                             appRootClassName, StringComparison.InvariantCultureIgnoreCase);
+                    });
+            }
+
+            if(matchingRoots.Count == 0)
+                throw new NotSupportedException(
+                    string.Format(SR.ExceptionApplicationRootNoMatches, appRootClassName));
+            if (matchingRoots.Count > 1)
+                throw new NotSupportedException(
+                    string.Format(SR.ExceptionApplicationRootMultipleMatches, appRootClassName));
+
+            // start app
+            StartApp(new ClassNameExtensionFilter(CollectionUtils.FirstElement(matchingRoots).ExtensionClass.FullName), args);
+        }
+
+	    /// <summary>
         /// Obtains an instance of the specified service for use by the application.
         /// </summary>
         /// <remarks>

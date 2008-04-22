@@ -61,7 +61,7 @@ namespace ClearCanvas.Desktop.Executable
                 string[] args1 = new string[args.Length - 1];
                 Array.Copy(args, 1, args1, 0, args1.Length);
 
-                Platform.StartApp(new ClassNameExtensionFilter(args[0]), args1);
+                Platform.StartApp(args[0], args1);
             }
             else
             {

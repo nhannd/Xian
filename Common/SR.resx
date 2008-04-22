@@ -291,4 +291,10 @@
   <data name="ExceptionConditionIsNotMet" xml:space="preserve">
     <value>Condition is not met :{0}</value>
   </data>
+  <data name="ExceptionApplicationRootMultipleMatches" xml:space="preserve">
+    <value>Unable to resolve application root class {0} - multiple matches.</value>
+  </data>
+  <data name="ExceptionApplicationRootNoMatches" xml:space="preserve">
+    <value>Unable to resolve application root class {0} - no matches.</value>
+  </data>
 </root>
