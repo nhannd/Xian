@@ -41,9 +41,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare.Imex
 {
-    [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "Facility Importer")]
+    [ExtensionOf(typeof(CsvDataImporterExtensionPoint), Name = "Facility Importer")]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    public class FacilityImporter : DataImporterBase
+    public class FacilityImporter : CsvDataImporterBase
     {
         private IUpdateContext _context;
         private IEnumBroker _enumBroker;
@@ -52,11 +52,6 @@ namespace ClearCanvas.Healthcare.Imex
         public FacilityImporter()
         {
 
-        }
-
-        public override bool SupportsCsv
-        {
-            get { return true; }
         }
 
         /// <summary>
@@ -70,7 +65,7 @@ namespace ClearCanvas.Healthcare.Imex
         ///     3 - Information Authoirty Name
         /// </param>
         /// <param name="context"></param>
-        public override void ImportCsv(List<string> rows, IUpdateContext context)
+        public override void Import(List<string> rows, IUpdateContext context)
         {
             _context = context;
             _enumBroker = context.GetBroker<IEnumBroker>();

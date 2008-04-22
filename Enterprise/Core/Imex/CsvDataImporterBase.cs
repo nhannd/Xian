@@ -39,33 +39,13 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Enterprise.Core.Imex
 {
-    public abstract class DataImporterBase : IDataImporter, IApplicationRoot
+    public abstract class CsvDataImporterBase : ICsvDataImporter, IApplicationRoot
     {
         private const int DEFAULT_BATCH_SIZE = 20;
 
-        public DataImporterBase()
-        {
-        }
+        #region ICsvDataImporter Members
 
-
-        #region IDataImporter Members
-
-        public virtual bool SupportsCsv
-        {
-            get { return false; }
-        }
-
-        public virtual bool SupportsXml
-        {
-            get { return false; }
-        }
-
-        public virtual void ImportCsv(List<string> rows, IUpdateContext context)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void ImportXml(XmlReader reader, IUpdateContext context)
+        public virtual void Import(List<string> rows, IUpdateContext context)
         {
             throw new NotImplementedException();
         }
@@ -86,31 +66,14 @@ namespace ClearCanvas.Enterprise.Core.Imex
             {
                 using (StreamReader reader = File.OpenText(args[0]))
                 {
-                    if(args[0].EndsWith(".xml", StringComparison.CurrentCultureIgnoreCase))
+                    List<string> lines = null;
+                    while ((lines = ReadLines(reader, DEFAULT_BATCH_SIZE)).Count > 0)
                     {
-                        // treat as xml
-                        XmlTextReader xmlReader = new XmlTextReader(reader);
-                        xmlReader.WhitespaceHandling = WhitespaceHandling.None;
                         using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
                         {
-                            ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName; 
-                            ImportXml(xmlReader, (IUpdateContext)PersistenceScope.Current);
+                            ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
+                            Import(lines, (IUpdateContext)PersistenceScope.Current);
                             scope.Complete();
-                        }
-                        xmlReader.Close();
-                    }
-                    else
-                    {
-                        // treat as csv
-                        List<string> lines = null;
-                        while ((lines = ReadLines(reader, DEFAULT_BATCH_SIZE)).Count > 0)
-                        {
-                            using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
-                            {
-                                ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
-                                ImportCsv(lines, (IUpdateContext)PersistenceScope.Current);
-                                scope.Complete();
-                            }
                         }
                     }
                 }

@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.Import
         public ListImportersResponse ListImporters(ListImportersRequest request)
         {
             List<string> importers = CollectionUtils.Map<ExtensionInfo, string, List<string>>(
-                (new DataImporterExtensionPoint()).ListExtensions(),
+                (new CsvDataImporterExtensionPoint()).ListExtensions(),
                 delegate(ExtensionInfo info)
                 {
                     return info.Name ?? info.FormalName;
@@ -63,11 +63,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.Import
         [UpdateOperation]
         public ImportCsvResponse ImportCsv(ImportCsvRequest request)
         {
-            IDataImporter importer = null;
+            ICsvDataImporter importer = null;
             try
             {
-                importer = (IDataImporter)
-                    (new DataImporterExtensionPoint()).CreateExtension(
+                importer = (ICsvDataImporter)
+                    (new CsvDataImporterExtensionPoint()).CreateExtension(
                                             delegate(ExtensionInfo info)
                                             {
                                                 return info.Name == request.Importer || info.FormalName == request.Importer;
@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.Import
                 throw new RequestValidationException(string.Format("{0} is not supported.", request.Importer));
             }
 
-            importer.ImportCsv(request.Rows, (IUpdateContext)PersistenceContext);
+            importer.Import(request.Rows, (IUpdateContext)PersistenceContext);
 
             return new ImportCsvResponse();
         }

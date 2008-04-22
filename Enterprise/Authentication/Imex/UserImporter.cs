@@ -9,20 +9,15 @@ using ClearCanvas.Enterprise.Core.Imex;
 
 namespace ClearCanvas.Enterprise.Authentication.Imex
 {
-    [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "User Importer")]
+    [ExtensionOf(typeof(CsvDataImporterExtensionPoint), Name = "User Importer")]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    class UserImporter : DataImporterBase
+    class UserImporter : CsvDataImporterBase
     {
         private const int _numFields = 9;
 
         private IPersistenceContext _context;
 
-        #region DataImporterBase overrides
-
-        public override bool SupportsCsv
-        {
-            get { return true; }
-        }
+        #region CsvDataImporterBase overrides
 
         /// <summary>
         /// Import user from CSV format.
@@ -40,7 +35,7 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
         ///     8 - Degree
         /// </param>
         /// <param name="context"></param>
-        public override void ImportCsv(List<string> rows, IUpdateContext context)
+        public override void Import(List<string> rows, IUpdateContext context)
         {
             _context = context;
 

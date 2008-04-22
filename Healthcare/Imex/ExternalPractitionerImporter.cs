@@ -42,20 +42,15 @@ using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Healthcare.Imex
 {
-    [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "External Practitioner Importer")]
+    [ExtensionOf(typeof(CsvDataImporterExtensionPoint), Name = "External Practitioner Importer")]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    public class ExternalPractitionerImporter : DataImporterBase
+    public class ExternalPractitionerImporter : CsvDataImporterBase
     {
         private const int _numFields = 25;
 
         IPersistenceContext _context;
 
-        #region DataImporterBase overrides
-
-        public override bool SupportsCsv
-        {
-            get { return true; }
-        }
+        #region CsvDataImporterBase overrides
 
         /// <summary>
         /// Import external practitioner from CSV format.
@@ -92,7 +87,7 @@ namespace ClearCanvas.Healthcare.Imex
         ///     27 - ValidUntil
         /// </param>
         /// <param name="context"></param>
-        public override void ImportCsv(List<string> rows, IUpdateContext context)
+        public override void Import(List<string> rows, IUpdateContext context)
         {
             _context = context;
 

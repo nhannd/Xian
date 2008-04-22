@@ -41,20 +41,15 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Imex
 {
-    [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "Staff Importer")]
+    [ExtensionOf(typeof(CsvDataImporterExtensionPoint), Name = "Staff Importer")]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    class StaffImporter : DataImporterBase
+    class StaffImporter : CsvDataImporterBase
     {
         private const int _numFields = 9;
 
         private IPersistenceContext _context;
 
-        #region DataImporterBase overrides
-
-        public override bool SupportsCsv
-        {
-            get { return true; }
-        }
+        #region CsvDataImporterBase overrides
 
         /// <summary>
         /// Import staff from CSV format.
@@ -72,7 +67,7 @@ namespace ClearCanvas.Healthcare.Imex
         ///     8 - Degree
         /// </param>
         /// <param name="context"></param>
-        public override void ImportCsv(List<string> rows, IUpdateContext context)
+        public override void Import(List<string> rows, IUpdateContext context)
         {
             _context = context;
 

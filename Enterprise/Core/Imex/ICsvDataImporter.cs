@@ -38,17 +38,13 @@ using System.Xml;
 
 namespace ClearCanvas.Enterprise.Core.Imex
 {
-    public interface IDataImporter
+    public interface ICsvDataImporter
     {
-        bool SupportsCsv { get; }
-        bool SupportsXml { get; }
-
-        void ImportCsv(List<string> rows, IUpdateContext context);
-        void ImportXml(XmlReader reader, IUpdateContext context);
+        void Import(List<string> rows, IUpdateContext context);
     }
 
     [ExtensionPoint]
-    public class DataImporterExtensionPoint : ExtensionPoint<IDataImporter>
+    public class CsvDataImporterExtensionPoint : ExtensionPoint<ICsvDataImporter>
     {
     }
 

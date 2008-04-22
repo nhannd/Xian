@@ -41,21 +41,16 @@ using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Healthcare.Imex
 {
-    [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "Modality Importer")]
+    [ExtensionOf(typeof(CsvDataImporterExtensionPoint), Name = "Modality Importer")]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    public class ModalityImporter : DataImporterBase
+    public class ModalityImporter : CsvDataImporterBase
     {
         public ModalityImporter()
         {
 
         }
 
-        public override bool SupportsCsv
-        {
-            get { return true; }
-        }
-
-        public override void ImportCsv(List<string> rows, IUpdateContext context)
+        public override void Import(List<string> rows, IUpdateContext context)
         {
             List<Modality> modalities = new List<Modality>();
         
