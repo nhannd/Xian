@@ -51,6 +51,7 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(false)]
+    [StaticWorklist(true)]
     [WorklistClassDescription("ReportingAssignedWorklistDescription")]
     public class ReportingAssignedWorklist : ReportingWorklist
     {
