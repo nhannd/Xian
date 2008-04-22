@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core.Imex
 {
@@ -26,6 +27,24 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
 
         public const string RootTag = "Items";
+
+        public static string[] ListImexDataClasses()
+        {
+            List<string> dataClasses = new List<string>();
+            foreach (ExtensionInfo info in new XmlDataImexExtensionPoint().ListExtensions())
+            {
+                ImexDataClassAttribute a = AttributeUtils.GetAttribute<ImexDataClassAttribute>(info.ExtensionClass);
+                if (a != null)
+                    dataClasses.Add(a.DataClass);
+            }
+            return dataClasses.ToArray();
+        }
+
+        public static void PrintImexDataClasses(TextWriter writer)
+        {
+            foreach (string w in ListImexDataClasses())
+                writer.WriteLine(w);
+        }
 
 
         public static void ExportToSingleFile(IXmDataImex imex, string path)

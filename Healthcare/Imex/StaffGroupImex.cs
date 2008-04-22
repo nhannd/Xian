@@ -10,7 +10,8 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Imex
 {
-    [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
+    [ExtensionOf(typeof(XmlDataImexExtensionPoint))]
+    [ImexDataClass("StaffGroup")]
     public class StaffGroupImex : XmlEntityImex<StaffGroup, StaffGroupImex.StaffGroupData>
     {
         [DataContract]

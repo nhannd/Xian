@@ -86,10 +86,14 @@
     <Compile Include="IExceptionRecorder.cs" />
     <Compile Include="Imex\DataExporterBase.cs" />
     <Compile Include="Imex\DataImporterBase.cs" />
-    <Compile Include="Imex\ImexCommandLine.cs" />
+    <Compile Include="Imex\Exporter.cs" />
+    <Compile Include="Imex\ExporterCommandLine.cs" />
+    <Compile Include="Imex\ImexDataClassAttribute.cs" />
     <Compile Include="Imex\ImexUtils.cs" />
     <Compile Include="Imex\IDataExporter.cs" />
     <Compile Include="Imex\IDataImporter.cs" />
+    <Compile Include="Imex\Importer.cs" />
+    <Compile Include="Imex\ImporterCommandLine.cs" />
     <Compile Include="Imex\ImportException.cs" />
     <Compile Include="Imex\IXmDataImex.cs" />
     <Compile Include="Imex\XmlEntityImex.cs" />

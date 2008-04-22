@@ -11,7 +11,8 @@ using System.Xml;
 
 namespace ClearCanvas.Healthcare.Imex
 {
-    [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
+    [ExtensionOf(typeof(XmlDataImexExtensionPoint))]
+    [ImexDataClass("ProcedureType")]
     public class ProcedureTypeImex : XmlEntityImex<ProcedureType, ProcedureTypeImex.ProcedureTypeData>
     {
         [DataContract]

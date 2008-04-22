@@ -10,7 +10,7 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Core.Imex
 {
-    public abstract class XmlEntityImex<TEntity, TDataContract> : IXmDataImex, IApplicationRoot
+    public abstract class XmlEntityImex<TEntity, TDataContract> : IXmDataImex
         where TEntity : Entity
     {
         class ExportItem : IExportItem
@@ -58,37 +58,6 @@ namespace ClearCanvas.Enterprise.Core.Imex
             {
                 TDataContract data = Read(item.Read());
                 Import(data, context);
-            }
-        }
-
-        #endregion
-
-        #region IApplicationRoot Members
-
-        public void RunApplication(string[] args)
-        {
-            ImexCommandLine cmdLine = new ImexCommandLine();
-            try
-            {
-                cmdLine.Parse(args);
-
-                // must specify either "/i" or "/e"
-                if ((cmdLine.Import == false && cmdLine.Export == false) || (cmdLine.Import && cmdLine.Export))
-                    throw new CommandLineException(null);
-
-                if (cmdLine.Export)
-                {
-                    ImexUtils.ExportToSingleFile(this, cmdLine.Path);
-                }
-                else
-                {
-                    ImexUtils.ImportFromSingleFile(this, cmdLine.Path);
-                }
-
-            }
-            catch (CommandLineException)
-            {
-                cmdLine.PrintUsage(Console.Out);
             }
         }
 

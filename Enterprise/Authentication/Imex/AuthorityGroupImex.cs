@@ -10,7 +10,8 @@ using ClearCanvas.Enterprise.Authentication.Brokers;
 
 namespace ClearCanvas.Enterprise.Authentication.Imex
 {
-    [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
+    [ExtensionOf(typeof(XmlDataImexExtensionPoint))]
+    [ImexDataClass("AuthorityGroup")]
     public class AuthorityGroupImex : XmlEntityImex<AuthorityGroup, AuthorityGroupImex.AuthorityGroupData>
     {
         [DataContract]

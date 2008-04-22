@@ -11,7 +11,8 @@ using System.Xml;
 
 namespace ClearCanvas.Healthcare.Imex
 {
-    [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
+    [ExtensionOf(typeof(XmlDataImexExtensionPoint))]
+    [ImexDataClass("ProtocolGroup")]
     public class ProtocolGroupImex : XmlEntityImex<ProtocolGroup, ProtocolGroupImex.ProtocolGroupData>
     {
         [DataContract]
