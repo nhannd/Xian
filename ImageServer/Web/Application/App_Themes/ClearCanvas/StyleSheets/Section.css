@@ -1,0 +1,36 @@
+.CSSSection
+{ 
+}
+
+
+.CSSDefaultSectionHeading
+{
+	background-color: #858585;
+	padding: 3px;
+	border-bottom: #3399cc 1px solid;
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr=#c2deff, endColorstr=#ffffff);
+	color: black;
+}
+
+.CSSStudyHeading
+{
+	background-color: #858585;
+	padding: 3px;
+	border-bottom: #3399cc 1px solid;
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr=#c2deff, endColorstr=#ffffff);
+	color: black;
+}
+
+
+.CSSWorkQueueDetailSectionHeading
+{
+	background-color: #858585;
+	border-bottom: #3399cc 1px solid;
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr=#c2deff, endColorstr=#ffffff);
+	color: blue;
+	padding-left: 10px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	font-weight: bolder;
+	font-size: large;
+}
