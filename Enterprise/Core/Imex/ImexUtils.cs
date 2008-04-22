@@ -49,6 +49,9 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
         public static void ExportToSingleFile(IXmDataImex imex, string path)
         {
+            // delete the file if it exists (no error if it doesn't)
+            File.Delete(path);
+
             using (StreamWriter writer = new StreamWriter(File.OpenWrite(path)))
             {
                 XmlTextWriter xmlWriter = new XmlTextWriter(writer);

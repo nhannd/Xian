@@ -91,8 +91,17 @@ namespace ClearCanvas.Healthcare.Imex
             DiagnosticServiceTreeNode node = null;
             if(parent != null)
             {
-                node = CollectionUtils.SelectFirst<DiagnosticServiceTreeNode>(parent.Children,
+                node = CollectionUtils.SelectFirst(parent.Children,
                     delegate(DiagnosticServiceTreeNode n) { return n.Description == description; });
+            }
+            else
+            {
+                // look for an existing root node with this description
+                DiagnosticServiceTreeNodeSearchCriteria where = new DiagnosticServiceTreeNodeSearchCriteria();
+                where.Description.EqualTo(description);
+                where.Parent.IsNull();
+
+                node = CollectionUtils.FirstElement(context.GetBroker<IDiagnosticServiceTreeNodeBroker>().Find(where));
             }
 
             if (node == null)
