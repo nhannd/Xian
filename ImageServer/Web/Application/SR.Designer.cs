@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageServer.Web.Application {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to remove the following studies?.
+        /// </summary>
+        internal static string MultipleStudyDelete {
+            get {
+                return ResourceManager.GetString("MultipleStudyDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The item you selected is no longer on the list. It could have been modified by the system or another person. Please refresh the list..
         /// </summary>
         internal static string SelectedWorkQueueNoLongerOnTheList {
@@ -84,6 +93,15 @@ namespace ClearCanvas.ImageServer.Web.Application {
         internal static string ServiceLockUpdateFailed_ContactAdmin {
             get {
                 return ResourceManager.GetString("ServiceLockUpdateFailed_ContactAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to remove the following study?.
+        /// </summary>
+        internal static string SingleStudyDelete {
+            get {
+                return ResourceManager.GetString("SingleStudyDelete", resourceCulture);
             }
         }
         

@@ -245,11 +245,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
             if (studies != null && studies.Count>0)
             {
-                
-                ConfirmationDialog.Message = string.Format("Are you sure you want to remove the following ");
-                
-                if (studies.Count > 1) ConfirmationDialog.Message += "studies?<BR/>";
-                else ConfirmationDialog.Message += "study?<BR/>";
+                if (studies.Count > 1) ConfirmationDialog.Message = string.Format(SR.MultipleStudyDelete);
+                else ConfirmationDialog.Message = string.Format(SR.SingleStudyDelete);
 
                 ConfirmationDialog.Message += "<table>";
                 foreach (Study study in studies)
