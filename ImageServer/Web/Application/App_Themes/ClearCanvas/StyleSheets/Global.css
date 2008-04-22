@@ -11,7 +11,9 @@ Global.css - Defines the global styles for the entire web application relating
 	margin-top: 10px;
 	margin-right: 10px;
 	margin-bottom: 10px;
-	z-index: -100;
+	z-index: -1;
+	font-family: Verdana;
+	font-size: small;
 }
 
 /* Panel containing the contents of entire page */
@@ -20,201 +22,1868 @@ Global.css - Defines the global styles for the entire web application relating
     background-color: Transparent;
 }
 
-
-/* Header panel contains the logo, menu and location bar */
-.HeaderPanel 
-{
-	position: relative;
-	top: 2px;
-	background-color: Aqua;
-	
-}
-
 /*==================================================
- * Main Menu Items 
+ * Header Items (Main Menu and Location Panel)
  *==================================================*/
 
 .MainMenuPanel
 {
-/*	position: absolute;
-	top: 21px;
-	left: 200px;
-	padding: 0px 0px 0px 0px;
-	vertical-align: middle;
+	background: url("../images/Header/MenuBackground.png") repeat-x;
+	height: 45px;
+	text-align: left;
 	font-family: Sans-Serif;
-	font-size: large;
-	font-weight: bold;
-	color: White;*/
-    height: 24px;
-	background: url(../images/MenuBackground.png) repeat-x;
-}
-
-.MenuTable
-{
-	position: relative;
-	margin: 0px 0px 0px 10px;
-	padding: 0px 0px 0px 0px;
-	border-width: 0px
-}
-
-.MenuTableRow
-{
-	position: relative;
-	margin: 0px 0px 0px 0px;
-	padding: 0px 0px 0px 0px;
-	border-width: 0px;
-}
-
-.MenuTableCell
-{
-	position: relative;
-	margin: 0px 0px 0px 0px;
-	padding: 0px 0px 0px 0px;
-	border-width: 0px
+	color: White;
 }
 
 .MainMenuContent
 {
-
-}
-
-.StaticMenu 
-{
-	padding: 0px 2px 0px 2px;
-	margin: 0px 0px 0px 0px;
-	position: relative;
-}
-
-.StaticMenuItem 
-{
-	padding: 0px 2px 4px 2px;
-	margin: 0px 0px 0px 0px;
+	padding: 21px 0px 0px 0px;
 	font-family: Sans-Serif;
-	color: White;
-	border-style: solid;
-	border-width: 1px;
-	border-bottom-color: transparent;
-	border-top-color: transparent;
-	border-left-color: transparent;
-	border-right-color: transparent;
-	position: relative;
+	font-weight: bold;
 }
 
-.StaticHover 
+.StaticMenu
 {
-	padding: 0px px 0px 2px;
-	margin: 0px 0px 0px 0px;
-	background-color: #3b7193;
-	font-family: Sans-Serif;
-	color: White;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #006699;
-	position: relative;
+    color: White;
+    font-family: Sans-Serif;
+}
+
+.StaticMenuItem
+{
+    color: White;
+    margin: 0px 3px 0px 3px;
+    font-family: San-Serif;
+    text-align: center;
+}
+
+.StaticHover
+{
+    color: White;
+    background-color: #336699;
 }
 
 .StaticSelected
 {
-	background-color: #3b7193;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #006699;
+    color: White;
 }
 
-.DynamicMenu 
+.DynamicMenu
 {
-	padding: 0px 0px 0px 0px;
-	margin: 0px 0px 0px 1px;
-	background-color: #3b7193;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #006699;
+    color: White;
+    font-family: Sans-Serif;
 }
 
-.DynamicMenuItem 
+.DynamicMenuItem
 {
-	position: relative;
-	padding: 5px 5px 5px 3px;
-	margin: 0px 0px 0px 0px;
-	font-family: Sans-Serif;
-	font-size: medium;
-	color: White;
-	background-color: #3b7193;
+    color: White;
+    background-color: #336699;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 3px 3px 3px 3px;
 }
 
-.DynamicHover 
+.DynamicHover
 {
-	position: relative;
-	padding: 5px 5px 5px 3px;
-	margin: 0px 0px 0px 0px;
-	font-family: Sans-Serif;
-	font-size: medium;
-	color: White;
-	background-color: #6699cc;
+    color: White;
+    background-color: #6699CC;
+    padding: 3px 3px 3px 3px;
 }
 
 .DynamicSelected
 {
-
+    color: White;
 }
+    
+/* Location Panel and Content */
 
-/*=======================================================
- * Location Panel Items 
- *=====================================================*/
 .LocationPanel
 {
-	background-color: #cccccc;
-	position: absolute;
-	top:53px;
-	right:10px;
-	left:200px;
-	height:20px;
-	vertical-align:middle;
-	font-family: Sans-Serif;
-	font-size: small;
+	background: url(../images/Header/LocationBackground.png) repeat-x;
+	height: 18px;
+	z-index: -1;
+}
+
+.LocationPanelContent
+{
+    font-family: Arial;
+	font-size: 13px;
 	font-weight: bold;
-	padding: 2px 0px 0px 13px;
-	background: url(../images/LocationBackground.png) repeat-x;
-}
-
-.LocationTable
-{
-	position: relative;
-	margin: -3px 0px 0px 5px;
-	padding: 0px 0px 0px 0px;
-	border-width: 0px;
-}
-
-.LocationTableRow
-{
-	position: relative;
-	margin: 0px 0px 0px 0px;
-	padding: 0px 0px 0px 0px;
-	border-width: 0px;
-}
-
-.LocationTableCell
-{
-	position: relative;
-	margin: 0px 0px 0px 0px;
-	padding: 0px 0px 0px 0px;
-	border-width: 0px
+	padding: 1px 10px 0px 10px;
+	
 }
 
 /*=======================================================
  * Main Content Panel Items 
  *=====================================================*/
+
 .MainContentPanel 
 {
 	background-color: White;
-	padding: 15px 15px 15px 15px;
+	padding: 25px 10px 10px 10px;
 }
 
-.MainContentBorderPanel
+.MainContentLeftEdge
 {
-	position: absolute;
-	top: 0px;
-	left: 10px;
-	border-style:none;
-	border-width: 0px;
+	background: url(../images/MainContent/MainContentLeftEdge.png) repeat-y;
+	width: 14px;
+	height: 1px;
 }
+
+
+.MainContentRightEdge
+{
+	background: url(../images/MainContent/MainContentRightEdge.png) repeat-y;
+	width: 14px;
+	height: 1px;
+}
+
+.MainContentBottom
+{
+	background: url(../images/MainContent/MainContentBottom.png) repeat-x;
+	height: 14px;   
+}
+
+
+
+
+/*************************************************************************************************
+	Gridview control background 
+*************************************************************************************************/
+
+
+/* Container for the gridview */
+.CSSGridViewPanelContainer
+{
+}
+
+/* border of the gridview */
+.CSSGridViewPanelBorder
+{
+}
+
+/* gridview content panel */
+.CSSGridViewPanelContent
+{
+}
+
+
+
+/* gridview control styling */
+.CSSGridView
+{
+}
+
+/* gridview control header row */
+.CSSGridHeader th
+{	
+	background-image: url(images/gridheaderbackground.png);
+	background-repeat: repeat-x;
+}
+
+/* gridview control row */
+.CSSGridRowStyle
+{
+	
+}
+
+/* gridview control cell */
+.CSSGridRowStyle td
+{
+	
+}
+
+/* Alternating row style */
+.CSSGridAlternatingRowStyle
+{
+	background-color:#F7F6F3;
+}
+
+/* Alternating row cell style */
+.CSSGridAlternatingRowStyle td
+{	
+	background-color:#F7F6F3;
+}
+
+
+/* gridview control selected row */
+.CSSGridSelectedRowStyle
+{
+	background-color:#316AC5;
+	 
+	
+}
+
+/* gridview cell of the selected row */
+.CSSGridSelectedRowStyle td
+{
+	
+}
+
+
+
+
+/*************************************************************************************************
+	Gridview Pager panel background
+*************************************************************************************************/
+
+
+/* Grid pager control panel container */
+.CSSGridPagerPanelContainer
+{
+}
+
+/* grid pager panel border */
+.CSSGridPagerPanelBorder
+{
+
+}
+
+/*grid pager panel content */
+.CSSGridPagerPanelContent
+{
+	background-image: url(images/gridheaderbackground.png);
+	background-repeat: repeat-x;
+}
+
+
+
+/*************************************************************************************************
+	Popup Dialog
+*************************************************************************************************/
+
+.CSSPopupWindow
+{
+	background-color: white;
+	
+}
+
+
+.CSSPopupWindowBody 
+{ 
+	
+}
+
+.CSSDialogTabPanelContent
+{
+	
+}
+        
+.CSSPopupWindowTitleBar
+{
+	background-color: #3D98D1;
+	
+	
+}
+
+/*****************************************************************************************
+	Invalid input indicator styles
+*****************************************************************************************/
+.CSSInvalidInputIndicatorContainer
+{
+}
+
+.CSSInvalidIndicatorTooltipPanel
+{
+	background-color: #ffffcc;
+}
+
+.CSSInvalidIndicatorTooltip
+{
+}
+
+
+/*****************************************************************************************
+	Study Details view styles
+*****************************************************************************************/
+.CSSStudyDetailsView
+{
+}
+
+.CSSStudyDetailsViewRowStyle
+{
+
+}
+
+.CSSStudyDetailsViewRowStyle td
+{
+
+}
+
+
+.CSSStudyDetailsViewAlternatingRowStyle
+{
+	background-color:#F7F6F3;
+}
+
+
+.CSSStudyDetailsViewAlternatingRowStyle td
+{
+	background-color:#F7F6F3;
+}
+
+
+/*****************************************************************************************
+	Series grid view styles
+*****************************************************************************************/
+
+.CSSSeriesGridView
+{
+}
+
+.CSSSeriesGridViewHeaderStyle
+{
+	background-image: url(images/gridheaderbackground.png);
+	background-repeat: repeat-x;
+}
+
+/* gridview control selected row */
+.CSSSeriesGridViewRowStyle
+{
+
+}
+
+/* gridview control cell */
+.CSSSeriesGridViewRowStyle td
+{
+	background-color:#F7F6F3;
+}
+
+/* gridview control cell */
+.CSSSeriesGridViewAlternatingRowStyle
+{
+
+}
+
+
+/* gridview control cell */
+.CSSSeriesGridViewAlternatingRowStyle td
+{
+	background-color:Transparent;
+}
+
+/* gridview control selected row */
+.CSSSeriesGridSelectedRowStyle
+{
+	background-color:#316AC5;
+}
+
+
+/* gridview cell of the selected row */
+.CSSSeriesGridSelectedRowStyle td
+{
+}
+
+
+
+/**************************************************************************************************
+	This file contains the border CSS 
+**************************************************************************************************/
+
+
+/* Panel that holds the contents of the page - below the menubar*/
+.CSSPageContentMainWindow
+{
+}
+
+/* Title of the page */
+.CSSPageTitle
+{
+	
+}
+
+
+
+/*************************************************************************************************
+	Toolbar styles 
+*************************************************************************************************/
+
+
+/* toolbar panel container */
+.CSSToolbarPanelContainer
+{
+}
+
+/* Toolbar panel border */
+.CSSToolbarPanelBorder
+{
+
+}
+
+/* The content panel in the toolbar panel */
+.CSSToolbarContent
+{
+	
+}
+
+
+
+/*************************************************************************************************
+	Filter panel
+*************************************************************************************************/
+
+
+/* filter panel */
+.CSSFilterPanelContainer
+{
+	
+}
+
+/* filter panel content border */
+.CSSFilterPanelBorder
+{
+	border-right: #e7e7e8 1px solid;
+	border-top: #e7e7e8 1px solid;
+	border-left: #e7e7e8 1px solid;
+	border-bottom: #e7e7e8 1px solid;
+}
+
+/* filter panel content*/
+.CSSFilterPanelContent
+{
+
+}
+
+
+
+
+
+
+/*************************************************************************************************
+	About Page 
+*************************************************************************************************/
+
+
+/* Container for the gridview */
+.CSSAboutPanelContainer
+{
+	
+}
+
+/* border of the gridview */
+.CSSAboutPanelBorder
+{
+	border-right: darkgray 1px solid;
+	border-top: darkgray 1px solid;
+	border-left: darkgray 1px solid;
+	border-bottom:darkgray 1px solid;
+}
+
+/* gridview content panel */
+.CSSAboutPanelContent
+{
+	
+}
+
+/*************************************************************************************************
+	Gridview control 
+*************************************************************************************************/
+
+
+/* Container for the gridview */
+.CSSGridViewPanelContainer
+{
+	
+}
+
+/* border of the gridview */
+.CSSGridViewPanelBorder
+{
+	border-right: darkgray 1px solid;
+	border-top: darkgray 1px solid;
+	border-left: darkgray 1px solid;
+	border-bottom:darkgray 1px solid;
+}
+
+/* gridview content panel */
+.CSSGridViewPanelContent
+{
+	
+}
+
+
+
+/* gridview control styling */
+.CSSGridView
+{
+
+}
+
+/* gridview control header row */
+.CSSGridHeader th
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+/* gridview control row */
+.CSSGridRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+/* gridview control cell */
+.CSSGridRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+/* Alternating row style */
+.CSSGridAlternatingRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+/* Alternating row cell style */
+.CSSGridAlternatingRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+/* gridview control selected row */
+.CSSGridSelectedRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+/* gridview cell of the selected row */
+.CSSGridSelectedRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+
+
+/*************************************************************************************************
+	Gridview Pager panel background
+*************************************************************************************************/
+
+
+/* Grid pager control panel container */
+.CSSGridPagerPanelContainer
+{
+}
+
+/* grid pager panel border */
+.CSSGridPagerPanelBorder
+{
+	border-right: darkgray  1px solid;
+	border-top: darkgray  1px solid;
+	border-left:darkgray  1px solid;
+	border-bottom: darkgray  1px solid;
+}
+
+/*grid pager panel content */
+.CSSGridPagerPanelContent
+{
+
+}
+
+
+
+
+
+/*************************************************************************************************
+	Popup Dialog
+*************************************************************************************************/
+
+
+.CSSPopupWindow
+{
+	border-right: 1px outset;
+	border-top: 1px outset;
+	border-left: 1px outset;
+	border-bottom: 1px outset;
+}
+
+
+.CSSPopupWindowBody 
+{ 
+	
+}
+
+.CSSDialogTabPanelContent
+{
+	
+}
+
+        
+.CSSPopupWindowTitleBar
+{
+	border-bottom: gray 1px ridge;
+	
+}
+
+/*****************************************************************************************
+	Invalid input indicator styles
+*****************************************************************************************/
+.CSSInvalidInputIndicatorContainer
+{
+}
+
+.CSSInvalidIndicatorTooltipPanel
+{
+	border-right: #990000 1px solid;
+	border-top: #990000 1px solid;
+	border-left: #990000 1px solid;
+	border-bottom: #990000 1px solid;
+}
+
+.CSSInvalidIndicatorTooltip
+{
+}
+
+
+/*****************************************************************************************
+	Study Details view styles
+*****************************************************************************************/
+.CSSStudyDetailsView
+{
+	border-right: #b0c4de 1px solid;
+	border-top: #b0c4de 1px solid;
+	border-left: #b0c4de 1px solid;
+	border-bottom: #b0c4de 1px solid;
+}
+
+.CSSStudyDetailsViewRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+.CSSStudyDetailsViewRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+.CSSStudyDetailsViewAlternatingRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+.CSSStudyDetailsViewAlternatingRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+/*****************************************************************************************
+	Series grid view styles
+*****************************************************************************************/
+
+.CSSSeriesGridView
+{
+	border-right: #b0c4de 1px solid;
+	border-top: #b0c4de 1px solid;
+	border-left: #b0c4de 1px solid;
+	border-bottom: #b0c4de 1px solid;
+}
+
+.CSSSeriesGridViewHeaderStyle
+{
+	border-right: #eeeeee 1px solid;
+	border-top: #eeeeee 1px solid;
+	border-left: #eeeeee 1px solid;
+	border-bottom: #eeeeee 1px solid;
+	
+}
+
+/* gridview control selected row */
+.CSSSeriesGridViewRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+/* gridview control cell */
+.CSSSeriesGridViewRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+/* gridview control cell */
+.CSSSeriesGridViewAlternatingRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+/* gridview control cell */
+.CSSSeriesGridViewAlternatingRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+/* gridview control selected row */
+.CSSSeriesGridSelectedRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+/* gridview cell of the selected row */
+.CSSSeriesGridSelectedRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+/* Panel that holds the contents of the page - below the menubar*/
+.CSSPageContentMainWindow
+{
+	font-size: 100%;
+}
+
+/* Title of the page */
+.CSSPageTitle
+{
+	
+	font-size:110%;
+	font-weight:bold;
+	color:White;
+	
+}
+
+.CSSVersionLabel
+{
+	font-size:70%;
+	color:Silver;
+	font-weight:normal;
+}
+
+
+/*************************************************************************************************
+	Filter panel font
+*************************************************************************************************/
+
+
+/* filter panel container */
+.CSSFilterPanelContainer
+{
+	font-style: normal;
+	font-weight: normal;
+	
+}
+
+/* filter panel content border */
+.CSSFilterPanelBorder
+{
+	
+}
+
+/* filter panel content*/
+.CSSFilterPanelContent
+{
+
+}
+
+
+
+
+/*************************************************************************************************
+	Menubar font
+*************************************************************************************************/
+
+
+/* Menubar panel container */
+.CSSMainMenuBarContainer
+{
+	font-size:110%;	
+}
+
+
+/* Menubar */
+.CSSMenuBarBorder
+{
+	
+}
+
+/* Menu item color */
+.CSSMainMenu a:link , .CSSMainMenu a:visited, .CSSMainMenu a:hover, .CSSMainMenu a:active
+{
+	color:white;
+	font-weight:bold;
+}
+
+
+/* main menu */
+.CSSMenu_TopLevel
+{
+
+}
+
+
+/* main menu */
+.CSSMenu_TopLevelItem
+{
+}
+
+
+
+/* main menu (when hover over)*/
+.CSSMenu_TopLevel_Hover
+{
+
+}
+
+
+/* submenu container styles */
+.CSSMenu_SubMenu
+{
+
+}
+
+
+/* submenu item */
+.CSSMenu_SubMenuItem
+{
+	font-size:100%;	
+}
+
+/* submenu item color */
+.CSSMenu_SubMenuItem a:link , .CSSMenu_SubMenuItem a:visited, .CSSMenu_SubMenuItem a:hover, .CSSMenu_SubMenuItem a:active
+{
+	color:white;
+}
+
+
+/* submenu item when hover*/
+.CSSMenu_SubMenu_Hover
+{
+
+	
+}
+
+
+
+/*************************************************************************************************
+	Gridview control font
+*************************************************************************************************/
+
+
+/* Container for the gridview */
+.CSSGridViewPanelContainer
+{
+}
+
+/* border of the gridview */
+.CSSGridViewPanelBorder
+{
+}
+
+/* gridview content panel */
+.CSSGridViewPanelContent
+{
+}
+
+
+
+/* gridview control styling */
+.CSSGridView
+{
+	
+}
+
+/* gridview control header row */
+.CSSGridHeader th
+{	
+	font-weight:normal;
+}
+
+/* gridview control row */
+.CSSGridRowStyle
+{
+	
+}
+
+/* gridview control cell */
+.CSSGridRowStyle td
+{
+	
+}
+
+/* gridview control selected row */
+.CSSGridSelectedRowStyle
+{
+	
+}
+
+
+/* Alternating row style */
+.CSSGridAlternatingRowStyle
+{
+}
+
+/* Alternating row cell style */
+.CSSGridAlternatingRowStyle td
+{
+}
+
+
+
+/* gridview cell of the selected row */
+.CSSGridSelectedRowStyle td
+{
+	color: white;
+	
+}
+
+
+
+
+
+/*************************************************************************************************
+	Gridview pager panel font
+*************************************************************************************************/
+
+
+/* Grid pager control panel container */
+.CSSGridPagerPanelContainer
+{
+}
+
+/* grid pager panel border */
+.CSSGridPagerPanelBorder
+{
+	font-style: normal;
+	font-weight: normal;
+	
+}
+
+/*grid pager panel content */
+.CSSGridPagerPanelContent
+{
+	
+}
+
+
+
+
+/*************************************************************************************************
+	Popup dialog font
+*************************************************************************************************/
+
+.CSSPopupWindow
+{
+	
+}
+
+
+.CSSPopupWindowBody 
+{ 
+	
+}
+
+.CSSDialogTabPanelContent
+{
+	
+}
+        
+.CSSPopupWindowTitleBar
+{
+	font-weight: bold;
+	font-size: larger;
+	text-transform: capitalize;
+	color:White;
+}
+
+/*****************************************************************************************
+	Invalid input indicator styles
+*****************************************************************************************/
+.CSSInvalidInputIndicatorContainer
+{
+}
+
+.CSSInvalidIndicatorTooltipPanel
+{
+	color: #ff6600;
+	
+}
+
+.CSSInvalidIndicatorTooltip
+{
+}
+
+
+/*****************************************************************************************
+	Study Details view styles
+*****************************************************************************************/
+.CSSStudyDetailsView
+{
+}
+
+.CSSStudyDetailsViewRowStyle
+{
+
+}
+
+.CSSStudyDetailsViewRowStyle td
+{
+
+}
+
+
+.CSSStudyDetailsViewAlternatingRowStyle
+{
+
+}
+
+
+.CSSStudyDetailsViewAlternatingRowStyle td
+{
+
+}
+
+/*****************************************************************************************
+	Series grid view styles
+*****************************************************************************************/
+.CSSSeriesGridView
+{
+}
+
+
+.CSSSeriesGridViewHeaderStyle
+{
+	
+}
+
+.CSSSeriesGridViewHeaderStyle th
+{
+	font-weight:normal;
+	text-align:left;
+}
+
+/* gridview control selected row */
+.CSSSeriesGridViewRowStyle
+{
+
+}
+
+/* gridview control cell */
+.CSSSeriesGridViewRowStyle td
+{
+	color:#333333;
+}
+
+/* gridview control cell */
+.CSSSeriesGridViewAlternatingRowStyle
+{
+
+}
+
+
+/* gridview control cell */
+.CSSSeriesGridViewAlternatingRowStyle td
+{
+	color:#333333;
+}
+
+/* gridview control selected row */
+.CSSSeriesGridSelectedRowStyle
+{
+	color:White;
+}
+
+
+/* gridview cell of the selected row */
+.CSSSeriesGridSelectedRowStyle td
+{
+}
+
+
+
+
+
+
+/*************************************************************************************************
+	Toolbar
+*************************************************************************************************/
+
+
+/* toolbar panel container */
+.CSSToolbarPanelContainer
+{
+	margin: 5px 0px;
+}
+
+/* Toolbar panel */
+.CSSToolbarPanelBorder
+{
+	margin:5px;
+}
+
+/* The content panel in the toolbar panel */
+.CSSToolbarContent
+{
+}
+
+
+
+
+
+/*************************************************************************************************
+	Filter panel 
+*************************************************************************************************/
+
+
+/* filter panel container */
+.CSSFilterPanelContainer
+{
+	margin: 5px 0px 5px 5px;
+}
+
+
+
+/* filter panel content border*/
+.CSSFilterPanelBorder
+{
+	
+}
+
+/* filter panel content*/
+.CSSFilterPanelContent
+{
+	margin:5px;	
+}
+
+
+
+
+
+/*************************************************************************************************
+	About layout
+*************************************************************************************************/
+
+
+/* Container for the gridview */
+.CSSAboutPanelContainer
+{
+	margin-top:3px;
+}
+
+/* border of the gridview */
+.CSSAboutPanelBorder
+{
+}
+
+/* gridview content panel */
+.CSSAboutPanelContent
+{
+	height:600px;
+	padding:1px;
+}
+
+/*************************************************************************************************
+	Gridview control layout
+*************************************************************************************************/
+
+
+/* Container for the gridview */
+.CSSGridViewPanelContainer
+{
+
+}
+
+/* border of the gridview */
+.CSSGridViewPanelBorder
+{
+	height:100%;
+}
+
+/* gridview content panel */
+.CSSGridViewPanelContent
+{
+	padding:1px;
+}
+
+
+
+/* gridview control styling */
+.CSSGridView
+{
+	
+}
+
+/* gridview control header row */
+.CSSGridHeader th
+{	
+	height: 24px;
+	padding-right: 5px;
+	padding-left: 5px;
+	
+}
+
+/* gridview control row */
+.CSSGridRowStyle
+{
+	
+	height: 24px; 
+}
+
+/* gridview control cell */
+.CSSGridRowStyle td
+{
+	height: 24px; 
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+/* Alternating row style */
+.CSSGridAlternatingRowStyle
+{
+	height: 24px; 
+}
+
+/* Alternating row cell style */
+.CSSGridAlternatingRowStyle td
+{
+	height: 24px; 
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+/* gridview control selected row */
+.CSSGridSelectedRowStyle
+{
+	height: 24px;
+}
+
+/* gridview cell of the selected row */
+.CSSGridSelectedRowStyle td
+{
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+
+
+
+
+
+/*************************************************************************************************
+	Gridview pager panel layout
+*************************************************************************************************/
+
+
+/* Grid pager control panel container */
+.CSSGridPagerPanelContainer
+{
+}
+
+/* grid pager panel border */
+.CSSGridPagerPanelBorder
+{
+
+}
+
+/*grid pager panel content */
+.CSSGridPagerPanelContent
+{
+	margin: 2px;
+
+}
+
+
+
+
+
+/*************************************************************************************************
+	Popup dialog
+*************************************************************************************************/
+
+
+.CSSPopupWindow
+{
+	
+}
+
+
+.CSSPopupWindowBody 
+{ 
+	vertical-align: top;
+	margin:15px;
+}
+
+.CSSDialogTabPanelContent
+{
+	padding:10px;
+}
+        
+.CSSPopupWindowTitleBar
+{
+	cursor: move;
+	width: 100%;
+	height: 30px;
+	vertical-align: middle;
+	text-align: center;
+	
+}
+
+/*****************************************************************************************
+	Invalid input indicator styles
+*****************************************************************************************/
+.CSSInvalidInputIndicatorContainer
+{
+}
+
+.CSSInvalidIndicatorTooltipPanel
+{
+	position: relative;
+	padding-right: 10px;
+	padding-left: 10px;
+	padding-bottom: 5px;
+	padding-top: 5px;
+	
+}
+
+.CSSInvalidIndicatorTooltip
+{
+}
+
+
+/*****************************************************************************************
+	Study Details view styles
+*****************************************************************************************/
+.CSSStudyDetailsView
+{
+}
+
+.CSSStudyDetailsViewHeaderStyle
+{
+
+}
+
+.CSSStudyDetailsViewHeaderStyle
+{
+
+
+}
+
+
+
+.CSSStudyDetailsViewRowStyle
+{
+
+}
+
+.CSSStudyDetailsViewRowStyle td
+{
+
+}
+
+.CSSStudyDetailsAlternatingRowStyle
+{
+}
+
+
+/*****************************************************************************************
+	Series grid view styles
+*****************************************************************************************/
+.CSSSeriesGridView
+{
+}
+
+
+.CSSSeriesGridViewHeaderStyle
+{
+	
+	text-wrap: suppress;
+	overflow: visible;
+
+}
+
+/* gridview control selected row */
+.CSSSeriesGridViewRowStyle
+{
+
+}
+
+/* gridview control cell */
+.CSSSeriesGridViewRowStyle td
+{
+	
+}
+
+/* gridview control cell */
+.CSSSeriesGridViewAlternatingRowStyle
+{
+
+}
+
+
+/* gridview control cell */
+.CSSSeriesGridViewAlternatingRowStyle td
+{
+	
+}
+
+/* gridview control selected row */
+.CSSSeriesGridSelectedRowStyle
+{
+
+}
+
+
+/* gridview cell of the selected row */
+.CSSSeriesGridSelectedRowStyle td
+{
+
+}
+
+
+
+.InvalidInputHilight
+{
+	background-color:Yellow;
+}
+
+
+.FilterButtonContainer
+{
+	margin-left:10px;
+	margin-right:5px;
+}
+
+.CSSTextBoxLabel
+{
+	width: 100px;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+
+ 
+.CSSFilterTextBox
+{
+	width: 100px;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+
+.CSSFilterDropDownList
+{
+	width: 120px;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+
+.CSSCheckBox
+{
+	margin-left:10px;
+	margin-right:10px;
+}
+
+
+
+/*************************************************************************************************
+	Filter panel
+*************************************************************************************************/
+
+
+/* filter panel */
+.CSSFilterPanelContainer
+{
+	
+}
+
+/* filter panel content border */
+.CSSFilterPanelBorder
+{
+	border-right: #e7e7e8 1px solid;
+	border-top: #e7e7e8 1px solid;
+	border-left: #e7e7e8 1px solid;
+	border-bottom: #e7e7e8 1px solid;
+}
+
+/* filter panel content*/
+.CSSFilterPanelContent
+{
+
+}
+
+
+
+
+/*************************************************************************************************
+	About Page 
+*************************************************************************************************/
+
+
+/* Container for the gridview */
+.CSSAboutPanelContainer
+{
+	
+}
+
+/* border of the gridview */
+.CSSAboutPanelBorder
+{
+	border-right: darkgray 1px solid;
+	border-top: darkgray 1px solid;
+	border-left: darkgray 1px solid;
+	border-bottom:darkgray 1px solid;
+}
+
+/* gridview content panel */
+.CSSAboutPanelContent
+{
+	
+}
+
+/*************************************************************************************************
+	Gridview control 
+*************************************************************************************************/
+
+
+/* Container for the gridview */
+.CSSGridViewPanelContainer
+{
+	
+}
+
+/* border of the gridview */
+.CSSGridViewPanelBorder
+{
+	border-right: darkgray 1px solid;
+	border-top: darkgray 1px solid;
+	border-left: darkgray 1px solid;
+	border-bottom:darkgray 1px solid;
+}
+
+/* gridview content panel */
+.CSSGridViewPanelContent
+{
+	
+}
+
+
+
+/* gridview control styling */
+.CSSGridView
+{
+
+}
+
+/* gridview control header row */
+.CSSGridHeader th
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+/* gridview control row */
+.CSSGridRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+/* gridview control cell */
+.CSSGridRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+/* Alternating row style */
+.CSSGridAlternatingRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+/* Alternating row cell style */
+.CSSGridAlternatingRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+/* gridview control selected row */
+.CSSGridSelectedRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+/* gridview cell of the selected row */
+.CSSGridSelectedRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+
+
+/*************************************************************************************************
+	Gridview Pager panel background
+*************************************************************************************************/
+
+
+/* Grid pager control panel container */
+.CSSGridPagerPanelContainer
+{
+}
+
+/* grid pager panel border */
+.CSSGridPagerPanelBorder
+{
+	border-right: darkgray  1px solid;
+	border-top: darkgray  1px solid;
+	border-left:darkgray  1px solid;
+	border-bottom: darkgray  1px solid;
+}
+
+/*grid pager panel content */
+.CSSGridPagerPanelContent
+{
+
+}
+
+
+
+
+
+/*************************************************************************************************
+	Popup Dialog
+*************************************************************************************************/
+
+
+.CSSPopupWindow
+{
+	border-right: 1px outset;
+	border-top: 1px outset;
+	border-left: 1px outset;
+	border-bottom: 1px outset;
+}
+
+
+.CSSPopupWindowBody 
+{ 
+	
+}
+
+.CSSDialogTabPanelContent
+{
+	
+}
+
+        
+.CSSPopupWindowTitleBar
+{
+	border-bottom: gray 1px ridge;
+	
+}
+
+/*****************************************************************************************
+	Invalid input indicator styles
+*****************************************************************************************/
+.CSSInvalidInputIndicatorContainer
+{
+}
+
+.CSSInvalidIndicatorTooltipPanel
+{
+	border-right: #990000 1px solid;
+	border-top: #990000 1px solid;
+	border-left: #990000 1px solid;
+	border-bottom: #990000 1px solid;
+}
+
+.CSSInvalidIndicatorTooltip
+{
+}
+
+
+/*****************************************************************************************
+	Study Details view styles
+*****************************************************************************************/
+.CSSStudyDetailsView
+{
+	border-right: #b0c4de 1px solid;
+	border-top: #b0c4de 1px solid;
+	border-left: #b0c4de 1px solid;
+	border-bottom: #b0c4de 1px solid;
+}
+
+.CSSStudyDetailsViewRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+.CSSStudyDetailsViewRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+.CSSStudyDetailsViewAlternatingRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+.CSSStudyDetailsViewAlternatingRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+/*****************************************************************************************
+	Series grid view styles
+*****************************************************************************************/
+
+.CSSSeriesGridView
+{
+	border-right: #b0c4de 1px solid;
+	border-top: #b0c4de 1px solid;
+	border-left: #b0c4de 1px solid;
+	border-bottom: #b0c4de 1px solid;
+}
+
+.CSSSeriesGridViewHeaderStyle
+{
+	border-right: #eeeeee 1px solid;
+	border-top: #eeeeee 1px solid;
+	border-left: #eeeeee 1px solid;
+	border-bottom: #eeeeee 1px solid;
+	
+}
+
+/* gridview control selected row */
+.CSSSeriesGridViewRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+/* gridview control cell */
+.CSSSeriesGridViewRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+/* gridview control cell */
+.CSSSeriesGridViewAlternatingRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+/* gridview control cell */
+.CSSSeriesGridViewAlternatingRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+/* gridview control selected row */
+.CSSSeriesGridSelectedRowStyle
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
+/* gridview cell of the selected row */
+.CSSSeriesGridSelectedRowStyle td
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
+}
+
+
