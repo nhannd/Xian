@@ -132,10 +132,10 @@
                                             <table>
                                                 <tr>
                                                     <td width="120px" align="left" valign="bottom">
-                                                        <asp:Label ID="Label8" runat="server" Text="Available" CssClass="CSSTextLabel" />
+                                                        <asp:Label ID="Label8" runat="server" Text="Used" CssClass="CSSTextLabel" />
                                                     </td>
                                                     <td>
-                                                        <asp:Label ID="AvailableSizeIndicator" runat="server" Text="??? KB" />
+                                                        <asp:Label ID="UsedSizeIndicator" runat="server" Text="??? KB" />
                                                     </td>
                                                 </tr>
                                             </table>

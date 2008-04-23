@@ -187,9 +187,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             template.Replace("@@LW_SIZE_CLIENTID@@", LowWaterMarkSize.ClientID);
             template.Replace("@@PATH_INPUT_CLIENTID@@", PathTextBox.ClientID);
             template.Replace("@@TOTAL_SIZE_INDICATOR_CLIENTID@@", TotalSizeIndicator.ClientID);
-            template.Replace("@@AVAILABLE_SIZE_INDICATOR_CLIENTID@@", AvailableSizeIndicator.ClientID);
+            template.Replace("@@USED_SIZE_INDICATOR_CLIENTID@@", UsedSizeIndicator.ClientID);
             template.Replace("@@TOTAL_SIZE_CLIENTID@@", TotalSize.ClientID);
-            template.Replace("@@AVAILABLE_SIZE_CLIENTID@@", AvailableSize.ClientID);
+            template.Replace("@@USED_SIZE_CLIENTID@@", AvailableSize.ClientID);
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID+"_scripts", template.Script, true);
         }

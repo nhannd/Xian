@@ -1,5 +1,14 @@
 var sizeTotal;
-var sizeFree;
+var sizeUsed;
+
+// This function calls the Web Service method.  
+function LoadFilesystemInfo()
+{
+     path = document.getElementById('@@PATH_INPUT_CLIENTID@@').value;
+
+     ClearCanvas.ImageServer.Web.Application.Services.FilesystemInfoService.GetFilesystemInfo(path, OnLoadFilesystemInfoSuccess, OnLoadFilesystemInfoError);
+     
+}
     
 function RecalculateWatermark()
 {
@@ -32,7 +41,8 @@ function RecalculateWatermark()
     }
 }
 
-
+// Returns a string containing a percentage value formatted to 
+// the number of decimal places specified by "decimalpoints"
 function FormatPercentage(value, decimalpoints)
 {
     var pct = new NumberFormat(value * 100.0);
@@ -40,12 +50,14 @@ function FormatPercentage(value, decimalpoints)
     return pct.toFormatted() + '%';
 }
 
+// Returns a string formatted to the appropriate size (MB, GB, TB)
+// provided a number that is the size in kilobytes (KB)
 function FormatSize(sizeInKB)
 {
         MB = 1024; //kb
         GB = 1024*MB;
         TB = 1024*GB;
-
+        
         if (sizeInKB > TB)
         {
             var num = new NumberFormat(sizeInKB / TB);
@@ -79,18 +91,6 @@ function ValidationFilesystemPathParams()
     return params;
 }
 
-
-
-// This function calls the Web Service method.  
-function LoadFilesystemInfo()
-{
- 
-     path = document.getElementById('@@PATH_INPUT_CLIENTID@@').value;
-
-     ClearCanvas.ImageServer.Web.Application.Services.FilesystemInfoService.GetFilesystemInfo(path, OnLoadFilesystemInfoSuccess, OnLoadFilesystemInfoError);
-}
-
-
 function OnLoadFilesystemInfoError(result)
 {
     alert('Error: ' + result.get_message());
@@ -108,16 +108,14 @@ function OnLoadFilesystemInfoSuccess(result)
         sizeTotal = document.getElementById('@@TOTAL_SIZE_CLIENTID@@');
         sizeTotal.value = filesysteminfo.SizeInKB;
         
-        sizeFree = document.getElementById('@@AVAILABLE_SIZE_CLIENTID@@');
-        sizeFree.value  = filesysteminfo.FreeSizeInKB;
+        sizeUsed = document.getElementById('@@USED_SIZE_CLIENTID@@');
+        sizeUsed.value = sizeTotal.value - filesysteminfo.FreeSizeInKB;
 
-        //alert(result);
         total = document.getElementById('@@TOTAL_SIZE_INDICATOR_CLIENTID@@');                                       
         total.innerHTML = FormatSize(sizeTotal.value);
         
-
-        available = document.getElementById('@@AVAILABLE_SIZE_INDICATOR_CLIENTID@@');
-        available.innerHTML = FormatSize(sizeFree.value) + ' (' + FormatPercentage(sizeFree.value/sizeTotal.value, 4) +')';
+        used = document.getElementById('@@USED_SIZE_INDICATOR_CLIENTID@@');
+        used.innerHTML = FormatSize(sizeUsed.value) + ' (' + FormatPercentage(sizeUsed.value/sizeTotal.value, 4) +')';
 
         RecalculateWatermark();
     }
@@ -126,17 +124,15 @@ function OnLoadFilesystemInfoSuccess(result)
         sizeTotal = document.getElementById('@@TOTAL_SIZE_CLIENTID@@');
         sizeTotal.value = 0;
         
-        sizeFree = document.getElementById('@@AVAILABLE_SIZE_CLIENTID@@');
-        sizeFree.value  = 0;
-
-        //alert(result);
+        sizeUsed = document.getElementById('@@USED_SIZE_CLIENTID@@');
+        sizeUsed.value  = 0;
+        
         total = document.getElementById('@@TOTAL_SIZE_INDICATOR_CLIENTID@@');                                       
         total.innerHTML = 'Unknown';
         
-
-        available = document.getElementById('@@AVAILABLE_SIZE_INDICATOR_CLIENTID@@');
-        available.innerHTML = 'Unknown';
-
+        used = document.getElementById('@@USED_SIZE_INDICATOR_CLIENTID@@');
+        used.innerHTML = 'Unknown';
+        
         RecalculateWatermark();
     }
     
