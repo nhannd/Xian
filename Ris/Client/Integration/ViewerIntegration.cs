@@ -29,67 +29,72 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer;
-using ClearCanvas.ImageViewer.StudyFinders.LocalDataStore;
+using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Ris.Client;
+using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.Ris.Client.Integration
 {
-    [ExtensionOf(typeof(ViewerIntegrationExtensionPoint))]
+	[ExtensionOf(typeof(ViewerIntegrationExtensionPoint))]
     public class ViewerIntegration : IViewerIntegration
-    {
-        /// <summary>
-        /// No-args constructor required by extension point framework.
-        /// </summary>
-        public ViewerIntegration()
+	{
+		public ViewerIntegration()
         {
-            if (!Platform.IsWin32Platform)
-                throw new NotSupportedException();
         }
 
         #region IViewerIntegration Members
 
-        public void OpenStudy(string accessionNumber)
+		public void OpenStudy(string accessionNumber)
+		{
+			foreach (DesktopWindow window in Application.DesktopWindows)
+			{
+				foreach (Workspace workspace in window.Workspaces)
+				{
+					IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(workspace);
+					if (viewer == null)
+						continue;
+					
+					foreach (Patient patient in viewer.StudyTree.Patients.Values)
+					{
+						foreach (Study study in patient.Studies.Values)
+						{
+							if (study.AccessionNumber == accessionNumber)
+							{
+								workspace.Activate();
+								return;
+							}
+						}
+					}
+				}
+			}
+
+			StudyItemList studies = FindStudies(accessionNumber);
+
+			if (studies.Count > 0)
+			{
+				int i = 0;
+				string[] uids = new string[studies.Count];
+				foreach (StudyItem study in studies)
+					uids[i++] = study.StudyInstanceUID;
+
+				OpenStudyHelper.OpenStudies("DICOM_LOCAL", uids, ViewerLaunchSettings.WindowBehaviour);
+			}
+		}
+
+    	private static StudyItemList FindStudies(string accessionNumber)
         {
-            StudyItemList studies = FindStudies(accessionNumber);
+			IStudyFinder studyFinder = 
+				(IStudyFinder)CollectionUtils.SelectFirst(new StudyFinderExtensionPoint().CreateExtensions(),
+        													delegate(object test)
+        		                            					{
+																	return ((IStudyFinder)test).Name == "DICOM_LOCAL";
+        		                            					});
 
-            if (studies.Count > 0)
-            {
-                string windowName = "ImageViewer";
-
-                DesktopWindow viewerWindow =
-                    CollectionUtils.SelectFirst(ClearCanvas.Desktop.Application.DesktopWindows,
-                    delegate(DesktopWindow window)
-                    {
-                        return window.Name == windowName;
-                    });
-
-                if (viewerWindow == null)
-                    viewerWindow = ClearCanvas.Desktop.Application.DesktopWindows.AddNew(windowName);
-                else
-                    viewerWindow.Activate();
-
-                foreach (StudyItem study in studies)
-                {
-                    OpenStudy(study, viewerWindow);
-                }
-            }
-        }
-
-        #endregion
-
-        #region Private Helpers
-
-        private static StudyItemList FindStudies(string accessionNumber)
-        {
-            LocalDataStoreStudyFinder studyFinder = new LocalDataStoreStudyFinder();
-
-            // do a broad query and choose a random Study
+			// do a broad query and choose a random Study
             QueryParameters queryParams = new QueryParameters();
             queryParams.Add("PatientsName", "");
             queryParams.Add("PatientId", "");
@@ -99,39 +104,16 @@ namespace ClearCanvas.Ris.Client.Integration
             queryParams.Add("StudyDate", "");
             queryParams.Add("StudyInstanceUid", "");
 
-            return studyFinder.Query(queryParams, null);
+            StudyItemList accessionStudies = studyFinder.Query(queryParams, null);
+			if (accessionStudies == null || accessionStudies.Count == 0)
+				return null;
+
+			//return all the studies for the given patient.
+    		queryParams["AccessionNumber"] = "";
+    		queryParams["PatientId"] = accessionStudies[0].PatientId;
+    		return studyFinder.Query(queryParams, null);
         }
 
-        private static void OpenStudy(StudyItem study, IDesktopWindow window)
-        {
-            ImageViewerComponent imageViewer = new ImageViewerComponent();
-
-            imageViewer.LoadStudy(study.StudyInstanceUID, "DICOM_LOCAL");
-
-            string workspaceName = imageViewer.PatientsLoadedLabel;
-
-            Workspace workspace =
-                CollectionUtils.SelectFirst(window.Workspaces,
-                delegate(Workspace ws)
-                {
-                    return ws.Name == workspaceName;
-                });
-
-            if (workspace == null)
-                window.Workspaces.AddNew(new WorkspaceCreationArgs(imageViewer, workspaceName, workspaceName));
-
-            //ApplicationComponent.LaunchAsWorkspace(
-            //    this.Context.DesktopWindow,
-            //    imageViewer,
-            //    imageViewer.PatientsLoadedLabel,
-            //    delegate
-            //    {
-            //        imageViewer.Dispose();
-            //    });
-
-            imageViewer.Layout();
-        }
-
-        #endregion
+		#endregion
     }
 }

@@ -29,20 +29,51 @@
 
 #endregion
 
-using System.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Utilities.DicomEditor.Tools;
 
-namespace ClearCanvas.Ris.Client.Integration
+namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 {
-
-    // TODO add a description of the purpose of the settings group here
-    [SettingsGroupDescription("")]
-    [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-    internal sealed partial class IntegrationSettings
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="AnonymizeStudyComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(AnonymizeStudyComponentViewExtensionPoint))]
+    public class AnonymizeStudyComponentView : WinFormsView, IApplicationComponentView
     {
-        private IntegrationSettings()
+        private AnonymizeStudyComponent _component;
+        private AnonymizeStudyComponentControl _control;
+
+        #region IApplicationComponentView Members
+
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
         {
-            ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+            _component = (AnonymizeStudyComponent)component;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new AnonymizeStudyComponentControl(_component);
+                }
+                return _control;
+            }
         }
     }
 }

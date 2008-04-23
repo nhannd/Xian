@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void DeleteStudy()
 		{
-			if (this.Context.SelectedStudy == null)
+			if (!Enabled || this.Context.SelectedStudy == null)
 				return;
 
 			if (AtLeastOneStudyInUse())
@@ -123,22 +123,19 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
 		{
-			// If the results aren't from the local machine, then we don't
-			// even care whether a study has been selected or not
-			if (!this.Context.SelectedServerGroup.IsLocalDatastore)
-				return;
-
-			base.OnSelectedStudyChanged(sender, e);
+			UpdateEnabled();
 		}
 
 		protected override void OnSelectedServerChanged(object sender, EventArgs e)
 		{
-			// If no study is selected then we don't even care whether
-			// the last searched server has changed.
-			if (this.Context.SelectedStudy == null)
-				return;
+			UpdateEnabled();
+		}
 
-			this.Enabled = this.Context.SelectedServerGroup.IsLocalDatastore;
+		private void UpdateEnabled()
+		{
+			this.Enabled = (this.Context.SelectedStudy != null &&
+			                this.Context.SelectedServerGroup.IsLocalDatastore &&
+			                LocalDataStoreActivityMonitor.Instance.IsConnected);
 		}
 
 		private bool ConfirmDeletion()

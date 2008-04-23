@@ -1,8 +1,16 @@
-<Project DefaultTargets="BuildSolution" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="BuildAll" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
   </PropertyGroup>
-  <Target Name="BuildSolution" >
-    <MSBuild Projects=".\RisViewerIntegration.sln" Properties="Configuration=$(Configuration)" />
+  <Target Name="BuildRis" >
+    <MSBuild Projects="RisViewerIntegration.sln" Properties="Configuration=$(Configuration)" />
+    <MSBuild Projects="..\..\..\Jscript\Build.proj" Properties="Configuration=$(Configuration)" />
+    <MSBuild Projects="..\..\Server\RisServer.proj" Properties="Configuration=$(Configuration)" />
   </Target>
+
+  <Target Name="BuildAll" >
+    <MSBuild Targets="BuildRis"></MSBuild>
+    <!-- copy files + report publication shred files -->
+    <MSBuild Projects="..\..\..\ImageViewer\ImageViewer.sln" Properties="Configuration=$(Configuration)" />
+    <!-- copy shredHost files-->
 </Project>

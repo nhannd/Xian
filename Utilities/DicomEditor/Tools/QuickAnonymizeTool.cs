@@ -132,71 +132,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
             IDicomEditorDumpManagement dump = this.Context.DumpManagement;
 
             dump.RemoveAllPrivateTags(applyToAll);
-            
-            if (dump.TagExists(DicomTags.AccessionNumber)) 
-                dump.EditTag(DicomTags.AccessionNumber, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.InstitutionName)) 
-                dump.EditTag(DicomTags.InstitutionName, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.InstitutionAddress)) 
-                dump.EditTag(DicomTags.InstitutionAddress, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.ReferringPhysiciansName)) 
-                dump.EditTag(DicomTags.ReferringPhysiciansName, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.StationName)) 
-                dump.EditTag(DicomTags.StationName, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.StudyDescription)) 
-                dump.EditTag(DicomTags.StudyDescription, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.InstitutionalDepartmentName)) 
-                dump.EditTag(DicomTags.InstitutionalDepartmentName, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.PhysiciansOfRecord)) 
-                dump.EditTag(DicomTags.PhysiciansOfRecord, String.Empty, applyToAll);           
-            if (dump.TagExists(DicomTags.PerformingPhysiciansName)) 
-                dump.EditTag(DicomTags.PerformingPhysiciansName, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.NameOfPhysiciansReadingStudy)) 
-                dump.EditTag(DicomTags.NameOfPhysiciansReadingStudy, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.OperatorsName)) 
-                dump.EditTag(DicomTags.OperatorsName, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.AdmittingDiagnosesDescription)) 
-                dump.EditTag(DicomTags.AdmittingDiagnosesDescription , String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.DerivationDescription)) 
-                dump.EditTag(DicomTags.DerivationDescription , String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.SeriesDescription)) 
-                dump.EditTag(DicomTags.SeriesDescription, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.PatientsName)) 
-                dump.EditTag(DicomTags.PatientsName, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.PatientId)) 
-                dump.EditTag(DicomTags.PatientId, "PatientID", applyToAll);
-            if (dump.TagExists(DicomTags.PatientsBirthDate)) 
-                dump.EditTag(DicomTags.PatientsBirthDate, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.PatientsBirthTime)) 
-                dump.EditTag(DicomTags.PatientsBirthTime, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.PatientsSex)) 
-                dump.EditTag(DicomTags.PatientsSex, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.OtherPatientIds)) 
-                dump.EditTag(DicomTags.OtherPatientIds, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.OtherPatientNames)) 
-                dump.EditTag(DicomTags.OtherPatientNames, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.PatientsAge)) 
-                dump.EditTag(DicomTags.PatientsAge, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.PatientsSize)) 
-                dump.EditTag(DicomTags.PatientsSize, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.PatientsWeight)) 
-                dump.EditTag(DicomTags.PatientsWeight, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.EthnicGroup)) 
-                dump.EditTag(DicomTags.EthnicGroup, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.Occupation)) 
-                dump.EditTag(DicomTags.Occupation, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.PatientComments)) 
-                dump.EditTag(DicomTags.PatientComments, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.AdditionalPatientHistory)) 
-                dump.EditTag(DicomTags.AdditionalPatientHistory, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.DeviceSerialNumber)) 
-                dump.EditTag(DicomTags.DeviceSerialNumber, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.ProtocolName)) 
-                dump.EditTag(DicomTags.ProtocolName, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.StudyId)) 
-                dump.EditTag(DicomTags.StudyId, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.ImageComments)) 
-                dump.EditTag(DicomTags.ImageComments, String.Empty, applyToAll);
+            dump.NullType2Tags(applyToAll);
         }
     }
 }

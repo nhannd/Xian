@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -39,7 +38,6 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using System.ComponentModel;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
@@ -60,7 +58,9 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         void RemoveAllPrivateTags(bool applyToAll);
 
-        void SaveAll();
+		void NullType2Tags(bool applyToAll);
+        
+		void SaveAll();
 
         bool TagExists(uint tag);
 
@@ -213,42 +213,35 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         public void RemoveAllPrivateTags(bool applyToAll)
         {
-            List<DicomTag> privateTags;
-
             if (applyToAll == false)
             {
-                privateTags = new List<DicomTag>();
-                foreach (DicomAttribute attribute in _loadedFiles[_position].DataSet)
-                {
-                    if (attribute.Tag.Name == "Private Tag")
-                        privateTags.Add(attribute.Tag);                        
-                }
-
-                foreach (DicomTag tag in privateTags)
-                {
-                    _loadedFiles[_position].DataSet[tag] = null;
-                }
+            	AnonymizationHelper.RemoveAllPrivateTags(_loadedFiles[_position].DataSet);
             }
             else
             {
                 for (int i = 0; i < _loadedFiles.Count; i++)
                 {
-                    privateTags = new List<DicomTag>();
-                    foreach (DicomAttribute attribute in _loadedFiles[i].DataSet)
-                    {
-                        if (attribute.Tag.Name == "Private Tag")
-                            privateTags.Add(attribute.Tag);
-                    }
-
-                    foreach (DicomTag tag in privateTags)
-                    {
-                        _loadedFiles[i].DataSet[tag] = null;
-                    }
+					AnonymizationHelper.RemoveAllPrivateTags(_loadedFiles[i].DataSet);
                 }
             }
         }
 
-        public void SaveAll()
+		public void NullType2Tags(bool applyToAll)
+		{
+			if (applyToAll == false)
+			{
+				AnonymizationHelper.NullType2Tags(_loadedFiles[_position].DataSet);
+			}
+			else
+			{
+				for (int i = 0; i < _loadedFiles.Count; i++)
+				{
+					AnonymizationHelper.NullType2Tags(_loadedFiles[i].DataSet);
+				}
+			}
+		}
+
+    	public void SaveAll()
         {
             for (int i = 0; i < _loadedFiles.Count; i++)
             {

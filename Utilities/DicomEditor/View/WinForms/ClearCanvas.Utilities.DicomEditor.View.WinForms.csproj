@@ -39,6 +39,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnonymizeStudyComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AnonymizeStudyComponentControl.Designer.cs">
+      <DependentUpon>AnonymizeStudyComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AnonymizeStudyComponentView.cs" />
     <Compile Include="DicomEditorComponentView.cs" />
     <Compile Include="DicomEditorControl.cs">
       <SubType>UserControl</SubType>
@@ -80,6 +87,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AnonymizeStudyComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AnonymizeStudyComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DicomEditorControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DicomEditorControl.cs</DependentUpon>
