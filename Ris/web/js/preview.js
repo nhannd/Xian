@@ -201,9 +201,9 @@ function createOrderNotesTable(htmlTable, notes)
 {
 	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
 		 [
-			{   label: "Comment",
+			{   label: "Note",
 				cellType: "text",
-				getValue: function(item) { return item.Comment; }
+				getValue: function(item) { return item.NoteBody; }
 			},
 			{   label: "Time",
 				cellType: "text",
