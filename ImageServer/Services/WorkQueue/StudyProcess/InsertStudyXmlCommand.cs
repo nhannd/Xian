@@ -31,6 +31,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -89,27 +90,33 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         private static void WriteStudyStream(string streamFile, StudyXml theStream)
         {
-            Stream fileStream = null;
+            XmlDocument doc = theStream.GetMemento();
 
-            try
-            {
-                XmlDocument doc = theStream.GetMemento();
-                if (File.Exists(streamFile))
-                    File.Delete(streamFile);
+            // allocate the random number generator here, in case we need it below
+            Random rand = new Random();
 
-                fileStream = new FileStream(streamFile, FileMode.CreateNew);
-
-                StudyXmlIo.Write(doc, fileStream);
-            }
-            finally
-            {
-                // We have to throw the exception here to cleanup 
-                if (fileStream != null)
+            for (int i = 0;; i++)
+                try
                 {
-                    fileStream.Close();
-                    fileStream.Dispose();
+                    if (File.Exists(streamFile))
+                        File.Delete(streamFile);
+
+                    using (Stream fileStream = new FileStream(streamFile, FileMode.CreateNew))
+                    {
+                        StudyXmlIo.Write(doc, fileStream);
+                    }
+                    return;
                 }
-            }
+                catch (IOException)
+                {
+                    if (i < 5)
+                    {
+                        Thread.Sleep(rand.Next(5, 50)); // Sleep 5-50 milliseconds
+                        continue;
+                    }
+
+                    throw;
+                }
         }
     }
 }

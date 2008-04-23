@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -126,16 +127,36 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             if (File.Exists(streamFile))
             {
-                using (Stream fileStream = new FileStream(streamFile, FileMode.Open))
-                {
-                    XmlDocument theDoc = new XmlDocument();
+                // allocate the random number generator here, in case we need it below
+                Random rand = new Random();
 
-                    StudyXmlIo.Read(theDoc, fileStream);
+                // Go into a retry loop, to handle if the study is being processed right now 
+                for (int i = 0; ;i++ )
+                    try
+                    {
+                        using (Stream fileStream = new FileStream(streamFile, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        {
+                            XmlDocument theDoc = new XmlDocument();
 
-                    theXml.SetMemento(theDoc);
+                            StudyXmlIo.Read(theDoc, fileStream);
 
-                    fileStream.Close();
-                }
+                            theXml.SetMemento(theDoc);
+
+                            fileStream.Close();
+
+                            return theXml;
+                        }
+                    }
+                    catch (IOException)
+                    {
+                        if (i < 5)
+                        {
+                            Thread.Sleep(rand.Next(5, 50)); // Sleep 5-50 milliseconds
+                            continue;
+                        }
+
+                        throw;
+                    }
             }
 
             return theXml;
