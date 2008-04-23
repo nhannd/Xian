@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
         protected void DeleteToolbarButton_Click(object sender, ImageClickEventArgs e)
         {
             ConfirmDialog.MessageType = ConfirmationDialog.MessageTypeEnum.YESNO;
-            ConfirmDialog.Message = "Are you sure to delete this study?";
+            ConfirmDialog.Message = SR.SingleStudyDelete;
             ConfirmDialog.Data = Study;
 
             ConfirmDialog.Show();
@@ -218,7 +218,7 @@ namespace ClearCanvas.ImageServer.Web.Application.StudyDetails
         private void ShowScheduledForDeleteAlert()
         {
             MessagePanel.Visible = true;
-            ConfirmationMessage.Text = "This study has been scheduled for delete !";
+            ConfirmationMessage.Text = "This study has been scheduled for deletion.";
             ConfirmationMessage.ForeColor = Color.Red;
                 
             UpdatePanel1.Update();

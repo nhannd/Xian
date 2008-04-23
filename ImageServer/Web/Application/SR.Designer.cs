@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Web.Application {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to remove the following studies?.
+        ///   Looks up a localized string similar to Are you sure you want to delete the following studies?.
         /// </summary>
         internal static string MultipleStudyDelete {
             get {
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageServer.Web.Application {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to remove the following study?.
+        ///   Looks up a localized string similar to Are you sure you want to delete this study?.
         /// </summary>
         internal static string SingleStudyDelete {
             get {
