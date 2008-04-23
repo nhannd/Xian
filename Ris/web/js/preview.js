@@ -358,7 +358,7 @@ function createReportPreview(element, report)
 	 // UHN report may contain a StructuredReport section
 	if(mainReport && mainReport.StructuredReport)
 	{
-		createStructuredReportPreview(mainReport.StructuredReport);
+		createStructuredReportPreview(mainReport.StructuredReport.data);
 	}
 }
 
