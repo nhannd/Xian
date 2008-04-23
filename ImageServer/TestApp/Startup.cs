@@ -33,5 +33,11 @@ namespace ClearCanvas.ImageServer.TestApp
             TestCompressionForm test = new TestCompressionForm();
             test.Show();
         }
+
+        private void buttonEditStudy_Click(object sender, EventArgs e)
+        {
+            TestEditStudyForm test = new TestEditStudyForm();
+            test.Show();
+        }
     }
 }

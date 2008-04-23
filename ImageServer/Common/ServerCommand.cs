@@ -104,9 +104,20 @@ namespace ClearCanvas.ImageServer.Common
         /// </summary>
         public void Execute()
         {
-            _stats.Start();
-            OnExecute();
-            _stats.End();
+            try
+            {
+                _stats.Start();
+                OnExecute();    
+            }
+            catch(Exception e)
+            {
+                throw;
+            }
+            finally
+            {
+                _stats.End();
+            }
+            
         }
 
         

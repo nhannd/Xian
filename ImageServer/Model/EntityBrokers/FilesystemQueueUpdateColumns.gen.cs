@@ -33,6 +33,7 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using ClearCanvas.Dicom;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class FilesystemQueueUpdateColumns : EntityUpdateColumns
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<System.DateTime>("ScheduledTime", value); }
         }
+       [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         public System.String SeriesInstanceUid
         {
             set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<System.String>("SeriesInstanceUid", value); }

@@ -29,6 +29,11 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
            (newid(),104,'WebMoveStudy','Web Move Study','Manual DICOM move of a study via the Web UI.')
 GO
 
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),105,'WebEditStudy','Web Edit Study','Manual study edit via the Web UI.')
+GO
 
 -- WorkQueueStatusEnum inserts
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]

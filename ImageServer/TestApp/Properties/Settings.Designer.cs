@@ -22,5 +22,15 @@ namespace ClearCanvas.ImageServer.TestApp.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=LPC;Initial Catalog=ImageServer;Integrated Security=True")]
+        public string ImageServerConnectionString {
+            get {
+                return ((string)(this["ImageServerConnectionString"]));
+            }
+        }
     }
 }

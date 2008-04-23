@@ -33,6 +33,7 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using ClearCanvas.Dicom;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class SeriesUpdateColumns : EntityUpdateColumns
@@ -40,30 +41,37 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public SeriesUpdateColumns()
        : base("Series")
        {}
+       [DicomField(DicomTags.Modality, DefaultValue = DicomFieldDefault.Null)]
         public System.String Modality
         {
             set { SubParameters["Modality"] = new EntityUpdateColumn<System.String>("Modality", value); }
         }
+       [DicomField(DicomTags.NumberOfSeriesRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
         public System.Int32 NumberOfSeriesRelatedInstances
         {
             set { SubParameters["NumberOfSeriesRelatedInstances"] = new EntityUpdateColumn<System.Int32>("NumberOfSeriesRelatedInstances", value); }
         }
+       [DicomField(DicomTags.PerformedProcedureStepStartDate, DefaultValue = DicomFieldDefault.Null)]
         public System.String PerformedProcedureStepStartDate
         {
             set { SubParameters["PerformedProcedureStepStartDate"] = new EntityUpdateColumn<System.String>("PerformedProcedureStepStartDate", value); }
         }
+       [DicomField(DicomTags.PerformedProcedureStepStartTime, DefaultValue = DicomFieldDefault.Null)]
         public System.String PerformedProcedureStepStartTime
         {
             set { SubParameters["PerformedProcedureStepStartTime"] = new EntityUpdateColumn<System.String>("PerformedProcedureStepStartTime", value); }
         }
+       [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
         public System.String SeriesDescription
         {
             set { SubParameters["SeriesDescription"] = new EntityUpdateColumn<System.String>("SeriesDescription", value); }
         }
+       [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         public System.String SeriesInstanceUid
         {
             set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<System.String>("SeriesInstanceUid", value); }
         }
+       [DicomField(DicomTags.SeriesNumber, DefaultValue = DicomFieldDefault.Null)]
         public System.String SeriesNumber
         {
             set { SubParameters["SeriesNumber"] = new EntityUpdateColumn<System.String>("SeriesNumber", value); }
@@ -72,6 +80,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }
         }
+       [DicomField(DicomTags.SourceApplicationEntityTitle, DefaultValue = DicomFieldDefault.Null)]
         public System.String SourceApplicationEntityTitle
         {
             set { SubParameters["SourceApplicationEntityTitle"] = new EntityUpdateColumn<System.String>("SourceApplicationEntityTitle", value); }

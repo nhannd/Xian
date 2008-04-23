@@ -33,6 +33,7 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using ClearCanvas.Dicom;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class WorkQueueUidUpdateColumns : EntityUpdateColumns
@@ -40,10 +41,12 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public WorkQueueUidUpdateColumns()
        : base("WorkQueueUid")
        {}
+       [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         public System.String SeriesInstanceUid
         {
             set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<System.String>("SeriesInstanceUid", value); }
         }
+       [DicomField(DicomTags.SopInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         public System.String SopInstanceUid
         {
             set { SubParameters["SopInstanceUid"] = new EntityUpdateColumn<System.String>("SopInstanceUid", value); }

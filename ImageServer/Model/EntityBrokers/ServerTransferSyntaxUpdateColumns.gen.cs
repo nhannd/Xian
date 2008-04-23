@@ -33,6 +33,7 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using ClearCanvas.Dicom;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class ServerTransferSyntaxUpdateColumns : EntityUpdateColumns
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["Lossless"] = new EntityUpdateColumn<System.Boolean>("Lossless", value); }
         }
+       [DicomField(DicomTags.Uid, DefaultValue = DicomFieldDefault.Null)]
         public System.String Uid
         {
             set { SubParameters["Uid"] = new EntityUpdateColumn<System.String>("Uid", value); }

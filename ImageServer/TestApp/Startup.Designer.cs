@@ -31,6 +31,7 @@ namespace ClearCanvas.ImageServer.TestApp
             this.TestRule = new System.Windows.Forms.Button();
             this.TestHeaderStreamButton = new System.Windows.Forms.Button();
             this.buttonCompression = new System.Windows.Forms.Button();
+            this.TestEditStudyButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // TestRule
@@ -63,11 +64,22 @@ namespace ClearCanvas.ImageServer.TestApp
             this.buttonCompression.UseVisualStyleBackColor = true;
             this.buttonCompression.Click += new System.EventHandler(this.buttonCompression_Click);
             // 
+            // TestEditStudyButton
+            // 
+            this.TestEditStudyButton.Location = new System.Drawing.Point(258, 135);
+            this.TestEditStudyButton.Name = "TestEditStudyButton";
+            this.TestEditStudyButton.Size = new System.Drawing.Size(183, 59);
+            this.TestEditStudyButton.TabIndex = 2;
+            this.TestEditStudyButton.Text = "Edit Study";
+            this.TestEditStudyButton.UseVisualStyleBackColor = true;
+            this.TestEditStudyButton.Click += new System.EventHandler(this.buttonEditStudy_Click);
+            // 
             // Startup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(464, 226);
+            this.Controls.Add(this.TestEditStudyButton);
             this.Controls.Add(this.buttonCompression);
             this.Controls.Add(this.TestHeaderStreamButton);
             this.Controls.Add(this.TestRule);
@@ -82,5 +94,6 @@ namespace ClearCanvas.ImageServer.TestApp
         private System.Windows.Forms.Button TestRule;
         private System.Windows.Forms.Button TestHeaderStreamButton;
         private System.Windows.Forms.Button buttonCompression;
+        private System.Windows.Forms.Button TestEditStudyButton;
     }
 }

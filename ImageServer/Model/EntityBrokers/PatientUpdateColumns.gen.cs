@@ -33,6 +33,7 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using ClearCanvas.Dicom;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class PatientUpdateColumns : EntityUpdateColumns
@@ -40,26 +41,32 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public PatientUpdateColumns()
        : base("Patient")
        {}
+       [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
         public System.String IssuerOfPatientId
         {
             set { SubParameters["IssuerOfPatientId"] = new EntityUpdateColumn<System.String>("IssuerOfPatientId", value); }
         }
+       [DicomField(DicomTags.NumberOfPatientRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
         public System.Int32 NumberOfPatientRelatedInstances
         {
             set { SubParameters["NumberOfPatientRelatedInstances"] = new EntityUpdateColumn<System.Int32>("NumberOfPatientRelatedInstances", value); }
         }
+       [DicomField(DicomTags.NumberOfPatientRelatedSeries, DefaultValue = DicomFieldDefault.Null)]
         public System.Int32 NumberOfPatientRelatedSeries
         {
             set { SubParameters["NumberOfPatientRelatedSeries"] = new EntityUpdateColumn<System.Int32>("NumberOfPatientRelatedSeries", value); }
         }
+       [DicomField(DicomTags.NumberOfPatientRelatedStudies, DefaultValue = DicomFieldDefault.Null)]
         public System.Int32 NumberOfPatientRelatedStudies
         {
             set { SubParameters["NumberOfPatientRelatedStudies"] = new EntityUpdateColumn<System.Int32>("NumberOfPatientRelatedStudies", value); }
         }
+       [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
         public System.String PatientId
         {
             set { SubParameters["PatientId"] = new EntityUpdateColumn<System.String>("PatientId", value); }
         }
+       [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
         public System.String PatientsName
         {
             set { SubParameters["PatientsName"] = new EntityUpdateColumn<System.String>("PatientsName", value); }
@@ -68,6 +75,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }
         }
+       [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
         public System.String SpecificCharacterSet
         {
             set { SubParameters["SpecificCharacterSet"] = new EntityUpdateColumn<System.String>("SpecificCharacterSet", value); }

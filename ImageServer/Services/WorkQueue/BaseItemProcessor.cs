@@ -201,7 +201,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <param name="item">The <see cref="WorkQueue"/> item to set.</param>
         /// <param name="batchSize">Number of workqueue uids associated with the workqueue item (process batch size).</param>
         /// <param name="failed">Indicates if the current batch was not processed successfully.</param>
-        protected static void PostProcessing(Model.WorkQueue item, int batchSize, bool failed)
+        protected virtual void PostProcessing(Model.WorkQueue item, int batchSize, bool failed)
         {
             using (
                 IUpdateContext updateContext =

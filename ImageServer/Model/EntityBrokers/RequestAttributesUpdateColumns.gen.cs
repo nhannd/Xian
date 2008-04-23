@@ -33,6 +33,7 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using ClearCanvas.Dicom;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class RequestAttributesUpdateColumns : EntityUpdateColumns
@@ -40,10 +41,12 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public RequestAttributesUpdateColumns()
        : base("RequestAttributes")
        {}
+       [DicomField(DicomTags.RequestedProcedureId, DefaultValue = DicomFieldDefault.Null)]
         public System.String RequestedProcedureId
         {
             set { SubParameters["RequestedProcedureId"] = new EntityUpdateColumn<System.String>("RequestedProcedureId", value); }
         }
+       [DicomField(DicomTags.ScheduledProcedureStepId, DefaultValue = DicomFieldDefault.Null)]
         public System.String ScheduledProcedureStepId
         {
             set { SubParameters["ScheduledProcedureStepId"] = new EntityUpdateColumn<System.String>("ScheduledProcedureStepId", value); }

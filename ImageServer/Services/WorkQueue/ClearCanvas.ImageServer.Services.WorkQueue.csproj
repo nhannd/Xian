@@ -38,6 +38,12 @@
     <Compile Include="BaseItemProcessor.cs" />
     <Compile Include="DeleteStudy\DeleteStudyFactoryExtension.cs" />
     <Compile Include="DeleteStudy\DeleteStudyItemProcessor.cs" />
+    <Compile Include="WebEditStudy\EditStudyCommand.cs" />
+    <Compile Include="WebEditStudy\EditStudyContext.cs" />
+    <Compile Include="WebEditStudy\ActionPlugins\SetValueActionItem.cs" />
+    <Compile Include="WebEditStudy\ActionPlugins\SetValueOperator.cs" />
+    <Compile Include="WebEditStudy\WebEditStudyFactoryExtension.cs" />
+    <Compile Include="WebEditStudy\WebEditStudyItemProcessor.cs" />
     <Compile Include="StudyProcess\InstanceStatistics.cs" />
     <Compile Include="StudyProcess\StudyProcessStatistics.cs" />
     <Compile Include="WebDeleteStudy\WebDeleteStudyItemProcessor.cs" />
@@ -104,6 +110,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <EmbeddedResource Include="WebEditStudy\ActionPlugins\SetValue.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="WebEditStudy\ActionPlugins\SetValue.xsx">
+      <DependentUpon>SetValue.xsd</DependentUpon>
+    </None>
     <None Include="WorkQueueSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>

@@ -33,6 +33,7 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using ClearCanvas.Dicom;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class ServerSopClassUpdateColumns : EntityUpdateColumns
@@ -48,6 +49,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["NonImage"] = new EntityUpdateColumn<System.Boolean>("NonImage", value); }
         }
+       [DicomField(DicomTags.SopClassUid, DefaultValue = DicomFieldDefault.Null)]
         public System.String SopClassUid
         {
             set { SubParameters["SopClassUid"] = new EntityUpdateColumn<System.String>("SopClassUid", value); }

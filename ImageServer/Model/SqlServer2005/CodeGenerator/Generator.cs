@@ -523,6 +523,22 @@ namespace CodeGenerator
 
             WriterHeader(writer, EntityInterfaceNamespace);
 
+            bool bDicomReference = false;
+            foreach (Column col in table.Columns)
+            {
+                if (!col.ColumnName.Equals("Key"))
+                {
+                    DicomTag tag = DicomTagDictionary.GetDicomTag(col.ColumnName);
+                    if (tag != null)
+                    {
+                        bDicomReference = true;
+                        break;
+                    }
+                }
+            }
+            if (bDicomReference)
+                writer.WriteLine("    using ClearCanvas.Dicom;");
+
             writer.WriteLine("    using ClearCanvas.ImageServer.Enterprise;");
             writer.WriteLine(""); 
             
@@ -538,6 +554,10 @@ namespace CodeGenerator
                 {
                     string colType = col.ColumnName.EndsWith("Enum") ? col.ColumnName : col.ColumnType.ToString();
                     string colName = col.ColumnName;
+                    DicomTag tag = DicomTagDictionary.GetDicomTag(col.ColumnName);
+                    if (tag != null)
+                        writer.WriteLine("       [DicomField(DicomTags.{0}, DefaultValue = DicomFieldDefault.Null)]", colName);
+
                     writer.WriteLine("        public {0} {1}", colType, colName);
                     writer.WriteLine("        {");
                     writer.WriteLine(
