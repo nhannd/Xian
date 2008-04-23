@@ -79,7 +79,7 @@ namespace ClearCanvas.Healthcare.Imex
 
                 string userName = fields[0];
 
-                StaffType staffType = TryParseOrDefault(fields[1], StaffType.X);
+                StaffType staffType = TryParseEnum(fields[1], StaffType.X);
                 string staffId = fields[2];
 
                 string staffFamilyName = fields[3];

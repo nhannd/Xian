@@ -7,11 +7,25 @@ using System.IO;
 
 namespace ClearCanvas.Enterprise.Core.Imex
 {
+    /// <summary>
+    /// Defines an extension point for XML data importer/exporters.
+    /// </summary>
+    [ExtensionPoint]
+    public class XmlDataImexExtensionPoint : ExtensionPoint<IXmlDataImex>
+    {
+    }
+
+    /// <summary>
+    /// Abstract base class for <see cref="Import"/> and <see cref="Export"/> applications.
+    /// </summary>
     public abstract class ImexApplicationBase<TCmdLine> : IApplicationRoot
         where TCmdLine : CommandLine, new()
     {
         #region IApplicationRoot Members
 
+        /// <summary>
+        /// Called by the platform to run the application.
+        /// </summary>
         public void RunApplication(string[] args)
         {
             TCmdLine cmdLine = new TCmdLine();
@@ -38,13 +52,18 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
         #endregion
 
+        /// <summary>
+        /// Executes the action specified by the command line arguments.
+        /// </summary>
+        /// <param name="cmdLine"></param>
+        protected abstract void Execute(TCmdLine cmdLine);
+
+
         private void PrintImexDataClasses(TextWriter writer)
         {
             foreach (string w in ImexUtils.ListImexDataClasses())
                 writer.WriteLine(w);
         }
 
-
-        protected abstract void Execute(TCmdLine cmdLine);
     }
 }

@@ -6,18 +6,20 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core.Imex
 {
+    /// <summary>
+    /// Import application.
+    /// </summary>
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class Import : ImexApplicationBase<ImportCommandLine>
     {
+        /// <summary>
+        /// Executes the action specified by the command line arguments.
+        /// </summary>
+        /// <param name="cmdLine"></param>
         protected override void Execute(ImportCommandLine cmdLine)
         {
-            ImportOneClass(cmdLine);
-        }
-
-        private void ImportOneClass(ImportCommandLine cmdLine)
-        {
-
-            ImexUtils.ImportFromSingleFile(ImexUtils.FindImexForDataClass(cmdLine.DataClass), cmdLine.Path);
+            IXmlDataImex imex = ImexUtils.FindImexForDataClass(cmdLine.DataClass);
+            ImexUtils.Import(imex, cmdLine.Path);
         }
     }
 }

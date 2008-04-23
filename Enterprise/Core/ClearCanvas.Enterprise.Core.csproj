@@ -94,7 +94,7 @@
     <Compile Include="Imex\ICsvDataImporter.cs" />
     <Compile Include="Imex\Import.cs" />
     <Compile Include="Imex\ImportException.cs" />
-    <Compile Include="Imex\IXmDataImex.cs" />
+    <Compile Include="Imex\IXmlDataImex.cs" />
     <Compile Include="Imex\XmlEntityImex.cs" />
     <Compile Include="IServiceOperationRecorder.cs" />
     <Compile Include="IValidator.cs" />

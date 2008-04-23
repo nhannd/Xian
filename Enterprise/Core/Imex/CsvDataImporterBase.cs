@@ -39,12 +39,20 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Enterprise.Core.Imex
 {
+    /// <summary>
+    /// Abstract base class for classes that implement <see cref="ICsvDataImporter"/>.
+    /// </summary>
     public abstract class CsvDataImporterBase : ICsvDataImporter, IApplicationRoot
     {
         private const int DEFAULT_BATCH_SIZE = 20;
 
         #region ICsvDataImporter Members
 
+        /// <summary>
+        /// Imports the specified list of rows, where each row is a string of comma separated values (CSV).
+        /// </summary>
+        /// <param name="rows"></param>
+        /// <param name="context"></param>
         public virtual void Import(List<string> rows, IUpdateContext context)
         {
             throw new NotImplementedException();
@@ -93,6 +101,11 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
         #region Helpers
 
+        /// <summary>
+        /// Parses the specified line as a list of comma-separated values.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
         protected string[] ParseCsv(string line)
         {
             string[] fields = StringUtilities.SplitQuoted(line, ",");
@@ -106,6 +119,13 @@ namespace ClearCanvas.Enterprise.Core.Imex
             return fields;
         }
 
+        /// <summary>
+        /// Parses the specified line as a list of comma-separated values, throwing an exception
+        /// if the number of fields is less than expected.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="expectedFieldCount"></param>
+        /// <returns></returns>
         protected string[] ParseCsv(string line, int expectedFieldCount)
         {
             string[] fields = ParseCsv(line);
@@ -114,25 +134,33 @@ namespace ClearCanvas.Enterprise.Core.Imex
             return fields;
         }
 
+        /// <summary>
+        /// Logs the specified message.
+        /// </summary>
+        /// <param name="level"></param>
+        /// <param name="message"></param>
         protected void Log(LogLevel level, string message)
         {
             Platform.Log(level, message);
         }
 
-        protected T TryParseOrDefault<T>(string value, T defaultValue)
+        /// <summary>
+        /// Tries to parse the specified string as an enum value.
+        /// </summary>
+        /// <typeparam name="T">The enum type.</typeparam>
+        /// <param name="value"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
+        protected T TryParseEnum<T>(string value, T defaultValue)
         {
-            T parsedValue;
-
             try
             {
-                parsedValue = (T)Enum.Parse(typeof(T), value);
+                return (T)Enum.Parse(typeof(T), value);
             }
             catch (Exception)
             {
-                parsedValue = defaultValue;
+                return defaultValue;
             }
-
-            return parsedValue;
         }
 
         private List<string> ReadLines(StreamReader reader, int numLines)

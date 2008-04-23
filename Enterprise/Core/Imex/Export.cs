@@ -7,15 +7,16 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core.Imex
 {
-    [ExtensionPoint]
-    public class XmlDataImexExtensionPoint : ExtensionPoint<IXmDataImex>
-    {
-    }
-
-
+    /// <summary>
+    /// Export application.
+    /// </summary>
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class Export : ImexApplicationBase<ExportCommandLine>
     {
+        /// <summary>
+        /// Executes the action specified by the command line arguments.
+        /// </summary>
+        /// <param name="cmdLine"></param>
         protected override void Execute(ExportCommandLine cmdLine)
         {
             if (cmdLine.AllClasses)
@@ -30,22 +31,41 @@ namespace ClearCanvas.Enterprise.Core.Imex
                 throw new CommandLineException("Must specify either /class:[data-class] or /all.");
         }
 
+        /// <summary>
+        /// Exports a single data-class.
+        /// </summary>
+        /// <param name="cmdLine"></param>
         private void ExportOneClass(ExportCommandLine cmdLine)
         {
-            IXmDataImex imex = ImexUtils.FindImexForDataClass(cmdLine.DataClass);
+            IXmlDataImex imex = ImexUtils.FindImexForDataClass(cmdLine.DataClass);
             int itemsPerFile = cmdLine.ItemsPerFile > 0
                                    ? cmdLine.ItemsPerFile
-                                   : ImexUtils.GetItemsPerFile(imex.GetType());
-            if (cmdLine.ItemsPerFile == 0)
+                                   : ImexUtils.GetDefaultItemsPerFile(imex.GetType());
+
+            string directory;
+            string baseFileName;
+
+            // if the path has no extension, assume it specifies a directory
+            if(string.IsNullOrEmpty(Path.GetExtension(cmdLine.Path)))
             {
-                ImexUtils.ExportToSingleFile(imex, cmdLine.Path);
+                // use the name of the dataclass as a base filename
+                directory = cmdLine.Path;
+                baseFileName = cmdLine.DataClass;
             }
             else
             {
-                ImexUtils.Export(imex, cmdLine.Path, cmdLine.DataClass, itemsPerFile);
+                // use the specified file name as the base filename
+                directory = Path.GetDirectoryName(cmdLine.Path);
+                baseFileName = Path.GetFileNameWithoutExtension(cmdLine.Path);
             }
+
+            ImexUtils.Export(imex, directory, baseFileName, itemsPerFile);
         }
 
+        /// <summary>
+        /// Exports all data-classes for which an Imex extension exists.
+        /// </summary>
+        /// <param name="cmdLine"></param>
         private void ExportAllClasses(ExportCommandLine cmdLine)
         {
             string path = cmdLine.Path;
@@ -56,7 +76,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
                 Directory.CreateDirectory(path);
             }
 
-            foreach (IXmDataImex imex in new XmlDataImexExtensionPoint().CreateExtensions())
+            foreach (IXmlDataImex imex in new XmlDataImexExtensionPoint().CreateExtensions())
             {
                 ImexDataClassAttribute a = AttributeUtils.GetAttribute<ImexDataClassAttribute>(imex.GetType());
                 if (a != null)

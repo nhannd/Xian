@@ -8,8 +8,14 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core.Imex
 {
+    /// <summary>
+    /// Defines utilities for working with Imex classes, and for transferring Imex data to and from the
+    /// filesystem.
+    /// </summary>
     public static class ImexUtils
     {
+        #region ImportItem class
+
         private class ImportItem : IImportItem
         {
             private XmlReader _reader;
@@ -25,9 +31,17 @@ namespace ClearCanvas.Enterprise.Core.Imex
             }
         }
 
+        #endregion
 
+        /// <summary>
+        /// Defines the root XML tag under which data is exported.
+        /// </summary>
         public const string RootTag = "Items";
 
+        /// <summary>
+        /// Returns a list of data-classes for which an Imex extension exists.
+        /// </summary>
+        /// <returns></returns>
         public static string[] ListImexDataClasses()
         {
             List<string> dataClasses = new List<string>();
@@ -46,9 +60,9 @@ namespace ClearCanvas.Enterprise.Core.Imex
         /// <param name="dataClass"></param>
         /// <returns></returns>
         /// <exception cref="NotSupportedException">Indicates that no imex was found that supports the specified data-class.</exception>
-        public static IXmDataImex FindImexForDataClass(string dataClass)
+        public static IXmlDataImex FindImexForDataClass(string dataClass)
         {
-            return (IXmDataImex)new XmlDataImexExtensionPoint().CreateExtension(
+            return (IXmlDataImex)new XmlDataImexExtensionPoint().CreateExtension(
                 delegate(ExtensionInfo info)
                 {
                     return CollectionUtils.Contains(AttributeUtils.GetAttributes<ImexDataClassAttribute>(info.ExtensionClass),
@@ -60,57 +74,34 @@ namespace ClearCanvas.Enterprise.Core.Imex
                 });
         }
 
-        public static int GetItemsPerFile(Type imexClass)
+        /// <summary>
+        /// Gets the default number of items exported per file, for the specified Imex extension class.
+        /// </summary>
+        /// <param name="imexClass"></param>
+        /// <returns></returns>
+        public static int GetDefaultItemsPerFile(Type imexClass)
         {
             ImexDataClassAttribute a = AttributeUtils.GetAttribute<ImexDataClassAttribute>(imexClass);
             return a == null ? 0 : a.ItemsPerFile;
         }
 
-        public static void ExportToSingleFile(IXmDataImex imex, string path)
+        /// <summary>
+        /// Exports data from the specified imex, to the specified directory using the specified base filename.
+        /// </summary>
+        /// <param name="imex"></param>
+        /// <param name="directory"></param>
+        /// <param name="baseFileName"></param>
+        /// <param name="itemsPerFile"></param>
+        public static void Export(IXmlDataImex imex, string directory, string baseFileName, int itemsPerFile)
         {
-            string dir = Path.GetDirectoryName(path);
-            if (dir == path)
-                throw new ArgumentException("Path must specify a file name.");
-
-            // delete the file if it exists (no error if it doesn't)
-            if (File.Exists(path))
-                File.Delete(path);
-
-            // create directories as needed
-            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-
-            using (StreamWriter writer = new StreamWriter(File.OpenWrite(path)))
-            {
-                XmlTextWriter xmlWriter = new XmlTextWriter(writer);
-                xmlWriter.Formatting = System.Xml.Formatting.Indented;
-                xmlWriter.WriteStartElement(RootTag);
-                using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Read))
-                {
-                    Platform.Log(LogLevel.Info, "Exporting...");
-
-                    foreach (IExportItem item in imex.Export((IReadContext)PersistenceScope.Current))
-                    {
-                        item.Write(xmlWriter);
-                    }
-
-                    scope.Complete();
-
-                    Platform.Log(LogLevel.Info, "Completed.");
-                }
-                xmlWriter.WriteEndElement();
-                xmlWriter.Close();
-            }
-        }
-
-        public static void Export(IXmDataImex imex, string directory, string baseFileName, int itemsPerFile)
-        {
-            if (!Directory.Exists(directory))
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
 
-            if (itemsPerFile == 0)
+            // set a flag indicating whether all items should be exported to a single file
+            bool oneFile = (itemsPerFile == 0);
+
+            // if one file, set itemsPerFile to max value (which is effectively the same thing)
+            if(oneFile)
                 itemsPerFile = int.MaxValue;
 
             int itemCount = 0;
@@ -133,7 +124,10 @@ namespace ClearCanvas.Enterprise.Core.Imex
                         }
 
                         // start new file
-                        string file = Path.Combine(directory, baseFileName + (++fileCount) + ".xml");
+                        string file = oneFile ?  Path.Combine(directory, baseFileName)
+                            : Path.Combine(directory, baseFileName + (++fileCount));
+                        if (!file.EndsWith(".xml"))
+                            file += ".xml";
 
                         // delete if already exists
                         File.Delete(file);
@@ -158,49 +152,69 @@ namespace ClearCanvas.Enterprise.Core.Imex
             }
         }
 
-        public static void ImportFromSingleFile(IXmDataImex imex, string path)
+        /// <summary>
+        /// Imports data to the specified imex, from the specified path, which may be either a single file
+        /// or a directory containing a set of .xml files.
+        /// </summary>
+        /// <param name="imex"></param>
+        /// <param name="path"></param>
+        public static void Import(IXmlDataImex imex, string path)
         {
-            try
+            Platform.CheckForNullReference(path, "path");   
+
+            // determine list of source files to import
+            List<string> fileList = new List<string>();
+            if(File.Exists(path))
             {
-                using (StreamReader reader = File.OpenText(path))
-                {
-                    XmlTextReader xmlReader = new XmlTextReader(reader);
-                    xmlReader.WhitespaceHandling = WhitespaceHandling.None;
-                    using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
-                    {
-                        ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = imex.GetType().FullName;
-
-                        // advance to root tag
-                        if (xmlReader.ReadToFollowing(RootTag))
-                        {
-                            // advance to first child
-                            while (xmlReader.Read() && xmlReader.NodeType != XmlNodeType.Element) ;
-
-                            // if child nodes exist, read them
-                            if (xmlReader.NodeType == XmlNodeType.Element)
-                            {
-                                imex.Import(ReadItems(xmlReader, xmlReader.Name), (IUpdateContext)PersistenceScope.Current);
-                            }
-
-                        }
-
-                        scope.Complete();
-                    }
-                    xmlReader.Close();
-                }
-
+                fileList.Add(path);
             }
-            catch(EntityValidationException e)
+            else if(Directory.Exists(path))
             {
-                Platform.Log(LogLevel.Error, e.MessageVerbose);
+                fileList.AddRange(Directory.GetFiles(path, "*.xml"));
+            }
+            else 
+                throw new ArgumentException(string.Format("{0} is not a valid source file or directory.", path));
+
+            using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
+            {
+                ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = imex.GetType().FullName;
+                imex.Import(ReadSourceFiles(fileList), (IUpdateContext)PersistenceScope.Current);
+                scope.Complete();
             }
         }
 
-        private static IEnumerable<IImportItem> ReadItems(XmlReader reader, string itemTag)
+        /// <summary>
+        /// Reads the specified set of XML source files, yielding each item as an <see cref="IImportItem"/>.
+        /// </summary>
+        /// <param name="sourceFiles"></param>
+        /// <returns></returns>
+        private static IEnumerable<IImportItem> ReadSourceFiles(IEnumerable<string> sourceFiles)
         {
-            for (bool more = true; more; more = reader.ReadToNextSibling(itemTag))
+            foreach (string sourceFile in sourceFiles)
             {
-                yield return new ImportItem(reader.ReadSubtree());
+                using (StreamReader reader = File.OpenText(sourceFile))
+                {
+                    XmlTextReader xmlReader = new XmlTextReader(reader);
+                    xmlReader.WhitespaceHandling = WhitespaceHandling.None;
+
+                    // advance to root tag
+                    if (xmlReader.ReadToFollowing(RootTag))
+                    {
+                        // advance to first child
+                        while (xmlReader.Read() && xmlReader.NodeType != XmlNodeType.Element) ;
+
+                        // if child nodes exist, read them
+                        if (xmlReader.NodeType == XmlNodeType.Element)
+                        {
+                            string itemTag = xmlReader.Name;
+                            for (bool more = true; more; more = xmlReader.ReadToNextSibling(itemTag))
+                            {
+                                yield return new ImportItem(xmlReader.ReadSubtree());
+                            }
+                        }
+                    }
+                    xmlReader.Close();
+                }
             }
         }
     }
