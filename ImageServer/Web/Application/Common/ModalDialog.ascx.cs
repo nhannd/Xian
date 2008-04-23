@@ -61,6 +61,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
     /// </ContentTemplate>
     /// </clearcanvas:ModalDialog>
     /// 
+    /// 
     /// C#:
     /// 
     ///  protected void Page_Load(object sender, EventArgs e)
@@ -78,6 +79,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
     /// 
     /// </example>
     ///
+    /// Note that the ModalDialog control is declared globally in the Web.Config file, and is not
+    /// required to be declared locally in an ASPX page. See Web.Config for information about the proper
+    /// declaration of the tagPrefix.
+    /// 
     /// </remarks>
     public partial class ModalDialog : UserControl
     {
@@ -105,9 +110,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         private string _title;
         private string _titleBarCSS;
         private string _dialogContentCSS;
-        private string _backgroundCSS;
-        private bool _dropShadow = true;
-        private bool _showCloseBox = true;
+        private string _backgroundCSS = "DefaultModalDialogBackground";
+        private bool _dropShadow = false;
+        private bool _showCloseBox = false;
         private ITemplate _titleBarTemplate = null;
         private ITemplate _contentTemplate = null;
         private readonly DialogContentContainer _contentPanelContainer = new DialogContentContainer();
@@ -320,9 +325,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
                 if (!String.IsNullOrEmpty(TitleBarCSS))
                     DefaultTitlePanel.CssClass = TitleBarCSS;
-
-                CloseButton.Visible = ShowCloseBox;
-
             }
 
             if (_contentTemplate != null)
@@ -334,15 +336,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                     ContentPanel.CssClass = ContentCSS;
             }
 
-
-
             ModalPopupExtender.BackgroundCssClass = BackgroundCSS;
             ModalPopupExtender.DropShadow = DropShadow;
-            if (CloseButton.Visible)
-            {
-                //ModalPopupExtender.CancelControlID = CloseButton.ClientID;
-                CloseButton.Click += CloseButton_Click;
-            }
         }
 
         protected override void OnLoad(EventArgs e)
@@ -425,7 +420,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
         public void RefreshUI()
         {
-            UpdatePanel.Update();
+            ModalDialogUpdatePanel.Update();
             
         }
 

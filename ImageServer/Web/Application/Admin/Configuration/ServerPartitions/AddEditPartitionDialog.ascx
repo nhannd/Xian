@@ -5,8 +5,8 @@
     TagPrefix="CCValidators" %>
 <%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
     TagPrefix="CCCommon" %>
-<%@ Register Src="~/Common/ModalDialog.ascx" TagName="ModalDialog" TagPrefix="clearcanvas" %>
-<clearcanvas:ModalDialog ID="ModalDialog" runat="server" BackgroundCSS="CSSDefaultPopupDialogBackground" Width="450px">
+
+<ccAsp:ModalDialog ID="ModalDialog" runat="server" >
     <ContentTemplate>
         <asp:Panel ID="Panel3" runat="server">
             <aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
@@ -194,4 +194,4 @@
             <br />
         </center>
     </ContentTemplate>
-</clearcanvas:ModalDialog>
+</ccAsp:ModalDialog>

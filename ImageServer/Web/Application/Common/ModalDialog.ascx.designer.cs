@@ -20,13 +20,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
     public partial class ModalDialog {
         
         /// <summary>
-        /// UpdatePanel control.
+        /// ModalDialogUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        protected global::System.Web.UI.UpdatePanel ModalDialogUpdatePanel;
         
         /// <summary>
         /// UpdatePanel1 control.
@@ -108,24 +108,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label TitleLabel;
-        
-        /// <summary>
-        /// TitleBarRight control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TableCell TitleBarRight;
-        
-        /// <summary>
-        /// CloseButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton CloseButton;
         
         /// <summary>
         /// CustomizedTitleBarPanel control.

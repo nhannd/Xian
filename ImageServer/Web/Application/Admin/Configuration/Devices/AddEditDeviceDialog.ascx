@@ -6,8 +6,7 @@
 
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.Validators"
     TagPrefix="CCValidators" %>
-<clearcanvas:ModalDialog ID="ModalDialog1" runat="server" BackgroundCSS="CSSDefaultPopupDialogBackground"
-    Width="450px">
+<ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="450px">
     <ContentTemplate>
         <asp:Panel ID="Panel3" runat="server">
             <aspAjax:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
@@ -182,4 +181,4 @@
             </center>
         </asp:Panel>
     </ContentTemplate>
-</clearcanvas:ModalDialog>
+</ccAsp:ModalDialog>

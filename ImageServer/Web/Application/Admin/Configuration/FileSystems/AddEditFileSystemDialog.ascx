@@ -2,7 +2,7 @@
     Codebehind="AddEditFileSystemDialog.ascx.cs" %>
 <%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
     TagPrefix="CCCommon" %>
-<%@ Register Src="~/Common/ModalDialog.ascx" TagName="ModalDialog" TagPrefix="clearcanvas" %>
+
 <%@ Register Assembly="Validators" Namespace="Sample.Web.UI.Compatibility" TagPrefix="CCValidators" %>
 
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.Validators" TagPrefix="clearcanvas" %>
@@ -11,8 +11,7 @@
         <asp:ServiceReference Path="~/Services/FilesystemInfoService.asmx" />
     </Services>
 </asp:ScriptManagerProxy>
-<clearcanvas:ModalDialog ID="ModalDialog" runat="server" BackgroundCSS="CSSDefaultPopupDialogBackground"
-    Width="450px">
+<ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="450px">
     <ContentTemplate>
         <asp:Panel ID="Panel2" runat="server">
             <aspAjax:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
@@ -227,4 +226,4 @@
         <asp:HiddenField ID="TotalSize" runat="server" />
         <asp:HiddenField ID="AvailableSize" runat="server" />
     </ContentTemplate>
-</clearcanvas:ModalDialog>
+</ccAsp:ModalDialog>

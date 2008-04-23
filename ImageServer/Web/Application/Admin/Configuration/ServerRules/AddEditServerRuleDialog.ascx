@@ -5,14 +5,14 @@
     TagPrefix="CCCommon" %>
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.Validators"
     TagPrefix="CCValidators" %>
-<%@ Register Src="~/Common/ModalDialog.ascx" TagName="ModalDialog" TagPrefix="clearcanvas" %>
+
 <asp:ScriptManagerProxy runat="server">
     <Services>
         <asp:ServiceReference Path="ServerRuleSamples.asmx" />
     </Services>
 </asp:ScriptManagerProxy>
 
-<clearcanvas:ModalDialog ID="ModalDialog" runat="server" BackgroundCSS="CSSDefaultPopupDialogBackground" Width="700px">
+<ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="700px">
     <ContentTemplate>
         <asp:Panel runat="server">
             <aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
@@ -146,4 +146,4 @@
             </center>
         </asp:Panel>
     </ContentTemplate>
-</clearcanvas:ModalDialog>
+</ccAsp:ModalDialog>

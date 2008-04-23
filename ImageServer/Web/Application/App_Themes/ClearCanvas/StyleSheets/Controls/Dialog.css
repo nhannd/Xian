@@ -1,31 +1,30 @@
-.CSSDefaultPopupDialogBackground
+.DefaultModalDialogBackground
 {
 	background-color: #345;
-	filter:alpha(opacity=50); opacity:0.5;
+	filter:alpha(opacity=30); opacity:0.3;
 }
 
-.CSSDefaultPopupDialogTitleBarLeft
+.DefaultModalDialogTitleBarLeft
 {
-	background-image: url(../../images/Dialog/DialogTitleBarBG-left.gif);
+	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG-left.gif);
 	background-repeat:no-repeat;
-	width:5px;
+	width:4px;
 }
 
-
-.CSSDefaultPopupDialogTitleBarTitle
+.DefaultModalDialogTitleBarTitle
 {
 	cursor: move;
 	vertical-align: middle;
 	text-align: center;
 	color: #ffffff;
+	font-family: Sans-Serif;
 	font-weight:bold;
-	padding:0px;
 	height:25px;
-	background-image: url(../../images/Dialog/DialogTitleBarBG.gif);
+	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG.gif);
 	background-repeat: repeat-x;
 }
 
-.CSSDefaultPopupDialogTitleBarControlBoxes
+.DefaultModalDialogTitleBarControlBoxes
 {
 	cursor: move;
 	vertical-align: middle;
@@ -35,30 +34,27 @@
 	font-weight:normal;
 	padding:0px;
 	height:25px;
-	background-image: url(../../images/Dialog/DialogTitleBarBG.gif);
+	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG.gif);
 	background-repeat: repeat-x;
 	width:25px;
 }
 
-
-.CSSDefaultPopupDialogTitleBarRight
+.DefaultModalDialogTitleBarRight
 {
-	text-align:right;
-	background-image: url(../../images/Dialog/DialogTitleBarBG-right.gif);
+	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG-right.gif);
 	background-repeat:no-repeat;
 	width:5px;
 }
 
-
-.CSSDefaultPopupDialogContent
+.DefaultModalDialogContent
 {
 	vertical-align: top;
 	padding: 15px;
-	background-color: #f8f8ff;
-	border-right: #ccccff 1px solid;
-	border-top: #ccccff 1px solid;
-	border-left: #ccccff 1px solid;
-	border-bottom: #ccccff 1px solid;
+	background-color: #ffffff;
+	border-left: #69C 2px solid;
+	border-right: #69C 2px solid;
+	border-bottom: #69C 2px solid;
+	
 }
 
 /*************************************************************************************************

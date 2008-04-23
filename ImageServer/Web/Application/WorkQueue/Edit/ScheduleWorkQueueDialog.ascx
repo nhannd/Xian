@@ -2,12 +2,11 @@
     Inherits="ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit.ScheduleWorkQueueDialog" %>
 <%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog"
     TagPrefix="clearcanvas" %>
-<%@ Register Src="~/Common/ModalDialog.ascx" TagName="ModalDialog" TagPrefix="clearcanvas" %>
+
 <%@ Register Src="WorkQueueSettingsPanel.ascx" TagName="WorkQueueSettingsPanel" TagPrefix="clearcanvas" %>
 <%@ Register Src="~/WorkQueue/WorkQueueItemListPanel.ascx" TagName="WorkQueueItemListPanel"
     TagPrefix="clearcanvas" %>
-<clearcanvas:modaldialog id="ModalDialog" runat="server" title="Schedule Work Queue Item"
-    backgroundcss="CSSDefaultPopupDialogBackground">
+<ccAsp:ModalDialog id="ModalDialog" runat="server" title="Schedule Work Queue Item">
 <ContentTemplate>
    
     <asp:Panel ID="Panel1" runat="server">
@@ -39,7 +38,7 @@
     </asp:Panel>
     
 </ContentTemplate>
-</clearcanvas:modaldialog>
+</ccAsp:ModalDialog>
 <clearcanvas:confirmationdialog id="PreOpenConfirmDialog" runat="server" />
 <clearcanvas:confirmationdialog id="PreApplyChangeConfirmDialog" runat="server" />
 <clearcanvas:confirmationdialog id="MessageDialog" runat="server" />

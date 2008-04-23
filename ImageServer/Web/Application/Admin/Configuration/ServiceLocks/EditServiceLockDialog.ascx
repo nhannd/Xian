@@ -2,7 +2,6 @@
     Codebehind="EditServiceLockDialog.ascx.cs" %>
 <%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
     TagPrefix="CCCommon" %>
-<%@ Register Src="~/Common/ModalDialog.ascx" TagName="ModalDialog" TagPrefix="clearcanvas" %>
 <%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog" TagPrefix="clearcanvas" %>
 
 
@@ -12,8 +11,7 @@
     TagPrefix="clearcanvas" %>
  
  
-<clearcanvas:ModalDialog ID="ModalDialog" runat="server" Title="Edit Service Schedule" BackgroundCSS="CSSDefaultPopupDialogBackground"
-    Width="450px">
+<ccAsp:ModalDialog ID="ModalDialog" runat="server" Title="Edit Service Schedule" Width="450px">
     <ContentTemplate>
         <asp:Panel ID="Panel3" runat="server" style="border-width:1px; border-color:#b0c4de; border-style:solid; padding:10px;">
             <asp:Table ID="Table1" runat="server" CellSpacing="3" CellPadding="3">
@@ -86,6 +84,6 @@
                 <br />
             </center>
     </ContentTemplate>
-</clearcanvas:ModalDialog>
+</ccAsp:ModalDialog>
 
 <clearcanvas:ConfirmationDialog ID="MessageBox" runat="server" />
