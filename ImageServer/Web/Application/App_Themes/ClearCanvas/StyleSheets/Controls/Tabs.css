@@ -20,43 +20,43 @@
 
 .TabControl .ajax__tab_header					
 {
-	background: url(../images/Controls/Tabs/tab-line.gif) repeat-x bottom;
+	background: url(../../images/Controls/Tabs/tab-line.gif) repeat-x bottom;
 }
 .TabControl .ajax__tab_outer
 {
-	background: url(../images/Controls/Tabs/tab-right.gif) no-repeat right;
+	background: url(../../images/Controls/Tabs/tab-right.gif) no-repeat right;
 }
 .TabControl .ajax__tab_inner
 {
-	background: url(../images/Controls/Tabs/tab-left.gif) no-repeat;
+	background: url(../../images/Controls/Tabs/tab-left.gif) no-repeat;
 }
 .TabControl .ajax__tab_tab
 {
-	background: url(../images/Controls/Tabs/tab.gif) repeat-x;
+	background: url(../../images/Controls/Tabs/tab.gif) repeat-x;
 }
 .TabControl .ajax__tab_hover .ajax__tab_outer
 {
-	background: url(../images/Controls/Tabs/tab-right.gif) no-repeat right;
+	background: url(../../images/Controls/Tabs/tab-right.gif) no-repeat right;
 }
 .TabControl .ajax__tab_hover .ajax__tab_inner
 {
-	background: url(../images/Controls/Tabs/tab-left.gif) no-repeat;
+	background: url(../../images/Controls/Tabs/tab-left.gif) no-repeat;
 }
 .TabControl .ajax__tab_hover .ajax__tab_tab
 {
-	background: url(../images/Controls/Tabs/tab-hover.gif) repeat-x;
+	background: url(../../images/Controls/Tabs/tab-hover.gif) repeat-x;
 }
 .TabControl .ajax__tab_active .ajax__tab_outer
 {
-	background: url(../images/tab-active-right.gif) no-repeat right;
+	background: url(../../images/Controls/Tabs/tab-active-right.gif) no-repeat right;
 }
 .TabControl .ajax__tab_active .ajax__tab_inner
 {
-	background: url(../images/Controls/Tabs/tab-active-left.gif) no-repeat;
+	background: url(../../images/Controls/Tabs/tab-active-left.gif) no-repeat;
 }
 .TabControl .ajax__tab_active .ajax__tab_tab
 {
-	background: url(../images/Controls/Tabs/tab-active.gif) repeat-x;
+	background: url(../../images/Controls/Tabs/tab-active.gif) repeat-x;
 }
 
 /*************************************************************************************************
@@ -66,28 +66,28 @@
 .TabControl .ajax__tab_header
 {
 	margin:0px;
-	
 }
 	
 .TabControl .ajax__tab_outer
 {
-	height: 25px;
+	height: 29px;
 }
+
 .TabControl .ajax__tab_inner
 {
-	padding-left: 3px;
+	padding: 0px 0px 0px 3px;
 }
+
 .TabControl .ajax__tab_tab
 {
 	padding: 6px 6px;
-	margin: 0;
 	font-family: Sans-Serif;
 	font-size:12px;
 	
 }
+
 .TabControl .ajax__tab_body
 {
-	margin: 0px;
 	padding: 5px;
 	border-right: #6699CC 1px solid;
 	border-top: #6699CC 1px solid;
@@ -102,11 +102,7 @@
 	font-family: Sans-Serif;
 }
 
-/* tab control content panel */
-.CSSTabPanel
-{
 
-}
 
 
 

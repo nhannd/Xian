@@ -53,20 +53,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Default.aspx" />
-    <Content Include="images\add.jpg" />
-    <Content Include="images\add.png" />
-    <Content Include="images\add2.gif" />
-    <Content Include="images\cancel.png" />
     <Content Include="images\CCLogo.png" />
     <Content Include="images\checked_small.gif" />
-    <Content Include="images\delete.jpg" />
-    <Content Include="images\delete2.gif" />
     <Content Include="images\dimbackground.gif" />
-    <Content Include="images\edit.jpg" />
-    <Content Include="images\edit2.gif" />
     <Content Include="images\LogoSmall.png" />
-    <Content Include="images\refresh.jpg" />
-    <Content Include="images\refresh2.gif" />
     <Content Include="images\unchecked_small.gif" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -583,9 +573,9 @@
     <Content Include="Admin\Configuration\ServiceLocks\ServiceLockGridView.ascx" />
     <Content Include="Admin\Configuration\ServiceLocks\ServiceLockPanel.ascx" />
     <Content Include="Admin\Configuration\ServiceLocks\ServiceLockPage.aspx" />
-    <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-left.gif" />
-    <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-right.gif" />
-    <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG-left.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG-right.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Header\ClearCanvasLogo.png" />
     <Content Include="App_Themes\ClearCanvas\images\Header\LocationEdge.png" />
     <Content Include="App_Themes\ClearCanvas\images\MainContent\MainContentBottom.png" />
@@ -615,9 +605,9 @@
     <Content Include="Admin\Configuration\ServerRules\ServerRulePanel.ascx" />
     <Content Include="Admin\Configuration\ServerRules\ServerRuleSamples.asmx" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Accordian.css" />
-    <Content Include="App_Themes\ClearCanvas\StyleSheets\Calendar.css" />
-    <Content Include="App_Themes\ClearCanvas\StyleSheets\Dialog.css" />
-    <Content Include="App_Themes\ClearCanvas\images\gridheaderbackground.png" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\Calendar.css" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\Dialog.css" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\GridView\gridheaderbackground.png" />
     <Content Include="App_Themes\ClearCanvas\images\icon_warning.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-active-left.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-active-right.gif" />
@@ -630,7 +620,7 @@
     <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-right.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab.gif" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Section.css" />
-    <Content Include="App_Themes\ClearCanvas\StyleSheets\Tabs.css" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\Tabs.css" />
     <Content Include="Common\BasePage.aspx" />
     <Content Include="Common\InvalidInputIndicator.ascx" />
     <Content Include="Common\ModalDialog.ascx" />
@@ -640,9 +630,9 @@
     <Content Include="Docs\About.htm" />
     <Content Include="images\blank.gif" />
     <Content Include="images\icons\close.png" />
-    <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-left.png" />
-    <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG-right.png" />
-    <Content Include="App_Themes\ClearCanvas\images\DialogTitleBarBG.png" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG-left.png" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG-right.png" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG.png" />
     <Content Include="images\icons\ClearSchedule.png" />
     <Content Include="images\icons\EraserEnabled.png" />
     <Content Include="images\icons\ViewDetailsDisabled.png" />
@@ -673,13 +663,7 @@
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
     </None>
     <Content Include="Common\GridPager.ascx" />
-    <Content Include="images\add_disabled.gif" />
-    <Content Include="images\ajax-loader.gif" />
-    <Content Include="images\blankfeature.gif" />
-    <Content Include="images\buttonnew.gif" />
     <Content Include="images\checked_tall.gif" />
-    <Content Include="images\delete_disabled.gif" />
-    <Content Include="images\edit_disabled.gif" />
     <Content Include="images\filter.gif" />
     <Content Include="images\filter_disabled.gif" />
     <Content Include="images\filter_on.gif" />
@@ -707,7 +691,6 @@
     <Content Include="images\next.gif" />
     <Content Include="images\prev.gif" />
     <Content Include="images\query.gif" />
-    <Content Include="images\search.gif" />
     <Content Include="images\storage.gif" />
     <Content Include="images\unchecked_tall.gif" />
     <Content Include="images\Plus.ico" />

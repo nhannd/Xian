@@ -6,7 +6,7 @@
 
 .CSSDefaultPopupDialogTitleBarLeft
 {
-	background-image: url(images/DialogTitleBarBG-left.gif);
+	background-image: url(../../images/Dialog/DialogTitleBarBG-left.gif);
 	background-repeat:no-repeat;
 	width:5px;
 }
@@ -21,7 +21,7 @@
 	font-weight:bold;
 	padding:0px;
 	height:25px;
-	background-image: url(images/DialogTitleBarBG.gif);
+	background-image: url(../../images/Dialog/DialogTitleBarBG.gif);
 	background-repeat: repeat-x;
 }
 
@@ -35,7 +35,7 @@
 	font-weight:normal;
 	padding:0px;
 	height:25px;
-	background-image: url(images/DialogTitleBarBG.gif);
+	background-image: url(../../images/Dialog/DialogTitleBarBG.gif);
 	background-repeat: repeat-x;
 	width:25px;
 }
@@ -44,7 +44,7 @@
 .CSSDefaultPopupDialogTitleBarRight
 {
 	text-align:right;
-	background-image: url(images/DialogTitleBarBG-right.gif);
+	background-image: url(../../images/Dialog/DialogTitleBarBG-right.gif);
 	background-repeat:no-repeat;
 	width:5px;
 }
@@ -82,44 +82,44 @@
 
 .CSSDialogTabControl .ajax__tab_header					
 {
-	background: url(../images/Controls/Tabs/tab-line.gif) repeat-x bottom; 
+	background: url(../../images/Controls/Tabs/tab-line.gif) repeat-x bottom; 
 	vertical-align:bottom;
 }
 .CSSDialogTabControl .ajax__tab_outer
 {
-	background: url(../images/Controls/Tabs/tab-right.gif) no-repeat right;
+	background: url(../../images/Controls/Tabs/tab-right.gif) no-repeat right;
 }
 .CSSDialogTabControl .ajax__tab_inner
 {
-	background: url(../images/Controls/Tabs/tab-left.gif) no-repeat;
+	background: url(../../images/Controls/Tabs/tab-left.gif) no-repeat;
 }
 .CSSDialogTabControl .ajax__tab_tab
 {
-	background: url(../images/Controls/Tabs/tab.gif) repeat-x;
+	background: url(../../images/Controls/Tabs/tab.gif) repeat-x;
 }
 .CSSDialogTabControl .ajax__tab_hover .ajax__tab_outer
 {
-	background: url(../images/Controls/Tabs/tab-right.gif) no-repeat right;
+	background: url(../../images/Controls/Tabs/tab-right.gif) no-repeat right;
 }
 .CSSDialogTabControl .ajax__tab_hover .ajax__tab_inner
 {
-	background: url(../images/Controls/Tabs/tab-left.gif) no-repeat;
+	background: url(../../images/Controls/Tabs/tab-left.gif) no-repeat;
 }
 .CSSDialogTabControl .ajax__tab_hover .ajax__tab_tab
 {
-	background: url(../images/Controls/Tabs/tab.gif) repeat-x;
+	background: url(../../images/Controls/Tabs/tab.gif) repeat-x;
 }
 .CSSDialogTabControl .ajax__tab_active .ajax__tab_outer
 {
-	background: url(../images/Controls/Tabs/tab-active-right.gif) no-repeat right;
+	background: url(../../images/Controls/Tabs/tab-active-right.gif) no-repeat right;
 }
 .CSSDialogTabControl .ajax__tab_active .ajax__tab_inner
 {
-	background: url(../images/Controls/Tabs/tab-active-left.gif) no-repeat;
+	background: url(../../images/Controls/Tabs/tab-active-left.gif) no-repeat;
 }
 .CSSDialogTabControl .ajax__tab_active .ajax__tab_tab
 {
-	background: url(../images/Controls/Tabs/tab-active.gif) repeat-x;
+	background: url(../../images/Controls/Tabs/tab-active.gif) repeat-x;
 	
 }
 
