@@ -213,7 +213,7 @@ namespace ClearCanvas.Healthcare
             if(type.GetPlanXml().DocumentElement == null)
                 return;
 
-            XmlNodeList stepNodes = type.GetPlanXml().SelectNodes("*/procedure-steps/procedure-step");
+            XmlNodeList stepNodes = type.GetPlanXml().SelectNodes("procedure-plan/procedure-steps/procedure-step");
             foreach (XmlElement stepNode in stepNodes)
             {
                 string className = stepNode.GetAttribute("class");
