@@ -78,7 +78,6 @@
                 </asp:Panel>
             </SectionContentTemplate>
         </clearcanvas:SectionPanel>
-                <clearcanvas:TimedDialog ID="TimedDialog" runat="server" />    
-
+                <clearcanvas:TimedDialog ID="TimedDialog" runat="server" Timeout="5000" ShowOkButton="false" Title="Move Complete" />
     </ContentTemplate>
 </asp:UpdatePanel>

@@ -66,16 +66,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move
 
             TimedDialog.Confirmed += delegate(object data)
                  {
-                     StudyController studyController = new StudyController();
-                     if (data is MoveRequest)
-                     {
-                         MoveRequest move = data as MoveRequest;
-                         foreach (Study study in move.Studies)
-                         {
-                             studyController.MoveStudy(study, move.DestinationDevice);
-                         }
-                     }
-
                      Response.Redirect("~/Search/SearchPage.aspx"); 
                  };
 
@@ -154,7 +144,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move
 
         protected void SendButton_Click(object sender, ImageClickEventArgs e)
         {
-            if (this.DeviceGridPanel.SelectedDevice != null)
+            if (DeviceGridPanel.SelectedDevice != null)
             {
                 TimedDialog.Message =
                     string.Format("The following studies have been placed in the WorkQueue to transfer to {0}:<BR/>",
@@ -170,11 +160,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move
                 }
                 TimedDialog.Message += "</table>";
 
-
+                // Create the move request, although it really isn't needed.
                 MoveRequest data = new MoveRequest();
                 data.Studies = StudyGridView.StudyList;
                 data.DestinationDevice = DeviceGridPanel.SelectedDevice;
                 TimedDialog.Data = data;
+
+                StudyController studyController = new StudyController();
+                foreach (Study study in data.Studies)
+                {
+                    studyController.MoveStudy(study, data.DestinationDevice);
+                }                
 
                 TimedDialog.Show();
             }

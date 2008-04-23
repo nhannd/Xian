@@ -637,7 +637,6 @@
     <Content Include="Common\SectionPanel.ascx" />
     <Content Include="Common\ServerPartitionTabs.ascx" />
     <Content Include="Common\TimedDialog.ascx" />
-    <Content Include="Common\TimedDialog.js" />
     <Content Include="Docs\About.htm" />
     <Content Include="images\blank.gif" />
     <Content Include="images\icons\close.png" />

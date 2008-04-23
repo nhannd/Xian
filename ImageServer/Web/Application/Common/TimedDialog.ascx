@@ -5,6 +5,7 @@
     <ContentTemplate>
         <asp:Panel ID="Panel3" runat="server">
             <asp:Panel ID="Panel1" runat="server">
+                <asp:Timer ID="TimerTimeout" runat="server" Interval="10" OnTick="TimerTimout_Tick" Enabled="false"/>
                 <table cellspacing="0" cellpadding="0">
                     <tr>
                         <td colspan="1" style="height: 24px">
