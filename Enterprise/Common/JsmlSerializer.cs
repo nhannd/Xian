@@ -226,8 +226,7 @@ namespace ClearCanvas.Enterprise.Common
                 if(xmlDoc.DocumentElement != null)
                 {
                     writer.WriteStartElement(objectName);
-                    // don't write the root element, as it just a container node for the content
-                    xmlDoc.DocumentElement.WriteContentTo(writer);
+                    xmlDoc.DocumentElement.WriteTo(writer);
                     writer.WriteEndElement();
                 }
             }
@@ -318,7 +317,7 @@ namespace ClearCanvas.Enterprise.Common
             else if(dataType == typeof(XmlDocument))
             {
                 // this clause supports deserialization of an embedded JSML document
-                string xml = xmlElement.OuterXml;
+                string xml = xmlElement.InnerXml;
                 if(!string.IsNullOrEmpty(xml))
                 {
                     XmlDocument doc = new XmlDocument();
