@@ -29,9 +29,6 @@
 
 #endregion
 
-//not a production tool right now.
-#if DEBUG
-
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -49,8 +46,6 @@ namespace ClearCanvas.Utilities.DicomEditor
 	[Tooltip("activate", "TooltipAnonymizeStudy")]
 	[IconSet("activate", IconScheme.Colour, "Icons.AnonymizeStudyToolSmall.png", "Icons.AnonymizeStudyToolSmall.png", "Icons.AnonymizeStudyToolSmall.png")]
 
-	//TODO: Remove this later.
-	[ActionPermission("activate", "DemoAdmin")]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class AnonymizeStudyTool : StudyBrowserTool, IAnonymizationCallback
 	{
@@ -146,5 +141,3 @@ namespace ClearCanvas.Utilities.DicomEditor
 		#endregion
 	}
 }
-
-#endif
