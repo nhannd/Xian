@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="studyBindingSource.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>840, 17</value>
+  </metadata>
   <metadata name="imageServerDataSetBindingSource.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>170, 17</value>
   </metadata>
@@ -131,11 +134,14 @@
   </metadata>
   <data name="textBox1.Text" xml:space="preserve">
     <value>&lt;editstudy&gt;
-&lt;set tag="00100010" value="XXXXXXXXXXXX^Huynh" /&gt;
-&lt;set tag="00100020" value="XXXXXXXXXXXX" /&gt;
-&lt;set tag="00080050" value="A#1234" /&gt;
-&lt;set tag="00080020" value="20000202" /&gt;
-&lt;set tag="00080096\00080092" value="YYYYYYYYYYYY" /&gt;
+&lt;set tag="00100010" value="PatName" /&gt;
+&lt;set tag="00100020" value="PatientID" /&gt;
+&lt;set tag="00080050" value="Accession#" /&gt;
+&lt;set tag="00080020" value="20080501" /&gt;
+&lt;set tag="00080096\00080092" value="RefPhysicianName" /&gt;
 &lt;/editstudy&gt;</value>
   </data>
+  <metadata name="RefreshTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>722, 17</value>
+  </metadata>
 </root>

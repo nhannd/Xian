@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
@@ -110,6 +111,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                              item.GetKey().ToString());
                 throw new ApplicationException("Unable to find storage location for WorkQueue item.");
             }
+
+            Debug.Assert(_storageLocationList.Count>0);
         }
 
         /// <summary>
@@ -126,8 +129,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             _uidList = select.Execute(parms);
 
             _uidList = TruncateList(item, _uidList);
-
-            Console.WriteLine("Truncated: size=" + _uidList.Count);
         }
 
         /// <summary>
@@ -135,7 +136,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </summary>
         /// <param name="item">The <see cref="WorkQueue"/> item to be processed</param>
         /// <returns>The maximum batch size for the <see cref="WorkQueue"/> item</returns>
-        protected int GetMaxBatchSize(Model.WorkQueue item)
+        protected static int GetMaxBatchSize(Model.WorkQueue item)
         {
             int maxSize = 0;
 
@@ -167,14 +168,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <param name="item">The <see cref="WorkQueue"/> item to be processed</param>
         /// <param name="list">The list of <see cref="WorkQueueUid"/> to be truncated, if needed</param>
         /// <return>A truncated list of <see cref="WorkQueueUid"/></return>
-        protected IList<Model.WorkQueueUid> TruncateList(Model.WorkQueue item, IList<Model.WorkQueueUid> list)
+        protected static IList<WorkQueueUid> TruncateList(Model.WorkQueue item, IList<WorkQueueUid> list)
         {
             if (item!=null && list!=null)
             {
                 int maxSize = GetMaxBatchSize(item);
                 if (list.Count > maxSize)
                 {
-                    IList<Model.WorkQueueUid> newList = new List<Model.WorkQueueUid>();
+                    IList<WorkQueueUid> newList = new List<WorkQueueUid>();
                     for (int i = 0; i < maxSize; i++)
                         newList.Add(list[i]);
                     return newList;

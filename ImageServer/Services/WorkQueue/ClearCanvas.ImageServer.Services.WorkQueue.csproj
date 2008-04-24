@@ -110,12 +110,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <EmbeddedResource Include="WebEditStudy\ActionPlugins\SetValue.xsd">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <None Include="WebEditStudy\ActionPlugins\SetValue.xsx">
-      <DependentUpon>SetValue.xsd</DependentUpon>
-    </None>
     <None Include="WorkQueueSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>

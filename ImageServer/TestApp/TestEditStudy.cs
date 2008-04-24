@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -24,9 +25,7 @@ namespace ClearCanvas.ImageServer.TestApp
 
         private void TestEditStudyForm_Load(object sender, EventArgs e)
         {
-            // TODO: This line of code loads data into the 'imageServerDataSet.StudyStorage' table. You can move, or remove it, as needed.
             this.studyStorageTableAdapter.Fill(this.imageServerDataSet.StudyStorage);
-            // TODO: This line of code loads data into the 'imageServerDataSet.Study' table. You can move, or remove it, as needed.
             this.studyTableAdapter.Fill(this.imageServerDataSet.Study);
 
             dataGridView1.DataSource = this.imageServerDataSet;
@@ -35,15 +34,15 @@ namespace ClearCanvas.ImageServer.TestApp
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Apply_Click(object sender, EventArgs e)
         {
             DataRowView view = dataGridView1.SelectedRows[0].DataBoundItem as DataRowView;
-            if (view!=null)
+            if (view != null)
             {
                 Guid guid = (Guid) view.Row["GUID"];
 
                 IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-                
+
                 using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
                 {
                     IStudyEntityBroker studyBroker = ctx.GetBroker<IStudyEntityBroker>();
@@ -78,11 +77,35 @@ namespace ClearCanvas.ImageServer.TestApp
                     workQueueBroker.Insert(columns);
 
                     ctx.Commit();
-
                 }
-                
-
             }
         }
+
+        private void RefreshTimer_Tick(object sender, EventArgs e)
+        {
+            Guid guid = Guid.Empty;
+            if (dataGridView1.SelectedRows != null)
+            {
+                DataRowView view = dataGridView1.SelectedRows[0].DataBoundItem as DataRowView;
+                if (view!=null)
+                {
+                    guid = (Guid) view["GUID"];
+                    Trace.WriteLine(guid);
+                }
+                
+            }
+            this.studyStorageTableAdapter.Fill(this.imageServerDataSet.StudyStorage);
+            this.studyTableAdapter.Fill(this.imageServerDataSet.Study);
+
+            if (guid!=Guid.Empty)
+            {
+                int index = studyBindingSource.Find("GUID", guid);
+                Trace.WriteLine(index);
+                this.studyBindingSource.Position = index;
+                dataGridView1.Rows[index].Selected = true;
+            }
+            
+        }
+
     }
 }
