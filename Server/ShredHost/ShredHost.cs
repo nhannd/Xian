@@ -127,6 +127,7 @@ namespace ClearCanvas.Server.ShredHost
 
             // correct sequence should be to stop the WCF host so that we don't
             // receive any more incoming requests
+			Platform.Log(LogLevel.Info, "Shred Host stop request received");
 
 			if (_shredHostWCFInitialized)
 			{
