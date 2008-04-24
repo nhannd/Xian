@@ -1,16 +1,94 @@
-<Project DefaultTargets="BuildAll" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Choose>
+    <When Condition=" '$(Platform)' == 'x64' ">
+      <PropertyGroup>
+        <PlatformSuffix>_x64</PlatformSuffix>
+        <PlatformFolderPrefix>x64</PlatformFolderPrefix>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <!-- assumes Win32 -->
+      <PropertyGroup>
+        <PlatformSuffix></PlatformSuffix>
+        <PlatformFolderPrefix></PlatformFolderPrefix>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <!-- set out some defaults -->
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' "></Platform>
+    <DistributionBuild>false</DistributionBuild>
+    <BuildServer>false</BuildServer>
   </PropertyGroup>
-  <Target Name="BuildRis" >
-    <MSBuild Projects="RisViewerIntegration.sln" Properties="Configuration=$(Configuration)" />
-    <MSBuild Projects="..\..\..\Jscript\Build.proj" Properties="Configuration=$(Configuration)" />
-    <MSBuild Projects="..\..\Server\RisServer.proj" Properties="Configuration=$(Configuration)" />
-  </Target>
 
-  <Target Name="BuildAll" >
-    <MSBuild Targets="BuildRis"></MSBuild>
-    <!-- copy files + report publication shred files -->
-    <MSBuild Projects="..\..\..\ImageViewer\ImageViewer.sln" Properties="Configuration=$(Configuration)" />
-    <!-- copy shredHost files-->
+  <Choose>
+    <When Condition="$(DistributionBuild)">
+      <PropertyGroup>
+        <DistributionDir>$(MSBuildProjectDirectory)\..\..\..\Distribution\Build\$(PlatformFolderPrefix)\$(Configuration)</DistributionDir>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DistributionDir></DistributionDir>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <Choose>
+    <When Condition="$(DistributionBuild) And '$(Configuration)' == 'Release' And '$(KeyFile)' != ''">
+      <PropertyGroup>
+        <SwigWrapperProperties>Configuration=$(Configuration);Platform=$(Platform);KeyFile=$(KeyFile)</SwigWrapperProperties>
+        <ImageViewerProperties>Configuration=$(Configuration);Platform=Any CPU;PlatformFolderPrefix=$(PlatformFolderPrefix);DistributionDir=$(DistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</ImageViewerProperties>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <SwigWrapperProperties>Configuration=$(Configuration);Platform=$(Platform)</SwigWrapperProperties>
+        <ImageViewerProperties>Configuration=$(Configuration);Platform=Any CPU;PlatformFolderPrefix=$(PlatformFolderPrefix);DistributionDir=$(DistributionDir)</ImageViewerProperties>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <ItemGroup>
+    <ServerFiles Include="$(MSBuildProjectDirectory)\..\..\Server\Executable\bin\$(Configuration)\*.*"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ServerCommonFiles Include="$(MSBuildProjectDirectory)\..\..\Server\Executable\bin\$(Configuration)\common\*.*"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ServerPluginFiles Include="$(MSBuildProjectDirectory)\..\..\Server\Executable\bin\$(Configuration)\plugins\*.*"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Web Include="$(MSBuildProjectDirectory)\..\..\web\*.*" />
+    <WebCSS Include="$(MSBuildProjectDirectory)\..\..\web\css\*.*" />
+    <WebFormsAdmin Include="$(MSBuildProjectDirectory)\..\..\web\forms\admin\*.*" />
+    <WebFormsTech Include="$(MSBuildProjectDirectory)\..\..\web\forms\technologist\*.*" />
+    <WebImages Include="$(MSBuildProjectDirectory)\..\..\web\images\*.*" />
+    <WebJS Include="$(MSBuildProjectDirectory)\..\..\web\js\*.*" />
+  </ItemGroup>
+
+  <Target Name="BuildJScriptAndServer"  Condition="$(BuildServer)" >
+    <MSBuild Projects="$(MSBuildProjectDirectory)\..\..\..\Jscript\Build.proj" Properties="Configuration=$(Configuration)" />
+    <MSBuild Projects="$(MSBuildProjectDirectory)\..\..\Server\RisServer.proj" Properties="Configuration=$(Configuration)" />
+  </Target>
+  <Target Name="CopyFiles" DependsOnTargets="BuildJScriptAndServer">
+    <Copy SourceFiles="@(ServerFiles)" DestinationFolder="$(DistributionDir)\Server" />
+    <Copy SourceFiles="@(ServerCommonFiles)" DestinationFolder="$(DistributionDir)\Server\common" />
+    <Copy SourceFiles="@(ServerPluginFiles)" DestinationFolder="$(DistributionDir)\Server\plugins" />
+    <Copy SourceFiles="@(Web)" DestinationFolder="$(DistributionDir)\Server\web" />
+    <Copy SourceFiles="@(WebCSS)" DestinationFolder="$(DistributionDir)\Server\web\css" />
+    <Copy SourceFiles="@(WebFormsAdmin)" DestinationFolder="$(DistributionDir)\Server\web\forms\admin" />
+    <Copy SourceFiles="@(WebFormsTech)" DestinationFolder="$(DistributionDir)\Server\web\forms\technologist" />
+    <Copy SourceFiles="@(WebImages)" DestinationFolder="$(DistributionDir)\Server\web\images" />
+    <Copy SourceFiles="@(WebJS)" DestinationFolder="$(DistributionDir)\Server\web\js" />
+  </Target>
+  <Target Name="BuildClient" >
+    <MSBuild Projects="$(MSBuildProjectDirectory)\RisViewerIntegration.sln" Properties="$(ImageViewerProperties)" />
+  </Target>
+  <Target Name="Build">
+    <RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />
+    <CallTarget Targets="BuildClient;CopyFiles" />
+  </Target>
 </Project>

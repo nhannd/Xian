@@ -51,9 +51,6 @@ namespace ClearCanvas.Utilities.DicomEditor
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[GroupHint("activate", "Tools.Dicom.Editor")]
 
-	//TODO: Remove this later.
-	[ActionPermission("activate", "DemoAdmin")]
-	
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     [ExtensionOf(typeof(LocalImageExplorerToolExtensionPoint))]
     public class DicomEditorTool : ToolBase
