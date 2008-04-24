@@ -95,7 +95,9 @@
     <Compile Include="Imex\Import.cs" />
     <Compile Include="Imex\ImportException.cs" />
     <Compile Include="Imex\IXmlDataImex.cs" />
+    <Compile Include="Imex\XmlDataImexBase.cs" />
     <Compile Include="Imex\XmlEntityImex.cs" />
+    <Compile Include="Imex\XmlEnumValueImex.cs" />
     <Compile Include="IServiceOperationRecorder.cs" />
     <Compile Include="IValidator.cs" />
     <Compile Include="IEnumBroker.cs" />

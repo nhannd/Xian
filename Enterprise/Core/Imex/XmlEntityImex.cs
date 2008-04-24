@@ -11,14 +11,14 @@ namespace ClearCanvas.Enterprise.Core.Imex
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     /// <typeparam name="TDataContract"></typeparam>
-    public abstract class XmlEntityImex<TEntity, TDataContract> : IXmlDataImex
+    public abstract class XmlEntityImex<TEntity, TDataContract> : XmlDataImexBase
         where TEntity : Entity
     {
         #region ExportItem class
 
         class ExportItem : IExportItem
         {
-            private TDataContract _data;
+            private readonly TDataContract _data;
 
             public ExportItem(TDataContract data)
             {
@@ -27,7 +27,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
             public void Write(XmlWriter writer)
             {
-                XmlEntityImex<TEntity, TDataContract>.Write(writer, _data);
+                XmlDataImexBase.Write(writer, _data);
             }
         }
 
@@ -65,9 +65,9 @@ namespace ClearCanvas.Enterprise.Core.Imex
         
         #endregion
 
-        #region IXmEntityImex Members
+        #region Protected overrides
 
-        IEnumerable<IExportItem> IXmlDataImex.Export()
+        protected override IEnumerable<IExportItem> ExportCore()
         {
             bool more = true;
             for (int row = 0; more; row += ItemsPerReadTransaction)
@@ -82,14 +82,14 @@ namespace ClearCanvas.Enterprise.Core.Imex
                         yield return new ExportItem(data);
                     }
 
-                    // there may be more rows if the last query returned the max number of items
-                    more = (items.Count == ItemsPerReadTransaction);
+                    // there may be more rows if the last query returned any items
+                    more = (items.Count > 0);
                     scope.Complete();
                 }
             }
         }
 
-        void IXmlDataImex.Import(IEnumerable<IImportItem> items)
+        protected override void ImportCore(IEnumerable<IImportItem> items)
         {
             IEnumerator<IImportItem> enumerator = items.GetEnumerator();
             for(bool more = true; more; )
@@ -104,7 +104,8 @@ namespace ClearCanvas.Enterprise.Core.Imex
                         more = enumerator.MoveNext();
                         if (more)
                         {
-                            TDataContract data = Read(enumerator.Current.Read());
+                            IImportItem item = enumerator.Current;
+                            TDataContract data = (TDataContract)Read(item.Read(), typeof(TDataContract));
                             Import(data, context);
                         }
                     }
@@ -115,18 +116,5 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
         #endregion
 
-        #region Helpers
-
-        private static void Write(XmlWriter writer, TDataContract data)
-        {
-            JsmlSerializer.Serialize(writer, data, data.GetType().Name, false);
-        }
-
-        private static TDataContract Read(XmlReader reader)
-        {
-            return (TDataContract)JsmlSerializer.Deserialize<TDataContract>(reader);
-        }
-
-        #endregion
     }
 }
