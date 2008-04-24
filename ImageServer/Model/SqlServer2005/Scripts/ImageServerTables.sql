@@ -610,7 +610,7 @@ CREATE TABLE [dbo].[Patient](
 ) ON [PRIMARY]
 END
 GO
-/****** Object:  Table [dbo].[Device]    Script Date: 01/09/2008 15:03:25 ******/
+/****** Object:  Table [dbo].[Device]    Script Date: 04/23/2008 23:48:21 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -631,6 +631,7 @@ CREATE TABLE [dbo].[Device](
 	[AllowStorage] [bit] NOT NULL CONSTRAINT [DF_Device_StorageFlag]  DEFAULT ((0)),
 	[AllowRetrieve] [bit] NOT NULL CONSTRAINT [DF_Device_AllowRetrieve]  DEFAULT ((0)),
 	[AllowQuery] [bit] NOT NULL CONSTRAINT [DF_Device_AllowQuery]  DEFAULT ((0)),
+	[AllowAutoRoute] [bit] NOT NULL CONSTRAINT [DF_Device_AllowAutoRoute]  DEFAULT ((1)),
  CONSTRAINT [PK_Device] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC

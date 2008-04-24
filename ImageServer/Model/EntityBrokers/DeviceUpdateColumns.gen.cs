@@ -44,6 +44,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["AeTitle"] = new EntityUpdateColumn<System.String>("AeTitle", value); }
         }
+        public System.Boolean AllowAutoRoute
+        {
+            set { SubParameters["AllowAutoRoute"] = new EntityUpdateColumn<System.Boolean>("AllowAutoRoute", value); }
+        }
         public System.Boolean AllowQuery
         {
             set { SubParameters["AllowQuery"] = new EntityUpdateColumn<System.Boolean>("AllowQuery", value); }

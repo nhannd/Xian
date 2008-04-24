@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns></returns>
         public bool DeleteDevice(Device dev)
         {
-            return base.Delete(dev.GetKey());
+            return Delete(dev.GetKey());
         }
 
         /// <summary>
@@ -81,8 +81,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             param.AllowQuery = dev.AllowQuery;
             param.AllowRetrieve = dev.AllowRetrieve;
             param.AllowStorage = dev.AllowStorage;
+            param.AllowAutoRoute = dev.AllowAutoRoute;
 
-            base.Update(dev.GetKey(), param);
+            Update(dev.GetKey(), param);
 
             return ok;
         }
@@ -109,7 +110,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns></returns>
         public IList<Device> GetDevices(DeviceSelectCriteria criteria)
         {
-            return base.Get(criteria);
+            return Get(criteria);
         }
 
         /// <summary>
@@ -130,8 +131,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             param.AllowQuery = newDev.AllowQuery;
             param.AllowRetrieve = newDev.AllowRetrieve;
             param.AllowStorage = newDev.AllowStorage;
+            param.AllowAutoRoute = newDev.AllowAutoRoute;
 
-            return base.Add(param);
+            return Add(param);
         }
     }
 }

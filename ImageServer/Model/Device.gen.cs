@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Private Members
         private System.String _aeTitle;
+        private System.Boolean _allowAutoRoute;
         private System.Boolean _allowQuery;
         private System.Boolean _allowRetrieve;
         private System.Boolean _allowStorage;
@@ -64,6 +65,11 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _aeTitle; }
         set { _aeTitle = value; }
+        }
+        public System.Boolean AllowAutoRoute
+        {
+        get { return _allowAutoRoute; }
+        set { _allowAutoRoute = value; }
         }
         public System.Boolean AllowQuery
         {

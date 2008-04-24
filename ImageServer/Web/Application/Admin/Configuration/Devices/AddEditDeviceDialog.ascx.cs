@@ -215,6 +215,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             Device.AllowStorage = AllowStorageCheckBox.Checked;
             Device.AllowQuery = AllowQueryCheckBox.Checked;
             Device.AllowRetrieve = AllowRetrieveCheckBox.Checked;
+            Device.AllowAutoRoute = AllowAutoRouteCheckBox.Checked;
         }
 
         #endregion Protected methods
@@ -256,6 +257,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                 AllowStorageCheckBox.Checked = true;
                 AllowQueryCheckBox.Checked = true;
                 AllowRetrieveCheckBox.Checked = true;
+                AllowAutoRouteCheckBox.Checked = true;
 
 
                 ServerPartitionDropDownList.SelectedIndex = 0;
@@ -272,6 +274,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                 AllowStorageCheckBox.Checked = Device.AllowStorage;
                 AllowQueryCheckBox.Checked = Device.AllowQuery;
                 AllowRetrieveCheckBox.Checked = Device.AllowRetrieve;
+                AllowAutoRouteCheckBox.Checked = Device.AllowAutoRoute;
 
                 ServerPartitionDropDownList.SelectedValue = Device.ServerPartitionKey.Key.ToString();
             }

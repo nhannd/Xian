@@ -266,6 +266,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             {
                 // add an image for each enabled feature
                 AddAllowStorageImage(e, placeHolder);
+                AddAllowAutoRouteImage(e, placeHolder);
                 AddAllowRetrieveImage(e, placeHolder);
                 AddAllowQueryImage(e, placeHolder);
             }
@@ -315,6 +316,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowStorage")))
             {
                 img.ImageUrl = "~/images/icons/StoreSmall.png";
+                img.AlternateText = "Store";
+            }
+            else
+            {
+                //img.Visible = false;
+                img.ImageUrl = "~/images/blankfeature.gif";
+                img.AlternateText = "";
+            }
+            placeHolder.Controls.Add(img);
+        }
+
+        private void AddAllowAutoRouteImage(GridViewRowEventArgs e, PlaceHolder placeHolder)
+        {
+            Image img = new Image();
+            if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowAutoRoute")))
+            {
+                img.ImageUrl = "~/images/icons/AutoRouteSmall.png";
                 img.AlternateText = "Store";
             }
             else

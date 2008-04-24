@@ -136,7 +136,15 @@
                                     <td>
                                     </td>
                                     <td>
-                                        <asp:CheckBox ID="AllowStorageCheckBox" runat="server" Text="Storage" ToolTip="Accept or reject C-STORE from this device." /></td>
+                                        <asp:CheckBox ID="AllowStorageCheckBox" runat="server" Text="Storage" ToolTip="Accept or reject C-STORE from this device" /></td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <asp:CheckBox ID="AllowAutoRouteCheckBox" runat="server" Text="Auto Route" ToolTip="Allow auto-routing to this device" /></td>
                                     <td>
                                     </td>
                                 </tr>

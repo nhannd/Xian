@@ -81,6 +81,14 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
             if (dev == null)
                 throw new ApplicationException(String.Format("Device '{0}' not in database for autoroute request!", _deviceAe));
 
+            if (!dev.AllowAutoRoute)
+            {
+                Platform.Log(LogLevel.Warn,
+                             "Auto-route attempted to device {0} on partition {1} with autoroute support disabled.  Ignoring request.",
+                             dev.AeTitle, ServerPartition.Load(_context.ServerPartitionKey).AeTitle);
+                return;
+            }
+
             WorkQueueAutoRouteInsertParameters parms = new WorkQueueAutoRouteInsertParameters();
 
             parms.ScheduledTime = Platform.Time.AddSeconds(60);

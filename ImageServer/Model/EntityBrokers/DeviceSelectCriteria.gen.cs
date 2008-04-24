@@ -52,6 +52,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["AeTitle"];
             } 
         }
+        public ISearchCondition<System.Boolean> AllowAutoRoute
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("AllowAutoRoute"))
+              {
+                 SubCriteria["AllowAutoRoute"] = new SearchCondition<System.Boolean>("AllowAutoRoute");
+              }
+              return (ISearchCondition<System.Boolean>)SubCriteria["AllowAutoRoute"];
+            } 
+        }
         public ISearchCondition<System.Boolean> AllowQuery
         {
             get

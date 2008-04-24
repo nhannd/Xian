@@ -1,29 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Configuration;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Search.Move
 {
     public partial class DeviceGridView : System.Web.UI.UserControl
     {
-        #region private members
-
-        // server partitions lookup table based on server key
-        private ServerPartition _partition;
+        #region Private members
         // list of devices to display
         private IList<Device> _devices;
         private Unit _height;
         #endregion Private members
 
-        #region public properties
+        #region Public properties
 
         /// <summary>
         /// Retrieve reference to the grid control being used to display the devices.
@@ -164,6 +155,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move
             {
                 // add an image for each enabled feature
                 AddAllowStorageImage(e, placeHolder);
+                AddAllowAutoRouteImage(e, placeHolder);
                 AddAllowRetrieveImage(e, placeHolder);
                 AddAllowQueryImage(e, placeHolder);
             }
@@ -224,6 +216,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move
             placeHolder.Controls.Add(img);
         }
 
+        private void AddAllowAutoRouteImage(GridViewRowEventArgs e, PlaceHolder placeHolder)
+        {
+            Image img = new Image();
+            if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowAutoRoute")))
+            {
+                img.ImageUrl = "~/images/icons/AutoRouteSmall.png";
+                img.AlternateText = "Store";
+            }
+            else
+            {
+                //img.Visible = false;
+                img.ImageUrl = "~/images/blankfeature.gif";
+                img.AlternateText = "";
+            }
+            placeHolder.Controls.Add(img);
+        }
+
         protected void CustomizeDHCPColumn(GridViewRowEventArgs e)
         {
             Image img = ((Image)e.Row.FindControl("DHCPImage"));
@@ -261,7 +270,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move
         protected void CustomizeServerPartitionColumn(GridViewRowEventArgs e)
         {
             Device dev = e.Row.DataItem as Device;
+            if (dev == null) return;
             Label lbl = e.Row.FindControl("ServerParitionLabel") as Label; // The label is added in the template
+            if (lbl == null) return;
             lbl.Text = dev.ServerPartition.AeTitle;
         }
 
@@ -269,12 +280,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move
         protected void CustomizeIpAddressColumn(GridViewRowEventArgs e)
         {
             Device dev = e.Row.DataItem as Device;
+            if (dev==null) return;
             Label lbl = e.Row.FindControl("IpAddressLabel") as Label; // The label is added in the template
+            if (lbl == null) return;
             if (dev.Dhcp)
                 lbl.Text = "";
             else
                 lbl.Text = dev.IpAddress;
         }
+
         protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             Device dev = SelectedDevice;

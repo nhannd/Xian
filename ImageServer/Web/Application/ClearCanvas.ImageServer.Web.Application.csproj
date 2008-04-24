@@ -629,6 +629,7 @@
     <Content Include="Common\TimedDialog.ascx" />
     <Content Include="Docs\About.htm" />
     <Content Include="images\blank.gif" />
+    <Content Include="images\icons\AutoRouteSmall.png" />
     <Content Include="images\icons\close.png" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG-left.png" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG-right.png" />
