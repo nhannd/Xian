@@ -33,14 +33,20 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
         #endregion
 
+        private const int ItemsPerReadTransaction = 100;
+        private const int ItemsPerUpdateTransaction = 100;
+
+
         #region Absract Methods
 
         /// <summary>
         /// Called to obtain the list of entities to export.
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="firstRow"></param>
+        /// <param name="maxRows"></param>
         /// <returns></returns>
-        protected abstract IEnumerable<TEntity> GetItemsForExport(IReadContext context);
+        protected abstract IList<TEntity> GetItemsForExport(IReadContext context, int firstRow, int maxRows);
 
         /// <summary>
         /// Called to export the specified entity.
@@ -61,21 +67,49 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
         #region IXmEntityImex Members
 
-        IEnumerable<IExportItem> IXmlDataImex.Export(IReadContext context)
+        IEnumerable<IExportItem> IXmlDataImex.Export()
         {
-            foreach (TEntity entity in GetItemsForExport(context))
+            bool more = true;
+            for (int row = 0; more; row += ItemsPerReadTransaction)
             {
-                TDataContract data = Export(entity, context);
-                yield return new ExportItem(data);
+                using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Read))
+                {
+                    IReadContext context = (IReadContext)PersistenceScope.Current;
+                    IList<TEntity> items = GetItemsForExport(context, row, ItemsPerReadTransaction);
+                    foreach (TEntity entity in items)
+                    {
+                        TDataContract data = Export(entity, context);
+                        yield return new ExportItem(data);
+                    }
+
+                    // there may be more rows if the last query returned the max number of items
+                    more = (items.Count == ItemsPerReadTransaction);
+                    scope.Complete();
+                }
             }
         }
 
-        void IXmlDataImex.Import(IEnumerable<IImportItem> items, IUpdateContext context)
+        void IXmlDataImex.Import(IEnumerable<IImportItem> items)
         {
-            foreach (IImportItem item in items)
+            IEnumerator<IImportItem> enumerator = items.GetEnumerator();
+            for(bool more = true; more; )
             {
-                TDataContract data = Read(item.Read());
-                Import(data, context);
+                using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
+                {
+                    IUpdateContext context = (IUpdateContext)PersistenceScope.Current;
+                    context.ChangeSetRecorder.OperationName = this.GetType().FullName;
+
+                    for (int j = 0; j < ItemsPerUpdateTransaction && more; j++)
+                    {
+                        more = enumerator.MoveNext();
+                        if (more)
+                        {
+                            TDataContract data = Read(enumerator.Current.Read());
+                            Import(data, context);
+                        }
+                    }
+                    scope.Complete();
+                }
             }
         }
 

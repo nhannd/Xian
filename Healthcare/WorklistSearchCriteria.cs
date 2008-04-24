@@ -61,5 +61,17 @@ namespace ClearCanvas.Healthcare
                 return (ISearchCondition<string>)this.SubCriteria["Name"];
             }
         }
+
+        public ISearchCondition<string> FullClassName
+        {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("FullClassName"))
+                {
+                    this.SubCriteria["FullClassName"] = new SearchCondition<string>("FullClassName");
+                }
+                return (ISearchCondition<string>)this.SubCriteria["FullClassName"];
+            }
+        }
     }
 }

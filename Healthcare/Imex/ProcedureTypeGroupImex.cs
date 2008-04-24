@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core.Imex;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Core;
@@ -40,9 +41,11 @@ namespace ClearCanvas.Healthcare.Imex
 
         #region Overrides
 
-        protected override IEnumerable<ProcedureTypeGroup> GetItemsForExport(IReadContext context)
+        protected override IList<ProcedureTypeGroup> GetItemsForExport(IReadContext context, int firstRow, int maxRows)
         {
-            return context.GetBroker<IProcedureTypeGroupBroker>().FindAll();
+            ProcedureTypeGroupSearchCriteria where = new ProcedureTypeGroupSearchCriteria();
+            where.Name.SortAsc(0);
+            return context.GetBroker<IProcedureTypeGroupBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
         }
 
         protected override ProcedureTypeGroupData Export(ProcedureTypeGroup entity, IReadContext context)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core.Imex;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Core;
@@ -36,9 +37,15 @@ namespace ClearCanvas.Enterprise.Configuration.Imex
 
         #region Overrides
 
-        protected override IEnumerable<ConfigurationDocument> GetItemsForExport(IReadContext context)
+        protected override IList<ConfigurationDocument> GetItemsForExport(IReadContext context, int firstRow, int maxRows)
         {
-            return context.GetBroker<IConfigurationDocumentBroker>().FindAll();
+            ConfigurationDocumentSearchCriteria where = new ConfigurationDocumentSearchCriteria();
+            where.DocumentName.SortAsc(0);
+            where.DocumentVersionString.SortAsc(1);
+            where.User.SortAsc(2);
+            where.InstanceKey.SortAsc(3);
+
+            return context.GetBroker<IConfigurationDocumentBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
         }
 
         protected override ConfigurationData Export(ConfigurationDocument configDocument, IReadContext context)

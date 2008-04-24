@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Imex;
 using System.Runtime.Serialization;
@@ -29,7 +30,7 @@ namespace ClearCanvas.Healthcare.Imex
 
         #region Overrides
 		
-        protected override IEnumerable<DiagnosticServiceTreeNode> GetItemsForExport(IReadContext context)
+        protected override IList<DiagnosticServiceTreeNode> GetItemsForExport(IReadContext context, int firstRow, int maxRows)
         {
             IDiagnosticServiceTreeNodeBroker broker = context.GetBroker<IDiagnosticServiceTreeNodeBroker>();
 
@@ -37,7 +38,7 @@ namespace ClearCanvas.Healthcare.Imex
             DiagnosticServiceTreeNodeSearchCriteria where = new DiagnosticServiceTreeNodeSearchCriteria();
             where.Parent.IsNull();
 
-            DiagnosticServiceTreeNode rootNode = CollectionUtils.FirstElement(broker.Find(where));
+            DiagnosticServiceTreeNode rootNode = CollectionUtils.FirstElement(broker.Find(where, new SearchResultPage(firstRow, maxRows)));
             return new DiagnosticServiceTreeNode[] { rootNode };
         }
 

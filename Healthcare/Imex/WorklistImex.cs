@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core.Imex;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
@@ -156,9 +157,12 @@ namespace ClearCanvas.Healthcare.Imex
 
         #region Overrides
 
-        protected override IEnumerable<Worklist> GetItemsForExport(IReadContext context)
+        protected override IList<Worklist> GetItemsForExport(IReadContext context, int firstRow, int maxRows)
         {
-            return context.GetBroker<IWorklistBroker>().FindAll();
+            WorklistSearchCriteria where = new WorklistSearchCriteria();
+            where.Name.SortAsc(0);
+            where.FullClassName.SortAsc(1);
+            return context.GetBroker<IWorklistBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
         }
 
         protected override WorklistData Export(Worklist worklist, IReadContext context)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core.Imex;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Core;
@@ -50,9 +51,12 @@ namespace ClearCanvas.Healthcare.Imex
 
         #region Overrides
 
-        protected override IEnumerable<ProtocolGroup> GetItemsForExport(IReadContext context)
+        protected override IList<ProtocolGroup> GetItemsForExport(IReadContext context, int firstRow, int maxRows)
         {
-            return context.GetBroker<IProtocolGroupBroker>().FindAll();
+            ProtocolGroupSearchCriteria where = new ProtocolGroupSearchCriteria();
+            where.Name.SortAsc(0);
+
+            return context.GetBroker<IProtocolGroupBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
         }
 
         protected override ProtocolGroupData Export(ProtocolGroup group, IReadContext context)

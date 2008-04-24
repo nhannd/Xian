@@ -109,40 +109,36 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
             StreamWriter sw = null;
             XmlTextWriter writer = null;
-            using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Read))
+            foreach (IExportItem item in imex.Export())
             {
-                foreach (IExportItem item in imex.Export((IReadContext)PersistenceScope.Current))
+                if(itemCount % itemsPerFile == 0)
                 {
-                    if(itemCount % itemsPerFile == 0)
+                    // close current file
+                    if(writer != null)
                     {
-                        // close current file
-                        if(writer != null)
-                        {
-                            writer.WriteEndElement();
-                            writer.Close();
-                            sw.Close();
-                        }
-
-                        // start new file
-                        string file = oneFile ?  Path.Combine(directory, baseFileName)
-                            : Path.Combine(directory, baseFileName + (++fileCount));
-                        if (!file.EndsWith(".xml"))
-                            file += ".xml";
-
-                        // delete if already exists
-                        File.Delete(file);
-
-                        sw = new StreamWriter(File.OpenWrite(file));
-                        writer = new XmlTextWriter(sw);
-                        writer.Formatting = System.Xml.Formatting.Indented;
-                        writer.WriteStartElement(RootTag);
+                        writer.WriteEndElement();
+                        writer.Close();
+                        sw.Close();
                     }
 
-                    item.Write(writer);
+                    // start new file
+                    string file = oneFile ?  Path.Combine(directory, baseFileName)
+                        : Path.Combine(directory, baseFileName + (++fileCount));
+                    if (!file.EndsWith(".xml"))
+                        file += ".xml";
 
-                    itemCount++;
+                    // delete if already exists
+                    File.Delete(file);
+
+                    sw = new StreamWriter(File.OpenWrite(file));
+                    writer = new XmlTextWriter(sw);
+                    writer.Formatting = System.Xml.Formatting.Indented;
+                    writer.WriteStartElement(RootTag);
                 }
-                scope.Complete();
+
+                item.Write(writer);
+
+                itemCount++;
             }
             if (writer != null)
             {
@@ -175,12 +171,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
             else 
                 throw new ArgumentException(string.Format("{0} is not a valid source file or directory.", path));
 
-            using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
-            {
-                ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = imex.GetType().FullName;
-                imex.Import(ReadSourceFiles(fileList), (IUpdateContext)PersistenceScope.Current);
-                scope.Complete();
-            }
+            imex.Import(ReadSourceFiles(fileList));
         }
 
         /// <summary>

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core.Imex;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Core;
@@ -39,9 +40,11 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
 
         #region Overrides
 
-        protected override IEnumerable<User> GetItemsForExport(IReadContext context)
+        protected override IList<User> GetItemsForExport(IReadContext context, int firstRow, int maxRows)
         {
-            return context.GetBroker<IUserBroker>().FindAll();
+            UserSearchCriteria where = new UserSearchCriteria();
+            where.UserName.SortAsc(0);
+            return context.GetBroker<IUserBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
         }
 
         protected override UserData Export(User user, IReadContext context)

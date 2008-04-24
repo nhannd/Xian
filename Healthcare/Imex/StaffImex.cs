@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core.Imex;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Core;
@@ -48,9 +49,12 @@ namespace ClearCanvas.Healthcare.Imex
 
         #region Overrides
 
-        protected override IEnumerable<Staff> GetItemsForExport(IReadContext context)
+        protected override IList<Staff> GetItemsForExport(IReadContext context, int firstRow, int maxRows)
         {
-            return context.GetBroker<IStaffBroker>().FindAll();
+            StaffSearchCriteria where = new StaffSearchCriteria();
+            where.Id.SortAsc(0);
+
+            return context.GetBroker<IStaffBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
         }
 
         protected override StaffData Export(Staff entity, IReadContext context)

@@ -29,15 +29,13 @@ namespace ClearCanvas.Enterprise.Core.Imex
         /// <summary>
         /// Export all data as a set of <see cref="IExportItem"/>s.
         /// </summary>
-        /// <param name="context"></param>
         /// <returns></returns>
-        IEnumerable<IExportItem> Export(IReadContext context);
+        IEnumerable<IExportItem> Export();
 
         /// <summary>
         /// Import the specified set of <see cref="IImportItem"/>s.
         /// </summary>
         /// <param name="items"></param>
-        /// <param name="context"></param>
-        void Import(IEnumerable<IImportItem> items, IUpdateContext context);
+        void Import(IEnumerable<IImportItem> items);
     }
 }
