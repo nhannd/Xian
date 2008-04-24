@@ -53,6 +53,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         private ServerPartition _partition;
         private Study _study;
         private Patient _patient;
+        private string _tempPath;
         #endregion Private Members
 
         #region Public Properties
@@ -110,7 +111,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                     ctx.NewStudyXml = new DicomServices.Xml.StudyXml();
 
                     // output folder = temp\ImageServer\EditStudy\.....
-                    string destFolder = Path.GetTempPath();
+                    string destFolder = GetTempPath();
                     destFolder = Path.Combine(destFolder, "ImageServer");
                     destFolder = Path.Combine(destFolder, "EditStudy");
                     destFolder = Path.Combine(destFolder, Path.GetRandomFileName());
@@ -135,6 +136,24 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             {
                 PostProcessing(item, 0, !successful);
             }
+        }
+
+        
+        #endregion Public Methods
+
+        #region Private Methods
+
+        private string GetTempPath()
+        {
+            if (String.IsNullOrEmpty(_tempPath))
+            {
+                string root = Path.GetPathRoot(Path.GetTempPath());
+                _tempPath = Path.Combine(root, "temp");    
+            }
+            if (!Directory.Exists(_tempPath))
+                Directory.CreateDirectory(_tempPath);
+            
+            return _tempPath;
         }
 
         private void LoadEntities(Model.WorkQueue item)
@@ -164,12 +183,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             IPatientEntityBroker patientBroker = ReadContext.GetBroker<IPatientEntityBroker>();
             _patient = patientBroker.Load(_study.PatientKey);
 
-            Debug.Assert(Partition!=null);
+            Debug.Assert(Partition != null);
             Debug.Assert(Patient != null);
             Debug.Assert(Study != null);
         }
 
-        #endregion Public Methods
+        #endregion
 
         #region Protected Methods
 
