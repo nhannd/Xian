@@ -29,28 +29,58 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.VtkItkAdapters;
+using itk;
+using FilterType = itk.itkLaplacianSharpeningImageFilter;
 
 namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter
 {
-	public class ConvolutionKernel
+	[MenuAction("apply", "global-menus/MenuTools/MenuFilter/MenuLaplacianSharpening", "Apply")]
+	[MenuAction("apply", "imageviewer-filterdropdownmenu/MenuLaplacianSharpening", "Apply")]
+	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	public class LaplacianSharpeningImageFilterTool : ImageViewerTool
 	{
-		public ConvolutionKernel()
+        public LaplacianSharpeningImageFilterTool()
 		{
 
 		}
 
-		public int TopLeft = 0, TopMid = 0, TopRight = 0;
-		public int MidLeft = 0, Pixel = 1, MidRight = 0;
-		public int BottomLeft = 0, BottomMid = 0, BottomRight = 0;
-		public int Factor = 1;
-		public int Offset = 0;
-
-		public void SetAll(int nVal)
+		public void Apply()
 		{
-			TopLeft = TopMid = TopRight = MidLeft = Pixel = MidRight = BottomLeft = BottomMid = BottomRight = nVal;
+			if (this.SelectedImageGraphicProvider == null)
+				return;
+
+			ImageGraphic image = this.SelectedImageGraphicProvider.ImageGraphic;
+
+			if (image == null)
+				return;
+
+			if (!(image is GrayscaleImageGraphic))
+				return;
+
+            itkImageBase input = ItkHelper.CreateItkImage(image as GrayscaleImageGraphic);
+            itkImageBase output = itkImage.New(input);
+            ItkHelper.CopyToItkImage(image as GrayscaleImageGraphic, input);
+            
+            FilterType filter = FilterType.New(input, output);
+            filter.SetInput(input);
+
+            filter.Update();
+
+            filter.GetOutput(output);
+
+            ItkHelper.CopyFromItkImage(image as GrayscaleImageGraphic, output);
+            image.Draw();
+
+            filter.Dispose();
+            input.Dispose();
+            output.Dispose();
 		}
 	}
 }

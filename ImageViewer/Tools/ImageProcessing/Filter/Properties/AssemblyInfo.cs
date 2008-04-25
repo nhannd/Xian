@@ -30,15 +30,16 @@
 #endregion
 
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using ClearCanvas.Common;
+
 [assembly: AssemblyConfiguration("Release")]
 [assembly: AssemblyCompany("ClearCanvas Inc")]
 [assembly: AssemblyProduct("Image Viewer")]
 [assembly: AssemblyCopyright("Copyright (c) 2006-2008")]
 [assembly: AssemblyVersion("0.95.1815.10455")]
 [assembly: AssemblyFileVersion("0.95.1815.10455")]
-[assembly: ClearCanvas.Common.Plugin]
+[assembly: Plugin]
 [assembly: AssemblyTitle("Filter")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyTrademark("")]

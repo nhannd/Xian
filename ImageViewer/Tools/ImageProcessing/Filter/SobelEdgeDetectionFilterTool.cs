@@ -29,28 +29,26 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.Desktop;
-using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.VtkItkAdapters;
+using itk;
+using FilterType = itk.itkSobelEdgeDetectionImageFilter;
+using intensityFilterType = itk.itkRescaleIntensityImageFilter;
+using CastImageFilterType = itk.itkCastImageFilter;
 
 namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter
 {
-	[MenuAction("apply", "global-menus/MenuTools/MenuFilter/MenuEdgeDetection")]
-	[MenuAction("apply", "imageviewer-filterdropdownmenu/MenuEdgeDetection")]
-	[MenuAction("apply", "imageviewer-contextmenu/MenuFilter/MenuEdgeDetection")]
-	[ClickHandler("apply", "Apply")]
+	[MenuAction("apply", "global-menus/MenuTools/MenuFilter/MenuSobelEdgeDetection", "Apply")]
+	[MenuAction("apply", "imageviewer-filterdropdownmenu/MenuSobelEdgeDetection", "Apply")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[Tooltip("apply", "TooltipEdgeDetection")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class EdgeDetectionFilterTool : ImageViewerTool
+	public class SobelEdgeDetectionFilterTool : ImageViewerTool
 	{
-		public EdgeDetectionFilterTool()
+        public SobelEdgeDetectionFilterTool()
 		{
 
 		}
@@ -68,16 +66,40 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter
 			if (!(image is GrayscaleImageGraphic))
 				return;
 
-			ConvolutionKernel m = new ConvolutionKernel();
-			m.TopLeft = m.TopMid = m.TopRight = -1;
-			m.MidLeft = m.Pixel = m.MidRight = 0;
-			m.BottomLeft = m.BottomMid = m.BottomRight = 1;
+            byte[] pixels = image.PixelData.Raw;
 
-			m.Offset = 127;
+            itkImageBase input = ItkHelper.CreateItkImage(image as GrayscaleImageGraphic);
+            itkImageRegion region = input.LargestPossibleRegion;
 
-			ConvolutionFilter.Apply(image as GrayscaleImageGraphic, m);
+            itkImageBase output = itkImage.New(input);
+            ItkHelper.CopyToItkImage(image as GrayscaleImageGraphic, input);
 
-			image.Draw();
+            string mangledType = input.MangledTypeString;
+            string mangledType2 = input.PixelType.MangledTypeString;
+            CastImageFilterType castToIF2 = CastImageFilterType.New(mangledType + "IF2");
+            castToIF2.SetInput(input);
+
+            FilterType filter = FilterType.New("IF2IF2");
+            filter.SetInput(castToIF2.GetOutput());
+
+            intensityFilterType intensityFilter = intensityFilterType.New("IF2" + mangledType);
+            intensityFilter.SetInput(filter.GetOutput());
+            intensityFilter.OutputMinimum = 0;
+            if (image.BitsPerPixel == 16)
+                intensityFilter.OutputMaximum = (image as GrayscaleImageGraphic).ModalityLut.MaxInputValue;
+            else
+                intensityFilter.OutputMaximum = 255;
+            intensityFilter.Update();
+
+
+            intensityFilter.GetOutput(output);
+            ItkHelper.CopyFromItkImage(image as GrayscaleImageGraphic, output);
+            image.Draw();
+
+            filter.Dispose();
+            intensityFilter.Dispose();
+            input.Dispose();
+            output.Dispose();
 		}
 	}
 }

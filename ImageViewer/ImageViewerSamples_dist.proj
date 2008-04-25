@@ -10,8 +10,10 @@
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\ImageProcessing\RoiAnalysis\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.View.WinForms.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Volume\VTK\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Volume.VTK.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Volume\VTK\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Volume.VTK.View.WinForms.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\vtk\*.*" />
-	</ItemGroup>
+		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\*.*" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Itk\*.*" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\VtkItkAdapters\bin\$(Configuration)\ClearCanvas.ImageViewer.VtkItkAdapters.dll" />
+  </ItemGroup>
 
 	<Target Name="Copy Files">
     <!-- Run the image viewer build file -->

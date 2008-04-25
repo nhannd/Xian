@@ -30,18 +30,145 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ManagedITK.Calculators, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.Calculators.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.CastFilters, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.CastFilters.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.Common, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.Common.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.ComposeFilters, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.ComposeFilters.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.DistanceMaps, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.DistanceMaps.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.EdgeFilters, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.EdgeFilters.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.GradientFilters, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.GradientFilters.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.IntensityFilters, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.IntensityFilters.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.Interpolators, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.Interpolators.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.IO, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.IO.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.Iterators, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.Iterators.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.LevelSetFilters, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.LevelSetFilters.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.MorphologicalFilters, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.MorphologicalFilters.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.NoiseFilters, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.NoiseFilters.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.Optimizers, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.Optimizers.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.Paths, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.Paths.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.PixelMathFilters, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.PixelMathFilters.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.ProjectionFilters, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.ProjectionFilters.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.Registration, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.Registration.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.ResizeFilters, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.ResizeFilters.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.SpatialObjects, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.SpatialObjects.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.Statistics, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.Statistics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.ThresholdFilters, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.ThresholdFilters.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.Topology, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.Topology.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ManagedITK.Transforms, Version=3.4.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Itk\ManagedITK.Transforms.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConvolutionFilter.cs" />
-    <Compile Include="ConvolutionKernel.cs" />
-    <Compile Include="EdgeDetectionFilterTool.cs" />
+    <Compile Include="CannyEdgeDetectionFilterTool.cs" />
+    <Compile Include="FastMarchingSegmentationTool.cs" />
     <Compile Include="FilterTool.cs" />
-    <Compile Include="SharpeningFilterTool.cs" />
+    <Compile Include="GradientMagnitudeFilterTool.cs" />
+    <Compile Include="LaplacianSharpeningImageFilterTool.cs" />
+    <Compile Include="ShapeDetectionSegmentationTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SmoothingFilterTool.cs" />
+    <Compile Include="SmoothingRecursiveGaussianFilterTool.cs" />
+    <Compile Include="SobelEdgeDetectionFilterTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -67,6 +194,10 @@
     <ProjectReference Include="..\..\..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\VtkItkAdapters\ClearCanvas.ImageViewer.VtkItkAdapters.csproj">
+      <Project>{9C04C2BC-BB87-4286-A2A6-49523B677060}</Project>
+      <Name>ClearCanvas.ImageViewer.VtkItkAdapters</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

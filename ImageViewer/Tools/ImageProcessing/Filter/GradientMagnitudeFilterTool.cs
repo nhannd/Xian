@@ -30,27 +30,25 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.Desktop;
-using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.VtkItkAdapters;
+using itk;
+using FilterType = itk.itkGradientMagnitudeImageFilter;
+using intensityFilterType = itk.itkRescaleIntensityImageFilter;
 
 namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter
 {
-	[MenuAction("apply", "global-menus/MenuTools/MenuFilter/MenuSmoothing")]
-	[MenuAction("apply", "imageviewer-filterdropdownmenu/MenuSmoothing")]
-	[MenuAction("apply", "imageviewer-contextmenu/MenuFilter/MenuSmoothing")]
-	[ClickHandler("apply", "Apply")]
+	[MenuAction("apply", "global-menus/MenuTools/MenuFilter/MenuGradientMagnitude", "Apply")]
+	[MenuAction("apply", "imageviewer-filterdropdownmenu/MenuGradientMagnitude", "Apply")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[Tooltip("apply", "TooltipSmoothing")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class SmoothingFilterTool : ImageViewerTool
+	public class GradientMagnitudeFilterTool : ImageViewerTool
 	{
-		public SmoothingFilterTool()
+        public GradientMagnitudeFilterTool()
 		{
 
 		}
@@ -68,15 +66,31 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter
 			if (!(image is GrayscaleImageGraphic))
 				return;
 
-			int nWeight = 10;
-			ConvolutionKernel m = new ConvolutionKernel();
-			m.SetAll(1);
-			m.Pixel = nWeight;
-			m.Factor = nWeight + 8;
+            itkImageBase input = ItkHelper.CreateItkImage(image as GrayscaleImageGraphic);
+            itkImageBase output = itkImage.New(input);
+            ItkHelper.CopyToItkImage(image as GrayscaleImageGraphic, input);
+            
+            FilterType filter = FilterType.New(input, output);
+            filter.SetInput(input);
 
-			ConvolutionFilter.Apply(image as GrayscaleImageGraphic, m);
+            String mangledType = input.MangledTypeString;
+            intensityFilterType intensityFilter = intensityFilterType.New(mangledType + mangledType);
+            intensityFilter.SetInput(filter.GetOutput());
+            intensityFilter.OutputMinimum = 0;
+            if (image.BitsPerPixel == 16)
+                intensityFilter.OutputMaximum = 32767;
+            else
+                intensityFilter.OutputMaximum = 255;
+            intensityFilter.Update();
 
-			image.Draw();
+            intensityFilter.GetOutput(output);
+            ItkHelper.CopyFromItkImage(image as GrayscaleImageGraphic, output);
+            image.Draw();
+
+            filter.Dispose();
+            intensityFilter.Dispose();
+            input.Dispose();
+            output.Dispose();
 		}
 	}
 }

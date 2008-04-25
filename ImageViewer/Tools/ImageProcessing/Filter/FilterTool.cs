@@ -29,13 +29,10 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter
 {

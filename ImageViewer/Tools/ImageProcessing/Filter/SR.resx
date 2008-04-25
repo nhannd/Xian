@@ -120,11 +120,26 @@
   <data name="ExceptionActionBuilderMethodDoesNotExist" xml:space="preserve">
     <value>The method {0} does not exist for class {1}, or it does not have the correct signature.</value>
   </data>
+  <data name="MenuCannyEdgeDetection" xml:space="preserve">
+    <value>Canny Edge Detection</value>
+  </data>
   <data name="MenuEdgeDetection" xml:space="preserve">
     <value>Edge Detection</value>
   </data>
+  <data name="MenuFastMarchingSegmentation" xml:space="preserve">
+    <value>Fast Marching Segmentation</value>
+  </data>
   <data name="MenuFilter" xml:space="preserve">
     <value>Filter</value>
+  </data>
+  <data name="MenuGradientMagnitude" xml:space="preserve">
+    <value>Gradient Magnitude</value>
+  </data>
+  <data name="MenuLaplacianSharpening" xml:space="preserve">
+    <value>Laplacian Sharpening</value>
+  </data>
+  <data name="MenuShapeDetectionSegmentation" xml:space="preserve">
+    <value>Shape Detection Segmentation</value>
   </data>
   <data name="MenuSharpening" xml:space="preserve">
     <value>Sharpening</value>
@@ -132,16 +147,16 @@
   <data name="MenuSmoothing" xml:space="preserve">
     <value>Smoothing</value>
   </data>
+  <data name="MenuSmoothingRecursiveGaussian" xml:space="preserve">
+    <value>Smoothing Recursive Gaussian</value>
+  </data>
+  <data name="MenuSobelEdgeDetection" xml:space="preserve">
+    <value>Sobel Edge Detection</value>
+  </data>
+  <data name="MenuWatershed" xml:space="preserve">
+    <value>Watershed</value>
+  </data>
   <data name="ToolbarFilter" xml:space="preserve">
     <value>Filters</value>
-  </data>
-  <data name="TooltipEdgeDetection" xml:space="preserve">
-    <value>EdgeDetection Filter</value>
-  </data>
-  <data name="TooltipSharpening" xml:space="preserve">
-    <value>Sharpening Filter</value>
-  </data>
-  <data name="TooltipSmoothing" xml:space="preserve">
-    <value>Smoothing Filter</value>
   </data>
 </root>
