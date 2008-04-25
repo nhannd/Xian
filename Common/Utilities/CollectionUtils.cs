@@ -901,7 +901,20 @@ namespace ClearCanvas.Common.Utilities
         /// <returns></returns>
         public static List<T> Unique<T>(IEnumerable<T> target)
         {
-            Dictionary<T, T> set = new Dictionary<T, T>();
+            return Unique(target, null);
+        }
+
+        /// <summary>
+        /// Returns a new list containing only the unique elements of the target collection, preserving the order.
+        /// The specified <see cref="IEqualityComparer{T}"/> is used to determine uniqueness.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="target"></param>
+        /// <param name="comparer"></param>
+        /// <returns></returns>
+        public static List<T> Unique<T>(IEnumerable<T> target, IEqualityComparer<T> comparer)
+        {
+            Dictionary<T, T> set = comparer == null ? new Dictionary<T, T>() : new Dictionary<T, T>(comparer);
             List<T> result = new List<T>();
             bool resultContainsNull = false;
             foreach(T item in target)
@@ -932,7 +945,20 @@ namespace ClearCanvas.Common.Utilities
         /// <returns></returns>
         public static ArrayList Unique(IEnumerable target)
         {
-            Hashtable set = new Hashtable();
+            return Unique(target, null);
+        }
+
+
+        /// <summary>
+        /// Returns a new list containing only the unique elements of the target collection, preserving the order.
+        /// The specified <see cref="IEqualityComparer"/> is used to determine uniqueness.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="comparer"></param>
+        /// <returns></returns>
+        public static ArrayList Unique(IEnumerable target, IEqualityComparer comparer)
+        {
+            Hashtable set = comparer == null ? new Hashtable() : new Hashtable(comparer);
             ArrayList result = new ArrayList();
             bool resultContainsNull = false;
             foreach (object item in target)
