@@ -7,9 +7,6 @@
 <%@ Register TagPrefix="clearcanvas" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" 
     Assembly="ClearCanvas.ImageServer.Web.Common" %>
     
-
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="AjaxControlToolkit" %>
-
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="PagePanel" runat="server">
@@ -63,8 +60,8 @@
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="Schedule" Style="padding-right: 0px" />
-                                                <asp:ImageButton ID="ClearScheduleDateButton" runat="server" ImageUrl="~/images/icons/ClearSchedule.png" AlternateText="Clear Date" />
-                                                <asp:TextBox ID="ScheduleDate" runat="server" Width="100px" ReadOnly="true" ToolTip="Filter the list by Scheduled Date [dd/mm/yyyy]" />
+                                                <asp:ImageButton ID="ClearScheduleDateButton" runat="server" ImageUrl="~/images/icons/ClearDate.png" AlternateText="Clear Date" />
+                                                <asp:TextBox ID="ScheduleDate" runat="server" Width="100px" ReadOnly="true" ToolTip="Filter the list by Schedule Date [dd/mm/yyyy]" />
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label5" runat="server" Text="Type" Width="68px" Style="padding-right: 5px"
@@ -90,9 +87,9 @@
                                 </asp:Panel>
                             </asp:Panel>
                         </asp:Panel>
-                        <AjaxControlToolkit:CalendarExtender ID="CalendarExtender1" runat="server" TargetControlID="ScheduleDate"
+                        <aspAjax:CalendarExtender ID="CalendarExtender1" runat="server" TargetControlID="ScheduleDate"
                             CssClass="Calendar">
-                        </AjaxControlToolkit:CalendarExtender>
+                        </aspAjax:CalendarExtender>
                     </asp:TableHeaderCell>
                 </asp:TableHeaderRow>
                 <asp:TableRow>

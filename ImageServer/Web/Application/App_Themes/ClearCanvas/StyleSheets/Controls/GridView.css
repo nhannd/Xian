@@ -1,0 +1,98 @@
+/*************************************************************************************************
+	Gridview control background 
+*************************************************************************************************/
+
+
+/* Container for the gridview */
+.CSSGridViewPanelContainer
+{
+}
+
+/* border of the gridview */
+.CSSGridViewPanelBorder
+{
+}
+
+/* gridview content panel */
+.CSSGridViewPanelContent
+{
+}
+
+
+
+/* gridview control styling */
+.CSSGridView
+{
+}
+
+/* gridview control header row */
+.CSSGridHeader th
+{	
+	background-image: url(images/gridheaderbackground.png);
+	background-repeat: repeat-x;
+}
+
+/* gridview control row */
+.CSSGridRowStyle
+{
+	
+}
+
+/* gridview control cell */
+.CSSGridRowStyle td
+{
+	
+}
+
+/* Alternating row style */
+.CSSGridAlternatingRowStyle
+{
+	background-color:#F7F6F3;
+}
+
+/* Alternating row cell style */
+.CSSGridAlternatingRowStyle td
+{	
+	background-color:#F7F6F3;
+}
+
+
+/* gridview control selected row */
+.CSSGridSelectedRowStyle
+{
+	background-color:#316AC5;
+	 
+	
+}
+
+/* gridview cell of the selected row */
+.CSSGridSelectedRowStyle td
+{
+	
+}
+
+
+
+
+/*************************************************************************************************
+	Gridview Pager panel background
+*************************************************************************************************/
+
+
+/* Grid pager control panel container */
+.CSSGridPagerPanelContainer
+{
+}
+
+/* grid pager panel border */
+.CSSGridPagerPanelBorder
+{
+
+}
+
+/*grid pager panel content */
+.CSSGridPagerPanelContent
+{
+	background-image: url(images/gridheaderbackground.png);
+	background-repeat: repeat-x;
+}

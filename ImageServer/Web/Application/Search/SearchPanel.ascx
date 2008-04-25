@@ -50,44 +50,51 @@
                             <!-- need this table so that the filter panel container is fit to the content -->
                             <tr>
                                 <td>
-                                <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
-                            <asp:Panel ID="Panel5" runat="server" CssClass="CSSFilterPanelBorder">
-                                <asp:Panel ID="Panel6" runat="server"  CssClass="CSSFilterPanelContent" DefaultButton="FilterButton">
+                                <asp:Panel ID="FilterPanel" runat="server" CssClass="FilterPanelContainer">
+                                <asp:Panel ID="Panel6" runat="server"  CssClass="FilterPanelContent" DefaultButton="FilterButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label1" runat="server" Text="Patient Name" CssClass="CSSTextBoxLabel"
+                                                <asp:Label ID="Label1" runat="server" Text="Patient Name" CssClass="FilterTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="PatientName" runat="server" CssClass="CSSFilterTextBox" ToolTip="Filter the list by Patient Name" />
+                                                <asp:TextBox ID="PatientName" runat="server" CssClass="FilterTextBox" ToolTip="Filter the list by Patient Name" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label2" runat="server" Text="Patient ID" CssClass="CSSTextBoxLabel"
+                                                <asp:Label ID="Label2" runat="server" Text="Patient ID" CssClass="FilterTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="PatientId" runat="server" CssClass="CSSFilterTextBox" ToolTip="Filter the list by Patient Id" />
+                                                <asp:TextBox ID="PatientId" runat="server" CssClass="FilterTextBox" ToolTip="Filter the list by Patient Id" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label3" runat="server" Text="Accession#" CssClass="CSSTextBoxLabel"
+                                                <asp:Label ID="Label3" runat="server" Text="Accession#" CssClass="FilterTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="AccessionNumber" runat="server" CssClass="CSSFilterTextBox" ToolTip="Filter the list by Accession Number" />
+                                                <asp:TextBox ID="AccessionNumber" runat="server" CssClass="FilterTextBox" ToolTip="Filter the list by Accession Number" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label4" runat="server" Text="Description" CssClass="CSSTextBoxLabel"
-                                                    EnableViewState="False" /><br />
-                                                <asp:TextBox ID="StudyDescription" runat="server"  CssClass="CSSFilterTextBox" ToolTip="Filter the list by Study Description" />
+                                                <asp:Label ID="Label5" runat="server" Text="Study Date" CssClass="FilterTextBoxLabel" EnableViewState="false"/>
+                                                <asp:ImageButton ID="ClearStudyDateButton" runat="server" ImageUrl="~/images/icons/ClearDate.png" AlternateText="Clear Date" /><br />
+                                                <asp:TextBox ID="StudyDate" runat="server" CssClass="FilterTextBox" ReadOnly="true" style="background-color: #fefefe" ToolTip="Filter the list by Study Date [dd/mm/yyyy]" />
                                             </td>
-                                            <td align="right" valign="bottom" style="width: 57px">
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label4" runat="server" Text="Description" CssClass="FilterTextBoxLabel"
+                                                    EnableViewState="False" /><br />
+                                                <asp:TextBox ID="StudyDescription" runat="server"  CssClass="FilterTextBox" ToolTip="Filter the list by Study Description" />
+                                            </td>
+                                            <td align="right" valign="bottom">
+                                            <asp:Panel runat="server" CssClass="FilterButtonContainer">
                                                 <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png" 
                                                     OnClick="FilterButton_Click" ToolTip="Filter" />
+                                            </asp:Panel>
                                             </td>
                                         </tr>
                                     </table>
                                 </asp:Panel>
-                            </asp:Panel>
                         </asp:Panel>
                                 </td>
                             </tr>
                         </table>
-                        
+                        <aspAjax:CalendarExtender ID="StudyDateCalendarExtender" runat="server" TargetControlID="StudyDate"
+                            CssClass="Calendar">
+                        </aspAjax:CalendarExtender>
                     </asp:TableHeaderCell>
                 </asp:TableHeaderRow>
                 <asp:TableRow>

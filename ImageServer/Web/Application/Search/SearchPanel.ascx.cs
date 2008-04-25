@@ -37,6 +37,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Search.SearchPanel.js", "application/x-javascript")]
 
@@ -48,6 +49,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         #region Private members
         private ServerPartition _serverPartition;
         private StudyController _controller = new StudyController();
+        private string STUDYDATE_DATEFORMAT = "yyyyMMdd";
 
         #endregion Private members
 
@@ -164,6 +166,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
                 key = key.Replace("?", "_");
                 criteria.AccessionNumber.Like(key);
             }
+
+            if (!String.IsNullOrEmpty(StudyDate.Text))
+            {
+                string key = DateTime.ParseExact(StudyDate.Text, StudyDateCalendarExtender.Format, null).ToString(STUDYDATE_DATEFORMAT);
+                criteria.StudyDate.Like(key); 
+            }
+
             if (!String.IsNullOrEmpty(StudyDescription.Text))
             {
                 string key = StudyDescription.Text + "%";
@@ -181,6 +190,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         {
             base.OnInit(e);
 
+            StudyDateCalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
+
+            ClearStudyDateButton.OnClientClick = "document.getElementById('" + StudyDate.ClientID + "').value=''; return false;";
+            
             // setup child controls
             GridPager.ItemName = "Study";
             GridPager.PuralItemName = "Studies";
@@ -215,11 +228,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            StudyDate.Text = Request[StudyDate.UniqueID];
+            if (!String.IsNullOrEmpty(StudyDate.Text))
+                StudyDateCalendarExtender.SelectedDate = DateTime.ParseExact(StudyDate.Text, StudyDateCalendarExtender.Format, null);
+            else
+                StudyDateCalendarExtender.SelectedDate = null;
+            
             if (StudyListGridView.IsPostBack)
             {
                 LoadStudies();
-            }
-            
+            }        
         }
 
         protected override void OnPreRender(EventArgs e)

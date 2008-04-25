@@ -1,0 +1,89 @@
+/*==================================================
+ * Header Items (Main Menu and Location Panel)
+ *==================================================*/
+
+.MainMenuPanel
+{
+	background: url("../images/Header/MenuBackground.png") repeat-x;
+	height: 45px;
+	text-align: left;
+	font-family: Sans-Serif;
+	color: White;
+}
+
+.MainMenuContent
+{
+	padding: 21px 0px 0px 0px;
+	font-family: Sans-Serif;
+	font-weight: bold;
+}
+
+.StaticMenu
+{
+    color: White;
+    font-family: Sans-Serif;
+}
+
+.StaticMenuItem
+{
+    color: White;
+    margin: 0px 3px 0px 3px;
+    font-family: San-Serif;
+    text-align: center;
+}
+
+.StaticHover
+{
+    color: White;
+    background-color: #336699;
+}
+
+.StaticSelected
+{
+    color: White;
+}
+
+.DynamicMenu
+{
+    color: White;
+    font-family: Sans-Serif;
+}
+
+.DynamicMenuItem
+{
+    color: White;
+    background-color: #336699;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 3px 3px 3px 3px;
+}
+
+.DynamicHover
+{
+    color: White;
+    background-color: #999999;
+    padding: 3px 3px 3px 3px;
+}
+
+.DynamicSelected
+{
+    color: White;
+}
+    
+/* Location Panel and Content */
+
+.LocationPanel
+{
+	background: url(../images/Header/LocationBackground.png) repeat-x;
+	height: 18px;
+	z-index: -1;
+}
+
+.LocationPanelContent
+{
+    font-family: Sans-Serif;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 1px 10px 0px 10px;
+	
+}

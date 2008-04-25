@@ -573,6 +573,9 @@
     <Content Include="Admin\Configuration\ServiceLocks\ServiceLockGridView.ascx" />
     <Content Include="Admin\Configuration\ServiceLocks\ServiceLockPanel.ascx" />
     <Content Include="Admin\Configuration\ServiceLocks\ServiceLockPage.aspx" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Calendar\calendar-arrow-left.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Calendar\calendar-arrow-right.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\Calendar\TitleBackground.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG-left.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG-right.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG.gif" />
@@ -586,7 +589,10 @@
     <Content Include="App_Themes\ClearCanvas\images\Header\MenuBackground.png" />
     <Content Include="App_Themes\ClearCanvas\images\Header\LocationBackground.png" />
     <Content Include="App_Themes\ClearCanvas\images\Header\MenuEdge.png" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\GridView.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Global.css" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Header.css" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Filter.css" />
     <Content Include="Common\ConfirmationDialog.ascx" />
     <Content Include="Admin\Configuration\Devices\DevicePage.aspx" />
     <Content Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx" />
@@ -634,7 +640,7 @@
     <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG-left.png" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG-right.png" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG.png" />
-    <Content Include="images\icons\ClearSchedule.png" />
+    <Content Include="images\icons\ClearDate.png" />
     <Content Include="images\icons\EraserEnabled.png" />
     <Content Include="images\icons\ViewDetailsDisabled.png" />
     <Content Include="images\icons\ViewDetailsEnabled.png" />
@@ -772,6 +778,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Pages\" />
     <Folder Include="plugins\" />
     <Folder Include="Scripts\.svn\prop-base\" />
     <Folder Include="Scripts\.svn\props\" />
