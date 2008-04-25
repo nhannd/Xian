@@ -33,6 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\DeleteServerPartition.cs" />
     <Compile Include="Brokers\WebQueryWorkQueue.cs" />
     <Compile Include="Brokers\DeleteStudyStorage.cs" />
     <Compile Include="Brokers\InsertFilesystem.cs" />

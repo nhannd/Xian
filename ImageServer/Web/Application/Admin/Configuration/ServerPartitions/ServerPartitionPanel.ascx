@@ -5,7 +5,7 @@
     TagPrefix="uc2" %>
 <%@ Register TagPrefix="clearcanvas" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" 
     Assembly="ClearCanvas.ImageServer.Web.Common" %>
-
+ 
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
@@ -28,7 +28,13 @@
                                                         ID="EditToolbarButton" runat="server" 
                                                         EnabledImageURL="~/images/icons/EditEnabled.png" 
                                                         DisabledImageURL="~/images/icons/EditDisabled.png"
-                                                        OnClick="EditButton_Click" AlternateText="Edit a server partition"
+                                                        OnClick="EditButton_Click" AlternateText="Edit the server partition"
+                                                        />
+                                    <clearcanvas:ToolbarButton
+                                                        ID="DeleteToolbarButton" runat="server" 
+                                                        EnabledImageURL="~/images/icons/DeleteEnabled.png" 
+                                                        DisabledImageURL="~/images/icons/DeleteDisabled.png"
+                                                        OnClick="DeleteButton_Click" AlternateText="Delete the server partition"
                                                         />
                                 </asp:Panel>
                             </asp:Panel>

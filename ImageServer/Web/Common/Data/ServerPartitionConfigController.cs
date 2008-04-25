@@ -29,25 +29,18 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    /// <summary>
-    /// Defines the interface of a device configuration controller.
-    /// </summary>
-    public interface IServerPartitionConfigurationController
-    {
-        bool AddPartition(ServerPartition partition);
-        bool UpdatePartition(ServerPartition partition);
-        IList<ServerPartition> GetPartitions(ServerPartitionSelectCriteria criteria);
-        IList<ServerPartition> GetAllPartitions();
-    }
-
-    public class ServerPartitionConfigController : IServerPartitionConfigurationController
+    public class ServerPartitionConfigController
     {
         #region Private members
 
@@ -98,6 +91,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return result;
         }
 
+        
+
         /// <summary>
         /// Retrieves a list of <seealso cref="ServerPartition"/> matching the specified criteria.
         /// </summary>
@@ -116,6 +111,52 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return GetPartitions(new ServerPartitionSelectCriteria());
         }
 
+        /// <summary>
+        /// Checks if a specified partition can be deleted
+        /// </summary>
+        /// <param name="partition"></param>
+        /// <returns></returns>
+        public bool CanDelete(ServerPartition partition)
+        {
+            return partition.StudyCount == 0;
+        }
+
+
+        /// <summary>
+        /// Delete the specified partition
+        /// 
+        /// </summary>
+        /// <param name="partition"></param>
+        /// <returns></returns>
+        public bool Delete(ServerPartition partition)
+        {
+            Platform.Log(LogLevel.Info, "Deleting server partition: AETitle = {0}", partition.AeTitle);
+
+            try
+            {
+                using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                {
+                    IDeleteServerPartition broker = ctx.GetBroker<IDeleteServerPartition>();
+                    ServerPartitionDeleteParameters parms = new ServerPartitionDeleteParameters();
+                    parms.ServerPartitionKey = partition.GetKey();
+                    if (!broker.Execute(parms))
+                        throw new Exception("Unable to delete server partition from database");
+                    ctx.Commit();
+                }
+
+                Platform.Log(LogLevel.Info, "Server Partition deleted : AETitle = {0}", partition.AeTitle);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Info, e, "Failed to delete Server Partition: AETitle = {0}", partition.AeTitle);
+                return false;
+            }
+
+
+        }
+
         #endregion // public methods
+
     }
 }

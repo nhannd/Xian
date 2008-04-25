@@ -37,6 +37,13 @@
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Studies">
+                        <ItemTemplate>
+                            <asp:Label ID="Studies" runat="server" Text='<%# Bind("StudyCount") %>'></asp:Label>
+                        </ItemTemplate>
+                        <ItemStyle HorizontalAlign="Center" />
+                        <HeaderStyle HorizontalAlign="Center" />
+                    </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
                     <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
@@ -59,6 +66,9 @@
                             </asp:TableHeaderCell>
                             <asp:TableHeaderCell HorizontalAlign="Center">
                             Accept Any Device
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center">
+                            Studies
                             </asp:TableHeaderCell>
                         </asp:TableHeaderRow>
                     </asp:Table>

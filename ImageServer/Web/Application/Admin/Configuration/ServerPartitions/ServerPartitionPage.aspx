@@ -4,6 +4,7 @@
 
 <%@ Register Src="AddEditPartitionDialog.ascx" TagName="AddEditPartitionDialog" TagPrefix="uc2" %>
 <%@ Register Src="ServerPartitionPanel.ascx" TagName="ServerPartitionPanel" TagPrefix="uc1" %>
+<%@ Register Src="~/Common/ConfirmationDialog.ascx" TagName="ConfirmationDialog" TagPrefix="uc1" %>
 
 <asp:Content ID="LocationName" ContentPlaceHolderID="LocationNamePlaceHolder" runat="server">Configure > Service Partitions</asp:Content>
 
@@ -13,7 +14,9 @@
             <asp:Panel ID="Panel1" runat="server" CssClass="ContentPanel">
                 <uc1:ServerPartitionPanel ID="ServerPartitionPanel" runat="server"></uc1:ServerPartitionPanel>
             </asp:Panel>
-            <uc2:AddEditPartitionDialog ID="AddEditPartitionDialog1" runat="server" />
+            <uc2:AddEditPartitionDialog ID="AddEditPartitionDialog" runat="server" /> 
+            <uc1:ConfirmationDialog ID="deleteConfirmBox" runat="server" />       
+            <uc1:ConfirmationDialog ID="MessageBox" runat="server" />             
         </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>

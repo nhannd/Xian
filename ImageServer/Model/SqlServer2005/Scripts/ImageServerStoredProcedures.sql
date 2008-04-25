@@ -1239,7 +1239,7 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: November 19, 2007
--- Update date: January 9, 2008
+-- Update date: April 18, 2008
 -- Description:	Completely delete a Study from the database
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteStudyStorage] 
@@ -1303,6 +1303,9 @@ BEGIN
 
 	DELETE FROM StudyStorage
 	WHERE GUID = @StudyStorageGUID
+
+	UPDATE dbo.ServerPartition SET StudyCount=(SELECT COUNT(GUID) FROM dbo.Study WHERE ServerPartitionGUID=@ServerPartitionGUID)
+	WHERE GUID=@ServerPartitionGUID
 
 	COMMIT TRANSACTION
 
@@ -1520,7 +1523,7 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: August 17, 2007
--- Modified:    December 12, 2007
+-- Modified:    April 24, 2008
 -- Description:	
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertInstance] 
@@ -1681,6 +1684,9 @@ BEGIN
 		WHERE GUID = @SeriesGUID
 	END
 
+	UPDATE dbo.ServerPartition SET StudyCount=(SELECT COUNT(GUID) FROM dbo.Study WHERE ServerPartitionGUID=@ServerPartitionGUID)
+	WHERE GUID=@ServerPartitionGUID
+
 	COMMIT TRANSACTION
 
 	-- Return the resultant keys
@@ -1745,3 +1751,104 @@ END
 ' 
 END
 GO
+
+
+set ANSI_NULLS ON
+set QUOTED_IDENTIFIER ON
+go
+
+/****** Object:  StoredProcedure [dbo].[DeleteServerPartition]    Script Date: 04/24/2008 16:04:34 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteServerPartition]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: April 24, 2008
+-- Update date: April 24, 2008
+-- Description:	Completely delete a Server Partition from the database.
+				This involves deleting devies, rules, 
+-- =============================================
+CREATE PROCEDURE [dbo].[DeleteServerPartition] 
+	-- Add the parameters for the stored procedure here
+	@ServerPartitionGUID uniqueidentifier,
+	@DeleteStudies bit = 0
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	Declare @DeviceGUID uniqueidentifier
+	Declare @StudyStorageGUID uniqueidentifier
+
+	/* DELETE DEVICE AND RELATED TABLES */
+	DECLARE DeviceCursor Cursor For Select GUID from dbo.Device where ServerPartitionGUID=@ServerPartitionGUID
+	Open DeviceCursor
+	Fetch NEXT FROM DeviceCursor INTO @DeviceGUID
+	While (@@FETCH_STATUS <> -1)
+	BEGIN
+		-- PRINT ''Deleting DevicePreferredTransferSyntax''
+		delete dbo.DevicePreferredTransferSyntax where DeviceGUID=@DeviceGUID
+		--PRINT ''Deleting WorkQueueUid''
+		delete dbo.WorkQueueUid where WorkQueueGUID in (select GUID from dbo.WorkQueue where DeviceGUID=@DeviceGUID)
+		--PRINT ''Deleting WorkQueue''
+		delete dbo.WorkQueue where DeviceGUID=@DeviceGUID
+		Fetch NEXT FROM DeviceCursor INTO @DeviceGUID
+	END
+	CLOSE DeviceCursor
+	DEALLOCATE DeviceCursor	
+	--PRINT ''Deleting Device''
+	delete dbo.Device where ServerPartitionGUID=@ServerPartitionGUID
+
+	/* DELETE STUDYSTORAGE AND RELATED TABLES  */
+	DECLARE StudyStorageCursor Cursor For Select GUID from dbo.StudyStorage where ServerPartitionGUID=@ServerPartitionGUID
+	Open StudyStorageCursor
+	Fetch NEXT FROM StudyStorageCursor INTO @StudyStorageGUID
+	While (@@FETCH_STATUS <> -1)
+	BEGIN
+		--PRINT ''Deleting FilesystemQueue''
+		delete dbo.FilesystemQueue where StudyStorageGUID=@StudyStorageGUID
+		--PRINT ''Deleting StorageFilesystem''
+		delete dbo.StorageFilesystem where StudyStorageGUID=@StudyStorageGUID
+		--PRINT ''Deleting WorkQueueUid''
+		delete dbo.WorkQueueUid where WorkQueueGUID in (select GUID from dbo.WorkQueue where StudyStorageGUID=@StudyStorageGUID)
+		--PRINT ''Deleting WorkQueue''
+		delete dbo.WorkQueue where StudyStorageGUID=@StudyStorageGUID
+		Fetch NEXT FROM StudyStorageCursor INTO @StudyStorageGUID
+	END
+	CLOSE StudyStorageCursor
+	DEALLOCATE StudyStorageCursor	
+	--PRINT ''Deleting StudyStorage''
+	delete dbo.StudyStorage where ServerPartitionGUID=@ServerPartitionGUID
+	
+	/* DELETE WORKQUEUE AND RELATED TABLES */
+	--PRINT ''Deleting WorkQueueUid''
+	delete dbo.WorkQueueUid where WorkQueueGUID in (select GUID from dbo.WorkQueue where StudyStorageGUID=@StudyStorageGUID)
+	--PRINT ''Deleting WorkQueue''
+	delete dbo.WorkQueue where ServerPartitionGUID=@ServerPartitionGUID
+	--PRINT ''Deleting PartitionSopClass''
+	delete dbo.PartitionSopClass where ServerPartitionGUID=@ServerPartitionGUID
+	--PRINT ''Deleting ServerRule''
+	delete dbo.ServerRule where ServerPartitionGUID=@ServerPartitionGUID
+
+	IF @DeleteStudies=1
+	BEGIN
+		/* DELETE STUDY, PATIENT AND RELATED TABLES */
+		delete dbo.RequestAttributes where SeriesGUID in (Select GUID from dbo.Series where ServerPartitionGUID=@ServerPartitionGUID)
+		delete dbo.Series where ServerPartitionGUID=@ServerPartitionGUID
+		delete dbo.Study where ServerPartitionGUID=@ServerPartitionGUID
+		delete dbo.Patient where ServerPartitionGUID=@ServerPartitionGUID		
+	END
+
+	--PRINT ''Deleting ServerPartition''
+	delete dbo.ServerPartition where GUID=@ServerPartitionGUID
+	
+END
+' 
+END
+GO
+
+

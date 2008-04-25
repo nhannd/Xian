@@ -55,6 +55,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.Boolean _enabled;
         private System.String _partitionFolder;
         private System.Int32 _port;
+        private System.Int32 _studyCount;
         #endregion
 
         #region Public Properties
@@ -97,6 +98,11 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _port; }
         set { _port = value; }
+        }
+        public System.Int32 StudyCount
+        {
+        get { return _studyCount; }
+        set { _studyCount = value; }
         }
         #endregion
 

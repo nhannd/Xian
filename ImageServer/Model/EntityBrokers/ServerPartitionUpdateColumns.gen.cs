@@ -72,5 +72,9 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["Port"] = new EntityUpdateColumn<System.Int32>("Port", value); }
         }
+        public System.Int32 StudyCount
+        {
+            set { SubParameters["StudyCount"] = new EntityUpdateColumn<System.Int32>("StudyCount", value); }
+        }
     }
 }

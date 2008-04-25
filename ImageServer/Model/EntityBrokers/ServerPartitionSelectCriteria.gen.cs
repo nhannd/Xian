@@ -129,5 +129,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Int32>)SubCriteria["Port"];
             } 
         }
+        public ISearchCondition<System.Int32> StudyCount
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("StudyCount"))
+              {
+                 SubCriteria["StudyCount"] = new SearchCondition<System.Int32>("StudyCount");
+              }
+              return (ISearchCondition<System.Int32>)SubCriteria["StudyCount"];
+            } 
+        }
     }
 }

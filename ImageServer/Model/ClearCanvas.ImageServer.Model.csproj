@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\IDeleteServerPartition.cs" />
     <Compile Include="Brokers\IWebQueryWorkQueue.cs" />
     <Compile Include="Brokers\IDeleteStudyStorage.cs" />
     <Compile Include="Brokers\IInsertFilesystemQueue.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="FilesystemQueueTypeEnum.gen.cs" />
     <Compile Include="FilesystemTierEnum.gen.cs" />
     <Compile Include="Parameters\FilesystemInsertParameters.cs" />
+    <Compile Include="Parameters\ServerPartitionDeleteParameters.cs" />
     <Compile Include="Parameters\WebWorkQueueQueryParameters.cs" />
     <Compile Include="PartitionSopClass.cs" />
     <Compile Include="PartitionSopClass.gen.cs" />

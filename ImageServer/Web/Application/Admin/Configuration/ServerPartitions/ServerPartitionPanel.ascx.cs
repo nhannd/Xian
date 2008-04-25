@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         // list of partitions displayed in the list
         private IList<ServerPartition> _partitions = new List<ServerPartition>();
         // used for database interaction
-        private IServerPartitionConfigurationController _theController;
+        private ServerPartitionConfigController _theController;
         private ServerPartitionPage _enclosingPage;
 
         #endregion Private Members
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         }
 
         // Sets/Gets the controller used to retrieve load partitions.
-        public IServerPartitionConfigurationController Controller
+        public ServerPartitionConfigController Controller
         {
             get { return _theController; }
             set { _theController = value; }
@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
 
         protected void AddButton_Click(object sender, ImageClickEventArgs e)
         {
-            EnclosingPage.OnAddPartition();
+            EnclosingPage.AddPartition();
         }
 
         protected void EditButton_Click(object sender, ImageClickEventArgs e)
@@ -185,7 +185,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
 
             if (selectedPartition != null)
             {
-                EnclosingPage.OnEditPartition(selectedPartition);
+                EnclosingPage.EditPartition(selectedPartition);
+            }
+        }
+
+        protected void DeleteButton_Click(object sender, ImageClickEventArgs e)
+        {
+            ServerPartition selectedPartition =
+                ServerPartitionGridPanel.SelectedPartition;
+
+            if (selectedPartition != null)
+            {
+                EnclosingPage.DeletePartition(selectedPartition);
             }
         }
 
@@ -206,23 +217,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             LoadData();
             ServerPartitionGridPanel.UpdateUI();
 
-            ServerPartition parition = ServerPartitionGridPanel.SelectedPartition;
-            if (parition == null)
-            {
-                // no Partition being selected
-                EditToolbarButton.Enabled = false;
-            }
-            else
-            {
-                EditToolbarButton.Enabled = true;
-            }
+            ServerPartition partition = ServerPartitionGridPanel.SelectedPartition;
+            EditToolbarButton.Enabled = partition != null;
+            DeleteToolbarButton.Enabled = (partition != null && _theController.CanDelete(partition));
 
             UpdatePanel1.Update();
         }
 
         #endregion Public methods
-
-       
        
     }
 }

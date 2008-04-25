@@ -43,6 +43,7 @@ CREATE TABLE [dbo].[ServerPartition](
 	[AcceptAnyDevice] [bit] NOT NULL CONSTRAINT [DF_ServerPartition_AcceptAnyDevice]  DEFAULT ((1)),
 	[AutoInsertDevice] [bit] NOT NULL CONSTRAINT [DF_ServerPartition_AutoInsertDevice]  DEFAULT ((1)),
 	[DefaultRemotePort] [int] NOT NULL CONSTRAINT [DF_ServerPartition_DefaultRemotePort]  DEFAULT ((104)),
+	[StudyCount] [int] NOT NULL CONSTRAINT [DF_ServerPartition_StudyCount]  DEFAULT ((0)),
  CONSTRAINT [PK_ServerPartition] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
