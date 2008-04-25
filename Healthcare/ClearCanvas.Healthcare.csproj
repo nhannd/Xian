@@ -78,6 +78,7 @@
     <Compile Include="Alerts\LanguageAlert.cs" />
     <Compile Include="Alerts\NoteAlert.cs" />
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
+    <Compile Include="NoteboxFactory.cs" />
     <Compile Include="Imex\ExternalPractitionerImex.cs" />
     <Compile Include="Imex\FacilityImex.cs" />
     <Compile Include="Imex\ModalityImex.cs" />
@@ -89,8 +90,12 @@
     <Compile Include="Imex\SharedDataContracts.cs" />
     <Compile Include="Imex\StaffImex.cs" />
     <Compile Include="Imex\WorklistImex.cs" />
+    <Compile Include="INotebox.cs" />
+    <Compile Include="Brokers\IOrderNoteboxItemBroker.cs" />
     <Compile Include="Note.cs" />
     <Compile Include="NoteAcknowledgementException.cs" />
+    <Compile Include="Notebox.cs" />
+    <Compile Include="NoteboxItemSearchCriteria.cs" />
     <Compile Include="NoteReader.cs" />
     <Compile Include="NoteRecipient.cs" />
     <Compile Include="NoteReadActivity.cs" />
@@ -98,6 +103,8 @@
     <Compile Include="Imex\FacilityImporter.cs" />
     <Compile Include="Imex\ModalityImporter.cs" />
     <Compile Include="Imex\StaffImporter.cs" />
+    <Compile Include="OrderNoteboxes.cs" />
+    <Compile Include="OrderNoteboxItem.cs" />
     <Compile Include="ReportingProtocolWorklists.cs" />
     <Compile Include="ExternalPractitionerContactPoint.cs" />
     <Compile Include="IWorklistQueryContext.cs" />

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
@@ -16,6 +17,64 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
     [ServiceImplementsContract(typeof(IOrderNoteService))]
     public class OrderNoteService : ApplicationServiceBase, IOrderNoteService
     {
+        /// <summary>
+        /// Implementation of <see cref="IWorklistQueryContext"/>.
+        /// </summary>
+        class NoteboxQueryContext : INoteboxQueryContext
+        {
+            private readonly ApplicationServiceBase _applicationService;
+            private readonly SearchResultPage _page;
+
+            /// <summary>
+            /// Constructor.
+            /// </summary>
+            /// <param name="service"></param>
+            /// <param name="page"></param>
+            public NoteboxQueryContext(ApplicationServiceBase service, SearchResultPage page)
+            {
+                _applicationService = service;
+                _page = page;
+            }
+
+            #region INoteboxQueryContext Members
+
+            /// <summary>
+            /// Gets the current user <see cref="Healthcare.Staff"/> object.
+            /// </summary>
+            public Staff Staff
+            {
+                get { return _applicationService.CurrentUserStaff; }
+            }
+
+            /// <summary>
+            /// Gets the working <see cref="Facility"/> associated with the current user, or null if no facility is associated.
+            /// </summary>
+            public Facility WorkingFacility
+            {
+                get { return _applicationService.WorkingFacility; }
+            }
+
+            /// <summary>
+            /// Gets the <see cref="SearchResultPage"/> that specifies which page of the worklist is requested.
+            /// </summary>
+            public SearchResultPage Page
+            {
+                get { return _page; }
+            }
+
+            /// <summary>
+            /// Obtains an instance of the specified broker.
+            /// </summary>
+            /// <typeparam name="TBrokerInterface"></typeparam>
+            /// <returns></returns>
+            public TBrokerInterface GetBroker<TBrokerInterface>() where TBrokerInterface : IPersistenceBroker
+            {
+                return _applicationService.PersistenceContext.GetBroker<TBrokerInterface>();
+            }
+
+            #endregion
+        }
+        
         #region IOrderNoteService Members
 
         [ReadOperation]
@@ -24,71 +83,32 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.NoteboxClass, "request.NoteboxClass");
 
-            MrnAssembler mrnAssembler = new MrnAssembler();
-            PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            StaffAssembler staffAssembler = new StaffAssembler();
-            List<OrderNoteboxItemSummary> items;
-            if(request.NoteboxClass == "Inbox")
+            Notebox notebox = NoteboxFactory.Instance.CreateNotebox(request.NoteboxClass);
+            SearchResultPage page = new SearchResultPage(0, 100);
+            IList results = null;
+            if (request.QueryItems)
             {
-                NoteReadActivitySearchCriteria where1 = new NoteReadActivitySearchCriteria();
-                where1.Recipient.Staff.EqualTo(CurrentUserStaff);
-
-                NoteReadActivitySearchCriteria where2 = new NoteReadActivitySearchCriteria();
-                where2.Recipient.Group.In(CurrentUserStaff.Groups);
-
-                IList<NoteReadActivity> activities = PersistenceContext.GetBroker<INoteReadActivityBroker>().Find(
-                    new NoteReadActivitySearchCriteria[] {where1, where2});
-
-                items = CollectionUtils.Map<NoteReadActivity, OrderNoteboxItemSummary>(activities,
-                    delegate(NoteReadActivity a)
-                    {
-                        OrderNote note = a.Note.As<OrderNote>();
-                        return new OrderNoteboxItemSummary(
-                            note.GetRef(),
-                            note.Order.GetRef(),
-                            note.Order.Patient.GetRef(),
-                            mrnAssembler.CreateMrnDetail(CollectionUtils.FirstElement(note.Order.Patient.Profiles).Mrn),
-                            nameAssembler.CreatePersonNameDetail(CollectionUtils.FirstElement(note.Order.Patient.Profiles).Name),
-                            CollectionUtils.FirstElement(note.Order.Patient.Profiles).DateOfBirth,
-                            note.Order.AccessionNumber,
-                            note.Order.DiagnosticService.Name,
-                            note.Category,
-                            note.PostTime,
-                            staffAssembler.CreateStaffSummary(note.Author, PersistenceContext),
-                            a.IsAcknowledged
-                            );
-                    });
+                // get the first page, up to the default max number of items per page
+                results = notebox.GetItems(new NoteboxQueryContext(this, page));
             }
-            else if(request.NoteboxClass == "SentItems")
+
+            int count = -1;
+            if (request.QueryCount)
             {
-                OrderNoteSearchCriteria where = new OrderNoteSearchCriteria();
-                where.Author.EqualTo(CurrentUserStaff);
-                where.PostTime.IsNotNull();
-
-                IList<OrderNote> orderNotes = PersistenceContext.GetBroker<IOrderNoteBroker>().Find(where);
-                items = CollectionUtils.Map<OrderNote, OrderNoteboxItemSummary>(orderNotes,
-                    delegate(OrderNote note)
-                    {
-                        return new OrderNoteboxItemSummary(
-                            note.GetRef(),
-                            note.Order.GetRef(),
-                            note.Order.Patient.GetRef(),
-                            mrnAssembler.CreateMrnDetail(CollectionUtils.FirstElement(note.Order.Patient.Profiles).Mrn),
-                            nameAssembler.CreatePersonNameDetail(CollectionUtils.FirstElement(note.Order.Patient.Profiles).Name),
-                            CollectionUtils.FirstElement(note.Order.Patient.Profiles).DateOfBirth,
-                            note.Order.AccessionNumber,
-                            note.Order.DiagnosticService.Name,
-                            note.Category,
-                            note.PostTime,
-                            staffAssembler.CreateStaffSummary(note.Author, PersistenceContext),
-                            note.IsFullyAcknowledged
-                            );
-                    });
+                // if the items were already queried, and the number returned is less than the max per page,
+                // then there is no need to do a separate count query
+                if (results != null && results.Count < page.MaxRows)
+                    count = results.Count;
+                else
+                    count = notebox.GetItemCount(new NoteboxQueryContext(this, null));
             }
-            else 
-                throw new RequestValidationException(string.Format("{0} is not a valid notebox class name.", request.NoteboxClass));
 
-            return new QueryNoteboxResponse(items, items.Count);
+            OrderNoteboxItemAssembler assembler = new OrderNoteboxItemAssembler();
+            List<OrderNoteboxItemSummary> items = CollectionUtils.Map<OrderNoteboxItem, OrderNoteboxItemSummary>(
+                results,
+                delegate(OrderNoteboxItem item) { return assembler.CreateSummary(item, PersistenceContext); });
+
+            return new QueryNoteboxResponse(items, count);
         }
 
         [ReadOperation]
