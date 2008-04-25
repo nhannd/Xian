@@ -333,7 +333,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowAutoRoute")))
             {
                 img.ImageUrl = "~/images/icons/AutoRouteSmall.png";
-                img.AlternateText = "Store";
+                img.AlternateText = "Auto Route";
             }
             else
             {

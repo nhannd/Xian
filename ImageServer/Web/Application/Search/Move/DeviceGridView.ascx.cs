@@ -222,7 +222,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search.Move
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowAutoRoute")))
             {
                 img.ImageUrl = "~/images/icons/AutoRouteSmall.png";
-                img.AlternateText = "Store";
+                img.AlternateText = "Auto Route";
             }
             else
             {
