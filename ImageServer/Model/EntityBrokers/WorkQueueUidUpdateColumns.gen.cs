@@ -41,6 +41,22 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public WorkQueueUidUpdateColumns()
        : base("WorkQueueUid")
        {}
+        public System.Boolean Duplicate
+        {
+            set { SubParameters["Duplicate"] = new EntityUpdateColumn<System.Boolean>("Duplicate", value); }
+        }
+        public System.String Extension
+        {
+            set { SubParameters["Extension"] = new EntityUpdateColumn<System.String>("Extension", value); }
+        }
+        public System.Boolean Failed
+        {
+            set { SubParameters["Failed"] = new EntityUpdateColumn<System.Boolean>("Failed", value); }
+        }
+        public System.Int16 FailureCount
+        {
+            set { SubParameters["FailureCount"] = new EntityUpdateColumn<System.Int16>("FailureCount", value); }
+        }
        [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         public System.String SeriesInstanceUid
         {

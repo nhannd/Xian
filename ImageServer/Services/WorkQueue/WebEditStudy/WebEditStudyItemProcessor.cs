@@ -131,6 +131,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Error, e,"Unexpected exception occured while processing the WebEditStudy work queue item");
+                item.FailureDescription = e.Message;
             }
             finally
             {

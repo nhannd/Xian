@@ -75,5 +75,10 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { this.SubCriteria["ProcessorID"] = new ProcedureParameter<string>("ProcessorID", value); }
         }
 
+        public string FailureDescription
+        {
+            set { this.SubCriteria["FailureDescription"] = new ProcedureParameter<string>("FailureDescription", value); }
+        }
+
     }
 }

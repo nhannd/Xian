@@ -34,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brokers\DeleteServerPartition.cs" />
+    <Compile Include="Brokers\DeleteWorkQueue.cs" />
     <Compile Include="Brokers\WebQueryWorkQueue.cs" />
     <Compile Include="Brokers\DeleteStudyStorage.cs" />
     <Compile Include="Brokers\InsertFilesystem.cs" />
@@ -44,7 +45,6 @@
     <Compile Include="Brokers\QueryServiceLock.cs" />
     <Compile Include="Brokers\ResetServiceLock.cs" />
     <Compile Include="Brokers\ResetWorkQueue.cs" />
-    <Compile Include="Brokers\DeleteWorkQueueUid.cs" />
     <Compile Include="Brokers\InsertInstance.cs" />
     <Compile Include="Brokers\InsertRequestAttributes.cs" />
     <Compile Include="Brokers\InsertServerPartition.cs" />

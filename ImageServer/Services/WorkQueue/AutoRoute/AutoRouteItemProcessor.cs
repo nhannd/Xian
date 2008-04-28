@@ -87,8 +87,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             Device device = Device.Load(ReadContext, item.DeviceKey);
             if (device == null)
             {
-                Platform.Log(LogLevel.Error,
-                             "Unknown auto-route destination \"{0}\"", item.DeviceKey);
+                item.FailureDescription = String.Format("Unknown auto-route destination \"{0}\"", item.DeviceKey);
+                Platform.Log(LogLevel.Error,item.FailureDescription);
 
                 PostProcessing(item, WorkQueueUidList.Count, true);
                 return ;
@@ -96,8 +96,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
             if (device.Dhcp && device.IpAddress.Length == 0)
             {
+                item.FailureDescription = String.Format("Auto-route destination is a DHCP device with no known IP address: \"{0}\"", device.AeTitle);
                 Platform.Log(LogLevel.Error,
-                             "Auto-route destination is a DHCP device with no known IP address: \"{0}\"", device.AeTitle);
+                             item.FailureDescription);
 
                 PostProcessing(item, WorkQueueUidList.Count, true);
                 return;
@@ -132,11 +133,23 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                                             }
                                             if (foundUid != null)
                                             {
-                                                DeleteWorkQueueUid(foundUid);
-                                                WorkQueueUidList.Remove(foundUid);
+                                                if (instance.SendStatus.Status == DicomState.Failure)
+                                                {
+                                                    item.FailureDescription = instance.SendStatus.Description;
+                                                    foundUid.FailureCount++;
+                                                    UpdateWorkQueueUid(foundUid);
+                                                }
+                                                else
+                                                {
+                                                    DeleteWorkQueueUid(foundUid);
+                                                    WorkQueueUidList.Remove(foundUid);
+                                                }
                                             }
                                             if (instance.SendStatus.Equals(DicomStatuses.SOPClassNotSupported))
                                             {
+                                                item.FailureDescription =
+                                                    String.Format("SOP Class not supported by remote device: {0}",
+                                                                  instance.SopClass.Name);
                                                 Platform.Log(LogLevel.Warn,
                                                              "Unable to transfer SOP Instance, SOP Class is not supported by remote device: {0}",
                                                              instance.SopClass.Name);

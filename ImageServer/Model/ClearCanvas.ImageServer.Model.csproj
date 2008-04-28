@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brokers\IDeleteServerPartition.cs" />
+    <Compile Include="Brokers\IDeleteWorkQueue.cs" />
     <Compile Include="Brokers\IWebQueryWorkQueue.cs" />
     <Compile Include="Brokers\IDeleteStudyStorage.cs" />
     <Compile Include="Brokers\IInsertFilesystemQueue.cs" />
@@ -49,7 +50,6 @@
     <Compile Include="Brokers\IQueryServiceLock.cs" />
     <Compile Include="Brokers\IResetServiceLock.cs" />
     <Compile Include="Brokers\IResetWorkQueueItems.cs" />
-    <Compile Include="Brokers\IDeleteWorkQueueUid.cs" />
     <Compile Include="Brokers\IInsertFilesystem.cs" />
     <Compile Include="Brokers\IUpdateServiceLock.cs" />
     <Compile Include="Device.gen.cs" />
@@ -126,6 +126,7 @@
     <Compile Include="Parameters\FilesystemInsertParameters.cs" />
     <Compile Include="Parameters\ServerPartitionDeleteParameters.cs" />
     <Compile Include="Parameters\WebWorkQueueQueryParameters.cs" />
+    <Compile Include="Parameters\WorkQueueDeleteParameters.cs" />
     <Compile Include="PartitionSopClass.cs" />
     <Compile Include="PartitionSopClass.gen.cs" />
     <Compile Include="Patient.gen.cs" />
@@ -184,7 +185,6 @@
     <Compile Include="Parameters\WorkQueueQueryParameters.cs" />
     <Compile Include="Parameters\WorkQueueStudyProcessInsertParameters.cs" />
     <Compile Include="WorkQueueTypeEnum.gen.cs" />
-    <Compile Include="Parameters\WorkQueueUidDeleteParameters.cs" />
     <Compile Include="Parameters\WorkQueueUidQueryParameters.cs" />
     <Compile Include="WorkQueueUid.gen.cs" />
   </ItemGroup>

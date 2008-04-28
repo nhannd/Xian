@@ -380,6 +380,7 @@ CREATE TABLE [dbo].[WorkQueue](
 	[ScheduledTime] [datetime] NOT NULL,
 	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_WorkQueue_InsertTime]  DEFAULT (getdate()),
 	[FailureCount] [int] NOT NULL CONSTRAINT [DF_WorkQueue_FailureCount]  DEFAULT ((0)),
+	[FailureDescription] [nvarchar](256) NULL,
 	[Data] [xml] NULL,
  CONSTRAINT [PK_WorkQueue] PRIMARY KEY CLUSTERED 
 (
@@ -756,6 +757,10 @@ CREATE TABLE [dbo].[WorkQueueUid](
 	[WorkQueueGUID] [uniqueidentifier] NOT NULL,
 	[SeriesInstanceUid] [varchar](64) NULL,
 	[SopInstanceUid] [varchar](64) NULL,
+	[Failed] [bit] NOT NULL CONSTRAINT [DF_WorkQueueUid_Failed]  DEFAULT ((0)),
+	[Duplicate] [bit] NOT NULL CONSTRAINT [DF_WorkQueueUid_Duplicate]  DEFAULT ((0)),
+	[Extension] [varchar](10) NULL,
+	[FailureCount] [smallint] NOT NULL CONSTRAINT [DF_WorkQueueUid_FailureCount]  DEFAULT ((0)),
  CONSTRAINT [PK_WorkQueueUid] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC

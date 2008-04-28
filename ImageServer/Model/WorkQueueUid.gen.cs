@@ -48,12 +48,36 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
+        private System.Boolean _duplicate;
+        private System.String _extension;
+        private System.Boolean _failed;
+        private System.Int16 _failureCount;
         private System.String _seriesInstanceUid;
         private System.String _sopInstanceUid;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _workQueueKey;
         #endregion
 
         #region Public Properties
+        public System.Boolean Duplicate
+        {
+        get { return _duplicate; }
+        set { _duplicate = value; }
+        }
+        public System.String Extension
+        {
+        get { return _extension; }
+        set { _extension = value; }
+        }
+        public System.Boolean Failed
+        {
+        get { return _failed; }
+        set { _failed = value; }
+        }
+        public System.Int16 FailureCount
+        {
+        get { return _failureCount; }
+        set { _failureCount = value; }
+        }
         [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         public System.String SeriesInstanceUid
         {

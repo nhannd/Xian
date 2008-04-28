@@ -68,10 +68,6 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertInstance]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertInstance]
 GO
-/****** Object:  StoredProcedure [dbo].[DeleteWorkQueueUid]    Script Date: 01/08/2008 16:04:33 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteWorkQueueUid]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [dbo].[DeleteWorkQueueUid]
-GO
 /****** Object:  StoredProcedure [dbo].[QueryWorkQueueUids]    Script Date: 01/08/2008 16:04:34 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryWorkQueueUids]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryWorkQueueUids]
@@ -95,6 +91,14 @@ GO
 /****** Object:  StoredProcedure [dbo].[QueryStudyStorageLocation]    Script Date: 01/08/2008 16:04:34 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryStudyStorageLocation]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryStudyStorageLocation]
+GO
+/****** Object:  StoredProcedure [dbo].[DeleteWorkQueue]    Script Date: 04/26/2008 00:28:22 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteWorkQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[DeleteWorkQueue]
+GO
+/****** Object:  StoredProcedure [dbo].[DeleteServerPartition]    Script Date: 04/26/2008 00:28:22 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteServerPartition]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[DeleteServerPartition]
 GO
 /****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
 SET ANSI_NULLS ON
@@ -443,7 +447,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
+/****** Object:  StoredProcedure [dbo].[UpdateWorkQueue]    Script Date: 04/26/2008 00:28:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -466,7 +470,8 @@ CREATE PROCEDURE [dbo].[UpdateWorkQueue]
 	@WorkQueueStatusEnum smallint,
 	@FailureCount int,
 	@ExpirationTime datetime = null,
-	@ScheduledTime datetime = null
+	@ScheduledTime datetime = null,
+	@FailureDescription nvarchar(256) = null
 AS
 BEGIN
 
@@ -506,11 +511,23 @@ BEGIN
 		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
 		WHERE GUID = @StudyStorageGUID AND Lock = 1
 
-		UPDATE WorkQueue
-		SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
-			FailureCount = @FailureCount,
-			ProcessorID = @ProcessorID
-		WHERE GUID = @WorkQueueGUID
+		IF @FailureDescription is NULL
+		BEGIN
+			UPDATE WorkQueue
+			SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
+				FailureCount = @FailureCount,
+				ProcessorID = @ProcessorID
+			WHERE GUID = @WorkQueueGUID
+		END
+		ELSE
+		BEGIN
+			UPDATE WorkQueue
+			SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
+				FailureCount = @FailureCount,
+				ProcessorID = @ProcessorID,
+				FailureDescription = @FailureDescription
+			WHERE GUID = @WorkQueueGUID
+		END
 	END
 	ELSE if @WorkQueueStatusEnum = @PendingStatusEnum
 	BEGIN
@@ -1360,34 +1377,6 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[DeleteWorkQueueUid]    Script Date: 01/08/2008 16:04:33 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteWorkQueueUid]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'-- =============================================
--- Author:		Steve Wranovsky
--- Create date: August 17, 2007
--- Description:	Delete a WorkQueueUid entry
--- =============================================
-CREATE PROCEDURE [dbo].[DeleteWorkQueueUid] 
-	-- Add the parameters for the stored procedure here
-	@WorkQueueUidGUID uniqueidentifier
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    -- Do the delete
-	DELETE FROM WorkQueueUid 
-	WHERE GUID = @WorkQueueUidGUID
-END
-' 
-END
-GO
 /****** Object:  StoredProcedure [dbo].[QueryWorkQueueUids]    Script Date: 01/08/2008 16:04:34 ******/
 SET ANSI_NULLS ON
 GO
@@ -1769,7 +1758,7 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Create date: April 24, 2008
 -- Update date: April 24, 2008
 -- Description:	Completely delete a Server Partition from the database.
-				This involves deleting devies, rules, 
+--				This involves deleting devies, rules, 
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteServerPartition] 
 	-- Add the parameters for the stored procedure here
@@ -1850,5 +1839,88 @@ END
 ' 
 END
 GO
+/****** Object:  StoredProcedure [dbo].[DeleteWorkQueue]    Script Date: 04/26/2008 00:28:22 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteWorkQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: April 24, 2008
+-- Description:	Stored procedure for deleting WorkQueue entries
+-- =============================================
+CREATE PROCEDURE [dbo].[DeleteWorkQueue] 
+	-- Add the parameters for the stored procedure here
+	@WorkQueueGUID uniqueidentifier,
+	@ServerPartitionGUID uniqueidentifier,
+	@WorkQueueTypeEnum smallint,
+	@StudyStorageGUID uniqueidentifier
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
 
+	declare @StudyProcessTypeEnum as smallint
+	select @StudyProcessTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''StudyProcess''
+	declare @CleanupStudyTypeEnum as smallint
+	select @CleanupStudyTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''CleanupStudy''
+	
+	declare @PendingStatusEnum as smallint
+	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+	
+	BEGIN TRANSACTION
+
+	UPDATE StudyStorage
+		SET Lock = 1, LastAccessedTime = getdate()
+	WHERE 
+		Lock = 0 
+		AND GUID = @StudyStorageGUID
+
+	if (@@ROWCOUNT = 1)
+	BEGIN
+		-- Make sure we lock the study, so no one else can get it
+		COMMIT TRANSACTION
+
+		BEGIN TRANSACTION
+
+		IF (@workQueueTypeEnum != @StudyProcessTypeEnum)
+		BEGIN
+			DELETE FROM WorkQueueUid WHERE WorkQueueGUID = @WorkQueueGUID
+			DELETE FROM WorkQueue WHERE GUID = @WorkQueueGUID;
+		END
+		ELSE
+		BEGIN
+			declare @NewWorkQueueGUID uniqueidentifier
+			set @NewWorkQueueGUID = NEWID();
+
+			INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime)
+				values  (@NewWorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @CleanupStudyTypeEnum, @PendingStatusEnum, getdate(), getdate())
+
+			UPDATE WorkQueueUid set WorkQueueGUID = @NewWorkQueueGUID WHERE WorkQueueGUID = @WorkQueueGUID
+
+			DELETE FROM WorkQueue where GUID = @WorkQueueGUID
+		END			
+
+		UPDATE StudyStorage
+			SET Lock = 0, LastAccessedTime = getdate()
+		WHERE 
+			Lock = 1 
+			AND GUID = @StudyStorageGUID
+
+		COMMIT TRANSACTION
+	END
+	ELSE
+	BEGIN
+		ROLLBACK TRANSACTION
+		RAISERROR (N''Study could not be locked for deletion of WorkQueue entry.'', 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
+		RETURN 50000
+	END
+
+END
+' 
+END
+GO
 

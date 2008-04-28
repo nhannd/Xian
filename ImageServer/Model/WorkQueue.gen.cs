@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageServer.Model
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _deviceKey;
         private System.DateTime _expirationTime;
         private System.Int32 _failureCount;
+        private System.String _failureDescription;
         private System.DateTime _insertTime;
         private System.String _processorID;
         private System.DateTime _scheduledTime;
@@ -81,6 +82,11 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _failureCount; }
         set { _failureCount = value; }
+        }
+        public System.String FailureDescription
+        {
+        get { return _failureDescription; }
+        set { _failureDescription = value; }
         }
         public System.DateTime InsertTime
         {

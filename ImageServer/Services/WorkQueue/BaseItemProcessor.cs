@@ -40,6 +40,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
@@ -138,7 +139,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <returns>The maximum batch size for the <see cref="WorkQueue"/> item</returns>
         protected static int GetMaxBatchSize(Model.WorkQueue item)
         {
-            int maxSize = 0;
+            int maxSize;
 
             WorkQueueSettings settings = WorkQueueSettings.Default;
 
@@ -218,6 +219,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
                 if (failed)
                 {
+                    if (item.FailureDescription != null)
+                        parms.FailureDescription = item.FailureDescription;
+
                     parms.FailureCount = item.FailureCount + 1;
                     if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
                     {
@@ -242,7 +246,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 }
                 else
                 {
-                    DateTime scheduledTime = Platform.Time;
+                    DateTime scheduledTime;
 
                     if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("Low"))
                     {
@@ -312,12 +316,39 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 IUpdateContext updateContext =
                     PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                IDeleteWorkQueueUid delete = updateContext.GetBroker<IDeleteWorkQueueUid>();
+                IWorkQueueUidEntityBroker delete = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
 
-                WorkQueueUidDeleteParameters parms = new WorkQueueUidDeleteParameters();
-                parms.WorkQueueUidKey = sop.GetKey();
+                delete.Delete(sop.GetKey());
 
-                delete.Execute(parms);
+                updateContext.Commit();
+            }
+        }
+
+        /// <summary>
+        /// Update an entry in the <see cref="WorkQueueUid"/> table.
+        /// </summary>
+        /// <remarks>
+        /// Note that just the Duplicate, Failed, FailureCount, and Extension columns are updated from the
+        /// input parameter <paramref name="sop"/>.
+        /// </remarks>
+        /// <param name="sop">The <see cref="WorkQueueUid"/> entry to update.</param>
+        protected static void UpdateWorkQueueUid(WorkQueueUid sop)
+        {
+            using (
+                IUpdateContext updateContext =
+                    PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IWorkQueueUidEntityBroker update = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+
+                WorkQueueUidUpdateColumns columns = new WorkQueueUidUpdateColumns();
+
+                columns.Duplicate = sop.Duplicate;
+                columns.Failed = sop.Failed;
+                columns.FailureCount = sop.FailureCount;
+                if (sop.Extension != null)
+                    columns.Extension = sop.Extension;
+
+                update.Update(sop.GetKey(), columns);
 
                 updateContext.Commit();
             }

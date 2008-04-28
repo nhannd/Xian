@@ -31,14 +31,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -53,67 +51,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         #endregion
 
         #region Protected Methods
-
-        /// <summary>
-        /// Deletes all <see cref="WorkQueueUid"/> associated with a specified <see cref="WorkQueue"/>
-        /// </summary>
-        /// <param name="uctx">The update context for current operation</param>
-        /// <param name="item">The <see cref="WorkQueue"/> item whose <see cref="WorkQueueUid"/> to be deleted</param>
-        /// <param name="uidList">The list of <see cref="WorkQueueUid"/> to be deleted</param>
-        /// <param name="deleteFiles">A value indicating whether the DICOM files associated with the <see cref="WorkQueueUid"/> in the <paramref name="uidList"/> should be deleted as well</param>
-        /// <returns>a value indicating whether all <see cref="WorkQueueUid"/> in <paramref name="uidList"/> are deleted from the database. If <paramref name="deleteFiles"/> is 
-        /// <b>true</b> then the method returns a <b>true</b>only if all associated DICOM files are successfully deleted as well.</returns>
-        static protected bool DeleteWorkQueueUids(IUpdateContext uctx, WorkQueue item, IList<WorkQueueUid> uidList, bool deleteFiles)
-        {
-            bool result = true;
-            int fileCounter = 0;
-
-            StudyStorageLocation storage = GetLoadStorageLocation(uctx, item);
-
-            IWorkQueueUidEntityBroker workQueueUidBroker = uctx.GetBroker<IWorkQueueUidEntityBroker>();
-            try
-            {
-                Platform.Log(LogLevel.Debug, "Deleting work queue uid {0}", item.GetKey().Key);
-
-                foreach (WorkQueueUid uid in uidList)
-                {
-                    try
-                    {
-                        if (deleteFiles)
-                        {
-                            string path = Path.Combine(storage.GetStudyPath(), uid.SeriesInstanceUid);
-                            path = Path.Combine(path, uid.SopInstanceUid + ".dcm");
-                            File.Delete(path);
-
-                            fileCounter++;
-                        }
-
-
-                        if (false == workQueueUidBroker.Delete(uid.GetKey()))
-                        {
-                            result = false;
-                            break;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Platform.Log(LogLevel.Error, "DeleteWorkQueueUids(): Error occurred while trying to delete the work queue entry: GUID= {0}, Uid GUID={1}, Sop UID={2}. Error= {4}",
-                                     item.GetKey().Key, uid.GetKey().Key, uid.SopInstanceUid, e.StackTrace);
-                        return false;
-                    }
-                }
-            }
-            finally
-            {
-                if (deleteFiles)
-                    Platform.Log(LogLevel.Info, "{0} files deleted for work queue {0}", item.GetKey().Key);
-
-            }
-
-
-            return result;
-        }
-
 
         /// <summary>
         /// Gets the <see cref="StudyStorageLocation"/> for the study associated with the specified <see cref="WorkQueue"/> item.
@@ -209,10 +146,27 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 /* completed item */
                 || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("Completed"))
                 /* nobody claimed it */
-                || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress") && String.IsNullOrEmpty(item.ProcessorID))
+                ||
+                (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress") &&
+                 String.IsNullOrEmpty(item.ProcessorID))
                 /* somebody claimed it but hasn't updated it for quite a while */
-                || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress") && !String.IsNullOrEmpty(item.ProcessorID) &&
-                    item.ScheduledTime < Platform.Time.Subtract(TimeSpan.FromHours(12)));
+                ||
+                (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress") &&
+                 !String.IsNullOrEmpty(item.ProcessorID) &&
+                 item.ScheduledTime < Platform.Time.Subtract(TimeSpan.FromHours(12)))
+                // allow deletes of some pending entries
+                ||
+                (item.WorkQueueStatusEnum != WorkQueueStatusEnum.GetEnum("In Progress") &&
+                 item.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("WebMoveStudy"))
+                ||
+                (item.WorkQueueStatusEnum != WorkQueueStatusEnum.GetEnum("In Progress") &&
+                 item.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("WebEditStudy"))
+                ||
+                (item.WorkQueueStatusEnum != WorkQueueStatusEnum.GetEnum("In Progress") &&
+                 item.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("AutoRoute"))
+                ||
+                (item.WorkQueueStatusEnum != WorkQueueStatusEnum.GetEnum("In Progress") &&
+                 item.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("WebDeleteStudy"));
         }
 
 
@@ -229,7 +183,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             try
             {
-                IList<WorkQueue> list = null;
+                IList<WorkQueue> list;
                 
                 IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
 
@@ -256,10 +210,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <param name="items">The list of <see cref="WorkQueue"/> items to be deleted</param>
         /// <returns>A value indicating whether all items have been successfully deleted.</returns>
         /// 
-        /// <remarkks>
+        /// <remarks>
         /// If one or more <see cref="WorkQueue"/> in <paramref name="items"/> cannot be deleted, the method will return <b>false</b>
         /// and the deletion will be undone (i.e., All of the <see cref="WorkQueue"/> items will remain in the database)
-        /// </remarkks>
+        /// </remarks>
         public bool DeleteWorkQueueItems(IList<WorkQueue> items)
         {
             if (items == null || items.Count == 0)
@@ -267,44 +221,23 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             bool result = true;
 
-            WorkQueueTypeEnum StudyProcess = WorkQueueTypeEnum.GetEnum("StudyProcess");
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
             using (IUpdateContext uctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                IWorkQueueUidEntityBroker workQueueUidBroker = uctx.GetBroker<IWorkQueueUidEntityBroker>();
-                IWorkQueueEntityBroker workQueueBroker = uctx.GetBroker<IWorkQueueEntityBroker>();
+                IDeleteWorkQueue delete = uctx.GetBroker<IDeleteWorkQueue>();
                     
                 foreach (WorkQueue item in items)
                 {
-                    WorkQueueUidSelectCriteria criteria = new WorkQueueUidSelectCriteria();
-                    criteria.WorkQueueKey.EqualTo(item.GetKey());
+                    WorkQueueDeleteParameters parms = new WorkQueueDeleteParameters();
+                    parms.ServerPartitionKey = item.ServerPartitionKey;
+                    parms.StudyStorageKey = item.StudyStorageKey;
+                    parms.WorkQueueKey = item.GetKey();
+                    parms.WorkQueueTypeEnum = item.WorkQueueTypeEnum;
 
-                    IList<WorkQueueUid> unprocessedUids = workQueueUidBroker.Find(criteria);
-
-                    if (item.WorkQueueTypeEnum == StudyProcess)
+                    if (!delete.Execute(parms))
                     {
-                        result = DeleteWorkQueueUids(uctx, item, unprocessedUids, true);
-                    }
-                    else
-                    {
-                        result = DeleteWorkQueueUids(uctx, item, unprocessedUids, false);
-                    }
-
-                    if (result)
-                    {
-                        // if the entry is deleted while images are coming in, we may not be able to delete 
-                        // the work queue entry. Check to see if any new uids have been added before attempting to delete the entry.
-                        // Note: there's still small chance the problem still occurs
-                        unprocessedUids = workQueueUidBroker.Find(criteria);
-                        if (unprocessedUids==null || unprocessedUids.Count==0)
-                        {
-                            if (false == workQueueBroker.Delete(item.GetKey()))
-                            {
-                                result = false;
-                                break;
-                            }
-                        }
-                        
+                        Platform.Log(LogLevel.Error, "Unexpected error trying to delete WorkQueue entry");
+                        result = false;
                     }
                 }
 

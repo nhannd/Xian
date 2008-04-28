@@ -30,11 +30,30 @@
 #endregion
 
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Model.Brokers
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public interface IDeleteWorkQueueUid : IProcedureUpdateBroker<WorkQueueUidDeleteParameters>
+    public class WorkQueueDeleteParameters : ProcedureParameters
     {
+        public WorkQueueDeleteParameters()
+            : base("DeleteWorkQueue")
+        { }
+
+        public ServerEntityKey WorkQueueKey
+        {
+            set { this.SubCriteria["WorkQueueKey"] = new ProcedureParameter<ServerEntityKey>("WorkQueueKey", value); }
+        }
+        public ServerEntityKey ServerPartitionKey
+        {
+            set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
+        }
+        public WorkQueueTypeEnum WorkQueueTypeEnum
+        {
+            set { this.SubCriteria["WorkQueueTypeEnum"] = new ProcedureParameter<ServerEnum>("WorkQueueTypeEnum", value); }
+        }
+        public ServerEntityKey StudyStorageKey
+        {
+            set { this.SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
+        }
     }
 }

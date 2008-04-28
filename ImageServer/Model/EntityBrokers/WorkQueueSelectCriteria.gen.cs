@@ -85,6 +85,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Int32>)SubCriteria["FailureCount"];
             } 
         }
+        public ISearchCondition<System.String> FailureDescription
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("FailureDescription"))
+              {
+                 SubCriteria["FailureDescription"] = new SearchCondition<System.String>("FailureDescription");
+              }
+              return (ISearchCondition<System.String>)SubCriteria["FailureDescription"];
+            } 
+        }
         public ISearchCondition<System.DateTime> InsertTime
         {
             get

@@ -38,7 +38,6 @@ using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
-using ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
@@ -264,16 +263,51 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             foreach (WorkQueueUid sop in WorkQueueUidList)
             {
-                string path = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
-                path = Path.Combine(path, sop.SopInstanceUid + ".dcm");
+                string basePath = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
+                basePath = Path.Combine(basePath, sop.SopInstanceUid);
+                string path;
+                if (sop.Extension != null)
+                    path = basePath + "." + sop.Extension;
+                else
+                    path = basePath + ".dcm";
+
+                if (sop.Failed)
+                    continue;
+
+                if (sop.Duplicate)
+                    continue;  // TODO
 
                 try
                 {
-                    ProcessFile(item, path,studyXml);
+                    ProcessFile(item, path, studyXml);
                 }
                 catch (Exception e)
                 {
                     Platform.Log(LogLevel.Error, e, "Unexpected exception when processing file: {0} SOP Instance: {1}", path, sop.SopInstanceUid);
+                    if (e.InnerException != null)
+                        item.FailureDescription = e.InnerException.Message;
+                    else
+                        item.FailureDescription = e.Message;
+
+                    sop.FailureCount++;
+                    if (sop.FailureCount > WorkQueueSettings.Default.WorkQueueMaxFailureCount)
+                    {
+                        sop.Failed = true;
+                        if (sop.Extension != null)
+                        {
+                            string newPath;
+                            for (int i = 1;; i++)
+                            {
+                                sop.Extension = String.Format("fail{0}", 1);
+                                newPath = basePath + "." + sop.Extension;
+                                if (!File.Exists(newPath))
+                                    break;
+                            }
+
+                            File.Move(basePath, newPath);
+                        }
+                        UpdateWorkQueueUid(sop);
+                    }
                     continue;
                 }
 
@@ -281,7 +315,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                 // Delete it out of the queue
                 DeleteWorkQueueUid(sop);
-
             }
 
             if (successfulProcessCount == 0)

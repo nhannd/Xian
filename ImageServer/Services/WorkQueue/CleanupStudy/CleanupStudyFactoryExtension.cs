@@ -29,20 +29,34 @@
 
 #endregion
 
-using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Model.Parameters
+namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
 {
-    public class WorkQueueUidDeleteParameters : ProcedureParameters
+    [ExtensionOf(typeof(WorkQueueFactoryExtensionPoint))]
+    public class CleanupStudyFactoryExtension : IWorkQueueProcessorFactory
     {
-        public WorkQueueUidDeleteParameters()
-            : base("DeleteWorkQueueUid")
+        #region Private Members
+        #endregion
+
+        #region Constructors
+        public CleanupStudyFactoryExtension()
+        { }
+        #endregion
+
+        #region IWorkQueueProcessorFactory Members
+
+        public WorkQueueTypeEnum GetWorkQueueType()
         {
+            return WorkQueueTypeEnum.GetEnum("CleanupStudy");
         }
 
-        public ServerEntityKey WorkQueueUidKey
+        public IWorkQueueItemProcessor GetItemProcessor()
         {
-            set { this.SubCriteria["WorkQueueUidKey"] = new ProcedureParameter<ServerEntityKey>("WorkQueueUidKey", value); }
+            return new CleanupStudyItemProcessor();
         }
+
+        #endregion
     }
 }

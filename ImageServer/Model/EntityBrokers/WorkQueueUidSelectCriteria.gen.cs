@@ -41,6 +41,50 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public WorkQueueUidSelectCriteria()
         : base("WorkQueueUid")
         {}
+        public ISearchCondition<System.Boolean> Duplicate
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Duplicate"))
+              {
+                 SubCriteria["Duplicate"] = new SearchCondition<System.Boolean>("Duplicate");
+              }
+              return (ISearchCondition<System.Boolean>)SubCriteria["Duplicate"];
+            } 
+        }
+        public ISearchCondition<System.String> Extension
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Extension"))
+              {
+                 SubCriteria["Extension"] = new SearchCondition<System.String>("Extension");
+              }
+              return (ISearchCondition<System.String>)SubCriteria["Extension"];
+            } 
+        }
+        public ISearchCondition<System.Boolean> Failed
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Failed"))
+              {
+                 SubCriteria["Failed"] = new SearchCondition<System.Boolean>("Failed");
+              }
+              return (ISearchCondition<System.Boolean>)SubCriteria["Failed"];
+            } 
+        }
+        public ISearchCondition<System.Int16> FailureCount
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("FailureCount"))
+              {
+                 SubCriteria["FailureCount"] = new SearchCondition<System.Int16>("FailureCount");
+              }
+              return (ISearchCondition<System.Int16>)SubCriteria["FailureCount"];
+            } 
+        }
         public ISearchCondition<System.String> SeriesInstanceUid
         {
             get

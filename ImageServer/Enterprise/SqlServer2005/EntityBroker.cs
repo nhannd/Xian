@@ -739,6 +739,10 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 command.Connection = Context.Connection;
                 command.CommandType = CommandType.Text;
 
+                UpdateContext update = Context as UpdateContext;
+                if (update != null)
+                    command.Transaction = update.Transaction;
+
                 command.CommandText = sql = GetSelectCountSql(_entityName, command, criteria, null);
 
                 object result = command.ExecuteScalar();

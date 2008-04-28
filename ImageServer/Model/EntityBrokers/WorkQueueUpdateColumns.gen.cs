@@ -56,6 +56,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["FailureCount"] = new EntityUpdateColumn<System.Int32>("FailureCount", value); }
         }
+        public System.String FailureDescription
+        {
+            set { SubParameters["FailureDescription"] = new EntityUpdateColumn<System.String>("FailureDescription", value); }
+        }
         public System.DateTime InsertTime
         {
             set { SubParameters["InsertTime"] = new EntityUpdateColumn<System.DateTime>("InsertTime", value); }
