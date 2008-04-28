@@ -97,24 +97,24 @@ namespace ClearCanvas.Ris.Application.Services
             List<OrderNoteDetail.StaffRecipientDetail> staffRecipients = new List<OrderNoteDetail.StaffRecipientDetail>();
             List<OrderNoteDetail.GroupRecipientDetail> groupRecipients = new List<OrderNoteDetail.GroupRecipientDetail>();
 
-            // if the note has been posted, construct the recipients list from the ReadActivites, so we can get the ACK status
+            // if the note has been posted, construct the recipients list from the postings, so we can get the ACK status
             if (orderNote.IsPosted)
             {
-                foreach (NoteReadActivity readActivity in orderNote.ReadActivities)
+                foreach (NotePosting posting in orderNote.Postings)
                 {
-                    if(readActivity.Recipient.IsGroupRecipient)
+                    if(posting.Recipient.IsGroupRecipient)
                     {
                         groupRecipients.Add(
-                            CreateGroupRecipientDetail(readActivity.Recipient.Group,
-                                                       readActivity.IsAcknowledged,
-                                                       readActivity.AcknowledgedBy, context));
+                            CreateGroupRecipientDetail(posting.Recipient.Group,
+                                                       posting.IsAcknowledged,
+                                                       posting.AcknowledgedBy, context));
                     }
                     else
                     {
                         staffRecipients.Add(
-                            CreateStaffRecipientDetail(readActivity.Recipient.Staff,
-                                                       readActivity.IsAcknowledged,
-                                                       readActivity.AcknowledgedBy, context));
+                            CreateStaffRecipientDetail(posting.Recipient.Staff,
+                                                       posting.IsAcknowledged,
+                                                       posting.AcknowledgedBy, context));
                     }
                 }
             }
@@ -198,7 +198,7 @@ namespace ClearCanvas.Ris.Application.Services
         #region Helpers
 
         private OrderNoteDetail.GroupRecipientDetail CreateGroupRecipientDetail(StaffGroup group, bool acknowledged,
-            NoteReader acknowledgement, IPersistenceContext context)
+            NoteAcknowledgement acknowledgement, IPersistenceContext context)
         {
             StaffAssembler staffAssembler = new StaffAssembler();
             StaffGroupAssembler staffGroupAssembler = new StaffGroupAssembler();
@@ -210,7 +210,7 @@ namespace ClearCanvas.Ris.Application.Services
         }
 
         private OrderNoteDetail.StaffRecipientDetail CreateStaffRecipientDetail(Staff staff, bool acknowledged,
-            NoteReader acknowledgement, IPersistenceContext context)
+            NoteAcknowledgement acknowledgement, IPersistenceContext context)
         {
             StaffAssembler staffAssembler = new StaffAssembler();
             return new OrderNoteDetail.StaffRecipientDetail(

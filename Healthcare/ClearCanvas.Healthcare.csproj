@@ -96,9 +96,9 @@
     <Compile Include="NoteAcknowledgementException.cs" />
     <Compile Include="Notebox.cs" />
     <Compile Include="NoteboxItemSearchCriteria.cs" />
-    <Compile Include="NoteReader.cs" />
+    <Compile Include="NoteAcknowledgement.cs" />
     <Compile Include="NoteRecipient.cs" />
-    <Compile Include="NoteReadActivity.cs" />
+    <Compile Include="NotePosting.cs" />
     <Compile Include="Imex\ExternalPractitionerImporter.cs" />
     <Compile Include="Imex\FacilityImporter.cs" />
     <Compile Include="Imex\ModalityImporter.cs" />

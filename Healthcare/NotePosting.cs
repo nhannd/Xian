@@ -10,9 +10,9 @@ namespace ClearCanvas.Healthcare {
 
 
     /// <summary>
-    /// NoteReadActivity entity
+    /// NotePosting entity
     /// </summary>
-	public partial class NoteReadActivity : ClearCanvas.Enterprise.Core.Entity
+	public partial class NotePosting : ClearCanvas.Enterprise.Core.Entity
 	{
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace ClearCanvas.Healthcare {
             if(_isAcknowledged)
                 throw new WorkflowException("Already acknowledged.");
 
-            _acknowledgedBy = new NoteReader(acknowledgedBy, Platform.Time);
+            _acknowledgedBy = new NoteAcknowledgement(acknowledgedBy, Platform.Time);
             _isAcknowledged = true;
         }
 	

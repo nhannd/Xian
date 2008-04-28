@@ -16,7 +16,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         #region Hql Constants
 
         protected static readonly HqlSelect SelectNote = new HqlSelect("n");
-        protected static readonly HqlSelect SelectNoteReadAcknowledged = new HqlSelect("nr.IsAcknowledged");
+        protected static readonly HqlSelect SelectNoteReadAcknowledged = new HqlSelect("np.IsAcknowledged");
         protected static readonly HqlSelect SelectOrder = new HqlSelect("o");
         protected static readonly HqlSelect SelectPatient = new HqlSelect("p");
         protected static readonly HqlSelect SelectPatientProfile = new HqlSelect("pp");
@@ -24,8 +24,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         protected static readonly HqlJoin JoinOrder = new HqlJoin("n.Order", "o");
         protected static readonly HqlJoin JoinPatient = new HqlJoin("o.Patient", "p");
         protected static readonly HqlJoin JoinPatientProfile = new HqlJoin("p.Profiles", "pp");
-        protected static readonly HqlJoin JoinNoteReads = new HqlJoin("n.ReadActivities", "nr");
-        protected static readonly HqlJoin FetchJoinNoteReads = new HqlJoin("n.ReadActivities", "nr", HqlJoinMode.Inner, true);
+        protected static readonly HqlJoin JoinNoteReads = new HqlJoin("n.Postings", "np");
+        protected static readonly HqlJoin FetchJoinNoteReads = new HqlJoin("n.Postings", "np", HqlJoinMode.Inner, true);
 
         protected static readonly HqlCondition ConditionConstrainPatientProfile =
             new HqlCondition("pp.Mrn.AssigningAuthority = o.OrderingFacility.InformationAuthority");
@@ -157,11 +157,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             foreach (NoteboxItemSearchCriteria criteria in notebox.GetInvariantCriteria(nqc))
             {
                 HqlAnd and = new HqlAnd();
-                and.Conditions.Add(new HqlCondition("nr.IsAcknowledged = ?", criteria.IsAcknowledged));
+                and.Conditions.Add(new HqlCondition("np.IsAcknowledged = ?", criteria.IsAcknowledged));
                 if(criteria.SentToMe)
-                    and.Conditions.Add(new HqlCondition("nr.Recipient.Staff = ?", nqc.Staff));
+                    and.Conditions.Add(new HqlCondition("np.Recipient.Staff = ?", nqc.Staff));
                 if(criteria.SentToGroupIncludingMe)
-                    and.Conditions.Add(new HqlCondition("nr.Recipient.Group in (select elements(s.Groups) from Staff s where s = ?)", nqc.Staff));
+                    and.Conditions.Add(new HqlCondition("np.Recipient.Group in (select elements(s.Groups) from Staff s where s = ?)", nqc.Staff));
                 
                 or.Conditions.Add(and);
             }
@@ -188,12 +188,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 if(criteria.IsAcknowledged)
                 {
                     // condition is that *all* nr are acknowledged
-                    and.Conditions.Add(new HqlCondition("not exists (select nr1.IsAcknowledged from NoteReadActivity nr1 where nr1.Note = n and nr1.IsAcknowledged = ?)", false));
+                    and.Conditions.Add(new HqlCondition("not exists (select np1.IsAcknowledged from NotePosting np1 where np1.Note = n and np1.IsAcknowledged = ?)", false));
                 }
                 else
                 {
                     // condition is that *any* nr is not acknowledged
-                    and.Conditions.Add(new HqlCondition("exists (select nr1.IsAcknowledged from NoteReadActivity nr1 where nr1.Note = n and nr1.IsAcknowledged = ?)", false));
+                    and.Conditions.Add(new HqlCondition("exists (select np1.IsAcknowledged from NotePosting np1 where np1.Note = n and np1.IsAcknowledged = ?)", false));
                 }
 
                 if (criteria.SentByMe)

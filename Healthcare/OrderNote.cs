@@ -90,12 +90,12 @@ namespace ClearCanvas.Healthcare {
                     if(!note.IsPosted || note.Category != this.Category)
                         return false;
 
-                    return CollectionUtils.Contains(note.ReadActivities,
-                        delegate(NoteReadActivity reading)
+                    return CollectionUtils.Contains(note.Postings,
+                        delegate(NotePosting posting)
                         {
-                            return !reading.IsAcknowledged &&
-                                   (Equals(reading.Recipient.Staff, this.Author) ||
-                                    (reading.Recipient.Group != null && reading.Recipient.Group.Members.Contains(this.Author)));
+                            return !posting.IsAcknowledged &&
+                                   (Equals(posting.Recipient.Staff, this.Author) ||
+                                    (posting.Recipient.Group != null && posting.Recipient.Group.Members.Contains(this.Author)));
                         });
                 });
 

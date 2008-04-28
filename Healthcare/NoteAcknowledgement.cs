@@ -7,9 +7,9 @@ namespace ClearCanvas.Healthcare {
 
 
     /// <summary>
-    /// NoteReader component
+    /// NoteAcknowledgement component
     /// </summary>
-	public partial class NoteReader
+	public partial class NoteAcknowledgement
 	{
 	
 		/// <summary>

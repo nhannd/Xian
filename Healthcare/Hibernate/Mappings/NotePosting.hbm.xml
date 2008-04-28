@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
-	<class name="NoteReadActivity" proxy="NoteReadActivity" table="NoteReadActivity_">
+	<class name="NotePosting" proxy="NotePosting" table="NotePosting_">
 		<id name="OID" column="OID_" type="Guid">
 			<generator class="guid.comb"/>
 		</id>
@@ -12,7 +12,7 @@
       <many-to-one name="Group" column="RecipientGroupOID_" class="StaffGroup" fetch="join" not-null="false"/>
     </component>
     <property name="IsAcknowledged" column="IsAcknowledged_" type="Boolean"/>
-		<component name="AcknowledgedBy" class="NoteReader">
+		<component name="AcknowledgedBy" class="NoteAcknowledgement">
 			<many-to-one name="Staff" class="Staff" column="AcknowledgedByStaffOID_" not-null="false"/>
 			<property name="Time" column="AcknowledgedByTime_" type="DateTime" not-null="false"/>
 		</component>

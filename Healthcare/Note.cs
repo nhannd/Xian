@@ -42,7 +42,7 @@ namespace ClearCanvas.Healthcare {
             _author = author;
             _body = body;
             _recipients = new List<NoteRecipient>(recipients);
-            _readActivities = new HashedSet<NoteReadActivity>();
+            _postings = new HashedSet<NotePosting>();
 
             _creationTime = Platform.Time;
         }
@@ -67,8 +67,8 @@ namespace ClearCanvas.Healthcare {
         {
             get
             {
-                return IsPosted && CollectionUtils.TrueForAll(_readActivities,
-                    delegate(NoteReadActivity readActivity) { return readActivity.IsAcknowledged; });
+                return IsPosted && CollectionUtils.TrueForAll(_postings,
+                    delegate(NotePosting readActivity) { return readActivity.IsAcknowledged; });
             }
         }
 
@@ -101,8 +101,8 @@ namespace ClearCanvas.Healthcare {
 
 
             // find all un-acknowledged reading that this staff person could acknowledge
-            List<NoteReadActivity> acknowledgeableActivities = CollectionUtils.Select(_readActivities,
-                delegate(NoteReadActivity a)
+            List<NotePosting> acknowledgeableActivities = CollectionUtils.Select(_postings,
+                delegate(NotePosting a)
                 {
                     return !a.IsAcknowledged && (a.Recipient.Staff.Equals(staff) || a.Recipient.Group.Members.Contains(staff));
                 });
@@ -112,7 +112,7 @@ namespace ClearCanvas.Healthcare {
                 throw new NoteAcknowledgementException("The specified staff was either not a recipient of this note, or the note has already been acknowledged.");
 
             // acknowledge the reading
-            foreach (NoteReadActivity readActivity in acknowledgeableActivities)
+            foreach (NotePosting readActivity in acknowledgeableActivities)
             {
                 readActivity.Acknowledge(staff);
             }
@@ -147,8 +147,8 @@ namespace ClearCanvas.Healthcare {
             // create read activities for any recipients
             foreach (NoteRecipient recipient in _recipients)
             {
-                NoteReadActivity readActivity = new NoteReadActivity(this, recipient, false, null);
-                _readActivities.Add(readActivity);
+                NotePosting posting = new NotePosting(this, recipient, false, null);
+                _postings.Add(posting);
             }
 
             // give subclass a chance to do some processing

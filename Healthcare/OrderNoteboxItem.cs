@@ -60,8 +60,8 @@ namespace ClearCanvas.Healthcare
             _author = note.Author;
             _isAcknowledged = isAcknowledged;
 
-            _recipients = note.IsPosted ? CollectionUtils.Map<NoteReadActivity, NoteRecipient>(note.ReadActivities,
-                delegate (NoteReadActivity nr) { return nr.Recipient; }).ToArray() : new NoteRecipient[]{};
+            _recipients = note.IsPosted ? CollectionUtils.Map<NotePosting, NoteRecipient>(note.Postings,
+                delegate (NotePosting nr) { return nr.Recipient; }).ToArray() : new NoteRecipient[]{};
         }
 
         public EntityRef OrderNoteRef

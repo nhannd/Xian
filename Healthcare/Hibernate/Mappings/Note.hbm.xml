@@ -25,9 +25,9 @@
 			</composite-element>
 		</idbag>
     
-    <set name="ReadActivities" lazy="true" cascade="all-delete-orphan" fetch="subselect">
+    <set name="Postings" lazy="true" cascade="all-delete-orphan" fetch="subselect">
       <key column="NoteOID_"/>
-      <one-to-many class="NoteReadActivity"/>
+      <one-to-many class="NotePosting"/>
     </set>
   </class>
 </hibernate-mapping>
