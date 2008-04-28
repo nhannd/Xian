@@ -25,7 +25,7 @@
 			</composite-element>
 		</idbag>
     
-    <set name="ReadActivities" lazy="true" cascade="all-delete-orphan">
+    <set name="ReadActivities" lazy="true" cascade="all-delete-orphan" fetch="subselect">
       <key column="NoteOID_"/>
       <one-to-many class="NoteReadActivity"/>
     </set>

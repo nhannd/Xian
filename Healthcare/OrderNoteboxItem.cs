@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare
 {
@@ -20,35 +21,7 @@ namespace ClearCanvas.Healthcare
         private readonly DateTime? _postTime;
         private readonly Staff _author;
         private readonly bool _isAcknowledged;
-
-
-        public OrderNoteboxItem(
-            OrderNote orderNote,
-            Order order,
-            Patient patient,
-            PatientIdentifier mrn,
-            PersonName patientName,
-            DateTime? dateOfBirth,
-            string accessionNumber,
-            string diagnosticServiceName,
-            string category,
-            DateTime? postTime,
-            Staff author,
-            bool isAcknowledged)
-        {
-            this._orderNoteRef = orderNote.GetRef();
-            this._orderRef = order.GetRef();
-            this._patientRef = patient.GetRef();
-            this._mrn = mrn;
-            this._patientName = patientName;
-            this._dateOfBirth = dateOfBirth;
-            this._accessionNumber = accessionNumber;
-            this._diagnosticServiceName = diagnosticServiceName;
-            this._category = category;
-            this._postTime = postTime;
-            this._author = author;
-            this._isAcknowledged = isAcknowledged;
-        }
+        private NoteRecipient[] _recipients;
 
 
         /// <summary>
@@ -86,6 +59,9 @@ namespace ClearCanvas.Healthcare
             _postTime = note.PostTime;
             _author = note.Author;
             _isAcknowledged = isAcknowledged;
+
+            _recipients = note.IsPosted ? CollectionUtils.Map<NoteReadActivity, NoteRecipient>(note.ReadActivities,
+                delegate (NoteReadActivity nr) { return nr.Recipient; }).ToArray() : new NoteRecipient[]{};
         }
 
         public EntityRef OrderNoteRef
@@ -146,6 +122,11 @@ namespace ClearCanvas.Healthcare
         public bool IsAcknowledged
         {
             get { return _isAcknowledged; }
+        }
+
+        public NoteRecipient[] Recipients
+        {
+            get { return _recipients; }
         }
     }
 }

@@ -103,12 +103,19 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
                     count = notebox.GetItemCount(new NoteboxQueryContext(this, null));
             }
 
-            OrderNoteboxItemAssembler assembler = new OrderNoteboxItemAssembler();
-            List<OrderNoteboxItemSummary> items = CollectionUtils.Map<OrderNoteboxItem, OrderNoteboxItemSummary>(
-                results,
-                delegate(OrderNoteboxItem item) { return assembler.CreateSummary(item, PersistenceContext); });
+            if (request.QueryItems)
+            {
+                OrderNoteboxItemAssembler assembler = new OrderNoteboxItemAssembler();
+                List<OrderNoteboxItemSummary> items = CollectionUtils.Map<OrderNoteboxItem, OrderNoteboxItemSummary>(
+                    results,
+                    delegate(OrderNoteboxItem item) { return assembler.CreateSummary(item, PersistenceContext); });
 
-            return new QueryNoteboxResponse(items, count);
+                return new QueryNoteboxResponse(items, count);
+            }
+            else
+            {
+                return new QueryNoteboxResponse(new List<OrderNoteboxItemSummary>(), count);
+            }
         }
 
         [ReadOperation]

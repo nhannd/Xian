@@ -24,9 +24,13 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
         /// <param name="postTime"></param>
         /// <param name="author"></param>
         /// <param name="isAcknowledged"></param>
+        /// <param name="staffRecipients"></param>
+        /// <param name="groupRecipients"></param>
         public OrderNoteboxItemSummary(EntityRef orderNoteRef, EntityRef orderRef, EntityRef patientRef,
             CompositeIdentifierDetail mrn, PersonNameDetail patientName, DateTime? dateOfBirth, string accessionNumber,
-            string diagnosticServiceName, string category, DateTime? postTime, StaffSummary author, bool isAcknowledged)
+            string diagnosticServiceName, string category, DateTime? postTime, StaffSummary author, bool isAcknowledged,
+            List<StaffSummary> staffRecipients,
+            List<StaffGroupSummary> groupRecipients)
         {
             OrderNoteRef = orderNoteRef;
             OrderRef = orderRef;
@@ -40,6 +44,8 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
             PostTime = postTime;
             Author = author;
             IsAcknowledged = isAcknowledged;
+            StaffRecipients = staffRecipients;
+            GroupRecipients = groupRecipients;
         }
 
         /// <summary>
@@ -114,5 +120,17 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
         /// </summary>
         [DataMember]
         public bool IsAcknowledged;
+
+        /// <summary>
+        /// Gets the list of staff recipients.
+        /// </summary>
+        [DataMember]
+        public List<StaffSummary> StaffRecipients;
+
+        /// <summary>
+        /// Gets the list of group recipients.
+        /// </summary>
+        [DataMember]
+        public List<StaffGroupSummary> GroupRecipients;
     }
 }

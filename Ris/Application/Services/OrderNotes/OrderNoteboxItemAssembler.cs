@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.OrderNotes
 {
@@ -14,6 +15,19 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
             MrnAssembler mrnAssembler = new MrnAssembler();
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             StaffAssembler staffAssembler = new StaffAssembler();
+            StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
+
+            List<StaffSummary> staffRecipients = new List<StaffSummary>();
+            List<StaffGroupSummary> groupRecipients = new List<StaffGroupSummary>();
+
+            foreach (NoteRecipient recipient in item.Recipients)
+            {
+                if(recipient.Staff != null)
+                    staffRecipients.Add(staffAssembler.CreateStaffSummary(recipient.Staff, context));
+                if(recipient.Group != null)
+                    groupRecipients.Add(groupAssembler.CreateSummary(recipient.Group));
+            }
+
             return new OrderNoteboxItemSummary(
                 item.OrderNoteRef,
                 item.OrderRef,
@@ -26,7 +40,9 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
                 item.Category,
                 item.PostTime,
                 staffAssembler.CreateStaffSummary(item.Author, context),
-                item.IsAcknowledged);
+                item.IsAcknowledged,
+                staffRecipients,
+                groupRecipients);
         }
     }
 }

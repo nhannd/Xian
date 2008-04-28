@@ -26,9 +26,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         protected static readonly HqlJoin JoinPatientProfile = new HqlJoin("p.Profiles", "pp");
         protected static readonly HqlJoin JoinNoteReads = new HqlJoin("n.ReadActivities", "nr");
         protected static readonly HqlJoin FetchJoinNoteReads = new HqlJoin("n.ReadActivities", "nr", HqlJoinMode.Inner, true);
-        protected static readonly HqlJoin FetchJoinNoteReadsRecipStaff = new HqlJoin("n.ReadActivities.Recipient.Staff", null, HqlJoinMode.Inner, true);
-        protected static readonly HqlJoin FetchJoinNoteReadsRecipGroup = new HqlJoin("n.ReadActivities.Recipient.Group", null, HqlJoinMode.Inner, true);
-        protected static readonly HqlJoin FetchJoinNoteReadsAckStaff = new HqlJoin("n.ReadActivities.AcknowledgedBy.Staff", null, HqlJoinMode.Inner, true);
 
         protected static readonly HqlCondition ConditionConstrainPatientProfile =
             new HqlCondition("pp.Mrn.AssigningAuthority = o.OrderingFacility.InformationAuthority");
@@ -63,7 +60,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 JoinPatientProfile,
               };
 
-        private static readonly HqlJoin[] SentJoins
+        private static readonly HqlJoin[] SentItemJoins
             = {
                 JoinOrder,
                 JoinPatient,
@@ -97,19 +94,19 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList GetInboxItems(Notebox notebox, INoteboxQueryContext nqc)
         {
-            HqlProjectionQuery query = BuildInboxQuery(nqc, false);
+            HqlProjectionQuery query = BuildInboxQuery(notebox, nqc, false);
             return DoQuery(query);
         }
 
         public int CountInboxItems(Notebox notebox, INoteboxQueryContext nqc)
         {
-            HqlProjectionQuery query = BuildInboxQuery(nqc, true);
+            HqlProjectionQuery query = BuildInboxQuery(notebox, nqc, true);
             return DoQueryCount(query);
         }
 
         public IList GetSentItems(Notebox notebox, INoteboxQueryContext nqc)
         {
-            HqlProjectionQuery query = BuildSentQuery(nqc, false);
+            HqlProjectionQuery query = BuildSentQuery(notebox, nqc, false);
             List<OrderNoteboxItem> results = DoQuery(query);
 
             // because the "sent items" query involves a fetch join to a child collection,
@@ -119,7 +116,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int CountSentItems(Notebox notebox, INoteboxQueryContext nqc)
         {
-            HqlProjectionQuery query = BuildSentQuery(nqc, true);
+            HqlProjectionQuery query = BuildSentQuery(notebox, nqc, true);
             return DoQueryCount(query);
         }
 
@@ -127,61 +124,84 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region Helpers
 
-        private HqlProjectionQuery BuildInboxQuery(INoteboxQueryContext nqc, bool countQuery)
+        private HqlProjectionQuery GetBaseQuery(INoteboxQueryContext nqc, bool countQuery, HqlSelect[] itemProjection, HqlJoin[] joins)
         {
-            HqlProjectionQuery query = new HqlProjectionQuery(new HqlFrom(typeof(OrderNote).Name, "n", InboxJoins));
-            query.SelectDistinct = true;    // need this in case note was sent to staff and staffgroup containing same staff
+            HqlProjectionQuery query = new HqlProjectionQuery(new HqlFrom(typeof(OrderNote).Name, "n", joins));
             if (countQuery)
-                query.Selects.AddRange(CountProjection);
-            else
-                query.Selects.AddRange(InboxItemProjection);
-
-            HqlOr or = new HqlOr();
-            or.Conditions.Add(new HqlCondition("nr.Recipient.Staff = ?", nqc.Staff));
-            or.Conditions.Add(new HqlCondition("nr.Recipient.Group in (select elements(s.Groups) from Staff s where s = ?)", nqc.Staff));
-            query.Conditions.Add(or);
-            query.Conditions.Add(new HqlCondition("nr.IsAcknowledged = ?", false));
-
-            query.Conditions.Add(ConditionConstrainPatientProfile);
-
-            // add paging if not a count query
-            if (!countQuery)
             {
+                query.Selects.AddRange(CountProjection);
+            }
+            else
+            {
+                query.Selects.AddRange(itemProjection);
+
+                // need this in case note was sent to staff and staffgroup containing same staff
+                query.SelectDistinct = true;
+
+                // add paging if not a count query
                 query.Page = nqc.Page;
             }
+
+            // constrain patient profile by OrderingFacility (this is not ideal, but it is the easiest way to constrain the patient profile)
+            query.Conditions.Add(ConditionConstrainPatientProfile);
 
             return query;
         }
 
-        private HqlProjectionQuery BuildSentQuery(INoteboxQueryContext nqc, bool countQuery)
+
+        private HqlProjectionQuery BuildInboxQuery(Notebox notebox, INoteboxQueryContext nqc, bool countQuery)
         {
-            HqlProjectionQuery query = new HqlProjectionQuery(new HqlFrom(typeof(OrderNote).Name, "n", SentJoins));
-            if (countQuery)
+            HqlProjectionQuery query = GetBaseQuery(nqc, countQuery, InboxItemProjection, InboxJoins);
+
+            HqlOr or = new HqlOr();
+            foreach (NoteboxItemSearchCriteria criteria in notebox.GetInvariantCriteria(nqc))
             {
-                query.Selects.AddRange(CountProjection);
+                HqlAnd and = new HqlAnd();
+                and.Conditions.Add(new HqlCondition("nr.IsAcknowledged = ?", criteria.IsAcknowledged));
+                if(criteria.SentToMe)
+                    and.Conditions.Add(new HqlCondition("nr.Recipient.Staff = ?", nqc.Staff));
+                if(criteria.SentToGroupIncludingMe)
+                    and.Conditions.Add(new HqlCondition("nr.Recipient.Group in (select elements(s.Groups) from Staff s where s = ?)", nqc.Staff));
+                
+                or.Conditions.Add(and);
             }
-            else
+            query.Conditions.Add(or);
+
+            return query;
+        }
+
+        private HqlProjectionQuery BuildSentQuery(Notebox notebox, INoteboxQueryContext nqc, bool countQuery)
+        {
+            HqlProjectionQuery query = GetBaseQuery(nqc, countQuery, SentItemProjection, SentItemJoins);
+
+            // potential optimization by fetch joining the note-reads
+            // not sure if this actually improves performance or not
+            //if (!countQuery)
+            //    query.Froms[0].Joins.Add(FetchJoinNoteReads);
+
+            HqlOr or = new HqlOr();
+            foreach (NoteboxItemSearchCriteria criteria in notebox.GetInvariantCriteria(nqc))
             {
-                query.Selects.AddRange(SentItemProjection);
+                HqlAnd and = new HqlAnd();
 
-                // add fetch join for note-reads and related entities
-                // (we don't do this in the 'count' query because it would throw off the numbers)
-                query.Froms[0].Joins.Add(FetchJoinNoteReads);
-                //query.Froms[0].Joins.Add(FetchJoinNoteReadsRecipStaff);
-                //query.Froms[0].Joins.Add(FetchJoinNoteReadsRecipGroup);
-                //query.Froms[0].Joins.Add(FetchJoinNoteReadsAckStaff);
+                // for sent items, IsAcknowledged means fully acknowledged (all readers have acknowledged)
+                if(criteria.IsAcknowledged)
+                {
+                    // condition is that *all* nr are acknowledged
+                    and.Conditions.Add(new HqlCondition("not exists (select nr1.IsAcknowledged from NoteReadActivity nr1 where nr1.Note = n and nr1.IsAcknowledged = ?)", false));
+                }
+                else
+                {
+                    // condition is that *any* nr is not acknowledged
+                    and.Conditions.Add(new HqlCondition("exists (select nr1.IsAcknowledged from NoteReadActivity nr1 where nr1.Note = n and nr1.IsAcknowledged = ?)", false));
+                }
+
+                if (criteria.SentByMe)
+                    and.Conditions.Add(new HqlCondition("n.Author = ?", nqc.Staff));
+
+                or.Conditions.Add(and);
             }
-
-            query.Conditions.Add(new HqlCondition("n.Author = ?", nqc.Staff));
-            //query.Conditions.Add(new HqlCondition("where ? = all elements(nr.IsAcknowledged)", true));
-
-            query.Conditions.Add(ConditionConstrainPatientProfile);
-
-            // add paging if not a count query
-            if (!countQuery)
-            {
-                query.Page = nqc.Page;
-            }
+            query.Conditions.Add(or);
 
             return query;
         }
