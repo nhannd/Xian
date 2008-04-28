@@ -16,7 +16,7 @@ namespace ClearCanvas.Healthcare {
 	{
 
         /// <summary>
-        /// Marks this read-activity as being acknowledged.
+        /// Marks this posting as being acknowledged.
         /// </summary>
         /// <param name="acknowledgedBy"></param>
         protected virtual internal void Acknowledge(Staff acknowledgedBy)

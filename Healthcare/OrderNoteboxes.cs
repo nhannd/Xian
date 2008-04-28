@@ -7,15 +7,25 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare
 {
+    /// <summary>
+    /// Abstract base class for order-noteboxes.
+    /// </summary>
     public abstract class OrderNotebox : Notebox
     {
-        public IOrderNoteboxItemBroker GetBroker(INoteboxQueryContext nqc)
+        /// <summary>
+        /// Helper method to get a broker.
+        /// </summary>
+        /// <param name="nqc"></param>
+        /// <returns></returns>
+        protected IOrderNoteboxItemBroker GetBroker(INoteboxQueryContext nqc)
         {
             return nqc.GetBroker<IOrderNoteboxItemBroker>();
         }
-
     }
 
+    /// <summary>
+    /// Defines the order-note "Inbox".
+    /// </summary>
     [ExtensionOf(typeof(NoteboxExtensionPoint))]
     public class OrderNoteInbox : OrderNotebox
     {
@@ -44,6 +54,9 @@ namespace ClearCanvas.Healthcare
         }
     }
 
+    /// <summary>
+    /// Defines the order-note "Sent Items" box.
+    /// </summary>
     [ExtensionOf(typeof(NoteboxExtensionPoint))]
     public class OrderNoteSentItems : OrderNotebox
     {

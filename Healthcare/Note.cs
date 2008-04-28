@@ -68,7 +68,7 @@ namespace ClearCanvas.Healthcare {
             get
             {
                 return IsPosted && CollectionUtils.TrueForAll(_postings,
-                    delegate(NotePosting readActivity) { return readActivity.IsAcknowledged; });
+                    delegate(NotePosting posting) { return posting.IsAcknowledged; });
             }
         }
 
@@ -101,20 +101,20 @@ namespace ClearCanvas.Healthcare {
 
 
             // find all un-acknowledged reading that this staff person could acknowledge
-            List<NotePosting> acknowledgeableActivities = CollectionUtils.Select(_postings,
+            List<NotePosting> acknowledgeablePostings = CollectionUtils.Select(_postings,
                 delegate(NotePosting a)
                 {
                     return !a.IsAcknowledged && (a.Recipient.Staff.Equals(staff) || a.Recipient.Group.Members.Contains(staff));
                 });
 
             // if none, this is a workflow exception
-            if(acknowledgeableActivities.Count == 0)
+            if(acknowledgeablePostings.Count == 0)
                 throw new NoteAcknowledgementException("The specified staff was either not a recipient of this note, or the note has already been acknowledged.");
 
-            // acknowledge the reading
-            foreach (NotePosting readActivity in acknowledgeableActivities)
+            // acknowledge the posting
+            foreach (NotePosting posting in acknowledgeablePostings)
             {
-                readActivity.Acknowledge(staff);
+                posting.Acknowledge(staff);
             }
         }
 
@@ -144,7 +144,7 @@ namespace ClearCanvas.Healthcare {
         /// <param name="postTime"></param>
         private void Post(DateTime postTime)
         {
-            // create read activities for any recipients
+            // create postings for any recipients
             foreach (NoteRecipient recipient in _recipients)
             {
                 NotePosting posting = new NotePosting(this, recipient, false, null);
