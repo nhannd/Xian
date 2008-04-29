@@ -42,180 +42,181 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
-    /// <summary>
-    /// Implementation of <see cref="IReportingWorklistItemBroker"/>.
-    /// </summary>
-    [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class ReportingWorklistItemBroker : WorklistItemBrokerBase<WorklistItem>, IReportingWorklistItemBroker
-    {
-        #region HQL Constants
+	/// <summary>
+	/// Implementation of <see cref="IReportingWorklistItemBroker"/>.
+	/// </summary>
+	[ExtensionOf(typeof(BrokerExtensionPoint))]
+	public class ReportingWorklistItemBroker : WorklistItemBrokerBase<WorklistItem>, IReportingWorklistItemBroker
+	{
+		#region HQL Constants
 
-        private static readonly HqlSelect SelectReport = new HqlSelect("r");
-        private static readonly HqlJoin JoinReportPart = new HqlJoin("ps.ReportPart", "rpp", HqlJoinMode.Left);
-        private static readonly HqlJoin JoinReport = new HqlJoin("rpp.Report", "r", HqlJoinMode.Left);
+		private static readonly HqlSelect SelectReport = new HqlSelect("r");
+		private static readonly HqlJoin JoinReportPart = new HqlJoin("ps.ReportPart", "rpp", HqlJoinMode.Left);
+		private static readonly HqlJoin JoinReport = new HqlJoin("rpp.Report", "r", HqlJoinMode.Left);
 
-        #endregion
+		#endregion
 
-        #region IReportingWorklistItemBroker Members
+		#region IReportingWorklistItemBroker Members
 
-        /// <summary>
-        /// Maps the specified set of reporting steps to a corresponding set of reporting worklist items.
-        /// </summary>
-        /// <param name="reportingSteps"></param>
-        /// <returns></returns>
-        public IList<WorklistItem> GetWorklistItems(IEnumerable<ReportingProcedureStep> reportingSteps)
-        {
-            ReportingWorklistItemSearchCriteria[] worklistItemCriteria =
-                CollectionUtils.Map<ReportingProcedureStep, ReportingWorklistItemSearchCriteria>(reportingSteps,
-                delegate(ReportingProcedureStep ps)
-                {
-                    ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-                    criteria.ProcedureStepClass = typeof (ReportingProcedureStep);
-                    criteria.ProcedureStep.EqualTo(ps);
-                    return criteria;
-                }).ToArray();
+		/// <summary>
+		/// Maps the specified set of reporting steps to a corresponding set of reporting worklist items.
+		/// </summary>
+		/// <param name="reportingSteps"></param>
+		/// <returns></returns>
+		public IList<WorklistItem> GetWorklistItems(IEnumerable<ReportingProcedureStep> reportingSteps)
+		{
+			ReportingWorklistItemSearchCriteria[] worklistItemCriteria =
+				CollectionUtils.Map<ReportingProcedureStep, ReportingWorklistItemSearchCriteria>(reportingSteps,
+				delegate(ReportingProcedureStep ps)
+				{
+					ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+					criteria.ProcedureStepClass = typeof(ReportingProcedureStep);
+					criteria.ProcedureStep.EqualTo(ps);
+					criteria.TimeField = WorklistTimeField.ProcedureStartTime;
+					return criteria;
+				}).ToArray();
 
 
-            HqlProjectionQuery query = CreateBaseItemQuery(worklistItemCriteria);
-            AddConditions(query, worklistItemCriteria, true, false);
+			HqlProjectionQuery query = CreateBaseItemQuery(worklistItemCriteria);
+			AddConditions(query, worklistItemCriteria, true, false);
 
-            return DoQuery(query);
-        }
+			return DoQuery(query);
+		}
 
-        /// <summary>
-        /// Performs a search for modality worklist items using the specified criteria.
-        /// </summary>
-        /// <param name="where"></param>
-        /// <param name="page"></param>
-        /// <param name="showActiveOnly"></param>
-        /// <returns></returns>
-        public IList<WorklistItem> GetSearchResults(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly)
-        {
-            // ensure criteria are filtering on correct type of step, and display the correct time field
-            // ProcedureStartTime seems like a reasonable choice for rad homepage search,
-            // as it gives a general sense of when the procedure occured in time, regardless of the procedure step
-            CollectionUtils.ForEach(where,
-                delegate(WorklistItemSearchCriteria sc)
-                {
-                    sc.ProcedureStepClass = typeof(ReportingProcedureStep);
-                    sc.TimeField = WorklistTimeField.ProcedureStartTime;
-                });
+		/// <summary>
+		/// Performs a search for modality worklist items using the specified criteria.
+		/// </summary>
+		/// <param name="where"></param>
+		/// <param name="page"></param>
+		/// <param name="showActiveOnly"></param>
+		/// <returns></returns>
+		public IList<WorklistItem> GetSearchResults(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly)
+		{
+			// ensure criteria are filtering on correct type of step, and display the correct time field
+			// ProcedureStartTime seems like a reasonable choice for rad homepage search,
+			// as it gives a general sense of when the procedure occured in time, regardless of the procedure step
+			CollectionUtils.ForEach(where,
+				delegate(WorklistItemSearchCriteria sc)
+				{
+					sc.ProcedureStepClass = typeof(ReportingProcedureStep);
+					sc.TimeField = WorklistTimeField.ProcedureStartTime;
+				});
 
-            HqlProjectionQuery query = CreateBaseItemQuery(where);
-            query.Page = page;
-            BuildSearchQuery(query, where, showActiveOnly, false);
-            return DoQuery(query);
-        }
+			HqlProjectionQuery query = CreateBaseItemQuery(where);
+			query.Page = page;
+			BuildSearchQuery(query, where, showActiveOnly, false);
+			return DoQuery(query);
+		}
 
-        /// <summary>
-        /// Obtains a count of the number of results that a search using the specified criteria would return.
-        /// </summary>
-        /// <param name="where"></param>
-        /// <param name="showActiveOnly"></param>
-        /// <returns></returns>
-        public int CountSearchResults(WorklistItemSearchCriteria[] where, bool showActiveOnly)
-        {
-            // ensure criteria are filtering on correct type of step
-            CollectionUtils.ForEach(where,
-                delegate(WorklistItemSearchCriteria sc) { sc.ProcedureStepClass = typeof(ReportingProcedureStep); });
+		/// <summary>
+		/// Obtains a count of the number of results that a search using the specified criteria would return.
+		/// </summary>
+		/// <param name="where"></param>
+		/// <param name="showActiveOnly"></param>
+		/// <returns></returns>
+		public int CountSearchResults(WorklistItemSearchCriteria[] where, bool showActiveOnly)
+		{
+			// ensure criteria are filtering on correct type of step
+			CollectionUtils.ForEach(where,
+				delegate(WorklistItemSearchCriteria sc) { sc.ProcedureStepClass = typeof(ReportingProcedureStep); });
 
-            HqlProjectionQuery query = CreateBaseCountQuery(where);
-            BuildSearchQuery(query, where, showActiveOnly, true);
-            return DoQueryCount(query);
-        }
+			HqlProjectionQuery query = CreateBaseCountQuery(where);
+			BuildSearchQuery(query, where, showActiveOnly, true);
+			return DoQueryCount(query);
+		}
 
-        /// <summary>
-        /// Obtains a set of interpretation steps that are candidates for linked reporting to the specified interpretation step.
-        /// </summary>
-        /// <param name="step"></param>
-        /// <param name="interpreter"></param>
-        /// <returns></returns>
-        public IList<InterpretationStep> GetLinkedInterpretationCandidates(InterpretationStep step, Staff interpreter)
-        {
-            NHibernate.IQuery q = this.Context.GetNamedHqlQuery("linkedInterpretationCandidates");
-            q.SetParameter(0, step);
-            q.SetParameter(1, interpreter);
-            return q.List<InterpretationStep>();
-        }
+		/// <summary>
+		/// Obtains a set of interpretation steps that are candidates for linked reporting to the specified interpretation step.
+		/// </summary>
+		/// <param name="step"></param>
+		/// <param name="interpreter"></param>
+		/// <returns></returns>
+		public IList<InterpretationStep> GetLinkedInterpretationCandidates(InterpretationStep step, Staff interpreter)
+		{
+			NHibernate.IQuery q = this.Context.GetNamedHqlQuery("linkedInterpretationCandidates");
+			q.SetParameter(0, step);
+			q.SetParameter(1, interpreter);
+			return q.List<InterpretationStep>();
+		}
 
-        #endregion
+		#endregion
 
-        #region Overrides
+		#region Overrides
 
-        /// <summary>
-        /// Creates an <see cref="HqlProjectionQuery"/> that queries for worklist items based on the specified
-        /// procedure-step class.
-        /// </summary>
-        /// <param name="criteria"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// Subclasses may override this method to customize the query or return an entirely different query.
-        /// </remarks>
-        protected override HqlProjectionQuery CreateBaseItemQuery(WorklistItemSearchCriteria[] criteria)
-        {
-            Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
-            HqlProjectionQuery query = base.CreateBaseItemQuery(criteria);
-            ModifyQuery(query, procedureStepClass, false);
-            return query;
-        }
+		/// <summary>
+		/// Creates an <see cref="HqlProjectionQuery"/> that queries for worklist items based on the specified
+		/// procedure-step class.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Subclasses may override this method to customize the query or return an entirely different query.
+		/// </remarks>
+		protected override HqlProjectionQuery CreateBaseItemQuery(WorklistItemSearchCriteria[] criteria)
+		{
+			Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
+			HqlProjectionQuery query = base.CreateBaseItemQuery(criteria);
+			ModifyQuery(query, procedureStepClass, false);
+			return query;
+		}
 
-        /// <summary>
-        /// Creates an <see cref="HqlProjectionQuery"/> that queries for the count of worklist items based on the specified
-        /// procedure-step class.
-        /// </summary>
-        /// <param name="criteria"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// Subclasses may override this method to customize the query or return an entirely different query.
-        /// </remarks>
-        protected override HqlProjectionQuery CreateBaseCountQuery(WorklistItemSearchCriteria[] criteria)
-        {
-            Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
-            HqlProjectionQuery query = base.CreateBaseCountQuery(criteria);
-            ModifyQuery(query, procedureStepClass, true);
-            return query;
-        }
+		/// <summary>
+		/// Creates an <see cref="HqlProjectionQuery"/> that queries for the count of worklist items based on the specified
+		/// procedure-step class.
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Subclasses may override this method to customize the query or return an entirely different query.
+		/// </remarks>
+		protected override HqlProjectionQuery CreateBaseCountQuery(WorklistItemSearchCriteria[] criteria)
+		{
+			Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
+			HqlProjectionQuery query = base.CreateBaseCountQuery(criteria);
+			ModifyQuery(query, procedureStepClass, true);
+			return query;
+		}
 
-        #endregion
+		#endregion
 
-        #region Helpers
+		#region Helpers
 
-        private void ModifyQuery(HqlProjectionQuery query, Type stepClass, bool isCountQuery)
-        {
-            if(!isCountQuery)
-                query.Selects.Add(SelectProcedureStepState);
+		private void ModifyQuery(HqlProjectionQuery query, Type stepClass, bool isCountQuery)
+		{
+			if (!isCountQuery)
+				query.Selects.Add(SelectProcedureStepState);
 
-            HqlFrom from = query.Froms[0];
-            if (stepClass == typeof(ProtocolAssignmentStep))
-            {
-                from.Joins.Add(JoinProtocol);
-            }
-            else
-            {
-                // if this is a reporting step, rather than a protocoling step, include the report object
-                from.Joins.Add(JoinReportPart);
-                from.Joins.Add(JoinReport);
+			HqlFrom from = query.Froms[0];
+			if (stepClass == typeof(ProtocolAssignmentStep))
+			{
+				from.Joins.Add(JoinProtocol);
+			}
+			else
+			{
+				// if this is a reporting step, rather than a protocoling step, include the report object
+				from.Joins.Add(JoinReportPart);
+				from.Joins.Add(JoinReport);
 
-                if(!isCountQuery)
-                    query.Selects.Add(SelectReport);
-            }
-        }
+				if (!isCountQuery)
+					query.Selects.Add(SelectReport);
+			}
+		}
 
-        private void BuildSearchQuery(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool showActiveOnly, bool countQuery)
-        {
-            if (showActiveOnly)
-            {
-                query.Conditions.Add(new HqlCondition("ps.State in (?, ?)", ActivityStatus.SC, ActivityStatus.IP));
-            }
-            else // Active Set of RPS union with inactive set of verification Step
-            {
-                query.Conditions.Add(new HqlCondition("(ps.State in (?, ?) or (ps.class = PublicationStep and ps.State = ?))",
-                    ActivityStatus.SC, ActivityStatus.IP, ActivityStatus.CM));
-            }
+		private void BuildSearchQuery(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool showActiveOnly, bool countQuery)
+		{
+			if (showActiveOnly)
+			{
+				query.Conditions.Add(new HqlCondition("ps.State in (?, ?)", ActivityStatus.SC, ActivityStatus.IP));
+			}
+			else // Active Set of RPS union with inactive set of verification Step
+			{
+				query.Conditions.Add(new HqlCondition("(ps.State in (?, ?) or (ps.class = PublicationStep and ps.State = ?))",
+					ActivityStatus.SC, ActivityStatus.IP, ActivityStatus.CM));
+			}
 
-            AddConditions(query, where, true, countQuery);
-        }
+			AddConditions(query, where, true, countQuery);
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }
