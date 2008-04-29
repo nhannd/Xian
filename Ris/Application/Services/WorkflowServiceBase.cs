@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Application.Services
                 WorklistFactory.Instance.CreateWorklist(request.WorklistClass);
 
             IList results = null;
-            SearchResultPage page = new SearchResultPage(0, new WorklistSettings().DefaultItemsPerPage);
+            SearchResultPage page = new SearchResultPage(0, new WorklistSettings().ItemsPerPage);
             if(request.QueryItems)
             {
                 // get the first page, up to the default max number of items per page

@@ -16,7 +16,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         #region Hql Constants
 
         protected static readonly HqlSelect SelectNote = new HqlSelect("n");
-        protected static readonly HqlSelect SelectNoteReadAcknowledged = new HqlSelect("np.IsAcknowledged");
+        protected static readonly HqlSelect SelectNotePostingAcknowledged = new HqlSelect("np.IsAcknowledged");
+        protected static readonly HqlSelect SelectNoteFullyAcknowledged = new HqlSelect("n.IsFullyAcknowledged");
         protected static readonly HqlSelect SelectOrder = new HqlSelect("o");
         protected static readonly HqlSelect SelectPatient = new HqlSelect("p");
         protected static readonly HqlSelect SelectPatientProfile = new HqlSelect("pp");
@@ -24,8 +25,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         protected static readonly HqlJoin JoinOrder = new HqlJoin("n.Order", "o");
         protected static readonly HqlJoin JoinPatient = new HqlJoin("o.Patient", "p");
         protected static readonly HqlJoin JoinPatientProfile = new HqlJoin("p.Profiles", "pp");
-        protected static readonly HqlJoin JoinNoteReads = new HqlJoin("n.Postings", "np");
-        protected static readonly HqlJoin FetchJoinNoteReads = new HqlJoin("n.Postings", "np", HqlJoinMode.Inner, true);
+        protected static readonly HqlJoin JoinNotePostings = new HqlJoin("n.Postings", "np");
+
+
 
         protected static readonly HqlCondition ConditionConstrainPatientProfile =
             new HqlCondition("pp.Mrn.AssigningAuthority = o.OrderingFacility.InformationAuthority");
@@ -36,7 +38,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 SelectOrder,
                 SelectPatient,
                 SelectPatientProfile,
-                SelectNoteReadAcknowledged
+                SelectNotePostingAcknowledged
               };
 
         private static readonly HqlSelect[] SentItemProjection
@@ -44,7 +46,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 SelectNote,
                 SelectOrder,
                 SelectPatient,
-                SelectPatientProfile
+                SelectPatientProfile,
+                SelectNoteFullyAcknowledged
               };
 
         private static readonly HqlSelect[] CountProjection
@@ -54,7 +57,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         private static readonly HqlJoin[] InboxJoins
             = {
-                JoinNoteReads,
+                JoinNotePostings,
                 JoinOrder,
                 JoinPatient,
                 JoinPatientProfile,
@@ -67,26 +70,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 JoinPatientProfile,
               };
 
-        #endregion
+        private static readonly HqlSort[] InboxItemOrdering
+           = {
+                    new HqlSort("np.IsAcknowledged", true, 0),
+                    new HqlSort("n.PostTime", false, 1)
+              };
 
-        #region SentItemEqualityComparer class
-
-        class SentItemEqualityComparer : IEqualityComparer<OrderNoteboxItem>
-        {
-
-            #region IEqualityComparer Members
-
-            public bool Equals(OrderNoteboxItem x, OrderNoteboxItem y)
-            {
-                return x.OrderNoteRef.Equals(y.OrderNoteRef, true);
-            }
-            public int GetHashCode(OrderNoteboxItem obj)
-            {
-                return obj.OrderNoteRef.GetHashCode();
-            }
-
-            #endregion
-        }
+        private static readonly HqlSort[] SentItemOrdering
+           = {
+                    new HqlSort("n.IsFullyAcknowledged", true, 0),
+                    new HqlSort("n.PostTime", false, 1)
+              };
 
         #endregion
 
@@ -107,11 +101,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         public IList GetSentItems(Notebox notebox, INoteboxQueryContext nqc)
         {
             HqlProjectionQuery query = BuildSentQuery(notebox, nqc, false);
-            List<OrderNoteboxItem> results = DoQuery(query);
-
-            // because the "sent items" query involves a fetch join to a child collection,
-            // it needs to be filtered for unique items
-            return CollectionUtils.Unique(results, new SentItemEqualityComparer());
+            return DoQuery(query);
         }
 
         public int CountSentItems(Notebox notebox, INoteboxQueryContext nqc)
@@ -167,6 +157,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             }
             query.Conditions.Add(or);
 
+            query.Sorts.AddRange(InboxItemOrdering);
+
             return query;
         }
 
@@ -174,27 +166,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             HqlProjectionQuery query = GetBaseQuery(nqc, countQuery, SentItemProjection, SentItemJoins);
 
-            // potential optimization by fetch joining the note-reads
-            // not sure if this actually improves performance or not
-            //if (!countQuery)
-            //    query.Froms[0].Joins.Add(FetchJoinNoteReads);
-
             HqlOr or = new HqlOr();
             foreach (NoteboxItemSearchCriteria criteria in notebox.GetInvariantCriteria(nqc))
             {
                 HqlAnd and = new HqlAnd();
 
                 // for sent items, IsAcknowledged means fully acknowledged (all readers have acknowledged)
-                if(criteria.IsAcknowledged)
-                {
-                    // condition is that *all* nr are acknowledged
-                    and.Conditions.Add(new HqlCondition("not exists (select np1.IsAcknowledged from NotePosting np1 where np1.Note = n and np1.IsAcknowledged = ?)", false));
-                }
-                else
-                {
-                    // condition is that *any* nr is not acknowledged
-                    and.Conditions.Add(new HqlCondition("exists (select np1.IsAcknowledged from NotePosting np1 where np1.Note = n and np1.IsAcknowledged = ?)", false));
-                }
+                and.Conditions.Add(new HqlCondition("n.IsFullyAcknowledged = ?", criteria.IsAcknowledged));
 
                 if (criteria.SentByMe)
                     and.Conditions.Add(new HqlCondition("n.Author = ?", nqc.Staff));
@@ -202,6 +180,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 or.Conditions.Add(and);
             }
             query.Conditions.Add(or);
+
+            query.Sorts.AddRange(SentItemOrdering);
 
             return query;
         }

@@ -56,6 +56,12 @@
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
     <Compile Include="Admin\StaffGroupAdmin\StaffGroupAdminService.cs" />
+    <Compile Include="OrderNoteSettings.cs" />
+    <Compile Include="OrderNoteSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>OrderNoteSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="OrderNotes\OrderNoteboxItemAssembler.cs" />
     <Compile Include="OrderNotes\OrderNoteService.cs" />
     <Compile Include="StaffGroupAssembler.cs" />
@@ -208,6 +214,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="OrderNoteSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>OrderNoteSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="WorkingFacilitySettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorkingFacilitySettings.Designer.cs</LastGenOutput>

@@ -59,19 +59,6 @@ namespace ClearCanvas.Healthcare {
             get { return _postTime != null; }
         }
 
-        /// <summary>
-        /// Gets a value indicating whether this note has been posted and
-        /// acknowledged by all parties that are expected to acknowledge it.
-        /// </summary>
-        public virtual bool IsFullyAcknowledged
-        {
-            get
-            {
-                return IsPosted && CollectionUtils.TrueForAll(_postings,
-                    delegate(NotePosting posting) { return posting.IsAcknowledged; });
-            }
-        }
-
         #endregion
 
         #region Public Methods
@@ -100,7 +87,7 @@ namespace ClearCanvas.Healthcare {
                 throw new WorkflowException("Cannot acknowledge a note that has not been posted.");
 
 
-            // find all un-acknowledged reading that this staff person could acknowledge
+            // find all un-acknowledged postings that this staff person could acknowledge
             List<NotePosting> acknowledgeablePostings = CollectionUtils.Select(_postings,
                 delegate(NotePosting a)
                 {
@@ -116,6 +103,10 @@ namespace ClearCanvas.Healthcare {
             {
                 posting.Acknowledge(staff);
             }
+
+            // update the 'fully acknowledged' status of this note
+            _isFullyAcknowledged = CollectionUtils.TrueForAll(_postings,
+                delegate(NotePosting posting) { return posting.IsAcknowledged; });
         }
 
         #endregion

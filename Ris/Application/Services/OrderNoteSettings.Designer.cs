@@ -13,21 +13,21 @@ namespace ClearCanvas.Ris.Application.Services {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class WorklistSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class OrderNoteSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static WorklistSettings defaultInstance = ((WorklistSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new WorklistSettings())));
+        private static OrderNoteSettings defaultInstance = ((OrderNoteSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new OrderNoteSettings())));
         
-        public static WorklistSettings Default {
+        public static OrderNoteSettings Default {
             get {
                 return defaultInstance;
             }
         }
         
         /// <summary>
-        /// Number of worklist items per page
+        /// Number of order-note items per page
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Number of worklist items per page")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Number of order-note items per page")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
         public int ItemsPerPage {

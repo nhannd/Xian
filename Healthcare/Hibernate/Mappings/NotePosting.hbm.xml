@@ -11,7 +11,7 @@
       <many-to-one name="Staff" column="RecipientStaffOID_" class="Staff" fetch="join" not-null="false"/>
       <many-to-one name="Group" column="RecipientGroupOID_" class="StaffGroup" fetch="join" not-null="false"/>
     </component>
-    <property name="IsAcknowledged" column="IsAcknowledged_" type="Boolean"/>
+    <property name="IsAcknowledged" column="IsAcknowledged_" type="Boolean" not-null="true"/>
 		<component name="AcknowledgedBy" class="NoteAcknowledgement">
 			<many-to-one name="Staff" class="Staff" column="AcknowledgedByStaffOID_" not-null="false"/>
 			<property name="Time" column="AcknowledgedByTime_" type="DateTime" not-null="false"/>

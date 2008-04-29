@@ -23,22 +23,8 @@ namespace ClearCanvas.Healthcare
         private readonly bool _isAcknowledged;
         private NoteRecipient[] _recipients;
 
-
         /// <summary>
-        /// Constructor for sent item.
-        /// </summary>
-        /// <param name="note"></param>
-        /// <param name="order"></param>
-        /// <param name="patient"></param>
-        /// <param name="patientProfile"></param>
-        public OrderNoteboxItem(OrderNote note, Order order, Patient patient, PatientProfile patientProfile)
-            :this(note, order, patient, patientProfile, note.IsFullyAcknowledged)
-        {
-        }
-
-
-        /// <summary>
-        /// Constructor for inbox item.
+        /// Constructor.
         /// </summary>
         /// <param name="note"></param>
         /// <param name="order"></param>

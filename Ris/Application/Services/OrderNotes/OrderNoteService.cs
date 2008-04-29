@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
             Platform.CheckMemberIsSet(request.NoteboxClass, "request.NoteboxClass");
 
             Notebox notebox = NoteboxFactory.Instance.CreateNotebox(request.NoteboxClass);
-            SearchResultPage page = new SearchResultPage(0, 100);
+            SearchResultPage page = new SearchResultPage(0, new OrderNoteSettings().ItemsPerPage);
             IList results = null;
             if (request.QueryItems)
             {
