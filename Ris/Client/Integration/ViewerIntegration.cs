@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client.Integration
 
 			StudyItemList studies = FindStudies(accessionNumber);
 
-			if (studies.Count > 0)
+			if (studies != null && studies.Count > 0)
 			{
 				int i = 0;
 				string[] uids = new string[studies.Count];
