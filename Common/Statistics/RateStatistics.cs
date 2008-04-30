@@ -174,11 +174,19 @@ namespace ClearCanvas.Common.Statistics
 
         #region Overridden Public Methods
 
+        /// <summary>
+        /// Creates a copy of the current statistics
+        /// </summary>
+        /// <returns>A copy of the current <see cref="RateStatistics"/> object</returns>
         public override object Clone()
         {
             return new RateStatistics(this);
         }
 
+        /// <summary>
+        /// Returns a new average statistics object corresponding to the current statistics
+        /// </summary>
+        /// <returns>A <see cref="AverageRateStatistics"/> object</returns>
         public override IAverageStatistics NewAverageStatistics()
         {
             return new AverageRateStatistics(this);
