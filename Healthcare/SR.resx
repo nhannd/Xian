@@ -168,6 +168,12 @@
   <data name="EmailAddress" xml:space="preserve">
     <value>E-mail address</value>
   </data>
+  <data name="EmergencyPhysicianEmergencyOrdersWorklist" xml:space="preserve">
+    <value>Emergency Orders</value>
+  </data>
+  <data name="EmergencyPhysicianEmergencyOrdersWorklistDescription" xml:space="preserve">
+    <value>Lists Emergency department orders regardless of status.</value>
+  </data>
   <data name="EnumValueValue" xml:space="preserve">
     <value>Display Value</value>
   </data>
@@ -383,6 +389,9 @@
   </data>
   <data name="WorklistCategoryBooking" xml:space="preserve">
     <value>Booking</value>
+  </data>
+  <data name="WorklistCategoryEmergencyPhysician" xml:space="preserve">
+    <value>Emergency Physician</value>
   </data>
   <data name="WorklistCategoryProtocoling" xml:space="preserve">
     <value>Protocoling</value>

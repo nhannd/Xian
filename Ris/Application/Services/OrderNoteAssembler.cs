@@ -174,14 +174,14 @@ namespace ClearCanvas.Ris.Application.Services
         {
             List<NoteRecipient> recipients = new List<NoteRecipient>();
             recipients.AddRange(
-                CollectionUtils.Map<OrderNoteDetail.StaffRecipientDetail, NoteRecipient>(detail.StaffRecipients,
+                CollectionUtils.Map<OrderNoteDetail.StaffRecipientDetail, NoteRecipient>(detail.StaffRecipients ?? new List<OrderNoteDetail.StaffRecipientDetail>(),
                     delegate(OrderNoteDetail.StaffRecipientDetail item)
                     {
                         return new NoteRecipient(context.Load<Staff>(item.Staff.StaffRef, EntityLoadFlags.Proxy));
                     }));
 
             recipients.AddRange(
-                CollectionUtils.Map<OrderNoteDetail.GroupRecipientDetail, NoteRecipient>(detail.GroupRecipients,
+                CollectionUtils.Map<OrderNoteDetail.GroupRecipientDetail, NoteRecipient>(detail.GroupRecipients ?? new List<OrderNoteDetail.GroupRecipientDetail>(),
                     delegate(OrderNoteDetail.GroupRecipientDetail item)
                     {
                         return new NoteRecipient(context.Load<StaffGroup>(item.Group.StaffGroupRef, EntityLoadFlags.Proxy));

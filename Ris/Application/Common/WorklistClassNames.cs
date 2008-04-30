@@ -33,114 +33,121 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    public class WorklistClassNames
-    {
-        #region Registration Worklist Class Names
+	public class WorklistClassNames
+	{
+		#region Registration Worklist Class Names
 
-        [WorklistClassName]
-        public const string RegistrationScheduledWorklist = "RegistrationScheduledWorklist";
+		[WorklistClassName]
+		public const string RegistrationScheduledWorklist = "RegistrationScheduledWorklist";
 
-        [WorklistClassName]
-        public const string RegistrationCheckedInWorklist = "RegistrationCheckedInWorklist";
+		[WorklistClassName]
+		public const string RegistrationCheckedInWorklist = "RegistrationCheckedInWorklist";
 
-        [WorklistClassName]
-        public const string RegistrationCancelledWorklist = "RegistrationCancelledWorklist";
+		[WorklistClassName]
+		public const string RegistrationCancelledWorklist = "RegistrationCancelledWorklist";
 
-        [WorklistClassName]
-        public const string RegistrationCompletedWorklist = "RegistrationCompletedWorklist";
+		[WorklistClassName]
+		public const string RegistrationCompletedWorklist = "RegistrationCompletedWorklist";
 
-        [WorklistClassName]
-        public const string RegistrationInProgressWorklist = "RegistrationInProgressWorklist";
+		[WorklistClassName]
+		public const string RegistrationInProgressWorklist = "RegistrationInProgressWorklist";
 
-        [WorklistClassName]
-        public const string RegistrationCompletedProtocolWorklist = "RegistrationCompletedProtocolWorklist";
+		[WorklistClassName]
+		public const string RegistrationCompletedProtocolWorklist = "RegistrationCompletedProtocolWorklist";
 
-        [WorklistClassName]
-        public const string RegistrationSuspendedProtocolWorklist = "RegistrationSuspendedProtocolWorklist";
+		[WorklistClassName]
+		public const string RegistrationSuspendedProtocolWorklist = "RegistrationSuspendedProtocolWorklist";
 
-        [WorklistClassName]
-        public const string RegistrationRejectedProtocolWorklist = "RegistrationRejectedProtocolWorklist";
+		[WorklistClassName]
+		public const string RegistrationRejectedProtocolWorklist = "RegistrationRejectedProtocolWorklist";
 
-        [WorklistClassName]
-        public const string RegistrationPendingProtocolWorklist = "RegistrationPendingProtocolWorklist";
+		[WorklistClassName]
+		public const string RegistrationPendingProtocolWorklist = "RegistrationPendingProtocolWorklist";
 
-        [WorklistClassName]
-        public const string RegistrationAsapPendingProtocolWorklist = "RegistrationAsapPendingProtocolWorklist";
+		[WorklistClassName]
+		public const string RegistrationAsapPendingProtocolWorklist = "RegistrationAsapPendingProtocolWorklist";
 
-        [WorklistClassName]
-        public const string RegistrationToBeScheduledWorklist = "RegistrationToBeScheduledWorklist";
+		[WorklistClassName]
+		public const string RegistrationToBeScheduledWorklist = "RegistrationToBeScheduledWorklist";
 
-        #endregion
+		#endregion
 
-        #region Technologist Worklist Class Names
+		#region Technologist Worklist Class Names
 
-        [WorklistClassName]
-        public const string TechnologistScheduledWorklist = "TechnologistScheduledWorklist";
+		[WorklistClassName]
+		public const string TechnologistScheduledWorklist = "TechnologistScheduledWorklist";
 
-        [WorklistClassName]
-        public const string TechnologistCheckedInWorklist = "TechnologistCheckedInWorklist";
+		[WorklistClassName]
+		public const string TechnologistCheckedInWorklist = "TechnologistCheckedInWorklist";
 
-        [WorklistClassName]
-        public const string TechnologistCancelledWorklist = "TechnologistCancelledWorklist";
+		[WorklistClassName]
+		public const string TechnologistCancelledWorklist = "TechnologistCancelledWorklist";
 
-        [WorklistClassName]
-        public const string TechnologistCompletedWorklist = "TechnologistCompletedWorklist";
+		[WorklistClassName]
+		public const string TechnologistCompletedWorklist = "TechnologistCompletedWorklist";
 
-        [WorklistClassName]
-        public const string TechnologistInProgressWorklist = "TechnologistInProgressWorklist";
+		[WorklistClassName]
+		public const string TechnologistInProgressWorklist = "TechnologistInProgressWorklist";
 
-        [WorklistClassName]
-        public const string TechnologistSuspendedWorklist = "TechnologistSuspendedWorklist";
+		[WorklistClassName]
+		public const string TechnologistSuspendedWorklist = "TechnologistSuspendedWorklist";
 
-        [WorklistClassName]
-        public const string TechnologistUndocumentedWorklist = "TechnologistUndocumentedWorklist";
+		[WorklistClassName]
+		public const string TechnologistUndocumentedWorklist = "TechnologistUndocumentedWorklist";
 
-        #endregion
+		#endregion
 
-        #region Reporting Worklist Class Names
+		#region Reporting Worklist Class Names
 
-        [WorklistClassName]
-        public const string ReportingToBeReportedWorklist = "ReportingToBeReportedWorklist";
+		[WorklistClassName]
+		public const string ReportingToBeReportedWorklist = "ReportingToBeReportedWorklist";
 
-        [WorklistClassName]
-        public const string ReportingToBeProtocolledWorklist = "ReportingToBeProtocolledWorklist";
+		[WorklistClassName]
+		public const string ReportingToBeProtocolledWorklist = "ReportingToBeProtocolledWorklist";
 
-        [WorklistClassName]
-        public const string ReportingAssignedWorklist = "ReportingAssignedWorklist";
+		[WorklistClassName]
+		public const string ReportingAssignedWorklist = "ReportingAssignedWorklist";
 
-        [WorklistClassName]
-        public const string ReportingDraftWorklist = "ReportingDraftWorklist";
+		[WorklistClassName]
+		public const string ReportingDraftWorklist = "ReportingDraftWorklist";
 
-        [WorklistClassName]
-        public const string ReportingInTranscriptionWorklist = "ReportingInTranscriptionWorklist";
+		[WorklistClassName]
+		public const string ReportingInTranscriptionWorklist = "ReportingInTranscriptionWorklist";
 
-        [WorklistClassName]
-        public const string ReportingRadiologistToBeVerifiedWorklist = "ReportingRadiologistToBeVerifiedWorklist";
+		[WorklistClassName]
+		public const string ReportingRadiologistToBeVerifiedWorklist = "ReportingRadiologistToBeVerifiedWorklist";
 
-        [WorklistClassName]
-        public const string ReportingResidentToBeVerifiedWorklist = "ReportingResidentToBeVerifiedWorklist";
+		[WorklistClassName]
+		public const string ReportingResidentToBeVerifiedWorklist = "ReportingResidentToBeVerifiedWorklist";
 
-        [WorklistClassName]
-        public const string ReportingRadiologistVerifiedWorklist = "ReportingRadiologistVerifiedWorklist";
+		[WorklistClassName]
+		public const string ReportingRadiologistVerifiedWorklist = "ReportingRadiologistVerifiedWorklist";
 
-        [WorklistClassName]
-        public const string ReportingResidentVerifiedWorklist = "ReportingResidentVerifiedWorklist";
+		[WorklistClassName]
+		public const string ReportingResidentVerifiedWorklist = "ReportingResidentVerifiedWorklist";
 
-        [WorklistClassName]
-        public const string ReportingReviewResidentReportWorklist = "ReportingReviewResidentReportWorklist";
+		[WorklistClassName]
+		public const string ReportingReviewResidentReportWorklist = "ReportingReviewResidentReportWorklist";
 
-        [WorklistClassName]
-        public const string ReportingDraftProtocolWorklist = "ReportingDraftProtocolWorklist";
+		[WorklistClassName]
+		public const string ReportingDraftProtocolWorklist = "ReportingDraftProtocolWorklist";
 
-        [WorklistClassName]
-        public const string ReportingCompletedProtocolWorklist = "ReportingCompletedProtocolWorklist";
+		[WorklistClassName]
+		public const string ReportingCompletedProtocolWorklist = "ReportingCompletedProtocolWorklist";
 
-        [WorklistClassName]
-        public const string ReportingSuspendedProtocolWorklist = "ReportingSuspendedProtocolWorklist";
+		[WorklistClassName]
+		public const string ReportingSuspendedProtocolWorklist = "ReportingSuspendedProtocolWorklist";
 
-        [WorklistClassName]
-        public const string ReportingRejectedProtocolWorklist = "ReportingRejectedProtocolWorklist";
+		[WorklistClassName]
+		public const string ReportingRejectedProtocolWorklist = "ReportingRejectedProtocolWorklist";
 
-        #endregion
-    }
+		#endregion
+
+		#region Emergency Physician Worklist Class Names
+
+		[WorklistClassName]
+		public const string EmergencyPhysicianEmergencyOrdersWorklist = "EmergencyPhysicianEmergencyOrdersWorklist";
+
+		#endregion
+	}
 }

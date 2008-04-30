@@ -78,6 +78,7 @@
     <Compile Include="Alerts\LanguageAlert.cs" />
     <Compile Include="Alerts\NoteAlert.cs" />
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
+    <Compile Include="EmergencyPhysicianWorklists.cs" />
     <Compile Include="NoteboxFactory.cs" />
     <Compile Include="Imex\ExternalPractitionerImex.cs" />
     <Compile Include="Imex\FacilityImex.cs" />
