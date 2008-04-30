@@ -153,6 +153,16 @@ namespace ClearCanvas.Desktop.Validation
                     rules.Add(a.CreateRule(property, new ResourceResolver(applicationComponentClass.Assembly)));
                 }
             }
+
+        	BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+        	foreach (MethodInfo method in applicationComponentClass.GetMethods(flags))
+        	{
+				foreach (ValidationMethodForAttribute attribute in method.GetCustomAttributes(typeof(ValidationMethodForAttribute), true))
+        		{
+        			rules.Add(attribute.CreateRule(method));
+        		}	
+        	}
+
             return rules;
         }
     }

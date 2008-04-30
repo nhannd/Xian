@@ -1,7 +1,7 @@
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using System;
 
 namespace ClearCanvas.ImageViewer.Clipboard
 {

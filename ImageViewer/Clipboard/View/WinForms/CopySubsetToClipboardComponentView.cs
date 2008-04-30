@@ -31,59 +31,45 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Clipboard.CopyToClipboard;
 
-namespace ClearCanvas.ImageViewer.Clipboard.Tools
+namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 {
-	[MenuAction("show", "global-menus/MenuView/MenuShowClipboard", "Show")]
-	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarShowClipboard", "Show")]
-	[Tooltip("show", "TooltipShowClipboard")]
-	[IconSet("show", IconScheme.Colour, "Icons.ShowClipboardToolSmall.png", "Icons.ShowClipboardToolMedium.png", "Icons.ShowClipboardToolLarge.png")]
-	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="CopySubsetToClipboardComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(CopySubsetToClipboardComponentViewExtensionPoint))]
+    public class CopySubsetToClipboardComponentView : WinFormsView, IApplicationComponentView
+    {
+        private CopySubsetToClipboardComponent _component;
+        private CopySubsetToClipboardComponentControl _control;
 
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class ShowClipboardTool : ImageViewerTool
-	{
-		private static ClipboardComponent _clipboardComponent;
-		private static IShelf _shelf;
+        #region IApplicationComponentView Members
 
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		/// <remarks>
-		/// A no-args constructor is required by the framework.  Do not remove.
-		/// </remarks>
-		public ShowClipboardTool()
-		{
-		}
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (CopySubsetToClipboardComponent)component;
+        }
 
-		public void Show()
-		{
-			if (_clipboardComponent == null)
-			{
-				_clipboardComponent = new ClipboardComponent();
+        #endregion
 
-				_shelf = ApplicationComponent.LaunchAsShelf(
-					this.Context.DesktopWindow,
-					_clipboardComponent,
-					SR.TitleClipboard,
-					"Clipboard",
-					ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide);
-
-				_shelf.Closed += OnShelfClosed;
-			}
-			else
-			{
-				_shelf.Show();
-			}
-		}
-
-		private static void OnShelfClosed(object sender, ClosedEventArgs e)
-		{
-			_shelf.Closed -= OnShelfClosed;
-			_shelf = null;
-			_clipboardComponent = null;
-		}
-	}
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new CopySubsetToClipboardComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

@@ -1,13 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Clipboard.ImageExport;
-using System;
-using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageViewer.Clipboard
+namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {
 	[MenuAction("export", "clipboard-contextmenu/MenuExportToImage", "Export")]
 	[ButtonAction("export", "clipboard-toolbar/ToolbarExportToImage", "Export")]
@@ -78,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 			ImageExportComponent component = new ImageExportComponent(numberOfImagesToExport);
 			if (ApplicationComponentExitCode.Accepted !=
-				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, component, title))
+			    ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, component, title))
 			{
 				return;
 			}
@@ -100,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 				ClipboardItem clipboardItem = (ClipboardItem)this.Context.SelectedClipboardItems[0];
 
 				exporter.Export((IPresentationImage)clipboardItem.Item, component.ExportFilePath,
-									new ExportImageParams(component.ExportOption, clipboardItem.DisplayRectangle));
+				                new ExportImageParams(component.ExportOption, clipboardItem.DisplayRectangle));
 			}
 			else
 			{
@@ -129,8 +128,8 @@ namespace ClearCanvas.ImageViewer.Clipboard
 					_progressComponentShelf.Closed +=
 						delegate
 							{
-									Cleanup(true);
-									task.Dispose();
+								Cleanup(true);
+								task.Dispose();
 							};
 				}
 			}

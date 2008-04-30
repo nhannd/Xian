@@ -106,6 +106,24 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Subset (Custom).
+        /// </summary>
+        internal static string DescriptionSubsetCustom {
+            get {
+                return ResourceManager.GetString("DescriptionSubsetCustom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subset (Range).
+        /// </summary>
+        internal static string DescriptionSubsetRange {
+            get {
+                return ResourceManager.GetString("DescriptionSubsetRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tag Image File Format (TIFF).
         /// </summary>
         internal static string DescriptionTiff {
@@ -147,6 +165,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         internal static string MenuCopyImageToClipboard {
             get {
                 return ResourceManager.GetString("MenuCopyImageToClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Range of Images to Clipboard.
+        /// </summary>
+        internal static string MenuCopySubsetToClipboard {
+            get {
+                return ResourceManager.GetString("MenuCopySubsetToClipboard", resourceCulture);
             }
         }
         
@@ -205,11 +232,38 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The custom range is invalid..
+        /// </summary>
+        internal static string MessageCustomRangeInvalid {
+            get {
+                return ResourceManager.GetString("MessageCustomRangeInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified directory does not exist..
         /// </summary>
         internal static string MessageDirectoryDoesNotExist {
             get {
                 return ResourceManager.GetString("MessageDirectoryDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The end value must be less than or equal to the start value..
+        /// </summary>
+        internal static string MessageEndValueLargerThanStart {
+            get {
+                return ResourceManager.GetString("MessageEndValueLargerThanStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The end value is out of range..
+        /// </summary>
+        internal static string MessageEndValueOutOfRange {
+            get {
+                return ResourceManager.GetString("MessageEndValueOutOfRange", resourceCulture);
             }
         }
         
@@ -268,6 +322,24 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The interval value is invalid..
+        /// </summary>
+        internal static string MessageRangeIntervalInvalid {
+            get {
+                return ResourceManager.GetString("MessageRangeIntervalInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The start value is out of range..
+        /// </summary>
+        internal static string MessageStartValueOutOfRange {
+            get {
+                return ResourceManager.GetString("MessageStartValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to At least one of the items could not be removed from the clipboard because it is in use..
         /// </summary>
         internal static string MessageUnableToClearClipboardItems {
@@ -282,6 +354,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         internal static string TitleClipboard {
             get {
                 return ResourceManager.GetString("TitleClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Images to Clipboard.
+        /// </summary>
+        internal static string TitleCopySubsetToClipboard {
+            get {
+                return ResourceManager.GetString("TitleCopySubsetToClipboard", resourceCulture);
             }
         }
         

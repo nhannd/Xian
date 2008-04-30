@@ -31,11 +31,10 @@
 
 using System;
 using System.Collections.Generic;
-
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Common.Utilities;
 using System.IO;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using Path=System.IO.Path;
 

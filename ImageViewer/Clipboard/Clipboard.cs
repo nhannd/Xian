@@ -1,4 +1,3 @@
-
 namespace ClearCanvas.ImageViewer.Clipboard
 {
 	public static class Clipboard
@@ -11,6 +10,11 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		public static void Add(IDisplaySet displaySet)
 		{
 			ClipboardComponent.AddToClipboard(displaySet);
+		}
+
+		public static void Add(IDisplaySet displaySet, IImageSelectionStrategy selectionStrategy)
+		{
+			ClipboardComponent.AddToClipboard(displaySet, selectionStrategy);
 		}
 	}
 }

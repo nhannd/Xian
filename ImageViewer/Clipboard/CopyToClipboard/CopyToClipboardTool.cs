@@ -29,24 +29,45 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
-using System;
 
-namespace ClearCanvas.ImageViewer.Clipboard
+namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 {
 	[MenuAction("copyImage", "imageviewer-contextmenu/MenuCopyImageToClipboard", "CopyImage")]
 	[IconSet("copyImage", IconScheme.Colour, "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
+	[EnabledStateObserver("copyImage", "Enabled", "EnabledChanged")]
+
 	[MenuAction("copyDisplaySet", "imageviewer-contextmenu/MenuCopyDisplaySetToClipboard", "CopyDisplaySet")]
 	[IconSet("copyDisplaySet", IconScheme.Colour, "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
-	[EnabledStateObserver("copyImage", "Enabled", "EnabledChanged")]
+	[EnabledStateObserver("copyDisplaySet", "Enabled", "EnabledChanged")]
+
+	//[MenuAction("copySubset", "imageviewer-contextmenu/MenuCopySubsetToClipboard", "CopySubset")]
+	//[IconSet("copySubset", IconScheme.Colour, "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
+	//[EnabledStateObserver("copySubset", "Enabled", "EnabledChanged")]
+
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class CopyToClipboardTool : ImageViewerTool
 	{
+		private static readonly Dictionary<IDesktopWindow, IShelf> _copyShelves = new Dictionary<IDesktopWindow, IShelf>();
+
 		public CopyToClipboardTool()
 		{
+		}
+
+		private IShelf ComponentShelf
+		{
+			get
+			{
+				if (_copyShelves.ContainsKey(this.Context.DesktopWindow))
+					return _copyShelves[this.Context.DesktopWindow];
+
+				return null;
+			}	
 		}
 
 		public void CopyImage()
@@ -74,6 +95,40 @@ namespace ClearCanvas.ImageViewer.Clipboard
 						{
 							Clipboard.Add(this.SelectedPresentationImage.ParentDisplaySet);
 						});
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+			}
+		}
+
+		public void CopySubset()
+		{
+			try
+			{
+				if (ComponentShelf != null)
+				{
+					ComponentShelf.Activate();
+				}
+				else
+				{
+					IDesktopWindow desktopWindow = this.Context.DesktopWindow;
+
+					CopySubsetToClipboardComponent component =
+						new CopySubsetToClipboardComponent(desktopWindow);
+
+					_copyShelves[desktopWindow] = ApplicationComponent.LaunchAsShelf(
+						desktopWindow,
+						component,
+						SR.TitleCopySubsetToClipboard,
+						ShelfDisplayHint.DockFloat);
+
+					_copyShelves[desktopWindow].Closed +=
+						delegate
+							{
+								_copyShelves.Remove(desktopWindow);
+							};
+				}
 			}
 			catch (Exception e)
 			{

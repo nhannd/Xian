@@ -1,6 +1,6 @@
 using System.Drawing;
-using ClearCanvas.Desktop;
 using System.Threading;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Clipboard
 {

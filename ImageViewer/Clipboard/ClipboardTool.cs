@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 

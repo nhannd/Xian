@@ -225,6 +225,7 @@
     <Compile Include="Validation\ValidationAttributeException.cs" />
     <Compile Include="Validation\ValidationCache.cs" />
     <Compile Include="Validation\ValidationResult.cs" />
+    <Compile Include="Validation\ValidationMethodForAttribute.cs" />
     <Compile Include="Validation\ValidationRuleSet.cs" />
     <Compile Include="Validation\ValidationRule.cs" />
     <Compile Include="Validation\StartedComponentsValidationStrategy.cs" />

@@ -1,5 +1,5 @@
-using System.Drawing;
 using System;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Clipboard
 {
@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			return bmp;
 		}
 
-		public static Bitmap CreateDisplaySetIcon(IDisplaySet displaySet)
+		public static Bitmap CreateDisplaySetIcon(IDisplaySet displaySet, Rectangle displayedClientRectangle)
 		{
 			Bitmap bmp = new Bitmap(_iconWidth, _iconHeight);
 			int numImages = 3;
@@ -41,8 +41,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 			System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp);
 
-			Rectangle imgRectangle = displaySet.ImageBox.SelectedTile.PresentationImage.ClientRectangle;
-			int dimension = Math.Max(imgRectangle.Width, imgRectangle.Height);
+			int dimension = Math.Max(displayedClientRectangle.Width, displayedClientRectangle.Height);
 
 			IPresentationImage image = displaySet.PresentationImages[displaySet.PresentationImages.Count / 2];
 			Bitmap img = image.DrawToBitmap(dimension, (int)(dimension * aspectRatio));

@@ -1,6 +1,6 @@
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
 [assembly: AssemblyConfiguration("Release")]
 [assembly: AssemblyCompany("ClearCanvas Inc.")]
 [assembly: AssemblyProduct("ClearCanvas Workstation")]

@@ -2,8 +2,8 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {

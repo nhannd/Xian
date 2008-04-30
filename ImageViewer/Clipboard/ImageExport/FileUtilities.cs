@@ -1,6 +1,6 @@
 using System;
-using ClearCanvas.Common.Utilities;
 using System.IO;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {

@@ -214,6 +214,8 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		internal static void AddToClipboard(IPresentationImage image)
 		{
+			Platform.CheckForNullReference(image, "image");
+
 			Rectangle clientRectangle = image.ClientRectangle;
 			Bitmap bmp = IconCreator.CreatePresentationImageIcon(image);
 			_clipboardItems.Add(new ClipboardItem(image.Clone(), bmp, "", clientRectangle));
@@ -221,12 +223,32 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		internal static void AddToClipboard(IDisplaySet displaySet)
 		{
-			if (displaySet.ImageBox.SelectedTile == null || displaySet.ImageBox.SelectedTile.PresentationImage == null)
+			AddToClipboard(displaySet, null);
+		}
+
+		internal static void AddToClipboard(IDisplaySet displaySet, IImageSelectionStrategy selectionStrategy)
+		{
+			Platform.CheckForNullReference(displaySet, "displaySet");
+
+			if (displaySet.ImageBox == null || displaySet.ImageBox.SelectedTile == null || displaySet.ImageBox.SelectedTile.PresentationImage == null)
 				throw new ArgumentException("DisplaySet must have a selected image.");
 
 			Rectangle clientRectangle = displaySet.ImageBox.SelectedTile.PresentationImage.ClientRectangle;
-			Bitmap bmp = IconCreator.CreateDisplaySetIcon(displaySet);
-			ClipboardItem item = new ClipboardItem(displaySet.Clone(), bmp, displaySet.Name, clientRectangle);
+			if (selectionStrategy == null)
+			{
+				displaySet = displaySet.Clone();
+			}
+			else
+			{
+				string name = String.Format("{0} - {1}", selectionStrategy.Description, displaySet.Name);
+				IDisplaySet sourceDisplaySet = displaySet;
+				displaySet = new DisplaySet(name, displaySet.Uid);
+				foreach (IPresentationImage image in selectionStrategy.GetImages(sourceDisplaySet))
+					displaySet.PresentationImages.Add(image.Clone());
+			}
+
+			Bitmap bmp = IconCreator.CreateDisplaySetIcon(displaySet, clientRectangle);
+			ClipboardItem item = new ClipboardItem(displaySet, bmp, displaySet.Name, clientRectangle);
 			_clipboardItems.Add(item);
 		}
 	}

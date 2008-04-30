@@ -42,6 +42,13 @@
       <DependentUpon>ClipboardComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ClipboardComponentView.cs" />
+    <Compile Include="CopySubsetToClipboardComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CopySubsetToClipboardComponentControl.Designer.cs">
+      <DependentUpon>CopySubsetToClipboardComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CopySubsetToClipboardComponentView.cs" />
     <Compile Include="ImageExportComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -78,6 +85,10 @@
     <EmbeddedResource Include="ClipboardComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ClipboardComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CopySubsetToClipboardComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CopySubsetToClipboardComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ImageExportComponentControl.resx">
       <SubType>Designer</SubType>
