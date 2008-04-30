@@ -16,7 +16,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             string accessionNumber,
             DiagnosticServiceSummary diagnosticService,
             ProcedureTypeSummary procedureType,
-            EnumValueInfo reportStatus)
+            EnumValueInfo reportStatus,
+            DateTime? performedDate)
         {
             this.OrderRef = orderRef;
             this.ProcedureRef = procedureRef;
@@ -25,6 +26,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             this.DiagnosticService = diagnosticService;
             this.ProcedureType = procedureType;
             this.ReportStatus = reportStatus;
+            this.PerformedDate = performedDate;
         }
 
 
@@ -33,6 +35,9 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
         [DataMember]
         public EntityRef ProcedureRef;
+
+        [DataMember]
+        public EntityRef ReportRef;
 
         [DataMember]
         public string AccessionNumber;
@@ -44,9 +49,10 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public ProcedureTypeSummary ProcedureType;
 
         [DataMember]
-        public EntityRef ReportRef;
+        public EnumValueInfo ReportStatus;
 
         [DataMember]
-        public EnumValueInfo ReportStatus;
+        public DateTime? PerformedDate;
+
     }
 }

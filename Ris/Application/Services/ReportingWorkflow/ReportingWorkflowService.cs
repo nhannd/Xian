@@ -381,6 +381,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             {
                 foreach (Procedure procedure in priorReport.Procedures)
                 {
+                    // Note: we use the ProcedureCheckin.CheckOutTime as the PerformedDate
+                    // because it is the closest to the end of modality procedure step completion time.
+                    // However, if we change the definition of CheckOutTime in the future, this won't be accurate
                     PriorProcedureSummary summary = new PriorProcedureSummary(
                         procedure.Order.GetRef(),
                         procedure.GetRef(),
@@ -388,7 +391,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                         procedure.Order.AccessionNumber,
                         dsAssembler.CreateDiagnosticServiceSummary(procedure.Order.DiagnosticService),
                         rptAssembler.CreateProcedureTypeSummary(procedure.Type),
-                        EnumUtils.GetEnumValueInfo(priorReport.Status, PersistenceContext));
+                        EnumUtils.GetEnumValueInfo(priorReport.Status, PersistenceContext),
+                        procedure.ProcedureCheckIn.CheckOutTime);
 
                     priorSummaries.Add(summary);
                 }

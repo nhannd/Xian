@@ -49,10 +49,13 @@ namespace ClearCanvas.Ris.Client.Reporting
                 delegate(PriorProcedureSummary item) { return item.AccessionNumber; }));
             this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Procedure",
                 delegate(PriorProcedureSummary item) { return item.ProcedureType.Name; }));
-            this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Performed Location",
-                delegate(PriorProcedureSummary item) { return "WHAT?"; }));
+
+            //TODO: fill out Performed Location for Prior Summary Table
+            //this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Performed Location",
+            //    delegate(PriorProcedureSummary item) { return "WHAT?"; }));
+
             this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Performed Date",
-                delegate(PriorProcedureSummary item) { return "WHAT?"; }));
+                delegate(PriorProcedureSummary item) { return Format.Date(item.PerformedDate.Value); }));
             this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Report Status",
                 delegate(PriorProcedureSummary item) { return item.ReportStatus.Value; }));
         }
