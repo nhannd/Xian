@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Resources;
+using System.Text.RegularExpressions;
 
 namespace ClearCanvas.Common.Utilities
 {
@@ -212,6 +213,28 @@ namespace ClearCanvas.Common.Utilities
 
             // not found - throw exception
             throw new MissingManifestResourceException(string.Format(SR.ExceptionResourceNotFound, resourceName));
+        }
+
+        /// <summary>
+        /// Returns the set of resources whose name matches the specified regular expression.
+        /// </summary>
+        /// <param name="regex"></param>
+        /// <returns></returns>
+        public string[] FindResources(Regex regex)
+        {
+            List<string> matches = new List<string>();
+            foreach (Assembly asm in _assemblies)
+            {
+                matches.AddRange(
+                    CollectionUtils.Select(asm.GetManifestResourceNames(),
+                        delegate(string res) { return regex.Match(res).Success; }));
+            }
+
+            // include the fallback
+            if (_fallbackResovler != null)
+                matches.AddRange(_fallbackResovler.FindResources(regex));
+
+            return CollectionUtils.Unique(matches).ToArray();
         }
 
         /// <summary>

@@ -31,6 +31,7 @@
 
 using System.IO;
 using System.Resources;
+using System.Text.RegularExpressions;
 
 namespace ClearCanvas.Common.Utilities
 {
@@ -72,5 +73,12 @@ namespace ClearCanvas.Common.Utilities
         /// <returns>A qualified resource name, if found, otherwise an exception is thrown.</returns>
         /// <exception cref="MissingManifestResourceException">if the resource name could not be resolved.</exception>
         string ResolveResource(string resourceName);
+
+        /// <summary>
+        /// Returns the set of resources whose name matches the specified regular expression.
+        /// </summary>
+        /// <param name="regex"></param>
+        /// <returns></returns>
+        string[] FindResources(Regex regex);
     }
 }
