@@ -59,7 +59,9 @@
                                                 <asp:TextBox ID="FolderFilter" runat="server" CssClass="CSSFilterTextBox"></asp:TextBox>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:CheckBox ID="EnabledOnlyFilter" runat="server" Text="Enabled" CssClass="CSSCheckBox" />
+                                                <asp:Label ID="Label4" runat="server" Text="Status" CssClass="CSSTextBoxLabel"></asp:Label><br />
+                                                <asp:DropDownList ID="StatusFilter" runat="server" CssClass="CSSFilterDropDownList">
+                                                </asp:DropDownList>
                                             </td>
                                             <td align="right" valign="bottom">
                                                 <asp:Panel ID="FilterButtonContainer" runat="server" CssClass="FilterButtonContainer">

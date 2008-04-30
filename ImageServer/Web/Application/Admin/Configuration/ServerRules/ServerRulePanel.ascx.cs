@@ -92,14 +92,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
                 }
             }
 
-            if (EnabledOnlyFilter.Checked)
+            if (StatusFilter.SelectedIndex != 0)
             {
-                criteria.Enabled.EqualTo(true);
+                if (StatusFilter.SelectedIndex == 1)
+                    criteria.Enabled.EqualTo(true);
+                else
+                    criteria.Enabled.EqualTo(false);
             }
 
-            if (DefaultOnlyFilter.Checked)
+            if (DefaultFilter.SelectedIndex != 0)
             {
-                criteria.DefaultRule.EqualTo(true);
+                if (DefaultFilter.SelectedIndex == 1)
+                    criteria.DefaultRule.EqualTo(true);
+                else
+                    criteria.DefaultRule.EqualTo(false);
             }
 
             ServerRuleGridViewControl.ServerRules = _controller.GetServerRules(criteria);
@@ -174,7 +180,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             
         }
 
-       
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+            StatusFilter.Items.Add(new ListItem("--- ALL ---"));
+            StatusFilter.Items.Add(new ListItem("Enabled"));
+            StatusFilter.Items.Add(new ListItem("Disabled"));
+
+            DefaultFilter.Items.Add(new ListItem("--- ALL ---"));
+            DefaultFilter.Items.Add(new ListItem("Default"));
+            DefaultFilter.Items.Add(new ListItem("Not Default"));
+        }
 
         protected override void OnPreRender(EventArgs e)
         {
@@ -218,8 +235,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         {
             RuleApplyTimeDropDownList.SelectedIndex = 0;
             RuleTypeDropDownList.SelectedIndex = 0;
-            EnabledOnlyFilter.Checked = false;
-            DefaultOnlyFilter.Checked = false;
+            StatusFilter.SelectedIndex = 0;
+            DefaultFilter.SelectedIndex = 0;
 
             LoadRules();
         }

@@ -45,8 +45,9 @@
                                                 </asp:DropDownList>
                                                 </td>
                                             <td align="left" valign="bottom">
-                                                <asp:CheckBox ID="EnabledOnlyFilter" runat="server" Text="Enabled" ToolTip="Show Enabled devices only"
-                                                    CssClass="CSSCheckBox" /></td>
+                                                <asp:Label ID="Label3" runat="server" Text="Status" CssClass="CSSTextBoxLabel"></asp:Label><br />
+                                                <asp:DropDownList ID="StatusFilter" runat="server" CssClass="CSSFilterDropDownList">
+                                                </asp:DropDownList></td>
                                             <td align="left" valign="bottom">
                                                 <asp:Panel ID="FilterButtonContainer" runat="server" CssClass="FilterButtonContainer">                                                        
                                                     <clearcanvas:ToolbarButton

@@ -55,11 +55,13 @@
                                                     EnableViewState="False"></asp:Label><br />
                                                 <asp:TextBox ID="IPAddressFilter" runat="server" CssClass="CSSFilterTextBox" ToolTip="Filter the list by IP Address"></asp:TextBox></td>
                                             <td align="left" valign="bottom">
-                                                <asp:CheckBox ID="EnabledOnlyFilter" runat="server" Text="Enabled" ToolTip="Show Enabled devices only"
-                                                    CssClass="CSSCheckBox" /></td>
+                                                <asp:Label ID="Label3" runat="server" Text="Status" CssClass="CSSTextBoxLabel"></asp:Label><br />
+                                                <asp:DropDownList ID="StatusFilter" runat="server" CssClass="CSSFilterDropDownList">
+                                                </asp:DropDownList></td>
                                             <td align="left" valign="bottom">
-                                                <asp:CheckBox ID="DHCPOnlyFilter" runat="server" Text="DHCP" ToolTip="Show only devices using DHCP"
-                                                    CssClass="CSSCheckBox" /></td>
+                                                <asp:Label ID="Label4" runat="server" Text="DHCP" CssClass="CSSTextBoxLabel"></asp:Label><br />
+                                                <asp:DropDownList ID="DHCPFilter" runat="server" CssClass="CSSFilterDropDownList">
+                                                </asp:DropDownList></td>
                                             <td align="right" valign="bottom">
                                                 <asp:Panel ID="FilterButtonContainer" runat="server" CssClass="FilterButtonContainer">                                                        
                                                     <clearcanvas:ToolbarButton

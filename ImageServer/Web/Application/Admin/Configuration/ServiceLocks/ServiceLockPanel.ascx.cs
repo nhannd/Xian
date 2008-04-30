@@ -81,6 +81,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
             GridPager.PuralItemName = "Services";
             GridPager.Target = ServiceLockGridViewControl.TheGrid;
 
+            StatusFilter.Items.Add(new ListItem("--- ALL ---"));
+            StatusFilter.Items.Add(new ListItem("Enabled"));
+            StatusFilter.Items.Add(new ListItem("Disabled"));
+
             ConfirmEditDialog.Confirmed += ConfirmEditDialog_Confirmed;
 
             GridPager.GetRecordCountMethod = delegate {
@@ -212,8 +216,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
                 criteria.ServiceLockTypeEnum.EqualTo(ServiceLockTypeEnum.GetEnum(TypeDropDownList.SelectedValue));
             }
 
-            if (EnabledOnlyFilter.Checked)
-                criteria.Enabled.EqualTo(true);
+            if (StatusFilter.SelectedIndex != 0)
+            {
+                if (StatusFilter.SelectedIndex == 1)
+                    criteria.Enabled.EqualTo(true);
+                else
+                    criteria.Enabled.EqualTo(false);
+            }
 
             criteria.Enabled.SortDesc(1);
             criteria.ServiceLockTypeEnum.SortAsc(2);

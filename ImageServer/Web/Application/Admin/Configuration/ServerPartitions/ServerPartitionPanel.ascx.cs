@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -93,7 +94,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// <returns></returns>
         protected bool HasFilters()
         {
-            if (AETitleFilter.Text.Length > 0 || DescriptionFilter.Text.Length > 0 || EnabledOnlyFilter.Checked)
+            if (AETitleFilter.Text.Length > 0 || DescriptionFilter.Text.Length > 0 || StatusFilter.SelectedIndex > 0)
                 return true;
             else
                 return false;
@@ -112,6 +113,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             GridPager.Target = ServerPartitionGridPanel.TheGrid;
             GridPager.ItemName = "Partition";
             GridPager.PuralItemName = "Partitions";
+
+            StatusFilter.Items.Add(new ListItem("--- ALL ---"));
+            StatusFilter.Items.Add(new ListItem("Enabled"));
+            StatusFilter.Items.Add(new ListItem("Disabled"));
 
             SetupEventHandlers();
         }
@@ -132,7 +137,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         {
             AETitleFilter.Text = "";
             DescriptionFilter.Text = "";
-            EnabledOnlyFilter.Checked = false;
+            StatusFilter.SelectedIndex = 0;
             FolderFilter.Text = "";
         }
 
@@ -158,12 +163,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 criteria.PartitionFolder.Like(key + "%");
             }
 
-            if (EnabledOnlyFilter.Checked)
+            if (StatusFilter.SelectedIndex != 0)
             {
-                criteria.Enabled.EqualTo(true);
+                if (StatusFilter.SelectedIndex == 1)
+                    criteria.Enabled.EqualTo(true);
+                else
+                    criteria.Enabled.EqualTo(false);
             }
-
-
+            
             Partitions =
                 _theController.GetPartitions(criteria);
         }

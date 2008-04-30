@@ -53,14 +53,14 @@
                                                 <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" CssClass="CSSFilterDropDownList" ToolTip="Filter by apply time"/>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <br />
-                                                <asp:CheckBox ID="EnabledOnlyFilter" runat="server" Text="Enabled" ToolTip="Show Enabled Rules only"
-                                                    CssClass="CSSCheckBox" />
+                                                <asp:Label ID="Label3" runat="server" Text="Status" CssClass="CSSTextBoxLabel"></asp:Label><br />
+                                                <asp:DropDownList ID="StatusFilter" runat="server" CssClass="CSSFilterDropDownList">
+                                                </asp:DropDownList>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <br />
-                                                <asp:CheckBox ID="DefaultOnlyFilter" runat="server" Text="Default" ToolTip="Show only default rules"
-                                                    CssClass="CSSCheckBox" />
+                                                <asp:Label ID="Label4" runat="server" Text="Default" CssClass="CSSTextBoxLabel"></asp:Label><br />
+                                                <asp:DropDownList ID="DefaultFilter" runat="server" CssClass="CSSFilterDropDownList">
+                                                </asp:DropDownList>
                                             </td>
                                             <td align="right" valign="bottom">
                                                 <asp:Panel ID="FilterButtonContainer" runat="server" CssClass="FilterButtonContainer">

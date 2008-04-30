@@ -164,22 +164,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         protected global::System.Web.UI.WebControls.DropDownList RuleApplyTimeDropDownList;
         
         /// <summary>
-        /// EnabledOnlyFilter control.
+        /// StatusFilter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox EnabledOnlyFilter;
+        protected global::System.Web.UI.WebControls.DropDownList StatusFilter;
         
         /// <summary>
-        /// DefaultOnlyFilter control.
+        /// DefaultFilter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox DefaultOnlyFilter;
+        protected global::System.Web.UI.WebControls.DropDownList DefaultFilter;
         
         /// <summary>
         /// FilterButtonContainer control.

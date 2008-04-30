@@ -182,13 +182,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         protected global::System.Web.UI.WebControls.TextBox FolderFilter;
         
         /// <summary>
-        /// EnabledOnlyFilter control.
+        /// StatusFilter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox EnabledOnlyFilter;
+        protected global::System.Web.UI.WebControls.DropDownList StatusFilter;
         
         /// <summary>
         /// FilterButtonContainer control.

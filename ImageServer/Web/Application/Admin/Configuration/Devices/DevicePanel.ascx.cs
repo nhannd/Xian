@@ -31,6 +31,8 @@
 
 using System;
 using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -85,8 +87,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         {
             AETitleFilter.Text = "";
             IPAddressFilter.Text = "";
-            EnabledOnlyFilter.Checked = false;
-            DHCPOnlyFilter.Checked = false;
+            StatusFilter.SelectedIndex = 0;
+            DHCPFilter.SelectedIndex = 0;
         }
 
         protected override void OnInit(EventArgs e)
@@ -102,6 +104,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             GridPager1.PuralItemName = "Devices";
             GridPager1.Target = DeviceGridViewControl1.TheGrid;
 
+            StatusFilter.Items.Add(new ListItem("--- ALL ---"));
+            StatusFilter.Items.Add(new ListItem("Enabled"));
+            StatusFilter.Items.Add(new ListItem("Disabled"));
+
+            DHCPFilter.Items.Add(new ListItem("--- ALL ---"));
+            DHCPFilter.Items.Add(new ListItem("DHCP"));
+            DHCPFilter.Items.Add(new ListItem("No DHCP"));
 
             // setup event handler for child controls
             SetUpEventHandlers();
@@ -113,8 +122,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         /// <returns></returns>
         protected bool HasFilters()
         {
-            if (AETitleFilter.Text.Length > 0 || IPAddressFilter.Text.Length > 0 || EnabledOnlyFilter.Checked ||
-                DHCPOnlyFilter.Checked)
+            if (AETitleFilter.Text.Length > 0 || IPAddressFilter.Text.Length > 0 || StatusFilter.SelectedIndex > 0 ||
+                DHCPFilter.SelectedIndex > 0)
                 return true;
             else
                 return false;
@@ -172,14 +181,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                 criteria.IpAddress.Like(key);
             }
 
-            if (EnabledOnlyFilter.Checked)
+            if (StatusFilter.SelectedIndex != 0)
             {
-                criteria.Enabled.EqualTo(true);
+                if (StatusFilter.SelectedIndex == 1)
+                    criteria.Enabled.EqualTo(true);
+                else
+                    criteria.Enabled.EqualTo(false);
             }
 
-            if (DHCPOnlyFilter.Checked)
+            if (DHCPFilter.SelectedIndex != 0)
             {
-                criteria.Dhcp.EqualTo(true);
+                if (DHCPFilter.SelectedIndex == 1)
+                    criteria.Dhcp.EqualTo(true);
+                else
+                    criteria.Dhcp.EqualTo(false);
             }
 
             DeviceGridViewControl1.Devices = _theController.GetDevices(criteria);
