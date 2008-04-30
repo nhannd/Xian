@@ -235,7 +235,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     delegate(IReportingWorkflowService service)
                     {
                         CreateAddendumResponse response = service.CreateAddendum(new CreateAddendumRequest(item.ProcedureStepRef));
-                        item.ProcedureStepRef = response.PublicationStepRef;
+                        item.ProcedureStepRef = response.InterpretationStepRef;
                     });
 
                 folderSystem.InvalidateFolder(typeof(Folders.DraftFolder));
