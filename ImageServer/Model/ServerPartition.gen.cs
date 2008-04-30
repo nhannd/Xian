@@ -52,6 +52,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.Boolean _autoInsertDevice;
         private System.Int32 _defaultRemotePort;
         private System.String _description;
+        private DuplicateSopPolicyEnum _duplicateSopPolicyEnum;
         private System.Boolean _enabled;
         private System.String _partitionFolder;
         private System.Int32 _port;
@@ -83,6 +84,11 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _description; }
         set { _description = value; }
+        }
+        public DuplicateSopPolicyEnum DuplicateSopPolicyEnum
+        {
+        get { return _duplicateSopPolicyEnum; }
+        set { _duplicateSopPolicyEnum = value; }
         }
         public System.Boolean Enabled
         {

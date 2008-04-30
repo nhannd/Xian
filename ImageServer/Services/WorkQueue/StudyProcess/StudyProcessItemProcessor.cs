@@ -128,6 +128,32 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
         }
 
+        private static void ProcessDuplicate(string basePath, string duplicatePath)
+        {
+            DicomFile dupFile = new DicomFile(duplicatePath);
+            DicomFile baseFile = new DicomFile(basePath);
+
+            dupFile.Load(DicomReadOptions.StorePixelDataReferences);
+            baseFile.Load(DicomReadOptions.StorePixelDataReferences);
+
+            if (!dupFile.TransferSyntax.Equals(baseFile.TransferSyntax))
+            {
+                string failure = String.Format("Base file transfer syntax '{0}' not equal to duplicate file '{1}'",
+                                               baseFile.TransferSyntax, dupFile.TransferSyntax);
+                throw new ApplicationException(failure);
+            }
+            string failureReason;
+            if (baseFile.DataSet.Equals(dupFile.DataSet, out failureReason))
+            {
+                Platform.Log(LogLevel.Info,
+                             "Duplicate SOP being processed is identical.  Removing SOP: {0}",
+                             baseFile.MediaStorageSopInstanceUid);
+                File.Delete(duplicatePath);
+                return;
+            }
+            else throw new ApplicationException(failureReason);
+        }
+
         /// <summary>
         /// Process a specific DICOM file related to a <see cref="WorkQueue"/> request.
         /// </summary>
@@ -256,9 +282,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 if (sop.Failed)
                     continue;
 
-                if (sop.Duplicate)
-                    continue;  // TODO
-
                 if (ProcessWorkQueueUid(item, sop, studyXml))
                     successfulProcessCount++;
             }
@@ -301,11 +324,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             else
                 path = basePath + ".dcm";
 
-
             try
             {
-                ProcessFile(item, path, studyXml);
-
+                if (sop.Duplicate)
+                {
+                    ProcessDuplicate(basePath + ".dcm", path);
+                }
+                else
+                    ProcessFile(item, path, studyXml);
+                
                 // Delete it out of the queue
                 DeleteWorkQueueUid(sop);
                 return true;
@@ -319,22 +346,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     item.FailureDescription = e.Message;
 
                 sop.FailureCount++;
-                if (sop.FailureCount > WorkQueueSettings.Default.WorkQueueMaxFailureCount)
+                if ((sop.FailureCount > WorkQueueSettings.Default.WorkQueueMaxFailureCount) || sop.Duplicate)
                 {
                     sop.Failed = true;
                     if (sop.Extension != null)
-                    {
-                        string newPath;
-                        for (int i = 1; ; i++)
+                        for (int i = 1; i < 999; i++)
                         {
-                            sop.Extension = String.Format("fail{0}", 1);
-                            newPath = basePath + "." + sop.Extension;
+                            string extension = String.Format("bad{0}.dcm", i);
+                            string newPath = basePath + "." + extension;
                             if (!File.Exists(newPath))
+                            {
+                                sop.Extension = extension;
+                                File.Move(path, newPath);
                                 break;
+                            }
                         }
-
-                        File.Move(basePath, newPath);
-                    }
 
                     UpdateWorkQueueUid(sop);
                 }
@@ -345,8 +371,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 OnProcessUidEnd(item, sop);
             }
-
-
         }
         #endregion
 

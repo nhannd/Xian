@@ -31,6 +31,7 @@
 
 using System;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions
@@ -180,6 +181,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 OKButton.Text = "Add";
             }
 
+            // update the dropdown list
+            DuplicateSopDropDownList.Items.Clear();
+            foreach (DuplicateSopPolicyEnum policyEnum in DuplicateSopPolicyEnum.GetAll())
+            {
+                DuplicateSopDropDownList.Items.Add(new ListItem(policyEnum.Description, policyEnum.Enum.ToString()));
+            }
 
             if (Partition == null)
             {
@@ -194,6 +201,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
 
                 AutoInsertDeviceCheckBox.Enabled = true;
                 DefaultRemotePortTextBox.Enabled = true;
+
+                DuplicateSopDropDownList.SelectedIndex = 0;
             }
             else if (Page.IsValid)
                 // only update the UI with the partition if the data is valid, otherwise, keep them on the screen
@@ -208,6 +217,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 DefaultRemotePortTextBox.Text = Partition.DefaultRemotePort.ToString();
 
                 DefaultRemotePortTextBox.Enabled = Partition.AutoInsertDevice;
+
+                DuplicateSopDropDownList.SelectedValue = Partition.DuplicateSopPolicyEnum.Enum.ToString();
+
             }
         }
 
@@ -236,6 +248,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             Partition.AutoInsertDevice = AutoInsertDeviceCheckBox.Checked;
             if (Int32.TryParse(DefaultRemotePortTextBox.Text, out port))
                 Partition.DefaultRemotePort = port;
+
+            Partition.DuplicateSopPolicyEnum = DuplicateSopPolicyEnum.GetAll()[DuplicateSopDropDownList.SelectedIndex];
         }
 
         #endregion Private Methods

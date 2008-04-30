@@ -29,19 +29,14 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Network;
 using ClearCanvas.DicomServices;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Services.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
@@ -50,83 +45,15 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     {
         #region Private Members
         private IList<SupportedSop> _list;
+        private readonly string _type = "Uncompressed C-STORE-RQ Image";  
         #endregion
 
-        #region IDicomScp Members
-
-        public override bool OnReceiveRequest(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
+        public override string StorageScpType
         {
-            ServerCommandProcessor processor = new ServerCommandProcessor("Processing NonImage C-STORE-RQ");
-            DicomStatus returnStatus = DicomStatuses.Success;
-            try
-            {
-                String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
-                String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
-
-                StudyStorageLocation studyLocation = GetStudyStorageLocation(message);
-                if (studyLocation == null)
-                {
-                    returnStatus = DicomStatuses.ResourceLimitation;
-                    Platform.Log(LogLevel.Error,"Unable to process image, no writeable storage location: {0}",sopInstanceUid);
-                    throw new ApplicationException("No writeable storage location.");
-                }
-
-                String path = studyLocation.FilesystemPath;
-                processor.AddCommand(new CreateDirectoryCommand(path));
-
-                path = Path.Combine(path, studyLocation.PartitionFolder);
-                processor.AddCommand(new CreateDirectoryCommand(path));
-
-                path = Path.Combine(path, studyLocation.StudyFolder);
-                processor.AddCommand(new CreateDirectoryCommand(path));
-
-                path = Path.Combine(path, studyLocation.StudyInstanceUid);
-                processor.AddCommand(new CreateDirectoryCommand(path));
-
-                path = Path.Combine(path, seriesInstanceUid);
-                processor.AddCommand(new CreateDirectoryCommand(path));
-
-                path = Path.Combine(path, sopInstanceUid + ".dcm");
-                if (File.Exists(path))
-                {
-                    returnStatus = DicomStatuses.DuplicateSOPInstance;
-                    Platform.Log(LogLevel.Info,"Duplicate SOP Instance received, rejecting {0}",sopInstanceUid);
-                    throw new ApplicationException("Duplicate SOP Instance recieved.");
-                }
-
-                DicomFile file = ConvertToDicomFile(message, path, association);
-                processor.AddCommand(new SaveDicomFileCommand(path, file));
-
-                processor.AddCommand(new UpdateWorkQueueCommand(file, studyLocation));
-
-                if (processor.Execute())
-                {
-                    Platform.Log(LogLevel.Info, "Received SOP Instance {0} from {1} to {2} on context {3}", sopInstanceUid,
-                                 association.CallingAE, association.CalledAE, presentationID);
-
-                    returnStatus = DicomStatuses.Success;
-                }
-                else
-                {
-                    Platform.Log(LogLevel.Error, "Failure processing message.  Sending failure response.");
-
-                    returnStatus = DicomStatuses.ProcessingFailure;
-                }
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.", processor.Description);
-                processor.Rollback();
-
-                if (returnStatus == DicomStatuses.Success)
-                    returnStatus = DicomStatuses.ProcessingFailure;
-            }
-
-            server.SendCStoreResponse(presentationID, message.MessageId, message.AffectedSopInstanceUid,
-                                      returnStatus);
-
-            return true;
+            get { return _type; }
         }
+
+        #region IDicomScp Members
 
         /// <summary>
         /// Returns a list of the services supported by this plugin.

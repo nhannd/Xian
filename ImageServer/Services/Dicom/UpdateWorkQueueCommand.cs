@@ -47,9 +47,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         #region Private Members
         private readonly DicomMessageBase _message;
         private readonly StudyStorageLocation _storageLocation;
+        private readonly bool _duplicate;
+        private readonly string _extension;
         #endregion
 
-        public UpdateWorkQueueCommand(DicomMessageBase message, StudyStorageLocation location)
+        public UpdateWorkQueueCommand(DicomMessageBase message, StudyStorageLocation location, bool duplicate, string extension)
             : base("Update/Insert a WorkQueue Entry", true)
         {
             Platform.CheckForNullReference(message, "Dicom Message object");
@@ -57,6 +59,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             _message = message;
             _storageLocation = location;
+            _duplicate = duplicate;
+            _extension = extension;
         }
 
         protected override void OnExecute(IUpdateContext updateContext)
@@ -69,6 +73,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             parms.SopInstanceUid = _message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
             parms.ScheduledTime = Platform.Time;
             parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
+            if (_duplicate)
+            {
+                parms.Duplicate = _duplicate;
+                parms.Extension = _extension;
+            }
             insert.Execute(parms);
         }
     }

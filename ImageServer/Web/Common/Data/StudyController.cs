@@ -136,7 +136,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
 
             IList<StudyStorage> storages = studyStorageAdaptor.Get(criteria);
-            int counter = 0;
             foreach (StudyStorage storage in storages)
             {
                 WorkQueueAdaptor adaptor = new WorkQueueAdaptor();

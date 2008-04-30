@@ -455,8 +455,30 @@ namespace ClearCanvas.Dicom
         /// <returns>true if the collections are equal.</returns>
         public override bool Equals(object obj)
         {
+            string failureReason;
+            return Equals(obj, out failureReason);
+        }
+
+        /// <summary>
+        /// Check if the contents of the DicomAttributeCollection is identical to another DicomAttributeCollection instance.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This method compares the contents of two attribute collections to see if they are equal.  The method
+        /// will step through each of the tags within the collection, and compare them to see if they are equal.  The
+        /// method will also recurse into sequence attributes to be sure they are equal.</para>
+        /// </remarks>
+        /// <param name="obj">The objec to compare to.</param>
+        /// <param name="comparisonFailure">An output string describing why the objects are not equal.</param>
+        /// <returns>true if the collections are equal.</returns>
+        public bool Equals(object obj, out string comparisonFailure)
+        {
             DicomAttributeCollection a = obj as DicomAttributeCollection;
-            if (a == null) return false;
+            if (a == null)
+            {
+                comparisonFailure = String.Format("Comparison object is invalid type: {0}", obj.GetType());
+                return false;
+            }
 
             IEnumerator<DicomAttribute> thisEnumerator = GetEnumerator();
             IEnumerator<DicomAttribute> compareEnumerator = a.GetEnumerator();
@@ -476,8 +498,10 @@ namespace ClearCanvas.Dicom
                     break; // break & exit with true
 
                 if (!thisValidNext || !compareValidNext)
+                {
+                    comparisonFailure = String.Format("Invalid last tag in attribute collection");
                     return false;
-
+                }
                 DicomAttribute thisAttrib = thisEnumerator.Current;
                 DicomAttribute compareAttrib = compareEnumerator.Current;
 
@@ -485,12 +509,11 @@ namespace ClearCanvas.Dicom
                 {
                     thisValidNext = thisEnumerator.MoveNext();
 
-                    if (!thisValidNext && !compareValidNext)
-                        break; // break & exit with true
-
-                    if (!thisValidNext || !compareValidNext)
+                    if (!thisValidNext)
+                    {
+                        comparisonFailure = String.Format("Invalid last tag in attribute collection");
                         return false;
-
+                    }
                     thisAttrib = thisEnumerator.Current;
                 }
 
@@ -498,22 +521,37 @@ namespace ClearCanvas.Dicom
                 {
                     compareValidNext = compareEnumerator.MoveNext();
 
-                    if (!thisValidNext && !compareValidNext)
-                        break; // break & exit with true
-
-                    if (!thisValidNext || !compareValidNext)
+                    if (!compareValidNext)
+                    {
+                        comparisonFailure = String.Format("Invalid last tag in attribute collection");
                         return false;
-
+                    }
                     compareAttrib = compareEnumerator.Current;
                 }
 
 
                 if (!thisAttrib.Tag.Equals(compareAttrib.Tag))
+                {
+                    comparisonFailure =
+                        String.Format(
+                            "Source tag {0} and comparison message tag {1} not the same, possible missing tag.",
+                            thisAttrib.Tag, compareAttrib.Tag);
                     return false;
+                }
                 if (!thisAttrib.Equals(compareAttrib))
+                {
+                    if (thisAttrib.StreamLength < 64 && compareAttrib.StreamLength < 64)
+                        comparisonFailure =
+                            String.Format("Tag {0} values not equal, Base value: '{1}', Comparison value: '{2}'",
+                                          thisAttrib.Tag,
+                                          thisAttrib, compareAttrib);
+                    else
+                        comparisonFailure = String.Format("Tag {0} values not equal in message", thisAttrib.Tag);
                     return false;
+                }
             }
-           
+
+            comparisonFailure = "DicomAttributeCollections are equal!";
             return true;
         }
 
@@ -814,7 +852,7 @@ namespace ClearCanvas.Dicom
                     try
                     {
                         DicomFieldAttribute dfa = (DicomFieldAttribute)field.GetCustomAttributes(typeof(DicomFieldAttribute), true)[0];
-                        if ((dfa.Tag.TagValue >= this.StartTagValue) && (dfa.Tag.TagValue <= this.EndTagValue))
+                        if ((dfa.Tag.TagValue >= StartTagValue) && (dfa.Tag.TagValue <= this.EndTagValue))
                         {
                             if (Contains(dfa.Tag))
                             {

@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
         private WorkQueueTypeEnum _type;
         private WorkQueueStatusEnum _status;
         private WorkQueuePriorityEnum _priority;
+        private string _failureDescription;
 
         private string _processorID;
         private int _numSeriesPending;
@@ -128,6 +129,11 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             set { _priority = value; }
         }
 
+        public string FailureDescription
+        {
+            get { return _failureDescription; }
+            set { _failureDescription = value; }
+        }
         #endregion Public Properties
     }
 }

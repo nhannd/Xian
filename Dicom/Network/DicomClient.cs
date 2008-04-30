@@ -278,6 +278,18 @@ namespace ClearCanvas.Dicom.Network
 		public void Join() {
 			_closedEvent.WaitOne();
 		}
+
+        /// <summary>
+        /// Wait a specified timeout for the background thread for the client to close.
+        /// </summary>
+        /// <returns>
+        /// True if the background thread has exited.
+        /// </returns>
+        /// <param name="timeout"></param>
+        public bool Join(TimeSpan timeout)
+        {
+            return _closedEvent.WaitOne(timeout, true);
+        }
 		#endregion
 
 		#region NetworkBase Overrides

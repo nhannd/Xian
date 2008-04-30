@@ -29,55 +29,48 @@
 
 #endregion
 
-using System;
-using ClearCanvas.ImageServer.Enterprise;
+using System.IO;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageServer.Model.Parameters
+namespace ClearCanvas.ImageServer.Common
 {
-    public class WorkQueueStudyProcessInsertParameters : ProcedureParameters
+    /// <summary>
+    /// A ServerCommand derived class for renaming a file.
+    /// </summary>
+    public class RenameFileCommand : ServerCommand
     {
-        public WorkQueueStudyProcessInsertParameters()
-            : base("InsertWorkQueueStudyProcess")
-        { }
+        #region Private Members
+        private readonly string _sourceFile;
+        private readonly string _destinationFile;
+        #endregion
 
-        public ServerEntityKey ServerPartitionKey
+        public RenameFileCommand(string sourceFile, string destinationFile)
+            : base("Rename File", true)
         {
-            set { SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
+            Platform.CheckForNullReference(sourceFile, "Source filename");
+            Platform.CheckForNullReference(destinationFile, "Destination filename");
+
+            _sourceFile = sourceFile;
+            _destinationFile = destinationFile;
         }
 
-        public ServerEntityKey StudyStorageKey
+        protected override void OnExecute()
         {
-            set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
+            if (File.Exists(_destinationFile))
+            {
+                File.Delete(_destinationFile);
+                return;
+            }
+
+            File.Move(_sourceFile, _destinationFile);
         }
 
-        public DateTime ExpirationTime
+        protected override void OnUndo()
         {
-            set { SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
-        }
+            if (File.Exists(_sourceFile))
+                File.Delete(_sourceFile);
 
-        public DateTime ScheduledTime
-        {
-            set { SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
-        }
-
-        public string SeriesInstanceUid
-        {
-            set { SubCriteria["SeriesInstanceUid"] = new ProcedureParameter<string>("SeriesInstanceUid", value); }
-        }
-
-        public string SopInstanceUid
-        {
-            set { SubCriteria["SopInstanceUid"] = new ProcedureParameter<string>("SopInstanceUid", value); }
-        }
-
-        public bool Duplicate
-        {
-            set { SubCriteria["Duplicate"] = new ProcedureParameter<bool>("Duplicate", value); }
-            
-        }
-        public string Extension
-        {
-            set { SubCriteria["Extension"] = new ProcedureParameter<string>("Extension", value); }           
+            File.Move(_destinationFile, _sourceFile);
         }
     }
 }

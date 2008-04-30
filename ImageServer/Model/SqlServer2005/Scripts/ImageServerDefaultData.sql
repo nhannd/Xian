@@ -592,3 +592,21 @@ GO
 INSERT INTO [ImageServer].[dbo].[StudyStatusEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
 VALUES(newid(),200,'Pending','Pending','Pending')
 GO
+
+
+-- DuplicateSopPolicyEnum inserts
+INSERT INTO [ImageServer].[dbo].DuplicateSopPolicyEnum([GUID],[Enum],[Lookup],[Description],[LongDescription])
+VALUES(newid(),100,'SendSuccess','Send Success','Send a DICOM C-STORE-RSP success status when receiving a duplicate, but ignore the file.')
+GO
+
+INSERT INTO [ImageServer].[dbo].DuplicateSopPolicyEnum([GUID],[Enum],[Lookup],[Description],[LongDescription])
+VALUES(newid(),101,'RejectDuplicates','Reject Duplicates','Send a DICOM C-STORE-RSP reject status when receiving a duplicate.')
+GO
+
+INSERT INTO [ImageServer].[dbo].DuplicateSopPolicyEnum([GUID],[Enum],[Lookup],[Description],[LongDescription])
+VALUES(newid(),102,'AcceptLatest','Accept Latest','Keep the latest object received.')
+GO
+
+INSERT INTO [ImageServer].[dbo].DuplicateSopPolicyEnum([GUID],[Enum],[Lookup],[Description],[LongDescription])
+VALUES(newid(),103,'CompareDuplicates','Compare Duplicates','Process duplicate objects received and compare them to originals flagging any differences as a failure.')
+GO

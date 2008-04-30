@@ -24,6 +24,30 @@ END
 GO
 SET ANSI_PADDING OFF
 GO
+/****** Object:  Table [dbo].[DuplicateSopPolicyEnum]    Script Date: 04/29/2008 14:56:14 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DuplicateSopPolicyEnum]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[DuplicateSopPolicyEnum](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_DuplicateSopPolicyEnum_GUID]  DEFAULT (newid()),
+	[Enum] [smallint] NOT NULL,
+	[Lookup] [varchar](32) NOT NULL,
+	[Description] [nvarchar](32) NOT NULL,
+	[LongDescription] [nvarchar](128) NOT NULL,
+ CONSTRAINT [PK_DuplicateSopPolicyEnum] PRIMARY KEY CLUSTERED 
+(
+	[Enum] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [STATIC]
+) ON [STATIC]
+END
+GO
+SET ANSI_PADDING OFF
+GO
 /****** Object:  Table [dbo].[ServerPartition]    Script Date: 01/09/2008 15:03:51 ******/
 SET ANSI_NULLS ON
 GO
@@ -44,6 +68,7 @@ CREATE TABLE [dbo].[ServerPartition](
 	[AutoInsertDevice] [bit] NOT NULL CONSTRAINT [DF_ServerPartition_AutoInsertDevice]  DEFAULT ((1)),
 	[DefaultRemotePort] [int] NOT NULL CONSTRAINT [DF_ServerPartition_DefaultRemotePort]  DEFAULT ((104)),
 	[StudyCount] [int] NOT NULL CONSTRAINT [DF_ServerPartition_StudyCount]  DEFAULT ((0)),
+	[DuplicateSopPolicyEnum] [smallint] NOT NULL,
  CONSTRAINT [PK_ServerPartition] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
@@ -71,8 +96,8 @@ BEGIN
 CREATE TABLE [dbo].[WorkQueueStatusEnum](
 	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_WorkQueueStatusEnum_GUID]  DEFAULT (newid()),
 	[Enum] [smallint] NOT NULL,
-	[Lookup] [varchar](16) NOT NULL,
-	[Description] [nvarchar](16) NOT NULL,
+	[Lookup] [varchar](32) NOT NULL,
+	[Description] [nvarchar](32) NOT NULL,
 	[LongDescription] [nvarchar](128) NOT NULL,
  CONSTRAINT [PK_WorkQueueStatusEnum] PRIMARY KEY CLUSTERED 
 (
@@ -83,8 +108,6 @@ END
 GO
 SET ANSI_PADDING OFF
 GO
-
-
 
 /****** Object:  Table [dbo].[StudyStatusEnum]    Script Date: 01/09/2008 15:04:16 ******/
 SET ANSI_NULLS ON
@@ -98,8 +121,8 @@ BEGIN
 CREATE TABLE [dbo].[StudyStatusEnum](
 	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_StudyStatusEnum_GUID]  DEFAULT (newid()),
 	[Enum] [smallint] NOT NULL,
-	[Lookup] [varchar](16) NOT NULL,
-	[Description] [nvarchar](16) NOT NULL,
+	[Lookup] [varchar](32) NOT NULL,
+	[Description] [nvarchar](32) NOT NULL,
 	[LongDescription] [nvarchar](128) NOT NULL,
  CONSTRAINT [PK_StudyStatusEnum] PRIMARY KEY CLUSTERED 
 (
@@ -122,8 +145,8 @@ BEGIN
 CREATE TABLE [dbo].[WorkQueueTypeEnum](
 	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_WorkQueueTypeEnum_GUID]  DEFAULT (newid()),
 	[Enum] [smallint] NOT NULL,
-	[Lookup] [varchar](16) NOT NULL,
-	[Description] [nvarchar](16) NOT NULL,
+	[Lookup] [varchar](32) NOT NULL,
+	[Description] [nvarchar](32) NOT NULL,
 	[LongDescription] [nvarchar](128) NOT NULL,
  CONSTRAINT [PK_WorkQueueTypeEnum] PRIMARY KEY CLUSTERED 
 (
@@ -283,7 +306,6 @@ END
 GO
 SET ANSI_PADDING OFF
 GO
-
 
 /****** Object:  Table [dbo].[WorkQueuePriorityEnum]    Script Date: 03/12/2008 14:30:42 ******/
 SET ANSI_NULLS ON
@@ -1065,3 +1087,10 @@ GO
 ALTER TABLE [dbo].[WorkQueueUid] CHECK CONSTRAINT [FK_WorkQueueUid_WorkQueue]
 GO
 
+/****** Object:  ForeignKey [FK_ServerPartition_DuplicateSopPolicyEnum]    Script Date: 04/29/2008 14:56:18 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ServerPartition_DuplicateSopPolicyEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[ServerPartition]'))
+ALTER TABLE [dbo].[ServerPartition]  WITH CHECK ADD  CONSTRAINT [FK_ServerPartition_DuplicateSopPolicyEnum] FOREIGN KEY([DuplicateSopPolicyEnum])
+REFERENCES [dbo].[DuplicateSopPolicyEnum] ([Enum])
+GO
+ALTER TABLE [dbo].[ServerPartition] CHECK CONSTRAINT [FK_ServerPartition_DuplicateSopPolicyEnum]
+GO

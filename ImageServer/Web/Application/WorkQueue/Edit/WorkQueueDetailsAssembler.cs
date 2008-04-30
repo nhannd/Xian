@@ -79,15 +79,16 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             detail.Status = item.WorkQueueStatusEnum;
             detail.Priority = item.WorkQueuePriorityEnum;
             detail.ProcessorID = item.ProcessorID;
+            detail.FailureDescription = item.FailureDescription;
 
             // Fetch UIDs
             WorkQueueUidAdaptor wqUidsAdaptor = new WorkQueueUidAdaptor();
             WorkQueueUidSelectCriteria uidCriteria = new WorkQueueUidSelectCriteria();
             uidCriteria.WorkQueueKey.EqualTo(item.GetKey());
-            IList<Model.WorkQueueUid> uids = wqUidsAdaptor.Get(uidCriteria);
+            IList<WorkQueueUid> uids = wqUidsAdaptor.Get(uidCriteria);
 
             Hashtable mapSeries = new Hashtable();
-            foreach (Model.WorkQueueUid uid in uids)
+            foreach (WorkQueueUid uid in uids)
             {
                 if (mapSeries.ContainsKey(uid.SeriesInstanceUid) == false)
                     mapSeries.Add(uid.SeriesInstanceUid, uid.SopInstanceUid);
@@ -104,7 +105,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             StudyAdaptor studyAdaptor = new StudyAdaptor();
             StudySelectCriteria studycriteria = new StudySelectCriteria();
             studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
-            IList<Model.Study> studyList = studyAdaptor.Get(studycriteria);
+            IList<Study> studyList = studyAdaptor.Get(studycriteria);
 
             // Study may not be available until the images are processed.
             if (studyList != null && studyList.Count > 0)
@@ -115,35 +116,36 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             return detail;
         }
 
-        private static WorkQueueDetails CreateAutoRouteWorkQueueItemDetails(Model.WorkQueue workqueue)
+        private static WorkQueueDetails CreateAutoRouteWorkQueueItemDetails(Model.WorkQueue item)
         {
             StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
             DeviceDataAdapter deviceAdaptor = new DeviceDataAdapter();
             WorkQueueUidAdaptor wqUidsAdaptor = new WorkQueueUidAdaptor();
             StudyAdaptor studyAdaptor = new StudyAdaptor();
 
-            StudyStorage studyStorage = studyStorageAdaptor.Get(workqueue.StudyStorageKey);
+            StudyStorage studyStorage = studyStorageAdaptor.Get(item.StudyStorageKey);
             
             AutoRouteWorkQueueDetails detail = new AutoRouteWorkQueueDetails();
-            detail.GUID = workqueue.GetKey();
+            detail.GUID = item.GetKey();
             detail.StudyInstanceUid = studyStorage==null? "":studyStorage.StudyInstanceUid;
 
-            detail.DestinationAE = deviceAdaptor.Get(workqueue.DeviceKey).AeTitle;
-            detail.ScheduledDateTime = workqueue.ScheduledTime;
-            detail.ExpirationTime = workqueue.ExpirationTime;
-            detail.FailureCount = workqueue.FailureCount;
-            detail.Type = workqueue.WorkQueueTypeEnum;
-            detail.Status = workqueue.WorkQueueStatusEnum;
-            detail.Priority = workqueue.WorkQueuePriorityEnum;
-            detail.ProcessorID = workqueue.ProcessorID;
+            detail.DestinationAE = deviceAdaptor.Get(item.DeviceKey).AeTitle;
+            detail.ScheduledDateTime = item.ScheduledTime;
+            detail.ExpirationTime = item.ExpirationTime;
+            detail.FailureCount = item.FailureCount;
+            detail.Type = item.WorkQueueTypeEnum;
+            detail.Status = item.WorkQueueStatusEnum;
+            detail.Priority = item.WorkQueuePriorityEnum;
+            detail.ProcessorID = item.ProcessorID;
+            detail.FailureDescription = item.FailureDescription;
 
             // Fetch UIDs
             WorkQueueUidSelectCriteria uidCriteria = new WorkQueueUidSelectCriteria();
-            uidCriteria.WorkQueueKey.EqualTo(workqueue.GetKey());
-            IList<Model.WorkQueueUid> uids = wqUidsAdaptor.Get(uidCriteria);
+            uidCriteria.WorkQueueKey.EqualTo(item.GetKey());
+            IList<WorkQueueUid> uids = wqUidsAdaptor.Get(uidCriteria);
 
             Hashtable mapSeries = new Hashtable();
-            foreach (Model.WorkQueueUid uid in uids)
+            foreach (WorkQueueUid uid in uids)
             {
                 if (mapSeries.ContainsKey(uid.SeriesInstanceUid) == false)
                     mapSeries.Add(uid.SeriesInstanceUid, uid.SopInstanceUid);
@@ -158,7 +160,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             {
                 StudySelectCriteria studycriteria = new StudySelectCriteria();
                 studycriteria.StudyInstanceUid.EqualTo(studyStorage.StudyInstanceUid);
-                IList<Model.Study> studyList = studyAdaptor.Get(studycriteria);
+                IList<Study> studyList = studyAdaptor.Get(studycriteria);
 
                 // Study may not be available until the images are processed.
                 if (studyList != null && studyList.Count > 0)
@@ -171,35 +173,36 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             return detail;
         }
 
-        private static WorkQueueDetails CreateWebMoveStudyWorkQueueItemDetails(Model.WorkQueue workqueue)
+        private static WorkQueueDetails CreateWebMoveStudyWorkQueueItemDetails(Model.WorkQueue item)
         {
             DeviceDataAdapter deviceAdaptor = new DeviceDataAdapter();
             StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
-            StudyStorage studyStorage = studyStorageAdaptor.Get(workqueue.StudyStorageKey);
+            StudyStorage studyStorage = studyStorageAdaptor.Get(item.StudyStorageKey);
             WorkQueueUidAdaptor wqUidsAdaptor = new WorkQueueUidAdaptor();
             StudyAdaptor studyAdaptor = new StudyAdaptor();
-            Device dest = deviceAdaptor.Get(workqueue.DeviceKey);
+            Device dest = deviceAdaptor.Get(item.DeviceKey);
             
             WebMoveStudyWorkQueueDetails detail = new WebMoveStudyWorkQueueDetails();
-            detail.GUID = workqueue.GetKey();
+            detail.GUID = item.GetKey();
 
             detail.DestinationAE = dest==null? "":dest.AeTitle;
             detail.StudyInstanceUid = studyStorage==null? "":studyStorage.StudyInstanceUid;
-            detail.ScheduledDateTime = workqueue.ScheduledTime;
-            detail.ExpirationTime = workqueue.ExpirationTime;
-            detail.FailureCount = workqueue.FailureCount;
-            detail.Type = workqueue.WorkQueueTypeEnum;
-            detail.Status = workqueue.WorkQueueStatusEnum;
-            detail.Priority = workqueue.WorkQueuePriorityEnum;
-            detail.ProcessorID = workqueue.ProcessorID;
+            detail.ScheduledDateTime = item.ScheduledTime;
+            detail.ExpirationTime = item.ExpirationTime;
+            detail.FailureCount = item.FailureCount;
+            detail.Type = item.WorkQueueTypeEnum;
+            detail.Status = item.WorkQueueStatusEnum;
+            detail.Priority = item.WorkQueuePriorityEnum;
+            detail.ProcessorID = item.ProcessorID;
+            detail.FailureDescription = item.FailureDescription;
 
             // Fetch UIDs
             WorkQueueUidSelectCriteria uidCriteria = new WorkQueueUidSelectCriteria();
-            uidCriteria.WorkQueueKey.EqualTo(workqueue.GetKey());
-            IList<Model.WorkQueueUid> uids = wqUidsAdaptor.Get(uidCriteria);
+            uidCriteria.WorkQueueKey.EqualTo(item.GetKey());
+            IList<WorkQueueUid> uids = wqUidsAdaptor.Get(uidCriteria);
 
             Hashtable mapSeries = new Hashtable();
-            foreach (Model.WorkQueueUid uid in uids)
+            foreach (WorkQueueUid uid in uids)
             {
                 if (mapSeries.ContainsKey(uid.SeriesInstanceUid) == false)
                     mapSeries.Add(uid.SeriesInstanceUid, uid.SopInstanceUid);
@@ -214,7 +217,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
             {
                 StudySelectCriteria studycriteria = new StudySelectCriteria();
                 studycriteria.StudyInstanceUid.EqualTo(studyStorage.StudyInstanceUid);
-                IList<Model.Study> studyList = studyAdaptor.Get(studycriteria);
+                IList<Study> studyList = studyAdaptor.Get(studycriteria);
 
                 // Study may not be available until the images are processed.
                 if (studyList != null && studyList.Count > 0)

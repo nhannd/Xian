@@ -3369,7 +3369,22 @@ namespace ClearCanvas.Dicom
             //Check for null and compare run-time types.
             if (obj == null || GetType() != obj.GetType()) return false;
 
-            return false;  //TODO
+            DicomAttribute a = (DicomAttribute)obj;
+            byte[] destArray = (byte[])a.Values;
+            byte[] sourceArray = (byte[])Values;
+
+            if (Count != a.Count)
+                return false;
+            if (Count == 0 && a.Count == 0)
+                return true;
+            if (destArray.Length != sourceArray.Length)
+                return false;
+
+            for (int index = 0; index < a.Count; index++)
+                if (!destArray[index].Equals(sourceArray[index]))
+                    return false;
+
+            return true;
         }
 
         public override int GetHashCode()

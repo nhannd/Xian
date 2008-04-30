@@ -43,35 +43,39 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
         public bool Enabled
         {
-            set { this.SubCriteria["Enabled"] = new ProcedureParameter<bool>("Enabled", value); }
+            set { SubCriteria["Enabled"] = new ProcedureParameter<bool>("Enabled", value); }
         }
         public String Description
         {
-            set { this.SubCriteria["Description"] = new ProcedureParameter<String>("Description", value); }
+            set { SubCriteria["Description"] = new ProcedureParameter<String>("Description", value); }
         }
         public String AeTitle
         {
-            set { this.SubCriteria["AeTitle"] = new ProcedureParameter<String>("AeTitle", value); }
+            set { SubCriteria["AeTitle"] = new ProcedureParameter<String>("AeTitle", value); }
         }
         public int Port
         {
-            set { this.SubCriteria["Port"] = new ProcedureParameter<int>("Port", value); }
+            set { SubCriteria["Port"] = new ProcedureParameter<int>("Port", value); }
         }
         public String PartitionFolder
         {
-            set { this.SubCriteria["PartitionFolder"] = new ProcedureParameter<String>("PartitionFolder", value); }
+            set { SubCriteria["PartitionFolder"] = new ProcedureParameter<String>("PartitionFolder", value); }
+        }
+        public DuplicateSopPolicyEnum DuplicateSopPolicyEnum
+        {
+            set { SubCriteria["DuplicateSopPolicyEnum"] = new ProcedureParameter<ServerEnum>("DuplicateSopPolicyEnum", value); }
         }
         public int DefaultRemotePort
         {
-            set { this.SubCriteria["DefaultRemotePort"] = new ProcedureParameter<int>("DefaultRemotePort", value); }
+            set { SubCriteria["DefaultRemotePort"] = new ProcedureParameter<int>("DefaultRemotePort", value); }
         }
         public bool AcceptAnyDevice
         {
-            set { this.SubCriteria["AcceptAnyDevice"] = new ProcedureParameter<bool>("AcceptAnyDevice", value); }
+            set { SubCriteria["AcceptAnyDevice"] = new ProcedureParameter<bool>("AcceptAnyDevice", value); }
         }
         public bool AutoInsertDevice
         {
-            set { this.SubCriteria["AutoInsertDevice"] = new ProcedureParameter<bool>("AutoInsertDevice", value); }
+            set { SubCriteria["AutoInsertDevice"] = new ProcedureParameter<bool>("AutoInsertDevice", value); }
         }
     }
 }

@@ -1,12 +1,10 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions.AddEditPartitionDialog"
     Codebehind="AddEditPartitionDialog.ascx.cs" %>
-
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.Validators"
     TagPrefix="CCValidators" %>
 <%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
     TagPrefix="CCCommon" %>
-
-<ccAsp:ModalDialog ID="ModalDialog" runat="server" >
+<ccAsp:ModalDialog ID="ModalDialog" runat="server">
     <ContentTemplate>
         <asp:Panel ID="Panel3" runat="server">
             <aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
@@ -30,14 +28,14 @@
                                                     </CCCommon:InvalidInputIndicator>
                                                     <CCValidators:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                         ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="true" ErrorMessage="AE Title is required"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AETitleHelp"/>
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AETitleHelp" />
                                                     <CCValidators:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator2"
                                                         runat="server" ControlToValidate="AETitleTextBox" Display="None" ErrorMessage="The AE Title is not valid."
                                                         InvalidInputColor="#FAFFB5" ValidationExpression="^([^\\]){1,16}$" ValidationGroup="vg1"
-                                                        InvalidInputIndicatorID="AETitleHelp"/>
+                                                        InvalidInputIndicatorID="AETitleHelp" />
                                                     <CCValidators:ServerPartitionValidator ID="ServerPartitionValidator" runat="server"
-                                                        ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="false" ErrorMessage="The AE Title is not valid." 
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                        ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="false"
+                                                        ErrorMessage="The AE Title is not valid." InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
                                                         InvalidInputIndicatorID="AETitleHelp" />
                                                 </td>
                                             </tr>
@@ -109,6 +107,16 @@
                                         </table>
                                     </td>
                                     <td id="Td6" runat="server" valign="top">
+                                        <table width="100%">
+                                            <tr>
+                                                <td width="100%">
+                                                    <asp:Label ID="DuplicateSopLabel" runat="server" Text="Duplicate Object Policy" CssClass="CSSTextLabel" /><br />
+                                                    <asp:DropDownList ID="DuplicateSopDropDownList" runat="server" ToolTip="A policy for dealing with duplication DICOM objects received by the partition." />
+                                                </td>
+                                                <td>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                             </table>

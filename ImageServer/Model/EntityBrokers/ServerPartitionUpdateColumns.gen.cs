@@ -60,6 +60,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["Description"] = new EntityUpdateColumn<System.String>("Description", value); }
         }
+        public DuplicateSopPolicyEnum DuplicateSopPolicyEnum
+        {
+            set { SubParameters["DuplicateSopPolicyEnum"] = new EntityUpdateColumn<DuplicateSopPolicyEnum>("DuplicateSopPolicyEnum", value); }
+        }
         public System.Boolean Enabled
         {
             set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }

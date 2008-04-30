@@ -37,6 +37,11 @@
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Duplicate Object Policy">
+                        <ItemTemplate>
+                            <asp:Label ID="DuplicateSopDescription" runat="server"/>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="Studies">
                         <ItemTemplate>
                             <asp:Label ID="Studies" runat="server" Text='<%# Bind("StudyCount") %>'></asp:Label>
@@ -66,6 +71,9 @@
                             </asp:TableHeaderCell>
                             <asp:TableHeaderCell HorizontalAlign="Center">
                             Accept Any Device
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Duplication Object Policy
                             </asp:TableHeaderCell>
                             <asp:TableHeaderCell HorizontalAlign="Center">
                             Studies

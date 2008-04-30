@@ -29,11 +29,15 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.IO;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.DicomServices;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -49,6 +53,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// </remarks>
     public abstract class StorageScp : BaseScp
     {
+        #region Abstract Properties
+        public abstract string StorageScpType { get; }
+        #endregion
+
         #region Protected Members
 
         /// <summary>
@@ -119,5 +127,135 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         }
 
         #endregion Overridden BaseSCP methods
+
+        #region IDicomScp Members
+
+        public override bool OnReceiveRequest(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
+        {
+            // Use the command processor for rollback capabilities.
+            ServerCommandProcessor processor = new ServerCommandProcessor("Processing " + StorageScpType);
+            DicomStatus returnStatus = DicomStatuses.Success;
+            try
+            {
+                String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
+                String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
+
+                StudyStorageLocation studyLocation = GetStudyStorageLocation(message);
+                if (studyLocation == null)
+                {
+                    returnStatus = DicomStatuses.ResourceLimitation;
+                    Platform.Log(LogLevel.Error, "Unable to process image, no writeable storage location: {0}", sopInstanceUid);
+                    throw new ApplicationException("No writeable storage location.");
+                }
+
+                String path = studyLocation.FilesystemPath;
+                String dupPath = null;
+                String basePath;
+                bool dupImage = false;
+                string extension = null;
+
+                processor.AddCommand(new CreateDirectoryCommand(path));
+
+                path = Path.Combine(path, studyLocation.PartitionFolder);
+                processor.AddCommand(new CreateDirectoryCommand(path));
+
+                path = Path.Combine(path, studyLocation.StudyFolder);
+                processor.AddCommand(new CreateDirectoryCommand(path));
+
+                path = Path.Combine(path, studyLocation.StudyInstanceUid);
+                processor.AddCommand(new CreateDirectoryCommand(path));
+
+                path = Path.Combine(path, seriesInstanceUid);
+                processor.AddCommand(new CreateDirectoryCommand(path));
+
+                basePath = path = Path.Combine(path, sopInstanceUid );
+                path += ".dcm";
+
+                if (File.Exists(path))
+                {
+                    if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.GetEnum("SendSuccess")))
+                    {
+                        returnStatus = DicomStatuses.Success;
+
+                        Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, sending success response {0}", sopInstanceUid);
+
+                        // Send the response message
+                        server.SendCStoreResponse(presentationID, message.MessageId, message.AffectedSopInstanceUid, returnStatus);
+
+                        return true;
+                    }
+                    else if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.GetEnum("RejectDuplicates")))
+                    {
+                        returnStatus = DicomStatuses.DuplicateSOPInstance;
+                        Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, rejecting {0}", sopInstanceUid);
+                        throw new ApplicationException("Duplicate SOP Instance received.");
+                    }
+                    else if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.GetEnum("AcceptLatest")))
+                    {
+                        Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, replacing previous file {0}", sopInstanceUid);
+                        dupPath = path + "_dup_old";
+                        processor.AddCommand(new RenameFileCommand(path, dupPath));
+                    }
+                    else if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.GetEnum("CompareDuplicates")))
+                    {
+                        Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, processing {0}", sopInstanceUid);
+                        for (int i = 1; i < 999; i++)
+                        {
+                            extension = String.Format("dup{0}.dcm", i);
+                            string newPath = basePath + "." + extension;
+                            if (!File.Exists(newPath))
+                            {
+                                dupImage = true;
+                                path = newPath;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                DicomFile file = ConvertToDicomFile(message, path, association);
+                processor.AddCommand(new SaveDicomFileCommand(path, file));
+
+                processor.AddCommand(new UpdateWorkQueueCommand(file, studyLocation, dupImage, extension));
+
+                if (processor.Execute())
+                {
+                    Platform.Log(LogLevel.Info, "Received SOP Instance {0} from {1} to {2} on context {3}", sopInstanceUid,
+                                 association.CallingAE, association.CalledAE, presentationID);
+                    returnStatus = DicomStatuses.Success;
+                    if (dupPath != null)
+                    {
+                        try
+                        {
+                            // Don't want to rollback here, just leave the file "as is"
+                            File.Delete(dupPath);
+                        }
+                        catch (Exception e)
+                        {
+                            Platform.Log(LogLevel.Warn, e, "Unexpectedly unable to remove duplicate file: {0}", dupPath);
+                        }
+                    }
+                }
+                else
+                {
+                    Platform.Log(LogLevel.Error, "Failure processing message, sending failure status.");
+
+                    returnStatus = DicomStatuses.ProcessingFailure;
+                }
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.", processor.Description);
+                processor.Rollback();
+                if (returnStatus == DicomStatuses.Success)
+                    returnStatus = DicomStatuses.ProcessingFailure;
+            }
+
+            // Send the response message
+            server.SendCStoreResponse(presentationID, message.MessageId, message.AffectedSopInstanceUid, returnStatus);
+
+            return true;
+        }
+        #endregion
     }
 }

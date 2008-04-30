@@ -180,7 +180,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
 
         public override void DataBind()
         {
-            if (_detailsView==null)
+            if (_detailsView==null && WorkQueue != null)
             {
                 if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("AutoRoute"))
                 {
@@ -199,7 +199,8 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue.Edit
                     WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
                 }
             }
-            _detailsView.WorkQueue = WorkQueue;
+            if (_detailsView != null)
+                _detailsView.WorkQueue = WorkQueue;
             base.DataBind();
         }
 

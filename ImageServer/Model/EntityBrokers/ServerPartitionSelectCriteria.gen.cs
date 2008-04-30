@@ -96,6 +96,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Description"];
             } 
         }
+        public ISearchCondition<DuplicateSopPolicyEnum> DuplicateSopPolicyEnum
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("DuplicateSopPolicyEnum"))
+              {
+                 SubCriteria["DuplicateSopPolicyEnum"] = new SearchCondition<DuplicateSopPolicyEnum>("DuplicateSopPolicyEnum");
+              }
+              return (ISearchCondition<DuplicateSopPolicyEnum>)SubCriteria["DuplicateSopPolicyEnum"];
+            } 
+        }
         public ISearchCondition<System.Boolean> Enabled
         {
             get

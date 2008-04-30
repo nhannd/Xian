@@ -274,6 +274,7 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: August 13, 2007
+-- Modify date: April 29, 2008
 -- Description:	Insert a ServerPartition row
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertServerPartition] 
@@ -283,6 +284,7 @@ CREATE PROCEDURE [dbo].[InsertServerPartition]
 	@AeTitle varchar(16),
 	@Port int,
 	@PartitionFolder nvarchar(16),
+	@DuplicateSopPolicyEnum smallint,
 	@AcceptAnyDevice bit = 1,
 	@AutoInsertDevice bit = 1,
 	@DefaultRemotePort int = 104
@@ -303,8 +305,8 @@ BEGIN
 	BEGIN TRANSACTION
 
 	INSERT INTO [ImageServer].[dbo].[ServerPartition] 
-		([GUID],[Enabled],[Description],[AeTitle],[Port],[PartitionFolder],[AcceptAnyDevice],[AutoInsertDevice],[DefaultRemotePort])
-	VALUES (@ServerPartitionGUID, @Enabled, @Description, @AeTitle, @Port, @PartitionFolder, @AcceptAnyDevice, @AutoInsertDevice, @DefaultRemotePort)
+		([GUID],[Enabled],[Description],[AeTitle],[Port],[PartitionFolder],[AcceptAnyDevice],[AutoInsertDevice],[DefaultRemotePort],[DuplicateSopPolicyEnum])
+	VALUES (@ServerPartitionGUID, @Enabled, @Description, @AeTitle, @Port, @PartitionFolder, @AcceptAnyDevice, @AutoInsertDevice, @DefaultRemotePort, @DuplicateSopPolicyEnum)
 
 
 	DECLARE cur_sopclass CURSOR FOR 
@@ -534,11 +536,20 @@ BEGIN
 		-- Pending
 		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
 		WHERE GUID = @StudyStorageGUID AND Lock = 1
-		
-		UPDATE WorkQueue
-		SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
-			FailureCount = @FailureCount, ProcessorID = @ProcessorID
-		WHERE GUID = @WorkQueueGUID
+		IF @FailureDescription is NULL
+		BEGIN
+			UPDATE WorkQueue
+			SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
+				FailureCount = @FailureCount, ProcessorID = @ProcessorID
+			WHERE GUID = @WorkQueueGUID
+		END
+		ELSE
+		BEGIN
+			UPDATE WorkQueue
+			SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
+				FailureCount = @FailureCount, ProcessorID = @ProcessorID, FailureDescription = @FailureDescription
+			WHERE GUID = @WorkQueueGUID
+		END
 	END
 	ELSE
 	BEGIN
@@ -646,7 +657,9 @@ CREATE PROCEDURE [dbo].[InsertWorkQueueStudyProcess]
 	@SeriesInstanceUid varchar(64),
 	@SopInstanceUid varchar(64),
 	@ExpirationTime datetime,
-	@ScheduledTime datetime 
+	@ScheduledTime datetime,
+	@Duplicate bit = 0,
+	@Extension varchar(10) = null 
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -683,8 +696,16 @@ BEGIN
 			where GUID = @WorkQueueGUID
 	END
 
-	INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid)
-		values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid)
+	IF @Duplicate = 1
+	BEGIN
+		INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid, Duplicate, Extension)
+			values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid, @Duplicate, @Extension)
+	END
+	ELSE
+	BEGIN
+		INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid)
+			values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid)
+	END
 
 	COMMIT TRANSACTION
 END

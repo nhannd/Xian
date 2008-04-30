@@ -147,6 +147,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
 
                     CustomizeActiveColumn(e);
                     CustomizeAcceptAnyDeviceColumn(e);
+                    CustomizeDuplicateSopPolicyColumn(e.Row);
                 }
             }
         }
@@ -181,6 +182,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                     img.ImageUrl = "~/images/unchecked_small.gif";
                 }
             }
+        }
+
+        private void CustomizeDuplicateSopPolicyColumn(GridViewRow row)
+        {
+            ServerPartition partition = row.DataItem as ServerPartition;
+            Label lbl = row.FindControl("DuplicateSopDescription") as Label; // The label is added in the template
+            lbl.Text = partition.DuplicateSopPolicyEnum.Description;
         }
 
         #endregion Protected methods

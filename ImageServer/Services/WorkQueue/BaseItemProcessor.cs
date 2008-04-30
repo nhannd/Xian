@@ -273,6 +273,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     DateTime scheduledTime;
 
+                    if (item.FailureDescription != null)
+                        parms.FailureDescription = item.FailureDescription;
+
                     if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("Low"))
                     {
                         scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayLowPrioritySeconds);

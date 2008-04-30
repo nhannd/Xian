@@ -84,6 +84,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 parms.DefaultRemotePort = partition.DefaultRemotePort;
                 parms.AutoInsertDevice = partition.AutoInsertDevice;
                 parms.AcceptAnyDevice = partition.AcceptAnyDevice;
+                parms.DuplicateSopPolicyEnum = partition.DuplicateSopPolicyEnum;
+                
                 try
                 {
                     list = insert.Execute(parms);
@@ -113,8 +115,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             parms.AcceptAnyDevice = partition.AcceptAnyDevice;
             parms.AutoInsertDevice = partition.AutoInsertDevice;
             parms.DefaultRemotePort = partition.DefaultRemotePort;
+            parms.DuplicateSopPolicyEnum = partition.DuplicateSopPolicyEnum;
 
-            return base.Update(partition.GetKey(), parms);
+            return Update(partition.GetKey(), parms);
         }
 
         #endregion Public methods
