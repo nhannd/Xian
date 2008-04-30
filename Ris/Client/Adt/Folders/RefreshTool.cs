@@ -29,25 +29,14 @@
 
 #endregion
 
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.Adt.Folders
 {
-    [MenuAction("apply", "folderexplorer-folders-contextmenu/Refresh", "Refresh")]
-    [ButtonAction("apply", "folderexplorer-folders-toolbar/Refresh", "Refresh")]
-    [Tooltip("apply", "Refresh Folder")]
-    [IconSet("apply", IconScheme.Colour, "Icons.RefreshToolSmall.png", "Icons.RefreshToolMedium.png", "Icons.RefreshToolLarge.png")]
     [ExtensionOf(typeof(RegistrationMainWorkflowFolderToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationBookingWorkflowFolderToolExtensionPoint))]
     [ExtensionOf(typeof(TechnologistMainWorkflowFolderToolExtensionPoint))]
-    public class RefreshTool : Tool<IWorkflowFolderToolContext>
+    public class RefreshTool : RefreshTool<IWorkflowFolderToolContext>
     {
-        public void Refresh()
-        {
-            this.Context.SelectedFolder.Refresh();
-        }
     }
 }

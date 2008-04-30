@@ -153,14 +153,8 @@
     <Content Include="actionmodels.xml" />
     <EmbeddedResource Include="Icons\EditToolLarge.png" />
     <EmbeddedResource Include="Icons\EditToolMedium.png" />
-    <EmbeddedResource Include="Icons\SearchToolLarge.png" />
-    <EmbeddedResource Include="Icons\SearchToolMedium.png" />
-    <EmbeddedResource Include="Icons\SearchToolSmall.png" />
     <EmbeddedResource Include="Icons\DoubleExclamation.png" />
     <EmbeddedResource Include="Icons\SingleExclamation.png" />
-    <EmbeddedResource Include="Icons\RefreshToolLarge.png" />
-    <EmbeddedResource Include="Icons\RefreshToolMedium.png" />
-    <EmbeddedResource Include="Icons\RefreshToolSmall.png" />
     <EmbeddedResource Include="Icons\ProcessMessageToolLarge.png" />
     <EmbeddedResource Include="Icons\ProcessMessageToolMedium.png" />
     <EmbeddedResource Include="Icons\ProcessMessageToolSmall.png" />

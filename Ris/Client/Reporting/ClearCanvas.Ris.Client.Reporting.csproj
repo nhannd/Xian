@@ -39,7 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditReportTool.cs" />
-    <Compile Include="EmergencyPhysicianHomeTool.cs" />
+    <Compile Include="Folders\ReportingOrderNoteboxFolders.cs" />
     <Compile Include="LinkedInterpretationComponent.cs" />
     <Compile Include="ProtocolGroupSettings.cs" />
     <Compile Include="ProtocolGroupSettings.Designer.cs">
@@ -55,6 +55,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ReportDocumentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ReportingOrderNoteboxFolderSystem.cs" />
+    <Compile Include="ReportingOrderNoteboxFolderSystemTool.cs" />
     <Compile Include="ReportingProtocolWorkflowFolderSystem.cs" />
     <Compile Include="ReportingProtocolWorkflowFolderSystemTool.cs" />
     <Compile Include="ReportingMainWorkflowFolderSystem.cs" />
@@ -166,13 +168,6 @@
     <EmbeddedResource Include="Icons\EditToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\RefreshToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\RefreshToolLarge.png" />
-    <EmbeddedResource Include="Icons\RefreshToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="ProtocolGroupSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -186,11 +181,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>SupervisorSettings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\SearchToolLarge.png" />
-    <EmbeddedResource Include="Icons\SearchToolMedium.png" />
-    <EmbeddedResource Include="Icons\SearchToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\PatientDetailsToolLarge.png" />
@@ -211,15 +201,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\DoubleExclamation.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\EmergencyPhysicianHomeToolLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\EmergencyPhysicianHomeToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\EmergencyPhysicianHomeToolMedium.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

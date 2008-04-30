@@ -3,6 +3,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -59,7 +60,7 @@ namespace ClearCanvas.Ris.Client
 	}
 
 	/// <summary>
-	/// A tool for launching a home page with a <see cref="WorklistPreviewComponent"/> as the preview component
+	/// A tool for launching a home page with a <see cref="FolderSystemItemPreviewComponent"/> as the preview component
 	/// </summary>
 	/// <seealso cref="HomeTool{TFolderSystemToolExtensionPoint}"/>
 	/// <typeparam name="TFolderSystemToolExtensionPoint">Specifies the extension point used to create the set of folder systems</typeparam>
@@ -68,15 +69,12 @@ namespace ClearCanvas.Ris.Client
 	{
 		protected override IApplicationComponent  BuildComponent()
 		{
-			WorklistPreviewComponent previewComponent = new WorklistPreviewComponent();
+			FolderSystemItemPreviewComponent previewComponent = new FolderSystemItemPreviewComponent();
 			HomePageContainer homePage = new HomePageContainer(new TFolderSystemToolExtensionPoint(), previewComponent);
 
 			homePage.ContentsComponent.SelectedItemsChanged += delegate
 			{
-				WorklistItemSummaryBase item =
-					homePage.ContentsComponent.SelectedItems.Item as
-					WorklistItemSummaryBase;
-				previewComponent.WorklistItem = item;
+				previewComponent.FolderSystemItem = homePage.ContentsComponent.SelectedItems.Item as DataContractBase;
 			};
 
 			return homePage;

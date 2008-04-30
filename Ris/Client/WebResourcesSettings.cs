@@ -251,6 +251,35 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("emergencyphysicianpreview.htm")]
+		public string EmergencyPhysicianFolderSystemUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["EmergencyPhysicianFolderSystemUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("noteboxpreview.htm")]
+		public string EmergencyPhysicianOrderNoteboxFolderSystemUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["EmergencyPhysicianOrderNoteboxFolderSystemUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("noteboxpreview.htm")]
+		public string ReportingOrderNoteboxFolderSystemUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ReportingOrderNoteboxFolderSystemUrl"]));
+			}
+		}
 		#endregion
 	}
 

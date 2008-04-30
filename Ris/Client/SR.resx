@@ -306,6 +306,9 @@
   <data name="ExceptionFolderRefresh" xml:space="preserve">
     <value>Cannot refresh folder</value>
   </data>
+  <data name="ExceptionOperationEnablementUnknown" xml:space="preserve">
+    <value>Cannot determine enablement for operation: {0}</value>
+  </data>
   <data name="ExceptionSaveExternalPractitioner" xml:space="preserve">
     <value>Unable to save practitioner</value>
   </data>

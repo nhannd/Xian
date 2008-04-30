@@ -223,20 +223,20 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Emergency Physician Home.
-        /// </summary>
-        internal static string TitleEmergencyPhysicianHome {
-            get {
-                return ResourceManager.GetString("TitleEmergencyPhysicianHome", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Link Procedures.
         /// </summary>
         internal static string TitleLinkProcedures {
             get {
                 return ResourceManager.GetString("TitleLinkProcedures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Order Notes.
+        /// </summary>
+        internal static string TitleOrderNoteboxFolderSystem {
+            get {
+                return ResourceManager.GetString("TitleOrderNoteboxFolderSystem", resourceCulture);
             }
         }
         
