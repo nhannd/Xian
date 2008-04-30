@@ -56,9 +56,10 @@
 		<ClientModuleFiles Include="$(SolutionDir)\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
 		<ClientModuleFiles Include="$(SolutionDir)\Uhn\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.dll" />
 		<ClientModuleFiles Include="$(SolutionDir)\Uhn\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.View.WinForms.dll" />
-    <ClientModuleFiles Include="$(SolutionDir)\Fax\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.dll" />
-    <ClientModuleFiles Include="$(SolutionDir)\Fax\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.View.WinForms.dll" />
-    <ClientModuleFiles Include="$(SolutionDir)\Oto\bin\$(Configuration)\ClearCanvas.Ris.Client.Oto.dll" />
+		<ClientModuleFiles Include="$(SolutionDir)\Fax\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.dll" />
+		<ClientModuleFiles Include="$(SolutionDir)\Fax\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.View.WinForms.dll" />
+		<ClientModuleFiles Include="$(SolutionDir)\Oto\bin\$(Configuration)\ClearCanvas.Ris.Client.Oto.dll" />
+		<ClientModuleFiles Include="$(SolutionDir)\EmergencyPhysician\bin\$(Configuration)\ClearCanvas.Ris.Client.EmergencyPhysician.dll" />
   </ItemGroup>
 
   <ItemGroup>
