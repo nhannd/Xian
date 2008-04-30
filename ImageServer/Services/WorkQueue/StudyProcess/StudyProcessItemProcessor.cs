@@ -158,11 +158,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// Process a specific DICOM file related to a <see cref="WorkQueue"/> request.
         /// </summary>
         /// <param name="item">The WorkQueue item to process</param>
+        /// <param name="queueUid"></param>
         /// <param name="path">The path of the file to process.</param>
         /// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
-        private void ProcessFile(Model.WorkQueue item, string path, StudyXml stream)
+        private void ProcessFile(Model.WorkQueue item, WorkQueueUid queueUid, string path, StudyXml stream)
         {
-            InstanceKeys keys;
+            InstanceKeys keys = null;
             DicomFile file;
             String modality = null;
 
@@ -194,9 +195,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 insertStudyXmlCommand = new InsertStudyXmlCommand(file, stream, StorageLocation);
                 processor.AddCommand(insertStudyXmlCommand);
 
-                // Insert into the database
-                insertInstanceCommand = new InsertInstanceCommand(file, StorageLocation);
-                processor.AddCommand(insertInstanceCommand);
+                // Insert into the database, but only if its not a duplicate so the counts don't get off
+                if (!queueUid.Duplicate)
+                {
+                    insertInstanceCommand = new InsertInstanceCommand(file, StorageLocation);
+                    processor.AddCommand(insertInstanceCommand);
+                }
 
                 // Create a context for applying actions from the rules engine
                 ServerActionContext context =
@@ -216,7 +220,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 {
                     Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid,
                                  patientsName);
-                    keys = insertInstanceCommand.InsertKeys;
+
+                    if (insertInstanceCommand != null)
+                        keys = insertInstanceCommand.InsertKeys;
 
                     if (keys != null)
                     {
@@ -326,12 +332,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             try
             {
-                if (sop.Duplicate)
+                // This is a bit trickly.  If the partition has the "AcceptLatest" policy configured, the 
+                // duplicate bit is set, and no extension is set.  In this case we want to process the 
+                // file as normal.  When the "CompareDuplicates" policy is set, we don't want to process,
+                // we just want to compare to the original object.  In this case, we have an extension
+                // set along with the duplicate flag.
+                if (sop.Duplicate && sop.Extension != null)
                 {
                     ProcessDuplicate(basePath + ".dcm", path);
                 }
                 else
-                    ProcessFile(item, path, studyXml);
+                    ProcessFile(item, sop, path, studyXml);
                 
                 // Delete it out of the queue
                 DeleteWorkQueueUid(sop);

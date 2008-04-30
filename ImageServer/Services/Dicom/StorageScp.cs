@@ -195,6 +195,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, replacing previous file {0}", sopInstanceUid);
                         dupPath = path + "_dup_old";
                         processor.AddCommand(new RenameFileCommand(path, dupPath));
+                        dupImage = true;
                     }
                     else if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.GetEnum("CompareDuplicates")))
                     {
