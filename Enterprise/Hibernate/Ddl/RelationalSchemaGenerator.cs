@@ -33,24 +33,50 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NHibernate.Dialect;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
     /// <summary>
-    /// Generates scripts to create/drop the table schemas.
+    /// Generates scripts to create the tables, foreign key constraints, and indexes.
     /// </summary>
-    class TableSchemaGenerator : IDdlScriptGenerator
+    class RelationalSchemaGenerator : IDdlScriptGenerator
     {
         #region IDdlScriptGenerator Members
 
         public string[] GenerateCreateScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
         {
-            return store.Configuration.GenerateSchemaCreationScript(dialect);
+            List<string> scripts = new List<string>(store.Configuration.GenerateSchemaCreationScript(dialect));
+            List<string> createTables = CollectionUtils.Select(scripts,
+                delegate(string s) { return s.StartsWith("create table", StringComparison.InvariantCultureIgnoreCase); });
+            List<string> alterTables = CollectionUtils.Select(scripts,
+                delegate(string s) { return s.StartsWith("alter table", StringComparison.InvariantCultureIgnoreCase); });
+            List<string> createIndexes = CollectionUtils.Select(scripts,
+                delegate(string s) { return s.StartsWith("create index", StringComparison.InvariantCultureIgnoreCase); });
+
+            // for some reason, Hibernate does not qualify the table names when generating index scripts
+            // need to qualify them using this hack
+            string schemaName = store.Configuration.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
+            string replacement = string.Format(" on {0}.", schemaName);
+            createIndexes = CollectionUtils.Map<string, string>(createIndexes,
+                delegate(string s) { return s.Replace(" on ", replacement); });
+
+            // sort each group of statements alphabetically
+            createTables.Sort();
+            alterTables.Sort();
+            createIndexes.Sort();
+
+            List<string> sortedScripts = new List<string>();
+            sortedScripts.AddRange(createTables);
+            sortedScripts.AddRange(alterTables);
+            sortedScripts.AddRange(createIndexes);
+
+            return sortedScripts.ToArray();
         }
 
         public string[] GenerateDropScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
         {
-            return store.Configuration.GenerateDropSchemaScript(dialect);
+            return new string[]{};
         }
 
         #endregion

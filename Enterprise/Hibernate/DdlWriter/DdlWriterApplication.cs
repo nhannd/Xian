@@ -77,6 +77,9 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
                 PersistentStore store = new PersistentStore();
                 store.Initialize();
 
+                PreProcessor preProcessor = new PreProcessor();
+                preProcessor.Process(store);
+
                 ScriptWriter scriptWriter = new ScriptWriter(store, dialect);
                 scriptWriter.WriteCreateScript(writer);
             }

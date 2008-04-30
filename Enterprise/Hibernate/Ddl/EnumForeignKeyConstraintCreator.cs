@@ -43,48 +43,21 @@ using NHibernate.Dialect;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
-    class EnumForeignKeyConstraintGenerator : DdlScriptGenerator
+    /// <summary>
+    /// Adds foreign-key constraints on hard-enum columns to the Hibernate relational model, since Hibernate does not know
+    /// to add these constraints automatically.
+    /// </summary>
+    class EnumForeignKeyConstraintCreator : IDdlPreProcessor
     {
-        class FKConstraint
+        public void Process(PersistentStore store)
         {
-            public Table ConstrainedTable;
-            public Column ConstrainedColumn;
-            public Table ReferencedTable;
-
-            public string GetCreateScript(Dialect dialect, string defaultSchema)
-            {
-                // don't really know if this will be unique or not...
-                int unique = ConstrainedTable.Name.GetHashCode() ^ ConstrainedColumn.Name.GetHashCode() ^ ReferencedTable.Name.GetHashCode();
-                string fkName = string.Format("FK{0}", unique.ToString("X"));
-
-                return string.Format("alter table {0} add constraint {1} foreign key ({2}) references {3}",
-                    this.ConstrainedTable.GetQualifiedName(dialect, defaultSchema),
-                    fkName,
-                    this.ConstrainedColumn.GetQuotedName(dialect),
-                    this.ReferencedTable.GetQualifiedName(dialect, defaultSchema));
-            }
-        }
-
-        public override string[] GenerateCreateScripts(PersistentStore store, Dialect dialect)
-        {
-            string defaultSchema = store.Configuration.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
-
-            List<FKConstraint> constraints = new List<FKConstraint>();
             foreach (PersistentClass pc in store.Configuration.ClassMappings)
             {
-                CreateConstraints(store, pc.PropertyCollection, constraints);
+                CreateConstraints(store, pc.PropertyCollection);
             }
-
-            return CollectionUtils.Map<FKConstraint, string, List<string>>(constraints,
-                delegate(FKConstraint c) { return c.GetCreateScript(dialect, defaultSchema); }).ToArray();
         }
 
-        public override string[] GenerateDropScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
-        {
-            return new string[0];
-        }
-
-        private void CreateConstraints(PersistentStore store, ICollection properties, List<FKConstraint> constraints)
+        private void CreateConstraints(PersistentStore store, ICollection properties)
         {
             foreach (Property prop in properties)
             {
@@ -92,7 +65,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                 {
                     // recur on component properties
                     Component comp = prop.Value as Component;
-                    CreateConstraints(store, comp.PropertyCollection, constraints);
+                    CreateConstraints(store, comp.PropertyCollection);
                 }
                 else if (prop.Value is Collection)
                 {
@@ -101,7 +74,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                     if (coll.Element is Component)
                     {
                         Component comp = coll.Element as Component;
-                        CreateConstraints(store, comp.PropertyCollection, constraints);
+                        CreateConstraints(store, comp.PropertyCollection);
                     }
                 }
                 else
@@ -112,12 +85,15 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                         Type enumClass = GetEnumValueClassForEnumType(prop.Type.ReturnedClass);
 
                         // build a constraint for this column
-                        FKConstraint constraint = new FKConstraint();
-                        constraint.ConstrainedTable = prop.Value.Table;
-                        constraint.ConstrainedColumn = CollectionUtils.FirstElement<Column>(prop.ColumnCollection);
-                        constraint.ReferencedTable = GetTableForEnumClass(enumClass, store);
+                        Table constrainedTable = prop.Value.Table;
+                        Column constrainedColumn = CollectionUtils.FirstElement<Column>(prop.ColumnCollection);
+                        Table referencedTable = GetTableForEnumClass(enumClass, store);
 
-                        constraints.Add(constraint);
+                        // don't really know if this will be unique or not...
+                        int unique = constrainedTable.Name.GetHashCode() ^ constrainedColumn.Name.GetHashCode() ^ referencedTable.Name.GetHashCode();
+                        string fkName = string.Format("FK{0}", unique.ToString("X"));
+
+                        constrainedTable.CreateForeignKey(fkName, new Column[] { constrainedColumn }, enumClass);
                     }
                 }
             }

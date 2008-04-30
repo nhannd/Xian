@@ -49,6 +49,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     {
     }
 
+
+
     /// <summary>
     /// Utility class that generates a database creation and/or drop script and writes the script to a <see cref="StreamWriter"/>.
     /// </summary>
@@ -63,11 +65,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             _store = store;
             _dialect = dialect;
 
+
             _generators = new List<IDdlScriptGenerator>();
 
             // the order of generator execution is important, so add the static generators first
-            _generators.Add(new TableSchemaGenerator());
-            _generators.Add(new EnumForeignKeyConstraintGenerator());
+            _generators.Add(new RelationalSchemaGenerator());
             _generators.Add(new EnumValueInsertGenerator());
 
             // subsequently we can add extension generators, with uncontrolled ordering

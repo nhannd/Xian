@@ -114,8 +114,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
             string defaultSchema = store.Configuration.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
 
-            return CollectionUtils.Map<Insert, string, List<string>>(inserts,
-                delegate(Insert i) { return i.GetCreateScript(dialect, defaultSchema); }).ToArray();
+            List<string> scripts = CollectionUtils.Map<Insert, string>(inserts,
+                delegate(Insert i) { return i.GetCreateScript(dialect, defaultSchema); });
+            scripts.Sort();
+            return scripts.ToArray();
         }
 
         public override string[] GenerateDropScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
