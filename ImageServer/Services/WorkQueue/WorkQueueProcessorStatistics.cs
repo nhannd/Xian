@@ -29,73 +29,55 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common.Statistics;
 
-namespace ClearCanvas.ImageServer.Rules
+namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
     /// <summary>
-    /// Stores the engine statistics of a rule engine.
+    /// Performance statistics class for the <see cref="BaseItemProcessor"/>
     /// </summary>
-    public class RuleEngineStatistics:StatisticsSet
+    public class WorkQueueProcessorStatistics:StatisticsSet
     {
-        #region Private members
-        #endregion Private members
-
-        public void Reset()
+        public WorkQueueProcessorStatistics()
+            : base("WorkQueueProcessorStatistics")
         {
-            LoadTime.Reset();
-            ExecutionTime.Reset();
+           
         }
 
-        #region Public Properties
-        /// <summary>
-        /// Gets or sets the execution time of the rule engine in miliseconds.
-        /// </summary>
-        public TimeSpanStatistics ExecutionTime
+        public TimeSpanStatistics UidsLoadTime
         {
             get
             {
-                if (this["ExecutionTime"] == null)
-                {
-                    this["ExecutionTime"] = new TimeSpanStatistics("ExecutionTime");
-                }
+                if (this["UidsLoadTime"] == null)
+                    this["UidsLoadTime"] = new TimeSpanStatistics("UidsLoadTime");
 
-                return (this["ExecutionTime"] as TimeSpanStatistics);
+                return (this["UidsLoadTime"] as TimeSpanStatistics);
             }
+            set { this["UidsLoadTime"] = value; }
         }
 
-        /// <summary>
-        /// Gets or sets the load time of the rule engine in miliseconds.
-        /// </summary>
-        public TimeSpanStatistics LoadTime
+        public TimeSpanStatistics StorageLocationLoadTime
         {
             get
             {
-                if (this["LoadTime"] == null)
-                    this["LoadTime"] = new TimeSpanStatistics("LoadTime");
-                return (this["LoadTime"] as TimeSpanStatistics);
+                if (this["StorageLocationLoadTime"] == null)
+                    this["StorageLocationLoadTime"] = new TimeSpanStatistics("StorageLocationLoadTime");
+
+                return (this["StorageLocationLoadTime"] as TimeSpanStatistics);
             }
-
+            set { this["StorageLocationLoadTime"] = value; }
         }
 
-        #endregion Public Properties
-
-        #region Constructors
-
-        public RuleEngineStatistics()
-            : base()
+        public TimeSpanStatistics StudyXmlLoadTime
         {
+            get
+            {
+                if (this["StudyXmlLoadTime"] == null)
+                    this["StudyXmlLoadTime"] = new TimeSpanStatistics("StudyXmlLoadTime");
 
+                return (this["StudyXmlLoadTime"] as TimeSpanStatistics);
+            }
+            set { this["StudyXmlLoadTime"] = value; }
         }
-
-        public RuleEngineStatistics(string name, string description)
-            : base(name,description)
-        {
-            Context = new StatisticsContext(name);
-        }
-        #endregion
-
-        
     }
 }

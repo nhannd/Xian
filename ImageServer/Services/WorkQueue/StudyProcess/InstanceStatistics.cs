@@ -41,20 +41,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #region Constructors
 
         public InstanceStatistics()
-            : this("InstanceStatistics")
+            : this("Instance")
         {
         }
 
         public InstanceStatistics(string name)
             : base(name)
         {
-            AddField(new TimeSpanStatistics("ProcessTime"));
-            AddField(new ByteCountStatistics("FileSize"));
-            AddField(new TimeSpanStatistics("FileLoadTime"));
-            AddField(new TimeSpanStatistics("EngineLoadTime"));
-            AddField(new TimeSpanStatistics("EngineExecutionTime"));
-            AddField(new TimeSpanStatistics("InsertStreamTime"));
-            AddField(new TimeSpanStatistics("InsertDBTime"));
+
         }
 
         #endregion Constructors
@@ -63,43 +57,150 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         public TimeSpanStatistics ProcessTime
         {
-            get { return (this["ProcessTime"] as TimeSpanStatistics); }
+            get
+            {
+                if (this["ProcessTime"]==null)
+                    this["ProcessTime"] = new TimeSpanStatistics("ProcessTime");
+
+                return (this["ProcessTime"] as TimeSpanStatistics);
+            }
             set { this["ProcessTime"] = value; }
+        }
+
+        public TimeSpanStatistics DBUpdateTime
+        {
+            get
+            {
+                if (this["DBUpdateTime"] == null)
+                    this["DBUpdateTime"] = new TimeSpanStatistics("DBUpdateTime");
+
+                return (this["DBUpdateTime"] as TimeSpanStatistics);
+            }
+            set { this["DBUpdateTime"] = value; }
         }
 
         public ulong FileSize
         {
-            set { this["FileSize"] = new ByteCountStatistics("FileSize", value); }
-            get { return (this["FileSize"] as ByteCountStatistics).Value; }
+            set
+            {
+                this["FileSize"] = new ByteCountStatistics("FileSize", value);
+            }
+            get
+            {
+                if (this["FileSize"] == null)
+                    this["FileSize"] = new ByteCountStatistics("FileSize");
+
+                return (this["FileSize"] as ByteCountStatistics).Value;
+            }
         }
 
-        public TimeSpanStatistics EngineLoadTime
+        public TimeSpanStatistics SopRulesLoadTime
         {
-            get { return (this["EngineLoadTime"] as TimeSpanStatistics); }
-            set { this["EngineLoadTime"] = value; }
+            get
+            {
+                if (this["SopRulesLoadTime"] == null)
+                    this["SopRulesLoadTime"] = new TimeSpanStatistics("SopRulesLoadTime");
+
+                return (this["SopRulesLoadTime"] as TimeSpanStatistics);
+            }
+            set { this["SopRulesLoadTime"] = value; }
         }
 
-        public TimeSpanStatistics EngineExecutionTime
+        public TimeSpanStatistics SeriesRulesLoadTime
         {
-            get { return (this["EngineExecutionTime"] as TimeSpanStatistics); }
-            set { this["EngineExecutionTime"] = value; }
+            get
+            {
+                if (this["SeriesRulesLoadTime"] == null)
+                    this["SeriesRulesLoadTime"] = new TimeSpanStatistics("SeriesRulesLoadTime");
+
+                return (this["SeriesRulesLoadTime"] as TimeSpanStatistics);
+            }
+            set { this["SeriesRulesLoadTime"] = value; }
+        }
+
+
+        public TimeSpanStatistics StudyRulesLoadTime
+        {
+            get
+            {
+                if (this["StudyRulesLoadTime"] == null)
+                    this["StudyRulesLoadTime"] = new TimeSpanStatistics("StudyRulesLoadTime");
+
+                return (this["StudyRulesLoadTime"] as TimeSpanStatistics);
+            }
+            set { this["StudyRulesLoadTime"] = value; }
+        }
+
+
+        public TimeSpanStatistics SopEngineExecutionTime
+        {
+            get
+            {
+                if (this["SopEngineExecutionTime"] == null)
+                    this["SopEngineExecutionTime"] = new TimeSpanStatistics("SopEngineExecutionTime");
+
+                return (this["SopEngineExecutionTime"] as TimeSpanStatistics);
+            }
+            set { this["SopEngineExecutionTime"] = value; }
+        }
+
+        public TimeSpanStatistics SeriesEngineExecutionTime
+        {
+            get
+            {
+                if (this["SeriesEngineExecutionTime"] == null)
+                    this["SeriesEngineExecutionTime"] = new TimeSpanStatistics("SeriesEngineExecutionTime");
+
+                return (this["SeriesEngineExecutionTime"] as TimeSpanStatistics);
+            }
+            set { this["SeriesEngineExecutionTime"] = value; }
+        }
+
+        public TimeSpanStatistics StudyEngineExecutionTime
+        {
+            get
+            {
+                if (this["StudyEngineExecutionTime"] == null)
+                    this["StudyEngineExecutionTime"] = new TimeSpanStatistics("StudyEngineExecutionTime");
+
+                return (this["StudyEngineExecutionTime"] as TimeSpanStatistics);
+            }
+            set { this["StudyEngineExecutionTime"] = value; }
         }
 
         public TimeSpanStatistics InsertStreamTime
         {
-            get { return (this["InsertStreamTime"] as TimeSpanStatistics); }
+            get
+            {
+                if (this["InsertStreamTime"] == null)
+                    this["InsertStreamTime"] = new TimeSpanStatistics("InsertStreamTime");
+
+                return (this["InsertStreamTime"] as TimeSpanStatistics);
+            }
             set { this["InsertStreamTime"] = value; }
         }
 
         public TimeSpanStatistics InsertDBTime
         {
-            get { return (this["InsertDBTime"] as TimeSpanStatistics); }
+            get
+            {
+                if (this["InsertDBTime"] == null)
+                    this["InsertDBTime"] = new TimeSpanStatistics("InsertDBTime");
+
+                return (this["InsertDBTime"] as TimeSpanStatistics);
+            }
             set { this["InsertDBTime"] = value; }
         }
 
         public TimeSpanStatistics FileLoadTime
         {
-            get { return (this["FileLoadTime"] as TimeSpanStatistics); }
+            get
+            {
+                if (this["FileLoadTime"] == null)
+                    this["FileLoadTime"] = new TimeSpanStatistics("FileLoadTime");
+
+                return (this["FileLoadTime"] as TimeSpanStatistics);
+            }
             set { this["FileLoadTime"] = value; }
         }
 

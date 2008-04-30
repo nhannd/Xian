@@ -30,72 +30,22 @@
 #endregion
 
 using System;
-using ClearCanvas.Common.Statistics;
 
-namespace ClearCanvas.ImageServer.Rules
+namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
-    /// Stores the engine statistics of a rule engine.
+    /// Message rate formatter class
     /// </summary>
-    public class RuleEngineStatistics:StatisticsSet
+    public static class MessageRateFormatter
     {
-        #region Private members
-        #endregion Private members
-
-        public void Reset()
-        {
-            LoadTime.Reset();
-            ExecutionTime.Reset();
-        }
-
-        #region Public Properties
         /// <summary>
-        /// Gets or sets the execution time of the rule engine in miliseconds.
+        /// Formats a rate in msg/sec unit
         /// </summary>
-        public TimeSpanStatistics ExecutionTime
+        /// <param name="rate"></param>
+        /// <returns></returns>
+        public static string Format(double rate)
         {
-            get
-            {
-                if (this["ExecutionTime"] == null)
-                {
-                    this["ExecutionTime"] = new TimeSpanStatistics("ExecutionTime");
-                }
-
-                return (this["ExecutionTime"] as TimeSpanStatistics);
-            }
+            return String.Format("{0:0.00} msg/s", rate);
         }
-
-        /// <summary>
-        /// Gets or sets the load time of the rule engine in miliseconds.
-        /// </summary>
-        public TimeSpanStatistics LoadTime
-        {
-            get
-            {
-                if (this["LoadTime"] == null)
-                    this["LoadTime"] = new TimeSpanStatistics("LoadTime");
-                return (this["LoadTime"] as TimeSpanStatistics);
-            }
-
-        }
-
-        #endregion Public Properties
-
-        #region Constructors
-
-        public RuleEngineStatistics()
-            : base()
-        {
-
-        }
-
-        public RuleEngineStatistics(string name, string description)
-            : base(name,description)
-        {
-            Context = new StatisticsContext(name);
-        }
-        #endregion
-
-        
     }
 }

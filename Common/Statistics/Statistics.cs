@@ -35,15 +35,18 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 
-
 namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
     /// Generic base statistics class that implements <see cref="IStatistics"/>
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The underlying data type of the statistics</typeparam>
+    /// 
+    /// 
     public class Statistics<T> : IStatistics
     {
+        #region Delegates
+
         /// <summary>
         /// Defines the delegate used for formatting the value of the statistics.
         /// <seealso cref="FormattedValue"/>
@@ -52,37 +55,55 @@ namespace ClearCanvas.Common.Statistics
         /// <returns></returns>
         public delegate string ValueFormatterDelegate(T value);
 
+        #endregion
+
         #region Private members
 
-        private readonly string _name;
-        private T _value;
+        private IStatisticsContext _context;
+        private ValueFormatterDelegate _formatter;
+        private string _name;
         private string _unit;
+        private T _value;
 
         #endregion Private members
 
-        #region Delegates
-
-        private ValueFormatterDelegate _formatter;
-
-        #endregion Delegates
-
         #region Constructors
 
+        /// <summary>
+        /// Creates an instance of <see cref="Statistics"/> with specified name.
+        /// </summary>
+        /// <param name="name">Name of the <see cref="Statistics"/> object to be created</param>
         public Statistics(string name)
         {
             _name = name;
+            _formatter = null;
         }
 
-        public Statistics(string name, ValueFormatterDelegate formatter)
-        {
-            _name = name;
-            _formatter = formatter;
-        }
-
+        /// <summary>
+        /// Creates an instance of <see cref="Statistics"/> with specified name and value.
+        /// </summary>
+        /// <param name="name">Name of the <see cref="Statistics"/> object to be created</param>
+        /// <param name="value">value to be assigned to the newly crated <see cref="Statistics"/> object</param>
         public Statistics(string name, T value)
+            : this(name)
         {
-            _name = name;
             _value = value;
+            _formatter = null;
+        }
+
+
+        /// <summary>
+        /// Creates an separate copy instance of <see cref="Statistics"/> based on a specified <see cref="Statistics"/> object.
+        /// </summary>
+        /// <param name="source">The original <see cref="Statistics"/></param>
+        /// <remarks>
+        /// </remarks>
+        public Statistics(Statistics<T> source)
+            : this(source.Name)
+        {
+            _value = source.Value;
+            ValueFormatter = source.ValueFormatter;
+            Context = source.Context;
         }
 
         #endregion Constructors
@@ -118,15 +139,25 @@ namespace ClearCanvas.Common.Statistics
 
         #region Public properties
 
-        public string Name
-        {
-            get { return _name; }
-        }
-
-        public T Value
+        /// <summary>
+        /// Gets or sets the value associated with the statistics
+        /// </summary>
+        public virtual T Value
         {
             get { return _value; }
             set { _value = value; }
+        }
+
+        public ValueFormatterDelegate ValueFormatter
+        {
+            get { return _formatter; }
+            set { _formatter = value; }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
         }
 
 
@@ -136,9 +167,20 @@ namespace ClearCanvas.Common.Statistics
             set { _unit = value; }
         }
 
+        public virtual string FormattedValue
+        {
+            get { return FormatValue(_value); }
+        }
+
+        public IStatisticsContext Context
+        {
+            get { return _context; }
+            set { _context = value; }
+        }
+
         #endregion Public properties
 
-        #region IStatistics Members
+        #region Public Methods
 
         public XmlAttribute[] GetXmlAttributes(XmlDocument doc)
         {
@@ -147,22 +189,25 @@ namespace ClearCanvas.Common.Statistics
             XmlAttribute attr = doc.CreateAttribute(Name);
             if (_value != null)
                 attr.Value = FormattedValue;
-            list.Add(attr);
 
+            list.Add(attr);
             return list.ToArray();
         }
 
+        #endregion
 
-        public virtual string FormattedValue
+        #region IStatistics Members
+
+        public virtual object Clone()
         {
-            get { return FormatValue(_value); }
+            Statistics<T> copy = new Statistics<T>(this);
+            return copy;
         }
 
 
-        public ValueFormatterDelegate ValueFormatter
+        public virtual IAverageStatistics NewAverageStatistics()
         {
-            get { return _formatter; }
-            set { _formatter = value; }
+            return new AverageStatistics<T>(this);
         }
 
         #endregion

@@ -30,72 +30,34 @@
 #endregion
 
 using System;
-using ClearCanvas.Common.Statistics;
+using System.Diagnostics;
 
-namespace ClearCanvas.ImageServer.Rules
+namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
-    /// Stores the engine statistics of a rule engine.
+    /// Helper class
     /// </summary>
-    public class RuleEngineStatistics:StatisticsSet
+    public static class StatisticsHelper
     {
-        #region Private members
-        #endregion Private members
-
-        public void Reset()
-        {
-            LoadTime.Reset();
-            ExecutionTime.Reset();
-        }
-
-        #region Public Properties
         /// <summary>
-        /// Gets or sets the execution time of the rule engine in miliseconds.
+        /// Resolves the ID of a statistics based on its context and name
         /// </summary>
-        public TimeSpanStatistics ExecutionTime
+        /// <param name="stat"></param>
+        /// <returns></returns>
+        public static object ResolveID(IStatistics stat)
         {
-            get
+            object key = null;
+            if (stat.Context != null)
             {
-                if (this["ExecutionTime"] == null)
-                {
-                    this["ExecutionTime"] = new TimeSpanStatistics("ExecutionTime");
-                }
-
-                return (this["ExecutionTime"] as TimeSpanStatistics);
+                key = String.Format("{0}.{1}", stat.Context.ID, stat.Name);
             }
-        }
-
-        /// <summary>
-        /// Gets or sets the load time of the rule engine in miliseconds.
-        /// </summary>
-        public TimeSpanStatistics LoadTime
-        {
-            get
+            else
             {
-                if (this["LoadTime"] == null)
-                    this["LoadTime"] = new TimeSpanStatistics("LoadTime");
-                return (this["LoadTime"] as TimeSpanStatistics);
+                key = String.Format("{0}", stat.Name);
             }
 
+            Debug.Assert(key != null);
+            return key;
         }
-
-        #endregion Public Properties
-
-        #region Constructors
-
-        public RuleEngineStatistics()
-            : base()
-        {
-
-        }
-
-        public RuleEngineStatistics(string name, string description)
-            : base(name,description)
-        {
-            Context = new StatisticsContext(name);
-        }
-        #endregion
-
-        
     }
 }

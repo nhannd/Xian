@@ -45,9 +45,9 @@
     <Compile Include="RuleTypeCollection.cs" />
     <Compile Include="ServerActionContext.cs" />
     <Compile Include="ServerRulesEngine.cs" />
-    <Compile Include="Specifications\DicomAgeGreaterThanSpecification.cs" />
-    <Compile Include="Specifications\DicomAgeLessThanSpecification.cs" />
-    <Compile Include="Specifications\DicomExpression.cs" />
+    <Compile Include="OnlineRetentionAction\Specifications\DicomAgeGreaterThanSpecification.cs" />
+    <Compile Include="OnlineRetentionAction\Specifications\DicomAgeLessThanSpecification.cs" />
+    <Compile Include="OnlineRetentionAction\Specifications\DicomExpression.cs" />
     <Compile Include="StudyDeleteAction\StudyDeleteActionItem.cs" />
     <Compile Include="StudyDeleteAction\StudyDeleteActionOperator.cs" />
     <Compile Include="Tier1RetentionAction\Tier1RetentionActionItem.cs" />

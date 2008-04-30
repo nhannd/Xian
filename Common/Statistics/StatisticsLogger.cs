@@ -40,16 +40,21 @@ namespace ClearCanvas.Common.Statistics
     /// </summary>
     public class StatisticsLogger
     {
-        #region private members
-        private readonly static XmlDocument doc = new XmlDocument();
-        #endregion private members
+        private static readonly XmlDocument doc = new XmlDocument();
+        private static object[] _extensions;
+        private static StatisticsLoggerExtensionPoint _xp = new StatisticsLoggerExtensionPoint();
+
+        static StatisticsLogger()
+        {
+            _extensions = _xp.CreateExtensions();
+        }
 
         /// <summary>
-        /// Log Statistics.
+        /// Logs a statistics.
         /// </summary>
-        /// <param name="logLevel"></param>
-        /// <param name="statistics"></param>
-        public static void Log(LogLevel logLevel, StatisticsSet statistics)
+        /// <param name="level">The log level used for logging the statistics</param>
+        /// <param name="statistics">The statistics to be logged</param>
+        public static void Log(LogLevel level, StatisticsSet statistics)
         {
             XmlElement el = statistics.GetXmlElement(doc, true);
 
@@ -65,9 +70,14 @@ namespace ClearCanvas.Common.Statistics
                 el.WriteTo(writer);
                 writer.Flush();
 
-                Platform.Log(logLevel, sw.ToString());
+                Platform.Log(level, sw.ToString());
 
                 writer.Close();
+            }
+
+            foreach (IStatisticsLoggerListener extension in _extensions)
+            {
+                extension.OnStatisticsLogged(statistics);
             }
         }
     }

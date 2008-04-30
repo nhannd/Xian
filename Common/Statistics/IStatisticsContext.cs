@@ -29,73 +29,16 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Common.Statistics;
-
-namespace ClearCanvas.ImageServer.Rules
+namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
-    /// Stores the engine statistics of a rule engine.
+    /// Defines the interface of the context where performance <see cref="IStatistics"/> is being tracked.
     /// </summary>
-    public class RuleEngineStatistics:StatisticsSet
+    public interface IStatisticsContext
     {
-        #region Private members
-        #endregion Private members
-
-        public void Reset()
-        {
-            LoadTime.Reset();
-            ExecutionTime.Reset();
-        }
-
-        #region Public Properties
         /// <summary>
-        /// Gets or sets the execution time of the rule engine in miliseconds.
+        /// Gets or sets the ID of the context
         /// </summary>
-        public TimeSpanStatistics ExecutionTime
-        {
-            get
-            {
-                if (this["ExecutionTime"] == null)
-                {
-                    this["ExecutionTime"] = new TimeSpanStatistics("ExecutionTime");
-                }
-
-                return (this["ExecutionTime"] as TimeSpanStatistics);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the load time of the rule engine in miliseconds.
-        /// </summary>
-        public TimeSpanStatistics LoadTime
-        {
-            get
-            {
-                if (this["LoadTime"] == null)
-                    this["LoadTime"] = new TimeSpanStatistics("LoadTime");
-                return (this["LoadTime"] as TimeSpanStatistics);
-            }
-
-        }
-
-        #endregion Public Properties
-
-        #region Constructors
-
-        public RuleEngineStatistics()
-            : base()
-        {
-
-        }
-
-        public RuleEngineStatistics(string name, string description)
-            : base(name,description)
-        {
-            Context = new StatisticsContext(name);
-        }
-        #endregion
-
-        
+        string ID { get; set; }
     }
 }

@@ -56,6 +56,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private IReadContext _readContext;
         private IList<WorkQueueUid> _uidList;
 
+        private WorkQueueProcessorStatistics _statistics;
+
         #endregion
 
         #region Protected Properties
@@ -80,6 +82,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             get { return _uidList; }
         }
 
+        protected WorkQueueProcessorStatistics Statistics
+        {
+            get { return _statistics; }
+            set { _statistics = value; }
+        }
+
         #endregion
 
         #region Contructors
@@ -87,6 +95,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         public BaseItemProcessor()
         {
             _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+            Statistics = new WorkQueueProcessorStatistics();
         }
 
         #endregion
@@ -99,21 +108,30 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <param name="item">The item to load the location for.</param>
         protected void LoadStorageLocation(Model.WorkQueue item)
         {
-            IQueryStudyStorageLocation select = _readContext.GetBroker<IQueryStudyStorageLocation>();
-
-            StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-            parms.StudyStorageKey = item.StudyStorageKey;
-
-            _storageLocationList = select.Execute(parms);
-
-            if (_storageLocationList.Count == 0)
+            _statistics.StorageLocationLoadTime.Start();
+            try
             {
-                Platform.Log(LogLevel.Error, "Unable to find storage location for WorkQueue item: {0}",
-                             item.GetKey().ToString());
-                throw new ApplicationException("Unable to find storage location for WorkQueue item.");
-            }
+                IQueryStudyStorageLocation select = _readContext.GetBroker<IQueryStudyStorageLocation>();
 
+                StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
+                parms.StudyStorageKey = item.StudyStorageKey;
+
+                _storageLocationList = select.Execute(parms);
+
+                if (_storageLocationList.Count == 0)
+                {
+                    Platform.Log(LogLevel.Error, "Unable to find storage location for WorkQueue item: {0}",
+                                 item.GetKey().ToString());
+                    throw new ApplicationException("Unable to find storage location for WorkQueue item.");
+                }
+            }
+            finally
+            {
+                 _statistics.StorageLocationLoadTime.End();
+            }
+            
             Debug.Assert(_storageLocationList.Count>0);
+           
         }
 
         /// <summary>
@@ -122,14 +140,24 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <param name="item">The WorkQueue item.</param>
         protected void LoadUids(Model.WorkQueue item)
         {
-            IQueryWorkQueueUids select = _readContext.GetBroker<IQueryWorkQueueUids>();
+            _statistics.UidsLoadTime.Start();
+            try
+            {
+                IQueryWorkQueueUids select = _readContext.GetBroker<IQueryWorkQueueUids>();
 
-            WorkQueueUidQueryParameters parms = new WorkQueueUidQueryParameters();
+                WorkQueueUidQueryParameters parms = new WorkQueueUidQueryParameters();
 
-            parms.WorkQueueKey = item.GetKey();
-            _uidList = select.Execute(parms);
+                parms.WorkQueueKey = item.GetKey();
+                _uidList = select.Execute(parms);
 
-            _uidList = TruncateList(item, _uidList);
+                _uidList = TruncateList(item, _uidList);
+
+            }
+            finally
+            {
+               _statistics.UidsLoadTime.End();
+            }
+
         }
 
         /// <summary>
@@ -174,12 +202,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             if (item!=null && list!=null)
             {
                 int maxSize = GetMaxBatchSize(item);
-                if (list.Count > maxSize)
+                while(list.Count > maxSize)
                 {
-                    IList<WorkQueueUid> newList = new List<WorkQueueUid>();
-                    for (int i = 0; i < maxSize; i++)
-                        newList.Add(list[i]);
-                    return newList;
+                    list.RemoveAt(list.Count - 1);
                 }
             }
 
@@ -310,7 +335,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// Delete an entry in the <see cref="WorkQueueUid"/> table.
         /// </summary>
         /// <param name="sop">The <see cref="WorkQueueUid"/> entry to delete.</param>
-        protected static void DeleteWorkQueueUid(WorkQueueUid sop)
+        protected virtual void DeleteWorkQueueUid(WorkQueueUid sop)
         {
             using (
                 IUpdateContext updateContext =
@@ -409,27 +434,36 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </summary>
         /// <param name="location">The location a study is stored.</param>
         /// <returns>The <see cref="StudyXml"/> instance for <paramref name="location"/></returns>
-        protected static StudyXml LoadStudyXml(StudyStorageLocation location)
+        protected virtual StudyXml LoadStudyXml(StudyStorageLocation location)
         {
-            String streamFile = Path.Combine(location.GetStudyPath(), location.StudyInstanceUid + ".xml");
+            Statistics.StudyXmlLoadTime.Start();
 
-            StudyXml theXml = new StudyXml();
-
-            if (File.Exists(streamFile))
+            try
             {
-                using (Stream fileStream = new FileStream(streamFile, FileMode.Open))
+                String streamFile = Path.Combine(location.GetStudyPath(), location.StudyInstanceUid + ".xml");
+
+                StudyXml theXml = new StudyXml();
+
+                if (File.Exists(streamFile))
                 {
-                    XmlDocument theDoc = new XmlDocument();
+                    using (Stream fileStream = new FileStream(streamFile, FileMode.Open))
+                    {
+                        XmlDocument theDoc = new XmlDocument();
 
-                    StudyXmlIo.Read(theDoc, fileStream);
+                        StudyXmlIo.Read(theDoc, fileStream);
 
-                    theXml.SetMemento(theDoc);
+                        theXml.SetMemento(theDoc);
 
-                    fileStream.Close();
+                        fileStream.Close();
+                    }
                 }
-            }
 
-            return theXml;
+                return theXml;
+            }
+            finally
+            {
+                Statistics.StudyXmlLoadTime.End();
+            }
         }
 
         #endregion

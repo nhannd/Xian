@@ -29,9 +29,7 @@
 
 #endregion
 
-#pragma warning disable 1591
-
-using System;
+using System.Diagnostics;
 
 namespace ClearCanvas.Common.Statistics
 {
@@ -40,7 +38,13 @@ namespace ClearCanvas.Common.Statistics
     /// </summary>
     public enum RateType
     {
-        BYTES,
+        ///<summary>
+        /// Rate statistics in number of bytes within a period
+        ///</summary>
+        BYTES, 
+        /// <summary>
+        /// Rate statistics in number of message within a period
+        /// </summary>
         MESSAGES
     } ;
 
@@ -73,24 +77,17 @@ namespace ClearCanvas.Common.Statistics
     /// </remarks>
     public class RateStatistics : Statistics<double>
     {
-        #region Constants
-        private const double TICKSPERSECOND= 10*1000*1000;
-        private const double KILOBYTES = 1024;
-        private const double MEGABYTES = 1024 * KILOBYTES;
-        private const double GIGABYTES = 1024 * MEGABYTES;
-
-        #endregion Constants
 
         #region private members
-        private long _begin;
-        private long _end;
-        private double _data = 0;
 
+        private double _data = 0;
+        private readonly Stopwatch _stopWatch = new Stopwatch();
         private RateType _type;
 
         #endregion private members
 
         #region Constructors
+
         /// <summary>
         /// Creates an instance of <see cref="RateStatistics"/> for the specified <see cref="RateType"/>
         /// </summary>
@@ -99,36 +96,50 @@ namespace ClearCanvas.Common.Statistics
         public RateStatistics(string name, RateType rateType)
             : base(name)
         {
-            _type = rateType;
+            Type = rateType;
 
-            switch (_type)
+            switch (Type)
             {
                 case RateType.BYTES:
-                    ValueFormatter = delegate(double rate)
-                                         {
-                                             if (rate > GIGABYTES)
-                                                 return String.Format("{0:0.00} GB/s", rate / GIGABYTES);
-                                             if (rate > MEGABYTES)
-                                                return String.Format("{0:0.00} MB/s", rate/ MEGABYTES);
-                                             if (rate > KILOBYTES)
-                                                return String.Format("{0:0.00} KB/s", rate / KILOBYTES);
-
-                                             return String.Format("{0:0} B/s", rate);
-                                         };
+                    ValueFormatter = TransmissionRateFormatter.Format;
                     break;
 
                 case RateType.MESSAGES:
-                    ValueFormatter = delegate(double rate)
-                                         {
-                                             return String.Format("{0:0.00} msg/s", rate);
-                                         };
+                    ValueFormatter = MessageRateFormatter.Format;
                     break;
             }
+        }
+
+        /// <summary>
+        /// Creates a copy of the original <see cref="RateStatistics"/> object.
+        /// </summary>
+        /// <param name="source">The original <see cref="RateStatistics"/> to copy </param>
+        public RateStatistics(RateStatistics source)
+            : base(source)
+        {
+            Type = source.Type;
+        }
+
+        /// <summary>
+        /// Gets or sets the type of the rate being measured
+        /// </summary>
+        public RateType Type
+        {
+            get { return _type; }
+            set { _type = value; }
         }
 
         #endregion Constructors
 
         #region Public methods
+
+        /// <summary>
+        /// Gets the elapsed time being measured, in ticks.
+        /// </summary>
+        public long ElapsedTime
+        {
+            get { return _stopWatch.ElapsedTicks; }
+        }
 
         /// <summary>
         /// Sets the value of the underlying data.
@@ -144,8 +155,7 @@ namespace ClearCanvas.Common.Statistics
         /// </summary>
         public void Start()
         {
-            _begin = DateTime.Now.Ticks;
-
+            _stopWatch.Start();
         }
 
         /// <summary>
@@ -153,11 +163,27 @@ namespace ClearCanvas.Common.Statistics
         /// </summary>
         public void End()
         {
-            _end = DateTime.Now.Ticks + 1;
-            Value = _data / ((_end - _begin) / TICKSPERSECOND);
+            Debug.Assert(_stopWatch.IsRunning);
+
+            _stopWatch.Stop();
+            Debug.Assert(_stopWatch.ElapsedTicks > 0);
+            Value = _data/((double) _stopWatch.ElapsedTicks/Stopwatch.Frequency);
         }
-        #endregion Public methods
 
+        #endregion
+
+        #region Overridden Public Methods
+
+        public override object Clone()
+        {
+            return new RateStatistics(this);
+        }
+
+        public override IAverageStatistics NewAverageStatistics()
+        {
+            return new AverageRateStatistics(this);
+        }
+
+        #endregion
     }
-
-   }
+}

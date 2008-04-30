@@ -29,73 +29,43 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Common.Statistics;
-
-namespace ClearCanvas.ImageServer.Rules
+namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
-    /// Stores the engine statistics of a rule engine.
+    /// <see cref="IStatisticsContext"/> implemenation class 
     /// </summary>
-    public class RuleEngineStatistics:StatisticsSet
+    public class StatisticsContext : IStatisticsContext
     {
-        #region Private members
-        #endregion Private members
+        #region Private Memebers
 
-        public void Reset()
-        {
-            LoadTime.Reset();
-            ExecutionTime.Reset();
-        }
+        private string _id;
 
-        #region Public Properties
-        /// <summary>
-        /// Gets or sets the execution time of the rule engine in miliseconds.
-        /// </summary>
-        public TimeSpanStatistics ExecutionTime
-        {
-            get
-            {
-                if (this["ExecutionTime"] == null)
-                {
-                    this["ExecutionTime"] = new TimeSpanStatistics("ExecutionTime");
-                }
-
-                return (this["ExecutionTime"] as TimeSpanStatistics);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the load time of the rule engine in miliseconds.
-        /// </summary>
-        public TimeSpanStatistics LoadTime
-        {
-            get
-            {
-                if (this["LoadTime"] == null)
-                    this["LoadTime"] = new TimeSpanStatistics("LoadTime");
-                return (this["LoadTime"] as TimeSpanStatistics);
-            }
-
-        }
-
-        #endregion Public Properties
+        #endregion
 
         #region Constructors
 
-        public RuleEngineStatistics()
-            : base()
+        /// <summary>
+        /// Creates an instance of <see cref="StatisticsContext"/> with a specified ID.
+        /// </summary>
+        /// <param name="id"></param>
+        public StatisticsContext(string id)
         {
-
+            _id = id;
         }
 
-        public RuleEngineStatistics(string name, string description)
-            : base(name,description)
-        {
-            Context = new StatisticsContext(name);
-        }
         #endregion
 
-        
+        #region IStatisticsContext Members
+
+        /// <summary>
+        /// Gets or sets the ID of the context
+        /// </summary>
+        public string ID
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
+
+        #endregion
     }
 }

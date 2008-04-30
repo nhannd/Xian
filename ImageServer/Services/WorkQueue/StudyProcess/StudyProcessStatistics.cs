@@ -30,45 +30,141 @@
 #endregion
 
 using ClearCanvas.Common.Statistics;
-using ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
     /// <summary>
     /// Store performance statistics of a study processor.
     /// </summary>
-    internal class StudyProcessStatistics : CollectionAverageStatistics<InstanceStatistics>
+    internal class StudyProcessStatistics : StatisticsSet
     {
         #region Public Properties
 
         public string StudyInstanceUid
         {
-            set { this["StudyInstanceUid"] = new Statistics<string>("StudyInstanceUid", value); }
-            get { return (this["StudyInstanceUid"] as Statistics<string>).Value; }
+            set
+            {
+                this["StudyInstanceUid"] = new Statistics<string>("StudyInstanceUid", value);
+            }
+            get
+            {
+                if (this["StudyInstanceUid"] == null)
+                    this["StudyInstanceUid"] = new Statistics<string>("StudyInstanceUid");
+
+                return (this["StudyInstanceUid"] as Statistics<string>).Value;
+            }
         }
 
         public string Modality
         {
             set { this["Modality"] = new Statistics<string>("Modality", value); }
-            get { return (this["Modality"] as Statistics<string>).Value; }
+            get
+            {
+                if (this["Modality"] == null)
+                    this["Modality"] = new Statistics<string>("Modality");
+
+                return (this["Modality"] as Statistics<string>).Value;
+            }
         }
 
 
         public int NumInstances
         {
             set { this["NumInstances"] = new Statistics<int>("NumInstances", value); }
-            get { return (this["NumInstances"] as Statistics<int>).Value; }
+            get
+            {
+                if (this["NumInstances"] == null)
+                    this["NumInstances"] = new Statistics<int>("Modality");
+
+                return (this["NumInstances"] as Statistics<int>).Value;
+            }
         }
+
+        public TimeSpanStatistics TotalProcessTime
+        {
+            get
+            {
+                if (this["TotalProcessTime"] == null)
+                    this["TotalProcessTime"] = new TimeSpanStatistics("TotalProcessTime");
+
+                return (this["TotalProcessTime"] as TimeSpanStatistics);
+            }
+            set { this["TotalProcessTime"] = value; }
+        }
+
+        public TimeSpanStatistics UpdateDBTime
+        {
+            get
+            {
+                if (this["UpdateDBTime"] == null)
+                    this["UpdateDBTime"] = new TimeSpanStatistics("UpdateDBTime");
+
+                return (this["UpdateDBTime"] as TimeSpanStatistics);
+            }
+            set { this["UpdateDBTime"] = value; }
+        }
+
+        public TimeSpanStatistics StudyXmlLoadTime
+        {
+            get
+            {
+                if (this["StudyXmlLoadTime"] == null)
+                    this["StudyXmlLoadTime"] = new TimeSpanStatistics("StudyXmlLoadTime");
+
+                return (this["StudyXmlLoadTime"] as TimeSpanStatistics);
+            }
+            set { this["StudyXmlLoadTime"] = value; }
+        }
+
+        public TimeSpanStatistics StorageLocationLoadTime
+        {
+            get
+            {
+                if (this["StorageLocationLoadTime"] == null)
+                    this["StorageLocationLoadTime"] = new TimeSpanStatistics("StorageLocationLoadTime");
+
+                return (this["StorageLocationLoadTime"] as TimeSpanStatistics);
+            }
+            set { this["StorageLocationLoadTime"] = value; }
+        }
+
+        public TimeSpanStatistics UidsLoadTime
+        {
+            get
+            {
+                if (this["UidsLoadTime"] == null)
+                    this["UidsLoadTime"] = new TimeSpanStatistics("UidsLoadTime");
+
+                return (this["UidsLoadTime"] as TimeSpanStatistics);
+            }
+            set { this["UidsLoadTime"] = value; }
+        }
+
+        public TimeSpanStatistics SopProcessedEngineLoadTime
+        {
+            get
+            {
+                if (this["SopProcessedEngineLoadTime"] == null)
+                    this["SopProcessedEngineLoadTime"] = new TimeSpanStatistics("SopProcessedEngineLoadTime");
+
+                return (this["SopProcessedEngineLoadTime"] as TimeSpanStatistics);
+            }
+            set { this["SopProcessedEngineLoadTime"] = value; }
+        }
+
 
         #endregion Public Properties
 
         #region Constructors
 
-        public StudyProcessStatistics() : base("Study Process")
+        public StudyProcessStatistics() : this("StudyProcess")
         {
-            AddField(new Statistics<string>("Modality"));
-            AddField(new Statistics<string>("StudyInstanceUid"));
-            AddField(new Statistics<int>("NumInstances"));
+        }
+
+
+        public StudyProcessStatistics(string name)
+            : base(name)
+        {
         }
 
         #endregion Constructors

@@ -32,14 +32,15 @@
 #pragma warning disable 1591
 
 using System;
+using System.Diagnostics;
 
 namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
-    /// Statistics class to store the time span.
+    /// Statistics class to track a timespan.
     /// </summary>
     /// <remarks>
-    /// <see cref="IStatistics.FormattedValue"/> of the <see cref="RateStatistics"/> has unit of "sec", "ms", "min", "hr" depending on the elapsed time
+    /// <see cref="IStatistics.FormattedValue"/> of the <see cref="TimeSpanStatistics"/> has unit of "sec", "ms", "min", "hr" depending on the elapsed time
     /// between <see cref="Start"/> and <see cref="End"/> calls. The number of ticks between these calls is stored in <see cref="Statistics{T}.Value"/>.
     /// 
     /// <example>
@@ -54,8 +55,8 @@ namespace ClearCanvas.Common.Statistics
     /// <para>If the time elapsed is 300 miliseconds, then ts.FormattedValue = "300ms"</para>
     /// 
     /// <para>
-    /// <see cref="TimeSpanStatistics"/> also supports <see cref="Add(TimeSpanStatistics)"/> and <see cref="Subtract(TimeSpanStatistics)"/> to add or
-    /// substract timespans.
+    /// <see cref="TimeSpanStatistics"/> also supports <see cref="Add(TimeSpanStatistics)"/> and <see cref="Subtract(TimeSpanStatistics)"/> for timespan 
+    /// arithmetics.
     /// </para>
     /// 
     /// </example>
@@ -63,72 +64,106 @@ namespace ClearCanvas.Common.Statistics
     /// 
     /// 
     /// </remarks>
+    /// 
     public class TimeSpanStatistics : Statistics<TimeSpan>
     {
-        #region Constants
-
-        private const double TICKSPERMICROECONDS = 10;
-        private const double TICKSPERMILISECONDS = TICKSPERMICROECONDS*1000;
-        private const double TICKSPERSECONDS = TICKSPERMILISECONDS*1000;
-        private const double TICKSPERMINUTE = TICKSPERSECONDS*60;
-        private const double TICKSPERHOUR = TICKSPERMINUTE*60;
-
-        #endregion Constants
-
         #region Private members
 
-        private long _begin;
-        private long _end;
+        private readonly Stopwatch _stopWatch = new Stopwatch();
 
         #endregion Private members
 
         #region Constructors
 
+        /// <summary>
+        /// Creates an instance of <see cref="TimeSpanStatistics"/>
+        /// </summary>
         public TimeSpanStatistics()
             : this("TimeSpanStatistics")
         {
-            Value = new TimeSpan();
+            Value = TimeSpan.Zero;
         }
 
+        /// <summary>
+        /// Creates an instance of <see cref="TimeSpanStatistics"/> with a specified name.
+        /// </summary>
+        /// <param name="name">Name of the <see cref="TimeSpanStatistics"/> instance to be created</param>
         public TimeSpanStatistics(string name)
             : base(name)
         {
-            Value = new System.TimeSpan();
+            Value = TimeSpan.Zero;
 
-            ValueFormatter = delegate(TimeSpan ts)
-                                 {
-                                     if (ts.Ticks > TICKSPERHOUR)
-                                         return String.Format("{0} hr {1} min", ts.Hours, ts.Minutes);
-                                     if (ts.Ticks > TICKSPERMINUTE)
-                                         return String.Format("{0:0.00} min", ts.TotalMinutes);
-                                     if (ts.Ticks > TICKSPERSECONDS)
-                                         return String.Format("{0:0.00} sec", ts.TotalSeconds);
-                                     if (ts.Ticks > TICKSPERMILISECONDS)
-                                         return String.Format("{0:0.00} ms", ts.TotalMilliseconds);
+            ValueFormatter = TimeSpanFormatter.Format;
+        }
 
-                                     return String.Format("{0:0.00} us", ts.Ticks/TICKSPERMICROECONDS);
-                                 };
+        /// <summary>
+        /// Creates a copy of the orginal <see cref="TimeSpanStatistics"/> object.
+        /// </summary>
+        /// <param name="copy"></param>
+        public TimeSpanStatistics(TimeSpanStatistics copy)
+            : base(copy)
+        {
         }
 
         #endregion Constructors
 
-        #region Public Methods
+        #region Public Properties
 
         /// <summary>
-        /// Resets the <see cref="TimeSpanStatistics"/>
+        /// Gets a value indiating whether or not the value of the statistics has been set.
         /// </summary>
-        public void Reset()
+        public bool IsSet
         {
-            Value = new System.TimeSpan();
+            get { return Value != TimeSpan.Zero; }
         }
 
         /// <summary>
-        /// Adds a <see cref="TimeSpanStatistics"/> to the current <see cref="TimeSpanStatistics"/>.
+        /// Gets a value indicating whether or not the statistics is still being recorded 
         /// </summary>
-        /// <param name="ts"></param>
-        public void Add(TimeSpanStatistics ts)
+        /// <remarks>
+        /// After after <see cref="Start"/> is called, the statistics will be in running state until <see cref="End"/> is called.
+        /// </remarks>
+        public bool IsRunning
         {
-            Value = Value.Add(ts.Value);
+            get { return _stopWatch.IsRunning; }
+        }
+
+        /// <summary>
+        /// Gets the total elapsed time measured, in timer ticks.
+        /// </summary>
+        public long ElapsedTick
+        {
+            get { return _stopWatch.ElapsedTicks; }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Resets the current statistics.
+        /// </summary>
+        public void Reset()
+        {
+            Value = TimeSpan.Zero;
+            _stopWatch.Reset();
+
+            Debug.Assert(IsSet == false);
+            Debug.Assert(IsRunning == false);
+        }
+
+        /// <summary>
+        /// Adds a duration to the current <see cref="TimeSpanStatistics"/>.
+        /// </summary>
+        /// <param name="duration"></param>
+        /// <remarks>
+        /// Duration set using <see cref="Add(TimeSpanStatistics)"/> will
+        /// be lost if <see cref="Start"/> and <see cref="End"/> are called.
+        /// </remarks>
+        public void Add(TimeSpanStatistics duration)
+        {
+            Platform.CheckForNullReference(duration, "duration");
+            Value = Value.Add(duration.Value);
         }
 
         /// <summary>
@@ -136,6 +171,8 @@ namespace ClearCanvas.Common.Statistics
         /// </summary>
         /// <param name="ticks"></param>
         /// <remarks>
+        /// Duration set using <see cref="Add(long)"/> will
+        /// be lost if <see cref="Start"/> and <see cref="End"/> are called.
         /// </remarks>
         public void Add(long ticks)
         {
@@ -147,18 +184,27 @@ namespace ClearCanvas.Common.Statistics
         /// Subtract a number of ticks from the current <see cref="TimeSpanStatistics"/>.
         /// </summary>
         /// <param name="ticks"></param>
+        /// <remarks>
+        /// Duration set using <see cref="Subtract(long)"/> will
+        /// be lost if <see cref="Start"/> and <see cref="End"/> are called.
+        /// </remarks>
         public void Subtract(long ticks)
         {
             Value = Value.Subtract(new TimeSpan(ticks));
         }
 
         /// <summary>
-        /// Adds a <see cref="TimeSpanStatistics"/> to the current <see cref="TimeSpanStatistics"/>.
+        /// Adds a duration to the current <see cref="TimeSpanStatistics"/>.
         /// </summary>
-        /// <param name="ts"></param>
-        public void Subtract(TimeSpanStatistics ts)
+        /// <param name="duration">The duration </param>
+        /// <remarks>
+        /// Duration set using <see cref="Subtract(TimeSpanStatistics)"/> will
+        /// be lost if <see cref="Start"/> and <see cref="End"/> are called.
+        /// </remarks>
+        public void Subtract(TimeSpanStatistics duration)
         {
-            Value = Value.Subtract(ts.Value);
+            Platform.CheckForNullReference(duration, "duration");
+            Value = Value.Subtract(duration.Value);
         }
 
         /// <summary>
@@ -166,18 +212,39 @@ namespace ClearCanvas.Common.Statistics
         /// </summary>
         public void Start()
         {
-            _begin = DateTime.Now.Ticks;
+            _stopWatch.Start();
         }
 
         /// <summary>
         /// Signals the end of the period to be measured.
         /// </summary>
+        /// <remarks>
+        /// Any value set using <see cref="Add(TimeSpanStatistics)"/> and <see cref="Subtract(TimeSpanStatistics)"/> will
+        /// be lost. The <see cref="Statistics{T}.Value"/>  will be the elapsed time between <see cref="Start"/> and <see cref="End"/>
+        /// </remarks>
         public void End()
         {
-            _end = DateTime.Now.Ticks + 1;
-            Value = new System.TimeSpan(_end - _begin);
+            _stopWatch.Stop();
+            Debug.Assert(_stopWatch.ElapsedTicks > 0);
+            Value = _stopWatch.Elapsed;
         }
 
-        #endregion Public methods
+        #endregion
+
+        #region Overridden Public Methods
+
+        public override IAverageStatistics NewAverageStatistics()
+        {
+            return new AverageTimeSpanStatistics(this);
+        }
+
+        public override object Clone()
+        {
+            TimeSpanStatistics copy = new TimeSpanStatistics(this);
+
+            return copy;
+        }
+
+        #endregion
     }
 }

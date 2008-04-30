@@ -29,9 +29,7 @@
 
 #endregion
 
-#pragma warning disable 1591
 
-using System;
 
 namespace ClearCanvas.Common.Statistics
 {
@@ -44,30 +42,51 @@ namespace ClearCanvas.Common.Statistics
     /// </remarks>
     public class ByteCountStatistics : Statistics<ulong>
     {
-        private const double KILOBYTES = 1024;
-        private const double MEGABYTES = 1024*KILOBYTES;
-        private const double GIGABYTES = 1024*MEGABYTES;
+        #region Constructors
 
+        /// <summary>
+        /// Creates an instance of <see cref="ByteCountStatistics"/>
+        /// </summary>
+        /// <param name="name"></param>
         public ByteCountStatistics(string name)
             : this(name, 0)
         {
-            
         }
 
+        /// <summary>
+        /// Creates an instance of <see cref="ByteCountStatistics"/> with specified name and value
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
         public ByteCountStatistics(string name, ulong value)
             : base(name, value)
         {
-            ValueFormatter = delegate(ulong bytes)
-                                 {
-                                     if (bytes > GIGABYTES)
-                                         return String.Format("{0:0.00} GB", bytes / GIGABYTES);
-                                     if (bytes > MEGABYTES)
-                                         return String.Format("{0:0.00} MB", bytes / MEGABYTES);
-                                     if (bytes > KILOBYTES)
-                                         return String.Format("{0:0.00} KB", bytes / KILOBYTES);
-
-                                     return String.Format("{0} B", bytes);
-                                 };
+            ValueFormatter = ByteCountFormatter.Format;
         }
+
+        /// <summary>
+        /// Creates a copy of the original <see cref="ByteCountStatistics"/> object.
+        /// </summary>
+        /// <param name="source">The original <see cref="ByteCountStatistics"/> to copy</param>
+        public ByteCountStatistics(ByteCountStatistics source)
+            : base(source)
+        {
+        }
+
+        #endregion
+
+        #region Overridden Public Methods
+
+        public override object Clone()
+        {
+            return new ByteCountStatistics(this);
+        }
+
+        public override IAverageStatistics NewAverageStatistics()
+        {
+            return new AverageByteCountStatistics(this);
+        }
+
+        #endregion
     }
 }

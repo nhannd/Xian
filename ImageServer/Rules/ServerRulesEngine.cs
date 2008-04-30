@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageServer.Rules
             _applyTime = applyTime;
             _serverPartitionKey = serverPartitionKey;
 
-            _stats = new RuleEngineStatistics(this);
+            _stats = new RuleEngineStatistics(applyTime.Lookup, applyTime.LongDescription);
         }
         #endregion
 

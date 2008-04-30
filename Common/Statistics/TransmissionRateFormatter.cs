@@ -30,72 +30,41 @@
 #endregion
 
 using System;
-using ClearCanvas.Common.Statistics;
 
-namespace ClearCanvas.ImageServer.Rules
+namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
-    /// Stores the engine statistics of a rule engine.
+    /// Transmission rate formatter class.
     /// </summary>
-    public class RuleEngineStatistics:StatisticsSet
+    public static class TransmissionRateFormatter
     {
-        #region Private members
-        #endregion Private members
+        #region Constants
 
-        public void Reset()
-        {
-            LoadTime.Reset();
-            ExecutionTime.Reset();
-        }
+        private const double GIGABYTES = 1024*MEGABYTES;
+        private const double KILOBYTES = 1024;
+        private const double MEGABYTES = 1024*KILOBYTES;
 
-        #region Public Properties
-        /// <summary>
-        /// Gets or sets the execution time of the rule engine in miliseconds.
-        /// </summary>
-        public TimeSpanStatistics ExecutionTime
-        {
-            get
-            {
-                if (this["ExecutionTime"] == null)
-                {
-                    this["ExecutionTime"] = new TimeSpanStatistics("ExecutionTime");
-                }
-
-                return (this["ExecutionTime"] as TimeSpanStatistics);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the load time of the rule engine in miliseconds.
-        /// </summary>
-        public TimeSpanStatistics LoadTime
-        {
-            get
-            {
-                if (this["LoadTime"] == null)
-                    this["LoadTime"] = new TimeSpanStatistics("LoadTime");
-                return (this["LoadTime"] as TimeSpanStatistics);
-            }
-
-        }
-
-        #endregion Public Properties
-
-        #region Constructors
-
-        public RuleEngineStatistics()
-            : base()
-        {
-
-        }
-
-        public RuleEngineStatistics(string name, string description)
-            : base(name,description)
-        {
-            Context = new StatisticsContext(name);
-        }
         #endregion
 
-        
+        #region Public Static Methods
+
+        /// <summary>
+        /// Formats a transmission rate in appropriate units
+        /// </summary>
+        /// <param name="rate"></param>
+        /// <returns></returns>
+        public static string Format(double rate)
+        {
+            if (rate > GIGABYTES)
+                return String.Format("{0:0.00} GB/s", rate/GIGABYTES);
+            if (rate > MEGABYTES)
+                return String.Format("{0:0.00} MB/s", rate/MEGABYTES);
+            if (rate > KILOBYTES)
+                return String.Format("{0:0.00} KB/s", rate/KILOBYTES);
+
+            return String.Format("{0:0} bytes/s", rate);
+        }
+
+        #endregion
     }
 }

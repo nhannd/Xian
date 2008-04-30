@@ -109,10 +109,6 @@ namespace ClearCanvas.ImageServer.Common
                 _stats.Start();
                 OnExecute();    
             }
-            catch(Exception e)
-            {
-                throw;
-            }
             finally
             {
                 _stats.End();

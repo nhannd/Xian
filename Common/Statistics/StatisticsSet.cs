@@ -31,26 +31,26 @@
 
 #pragma warning disable 1591
 
-using System.Collections.Generic;
-using System.Xml;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Xml;
 
 namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
     /// Statistics to hold one of more <see cref="IStatistics"/>.
     /// </summary>
-    public class StatisticsSet
+    public class StatisticsSet : ICloneable
     {
-        #region Protected Members
+        private IStatisticsContext _context;
+        private string _description;
 
-        protected String _name;
-         // list of sub-statistics
+        // list of sub-statistics
         protected Dictionary<object, IStatistics> _fields = new Dictionary<object, IStatistics>();
+        protected String _name;
 
-        private Dictionary<object, StatisticsSet> _subStatistics = new Dictionary<object, StatisticsSet>();
-       
-        #endregion
+        private List<StatisticsSet> _subStatistics = new List<StatisticsSet>();
 
         #region Public Properties
 
@@ -71,10 +71,22 @@ namespace ClearCanvas.Common.Statistics
             get { return _fields.Values; }
         }
 
-        public Dictionary<object, StatisticsSet> SubStatistics
+        public List<StatisticsSet> SubStatistics
         {
             get { return _subStatistics; }
             set { _subStatistics = value; }
+        }
+
+        public string Description
+        {
+            get { return _description; }
+            set { _description = value; }
+        }
+
+        public IStatisticsContext Context
+        {
+            get { return _context; }
+            set { _context = value; }
         }
 
         /// <summary>
@@ -84,17 +96,39 @@ namespace ClearCanvas.Common.Statistics
         /// <returns></returns>
         public IStatistics this[object key]
         {
-            get { return _fields[key]; }
-            set { _fields[key] = value; }
+            get
+            {
+                if (!_fields.ContainsKey(key))
+                {
+                    return null;
+                }
+                return _fields[key];
+            }
+            set
+            {
+                _fields[key] = value;
+                value.Context = Context;
+            }
         }
 
         #endregion
 
         #region Constructors
 
-        public StatisticsSet(string name)
+        public StatisticsSet(string name, string description)
         {
-            _name = name;
+            Name = name;
+            Description = description;
+            Context = new StatisticsContext(name);
+        }
+
+        public StatisticsSet(string name)
+            : this(name, name)
+        {
+        }
+
+        public StatisticsSet() : this(String.Empty, String.Empty)
+        {
         }
 
         #endregion
@@ -107,7 +141,10 @@ namespace ClearCanvas.Common.Statistics
         /// <param name="stat"></param>
         public void AddField(IStatistics stat)
         {
-            _fields[stat.Name] = stat;
+            object key = StatisticsHelper.ResolveID(stat);
+            _fields[key] = stat;
+
+            stat.Context = Context;
         }
 
 
@@ -120,19 +157,32 @@ namespace ClearCanvas.Common.Statistics
         {
             Statistics<string> newField = new Statistics<string>(name);
             newField.Value = value;
-            _fields[name] = newField;
+            AddField(newField);
         }
 
 
         /// <summary>
         /// Adds a sub-statistics.
         /// </summary>
-        /// <param name="key"></param>
         /// <param name="stat"></param>
-        public void AddSubStats(object key, StatisticsSet stat)
+        public void AddSubStats(StatisticsSet stat)
         {
-            _subStatistics.Add(key, stat);
+            Debug.Assert(stat.Context != null);
+            Platform.CheckForNullReference(stat, "stat");
+            _subStatistics.Add(stat);
         }
+
+        /// <summary>
+        /// Creats and calculates the averages for applicable fields in the sub-statistics
+        /// </summary>
+        public void CalculateAverage()
+        {
+            foreach (StatisticsSet substat in SubStatistics)
+            {
+                ComputeAverage(substat);
+            }
+        }
+
 
         /// <summary>
         /// Gets the XML representation of the statistics set.
@@ -144,15 +194,29 @@ namespace ClearCanvas.Common.Statistics
         {
             XmlElement el = doc.CreateElement("Statistics");
 
-            if (this.GetType()!=typeof(StatisticsSet))
+            if (GetType() != typeof (StatisticsSet))
             {
                 XmlAttribute attrType = doc.CreateAttribute("Type");
                 attrType.Value = GetType().Name;
-                el.Attributes.Append(attrType);    
+                el.Attributes.Append(attrType);
             }
 
+            if (Context != null)
+            {
+                XmlAttribute attrContext = doc.CreateAttribute("Context");
+                attrContext.Value = Context.ID;
+                el.Attributes.Append(attrContext);
+            }
+            else
+            {
+                XmlAttribute attrName = doc.CreateAttribute("Name");
+                attrName.Value = Name;
+                el.Attributes.Append(attrName);
+            }
+
+
             XmlAttribute attrDescription = doc.CreateAttribute("Description");
-            attrDescription.Value = Name;
+            attrDescription.Value = Description;
             el.Attributes.Append(attrDescription);
 
             foreach (IStatistics field in Fields)
@@ -166,18 +230,99 @@ namespace ClearCanvas.Common.Statistics
 
             if (recursive)
             {
-                foreach (StatisticsSet substat in SubStatistics.Values)
+                foreach (StatisticsSet substat in SubStatistics)
                 {
                     el.AppendChild(substat.GetXmlElement(doc, recursive));
-                } 
+                }
             }
-            
+
 
             return el;
         }
 
         #endregion
 
-        
+        #region Private Methods
+
+        protected virtual void ComputeAverage(StatisticsSet statistics)
+        {
+            foreach (IStatistics field in statistics.Fields)
+            {
+                IAverageStatistics average = field.NewAverageStatistics();
+
+                if (average == null)
+                    continue;
+
+                object key = StatisticsHelper.ResolveID(average);
+                if (this[key] != null)
+                {
+                    average = this[key] as IAverageStatistics;
+                    Debug.Assert(average != null);
+                }
+                else
+                {
+                    AddField(average);
+                }
+
+                if (field is Statistics<int>)
+                {
+                    average.AddSample(((Statistics<int>) field).Value);
+                }
+                else if (field is Statistics<uint>)
+                {
+                    average.AddSample(((Statistics<uint>) field).Value);
+                }
+                else if (field is Statistics<long>)
+                {
+                    //sum += ((Statistics<long>)field).Value;
+                    average.AddSample(((Statistics<long>) field).Value);
+                }
+                else if (field is Statistics<ulong>)
+                {
+                    average.AddSample(((Statistics<ulong>) field).Value);
+                }
+                else if (field is Statistics<double>)
+                {
+                    average.AddSample(((Statistics<double>) field).Value);
+                }
+                else if (field is TimeSpanStatistics)
+                {
+                    TimeSpanStatistics stat = field as TimeSpanStatistics;
+                    if (stat.IsSet)
+                        average.AddSample(((TimeSpanStatistics) field).Value);
+                }
+            }
+        }
+
+        #endregion
+
+        #region ICloneable Members
+
+        public object Clone()
+        {
+            // create an instance of this specific type instead of StatisticsSet
+            object newObject = Activator.CreateInstance(GetType());
+
+            // copy the basic stuff
+            StatisticsSet copy = newObject as StatisticsSet;
+            copy.Name = Name;
+            copy.Description = Description;
+            copy.Context = Context;
+
+            // perform deep copy
+            foreach (IStatistics field in Fields)
+            {
+                copy.AddField(field.Clone() as IStatistics);
+            }
+
+            foreach (StatisticsSet substat in SubStatistics)
+            {
+                copy.AddSubStats(substat.Clone() as StatisticsSet);
+            }
+
+            return copy;
+        }
+
+        #endregion
     }
 }

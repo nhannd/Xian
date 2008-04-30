@@ -30,72 +30,41 @@
 #endregion
 
 using System;
-using ClearCanvas.Common.Statistics;
 
-namespace ClearCanvas.ImageServer.Rules
+namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
-    /// Stores the engine statistics of a rule engine.
+    /// Provide methods to format a number of bytes in different units
     /// </summary>
-    public class RuleEngineStatistics:StatisticsSet
+    public static class ByteCountFormatter
     {
-        #region Private members
-        #endregion Private members
+        #region Constants
 
-        public void Reset()
-        {
-            LoadTime.Reset();
-            ExecutionTime.Reset();
-        }
+        private const double GIGABYTES = 1024*MEGABYTES;
+        private const double KILOBYTES = 1024;
+        private const double MEGABYTES = 1024*KILOBYTES;
 
-        #region Public Properties
-        /// <summary>
-        /// Gets or sets the execution time of the rule engine in miliseconds.
-        /// </summary>
-        public TimeSpanStatistics ExecutionTime
-        {
-            get
-            {
-                if (this["ExecutionTime"] == null)
-                {
-                    this["ExecutionTime"] = new TimeSpanStatistics("ExecutionTime");
-                }
-
-                return (this["ExecutionTime"] as TimeSpanStatistics);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the load time of the rule engine in miliseconds.
-        /// </summary>
-        public TimeSpanStatistics LoadTime
-        {
-            get
-            {
-                if (this["LoadTime"] == null)
-                    this["LoadTime"] = new TimeSpanStatistics("LoadTime");
-                return (this["LoadTime"] as TimeSpanStatistics);
-            }
-
-        }
-
-        #endregion Public Properties
-
-        #region Constructors
-
-        public RuleEngineStatistics()
-            : base()
-        {
-
-        }
-
-        public RuleEngineStatistics(string name, string description)
-            : base(name,description)
-        {
-            Context = new StatisticsContext(name);
-        }
         #endregion
 
-        
+        #region Public Static Methods
+
+        /// <summary>
+        /// Formats a byte number in different units
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static string Format(ulong bytes)
+        {
+            if (bytes > GIGABYTES)
+                return String.Format("{0:0.00} GB", bytes/GIGABYTES);
+            if (bytes > MEGABYTES)
+                return String.Format("{0:0.00} MB", bytes/MEGABYTES);
+            if (bytes > KILOBYTES)
+                return String.Format("{0:0.00} KB", bytes/KILOBYTES);
+
+            return String.Format("{0} bytes", bytes);
+        }
+
+        #endregion
     }
 }

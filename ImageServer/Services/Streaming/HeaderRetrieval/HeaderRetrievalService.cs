@@ -95,8 +95,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
                 if (Settings.Default.LogStatistics)
                 {
                     stats.AddField("StudyInstanceUid", parameters.StudyInstanceUID);
-                    
-                    stats.AddSubStats("Loading", loader.Statistics);
+
+                    stats.AddSubStats(loader.Statistics);
                     StatisticsLogger.Log(LogLevel.Info, stats);    
                 }
                 

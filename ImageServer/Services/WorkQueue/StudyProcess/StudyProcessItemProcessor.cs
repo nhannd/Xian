@@ -79,7 +79,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 _studyProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"), item.ServerPartitionKey);
                 _studyProcessedRulesEngine.Load();
-                _instanceStats.EngineLoadTime.Add(_studyProcessedRulesEngine.Statistics.LoadTime);
+            }
+            else
+            {
+                _studyProcessedRulesEngine.Statistics.LoadTime.Reset();
+                _studyProcessedRulesEngine.Statistics.ExecutionTime.Reset();
             }
             ServerActionContext context = new ServerActionContext(file,StorageLocation.FilesystemKey, item.ServerPartitionKey,item.StudyStorageKey);
 
@@ -91,8 +95,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 Platform.Log(LogLevel.Error, "Unexpeected failure processing Study level rules");   
             }
-
-            _instanceStats.EngineExecutionTime.Add(_studyProcessedRulesEngine.Statistics.ExecutionTime);
         }
 
 
@@ -107,8 +109,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 _seriesProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SeriesProcessed"), item.ServerPartitionKey);
                 _seriesProcessedRulesEngine.Load();
-                _instanceStats.EngineLoadTime.Add(_seriesProcessedRulesEngine.Statistics.LoadTime);
             }
+            else
+            {
+                _seriesProcessedRulesEngine.Statistics.LoadTime.Reset();
+                _seriesProcessedRulesEngine.Statistics.ExecutionTime.Reset();
+            }
+           
             ServerActionContext context = new ServerActionContext(file, StorageLocation.FilesystemKey, item.ServerPartitionKey, item.StudyStorageKey);
 
             context.CommandProcessor = new ServerCommandProcessor("Series Rule Processor");
@@ -119,8 +126,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 Platform.Log(LogLevel.Error,"Error processing Series level rules StudyStorage {0}",item.StudyStorageKey);
             }
-
-            _instanceStats.EngineExecutionTime.Add(_seriesProcessedRulesEngine.Statistics.ExecutionTime);
         }
 
         /// <summary>
@@ -133,11 +138,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             InstanceKeys keys;
             DicomFile file;
-            long fileSize;
             String modality = null;
-
-            FileInfo fileInfo = new FileInfo(path);
-            fileSize = fileInfo.Length;
 
             // Use the command processor for rollback capabilities.
             ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue DICOM File");
@@ -146,15 +147,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             try
             {
-                OnProcessFileBegin();
-
+                long fileSize;
+            
+                FileInfo fileInfo = new FileInfo(path);
+                fileSize = fileInfo.Length;
+                
                 _instanceStats.FileLoadTime.Start();
                 file = new DicomFile(path);
                 file.Load(DicomReadOptions.StorePixelDataReferences | DicomReadOptions.Default);
                 _instanceStats.FileLoadTime.End();
                 _instanceStats.FileSize = (ulong) fileSize;
 
-                _instanceStats.Name = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:"+fileInfo.Name);
+                _instanceStats.Description = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:"+fileInfo.Name);
 
                 // Get the Patients Name for processing purposes.
                 String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
@@ -187,6 +191,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid,
                                  patientsName);
                     keys = insertInstanceCommand.InsertKeys;
+
+                    if (keys != null)
+                    {
+                        // We've inserted a new Study, process Study Rules
+                        if (keys.InsertStudy)
+                        {
+                            ProcessStudyRules(item, file);
+                        }
+
+                        // We've inserted a new Series, process Series Rules
+                        if (keys.InsertSeries)
+                        {
+                            ProcessSeriesRules(item, file);
+                        }
+                    }
                 }
 
                 
@@ -196,18 +215,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.",
                              processor.Description);
                 processor.Rollback();
-                _instanceStats.ProcessTime.End();  
                 throw new ApplicationException("Unexpected exception when processing file.", e);
             }
             finally
             {
-                _instanceStats.EngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
-                _instanceStats.EngineExecutionTime.Add(_sopProcessedRulesEngine.Statistics.ExecutionTime);
-                if (insertInstanceCommand != null)
-                    _instanceStats.InsertDBTime.Add(insertInstanceCommand.Statistics);
-                if (insertStudyXmlCommand!=null)
-                _instanceStats.InsertStreamTime.Add(insertStudyXmlCommand.Statistics);
 
+
+                if (insertInstanceCommand != null && insertInstanceCommand.Statistics.IsSet)
+                    _instanceStats.InsertDBTime.Add(insertInstanceCommand.Statistics);
+                if (insertStudyXmlCommand != null && insertStudyXmlCommand.Statistics.IsSet)
+                    _instanceStats.InsertStreamTime.Add(insertStudyXmlCommand.Statistics);
+
+                
                 _stats.StudyInstanceUid = StorageLocation.StudyInstanceUid;
                 if (String.IsNullOrEmpty(modality) == false)
                     _stats.Modality = modality;
@@ -217,35 +236,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             }
             
-
-            if (keys != null)
-            {
-                // We've inserted a new Study, process Study Rules
-                if (keys.InsertStudy)
-                {
-                    ProcessStudyRules(item, file);
-                    _instanceStats.EngineLoadTime.Add(_studyProcessedRulesEngine.Statistics.LoadTime);
-                    _instanceStats.EngineExecutionTime.Add(_studyProcessedRulesEngine.Statistics.ExecutionTime);
-                }
-
-                // We've inserted a new Series, process Series Rules
-                if (keys.InsertSeries)
-                {
-                    ProcessSeriesRules(item, file);
-                    _instanceStats.EngineLoadTime.Add(_seriesProcessedRulesEngine.Statistics.LoadTime);
-                    _instanceStats.EngineExecutionTime.Add(_seriesProcessedRulesEngine.Statistics.ExecutionTime);
-                }
-            }
-
-            _instanceStats.ProcessTime.End();            
-        }
-
-        private void OnProcessFileBegin()
-        {
-            _instanceStats = _stats.NewStatistics("Instance Processing");
-            _instanceStats.ProcessTime.Start();
-            _sopProcessedRulesEngine.Statistics.LoadTime.Reset();
-            _sopProcessedRulesEngine.Statistics.ExecutionTime.Reset();
         }
 
 
@@ -256,67 +246,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private void ProcessUidList(Model.WorkQueue item)
         {
             StudyXml studyXml;
-            
+
             studyXml = LoadStudyXml(StorageLocation);
-            
+
             int successfulProcessCount = 0;
 
             foreach (WorkQueueUid sop in WorkQueueUidList)
             {
-                string basePath = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
-                basePath = Path.Combine(basePath, sop.SopInstanceUid);
-                string path;
-                if (sop.Extension != null)
-                    path = basePath + "." + sop.Extension;
-                else
-                    path = basePath + ".dcm";
-
                 if (sop.Failed)
                     continue;
 
                 if (sop.Duplicate)
                     continue;  // TODO
 
-                try
-                {
-                    ProcessFile(item, path, studyXml);
-                }
-                catch (Exception e)
-                {
-                    Platform.Log(LogLevel.Error, e, "Unexpected exception when processing file: {0} SOP Instance: {1}", path, sop.SopInstanceUid);
-                    if (e.InnerException != null)
-                        item.FailureDescription = e.InnerException.Message;
-                    else
-                        item.FailureDescription = e.Message;
-
-                    sop.FailureCount++;
-                    if (sop.FailureCount > WorkQueueSettings.Default.WorkQueueMaxFailureCount)
-                    {
-                        sop.Failed = true;
-                        if (sop.Extension != null)
-                        {
-                            string newPath;
-                            for (int i = 1;; i++)
-                            {
-                                sop.Extension = String.Format("fail{0}", 1);
-                                newPath = basePath + "." + sop.Extension;
-                                if (!File.Exists(newPath))
-                                    break;
-                            }
-
-                            File.Move(basePath, newPath);
-                        }
-                        UpdateWorkQueueUid(sop);
-                    }
-                    continue;
-                }
-
-                successfulProcessCount++;
-
-                // Delete it out of the queue
-                DeleteWorkQueueUid(sop);
+                if (ProcessWorkQueueUid(item, sop, studyXml))
+                    successfulProcessCount++;
             }
 
+
+            _stats.UpdateDBTime.Start();
             if (successfulProcessCount == 0)
             {
                 PostProcessing(item, WorkQueueUidList.Count, true); // set the status to Pending or Failed depending on whether or not the max retry has been reached
@@ -325,16 +273,167 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 PostProcessing(item, WorkQueueUidList.Count, false); // set the status to Pending
 
-				if (_stats.NumInstances > 0)
-                {
-                    StatisticsLogger.Log(LogLevel.Info, _stats);
-                }
             }
-            
+            _stats.UpdateDBTime.End();
+
+        }
+        /// <summary>
+        /// Process a specified <see cref="WorkQueueUid"/>
+        /// </summary>
+        /// <param name="item">The <see cref="WorkQueue"/> item being processed</param>
+        /// <param name="sop">The <see cref="WorkQueueUid"/> being processed</param>
+        /// <param name="studyXml">The <see cref="StudyXml"/> object for the study being processed</param>
+        /// <returns>true if the <see cref="WorkQueueUid"/> is successfully processed. false otherwise</returns>
+        private bool ProcessWorkQueueUid(Model.WorkQueue item, WorkQueueUid sop, StudyXml studyXml)
+        {
+            Platform.CheckForNullReference(item, "item");
+            Platform.CheckForNullReference(sop, "sop");
+            Platform.CheckForNullReference(studyXml, "studyXml");
+
+
+            OnProcessUidBegin(item, sop);
+
+            string basePath = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
+            basePath = Path.Combine(basePath, sop.SopInstanceUid);
+            string path;
+            if (sop.Extension != null)
+                path = basePath + "." + sop.Extension;
+            else
+                path = basePath + ".dcm";
+
+
+            try
+            {
+                ProcessFile(item, path, studyXml);
+
+                // Delete it out of the queue
+                DeleteWorkQueueUid(sop);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when processing file: {0} SOP Instance: {1}", path, sop.SopInstanceUid);
+                if (e.InnerException != null)
+                    item.FailureDescription = e.InnerException.Message;
+                else
+                    item.FailureDescription = e.Message;
+
+                sop.FailureCount++;
+                if (sop.FailureCount > WorkQueueSettings.Default.WorkQueueMaxFailureCount)
+                {
+                    sop.Failed = true;
+                    if (sop.Extension != null)
+                    {
+                        string newPath;
+                        for (int i = 1; ; i++)
+                        {
+                            sop.Extension = String.Format("fail{0}", 1);
+                            newPath = basePath + "." + sop.Extension;
+                            if (!File.Exists(newPath))
+                                break;
+                        }
+
+                        File.Move(basePath, newPath);
+                    }
+
+                    UpdateWorkQueueUid(sop);
+                }
+
+                return false;
+            }
+            finally
+            {
+                OnProcessUidEnd(item, sop);
+            }
+
+
+        }
+        #endregion
+
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Called before the specified <see cref="WorkQueueUid"/> is processed
+        /// </summary>
+        /// <param name="item">The <see cref="WorkQueue"/> item being processed</param>
+        /// <param name="uid">The <see cref="WorkQueueUid"/> being processed</param>
+        protected virtual void OnProcessUidBegin(Model.WorkQueue item, WorkQueueUid uid)
+        {
+            _instanceStats = new InstanceStatistics();
+            _instanceStats.ProcessTime.Start();
+        }
+
+        /// <summary>
+        /// Called after the specified <see cref="WorkQueueUid"/> has been processed
+        /// </summary>
+        /// <param name="item">The <see cref="WorkQueue"/> item being processed</param>
+        /// <param name="uid">The <see cref="WorkQueueUid"/> being processed</param>
+        protected virtual void OnProcessUidEnd(Model.WorkQueue item, WorkQueueUid uid)
+        {
+
+            if (_sopProcessedRulesEngine != null)
+            {
+                if (_sopProcessedRulesEngine.Statistics.LoadTime.IsSet)
+                    _instanceStats.SopRulesLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
+
+                if (_sopProcessedRulesEngine.Statistics.ExecutionTime.IsSet)
+                    _instanceStats.SopEngineExecutionTime.Add(_sopProcessedRulesEngine.Statistics.ExecutionTime);
+
+
+                _sopProcessedRulesEngine.Statistics.Reset();
+            }
+
+            if (_studyProcessedRulesEngine != null)
+            {
+                if (_studyProcessedRulesEngine.Statistics.LoadTime.IsSet)
+                    _instanceStats.StudyRulesLoadTime.Add(_studyProcessedRulesEngine.Statistics.LoadTime);
+
+                if (_studyProcessedRulesEngine.Statistics.ExecutionTime.IsSet)
+                    _instanceStats.StudyEngineExecutionTime.Add(_studyProcessedRulesEngine.Statistics.ExecutionTime);
+
+                _studyProcessedRulesEngine.Statistics.Reset();
+            }
+
+            if (_seriesProcessedRulesEngine != null)
+            {
+
+                if (_seriesProcessedRulesEngine.Statistics.LoadTime.IsSet)
+                    _instanceStats.SeriesRulesLoadTime.Add(_seriesProcessedRulesEngine.Statistics.LoadTime);
+                if (_seriesProcessedRulesEngine.Statistics.ExecutionTime.IsSet)
+                    _instanceStats.SeriesEngineExecutionTime.Add(_seriesProcessedRulesEngine.Statistics.ExecutionTime);
+
+                _seriesProcessedRulesEngine.Statistics.Reset();
+            }
+
+            _instanceStats.ProcessTime.End();
+
+            _stats.AddSubStats(_instanceStats);
+        }
+
+        #endregion
+
+        #region Overriden Protected  Methods
+
+        protected override StudyXml LoadStudyXml(StudyStorageLocation location)
+        {
+            StudyXml studyXml = base.LoadStudyXml(location);
+
+            _stats.StudyXmlLoadTime.Add(Statistics.StudyXmlLoadTime);
+
+            return studyXml;
         }
 
 
-       
+        protected override void DeleteWorkQueueUid(WorkQueueUid sop)
+        {
+            Platform.CheckForNullReference(sop ,"sop");
+
+            _instanceStats.DBUpdateTime.Start();
+            base.DeleteWorkQueueUid(sop);
+            _instanceStats.DBUpdateTime.End();
+        }
+
         #endregion
 
         #region IWorkQueueItemProcessor Members
@@ -354,29 +453,54 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Console.WriteLine("WorkQueue Item is being processed...");
 #endif
             _stats = new StudyProcessStatistics();
+            _stats.Description =
+                String.Format("{0}. GUID={1}", item.WorkQueueTypeEnum.Description, item.GetKey().Key);
 
-            //Load the specific UIDs that need to be processed.
-            LoadUids(item);
-
-            if (WorkQueueUidList.Count == 0)
+            _stats.TotalProcessTime.Start();
+            try
             {
-                // No UIDs associated with the WorkQueue item.  Set the status back to idle
-                PostProcessing(item, 0, false);
+                 //Load the specific UIDs that need to be processed.
+                LoadUids(item);
+
+                _stats.UidsLoadTime.Add(Statistics.UidsLoadTime);
+
+                if (WorkQueueUidList.Count == 0)
+                {
+                    // No UIDs associated with the WorkQueue item.  Set the status back to idle
+                    PostProcessing(item, 0, false);
+                }
+                else
+                {
+                    // Load the rules engine
+                    _sopProcessedRulesEngine =
+                        new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"), item.ServerPartitionKey);
+                    _sopProcessedRulesEngine.Load();
+
+                    _stats.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
+                    
+                    //Load the storage location.
+                    LoadStorageLocation(item);
+
+                    _stats.StorageLocationLoadTime.Add(Statistics.StorageLocationLoadTime);
+
+                    // Process the images in the list
+                    ProcessUidList(item);
+                }
+
             }
-            else
+            finally
             {
-                // Load the rules engine
-                _sopProcessedRulesEngine =
-                    new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"), item.ServerPartitionKey);
-                _sopProcessedRulesEngine.Load();
-                
-                //Load the storage location.
-                LoadStorageLocation(item);
+                _stats.TotalProcessTime.End();
 
-                // Process the images in the list
-                ProcessUidList(item);
+                _stats.CalculateAverage();
+
+                if (_stats.NumInstances > 0)
+                {
+                    StatisticsLogger.Log(LogLevel.Info, _stats);
+                }
             }
 
+           
 
 
         }

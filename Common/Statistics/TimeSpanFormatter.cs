@@ -30,72 +30,50 @@
 #endregion
 
 using System;
-using ClearCanvas.Common.Statistics;
 
-namespace ClearCanvas.ImageServer.Rules
+namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
-    /// Stores the engine statistics of a rule engine.
+    /// <see cref="TimeSpan"/> formatter class.
     /// </summary>
-    public class RuleEngineStatistics:StatisticsSet
+    public static class TimeSpanFormatter
     {
-        #region Private members
-        #endregion Private members
+        #region Constants
 
-        public void Reset()
-        {
-            LoadTime.Reset();
-            ExecutionTime.Reset();
-        }
+        private const double TICKSPERHOUR = TICKSPERMINUTE*60;
+        private const double TICKSPERMICROECONDS = 10;
+        private const double TICKSPERMILISECONDS = TICKSPERMICROECONDS*1000;
+        private const double TICKSPERMINUTE = TICKSPERSECONDS*60;
+        private const double TICKSPERNANOSECONDS = 1/100.0;
+        private const double TICKSPERSECONDS = TICKSPERMILISECONDS*1000;
 
-        #region Public Properties
-        /// <summary>
-        /// Gets or sets the execution time of the rule engine in miliseconds.
-        /// </summary>
-        public TimeSpanStatistics ExecutionTime
-        {
-            get
-            {
-                if (this["ExecutionTime"] == null)
-                {
-                    this["ExecutionTime"] = new TimeSpanStatistics("ExecutionTime");
-                }
-
-                return (this["ExecutionTime"] as TimeSpanStatistics);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the load time of the rule engine in miliseconds.
-        /// </summary>
-        public TimeSpanStatistics LoadTime
-        {
-            get
-            {
-                if (this["LoadTime"] == null)
-                    this["LoadTime"] = new TimeSpanStatistics("LoadTime");
-                return (this["LoadTime"] as TimeSpanStatistics);
-            }
-
-        }
-
-        #endregion Public Properties
-
-        #region Constructors
-
-        public RuleEngineStatistics()
-            : base()
-        {
-
-        }
-
-        public RuleEngineStatistics(string name, string description)
-            : base(name,description)
-        {
-            Context = new StatisticsContext(name);
-        }
         #endregion
 
-        
+        #region Public Static Methods
+
+        /// <summary>
+        /// Formats a <see cref="TimeSpan"/> in appropriate units.
+        /// </summary>
+        /// <param name="ts"></param>
+        /// <returns></returns>
+        public static string Format(TimeSpan ts)
+        {
+            if (ts == TimeSpan.Zero)
+                return "N/A";
+            else if (ts.Ticks > TICKSPERHOUR)
+                return String.Format("{0} hr {1} min", ts.Hours, ts.Minutes);
+            if (ts.Ticks > TICKSPERMINUTE)
+                return String.Format("{0:0.00} min", ts.TotalMinutes);
+            if (ts.Ticks > TICKSPERSECONDS)
+                return String.Format("{0:0.00} sec", ts.TotalSeconds);
+            if (ts.Ticks > TICKSPERMILISECONDS)
+                return String.Format("{0:0.00} ms", ts.TotalMilliseconds);
+            if (ts.Ticks > TICKSPERMICROECONDS)
+                return String.Format("{0:0.00} us", ts.Ticks/TICKSPERMICROECONDS);
+            else
+                return String.Format("{0:0.00} ns", ts.Ticks/TICKSPERNANOSECONDS);
+        }
+
+        #endregion
     }
 }

@@ -29,73 +29,18 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Common.Statistics;
-
-namespace ClearCanvas.ImageServer.Rules
+namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
-    /// Stores the engine statistics of a rule engine.
+    /// Defines the interface of an average statistics
     /// </summary>
-    public class RuleEngineStatistics:StatisticsSet
+    public interface IAverageStatistics : IStatistics
     {
-        #region Private members
-        #endregion Private members
-
-        public void Reset()
-        {
-            LoadTime.Reset();
-            ExecutionTime.Reset();
-        }
-
-        #region Public Properties
         /// <summary>
-        /// Gets or sets the execution time of the rule engine in miliseconds.
+        /// Adds a sample
         /// </summary>
-        public TimeSpanStatistics ExecutionTime
-        {
-            get
-            {
-                if (this["ExecutionTime"] == null)
-                {
-                    this["ExecutionTime"] = new TimeSpanStatistics("ExecutionTime");
-                }
-
-                return (this["ExecutionTime"] as TimeSpanStatistics);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the load time of the rule engine in miliseconds.
-        /// </summary>
-        public TimeSpanStatistics LoadTime
-        {
-            get
-            {
-                if (this["LoadTime"] == null)
-                    this["LoadTime"] = new TimeSpanStatistics("LoadTime");
-                return (this["LoadTime"] as TimeSpanStatistics);
-            }
-
-        }
-
-        #endregion Public Properties
-
-        #region Constructors
-
-        public RuleEngineStatistics()
-            : base()
-        {
-
-        }
-
-        public RuleEngineStatistics(string name, string description)
-            : base(name,description)
-        {
-            Context = new StatisticsContext(name);
-        }
-        #endregion
-
-        
+        /// <typeparam name="TSample">Type of the statistics sample</typeparam>
+        /// <param name="sample"></param>
+        void AddSample<TSample>(TSample sample);
     }
 }
