@@ -212,6 +212,7 @@
     <Compile Include="Specifications\UndefinedSpecificationException.cs" />
     <Compile Include="Specifications\XmlSpecificationCompiler.cs" />
     <Compile Include="Specifications\XmlSpecificationCompilerException.cs" />
+    <Compile Include="Statistics\TimeSpanStatisticsHelper.cs" />
     <Compile Include="Statistics\TransmissionRateFormatter.cs" />
     <Compile Include="Tests\FileProcessorTest.cs" />
     <Compile Include="TypeExtensionFilter.cs" />

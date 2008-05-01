@@ -96,9 +96,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
         }
         #endregion
 
-        #region IWorkQueueItemProcessor Members
+        #region Overridden Protected Method
 
-        public override void Process(Model.WorkQueue item)
+        protected override void ProcessItem(Model.WorkQueue item)
         {
             //Load the storage location.
             LoadStorageLocation(item);

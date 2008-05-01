@@ -92,17 +92,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             set { this["TotalProcessTime"] = value; }
         }
 
-        public TimeSpanStatistics UpdateDBTime
+        public TimeSpanStatistics DBUpdateTime
         {
             get
             {
-                if (this["UpdateDBTime"] == null)
-                    this["UpdateDBTime"] = new TimeSpanStatistics("UpdateDBTime");
+                if (this["DBUpdateTime"] == null)
+                    this["DBUpdateTime"] = new TimeSpanStatistics("DBUpdateTime");
 
-                return (this["UpdateDBTime"] as TimeSpanStatistics);
+                return (this["DBUpdateTime"] as TimeSpanStatistics);
             }
-            set { this["UpdateDBTime"] = value; }
+            set { this["DBUpdateTime"] = value; }
         }
+
 
         public TimeSpanStatistics StudyXmlLoadTime
         {

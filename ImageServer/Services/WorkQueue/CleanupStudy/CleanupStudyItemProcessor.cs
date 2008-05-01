@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
             }
         }
 
-        public override void Process(Model.WorkQueue item)
+        protected override void ProcessItem(Model.WorkQueue item)
         {
             LoadUids(item);
             LoadStorageLocation(item);

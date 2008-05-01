@@ -167,6 +167,26 @@ namespace ClearCanvas.Common.Statistics
         }
 
         /// <summary>
+        /// Executes and measures the duration of the specified call.
+        /// </summary>
+        /// <param name="codeDelegate">a delegate to an executation block</param>
+        /// <remarks>
+        /// This method provides a convenient mean to capture the elapsed time of the code block. 
+        /// </remarks>
+        public void Add(TimeSpanStatisticsHelper.ExecutationBlock codeDelegate)
+        {
+            try
+            {
+                Start();
+                codeDelegate();
+            }
+            finally
+            {
+                End();
+            }
+        }
+
+        /// <summary>
         /// Adds a number of ticks to the current <see cref="TimeSpanStatistics"/>.
         /// </summary>
         /// <param name="ticks"></param>

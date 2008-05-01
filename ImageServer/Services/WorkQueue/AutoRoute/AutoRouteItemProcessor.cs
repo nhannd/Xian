@@ -65,11 +65,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         #endregion
 
-        #region Public Methods
+        #region Overridden Protected Method
+
         /// <summary>
         /// Process a <see cref="WorkQueue"/> item of type AutoRoute.
         /// </summary>
-        public override void Process(Model.WorkQueue item)
+        protected override void ProcessItem(Model.WorkQueue item)
         {
             // Load related rows form the WorkQueueUid table
             LoadUids(item);

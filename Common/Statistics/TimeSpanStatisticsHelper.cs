@@ -29,55 +29,37 @@
 
 #endregion
 
-using ClearCanvas.Common.Statistics;
-
-namespace ClearCanvas.ImageServer.Services.WorkQueue
+namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
-    /// Performance statistics class for the <see cref="BaseItemProcessor"/>
+    /// Provides helper method to generate <see cref="TimeSpanStatistics"/>
     /// </summary>
-    public class WorkQueueProcessorStatistics:StatisticsSet
+    public class TimeSpanStatisticsHelper
     {
-        public WorkQueueProcessorStatistics()
-            : base("WorkQueueProcessorStatistics")
-        {
-           
-        }
+        /// <summary>
+        /// Defines the delegate to a code block whose execution time will be measured using <see cref="Measure"/>.
+        /// </summary>
+        public delegate void ExecutationBlock();
 
-        public TimeSpanStatistics UidsLoadTime
+        /// <summary>
+        /// Measures the elapsed time taken by an code block.
+        /// </summary>
+        /// <param name="executionBlock">Delegate to the code block which will be executed by this method and its elapsed will be measured</param>
+        /// <returns>The <see cref="TimeSpanStatistics"/> object contains the elapsed time of the execution</returns>
+        static public TimeSpanStatistics Measure(ExecutationBlock executionBlock)
         {
-            get
+            TimeSpanStatistics stat = new TimeSpanStatistics();
+
+            stat.Start();
+            try
             {
-                if (this["UidsLoadTime"] == null)
-                    this["UidsLoadTime"] = new TimeSpanStatistics("UidsLoadTime");
-
-                return (this["UidsLoadTime"] as TimeSpanStatistics);
+                executionBlock();
+                return stat;
             }
-            set { this["UidsLoadTime"] = value; }
-        }
-
-        public TimeSpanStatistics StorageLocationLoadTime
-        {
-            get
+            finally
             {
-                if (this["StorageLocationLoadTime"] == null)
-                    this["StorageLocationLoadTime"] = new TimeSpanStatistics("StorageLocationLoadTime");
-
-                return (this["StorageLocationLoadTime"] as TimeSpanStatistics);
+                stat.End();
             }
-            set { this["StorageLocationLoadTime"] = value; }
-        }
-
-        public TimeSpanStatistics StudyXmlLoadTime
-        {
-            get
-            {
-                if (this["StudyXmlLoadTime"] == null)
-                    this["StudyXmlLoadTime"] = new TimeSpanStatistics("StudyXmlLoadTime");
-
-                return (this["StudyXmlLoadTime"] as TimeSpanStatistics);
-            }
-            set { this["StudyXmlLoadTime"] = value; }
         }
     }
 }

@@ -87,9 +87,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         #endregion Public Properties
 
-        #region Public Methods
+        #region Overridden Protected Method
 
-        public override void Process(Model.WorkQueue item)
+        protected override void ProcessItem(Model.WorkQueue item)
         {
             Platform.CheckForNullReference(item.Data, "item.Data");
             ServerCommandProcessor processor = new ServerCommandProcessor("Process EditStudy");

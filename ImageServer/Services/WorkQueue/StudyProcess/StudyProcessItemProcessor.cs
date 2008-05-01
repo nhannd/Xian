@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private ServerRulesEngine _studyProcessedRulesEngine;
         private ServerRulesEngine _seriesProcessedRulesEngine;
 
-        private StudyProcessStatistics _stats;
+        private StudyProcessStatistics _statistics;
         private InstanceStatistics _instanceStats;
         
         #endregion
@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #region Constructors
         public StudyProcessItemProcessor()
         {
-            _stats = new StudyProcessStatistics();
+            _statistics = new StudyProcessStatistics();
         }
         #endregion Constructors
 
@@ -259,12 +259,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     _instanceStats.InsertStreamTime.Add(insertStudyXmlCommand.Statistics);
 
                 
-                _stats.StudyInstanceUid = StorageLocation.StudyInstanceUid;
+                _statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
                 if (String.IsNullOrEmpty(modality) == false)
-                    _stats.Modality = modality;
+                    _statistics.Modality = modality;
 
                 // Update the statistics
-                _stats.NumInstances++;
+                _statistics.NumInstances++;
 
             }
             
@@ -275,7 +275,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// Process all of the SOP Instances associated with a <see cref="WorkQueue"/> item.
         /// </summary>
         /// <param name="item">The <see cref="WorkQueue"/> item.</param>
-        private void ProcessUidList(Model.WorkQueue item)
+        /// <returns>A value indicating whether the uid list has been successfully processed</returns>
+        private bool ProcessUidList(Model.WorkQueue item)
         {
             StudyXml studyXml;
 
@@ -292,18 +293,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     successfulProcessCount++;
             }
 
-
-            _stats.UpdateDBTime.Start();
-            if (successfulProcessCount == 0)
-            {
-                PostProcessing(item, WorkQueueUidList.Count, true); // set the status to Pending or Failed depending on whether or not the max retry has been reached
-            }
-            else
-            {
-                PostProcessing(item, WorkQueueUidList.Count, false); // set the status to Pending
-
-            }
-            _stats.UpdateDBTime.End();
+            //TODO: Should we return true only if ALL uids have been processed instead?
+            return successfulProcessCount > 0;
 
         }
         /// <summary>
@@ -319,9 +310,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(sop, "sop");
             Platform.CheckForNullReference(studyXml, "studyXml");
 
-
             OnProcessUidBegin(item, sop);
-
+            
             string basePath = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
             basePath = Path.Combine(basePath, sop.SopInstanceUid);
             string path;
@@ -332,6 +322,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             try
             {
+                
                 // This is a bit trickly.  If the partition has the "AcceptLatest" policy configured, the 
                 // duplicate bit is set, and no extension is set.  In this case we want to process the 
                 // file as normal.  When the "CompareDuplicates" policy is set, we don't want to process,
@@ -342,6 +333,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     ProcessDuplicate(basePath + ".dcm", path);
                 }
                 else
+
                     ProcessFile(item, sop, path, studyXml);
                 
                 // Delete it out of the queue
@@ -377,11 +369,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 }
 
                 return false;
+                
             }
             finally
             {
                 OnProcessUidEnd(item, sop);
             }
+
+            
         }
         #endregion
 
@@ -395,6 +390,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="uid">The <see cref="WorkQueueUid"/> being processed</param>
         protected virtual void OnProcessUidBegin(Model.WorkQueue item, WorkQueueUid uid)
         {
+            Platform.CheckForNullReference(item, "item");
+            Platform.CheckForNullReference(uid, "uid");
+
             _instanceStats = new InstanceStatistics();
             _instanceStats.ProcessTime.Start();
         }
@@ -406,6 +404,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="uid">The <see cref="WorkQueueUid"/> being processed</param>
         protected virtual void OnProcessUidEnd(Model.WorkQueue item, WorkQueueUid uid)
         {
+            Platform.CheckForNullReference(item, "item");
+            Platform.CheckForNullReference(uid, "uid");
 
             if (_sopProcessedRulesEngine != null)
             {
@@ -443,41 +443,41 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             _instanceStats.ProcessTime.End();
 
-            _stats.AddSubStats(_instanceStats);
+            _statistics.AddSubStats(_instanceStats);
         }
 
         #endregion
 
-        #region Overriden Protected  Methods
 
-        protected override StudyXml LoadStudyXml(StudyStorageLocation location)
+        #region Overridden Protected Method
+
+        protected override void OnProcessItemEnd(Model.WorkQueue item)
         {
-            StudyXml studyXml = base.LoadStudyXml(location);
+            Platform.CheckForNullReference(item, "item");
 
-            _stats.StudyXmlLoadTime.Add(Statistics.StudyXmlLoadTime);
+            _statistics.UidsLoadTime.Add(UidsLoadTime);
+            _statistics.StorageLocationLoadTime.Add(StorageLocationLoadTime);
+            _statistics.StudyXmlLoadTime.Add(StudyXmlLoadTime);
+            _statistics.DBUpdateTime.Add(DBUpdateTime);
 
-            return studyXml;
+            if (_statistics.NumInstances > 0)
+            {
+                _statistics.CalculateAverage();
+                StatisticsLogger.Log(LogLevel.Info, _statistics);
+            }
         }
 
-
-        protected override void DeleteWorkQueueUid(WorkQueueUid sop)
+        protected override  void OnProcessItemBegin(Model.WorkQueue item)
         {
-            Platform.CheckForNullReference(sop ,"sop");
+            Platform.CheckForNullReference(item, "item");
 
-            _instanceStats.DBUpdateTime.Start();
-            base.DeleteWorkQueueUid(sop);
-            _instanceStats.DBUpdateTime.End();
+            _statistics = new StudyProcessStatistics();
+            _statistics.Description = String.Format("{0}[GUID={1}]", item.WorkQueueTypeEnum.Description, item.GetKey().Key);
         }
-
-        #endregion
-
-        #region IWorkQueueItemProcessor Members
-
-        /// <summary>
-        /// Process a <see cref="WorkQueue"/> item.
-        /// </summary>
-        public override void Process(Model.WorkQueue item)
+        
+        protected override void ProcessItem(Model.WorkQueue item)
         {
+            Platform.CheckForNullReference(item, "item");
 
 #if DEBUG_TEST
         // Simulate slow processing so that we can stop the service
@@ -487,58 +487,37 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Thread.Sleep(10000);
             Console.WriteLine("WorkQueue Item is being processed...");
 #endif
-            _stats = new StudyProcessStatistics();
-            _stats.Description =
-                String.Format("{0}. GUID={1}", item.WorkQueueTypeEnum.Description, item.GetKey().Key);
+            bool successful = false;
+            _statistics.TotalProcessTime.Add(
+                    delegate()
+                    {
+                            //Load the specific UIDs that need to be processed.
+                            LoadUids(item);
 
-            _stats.TotalProcessTime.Start();
-            try
-            {
-                 //Load the specific UIDs that need to be processed.
-                LoadUids(item);
+                            if (WorkQueueUidList.Count == 0)
+                            {
+                                successful = true;
+                            }
+                            else
+                            {
+                                // Load the rules engine
+                                _sopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"), item.ServerPartitionKey);
+                                _sopProcessedRulesEngine.Load();
+                                _statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
+            
+                                //Load the storage location.
+                                LoadStorageLocation(item);
 
-                _stats.UidsLoadTime.Add(Statistics.UidsLoadTime);
+                                // Process the images in the list
+                                successful = ProcessUidList(item);
 
-                if (WorkQueueUidList.Count == 0)
-                {
-                    // No UIDs associated with the WorkQueue item.  Set the status back to idle
-                    PostProcessing(item, 0, false);
-                }
-                else
-                {
-                    // Load the rules engine
-                    _sopProcessedRulesEngine =
-                        new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"), item.ServerPartitionKey);
-                    _sopProcessedRulesEngine.Load();
+                            }
+                        }
+                );
 
-                    _stats.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
-                    
-                    //Load the storage location.
-                    LoadStorageLocation(item);
-
-                    _stats.StorageLocationLoadTime.Add(Statistics.StorageLocationLoadTime);
-
-                    // Process the images in the list
-                    ProcessUidList(item);
-                }
-
-            }
-            finally
-            {
-                _stats.TotalProcessTime.End();
-
-                _stats.CalculateAverage();
-
-                if (_stats.NumInstances > 0)
-                {
-                    StatisticsLogger.Log(LogLevel.Info, _stats);
-                }
-            }
-
-           
-
-
+            PostProcessing(item, WorkQueueUidList.Count, !successful);
         }
+
 
         #endregion
     }
