@@ -64,7 +64,17 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			_desktopWindow = desktopWindow;
 		}
 
-		#region Private Methods
+		#region Internal / Private Methods
+
+		internal IDesktopWindow DesktopWindow
+		{
+			get { return _desktopWindow; }	
+		}
+
+		internal void Close()
+		{
+			this.Host.Exit();
+		}
 
 		private void OnWorkspaceChanged(object sender, ItemEventArgs<Workspace> e)
 		{

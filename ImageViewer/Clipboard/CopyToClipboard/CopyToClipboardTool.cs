@@ -53,21 +53,10 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class CopyToClipboardTool : ImageViewerTool
 	{
-		private static readonly Dictionary<IDesktopWindow, IShelf> _copyShelves = new Dictionary<IDesktopWindow, IShelf>();
+		private static IShelf _shelf;
 
 		public CopyToClipboardTool()
 		{
-		}
-
-		private IShelf ComponentShelf
-		{
-			get
-			{
-				if (_copyShelves.ContainsKey(this.Context.DesktopWindow))
-					return _copyShelves[this.Context.DesktopWindow];
-
-				return null;
-			}	
 		}
 
 		public void CopyImage()
@@ -106,29 +95,33 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 		{
 			try
 			{
-				if (ComponentShelf != null)
+				CopySubsetToClipboardComponent component;
+
+				if (_shelf != null)
 				{
-					ComponentShelf.Activate();
+					component = (CopySubsetToClipboardComponent)_shelf.Component;
+					if (component.DesktopWindow != this.Context.DesktopWindow)
+					{
+						component.Close();
+					}
+					else
+					{
+						_shelf.Activate();
+						return;
+					}
 				}
-				else
-				{
-					IDesktopWindow desktopWindow = this.Context.DesktopWindow;
 
-					CopySubsetToClipboardComponent component =
-						new CopySubsetToClipboardComponent(desktopWindow);
+				IDesktopWindow desktopWindow = this.Context.DesktopWindow;
 
-					_copyShelves[desktopWindow] = ApplicationComponent.LaunchAsShelf(
-						desktopWindow,
-						component,
-						SR.TitleCopySubsetToClipboard,
-						ShelfDisplayHint.DockFloat | ShelfDisplayHint.ShowNearMouse);
+				component = new CopySubsetToClipboardComponent(desktopWindow);
 
-					_copyShelves[desktopWindow].Closed +=
-						delegate
-							{
-								_copyShelves.Remove(desktopWindow);
-							};
-				}
+				_shelf = ApplicationComponent.LaunchAsShelf(
+					desktopWindow,
+					component,
+					SR.TitleCopySubsetToClipboard,
+					ShelfDisplayHint.DockFloat | ShelfDisplayHint.ShowNearMouse);
+
+				_shelf.Closed += delegate { _shelf = null; };
 			}
 			catch (Exception e)
 			{
