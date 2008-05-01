@@ -23,7 +23,7 @@
                                         ID="EditToolbarButton" runat="server" 
                                         EnabledImageURL="~/images/icons/EditEnabled.png" 
                                         DisabledImageURL="~/images/icons/EditDisabled.png"
-                                        OnClick="EditButton_Click" AlternateText="Edit a service lock"
+                                        OnClick="EditButton_Click" AlternateText="Edit a service"
                                         />
                                 </asp:Panel>
                             </asp:Panel>
@@ -54,7 +54,7 @@
                                                         ID="FilterToolbarButton" runat="server" 
                                                         EnabledImageURL="~/images/icons/QueryEnabled.png" 
                                                         DisabledImageURL="~/images/icons/QueryDisabled.png"
-                                                        OnClick="FilterButton_Click" Tooltip="Filter devices"
+                                                        OnClick="FilterButton_Click" Tooltip="Filter services"
                                                         />
                                                 </asp:Panel>
                                             </td>
