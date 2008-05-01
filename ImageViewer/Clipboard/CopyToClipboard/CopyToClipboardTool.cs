@@ -46,9 +46,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 	[IconSet("copyDisplaySet", IconScheme.Colour, "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
 	[EnabledStateObserver("copyDisplaySet", "Enabled", "EnabledChanged")]
 
-	//[MenuAction("copySubset", "imageviewer-contextmenu/MenuCopySubsetToClipboard", "CopySubset")]
+	[MenuAction("copySubset", "imageviewer-contextmenu/MenuCopySubsetToClipboard", "CopySubset")]
 	//[IconSet("copySubset", IconScheme.Colour, "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
-	//[EnabledStateObserver("copySubset", "Enabled", "EnabledChanged")]
+	[EnabledStateObserver("copySubset", "Enabled", "EnabledChanged")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class CopyToClipboardTool : ImageViewerTool
@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 						desktopWindow,
 						component,
 						SR.TitleCopySubsetToClipboard,
-						ShelfDisplayHint.DockFloat);
+						ShelfDisplayHint.DockFloat | ShelfDisplayHint.ShowNearMouse);
 
 					_copyShelves[desktopWindow].Closed +=
 						delegate

@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 				else
 				{
 					//selection indices are 1-based.
-					for (int i = _startValue - 1; i < _endValue; i += _selectionInterval)
+					for (int i = _startValue - 1; i < _endValue && i < displaySet.PresentationImages.Count; i += _selectionInterval)
 						yield return displaySet.PresentationImages[i];
 				}
 			}
@@ -184,6 +184,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 					{
 						for (int j = _ranges[i] - 1; j <= _ranges[i + 1] - 1; ++j)
 						{
+							if (j >= displaySet.PresentationImages.Count)
+								break;
+
 							if (!images.Contains(displaySet.PresentationImages[j]))
 								images.Add(displaySet.PresentationImages[j]);
 						}

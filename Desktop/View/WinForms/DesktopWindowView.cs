@@ -315,10 +315,16 @@ namespace ClearCanvas.Desktop.View.WinForms
         	else
         	{
         		Point displayLocation;
-        		//we can only save/restore the window position when it is floating because DotNetMagic doesn't expose enough docked 
-        		//state information without using their Restore object(s).
-        		if (shelfView.GetFloatingState(_desktopWindow.Name, out displayLocation))
+				if ((hint & ShelfDisplayHint.ShowNearMouse) != 0)
+				{
+					content.DisplayLocation = Control.MousePosition;
+				}
+        		else if (shelfView.GetFloatingState(_desktopWindow.Name, out displayLocation))
+        		{
+					//we can only save/restore the window position when it is floating because DotNetMagic doesn't expose enough docked 
+					//state information without using their Restore object(s).
         			content.DisplayLocation = displayLocation;
+        		}
 
         		_form.DockingManager.AddContentWithState(content, State.Floating);
         	}

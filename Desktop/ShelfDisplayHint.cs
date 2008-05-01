@@ -77,6 +77,12 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Hide the shelf whenever a new workspace opens.
         /// </summary>
-		HideOnWorkspaceOpen = 64
+		HideOnWorkspaceOpen = 64,
+
+		/// <summary>
+		/// Works only with <see cref="DockFloat"/>, indicating that
+		/// the shelf should always be shown near the mouse.
+		/// </summary>
+		ShowNearMouse = 128
     }
 }

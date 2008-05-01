@@ -38,23 +38,23 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 		private IDisplaySet _currentDisplaySet;
 
 		private int _numberOfImages;
-		private bool _enabled;
 
 		private RangeSelectionOption _rangeSelectionOption;
-		private bool _useInstanceNumberEnabled;
 		private int _minInstanceNumber;
 		private int _maxInstanceNumber;
 
 		private CopyOption _copyOption;
-		private bool _copyCustomEnabled;
 
 		private CopyRangeOption _copyRangeOption;
 		private int _copyRangeStart;
 		private int _copyRangeEnd;
 		private int _rangeMinimum;
 		private int _rangeMaximum;
+		private bool _updatingCopyRange;
 
-		private int _copyRangeInterval = 2;
+		private int _copyRangeInterval;
+		private static readonly int _rangeMinInterval = 2;
+		private int _rangeMaxInterval;
 
 		private string _customRange;
 
@@ -125,6 +125,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 				}
 
 				Clipboard.Add(CurrentDisplaySet, strategy);
+				this.Host.Exit();
 			}
 		}
 
@@ -163,7 +164,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 		[ValidationMethodFor("CopyRangeStart")]
 		private ValidationResult ValidateCopyRangeStart()
 		{
-			if (CopyRange && (CopyRangeStart < RangeMinimum || CopyRangeStart > RangeMaximum))
+			if (CopyRange && (CopyRangeStart < RangeMinimum || CopyRangeStart > CopyRangeEnd))
 				return new ValidationResult(false, SR.MessageStartValueOutOfRange);
 
 			return new ValidationResult(true, "");
@@ -174,10 +175,8 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 		{
 			if (CopyRange)
 			{
-				if (CopyRangeEnd < RangeMinimum || CopyRangeEnd > RangeMaximum)
+				if (CopyRangeEnd < CopyRangeStart || CopyRangeEnd > RangeMaximum)
 					return new ValidationResult(false, SR.MessageEndValueOutOfRange);
-				else if (CopyRangeEnd < CopyRangeStart)
-					return new ValidationResult(false, SR.MessageEndValueLargerThanStart);
 			}
 
 			return new ValidationResult(true, "");
@@ -207,97 +206,103 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 
 				_currentDisplaySet = value;
 
-				Reset();
+				UpdateUseInstanceNumber();
+				UpdateCopyRange();
+				UpdateCopyCustom();
+
+				NotifyPropertyChanged("UsePositionNumberEnabled");
+				NotifyPropertyChanged("CopyRangeEnabled");
+				NotifyPropertyChanged("CopyRangeAllEnabled");
+				NotifyPropertyChanged("CopyRangeStartEnabled");
+				NotifyPropertyChanged("CopyRangeEndEnabled");
+				NotifyPropertyChanged("Enabled");
 			}
 		}
 
-		private void Reset()
+		private void UpdateUseInstanceNumber()
 		{
-			_minInstanceNumber = int.MaxValue;
-			_maxInstanceNumber = int.MinValue;
-			_useInstanceNumberEnabled = true;
-
-			_numberOfImages = 0;
-
+			//only change values when there is a display set.
 			if (CurrentDisplaySet != null)
 			{
+				_numberOfImages = 0;
+				_minInstanceNumber = int.MaxValue;
+				_maxInstanceNumber = int.MinValue;
+
 				_numberOfImages = CurrentDisplaySet.PresentationImages.Count;
 
 				foreach (IPresentationImage image in CurrentDisplaySet.PresentationImages)
 				{
 					if (image is IImageSopProvider)
 					{
-						IImageSopProvider provider = (IImageSopProvider) image;
+						IImageSopProvider provider = (IImageSopProvider)image;
 						if (provider.ImageSop.InstanceNumber < _minInstanceNumber)
 							_minInstanceNumber = provider.ImageSop.InstanceNumber;
 						if (provider.ImageSop.InstanceNumber > _maxInstanceNumber)
 							_maxInstanceNumber = provider.ImageSop.InstanceNumber;
 					}
 				}
-			}
 
-			if (_numberOfImages == 0 || _minInstanceNumber == int.MaxValue || _maxInstanceNumber == int.MinValue)
-			{
-				_minInstanceNumber = _maxInstanceNumber = 0;
-				_useInstanceNumberEnabled = false;
+				if (!UseInstanceNumberEnabled)
+					UseInstanceNumber = false;
 			}
-
-			if (!_useInstanceNumberEnabled)
-				UseInstanceNumber = false;
 
 			NotifyPropertyChanged("UseInstanceNumberEnabled");
-
-			UpdateRanges();
-
-			_copyCustomEnabled = _numberOfImages > 2;
-			if (!_copyCustomEnabled)
-				CopyCustom = false;
-
-			NotifyPropertyChanged("CustomRangeEnabled");
-			NotifyPropertyChanged("CopyCustomEnabled");
-
-			_enabled = _numberOfImages > 0;
-			NotifyPropertyChanged("Enabled");
 		}
 
-		private void UpdateRanges()
+		private void UpdateCopyRange()
 		{
+			if (CurrentDisplaySet == null)
+				return;
+
+			_updatingCopyRange = true;
+
 			if (UseInstanceNumber)
 			{
-				_rangeMinimum = _minInstanceNumber;
-				_rangeMaximum = _maxInstanceNumber;
-				
-				NotifyPropertyChanged("RangeMinimum");
-				NotifyPropertyChanged("RangeMaximum");
-
-				CopyRangeStart = RangeMinimum;
-				CopyRangeEnd = RangeMaximum;
+				RangeMinimum = _minInstanceNumber;
+				RangeMaximum = _maxInstanceNumber;
 			}
 			else
 			{
-				_rangeMinimum = 1;
-				_rangeMaximum = _currentDisplaySet == null ? 1 : _currentDisplaySet.PresentationImages.Count;
-
-				NotifyPropertyChanged("RangeMinimum");
-				NotifyPropertyChanged("RangeMaximum");
-				
-				CopyRangeStart = RangeMinimum;
-				CopyRangeEnd = RangeMaximum;
+				RangeMinimum = 1;
+				RangeMaximum = _currentDisplaySet == null ? 1 : _currentDisplaySet.PresentationImages.Count;
 			}
 
-			FixRangeInterval();
+			CopyRangeStart = RangeMinimum;
+			CopyRangeEnd = RangeMaximum;
+
+			_updatingCopyRange = false;
+
+			UpdateRangeInterval();
 		}
 
-		private void FixRangeInterval()
+		private void UpdateRangeInterval()
 		{
-			CopyRangeInterval = Math.Min(CopyRangeInterval, RangeMaxInterval);
+			if (_updatingCopyRange)
+				return;
 
-			if (!CopyRangeAtIntervalEnabled)
-				CopyRangeAtInterval = false;
+			if (CurrentDisplaySet != null)
+			{
+				RangeMaxInterval = Math.Max(RangeMinInterval, CopyRangeEnd - CopyRangeStart);
+				CopyRangeInterval = Math.Min(CopyRangeInterval, RangeMaxInterval);
 
-			NotifyPropertyChanged("RangeMaxInterval");
+				if (!CopyRangeAtIntervalEnabled)
+					CopyRangeAtInterval = false;
+			}
+
 			NotifyPropertyChanged("CopyRangeIntervalEnabled");
 			NotifyPropertyChanged("CopyRangeAtIntervalEnabled");
+		}
+
+		private void UpdateCopyCustom()
+		{
+			if (CurrentDisplaySet != null)
+			{
+				if (!CopyCustomEnabled)
+					CopyCustom = false;
+			}
+
+			NotifyPropertyChanged("CustomRangeEnabled");
+			NotifyPropertyChanged("CopyCustomEnabled");
 		}
 
 		#region Presentation Model
@@ -313,9 +318,14 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 					NotifyPropertyChanged("UsePositionNumber");
 					NotifyPropertyChanged("UseInstanceNumber");
 
-					UpdateRanges();
+					UpdateCopyRange();
 				}
 			}
+		}
+
+		public bool UsePositionNumberEnabled
+		{
+			get { return Enabled; }	
 		}
 
 		public bool UseInstanceNumber
@@ -329,34 +339,58 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 					NotifyPropertyChanged("UseInstanceNumber");
 					NotifyPropertyChanged("UsePositionNumber");
 
-					UpdateRanges();
+					UpdateCopyRange();
 				}
 			}
 		}
 
 		public bool UseInstanceNumberEnabled
 		{
-			get { return _useInstanceNumberEnabled; }
+			get { return Enabled && _minInstanceNumber != int.MaxValue && _maxInstanceNumber != int.MinValue; }
 		}
 
 		public int RangeMinimum
 		{
 			get { return _rangeMinimum; }
+			private set
+			{
+				if (_rangeMinimum == value)
+					return;
+
+				_rangeMinimum = value;
+				NotifyPropertyChanged("RangeMinimum");
+			}
 		}
 
 		public int RangeMaximum
 		{
 			get { return _rangeMaximum; }
+			private set
+			{
+				if (_rangeMaximum == value)
+					return;
+
+				_rangeMaximum = value;
+				NotifyPropertyChanged("RangeMaximum");
+			}
 		}
 
 		public int RangeMinInterval
 		{
-			get { return 2; }	
+			get { return _rangeMinInterval; }	
 		}
 
 		public int RangeMaxInterval
 		{
-			get { return Math.Max(RangeMinInterval, CopyRangeEnd - CopyRangeStart); }
+			get { return _rangeMaxInterval; }
+			private set
+			{
+				if (value == _rangeMaxInterval)
+					return;
+
+				_rangeMaxInterval = value;
+				NotifyPropertyChanged("RangeMaxInterval");
+			}
 		}
 		
 		public bool CopyRange
@@ -373,6 +407,11 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			}
 		}
 
+		public bool CopyRangeEnabled
+		{
+			get { return Enabled; }	
+		}
+
 		public bool CopyRangeAll
 		{
 			get { return _copyRangeOption == CopyRangeOption.CopyAll; }
@@ -387,6 +426,11 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			}
 		}
 
+		public bool CopyRangeAllEnabled
+		{
+			get { return Enabled && CopyRange; }	
+		}
+
 		public int CopyRangeStart
 		{
 			get { return _copyRangeStart; }
@@ -398,8 +442,13 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 				_copyRangeStart = value;
 				NotifyPropertyChanged("CopyRangeStart");
 
-				FixRangeInterval();
+				UpdateRangeInterval();
 			}
+		}
+
+		public bool CopyRangeStartEnabled
+		{
+			get { return Enabled && CopyRange; }
 		}
 
 		public int CopyRangeEnd
@@ -413,8 +462,13 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 				_copyRangeEnd = value;
 				NotifyPropertyChanged("CopyRangeEnd");
 
-				FixRangeInterval();
+				UpdateRangeInterval();
 			}
+		}
+
+		public bool CopyRangeEndEnabled
+		{
+			get { return Enabled && CopyRange; }
 		}
 
 		public bool CopyRangeAtInterval
@@ -433,7 +487,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 
 		public bool CopyRangeAtIntervalEnabled
 		{
-			get { return CopyRange && (CopyRangeEnd - CopyRangeStart) >= RangeMinInterval; }
+			get { return CopyRange && CopyRangeEnabled && (CopyRangeEnd - CopyRangeStart) >= RangeMinInterval; }
 		}
 
 		public int CopyRangeInterval
@@ -470,7 +524,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 
 		public bool CopyCustomEnabled
 		{
-			get { return _copyCustomEnabled; }	
+			get { return Enabled && _numberOfImages > 2; }
 		}
 
 		public string CustomRange
@@ -493,7 +547,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 
 		public bool Enabled
 		{
-			get { return _enabled; }
+			get { return _currentDisplaySet != null && _numberOfImages > 0; }
 		}
 
 		public void CopyToClipboard()
@@ -508,6 +562,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			catch(Exception e)
 			{
 				ExceptionHandler.Report(e, Host.DesktopWindow);
+				this.Host.Exit();
 			}
 		}
 
