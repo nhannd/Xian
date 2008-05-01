@@ -131,7 +131,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			_bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
 			_bannerComponentHost.StartComponent();
 
-			_orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent());
+			_orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent(OrderNoteCategory.General));
 			_orderNotesComponentHost.StartComponent();
 
 			_protocolEditorComponent = new ProtocolEditorComponent(_worklistItem, _componentMode);

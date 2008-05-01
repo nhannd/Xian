@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client
                 delegate(OrderNoteDetail n) { return n.NoteBody; },
                 0.5f));
             this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnPostTime,
-                delegate(OrderNoteDetail n) { return n.PostTime == null ? SR.LabelNew : Format.Date(n.PostTime); },
+                delegate(OrderNoteDetail n) { return n.PostTime == null ? SR.LabelNew : Format.DateTime(n.PostTime); },
                 0.25f));
             this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnAuthor,
                 delegate(OrderNoteDetail n) { return n.Author == null ? SR.LabelMe : PersonNameFormat.Format(n.Author.Name); },

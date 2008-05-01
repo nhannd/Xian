@@ -82,8 +82,15 @@ namespace ClearCanvas.Ris.Application.Services
         /// <param name="context"></param>
         public void SynchronizeOrderNotes(Order order, IList<OrderNoteDetail> sourceList, Staff newNoteAuthor, IPersistenceContext context)
         {
-            OrderNoteSynchronizeHelper synchronizer = new OrderNoteSynchronizeHelper(this, order, newNoteAuthor, context);
-            synchronizer.Synchronize(order.Notes, sourceList);
+            List<OrderNote> existingNotes = new List<OrderNote>(order.Notes);
+            foreach (OrderNoteDetail detail in sourceList)
+            {
+                if (!CollectionUtils.Contains(existingNotes,
+                    delegate (OrderNote n) { return n.GetRef().Equals(detail.OrderNoteRef); }))
+                {
+                    CreateOrderNote(detail, order, newNoteAuthor, true, context);
+                }
+            }
         }
 
         /// <summary>

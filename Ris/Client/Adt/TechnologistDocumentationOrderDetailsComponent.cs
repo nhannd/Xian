@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
 		public override void Start()
 		{
-			_orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent());
+			_orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent(OrderNoteCategory.General));
 			_orderNotesComponentHost.StartComponent();
 
 			_protocolSummaryComponentHost = new ChildComponentHost(this.Host, new ProtocolSummaryComponent(_worklistItem));

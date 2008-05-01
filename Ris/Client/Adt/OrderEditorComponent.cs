@@ -334,7 +334,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         SR.MessageMissingCancellationReason);
                 }));
 
-            _noteSummaryComponent = new OrderNoteSummaryComponent();
+            _noteSummaryComponent = new OrderNoteSummaryComponent(OrderNoteCategory.General);
             _attachmentSummaryComponent = new MimeDocumentPreviewComponent(true, true, MimeDocumentPreviewComponent.AttachmentMode.Order);
             this.ChangeCommitted += delegate { _attachmentSummaryComponent.SaveChanges(); };
             _orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();

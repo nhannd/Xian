@@ -36,6 +36,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -53,16 +54,21 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(OrderNoteSummaryComponentViewExtensionPoint))]
     public class OrderNoteSummaryComponent : ApplicationComponent
     {
+        private readonly OrderNoteCategory _category;
         private readonly OrderNoteTable _noteTable;
         private readonly CrudActionModel _noteActionHandler;
         private OrderNoteDetail _currentNoteSelection;
         private List<OrderNoteDetail> _notes;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        public OrderNoteSummaryComponent()
+        /// <param name="category">Specifies the category of order notes to display, and the category under which new notes are placed.</param>
+        public OrderNoteSummaryComponent(OrderNoteCategory category)
         {
+            Platform.CheckForNullReference(category, "category");
+
+            _category = category;
             _notes = new List<OrderNoteDetail>();
             _noteTable = new OrderNoteTable();
 
@@ -83,7 +89,9 @@ namespace ClearCanvas.Ris.Client
             {
                 _notes = value;
                 _noteTable.Items.Clear();
-                _noteTable.Items.AddRange(_notes);
+                _noteTable.Items.AddRange(
+                    CollectionUtils.Select(value,
+                        delegate(OrderNoteDetail d) { return d.Category == _category.Key; }));
             }
         }
 
@@ -111,7 +119,7 @@ namespace ClearCanvas.Ris.Client
 
         public void AddNote()
         {
-            OrderNoteDetail note = new OrderNoteDetail("OrderComment", "", null, null);
+            OrderNoteDetail note = new OrderNoteDetail(_category.Key, "", null, null);
 
             try
             {
@@ -184,8 +192,9 @@ namespace ClearCanvas.Ris.Client
 
         private void NoteSelectionChanged()
         {
-            _noteActionHandler.Edit.Enabled = _currentNoteSelection != null;
-            _noteActionHandler.Delete.Enabled = (_currentNoteSelection != null && _currentNoteSelection.CreationTime == null);
+            // only un-posted notes can be edited or deleted
+            _noteActionHandler.Edit.Enabled = _noteActionHandler.Delete.Enabled = 
+                (_currentNoteSelection != null && _currentNoteSelection.PostTime == null);
         }
     }
 }

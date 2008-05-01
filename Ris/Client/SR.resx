@@ -378,6 +378,12 @@
   <data name="MessageUnknownErrorCommunicatingWithServer" xml:space="preserve">
     <value>An unknown error occured while attempting to communicate with the server.  See log for details.</value>
   </data>
+  <data name="OrderNoteCategoryGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="OrderNoteCategoryPrelimDiagnosis" xml:space="preserve">
+    <value>Prelim. Diagnosis</value>
+  </data>
   <data name="PhoneNumberHome" xml:space="preserve">
     <value>Home</value>
   </data>

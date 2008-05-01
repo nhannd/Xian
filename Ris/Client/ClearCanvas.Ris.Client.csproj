@@ -64,6 +64,7 @@
     <Compile Include="OrderNoteboxFolder.cs" />
     <Compile Include="OrderNoteboxFolderSystemBase.cs" />
     <Compile Include="OrderNoteboxTable.cs" />
+    <Compile Include="OrderNoteCategory.cs" />
     <Compile Include="OrderNoteEditorComponent.cs" />
     <Compile Include="OrderNoteSummaryComponent.cs" />
     <Compile Include="OrderNoteTable.cs" />
