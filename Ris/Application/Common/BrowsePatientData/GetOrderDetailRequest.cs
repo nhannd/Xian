@@ -31,6 +31,7 @@
 
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
@@ -80,5 +81,12 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         /// </summary>
         [DataMember]
         public bool IncludeNotes;
+
+        /// <summary>
+        /// A list of filters that determine which categories of order notes are returned. Optional, defaults to all.
+        /// Ignored if <see cref="IncludeNotes"/> is false.
+        /// </summary>
+        [DataMember]
+        public List<string> NoteCategoriesFilter;
     }
 }

@@ -33,6 +33,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common.Utilities;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -40,13 +41,14 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public OrderDetail CreateOrderDetail(Order order, IPersistenceContext context)
         {
-            return CreateOrderDetail(order, context, true, true, true);
+            return CreateOrderDetail(order, context, true, true, true, null);
         }
 
         public OrderDetail CreateOrderDetail(Order order, IPersistenceContext context,
             bool includeVisit,
             bool includeProcedures,
-            bool includeNotes)
+            bool includeNotes,
+            IList<string> noteCategoriesFilter)
         {
             OrderDetail detail = new OrderDetail();
 
@@ -87,7 +89,19 @@ namespace ClearCanvas.Ris.Application.Services
             if(includeNotes)
             {
                 OrderNoteAssembler orderNoteAssembler = new OrderNoteAssembler();
-                detail.Notes = CollectionUtils.Map<OrderNote, OrderNoteSummary>(order.Notes,
+                List<OrderNote> notes = new List<OrderNote>(order.Notes);
+
+                // apply category filter, if provided
+                if(noteCategoriesFilter != null && noteCategoriesFilter.Count > 0)
+                {
+                    notes = CollectionUtils.Select(notes,
+                        delegate(OrderNote n) { return noteCategoriesFilter.Contains(n.Category); });
+                }
+
+                // sort notes by post-time (guaranteed non-null because only "posted" notes are in this collection)
+                notes.Sort(delegate(OrderNote x, OrderNote y) { return x.PostTime.Value.CompareTo(y.PostTime.Value); });
+
+                detail.Notes = CollectionUtils.Map<OrderNote, OrderNoteSummary>(notes,
                     delegate(OrderNote note)
                     {
                         return orderNoteAssembler.CreateOrderNoteSummary(note, context);

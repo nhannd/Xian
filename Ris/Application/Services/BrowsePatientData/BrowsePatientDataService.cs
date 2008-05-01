@@ -163,7 +163,8 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
                 this.PersistenceContext,
                 request.IncludeVisit,
                 request.IncludeProcedures,
-                request.IncludeNotes);
+                request.IncludeNotes,
+                request.NoteCategoriesFilter);
 
             if (request.IncludeAlerts)
             {

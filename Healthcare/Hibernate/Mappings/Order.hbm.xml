@@ -68,7 +68,8 @@
 		<property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.OrderStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true" access="nosetter.camelcase-underscore"/>
 		<many-to-one name="CancelReason" class="OrderCancelReasonEnum" column="CancelReason_"/>
 
-		<set name="Notes" lazy="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+		<set name="Notes" lazy="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore"
+         where="PostTime_ is not null">
 			<key column="OrderOID_"/>
 			<one-to-many class="OrderNote"/>
 		</set>
