@@ -50,7 +50,7 @@ namespace ClearCanvas.Healthcare.Alerts
             else
             {
                 // Check Visit status
-                if (order.Visit.VisitStatus != VisitStatus.AA)
+                if (order.Visit.Status != VisitStatus.AA)
                     reasons.Add("Visit Status is not active");
 
                 // Check Visit date

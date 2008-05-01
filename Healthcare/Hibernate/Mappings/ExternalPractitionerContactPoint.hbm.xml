@@ -24,7 +24,7 @@
       <collection-id column="OID_" type="Guid">
         <generator class="guid.comb"/>
       </collection-id>
-      <key column="StaffOID_"/>
+      <key column="ExternalPractitionerContactPointOID_"/>
       <composite-element class="TelephoneNumber">
         <property name="CountryCode" column="CountryCode_" type="String" length="10" not-null="false"/>
         <property name="AreaCode" column="AreaCode_" type="String" length="10" not-null="false"/>
@@ -43,7 +43,7 @@
       <collection-id column="OID_" type="Guid">
         <generator class="guid.comb"/>
       </collection-id>
-      <key column="StaffOID_"/>
+      <key column="ExternalPractitionerContactPointOID_"/>
       <composite-element class="Address">
         <property name="Street" column="Street_" type="String" length="100" not-null="true"/>
         <property name="Unit" column="Unit_" type="String" length="50" not-null="false"/>
@@ -63,7 +63,7 @@
       <collection-id column="OID_" type="Guid">
         <generator class="guid.comb"/>
       </collection-id>
-      <key column="PatientProfileOID_"/>
+      <key column="ExternalPractitionerContactPointOID_"/>
       <composite-element class="EmailAddress">
         <property name="Address" column="Address_" type="String" length="255" not-null="true"/>
         <property name="ValidRange" type="ClearCanvas.Healthcare.Hibernate.DateTimeRangeHbm, ClearCanvas.Healthcare.Hibernate">

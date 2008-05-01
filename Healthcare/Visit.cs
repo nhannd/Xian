@@ -59,7 +59,7 @@ namespace ClearCanvas.Healthcare {
         {
             this.VisitNumber.Id = v.VisitNumber.Id;
             this.VisitNumber.AssigningAuthority = v.VisitNumber.AssigningAuthority;
-            this.VisitStatus = v.VisitStatus;
+            this.Status = v.Status;
             this.AdmitTime = v.AdmitTime;
             this.PatientClass = v.PatientClass;
             this.PatientType = v.PatientType;
@@ -93,12 +93,12 @@ namespace ClearCanvas.Healthcare {
 
         public virtual void Cancel()
         {
-            this.VisitStatus = VisitStatus.CX;
+            this.Status = VisitStatus.CX;
         }
 
         public virtual void CancelPreAdmit()
         {
-            this.VisitStatus = VisitStatus.PC;
+            this.Status = VisitStatus.PC;
         }
 
         /// <summary>
@@ -106,15 +106,15 @@ namespace ClearCanvas.Healthcare {
         /// </summary>
         public virtual void InferVisitStatus()
         {
-            if (this.AdmitTime.HasValue) this.VisitStatus = VisitStatus.AA;
-            if (this.DischargeTime.HasValue) this.VisitStatus = VisitStatus.DC;
+            if (this.AdmitTime.HasValue) this.Status = VisitStatus.AA;
+            if (this.DischargeTime.HasValue) this.Status = VisitStatus.DC;
         }
 
         public virtual void Discharge(DateTime dischargeDateTime, string dischargeDispostion)
         {
-            if (this.VisitStatus != VisitStatus.DC && this.VisitStatus != VisitStatus.CX)
+            if (this.Status != VisitStatus.DC && this.Status != VisitStatus.CX)
             {
-                this.VisitStatus = VisitStatus.DC;
+                this.Status = VisitStatus.DC;
                 this.DischargeTime = dischargeDateTime;
                 this.DischargeDisposition = dischargeDispostion;
             }

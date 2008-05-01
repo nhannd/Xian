@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Application.Services
             summary.AdmissionType = visit.AdmissionType.Value;
             summary.PatientClass = visit.PatientClass.Value;
             summary.PatientType = visit.PatientType.Value;
-            summary.Status = EnumUtils.GetValue(visit.VisitStatus, context);
+            summary.Status = EnumUtils.GetValue(visit.Status, context);
 
             summary.AdmitTime = visit.AdmitTime;
             summary.DischargeTime = visit.DischargeTime;
@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Application.Services
             detail.AdmissionType = EnumUtils.GetEnumValueInfo(visit.AdmissionType);
             detail.PatientClass = EnumUtils.GetEnumValueInfo(visit.PatientClass);
             detail.PatientType = EnumUtils.GetEnumValueInfo(visit.PatientType);
-            detail.Status = EnumUtils.GetEnumValueInfo(visit.VisitStatus, context);
+            detail.Status = EnumUtils.GetEnumValueInfo(visit.Status, context);
 
 
             detail.AdmitTime = visit.AdmitTime;
@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Application.Services
             visit.AdmissionType = EnumUtils.GetEnumValue<AdmissionTypeEnum>(detail.AdmissionType, context);
             visit.PatientClass = EnumUtils.GetEnumValue<PatientClassEnum>(detail.PatientClass, context);
             visit.PatientType = EnumUtils.GetEnumValue<PatientTypeEnum>(detail.PatientType, context);
-            visit.VisitStatus = EnumUtils.GetEnumValue<VisitStatus>(detail.Status);
+            visit.Status = EnumUtils.GetEnumValue<VisitStatus>(detail.Status);
 
             visit.AdmitTime = detail.AdmitTime;
             visit.DischargeTime = detail.DischargeTime;

@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             Patient patient = PersistenceContext.GetBroker<IPatientBroker>().Load(request.PatientRef, EntityLoadFlags.Proxy);
 
             VisitSearchCriteria criteria = new VisitSearchCriteria();
-            criteria.VisitStatus.NotEqualTo(VisitStatus.DC);
+            criteria.Status.NotEqualTo(VisitStatus.DC);
             criteria.Patient.EqualTo(patient);
 
             VisitAssembler assembler = new VisitAssembler();

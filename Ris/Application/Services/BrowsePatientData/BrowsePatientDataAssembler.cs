@@ -90,7 +90,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.PatientClass = EnumUtils.GetEnumValueInfo(visit.PatientClass);
             data.PatientType = EnumUtils.GetEnumValueInfo(visit.PatientType);
             data.AdmissionType = EnumUtils.GetEnumValueInfo(visit.AdmissionType);
-            data.VisitStatus = EnumUtils.GetEnumValueInfo(visit.VisitStatus, context);
+            data.VisitStatus = EnumUtils.GetEnumValueInfo(visit.Status, context);
             data.AdmitTime = visit.AdmitTime;
             data.DischargeTime = visit.DischargeTime;
             data.VisitFacility = facilityAssembler.CreateFacilitySummary(visit.Facility);

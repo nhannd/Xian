@@ -16,7 +16,7 @@
       </many-to-one>
     </component>
 
-    <property name="VisitStatus" column="VisitStatus" type="ClearCanvas.Healthcare.Hibernate.VisitStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+    <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.VisitStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
     <property name="AdmitTime" column="AdmitTime_" type="DateTime" not-null="false"/>
     <property name="DischargeTime" column="DischargeTime_" type="DateTime" not-null="false"/>
     <property name="DischargeDisposition" column="DischargeDisposition_" type="String" length="100" not-null="false"/>
