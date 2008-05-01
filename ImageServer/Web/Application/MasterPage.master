@@ -70,14 +70,10 @@
                                         </ContentTemplate>
                                     </asp:UpdatePanel>
                                 </asp:TableCell>
-                                <asp:TableCell CssClass="MainContentRightEdge">
-                        
-                                </asp:TableCell>
+                                <asp:TableCell CssClass="MainContentRightEdge"></asp:TableCell>
                             </asp:TableRow>
-                            <asp:TableRow>
-                                <asp:TableCell>
-                                    <asp:Image runat="server" SkinID="MainContentBottomLeftCorner" />
-                                </asp:TableCell>
+                            <asp:TableRow VerticalAlign="Top">
+                                <asp:TableCell><asp:Image runat="server" SkinID="MainContentBottomLeftCorner" /></asp:TableCell>
                                 <asp:TableCell>
                                     <asp:Panel ID="Panel2" runat="server" CssClass="MainContentBottom">
                                         <asp:Image runat="server" SkinID="Spacer" /></asp:Panel>

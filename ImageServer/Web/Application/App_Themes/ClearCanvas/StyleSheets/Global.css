@@ -34,7 +34,7 @@ Global.css - Defines the global styles for the entire web application relating
 
 .MainContentLeftEdge
 {
-	background: url(../images/MainContent/MainContentLeftEdge.png) repeat-y;
+	background: white url(../images/MainContent/MainContentLeftEdge.png) repeat-y;
 	width: 14px;
 	height: 1px;
 }
@@ -42,7 +42,7 @@ Global.css - Defines the global styles for the entire web application relating
 
 .MainContentRightEdge
 {
-	background: url(../images/MainContent/MainContentRightEdge.png) repeat-y;
+	background: white url(../images/MainContent/MainContentRightEdge.png) repeat-y;
 	width: 14px;
 	height: 1px;
 }
