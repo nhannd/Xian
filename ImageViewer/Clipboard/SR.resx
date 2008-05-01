@@ -147,6 +147,9 @@
   <data name="LabelExportPath" xml:space="preserve">
     <value>Destination folder</value>
   </data>
+  <data name="MenuClipboard" xml:space="preserve">
+    <value>Clipboard</value>
+  </data>
   <data name="MenuCopyDisplaySetToClipboard" xml:space="preserve">
     <value>Copy Display Set to Clipboard</value>
   </data>

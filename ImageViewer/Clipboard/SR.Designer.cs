@@ -151,6 +151,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clipboard.
+        /// </summary>
+        internal static string MenuClipboard {
+            get {
+                return ResourceManager.GetString("MenuClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy Display Set to Clipboard.
         /// </summary>
         internal static string MenuCopyDisplaySetToClipboard {

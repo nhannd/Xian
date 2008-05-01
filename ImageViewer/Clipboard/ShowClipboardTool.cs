@@ -34,7 +34,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 
-namespace ClearCanvas.ImageViewer.Clipboard.Tools
+namespace ClearCanvas.ImageViewer.Clipboard
 {
 	[MenuAction("show", "global-menus/MenuView/MenuShowClipboard", "Show")]
 	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarShowClipboard", "Show")]
