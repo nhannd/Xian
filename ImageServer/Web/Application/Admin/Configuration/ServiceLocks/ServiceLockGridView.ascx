@@ -41,7 +41,6 @@
                         <HeaderStyle HorizontalAlign="Center" />
                         <ItemStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
-                    
                      <asp:TemplateField HeaderText="Schedule">
                         <ItemTemplate>
                             <clearcanvas:DateTimeLabel ID="Schedule" runat="server" Text='<%# Eval("ScheduledTime") %>'></clearcanvas:DateTimeLabel>
@@ -49,7 +48,13 @@
                         <HeaderStyle HorizontalAlign="Center" />
                         <ItemStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
-                    
+                    <asp:TemplateField HeaderText="Filesystem">
+                        <ItemTemplate>
+                            <asp:Label ID="Filesystem" runat="server" Text=""/>
+                        </ItemTemplate>
+                        <HeaderStyle HorizontalAlign="Center" />
+                        <ItemStyle HorizontalAlign="Center" />
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="Processor ID">
                         <ItemTemplate>
                             <asp:Label ID="ProcessorID" runat="server" Text='<%# Eval("ProcessorID") %>'></asp:Label>
@@ -57,36 +62,7 @@
                         <HeaderStyle HorizontalAlign="Center" />
                         <ItemStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
-                    
                 </Columns>
-                <EmptyDataTemplate>
-                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                        CssClass="CSSGridHeader">
-                        <asp:TableHeaderRow>
-                            <asp:TableHeaderCell>
-                            AE Title
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Description
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            IPAddress
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Port
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
-                            Enabled
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
-                            DHCP
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Features
-                            </asp:TableHeaderCell>
-                        </asp:TableHeaderRow>
-                    </asp:Table>
-                </EmptyDataTemplate>
                 <RowStyle CssClass="CSSGridRowStyle" />
                 <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
                 <HeaderStyle CssClass="CSSGridHeader" />

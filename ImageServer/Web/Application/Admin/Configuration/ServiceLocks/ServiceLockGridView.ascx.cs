@@ -34,6 +34,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLocks
@@ -46,6 +47,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
         #region private members
         private ServiceLockCollection _services;
         private Unit _height;
+        FileSystemsConfigurationController _fsController = new FileSystemsConfigurationController();
         #endregion Private members
 
         #region protected properties
@@ -227,6 +229,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
 
                     CustomizeEnabledColumn(e.Row);
                     CustomizeLockColumn(e.Row);
+                    CustomizeFilesystemColumn(e.Row);
                 }
             }
         }
@@ -250,6 +253,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServiceLoc
             {
                 img.ImageUrl = item.Lock ? "~/images/checked_small.gif" : "~/images/unchecked_small.gif";
             }
+        }
+        protected void CustomizeFilesystemColumn(GridViewRow row)
+        {
+            Label text = row.FindControl("Filesystem") as Label;
+
+            ServiceLock item = row.DataItem as ServiceLock;
+            if (item.FilesystemKey == null)
+                text.Text = "N/A";
+            else
+                text.Text = _fsController.LoadFileSystem(item.FilesystemKey).Description;            
         }
 
         protected void GridView_SelectedIndexChanged(object sender, EventArgs e)

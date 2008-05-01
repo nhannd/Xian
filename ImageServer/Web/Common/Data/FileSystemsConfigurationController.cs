@@ -31,6 +31,7 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -90,6 +91,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                              filesystem.Description, filesystem.FilesystemPath);
 
             return ok;
+        }
+
+        public Filesystem LoadFileSystem(ServerEntityKey key)
+        {
+            return Filesystem.Load(key);
         }
 
         public IList<Filesystem> GetFileSystems(FilesystemSelectCriteria criteria)
