@@ -30,8 +30,9 @@
 						GetOrderDetailRequest:
 							 { 
 								OrderRef: worklistItem.OrderRef,
+								IncludeProcedures: true,
 								IncludeNotes: true,
-								IncludeProcedures: true
+								NoteCategoriesFilter: ["General"]
 							}
 					};
 
