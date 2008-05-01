@@ -37,6 +37,8 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
     [ServiceContract]
     public interface ITechnologistDocumentationService
     {
+        [OperationContract]
+        LoadDataResponse LoadData(LoadDataRequest request);
 
         [OperationContract]
         SaveDataResponse SaveData(SaveDataRequest request);

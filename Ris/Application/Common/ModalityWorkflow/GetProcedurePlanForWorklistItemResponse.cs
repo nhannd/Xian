@@ -40,8 +40,5 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     {
         [DataMember] 
         public ProcedurePlanDetail ProcedurePlan;
-
-        [DataMember]
-        public Dictionary<string, string> OrderExtendedProperties;
     }
 }

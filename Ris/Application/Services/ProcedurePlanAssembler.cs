@@ -55,19 +55,6 @@ namespace ClearCanvas.Ris.Application.Services
             detail.DiagnosticServiceSummary =
                 new DiagnosticServiceSummary(order.DiagnosticService.GetRef(), order.DiagnosticService.Id, order.DiagnosticService.Name);
 
-            // establish whether there is a unique assigned interpreter for all procedures
-            HashedSet<Staff> interpreters = new HashedSet<Staff>();
-            foreach (Procedure procedure in order.Procedures)
-            {
-                ProcedureStep pendingInterpretationStep = procedure.GetProcedureStep(
-                    delegate (ProcedureStep ps) { return ps.Is<InterpretationStep>() && ps.State == ActivityStatus.SC; });
-
-                if(pendingInterpretationStep != null && pendingInterpretationStep.AssignedStaff != null)
-                    interpreters.Add(pendingInterpretationStep.AssignedStaff);
-            }
-
-            if (interpreters.Count == 1)
-                detail.AssignedInterpreter = staffAssembler.CreateStaffSummary(CollectionUtils.FirstElement(interpreters), context);
 
             return detail;
         }

@@ -68,10 +68,21 @@ namespace ClearCanvas.Ris.Client.Adt
     public interface ITechnologistDocumentationContext
     {
         /// <summary>
+        /// Exposes the order reference.
+        /// </summary>
+        EntityRef OrderRef { get; }
+
+        /// <summary>
         /// Exposes the extended properties associated with the Order.  Modifications made to these
         /// properties by the documentation page will be persisted whenever the documentation workspace is saved.
         /// </summary>
         IDictionary<string, string> OrderExtendedProperties { get; }
+
+        /// <summary>
+        /// Exposes the order notes associated with the order.  Modifications made to this
+        /// collection will be persisted when the documentation workspace is saved.
+        /// </summary>
+        List<OrderNoteDetail> OrderNotes { get; }
 
         /// <summary>
         /// Gets the <see cref="ProcedurePlanDetail"/> representing this order.
@@ -111,9 +122,19 @@ namespace ClearCanvas.Ris.Client.Adt
 
             #region ITechnologistDocumentationContext Members
 
+            public EntityRef OrderRef
+            {
+                get { return _owner._procedurePlan.OrderRef; }
+            }
+
             public IDictionary<string, string> OrderExtendedProperties
             {
                 get { return _owner._orderExtendedProperties; }
+            }
+
+            public List<OrderNoteDetail> OrderNotes
+            {
+                get { return _owner._orderNotes; }
             }
 
             public ProcedurePlanDetail ProcedurePlan
@@ -137,6 +158,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private readonly ModalityWorklistItem _worklistItem;
         private Dictionary<string, string> _orderExtendedProperties;
+        private List<OrderNoteDetail> _orderNotes;
 
         private ProcedurePlanDetail _procedurePlan;
         private ProcedurePlanSummaryTable _procedurePlanSummaryTable;
@@ -397,7 +419,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
 
                             SaveDataRequest saveRequest =
-                                new SaveDataRequest(_procedurePlan.OrderRef, _orderExtendedProperties, ppsExtendedProperties, _assignedRadiologist);
+                                new SaveDataRequest(_procedurePlan.OrderRef, _orderExtendedProperties, _orderNotes,
+                                        ppsExtendedProperties, _assignedRadiologist);
                             SaveDataResponse saveResponse = service.SaveData(saveRequest);
 
                             if (completeDocumentation)
@@ -436,10 +459,18 @@ namespace ClearCanvas.Ris.Client.Adt
                     GetProcedurePlanForWorklistItemRequest procedurePlanRequest = new GetProcedurePlanForWorklistItemRequest(_worklistItem.ProcedureStepRef);
                     GetProcedurePlanForWorklistItemResponse procedurePlanResponse = service.GetProcedurePlanForWorklistItem(procedurePlanRequest);
                     _procedurePlan = procedurePlanResponse.ProcedurePlan;
-                    _orderExtendedProperties = procedurePlanResponse.OrderExtendedProperties;
                 });
 
             RefreshProcedurePlanSummary(_procedurePlan);
+
+            Platform.GetService<ITechnologistDocumentationService>(
+                delegate(ITechnologistDocumentationService service)
+                {
+                    LoadDataResponse response = service.LoadData(new LoadDataRequest(_worklistItem.OrderRef));
+                    _orderExtendedProperties = response.OrderExtendedProperties;
+                    _orderNotes = response.OrderNotes;
+                    this.AssignedRadiologist = response.AssignedInterpreter;
+                });
 
             InitializeProcedurePlanSummaryActionHandlers();
         }
@@ -454,13 +485,15 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void InitializeDocumentationTabPages()
         {
+            TechnologistDocumentationContext context = new TechnologistDocumentationContext(this);
+
             _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
             _bannerComponentHost.StartComponent();
 
             _documentationTabContainer = new TabComponentContainer();
             _documentationTabContainer.ValidationStrategy = new AllComponentsValidationStrategy();
 
-            _orderDetailsComponent = new TechnologistDocumentationOrderDetailsComponent(_worklistItem, _orderExtendedProperties);
+            _orderDetailsComponent = new TechnologistDocumentationOrderDetailsComponent(context);
             _documentationTabContainer.Pages.Add(new TabPage("Order", _orderDetailsComponent));
 
             _ppsComponent = new PerformedProcedureComponent(_procedurePlan.OrderRef, this);
@@ -468,7 +501,6 @@ namespace ClearCanvas.Ris.Client.Adt
             _documentationTabContainer.Pages.Add(new TabPage("Exam", _ppsComponent));
 
             // create extension pages
-            TechnologistDocumentationContext context = new TechnologistDocumentationContext(this);
             foreach (ITechnologistDocumentationPageProvider pageProvider in (new TechnologistDocumentationPageProviderExtensionPoint()).CreateExtensions())
             {
                 _extensionPages.AddRange(pageProvider.GetDocumentationPages(context));
@@ -558,8 +590,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 }
             }
             _procedurePlanSummaryTable.Sort();
-
-            this.AssignedRadiologist = procedurePlanDetail.AssignedInterpreter;
 
             EventsHelper.Fire(_procedurePlanChanged, this, EventArgs.Empty);
         }

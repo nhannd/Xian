@@ -39,16 +39,17 @@ namespace ClearCanvas.Ris.Client
     public class OrderNoteTable : Table<OrderNoteDetail>
     {
         public OrderNoteTable()
+            :base(2)
         {
-            this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnComments,
-                delegate(OrderNoteDetail n) { return n.NoteBody; },
-                0.5f));
-            this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnPostTime,
-                delegate(OrderNoteDetail n) { return n.PostTime == null ? SR.LabelNew : Format.DateTime(n.PostTime); },
-                0.25f));
             this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnAuthor,
                 delegate(OrderNoteDetail n) { return n.Author == null ? SR.LabelMe : PersonNameFormat.Format(n.Author.Name); },
                 0.25f));
+            this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnPostTime,
+                delegate(OrderNoteDetail n) { return n.PostTime == null ? SR.LabelNew : Format.DateTime(n.PostTime); },
+                0.25f));
+            this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnComments,
+                delegate(OrderNoteDetail n) { return n.NoteBody; },
+                0.5f, 1));
         }
     }
 }

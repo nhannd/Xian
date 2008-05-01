@@ -59,6 +59,8 @@
     <Compile Include="Admin\WorklistAdmin\ListWorklistClassesResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistClassSummary.cs" />
     <Compile Include="IWorklistService.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\LoadDataRequest.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\LoadDataResponse.cs" />
     <Compile Include="OrderNotes\AcknowledgeAndReplyRequest.cs" />
     <Compile Include="OrderNotes\AcknowledgeAndReplyResponse.cs" />
     <Compile Include="OrderNotes\OrderNoteboxItemSummary.cs" />

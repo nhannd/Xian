@@ -132,13 +132,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
             GetProcedurePlanForWorklistItemResponse response = new GetProcedurePlanForWorklistItemResponse();
             response.ProcedurePlan = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
-
-            response.OrderExtendedProperties = new Dictionary<string, string>();
-            foreach (string key in order.ExtendedProperties.Keys)
-            {
-                response.OrderExtendedProperties[key] = order.ExtendedProperties[key];
-            }
-
             return response;
         }
 

@@ -42,11 +42,13 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
     {
         public SaveDataRequest(EntityRef orderRef,
             Dictionary<string, string> orderExtendedProperties,
+            List<OrderNoteDetail> orderNotes,
             Dictionary<EntityRef, Dictionary<string, string>> performedProcedureStepExtendedProperties,
             StaffSummary assignedInterpreter)
         {
             this.OrderRef = orderRef;
             this.OrderExtendedProperties = orderExtendedProperties;
+            this.OrderNotes = orderNotes;
             this.PerformedProcedureStepExtendedProperties = performedProcedureStepExtendedProperties;
             this.AssignedInterpreter = assignedInterpreter;
         }
@@ -56,6 +58,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
 
         [DataMember]
         public Dictionary<string, string> OrderExtendedProperties;
+
+        [DataMember]
+        public List<OrderNoteDetail> OrderNotes;
 
         [DataMember]
         public Dictionary<EntityRef, Dictionary<string, string>> PerformedProcedureStepExtendedProperties;

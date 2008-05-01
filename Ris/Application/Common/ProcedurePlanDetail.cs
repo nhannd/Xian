@@ -46,11 +46,5 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public List<ProcedureDetail> Procedures;
-
-        /// <summary>
-        /// Radiologist that has been assigned to read these procedures, or null if none has been assigned.
-        /// </summary>
-        [DataMember]
-        public StaffSummary AssignedInterpreter;
     }
 }
