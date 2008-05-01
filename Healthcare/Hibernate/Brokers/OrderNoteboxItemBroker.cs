@@ -157,7 +157,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             }
             query.Conditions.Add(or);
 
-            query.Sorts.AddRange(InboxItemOrdering);
+			if(!countQuery)
+	            query.Sorts.AddRange(InboxItemOrdering);
 
             return query;
         }
@@ -181,7 +182,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             }
             query.Conditions.Add(or);
 
-            query.Sorts.AddRange(SentItemOrdering);
+			if(!countQuery)
+	            query.Sorts.AddRange(SentItemOrdering);
 
             return query;
         }
