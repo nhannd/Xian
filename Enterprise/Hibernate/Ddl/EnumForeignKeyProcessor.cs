@@ -47,7 +47,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     /// Adds foreign-key constraints on hard-enum columns to the Hibernate relational model, since Hibernate does not know
     /// to add these constraints automatically.
     /// </summary>
-    class EnumForeignKeyConstraintCreator : IDdlPreProcessor
+    class EnumForeignKeyProcessor : IDdlPreProcessor
     {
         public void Process(PersistentStore store)
         {

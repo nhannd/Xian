@@ -52,11 +52,11 @@
     <Compile Include="ChangeRecord.cs" />
     <Compile Include="ChangeTracker.cs" />
     <Compile Include="CustomSqlDialect.cs" />
-    <Compile Include="Ddl\AdditionalIndexCreator.cs" />
+    <Compile Include="Ddl\AdditionalIndexProcessor.cs" />
     <Compile Include="Ddl\DdlScriptGenerator.cs" />
-    <Compile Include="Ddl\EnumForeignKeyConstraintCreator.cs" />
+    <Compile Include="Ddl\EnumForeignKeyProcessor.cs" />
     <Compile Include="Ddl\IDdlPreProcessor.cs" />
-    <Compile Include="Ddl\BaselineIndexCreator.cs" />
+    <Compile Include="Ddl\ForeignKeyIndexProcessor.cs" />
     <Compile Include="Ddl\IndexCreatorBase.cs" />
     <Compile Include="Ddl\PreProcessor.cs" />
     <Compile Include="Ddl\ScriptWriter.cs" />
@@ -118,6 +118,7 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Ddl\AdditionalIndexProcessor.dbi.xml" />
     <Content Include="hibernate.cfg.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

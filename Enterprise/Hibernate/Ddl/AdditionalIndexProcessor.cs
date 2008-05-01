@@ -12,11 +12,19 @@ using NHibernate.Mapping;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
-    class AdditionalIndexCreator : IndexCreatorBase
+    /// <summary>
+    /// Adds additional indexes to the Hibernate relational model, according to what is defined in *.dbi.xml files
+    /// that are found in plugins.
+    /// </summary>
+    /// <remarks>
+    /// This processor scans all plugins for *.dbi.xml resource files.  These files contain instructions for creating
+    /// specific indexes in an XML format. See the file AdditionalIndexProcessor.dbi.xml.
+    /// </remarks>
+    class AdditionalIndexProcessor : IndexCreatorBase
     {
         public override void Process(PersistentStore store)
         {
-            Dictionary<string, Table> tables = BuildModel(store);
+            Dictionary<string, Table> tables = GetTables(store);
 
             // create a resource resolver that will scan all plugins
             IResourceResolver resolver = new ResourceResolver(
@@ -65,7 +73,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             }
         }
 
-        private Dictionary<string, Table> BuildModel(PersistentStore store)
+        private Dictionary<string, Table> GetTables(PersistentStore store)
         {
             // build a set of all tables known to NH
             Dictionary<string, Table> tableSet = new Dictionary<string, Table>();

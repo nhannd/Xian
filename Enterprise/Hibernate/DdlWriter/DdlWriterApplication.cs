@@ -35,6 +35,7 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Hibernate.Ddl;
 using NHibernate.Dialect;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 {
@@ -43,6 +44,35 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
     {
         public void RunApplication(string[] args)
         {
+            DdlWriterCommandLine cmdLine = new DdlWriterCommandLine();
+            try
+            {
+                cmdLine.Parse(args);
+
+                Dialect dialect = new CustomSqlDialect();   // SQL Server 
+
+                // if a file name was supplied, write to the file
+                if (!string.IsNullOrEmpty(cmdLine.OutputFile))
+                {
+                    using (StreamWriter sw = File.CreateText(cmdLine.OutputFile))
+                    {
+                        WriteCreateScripts(sw, dialect, cmdLine);
+                    }
+                }
+                else
+                {
+                    // by default write to stdout
+                    WriteCreateScripts(Console.Out, dialect, cmdLine);
+                }
+            }
+            catch(CommandLineException e)
+            {
+                Console.WriteLine(e.Message);
+                cmdLine.PrintUsage(Console.Out);
+            }
+
+
+
             string outputFile = "";
 
             if (args.Length > 0)
@@ -53,31 +83,16 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
                 }
             }
 
-            Dialect dialect = new CustomSqlDialect();   // SQL Server 
-
-            // if a file name was supplied, write to the file
-            if (!string.IsNullOrEmpty(outputFile))
-            {
-                using (StreamWriter sw = File.CreateText(outputFile))
-                {
-                    WriteCreateScripts(sw, dialect);
-                }
-            }
-            else
-            {
-                // by default write to stdout
-                WriteCreateScripts(Console.Out, dialect);
-            }
         }
 
-        private void WriteCreateScripts(TextWriter writer, Dialect dialect)
+        private void WriteCreateScripts(TextWriter writer, Dialect dialect, DdlWriterCommandLine cmdLine)
         {
             try
             {
                 PersistentStore store = new PersistentStore();
                 store.Initialize();
 
-                PreProcessor preProcessor = new PreProcessor();
+                PreProcessor preProcessor = new PreProcessor(cmdLine.CreateIndexes, cmdLine.AutoIndexForeignKeys);
                 preProcessor.Process(store);
 
                 ScriptWriter scriptWriter = new ScriptWriter(store, dialect);

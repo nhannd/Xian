@@ -14,7 +14,7 @@ using Iesi.Collections;
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
     /// <summary>
-    /// Adds a baseline set of indexes to the Hibernate relational model, based on a set of rules described below.
+    /// Adds DB indexes on foreign key columns to the Hibernate relational model, based on a set of rules described below.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -27,11 +27,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     /// </para>
     /// <para>
     /// This class make decisions about which indexes to create based on foreign keys.  Therefore, 
-    /// ensure the that <see cref="EnumForeignKeyConstraintCreator"/> and any other processors
+    /// ensure the that <see cref="EnumForeignKeyProcessor"/> and any other processors
     /// that create foreign keys are run prior to this processor.
     /// </para>
     /// </remarks>
-    class BaselineIndexCreator : IndexCreatorBase
+    class ForeignKeyIndexProcessor : IndexCreatorBase
     {
         #region Overrides
 

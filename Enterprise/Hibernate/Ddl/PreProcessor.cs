@@ -16,18 +16,34 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
     public class PreProcessor
     {
+        private readonly bool _createIndexes;
+        private readonly bool _autoIndexForeignKeys;
+
+
+        public PreProcessor(bool createIndexes, bool autoIndexForeignKeys)
+        {
+            _createIndexes = createIndexes;
+            _autoIndexForeignKeys = autoIndexForeignKeys;
+        }
+
         public void Process(PersistentStore store)
         {
             // order is important
 
             // run the enum FK processor first
-            new EnumForeignKeyConstraintCreator().Process(store);
+            new EnumForeignKeyProcessor().Process(store);
 
-            // run the base index creator
-            new BaselineIndexCreator().Process(store);
+            if(_createIndexes)
+            {
+                if (_autoIndexForeignKeys)
+                {
+                    // run the fk index creator
+                    new ForeignKeyIndexProcessor().Process(store);
+                }
 
-            // run the additional index creator
-            new AdditionalIndexCreator().Process(store);
+                // run the additional index creator
+                new AdditionalIndexProcessor().Process(store);
+            }
 
             // run extension processors
             foreach (IDdlPreProcessor processor in new DdlPreProcessorExtensionPoint().CreateExtensions())
