@@ -6,7 +6,7 @@
     TagPrefix="CCCommon" %>
 <ccAsp:ModalDialog ID="ModalDialog" runat="server">
     <ContentTemplate>
-        <asp:Panel ID="Panel3" runat="server">
+        <asp:Panel ID="Panel3" runat="server" DefaultButton="OKButton">
             <aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
                 CssClass="CSSDialogTabControl">
                 <aspAjax:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel"
@@ -128,7 +128,7 @@
                 </aspAjax:TabPanel>
                 <aspAjax:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2">
                     <ContentTemplate>
-                        <asp:Panel ID="Panel2" runat="server" CssClass="CSSDialogTabPanelContent">
+                        <asp:Panel ID="Panel2" runat="server" CssClass="CSSDialogTabPanelContent" >
                             <table width="100%">
                                 <tr>
                                     <td align="left">
