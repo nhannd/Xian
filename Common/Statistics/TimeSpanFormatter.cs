@@ -69,7 +69,7 @@ namespace ClearCanvas.Common.Statistics
             if (ts.Ticks > TICKSPERMILISECONDS)
                 return String.Format("{0:0.00} ms", ts.TotalMilliseconds);
             if (ts.Ticks > TICKSPERMICROECONDS)
-                return String.Format("{0:0.00} us", ts.Ticks/TICKSPERMICROECONDS);
+                return String.Format("{0:0.00} µs", ts.Ticks / TICKSPERMICROECONDS);
             else
                 return String.Format("{0:0.00} ns", ts.Ticks/TICKSPERNANOSECONDS);
         }
