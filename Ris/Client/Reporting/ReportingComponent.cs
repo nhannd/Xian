@@ -471,10 +471,11 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		public void Verify()
 		{
-			if (!_reportEditor.Save(ReportEditorCloseReason.Verify))
-				return;
 			try
 			{
+				if (!_reportEditor.Save(ReportEditorCloseReason.Verify))
+					return;
+
 				if (_canCompleteInterpretationAndVerify)
 				{
 					Platform.GetService<IReportingWorkflowService>(
@@ -516,10 +517,11 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		public void SendToBeVerified()
 		{
-			if (!_reportEditor.Save(ReportEditorCloseReason.SendToBeVerified))
-				return;
 			try
 			{
+				if (!_reportEditor.Save(ReportEditorCloseReason.SendToBeVerified))
+					return;
+
 				if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && _supervisor == null)
 				{
 					this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
@@ -555,10 +557,11 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		public void SendToTranscription()
 		{
-			if (!_reportEditor.Save(ReportEditorCloseReason.SendToTranscription))
-				return;
 			try
 			{
+				if (!_reportEditor.Save(ReportEditorCloseReason.SendToTranscription))
+					return;
+
 				Platform.GetService<IReportingWorkflowService>(
 					delegate(IReportingWorkflowService service)
 					{
@@ -588,10 +591,11 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		public void SaveReport()
 		{
-			if (!_reportEditor.Save(ReportEditorCloseReason.SaveDraft))
-				return;
 			try
 			{
+				if (!_reportEditor.Save(ReportEditorCloseReason.SaveDraft))
+					return;
+
 				Platform.GetService<IReportingWorkflowService>(
 					delegate(IReportingWorkflowService service)
 					{

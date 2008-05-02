@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             //    delegate(PriorProcedureSummary item) { return "WHAT?"; }));
 
             this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Performed Date",
-                delegate(PriorProcedureSummary item) { return Format.Date(item.PerformedDate.Value); }));
+                delegate(PriorProcedureSummary item) { return item.PerformedDate == null ? null : Format.Date(item.PerformedDate.Value); }));
             this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Report Status",
                 delegate(PriorProcedureSummary item) { return item.ReportStatus.Value; }));
         }
