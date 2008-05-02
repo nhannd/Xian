@@ -456,8 +456,8 @@ namespace ClearCanvas.Ris.Client.Adt
             Platform.GetService<IModalityWorkflowService>(
                 delegate(IModalityWorkflowService service)
                 {
-                    GetProcedurePlanForWorklistItemRequest procedurePlanRequest = new GetProcedurePlanForWorklistItemRequest(_worklistItem.ProcedureStepRef);
-                    GetProcedurePlanForWorklistItemResponse procedurePlanResponse = service.GetProcedurePlanForWorklistItem(procedurePlanRequest);
+                    GetProcedurePlanRequest procedurePlanRequest = new GetProcedurePlanRequest(_worklistItem.ProcedureStepRef);
+                    GetProcedurePlanResponse procedurePlanResponse = service.GetProcedurePlan(procedurePlanRequest);
                     _procedurePlan = procedurePlanResponse.ProcedurePlan;
                 });
 

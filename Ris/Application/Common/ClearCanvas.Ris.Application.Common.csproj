@@ -365,8 +365,8 @@
     <Compile Include="ModalityWorkflow\DiscontinueModalityPerformedProcedureStepResponse.cs" />
     <Compile Include="ModalityWorkflow\DiscontinueModalityProcedureStepsRequest.cs" />
     <Compile Include="ModalityWorkflow\DiscontinueModalityProcedureStepsResponse.cs" />
-    <Compile Include="ModalityWorkflow\GetProcedurePlanForWorklistItemRequest.cs" />
-    <Compile Include="ModalityWorkflow\GetProcedurePlanForWorklistItemResponse.cs" />
+    <Compile Include="ModalityWorkflow\GetProcedurePlanRequest.cs" />
+    <Compile Include="ModalityWorkflow\GetProcedurePlanResponse.cs" />
     <Compile Include="ModalityWorkflow\ListPerformedProcedureStepsRequest.cs" />
     <Compile Include="ModalityWorkflow\ListPerformedProcedureStepsResponse.cs" />
     <Compile Include="ModalityWorkflow\ModalityPerformedProcedureStepDetail.cs" />

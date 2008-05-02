@@ -146,6 +146,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
 			DateTime now = Platform.Time;
+			List<InterpretationStep> interpSteps = new List<InterpretationStep>();
 			foreach (Procedure procedure in order.Procedures)
 			{
 				if (procedure.DocumentationProcedureStep != null && procedure.DocumentationProcedureStep.State != ActivityStatus.CM)
@@ -161,6 +162,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 					InterpretationStep interpretationStep = GetPendingInterpretationStep(procedure);
 					if (interpretationStep != null)
 						interpretationStep.Schedule(now);
+					interpSteps.Add(interpretationStep);
 				}
 			}
 
@@ -169,6 +171,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 			CompleteOrderDocumentationResponse response = new CompleteOrderDocumentationResponse();
 			ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
 			response.ProcedurePlan = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
+			response.InterpretationStepRefs = CollectionUtils.Map<InterpretationStep, EntityRef>(interpSteps,
+				delegate(InterpretationStep step) { return step.GetRef(); });
 
 			return response;
 		}

@@ -134,8 +134,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             if (request.SkipSaveReport == false)
                 SaveReportHelper(request, interpretation, supervisor);
 
-            if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.ExtendedProperties[ReportPartDetail.ReportContentKey]))
-                throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
+            ValidateReportTextExists(interpretation);
 
             Operations.CompleteInterpretationForTranscription op = new Operations.CompleteInterpretationForTranscription();
             ReportingProcedureStep nextStep = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
@@ -147,7 +146,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return response;
         }
 
-        [UpdateOperation]
+    	[UpdateOperation]
         [OperationEnablement("CanCompleteInterpretationForVerification")]
         public CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
         {
@@ -159,9 +158,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             if (request.SkipSaveReport == false)
                 SaveReportHelper(request, interpretation, supervisor);
-            
-            if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.ExtendedProperties[ReportPartDetail.ReportContentKey]))
-                throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
+
+			ValidateReportTextExists(interpretation);
 
             Operations.CompleteInterpretationForVerification op = new Operations.CompleteInterpretationForVerification();
             ReportingProcedureStep nextStep = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
@@ -184,8 +182,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             if (request.SkipSaveReport == false)
                 SaveReportHelper(request, interpretation, supervisor);
 
-            if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.ExtendedProperties[ReportPartDetail.ReportContentKey]))
-                throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
+			ValidateReportTextExists(interpretation);
 
             Operations.CompleteInterpretationAndVerify op = new Operations.CompleteInterpretationAndVerify();
             ReportingProcedureStep nextStep = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
@@ -573,5 +570,15 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             saveReportOp.Execute(step, request.ReportPartExtendedProperties, supervisor, this.PersistenceContext);
         }
 
+		private void ValidateReportTextExists(ReportingProcedureStep step)
+		{
+			string content;
+			if (step.ReportPart == null || step.ReportPart.ExtendedProperties == null
+				|| !step.ReportPart.ExtendedProperties.TryGetValue(ReportPartDetail.ReportContentKey, out content)
+				|| string.IsNullOrEmpty(content))
+			{
+				throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
+			}
+		}
     }
 }

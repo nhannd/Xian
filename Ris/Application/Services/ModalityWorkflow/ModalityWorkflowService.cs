@@ -118,19 +118,18 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.ProcedureStepRef)));
         }
 
-        /// <summary>
-        /// Returns a summary of the procedure plan for a specified modality procedure step
-        /// </summary>
-        /// <param name="request"><see cref="GetProcedurePlanForWorklistItemRequest"/></param>
-        /// <returns><see cref="GetProcedurePlanForWorklistItemResponse"/></returns>
-        [ReadOperation]
-        public GetProcedurePlanForWorklistItemResponse GetProcedurePlanForWorklistItem(GetProcedurePlanForWorklistItemRequest request)
+    	/// <summary>
+    	/// Returns a summary of the procedure plan for a specified order.
+    	/// </summary>
+    	/// <param name="request"><see cref="GetProcedurePlanRequest"/></param>
+    	/// <returns><see cref="GetProcedurePlanResponse"/></returns>
+    	[ReadOperation]
+        public GetProcedurePlanResponse GetProcedurePlan(GetProcedurePlanRequest request)
         {
-            ProcedureStep mps = this.PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef);
-            Order order = mps.Procedure.Order;
+			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+             
             ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
-
-            GetProcedurePlanForWorklistItemResponse response = new GetProcedurePlanForWorklistItemResponse();
+            GetProcedurePlanResponse response = new GetProcedurePlanResponse();
             response.ProcedurePlan = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
             return response;
         }

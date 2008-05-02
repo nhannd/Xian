@@ -62,12 +62,12 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
 
         /// <summary>
-        /// Returns a summary of the procedure plan for a specified modality procedure step
+        /// Returns a summary of the procedure plan for a specified order.
         /// </summary>
-        /// <param name="request"><see cref="GetProcedurePlanForWorklistItemRequest"/></param>
-        /// <returns><see cref="GetProcedurePlanForWorklistItemResponse"/></returns>
+        /// <param name="request"><see cref="GetProcedurePlanRequest"/></param>
+        /// <returns><see cref="GetProcedurePlanResponse"/></returns>
         [OperationContract]
-        GetProcedurePlanForWorklistItemResponse GetProcedurePlanForWorklistItem(GetProcedurePlanForWorklistItemRequest request);
+        GetProcedurePlanResponse GetProcedurePlan(GetProcedurePlanRequest request);
 
         /// <summary>
         /// Returns a list of all modality performed procedure steps for a particular order.

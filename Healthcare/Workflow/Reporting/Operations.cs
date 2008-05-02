@@ -126,7 +126,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 		{
 			protected void UpdateStep(InterpretationStep step, Staff currentUserStaff)
 			{
-				step.Complete(currentUserStaff);
+				if(step.PerformingStaff == null)
+					step.Complete(currentUserStaff);
+				else 
+					step.Complete();
 
 				// move draft report to prelim status
 				if (step.ReportPart.Status == ReportPartStatus.D)

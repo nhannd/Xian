@@ -29,16 +29,20 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class GetProcedurePlanForWorklistItemResponse : DataContractBase
+    public class GetProcedurePlanRequest : DataContractBase
     {
-        [DataMember] 
-        public ProcedurePlanDetail ProcedurePlan;
+        public GetProcedurePlanRequest(EntityRef orderRef)
+        {
+            OrderRef = orderRef;
+        }
+
+        [DataMember]
+        public EntityRef OrderRef;
     }
 }
