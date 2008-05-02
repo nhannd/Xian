@@ -11,9 +11,8 @@
                 BorderWidth="0px">
                 <asp:TableHeaderRow>
                     <asp:TableHeaderCell ColumnSpan="1" Width="100%" HorizontalAlign="Left" VerticalAlign="Bottom">
-                        <asp:Panel ID="Panel2" runat="server" CssClass="CSSToolbarPanelContainer">
-                            <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
-                                <asp:Panel ID="Panel4" runat="server" CssClass="CSSToolbarContent">
+                        <asp:Panel ID="Panel2" runat="server" CssClass="ToolbarPanelContainer">
+                                <asp:Panel ID="Panel4" runat="server" CssClass="ToolbarContent">
                                     <clearcanvas:ToolbarButton
                                                         ID="AddToolbarButton" runat="server" 
                                                         EnabledImageURL="~/images/icons/AddEnabled.png" 
@@ -33,33 +32,31 @@
                                                         OnClick="DeleteButton_Click" AlternateText="Delete a server rule"
                                                         />      
                                                        
-                                </asp:Panel>
                             </asp:Panel>
                         </asp:Panel>
                     </asp:TableHeaderCell>
                     <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom" Wrap="false">
-                        <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
-                            <asp:Panel ID="Panel5" runat="server" CssClass="CSSFilterPanelBorder">
-                                <asp:Panel ID="Panel6" runat="server" CssClass="CSSFilterPanelContent" DefaultButton="FilterToolbarButton">
+                        <asp:Panel ID="FilterPanel" runat="server" CssClass="FilterPanelContainer">
+                                <asp:Panel ID="Panel6" runat="server" CssClass="FilterPanelContent" DefaultButton="FilterToolbarButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label1" runat="server" Text="Type" CssClass="CSSTextBoxLabel" EnableViewState="False" /><br />
-                                                <asp:DropDownList ID="RuleTypeDropDownList" runat="server" CssClass="CSSFilterDropDownList" ToolTip="Filter by type" />
+                                                <asp:Label ID="Label1" runat="server" Text="Type" CssClass="FilterTextBoxLabel" EnableViewState="False" /><br />
+                                                <asp:DropDownList ID="RuleTypeDropDownList" runat="server" CssClass="FilterDropDownList" ToolTip="Filter by type" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label2" runat="server" Text="Apply Time" CssClass="CSSTextBoxLabel"
+                                                <asp:Label ID="Label2" runat="server" Text="Apply Time" CssClass="FilterTextBoxLabel"
                                                     EnableViewState="False"></asp:Label><br />
-                                                <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" CssClass="CSSFilterDropDownList" ToolTip="Filter by apply time"/>
+                                                <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" CssClass="FilterDropDownList" ToolTip="Filter by apply time"/>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label3" runat="server" Text="Status" CssClass="CSSTextBoxLabel"></asp:Label><br />
-                                                <asp:DropDownList ID="StatusFilter" runat="server" CssClass="CSSFilterDropDownList">
+                                                <asp:Label ID="Label3" runat="server" Text="Status" CssClass="FilterTextBoxLabel"></asp:Label><br />
+                                                <asp:DropDownList ID="StatusFilter" runat="server" CssClass="FilterDropDownList">
                                                 </asp:DropDownList>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label4" runat="server" Text="Default" CssClass="CSSTextBoxLabel"></asp:Label><br />
-                                                <asp:DropDownList ID="DefaultFilter" runat="server" CssClass="CSSFilterDropDownList">
+                                                <asp:Label ID="Label4" runat="server" Text="Default" CssClass="FilterTextBoxLabel"></asp:Label><br />
+                                                <asp:DropDownList ID="DefaultFilter" runat="server" CssClass="FilterDropDownList">
                                                 </asp:DropDownList>
                                             </td>
                                             <td align="right" valign="bottom">
@@ -74,19 +71,17 @@
                                             </td>
                                         </tr>
                                     </table>
-                                </asp:Panel>
                             </asp:Panel>
                         </asp:Panel>
                     </asp:TableHeaderCell>
                 </asp:TableHeaderRow>
                 <asp:TableRow>
                     <asp:TableCell ColumnSpan="2" VerticalAlign="Top">
-                        <asp:Panel ID="Panel7" runat="server" CssClass="CSSGridViewPanelContainer" >
-                                <asp:Panel ID="Panel8" runat="server" CssClass="CSSGridViewPanelBorder" >
+                        <asp:Panel ID="Panel7" runat="server" CssClass="GridViewPanelContainer" >
+                                <asp:Panel ID="Panel8" runat="server" CssClass="GridViewPanelBorder" >
                                     <grid:ServerRuleGridView ID="ServerRuleGridViewControl" runat="server"  Height="500px"/>
                                 </asp:Panel>                        
-                        </asp:Panel>
-                        
+                        </asp:Panel> 
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>

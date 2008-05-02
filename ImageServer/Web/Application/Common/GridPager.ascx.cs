@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                 if (GetRecordCountMethod != null)
                 {
                     int numRows = GetRecordCountMethod();
-                    ItemCountLabel.Text = string.Format("{0} {1}", numRows, numRows <= 1 ? ItemName : PuralItemName);
+                    ItemCountLabel.Text = string.Format("{0} {1}", numRows, numRows == 1 ? ItemName : PuralItemName);
                 }
 
 

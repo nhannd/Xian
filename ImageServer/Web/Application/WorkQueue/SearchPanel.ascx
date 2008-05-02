@@ -13,8 +13,8 @@
             <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0" BorderWidth="0px">
                 <asp:TableHeaderRow>
                     <asp:TableHeaderCell HorizontalAlign="left" Width="100%">
-                        <asp:Panel ID="Panel2" runat="server" CssClass="CSSToolbarPanelContainer">
-                                <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
+                        <asp:Panel ID="Panel2" runat="server" CssClass="ToolbarPanelContainer">
+                                <asp:Panel ID="Panel3" runat="server" CssClass="ToolbarPanelBorder" Wrap="False">
                                     <clearcanvas:ToolbarButton
                                             ID="ViewToolbarButton1" runat="server" 
                                             EnabledImageURL="~/images/icons/ViewDetailsEnabled.png" 
@@ -38,45 +38,45 @@
                             
                     </asp:TableHeaderCell>
                     <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom">
-                        <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
-                            <asp:Panel ID="Panel5" runat="server" CssClass="CSSFilterPanelBorder">
-                                <asp:Panel ID="Panel6" runat="server" CssClass="CSSFilterPanelContent" DefaultButton="FilterButton">
+                        <asp:Panel ID="FilterPanel" runat="server" CssClass="FilterPanelContainer">
+                            <asp:Panel ID="Panel5" runat="server" CssClass="FilterPanelBorder">
+                                <asp:Panel ID="Panel6" runat="server" CssClass="FilterPanelContent" DefaultButton="FilterButton">
                                     <table cellpadding="3" cellspacing="0">
                                         <tr>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label2" runat="server" Text="Patient ID" Width="100px" Style="padding-right: 5px"
+                                                <asp:Label ID="Label2" runat="server" Text="Patient ID" Width="100px" CssClass="FilterTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="PatientId" runat="server" Width="100px" ToolTip="Filter the list by Patient Id" />
+                                                <asp:TextBox ID="PatientId" runat="server" Width="100px" CssClass="FilterTextBox" ToolTip="Filter the list by Patient Id" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label3" runat="server" Text="Accession#" Width="100px" Style="padding-right: 5px"
+                                                <asp:Label ID="Label3" runat="server" Text="Accession#" Width="100px" CssClass="FilterTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="AccessionNumber" runat="server" Width="100px" ToolTip="Filter the list by Accession Number" />
+                                                <asp:TextBox ID="AccessionNumber" runat="server" Width="100px" CssClass="FilterTextBox" ToolTip="Filter the list by Accession Number" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label4" runat="server" Text="Description" Width="100px" Style="padding-right: 5px"
+                                                <asp:Label ID="Label4" runat="server" Text="Description" Width="100px" CssClass="FilterTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="StudyDescription" runat="server" Width="100px" ToolTip="Filter the list by Study Description" />
+                                                <asp:TextBox ID="StudyDescription" runat="server" Width="100px" CssClass="FilterTextBox" ToolTip="Filter the list by Study Description" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label1" runat="server" Text="Schedule" Style="padding-right: 0px" />
+                                                <asp:Label ID="Label1" runat="server" Text="Schedule" CssClass="FilterTextBoxLabel" />
                                                 <asp:ImageButton ID="ClearScheduleDateButton" runat="server" ImageUrl="~/images/icons/ClearDate.png" AlternateText="Clear Date" />
-                                                <asp:TextBox ID="ScheduleDate" runat="server" Width="100px" ReadOnly="true" ToolTip="Filter the list by Schedule Date [dd/mm/yyyy]" />
+                                                <asp:TextBox ID="ScheduleDate" runat="server" Width="100px" ReadOnly="true" CssClass="FilterTextBox" ToolTip="Filter the list by Schedule Date [dd/mm/yyyy]" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label5" runat="server" Text="Type" Width="68px" Style="padding-right: 5px"
+                                                <asp:Label ID="Label5" runat="server" Text="Type" Width="68px" CssClass="FilterTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:DropDownList ID="TypeDropDownList" runat="server" Width="120px">
+                                                <asp:DropDownList ID="TypeDropDownList" runat="server" CssClass="FilterDropDownList" Width="120px">
                                                 </asp:DropDownList></td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label6" runat="server" Text="Status" Width="68px" Style="padding-right: 5px"
+                                                <asp:Label ID="Label6" runat="server" Text="Status" Width="68px" CssClass="FilterTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:DropDownList ID="StatusDropDownList" runat="server" Width="120px">
+                                                <asp:DropDownList ID="StatusDropDownList" runat="server" Width="120px" CssClass="FilterDropDownList">
                                                 </asp:DropDownList></td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label7" runat="server" Text="Priority" Width="68px" Style="padding-right: 5px"
+                                                <asp:Label ID="Label7" runat="server" Text="Priority" Width="68px" CssClass="FilterTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:DropDownList ID="PriorityDropDownList" runat="server" Width="120px">
+                                                <asp:DropDownList ID="PriorityDropDownList" runat="server" Width="120px" CssClass="FilterDropDownList">
                                                 </asp:DropDownList></td>
                                             <td align="right" valign="bottom" style="width: 57px">
                                                 <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png"
@@ -94,8 +94,8 @@
                 </asp:TableHeaderRow>
                 <asp:TableRow>
                     <asp:TableCell ColumnSpan="2">
-                        <asp:Panel runat="server" CssClass="CSSGridViewPanelContainer">
-                                <asp:Panel runat="server" CssClass="CSSGridViewPanelBorder" >
+                        <asp:Panel runat="server" CssClass="GridViewPanelContainer">
+                                <asp:Panel runat="server" CssClass="GridViewPanelBorder" >
                                     <clearcanvas:WorkQueueSearchResultPanel ID="workQueueItemListPanel" Height="500px" AllowPaging="true" PageSize="20" runat="server"></clearcanvas:WorkQueueSearchResultPanel>
                                 </asp:Panel>                        
                         </asp:Panel>

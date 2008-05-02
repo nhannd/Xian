@@ -1,7 +1,6 @@
 .FilterPanelContainer
 {
     margin: 5px 0px 5px 5px;
-    border: solid 1px #cccccc;
 }
 
 .FilterPanelContent
@@ -40,6 +39,8 @@
 	width: 120px;
 	margin-left: 3px;
 	margin-right: 3px;
+	font-family: Sans-Serif;
+	font-size: 11px;
 }
 
 .FilterButtonContainer

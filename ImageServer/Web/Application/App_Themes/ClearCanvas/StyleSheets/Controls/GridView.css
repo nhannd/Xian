@@ -6,6 +6,7 @@
 /* Container for the gridview */
 .CSSGridViewPanelContainer
 {
+    border: solid 1px #cccccc;
 }
 
 /* border of the gridview */
@@ -16,6 +17,7 @@
 /* gridview content panel */
 .CSSGridViewPanelContent
 {
+    border: solid 1px #cccccc;
 }
 
 
@@ -80,19 +82,19 @@
 
 
 /* Grid pager control panel container */
-.CSSGridPagerPanelContainer
+.GridPagerPanelContainer
 {
-}
-
-/* grid pager panel border */
-.CSSGridPagerPanelBorder
-{
-
 }
 
 /*grid pager panel content */
-.CSSGridPagerPanelContent
+.GridPagerPanelContent
 {
-	background-image: url(images/gridheaderbackground.png);
-	background-repeat: repeat-x;
+    font-family: Sans-Serif;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.GridPagerNavigation
+{
+    margin: 2px 5px 0px 0px;
 }

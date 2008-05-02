@@ -29,15 +29,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// Panel2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel2;
-        
-        /// <summary>
         /// Panel3 control.
         /// </summary>
         /// <remarks>
@@ -63,6 +54,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label PageCountLabel;
+        
+        /// <summary>
+        /// GridPagerNavigation control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel GridPagerNavigation;
         
         /// <summary>
         /// PrevPageButton control.

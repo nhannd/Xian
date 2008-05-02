@@ -4,8 +4,11 @@
 <head runat="server">
     <title>Untitled Page</title>
     <style runat="server" type="text/css" id="IE6PNGBugFixCSS" />
+    <script type="text/javascript">
+        var handleEnter = true;
+    </script>
 </head>
-<body class="GlobalBody">
+<body id="MasterBody" runat="server" class="GlobalBody">
 
     <script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/NumberFormat154.js") %>"></script>
 

@@ -17,9 +17,8 @@
                     <asp:TableHeaderCell HorizontalAlign="Left">
                         <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                             <ContentTemplate>
-                                <asp:Panel ID="Panel1"  runat="server" CssClass="CSSToolbarPanelContainer">
-                                    <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
-                                        <asp:Panel ID="Panel4" runat="server" CssClass="CSSToolbarContent">
+                                <asp:Panel ID="Panel1"  runat="server" CssClass="ToolbarPanelContainer">
+                                        <asp:Panel ID="Panel4" runat="server" CssClass="ToolbarContent">
                                             <clearcanvas:ToolbarButton 
                                                 ID="OpenStudyToolbarButton" runat="server" 
                                                 EnabledImageURL="~/images/icons/ViewDetailsEnabled.png" 
@@ -39,7 +38,6 @@
                                                 AlternateText="Delete study"
                                                 OnClick="OnDeleteToolbarButtonClick"
                                                 />
-                                </asp:Panel>
                                     </asp:Panel>
                                 </asp:Panel>
                              </ContentTemplate>

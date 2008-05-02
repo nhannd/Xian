@@ -3,6 +3,7 @@
 <%@ Register Src="ModalDialog.ascx" TagName="ModalDialog" TagPrefix="uc1" %>
 <uc1:ModalDialog ID="ModalDialog" runat="server" Title="" >
     <ContentTemplate>
+        <asp:ScriptManagerProxy ID="DialogScriptManager" runat="server"/>
         <asp:Panel ID="Panel3" runat="server">
             <asp:Panel ID="Panel1" runat="server">
                 <table cellspacing="0" cellpadding="0">
@@ -19,7 +20,7 @@
                         <td>
                         </td>
                         <td align="center">
-                            <asp:Panel ID="ButtonPanel" runat="server">
+                            <asp:Panel ID="ButtonPanel" runat="server" DefaultButton="NoButton">
                                  <table width="50%" cellspacing="10">
                                     <tr>
                                         <td>

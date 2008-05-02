@@ -30,17 +30,16 @@
                         </asp:Panel>
                     </asp:TableHeaderCell>
                     <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom" Wrap="false">
-                        <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
-                            <asp:Panel ID="Panel5" runat="server" CssClass="CSSFilterPanelBorder">
-                                <asp:Panel ID="Panel6" runat="server" CssClass="CSSFilterPanelContent" DefaultButton="FilterToolbarButton">
+                        <asp:Panel ID="FilterPanel" runat="server" CssClass="FilterPanelContainer">
+                                <asp:Panel ID="Panel6" runat="server" CssClass="FilterPanelContent" DefaultButton="FilterToolbarButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                             <td align="left">
-                                                <asp:Label ID="Label1" runat="server" Text="Description" CssClass="CSSTextBoxLabel"></asp:Label><br />
-                                                <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="CSSFilterTextBox" ToolTip="Filter by description"></asp:TextBox></td>
+                                                <asp:Label ID="Label1" runat="server" Text="Description" CssClass="FilterTextBoxLabel"></asp:Label><br />
+                                                <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="FilterTextBox" ToolTip="Filter by description"></asp:TextBox></td>
                                             <td align="left">
-                                                <asp:Label ID="Label2" runat="server" Text="Tiers" CssClass="CSSTextBoxLabel"></asp:Label><br />
-                                                <asp:DropDownList ID="TiersDropDownList" runat="server" CssClass="CSSFilterDropDownList">
+                                                <asp:Label ID="Label2" runat="server" Text="Tiers" CssClass="FilterTextBoxLabel"></asp:Label><br />
+                                                <asp:DropDownList ID="TiersDropDownList" runat="server" CssClass="FilterDropDownList">
                                                 </asp:DropDownList></td>
                                             <td align="right" valign="bottom">
                                                 <asp:Panel ID="FilterButtonContainer" runat="server" CssClass="FilterButtonContainer">
@@ -56,14 +55,13 @@
                                         </tr> 
                                     </table>
                             </asp:Panel>
-                            </asp:Panel>
                         </asp:Panel>
                     </asp:TableHeaderCell> 
                  </asp:TableHeaderRow>
                 <asp:TableRow Height="100%">
                     <asp:TableCell ColumnSpan="2">
-                        <asp:Panel ID="Panel7" runat="server" CssClass="CSSGridViewPanelContainer" >
-                                <asp:Panel ID="Panel8" runat="server" CssClass="CSSGridViewPanelBorder" >
+                        <asp:Panel ID="Panel7" runat="server" CssClass="GridViewPanelContainer" >
+                                <asp:Panel ID="Panel8" runat="server" CssClass="GridViewPanelBorder" >
                                     <uc1:FileSystemsGridView ID="FileSystemsGridView1" runat="server"  Height="500px"/>
                                 </asp:Panel>                        
                         </asp:Panel>

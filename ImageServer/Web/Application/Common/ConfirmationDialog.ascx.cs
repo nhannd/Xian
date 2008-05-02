@@ -145,7 +145,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
         #region Events
 
-
         /// <summary>
         /// Defines the event handler for <seealso cref="Confirmed"/> event.
         /// </summary>
@@ -156,7 +155,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         /// Occurs when users click on "Yes" or "OK"
         /// </summary>
         public event ConfirmedEventHandler Confirmed;
-
 
         #endregion Events
 
@@ -204,7 +202,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                     break;
             }
 
+            if (NoButton.Visible)
+            {
+                Page.ClientScript.RegisterStartupScript(GetType(), "SetFocus", "<script>alert('!!!');</script>");
+            }
+            
             base.OnPreRender(e);
+        }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            
         }
         
         protected void YesButton_Click(object sender, EventArgs e)
