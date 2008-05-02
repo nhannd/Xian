@@ -41,15 +41,11 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public CompleteVerificationRequest(EntityRef verificationStepRef)
             :base(verificationStepRef, null, null)
         {
-            this.SkipSaveReport = true;
         }
 
         public CompleteVerificationRequest(EntityRef verificationStepRef, Dictionary<string, string> reportPartExtendedProperties)
             :base(verificationStepRef, reportPartExtendedProperties, null)
         {
         }
-
-        [DataMember]
-        public bool SkipSaveReport;
     }
 }

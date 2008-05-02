@@ -41,7 +41,6 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public CompleteInterpretationRequestBase(EntityRef reportingStepRef)
             : base(reportingStepRef, null, null)
         {
-            this.SkipSaveReport = true;
         }
 
         public CompleteInterpretationRequestBase(EntityRef reportingStepRef
@@ -50,8 +49,5 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             : base(reportingStepRef, reportPartExtendedProperties, supervisorRef)
         {
         }
-
-        [DataMember]
-        public bool SkipSaveReport;
     }
 }

@@ -131,8 +131,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
             Staff supervisor = GetSupervisor(interpretation, request.SupervisorRef);
 
-            if (request.SkipSaveReport == false)
-                SaveReportHelper(request, interpretation, supervisor);
+            SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor);
 
             ValidateReportTextExists(interpretation);
 
@@ -156,8 +155,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && supervisor == null)
                 throw new RequestValidationException(SR.ExceptionResidentReportMissingSupervisor);
 
-            if (request.SkipSaveReport == false)
-                SaveReportHelper(request, interpretation, supervisor);
+            SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor);
 
 			ValidateReportTextExists(interpretation);
 
@@ -179,8 +177,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
             Staff supervisor = GetSupervisor(interpretation, request.SupervisorRef);
 
-            if (request.SkipSaveReport == false)
-                SaveReportHelper(request, interpretation, supervisor);
+            SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor);
 
 			ValidateReportTextExists(interpretation);
 
@@ -247,8 +244,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         {
             VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
 
-            if (request.SkipSaveReport == false)
-                SaveReportHelper(request, verification, null);
+            SaveReportHelper(request.ReportPartExtendedProperties, verification, null);
 
             if (verification.ReportPart == null || String.IsNullOrEmpty(verification.ReportPart.ExtendedProperties[ReportPartDetail.ReportContentKey]))
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
@@ -333,7 +329,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
             Staff supervisor = GetSupervisor(step, request.SupervisorRef);
 
-            SaveReportHelper(request, step, supervisor);
+			SaveReportHelper(request.ReportPartExtendedProperties, step, supervisor);
 
             PersistenceContext.SynchState();
             return new SaveReportResponse(step.GetRef());
@@ -564,10 +560,13 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return supervisor;
         }
 
-        private void SaveReportHelper(SaveReportRequest request, ReportingProcedureStep step, Staff supervisor)
+        private void SaveReportHelper(Dictionary<string, string> reportPartExtendedProperties, ReportingProcedureStep step, Staff supervisor)
         {
+			if (reportPartExtendedProperties == null)
+				return;
+
             Operations.SaveReport saveReportOp = new Operations.SaveReport();
-            saveReportOp.Execute(step, request.ReportPartExtendedProperties, supervisor, this.PersistenceContext);
+			saveReportOp.Execute(step, reportPartExtendedProperties, supervisor, this.PersistenceContext);
         }
 
 		private void ValidateReportTextExists(ReportingProcedureStep step)
