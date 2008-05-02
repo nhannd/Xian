@@ -73,6 +73,8 @@
     <Compile Include="PatientProfileAdditionalInfoEditorComponent.cs" />
     <Compile Include="PatientProfileDetailsEditorComponent.cs" />
     <Compile Include="PatientProfileEditorComponent.cs" />
+    <Compile Include="PreliminaryDiagnosisConversationComponent.cs" />
+    <Compile Include="PreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="RefreshTool.cs" />
     <Compile Include="SearchTool.cs" />
     <Compile Include="SessionManagerTool.cs" />
@@ -367,6 +369,15 @@
   <ItemGroup>
     <EmbeddedResource Include="Icons\NoteRead.png" />
     <EmbeddedResource Include="Icons\NoteUnread.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PreliminaryDiagnosisToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PreliminaryDiagnosisToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PreliminaryDiagnosisToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
