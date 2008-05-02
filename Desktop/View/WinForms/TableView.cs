@@ -61,7 +61,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 	    private bool _isLoaded = false;
 
-        private const int CUSTOM_CONTENT_HEIGHT = 20;
+        private const int CELL_SUBROW_HEIGHT = 18;
         private readonly int _rowHeight = 0;
 
         public TableView()
@@ -260,21 +260,20 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                 if (_table != null)
                 {
-                    //_bindingSource.DataSource = new TableAdapter(_table);
-                    //_dataGridView.DataSource = _bindingSource;
-                    _dataGridView.DataSource = new TableAdapter(_table);
-
                     // Set a cell padding to provide space for the top of the focus 
                     // rectangle and for the content that spans multiple columns. 
                     Padding newPadding = new Padding(0, 1, 0,
-                        CUSTOM_CONTENT_HEIGHT * ((int)_table.CellRowCount - 1));
+                        CELL_SUBROW_HEIGHT * ((int)_table.CellRowCount - 1));
                     this.DataGridView.RowTemplate.DefaultCellStyle.Padding = newPadding;
 
                     // Set the row height to accommodate the content that 
                     // spans multiple columns.
-                    this.DataGridView.RowTemplate.Height = _rowHeight + CUSTOM_CONTENT_HEIGHT * ((int)_table.CellRowCount - 1);
+                    this.DataGridView.RowTemplate.Height = _rowHeight + CELL_SUBROW_HEIGHT * ((int)_table.CellRowCount - 1);
 
-                    _table.Sorted += new EventHandler(_table_SortEvent);
+					// DataSource must be set after RowTemplate in order for changes to take effect
+					_dataGridView.DataSource = new TableAdapter(_table);
+
+					_table.Sorted += new EventHandler(_table_SortEvent);
                 }
 
                 InitializeSortButton();
@@ -522,52 +521,64 @@ namespace ClearCanvas.Desktop.View.WinForms
                     forebrush = new SolidBrush(e.InheritedRowStyle.ForeColor);
                 }
 
-                StringBuilder sb = new StringBuilder();
+				// Store text for each subrow
+				StringBuilder[] sb = new StringBuilder[_table.CellRowCount];
+				for (int i = 0; i < _table.CellRowCount; i++)
+				{
+					sb[i] = new StringBuilder();
+				}
 
-                for (int i = 0; i < _table.Columns.Count; i++)
-                {
-                    ITableColumn col = _table.Columns[i] as ITableColumn;
-                    if (col != null && col.CellRow > 0)
-                    {
-                        DataGridViewRow row = this.DataGridView.Rows[e.RowIndex];
-                        object recipe = row.Index != -1 ? row.Cells[i].Value : null;
+				for (int i = 0; i < _table.Columns.Count; i++)
+				{
+					ITableColumn col = _table.Columns[i] as ITableColumn;
+					if (col != null && col.CellRow > 0)
+					{
+						DataGridViewRow row = this.DataGridView.Rows[e.RowIndex];
+						object recipe = row.Index != -1 ? row.Cells[i].Value : null;
 
-                        if (recipe != null)
-                        {
-                            sb.Append(recipe + " ");
-                        }
+						if (recipe != null)
+						{
+							sb[col.CellRow].Append(recipe + " ");
+						}
 
-                    }
-                }
+					}
+				}
 
-                string text = sb.ToString().Trim();
+				// Draw text for each sub row (Rows 1 and higher in the Table)
+				for (int i = 1; i < _table.CellRowCount; i++)
+				{
+					string text = sb[i].ToString().Trim();
 
-                if (string.IsNullOrEmpty(text) == false)
-                {
-                    // Calculate the bounds for the content that spans multiple 
-                    // columns, adjusting for the horizontal scrolling position 
-                    // and the current row height, and displaying only whole
-                    // lines of text.
-                    Rectangle textArea = rowBounds;
-                    textArea.X -= this.DataGridView.HorizontalScrollingOffset;
-                    textArea.Width += this.DataGridView.HorizontalScrollingOffset;
-                    textArea.Y += rowBounds.Height - e.InheritedRowStyle.Padding.Bottom;
-                    textArea.Height -= rowBounds.Height - e.InheritedRowStyle.Padding.Bottom;
-                    textArea.Height = (textArea.Height / e.InheritedRowStyle.Font.Height) * e.InheritedRowStyle.Font.Height;
+					if (string.IsNullOrEmpty(text) == false)
+					{
+						// Calculate the bounds for the content that spans multiple 
+						// columns, adjusting for the horizontal scrolling position 
+						// and the current row height, and displaying only whole
+						// lines of text.
+						Rectangle textArea = rowBounds;
+						textArea.X -= this.DataGridView.HorizontalScrollingOffset;
+						textArea.Width += this.DataGridView.HorizontalScrollingOffset;
+						textArea.Y += _rowHeight + (i-1)*CELL_SUBROW_HEIGHT;
+						textArea.Height = CELL_SUBROW_HEIGHT;
 
-                    // Calculate the portion of the text area that needs painting.
-                    RectangleF clip = textArea;
-                    int startX = this.DataGridView.RowHeadersVisible ? this.DataGridView.RowHeadersWidth : 0;
-                    clip.Width -= startX + 1 - clip.X;
-                    clip.X = startX + 1;
-                    RectangleF oldClip = e.Graphics.ClipBounds;
-                    e.Graphics.SetClip(clip);
+						// Calculate the portion of the text area that needs painting.
+						RectangleF clip = textArea;
+						int startX = this.DataGridView.RowHeadersVisible ? this.DataGridView.RowHeadersWidth : 0;
+						clip.Width -= startX + 1 - clip.X;
+						clip.X = startX + 1;
+						RectangleF oldClip = e.Graphics.ClipBounds;
+						e.Graphics.SetClip(clip);
 
-                    // Draw the content that spans multiple columns.
-                    e.Graphics.DrawString(text, e.InheritedRowStyle.Font, forebrush, textArea);
+						// Use a different font for subrows
+						// TODO: Make this a parameter of the Table
+						Font subRowFont = new Font(e.InheritedRowStyle.Font, FontStyle.Italic);
 
-                    e.Graphics.SetClip(oldClip);
-                }
+						// Draw the content that spans multiple columns.
+						e.Graphics.DrawString(text, subRowFont, forebrush, textArea);
+
+						e.Graphics.SetClip(oldClip);
+					}
+				}
             }
             finally
             {

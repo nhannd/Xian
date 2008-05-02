@@ -178,6 +178,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        internal static string ColumnDescription {
+            get {
+                return ResourceManager.GetString("ColumnDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Diagnostic Service.
         /// </summary>
         internal static string ColumnDiagnosticService {
@@ -246,6 +255,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string ColumnFamilyName {
             get {
                 return ResourceManager.GetString("ColumnFamilyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to From.
+        /// </summary>
+        internal static string ColumnFrom {
+            get {
+                return ResourceManager.GetString("ColumnFrom", resourceCulture);
             }
         }
         
@@ -354,6 +372,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string ColumnPatientClass {
             get {
                 return ResourceManager.GetString("ColumnPatientClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient Name.
+        /// </summary>
+        internal static string ColumnPatientName {
+            get {
+                return ResourceManager.GetString("ColumnPatientName", resourceCulture);
             }
         }
         
@@ -520,6 +547,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to To.
+        /// </summary>
+        internal static string ColumnTo {
+            get {
+                return ResourceManager.GetString("ColumnTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Type.
         /// </summary>
         internal static string ColumnType {
@@ -664,11 +700,29 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to From: {0} - {1}.
+        /// </summary>
+        internal static string FormatFrom {
+            get {
+                return ResourceManager.GetString("FormatFrom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} - Severity {1}.
         /// </summary>
         internal static string FormatNoteCategory {
             get {
                 return ResourceManager.GetString("FormatNoteCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To:     {0}.
+        /// </summary>
+        internal static string FormatTo {
+            get {
+                return ResourceManager.GetString("FormatTo", resourceCulture);
             }
         }
         

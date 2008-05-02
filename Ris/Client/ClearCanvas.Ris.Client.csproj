@@ -361,6 +361,13 @@
   <ItemGroup>
     <EmbeddedResource Include="Icons\SearchToolMedium.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Mail.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\NoteRead.png" />
+    <EmbeddedResource Include="Icons\NoteUnread.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

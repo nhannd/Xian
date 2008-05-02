@@ -156,6 +156,9 @@
   <data name="ColumnDateOfBirth" xml:space="preserve">
     <value>Date Of Birth</value>
   </data>
+  <data name="ColumnDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
   <data name="ColumnDiagnosticService" xml:space="preserve">
     <value>Diagnostic Service</value>
   </data>
@@ -179,6 +182,9 @@
   </data>
   <data name="ColumnFamilyName" xml:space="preserve">
     <value>Family Name</value>
+  </data>
+  <data name="ColumnFrom" xml:space="preserve">
+    <value>From</value>
   </data>
   <data name="ColumnGivenName" xml:space="preserve">
     <value>Given Name</value>
@@ -215,6 +221,9 @@
   </data>
   <data name="ColumnPatientClass" xml:space="preserve">
     <value>Patient Class</value>
+  </data>
+  <data name="ColumnPatientName" xml:space="preserve">
+    <value>Patient Name</value>
   </data>
   <data name="ColumnPatientType" xml:space="preserve">
     <value>Patient Type</value>
@@ -270,6 +279,9 @@
   <data name="ColumnStatusDescription" xml:space="preserve">
     <value>Status Description</value>
   </data>
+  <data name="ColumnTo" xml:space="preserve">
+    <value>To</value>
+  </data>
   <data name="ColumnType" xml:space="preserve">
     <value>Type</value>
   </data>
@@ -318,8 +330,14 @@
   <data name="ExceptionWeakSearchCriteria" xml:space="preserve">
     <value>Search criteria would return too many results.  Try repeating the search with different criteria.</value>
   </data>
+  <data name="FormatFrom" xml:space="preserve">
+    <value>From: {0} - {1}</value>
+  </data>
   <data name="FormatNoteCategory" xml:space="preserve">
     <value>{0} - Severity {1}</value>
+  </data>
+  <data name="FormatTo" xml:space="preserve">
+    <value>To:     {0}</value>
   </data>
   <data name="LabelMe" xml:space="preserve">
     <value>Me</value>
