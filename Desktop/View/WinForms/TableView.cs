@@ -573,8 +573,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 						// TODO: Make this a parameter of the Table
 						Font subRowFont = new Font(e.InheritedRowStyle.Font, FontStyle.Italic);
 
+						StringFormat format = new StringFormat();
+						format.FormatFlags = StringFormatFlags.NoWrap;
+						format.Trimming = StringTrimming.EllipsisWord;
+
 						// Draw the content that spans multiple columns.
-						e.Graphics.DrawString(text, subRowFont, forebrush, textArea);
+						e.Graphics.DrawString(text, subRowFont, forebrush, textArea, format);
 
 						e.Graphics.SetClip(oldClip);
 					}
