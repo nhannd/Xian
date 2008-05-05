@@ -66,5 +66,19 @@ namespace ClearCanvas.Workflow
             get { return _endTime; }
             internal set { _endTime = value; }
         }
-    }
+
+		/// <summary>
+		/// Shifts the object in time by the specified number of days, which may be negative or positive.
+		/// </summary>
+		/// <remarks>
+		/// The method is not intended for production use, but is provided for the purpose
+		/// of generating back-dated data for demos and load-testing.
+		/// </remarks>
+		/// <param name="days"></param>
+		public void TimeShift(int days)
+		{
+			_startTime = _startTime.HasValue ? _startTime.Value.AddDays(days) : _startTime;
+			_endTime = _endTime.HasValue ? _endTime.Value.AddDays(days) : _endTime;
+		}
+	}
 }

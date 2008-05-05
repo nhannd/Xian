@@ -293,7 +293,28 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return new ReplaceOrderResponse(orderAssembler.CreateOrderSummary(newOrder, PersistenceContext));
         }
 
-        #endregion
+		[UpdateOperation]
+		public TimeShiftOrderResponse TimeShiftOrder(TimeShiftOrderRequest request)
+    	{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
+
+			// load the order, explicitly ignoring the version (since this is only used for testing/demo data creation, we don't care)
+			Order order = PersistenceContext.Load<Order>(request.OrderRef, EntityLoadFlags.None);
+
+			// shift the order, which will also shift all procedures, etc.
+			order.TimeShift(request.NumberOfDays);
+
+			// shift the visit
+			order.Visit.TimeShift(request.NumberOfDays);
+
+			PersistenceContext.SynchState();
+
+			OrderAssembler orderAssembler = new OrderAssembler();
+			return new TimeShiftOrderResponse(orderAssembler.CreateOrderSummary(order, PersistenceContext));
+		}
+
+    	#endregion
 
         private void ValidateOrderModifiable(Order order)
         {

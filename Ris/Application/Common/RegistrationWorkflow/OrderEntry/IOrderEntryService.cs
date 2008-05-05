@@ -142,6 +142,18 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         [FaultContract(typeof(ConcurrentModificationException))]
         ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request);
 
-
+		/// <summary>
+		/// This method is for testing/demo purposes and is not intended to be called in production.
+		/// It shifts the order and associated visit in time by the specified number of days, which may be negative or positive.
+		/// </summary>
+		/// <remarks>
+		/// This method does not really belong on this interface but there was no other
+		/// convenient place to put it.
+		/// </remarks>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		TimeShiftOrderResponse TimeShiftOrder(TimeShiftOrderRequest request);
     }
 }

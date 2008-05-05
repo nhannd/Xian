@@ -328,6 +328,41 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
+		/// <summary>
+		/// Shifts the object in time by the specified number of days, which may be negative or positive.
+		/// </summary>
+		/// <remarks>
+		/// The method is not intended for production use, but is provided for the purpose
+		/// of generating back-dated data for demos and load-testing.
+		/// </remarks>
+		/// <param name="days"></param>
+		protected internal virtual void TimeShift(int days)
+		{
+			_scheduledStartTime = _scheduledStartTime.HasValue ? _scheduledStartTime.Value.AddDays(days) : _scheduledStartTime;
+			_startTime = _startTime.HasValue ? _startTime.Value.AddDays(days) : _startTime;
+			_endTime = _endTime.HasValue ? _endTime.Value.AddDays(days) : _endTime;
+
+			if(_procedureCheckIn != null)
+			{
+				_procedureCheckIn.TimeShift(days);
+			}
+
+			if (_protocol != null)
+			{
+				_protocol.TimeShift(days);
+			}
+
+			foreach (ProcedureStep step in _procedureSteps)
+			{
+				step.TimeShift(days);
+			}
+
+			foreach (Report report in _reports)
+			{
+				report.TimeShift(days);
+			}
+		}
+
         /// <summary>
         /// Helper method to change the status and also notify the parent order to change its status
         /// if necessary.
@@ -376,5 +411,6 @@ namespace ClearCanvas.Healthcare {
         }
 
         #endregion
-    }
+
+	}
 }

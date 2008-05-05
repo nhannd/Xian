@@ -135,6 +135,20 @@ namespace ClearCanvas.Workflow
             get { return _transitionLogic.IsTerminal(_state); }
         }
 
+		/// <summary>
+		/// Shifts the object in time by the specified number of days, which may be negative or positive.
+		/// </summary>
+		/// <remarks>
+		/// The method is not intended for production use, but is provided for the purpose
+		/// of generating back-dated data for demos and load-testing.
+		/// </remarks>
+		/// <param name="days"></param>
+		public virtual void TimeShift(int days)
+		{
+ 			_lastStateChangeTime =_lastStateChangeTime.AddDays(days);
+ 			_creationTime =_creationTime.AddDays(days);
+		}
+
         /// <summary>
         /// Called when the state changes to allow subclasses to respond.
         /// </summary>
@@ -143,5 +157,5 @@ namespace ClearCanvas.Workflow
         protected virtual void OnStateChanged(TStateEnum previousState, TStateEnum newState)
         {
         }
-    }
+	}
 }

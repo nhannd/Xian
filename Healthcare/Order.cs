@@ -274,6 +274,38 @@ namespace ClearCanvas.Healthcare {
             UpdateEndTime();
         }
 
+		/// <summary>
+		/// Shifts the object in time by the specified number of days, which may be negative or positive.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The method is not intended for production use, but is provided for the purpose
+		/// of generating back-dated data for demos and load-testing.  Calling this method on a
+		/// <see cref="Order"/> will also shift all child objects (Procedures, ProcedureSteps, 
+		/// Reports, ProcedureCheckIn, Protocol).  The <see cref="Visit"/> is not shifted, because
+		/// it is not considered a child of the order.
+		/// </para>
+		/// <para>
+		/// Typically this method is called after the order is performed and the report(s) is 
+		/// created and published, so that the entire order and all resulting documentation is
+		/// shifted in time by the same amount.
+		/// </para>
+		/// </remarks>
+		/// <param name="days"></param>
+		public virtual void TimeShift(int days)
+		{
+			_enteredTime = _enteredTime.AddDays(days);
+			_schedulingRequestTime = _schedulingRequestTime.HasValue ? _schedulingRequestTime.Value.AddDays(days) : _schedulingRequestTime;
+			_scheduledStartTime = _scheduledStartTime.HasValue ? _scheduledStartTime.Value.AddDays(days) : _scheduledStartTime;
+			_startTime = _startTime.HasValue ? _startTime.Value.AddDays(days) : _startTime;
+			_endTime = _endTime.HasValue ? _endTime.Value.AddDays(days) : _endTime;
+
+			foreach (Procedure procedure in _procedures)
+			{
+				procedure.TimeShift(days);
+			}
+		}
+
         #endregion
 
         #region Helper methods
