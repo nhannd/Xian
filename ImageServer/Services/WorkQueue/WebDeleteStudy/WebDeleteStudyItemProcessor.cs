@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
         protected override void ProcessItem(Model.WorkQueue item)
         {
             Platform.Log(LogLevel.Info, "Procesing Web Delete Study entry...");
-            base.Process(item);
+            base.ProcessItem(item);
         }
 
     }
