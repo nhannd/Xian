@@ -136,17 +136,17 @@ namespace ClearCanvas.Workflow
         }
 
 		/// <summary>
-		/// Shifts the object in time by the specified number of days, which may be negative or positive.
+		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
 		/// </summary>
 		/// <remarks>
 		/// The method is not intended for production use, but is provided for the purpose
 		/// of generating back-dated data for demos and load-testing.
 		/// </remarks>
-		/// <param name="days"></param>
-		public virtual void TimeShift(int days)
+		/// <param name="minutes"></param>
+		public virtual void TimeShift(int minutes)
 		{
- 			_lastStateChangeTime =_lastStateChangeTime.AddDays(days);
- 			_creationTime =_creationTime.AddDays(days);
+			_lastStateChangeTime = _lastStateChangeTime.AddMinutes(minutes);
+			_creationTime = _creationTime.AddMinutes(minutes);
 		}
 
         /// <summary>

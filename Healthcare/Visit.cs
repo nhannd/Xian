@@ -152,7 +152,7 @@ namespace ClearCanvas.Healthcare {
         }
 
 		/// <summary>
-		/// Shifts the object in time by the specified number of days, which may be negative or positive.
+		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
 		/// </summary>
 		/// <remarks>
 		/// <para>
@@ -160,22 +160,22 @@ namespace ClearCanvas.Healthcare {
 		/// of generating back-dated data for demos and load-testing.
 		/// </para>
 		/// </remarks>
-		/// <param name="days"></param>
-		public virtual void TimeShift(int days)
+		/// <param name="minutes"></param>
+		public virtual void TimeShift(int minutes)
 		{
-			_admitTime = _admitTime.HasValue ? _admitTime.Value.AddDays(days) : _admitTime;
-			_dischargeTime = _dischargeTime.HasValue ? _dischargeTime.Value.AddDays(days) : _dischargeTime;
+			_admitTime = _admitTime.HasValue ? _admitTime.Value.AddMinutes(minutes) : _admitTime;
+			_dischargeTime = _dischargeTime.HasValue ? _dischargeTime.Value.AddMinutes(minutes) : _dischargeTime;
 
 			foreach (VisitPractitioner prac in _practitioners)
 			{
-				prac.StartTime = prac.StartTime.HasValue ? prac.StartTime.Value.AddDays(days) : prac.StartTime;
-				prac.EndTime = prac.EndTime.HasValue ? prac.EndTime.Value.AddDays(days) : prac.EndTime;
+				prac.StartTime = prac.StartTime.HasValue ? prac.StartTime.Value.AddMinutes(minutes) : prac.StartTime;
+				prac.EndTime = prac.EndTime.HasValue ? prac.EndTime.Value.AddMinutes(minutes) : prac.EndTime;
 			}
 
 			foreach (VisitLocation loc in _locations)
 			{
-				loc.StartTime = loc.StartTime.HasValue ? loc.StartTime.Value.AddDays(days) : loc.StartTime;
-				loc.EndTime = loc.EndTime.HasValue ? loc.EndTime.Value.AddDays(days) : loc.EndTime;
+				loc.StartTime = loc.StartTime.HasValue ? loc.StartTime.Value.AddMinutes(minutes) : loc.StartTime;
+				loc.EndTime = loc.EndTime.HasValue ? loc.EndTime.Value.AddMinutes(minutes) : loc.EndTime;
 				
 			}
 		}

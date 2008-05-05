@@ -144,7 +144,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 
 		/// <summary>
 		/// This method is for testing/demo purposes and is not intended to be called in production.
-		/// It shifts the order and associated visit in time by the specified number of days, which may be negative or positive.
+		/// It shifts the order and associated visit in time by the specified number of minutes, which may be negative or positive.
 		/// </summary>
 		/// <remarks>
 		/// This method does not really belong on this interface but there was no other

@@ -172,18 +172,18 @@ namespace ClearCanvas.Healthcare {
         }
 
 		/// <summary>
-		/// Shifts the object in time by the specified number of days, which may be negative or positive.
+		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
 		/// </summary>
 		/// <remarks>
 		/// The method is not intended for production use, but is provided for the purpose
 		/// of generating back-dated data for demos and load-testing.
 		/// </remarks>
-		/// <param name="days"></param>
-		protected internal virtual void TimeShift(int days)
+		/// <param name="minutes"></param>
+		protected internal virtual void TimeShift(int minutes)
 		{
 			foreach (ReportPart part in _parts)
 			{
-				part.TimeShift(days);
+				part.TimeShift(minutes);
 			}
 		}
 	}

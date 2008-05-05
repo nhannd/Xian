@@ -96,11 +96,11 @@ namespace ClearCanvas.Healthcare {
 		/// The method is not intended for production use, but is provided for the purpose
 		/// of generating back-dated data for demos and load-testing.
 		/// </remarks>
-		/// <param name="days"></param>
-		protected internal virtual void TimeShift(int days)
+		/// <param name="minutes"></param>
+		protected internal virtual void TimeShift(int minutes)
 		{
-			_checkInTime = _checkInTime.HasValue ? _checkInTime.Value.AddDays(days) : _checkInTime;
-			_checkOutTime = _checkOutTime.HasValue ? _checkOutTime.Value.AddDays(days) : _checkOutTime;
+			_checkInTime = _checkInTime.HasValue ? _checkInTime.Value.AddMinutes(minutes) : _checkInTime;
+			_checkOutTime = _checkOutTime.HasValue ? _checkOutTime.Value.AddMinutes(minutes) : _checkOutTime;
 		}
 	}
 }

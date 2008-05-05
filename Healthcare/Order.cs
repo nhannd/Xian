@@ -275,7 +275,7 @@ namespace ClearCanvas.Healthcare {
         }
 
 		/// <summary>
-		/// Shifts the object in time by the specified number of days, which may be negative or positive.
+		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
 		/// </summary>
 		/// <remarks>
 		/// <para>
@@ -291,18 +291,18 @@ namespace ClearCanvas.Healthcare {
 		/// shifted in time by the same amount.
 		/// </para>
 		/// </remarks>
-		/// <param name="days"></param>
-		public virtual void TimeShift(int days)
+		/// <param name="minutes"></param>
+		public virtual void TimeShift(int minutes)
 		{
-			_enteredTime = _enteredTime.AddDays(days);
-			_schedulingRequestTime = _schedulingRequestTime.HasValue ? _schedulingRequestTime.Value.AddDays(days) : _schedulingRequestTime;
-			_scheduledStartTime = _scheduledStartTime.HasValue ? _scheduledStartTime.Value.AddDays(days) : _scheduledStartTime;
-			_startTime = _startTime.HasValue ? _startTime.Value.AddDays(days) : _startTime;
-			_endTime = _endTime.HasValue ? _endTime.Value.AddDays(days) : _endTime;
+			_enteredTime = _enteredTime.AddMinutes(minutes);
+			_schedulingRequestTime = _schedulingRequestTime.HasValue ? _schedulingRequestTime.Value.AddMinutes(minutes) : _schedulingRequestTime;
+			_scheduledStartTime = _scheduledStartTime.HasValue ? _scheduledStartTime.Value.AddMinutes(minutes) : _scheduledStartTime;
+			_startTime = _startTime.HasValue ? _startTime.Value.AddMinutes(minutes) : _startTime;
+			_endTime = _endTime.HasValue ? _endTime.Value.AddMinutes(minutes) : _endTime;
 
 			foreach (Procedure procedure in _procedures)
 			{
-				procedure.TimeShift(days);
+				procedure.TimeShift(minutes);
 			}
 		}
 

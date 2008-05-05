@@ -303,10 +303,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			Order order = PersistenceContext.Load<Order>(request.OrderRef, EntityLoadFlags.None);
 
 			// shift the order, which will also shift all procedures, etc.
-			order.TimeShift(request.NumberOfDays);
+			order.TimeShift(request.NumberOfMinutes);
 
 			// shift the visit
-			order.Visit.TimeShift(request.NumberOfDays);
+			order.Visit.TimeShift(request.NumberOfMinutes);
 
 			PersistenceContext.SynchState();
 

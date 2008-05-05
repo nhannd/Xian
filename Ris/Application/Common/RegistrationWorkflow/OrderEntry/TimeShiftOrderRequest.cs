@@ -9,10 +9,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 	[DataContract]
 	public class TimeShiftOrderRequest : DataContractBase
 	{
-		public TimeShiftOrderRequest(EntityRef orderRef, int numberOfDays)
+		public TimeShiftOrderRequest(EntityRef orderRef, int numberOfMinutes)
 		{
 			OrderRef = orderRef;
-			NumberOfDays = numberOfDays;
+			NumberOfMinutes = numberOfMinutes;
 		}
 
 		/// <summary>
@@ -22,10 +22,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		public EntityRef OrderRef;
 
 		/// <summary>
-		/// Specifies the number of days by which to shift the order in time - may be positive or negative.
+		/// Specifies the number of minutes by which to shift the order in time - may be positive or negative.
 		/// </summary>
 		[DataMember]
-		public int NumberOfDays;
+		public int NumberOfMinutes;
 
 	}
 }
