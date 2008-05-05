@@ -12,35 +12,37 @@
                 OnDataBound="StudyListControl_DataBound" EmptyDataText="" CellPadding="0" OnSelectedIndexChanged="StudyListControl_SelectedIndexChanged"
                 OnSelectedIndexChanging="StudyListControl_SelectedIndexChanging" OnPageIndexChanging="StudyListControl_PageIndexChanging"
                 SelectionMode="Multiple" PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
-                BorderWidth="0px">
+                BorderWidth="0px" HorizontalAlign="Left">
                 <Columns>
-                    <asp:TemplateField HeaderText="Patient Name">
+                    <asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left" >
                         <itemtemplate>
                             <clearcanvas:PersonNameLabel ID="PatientName" runat="server" PersonName='<%# Eval("PatientsName") %>' PersonNameType="Dicom"></clearcanvas:PersonNameLabel>
                         </itemtemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="PatientID" HeaderText="Patient ID"></asp:BoundField>
-                    <asp:BoundField DataField="AccessionNumber" HeaderText="Accession #"></asp:BoundField>
-                    <asp:TemplateField HeaderText="Study Date">
+                    <asp:BoundField DataField="PatientID" HeaderText="Patient ID" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
+                    <asp:BoundField DataField="AccessionNumber" HeaderText="Accession #" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+                    </asp:BoundField>
+                    <asp:TemplateField HeaderText="Study Date" HeaderSTyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <itemtemplate>
                             <clearcanvas:DALabel ID="StudyDate" runat="server" Value='<%# Eval("StudyDate") %>'></clearcanvas:DALabel>
                         </itemtemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="StudyDescription" HeaderText="Description"></asp:BoundField>
-                    <asp:BoundField DataField="NumberOfRelatedSeries" HeaderText="Series"></asp:BoundField>
-                    <asp:BoundField DataField="NumberOfRelatedInstances" HeaderText="Instances"></asp:BoundField>
+                    <asp:BoundField DataField="StudyDescription" HeaderText="Description" HeaderStyle-HorizontalAlign="Left">
+                    </asp:BoundField>
+                    <asp:BoundField DataField="NumberOfRelatedSeries" HeaderText="Series" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"></asp:BoundField>
+                    <asp:BoundField DataField="NumberOfRelatedInstances" HeaderText="Instances" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"></asp:BoundField>
                 </Columns>
                 <EmptyDataTemplate>
                     <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
                         CssClass="CSSGridHeader">
                         <asp:TableHeaderRow>
-                            <asp:TableHeaderCell>Patient Name</asp:TableHeaderCell>
-                            <asp:TableHeaderCell>Patient ID</asp:TableHeaderCell>
-                            <asp:TableHeaderCell>Accession #</asp:TableHeaderCell>
-                            <asp:TableHeaderCell>Study Date</asp:TableHeaderCell>
-                            <asp:TableHeaderCell>Description</asp:TableHeaderCell>
-                            <asp:TableHeaderCell>Series</asp:TableHeaderCell>
-                            <asp:TableHeaderCell>Instances</asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Left">Patient Name</asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Left">Patient ID</asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center">Accession #</asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center">Study Date</asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Left">Description</asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center">Series</asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center">Instances</asp:TableHeaderCell>
                         </asp:TableHeaderRow>
                     </asp:Table>
                 </EmptyDataTemplate>

@@ -13,14 +13,14 @@
                 EmptyDataText="" OnPageIndexChanging="GridView1_PageIndexChanging" CellPadding="0"
                 PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
                 <Columns>
-                    <asp:BoundField DataField="AETitle" HeaderText="AE Title"></asp:BoundField>
-                    <asp:BoundField DataField="Description" HeaderText="Description"></asp:BoundField>
-                    <asp:TemplateField HeaderText="IPAddress">
+                    <asp:BoundField DataField="AETitle" HeaderText="AE Title" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
+                    <asp:BoundField DataField="Description" HeaderText="Description" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
+                    <asp:TemplateField HeaderText="IPAddress" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:Label ID="IpAddressLabel" runat="server" Text="Label"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="Port" HeaderText="Port"></asp:BoundField>
+                    <asp:BoundField DataField="Port" HeaderText="Port" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"></asp:BoundField>
                     <asp:TemplateField HeaderText="Enabled">
                         <EditItemTemplate>
                             <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Enabled") %>'></asp:TextBox>
@@ -46,7 +46,7 @@
                             <asp:Label ID="ServerParitionLabel" runat="server" Text="Label"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Features">
+                    <asp:TemplateField HeaderText="Features" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:PlaceHolder ID="FeaturePlaceHolder" runat="server"></asp:PlaceHolder>
                         </ItemTemplate>

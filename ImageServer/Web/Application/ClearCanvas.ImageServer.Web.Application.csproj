@@ -594,6 +594,7 @@
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Global.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Header.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Filter.css" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Toolbar.css" />
     <Content Include="Common\ConfirmationDialog.ascx" />
     <Content Include="Admin\Configuration\Devices\DevicePage.aspx" />
     <Content Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx" />

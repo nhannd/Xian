@@ -12,13 +12,13 @@
                 OnPageIndexChanging="GridView1_PageIndexChanging" PageSize="20" AllowSorting="True"
                 CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
                 <Columns>
-                    <asp:BoundField DataField="RuleName" HeaderText="Name"></asp:BoundField>
-                    <asp:TemplateField HeaderText="Type">
+                    <asp:BoundField DataField="RuleName" HeaderText="Name" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
+                    <asp:TemplateField HeaderText="Type" HeaderStyle-HorizontalAlign="Left">
                         <ItemTemplate>
                             <asp:Label ID="ServerRuleTypeEnum" runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Apply Time">
+                    <asp:TemplateField HeaderText="Apply Time" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:Label ID="ServerRuleApplyTimeEnum" runat="server"></asp:Label>
                         </ItemTemplate>
@@ -30,8 +30,8 @@
                         <ItemTemplate>
                             <asp:Image ID="EnabledImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
                         </ItemTemplate>
-                        <ItemStyle CssClass="CheckedCell" />
-                        <HeaderStyle  />
+                        <ItemStyle HorizontalAlign="Center" />
+                        <HeaderStyle  HorizontalAlign="Center" />
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Default">
                         <EditItemTemplate>
@@ -40,8 +40,8 @@
                         <ItemTemplate>
                             <asp:Image ID="DefaultImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
                         </ItemTemplate>
-                        <ItemStyle CssClass="CheckedCell" />
-                        <HeaderStyle  />
+                        <ItemStyle HorizontalAlign="Center" />
+                        <HeaderStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>

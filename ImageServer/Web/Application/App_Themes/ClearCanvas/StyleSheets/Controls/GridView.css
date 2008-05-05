@@ -27,7 +27,7 @@
 	font-family: Sans-Serif;
 	font-size: 14px;
 	font-weight: bold;
-	text-align: left;
+
 	padding: 10px 1px 3px 3px;
 	border-bottom: solid 2px black;
 	border-left: solid 0px white;
@@ -84,11 +84,6 @@
 {
     padding: 3px 5px 3px 7px;
     margin: 0px 0px 0px 0px;
-}
-
-.CheckedCell
-{
-    text-indent: 22px;
 }
 
 /*************************************************************************************************

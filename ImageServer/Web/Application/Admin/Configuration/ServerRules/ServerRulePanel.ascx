@@ -12,7 +12,6 @@
                 <asp:TableHeaderRow>
                     <asp:TableHeaderCell ColumnSpan="1" Width="100%" HorizontalAlign="Left" VerticalAlign="Bottom">
                         <asp:Panel ID="Panel2" runat="server" CssClass="ToolbarPanelContainer">
-                                <asp:Panel ID="Panel4" runat="server" CssClass="ToolbarContent">
                                     <clearcanvas:ToolbarButton
                                                         ID="AddToolbarButton" runat="server" 
                                                         EnabledImageURL="~/images/icons/AddEnabled.png" 
@@ -31,8 +30,6 @@
                                                         DisabledImageURL="~/images/icons/DeleteDisabled.png"
                                                         OnClick="DeleteButton_Click" AlternateText="Delete a server rule"
                                                         />      
-                                                       
-                            </asp:Panel>
                         </asp:Panel>
                     </asp:TableHeaderCell>
                     <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom" Wrap="false">

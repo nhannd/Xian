@@ -22,11 +22,11 @@
                             OnSelectedIndexChanged="WorkQueueListView_SelectedIndexChanged">
                             <Columns>
                                 <asp:BoundField DataField="PatientID" HeaderText="Patient ID">
-                                    <HeaderStyle Wrap="false" />
+                                    <HeaderStyle Wrap="false" HorizontalAlign="Left" />
                                     <ItemStyle Wrap="false" />
                                 </asp:BoundField>
                                 <asp:TemplateField HeaderText="Patient Name">
-                                    <HeaderStyle Wrap="false" />
+                                    <HeaderStyle Wrap="false" HorizontalAlign="Left" />
                                     <ItemStyle Wrap="false" />
                                     <ItemTemplate>
                                         <clearcanvas:PersonNameLabel ID="PatientName" runat="server" PersonName='<%# Eval("PatientName") %>'
@@ -34,36 +34,36 @@
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Type">
-                                    <HeaderStyle Wrap="false" />
-                                    <ItemStyle Wrap="false" />
+                                    <HeaderStyle Wrap="false" HorizontalAlign="Left" />
+                                    <ItemStyle Wrap="false" HorizontalAlign="Left" />
                                     <ItemTemplate>
                                         <asp:Label ID="Type" runat="server" Text='<%# Eval("Type.Description") %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Schedule">
-                                    <HeaderStyle Wrap="false" />
-                                    <ItemStyle Wrap="false" />
+                                    <HeaderStyle Wrap="false" HorizontalAlign="Center"/>
+                                    <ItemStyle Wrap="false" HorizontalAlign="Center"/>
                                     <ItemTemplate>
                                         <asp:Label ID="Schedule" runat="server" Text='<%# DateTimeFormatter.Format((DateTime)Eval("ScheduledDateTime")) %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Priority">
-                                    <HeaderStyle Wrap="false" />
-                                    <ItemStyle Wrap="false" />
+                                    <HeaderStyle Wrap="false" HorizontalAlign="Center" />
+                                    <ItemStyle Wrap="false" HorizontalAlign="Center" />
                                     <ItemTemplate>
                                         <asp:Label ID="Status" runat="server" Text='<%# Eval("Priority.Description") %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Status">
-                                    <HeaderStyle Wrap="false" />
-                                    <ItemStyle Wrap="false" />
+                                    <HeaderStyle Wrap="false" HorizontalAlign="Center" />
+                                    <ItemStyle Wrap="false" HorizontalAlign="Center" />
                                     <ItemTemplate>
                                         <asp:Label ID="Status" runat="server" Text='<%# Eval("Status.Description") %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Notes">
-                                    <HeaderStyle Wrap="false" />
-                                    <ItemStyle Wrap="false" />
+                                    <HeaderStyle Wrap="false" HorizontalAlign="Left"/>
+                                    <ItemStyle Wrap="false" HorizontalAlign="Left" />
                                     <ItemTemplate>
                                         <asp:Label ID="Notes" runat="server" Text='<%# Eval("Notes") %>'></asp:Label>
                                     </ItemTemplate>

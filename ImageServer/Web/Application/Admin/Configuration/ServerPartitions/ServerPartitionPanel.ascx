@@ -9,13 +9,12 @@
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="Panel1" runat="server" Height="100%">
+        <asp:Panel ID="Panel1" runat="server" Height="100%" style="border: solid 1px #6699CC">
             <asp:Table ID="Table" runat="server" Width="100%" Height="100%" CellPadding="0"
                 BorderWidth="0px">
-                <asp:TableHeaderRow VerticalAlign="top">
-                    <asp:TableHeaderCell HorizontalAlign="left" VerticalAlign="bottom" Width="100%">
+                <asp:TableHeaderRow VerticalAlign="top" >
+                    <asp:TableHeaderCell VerticalAlign="bottom" HorizontalAlign="Left" Width="100%">
                         <asp:Panel ID="Panel2" runat="server" CssClass="ToolbarPanelContainer">
-                                <asp:Panel ID="Panel5" runat="server" CssClass="ToolbarContent" DefaultButton="EditToolbarButton">
                                     <clearcanvas:ToolbarButton
                                                         ID="AddToolbarButton" runat="server" 
                                                         EnabledImageURL="~/images/icons/AddEnabled.png" 
@@ -35,7 +34,6 @@
                                                         DisabledImageURL="~/images/icons/DeleteDisabled.png"
                                                         OnClick="DeleteButton_Click" AlternateText="Delete the server partition"
                                                         />
-                            </asp:Panel>
                         </asp:Panel>
                     </asp:TableHeaderCell>
                     <asp:TableHeaderCell HorizontalAlign="right" Width="100%" Wrap="false">

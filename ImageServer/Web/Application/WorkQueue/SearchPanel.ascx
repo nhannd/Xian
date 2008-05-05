@@ -61,7 +61,7 @@
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="Schedule" CssClass="FilterTextBoxLabel" />
                                                 <asp:ImageButton ID="ClearScheduleDateButton" runat="server" ImageUrl="~/images/icons/ClearDate.png" AlternateText="Clear Date" />
-                                                <asp:TextBox ID="ScheduleDate" runat="server" Width="100px" ReadOnly="true" CssClass="FilterTextBox" ToolTip="Filter the list by Schedule Date [dd/mm/yyyy]" />
+                                                <asp:TextBox ID="ScheduleDate" runat="server" Width="100px" ReadOnly="true" CssClass="FilterTextBox" BackColor="White" ToolTip="Filter the list by Schedule Date [dd/mm/yyyy]" />
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label5" runat="server" Text="Type" Width="68px" CssClass="FilterTextBoxLabel"

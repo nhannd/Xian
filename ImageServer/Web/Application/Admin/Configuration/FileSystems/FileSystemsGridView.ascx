@@ -14,7 +14,7 @@
                 BorderWidth="0px">
                 <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
                 <Columns>
-                    <asp:BoundField DataField="Description" HeaderText="Description"></asp:BoundField>
+                    <asp:BoundField DataField="Description" HeaderText="Description" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
                     <asp:TemplateField HeaderText="Read">
                         <ItemTemplate>
                             <asp:Image ID="ReadImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
@@ -29,12 +29,12 @@
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Tier">
+                    <asp:TemplateField HeaderText="Tier" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:Label ID="FilesystemTierDescription" runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Path">
+                    <asp:TemplateField HeaderText="Path" HeaderStyle-HorizontalAlign="Left">
                         <ItemTemplate>
                             <asp:Label ID="PathLabel" runat="server" Text='<%# Bind("FileSystemPath") %>'></asp:Label>
                         </ItemTemplate>

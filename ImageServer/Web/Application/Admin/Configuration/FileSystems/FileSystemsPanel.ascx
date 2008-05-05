@@ -6,13 +6,11 @@
     
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="Panel2" runat="server" Height="100%">
+        <asp:Panel ID="Panel2" runat="server" Height="100%" style="border: solid 1px #6699CC;">
             <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0">
                 <asp:TableHeaderRow>
                     <asp:TableHeaderCell HorizontalAlign="left" VerticalAlign="Bottom" Width="100%">
-                        <asp:Panel ID="Panel1" runat="server" CssClass="CSSToolbarPanelContainer">
-                            <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
-                                <asp:Panel ID="Panel4" runat="server" CssClass="CSSToolbarContent">
+                        <asp:Panel ID="Panel1" runat="server" CssClass="ToolbarPanelContainer">
                                     <clearcanvas:ToolbarButton
                                                         ID="AddToolbarButton" runat="server" 
                                                         EnabledImageURL="~/images/icons/AddEnabled.png" 
@@ -25,8 +23,6 @@
                                                         DisabledImageURL="~/images/icons/EditDisabled.png"
                                                         OnClick="EditButton_Click" AlternateText="Edit a filesystem"
                                                         />
-                                </asp:Panel>
-                            </asp:Panel>
                         </asp:Panel>
                     </asp:TableHeaderCell>
                     <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom" Wrap="false">
@@ -61,9 +57,7 @@
                 <asp:TableRow Height="100%">
                     <asp:TableCell ColumnSpan="2">
                         <asp:Panel ID="Panel7" runat="server" CssClass="GridViewPanelContainer" >
-                                <asp:Panel ID="Panel8" runat="server" CssClass="GridViewPanelBorder" >
                                     <uc1:FileSystemsGridView ID="FileSystemsGridView1" runat="server"  Height="500px"/>
-                                </asp:Panel>                        
                         </asp:Panel>
                         
                     </asp:TableCell>
