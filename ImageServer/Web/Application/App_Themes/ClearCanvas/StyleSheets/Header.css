@@ -28,14 +28,22 @@
 {
     color: White;
     margin: 0px 3px 0px 3px;
-    font-family: San-Serif;
+    padding: 1px 1px 6px 1px;
+    font-family: Sans-Serif;
+    font-size: 14px;
+    font-weight: bold;
     text-align: center;
 }
 
 .StaticHover
 {
     color: White;
-    background-color: #336699;
+    background: #336699 url(../images/Header/StaticMenuHoverBackground.png) repeat-x;
+    margin: 0px 3px 0px 3px;
+    padding: 1px 1px 6px 1px;
+    font-family: Sans-Serif;
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .StaticSelected
@@ -63,6 +71,7 @@
     color: White;
     background-color: #999999;
     padding: 3px 3px 3px 3px;
+    background: #336699 url(../images/Header/StaticMenuHoverBackground.png) repeat-x;
 }
 
 .DynamicSelected

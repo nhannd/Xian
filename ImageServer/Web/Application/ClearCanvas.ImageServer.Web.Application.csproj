@@ -581,6 +581,7 @@
     <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Header\ClearCanvasLogo.png" />
     <Content Include="App_Themes\ClearCanvas\images\Header\LocationEdge.png" />
+    <Content Include="App_Themes\ClearCanvas\images\Header\StaticMenuHoverBackground.png" />
     <Content Include="App_Themes\ClearCanvas\images\MainContent\MainContentBottom.png" />
     <Content Include="App_Themes\ClearCanvas\images\MainContent\MainContentBottomLeftCorner.png" />
     <Content Include="App_Themes\ClearCanvas\images\MainContent\MainContentBottomRightCorner.png" />

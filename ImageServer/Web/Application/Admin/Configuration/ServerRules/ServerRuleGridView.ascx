@@ -30,8 +30,8 @@
                         <ItemTemplate>
                             <asp:Image ID="EnabledImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
                         </ItemTemplate>
-                        <ItemStyle HorizontalAlign="Center" />
-                        <HeaderStyle HorizontalAlign="Center" />
+                        <ItemStyle CssClass="CheckedCell" />
+                        <HeaderStyle  />
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Default">
                         <EditItemTemplate>
@@ -40,8 +40,8 @@
                         <ItemTemplate>
                             <asp:Image ID="DefaultImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
                         </ItemTemplate>
-                        <ItemStyle HorizontalAlign="Center" />
-                        <HeaderStyle HorizontalAlign="Center" />
+                        <ItemStyle CssClass="CheckedCell" />
+                        <HeaderStyle  />
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
@@ -57,10 +57,10 @@
                             <asp:TableHeaderCell>
                             Apply Time
                             </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
+                            <asp:TableHeaderCell>
                             Enabled
                             </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
+                            <asp:TableHeaderCell >
                             Default
                             </asp:TableHeaderCell>
                         </asp:TableHeaderRow>

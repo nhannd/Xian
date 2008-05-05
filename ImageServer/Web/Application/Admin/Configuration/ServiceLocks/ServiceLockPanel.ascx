@@ -66,9 +66,7 @@
                 <asp:TableRow Height="100%">
                     <asp:TableCell ColumnSpan="2">
                         <asp:Panel ID="Panel7" runat="server" CssClass="GridViewPanelContainer" >
-                                <asp:Panel ID="Panel8" runat="server" CssClass="GridViewPanelBorder" >
                                     <uc1:ServiceLockGridView  ID="ServiceLockGridViewControl" Height="500px" runat="server" />
-                                </asp:Panel>                        
                         </asp:Panel>
                         
                         

@@ -116,6 +116,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             PatientName.Text = "";
             AccessionNumber.Text = "";
             StudyDescription.Text = "";
+            StudyDate.Text = "";
         }
 
         public override void DataBind()

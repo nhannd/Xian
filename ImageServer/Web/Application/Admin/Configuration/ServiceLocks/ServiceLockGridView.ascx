@@ -46,20 +46,20 @@
                             <clearcanvas:DateTimeLabel ID="Schedule" runat="server" Text='<%# Eval("ScheduledTime") %>'></clearcanvas:DateTimeLabel>
                         </ItemTemplate>
                         <HeaderStyle HorizontalAlign="Center" />
-                        <ItemStyle HorizontalAlign="Center" />
+                        <ItemStyle HorizontalAlign="Center" wrap="false" />
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Filesystem">
                         <ItemTemplate>
                             <asp:Label ID="Filesystem" runat="server" Text=""/>
                         </ItemTemplate>
                         <HeaderStyle HorizontalAlign="Center" />
-                        <ItemStyle HorizontalAlign="Center" />
+                        <ItemStyle  />
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Processor ID">
                         <ItemTemplate>
                             <asp:Label ID="ProcessorID" runat="server" Text='<%# Eval("ProcessorID") %>'></asp:Label>
                         </ItemTemplate>
-                        <HeaderStyle HorizontalAlign="Center" />
+                        <HeaderStyle HorizontalAlign="Center" Wrap="false"/>
                         <ItemStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
                 </Columns>

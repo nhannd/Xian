@@ -99,9 +99,7 @@
                     <asp:TableCell ColumnSpan="2">
                     
                         <asp:Panel ID="Panel2" runat="server" CssClass="CSSGridViewPanelContainer" >
-                                <asp:Panel ID="Panel7" runat="server" CssClass="CSSGridViewPanelBorder" >
                                     <uc1:StudyListGridView id="StudyListGridView" runat="server" Height="500px"></uc1:StudyListGridView>
-                                </asp:Panel>                        
                         </asp:Panel>
                         
                         

@@ -68,10 +68,10 @@
                             <asp:TableHeaderCell>
                             Port
                             </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
+                            <asp:TableHeaderCell>
                             Enabled
                             </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
+                            <asp:TableHeaderCell>
                             DHCP
                             </asp:TableHeaderCell>
                             <asp:TableHeaderCell>

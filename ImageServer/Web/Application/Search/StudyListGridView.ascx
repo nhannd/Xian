@@ -44,10 +44,10 @@
                         </asp:TableHeaderRow>
                     </asp:Table>
                 </EmptyDataTemplate>
-                <RowStyle CssClass="GridRowStyle" />
-                <AlternatingRowStyle CssClass="GridAlternatingRowStyle" />
-                <SelectedRowStyle CssClass="GridSelectedRowStyle" />
-                <HeaderStyle CssClass="GridHeader" />
+                <RowStyle CssClass="CSSGridRowStyle" />
+                <AlternatingRowStyle CssClass="CSSGridAlternatingRowStyle" />
+                <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
+                <HeaderStyle CssClass="CSSGridHeader" />
                 <PagerTemplate>
                 </PagerTemplate>
             </clearcanvas:GridView>
