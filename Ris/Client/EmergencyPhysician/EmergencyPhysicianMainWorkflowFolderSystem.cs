@@ -1,5 +1,7 @@
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Client.Adt;
 using ClearCanvas.Ris.Client.Adt.Folders;
@@ -32,7 +34,10 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 			       new EmergencyPhysicianMainWorkflowItemToolExtensionPoint(),
 			       new EmergencyPhysicianMainWorkflowFolderToolExtensionPoint())
 		{
-			this.AddFolder(new EROrdersFolder(this));
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+			{
+				this.AddFolder(new EROrdersFolder(this));
+			}
 
 			this.AddFolder(_searchFolder = new RegistrationSearchFolder(this));
 			folderExplorer.RegisterSearchDataHandler(this);
