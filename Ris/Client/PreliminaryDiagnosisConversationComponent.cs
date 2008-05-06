@@ -334,12 +334,34 @@ namespace ClearCanvas.Ris.Client
 
 		public string ReplyOrAcknowledge
 		{
-			get { return string.IsNullOrEmpty(_body) ? "Acknowledge" : "Post and Acknowledge"; }
+			get
+			{
+				string label;
+				if(HasUnacknowledgedNotes())
+				{
+					label = string.IsNullOrEmpty(_body) ? "Acknowledge" : "Acknowledge and Post";
+				}
+				else
+				{
+					label = string.IsNullOrEmpty(_body) && _notes.Items.Count != 0 ? "OK" : "Post";
+				}
+				return label;
+			}
 		}
 
 		public bool AcknowledgeEnabled
 		{
-			get { return !HasUnacknowledgedNotes(); }
+			get
+			{
+				if(_notes.Items.Count == 0)
+				{
+					return !string.IsNullOrEmpty(_body);
+				}
+				else
+				{
+					return !HasUncheckedUnacknowledgedNotes();
+				}
+			}
 		}
 
 		public void AcknowledgeAndOrPost()
@@ -447,12 +469,21 @@ namespace ClearCanvas.Ris.Client
 			return reply;
 		}
 
-		private bool HasUnacknowledgedNotes()
+		private bool HasUncheckedUnacknowledgedNotes()
 		{
 			return CollectionUtils.Contains(_notes.Items,
 				delegate(Checkable<OrderNoteDetail> checkableOrderNoteDetail)
 				{
 					return !checkableOrderNoteDetail.IsChecked && checkableOrderNoteDetail.Item.CanAcknowledge;
+				});
+		}
+
+		private bool HasUnacknowledgedNotes()
+		{
+			return CollectionUtils.Contains(_notes.Items,
+				delegate(Checkable<OrderNoteDetail> checkableOrderNoteDetail)
+				{
+					return checkableOrderNoteDetail.Item.CanAcknowledge;
 				});
 		}
 	}

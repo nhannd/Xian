@@ -136,7 +136,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _acknowledgePostButton
 			// 
 			this._acknowledgePostButton.AutoSize = true;
-			this._acknowledgePostButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._acknowledgePostButton.Location = new System.Drawing.Point(671, 3);
 			this._acknowledgePostButton.Name = "_acknowledgePostButton";
 			this._acknowledgePostButton.Size = new System.Drawing.Size(82, 23);
