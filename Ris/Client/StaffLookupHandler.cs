@@ -29,94 +29,92 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Desktop;
 using ClearCanvas.Common;
-using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
+using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Provides utilities for staff name resolution.
-    /// </summary>
-    public class StaffLookupHandler : LookupHandler<StaffTextQueryRequest, StaffSummary>
-    {
-        private readonly DesktopWindow _desktopWindow;
-        private readonly string[] _staffTypesFilter;
+	/// <summary>
+	/// Provides utilities for staff name resolution.
+	/// </summary>
+	public class StaffLookupHandler : LookupHandler<StaffTextQueryRequest, StaffSummary>
+	{
+		private readonly DesktopWindow _desktopWindow;
+		private readonly string[] _staffTypesFilter;
 
-        public StaffLookupHandler(DesktopWindow desktopWindow)
-            :this(desktopWindow, new string[] {})
-        {
-        }
+		public StaffLookupHandler(DesktopWindow desktopWindow)
+			: this(desktopWindow, new string[] { })
+		{
+		}
 
-        public StaffLookupHandler(DesktopWindow desktopWindow, string[] staffTypesFilter)
-        {
-            _desktopWindow = desktopWindow;
-            _staffTypesFilter = staffTypesFilter;
-        }
+		public StaffLookupHandler(DesktopWindow desktopWindow, string[] staffTypesFilter)
+		{
+			_desktopWindow = desktopWindow;
+			_staffTypesFilter = staffTypesFilter;
+		}
 
-        protected override TextQueryResponse<StaffSummary> DoQuery(StaffTextQueryRequest request)
-        {
-            TextQueryResponse<StaffSummary> response = null;
-            Platform.GetService<IStaffAdminService>(
-                delegate(IStaffAdminService service)
-                {
-                    response = service.TextQuery(request);
-                });
-            return response;
-        }
+		protected override TextQueryResponse<StaffSummary> DoQuery(StaffTextQueryRequest request)
+		{
+			TextQueryResponse<StaffSummary> response = null;
+			Platform.GetService<IStaffAdminService>(
+				delegate(IStaffAdminService service)
+				{
+					response = service.TextQuery(request);
+				});
+			return response;
+		}
 
-        /// <summary>
-        /// Shows a dialog to allow user to resolve the specified query to a single staff.
-        /// The query may consist of part of the surname,
-        /// optionally followed by a comma and then part of the given name (e.g. "sm, b" for smith, bill).
-        /// The method returns true if the name is successfully resolved, or false otherwise.
-        /// </summary>
-        /// <param name="query"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        public override bool ResolveNameInteractive(string query, out StaffSummary result)
-        {
-            result = null;
+		/// <summary>
+		/// Shows a dialog to allow user to resolve the specified query to a single staff.
+		/// The query may consist of part of the surname,
+		/// optionally followed by a comma and then part of the given name (e.g. "sm, b" for smith, bill).
+		/// The method returns true if the name is successfully resolved, or false otherwise.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="result"></param>
+		/// <returns></returns>
+		public override bool ResolveNameInteractive(string query, out StaffSummary result)
+		{
+			result = null;
 
-            StaffSummaryComponent staffComponent = new StaffSummaryComponent(true);
-            if (!string.IsNullOrEmpty(query))
-            {
-                string[] names = query.Split(',');
-                if (names.Length > 0)
-                    staffComponent.LastName = names[0].Trim();
-                if (names.Length > 1)
-                    staffComponent.FirstName = names[1].Trim();
-            }
+			StaffSummaryComponent staffComponent = new StaffSummaryComponent(true);
+			if (!string.IsNullOrEmpty(query))
+			{
+				string[] names = query.Split(',');
+				if (names.Length > 0)
+					staffComponent.LastName = names[0].Trim();
+				if (names.Length > 1)
+					staffComponent.FirstName = names[1].Trim();
+			}
 
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                _desktopWindow, staffComponent, SR.TitleStaff);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				_desktopWindow, staffComponent, SR.TitleStaff);
 
-            if (exitCode == ApplicationComponentExitCode.Accepted)
-            {
-                result = (StaffSummary)staffComponent.SelectedStaff.Item;
-            }
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				result = (StaffSummary)staffComponent.SelectedStaff.Item;
+			}
 
-            return (result != null);
-        }
+			return (result != null);
+		}
 
 
-        public override string FormatItem(StaffSummary item)
-        {
-            return string.Format("{0}, {1}", item.Name.FamilyName, item.Name.GivenName);
-        }
-        
-        protected override void PrepareRequest(StaffTextQueryRequest request, object[] additionalArgs)
-        {
-            base.PrepareRequest(request, additionalArgs);
+		public override string FormatItem(StaffSummary item)
+		{
+			return PersonNameFormat.Format(item.Name);
+		}
 
-            if (_staffTypesFilter != null && _staffTypesFilter.Length > 0)
-            {
-                request.StaffTypesFilter = _staffTypesFilter;
-            }
-        }
-    }
+		protected override void PrepareRequest(StaffTextQueryRequest request, object[] additionalArgs)
+		{
+			base.PrepareRequest(request, additionalArgs);
+
+			if (_staffTypesFilter != null && _staffTypesFilter.Length > 0)
+			{
+				request.StaffTypesFilter = _staffTypesFilter;
+			}
+		}
+	}
 }

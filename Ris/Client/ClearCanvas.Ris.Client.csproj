@@ -78,6 +78,7 @@
     <Compile Include="RefreshTool.cs" />
     <Compile Include="SearchTool.cs" />
     <Compile Include="SessionManagerTool.cs" />
+    <Compile Include="StaffGroupLookupHandler.cs" />
     <Compile Include="StaffStaffGroupEditorComponent.cs" />
     <Compile Include="SummaryComponentBase.cs" />
     <Compile Include="WeakSearchCriteriaException.cs" />

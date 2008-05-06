@@ -63,7 +63,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._acknowledgePostButton = new System.Windows.Forms.Button();
+			this._notesGroupBox = new System.Windows.Forms.GroupBox();
+			this._notesSplitContainer = new System.Windows.Forms.SplitContainer();
 			this._notes = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this._selectedNoteBody = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
+			this._replyGroupBox = new System.Windows.Forms.GroupBox();
 			this._replyTableLayout = new System.Windows.Forms.TableLayoutPanel();
 			this._recipientsGroupBox = new System.Windows.Forms.GroupBox();
 			this._recipientsTableLayout = new System.Windows.Forms.TableLayoutPanel();
@@ -72,21 +76,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._staffRecipientAddButton = new System.Windows.Forms.Button();
 			this._groupRecipientAddButton = new System.Windows.Forms.Button();
 			this._recipients = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this._notesGroupBox = new System.Windows.Forms.GroupBox();
-			this._notesSplitContainer = new System.Windows.Forms.SplitContainer();
-			this._selectedNoteBody = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
-			this._replyGroupBox = new System.Windows.Forms.GroupBox();
 			this._replyBody = new System.Windows.Forms.TextBox();
 			this._componentTableLayout.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
-			this._replyTableLayout.SuspendLayout();
-			this._recipientsGroupBox.SuspendLayout();
-			this._recipientsTableLayout.SuspendLayout();
 			this._notesGroupBox.SuspendLayout();
 			this._notesSplitContainer.Panel1.SuspendLayout();
 			this._notesSplitContainer.Panel2.SuspendLayout();
 			this._notesSplitContainer.SuspendLayout();
 			this._replyGroupBox.SuspendLayout();
+			this._replyTableLayout.SuspendLayout();
+			this._recipientsGroupBox.SuspendLayout();
+			this._recipientsTableLayout.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _componentTableLayout
@@ -131,6 +131,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton.TabIndex = 1;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
+			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
 			// _acknowledgePostButton
 			// 
@@ -142,6 +143,38 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._acknowledgePostButton.TabIndex = 0;
 			this._acknowledgePostButton.Text = "Acknowledge";
 			this._acknowledgePostButton.UseVisualStyleBackColor = true;
+			this._acknowledgePostButton.Click += new System.EventHandler(this._acknowledgePostButton_Click);
+			// 
+			// _notesGroupBox
+			// 
+			this._notesGroupBox.AutoSize = true;
+			this._notesGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._notesGroupBox.Controls.Add(this._notesSplitContainer);
+			this._notesGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._notesGroupBox.Location = new System.Drawing.Point(3, 3);
+			this._notesGroupBox.Name = "_notesGroupBox";
+			this._notesGroupBox.Size = new System.Drawing.Size(415, 654);
+			this._notesGroupBox.TabIndex = 0;
+			this._notesGroupBox.TabStop = false;
+			this._notesGroupBox.Text = "Preliminary Diagnosis Conversation";
+			// 
+			// _notesSplitContainer
+			// 
+			this._notesSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._notesSplitContainer.Location = new System.Drawing.Point(3, 16);
+			this._notesSplitContainer.Name = "_notesSplitContainer";
+			this._notesSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// _notesSplitContainer.Panel1
+			// 
+			this._notesSplitContainer.Panel1.Controls.Add(this._notes);
+			// 
+			// _notesSplitContainer.Panel2
+			// 
+			this._notesSplitContainer.Panel2.Controls.Add(this._selectedNoteBody);
+			this._notesSplitContainer.Size = new System.Drawing.Size(409, 635);
+			this._notesSplitContainer.SplitterDistance = 452;
+			this._notesSplitContainer.TabIndex = 0;
 			// 
 			// _notes
 			// 
@@ -154,6 +187,33 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._notes.Size = new System.Drawing.Size(409, 452);
 			this._notes.TabIndex = 0;
 			this._notes.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			// 
+			// _selectedNoteBody
+			// 
+			this._selectedNoteBody.AutoSize = true;
+			this._selectedNoteBody.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._selectedNoteBody.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._selectedNoteBody.LabelText = "Selected Note Body";
+			this._selectedNoteBody.Location = new System.Drawing.Point(0, 0);
+			this._selectedNoteBody.Margin = new System.Windows.Forms.Padding(2);
+			this._selectedNoteBody.Name = "_selectedNoteBody";
+			this._selectedNoteBody.ReadOnly = true;
+			this._selectedNoteBody.Size = new System.Drawing.Size(409, 179);
+			this._selectedNoteBody.TabIndex = 0;
+			this._selectedNoteBody.Value = null;
+			// 
+			// _replyGroupBox
+			// 
+			this._replyGroupBox.AutoSize = true;
+			this._replyGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._replyGroupBox.Controls.Add(this._replyTableLayout);
+			this._replyGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._replyGroupBox.Location = new System.Drawing.Point(424, 3);
+			this._replyGroupBox.Name = "_replyGroupBox";
+			this._replyGroupBox.Size = new System.Drawing.Size(416, 654);
+			this._replyGroupBox.TabIndex = 1;
+			this._replyGroupBox.TabStop = false;
+			this._replyGroupBox.Text = "Add a note";
 			// 
 			// _replyTableLayout
 			// 
@@ -244,6 +304,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._staffRecipientAddButton.TabIndex = 1;
 			this._staffRecipientAddButton.Text = "Add";
 			this._staffRecipientAddButton.UseVisualStyleBackColor = true;
+			this._staffRecipientAddButton.Click += new System.EventHandler(this._staffRecipientAddButton_Click);
 			// 
 			// _groupRecipientAddButton
 			// 
@@ -254,6 +315,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._groupRecipientAddButton.TabIndex = 3;
 			this._groupRecipientAddButton.Text = "Add";
 			this._groupRecipientAddButton.UseVisualStyleBackColor = true;
+			this._groupRecipientAddButton.Click += new System.EventHandler(this._groupRecipientAddButton_Click);
 			// 
 			// _recipients
 			// 
@@ -267,63 +329,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipients.Size = new System.Drawing.Size(392, 205);
 			this._recipients.TabIndex = 4;
 			this._recipients.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			// 
-			// _notesGroupBox
-			// 
-			this._notesGroupBox.AutoSize = true;
-			this._notesGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._notesGroupBox.Controls.Add(this._notesSplitContainer);
-			this._notesGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._notesGroupBox.Location = new System.Drawing.Point(3, 3);
-			this._notesGroupBox.Name = "_notesGroupBox";
-			this._notesGroupBox.Size = new System.Drawing.Size(415, 654);
-			this._notesGroupBox.TabIndex = 0;
-			this._notesGroupBox.TabStop = false;
-			this._notesGroupBox.Text = "Preliminary Diagnosis Conversation";
-			// 
-			// _notesSplitContainer
-			// 
-			this._notesSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._notesSplitContainer.Location = new System.Drawing.Point(3, 16);
-			this._notesSplitContainer.Name = "_notesSplitContainer";
-			this._notesSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			// 
-			// _notesSplitContainer.Panel1
-			// 
-			this._notesSplitContainer.Panel1.Controls.Add(this._notes);
-			// 
-			// _notesSplitContainer.Panel2
-			// 
-			this._notesSplitContainer.Panel2.Controls.Add(this._selectedNoteBody);
-			this._notesSplitContainer.Size = new System.Drawing.Size(409, 635);
-			this._notesSplitContainer.SplitterDistance = 452;
-			this._notesSplitContainer.TabIndex = 0;
-			// 
-			// _selectedNoteBody
-			// 
-			this._selectedNoteBody.AutoSize = true;
-			this._selectedNoteBody.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._selectedNoteBody.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._selectedNoteBody.LabelText = "Selected Note Body";
-			this._selectedNoteBody.Location = new System.Drawing.Point(0, 0);
-			this._selectedNoteBody.Margin = new System.Windows.Forms.Padding(2);
-			this._selectedNoteBody.Name = "_selectedNoteBody";
-			this._selectedNoteBody.Size = new System.Drawing.Size(409, 179);
-			this._selectedNoteBody.TabIndex = 0;
-			this._selectedNoteBody.Value = null;
-			// 
-			// _replyGroupBox
-			// 
-			this._replyGroupBox.AutoSize = true;
-			this._replyGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._replyGroupBox.Controls.Add(this._replyTableLayout);
-			this._replyGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._replyGroupBox.Location = new System.Drawing.Point(424, 3);
-			this._replyGroupBox.Name = "_replyGroupBox";
-			this._replyGroupBox.Size = new System.Drawing.Size(416, 654);
-			this._replyGroupBox.TabIndex = 1;
-			this._replyGroupBox.TabStop = false;
-			this._replyGroupBox.Text = "Add a note";
 			// 
 			// _replyBody
 			// 
@@ -345,12 +350,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._componentTableLayout.PerformLayout();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
-			this._replyTableLayout.ResumeLayout(false);
-			this._replyTableLayout.PerformLayout();
-			this._recipientsGroupBox.ResumeLayout(false);
-			this._recipientsGroupBox.PerformLayout();
-			this._recipientsTableLayout.ResumeLayout(false);
-			this._recipientsTableLayout.PerformLayout();
 			this._notesGroupBox.ResumeLayout(false);
 			this._notesSplitContainer.Panel1.ResumeLayout(false);
 			this._notesSplitContainer.Panel1.PerformLayout();
@@ -359,6 +358,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._notesSplitContainer.ResumeLayout(false);
 			this._replyGroupBox.ResumeLayout(false);
 			this._replyGroupBox.PerformLayout();
+			this._replyTableLayout.ResumeLayout(false);
+			this._replyTableLayout.PerformLayout();
+			this._recipientsGroupBox.ResumeLayout(false);
+			this._recipientsGroupBox.PerformLayout();
+			this._recipientsTableLayout.ResumeLayout(false);
+			this._recipientsTableLayout.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

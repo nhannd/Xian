@@ -29,38 +29,98 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="PreliminaryDiagnosisConversationComponent"/>.
-    /// </summary>
-    public partial class PreliminaryDiagnosisConversationComponentControl : ApplicationComponentUserControl
-    {
-        private PreliminaryDiagnosisConversationComponent _component;
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="PreliminaryDiagnosisConversationComponent"/>.
+	/// </summary>
+	public partial class PreliminaryDiagnosisConversationComponentControl : ApplicationComponentUserControl
+	{
+		private readonly PreliminaryDiagnosisConversationComponent _component;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public PreliminaryDiagnosisConversationComponentControl(PreliminaryDiagnosisConversationComponent component)
-            :base(component)
-        {
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public PreliminaryDiagnosisConversationComponentControl(PreliminaryDiagnosisConversationComponent component)
+			: base(component)
+		{
+			InitializeComponent();
+
 			_component = component;
-            InitializeComponent();
 
-            BindingSource bindingSource = new BindingSource();
-			bindingSource.DataSource = _component;
+			_notes.Table = _component.Notes;
+			_notes.DataBindings.Add("Selection", _component, "SelectedNote", true, DataSourceUpdateMode.OnPropertyChanged);
+			_selectedNoteBody.DataBindings.Add("Value", _component, "SelectedNoteBody", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            // TODO add .NET databindings to bindingSource
-        }
-    }
+			_replyBody.DataBindings.Add("Text", _component, "Body", true, DataSourceUpdateMode.OnPropertyChanged);
+			_recipients.Table = _component.Recipients;
+
+			_staffRecipientLookup.LookupHandler = _component.StaffRecipientLookupHandler;
+			_staffRecipientLookup.DataBindings.Add("Value", _component, "SelectedStaffRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
+			_staffRecipientAddButton.DataBindings.Add("Enabled", _component, "AddStaffRecipientEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_groupRecipientLookup.LookupHandler = _component.GroupRecipientLookupHandler;
+			_groupRecipientLookup.DataBindings.Add("Value", _component, "SelectedGroupRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
+			_groupRecipientAddButton.DataBindings.Add("Enabled", _component, "AddGroupRecipientEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_acknowledgePostButton.DataBindings.Add("Text", _component, "ReplyOrAcknowledge", true, DataSourceUpdateMode.OnPropertyChanged);
+			_acknowledgePostButton.DataBindings.Add("Enabled", _component, "AcknowledgeEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_component.PropertyChanged += _component_propertyChanged;
+		}
+
+		private void _component_propertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == "Recipients")
+			{
+				_recipients.Table = _component.Recipients;
+			}
+			//else if(e.PropertyName == "SelectedStaffRecipient")
+			//{
+			//    _staffRecipientLookup.Value = _component.SelectedStaffRecipient;
+			//    _staffRecipientLookup.Refresh();
+			//}
+			//else if (e.PropertyName == "SelectedGroupRecipient")
+			//{
+			//    _groupRecipientLookup.Value = _component.SelectedGroupRecipient;
+			//}
+			else if (e.PropertyName == "AcknowledgeEnabled")
+			{
+				_acknowledgePostButton.Enabled = _component.AcknowledgeEnabled;
+			}
+		}
+
+		private void _staffRecipientAddButton_Click(object sender, System.EventArgs e)
+		{
+			using(new CursorManager(Cursors.WaitCursor))
+			{
+				_component.AddStaffRecipient();
+			}
+		}
+
+		private void _groupRecipientAddButton_Click(object sender, System.EventArgs e)
+		{
+			using (new CursorManager(Cursors.WaitCursor))
+			{
+				_component.AddGroupRecipient();
+			}
+		}
+
+		private void _acknowledgePostButton_Click(object sender, System.EventArgs e)
+		{
+			using (new CursorManager(Cursors.WaitCursor))
+			{
+				_component.AcknowledgeAndOrPost();
+			}
+		}
+
+		private void _cancelButton_Click(object sender, System.EventArgs e)
+		{
+			_component.Cancel();
+		}
+	}
 }

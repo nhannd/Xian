@@ -163,7 +163,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
                 foreach (OrderNote note in notes)
                 {
                     //validate that the note is actually associated with the correct order
-                    if (Equals(note.Order, order))
+                    if (!Equals(note.Order, order))
                         throw new ArgumentException("Attempt to acknowledge a note that is not associated with this order.");
 
                     note.Acknowledge(CurrentUserStaff);
