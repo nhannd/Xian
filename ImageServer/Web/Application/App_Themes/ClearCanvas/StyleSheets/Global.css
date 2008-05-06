@@ -1,6 +1,6 @@
 /*================================================================================
 Global.css - Defines the global styles for the entire web application relating  
-             primarily to the elements defined in Global.master.
+             primarily to the elements defined in GlobalMasterPage.master.
 ==================================================================================*/
 
 /* Global styles for the body */
@@ -642,7 +642,7 @@ Global.css - Defines the global styles for the entire web application relating
 .CSSSeriesGridViewHeaderStyle
 {
 	
-	text-wrap: suppress;
+/*	text-wrap: suppress; */
 	overflow: visible;
 
 }

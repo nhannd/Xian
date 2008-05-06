@@ -61,52 +61,6 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx" />
-    <Content Include="Admin\Configuration\Devices\DeviceGridView.ascx" />
-    <Content Include="Admin\Default.aspx" />
-    <Compile Include="About\About.aspx.cs">
-      <DependentUpon>About.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="About\About.aspx.designer.cs">
-      <DependentUpon>About.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx.cs">
-      <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx.designer.cs">
-      <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServiceLocks\EditServiceLockDialog.ascx.cs">
-      <DependentUpon>EditServiceLockDialog.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServiceLocks\EditServiceLockDialog.ascx.designer.cs">
-      <DependentUpon>EditServiceLockDialog.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockCollection.cs" />
-    <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockGridView.ascx.cs">
-      <DependentUpon>ServiceLockGridView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockGridView.ascx.designer.cs">
-      <DependentUpon>ServiceLockGridView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockPanel.ascx.cs">
-      <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockPanel.ascx.designer.cs">
-      <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockPage.aspx.cs">
-      <DependentUpon>ServiceLockPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServiceLocks\ServiceLockPage.aspx.designer.cs">
-      <DependentUpon>ServiceLockPage.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Common\KeyedCollectionBase.cs" />
     <Compile Include="Common\ConfirmationDialog.ascx.cs">
       <DependentUpon>ConfirmationDialog.ascx</DependentUpon>
@@ -114,108 +68,6 @@
     </Compile>
     <Compile Include="Common\ConfirmationDialog.ascx.designer.cs">
       <DependentUpon>ConfirmationDialog.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\Devices\DevicePage.aspx.cs">
-      <DependentUpon>DevicePage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\Devices\DevicePage.aspx.designer.cs">
-      <DependentUpon>DevicePage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx.cs">
-      <DependentUpon>AddEditFileSystemDialog.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx.designer.cs">
-      <DependentUpon>AddEditFileSystemDialog.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\FileSystemsGridView.ascx.cs">
-      <DependentUpon>FileSystemsGridView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\FileSystemsGridView.ascx.designer.cs">
-      <DependentUpon>FileSystemsGridView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\FileSystemsPanel.ascx.cs">
-      <DependentUpon>FileSystemsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\FileSystemsPanel.ascx.designer.cs">
-      <DependentUpon>FileSystemsPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\FileSystemsPage.aspx.cs">
-      <DependentUpon>FileSystemsPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\FileSystemsPage.aspx.designer.cs">
-      <DependentUpon>FileSystemsPage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\Preferences\Default.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\Preferences\Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\AddEditPartitionDialog.ascx.cs">
-      <DependentUpon>AddEditPartitionDialog.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\AddEditPartitionDialog.ascx.designer.cs">
-      <DependentUpon>AddEditPartitionDialog.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionGridPanel.ascx.cs">
-      <DependentUpon>ServerPartitionGridPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionGridPanel.ascx.designer.cs">
-      <DependentUpon>ServerPartitionGridPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionPage.aspx.cs">
-      <DependentUpon>ServerPartitionPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionPage.aspx.designer.cs">
-      <DependentUpon>ServerPartitionPage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionPanel.ascx.cs">
-      <DependentUpon>ServerPartitionPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionPanel.ascx.designer.cs">
-      <DependentUpon>ServerPartitionPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerRules\AddEditServerRuleDialog.ascx.cs">
-      <DependentUpon>AddEditServerRuleDialog.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerRules\AddEditServerRuleDialog.ascx.designer.cs">
-      <DependentUpon>AddEditServerRuleDialog.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerRules\ServerRuleGridView.ascx.cs">
-      <DependentUpon>ServerRuleGridView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerRules\ServerRuleGridView.ascx.designer.cs">
-      <DependentUpon>ServerRuleGridView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerRules\ServerRulePage.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-      <DependentUpon>ServerRulePage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerRules\ServerRulePage.aspx.designer.cs">
-      <DependentUpon>ServerRulePage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerRules\ServerRulePanel.ascx.cs">
-      <DependentUpon>ServerRulePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerRules\ServerRulePanel.ascx.designer.cs">
-      <DependentUpon>ServerRulePanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerRules\ServerRuleSamples.asmx.cs">
-      <DependentUpon>ServerRuleSamples.asmx</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Common\BarChart.aspx.cs">
       <DependentUpon>BarChart.aspx</DependentUpon>
@@ -230,27 +82,6 @@
     </Compile>
     <Compile Include="Common\BasePage.aspx.designer.cs">
       <DependentUpon>BasePage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\Devices\DeviceGridView.ascx.cs">
-      <DependentUpon>DeviceGridView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\Devices\DeviceGridView.ascx.designer.cs">
-      <DependentUpon>DeviceGridView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\Devices\DevicePanel.ascx.cs">
-      <DependentUpon>DevicePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\Devices\DevicePanel.ascx.designer.cs">
-      <DependentUpon>DevicePanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Common\InvalidInputIndicator.ascx.cs">
       <DependentUpon>InvalidInputIndicator.ascx</DependentUpon>
@@ -289,12 +120,12 @@
     <Compile Include="Common\TimedDialog.ascx.designer.cs">
       <DependentUpon>TimedDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="MasterPage.master.cs">
-      <DependentUpon>MasterPage.master</DependentUpon>
+    <Compile Include="GlobalMasterPage.master.cs">
+      <DependentUpon>GlobalMasterPage.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="MasterPage.master.designer.cs">
-      <DependentUpon>MasterPage.master</DependentUpon>
+    <Compile Include="GlobalMasterPage.master.designer.cs">
+      <DependentUpon>GlobalMasterPage.master</DependentUpon>
     </Compile>
     <Compile Include="Common\GridPager.ascx.cs">
       <DependentUpon>GridPager.ascx</DependentUpon>
@@ -310,105 +141,389 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Configure\Devices\AddEditDeviceDialog.ascx.cs">
+      <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\Devices\AddEditDeviceDialog.ascx.designer.cs">
+      <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\Devices\DeviceGridView.ascx.cs">
+      <DependentUpon>DeviceGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\Devices\DeviceGridView.ascx.designer.cs">
+      <DependentUpon>DeviceGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\Devices\DevicePage.aspx.cs">
+      <DependentUpon>DevicePage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\Devices\DevicePage.aspx.designer.cs">
+      <DependentUpon>DevicePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\Devices\DevicePanel.ascx.cs">
+      <DependentUpon>DevicePanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\Devices\DevicePanel.ascx.designer.cs">
+      <DependentUpon>DevicePanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\FileSystems\AddEditFileSystemDialog.ascx.cs">
+      <DependentUpon>AddEditFileSystemDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\FileSystems\AddEditFileSystemDialog.ascx.designer.cs">
+      <DependentUpon>AddEditFileSystemDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\FileSystems\FileSystemsGridView.ascx.cs">
+      <DependentUpon>FileSystemsGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\FileSystems\FileSystemsGridView.ascx.designer.cs">
+      <DependentUpon>FileSystemsGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\FileSystems\FileSystemsPage.aspx.cs">
+      <DependentUpon>FileSystemsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\FileSystems\FileSystemsPage.aspx.designer.cs">
+      <DependentUpon>FileSystemsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\FileSystems\FileSystemsPanel.ascx.cs">
+      <DependentUpon>FileSystemsPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\FileSystems\FileSystemsPanel.ascx.designer.cs">
+      <DependentUpon>FileSystemsPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerPartitions\AddEditPartitionDialog.ascx.cs">
+      <DependentUpon>AddEditPartitionDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerPartitions\AddEditPartitionDialog.ascx.designer.cs">
+      <DependentUpon>AddEditPartitionDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerPartitions\ServerPartitionGridPanel.ascx.cs">
+      <DependentUpon>ServerPartitionGridPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerPartitions\ServerPartitionGridPanel.ascx.designer.cs">
+      <DependentUpon>ServerPartitionGridPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerPartitions\ServerPartitionPage.aspx.cs">
+      <DependentUpon>ServerPartitionPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerPartitions\ServerPartitionPage.aspx.designer.cs">
+      <DependentUpon>ServerPartitionPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerPartitions\ServerPartitionPanel.ascx.cs">
+      <DependentUpon>ServerPartitionPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerPartitions\ServerPartitionPanel.ascx.designer.cs">
+      <DependentUpon>ServerPartitionPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerRules\AddEditServerRuleDialog.ascx.cs">
+      <DependentUpon>AddEditServerRuleDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerRules\AddEditServerRuleDialog.ascx.designer.cs">
+      <DependentUpon>AddEditServerRuleDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerRules\ServerRuleGridView.ascx.cs">
+      <DependentUpon>ServerRuleGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerRules\ServerRuleGridView.ascx.designer.cs">
+      <DependentUpon>ServerRuleGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerRules\ServerRulePage.aspx.cs">
+      <DependentUpon>ServerRulePage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerRules\ServerRulePage.aspx.designer.cs">
+      <DependentUpon>ServerRulePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerRules\ServerRulePanel.ascx.cs">
+      <DependentUpon>ServerRulePanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerRules\ServerRulePanel.ascx.designer.cs">
+      <DependentUpon>ServerRulePanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\ServerRules\ServerRuleSamples.asmx.cs">
+      <DependentUpon>ServerRuleSamples.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\ServiceLocks\EditServiceLockDialog.ascx.cs">
+      <DependentUpon>EditServiceLockDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\ServiceLocks\EditServiceLockDialog.ascx.designer.cs">
+      <DependentUpon>EditServiceLockDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\ServiceLocks\ServiceLockCollection.cs" />
+    <Compile Include="Pages\Configure\ServiceLocks\ServiceLockGridView.ascx.cs">
+      <DependentUpon>ServiceLockGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\ServiceLocks\ServiceLockGridView.ascx.designer.cs">
+      <DependentUpon>ServiceLockGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\ServiceLocks\ServiceLockPage.aspx.cs">
+      <DependentUpon>ServiceLockPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\ServiceLocks\ServiceLockPage.aspx.designer.cs">
+      <DependentUpon>ServiceLockPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx.cs">
+      <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx.designer.cs">
+      <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Help\About.aspx.cs">
+      <DependentUpon>About.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Help\About.aspx.designer.cs">
+      <DependentUpon>About.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Search\Move\DeviceGridView.ascx.cs">
+      <DependentUpon>DeviceGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Search\Move\DeviceGridView.ascx.designer.cs">
+      <DependentUpon>DeviceGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Search\Move\MovePage.aspx.cs">
+      <DependentUpon>MovePage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Search\Move\MovePage.aspx.designer.cs">
+      <DependentUpon>MovePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Search\Move\MovePanel.ascx.cs">
+      <DependentUpon>MovePanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Search\Move\MovePanel.ascx.designer.cs">
+      <DependentUpon>MovePanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Search\Move\StudyGridView.ascx.cs">
+      <DependentUpon>StudyGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Search\Move\StudyGridView.ascx.designer.cs">
+      <DependentUpon>StudyGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Search\SearchPage.aspx.cs">
+      <DependentUpon>SearchPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Search\SearchPage.aspx.designer.cs">
+      <DependentUpon>SearchPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Search\SearchPanel.ascx.cs">
+      <DependentUpon>SearchPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Search\SearchPanel.ascx.designer.cs">
+      <DependentUpon>SearchPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Search\StudyListGridView.ascx.cs">
+      <DependentUpon>StudyListGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Search\StudyListGridView.ascx.designer.cs">
+      <DependentUpon>StudyListGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Search\StudySummary.cs" />
+    <Compile Include="Pages\Search\StudySummaryAssembler.cs" />
+    <Compile Include="Pages\SeriesDetails\PatientSummary.cs" />
+    <Compile Include="Pages\SeriesDetails\PatientSummaryAssembler.cs" />
+    <Compile Include="Pages\SeriesDetails\PatientSummaryPanel.ascx.cs">
+      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\SeriesDetails\PatientSummaryPanel.ascx.designer.cs">
+      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\SeriesDetails\SeriesDetails.cs" />
+    <Compile Include="Pages\SeriesDetails\SeriesDetailsAssembler.cs" />
+    <Compile Include="Pages\SeriesDetails\SeriesDetailsPage.aspx.cs">
+      <DependentUpon>SeriesDetailsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\SeriesDetails\SeriesDetailsPage.aspx.designer.cs">
+      <DependentUpon>SeriesDetailsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\SeriesDetails\SeriesDetailsPanel.ascx.cs">
+      <DependentUpon>SeriesDetailsPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\SeriesDetails\SeriesDetailsPanel.ascx.designer.cs">
+      <DependentUpon>SeriesDetailsPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\SeriesDetails\SeriesDetailsView.ascx.cs">
+      <DependentUpon>SeriesDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\SeriesDetails\SeriesDetailsView.ascx.designer.cs">
+      <DependentUpon>SeriesDetailsView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\SeriesDetails\StudySummaryPanel.ascx.cs">
+      <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\SeriesDetails\StudySummaryPanel.ascx.designer.cs">
+      <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\PatientSummary.cs" />
+    <Compile Include="Pages\StudyDetails\PatientSummaryAssembler.cs" />
+    <Compile Include="Pages\StudyDetails\PatientSummaryPanel.ascx.cs">
+      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\PatientSummaryPanel.ascx.designer.cs">
+      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\SeriesGridView.ascx.cs">
+      <DependentUpon>SeriesGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\SeriesGridView.ascx.designer.cs">
+      <DependentUpon>SeriesGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\StudyDetails.cs" />
+    <Compile Include="Pages\StudyDetails\StudyDetailsAssembler.cs" />
+    <Compile Include="Pages\StudyDetails\StudyDetailsPage.aspx.cs">
+      <DependentUpon>StudyDetailsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\StudyDetailsPage.aspx.designer.cs">
+      <DependentUpon>StudyDetailsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\StudyDetailsPanel.ascx.cs">
+      <DependentUpon>StudyDetailsPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\StudyDetailsPanel.ascx.designer.cs">
+      <DependentUpon>StudyDetailsPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\StudyDetailsView.ascx.cs">
+      <DependentUpon>StudyDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\StudyDetailsView.ascx.designer.cs">
+      <DependentUpon>StudyDetailsView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\AutoRouteWorkQueueDetails.cs" />
+    <Compile Include="Pages\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx.cs">
+      <DependentUpon>AutoRouteWorkQueueDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx.designer.cs">
+      <DependentUpon>AutoRouteWorkQueueDetailsView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\DeleteWorkQueueDialog.ascx.cs">
+      <DependentUpon>DeleteWorkQueueDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\DeleteWorkQueueDialog.ascx.designer.cs">
+      <DependentUpon>DeleteWorkQueueDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx.cs">
+      <DependentUpon>GeneralWorkQueueDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx.designer.cs">
+      <DependentUpon>GeneralWorkQueueDetailsView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\ResetWorkQueueDialog.ascx.cs">
+      <DependentUpon>ResetWorkQueueDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\ResetWorkQueueDialog.ascx.designer.cs">
+      <DependentUpon>ResetWorkQueueDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\ScheduleWorkQueueDialog.ascx.cs">
+      <DependentUpon>ScheduleWorkQueueDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\ScheduleWorkQueueDialog.ascx.designer.cs">
+      <DependentUpon>ScheduleWorkQueueDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\StudyDetails.cs" />
+    <Compile Include="Pages\WorkQueue\Edit\StudyDetailsAssembler.cs" />
+    <Compile Include="Pages\WorkQueue\Edit\ViewEdit.aspx.cs">
+      <DependentUpon>ViewEdit.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\ViewEdit.aspx.designer.cs">
+      <DependentUpon>ViewEdit.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\WebMoveStudyWorkQueueDetails.cs" />
+    <Compile Include="Pages\WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx.cs">
+      <DependentUpon>WebMoveStudyWorkQueueDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx.designer.cs">
+      <DependentUpon>WebMoveStudyWorkQueueDetailsView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\WorkQueueDetails.cs" />
+    <Compile Include="Pages\WorkQueue\Edit\WorkQueueDetailsAssembler.cs" />
+    <Compile Include="Pages\WorkQueue\Edit\WorkQueueDetailsViewBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.cs">
+      <DependentUpon>WorkQueueItemDetailsPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.designer.cs">
+      <DependentUpon>WorkQueueItemDetailsPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\WorkQueueSettingsPanel.ascx.cs">
+      <DependentUpon>WorkQueueSettingsPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\Edit\WorkQueueSettingsPanel.ascx.designer.cs">
+      <DependentUpon>WorkQueueSettingsPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\SearchPage.aspx.cs">
+      <DependentUpon>SearchPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\SearchPage.aspx.designer.cs">
+      <DependentUpon>SearchPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\SearchPanel.ascx.cs">
+      <DependentUpon>SearchPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\SearchPanel.ascx.designer.cs">
+      <DependentUpon>SearchPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\WorkQueueItemCollection.cs" />
+    <Compile Include="Pages\WorkQueue\WorkQueueItemListPanel.ascx.cs">
+      <DependentUpon>WorkQueueItemListPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\WorkQueueItemListPanel.ascx.designer.cs">
+      <DependentUpon>WorkQueueItemListPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\WorkQueueSettings.Designer.cs">
+      <DependentUpon>WorkQueueSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Pages\WorkQueue\WorkQueueSummary.cs" />
+    <Compile Include="Pages\WorkQueue\WorkQueueSummaryAssembler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Search\Move\DeviceGridView.ascx.cs">
-      <DependentUpon>DeviceGridView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Search\Move\DeviceGridView.ascx.designer.cs">
-      <DependentUpon>DeviceGridView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Search\Move\MovePage.aspx.cs">
-      <DependentUpon>MovePage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Search\Move\MovePage.aspx.designer.cs">
-      <DependentUpon>MovePage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Search\Move\MovePanel.ascx.cs">
-      <DependentUpon>MovePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Search\Move\MovePanel.ascx.designer.cs">
-      <DependentUpon>MovePanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Search\Move\StudyGridView.ascx.cs">
-      <DependentUpon>StudyGridView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Search\Move\StudyGridView.ascx.designer.cs">
-      <DependentUpon>StudyGridView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Search\StudyListGridView.ascx.cs">
-      <DependentUpon>StudyListGridView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Search\StudyListGridView.ascx.designer.cs">
-      <DependentUpon>StudyListGridView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Search\SearchPage.aspx.cs">
-      <DependentUpon>SearchPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Search\SearchPage.aspx.designer.cs">
-      <DependentUpon>SearchPage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Search\SearchPanel.ascx.cs">
-      <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Search\SearchPanel.ascx.designer.cs">
-      <DependentUpon>SearchPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\Preferences\Theme.aspx.cs">
-      <DependentUpon>Theme.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\Preferences\Theme.aspx.designer.cs">
-      <DependentUpon>Theme.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Search\StudySummary.cs">
-    </Compile>
-    <Compile Include="Search\StudySummaryAssembler.cs" />
-    <Compile Include="SeriesDetails\StudySummaryPanel.ascx.cs">
-      <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="SeriesDetails\StudySummaryPanel.ascx.designer.cs">
-      <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="SeriesDetails\PatientSummary.cs" />
-    <Compile Include="SeriesDetails\PatientSummaryAssembler.cs" />
-    <Compile Include="SeriesDetails\PatientSummaryPanel.ascx.cs">
-      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="SeriesDetails\PatientSummaryPanel.ascx.designer.cs">
-      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="SeriesDetails\SeriesDetailsAssembler.cs" />
-    <Compile Include="SeriesDetails\SeriesDetails.cs" />
-    <Compile Include="SeriesDetails\SeriesDetailsPage.aspx.cs">
-      <DependentUpon>SeriesDetailsPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="SeriesDetails\SeriesDetailsPage.aspx.designer.cs">
-      <DependentUpon>SeriesDetailsPage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="SeriesDetails\SeriesDetailsPanel.ascx.cs">
-      <DependentUpon>SeriesDetailsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="SeriesDetails\SeriesDetailsPanel.ascx.designer.cs">
-      <DependentUpon>SeriesDetailsPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="SeriesDetails\SeriesDetailsView.ascx.cs">
-      <DependentUpon>SeriesDetailsView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="SeriesDetails\SeriesDetailsView.ascx.designer.cs">
-      <DependentUpon>SeriesDetailsView.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
@@ -425,154 +540,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="StudyDetails\PatientSummaryAssembler.cs" />
-    <Compile Include="StudyDetails\PatientSummaryPanel.ascx.cs">
-      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="StudyDetails\PatientSummaryPanel.ascx.designer.cs">
-      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="StudyDetails\PatientSummary.cs" />
-    <Compile Include="StudyDetails\SeriesGridView.ascx.cs">
-      <DependentUpon>SeriesGridView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="StudyDetails\SeriesGridView.ascx.designer.cs">
-      <DependentUpon>SeriesGridView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="StudyDetails\StudyDetailsPage.aspx.cs">
-      <DependentUpon>StudyDetailsPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="StudyDetails\StudyDetailsPage.aspx.designer.cs">
-      <DependentUpon>StudyDetailsPage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="StudyDetails\StudyDetails.cs">
-    </Compile>
-    <Compile Include="StudyDetails\StudyDetailsPanel.ascx.cs">
-      <DependentUpon>StudyDetailsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="StudyDetails\StudyDetailsPanel.ascx.designer.cs">
-      <DependentUpon>StudyDetailsPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="StudyDetails\StudyDetailsAssembler.cs" />
-    <Compile Include="StudyDetails\StudyDetailsView.ascx.cs">
-      <DependentUpon>StudyDetailsView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="StudyDetails\StudyDetailsView.ascx.designer.cs">
-      <DependentUpon>StudyDetailsView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx.cs">
-      <DependentUpon>AutoRouteWorkQueueDetailsView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx.designer.cs">
-      <DependentUpon>AutoRouteWorkQueueDetailsView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\AutoRouteWorkQueueDetails.cs" />
-    <Compile Include="WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx.cs">
-      <DependentUpon>WebMoveStudyWorkQueueDetailsView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx.designer.cs">
-      <DependentUpon>WebMoveStudyWorkQueueDetailsView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\WebMoveStudyWorkQueueDetails.cs" />
-    <Compile Include="WorkQueue\Edit\DeleteWorkQueueDialog.ascx.cs">
-      <DependentUpon>DeleteWorkQueueDialog.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\DeleteWorkQueueDialog.ascx.designer.cs">
-      <DependentUpon>DeleteWorkQueueDialog.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\ResetWorkQueueDialog.ascx.cs">
-      <DependentUpon>ResetWorkQueueDialog.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\ResetWorkQueueDialog.ascx.designer.cs">
-      <DependentUpon>ResetWorkQueueDialog.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\ScheduleWorkQueueDialog.ascx.cs">
-      <DependentUpon>ScheduleWorkQueueDialog.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\ScheduleWorkQueueDialog.ascx.designer.cs">
-      <DependentUpon>ScheduleWorkQueueDialog.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx.cs">
-      <DependentUpon>GeneralWorkQueueDetailsView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx.designer.cs">
-      <DependentUpon>GeneralWorkQueueDetailsView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\WorkQueueDetailsViewBase.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.cs">
-      <DependentUpon>WorkQueueItemDetailsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.designer.cs">
-      <DependentUpon>WorkQueueItemDetailsPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\StudyDetails.cs" />
-    <Compile Include="WorkQueue\Edit\StudyDetailsAssembler.cs" />
-    <Compile Include="WorkQueue\Edit\WorkQueueDetails.cs" />
-    <Compile Include="WorkQueue\Edit\WorkQueueDetailsAssembler.cs" />
-    <Compile Include="WorkQueue\Edit\ViewEdit.aspx.cs">
-      <DependentUpon>ViewEdit.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\ViewEdit.aspx.designer.cs">
-      <DependentUpon>ViewEdit.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\WorkQueueSettingsPanel.ascx.cs">
-      <DependentUpon>WorkQueueSettingsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\Edit\WorkQueueSettingsPanel.ascx.designer.cs">
-      <DependentUpon>WorkQueueSettingsPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="WorkQueue\SearchPage.aspx.cs">
-      <DependentUpon>SearchPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\SearchPage.aspx.designer.cs">
-      <DependentUpon>SearchPage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="WorkQueue\SearchPanel.ascx.cs">
-      <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\SearchPanel.ascx.designer.cs">
-      <DependentUpon>SearchPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="WorkQueue\WorkQueueItemCollection.cs" />
-    <Compile Include="WorkQueue\WorkQueueItemListPanel.ascx.cs">
-      <DependentUpon>WorkQueueItemListPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\WorkQueueItemListPanel.ascx.designer.cs">
-      <DependentUpon>WorkQueueItemListPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="WorkQueue\WorkQueueSettings.Designer.cs">
-      <DependentUpon>WorkQueueSettings.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <Compile Include="WorkQueue\WorkQueueSummary.cs" />
-    <Compile Include="WorkQueue\WorkQueueSummaryAssembler.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="About\About.aspx" />
-    <Content Include="Admin\Configuration\ServiceLocks\EditServiceLockDialog.ascx" />
-    <Content Include="Admin\Configuration\ServiceLocks\ServiceLockGridView.ascx" />
-    <Content Include="Admin\Configuration\ServiceLocks\ServiceLockPanel.ascx" />
-    <Content Include="Admin\Configuration\ServiceLocks\ServiceLockPage.aspx" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Calendar\calendar-arrow-left.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Calendar\calendar-arrow-right.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Calendar\TitleBackground.gif" />
@@ -596,22 +565,6 @@
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Filter.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Toolbar.css" />
     <Content Include="Common\ConfirmationDialog.ascx" />
-    <Content Include="Admin\Configuration\Devices\DevicePage.aspx" />
-    <Content Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx" />
-    <EmbeddedResource Include="Admin\Configuration\FileSystems\Filesystem.js" />
-    <Content Include="Admin\Configuration\FileSystems\FileSystemsGridView.ascx" />
-    <Content Include="Admin\Configuration\FileSystems\FileSystemsPanel.ascx" />
-    <Content Include="Admin\Configuration\FileSystems\FileSystemsPage.aspx" />
-    <Content Include="Admin\Configuration\Preferences\Default.aspx" />
-    <Content Include="Admin\Configuration\ServerPartitions\AddEditPartitionDialog.ascx" />
-    <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionGridPanel.ascx" />
-    <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionPage.aspx" />
-    <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionPanel.ascx" />
-    <Content Include="Admin\Configuration\ServerRules\AddEditServerRuleDialog.ascx" />
-    <Content Include="Admin\Configuration\ServerRules\ServerRuleGridView.ascx" />
-    <Content Include="Admin\Configuration\ServerRules\ServerRulePage.aspx" />
-    <Content Include="Admin\Configuration\ServerRules\ServerRulePanel.ascx" />
-    <Content Include="Admin\Configuration\ServerRules\ServerRuleSamples.asmx" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Accordian.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\Calendar.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\Dialog.css" />
@@ -635,7 +588,7 @@
     <Content Include="Common\SectionPanel.ascx" />
     <Content Include="Common\ServerPartitionTabs.ascx" />
     <Content Include="Common\TimedDialog.ascx" />
-    <Content Include="Docs\About.htm" />
+    <Content Include="Pages\Help\About.htm" />
     <Content Include="images\blank.gif" />
     <Content Include="images\icons\AutoRouteSmall.png" />
     <Content Include="images\icons\close.png" />
@@ -653,24 +606,73 @@
     <Content Include="images\icons\SendDisabled.png" />
     <Content Include="images\icons\SendEnabled.png" />
     <Content Include="images\Splash.png" />
+    <Content Include="Pages\Configure\Devices\AddEditDeviceDialog.ascx" />
+    <Content Include="Pages\Configure\Devices\DeviceGridView.ascx" />
+    <Content Include="Pages\Configure\Devices\DevicePage.aspx" />
+    <Content Include="Pages\Configure\Devices\DevicePanel.ascx" />
+    <Content Include="Pages\Configure\FileSystems\AddEditFileSystemDialog.ascx" />
+    <EmbeddedResource Include="Pages\Configure\FileSystems\Filesystem.js" />
+    <Content Include="Pages\Configure\FileSystems\FileSystemsGridView.ascx" />
+    <Content Include="Pages\Configure\FileSystems\FileSystemsPage.aspx" />
+    <Content Include="Pages\Configure\FileSystems\FileSystemsPanel.ascx" />
+    <Content Include="Pages\Configure\ServerPartitions\AddEditPartitionDialog.ascx" />
+    <Content Include="Pages\Configure\ServerPartitions\ServerPartitionGridPanel.ascx" />
+    <Content Include="Pages\Configure\ServerPartitions\ServerPartitionPage.aspx" />
+    <Content Include="Pages\Configure\ServerPartitions\ServerPartitionPanel.ascx" />
+    <Content Include="Pages\Configure\ServerRules\AddEditServerRuleDialog.ascx" />
+    <Content Include="Pages\Configure\ServerRules\ServerRuleGridView.ascx" />
+    <Content Include="Pages\Configure\ServerRules\ServerRulePage.aspx" />
+    <Content Include="Pages\Configure\ServerRules\ServerRulePanel.ascx" />
+    <Content Include="Pages\Configure\ServerRules\ServerRuleSamples.asmx" />
+    <Content Include="Pages\Configure\ServiceLocks\EditServiceLockDialog.ascx" />
+    <Content Include="Pages\Configure\ServiceLocks\ServiceLockGridView.ascx" />
+    <Content Include="Pages\Configure\ServiceLocks\ServiceLockPage.aspx" />
+    <Content Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx" />
+    <Content Include="Pages\Help\About.aspx" />
+    <Content Include="Pages\Search\Move\DeviceGridView.ascx" />
+    <Content Include="Pages\Search\Move\MovePage.aspx" />
+    <Content Include="Pages\Search\Move\MovePanel.ascx" />
+    <Content Include="Pages\Search\Move\StudyGridView.ascx" />
+    <Content Include="Pages\Search\SearchPage.aspx" />
+    <Content Include="Pages\Search\SearchPanel.ascx" />
+    <EmbeddedResource Include="Pages\Search\SearchPanel.js" />
+    <Content Include="Pages\Search\StudyListGridView.ascx" />
+    <Content Include="Pages\SeriesDetails\PatientSummaryPanel.ascx" />
+    <Content Include="Pages\SeriesDetails\SeriesDetailsPage.aspx" />
+    <Content Include="Pages\SeriesDetails\SeriesDetailsPanel.ascx" />
+    <Content Include="Pages\SeriesDetails\SeriesDetailsView.ascx" />
+    <Content Include="Pages\SeriesDetails\StudySummaryPanel.ascx" />
+    <Content Include="Pages\StudyDetails\PatientSummaryPanel.ascx" />
+    <Content Include="Pages\StudyDetails\SeriesGridView.ascx" />
+    <EmbeddedResource Include="Pages\StudyDetails\SeriesGridView.js" />
+    <Content Include="Pages\StudyDetails\StudyDetailsPage.aspx" />
+    <Content Include="Pages\StudyDetails\StudyDetailsPanel.ascx" />
+    <EmbeddedResource Include="Pages\StudyDetails\StudyDetailsPanel.js" />
+    <Content Include="Pages\StudyDetails\StudyDetailsView.ascx" />
+    <Content Include="Pages\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx" />
+    <Content Include="Pages\WorkQueue\Edit\DeleteWorkQueueDialog.ascx" />
+    <Content Include="Pages\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />
+    <Content Include="Pages\WorkQueue\Edit\ResetWorkQueueDialog.ascx" />
+    <Content Include="Pages\WorkQueue\Edit\ScheduleWorkQueueDialog.ascx" />
+    <Content Include="Pages\WorkQueue\Edit\ViewEdit.aspx" />
+    <Content Include="Pages\WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx" />
+    <Content Include="Pages\WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx" />
+    <Content Include="Pages\WorkQueue\Edit\WorkQueueSettingsPanel.ascx" />
+    <Content Include="Pages\WorkQueue\SearchPage.aspx" />
+    <Content Include="Pages\WorkQueue\SearchPanel.ascx" />
+    <EmbeddedResource Include="Pages\WorkQueue\SearchPanel.js" />
+    <Content Include="Pages\WorkQueue\WorkQueueItemListPanel.ascx" />
     <Content Include="Scripts\NumberFormat154.js" />
-    <EmbeddedResource Include="Search\SearchPanel.js" />
-    <Content Include="Search\Move\DeviceGridView.ascx" />
-    <Content Include="Search\Move\MovePage.aspx" />
-    <Content Include="Search\Move\MovePanel.ascx" />
-    <Content Include="Search\Move\StudyGridView.ascx" />
-    <Content Include="Search\StudyListGridView.ascx" />
     <Content Include="Common\BarChart.aspx" />
-    <Content Include="Admin\Configuration\Devices\DevicePanel.ascx" />
-    <Content Include="MasterPage.master" />
+    <Content Include="GlobalMasterPage.master" />
     <Content Include="App_Themes\ClearCanvas\Global.skin" />
-    <None Include="Scripts\.svn\entries" />
-    <None Include="Scripts\.svn\format" />
-    <None Include="Service References\FilesystemServiceProxy.map" />
-    <None Include="WorkQueue\WorkQueueSettings.settings">
+    <None Include="Pages\WorkQueue\WorkQueueSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Scripts\.svn\entries" />
+    <None Include="Scripts\.svn\format" />
+    <None Include="Service References\FilesystemServiceProxy.map" />
     <Content Include="Common\GridPager.ascx" />
     <Content Include="images\checked_tall.gif" />
     <Content Include="images\filter.gif" />
@@ -704,14 +706,6 @@
     <Content Include="images\unchecked_tall.gif" />
     <Content Include="images\Plus.ico" />
     <Content Include="images\usage.png" />
-    <Content Include="Search\SearchPage.aspx" />
-    <Content Include="Search\SearchPanel.ascx" />
-    <Content Include="Admin\Configuration\Preferences\Theme.aspx" />
-    <Content Include="SeriesDetails\StudySummaryPanel.ascx" />
-    <Content Include="SeriesDetails\PatientSummaryPanel.ascx" />
-    <Content Include="SeriesDetails\SeriesDetailsPage.aspx" />
-    <Content Include="SeriesDetails\SeriesDetailsPanel.ascx" />
-    <Content Include="SeriesDetails\SeriesDetailsView.ascx" />
     <Content Include="Services\FilesystemInfoService.asmx" />
     <Content Include="Services\ValidationServices.asmx" />
     <EmbeddedResource Include="SR.resx">
@@ -719,29 +713,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="StudyDetails\SeriesGridView.js" />
-    <EmbeddedResource Include="StudyDetails\StudyDetailsPanel.js" />
-    <Content Include="StudyDetails\PatientSummaryPanel.ascx" />
-    <Content Include="StudyDetails\SeriesGridView.ascx" />
-    <Content Include="StudyDetails\StudyDetailsPage.aspx" />
-    <Content Include="StudyDetails\StudyDetailsPanel.ascx" />
-    <Content Include="StudyDetails\StudyDetailsView.ascx" />
     <Content Include="Web.sitemap" />
     <Content Include="Logging.config" />
     <Content Include="Services\webservice.htc" />
-    <EmbeddedResource Include="WorkQueue\SearchPanel.js" />
-    <Content Include="WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx" />
-    <Content Include="WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx" />
-    <Content Include="WorkQueue\Edit\DeleteWorkQueueDialog.ascx" />
-    <Content Include="WorkQueue\Edit\ResetWorkQueueDialog.ascx" />
-    <Content Include="WorkQueue\Edit\ScheduleWorkQueueDialog.ascx" />
-    <Content Include="WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />
-    <Content Include="WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx" />
-    <Content Include="WorkQueue\Edit\ViewEdit.aspx" />
-    <Content Include="WorkQueue\Edit\WorkQueueSettingsPanel.ascx" />
-    <Content Include="WorkQueue\SearchPage.aspx" />
-    <Content Include="WorkQueue\SearchPanel.ascx" />
-    <Content Include="WorkQueue\WorkQueueItemListPanel.ascx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -780,7 +754,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Pages\" />
     <Folder Include="plugins\" />
     <Folder Include="Scripts\.svn\prop-base\" />
     <Folder Include="Scripts\.svn\props\" />
