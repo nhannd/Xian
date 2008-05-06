@@ -41,8 +41,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	{
 		private delegate void GetTagDelegate<T>(DicomAttribute attribute, uint position, out T value);
  
-		private DicomFile _dicomFile;
-		private bool _loaded;
+		private readonly object _syncLock = new object();
+		private volatile bool _loaded;
+		private volatile DicomFile _dicomFile;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="LocalImageSop"/> with
@@ -61,9 +62,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
 		protected override void Dispose(bool disposing)
 		{
-			_dicomFile = null;
-			_loaded = false;
-
+			lock (_syncLock)
+			{
+				_dicomFile = null;
+				_loaded = false;
+			}
+			
 			base.Dispose(disposing);
 		}
 
@@ -275,8 +279,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			if (_loaded)
 				return;
 
-			_loaded = true;
-			_dicomFile.Load(DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences);
+			lock (_syncLock)
+			{
+				if (_loaded)
+					return;
+				
+				_dicomFile.Load(DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences);
+				_loaded = true;
+			}
 		}
 	}
 }

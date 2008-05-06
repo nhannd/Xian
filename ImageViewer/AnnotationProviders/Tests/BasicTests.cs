@@ -33,12 +33,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using ClearCanvas.Common;
-using System.Reflection;
 using ClearCanvas.ImageViewer.Annotations;
-using ClearCanvas.ImageViewer.AnnotationProviders.Dicom;
+using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Tests
 {

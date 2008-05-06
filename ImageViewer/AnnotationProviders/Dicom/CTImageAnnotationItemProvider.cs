@@ -31,11 +31,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using System.Reflection;
-using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -44,120 +42,115 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 	[ExtensionOf(typeof(AnnotationItemProviderExtensionPoint))]
 	public class CTImageAnnotationItemProvider : AnnotationItemProvider
 	{
-		private List<IAnnotationItem> _annotationItems;
+		private readonly List<IAnnotationItem> _annotationItems;
 
 		public CTImageAnnotationItemProvider()
 			: base("AnnotationItemProviders.Dicom.CTImage", new AnnotationResourceResolver(typeof(CTImageAnnotationItemProvider).Assembly))
 		{
+			_annotationItems = new List<IAnnotationItem>();
+
+			AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.CTImage.KVP",
+						resolver,
+						delegate(Frame frame)
+						{
+							double value;
+							bool tagExists;
+							frame.ParentImageSop.GetTag(DicomTags.Kvp, out value, out tagExists);
+							if (tagExists)
+								return String.Format(SR.FormatkV, value);
+
+							return "";
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.CTImage.XRayTubeCurrent",
+						resolver,
+						delegate(Frame frame)
+						{
+							int value;
+							bool tagExists;
+							frame.ParentImageSop.GetTag(DicomTags.XRayTubeCurrent, out value, out tagExists);
+							if (tagExists)
+								return String.Format(SR.FormatmA, value);
+
+							return "";
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.CTImage.GantryDetectorTilt",
+						resolver,
+						delegate(Frame frame)
+						{
+							double value;
+							bool tagExists;
+							frame.ParentImageSop.GetTag(DicomTags.GantryDetectorTilt, out value, out tagExists);
+							if (tagExists)
+								return String.Format(SR.FormatDegrees, value);
+
+							return "";
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.CTImage.ExposureTime",
+						resolver,
+						delegate(Frame frame)
+						{
+							int value;
+							bool tagExists;
+							frame.ParentImageSop.GetTag(DicomTags.ExposureTime, out value, out tagExists);
+							if (tagExists)
+								return String.Format(SR.Formatms, value);
+
+							return "";
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.CTImage.ConvolutionKernel",
+						resolver,
+						delegate(Frame frame)
+						{
+							string value;
+							bool tagExists;
+							frame.ParentImageSop.GetTag(DicomTags.ConvolutionKernel, out value, out tagExists);
+							return value;
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			if (_annotationItems == null)
-			{
-				_annotationItems = new List<IAnnotationItem>();
-
-				AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.CTImage.KVP",
-							resolver,
-							delegate(Frame frame)
-							{
-								double value;
-								bool tagExists;
-								frame.ParentImageSop.GetTag(DicomTags.Kvp, out value, out tagExists);
-								if (tagExists)
-									return String.Format(SR.FormatkV, value);
-								
-								return "";
-							},
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.CTImage.XRayTubeCurrent",
-							resolver,
-							delegate(Frame frame)
-							{
-								int value;
-								bool tagExists;
-								frame.ParentImageSop.GetTag(DicomTags.XRayTubeCurrent, out value, out tagExists);
-								if (tagExists)
-									return String.Format(SR.FormatmA, value);
-
-								return "";
-							},
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.CTImage.GantryDetectorTilt",
-							resolver,
-							delegate(Frame frame)
-							{
-								double value;
-								bool tagExists;
-								frame.ParentImageSop.GetTag(DicomTags.GantryDetectorTilt, out value, out tagExists);
-								if (tagExists)
-									return String.Format(SR.FormatDegrees, value);
-
-								return "";
-							},
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.CTImage.ExposureTime",
-							resolver,
-							delegate(Frame frame)
-							{
-								int value;
-								bool tagExists;
-								frame.ParentImageSop.GetTag(DicomTags.ExposureTime, out value, out tagExists);
-								if (tagExists)
-									return String.Format(SR.Formatms, value);
-
-								return "";
-							},
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.CTImage.ConvolutionKernel",
-							resolver,
-							delegate(Frame frame)
-							{
-								string value;
-								bool tagExists;
-								frame.ParentImageSop.GetTag(DicomTags.ConvolutionKernel, out value, out tagExists);
-								return value;
-							},
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-			}
-
 			return _annotationItems;
 		}
 	}

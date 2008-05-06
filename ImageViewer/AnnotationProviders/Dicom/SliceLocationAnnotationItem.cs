@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
@@ -31,10 +31,9 @@
 
 using System;
 using System.Drawing;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Annotations;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 {

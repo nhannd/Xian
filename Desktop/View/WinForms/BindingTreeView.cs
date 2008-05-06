@@ -241,7 +241,28 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
+    	[DefaultValue(KnownColor.Window)]
+		public Color TreeBackColor
+    	{
+			get { return _treeCtrl.BackColor; }	
+			set { _treeCtrl.BackColor = value; }	
+    	}
+
+		[DefaultValue(KnownColor.WindowText)]
+		public Color TreeForeColor
+		{
+			get { return _treeCtrl.ForeColor; }
+			set { _treeCtrl.ForeColor = value; }
+		}
+
+		[DefaultValue(KnownColor.Black)]
+		public Color TreeLineColor
+		{
+			get { return _treeCtrl.LineColor; }
+			set { _treeCtrl.LineColor = value; }
+		}
+
+		public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
         {
             get { return _toolStripItemDisplayStyle; }
             set { _toolStripItemDisplayStyle = value; }

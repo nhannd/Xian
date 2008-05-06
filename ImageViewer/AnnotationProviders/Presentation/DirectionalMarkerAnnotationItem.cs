@@ -30,13 +30,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.Annotations;
-using ClearCanvas.Dicom;
-using System.Drawing.Drawing2D;
 using System.Drawing;
+using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 

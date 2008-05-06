@@ -29,13 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.Annotations;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.StudyManagement;
-
 // Implement this later
 
 /*

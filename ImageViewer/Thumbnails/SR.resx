@@ -123,10 +123,19 @@
   <data name="MenuView" xml:space="preserve">
     <value>View</value>
   </data>
+  <data name="MessageLoading" xml:space="preserve">
+    <value>Loading ...</value>
+  </data>
+  <data name="MessageNoImages" xml:space="preserve">
+    <value>No Images</value>
+  </data>
   <data name="TitleThumbnails" xml:space="preserve">
     <value>Thumbnails</value>
   </data>
   <data name="ToolbarShowThumbnails" xml:space="preserve">
     <value>Thumbnails</value>
+  </data>
+  <data name="TooltipShowThumbnails" xml:space="preserve">
+    <value>Show Thumbnails</value>
   </data>
 </root>

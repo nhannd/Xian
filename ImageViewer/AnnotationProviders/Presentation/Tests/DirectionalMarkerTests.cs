@@ -31,16 +31,13 @@
 
 #if UNIT_TESTS
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.Annotations;
 using System.Drawing;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
+using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation.Tests
 {

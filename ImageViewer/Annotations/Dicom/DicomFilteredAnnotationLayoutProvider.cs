@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
 	internal sealed class DicomFilteredAnnotationLayoutProvider : StoredAnnotatationLayoutProvider
 	{
-		private IImageSopProvider _provider;
+		private readonly IImageSopProvider _provider;
 
 		public DicomFilteredAnnotationLayoutProvider(IImageSopProvider provider)
 		{

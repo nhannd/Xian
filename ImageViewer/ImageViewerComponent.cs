@@ -137,8 +137,8 @@ namespace ClearCanvas.ImageViewer
 		private ToolSet _toolSet;
 		private ILayoutManager _layoutManager;
 
-		private static StudyFinderMap _studyFinders;
-		private static StudyLoaderMap _studyLoaders;
+		private static readonly StudyFinderMap _studyFinders = new StudyFinderMap();
+		private static readonly StudyLoaderMap _studyLoaders = new StudyLoaderMap();
 
 		private event EventHandler _closingEvent;
 
@@ -443,24 +443,12 @@ namespace ClearCanvas.ImageViewer
 
 		private static StudyFinderMap StudyFinders
 		{
-			get
-			{
-				if (_studyFinders == null)
-					_studyFinders = new StudyFinderMap();
-
-				return _studyFinders;
-			}
+			get { return _studyFinders; }
 		}
 
 		private StudyLoaderMap StudyLoaders
 		{
-			get
-			{
-				if (_studyLoaders == null)
-					_studyLoaders = new StudyLoaderMap();
-
-				return _studyLoaders;
-			}
+			get { return _studyLoaders; }
 		}
 
 		private ActionModelNode ContextMenuModel
@@ -692,11 +680,6 @@ namespace ClearCanvas.ImageViewer
 			                    	};
 			imageViewer.Layout();
 			imageViewer.PhysicalWorkspace.SelectDefaultImageBox();			
-		}
-
-		private static void workspace_Closed(object sender, ClosedEventArgs e)
-		{
-			throw new NotImplementedException();
 		}
 
 		#endregion

@@ -31,11 +31,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using System.Reflection;
-using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -44,89 +42,85 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 	[ExtensionOf(typeof(AnnotationItemProviderExtensionPoint))]
 	public class PatientStudyAnnotationItemProvider : AnnotationItemProvider
 	{
-		private List<IAnnotationItem> _annotationItems;
+		private readonly List<IAnnotationItem> _annotationItems;
 
 		public PatientStudyAnnotationItemProvider()
 			: base("AnnotationItemProviders.Dicom.PatientStudy", new AnnotationResourceResolver(typeof(PatientStudyAnnotationItemProvider).Assembly))
 		{
+			_annotationItems = new List<IAnnotationItem>();
+
+			AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.PatientStudy.AdditionalPatientsHistory",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.AdditionalPatientsHistory; },
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.PatientStudy.Occupation",
+						resolver,
+						FrameDataRetrieverFactory.GetStringRetriever(DicomTags.Occupation),
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.PatientStudy.PatientsAge",
+						resolver,
+						FrameDataRetrieverFactory.GetStringRetriever(DicomTags.PatientsAge),
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<double>
+					(
+						"Dicom.PatientStudy.PatientsSize",
+						resolver,
+						FrameDataRetrieverFactory.GetDoubleRetriever(DicomTags.PatientsSize),
+						delegate(double input)
+						{
+							if (double.IsNaN(input) || input == 0)
+								return "";
+
+							return String.Format("{0} {1}", input.ToString("F2"), SR.Label_metres);
+						}
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<double>
+					(
+						"Dicom.PatientStudy.PatientsWeight",
+						resolver,
+						FrameDataRetrieverFactory.GetDoubleRetriever(DicomTags.PatientsWeight),
+						delegate(double input)
+						{
+							if (double.IsNaN(input) || input == 0)
+								return "";
+
+							return String.Format("{0} {1}", input.ToString("F2"), SR.Label_kilograms);
+						}
+					)
+				);
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			if (_annotationItems == null)
-			{
-				_annotationItems = new List<IAnnotationItem>();
-
-				AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.PatientStudy.AdditionalPatientsHistory",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.AdditionalPatientsHistory; },
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.PatientStudy.Occupation",
-							resolver,
-							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.Occupation),
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.PatientStudy.PatientsAge",
-							resolver,
-							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.PatientsAge),
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<double>
-						(
-							"Dicom.PatientStudy.PatientsSize",
-							resolver,
-							FrameDataRetrieverFactory.GetDoubleRetriever(DicomTags.PatientsSize),
-							delegate(double input)
-							{
-								if (double.IsNaN(input) || input == 0)
-									return "";
-
-								return String.Format("{0} {1}", input.ToString("F2"), SR.Label_metres);
-							}
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<double>
-						(
-							"Dicom.PatientStudy.PatientsWeight",
-							resolver,
-							FrameDataRetrieverFactory.GetDoubleRetriever(DicomTags.PatientsWeight),
-							delegate(double input)
-							{
-								if (double.IsNaN(input) || input == 0)
-									return "";
-
-								return String.Format("{0} {1}", input.ToString("F2"), SR.Label_kilograms);
-							}
-						)
-					);
-			}
-
 			return _annotationItems;
 		}
 	}

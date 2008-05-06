@@ -31,11 +31,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using System.Reflection;
-using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -44,149 +42,145 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 	[ExtensionOf(typeof(AnnotationItemProviderExtensionPoint))]
 	public class GeneralSeriesAnnotationItemProvider : AnnotationItemProvider
 	{
-		private List<IAnnotationItem> _annotationItems;
+		private readonly List<IAnnotationItem> _annotationItems;
 
 		public GeneralSeriesAnnotationItemProvider()
 			: base("AnnotationItemProviders.Dicom.GeneralSeries", new AnnotationResourceResolver(typeof(GeneralSeriesAnnotationItemProvider).Assembly))
 		{
+			_annotationItems = new List<IAnnotationItem>();
+
+			AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralSeries.BodyPartExamined",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.BodyPartExamined; },
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralSeries.Laterality",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.Laterality; },
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralSeries.Modality",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.Modality; },
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<PersonName[]>
+					(
+						"Dicom.GeneralSeries.OperatorsName",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.OperatorsName; },
+						DicomDataFormatHelper.PersonNameListFormatter
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralSeries.PerformedProcedureStepDescription",
+						resolver,
+						FrameDataRetrieverFactory.GetStringRetriever(DicomTags.PerformedProcedureStepDescription),
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<PersonName[]>
+					(
+						"Dicom.GeneralSeries.PerformingPhysiciansName",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.PerformingPhysiciansName; },
+						DicomDataFormatHelper.PersonNameListFormatter
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralSeries.ProtocolName",
+						resolver,
+						FrameDataRetrieverFactory.GetStringRetriever(DicomTags.ProtocolName),
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralSeries.SeriesDate",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.SeriesDate; },
+						DicomDataFormatHelper.DateFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralSeries.SeriesTime",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.SeriesTime; },
+						DicomDataFormatHelper.TimeFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralSeries.SeriesDescription",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.SeriesDescription; },
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralSeries.SeriesNumber",
+						resolver,
+						delegate(Frame frame)
+						{
+							string str = String.Format("{0}/{1}",
+								frame.ParentImageSop.SeriesNumber,
+								frame.ParentImageSop.ParentSeries.ParentStudy.Series.Count);
+							return str;
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			if (_annotationItems == null)
-			{
-				_annotationItems = new List<IAnnotationItem>();
-
-				AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralSeries.BodyPartExamined",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.BodyPartExamined; },
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralSeries.Laterality",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.Laterality; },
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralSeries.Modality",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.Modality; },
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<PersonName[]>
-						(
-							"Dicom.GeneralSeries.OperatorsName",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.OperatorsName; },
-							DicomDataFormatHelper.PersonNameListFormatter
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralSeries.PerformedProcedureStepDescription",
-							resolver,
-							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.PerformedProcedureStepDescription),
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<PersonName[]>
-						(
-							"Dicom.GeneralSeries.PerformingPhysiciansName",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.PerformingPhysiciansName; },
-							DicomDataFormatHelper.PersonNameListFormatter
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralSeries.ProtocolName",
-							resolver,
-							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.ProtocolName),
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralSeries.SeriesDate",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.SeriesDate; },
-							DicomDataFormatHelper.DateFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralSeries.SeriesTime",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.SeriesTime; },
-							DicomDataFormatHelper.TimeFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralSeries.SeriesDescription",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.SeriesDescription; },
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralSeries.SeriesNumber",
-							resolver,
-							delegate(Frame frame)
-							{
-								string str = String.Format("{0}/{1}",
-									frame.ParentImageSop.SeriesNumber,
-									frame.ParentImageSop.ParentSeries.ParentStudy.Series.Count);
-								return str;
-							},
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-			}
-
 			return _annotationItems;
 		}
 	}

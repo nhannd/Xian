@@ -31,213 +31,207 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using System.Reflection;
-using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 {
 	[ExtensionOf(typeof(AnnotationItemProviderExtensionPoint))]
 	public class GeneralImageAnnotationItemProvider : AnnotationItemProvider
 	{
-		private List<IAnnotationItem> _annotationItems;
+		private readonly List<IAnnotationItem> _annotationItems;
 
 		public GeneralImageAnnotationItemProvider()
 			: base("AnnotationItemProviders.Dicom.GeneralImage", new AnnotationResourceResolver(typeof(GeneralImageAnnotationItemProvider).Assembly))
 		{
+			_annotationItems = new List<IAnnotationItem>();
+
+			AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralImage.AcquisitionDate",
+						resolver,
+						delegate(Frame frame) { return frame.AcquisitionDate; },
+						DicomDataFormatHelper.DateFormat
+					)
+				);
+
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralImage.AcquisitionTime",
+						resolver,
+						delegate(Frame frame) { return frame.AcquisitionTime; },
+						DicomDataFormatHelper.TimeFormat
+					)
+				);
+
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralImage.AcquisitionDateTime",
+						resolver,
+						delegate(Frame frame) { return frame.AcquisitionDateTime; },
+						DicomDataFormatHelper.DateTimeFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralImage.AcquisitionNumber",
+						resolver,
+						delegate(Frame frame) { return frame.AcquisitionNumber.ToString(); },
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+				new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralImage.ContentDate",
+						resolver,
+						FrameDataRetrieverFactory.GetStringRetriever(DicomTags.ContentDate),
+						DicomDataFormatHelper.DateFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralImage.ContentTime",
+						resolver,
+						FrameDataRetrieverFactory.GetStringRetriever(DicomTags.ContentTime),
+						DicomDataFormatHelper.TimeFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralImage.DerivationDescription",
+						resolver,
+						FrameDataRetrieverFactory.GetStringRetriever(DicomTags.DerivationDescription),
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralImage.ImageComments",
+						resolver,
+						delegate(Frame frame) { return frame.ImageComments; },
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralImage.ImagesInAcquisition",
+						resolver,
+						delegate(Frame frame) { return frame.ImagesInAcquisition.ToString(); },
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralImage.ImageType",
+						resolver,
+						delegate(Frame frame) { return frame.ImageType; },
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralImage.InstanceNumber",
+						resolver,
+						delegate(Frame frame)
+						{
+							string str = String.Format("{0}/{1}",
+												frame.ParentImageSop.InstanceNumber,
+												frame.ParentImageSop.ParentSeries.Sops.Count);
+
+							if (frame.ParentImageSop.NumberOfFrames > 1)
+							{
+								string frameString = String.Format(
+									"Fr: {0}/{1}", 
+									frame.FrameNumber, 
+									frame.ParentImageSop.NumberOfFrames);
+
+								str += " " + frameString;
+							}
+
+							return str;
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralImage.LossyImageCompression",
+						resolver,
+						delegate(Frame frame) { return frame.LossyImageCompression; },
+						DicomDataFormatHelper.BooleanFormatter
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<double[]>
+					(
+						"Dicom.GeneralImage.LossyImageCompressionRatio",
+						resolver,
+						delegate(Frame frame) { return frame.LossyImageCompressionRatio; },
+						delegate(double[] values) 
+						{
+							return StringUtilities.Combine<double>(values, ",\n",
+								delegate(double value) { return value.ToString("F2"); });
+						}
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralImage.QualityControlImage",
+						resolver,
+						FrameDataRetrieverFactory.GetStringRetriever(DicomTags.QualityControlImage),
+						DicomDataFormatHelper.BooleanFormatter
+					)
+				);
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			if (_annotationItems == null)
-			{
-				_annotationItems = new List<IAnnotationItem>();
-
-				AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralImage.AcquisitionDate",
-							resolver,
-							delegate(Frame frame) { return frame.AcquisitionDate; },
-							DicomDataFormatHelper.DateFormat
-						)
-					);
-
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralImage.AcquisitionTime",
-							resolver,
-							delegate(Frame frame) { return frame.AcquisitionTime; },
-							DicomDataFormatHelper.TimeFormat
-						)
-					);
-
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralImage.AcquisitionDateTime",
-							resolver,
-							delegate(Frame frame) { return frame.AcquisitionDateTime; },
-							DicomDataFormatHelper.DateTimeFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralImage.AcquisitionNumber",
-							resolver,
-							delegate(Frame frame) { return frame.AcquisitionNumber.ToString(); },
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-					new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralImage.ContentDate",
-							resolver,
-							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.ContentDate),
-							DicomDataFormatHelper.DateFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralImage.ContentTime",
-							resolver,
-							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.ContentTime),
-							DicomDataFormatHelper.TimeFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralImage.DerivationDescription",
-							resolver,
-							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.DerivationDescription),
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralImage.ImageComments",
-							resolver,
-							delegate(Frame frame) { return frame.ImageComments; },
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralImage.ImagesInAcquisition",
-							resolver,
-							delegate(Frame frame) { return frame.ImagesInAcquisition.ToString(); },
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralImage.ImageType",
-							resolver,
-							delegate(Frame frame) { return frame.ImageType; },
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralImage.InstanceNumber",
-							resolver,
-							delegate(Frame frame)
-							{
-								string str = String.Format("{0}/{1}",
-													frame.ParentImageSop.InstanceNumber,
-													frame.ParentImageSop.ParentSeries.Sops.Count);
-
-								if (frame.ParentImageSop.NumberOfFrames > 1)
-								{
-									string frameString = String.Format(
-										"Fr: {0}/{1}", 
-										frame.FrameNumber, 
-										frame.ParentImageSop.NumberOfFrames);
-
-									str += " " + frameString;
-								}
-
-								return str;
-							},
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralImage.LossyImageCompression",
-							resolver,
-							delegate(Frame frame) { return frame.LossyImageCompression; },
-							DicomDataFormatHelper.BooleanFormatter
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<double[]>
-						(
-							"Dicom.GeneralImage.LossyImageCompressionRatio",
-							resolver,
-							delegate(Frame frame) { return frame.LossyImageCompressionRatio; },
-							delegate(double[] values) 
-							{
-								return StringUtilities.Combine<double>(values, ",\n",
-									delegate(double value) { return value.ToString("F2"); });
-							}
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralImage.QualityControlImage",
-							resolver,
-							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.QualityControlImage),
-							DicomDataFormatHelper.BooleanFormatter
-						)
-					);
-			}
-
 			return _annotationItems;
 		}
 	}

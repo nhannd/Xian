@@ -31,11 +31,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using System.Reflection;
 using ClearCanvas.ImageViewer.Annotations;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -44,43 +41,39 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 	[ExtensionOf(typeof(AnnotationItemProviderExtensionPoint))]
 	public class ImagePlaneAnnotationItemProvider : AnnotationItemProvider
 	{
-		private List<IAnnotationItem> _annotationItems;
+		private readonly List<IAnnotationItem> _annotationItems;
 
 		public ImagePlaneAnnotationItemProvider()
 			: base("AnnotationItemProviders.Dicom.ImagePlane", new AnnotationResourceResolver(typeof(ImagePlaneAnnotationItemProvider).Assembly))
 		{
+			_annotationItems = new List<IAnnotationItem>();
+
+			AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.ImagePlane.SliceThickness",
+						resolver,
+						delegate(Frame frame)
+						{
+							double thickness = frame.SliceThickness;
+
+							if (double.IsNaN(thickness) || thickness == 0)
+								return "";
+
+							return String.Format(SR.Formatmm1, frame.SliceThickness);
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add(new SliceLocationAnnotationItem());
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			if (_annotationItems == null)
-			{
-				_annotationItems = new List<IAnnotationItem>();
-
-				AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.ImagePlane.SliceThickness",
-							resolver,
-							delegate(Frame frame)
-							{
-								double thickness = frame.SliceThickness;
-
-								if (double.IsNaN(thickness) || thickness == 0)
-									return "";
-
-								return String.Format(SR.Formatmm1, frame.SliceThickness);
-							},
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add(new SliceLocationAnnotationItem());
-			}
-
 			return _annotationItems;
 		}
 	}

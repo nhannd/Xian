@@ -150,7 +150,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private void InitializeBindings()
 		{
 			_gallery.ListChanged += OnListChanged;
-
 			_listView.Items.Clear();
 
 			foreach (object item in _gallery)
@@ -166,6 +165,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 				AddItem(_gallery[e.NewIndex]);
 			else if (e.ListChangedType == ListChangedType.ItemDeleted)
 				RemoveItem(e.NewIndex);
+			else if (e.ListChangedType == ListChangedType.ItemChanged)
+				UpdateItem(e.NewIndex);
+		}
+
+		private void UpdateItem(int index)
+		{
+			ListViewItem lvi = _listView.Items[index];
+			int keyIndex = _listView.LargeImageList.Images.IndexOfKey(lvi.ImageKey);
+			_listView.LargeImageList.Images[keyIndex] = ((IGalleryItem) _gallery[index]).Image;
+			_listView.RedrawItems(index, index, true);
 		}
 
 		private void AddItem(object item)

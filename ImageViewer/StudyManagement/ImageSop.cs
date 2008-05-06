@@ -33,6 +33,7 @@ using System;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.DicomServices.Codec;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -41,15 +42,30 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public abstract class ImageSop : Sop
 	{
-		private FrameCollection _frames;
-		private static bool _codecsRegistered = false;
+		private readonly object _syncLock = new object();		
+		private volatile FrameCollection _frames;
+
+		static ImageSop()
+		{
+			try
+			{
+				DicomCodecHelper.RegisterCodecExtensions();
+			}
+			catch(NotSupportedException e)
+			{
+				Platform.Log(LogLevel.Info, e);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+			}
+		}
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ImageSop"/>.
 		/// </summary>
 		protected ImageSop()
 		{
-			RegisterCodecs();
 		}
 
 		/// <summary>
@@ -68,10 +84,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				if (_frames == null)
+				lock (_syncLock)
 				{
-					_frames = new FrameCollection();
-					AddFrames();
+					if (_frames == null)
+					{
+						_frames = new FrameCollection();
+						for (int i = 1; i <= this.NumberOfFrames; i++)
+							this.Frames.Add(CreateFrame(i));
+					}
 				}
 
 				return _frames;
@@ -456,33 +476,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Adds <see cref="Frame"/> objects to <see cref="ImageSop.Frames"/>.
-		/// </summary>
-		/// <remarks>
-		/// It is the responsibility of the subclass to add the frames to the collection.
-		/// </remarks>
-		protected void AddFrames()
-		{
-			for (int i = 1; i <= this.NumberOfFrames; i++)
-				this.Frames.Add(CreateFrame(i));
-
-		}
-
-		/// <summary>
 		/// Factory method to create the frame at <paramref name="index"/>.
 		/// </summary>
 		/// <param name="index">The <b>one-based</b> index of the frame to create.</param>
 		protected abstract Frame CreateFrame(int index);
-
-		private void RegisterCodecs()
-		{
-			// TODO: When do threaded loading, we'll have to make this threadsafe
-			if (!_codecsRegistered)
-			{
-				DicomCodecHelper.RegisterCodecExtensions();
-				_codecsRegistered = true;
-			}
-		}
 
 		/// <summary>
 		/// Validates the <see cref="ImageSop"/> object.

@@ -29,71 +29,72 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using System;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
 	[MenuAction("show", "global-menus/MenuView/MenuShowThumbnails", "Show")]
 	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarShowThumbnails", "Show")]
-	[Tooltip("show", "Place tooltip text here")]
+	[Tooltip("show", "TooltipShowThumbnails")]
 	[IconSet("show", IconScheme.Colour, "Icons.ShowThumbnailsToolSmall.png", "Icons.ShowThumbnailsToolMedium.png", "Icons.ShowThumbnailsToolLarge.png")]
 	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ShowThumbnailsTool : ImageViewerTool
 	{
-		private static ThumbnailComponent _thumbnailComponent;
-		private static IShelf _shelf;
+		private static readonly Dictionary<IDesktopWindow, IShelf> _shelves = new Dictionary<IDesktopWindow, IShelf>();
 
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		/// <remarks>
-		/// A no-args constructor is required by the framework.  Do not remove.
-		/// </remarks>
 		public ShowThumbnailsTool()
 		{
 		}
 
+		private IShelf ComponentShelf
+		{
+			get
+			{
+				if (_shelves.ContainsKey(this.Context.DesktopWindow))
+					return _shelves[this.Context.DesktopWindow];
+
+				return null;
+			}	
+		}
+
 		public void Show()
 		{
-			if (_thumbnailComponent == null)
+			if (ComponentShelf == null)
 			{
-				_thumbnailComponent = new ThumbnailComponent(this.ImageViewer);
+				try
+				{
+					IDesktopWindow desktopWindow = this.Context.DesktopWindow;
 
-				_shelf = ApplicationComponent.LaunchAsShelf(
-					this.Context.DesktopWindow,
-					_thumbnailComponent,
-					SR.TitleThumbnails,
-					"Thumbnails",
-					ShelfDisplayHint.DockTop | ShelfDisplayHint.DockAutoHide);
+					IShelf shelf = ApplicationComponent.LaunchAsShelf(
+						desktopWindow,
+						new ThumbnailComponent(desktopWindow),
+						SR.TitleThumbnails,
+						"Thumbnails",
+						ShelfDisplayHint.DockTop | ShelfDisplayHint.DockAutoHide);
 
-				_shelf.Closed += OnShelfClosed;
+					shelf.Closed += delegate
+					                	{
+					                		_shelves.Remove(desktopWindow);
+					                	};
+
+					_shelves[this.Context.DesktopWindow] = shelf;
+				}
+				catch(Exception e)
+				{
+					ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				}
 			}
 			else
 			{
-				_shelf.Show();
+				ComponentShelf.Show();
 			}
-		}
-
-		private void OnShelfClosed(object sender, ClosedEventArgs e)
-		{
-			_shelf = null;
-			_thumbnailComponent = null;
-		}
-
-		/// <summary>
-		/// Called when the tool is disposed.
-		/// </summary>
-		protected override void Dispose(bool disposing)
-		{
-			if (_shelf != null)
-				_shelf.Closed -= OnShelfClosed;
-
-			base.Dispose(disposing);
 		}
 	}
 }

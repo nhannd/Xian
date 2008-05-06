@@ -211,12 +211,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Private Fields
 
-		private static volatile LutFactory _instance;
+		private static readonly object _syncLock = new object();
+		private static readonly LutFactory _instance = new LutFactory();
 
-		private List<ModalityLutLinear> _modalityLUTs;
-
-		private List<IColorMapFactory> _colorMapFactories;
-		private List<IColorMap> _colorMaps;
+		private readonly List<ModalityLutLinear> _modalityLUTs = new List<ModalityLutLinear>();
+		private readonly List<IColorMapFactory> _colorMapFactories = CreateColorMapFactories();
+		private readonly List<IColorMap> _colorMaps = new List<IColorMap>();
 		
 		private int _referenceCount = 0;
 
@@ -224,7 +224,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private LutFactory()
 		{
-
 		}
 
 		#region Public Properties
@@ -233,10 +232,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				if (_instance == null)
-					_instance = new LutFactory();
-
-				++_instance._referenceCount;
+				lock (_syncLock)
+				{
+					++_instance._referenceCount;
+				}
+				
 				return _instance;
 			}
 		}
@@ -247,47 +247,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private List<ModalityLutLinear> ModalityLuts
 		{
-			get
-			{
-				if (_modalityLUTs == null)
-					_modalityLUTs = new List<ModalityLutLinear>();
-
-				return _modalityLUTs;
-			}
+			get { return _modalityLUTs; }
 		}
 
 		private List<IColorMapFactory> ColorMapFactories
 		{
-			get
-			{
-				if (_colorMapFactories == null)
-				{
-					_colorMapFactories = new List<IColorMapFactory>();
-
-					//Add the default color map.
-					_colorMapFactories.Add(new GrayscaleColorMapFactory());
-
-					object[] factories = new ColorMapFactoryExtensionPoint().CreateExtensions();
-					foreach (object obj in factories)
-					{
-						if (obj is IColorMapFactory)
-							_colorMapFactories.Add(obj as IColorMapFactory);
-					}
-				}
-
-				return _colorMapFactories;
-			}
+			get { return _colorMapFactories; }
 		}
 
 		private List<IColorMap> ColorMaps
 		{
-			get
-			{
-				if (_colorMaps == null)
-					_colorMaps = new List<IColorMap>();
-
-				return _colorMaps;
-			}
+			get { return _colorMaps; }
 		}
 
 		internal IEnumerable<ColorMapDescriptor> AvailableColorMaps
@@ -317,12 +287,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			ModalityLutLinear modalityLut = new ModalityLutLinear(bitsStored, isSigned, rescaleSlope, rescaleIntercept);
 
-			ModalityLutLinear existingLut = this.ModalityLuts.Find(delegate(ModalityLutLinear lut) { return lut.Equals(modalityLut); });
+			lock (_syncLock)
+			{
+				ModalityLutLinear existingLut =
+					this.ModalityLuts.Find(delegate(ModalityLutLinear lut) { return lut.Equals(modalityLut); });
 
-			if (existingLut == null)
-				this.ModalityLuts.Add(existingLut = modalityLut);
+				if (existingLut == null)
+					this.ModalityLuts.Add(existingLut = modalityLut);
 
-			return existingLut;
+				return existingLut;
+			}
 		}
 
 		internal IColorMap GetGrayscaleColorMap()
@@ -351,12 +325,40 @@ namespace ClearCanvas.ImageViewer.Imaging
 			colorMap.MinInputValue = minInputValue;
 			colorMap.MaxInputValue = maxInputValue;
 
-			IColorMap existingLut = this.ColorMaps.Find(delegate(IColorMap lut){ return lut.Equals(colorMap); });
+			lock (_syncLock)
+			{
+				IColorMap existingLut = this.ColorMaps.Find(delegate(IColorMap lut) { return lut.Equals(colorMap); });
 
-			if (existingLut == null)
-				this.ColorMaps.Add(existingLut = colorMap);
+				if (existingLut == null)
+					this.ColorMaps.Add(existingLut = colorMap);
 
-			return existingLut;
+				return existingLut;
+			}
+		}
+
+		private static List<IColorMapFactory> CreateColorMapFactories()
+		{
+			List<IColorMapFactory> factories = new List<IColorMapFactory>();
+
+			//Add the default color map.
+			factories.Add(new GrayscaleColorMapFactory());
+
+			try
+			{
+				object[] extensions = new ColorMapFactoryExtensionPoint().CreateExtensions();
+				foreach (IColorMapFactory factory in extensions)
+					factories.Add(factory);
+			}
+			catch(NotSupportedException e)
+			{
+				Platform.Log(LogLevel.Info, e);
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+			}
+
+			return factories;
 		}
 
 		#endregion
@@ -385,21 +387,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			if (disposing)
 			{
-				if (_referenceCount > 0)
-					--_referenceCount;
-
-				if (_referenceCount <= 0)
+				lock (_syncLock)
 				{
-					if (_modalityLUTs != null)
+					if (_referenceCount > 0)
+						--_referenceCount;
+
+					if (_referenceCount <= 0)
 					{
 						_modalityLUTs.Clear();
-						_modalityLUTs = null;
-					}
-
-					if (_colorMaps != null)
-					{
 						_colorMaps.Clear();
-						_colorMaps = null;
 					}
 				}
 			}

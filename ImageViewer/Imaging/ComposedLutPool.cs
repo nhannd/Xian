@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
@@ -39,13 +40,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		#region Private Fields
 
-		private static readonly object _syncRoot = new object();
-		private static volatile ComposedLutPool _instance;
-		
-		private int _referenceCount;
+		private static readonly object _syncLock = new object();
+		private static readonly ComposedLutPool _instance = new ComposedLutPool();
 
-		private Dictionary<string, ReferenceCountedObjectWrapper<int[]>> _lutCache;
-		private List<int[]> _pool;
+		private int _referenceCount;
+		private readonly Dictionary<string, ReferenceCountedObjectWrapper<int[]>> _lutCache = 
+			new Dictionary<string, ReferenceCountedObjectWrapper<int[]>>();
+		
+		private readonly List<int[]> _pool = new List<int[]>();
 		private readonly int _lutPoolSize = 4;
 
 		#endregion
@@ -61,16 +63,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				if (_instance == null)
+				lock (_syncLock)
 				{
-					lock (_syncRoot)
-					{
-						if (_instance == null)
-							_instance = new ComposedLutPool();
-					}
+					++_instance._referenceCount;
 				}
 
-				++_instance._referenceCount;
 				return _instance;
 			}
 		}
@@ -78,33 +75,38 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public int[] Retrieve(string key, int lutSize, out bool composeRequired)
 		{
 			composeRequired = false;
-
-			if (!LutCache.ContainsKey(key))
+			lock (_syncLock)
 			{
-				composeRequired = true;
-				LutCache[key] = new ReferenceCountedObjectWrapper<int[]>(RetrieveFromPool(lutSize));
+				if (!LutCache.ContainsKey(key))
+				{
+					composeRequired = true;
+					LutCache[key] = new ReferenceCountedObjectWrapper<int[]>(RetrieveFromPool(lutSize));
+				}
+
+				LutCache[key].IncrementReferenceCount();
+				return LutCache[key].Item;
 			}
-
-			LutCache[key].IncrementReferenceCount();
-			return LutCache[key].Item;
 		}
-
+	
 		public void Return(string key)
 		{
 			if (String.IsNullOrEmpty(key))
 				return;
 
-			if (!LutCache.ContainsKey(key))
-				return;
-
-			ReferenceCountedObjectWrapper<int[]> wrapper = LutCache[key];
-			wrapper.DecrementReferenceCount();
-			if (!wrapper.IsReferenceCountAboveZero())
+			lock (_syncLock)
 			{
-				LutCache.Remove(key);
+				if (!LutCache.ContainsKey(key))
+					return;
 
-				if (this.Pool.Count <= _lutPoolSize)
-					this.Pool.Add(wrapper.Item);
+				ReferenceCountedObjectWrapper<int[]> wrapper = LutCache[key];
+				wrapper.DecrementReferenceCount();
+				if (!wrapper.IsReferenceCountAboveZero())
+				{
+					LutCache.Remove(key);
+
+					if (this.Pool.Count <= _lutPoolSize)
+						this.Pool.Add(wrapper.Item);
+				}
 			}
 		}
 
@@ -114,37 +116,28 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private Dictionary<string, ReferenceCountedObjectWrapper<int[]>> LutCache
 		{
-			get
-			{
-				if (_lutCache == null)
-					_lutCache = new Dictionary<string, ReferenceCountedObjectWrapper<int[]>>();
-
-				return _lutCache;
-			}
+			get { return _lutCache; }
 		}
 
 		private List<int[]> Pool
 		{
-			get
-			{
-				if (_pool == null)
-					_pool = new List<int[]>();
-
-				return _pool;
-			}
+			get { return _pool; }
 		}
 
 		private int[] RetrieveFromPool(int lutSize)
 		{
-			// Find a LUT in the pool that's the same size as what's
-			// being requested
-			foreach (int[] lut in this.Pool)
+			lock (_syncLock)
 			{
-				// If we've found one, take it out of the pool and return it
-				if (lut.Length == lutSize)
+				// Find a LUT in the pool that's the same size as what's
+				// being requested
+				foreach (int[] lut in this.Pool)
 				{
-					this.Pool.Remove(lut);
-					return lut;
+					// If we've found one, take it out of the pool and return it
+					if (lut.Length == lutSize)
+					{
+						this.Pool.Remove(lut);
+						return lut;
+					}
 				}
 			}
 
@@ -183,21 +176,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			if (disposing)
 			{
-				if (_referenceCount > 0)
-					--_referenceCount;
-
-				if (_referenceCount <= 0)
+				lock (_syncLock)
 				{
-					if (_lutCache != null)
+					if (_referenceCount > 0)
+						--_referenceCount;
+
+					if (_referenceCount <= 0)
 					{
 						_lutCache.Clear();
-						_lutCache = null;
-					}
-
-					if (_pool != null)
-					{
 						_pool.Clear();
-						_pool = null;
 					}
 				}
 			}

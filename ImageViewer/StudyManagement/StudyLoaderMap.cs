@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
@@ -45,7 +46,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
     internal sealed class StudyLoaderMap : IEnumerable
     {
-        Dictionary<string, IStudyLoader> _studyLoaderMap = new Dictionary<string, IStudyLoader>();
+        private readonly Dictionary<string, IStudyLoader> _studyLoaderMap = new Dictionary<string, IStudyLoader>();
 
         public StudyLoaderMap()
         {
@@ -61,16 +62,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             }
         }
 
-        private void CreateStudyLoaders()
-        {
-            StudyLoaderExtensionPoint xp = new StudyLoaderExtensionPoint();
-            object[] studyLoaders = xp.CreateExtensions();
+		private void CreateStudyLoaders()
+		{
+			try
+			{
+				StudyLoaderExtensionPoint xp = new StudyLoaderExtensionPoint();
+				object[] studyLoaders = xp.CreateExtensions();
 
-            foreach (IStudyLoader studyLoader in studyLoaders)
-                _studyLoaderMap.Add(studyLoader.Name, studyLoader);
-        }
+				foreach (IStudyLoader studyLoader in studyLoaders)
+					_studyLoaderMap.Add(studyLoader.Name, studyLoader);
+			}
+			catch (NotSupportedException e)
+			{
+				Platform.Log(LogLevel.Info, e);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+			}
+		}
 
-        #region IEnumerable Members
+    	#region IEnumerable Members
 
         public IEnumerator GetEnumerator()
         {

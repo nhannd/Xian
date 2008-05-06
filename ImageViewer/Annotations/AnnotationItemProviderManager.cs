@@ -38,30 +38,25 @@ namespace ClearCanvas.ImageViewer.Annotations
 	internal sealed class AnnotationItemProviderManager
 	{
 		private static readonly AnnotationItemProviderManager _instance = new AnnotationItemProviderManager();
-		private List<IAnnotationItemProvider> _providers;
+
+		private readonly List<IAnnotationItemProvider> _providers;
 
 		private AnnotationItemProviderManager()
 		{
-			_providers = null;
-		}
+			_providers = new List<IAnnotationItemProvider>();
 
-		private void Initialize()
-		{
-			if (_providers == null)
+			try
 			{
-				_providers = new List<IAnnotationItemProvider>();
-
 				foreach (object extension in new AnnotationItemProviderExtensionPoint().CreateExtensions())
-				{
-					try
-					{
-						_providers.Add((IAnnotationItemProvider)extension);
-					}
-					catch (Exception e)
-					{
-						Platform.Log(LogLevel.Warn, e);
-					}
-				}
+					_providers.Add((IAnnotationItemProvider) extension);
+			}
+			catch(NotSupportedException e)
+			{
+				Platform.Log(LogLevel.Info, e);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e);
 			}
 		}
 
@@ -72,11 +67,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 		public IEnumerable<IAnnotationItemProvider> Providers
 		{
-			get
-			{
-				Initialize();
-				return _providers;
-			}
+			get { return _providers; }
 		}
 
 		public IAnnotationItem GetAnnotationItem(string annotationItemIdentifier)

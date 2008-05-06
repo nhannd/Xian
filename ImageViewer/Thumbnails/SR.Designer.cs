@@ -79,6 +79,24 @@ namespace ClearCanvas.ImageViewer.Thumbnails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading ....
+        /// </summary>
+        internal static string MessageLoading {
+            get {
+                return ResourceManager.GetString("MessageLoading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Images.
+        /// </summary>
+        internal static string MessageNoImages {
+            get {
+                return ResourceManager.GetString("MessageNoImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Thumbnails.
         /// </summary>
         internal static string TitleThumbnails {
@@ -93,6 +111,15 @@ namespace ClearCanvas.ImageViewer.Thumbnails {
         internal static string ToolbarShowThumbnails {
             get {
                 return ResourceManager.GetString("ToolbarShowThumbnails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Thumbnails.
+        /// </summary>
+        internal static string TooltipShowThumbnails {
+            get {
+                return ResourceManager.GetString("TooltipShowThumbnails", resourceCulture);
             }
         }
     }

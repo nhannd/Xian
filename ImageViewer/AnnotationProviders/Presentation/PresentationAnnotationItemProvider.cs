@@ -29,11 +29,8 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using System.Reflection;
 using ClearCanvas.ImageViewer.Annotations;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
@@ -41,25 +38,26 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 	[ExtensionOf(typeof(AnnotationItemProviderExtensionPoint))]
 	public class PresentationAnnotationItemProvider : AnnotationItemProvider
 	{
+		private readonly List<IAnnotationItem> _annotationItems;
+		
 		public PresentationAnnotationItemProvider()
 			: base("AnnotationItemProviders.Presentation", new AnnotationResourceResolver(typeof(PresentationAnnotationItemProvider).Assembly))
 		{
+			_annotationItems = new List<IAnnotationItem>();
+
+			_annotationItems.Add((IAnnotationItem)new ZoomAnnotationItem());
+			_annotationItems.Add((IAnnotationItem)new AppliedLutAnnotationItem());
+			//_annotationItems.Add((IAnnotationItem)new DFOVAnnotationItem());
+
+			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Left));
+			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Top));
+			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Right));
+			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom));
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			List<IAnnotationItem> annotationItems = new List<IAnnotationItem>();
-
-			annotationItems.Add((IAnnotationItem)new ZoomAnnotationItem());
-			annotationItems.Add((IAnnotationItem)new AppliedLutAnnotationItem());
-			//annotationItems.Add((IAnnotationItem)new DFOVAnnotationItem());
-
-			annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Left));
-			annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Top));
-			annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Right));
-			annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom));
-
-			return annotationItems;
+			return _annotationItems;
 		}
 	}
 }

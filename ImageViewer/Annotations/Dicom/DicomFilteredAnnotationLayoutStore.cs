@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
@@ -41,14 +40,15 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
 	internal sealed class DicomFilteredAnnotationLayoutStore
 	{
-		private static DicomFilteredAnnotationLayoutStore _instance;
+		private static readonly DicomFilteredAnnotationLayoutStore _instance = new DicomFilteredAnnotationLayoutStore();
 
+		private readonly object _syncLock = new object();
 		private XmlDocument _document;
 
 		private DicomFilteredAnnotationLayoutStore()
 		{
 			DicomFilteredAnnotationLayoutStoreSettings.Default.PropertyChanged +=
-				delegate(object sender, PropertyChangedEventArgs e)
+				delegate
 				{
 					this.Initialize(true);
 				};
@@ -56,13 +56,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 
 		public static DicomFilteredAnnotationLayoutStore Instance
 		{
-			get
-			{
-				if (_instance == null)
-					_instance = new DicomFilteredAnnotationLayoutStore();
-
-				return _instance;
-			}
+			get { return _instance; }
 		}
 
 		public IList<DicomFilteredAnnotationLayout> FilteredLayouts
@@ -72,9 +66,13 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 				List<DicomFilteredAnnotationLayout> allFilteredLayouts = new List<DicomFilteredAnnotationLayout>();
 
 				string xPath = "dicom-filtered-annotation-layout-configuration/dicom-filtered-annotation-layouts/dicom-filtered-annotation-layout";
-				XmlNodeList filteredLayoutNodes = _document.SelectNodes(xPath);
-				foreach (XmlElement filteredLayoutNode in filteredLayoutNodes)
-					allFilteredLayouts.Add(this.DeserializeFilteredLayout(filteredLayoutNode));
+				
+				lock (_syncLock)
+				{
+					XmlNodeList filteredLayoutNodes = _document.SelectNodes(xPath);
+					foreach (XmlElement filteredLayoutNode in filteredLayoutNodes)
+						allFilteredLayouts.Add(DeserializeFilteredLayout(filteredLayoutNode));
+				}
 
 				return allFilteredLayouts;
 			}
@@ -82,40 +80,43 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 
 		private void Initialize(bool reloadSettings)
 		{
-			if (_document != null && !reloadSettings)
-				return;
-
-			try
+			lock (_syncLock)
 			{
-				_document = new XmlDocument();
+				if (_document != null && !reloadSettings)
+					return;
 
-				if (!String.IsNullOrEmpty(DicomFilteredAnnotationLayoutStoreSettings.Default.FilteredLayoutSettingsXml))
+				try
 				{
-					_document.LoadXml(DicomFilteredAnnotationLayoutStoreSettings.Default.FilteredLayoutSettingsXml);
-				}
-				else
-				{
-					XmlElement root = _document.CreateElement("dicom-filtered-annotation-layout-configuration");
-					_document.AppendChild(root);
-					root.AppendChild(_document.CreateElement("dicom-filtered-annotation-layouts"));
+					_document = new XmlDocument();
 
-					SaveSettings(_document.OuterXml);
+					if (!String.IsNullOrEmpty(DicomFilteredAnnotationLayoutStoreSettings.Default.FilteredLayoutSettingsXml))
+					{
+						_document.LoadXml(DicomFilteredAnnotationLayoutStoreSettings.Default.FilteredLayoutSettingsXml);
+					}
+					else
+					{
+						XmlElement root = _document.CreateElement("dicom-filtered-annotation-layout-configuration");
+						_document.AppendChild(root);
+						root.AppendChild(_document.CreateElement("dicom-filtered-annotation-layouts"));
+
+						SaveSettings(_document.OuterXml);
+					}
 				}
-			}
-			catch
-			{
-				_document = null;
-				throw;
+				catch
+				{
+					_document = null;
+					throw;
+				}
 			}
 		}
 
-		private void SaveSettings(string settingsXml)
+		private static void SaveSettings(string settingsXml)
 		{
 			DicomFilteredAnnotationLayoutStoreSettings.Default.FilteredLayoutSettingsXml = settingsXml;
 			DicomFilteredAnnotationLayoutStoreSettings.Default.Save();
 		}
 
-		private DicomFilteredAnnotationLayout DeserializeFilteredLayout(XmlElement dicomFilteredLayoutNode)
+		private static DicomFilteredAnnotationLayout DeserializeFilteredLayout(XmlElement dicomFilteredLayoutNode)
 		{
 			string matchingLayoutId = dicomFilteredLayoutNode.GetAttribute("matching-layout-id");
 			string filteredLayoutId = dicomFilteredLayoutNode.GetAttribute("id");
@@ -138,23 +139,23 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			return filteredLayout;
 		}
 
-		private void SerializeFilteredLayout(DicomFilteredAnnotationLayout dicomFilteredAnnotationLayout)
+		private static void SerializeFilteredLayout(XmlDocument document, DicomFilteredAnnotationLayout dicomFilteredAnnotationLayout)
 		{
 			string xPath = "dicom-filtered-annotation-layout-configuration/dicom-filtered-annotation-layouts";
-			XmlElement filteredLayoutsNode = (XmlElement)_document.SelectSingleNode(xPath);
+			XmlElement filteredLayoutsNode = (XmlElement)document.SelectSingleNode(xPath);
 			if (filteredLayoutsNode == null)
 				throw new InvalidDataException(String.Format(SR.ExceptionInvalidFilteredAnnotationLayoutXml, "'dicom-filtered-annotation-layouts' node does not exist"));
 
-			XmlElement newFilteredLayoutNode = _document.CreateElement("dicom-filtered-annotation-layout");
+			XmlElement newFilteredLayoutNode = document.CreateElement("dicom-filtered-annotation-layout");
 			newFilteredLayoutNode.SetAttribute("id", dicomFilteredAnnotationLayout.Identifier);
 			newFilteredLayoutNode.SetAttribute("matching-layout-id", dicomFilteredAnnotationLayout.MatchingLayoutIdentifier);
 
-			XmlElement filtersNode = _document.CreateElement("filters");
+			XmlElement filtersNode = document.CreateElement("filters");
 			newFilteredLayoutNode.AppendChild(filtersNode);
 
 			foreach (KeyValuePair<string, string> keyValuePair in dicomFilteredAnnotationLayout.Filters)
 			{
-				XmlElement newFilterNode = _document.CreateElement("filter");
+				XmlElement newFilterNode = document.CreateElement("filter");
 				newFilterNode.SetAttribute("key", keyValuePair.Key);
 				newFilterNode.SetAttribute("value", keyValuePair.Value);
 				filtersNode.AppendChild(newFilterNode);
@@ -176,47 +177,56 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 
 		public DicomFilteredAnnotationLayout GetFilteredLayout(string filteredLayoutId)
 		{
-			string xPath = String.Format("dicom-filtered-annotation-layout-configuration/dicom-filtered-annotation-layouts/dicom-filtered-annotation-layout[@id='{0}']", filteredLayoutId);
-			XmlElement filteredLayoutNode = (XmlElement)_document.SelectSingleNode(xPath);
-			if (filteredLayoutNode == null)
-				return null;
+			lock (_syncLock)
+			{
+				string xPath = String.Format("dicom-filtered-annotation-layout-configuration/dicom-filtered-annotation-layouts/dicom-filtered-annotation-layout[@id='{0}']", filteredLayoutId);
+				XmlElement filteredLayoutNode = (XmlElement)_document.SelectSingleNode(xPath);
+				if (filteredLayoutNode == null)
+					return null;
 
-			return this.DeserializeFilteredLayout(filteredLayoutNode);
+				return DeserializeFilteredLayout(filteredLayoutNode);
+			}
 		}
 		
 		public void RemoveFilteredLayout(string filteredLayoutId)
 		{
-			string xPath = "dicom-filtered-annotation-layout-configuration/dicom-filtered-annotation-layouts";
-			XmlElement filteredLayoutsNode = (XmlElement)_document.SelectSingleNode(xPath);
-			if (filteredLayoutsNode == null)
-				throw new InvalidDataException(String.Format(SR.ExceptionInvalidFilteredAnnotationLayoutXml, "'dicom-filtered-annotation-layouts' node does not exist"));
+			lock (_syncLock)
+			{
+				string xPath = "dicom-filtered-annotation-layout-configuration/dicom-filtered-annotation-layouts";
+				XmlElement filteredLayoutsNode = (XmlElement)_document.SelectSingleNode(xPath);
+				if (filteredLayoutsNode == null)
+					throw new InvalidDataException(String.Format(SR.ExceptionInvalidFilteredAnnotationLayoutXml, "'dicom-filtered-annotation-layouts' node does not exist"));
 
-			xPath = String.Format("dicom-filtered-annotation-layout[@id='{0}']", filteredLayoutId);
-			XmlElement filteredLayoutNode = (XmlElement)filteredLayoutsNode.SelectSingleNode(xPath);
-			if (filteredLayoutNode != null)
-				filteredLayoutsNode.RemoveChild(filteredLayoutNode);
+				xPath = String.Format("dicom-filtered-annotation-layout[@id='{0}']", filteredLayoutId);
+				XmlElement filteredLayoutNode = (XmlElement)filteredLayoutsNode.SelectSingleNode(xPath);
+				if (filteredLayoutNode != null)
+					filteredLayoutsNode.RemoveChild(filteredLayoutNode);
+			}
 		}
 
 		public void Update(IEnumerable<DicomFilteredAnnotationLayout> filteredLayouts)
 		{
-			Initialize(false);
-
-			try
+			lock (_syncLock)
 			{
-				foreach (DicomFilteredAnnotationLayout filteredLayout in filteredLayouts)
+				Initialize(false);
+
+				try
 				{
-					Platform.CheckForNullReference(filteredLayout, "filteredLayout");
-					Platform.CheckForEmptyString(filteredLayout.MatchingLayoutIdentifier, "filteredLayout.MatchingLayoutIdentifier");
+					foreach (DicomFilteredAnnotationLayout filteredLayout in filteredLayouts)
+					{
+						Platform.CheckForNullReference(filteredLayout, "filteredLayout");
+						Platform.CheckForEmptyString(filteredLayout.MatchingLayoutIdentifier, "filteredLayout.MatchingLayoutIdentifier");
 
-					SerializeFilteredLayout(filteredLayout);
+						SerializeFilteredLayout(_document, filteredLayout);
+					}
+
+					SaveSettings(_document.OuterXml);
 				}
-			
-				SaveSettings(_document.OuterXml);
-			}
-			catch
-			{
-				Initialize(true);
-				throw;
+				catch
+				{
+					Initialize(true);
+					throw;
+				}
 			}
 		}
 
@@ -225,17 +235,20 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			Platform.CheckForNullReference(filteredLayout, "filteredLayout");
 			Platform.CheckForEmptyString(filteredLayout.MatchingLayoutIdentifier, "filteredLayout.MatchingLayoutIdentifier");
 
-			Initialize(false);
+			lock (_syncLock)
+			{
+				Initialize(false);
 
-			try
-			{
-				SerializeFilteredLayout(filteredLayout);
-				SaveSettings(_document.OuterXml);
-			}
-			catch
-			{
-				Initialize(true);
-				throw;
+				try
+				{
+					SerializeFilteredLayout(_document, filteredLayout);
+					SaveSettings(_document.OuterXml);
+				}
+				catch
+				{
+					Initialize(true);
+					throw;
+				}
 			}
 		}
 
@@ -249,21 +262,23 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			//!!this is hard-coded as the only filter 'candidate' for now, until the more general uses cases are better understood.
 			filterCandidates.Add(new KeyValuePair<string, string>("Modality", dicomImage.ImageSop.Modality));
 
-			Initialize(false);
-
-			string xPath = "dicom-filtered-annotation-layout-configuration/dicom-filtered-annotation-layouts/dicom-filtered-annotation-layout";
-			XmlNodeList filteredLayoutNodes = _document.SelectNodes(xPath);
-			foreach (XmlElement filteredLayoutNode in filteredLayoutNodes)
+			lock (_syncLock)
 			{
-				DicomFilteredAnnotationLayout filteredAnnotationLayout = DeserializeFilteredLayout(filteredLayoutNode);
-				if (filteredAnnotationLayout.IsMatch(filterCandidates))
+				Initialize(false);
+
+				string xPath = "dicom-filtered-annotation-layout-configuration/dicom-filtered-annotation-layouts/dicom-filtered-annotation-layout";
+				XmlNodeList filteredLayoutNodes = _document.SelectNodes(xPath);
+				foreach (XmlElement filteredLayoutNode in filteredLayoutNodes)
 				{
-					return filteredAnnotationLayout.MatchingLayoutIdentifier;
+					DicomFilteredAnnotationLayout filteredAnnotationLayout = DeserializeFilteredLayout(filteredLayoutNode);
+					if (filteredAnnotationLayout.IsMatch(filterCandidates))
+					{
+						return filteredAnnotationLayout.MatchingLayoutIdentifier;
+					}
 				}
 			}
 
 			return "";
 		}
-
 	}
 }

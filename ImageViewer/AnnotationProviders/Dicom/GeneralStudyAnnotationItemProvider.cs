@@ -29,103 +29,96 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using System.Reflection;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 {
 	[ExtensionOf(typeof(AnnotationItemProviderExtensionPoint))]
 	public class GeneralStudyAnnotationItemProvider : AnnotationItemProvider
 	{
-		private List<IAnnotationItem> _annotationItems;
+		private readonly List<IAnnotationItem> _annotationItems;
 
 		public GeneralStudyAnnotationItemProvider()
 			: base("AnnotationItemProviders.Dicom.GeneralStudy", new AnnotationResourceResolver(typeof(GeneralStudyAnnotationItemProvider).Assembly))
 		{
+			_annotationItems = new List<IAnnotationItem>();
+
+			AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralStudy.AccessionNumber",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.AccessionNumber; },
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<PersonName>
+					(
+						"Dicom.GeneralStudy.ReferringPhysiciansName",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.ReferringPhysiciansName; },
+						DicomDataFormatHelper.PersonNameFormatter
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralStudy.StudyDate",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.StudyDate; },
+						DicomDataFormatHelper.DateFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralStudy.StudyTime",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.StudyTime; },
+						DicomDataFormatHelper.TimeFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralStudy.StudyDescription",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.StudyDescription; },
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.GeneralStudy.StudyId",
+						resolver,
+						FrameDataRetrieverFactory.GetStringRetriever(DicomTags.StudyId),
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			if (_annotationItems == null)
-			{
-				_annotationItems = new List<IAnnotationItem>();
-
-				AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralStudy.AccessionNumber",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.AccessionNumber; },
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<PersonName>
-						(
-							"Dicom.GeneralStudy.ReferringPhysiciansName",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.ReferringPhysiciansName; },
-							DicomDataFormatHelper.PersonNameFormatter
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralStudy.StudyDate",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.StudyDate; },
-							DicomDataFormatHelper.DateFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralStudy.StudyTime",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.StudyTime; },
-							DicomDataFormatHelper.TimeFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralStudy.StudyDescription",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.StudyDescription; },
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.GeneralStudy.StudyId",
-							resolver, 
-							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.StudyId),
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-			}
-
 			return _annotationItems;
 		}
 	}

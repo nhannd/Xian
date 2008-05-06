@@ -40,7 +40,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public class LocalFrame : Frame
 	{
-		private byte[] _pixelData;
+		private readonly object _syncLock = new object();
+		private volatile byte[] _pixelData;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="LocalFrame"/>.
@@ -85,34 +86,43 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <seealso cref="Frame.ToArgb"/>
 		public override byte[] GetNormalizedPixelData()
 		{
-			this.ParentLocalImageSop.Load();
-
 			if (_pixelData == null)
 			{
-				DicomMessageBase message = this.ParentLocalImageSop.NativeDicomObject;
-
-				PhotometricInterpretation photometricInterpretation;
-
-				if (!message.TransferSyntax.Encapsulated)
+				lock (_syncLock)
 				{
-					DicomUncompressedPixelData pixelData = new DicomUncompressedPixelData(message);
-					_pixelData = pixelData.GetFrame(this.FrameNumber - 1);
-					photometricInterpretation = this.PhotometricInterpretation;
-				}
-				else if (DicomCodecRegistry.GetCodec(message.TransferSyntax) != null)
-				{
-					DicomCompressedPixelData pixelData = new DicomCompressedPixelData(message);
-					string pi;
-					_pixelData = pixelData.GetFrame(this.FrameNumber - 1, out pi);
-					photometricInterpretation = PhotometricInterpretationHelper.FromString(pi);
-				}
-				else
-					throw new DicomCodecException("Unsupported transfer syntax");
+					if (_pixelData == null)
+					{
+						this.ParentLocalImageSop.Load();
 
-				// DICOM library uses zero-based frame numbers
+						DicomMessageBase message = this.ParentLocalImageSop.NativeDicomObject;
 
-				if (this.IsColor)
-					_pixelData = this.ToArgb(_pixelData, photometricInterpretation);
+						PhotometricInterpretation photometricInterpretation;
+
+						byte[] temp;
+						if (!message.TransferSyntax.Encapsulated)
+						{
+							DicomUncompressedPixelData pixelData = new DicomUncompressedPixelData(message);
+							temp = pixelData.GetFrame(this.FrameNumber - 1);
+							photometricInterpretation = this.PhotometricInterpretation;
+						}
+						else if (DicomCodecRegistry.GetCodec(message.TransferSyntax) != null)
+						{
+							DicomCompressedPixelData pixelData = new DicomCompressedPixelData(message);
+							string pi;
+							temp = pixelData.GetFrame(this.FrameNumber - 1, out pi);
+							photometricInterpretation = PhotometricInterpretationHelper.FromString(pi);
+						}
+						else
+							throw new DicomCodecException("Unsupported transfer syntax");
+
+						// DICOM library uses zero-based frame numbers
+
+						if (this.IsColor)
+							temp = this.ToArgb(temp, photometricInterpretation);
+
+						_pixelData = temp;
+					}
+				}
 			}
 
 			return _pixelData;

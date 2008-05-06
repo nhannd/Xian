@@ -59,8 +59,45 @@ namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			this._splitContainer = new System.Windows.Forms.SplitContainer();
+			this._imageSetTree = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
 			this._galleryView = new ClearCanvas.Desktop.View.WinForms.GalleryView();
+			this._splitContainer.Panel1.SuspendLayout();
+			this._splitContainer.Panel2.SuspendLayout();
+			this._splitContainer.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// _splitContainer
+			// 
+			this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+			this._splitContainer.Location = new System.Drawing.Point(0, 0);
+			this._splitContainer.Name = "_splitContainer";
+			// 
+			// _splitContainer.Panel1
+			// 
+			this._splitContainer.Panel1.Controls.Add(this._imageSetTree);
+			// 
+			// _splitContainer.Panel2
+			// 
+			this._splitContainer.Panel2.Controls.Add(this._galleryView);
+			this._splitContainer.Size = new System.Drawing.Size(770, 166);
+			this._splitContainer.SplitterDistance = 324;
+			this._splitContainer.TabIndex = 2;
+			// 
+			// _imageSetTree
+			// 
+			this._imageSetTree.AllowDrop = true;
+			this._imageSetTree.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._imageSetTree.IconColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+			this._imageSetTree.IconSize = new System.Drawing.Size(16, 16);
+			this._imageSetTree.Location = new System.Drawing.Point(0, 0);
+			this._imageSetTree.Margin = new System.Windows.Forms.Padding(2);
+			this._imageSetTree.Name = "_imageSetTree";
+			this._imageSetTree.ShowToolbar = false;
+			this._imageSetTree.Size = new System.Drawing.Size(324, 166);
+			this._imageSetTree.TabIndex = 2;
+			this._imageSetTree.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _galleryView
 			// 
@@ -71,23 +108,29 @@ namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
 			this._galleryView.Location = new System.Drawing.Point(0, 0);
 			this._galleryView.MultiSelect = true;
 			this._galleryView.Name = "_galleryView";
-			this._galleryView.Size = new System.Drawing.Size(705, 163);
-			this._galleryView.TabIndex = 0;
+			this._galleryView.Size = new System.Drawing.Size(442, 166);
+			this._galleryView.TabIndex = 1;
 			// 
 			// ThumbnailComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._galleryView);
+			this.Controls.Add(this._splitContainer);
 			this.Name = "ThumbnailComponentControl";
-			this.Size = new System.Drawing.Size(705, 163);
+			this.Size = new System.Drawing.Size(770, 166);
+			this._splitContainer.Panel1.ResumeLayout(false);
+			this._splitContainer.Panel2.ResumeLayout(false);
+			this._splitContainer.ResumeLayout(false);
 			this.ResumeLayout(false);
 
         }
 
         #endregion
 
+		private System.Windows.Forms.SplitContainer _splitContainer;
+		private ClearCanvas.Desktop.View.WinForms.BindingTreeView _imageSetTree;
 		private ClearCanvas.Desktop.View.WinForms.GalleryView _galleryView;
+
 
 	}
 }

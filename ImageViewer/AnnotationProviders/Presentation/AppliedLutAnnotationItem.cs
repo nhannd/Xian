@@ -30,10 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 {

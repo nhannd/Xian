@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
@@ -51,10 +52,31 @@ namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
 			_component = component;
             InitializeComponent();
 
-			_galleryView.DataSource = _component.DisplaySetItems;
+			_galleryView.DataSource = _component.DisplaySetGalleryItems;
 			_galleryView.MultiSelect = false;
 			_galleryView.DragReorder = false;
 			_galleryView.DragOutside = true;
-        }
+
+			PropertyChangedEventHandler setSelection = delegate
+			                              	{
+			                              		_imageSetTree.Selection = _component.ImageSetTreeSelection;
+			                              	};
+
+        	_imageSetTree.SelectionChanged += 
+				delegate
+            	{
+            		_component.ImageSetTreeSelection = _imageSetTree.Selection;
+            	};
+
+        	_component.PropertyChanged += setSelection;
+
+        	_imageSetTree.TreeBackColor = Color.FromKnownColor(KnownColor.Black);
+			_imageSetTree.TreeForeColor = Color.FromKnownColor(KnownColor.ControlLight);
+			_imageSetTree.TreeLineColor = Color.FromKnownColor(KnownColor.ControlLight);
+
+			_imageSetTree.Tree = _component.ImageSetTree;
+
+			setSelection(null, null);
+		}
     }
 }

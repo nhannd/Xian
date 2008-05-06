@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		#region Private Fields
 
-		private static InitialVoiLutProvider _instance;
+		private static readonly InitialVoiLutProvider _instance = new InitialVoiLutProvider();
 
 		private readonly IInitialVoiLutProvider _extensionProvider;
 
@@ -50,9 +50,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 				_extensionProvider = new InitialVoiLutProviderExtensionPoint().CreateExtension() as IInitialVoiLutProvider;
 			}
-			catch(Exception e)
+			catch (NotSupportedException e)
 			{
-				Platform.Log(LogLevel.Warn, e);
+				Platform.Log(LogLevel.Info, e);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
 			}
 		}
 
@@ -60,13 +64,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public static InitialVoiLutProvider Instance
 		{
-			get
-			{
-				if (_instance == null)
-					_instance = new InitialVoiLutProvider();
-
-				return _instance;
-			}
+			get { return _instance; }
 		}
 
 		#region IInitialVoiLutProvider Members

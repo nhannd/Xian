@@ -32,6 +32,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using System;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -48,7 +49,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
     internal sealed class StudyFinderMap : IEnumerable
 	{
-        Dictionary<string, IStudyFinder> _studyFinderMap = new Dictionary<string, IStudyFinder>();
+        private readonly Dictionary<string, IStudyFinder> _studyFinderMap = new Dictionary<string, IStudyFinder>();
 
 		internal StudyFinderMap()
 		{
@@ -71,11 +72,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private void CreateStudyFinders()
 		{
-            StudyFinderExtensionPoint xp = new StudyFinderExtensionPoint();
-            object[] studyFinders = xp.CreateExtensions();
+            try
+            {
+				StudyFinderExtensionPoint xp = new StudyFinderExtensionPoint();
+				object[] studyFinders = xp.CreateExtensions();
 
-            foreach (IStudyFinder studyFinder in studyFinders)
-				_studyFinderMap.Add(studyFinder.Name, studyFinder);
+				foreach (IStudyFinder studyFinder in studyFinders)
+					_studyFinderMap.Add(studyFinder.Name, studyFinder);
+			}
+			catch (NotSupportedException e)
+			{
+				Platform.Log(LogLevel.Info, e);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+			}
 		}
 
 		#region IEnumerable Members

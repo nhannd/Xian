@@ -29,114 +29,107 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using System.Reflection;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 {
 	[ExtensionOf(typeof(AnnotationItemProviderExtensionPoint))]
 	public class PatientAnnotationItemProvider : AnnotationItemProvider
 	{
-		private List<IAnnotationItem> _annotationItems;
+		private readonly List<IAnnotationItem> _annotationItems;
 
 		public PatientAnnotationItemProvider()
 			: base("AnnotationItemProviders.Dicom.Patient", new AnnotationResourceResolver(typeof(PatientAnnotationItemProvider).Assembly))
 		{
+			_annotationItems = new List<IAnnotationItem>();
+
+			AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.Patient.EthnicGroup",
+						resolver,
+						FrameDataRetrieverFactory.GetStringRetriever(DicomTags.EthnicGroup),
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.Patient.PatientComments",
+						resolver,
+						FrameDataRetrieverFactory.GetStringRetriever(DicomTags.PatientComments),
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.Patient.PatientId",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.PatientId; },
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.Patient.PatientsBirthDate",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.PatientsBirthDate; },
+						DicomDataFormatHelper.DateFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.Patient.PatientsBirthTime",
+						resolver,
+						FrameDataRetrieverFactory.GetStringRetriever(DicomTags.PatientsBirthTime),
+						DicomDataFormatHelper.TimeFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<PersonName>
+					(
+						"Dicom.Patient.PatientsName",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.PatientsName; },
+						DicomDataFormatHelper.PersonNameFormatter
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.Patient.PatientsSex",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.PatientsSex; },
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			if (_annotationItems == null)
-			{
-				_annotationItems = new List<IAnnotationItem>();
-
-				AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.Patient.EthnicGroup",
-							resolver,
-							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.EthnicGroup),
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.Patient.PatientComments",
-							resolver,
-							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.PatientComments),
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.Patient.PatientId",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.PatientId; },
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.Patient.PatientsBirthDate",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.PatientsBirthDate; },
-							DicomDataFormatHelper.DateFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.Patient.PatientsBirthTime",
-							resolver,
-							FrameDataRetrieverFactory.GetStringRetriever(DicomTags.PatientsBirthTime),
-							DicomDataFormatHelper.TimeFormat
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<PersonName>
-						(
-							"Dicom.Patient.PatientsName",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.PatientsName; },
-							DicomDataFormatHelper.PersonNameFormatter
-						)
-					);
-
-				_annotationItems.Add
-					(
-						new DicomAnnotationItem<string>
-						(
-							"Dicom.Patient.PatientsSex",
-							resolver,
-							delegate(Frame frame) { return frame.ParentImageSop.PatientsSex; },
-							DicomDataFormatHelper.RawStringFormat
-						)
-					);
-			}
-
 			return _annotationItems;
 		}
 	}

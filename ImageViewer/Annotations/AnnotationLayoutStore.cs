@@ -42,17 +42,18 @@ namespace ClearCanvas.ImageViewer.Annotations
 {
 	internal sealed class AnnotationLayoutStore
 	{
-		private static AnnotationLayoutStore _instance;
+		private static readonly AnnotationLayoutStore _instance = new AnnotationLayoutStore();
 
+		private readonly object _syncLock = new object();
 		private XmlDocument _document;
 		private event EventHandler _storeChanged;
-		private Dictionary<string, StoredAnnotationLayout> _layoutsInMemory;
+		private readonly Dictionary<string, StoredAnnotationLayout> _layoutsInMemory;
 
 		private AnnotationLayoutStore()
 		{
 			_layoutsInMemory = new Dictionary<string, StoredAnnotationLayout>();
 			AnnotationLayoutStoreSettings.Default.PropertyChanged += 
-			delegate(object sender, PropertyChangedEventArgs e)
+			delegate
 			{
 				this.Initialize(true);
 			};
@@ -66,71 +67,76 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 		public static AnnotationLayoutStore Instance
 		{
-			get
-			{
-				if (_instance == null)
-					_instance = new AnnotationLayoutStore();
-
-				return _instance;
-			}
+			get{ return _instance; }
 		}
 
 		public void Clear()
 		{
-			_layoutsInMemory.Clear();
-			SaveSettings("");
-			Initialize(true);
+			lock (_syncLock)
+			{
+				_layoutsInMemory.Clear();
+				SaveSettings("");
+				Initialize(true);
+			}
 		}
 
 		public void RemoveLayout(string identifier)
 		{
-			Platform.CheckForEmptyString(identifier, "identifier"); 
-			Initialize(false);
+			Platform.CheckForEmptyString(identifier, "identifier");
 
-			string xPath = "annotation-configuration/annotation-layouts";
-			XmlElement layoutsNode = (XmlElement)_document.SelectSingleNode(xPath);
-			if (layoutsNode == null)
-				throw new InvalidDataException(String.Format(SR.ExceptionInvalidAnnotationLayoutXml, "'annotation-layouts' node does not exist"));
+			lock (_syncLock)
+			{
+				Initialize(false);
 
-			xPath = String.Format("annotation-layout[@id='{0}']", identifier);
-			XmlNodeList matchingNodes = layoutsNode.SelectNodes(xPath);
-			foreach(XmlElement matchingNode in matchingNodes)
-				layoutsNode.RemoveChild(matchingNode);
+				string xPath = "annotation-configuration/annotation-layouts";
+				XmlElement layoutsNode = (XmlElement) _document.SelectSingleNode(xPath);
+				if (layoutsNode == null)
+					throw new InvalidDataException(
+						String.Format(SR.ExceptionInvalidAnnotationLayoutXml, "'annotation-layouts' node does not exist"));
 
-			if (_layoutsInMemory.ContainsKey(identifier))
-				_layoutsInMemory.Remove(identifier);
+				xPath = String.Format("annotation-layout[@id='{0}']", identifier);
+				XmlNodeList matchingNodes = layoutsNode.SelectNodes(xPath);
+				foreach (XmlElement matchingNode in matchingNodes)
+					layoutsNode.RemoveChild(matchingNode);
 
-			SaveSettings(_document.OuterXml);
+				if (_layoutsInMemory.ContainsKey(identifier))
+					_layoutsInMemory.Remove(identifier);
+
+				SaveSettings(_document.OuterXml);
+			}
 		}
 
 		public IList<StoredAnnotationLayout> GetLayouts(IEnumerable<IAnnotationItem> availableAnnotationItems)
 		{
-			Initialize(false);
-
-			string xPath = "annotation-configuration/annotation-layouts/annotation-layout";
-			XmlNodeList layoutNodes = _document.SelectNodes(xPath);
-					
-			StoredAnnotationLayoutDeserializer deserializer = new StoredAnnotationLayoutDeserializer(availableAnnotationItems);
-			List<StoredAnnotationLayout> layouts = new List<StoredAnnotationLayout>();
-
-			foreach (XmlElement layoutNode in layoutNodes)
+			lock (_syncLock)
 			{
-				StoredAnnotationLayout layout;
-				string identifier = layoutNode.GetAttribute("id");
-				if (_layoutsInMemory.ContainsKey(identifier))
+				Initialize(false);
+
+				string xPath = "annotation-configuration/annotation-layouts/annotation-layout";
+				XmlNodeList layoutNodes = _document.SelectNodes(xPath);
+
+				StoredAnnotationLayoutDeserializer deserializer = new StoredAnnotationLayoutDeserializer(availableAnnotationItems);
+				List<StoredAnnotationLayout> layouts = new List<StoredAnnotationLayout>();
+
+				foreach (XmlElement layoutNode in layoutNodes)
 				{
-					layout = _layoutsInMemory[identifier];
-				}
-				else
-				{
-					layout = deserializer.DeserializeLayout(layoutNode);
-					_layoutsInMemory[layout.Identifier] = layout;
+					StoredAnnotationLayout layout;
+					string identifier = layoutNode.GetAttribute("id");
+					if (_layoutsInMemory.ContainsKey(identifier))
+					{
+						layout = _layoutsInMemory[identifier];
+					}
+					else
+					{
+						layout = deserializer.DeserializeLayout(layoutNode);
+						_layoutsInMemory[layout.Identifier] = layout;
+					}
+
+					layouts.Add(layout);
 				}
 
-				layouts.Add(layout);
+				return layouts;
 			}
-
-			return layouts;
 		}
 
 		public StoredAnnotationLayout GetLayout(string identifier, IEnumerable<IAnnotationItem> availableAnnotationItems)
@@ -138,19 +144,22 @@ namespace ClearCanvas.ImageViewer.Annotations
 			if (String.IsNullOrEmpty(identifier))
 				return null;
 
-			if (_layoutsInMemory.ContainsKey(identifier))
-				return _layoutsInMemory[identifier];
+			lock (_syncLock)
+			{
+				if (_layoutsInMemory.ContainsKey(identifier))
+					return _layoutsInMemory[identifier];
 
-			Initialize(false);
-			
-			string xPath = String.Format("annotation-configuration/annotation-layouts/annotation-layout[@id='{0}']", identifier);
-			XmlElement layoutNode = (XmlElement)_document.SelectSingleNode(xPath);
-			if (layoutNode == null)
-				return null;
+				Initialize(false);
 
-			StoredAnnotationLayout layout = new StoredAnnotationLayoutDeserializer(availableAnnotationItems).DeserializeLayout(layoutNode);
-			_layoutsInMemory[layout.Identifier] = layout;
-			return layout;
+				string xPath = String.Format("annotation-configuration/annotation-layouts/annotation-layout[@id='{0}']", identifier);
+				XmlElement layoutNode = (XmlElement) _document.SelectSingleNode(xPath);
+				if (layoutNode == null)
+					return null;
+
+				StoredAnnotationLayout layout = new StoredAnnotationLayoutDeserializer(availableAnnotationItems).DeserializeLayout(layoutNode);
+				_layoutsInMemory[layout.Identifier] = layout;
+				return layout;
+			}
 		}
 
 		public void Update(StoredAnnotationLayout layout)
@@ -158,45 +167,51 @@ namespace ClearCanvas.ImageViewer.Annotations
 			Platform.CheckForNullReference(layout, "layout");
 			Platform.CheckForEmptyString(layout.Identifier, "layout.Identifier");
 
-			Initialize(false);
+			lock (_syncLock)
+			{
+				Initialize(false);
 
-			try
-			{
-				new StoredAnnotationLayoutSerializer().SerializeLayout(layout);
-				_layoutsInMemory[layout.Identifier] = layout;
-				SaveSettings(_document.OuterXml);
-			}
-			catch
-			{
-				//undo any changes you may have just made.
-				Initialize(true);
-				throw;
+				try
+				{
+					new StoredAnnotationLayoutSerializer().SerializeLayout(layout);
+					_layoutsInMemory[layout.Identifier] = layout;
+					SaveSettings(_document.OuterXml);
+				}
+				catch
+				{
+					//undo any changes you may have just made.
+					Initialize(true);
+					throw;
+				}
 			}
 		}
 
 		public void Update(IEnumerable<StoredAnnotationLayout> layouts)
 		{
-			StoredAnnotationLayoutSerializer serializer = new StoredAnnotationLayoutSerializer();
-			Initialize(false);
-
-			try
+			lock (_syncLock)
 			{
-				foreach (StoredAnnotationLayout layout in layouts)
+				Initialize(false);
+
+				try
 				{
-					Platform.CheckForNullReference(layout, "layout");
-					Platform.CheckForEmptyString(layout.Identifier, "layout.Identifier");
+					StoredAnnotationLayoutSerializer serializer = new StoredAnnotationLayoutSerializer();
+					foreach (StoredAnnotationLayout layout in layouts)
+					{
+						Platform.CheckForNullReference(layout, "layout");
+						Platform.CheckForEmptyString(layout.Identifier, "layout.Identifier");
 
-					serializer.SerializeLayout(layout);
-					_layoutsInMemory[layout.Identifier] = layout;
+						serializer.SerializeLayout(layout);
+						_layoutsInMemory[layout.Identifier] = layout;
+					}
+
+					SaveSettings(_document.OuterXml);
 				}
-
-				SaveSettings(_document.OuterXml);
-			}
-			catch
-			{
-				//undo any changes you may have just made.
-				Initialize(true);
-				throw;
+				catch
+				{
+					//undo any changes you may have just made.
+					Initialize(true);
+					throw;
+				}
 			}
 		}
 
@@ -211,38 +226,41 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 		private void Initialize(bool reloadSettings)
 		{
-			if (_document != null && !reloadSettings)
-				return;
-
-			_layoutsInMemory.Clear();
-
-			try
+			lock (_syncLock)
 			{
-				_document = new XmlDocument();
+				if (_document != null && !reloadSettings)
+					return;
 
-				if (!String.IsNullOrEmpty(AnnotationLayoutStoreSettings.Default.LayoutSettingsXml))
-				{
-					_document.LoadXml(AnnotationLayoutStoreSettings.Default.LayoutSettingsXml);
-				}
-				else
-				{
-					XmlElement root = _document.CreateElement("annotation-configuration");
-					_document.AppendChild(root);
-					root.AppendChild(_document.CreateElement("annotation-layouts"));
+				_layoutsInMemory.Clear();
 
-					SaveSettings(_document.OuterXml);
+				try
+				{
+					_document = new XmlDocument();
+
+					if (!String.IsNullOrEmpty(AnnotationLayoutStoreSettings.Default.LayoutSettingsXml))
+					{
+						_document.LoadXml(AnnotationLayoutStoreSettings.Default.LayoutSettingsXml);
+					}
+					else
+					{
+						XmlElement root = _document.CreateElement("annotation-configuration");
+						_document.AppendChild(root);
+						root.AppendChild(_document.CreateElement("annotation-layouts"));
+
+						SaveSettings(_document.OuterXml);
+					}
 				}
-			}
-			catch
-			{
-				_document = null;
-				throw;
+				catch
+				{
+					_document = null;
+					throw;
+				}
 			}
 		}
 
 		private class StoredAnnotationLayoutDeserializer
 		{
-			private IEnumerable<IAnnotationItem> _availableAnnotationItems;
+			private readonly IEnumerable<IAnnotationItem> _availableAnnotationItems;
 			
 			public StoredAnnotationLayoutDeserializer(IEnumerable<IAnnotationItem> availableAnnotationItems)
 			{
