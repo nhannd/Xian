@@ -181,6 +181,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 or.Conditions.Add(and);
             }
             query.Conditions.Add(or);
+			query.Conditions.Add(new HqlCondition("size(n.Postings) > 0"));
 
 			if(!countQuery)
 	            query.Sorts.AddRange(SentItemOrdering);
