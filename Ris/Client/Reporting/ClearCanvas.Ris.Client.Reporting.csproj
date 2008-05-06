@@ -41,6 +41,7 @@
     <Compile Include="EditReportTool.cs" />
     <Compile Include="Folders\ReportingOrderNoteboxFolders.cs" />
     <Compile Include="LinkedInterpretationComponent.cs" />
+    <Compile Include="PreliminaryDiagnosis.cs" />
     <Compile Include="ReportingPreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="ProtocolGroupSettings.cs" />
     <Compile Include="ProtocolGroupSettings.Designer.cs">

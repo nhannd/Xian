@@ -179,6 +179,15 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
+                // check for a prelim diagnosis
+                if(PreliminaryDiagnosis.ConversationExists(item.OrderRef))
+                {
+                    if(PreliminaryDiagnosis.ShowConversationDialog(item.OrderRef, this.Context.DesktopWindow)
+                        == ApplicationComponentExitCode.None)
+                        return false;   // user cancelled out
+                }
+
+
                 if (item.ProcedureStepName == "Interpretation")
                 {
                     Platform.GetService<IReportingWorkflowService>(

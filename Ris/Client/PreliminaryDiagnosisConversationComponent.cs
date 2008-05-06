@@ -109,39 +109,32 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public override void Start()
 		{
-			// TODO prepare the component for its live phase
-			base.Start();
 
 			_staffLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow);
 			_staffGroupLookupHandler = new StaffGroupLookupHandler(this.Host.DesktopWindow);
 
-			try
-			{
-				Platform.GetService<IOrderNoteService>(
-					delegate(IOrderNoteService service)
-					{
-						GetConversationRequest request = new GetConversationRequest(_orderRef);
-						GetConversationResponse response = service.GetConversation(request);
+			Platform.GetService<IOrderNoteService>(
+				delegate(IOrderNoteService service)
+				{
+                    List<string> filters = new List<string>(new string[] {OrderNoteCategory.PreliminaryDiagnosis.Key});
+					GetConversationRequest request = new GetConversationRequest(_orderRef, filters, false);
+					GetConversationResponse response = service.GetConversation(request);
 
-						List<Checkable<OrderNoteDetail>> checkableOrderNoteDetails =
-							CollectionUtils.Map<OrderNoteDetail, Checkable<OrderNoteDetail>>(
-								response.OrderNotes,
-								delegate(OrderNoteDetail detail)
-								{
-									return new Checkable<OrderNoteDetail>(detail);
-								});
-						checkableOrderNoteDetails.Reverse();
-						_notes.Items.AddRange(checkableOrderNoteDetails);
+					List<Checkable<OrderNoteDetail>> checkableOrderNoteDetails =
+						CollectionUtils.Map<OrderNoteDetail, Checkable<OrderNoteDetail>>(
+							response.OrderNotes,
+							delegate(OrderNoteDetail detail)
+							{
+								return new Checkable<OrderNoteDetail>(detail);
+							});
+					checkableOrderNoteDetails.Reverse();
+					_notes.Items.AddRange(checkableOrderNoteDetails);
 
-						// Set default recipients list
-						AddDefaultRecipients(response.OrderNotes);
-					});
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
-		}
+					// Set default recipients list
+					AddDefaultRecipients(response.OrderNotes);
+				});
+            base.Start();
+        }
 
 		private void AddDefaultRecipients(IEnumerable<OrderNoteDetail> notes)
 		{

@@ -14,19 +14,12 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
         /// </summary>
         /// <param name="orderRef"></param>
         /// <param name="categoryFilters"></param>
-        public GetConversationRequest(EntityRef orderRef, List<string> categoryFilters)
+        /// <param name="countOnly"></param>
+        public GetConversationRequest(EntityRef orderRef, List<string> categoryFilters, bool countOnly)
         {
             OrderRef = orderRef;
             CategoryFilters = categoryFilters;
-        }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="orderRef"></param>
-        public GetConversationRequest(EntityRef orderRef)
-        {
-            OrderRef = orderRef;
+            CountOnly = countOnly;
         }
 
         /// <summary>
@@ -40,6 +33,12 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
         /// </summary>
         [DataMember]
         public List<string> CategoryFilters;
+
+		/// <summary>
+		/// Specifies that only a count of the messages in the conversation is requested, rather than the messages themselves.
+		/// </summary>
+		[DataMember]
+    	public bool CountOnly;
 
     }
 }

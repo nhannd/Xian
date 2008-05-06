@@ -13,15 +13,24 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
         /// Constructor.
         /// </summary>
         /// <param name="orderNotes"></param>
-        public GetConversationResponse(List<OrderNoteDetail> orderNotes)
+        /// <param name="count"></param>
+        public GetConversationResponse(List<OrderNoteDetail> orderNotes, int count)
         {
             OrderNotes = orderNotes;
+        	NoteCount = count;
         }
 
         /// <summary>
-        /// List of order notes in the conversation.
+        /// List of order notes in the conversation matching the specified filters,
+        /// or null if <see cref="GetConversationRequest.CountOnly"/> was true.
         /// </summary>
         [DataMember]
         public List<OrderNoteDetail> OrderNotes;
+
+		/// <summary>
+		/// Count of notes in the conversation.
+		/// </summary>
+		[DataMember]
+    	public int NoteCount;
     }
 }
