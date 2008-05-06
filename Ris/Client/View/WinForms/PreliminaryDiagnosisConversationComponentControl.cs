@@ -58,6 +58,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_replyBody.DataBindings.Add("Text", _component, "Body", true, DataSourceUpdateMode.OnPropertyChanged);
 			_recipients.Table = _component.Recipients;
+			_recipients.MenuModel = _component.RecipientActionModel;
+			_recipients.ToolbarModel = _component.RecipientActionModel;
+			_recipients.DataBindings.Add("Selection", _component, "SelectedRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_staffRecipientLookup.LookupHandler = _component.StaffRecipientLookupHandler;
 			_staffRecipientLookup.DataBindings.Add("Value", _component, "SelectedStaffRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -79,15 +82,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			{
 				_recipients.Table = _component.Recipients;
 			}
-			//else if(e.PropertyName == "SelectedStaffRecipient")
-			//{
-			//    _staffRecipientLookup.Value = _component.SelectedStaffRecipient;
-			//    _staffRecipientLookup.Refresh();
-			//}
-			//else if (e.PropertyName == "SelectedGroupRecipient")
-			//{
-			//    _groupRecipientLookup.Value = _component.SelectedGroupRecipient;
-			//}
 			else if (e.PropertyName == "AcknowledgeEnabled")
 			{
 				_acknowledgePostButton.Enabled = _component.AcknowledgeEnabled;

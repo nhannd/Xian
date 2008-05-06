@@ -35,6 +35,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
@@ -66,16 +67,16 @@ namespace ClearCanvas.Ris.Client
 		private string _body;
 
 		private readonly Table<string> _recipients;
+		private string _selectedRecipient;
+		private readonly CrudActionModel _recipientsActionModel;
 
 		private ILookupHandler _staffLookupHandler;
 		private StaffSummary _selectedStaff = null;
-		private readonly List<StaffSummary> _staffRecipients;
+		private List<StaffSummary> _staffRecipients;
 
 		private ILookupHandler _staffGroupLookupHandler;
 		private StaffGroupSummary _selectedStaffGroup = null;
-		private readonly List<StaffGroupSummary> _groupRecipients;
-
-		private bool _defaultRecpientsAdded = false;
+		private List<StaffGroupSummary> _groupRecipients;
 
 		/// <summary>
 		/// Constructor.
@@ -91,6 +92,13 @@ namespace ClearCanvas.Ris.Client
 			_recipients.Columns.Add(new TableColumn<string, string>("Name",
 				delegate(string item) { return item; },
 				1.0f));
+			_recipientsActionModel = new CrudActionModel(true, false, true);
+			_recipientsActionModel.Add.SetClickHandler(delegate() { });
+			_recipientsActionModel.Add.Visible = false;    // hide this action on the menu/toolbar - we'll use a special button instead
+			_recipientsActionModel.Delete.SetClickHandler(RemoveSelectedRecipient);
+			UpdateRecipientsActionModel();
+
+			_selectedRecipient = null;
 
 			_staffRecipients = new List<StaffSummary>();
 			_groupRecipients = new List<StaffGroupSummary>();
@@ -115,20 +123,60 @@ namespace ClearCanvas.Ris.Client
 						GetConversationRequest request = new GetConversationRequest(_orderRef);
 						GetConversationResponse response = service.GetConversation(request);
 
-						IList<Checkable<OrderNoteDetail>> checkableOrderNoteDetails =
+						List<Checkable<OrderNoteDetail>> checkableOrderNoteDetails =
 							CollectionUtils.Map<OrderNoteDetail, Checkable<OrderNoteDetail>>(
 								response.OrderNotes,
 								delegate(OrderNoteDetail detail)
 								{
 									return new Checkable<OrderNoteDetail>(detail);
 								});
-
+						checkableOrderNoteDetails.Reverse();
 						_notes.Items.AddRange(checkableOrderNoteDetails);
+
+						// Set default recipients list
+						AddDefaultRecipients(response.OrderNotes);
 					});
 			}
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		private void AddDefaultRecipients(IEnumerable<OrderNoteDetail> notes)
+		{
+			foreach (OrderNoteDetail note in notes)
+			{
+				foreach (OrderNoteDetail.StaffRecipientDetail staffRecipient in note.StaffRecipients)
+				{
+					if (!string.Equals(
+							PersonNameFormat.Format(staffRecipient.Staff.Name),
+							PersonNameFormat.Format(LoginSession.Current.FullName)))
+					{
+						if (!CollectionUtils.Contains(
+								_staffRecipients,
+								delegate(StaffSummary staffSummary)
+								{
+									return string.Equals(PersonNameFormat.Format(staffRecipient.Staff.Name),
+														 PersonNameFormat.Format(staffSummary.Name));
+								}))
+						{
+							_staffRecipients.Add(staffRecipient.Staff);
+						}
+					}
+				}
+				foreach (OrderNoteDetail.GroupRecipientDetail groupRecipient in note.GroupRecipients)
+				{
+					if (!CollectionUtils.Contains(
+							_groupRecipients,
+							delegate(StaffGroupSummary groupSummary)
+							{
+								return string.Equals(groupRecipient.Group.Name, groupSummary.Name);
+							}))
+					{
+						_groupRecipients.Add(groupRecipient.Group);
+					}
+				}
 			}
 		}
 
@@ -191,6 +239,30 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public void UpdateRecipientsActionModel()
+		{
+			_recipientsActionModel.Delete.Enabled = (_selectedRecipient != null);
+		}
+
+		public ActionModelNode RecipientActionModel
+		{
+			get { return _recipientsActionModel; }
+		}
+
+		public ISelection SelectedRecipient
+		{
+			get { return new Selection((object)_selectedRecipient); }
+			set
+			{
+				string recipient = (string)value.Item;
+				if (recipient != _selectedRecipient)
+				{
+					_selectedRecipient = recipient;
+					UpdateRecipientsActionModel();
+				}
+			}
+		}
+
 		#region Staff Recipients
 
 		public ILookupHandler StaffRecipientLookupHandler
@@ -213,8 +285,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (_selectedStaff == null) return;
 
-			bool contains = CollectionUtils.Contains(_staffRecipients,
-				delegate(StaffSummary staff) { return staff == _selectedStaff; });
+			bool contains = CollectionUtils.Contains(
+				_staffRecipients,
+				delegate(StaffSummary staff)
+					{
+						return string.Equals(PersonNameFormat.Format(staff.Name), PersonNameFormat.Format(_selectedStaff.Name));
+					});
 
 			if (!contains)
 			{
@@ -247,8 +323,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (_selectedStaffGroup == null) return;
 
-			bool contains = CollectionUtils.Contains(_groupRecipients,
-				delegate(StaffGroupSummary group) { return group == _selectedStaffGroup; });
+			bool contains = CollectionUtils.Contains(
+				_groupRecipients,
+				delegate(StaffGroupSummary group)
+					{
+						return string.Equals(group.Name, _selectedStaffGroup.Name);
+					});
 
 			if (!contains)
 			{
@@ -308,6 +388,27 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
+		private void RemoveSelectedRecipient()
+		{
+			if (string.IsNullOrEmpty(_selectedRecipient)) return;
+
+			CollectionUtils.Remove(
+				_staffRecipients,
+				delegate(StaffSummary staffSummary)
+				{
+					return string.Equals(PersonNameFormat.Format(staffSummary.Name), _selectedRecipient);
+				});
+
+			CollectionUtils.Remove(
+				_groupRecipients,
+				delegate(StaffGroupSummary groupSummary)
+				{
+					return string.Equals(groupSummary.Name, _selectedRecipient);
+				});
+
+			NotifyPropertyChanged("Recipients");
+		}
+
 		private List<string> ConsolidateRecipientsForDisplay()
 		{
 			List<string> recipients = new List<string>();
@@ -328,10 +429,10 @@ namespace ClearCanvas.Ris.Client
 		{
 			Platform.GetService<IOrderNoteService>(
 				delegate(IOrderNoteService service)
-					{
-						AcknowledgeAndReplyRequest request = new AcknowledgeAndReplyRequest(_orderRef, GetOrderNotesToAcknowledge(), GetReply());
-						service.AcknowledgeAndReply(request);
-					});
+				{
+					AcknowledgeAndReplyRequest request = new AcknowledgeAndReplyRequest(_orderRef, GetOrderNotesToAcknowledge(), GetReply());
+					service.AcknowledgeAndReply(request);
+				});
 		}
 
 		private List<EntityRef> GetOrderNotesToAcknowledge()
@@ -347,7 +448,7 @@ namespace ClearCanvas.Ris.Client
 
 		private OrderNoteDetail GetReply()
 		{
-			if(string.IsNullOrEmpty(_body)) return null;
+			if (string.IsNullOrEmpty(_body)) return null;
 
 			OrderNoteDetail reply = new OrderNoteDetail(OrderNoteCategory.PreliminaryDiagnosis.Key, _body, _staffRecipients, _groupRecipients);
 			return reply;
@@ -357,30 +458,9 @@ namespace ClearCanvas.Ris.Client
 		{
 			return CollectionUtils.Contains(_notes.Items,
 				delegate(Checkable<OrderNoteDetail> checkableOrderNoteDetail)
-					{
-						return checkableOrderNoteDetail.IsChecked == false && ShouldAcknowledge(checkableOrderNoteDetail.Item);
-					});
-		}
-
-		// TODO:  this should be moved to server and be a property of the OrderNoteDetail
-		private static bool ShouldAcknowledge(OrderNoteDetail detail)
-		{
-			bool shouldAcknowledge = false;
-
-			shouldAcknowledge |= CollectionUtils.Contains(
-				detail.StaffRecipients,
-				delegate(OrderNoteDetail.StaffRecipientDetail staffRecipientDetail)
 				{
-					return staffRecipientDetail.IsAcknowledged == false
-							&& string.Equals(PersonNameFormat.Format(staffRecipientDetail.Staff.Name),
-					                     PersonNameFormat.Format(LoginSession.Current.FullName));
+					return !checkableOrderNoteDetail.IsChecked && checkableOrderNoteDetail.Item.CanAcknowledge;
 				});
-
-			//foreach (OrderNoteDetail.GroupRecipientDetail groupRecipient in detail.GroupRecipients)
-			//{
-			//}
-
-			return shouldAcknowledge;
 		}
 	}
 
@@ -391,23 +471,26 @@ namespace ClearCanvas.Ris.Client
 		public PreliminaryDiagnosisOrderNoteTable()
 			: base(3)
 		{
+			TableColumn<Checkable<OrderNoteDetail>, IconSet> canAcknowledgeColumn =
+				new TableColumn<Checkable<OrderNoteDetail>, IconSet>("!",
+					delegate(Checkable<OrderNoteDetail> item) { return GetCanAcknowledgeIcon(item.Item.CanAcknowledge); },
+					0.2f);
+			canAcknowledgeColumn.Comparison = delegate(Checkable<OrderNoteDetail> item1, Checkable<OrderNoteDetail> item2)
+				{ return item1.Item.CanAcknowledge.CompareTo(item2.Item.CanAcknowledge); };
+			canAcknowledgeColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
+			this.Columns.Add(canAcknowledgeColumn);
+
 			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, bool>(".",
 				delegate(Checkable<OrderNoteDetail> item) { return item.IsChecked; },
 				delegate(Checkable<OrderNoteDetail> item, bool value)
 				{
-					item.IsChecked = value;
-					EventsHelper.Fire(_checkedItemsChanged, this, EventArgs.Empty);
+					if (item.Item.CanAcknowledge)
+					{
+						item.IsChecked = value;
+						EventsHelper.Fire(_checkedItemsChanged, this, EventArgs.Empty);
+					}
 				}, 
 				0.20f));
-
-			//TableColumn<OrderNoteDetail, IconSet> acknowledgedColumn =
-			//    new TableColumn<OrderNoteDetail, IconSet>(SR.ColumnStatus,
-			//        delegate(OrderNoteDetail item) { return GetIsAcknowledgedIcon(item.IsAcknowledged); },
-			//        0.3f);
-			//acknowledgedColumn.Comparison = delegate(OrderNoteDetail item1, OrderNoteDetail item2)
-			//    { return item1.IsAcknowledged.CompareTo(item2.IsAcknowledged); };
-			//acknowledgedColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
-			//this.Columns.Add(acknowledgedColumn);
 
 			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, string>(SR.ColumnFrom,
 				delegate(Checkable<OrderNoteDetail> item) { return PersonNameFormat.Format(item.Item.Author.Name); },
@@ -432,9 +515,9 @@ namespace ClearCanvas.Ris.Client
 			remove { _checkedItemsChanged -= value; }
 		}
 
-		private static IconSet GetIsAcknowledgedIcon(bool isAcknowledged)
+		private static IconSet GetCanAcknowledgeIcon(bool canAcknowledge)
 		{
-			return isAcknowledged ? new IconSet("NoteRead.png") : new IconSet("NoteUnread.png");
+			return canAcknowledge ? new IconSet("WarningHS.png") : null;
 		}
 
 		// Creates a semi-colon delimited list of the recipients
