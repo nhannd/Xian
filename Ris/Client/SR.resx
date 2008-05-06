@@ -219,6 +219,9 @@
   <data name="ColumnNumber" xml:space="preserve">
     <value>Number</value>
   </data>
+  <data name="ColumnPath" xml:space="preserve">
+    <value>Path</value>
+  </data>
   <data name="ColumnPatientClass" xml:space="preserve">
     <value>Patient Class</value>
   </data>
@@ -278,6 +281,9 @@
   </data>
   <data name="ColumnStatusDescription" xml:space="preserve">
     <value>Status Description</value>
+  </data>
+  <data name="ColumnText" xml:space="preserve">
+    <value>Text</value>
   </data>
   <data name="ColumnTo" xml:space="preserve">
     <value>To</value>
@@ -417,6 +423,9 @@
   <data name="TitleAddAddress" xml:space="preserve">
     <value>Add Address...</value>
   </data>
+  <data name="TitleAddCannedText" xml:space="preserve">
+    <value>Add Canned Text</value>
+  </data>
   <data name="TitleAddContactPerson" xml:space="preserve">
     <value>Add Contact Person...</value>
   </data>
@@ -438,8 +447,14 @@
   <data name="TitleAddStaff" xml:space="preserve">
     <value>Add Staff</value>
   </data>
+  <data name="TitleCannedText" xml:space="preserve">
+    <value>Canned Text</value>
+  </data>
   <data name="TitleContactPersons" xml:space="preserve">
     <value>Contact Persons</value>
+  </data>
+  <data name="TitleCopy" xml:space="preserve">
+    <value>Copy</value>
   </data>
   <data name="TitleDelete" xml:space="preserve">
     <value>Delete</value>
@@ -494,6 +509,9 @@
   </data>
   <data name="TitleUpdateAddress" xml:space="preserve">
     <value>Update Address...</value>
+  </data>
+  <data name="TitleUpdateCannedText" xml:space="preserve">
+    <value>Update Canned Text</value>
   </data>
   <data name="TitleUpdateContactPerson" xml:space="preserve">
     <value>Update Contact Person...</value>

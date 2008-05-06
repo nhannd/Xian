@@ -1,0 +1,40 @@
+using System;
+using System.Windows.Forms;
+
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
+{
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="CannedTextEditorComponent"/>
+    /// </summary>
+    public partial class CannedTextEditorComponentControl : ApplicationComponentUserControl
+    {
+        private readonly CannedTextEditorComponent _component;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public CannedTextEditorComponentControl(CannedTextEditorComponent component)
+            :base(component)
+        {
+            InitializeComponent();
+            _component = component;
+
+			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
+			_path.DataBindings.Add("Value", _component, "Path", true, DataSourceUpdateMode.OnPropertyChanged);
+			_text.DataBindings.Add("Value", _component, "Text", true, DataSourceUpdateMode.OnPropertyChanged);
+			_acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
+
+		private void _acceptButton_Click(object sender, EventArgs e)
+		{
+			_component.Accept();
+		}
+
+		private void _cancelButton_Click(object sender, EventArgs e)
+		{
+			_component.Cancel();
+		}
+    }
+}

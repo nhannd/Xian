@@ -56,6 +56,8 @@
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
     <Compile Include="Admin\StaffGroupAdmin\StaffGroupAdminService.cs" />
+    <Compile Include="CannedTextService\CannedTextAssembler.cs" />
+    <Compile Include="CannedTextService\CannedTextService.cs" />
     <Compile Include="OrderNoteSettings.cs" />
     <Compile Include="OrderNoteSettings.Designer.cs">
       <AutoGen>True</AutoGen>

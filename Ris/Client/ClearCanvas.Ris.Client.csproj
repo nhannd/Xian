@@ -46,6 +46,9 @@
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
+    <Compile Include="CannedTextSummaryComponent.cs" />
+    <Compile Include="CannedTextEditorComponent.cs" />
+    <Compile Include="CannedTextTable.cs" />
     <Compile Include="CoreServiceProvider.cs" />
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointEditorComponent.cs" />
@@ -382,6 +385,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\WarningHS.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\CopyToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -58,6 +58,17 @@
     <Compile Include="Admin\WorklistAdmin\ListWorklistClassesRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\ListWorklistClassesResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistClassSummary.cs" />
+    <Compile Include="CannedTextService\AddCannedTextRequest.cs" />
+    <Compile Include="CannedTextService\AddCannedTextResponse.cs" />
+    <Compile Include="CannedTextService\CannedTextDetail.cs" />
+    <Compile Include="CannedTextService\DeleteCannedTextRequest.cs" />
+    <Compile Include="CannedTextService\DeleteCannedTextResponse.cs" />
+    <Compile Include="CannedTextService\ICannedTextService.cs" />
+    <Compile Include="CannedTextService\ListCannedTextRequest.cs" />
+    <Compile Include="CannedTextService\ListCannedTextResponse.cs" />
+    <Compile Include="CannedTextService\UpdateCannedTextRequest.cs" />
+    <Compile Include="CannedTextService\UpdateCannedTextResponse.cs" />
+    <Compile Include="CannedTextService\CannedTextSummary.cs" />
     <Compile Include="IWorklistService.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\LoadDataRequest.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\LoadDataResponse.cs" />

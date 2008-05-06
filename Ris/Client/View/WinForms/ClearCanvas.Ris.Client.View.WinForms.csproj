@@ -77,6 +77,20 @@
       <DependentUpon>BiographyOverviewComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="BiographyOverviewComponentView.cs" />
+    <Compile Include="CannedTextSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CannedTextSummaryComponentControl.Designer.cs">
+      <DependentUpon>CannedTextSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CannedTextSummaryComponentView.cs" />
+    <Compile Include="CannedTextEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CannedTextEditorComponentControl.Designer.cs">
+      <DependentUpon>CannedTextEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CannedTextEditorComponentView.cs" />
     <Compile Include="ContactPersonEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -349,6 +363,14 @@
     <EmbeddedResource Include="BiographyOverviewComponentControl.resx">
       <DependentUpon>BiographyOverviewComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CannedTextEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CannedTextEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CannedTextSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CannedTextSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ContactPersonEditorComponentControl.resx">
       <SubType>Designer</SubType>

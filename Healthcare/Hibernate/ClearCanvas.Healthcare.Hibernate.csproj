@@ -44,6 +44,7 @@
     <Compile Include="*.gen.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Brokers\AccessionNumberBroker.cs" />
+    <Compile Include="Brokers\CannedTextBroker.cs" />
     <Compile Include="Brokers\OrderNoteboxItemBroker.cs" />
     <Compile Include="Brokers\ProcedureTypeGroupBroker.cs" />
     <Compile Include="Brokers\MimeDocumentDataBroker.cs" />
@@ -211,6 +212,7 @@
     <EmbeddedResource Include="Mappings\NotePosting.hbm.xml" />
     <EmbeddedResource Include="healthcare.dbi.xml" />
     <EmbeddedResource Include="Mappings\EmergencyPhysicianWorklists.hbm.xml" />
+    <EmbeddedResource Include="Mappings\CannedText.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />
