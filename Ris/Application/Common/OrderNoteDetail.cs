@@ -134,7 +134,10 @@ namespace ClearCanvas.Ris.Application.Common
         /// <param name="staffRecipients"></param>
         /// <param name="groupRecipients"></param>
         /// <param name="noteBody"></param>
-        public OrderNoteDetail(EntityRef orderNoteRef, string category, DateTime creationTime, DateTime? postTime, StaffSummary author, List<StaffRecipientDetail> staffRecipients, List<GroupRecipientDetail> groupRecipients, string noteBody)
+        /// <param name="canAcknowledge"></param>
+        public OrderNoteDetail(EntityRef orderNoteRef, string category, DateTime creationTime,
+			DateTime? postTime, StaffSummary author, List<StaffRecipientDetail> staffRecipients,
+			List<GroupRecipientDetail> groupRecipients, string noteBody, bool canAcknowledge)
         {
             OrderNoteRef = orderNoteRef;
             Category = category;
@@ -144,6 +147,7 @@ namespace ClearCanvas.Ris.Application.Common
             StaffRecipients = staffRecipients;
             GroupRecipients = groupRecipients;
             NoteBody = noteBody;
+        	CanAcknowledge = canAcknowledge;
         }
 
         /// <summary>
@@ -224,6 +228,12 @@ namespace ClearCanvas.Ris.Application.Common
         /// </summary>
         [DataMember]
         public List<GroupRecipientDetail> GroupRecipients;
+
+		/// <summary>
+		/// Gets a value indicating whether this note can be acknowledged by the current user.
+		/// </summary>
+		[DataMember]
+		public bool CanAcknowledge;
 
     }
 }

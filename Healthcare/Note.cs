@@ -71,6 +71,16 @@ namespace ClearCanvas.Healthcare {
             Post(Platform.Time);
         }
 
+		/// <summary>
+		/// Gets a value indicating whether this note can (should) be acknowledged by the specified staff.
+		/// </summary>
+		/// <param name="staff"></param>
+		/// <returns></returns>
+		public virtual bool CanAcknowledge(Staff staff)
+		{
+			return GetAcknowledgeablePostings(staff).Count > 0;
+		}
+
         /// <summary>
         /// Marks this note as being acknowledged by the specified staff.
         /// </summary>
@@ -88,13 +98,7 @@ namespace ClearCanvas.Healthcare {
 
 
             // find all un-acknowledged postings that this staff person could acknowledge
-            List<NotePosting> acknowledgeablePostings = CollectionUtils.Select(_postings,
-                delegate(NotePosting a)
-                {
-                    return !a.IsAcknowledged 
-						&& ((a.Recipient.IsStaffRecipient && a.Recipient.Staff.Equals(staff)) 
-							|| (a.Recipient.IsGroupRecipient && a.Recipient.Group.Members.Contains(staff)));
-                });
+            List<NotePosting> acknowledgeablePostings = GetAcknowledgeablePostings(staff);
 
             // if none, this is a workflow exception
             if(acknowledgeablePostings.Count == 0)
@@ -111,7 +115,8 @@ namespace ClearCanvas.Healthcare {
                 delegate(NotePosting posting) { return posting.IsAcknowledged; });
         }
 
-        #endregion
+
+    	#endregion
 
         #region Overridables
 
@@ -150,6 +155,15 @@ namespace ClearCanvas.Healthcare {
             // set the post time
             _postTime = postTime;
         }
+
+		private List<NotePosting> GetAcknowledgeablePostings(Staff staff)
+		{
+			return CollectionUtils.Select(_postings,
+					  delegate(NotePosting a)
+					  {
+						  return !a.IsAcknowledged && (a.Recipient.Staff.Equals(staff) || a.Recipient.Group.Members.Contains(staff));
+					  });
+		}
 	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom

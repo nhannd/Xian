@@ -139,7 +139,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
                 CollectionUtils.Map<OrderNote, OrderNoteDetail>(notes,
                     delegate (OrderNote n)
                     {
-                        return noteAssembler.CreateOrderNoteDetail(n, PersistenceContext);
+						return noteAssembler.CreateOrderNoteDetail(n, CurrentUserStaff, PersistenceContext);
                     }));
         }
 
@@ -183,7 +183,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
                 PersistenceContext.SynchState();
 
                 if (replyNote != null)
-                    return new AcknowledgeAndReplyResponse(noteAssembler.CreateOrderNoteDetail(replyNote, PersistenceContext));
+					return new AcknowledgeAndReplyResponse(noteAssembler.CreateOrderNoteDetail(replyNote, CurrentUserStaff, PersistenceContext));
                 else
                     return new AcknowledgeAndReplyResponse(null);
             }

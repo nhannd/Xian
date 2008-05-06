@@ -93,13 +93,18 @@ namespace ClearCanvas.Ris.Application.Services
             }
         }
 
-        /// <summary>
+ 		public OrderNoteDetail CreateOrderNoteDetail(OrderNote orderNote, IPersistenceContext context)
+ 		{
+ 			return CreateOrderNoteDetail(orderNote, null, context);
+ 		}
+       /// <summary>
         /// Creates an <see cref="OrderNoteDetail"/> from a <see cref="OrderNote"/>.
         /// </summary>
         /// <param name="orderNote"></param>
+		/// <param name="currentUserStaff"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public OrderNoteDetail CreateOrderNoteDetail(OrderNote orderNote, IPersistenceContext context)
+		public OrderNoteDetail CreateOrderNoteDetail(OrderNote orderNote, Staff currentUserStaff, IPersistenceContext context)
         {
             List<OrderNoteDetail.StaffRecipientDetail> staffRecipients = new List<OrderNoteDetail.StaffRecipientDetail>();
             List<OrderNoteDetail.GroupRecipientDetail> groupRecipients = new List<OrderNoteDetail.GroupRecipientDetail>();
@@ -146,7 +151,8 @@ namespace ClearCanvas.Ris.Application.Services
                 staffAssembler.CreateStaffSummary(orderNote.Author, context),
                 staffRecipients, 
                 groupRecipients, 
-                orderNote.Body);
+                orderNote.Body,
+				currentUserStaff == null ? false : orderNote.CanAcknowledge(currentUserStaff));
         }
 
         /// <summary>
