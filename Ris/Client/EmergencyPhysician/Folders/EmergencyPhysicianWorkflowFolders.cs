@@ -7,7 +7,7 @@ using ClearCanvas.Ris.Client.EmergencyPhysician;
 namespace ClearCanvas.Ris.Client.EmergencyPhysician.Folders
 {
 	[ExtensionOf(typeof(EmergencyPhysicianMainWorkflowFolderExtensionPoint))]
-	[FolderForWorklistClass(WorklistClassNames.EmergencyPhysicianEmergencyOrdersWorklist)]
+	[FolderForWorklistClass(WorklistClassNames.EmergencyOrdersWorklist)]
 	[FolderPath("Emergency Orders", true)]
 	public class EROrdersFolder : EmergencyPhysicianWorkflowFolder
 	{

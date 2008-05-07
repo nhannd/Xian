@@ -11,9 +11,9 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 	{
 	}
 
-	[MenuAction("launch", "global-menus/Go/Emergency Physician Home", "Launch")]
+	[MenuAction("launch", "global-menus/Go/Emergency Home", "Launch")]
 	//[ButtonAction("launch", "global-toolbars/Go/Radiologist Home", "Launch")]
-	[Tooltip("launch", "Emergency Physician Home")]
+	[Tooltip("launch", "Emergency Home")]
 	// TODO: change icons
 	[IconSet("launch", IconScheme.Colour, "Icons.EmergencyPhysicianHomeToolSmall.png", "Icons.EmergencyPhysicianHomeToolMedium.png", "Icons.EmergencyPhysicianHomeToolLarge.png")]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
@@ -21,7 +21,7 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 	{
 		public override string Title
 		{
-			get { return SR.TitleEmergencyPhysicianHome; }
+			get { return SR.TitleEmergencyHome; }
 		}
 	}
 }

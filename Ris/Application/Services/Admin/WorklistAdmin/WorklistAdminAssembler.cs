@@ -55,8 +55,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 Worklist.GetDisplayName(worklistClass),
                 Worklist.GetCategory(worklistClass),
                 Worklist.GetDescription(worklistClass),
-                ptgClass.Name,
-                TerminologyTranslator.Translate(ptgClass),
+                ptgClass == null ? null : ptgClass.Name,
+				ptgClass == null ? null : TerminologyTranslator.Translate(ptgClass),
                 Worklist.GetSupportsTimeFilter(worklistClass));
         }
 

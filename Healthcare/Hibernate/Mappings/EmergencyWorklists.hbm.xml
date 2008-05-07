@@ -2,8 +2,8 @@
 <!-- @codegen: ignore -->
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
   <!-- abstract intermediate classes -->
-  <subclass name="EmergencyPhysicianWorklist" extends="RegistrationWorklist" discriminator-value="EMERGENCYPHYSICIAN"/>
+  <subclass name="EmergencyWorklist" extends="RegistrationWorklist" discriminator-value="EMERGENCY"/>
 
   <!-- concrete classes -->
-  <subclass name="EmergencyPhysicianEmergencyOrdersWorklist" extends="EmergencyPhysicianWorklist" discriminator-value="EMERGENCYPHYSICIAN_EMERGENCYORDERS"/>
+  <subclass name="EmergencyOrdersWorklist" extends="EmergencyWorklist" discriminator-value="EMERGENCY_ORDERS"/>
 </hibernate-mapping>

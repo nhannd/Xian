@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 
 		public override string DisplayName
 		{
-			get { return SR.TitleEmergencyPhysicianHome; }
+			get { return SR.TitleEmergency; }
 		}
 
 		public override string PreviewUrl

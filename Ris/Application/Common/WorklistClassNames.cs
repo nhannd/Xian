@@ -143,10 +143,10 @@ namespace ClearCanvas.Ris.Application.Common
 
 		#endregion
 
-		#region Emergency Physician Worklist Class Names
+		#region Emergency Worklist Class Names
 
 		[WorklistClassName]
-		public const string EmergencyPhysicianEmergencyOrdersWorklist = "EmergencyPhysicianEmergencyOrdersWorklist";
+		public const string EmergencyOrdersWorklist = "EmergencyOrdersWorklist";
 
 		#endregion
 	}
