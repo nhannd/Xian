@@ -37,12 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
         GetConversationEditorFormDataResponse GetConversationEditorFormData(GetConversationEditorFormDataRequest request);
 
         /// <summary>
-        /// Acknowledges and/or replies to the specified order conversation.  Can also be used to
+        /// Acknowledges and/or posts to the specified order conversation.  Can also be used to
         /// initiate a conversation.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        AcknowledgeAndReplyResponse AcknowledgeAndReply(AcknowledgeAndReplyRequest request);
+        AcknowledgeAndPostResponse AcknowledgeAndPost(AcknowledgeAndPostRequest request);
     }
 }

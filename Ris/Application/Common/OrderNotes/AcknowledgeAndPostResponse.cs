@@ -7,13 +7,13 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.OrderNotes
 {
     [DataContract]
-    public class AcknowledgeAndReplyResponse : DataContractBase
+    public class AcknowledgeAndPostResponse : DataContractBase
     {
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="orderNote"></param>
-        public AcknowledgeAndReplyResponse(OrderNoteDetail orderNote)
+        public AcknowledgeAndPostResponse(OrderNoteDetail orderNote)
         {
             OrderNote = orderNote;
         }

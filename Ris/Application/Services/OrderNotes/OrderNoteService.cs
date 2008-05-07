@@ -161,7 +161,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
     	}
 
     	[UpdateOperation]
-        public AcknowledgeAndReplyResponse AcknowledgeAndReply(AcknowledgeAndReplyRequest request)
+        public AcknowledgeAndPostResponse AcknowledgeAndPost(AcknowledgeAndPostRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.OrderRef, "request.OrderRef");
@@ -200,9 +200,9 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
                 PersistenceContext.SynchState();
 
                 if (replyNote != null)
-					return new AcknowledgeAndReplyResponse(noteAssembler.CreateOrderNoteDetail(replyNote, CurrentUserStaff, PersistenceContext));
+					return new AcknowledgeAndPostResponse(noteAssembler.CreateOrderNoteDetail(replyNote, CurrentUserStaff, PersistenceContext));
                 else
-                    return new AcknowledgeAndReplyResponse(null);
+                    return new AcknowledgeAndPostResponse(null);
             }
             catch (NoteAcknowledgementException e)
             {

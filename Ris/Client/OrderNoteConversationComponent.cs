@@ -477,8 +477,8 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IOrderNoteService>(
 				delegate(IOrderNoteService service)
 				{
-					AcknowledgeAndReplyRequest request = new AcknowledgeAndReplyRequest(_orderRef, GetOrderNotesToAcknowledge(), GetReply());
-					service.AcknowledgeAndReply(request);
+					AcknowledgeAndPostRequest request = new AcknowledgeAndPostRequest(_orderRef, GetOrderNotesToAcknowledge(), GetReply());
+					service.AcknowledgeAndPost(request);
 				});
 		}
 

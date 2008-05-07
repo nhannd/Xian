@@ -72,8 +72,8 @@
     <Compile Include="IWorklistService.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\LoadDataRequest.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\LoadDataResponse.cs" />
-    <Compile Include="OrderNotes\AcknowledgeAndReplyRequest.cs" />
-    <Compile Include="OrderNotes\AcknowledgeAndReplyResponse.cs" />
+    <Compile Include="OrderNotes\AcknowledgeAndPostRequest.cs" />
+    <Compile Include="OrderNotes\AcknowledgeAndPostResponse.cs" />
     <Compile Include="OrderNotes\GetConversationEditorFormDataRequest.cs" />
     <Compile Include="OrderNotes\GetConversationEditorFormDataResponse.cs" />
     <Compile Include="OrderNotes\OrderNoteboxItemSummary.cs" />

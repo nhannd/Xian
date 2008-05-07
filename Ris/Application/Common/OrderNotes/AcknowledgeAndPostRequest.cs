@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.OrderNotes
 {
     [DataContract]
-    public class AcknowledgeAndReplyRequest : DataContractBase
+    public class AcknowledgeAndPostRequest : DataContractBase
     {
         /// <summary>
         /// Constructor
@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
         /// <param name="orderRef"></param>
         /// <param name="orderNotesToAcknowledge"></param>
         /// <param name="orderNote"></param>
-        public AcknowledgeAndReplyRequest(EntityRef orderRef, List<EntityRef> orderNotesToAcknowledge, OrderNoteDetail orderNote)
+        public AcknowledgeAndPostRequest(EntityRef orderRef, List<EntityRef> orderNotesToAcknowledge, OrderNoteDetail orderNote)
         {
             OrderRef = orderRef;
             OrderNotesToAcknowledge = orderNotesToAcknowledge;
