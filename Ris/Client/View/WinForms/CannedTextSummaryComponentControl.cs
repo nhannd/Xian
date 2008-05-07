@@ -33,7 +33,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private void _component_CopyCannedTextRequested(object sender, EventArgs e)
 		{
 			if (!string.IsNullOrEmpty(_component.Text))
-				Clipboard.SetDataObject(_component.Text, false);
+				Clipboard.SetDataObject(_component.Text, true);
+		}
+
+		private void _cannedTexts_ItemDrag(object sender, ItemDragEventArgs e)
+		{
+			_cannedTexts.DoDragDrop(_component.Text, DragDropEffects.All);
+		}
+
+		private void _cannedTexts_ItemDoubleClicked(object sender, EventArgs e)
+		{
+			_component.EditCannedText();
 		}
 	}
 }

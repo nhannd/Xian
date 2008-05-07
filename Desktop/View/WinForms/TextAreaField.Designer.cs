@@ -65,15 +65,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _textBox
 			// 
+			this._textBox.AllowDrop = true;
 			this._textBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._textBox.Location = new System.Drawing.Point(2, 16);
-			this._textBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._textBox.Margin = new System.Windows.Forms.Padding(2);
 			this._textBox.Multiline = true;
 			this._textBox.Name = "_textBox";
 			this._textBox.Size = new System.Drawing.Size(184, 105);
 			this._textBox.TabIndex = 0;
+			this._textBox.DragDrop += new System.Windows.Forms.DragEventHandler(this._textBox_DragDrop);
+			this._textBox.DragEnter += new System.Windows.Forms.DragEventHandler(this._textBox_DragEnter);
 			// 
 			// _label
 			// 
@@ -91,7 +94,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._textBox);
 			this.Controls.Add(this._label);
-			this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "TextAreaField";
 			this.Size = new System.Drawing.Size(188, 123);
 			this.ResumeLayout(false);

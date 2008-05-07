@@ -46,6 +46,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cannedTexts.TabIndex = 0;
 			this._cannedTexts.TabStop = false;
 			this._cannedTexts.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this._cannedTexts.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._cannedTexts_ItemDrag);
+			this._cannedTexts.ItemDoubleClicked += new System.EventHandler(this._cannedTexts_ItemDoubleClicked);
 			// 
 			// splitContainer1
 			// 
@@ -75,7 +77,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._text.Name = "_text";
 			this._text.ReadOnly = true;
 			this._text.Size = new System.Drawing.Size(301, 189);
-			this._text.TabIndex = 3;
+			this._text.TabIndex = 0;
 			this._text.Value = null;
 			// 
 			// CannedTextSummaryComponentControl

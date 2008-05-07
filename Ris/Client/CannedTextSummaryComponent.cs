@@ -170,6 +170,9 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
+				if (_selectedCannedText == null)
+					return;
+
 				CannedTextDetail detail = new CannedTextDetail(_selectedCannedText.Name, _selectedCannedText.Path, _selectedCannedText.Text);
 
 				CannedTextEditorComponent editor = new CannedTextEditorComponent(detail);
@@ -202,6 +205,9 @@ namespace ClearCanvas.Ris.Client
 		{
 			try 
 			{
+				if (_selectedCannedText == null)
+					return;
+
 				Platform.GetService<ICannedTextService>(
 					delegate(ICannedTextService service)
 						{

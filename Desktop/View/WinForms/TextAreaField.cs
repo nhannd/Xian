@@ -93,5 +93,38 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             return (value != null && value.Length == 0) ? null : value;
         }
+
+		private void _textBox_DragEnter(object sender, DragEventArgs e)
+		{
+			if (_textBox.ReadOnly)
+			{
+				e.Effect = DragDropEffects.None;
+				return;
+			}
+
+			if (e.Data.GetDataPresent(DataFormats.Text))
+			{
+				e.Effect = DragDropEffects.Copy;
+			}
+			else
+			{
+				e.Effect = DragDropEffects.None;
+			}
+		}
+
+		private void _textBox_DragDrop(object sender, DragEventArgs e)
+		{
+			if (e.Data.GetDataPresent(DataFormats.Text))
+			{
+				string dropString = (String)e.Data.GetData(typeof(String));
+
+				// Insert string at the current keyboard cursor
+				int currentIndex = _textBox.SelectionStart;
+				_textBox.Text = string.Concat(
+					_textBox.Text.Substring(0, currentIndex),
+					dropString,
+					_textBox.Text.Substring(currentIndex));
+			}
+		}
     }
 }
