@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
     /// <example>
     /// 
     /// <code>
-    /// <%@ Register Src="~/Common/SectionPanel.ascx" TagName="SectionPanel" TagPrefix="uc4" %>
+    /// <%@ Register Src="~/Common/Controls/SectionPanel.ascx" TagName="SectionPanel" TagPrefix="uc4" %>
     /// ...
     /// <uc4:SectionPanel ID="StudySectionPanel" runat="server" HeadingText="Button Section" HeadingCSS="CSSStudyHeading"
     ///    Width="100%" CssClass="CSSSection">
