@@ -1,19 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>Radiologist Preview</title>
+	<title>Notes Preview</title>
 	<link href="css/default.css" rel="stylesheet" type="text/css" />
-	<link href="css/tabs.css" rel="stylesheet" type="text/css" />
-	<link href="css/structuredreport.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="js/jsx.js"></script>
 	<script type="text/javascript" src="js/jsml.js"></script>
 	<script type="text/javascript" src="js/ui.js"></script>
 	<script type="text/javascript" src="js/ris.js"></script>
 	<script type="text/javascript" src="js/preview.js"></script>
 	<script type="text/javascript" src="js/layout.js"></script>
-	<script type="text/javascript" src="js/tabs.js"></script>
-	<script type="text/javascript" src="js/structuredreport.js"></script>
-	<script type="text/javascript" src="js/structuredreportsummary.js"></script>
+	<script type="text/javascript" src="js/collapse.js"></script>
 	<script type="text/javascript" >
 		var errorProvider = new ErrorProvider();
 
@@ -111,10 +107,21 @@
 					Field.setValue($("ProcedureEndTime"), "TODO");
 				}
 
+				var currentNoteRef = worklistItem.OrderNoteRef;
 				if(orderDetail.Notes.length)
-					createOrderNotesTable($("orderNotesTable"), orderDetail.Notes);
+				{
+					createOrderNotesTable($("orderNotesTable"));
+					orderNotesTable.renderRow = function(sender, args)
+					{
+						if(args.item.OrderNoteRef == currentNoteRef)
+						{
+							args.htmlRow.className = "highlight";
+						}
+					};
+					orderNotesTable.bindItems(orderDetail.Notes);
+				}
 				else
-					Field.show($("orderNotesTable"), false);
+					Field.show($("notesSection"), false);
 
 				var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
 				if (reportDetail)
@@ -126,7 +133,7 @@
 				else
 				{
 					// hide report section
-					Field.show($("proceduresTable"), false);
+					Field.show($("reportSection"), false);
 				}
 			}
 			catch(e)
@@ -135,93 +142,97 @@
 				Field.setValue($("myForm"), message);
 			}
 		}
-		</script>
-	</head>
-	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
-		<form id="myForm">
-			<table width="100%" border="0">
-				<tr>
-					<td class="patientnameheading"><div id="name"/></td>
-					<td rowspan="2" align="right"><div id="alerts"/></td>
-				</tr>
-				<tr>
-					<td class="patientmrnheading"><div id="mrn"/></td>
-				</tr>
-			</table>
+</script>
+</head>
+<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
+	<form id="myForm">
+		<table width="100%" border="0">
+			<tr>
+				<td class="patientnameheading"><div id="name"/></td>
+				<td rowspan="2" align="right"><div id="alerts"/></td>
+			</tr>
+			<tr>
+				<td class="patientmrnheading"><div id="mrn"/></td>
+			</tr>
+		</table>
 
-			<p>&nbsp;</p>
-			<table width="100%" border="0">
-				<tr>
-					<td width="120" class="propertyname">Date of Birth</td>
-					<td width="200"><div id="dateOfBirth"/></td>
-					<td width="63" class="propertyname">Age</td>
-					<td width="229"><div id="age"/></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td class="propertyname">Healthcard # </td>
-					<td><div id="healthcard"/></td>
-					<td width="63" class="propertyname">Sex</td>
-					<td width="229"><div id="sex"/></td>
-					<td class="additionalentriescount">
-						<script language="javascript" type="text/javascript">
-							document.write(Ris.getActionHtml("Details", "more..."));
-						</script>
-					</td>
-				</tr>
-			</table>
+		<p>&nbsp;</p>
+		<table width="100%" border="0">
+			<tr>
+				<td width="120" class="propertyname">Date of Birth</td>
+				<td width="200"><div id="dateOfBirth"/></td>
+				<td width="63" class="propertyname">Age</td>
+				<td width="229"><div id="age"/></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="propertyname">Healthcard # </td>
+				<td><div id="healthcard"/></td>
+				<td width="63" class="propertyname">Sex</td>
+				<td width="229"><div id="sex"/></td>
+				<td class="additionalentriescount">
+					<script language="javascript" type="text/javascript">
+						document.write(Ris.getActionHtml("Details", "more..."));
+					</script>
+				</td>
+			</tr>
+		</table>
 
-			<table width="100%" border="0">
-				<tr>
-					<td class="sectionheading" colspan="4">Imaging Consultation Overview</td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Accession Number</td>
-					<td width="200"><div id="AccessionNumber"/></td>
-					<td width="120" class="propertyname">Priority</td>
-					<td width="200"><div id="OrderPriority"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Ordering Physician</td>
-					<td width="200"><div id="OrderingPhysician"/></td>
-					<td width="120" class="propertyname">Ordering Facility</td>
-					<td width="200"><div id="OrderingFacility"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Diagnostic Service</td>
-					<td width="200"><div id="DiagnosticService"/></td>
-					<td width="120" class="propertyname">Procedure</td>
-					<td width="200"><div id="procedure"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Procedure Start Time</td>
-					<td width="200"><div id="ProcedureStartTime"/></td>
-					<td width="120" class="propertyname">Procedure End Time</td>
-					<td width="200"><div id="ProcedureEndTime"/></td>
-				</tr>
-			</table>
-			<table border="0" id="orderNotesTable">
-				<tr><td class="sectionheading" colspan="6">Order Notes</td></tr>
+
+		<p class="sectionheading">Imaging Consultation Overview</p>
+		<table width="100%" border="0">
+			<tr>
+				<td width="120" class="propertyname">Accession Number</td>
+				<td width="200"><div id="AccessionNumber"/></td>
+				<td width="120" class="propertyname">Priority</td>
+				<td width="200"><div id="OrderPriority"/></td>
+			</tr>
+			<tr>
+				<td width="120" class="propertyname">Ordering Physician</td>
+				<td width="200"><div id="OrderingPhysician"/></td>
+				<td width="120" class="propertyname">Ordering Facility</td>
+				<td width="200"><div id="OrderingFacility"/></td>
+			</tr>
+			<tr>
+				<td width="120" class="propertyname">Diagnostic Service</td>
+				<td width="200"><div id="DiagnosticService"/></td>
+				<td width="120" class="propertyname">Procedure</td>
+				<td width="200"><div id="procedure"/></td>
+			</tr>
+			<tr>
+				<td width="120" class="propertyname">Procedure Start Time</td>
+				<td width="200"><div id="ProcedureStartTime"/></td>
+				<td width="120" class="propertyname">Procedure End Time</td>
+				<td width="200"><div id="ProcedureEndTime"/></td>
+			</tr>
+		</table>
+
+		<div id="notesSection">
+			<p class="sectionheading">
+				<a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">-</span> Notes</a>
+			</p>
+			<table border="0" id="orderNotesTable" class="collapsibleContent" style="{display:block}">
 				<tr class="tableheading">
 					<td>Comment</td>
 					<td>Time</td>
 					<td>Author</td>
 				</tr>
 			</table>
+		</div>
 
-			<div id="reportSection">
-				<p id="reportheading" class="sectionheading">Report</p>
-				<table border="0" id="proceduresTable">
-					<tr class="tableheading">
-						<td>Procedure</td>
-						<td>Protocol</td>
-						<td>Code</td>
-					</tr>
-					<!-- this empty row is here so the color of the first data row is consistent with other previews -->
-					<tr colspan="3"></tr>
-				</table>
-				<div id="report"></div>
-			</div>
-		</form>
-	</body>
+		<div id="reportSection">
+			<p id="reportheading" class="sectionheading">Report</p>
+			<table border="0" id="proceduresTable">
+				<tr class="tableheading">
+					<td>Procedure</td>
+					<td>Protocol</td>
+					<td>Code</td>
+				</tr>
+				<!-- this empty row is here so the color of the first data row is consistent with other previews -->
+				<tr colspan="3"></tr>
+			</table>
+			<div id="report"></div>
+		</div>
+	</form>
+</body>
 </html>

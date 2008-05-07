@@ -1,225 +1,230 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-        <title>Registration Preview</title>
-        <link href="css/default.css" rel="stylesheet" type="text/css" />
-        <script type="text/javascript" src="js/jsx.js"></script>
-	    <script type="text/javascript" src="js/jsml.js"></script>
-	    <script type="text/javascript" src="js/ui.js"></script>
-	    <script type="text/javascript" src="js/ris.js"></script>
-	    <script type="text/javascript" src="js/preview.js"></script>
-	    <script type="text/javascript" src="js/layout.js"></script>
-	    <script type="text/javascript" >
-		    function onBodyLoad()
-		    {		        
-			    scaleWidth();
-		        if(!Ris)
-		            return;
-	            try
-	            {
-					var worklistItem = Ris.getHealthcareContext();
-					if (worklistItem == null)
-					{
-                        Field.setValue($("myForm"), "");
-                        return;
-					}
+<head>
+	<title>Emergency Physician Preview</title>
+	<link href="css/default.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="js/jsx.js"></script>
+	<script type="text/javascript" src="js/jsml.js"></script>
+	<script type="text/javascript" src="js/ui.js"></script>
+	<script type="text/javascript" src="js/ris.js"></script>
+	<script type="text/javascript" src="js/preview.js"></script>
+	<script type="text/javascript" src="js/layout.js"></script>
+	<script type="text/javascript" src="js/collapse.js"></script>
+	<script type="text/javascript" >
+		var errorProvider = new ErrorProvider();
 
-                    var request = {
-                        GetPatientProfileDetailRequest: { PatientProfileRef: worklistItem.PatientProfileRef, IncludeAlerts: true },
-                        ListOrdersRequest: 	{ PatientRef: worklistItem.PatientRef, QueryDetailLevel: "Procedure" },
-                        
-                        // need the order detail only for order alerts, and only if OrderRef is not null
-                        GetOrderDetailRequest: worklistItem.OrderRef ? { OrderRef: worklistItem.OrderRef, IncludeAlerts: true } : null
-                    };
-                    
-                    var service = Ris.getPatientDataService();
-                    var data = service.getData(request);
-                    if (data == null || data.length == 0)
-                    {
-                        Field.setValue($("myForm"), "");
-                        return;
-                    }
+		function onBodyLoad()
+		{
 
-		            // update patient demography
-	                var patientProfile = data.GetPatientProfileDetailResponse.PatientProfile;
-	                var patientName = Ris.formatPersonName(patientProfile.Name);
-		            if (patientProfile)
-		            {
-		                Field.setValue($("name"), patientName);
-			            Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
-			            Field.setValue($("age"), getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath));
-			            Field.setValue($("sex"), patientProfile.Sex.Value);
-			            Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
-			            Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
-						if (patientProfile.CurrentHomePhone)
-							Field.setValue($("currentHomePhone"), Ris.formatTelephone(patientProfile.CurrentHomePhone));
-						else
-							Field.show($("HomePhoneRow"), false);
-						
-						if (patientProfile.CurrentHomeAddress)
-							Field.setValue($("currentHomeAddress"), Ris.formatAddress(patientProfile.CurrentHomeAddress));
-						else
-							Field.show($("HomeAddressRow"), false);
-		            }
-	            
-                    // update alerts
-		            var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
-		            if(data.GetOrderDetailResponse)
-		                alertNotifications = alertNotifications.concat(data.GetOrderDetailResponse.OrderAlerts);
-		            if (alertNotifications)
-		            {
-                        var alertHtml = "";
-	                    alertNotifications.each(function(item) { alertHtml += getAlertHtml(item, patientName); });
-                        $("alerts").innerHTML = alertHtml;
-		            }
-		            
-                    // update active and past RIC tables
-   		            var patientOrderData = data.ListOrdersResponse.Orders;
-		            if (patientOrderData)
-		            {
+			scaleWidth();
 
-		                var today = Date.today();
-		                var pastProcedures = patientOrderData.select(
-		                    function(item) 
-		                    { 
-		                        return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) < 0;
-		                    }).sort(procedureScheduledDateComparison);
+			if(!Ris)
+				return;
 
-		                var activeProcedures = patientOrderData.select(
-		                    function(item) 
-		                    { 
-		                        return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) >= 0;
-		                    }).sort(procedureScheduledDateComparison);
+			try
 
-			            var notScheduledActiveProceduress = patientOrderData.select(
-			                function(item) 
-			                { 
-			                    return item.ProcedureScheduledStartTime == null
-								&& item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) >= 0;
-			                }).sort(orderRequestScheduledDateComparison);
-							
-			            var notScheduledPastProceduress = patientOrderData.select(
-			                function(item) 
-			                { 
-			                    return item.ProcedureScheduledStartTime == null
-								&& item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) < 0;
-			                }).sort(orderRequestScheduledDateComparison);
+			{
+				var worklistItem = Ris.getHealthcareContext();
+				if (worklistItem == null)
+				{
+					Field.setValue($("myForm"), "");
+					return;
+				}
 
-			            activeProcedures = activeProcedures.concat(notScheduledActiveProceduress);
-			            pastProcedures = pastProcedures.concat(notScheduledPastProceduress);
+				// construct request object
+				var request = 
+				{
+ 					GetPatientProfileDetailRequest:
+						{
+							PatientProfileRef: worklistItem.PatientProfileRef,
+							IncludeAlerts: true
+						},
+					GetOrderDetailRequest:
+						{
+							OrderRef: worklistItem.OrderRef,
+							IncludeAlerts: true,
+							IncludeNotes: true,
+							NoteCategoriesFilter: ["PrelimDiagnosis"],
 
-						// add a renderRow handler to highlight the correct row
-						var currentAccession = worklistItem.AccessionNumber;
-						
-                        if (activeProcedures.length == 0)
-                        {
-                            Field.show($("activeProceduresTable"), false);
-                        }
-                        else
-                        {
-                            var activeProceduresTable = createImagingRequestsTable($("activeProceduresTable"));
-                            activeProceduresTable.renderRow = function(sender, args)
-                            {
-                                if(args.item.AccessionNumber == currentAccession)
-                                    args.htmlRow.className = "highlight";
-                            };
-							
-                            activeProceduresTable.bindItems(activeProcedures);
-    	                }
-	                
-                        if (pastProcedures.length == 0)
-                        {
-                            Field.show($("pastProceduresTable"), false);
-                        }
-                        else
-                        {
-                            var pastProceduresTable = createImagingRequestsTable($("pastProceduresTable"));
+							// only include ordered procedures if report not yet created
+							IncludeProcedures: (worklistItem.ReportRef == null)
+						},
+					// only request the report detail if there is a report     
+					GetReportDetailRequest: worklistItem.ReportRef == null ? null : { ReportRef: worklistItem.ReportRef }
+				};
 
-                            pastProceduresTable.renderRow = function(sender, args)
-                            {
-                                if(args.item.AccessionNumber == currentAccession)
-                                    args.htmlRow.className = "highlight";
-                            };
+				var service = Ris.getPatientDataService();
 
-                            pastProceduresTable.bindItems(pastProcedures);
-    	                }
-		            }
-	            }
-	            catch(e)
-	            {
-	                var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
-		            Field.setValue($("myForm"), message);
-	            }
-		    }
-	</script>
-	</head>
-	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
-		<form id="myForm">
-		    <table width="100%" border="0">
-			    <tr>
-				    <td class="patientnameheading"><div id="name" /></td>
-				    <td rowspan="2" align="right"><div id="alerts"/></td>
-			    </tr>
-			    <tr>
-				    <td class="patientmrnheading"><div id="mrn"/></td>
-			    </tr>
+				var data = service.getData(request);
 
-		    </table>
-    		
-		    <p>&nbsp;</p>
-			<table width="100%" border="0">
-				<tr>
-					<td width="120" class="propertyname">Date of Birth</td>
-					<td width="200"><div id="dateOfBirth"/></td>
-					<td width="63" class="propertyname">Age</td>
-					<td width="229"><div id="age"/></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td class="propertyname">Healthcard # </td>
-					<td><div id="healthcard"/></td>
-					<td width="63" class="propertyname">Sex</td>
-					<td width="229"><div id="sex"/></td>
-					<td class="additionalentriescount">
-						<script language="javascript" type="text/javascript">
-							document.write(Ris.getActionHtml("Details", "more..."));
-						</script>
-					</td>
-				</tr>
-				<tr id="HomePhoneRow">
-					<td class="propertyname">Home Phone</td>
-					<td colspan="4"><div id="currentHomePhone"/></td>
-				</tr>
-				<tr id="HomeAddressRow">
-					<td class="propertyname">Home Address</td>
-					<td colspan="4"><div id="currentHomeAddress"/></td>
+				if (data == null || data.length == 0)
+				{
+					Field.setValue($("myForm"), "");
+					return;
+
+				}
+
+				// update patient demography
+				var patientProfile = data.GetPatientProfileDetailResponse.PatientProfile;
+				var patientName = Ris.formatPersonName(patientProfile.Name);
+				if (patientProfile)
+				{
+					Field.setValue($("name"), patientName);
+					Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
+					Field.setValue($("age"), getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath));
+					Field.setValue($("sex"), patientProfile.Sex.Value);
+					Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
+					Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
+				}
+
+				// update alerts
+				var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
+				alertNotifications = alertNotifications.concat(data.GetOrderDetailResponse.OrderAlerts);
+				if (alertNotifications)
+				{
+					var alertHtml = "";
+					alertNotifications.each(function(item) { alertHtml += getAlertHtml(item, patientName); });
+					$("alerts").innerHTML = alertHtml;
+				}
+
+				var orderDetail = data.GetOrderDetailResponse.Order;
+				var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
+
+				// update Imaging Consultation Overview
+				Field.setValue($("AccessionNumber"), orderDetail.AccessionNumber);
+				Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
+				Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
+				Field.setValue($("OrderingFacility"), orderDetail.OrderingFacility.Name);
+				Field.setValue($("DiagnosticService"), orderDetail.DiagnosticService.Name);
+
+				var procedures = reportDetail ? reportDetail.Procedures : orderDetail.Procedures;
+
+				var selectedProcedure = procedures.find(function(rp) { return rp.ProcedureRef == worklistItem.ProcedureRef; });
+				if (selectedProcedure)
+				{
+					Field.setValue($("procedure"), selectedProcedure.Type.Name);
+					Field.setValue($("ProcedureStartTime"), "TODO");
+					Field.setValue($("ProcedureEndTime"), "TODO");
+				}
+
+				if(orderDetail.Notes.length)
+				{
+					createOrderNotesTable($("orderNotesTable"));
+					orderNotesTable.bindItems(orderDetail.Notes);
+				}
+				else
+					Field.show($("notesSection"), false);
+
+				var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
+				if (reportDetail)
+				{
+					var procedures = reportDetail.Procedures;
+					createProceduresTable($("proceduresTable"), procedures);
+					createReportPreview($("report"), reportDetail);
+				}
+				else
+				{
+					// hide report section
+					Field.show($("reportSection"), false);
+				}
+			}
+			catch(e)
+			{
+				var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+				Field.setValue($("myForm"), message);
+			}
+		}
+</script>
+</head>
+<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
+	<form id="myForm">
+		<table width="100%" border="0">
+			<tr>
+				<td class="patientnameheading"><div id="name"/></td>
+				<td rowspan="2" align="right"><div id="alerts"/></td>
+			</tr>
+			<tr>
+				<td class="patientmrnheading"><div id="mrn"/></td>
+			</tr>
+		</table>
+
+		<p>&nbsp;</p>
+		<table width="100%" border="0">
+			<tr>
+				<td width="120" class="propertyname">Date of Birth</td>
+				<td width="200"><div id="dateOfBirth"/></td>
+				<td width="63" class="propertyname">Age</td>
+				<td width="229"><div id="age"/></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="propertyname">Healthcard # </td>
+				<td><div id="healthcard"/></td>
+				<td width="63" class="propertyname">Sex</td>
+				<td width="229"><div id="sex"/></td>
+				<td class="additionalentriescount">
+					<script language="javascript" type="text/javascript">
+						document.write(Ris.getActionHtml("Details", "more..."));
+					</script>
+				</td>
+			</tr>
+		</table>
+
+
+		<p class="sectionheading">Imaging Consultation Overview</p>
+		<table width="100%" border="0">
+			<tr>
+				<td width="120" class="propertyname">Accession Number</td>
+				<td width="200"><div id="AccessionNumber"/></td>
+				<td width="120" class="propertyname">Priority</td>
+				<td width="200"><div id="OrderPriority"/></td>
+			</tr>
+			<tr>
+				<td width="120" class="propertyname">Ordering Physician</td>
+				<td width="200"><div id="OrderingPhysician"/></td>
+				<td width="120" class="propertyname">Ordering Facility</td>
+				<td width="200"><div id="OrderingFacility"/></td>
+			</tr>
+			<tr>
+				<td width="120" class="propertyname">Diagnostic Service</td>
+				<td width="200"><div id="DiagnosticService"/></td>
+				<td width="120" class="propertyname">Procedure</td>
+				<td width="200"><div id="procedure"/></td>
+			</tr>
+			<tr>
+				<td width="120" class="propertyname">Procedure Start Time</td>
+				<td width="200"><div id="ProcedureStartTime"/></td>
+				<td width="120" class="propertyname">Procedure End Time</td>
+				<td width="200"><div id="ProcedureEndTime"/></td>
+			</tr>
+		</table>
+
+		<div id="notesSection">
+			<p class="sectionheading">
+				<a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">-</span> Preliminary Diagnosis</a>
+			</p>
+			<table border="0" id="orderNotesTable" class="collapsibleContent" style="{display:block}">
+				<tr class="tableheading">
+					<td>Comment</td>
+					<td>Time</td>
+					<td>Author</td>
 				</tr>
 			</table>
+		</div>
 
-    	 	<p>&nbsp;</p>
-
-	        <table border="0" id="activeProceduresTable">
-				<tr><td class="sectionheading" colspan="6">Active Requests for Imaging Consultation</td></tr>
-	            <tr class="tableheading">
-		            <td>Procedure</td>
-		            <td>Schedule</td>
-		            <td>Status</td>
-		            <td>Insurance</td>
-		            <td>Ordering Facility</td>
-		            <td>Ordering Physician</td>
-	            </tr>
-	        </table>
-	        <table border="0" id="pastProceduresTable">
-	            <tr><td class="sectionheading" colspan="6">Past Requests for Imaging Consultation</td></tr>
-	            <tr class="tableheading">
-		            <td>Procedure</td>
-		            <td>Schedule</td>
-		            <td>Status</td>
-		            <td>Insurance</td>
-		            <td>Ordering Facility</td>
-		            <td>Ordering Physician</td>
-	            </tr>
-	        </table>
-		</form>
-	</body>
+		<div id="reportSection">
+			<p id="reportheading" class="sectionheading">Report</p>
+			<table border="0" id="proceduresTable">
+				<tr class="tableheading">
+					<td>Procedure</td>
+					<td>Protocol</td>
+					<td>Code</td>
+				</tr>
+				<!-- this empty row is here so the color of the first data row is consistent with other previews -->
+				<tr colspan="3"></tr>
+			</table>
+			<div id="report"></div>
+		</div>
+	</form>
+</body>
 </html>
