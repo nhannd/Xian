@@ -34,16 +34,16 @@ namespace ClearCanvas.Healthcare.Imex
         {
             IDiagnosticServiceTreeNodeBroker broker = context.GetBroker<IDiagnosticServiceTreeNodeBroker>();
 
-            // criteria for global root node
+            // criteria for global root nodes
             DiagnosticServiceTreeNodeSearchCriteria where = new DiagnosticServiceTreeNodeSearchCriteria();
             where.Parent.IsNull();
 
-            DiagnosticServiceTreeNode rootNode = CollectionUtils.FirstElement(broker.Find(where, new SearchResultPage(firstRow, maxRows)));
-            return new DiagnosticServiceTreeNode[] { rootNode };
+        	return broker.Find(where, new SearchResultPage(firstRow, maxRows));
         }
 
         protected override DiagnosticServiceTreeNodeData Export(DiagnosticServiceTreeNode node, IReadContext context)
         {
+
             DiagnosticServiceTreeNodeData data = new DiagnosticServiceTreeNodeData();
             data.Description = node.Description;
             if (node.DiagnosticService != null)

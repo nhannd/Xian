@@ -84,6 +84,7 @@
     <Compile Include="IAuthenticationService.cs" />
     <Compile Include="IEntityBroker.cs" />
     <Compile Include="IExceptionRecorder.cs" />
+    <Compile Include="Imex\ExportException.cs" />
     <Compile Include="Imex\ImportCommandLine.cs" />
     <Compile Include="Imex\CsvDataImporterBase.cs" />
     <Compile Include="Imex\Export.cs" />
