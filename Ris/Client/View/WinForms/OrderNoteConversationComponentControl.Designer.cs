@@ -64,28 +64,22 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._completeButton = new System.Windows.Forms.Button();
 			this._notesGroupBox = new System.Windows.Forms.GroupBox();
-			this._notesSplitContainer = new System.Windows.Forms.SplitContainer();
 			this._notes = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this._selectedNoteBody = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
 			this._replyGroupBox = new System.Windows.Forms.GroupBox();
 			this._replyTableLayout = new System.Windows.Forms.TableLayoutPanel();
-			this._recipientsGroupBox = new System.Windows.Forms.GroupBox();
+			this._replyBody = new System.Windows.Forms.TextBox();
+			this._onBehalf = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._recipientsTableLayout = new System.Windows.Forms.TableLayoutPanel();
 			this._staffRecipientLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._groupRecipientLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._staffRecipientAddButton = new System.Windows.Forms.Button();
 			this._groupRecipientAddButton = new System.Windows.Forms.Button();
 			this._recipients = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this._replyBody = new System.Windows.Forms.TextBox();
 			this._componentTableLayout.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this._notesGroupBox.SuspendLayout();
-			this._notesSplitContainer.Panel1.SuspendLayout();
-			this._notesSplitContainer.Panel2.SuspendLayout();
-			this._notesSplitContainer.SuspendLayout();
 			this._replyGroupBox.SuspendLayout();
 			this._replyTableLayout.SuspendLayout();
-			this._recipientsGroupBox.SuspendLayout();
 			this._recipientsTableLayout.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -93,18 +87,18 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._componentTableLayout.AutoSize = true;
 			this._componentTableLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._componentTableLayout.ColumnCount = 2;
+			this._componentTableLayout.ColumnCount = 1;
 			this._componentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this._componentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this._componentTableLayout.Controls.Add(this.flowLayoutPanel1, 0, 1);
+			this._componentTableLayout.Controls.Add(this.flowLayoutPanel1, 0, 2);
 			this._componentTableLayout.Controls.Add(this._notesGroupBox, 0, 0);
-			this._componentTableLayout.Controls.Add(this._replyGroupBox, 1, 0);
+			this._componentTableLayout.Controls.Add(this._replyGroupBox, 0, 1);
 			this._componentTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._componentTableLayout.Location = new System.Drawing.Point(0, 0);
 			this._componentTableLayout.Margin = new System.Windows.Forms.Padding(0);
 			this._componentTableLayout.Name = "_componentTableLayout";
-			this._componentTableLayout.RowCount = 2;
+			this._componentTableLayout.RowCount = 3;
 			this._componentTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._componentTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 292F));
 			this._componentTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._componentTableLayout.Size = new System.Drawing.Size(843, 695);
 			this._componentTableLayout.TabIndex = 0;
@@ -113,7 +107,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this.flowLayoutPanel1.AutoSize = true;
 			this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._componentTableLayout.SetColumnSpan(this.flowLayoutPanel1, 2);
 			this.flowLayoutPanel1.Controls.Add(this._cancelButton);
 			this.flowLayoutPanel1.Controls.Add(this._completeButton);
 			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -148,58 +141,27 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._notesGroupBox.AutoSize = true;
 			this._notesGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._notesGroupBox.Controls.Add(this._notesSplitContainer);
+			this._notesGroupBox.Controls.Add(this._notes);
 			this._notesGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._notesGroupBox.Location = new System.Drawing.Point(3, 3);
 			this._notesGroupBox.Name = "_notesGroupBox";
-			this._notesGroupBox.Size = new System.Drawing.Size(415, 654);
+			this._notesGroupBox.Size = new System.Drawing.Size(837, 362);
 			this._notesGroupBox.TabIndex = 0;
 			this._notesGroupBox.TabStop = false;
 			this._notesGroupBox.Text = "Existing Conversation";
-			// 
-			// _notesSplitContainer
-			// 
-			this._notesSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._notesSplitContainer.Location = new System.Drawing.Point(3, 16);
-			this._notesSplitContainer.Name = "_notesSplitContainer";
-			this._notesSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			// 
-			// _notesSplitContainer.Panel1
-			// 
-			this._notesSplitContainer.Panel1.Controls.Add(this._notes);
-			// 
-			// _notesSplitContainer.Panel2
-			// 
-			this._notesSplitContainer.Panel2.Controls.Add(this._selectedNoteBody);
-			this._notesSplitContainer.Size = new System.Drawing.Size(409, 635);
-			this._notesSplitContainer.SplitterDistance = 452;
-			this._notesSplitContainer.TabIndex = 0;
 			// 
 			// _notes
 			// 
 			this._notes.AutoSize = true;
 			this._notes.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._notes.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._notes.Location = new System.Drawing.Point(0, 0);
+			this._notes.Location = new System.Drawing.Point(3, 16);
+			this._notes.MultiLine = true;
 			this._notes.Name = "_notes";
 			this._notes.ReadOnly = false;
-			this._notes.Size = new System.Drawing.Size(409, 452);
+			this._notes.Size = new System.Drawing.Size(831, 343);
 			this._notes.TabIndex = 0;
 			this._notes.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			// 
-			// _selectedNoteBody
-			// 
-			this._selectedNoteBody.AutoSize = true;
-			this._selectedNoteBody.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._selectedNoteBody.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._selectedNoteBody.LabelText = "Selected Note Body";
-			this._selectedNoteBody.Location = new System.Drawing.Point(0, 0);
-			this._selectedNoteBody.Margin = new System.Windows.Forms.Padding(2);
-			this._selectedNoteBody.Name = "_selectedNoteBody";
-			this._selectedNoteBody.ReadOnly = true;
-			this._selectedNoteBody.Size = new System.Drawing.Size(409, 179);
-			this._selectedNoteBody.TabIndex = 0;
-			this._selectedNoteBody.Value = null;
 			// 
 			// _replyGroupBox
 			// 
@@ -207,9 +169,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._replyGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._replyGroupBox.Controls.Add(this._replyTableLayout);
 			this._replyGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._replyGroupBox.Location = new System.Drawing.Point(424, 3);
+			this._replyGroupBox.Location = new System.Drawing.Point(3, 371);
 			this._replyGroupBox.Name = "_replyGroupBox";
-			this._replyGroupBox.Size = new System.Drawing.Size(416, 654);
+			this._replyGroupBox.Size = new System.Drawing.Size(837, 286);
 			this._replyGroupBox.TabIndex = 1;
 			this._replyGroupBox.TabStop = false;
 			this._replyGroupBox.Text = "Add a note";
@@ -218,32 +180,47 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._replyTableLayout.AutoSize = true;
 			this._replyTableLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._replyTableLayout.ColumnCount = 1;
-			this._replyTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this._replyTableLayout.Controls.Add(this._recipientsGroupBox, 0, 1);
-			this._replyTableLayout.Controls.Add(this._replyBody, 0, 0);
+			this._replyTableLayout.ColumnCount = 2;
+			this._replyTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._replyTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._replyTableLayout.Controls.Add(this._replyBody, 0, 1);
+			this._replyTableLayout.Controls.Add(this._onBehalf, 0, 0);
+			this._replyTableLayout.Controls.Add(this._recipientsTableLayout, 1, 0);
 			this._replyTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._replyTableLayout.Location = new System.Drawing.Point(3, 16);
 			this._replyTableLayout.Margin = new System.Windows.Forms.Padding(0);
 			this._replyTableLayout.Name = "_replyTableLayout";
 			this._replyTableLayout.RowCount = 2;
-			this._replyTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this._replyTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this._replyTableLayout.Size = new System.Drawing.Size(410, 635);
+			this._replyTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._replyTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._replyTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this._replyTableLayout.Size = new System.Drawing.Size(831, 267);
 			this._replyTableLayout.TabIndex = 0;
 			// 
-			// _recipientsGroupBox
+			// _replyBody
 			// 
-			this._recipientsGroupBox.AutoSize = true;
-			this._recipientsGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._recipientsGroupBox.Controls.Add(this._recipientsTableLayout);
-			this._recipientsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._recipientsGroupBox.Location = new System.Drawing.Point(3, 320);
-			this._recipientsGroupBox.Name = "_recipientsGroupBox";
-			this._recipientsGroupBox.Size = new System.Drawing.Size(404, 312);
-			this._recipientsGroupBox.TabIndex = 1;
-			this._recipientsGroupBox.TabStop = false;
-			this._recipientsGroupBox.Text = "Recipients";
+			this._replyBody.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._replyBody.Location = new System.Drawing.Point(3, 48);
+			this._replyBody.Multiline = true;
+			this._replyBody.Name = "_replyBody";
+			this._replyBody.Size = new System.Drawing.Size(513, 216);
+			this._replyBody.TabIndex = 0;
+			// 
+			// _onBehalf
+			// 
+			this._onBehalf.AutoSize = true;
+			this._onBehalf.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._onBehalf.DataSource = null;
+			this._onBehalf.DisplayMember = "";
+			this._onBehalf.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._onBehalf.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._onBehalf.LabelText = "On Behalf Of The Group";
+			this._onBehalf.Location = new System.Drawing.Point(2, 2);
+			this._onBehalf.Margin = new System.Windows.Forms.Padding(2);
+			this._onBehalf.Name = "_onBehalf";
+			this._onBehalf.Size = new System.Drawing.Size(515, 41);
+			this._onBehalf.TabIndex = 2;
+			this._onBehalf.Value = null;
 			// 
 			// _recipientsTableLayout
 			// 
@@ -252,20 +229,21 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipientsTableLayout.ColumnCount = 2;
 			this._recipientsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._recipientsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._recipientsTableLayout.Controls.Add(this._staffRecipientLookup, 0, 0);
-			this._recipientsTableLayout.Controls.Add(this._groupRecipientLookup, 0, 1);
-			this._recipientsTableLayout.Controls.Add(this._staffRecipientAddButton, 1, 0);
-			this._recipientsTableLayout.Controls.Add(this._groupRecipientAddButton, 1, 1);
 			this._recipientsTableLayout.Controls.Add(this._recipients, 0, 2);
+			this._recipientsTableLayout.Controls.Add(this._staffRecipientLookup, 0, 1);
+			this._recipientsTableLayout.Controls.Add(this._groupRecipientLookup, 0, 0);
+			this._recipientsTableLayout.Controls.Add(this._groupRecipientAddButton, 1, 0);
+			this._recipientsTableLayout.Controls.Add(this._staffRecipientAddButton, 1, 1);
 			this._recipientsTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._recipientsTableLayout.Location = new System.Drawing.Point(3, 16);
+			this._recipientsTableLayout.Location = new System.Drawing.Point(519, 0);
 			this._recipientsTableLayout.Margin = new System.Windows.Forms.Padding(0);
 			this._recipientsTableLayout.Name = "_recipientsTableLayout";
 			this._recipientsTableLayout.RowCount = 3;
+			this._replyTableLayout.SetRowSpan(this._recipientsTableLayout, 2);
 			this._recipientsTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._recipientsTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._recipientsTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._recipientsTableLayout.Size = new System.Drawing.Size(398, 293);
+			this._recipientsTableLayout.Size = new System.Drawing.Size(312, 267);
 			this._recipientsTableLayout.TabIndex = 0;
 			// 
 			// _staffRecipientLookup
@@ -273,11 +251,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._staffRecipientLookup.AutoSize = true;
 			this._staffRecipientLookup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._staffRecipientLookup.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._staffRecipientLookup.LabelText = "Find Staff Recipient";
-			this._staffRecipientLookup.Location = new System.Drawing.Point(0, 0);
+			this._staffRecipientLookup.LabelText = "Staff to Notify";
+			this._staffRecipientLookup.Location = new System.Drawing.Point(0, 41);
 			this._staffRecipientLookup.Margin = new System.Windows.Forms.Padding(0);
 			this._staffRecipientLookup.Name = "_staffRecipientLookup";
-			this._staffRecipientLookup.Size = new System.Drawing.Size(317, 41);
+			this._staffRecipientLookup.Size = new System.Drawing.Size(270, 41);
 			this._staffRecipientLookup.TabIndex = 0;
 			this._staffRecipientLookup.Value = null;
 			// 
@@ -286,20 +264,22 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._groupRecipientLookup.AutoSize = true;
 			this._groupRecipientLookup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._groupRecipientLookup.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._groupRecipientLookup.LabelText = "Find Group Recipient";
-			this._groupRecipientLookup.Location = new System.Drawing.Point(0, 41);
+			this._groupRecipientLookup.LabelText = "Group to Notify";
+			this._groupRecipientLookup.Location = new System.Drawing.Point(0, 0);
 			this._groupRecipientLookup.Margin = new System.Windows.Forms.Padding(0);
 			this._groupRecipientLookup.Name = "_groupRecipientLookup";
-			this._groupRecipientLookup.Size = new System.Drawing.Size(317, 41);
+			this._groupRecipientLookup.Size = new System.Drawing.Size(270, 41);
 			this._groupRecipientLookup.TabIndex = 2;
 			this._groupRecipientLookup.Value = null;
 			// 
 			// _staffRecipientAddButton
 			// 
 			this._staffRecipientAddButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._staffRecipientAddButton.Location = new System.Drawing.Point(320, 15);
+			this._staffRecipientAddButton.AutoSize = true;
+			this._staffRecipientAddButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._staffRecipientAddButton.Location = new System.Drawing.Point(273, 56);
 			this._staffRecipientAddButton.Name = "_staffRecipientAddButton";
-			this._staffRecipientAddButton.Size = new System.Drawing.Size(75, 23);
+			this._staffRecipientAddButton.Size = new System.Drawing.Size(36, 23);
 			this._staffRecipientAddButton.TabIndex = 1;
 			this._staffRecipientAddButton.Text = "Add";
 			this._staffRecipientAddButton.UseVisualStyleBackColor = true;
@@ -308,9 +288,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _groupRecipientAddButton
 			// 
 			this._groupRecipientAddButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._groupRecipientAddButton.Location = new System.Drawing.Point(320, 56);
+			this._groupRecipientAddButton.AutoSize = true;
+			this._groupRecipientAddButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._groupRecipientAddButton.Location = new System.Drawing.Point(273, 15);
 			this._groupRecipientAddButton.Name = "_groupRecipientAddButton";
-			this._groupRecipientAddButton.Size = new System.Drawing.Size(75, 23);
+			this._groupRecipientAddButton.Size = new System.Drawing.Size(36, 23);
 			this._groupRecipientAddButton.TabIndex = 3;
 			this._groupRecipientAddButton.Text = "Add";
 			this._groupRecipientAddButton.UseVisualStyleBackColor = true;
@@ -325,18 +307,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipients.Location = new System.Drawing.Point(3, 85);
 			this._recipients.Name = "_recipients";
 			this._recipients.ReadOnly = false;
-			this._recipients.Size = new System.Drawing.Size(392, 205);
+			this._recipients.Size = new System.Drawing.Size(306, 179);
 			this._recipients.TabIndex = 4;
 			this._recipients.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			// 
-			// _replyBody
-			// 
-			this._replyBody.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._replyBody.Location = new System.Drawing.Point(3, 3);
-			this._replyBody.Multiline = true;
-			this._replyBody.Name = "_replyBody";
-			this._replyBody.Size = new System.Drawing.Size(404, 311);
-			this._replyBody.TabIndex = 0;
 			// 
 			// OrderNoteConversationComponentControl
 			// 
@@ -350,17 +323,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
 			this._notesGroupBox.ResumeLayout(false);
-			this._notesSplitContainer.Panel1.ResumeLayout(false);
-			this._notesSplitContainer.Panel1.PerformLayout();
-			this._notesSplitContainer.Panel2.ResumeLayout(false);
-			this._notesSplitContainer.Panel2.PerformLayout();
-			this._notesSplitContainer.ResumeLayout(false);
+			this._notesGroupBox.PerformLayout();
 			this._replyGroupBox.ResumeLayout(false);
 			this._replyGroupBox.PerformLayout();
 			this._replyTableLayout.ResumeLayout(false);
 			this._replyTableLayout.PerformLayout();
-			this._recipientsGroupBox.ResumeLayout(false);
-			this._recipientsGroupBox.PerformLayout();
 			this._recipientsTableLayout.ResumeLayout(false);
 			this._recipientsTableLayout.PerformLayout();
 			this.ResumeLayout(false);
@@ -376,7 +343,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.Button _completeButton;
 		private ClearCanvas.Desktop.View.WinForms.TableView _notes;
 		private System.Windows.Forms.TableLayoutPanel _replyTableLayout;
-		private System.Windows.Forms.GroupBox _recipientsGroupBox;
 		private System.Windows.Forms.TableLayoutPanel _recipientsTableLayout;
 		private LookupField _staffRecipientLookup;
 		private LookupField _groupRecipientLookup;
@@ -384,9 +350,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.Button _groupRecipientAddButton;
 		private ClearCanvas.Desktop.View.WinForms.TableView _recipients;
 		private System.Windows.Forms.GroupBox _notesGroupBox;
-		private System.Windows.Forms.SplitContainer _notesSplitContainer;
-		private ClearCanvas.Desktop.View.WinForms.TextAreaField _selectedNoteBody;
 		private System.Windows.Forms.GroupBox _replyGroupBox;
 		private System.Windows.Forms.TextBox _replyBody;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _onBehalf;
     }
 }

@@ -14,7 +14,6 @@ namespace ClearCanvas.Ris.Client
 		private event EventHandler _checkedItemsChanged;
 
 		public OrderNoteConversationTable()
-			: base(3)
 		{
 			TableColumn<Checkable<OrderNoteDetail>, IconSet> canAcknowledgeColumn = new TableColumn<Checkable<OrderNoteDetail>, IconSet>(
 				"!",
@@ -23,6 +22,26 @@ namespace ClearCanvas.Ris.Client
 			canAcknowledgeColumn.Comparison = delegate(Checkable<OrderNoteDetail> item1, Checkable<OrderNoteDetail> item2) { return item1.Item.CanAcknowledge.CompareTo(item2.Item.CanAcknowledge); };
 			canAcknowledgeColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
 			this.Columns.Add(canAcknowledgeColumn);
+
+			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, string>(
+				SR.ColumnFrom,
+				delegate(Checkable<OrderNoteDetail> item) { return PersonNameFormat.Format(item.Item.Author.Name); },
+				1.0f));
+
+			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, DateTime?>(
+				"Posted",
+				delegate(Checkable<OrderNoteDetail> item) { return item.Item.PostTime; },
+				1.0f));
+
+			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, string>(
+				SR.ColumnTo,
+				delegate(Checkable<OrderNoteDetail> item) { return RecipientsList(item.Item.StaffRecipients, item.Item.GroupRecipients); },
+				1.0f));
+
+			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, string>
+				("Message",
+				delegate(Checkable<OrderNoteDetail> item) { return item.Item.NoteBody; },
+				5.0f));
 
 			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, bool>(
 				".",
@@ -37,26 +56,7 @@ namespace ClearCanvas.Ris.Client
 				},
 				0.20f));
 
-			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, string>(
-				SR.ColumnFrom,
-				delegate(Checkable<OrderNoteDetail> item) { return PersonNameFormat.Format(item.Item.Author.Name); },
-				1.0f));
-
-			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, DateTime?>(
-				"Posted",
-				delegate(Checkable<OrderNoteDetail> item) { return item.Item.PostTime; },
-				1.0f));
-
-			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, string>(
-				SR.ColumnTo,
-				delegate(Checkable<OrderNoteDetail> item) { return String.Format(SR.FormatTo, RecipientsList(item.Item.StaffRecipients, item.Item.GroupRecipients)); },
-				1.0f, 1));
-
-			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, string>
-				("Body",
-				delegate(Checkable<OrderNoteDetail> item) { return item.Item.NoteBody; },
-				1.0f, 2));
-		}
+}
 
 		public event EventHandler CheckedItemsChanged
 		{

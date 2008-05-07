@@ -387,36 +387,51 @@ namespace ClearCanvas.Ris.Client
 		{
 			foreach (OrderNoteDetail note in notes)
 			{
+				AddUnique(note.Author);
+
 				foreach (OrderNoteDetail.StaffRecipientDetail staffRecipient in note.StaffRecipients)
 				{
-					if (!string.Equals(
-							PersonNameFormat.Format(staffRecipient.Staff.Name),
-							PersonNameFormat.Format(LoginSession.Current.FullName)))
+					if (!IsStaffCurrentUser(staffRecipient.Staff))
 					{
-						if (!CollectionUtils.Contains(
-								_staffRecipients,
-								delegate(StaffSummary staffSummary)
-								{
-									return string.Equals(PersonNameFormat.Format(staffRecipient.Staff.Name),
-														 PersonNameFormat.Format(staffSummary.Name));
-								}))
-						{
-							_staffRecipients.Add(staffRecipient.Staff);
-						}
+						AddUnique(staffRecipient.Staff);
 					}
 				}
 				foreach (OrderNoteDetail.GroupRecipientDetail groupRecipient in note.GroupRecipients)
 				{
-					if (!CollectionUtils.Contains(
-							_groupRecipients,
-							delegate(StaffGroupSummary groupSummary)
-							{
-								return string.Equals(groupRecipient.Group.Name, groupSummary.Name);
-							}))
-					{
-						_groupRecipients.Add(groupRecipient.Group);
-					}
+					AddUnique(groupRecipient.Group);
 				}
+			}
+		}
+
+		private static bool IsStaffCurrentUser(StaffSummary staff)
+		{
+			return string.Equals(PersonNameFormat.Format(staff.Name), PersonNameFormat.Format(LoginSession.Current.FullName));
+		}
+
+		private void AddUnique(StaffSummary proposedStaffRecipient)
+		{
+			if (!CollectionUtils.Contains(
+					_staffRecipients,
+					delegate(StaffSummary existingRecipient)
+					{
+						return string.Equals(PersonNameFormat.Format(existingRecipient.Name),
+											 PersonNameFormat.Format(proposedStaffRecipient.Name));
+					}))
+			{
+				_staffRecipients.Add(proposedStaffRecipient);
+			}
+		}
+
+		private void AddUnique(StaffGroupSummary proposedGroupRecipient)
+		{
+			if (!CollectionUtils.Contains(
+					_groupRecipients,
+					delegate(StaffGroupSummary groupSummary)
+					{
+						return string.Equals(proposedGroupRecipient.Name, groupSummary.Name);
+					}))
+			{
+				_groupRecipients.Add(proposedGroupRecipient);
 			}
 		}
 

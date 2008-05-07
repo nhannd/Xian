@@ -55,7 +55,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_notes.Table = _component.Notes;
 			_notes.DataBindings.Add("Selection", _component, "SelectedNote", true, DataSourceUpdateMode.OnPropertyChanged);
-			_selectedNoteBody.DataBindings.Add("Value", _component, "SelectedNoteBody", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_replyBody.DataBindings.Add("Text", _component, "Body", true, DataSourceUpdateMode.OnPropertyChanged);
 			_recipients.Table = _component.Recipients;
