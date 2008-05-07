@@ -143,12 +143,14 @@ namespace ClearCanvas.Ris.Application.Services
             }
 
             StaffAssembler staffAssembler = new StaffAssembler();
+			StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
             return new OrderNoteDetail(
                 orderNote.GetRef(),
                 orderNote.Category,
                 orderNote.CreationTime,
                 orderNote.PostTime,
                 staffAssembler.CreateStaffSummary(orderNote.Author, context),
+				orderNote.OnBehalfOfGroup == null ? null : groupAssembler.CreateSummary(orderNote.OnBehalfOfGroup),
                 staffRecipients, 
                 groupRecipients, 
                 orderNote.Body,
@@ -164,13 +166,15 @@ namespace ClearCanvas.Ris.Application.Services
         public OrderNoteSummary CreateOrderNoteSummary(OrderNote orderNote, IPersistenceContext context)
         {
             StaffAssembler staffAssembler = new StaffAssembler();
-            return new OrderNoteSummary(
+			StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
+			return new OrderNoteSummary(
                 orderNote.GetRef(),
                 orderNote.Category,
                 orderNote.CreationTime,
                 orderNote.PostTime,
                 staffAssembler.CreateStaffSummary(orderNote.Author, context),
-                orderNote.IsFullyAcknowledged,
+				orderNote.OnBehalfOfGroup == null ? null : groupAssembler.CreateSummary(orderNote.OnBehalfOfGroup),
+				orderNote.IsFullyAcknowledged,
                 orderNote.Body);
         }
 
@@ -200,7 +204,11 @@ namespace ClearCanvas.Ris.Application.Services
                         return new NoteRecipient(context.Load<StaffGroup>(item.Group.StaffGroupRef, EntityLoadFlags.Proxy));
                     }));
 
-            OrderNote note = new OrderNote(order, detail.Category, author, detail.NoteBody, recipients);
+			StaffGroup onBehalfOf = detail.OnBehalfOfGroup == null ? null :
+				context.Load<StaffGroup>(detail.OnBehalfOfGroup.StaffGroupRef, EntityLoadFlags.Proxy);
+
+
+            OrderNote note = new OrderNote(order, detail.Category, author, onBehalfOf, detail.NoteBody, recipients);
 
             if(post)
                 note.Post();

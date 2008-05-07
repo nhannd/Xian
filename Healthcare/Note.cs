@@ -25,7 +25,7 @@ namespace ClearCanvas.Healthcare {
         /// <param name="author"></param>
         /// <param name="body"></param>
         public Note(string category, Staff author, string body)
-            : this(category, author, body, new NoteRecipient[] { })
+            : this(category, author, null, body, new NoteRecipient[] { })
         {
         }
 
@@ -34,12 +34,14 @@ namespace ClearCanvas.Healthcare {
         /// </summary>
         /// <param name="category"></param>
         /// <param name="author"></param>
+        /// <param name="onBehalfOf"></param>
         /// <param name="body"></param>
         /// <param name="recipients"></param>
-        public Note(string category, Staff author, string body, IEnumerable<NoteRecipient> recipients)
+        public Note(string category, Staff author, StaffGroup onBehalfOf, string body, IEnumerable<NoteRecipient> recipients)
         {
             _category = category;
             _author = author;
+        	_onBehalfOfGroup = onBehalfOf;
             _body = body;
             _recipients = new List<NoteRecipient>(recipients);
             _postings = new HashedSet<NotePosting>();

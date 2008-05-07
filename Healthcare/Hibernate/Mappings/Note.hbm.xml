@@ -12,6 +12,7 @@
 		
 		<property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
     <many-to-one name="Author" class="Staff" column="AuthorOID_" not-null="true"/>
+    <many-to-one name="OnBehalfOfGroup" class="StaffGroup" column="OnBehalfOfGroupOID_" not-null="false"/>
     <property name="PostTime" column="PostTime_" type="DateTime" not-null="false"/>
     <property name="IsFullyAcknowledged" column="IsFullyAcknowledged_" type="Boolean" not-null="true" access="nosetter.camelcase-underscore"/>
 

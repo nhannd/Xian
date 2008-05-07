@@ -41,6 +41,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
 				item.Category,
 				item.PostTime,
 				staffAssembler.CreateStaffSummary(item.Author, context),
+				item.OnBehalfOfGroup == null ? null : groupAssembler.CreateSummary(item.OnBehalfOfGroup),
 				item.IsAcknowledged,
 				staffRecipients,
 				groupRecipients);

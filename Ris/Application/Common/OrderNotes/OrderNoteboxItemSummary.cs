@@ -28,7 +28,8 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 		/// <param name="groupRecipients"></param>
 		public OrderNoteboxItemSummary(EntityRef orderNoteRef, EntityRef orderRef, EntityRef patientRef, EntityRef patientProfileRef,
 			CompositeIdentifierDetail mrn, PersonNameDetail patientName, DateTime? dateOfBirth, string accessionNumber,
-			string diagnosticServiceName, string category, DateTime? postTime, StaffSummary author, bool isAcknowledged,
+			string diagnosticServiceName, string category, DateTime? postTime, StaffSummary author, StaffGroupSummary onBehalfOfGroup,
+			bool isAcknowledged,
 			List<StaffSummary> staffRecipients,
 			List<StaffGroupSummary> groupRecipients)
 		{
@@ -44,6 +45,7 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 			Category = category;
 			PostTime = postTime;
 			Author = author;
+			OnBehalfOfGroup = onBehalfOfGroup;
 			IsAcknowledged = isAcknowledged;
 			StaffRecipients = staffRecipients;
 			GroupRecipients = groupRecipients;
@@ -120,6 +122,12 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 		/// </summary>
 		[DataMember]
 		public StaffSummary Author;
+
+		/// <summary>
+		/// Gets the group on behalf of which the note was sent, or null if none.
+		/// </summary>
+		[DataMember]
+		public StaffGroupSummary OnBehalfOfGroup;
 
 		/// <summary>
 		/// Gets a value indicating whether the note has been acknowledged.

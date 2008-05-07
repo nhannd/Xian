@@ -51,24 +51,11 @@ namespace ClearCanvas.Healthcare {
         /// <param name="order"></param>
         /// <param name="category"></param>
         /// <param name="author"></param>
+        /// <param name="onBehalfOf"></param>
         /// <param name="body"></param>
         /// <param name="recipients"></param>
-        public OrderNote(Order order, string category, Staff author, string body, IEnumerable<NoteRecipient> recipients)
-            :base(category, author, body, recipients)
-        {
-            _order = order;
-            _order.Notes.Add(this);
-        }
-
-        /// <summary>
-        /// Constructor for creating a new note.
-        /// </summary>
-        /// <param name="order"></param>
-        /// <param name="category"></param>
-        /// <param name="author"></param>
-        /// <param name="body"></param>
-        public OrderNote(Order order, string category, Staff author, string body)
-            : base(category, author, body)
+        public OrderNote(Order order, string category, Staff author, StaffGroup onBehalfOf, string body, IEnumerable<NoteRecipient> recipients)
+            :base(category, author, onBehalfOf, body, recipients)
         {
             _order = order;
             _order.Notes.Add(this);

@@ -131,12 +131,13 @@ namespace ClearCanvas.Ris.Application.Common
         /// <param name="creationTime"></param>
         /// <param name="postTime"></param>
         /// <param name="author"></param>
+        /// <param name="onBehalfOfGroup"></param>
         /// <param name="staffRecipients"></param>
         /// <param name="groupRecipients"></param>
         /// <param name="noteBody"></param>
         /// <param name="canAcknowledge"></param>
         public OrderNoteDetail(EntityRef orderNoteRef, string category, DateTime creationTime,
-			DateTime? postTime, StaffSummary author, List<StaffRecipientDetail> staffRecipients,
+			DateTime? postTime, StaffSummary author, StaffGroupSummary onBehalfOfGroup, List<StaffRecipientDetail> staffRecipients,
 			List<GroupRecipientDetail> groupRecipients, string noteBody, bool canAcknowledge)
         {
             OrderNoteRef = orderNoteRef;
@@ -144,6 +145,7 @@ namespace ClearCanvas.Ris.Application.Common
             CreationTime = creationTime;
             PostTime = postTime;
             Author = author;
+        	OnBehalfOfGroup = onBehalfOfGroup;
             StaffRecipients = staffRecipients;
             GroupRecipients = groupRecipients;
             NoteBody = noteBody;
@@ -210,6 +212,12 @@ namespace ClearCanvas.Ris.Application.Common
         /// </summary>
         [DataMember]
         public StaffSummary Author;
+
+		/// <summary>
+		/// Gets the staff group on behalf of which the note is posted, or null if it was not posted on behalf of any group.
+		/// </summary>
+		[DataMember]
+		public StaffGroupSummary OnBehalfOfGroup;
 
         /// <summary>
         /// Gets the note body text.

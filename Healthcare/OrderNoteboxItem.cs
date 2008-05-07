@@ -19,6 +19,7 @@ namespace ClearCanvas.Healthcare
 		private readonly string _category;
 		private readonly DateTime? _postTime;
 		private readonly Staff _author;
+		private readonly StaffGroup _onBehalfOfGroup;
 		private readonly bool _isAcknowledged;
 		private NoteRecipient[] _recipients;
 
@@ -44,6 +45,7 @@ namespace ClearCanvas.Healthcare
 			_category = note.Category;
 			_postTime = note.PostTime;
 			_author = note.Author;
+			_onBehalfOfGroup = note.OnBehalfOfGroup;
 			_isAcknowledged = isAcknowledged;
 
 			_recipients = note.IsPosted ? CollectionUtils.Map<NotePosting, NoteRecipient>(note.Postings,
@@ -108,6 +110,11 @@ namespace ClearCanvas.Healthcare
 		public Staff Author
 		{
 			get { return _author; }
+		}
+
+		public StaffGroup OnBehalfOfGroup
+		{
+			get { return _onBehalfOfGroup; }
 		}
 
 		public bool IsAcknowledged
