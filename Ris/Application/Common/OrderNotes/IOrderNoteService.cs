@@ -29,6 +29,14 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
         GetConversationResponse GetConversation(GetConversationRequest request);
 
         /// <summary>
+        /// Get conversation editor form data.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        GetConversationEditorFormDataResponse GetConversationEditorFormData(GetConversationEditorFormDataRequest request);
+
+        /// <summary>
         /// Acknowledges and/or replies to the specified order conversation.  Can also be used to
         /// initiate a conversation.
         /// </summary>

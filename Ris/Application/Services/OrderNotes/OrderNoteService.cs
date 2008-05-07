@@ -146,7 +146,21 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
                     }), notes.Count);
         }
 
-        [UpdateOperation]
+		[ReadOperation]
+		public GetConversationEditorFormDataResponse GetConversationEditorFormData(
+    		GetConversationEditorFormDataRequest request)
+    	{
+			StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
+			return new GetConversationEditorFormDataResponse(
+				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
+					this.CurrentUserStaff.Groups,
+					delegate (StaffGroup sg)
+					{
+						return groupAssembler.CreateSummary(sg);
+					}));
+    	}
+
+    	[UpdateOperation]
         public AcknowledgeAndReplyResponse AcknowledgeAndReply(AcknowledgeAndReplyRequest request)
         {
             Platform.CheckForNullReference(request, "request");
