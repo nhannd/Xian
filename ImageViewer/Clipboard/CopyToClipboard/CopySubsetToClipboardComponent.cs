@@ -86,15 +86,15 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			SetActiveViewer(viewer);
 		}
 
-		private void OnImageBoxSelected(object sender, ImageBoxSelectedEventArgs e)
+		private void OnDisplaySetSelected(object sender, DisplaySetSelectedEventArgs e)
 		{
-			CurrentDisplaySet = e.SelectedImageBox.DisplaySet;
+			CurrentDisplaySet = e.SelectedDisplaySet;
 		}
 
 		private void SetActiveViewer(IImageViewer viewer)
 		{
 			if (_activeViewer != null)
-				_activeViewer.EventBroker.ImageBoxSelected -= OnImageBoxSelected;
+				_activeViewer.EventBroker.DisplaySetSelected -= OnDisplaySetSelected;
 
 			_activeViewer = viewer;
 
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 
 			if (_activeViewer != null)
 			{
-				_activeViewer.EventBroker.ImageBoxSelected += OnImageBoxSelected;
+				_activeViewer.EventBroker.DisplaySetSelected += OnDisplaySetSelected;
 
 				if (_activeViewer.SelectedImageBox != null)
 					displaySet = _activeViewer.SelectedImageBox.DisplaySet;
