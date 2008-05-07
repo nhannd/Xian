@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 		internal interface IDefaultProtocolGroupSettingsProvider
 		{
 			string this[string procedureName] { get; set; }
-			string GetSuggestedDefault(IEnumerable<string> eligibleProtocolGroups);
+			string GetSuggestedDefault();
 		}
 
 		private class DefaultProtocolGroupSettingsProvider : IDefaultProtocolGroupSettingsProvider
@@ -87,25 +87,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 				}
 			}
 
-			public string GetSuggestedDefault(IEnumerable<string> eligibleProtocolGroups)
+			public string GetSuggestedDefault()
 			{
-				// Get an ordered list of all protocol groups which are specified as defaults (for any procedure)
-				IEnumerable<string> rankedDefaults = ProtocolGroupSettings.Default.GetRankedDefaults();
-
-				// Pick the first eligible protocol group which is in the ordered list of defaults.
-				foreach (string rankedDefault in rankedDefaults)
-				{
-					bool rankedDefaultIsEligible = CollectionUtils.Contains<string>(eligibleProtocolGroups, 
-						delegate(string availableProtocolGroup) { return string.Compare(availableProtocolGroup, rankedDefault) == 0; });
-
-					if (rankedDefaultIsEligible)
-					{
-						return rankedDefault;
-					}
-				}
-
-				// If none of the existing defaults are appropriate, just use the first eligible one.
-				return CollectionUtils.FirstElement(eligibleProtocolGroups);
+				return ProtocolGroupSettings.Default.LastDefaultProtocolGroup;
 			}
 
 			#endregion
@@ -686,11 +670,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			// Use the default if one exists for this procedure.
 			// Otherwise, get a suggested initial group and set the default to the suggested value
 			_defaultProtocolGroupName = _defaultProtocolGroupProvider[item.ProcedureDetail.Type.Name]
-									?? (_defaultProtocolGroupProvider[item.ProcedureDetail.Type.Name] = 
-											_defaultProtocolGroupProvider.GetSuggestedDefault(
-												CollectionUtils.Map<ProtocolGroupSummary, string>(
-													_protocolGroupChoices, 
-													delegate(ProtocolGroupSummary pgs) { return pgs.Name; })));
+									?? (_defaultProtocolGroupProvider[item.ProcedureDetail.Type.Name] = GetSuggestedDefault(item.ProcedureDetail.Type.Name));
 
 			if (string.IsNullOrEmpty(_defaultProtocolGroupName) == false)
 			{
@@ -702,6 +682,20 @@ namespace ClearCanvas.Ris.Client.Reporting
 			defaultProtocolGroup = defaultProtocolGroup ?? CollectionUtils.FirstElement(_protocolGroupChoices);
 
 			return defaultProtocolGroup;
+		}
+
+		private string GetSuggestedDefault(string procedureName)
+		{
+			if(CollectionUtils.Contains(
+				_protocolGroupChoices, 
+				delegate (ProtocolGroupSummary pgs) { return pgs.Name == _defaultProtocolGroupProvider.GetSuggestedDefault(); }))
+			{
+				return _defaultProtocolGroupProvider.GetSuggestedDefault();
+			}
+			else
+			{
+				return null;
+			}
 		}
 
 		private void ProtocolGroupSelectionChanged()

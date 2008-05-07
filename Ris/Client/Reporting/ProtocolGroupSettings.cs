@@ -13,6 +13,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 	{
 		private XmlDocument _xmlDoc;
 		private XmlNode _root;
+		private readonly string _lastDefault = "__LastDefault";
 
 		public ProtocolGroupSettings()
 		{
@@ -31,6 +32,19 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		public void SetDefaultProtocolGroup(string protocolGroupName, string procedureName)
 		{
+			SetDefaultProtocolGroupHelper(protocolGroupName, procedureName);
+			SetDefaultProtocolGroupHelper(protocolGroupName, _lastDefault);
+			this.DefaultProtocolGroupsXml = _xmlDoc.OuterXml;
+			this.Save();
+		}
+
+		public string LastDefaultProtocolGroup
+		{
+			get { return GetDefaultProtocolGroup(_lastDefault); }
+		}
+
+		private void SetDefaultProtocolGroupHelper(string protocolGroupName, string procedureName)
+		{
 			XmlElement element = (XmlElement)Root.SelectSingleNode(String.Format("procedure-protocolgroup-default[@procedureName='{0}']", procedureName));
 
 			if (element == null)
@@ -42,9 +56,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 			}
 
 			element.SetAttribute("protocolGroupName", protocolGroupName);
-
-			this.DefaultProtocolGroupsXml = _xmlDoc.OuterXml;
-			this.Save();
 		}
 
 		private XmlDocument GetXmlDocument()
@@ -84,37 +95,37 @@ namespace ClearCanvas.Ris.Client.Reporting
 			}
 		}
 
-		public bool IsADefault(string protocolGroupName)
-		{
-			return Root.SelectSingleNode(String.Format("procedure-protocolgroup-default[@protocolGroupName='{0}']", protocolGroupName)) != null;
-		}
+		//public bool IsADefault(string protocolGroupName)
+		//{
+		//    return Root.SelectSingleNode(String.Format("procedure-protocolgroup-default[@protocolGroupName='{0}']", protocolGroupName)) != null;
+		//}
 
-		internal IEnumerable<string> GetRankedDefaults()
-		{
-			IDictionary<string, int> defaultProtocolGroups = new Dictionary<string, int>();
+		//internal IEnumerable<string> GetRankedDefaults()
+		//{
+		//    IDictionary<string, int> defaultProtocolGroups = new Dictionary<string, int>();
 
-			foreach (XmlElement element in this.Root.ChildNodes)
-			{
-				string protocolGroup = element.GetAttribute("protocolGroupName");
+		//    foreach (XmlElement element in this.Root.ChildNodes)
+		//    {
+		//        string protocolGroup = element.GetAttribute("protocolGroupName");
 
-				if(defaultProtocolGroups.ContainsKey(protocolGroup))
-				{
-					defaultProtocolGroups[protocolGroup]++;
-				}
-				else
-				{
-					defaultProtocolGroups[protocolGroup] = 1;
-				}
-			}
+		//        if(defaultProtocolGroups.ContainsKey(protocolGroup))
+		//        {
+		//            defaultProtocolGroups[protocolGroup]++;
+		//        }
+		//        else
+		//        {
+		//            defaultProtocolGroups[protocolGroup] = 1;
+		//        }
+		//    }
 
-			List<KeyValuePair<string, int>> sortedDefaultProtocolGroups = CollectionUtils.Sort(
-				defaultProtocolGroups, 
-				delegate(KeyValuePair<string, int> x, KeyValuePair<string, int> y) { return x.Value.CompareTo(y.Value); });
-			sortedDefaultProtocolGroups.Reverse();
+		//    List<KeyValuePair<string, int>> sortedDefaultProtocolGroups = CollectionUtils.Sort(
+		//        defaultProtocolGroups, 
+		//        delegate(KeyValuePair<string, int> x, KeyValuePair<string, int> y) { return x.Value.CompareTo(y.Value); });
+		//    sortedDefaultProtocolGroups.Reverse();
 
-			return CollectionUtils.Map<KeyValuePair<string, int>, string>(
-				sortedDefaultProtocolGroups,
-				delegate(KeyValuePair<string, int> defaultProtocolGroup) { return defaultProtocolGroup.Key; });
-		}
+		//    return CollectionUtils.Map<KeyValuePair<string, int>, string>(
+		//        sortedDefaultProtocolGroups,
+		//        delegate(KeyValuePair<string, int> defaultProtocolGroup) { return defaultProtocolGroup.Key; });
+		//}
 	}
 }
