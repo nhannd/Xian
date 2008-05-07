@@ -3,7 +3,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Ris.Client.Reporting.Folders
 {
 	[ExtensionOf(typeof(ReportingOrderNoteboxFolderExtensionPoint))]
-	[FolderPath("Inbox")]
+	[FolderPath("Posted to me")]
 	internal class InboxFolder : OrderNoteboxFolder
 	{
 		private InboxFolder(OrderNoteboxFolderSystemBase folderSystemBase, string folderDisplayName, string folderDescription)
@@ -23,7 +23,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
 	}
 
 	[ExtensionOf(typeof(ReportingOrderNoteboxFolderExtensionPoint))]
-	[FolderPath("Sent Items")]
+	[FolderPath("Posted by me")]
 	internal class SentItemsFolder : OrderNoteboxFolder
 	{
 		private SentItemsFolder(OrderNoteboxFolderSystemBase folderSystemBase, string folderDisplayName, string folderDescription)
