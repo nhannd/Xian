@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 			int dimension = Math.Max(displayedClientRectangle.Width, displayedClientRectangle.Height);
 
-			IPresentationImage image = displaySet.PresentationImages[displaySet.PresentationImages.Count / 2];
+			IPresentationImage image = GetMiddlePresentationImage(displaySet);
 			Bitmap img = image.DrawToBitmap(dimension, (int)(dimension * aspectRatio));
 			Bitmap iconBmp = new Bitmap(img, subIconWidth, subIconHeight);
 			img.Dispose();
@@ -66,6 +66,17 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			g.Dispose();
 
 			return bmp;
+		}
+
+		private static IPresentationImage GetMiddlePresentationImage(IDisplaySet displaySet)
+		{
+			if (displaySet.PresentationImages.Count == 0)
+				throw new ArgumentException("The display set must contain at least one image.");
+
+			if (displaySet.PresentationImages.Count <= 2)
+				return displaySet.PresentationImages[0];
+
+			return displaySet.PresentationImages[displaySet.PresentationImages.Count / 2];
 		}
 	}
 }
