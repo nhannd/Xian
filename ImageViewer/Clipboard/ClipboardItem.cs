@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Threading;
 using ClearCanvas.Desktop;
@@ -17,10 +18,10 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		void Unlock();
 	}
 
-	internal class ClipboardItem : IClipboardItem, IGalleryItem
+	internal class ClipboardItem : IClipboardItem, IGalleryItem, IDisposable
 	{
-		private readonly object _item;
-		private readonly Image _image;
+		private object _item;
+		private Image _image;
 		private readonly string _description;
 		private readonly Rectangle _displayRectangle;
 		private int _lockCount;
@@ -67,5 +68,23 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		{
 			get { return Thread.VolatileRead(ref _lockCount) != 0; }
 		}
+
+		#region IDisposable Members
+
+		void IDisposable.Dispose()
+		{
+			if (_item != null && _item is IDisposable)
+			{
+				((IDisposable)_item).Dispose();
+				_item = null;
+			}
+			if (_image != null)
+			{
+				_image.Dispose();
+				_image = null;
+			}
+		}
+
+		#endregion
 	}
 }

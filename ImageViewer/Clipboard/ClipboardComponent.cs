@@ -230,8 +230,12 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		{
 			Platform.CheckForNullReference(displaySet, "displaySet");
 
-			if (displaySet.ImageBox == null || displaySet.ImageBox.SelectedTile == null || displaySet.ImageBox.SelectedTile.PresentationImage == null)
+			if (displaySet.ImageBox == null || 
+				displaySet.ImageBox.SelectedTile == null || 
+				displaySet.ImageBox.SelectedTile.PresentationImage == null)
+			{
 				throw new ArgumentException("DisplaySet must have a selected image.");
+			}
 
 			Rectangle clientRectangle = displaySet.ImageBox.SelectedTile.PresentationImage.ClientRectangle;
 			if (selectionStrategy == null)

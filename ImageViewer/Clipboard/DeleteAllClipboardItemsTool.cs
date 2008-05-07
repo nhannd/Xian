@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			bool anyLocked = false;
 			
 			List<IClipboardItem> items = new List<IClipboardItem>(this.Context.ClipboardItems);
-			foreach (IClipboardItem item in items)
+			foreach (ClipboardItem item in items)
 			{
 				if (item.Locked)
 				{
@@ -40,9 +40,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 				}
 				else
 				{
-					if (item.Item is IDisposable)
-						((IDisposable)item.Item).Dispose();
-					
+					((IDisposable)item).Dispose();
 					this.Context.ClipboardItems.Remove(item);
 				}
 			}
