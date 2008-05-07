@@ -36,17 +36,18 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="PreliminaryDiagnosisConversationComponent"/>.
+    /// Provides a Windows Forms view onto <see cref="OrderNoteConversationComponent"/>.
     /// </summary>
-    [ExtensionOf(typeof(PreliminaryDiagnosisConversationComponentViewExtensionPoint))]
-    public class PreliminaryDiagnosisConversationComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(OrderNoteConversationComponentViewExtensionPoint))]
+    public class OrderNoteConversationComponentView : WinFormsView, IApplicationComponentView
     {
-        private PreliminaryDiagnosisConversationComponent _component;
-        private PreliminaryDiagnosisConversationComponentControl _control;
+        private OrderNoteConversationComponent _component;
+        private OrderNoteConversationComponentControl _control;
 
         #region IApplicationComponentView Members
 
@@ -55,7 +56,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (PreliminaryDiagnosisConversationComponent)component;
+            _component = (OrderNoteConversationComponent)component;
         }
 
         #endregion
@@ -69,7 +70,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new PreliminaryDiagnosisConversationComponentControl(_component);
+                    _control = new OrderNoteConversationComponentControl(_component);
                 }
                 return _control;
             }

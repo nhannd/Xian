@@ -58,7 +58,11 @@ namespace ClearCanvas.Ris.Client
 				return _owner.GetOperationEnablement(operationClass);
 			}
 
-			public event EventHandler SelectionChanged;
+			public event EventHandler SelectionChanged
+			{
+				add { _owner.SelectedItemsChanged += value; }
+				remove { _owner.SelectedItemsChanged -= value; }
+			}
 
 			public ISelection Selection
 			{

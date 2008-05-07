@@ -32,20 +32,21 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
 	/// <summary>
-	/// Provides a Windows Forms user-interface for <see cref="PreliminaryDiagnosisConversationComponent"/>.
+	/// Provides a Windows Forms user-interface for <see cref="OrderNoteConversationComponent"/>.
 	/// </summary>
-	public partial class PreliminaryDiagnosisConversationComponentControl : ApplicationComponentUserControl
+	public partial class OrderNoteConversationComponentControl : ApplicationComponentUserControl
 	{
-		private readonly PreliminaryDiagnosisConversationComponent _component;
+		private readonly OrderNoteConversationComponent _component;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PreliminaryDiagnosisConversationComponentControl(PreliminaryDiagnosisConversationComponent component)
+		public OrderNoteConversationComponentControl(OrderNoteConversationComponent component)
 			: base(component)
 		{
 			InitializeComponent();
@@ -70,8 +71,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_groupRecipientLookup.DataBindings.Add("Value", _component, "SelectedGroupRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
 			_groupRecipientAddButton.DataBindings.Add("Enabled", _component, "AddGroupRecipientEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_acknowledgePostButton.DataBindings.Add("Text", _component, "ReplyOrAcknowledge", true, DataSourceUpdateMode.OnPropertyChanged);
-			_acknowledgePostButton.DataBindings.Add("Enabled", _component, "AcknowledgeEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_completeButton.DataBindings.Add("Text", _component, "CompleteLabel", true, DataSourceUpdateMode.OnPropertyChanged);
+			_completeButton.DataBindings.Add("Enabled", _component, "CompleteEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_component.PropertyChanged += _component_propertyChanged;
 		}
@@ -84,7 +85,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			}
 			else if (e.PropertyName == "AcknowledgeEnabled")
 			{
-				_acknowledgePostButton.Enabled = _component.AcknowledgeEnabled;
+				_completeButton.Enabled = _component.CompleteEnabled;
 			}
 		}
 
@@ -104,17 +105,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			}
 		}
 
-		private void _acknowledgePostButton_Click(object sender, System.EventArgs e)
+		private void _completeButton_Click(object sender, System.EventArgs e)
 		{
 			using (new CursorManager(Cursors.WaitCursor))
 			{
-				_component.AcknowledgeAndOrPost();
+				_component.OnComplete();
 			}
 		}
 
 		private void _cancelButton_Click(object sender, System.EventArgs e)
 		{
-			_component.Cancel();
+			_component.OnCancel();
 		}
 	}
 }

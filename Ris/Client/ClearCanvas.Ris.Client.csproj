@@ -68,6 +68,7 @@
     <Compile Include="OrderNoteboxFolderSystemBase.cs" />
     <Compile Include="OrderNoteboxTable.cs" />
     <Compile Include="OrderNoteCategory.cs" />
+    <Compile Include="OrderNoteConversationTable.cs" />
     <Compile Include="OrderNoteEditorComponent.cs" />
     <Compile Include="OrderNoteSummaryComponent.cs" />
     <Compile Include="OrderNoteTable.cs" />
@@ -76,7 +77,8 @@
     <Compile Include="PatientProfileAdditionalInfoEditorComponent.cs" />
     <Compile Include="PatientProfileDetailsEditorComponent.cs" />
     <Compile Include="PatientProfileEditorComponent.cs" />
-    <Compile Include="PreliminaryDiagnosisConversationComponent.cs" />
+    <Compile Include="OrderNoteConversationComponent.cs" />
+    <Compile Include="OrderNoteConversationTool.cs" />
     <Compile Include="PreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="RefreshTool.cs" />
     <Compile Include="SearchTool.cs" />
@@ -388,6 +390,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\CopyToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\OrderNoteConversationToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\OrderNoteConversationToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\OrderNoteConversationToolMedium.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

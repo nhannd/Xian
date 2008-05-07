@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    partial class PreliminaryDiagnosisConversationComponentControl
+    partial class OrderNoteConversationComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._componentTableLayout = new System.Windows.Forms.TableLayoutPanel();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._cancelButton = new System.Windows.Forms.Button();
-			this._acknowledgePostButton = new System.Windows.Forms.Button();
+			this._completeButton = new System.Windows.Forms.Button();
 			this._notesGroupBox = new System.Windows.Forms.GroupBox();
 			this._notesSplitContainer = new System.Windows.Forms.SplitContainer();
 			this._notes = new ClearCanvas.Desktop.View.WinForms.TableView();
@@ -115,7 +115,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._componentTableLayout.SetColumnSpan(this.flowLayoutPanel1, 2);
 			this.flowLayoutPanel1.Controls.Add(this._cancelButton);
-			this.flowLayoutPanel1.Controls.Add(this._acknowledgePostButton);
+			this.flowLayoutPanel1.Controls.Add(this._completeButton);
 			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 663);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -133,16 +133,16 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
-			// _acknowledgePostButton
+			// _completeButton
 			// 
-			this._acknowledgePostButton.AutoSize = true;
-			this._acknowledgePostButton.Location = new System.Drawing.Point(671, 3);
-			this._acknowledgePostButton.Name = "_acknowledgePostButton";
-			this._acknowledgePostButton.Size = new System.Drawing.Size(82, 23);
-			this._acknowledgePostButton.TabIndex = 0;
-			this._acknowledgePostButton.Text = "Acknowledge";
-			this._acknowledgePostButton.UseVisualStyleBackColor = true;
-			this._acknowledgePostButton.Click += new System.EventHandler(this._acknowledgePostButton_Click);
+			this._completeButton.AutoSize = true;
+			this._completeButton.Location = new System.Drawing.Point(671, 3);
+			this._completeButton.Name = "_completeButton";
+			this._completeButton.Size = new System.Drawing.Size(82, 23);
+			this._completeButton.TabIndex = 0;
+			this._completeButton.Text = "Acknowledge";
+			this._completeButton.UseVisualStyleBackColor = true;
+			this._completeButton.Click += new System.EventHandler(this._completeButton_Click);
 			// 
 			// _notesGroupBox
 			// 
@@ -155,7 +155,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._notesGroupBox.Size = new System.Drawing.Size(415, 654);
 			this._notesGroupBox.TabIndex = 0;
 			this._notesGroupBox.TabStop = false;
-			this._notesGroupBox.Text = "Preliminary Diagnosis Conversation";
+			this._notesGroupBox.Text = "Existing Conversation";
 			// 
 			// _notesSplitContainer
 			// 
@@ -338,12 +338,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._replyBody.Size = new System.Drawing.Size(404, 311);
 			this._replyBody.TabIndex = 0;
 			// 
-			// PreliminaryDiagnosisConversationComponentControl
+			// OrderNoteConversationComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._componentTableLayout);
-			this.Name = "PreliminaryDiagnosisConversationComponentControl";
+			this.Name = "OrderNoteConversationComponentControl";
 			this.Size = new System.Drawing.Size(843, 695);
 			this._componentTableLayout.ResumeLayout(false);
 			this._componentTableLayout.PerformLayout();
@@ -373,7 +373,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.TableLayoutPanel _componentTableLayout;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 		private System.Windows.Forms.Button _cancelButton;
-		private System.Windows.Forms.Button _acknowledgePostButton;
+		private System.Windows.Forms.Button _completeButton;
 		private ClearCanvas.Desktop.View.WinForms.TableView _notes;
 		private System.Windows.Forms.TableLayoutPanel _replyTableLayout;
 		private System.Windows.Forms.GroupBox _recipientsGroupBox;

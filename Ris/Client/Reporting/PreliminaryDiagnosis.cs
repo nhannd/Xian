@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -35,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         /// <returns></returns>
         public static ApplicationComponentExitCode ShowConversationDialog(EntityRef orderRef, IDesktopWindow desktopWindow)
         {
-            PreliminaryDiagnosisConversationComponent component = new PreliminaryDiagnosisConversationComponent(orderRef);
+            OrderNoteConversationComponent component = new OrderNoteConversationComponent(orderRef, OrderNoteCategory.PreliminaryDiagnosis.Key);
             return ApplicationComponent.LaunchAsDialog(desktopWindow, component, "Review Preliminary Diagnosis");
         }
     }
