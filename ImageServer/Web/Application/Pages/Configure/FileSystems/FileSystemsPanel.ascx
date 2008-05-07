@@ -1,0 +1,72 @@
+<%@ Control Language="C#" AutoEventWireup="true" Codebehind="FileSystemsPanel.ascx.cs"
+    Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems.FileSystemsPanel" %>
+
+<%@ Register Src="FileSystemsGridView.ascx" TagName="FileSystemsGridView" TagPrefix="uc1" %>
+    
+<asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
+    <ContentTemplate>
+        <asp:Panel ID="Panel2" runat="server" Height="100%" style="border: solid 1px #6699CC;">
+            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0">
+                <asp:TableHeaderRow>
+                    <asp:TableHeaderCell HorizontalAlign="left" VerticalAlign="Bottom" Width="100%">
+                        <asp:Panel ID="Panel1" runat="server" CssClass="ToolbarPanelContainer">
+                                    <ccUI:ToolbarButton
+                                                        ID="AddToolbarButton" runat="server" 
+                                                        EnabledImageURL="~/images/icons/AddEnabled.png" 
+                                                        DisabledImageURL="~/images/icons/AddDisabled.png"
+                                                        OnClick="AddButton_Click" AlternateText="Add a filesystem"
+                                                        />
+                                     <ccUI:ToolbarButton
+                                                        ID="EditToolbarButton" runat="server" 
+                                                        EnabledImageURL="~/images/icons/EditEnabled.png" 
+                                                        DisabledImageURL="~/images/icons/EditDisabled.png"
+                                                        OnClick="EditButton_Click" AlternateText="Edit a filesystem"
+                                                        />
+                        </asp:Panel>
+                    </asp:TableHeaderCell>
+                    <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom" Wrap="false">
+                        <asp:Panel ID="FilterPanel" runat="server" CssClass="FilterPanelContainer">
+                                <asp:Panel ID="Panel6" runat="server" CssClass="FilterPanelContent" DefaultButton="FilterToolbarButton">
+                                    <table cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td align="left">
+                                                <asp:Label ID="Label1" runat="server" Text="Description" CssClass="FilterTextBoxLabel"></asp:Label><br />
+                                                <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="FilterTextBox" ToolTip="Filter by description"></asp:TextBox></td>
+                                            <td align="left">
+                                                <asp:Label ID="Label2" runat="server" Text="Tiers" CssClass="FilterTextBoxLabel"></asp:Label><br />
+                                                <asp:DropDownList ID="TiersDropDownList" runat="server" CssClass="FilterDropDownList">
+                                                </asp:DropDownList></td>
+                                            <td align="right" valign="bottom">
+                                                <asp:Panel ID="FilterButtonContainer" runat="server" CssClass="FilterButtonContainer">
+                                                    <ccUI:ToolbarButton
+                                                        ID="FilterToolbarButton" runat="server" 
+                                                        EnabledImageURL="~/images/icons/QueryEnabled.png" 
+                                                        DisabledImageURL="~/images/icons/QueryDisabled.png"
+                                                        OnClick="FilterButton_Click" Tooltip="Filter/Refresh"
+                                                        />
+                                                 </asp:Panel>
+                                            </td>
+                                
+                                        </tr> 
+                                    </table>
+                            </asp:Panel>
+                        </asp:Panel>
+                    </asp:TableHeaderCell> 
+                 </asp:TableHeaderRow>
+                <asp:TableRow Height="100%">
+                    <asp:TableCell ColumnSpan="2">
+                        <asp:Panel ID="Panel7" runat="server" CssClass="GridViewPanelContainer" >
+                                    <uc1:FileSystemsGridView ID="FileSystemsGridView1" runat="server"  Height="500px"/>
+                        </asp:Panel>
+                        
+                    </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
+                    <asp:TableCell ColumnSpan="2">
+                        <ccAsp:GridPager ID="GridPager1" runat="server" />
+                    </asp:TableCell>
+                </asp:TableRow>
+            </asp:Table> 
+       </asp:Panel>
+    </ContentTemplate>
+</asp:UpdatePanel>
