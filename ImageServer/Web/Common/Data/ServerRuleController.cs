@@ -72,6 +72,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             parms.ServerPartitionKey = rule.ServerPartitionKey;
             parms.ServerRuleApplyTimeEnum = rule.ServerRuleApplyTimeEnum;
             parms.ServerRuleTypeEnum = rule.ServerRuleTypeEnum;
+        	parms.ExemptRule = rule.ExemptRule;
 
             return _adaptor.Add(parms);
         }
@@ -87,6 +88,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             parms.ServerPartitionKey = rule.ServerPartitionKey;
             parms.ServerRuleApplyTimeEnum = rule.ServerRuleApplyTimeEnum;
             parms.ServerRuleTypeEnum = rule.ServerRuleTypeEnum;
+			parms.ExemptRule = rule.ExemptRule;
 
             return _adaptor.Update(rule.GetKey(), parms);
         }

@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageServer.Model
         #region Private Members
         private System.Boolean _defaultRule;
         private System.Boolean _enabled;
+        private System.Boolean _exemptRule;
         private System.String _ruleName;
         private System.Xml.XmlDocument _ruleXml;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
@@ -66,6 +67,11 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _enabled; }
         set { _enabled = value; }
+        }
+        public System.Boolean ExemptRule
+        {
+        get { return _exemptRule; }
+        set { _exemptRule = value; }
         }
         public System.String RuleName
         {

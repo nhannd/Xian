@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
         [ClientPropertyName("SendStudyPageUrl")]
         public string SendStudyPageUrl
         {
-            get { return Page.ResolveClientUrl("~/Search/Move/MovePage.aspx"); }
+            get { return Page.ResolveClientUrl("~/Pages/Search/Move/MovePage.aspx"); }
         }
 
         public ServerPartition ServerPartition

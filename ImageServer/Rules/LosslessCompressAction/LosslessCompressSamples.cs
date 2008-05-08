@@ -29,48 +29,46 @@
 
 #endregion
 
-using System;
-using System.IO;
-using System.Text;
-using System.Web.Script.Services;
-using System.Web.Services;
+using System.Collections.Generic;
 using System.Xml;
-using ClearCanvas.ImageServer.Rules;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
+namespace ClearCanvas.ImageServer.Rules.LosslessCompressAction
 {
-	/// <summary>
-	/// Summary description for ServerRuleSamples
-	/// </summary>
-	[WebService(Namespace = "http://www.clearcanvas.ca/ImageServer/ServerRuleSamples.asmx")]
-	[WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-	[ScriptService]
-	public class ServerRuleSamples : WebService
+	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
+	public class LosslessCompressSample : ISampleRule
 	{
-		[WebMethod]
-		public string GetXml(string type)
+		private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
+
+		public LosslessCompressSample()
 		{
-			XmlDocument doc = null;
+			_applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+		}
+		public string Name
+		{
+			get { return "SimpleLosslessCompress"; }
+		}
+		public string Description
+		{
+			get { return "Simple Lossless Compress"; }
+		}
 
-			string inputString = Server.HtmlEncode(type);
-			if (String.IsNullOrEmpty(inputString))
-				inputString = "";
+		public ServerRuleTypeEnum Type
+		{
+			get { return ServerRuleTypeEnum.GetEnum("LosslessCompressStudy"); }
+		}
 
-			SampleRuleExtensionPoint ep = new SampleRuleExtensionPoint();
-			object[] extensions = ep.CreateExtensions();
+		public IList<ServerRuleApplyTimeEnum> ApplyTimeList
+		{
+			get { return _applyTime; }
+		}
 
-			foreach (ISampleRule extension in extensions)
+		public XmlDocument Rule
+		{
+			get
 			{
-				if (extension.Name.Equals(inputString))
-				{
-					doc = extension.Rule;
-					break;
-				}
-			}
-
-			if (doc == null)
-			{
-				doc = new XmlDocument();
+				XmlDocument doc = new XmlDocument();
 				XmlNode node = doc.CreateElement("rule");
 				doc.AppendChild(node);
 				XmlElement conditionNode = doc.CreateElement("condition");
@@ -78,26 +76,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 				conditionNode.SetAttribute("expressionLanguage", "dicom");
 				XmlNode actionNode = doc.CreateElement("action");
 				node.AppendChild(actionNode);
+
+				XmlElement andNode = doc.CreateElement("or");
+				conditionNode.AppendChild(andNode);
+				XmlElement equalNode = doc.CreateElement("equal");
+				equalNode.SetAttribute("test", "$Modality");
+				equalNode.SetAttribute("refValue", "MR");
+				andNode.AppendChild(equalNode);
+				equalNode = doc.CreateElement("equal");
+				equalNode.SetAttribute("test", "$Modality");
+				equalNode.SetAttribute("refValue", "CT");
+				andNode.AppendChild(equalNode);
+
+				XmlElement losslessCompress = doc.CreateElement("lossless-compress");
+				losslessCompress.SetAttribute("time", "10");
+				losslessCompress.SetAttribute("timeUnits", "weeks");
+				actionNode.AppendChild(losslessCompress);
+				return doc;
 			}
-
-			StringWriter sw = new StringWriter();
-
-			XmlWriterSettings xmlSettings = new XmlWriterSettings();
-
-			xmlSettings.Encoding = Encoding.UTF8;
-			xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
-			xmlSettings.Indent = true;
-			xmlSettings.NewLineOnAttributes = true;
-			xmlSettings.CheckCharacters = true;
-			xmlSettings.IndentChars = "  ";
-
-			XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
-
-			doc.WriteTo(tw);
-
-			tw.Close();
-
-			return sw.ToString();
 		}
 	}
 }

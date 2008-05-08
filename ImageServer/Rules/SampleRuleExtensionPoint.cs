@@ -29,17 +29,15 @@
 
 #endregion
 
+using ClearCanvas.Common;
 
-using System;
-using ClearCanvas.ImageServer.Web.Application.Common;
-
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
+namespace ClearCanvas.ImageServer.Rules
 {
-	public partial class About : BasePage
+	/// <summary>
+	/// Plugin for Sample Rules used in the Web GUI.
+	/// </summary>
+	[ExtensionPoint()]
+	public class SampleRuleExtensionPoint : ExtensionPoint<ISampleRule>
 	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-
-		}
 	}
 }

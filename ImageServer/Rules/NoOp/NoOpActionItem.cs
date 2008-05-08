@@ -29,17 +29,22 @@
 
 #endregion
 
+using ClearCanvas.Common.Actions;
 
-using System;
-using ClearCanvas.ImageServer.Web.Application.Common;
-
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
+namespace ClearCanvas.ImageServer.Rules.NoOp
 {
-	public partial class About : BasePage
+	public class NoOpActionItem : IActionItem<ServerActionContext>
 	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
+	    private readonly string _failureReason = "Success";
+	
+        public bool Execute(ServerActionContext context)
+        {
+            return true;
+        }
 
-		}
+        public string FailureReason
+        {
+            get { return _failureReason; }
+        }
 	}
 }

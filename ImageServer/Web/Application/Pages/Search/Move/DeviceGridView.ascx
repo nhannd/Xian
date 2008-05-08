@@ -1,5 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DeviceGridView.ascx.cs" 
-Inherits="ClearCanvas.ImageServer.Web.Application.Search.Move.DeviceGridView" %>
+Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Search.Move.DeviceGridView" %>
 
 
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"

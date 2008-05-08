@@ -288,7 +288,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             float usage = GetFilesystemUsedPercentage(fs);
             if (img != null)
             {
-                img.ImageUrl = string.Format("~/Common/Controls/BarChart.aspx?pct={0}&high={1}&low={2}",
+                img.ImageUrl = string.Format("~/Common/Pages/BarChart.aspx?pct={0}&high={1}&low={2}",
                                              usage,
                                              fs.HighWatermark,
                                              fs.LowWatermark);

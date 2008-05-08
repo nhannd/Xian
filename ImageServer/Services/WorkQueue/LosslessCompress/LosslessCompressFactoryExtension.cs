@@ -29,17 +29,29 @@
 
 #endregion
 
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Model;
 
-using System;
-using ClearCanvas.ImageServer.Web.Application.Common;
-
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
+namespace ClearCanvas.ImageServer.Services.WorkQueue.LosslessCompress
 {
-	public partial class About : BasePage
+	/// <summary>
+	/// Plugin for processing 'LosslessCompress' WorkQueue items.
+	/// </summary>
+	[ExtensionOf(typeof(WorkQueueFactoryExtensionPoint))]
+	public class LosslessCompressFactoryExtension : IWorkQueueProcessorFactory
 	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
+		#region IWorkQueueProcessorFactory Members
 
+		public WorkQueueTypeEnum GetWorkQueueType()
+		{
+			return WorkQueueTypeEnum.GetEnum("LosslessCompress");
 		}
+
+		public IWorkQueueItemProcessor GetItemProcessor()
+		{
+			return new LosslessCompressItemProcessor();
+		}
+
+		#endregion
 	}
 }

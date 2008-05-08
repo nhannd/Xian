@@ -984,6 +984,7 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: September 17, 2007
+-- Modification date: May 5, 2008
 -- Description:	
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertFilesystem] 
@@ -1007,11 +1008,15 @@ BEGIN
 	DECLARE @FilesystemDeleteServiceLockTypeEnum smallint
 	DECLARE @FilesystemReinventoryServiceLockTypeEnum smallint
 	DECLARE @FilesystemStudyProcessServiceLockTypeEnum smallint
+	DECLARE @FilesystemLosslessCompressServiceLockTypeEnum smallint
+	DECLARE @FilesystemLossyCompressServiceLockTypeEnum smallint
 
 	SET @GUID = newid()
 	SELECT @FilesystemDeleteServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemDelete''
 	SELECT @FilesystemReinventoryServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemReinventory''
 	SELECT @FilesystemStudyProcessServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemStudyProcess''
+	SELECT @FilesystemLosslessCompressServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemLosslessCompress''
+	SELECT @FilesystemLossyCompressServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemLossyCompress''
 
     -- Insert statements
 	BEGIN TRANSACTION
@@ -1031,6 +1036,14 @@ BEGIN
 	INSERT INTO [ImageServer].[dbo].ServiceLock
 		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
 	VALUES (newid(),@FilesystemStudyProcessServiceLockTypeEnum,0,getdate(),@GUID,0)
+
+	INSERT INTO [ImageServer].[dbo].ServiceLock
+		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+	VALUES (newid(),@FilesystemLosslessCompressServiceLockTypeEnum,0,getdate(),@GUID,0)
+
+	INSERT INTO [ImageServer].[dbo].ServiceLock
+		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+	VALUES (newid(),@FilesystemLossyCompressServiceLockTypeEnum,0,getdate(),@GUID,0)
 
 	COMMIT TRANSACTION
 

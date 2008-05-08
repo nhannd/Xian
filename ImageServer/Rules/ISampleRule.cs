@@ -29,17 +29,19 @@
 
 #endregion
 
+using System.Collections.Generic;
+using System.Xml;
+using ClearCanvas.ImageServer.Model;
 
-using System;
-using ClearCanvas.ImageServer.Web.Application.Common;
-
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
+namespace ClearCanvas.ImageServer.Rules
 {
-	public partial class About : BasePage
+	public interface ISampleRule
 	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-
-		}
+		string Name { get; }
+		string Description { get; }
+		ServerRuleTypeEnum Type { get; }
+		IList<ServerRuleApplyTimeEnum> ApplyTimeList { get;}
+		XmlDocument Rule { get;}
 	}
+	
 }

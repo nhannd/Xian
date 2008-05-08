@@ -41,6 +41,18 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
            (newid(),106,'CleanupStudy','Cleanup Study','Cleanup all unprocessed or failed instances within a study.')
 GO
 
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),107,'LosslessCompress','Lossless Compress Study','Lossless compress a study.')
+GO
+
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),108,'LossyCompress','Lossy Compress Study','Lossy compress a study.')
+GO
+
 
 -- WorkQueueStatusEnum inserts
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
@@ -54,7 +66,6 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
      VALUES
            (newid(),200,'Pending','Pending','Pending')
 GO
-
 
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
@@ -74,6 +85,7 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
            (newid(),203,'Failed','Failed','The Queue entry has failed.')
 GO
 
+
 -- FilesystemTierEnum
 INSERT INTO [ImageServer].[dbo].[FilesystemTierEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
@@ -92,6 +104,7 @@ INSERT INTO [ImageServer].[dbo].[FilesystemTierEnum]
      VALUES
            (newid(),103,'Tier3','Tier 3','Filesystem Tier 3')
 GO
+
 
 -- ServerRuleTypeEnum inserts
 INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
@@ -118,6 +131,30 @@ INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
            (newid(),103,'OnlineRetention','Online Retention','A rule to specify how long a study will be retained online')
 GO
 
+INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),104,'LosslessCompressStudy','Lossless Compress Study','A rule to specify when a study should be lossless compressed')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),105,'LossyCompressStudy','Lossy Compress Study','A rule to specify when a study should be lossy compressed')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),106,'LosslessCompressParameters','Lossless Compression Parameters','A rule to specify lossless compression parameters (including compression type)')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),107,'LossyCompressParameters','Lossy Compression Parameters','A rule to specify lossy compressoin parameters (including compression type)')
+GO
+
 
 --  WorkQueuePriorityEnum inserts
 INSERT INTO [ImageServer].[dbo].WorkQueuePriorityEnum
@@ -137,7 +174,6 @@ INSERT INTO [ImageServer].[dbo].WorkQueuePriorityEnum
      VALUES
            (newid(),300,'High','High','High priority')
 GO
-
 
 
 -- ServerRuleApplyTimeEnum inserts
@@ -165,6 +201,13 @@ INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
            (newid(),103,'StudyProcessed','Study Processed','Apply rule when a Study is initially processed')
 GO
 
+INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),104,'CompressingStudy','Compressing Study','Apply rule when a Study is being compressed')
+GO
+
+
 -- FilesystemQueueTypeEnum inserts
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
@@ -184,6 +227,19 @@ INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
            (newid(),102,'TierMigrate','Tier Migrate','Migrate a Study to a Lower Tier')
 GO
 
+INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),103,'LosslessCompress','Lossless Compress','Lossless Compress a Study')
+GO
+
+INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),104,'LossyCompress','Lossy Compress','Lossy Compress a Study')
+GO
+
+
 -- ServiceLockTypeEnum inserts
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
@@ -201,6 +257,18 @@ INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),102,'FilesystemStudyProcess','Filesystem Reprocess Studies','Reapply Study Processing rules within a Filesystem')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),103,'FilesystemLosslessCompress','Filesystem Lossless Compress','Lossless compress studies within a Filesystem')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),104,'FilesystemLossyCompress','Filesystem Lossy Compress','Lossy compress studies within a Filesystem')
 GO
 
 

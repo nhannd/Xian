@@ -372,6 +372,7 @@ CREATE TABLE [dbo].[ServerRule](
 	[ServerRuleApplyTimeEnum] [smallint] NOT NULL,
 	[Enabled] [bit] NOT NULL,
 	[DefaultRule] [bit] NOT NULL,
+	[ExemptRule] [bit] NOT NULL CONSTRAINT [DF_ServerRule_NotRule]  DEFAULT ((0)),
 	[RuleXml] [xml] NOT NULL,
  CONSTRAINT [PK_ServerRule] PRIMARY KEY CLUSTERED 
 (

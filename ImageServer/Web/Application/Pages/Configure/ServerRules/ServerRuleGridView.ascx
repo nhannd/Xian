@@ -43,6 +43,16 @@
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Exempt">
+                        <EditItemTemplate>
+                            <asp:TextBox ID="TextBox3" runat="server" Text='<%# Bind("Exempt") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                        <ItemTemplate>
+                            <asp:Image ID="ExemptImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
+                        </ItemTemplate>
+                        <ItemStyle HorizontalAlign="Center" />
+                        <HeaderStyle HorizontalAlign="Center" />
+                    </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
                     <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
@@ -62,6 +72,9 @@
                             </asp:TableHeaderCell>
                             <asp:TableHeaderCell >
                             Default
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell >
+                            Exempt
                             </asp:TableHeaderCell>
                         </asp:TableHeaderRow>
                     </asp:Table>

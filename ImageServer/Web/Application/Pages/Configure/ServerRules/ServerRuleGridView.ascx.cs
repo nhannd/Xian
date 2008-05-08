@@ -37,205 +37,217 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 {
-    public partial class ServerRuleGridView : UserControl
-    {
-        #region private members
-         // list of devices to display
-        private IList<ServerRule> _serverRules;
-        private ServerRulePanel _serverRulePanel;
-        private Unit _height;
-        #endregion Private members
+	public partial class ServerRuleGridView : UserControl
+	{
+		#region private members
+		// list of devices to display
+		private IList<ServerRule> _serverRules;
+		private ServerRulePanel _serverRulePanel;
+		private Unit _height;
+		#endregion Private members
 
      
-        #region public properties
-
-     	/// <summary>
-        /// Gets/Sets the server rule panel
-        /// </summary>
-        public ServerRulePanel ServerRulePanel
-        {
-            get { return _serverRulePanel; }
-            set { _serverRulePanel = value; }
-        }
+		#region public properties
 
 		/// <summary>
-        /// Gets a reference to the server rule list grid control
-        /// </summary>
-        public GridView TheGrid
-        {
-            get { return this.GridView; }
-        }
+		/// Gets/Sets the server rule panel
+		/// </summary>
+		public ServerRulePanel ServerRulePanel
+		{
+			get { return _serverRulePanel; }
+			set { _serverRulePanel = value; }
+		}
 
 		/// <summary>
-        /// Gets/Sets the height of the server rule list panel
-        /// </summary>
-        public Unit Height
-        {
-            get
-            {
-                if (ContainerTable != null)
-                    return ContainerTable.Height;
-                else
-                    return _height;
-            }
-            set
-            {
-                _height = value;
-                if (ContainerTable != null)
-                    ContainerTable.Height = value;
-            }
-        }
+		/// Gets a reference to the server rule list grid control
+		/// </summary>
+		public GridView TheGrid
+		{
+			get { return this.GridView; }
+		}
 
-        /// <summary>
-        /// Gets/Sets the current selected device.
-        /// </summary>
-        public ServerRule SelectedRule
-        {
-            get
-            {
-                if (ServerRules==null || ServerRules.Count == 0 || GridView.SelectedIndex < 0)
-                    return null;
+		/// <summary>
+		/// Gets/Sets the height of the server rule list panel
+		/// </summary>
+		public Unit Height
+		{
+			get
+			{
+				if (ContainerTable != null)
+					return ContainerTable.Height;
+				else
+					return _height;
+			}
+			set
+			{
+				_height = value;
+				if (ContainerTable != null)
+					ContainerTable.Height = value;
+			}
+		}
 
-                // SelectedIndex is for the current page. Must convert to the index of the entire list
-                int index = GridView.PageIndex * GridView.PageSize + GridView.SelectedIndex;
+		/// <summary>
+		/// Gets/Sets the current selected device.
+		/// </summary>
+		public ServerRule SelectedRule
+		{
+			get
+			{
+				if (ServerRules==null || ServerRules.Count == 0 || GridView.SelectedIndex < 0)
+					return null;
 
-                if (index < 0 || index > ServerRules.Count - 1)
-                    return null;
+				// SelectedIndex is for the current page. Must convert to the index of the entire list
+				int index = GridView.PageIndex * GridView.PageSize + GridView.SelectedIndex;
 
-                return ServerRules[index];
-            }
-            set
-            {
+				if (index < 0 || index > ServerRules.Count - 1)
+					return null;
 
-                GridView.SelectedIndex = ServerRules.IndexOf(value);
-              //  if (OnStudySelectionChanged != null)
-               //     OnDeviceSelectionChanged(this, value);
-            }
-        }
+				return ServerRules[index];
+			}
+			set
+			{
 
-        /// <summary>
-        /// Gets/Sets the list of devices rendered on the screen.
-        /// </summary>
-        public IList<ServerRule> ServerRules
-        {
-            get
-            {
-                return _serverRules;
-            }
-            set
-            {
-                _serverRules = value;
-                GridView.DataSource = _serverRules; // must manually call DataBind() later
-            }
-        }
-        #endregion
+				GridView.SelectedIndex = ServerRules.IndexOf(value);
+				//  if (OnStudySelectionChanged != null)
+				//     OnDeviceSelectionChanged(this, value);
+			}
+		}
 
-        #region Protected Methods
+		/// <summary>
+		/// Gets/Sets the list of devices rendered on the screen.
+		/// </summary>
+		public IList<ServerRule> ServerRules
+		{
+			get
+			{
+				return _serverRules;
+			}
+			set
+			{
+				_serverRules = value;
+				GridView.DataSource = _serverRules; // must manually call DataBind() later
+			}
+		}
+		#endregion
 
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-            if (Height != Unit.Empty)
-                ContainerTable.Height = _height;
-        }
+		#region Protected Methods
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            GridView.DataBind();
-        }
+		protected override void OnInit(EventArgs e)
+		{
+			base.OnInit(e);
+			if (Height != Unit.Empty)
+				ContainerTable.Height = _height;
+		}
 
-        protected void GridView_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-            if (GridView.EditIndex != e.Row.RowIndex)
-            {
-                if (e.Row.RowType == DataControlRowType.DataRow)
-                {
-                    // Add OnClick attribute to each row to make javascript call "Select$###" (where ### is the selected row)
-                    // This method when posted back will be handled by the grid
-                    e.Row.Attributes["OnClick"] =
-                        Page.ClientScript.GetPostBackEventReference(GridView, "Select$" + e.Row.RowIndex);
-                    e.Row.Style["cursor"] = "hand";
+		protected void Page_Load(object sender, EventArgs e)
+		{
+			GridView.DataBind();
+		}
 
-                    // For some reason, double-click won't work if single-click is used
-                    // e.Row.Attributes["ondblclick"] = Page.ClientScript.GetPostBackEventReference(GridView1, "Edit$" + e.Row.RowIndex);
+		protected void GridView_RowDataBound(object sender, GridViewRowEventArgs e)
+		{
+			if (GridView.EditIndex != e.Row.RowIndex)
+			{
+				if (e.Row.RowType == DataControlRowType.DataRow)
+				{
+					// Add OnClick attribute to each row to make javascript call "Select$###" (where ### is the selected row)
+					// This method when posted back will be handled by the grid
+					e.Row.Attributes["OnClick"] =
+						Page.ClientScript.GetPostBackEventReference(GridView, "Select$" + e.Row.RowIndex);
+					e.Row.Style["cursor"] = "hand";
 
-                    CustomizeColumns(e);
-                }
-            }
-        }
-        protected void CustomizeColumns(GridViewRowEventArgs e)
-        {
-            ServerRule fs = e.Row.DataItem as ServerRule;
-            Label lbl = e.Row.FindControl("ServerRuleApplyTimeEnum") as Label; // The label is added in the template
-            lbl.Text = fs.ServerRuleApplyTimeEnum.Description;
+					// For some reason, double-click won't work if single-click is used
+					// e.Row.Attributes["ondblclick"] = Page.ClientScript.GetPostBackEventReference(GridView1, "Edit$" + e.Row.RowIndex);
 
-            lbl = e.Row.FindControl("ServerRuleTypeEnum") as Label; // The label is added in the template
-            lbl.Text = fs.ServerRuleTypeEnum.Description;
+					CustomizeColumns(e);
+				}
+			}
+		}
+		protected void CustomizeColumns(GridViewRowEventArgs e)
+		{
+			ServerRule fs = e.Row.DataItem as ServerRule;
+			Label lbl = e.Row.FindControl("ServerRuleApplyTimeEnum") as Label; // The label is added in the template
+			lbl.Text = fs.ServerRuleApplyTimeEnum.Description;
+
+			lbl = e.Row.FindControl("ServerRuleTypeEnum") as Label; // The label is added in the template
+			lbl.Text = fs.ServerRuleTypeEnum.Description;
 
       
-            Image img = ((Image)e.Row.FindControl("EnabledImage"));
-            if (img != null)
-            {
-                if (fs.Enabled)
-                {
-                    img.ImageUrl = "~/images/checked_small.gif";
-                }
-                else
-                {
-                    img.ImageUrl = "~/images/unchecked_small.gif";
-                }
-            }
+			Image img = ((Image)e.Row.FindControl("EnabledImage"));
+			if (img != null)
+			{
+				if (fs.Enabled)
+				{
+					img.ImageUrl = "~/images/checked_small.gif";
+				}
+				else
+				{
+					img.ImageUrl = "~/images/unchecked_small.gif";
+				}
+			}
 
-            img = ((Image)e.Row.FindControl("DefaultImage"));
-            if (img != null)
-            {
-                if (fs.DefaultRule)
-                {
-                    img.ImageUrl = "~/images/checked_small.gif";
-                }
-                else
-                {
-                    img.ImageUrl = "~/images/unchecked_small.gif";
-                }
-            }
-        }
+			img = ((Image)e.Row.FindControl("DefaultImage"));
+			if (img != null)
+			{
+				if (fs.DefaultRule)
+				{
+					img.ImageUrl = "~/images/checked_small.gif";
+				}
+				else
+				{
+					img.ImageUrl = "~/images/unchecked_small.gif";
+				}
+			}
+			img = ((Image)e.Row.FindControl("ExemptImage"));
+			if (img != null)
+			{
+				if (fs.ExemptRule)
+				{
+					img.ImageUrl = "~/images/checked_small.gif";
+				}
+				else
+				{
+					img.ImageUrl = "~/images/unchecked_small.gif";
+				}
+			}
+		}
 
-        protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
-        {
-            GridView.PageIndex = e.NewPageIndex;
-            DataBind();
-        }
+		protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
+		{
+			GridView.PageIndex = e.NewPageIndex;
+			DataBind();
+		}
 
-        protected void GridView_DataBound(object sender, EventArgs e)
-        {
+		protected void GridView_DataBound(object sender, EventArgs e)
+		{
 
-        }
+		}
 
-        protected void GridView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DataBind();
-        }
+		protected void GridView_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			DataBind();
+		}
 
-        #endregion Protected Methods
+		#endregion Protected Methods
 
 
-        #region public methods
-        /// <summary>
-        /// Binds the list to the control.
-        /// </summary>
-        /// <remarks>
-        /// This method must be called after setting <seeaslo cref="Devices"/> to update the grid with the list.
-        /// </remarks>
-        public override void DataBind()
-        {
-            GridView.DataBind();
+		#region public methods
+		/// <summary>
+		/// Binds the list to the control.
+		/// </summary>
+		/// <remarks>
+		/// This method must be called after setting <seeaslo cref="Devices"/> to update the grid with the list.
+		/// </remarks>
+		public override void DataBind()
+		{
+			GridView.DataBind();
 
-            GridView.PagerSettings.Visible = false;
+			GridView.PagerSettings.Visible = false;
 
-        }
+		}
 
-        #endregion // public methods
+		#endregion // public methods
 
   
-    }
+	}
 }

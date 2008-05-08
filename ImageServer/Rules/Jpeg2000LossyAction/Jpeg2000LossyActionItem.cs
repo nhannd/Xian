@@ -29,17 +29,31 @@
 
 #endregion
 
-
 using System;
-using ClearCanvas.ImageServer.Web.Application.Common;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.Common.Actions;
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
+namespace ClearCanvas.ImageServer.Rules.Jpeg2000LossyAction
 {
-	public partial class About : BasePage
+	public class Jpeg2000LossyActionItem : IActionItem<ServerActionContext>
 	{
-		protected void Page_Load(object sender, EventArgs e)
+		private string _failureReason = "Success";
+
+		public Jpeg2000LossyActionItem()
 		{
 
+		}
+		public bool Execute(ServerActionContext context)
+		{
+			//	DicomJpeg2000Parameters parms;
+
+			return true;
+		}
+
+		public string FailureReason
+		{
+			get { return _failureReason; }
 		}
 	}
 }

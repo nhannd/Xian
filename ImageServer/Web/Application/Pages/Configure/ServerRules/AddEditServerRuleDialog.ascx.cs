@@ -37,101 +37,145 @@ using System.Web.UI.WebControls;
 using System.Xml;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 {
-    public partial class AddEditServerRuleDialog : UserControl
-    {
-        #region private variables
+	public partial class AddEditServerRuleDialog : UserControl
+	{
+		#region private variables
 
-        // The server partitions that the new device can be associated with
-        // This list will be determined by the user level permission.
-        private ServerPartition _partition;
+		// The server partitions that the new device can be associated with
+		// This list will be determined by the user level permission.
+		private ServerPartition _partition;
 
-        private bool _editMode;
-        private ServerRule _rule;
+		private bool _editMode;
+		private ServerRule _rule;
 
-        #endregion
+		#endregion
 
-        #region public members
+		#region public members
 
-        /// <summary>
-        /// Sets the list of partitions users allowed to pick.
-        /// </summary>
-        public ServerPartition Partition
-        {
-            set
-            {
-                _partition = value;
-                ViewState[ClientID + "_ServerPartition"] = value;
-            }
+		/// <summary>
+		/// Sets the list of partitions users allowed to pick.
+		/// </summary>
+		public ServerPartition Partition
+		{
+			set
+			{
+				_partition = value;
+				ViewState[ClientID + "_ServerPartition"] = value;
+			}
 
-            get { return _partition; }
-        }
+			get { return _partition; }
+		}
 
-        /// <summary>
-        /// Sets or gets the value which indicates whether the dialog is in edit mode.
-        /// </summary>
-        public bool EditMode
-        {
-            get { return _editMode; }
-            set
-            {
-                _editMode = value;
-                ViewState[ClientID + "_EditMode"] = value;
-            }
-        }
+		/// <summary>
+		/// Sets or gets the value which indicates whether the dialog is in edit mode.
+		/// </summary>
+		public bool EditMode
+		{
+			get { return _editMode; }
+			set
+			{
+				_editMode = value;
+				ViewState[ClientID + "_EditMode"] = value;
+			}
+		}
 
-        /// <summary>
-        /// Sets/Gets the current editing device.
-        /// </summary>
-        public ServerRule ServerRule
-        {
-            set
-            {
-                _rule = value;
-                // put into viewstate to retrieve later
-                if (_rule != null)
-                    ViewState[ClientID + "_EdittedRule"] = _rule.GetKey();
-            }
-            get { return _rule; }
-        }
+		/// <summary>
+		/// Sets/Gets the current editing device.
+		/// </summary>
+		public ServerRule ServerRule
+		{
+			set
+			{
+				_rule = value;
+				// put into viewstate to retrieve later
+				if (_rule != null)
+					ViewState[ClientID + "_EdittedRule"] = _rule.GetKey();
+			}
+			get { return _rule; }
+		}
 
-        #endregion // public members
+		#endregion // public members
 
-        #region Events
+		#region Events
 
-        /// <summary>
-        /// Defines the event handler for <seealso cref="OKClicked"/>.
-        /// </summary>
-        /// <param name="rule">The device being added.</param>
-        public delegate void OnOKClickedEventHandler(ServerRule rule);
+		/// <summary>
+		/// Defines the event handler for <seealso cref="OKClicked"/>.
+		/// </summary>
+		/// <param name="rule">The device being added.</param>
+		public delegate void OnOKClickedEventHandler(ServerRule rule);
 
-        /// <summary>
-        /// Occurs when users click on "OK".
-        /// </summary>
-        public event OnOKClickedEventHandler OKClicked;
+		/// <summary>
+		/// Occurs when users click on "OK".
+		/// </summary>
+		public event OnOKClickedEventHandler OKClicked;
 
-        #endregion Events
+		#endregion Events
 
-        #region Protected Methods
+		#region Protected Methods
+		private static string GetJavascriptForSampleRule(ServerRuleTypeEnum typeEnum, ServerRuleApplyTimeEnum applyTimeEnum, object[] extensions )
+		{
+			string sampleList = "";
 
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
+			foreach (ISampleRule extension in extensions)
+			{
+				if (extension.Type.Equals(typeEnum))
+				{
+					foreach (ServerRuleApplyTimeEnum applyTimeExtension in extension.ApplyTimeList)
+					{
+						if (applyTimeExtension.Equals(applyTimeExtension))
+						{
+							sampleList +=
+								String.Format(
+									@"        myEle = document.createElement('option') ;
+                    myEle.value = '{0}';
+                    myEle.text = '{1}' ;
+                    sampleList.add(myEle) ;",
+									extension.Name, extension.Description);
+						}
+					}
+				}
+			}
+			
+			return String.Format(@"if (val == '{0}')
+                {{
+                    myEle = document.createElement('option') ;
+                    myEle.value = '';
+                    myEle.text = '' ;
+                    sampleList.add(myEle) ;
+                    {3}
 
-            ServerPartitionTabContainer.ActiveTabIndex = 0;
+                    myEle = document.createElement('option') ;
+                    myEle.value = '{1}';
+                    myEle.text = '{2}';
+                    applyTimeList.add(myEle) ;
 
-            SampleRuleDropDownList.Attributes.Add("onchange", "webServiceScript(this, this.SelectedIndex);");
-            RuleTypeDropDownList.Attributes.Add("onchange", "selectRuleType(this);");
+                }}", typeEnum.Enum,
+			                     applyTimeEnum.Enum,
+			                     applyTimeEnum.Description, sampleList);
+		}
 
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID,
-                                                        @"<script type='text/javascript'>
+		protected override void OnInit(EventArgs e)
+		{
+			base.OnInit(e);
+
+			SampleRuleExtensionPoint ep = new SampleRuleExtensionPoint();
+			object[] extensions = ep.CreateExtensions();
+
+			ServerPartitionTabContainer.ActiveTabIndex = 0;
+
+			SampleRuleDropDownList.Attributes.Add("onchange", "webServiceScript(this, this.SelectedIndex);");
+			RuleTypeDropDownList.Attributes.Add("onchange", "selectRuleType(this);");
+
+			string javascript = @"<script type='text/javascript'>
             function ValidationServerRuleParams()
             {
                 control = document.getElementById('" +
-                                                        RuleXmlTextBox.ClientID +
-                                                        @"');
+			                    RuleXmlTextBox.ClientID +
+			                    @"');
                 params = new Array();
                 params.serverRule=escape(control.value);
                 return params;
@@ -141,96 +185,48 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             {         
                 var val = oList.value; 
                 var sampleList = document.getElementById('" +
-                                                        SampleRuleDropDownList.ClientID +
-                                                        @"');
+			                    SampleRuleDropDownList.ClientID +
+			                    @"');
                 var applyTimeList = document.getElementById('" +
-                                                        RuleApplyTimeDropDownList.ClientID +
-                                                        @"');
+			                    RuleApplyTimeDropDownList.ClientID +
+			                    @"');
                 for (var q=sampleList.options.length; q>=0; q--) sampleList.options[q]=null;
                 for (var q=applyTimeList.options.length; q>=0; q--) applyTimeList.options[q]=null;
-                if (val == '" +
-                                                        ServerRuleTypeEnum.GetEnum("AutoRoute").Enum +
-                                                        @"')
-                {
-                    myEle = document.createElement('option') ;
-                    myEle.value = '';
-                    myEle.text = '' ;
-                    sampleList.add(myEle) ;
-                    myEle = document.createElement('option') ;
-                    myEle.value = 'MultiTagAutoRoute';
-                    myEle.text = 'Multi-Tag AutoRoute' ;
-                    sampleList.add(myEle) ;
-                    myEle = document.createElement('option') ;
-                    myEle.value = 'SimpleAutoRoute';
-                    myEle.text = 'Simple AutoRoute' ;
-                    sampleList.add(myEle) ;
-
-                    myEle = document.createElement('option') ;
-                    myEle.value = '" +
-                                                        ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Enum +
-                                                        @"';
-                    myEle.text = '" +
-                                                        ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Description +
-                                                        @"';
-                    applyTimeList.add(myEle) ;
-
-                }
-                else if (val == '" +
-                                                        ServerRuleTypeEnum.GetEnum("StudyDelete").Enum +
-                                                        @"')
-                {
-                    myEle = document.createElement('option') ;
-                    myEle.value = '';
-                    myEle.text = '' ;
-                    sampleList.add(myEle) ;
-                    myEle = document.createElement('option') ;
-                    myEle.value = 'AgeBasedDelete';
-                    myEle.text = 'Age Based Delete' ;
-                    sampleList.add(myEle) ;
-                    myEle = document.createElement('option') ;
-                    myEle.value = 'TagBasedDelete';
-                    myEle.text = 'Tag Based Delete' ;
-                    sampleList.add(myEle) ;
-
-                    myEle = document.createElement('option') ;
-                    myEle.value = '" +
-                                                        ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum +
-                                                        @"';
-                    myEle.text = '" +
-                                                        ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Description +
-                                                        @"';
-                    applyTimeList.add(myEle) ;
-                }
-                else if (val == '" +
-                                                        ServerRuleTypeEnum.GetEnum("Tier1Retention").Enum +
-                                                        @"')
-                {
-                    myEle = document.createElement('option') ;
-                    myEle.value = '';
-                    myEle.text = '' ;
-                    sampleList.add(myEle) ;
-                    myEle = document.createElement('option') ;
-                    myEle.value = 'AgeBasedRetention';
-                    myEle.text = 'Age Based Retention' ;
-                    sampleList.add(myEle) ;
-
-                    myEle = document.createElement('option') ;
-                    myEle.value = '" +
-                                                        ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum +
-                                                        @"';
-                    myEle.text = '" +
-                                                        ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Description +
-                                                        @"';
-                    applyTimeList.add(myEle) ;
-                }
-            }
+				" + 
+			                    GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("AutoRoute"),
+			                                               ServerRuleApplyTimeEnum.GetEnum("SopProcessed"),extensions) +
+			                    @"else "
+			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("StudyDelete"),
+			                                                 ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"),
+			                                                 extensions) +
+			                    @"else "
+			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("Tier1Retention"),
+			                                                 ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"),
+			                                                 extensions) +
+			                    @"else "
+			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("LosslessCompressStudy"),
+			                                                 ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"),
+			                                                 extensions) +
+			                    @"else "
+			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("LossyCompressStudy"),
+			                                                 ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"),
+			                                                 extensions) +
+			                    @"else "
+			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("LosslessCompressParameters"),
+			                                                 ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"),
+			                                                 extensions) +
+			                    @"else "
+			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("LossyCompressParameters"),
+			                                                 ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"),
+			                                                 extensions) +
+			                    @"}
 
             // This function calls the Web Service method.  
             function webServiceScript(oList)
             {
                 var type = oList.value;
              
-                ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules.ServerRuleSamples.GetXml(type,
+                ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRules.ServerRuleSamples.GetXml(type,
                     OnSucess, OnError);
             }
             function OnError(result)
@@ -243,215 +239,267 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             function OnSucess(result)
             {
                 var oList = document.getElementById('" +
-                                                        SampleRuleDropDownList.ClientID +
-                                                        @"');
+			                    SampleRuleDropDownList.ClientID +
+			                    @"');
                 var sValue = oList.options[oList.selectedIndex].value;
              
                 RsltElem = document.getElementById('" +
-                                                        RuleXmlTextBox.ClientID +
-                                                        @"');
+			                    RuleXmlTextBox.ClientID +
+			                    @"');
                 RsltElem.value = result;
             }
   
-            </script>");
-        }
+            </script>";
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            if (Page.IsPostBack)
-            {
-                if (ViewState[ClientID + "_EditMode"] != null)
-                    _editMode = (bool) ViewState[ClientID + "_EditMode"];
+			Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, javascript);
+		}
 
-                if (ViewState[ClientID + "_ServerPartition"] != null)
-                    _partition = (ServerPartition) ViewState[ClientID + "_ServerPartition"];
+		protected void Page_Load(object sender, EventArgs e)
+		{
+			if (Page.IsPostBack)
+			{
+				if (ViewState[ClientID + "_EditMode"] != null)
+					_editMode = (bool) ViewState[ClientID + "_EditMode"];
 
-                if (ViewState[ClientID + "_EdittedRule"] != null)
-                {
-                    ServerEntityKey ruleKey = ViewState[ClientID + "_EdittedRule"] as ServerEntityKey;
-                    _rule = ServerRule.Load(ruleKey);
-                }
-            }
-        }
+				if (ViewState[ClientID + "_ServerPartition"] != null)
+					_partition = (ServerPartition) ViewState[ClientID + "_ServerPartition"];
 
-        protected void OKButton_Click(object sender, EventArgs e)
-        {
-            if (Page.IsValid)
-            {
-                SaveData();
-                if (OKClicked != null)
-                {
-                    OKClicked(ServerRule);
-                }
+				if (ViewState[ClientID + "_EdittedRule"] != null)
+				{
+					ServerEntityKey ruleKey = ViewState[ClientID + "_EdittedRule"] as ServerEntityKey;
+					_rule = ServerRule.Load(ruleKey);
+				}
+			}
+		}
 
-                Close();
-            }
-            else
-            {
-                Show();
-            }
-        }
+		protected void OKButton_Click(object sender, EventArgs e)
+		{
+			if (Page.IsValid)
+			{
+				SaveData();
+				if (OKClicked != null)
+				{
+					OKClicked(ServerRule);
+				}
 
-        protected void CancelButton_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-        #endregion Protected Methods
+				Close();
+			}
+			else
+			{
+				Show();
+			}
+		}
 
-
-        #region Private Methods
-
-        private void SaveData()
-        {
-            if (_rule == null)
-            {
-                _rule = new ServerRule();
-            }
+		protected void CancelButton_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
+		#endregion Protected Methods
 
 
-            if (RuleXmlTextBox.Text.Length > 0)
-            {
-                _rule.RuleXml = new XmlDocument();
-                _rule.RuleXml.Load(new StringReader(RuleXmlTextBox.Text));
-            }
+		#region Private Methods
 
-            _rule.RuleName = RuleNameTextBox.Text;
-
-            _rule.ServerRuleTypeEnum = new ServerRuleTypeEnum();
-            _rule.ServerRuleTypeEnum.SetEnum(short.Parse(RuleTypeDropDownList.SelectedItem.Value));
-
-            if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.GetEnum("AutoRoute"))
-                _rule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.GetEnum("SopProcessed");
-            else
-                _rule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.GetEnum("StudyProcessed");
-
-            _rule.Enabled = EnabledCheckBox.Checked;
-            _rule.DefaultRule = DefaultCheckBox.Checked;
-            _rule.ServerPartitionKey = Partition.GetKey();
-        }
-
-        #endregion Private Methods
-
-        #region Public methods
-
-        /// <summary>
-        /// Displays the add/edit device dialog box.
-        /// </summary>
-        public void Show()
-        {
-            // update the dropdown list
-            RuleApplyTimeDropDownList.Items.Clear();
-            RuleTypeDropDownList.Items.Clear();
-            RuleXmlTabPanel.TabIndex = 0;
-            ServerPartitionTabContainer.ActiveTabIndex = 0;
-
-            if (EditMode)
-            {
-                ModalDialog.Title = "Edit Server Rule";
-                OKButton.Text = "Update";
-
-                DefaultCheckBox.Checked = _rule.DefaultRule;
-                EnabledCheckBox.Checked = _rule.Enabled;
-
-                RuleNameTextBox.Text = _rule.RuleName;
-
-                SampleRuleDropDownList.Visible = false;
-                SelectSampleRuleLabel.Visible = false;
-
-                // Fill in the drop down menus
-                RuleTypeDropDownList.Items.Add(new ListItem(
-                                                   _rule.ServerRuleTypeEnum.Description,
-                                                   _rule.ServerRuleTypeEnum.Enum.ToString()));
-
-                if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("StudyDelete").Enum)
-                {
-                    RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                            ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").
-                                                                Description,
-                                                            ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
-                                                                ToString()));
-                }
-                else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("Tier1Retention").Enum)
-                {
-                    RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                            ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").
-                                                                Description,
-                                                            ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
-                                                                ToString()));
-                }
-                else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("AutoRoute").Enum)
-                {
-                    RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                            ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Description,
-                                                            ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Enum.
-                                                                ToString()));
-                }
-                RuleApplyTimeDropDownList.SelectedValue = _rule.ServerRuleApplyTimeEnum.Enum.ToString();
-                RuleTypeDropDownList.SelectedValue = _rule.ServerRuleTypeEnum.Enum.ToString();
+		private void SaveData()
+		{
+			if (_rule == null)
+			{
+				_rule = new ServerRule();
+			}
 
 
-                // Fill in the Rule XML
-                StringWriter sw = new StringWriter();
+			if (RuleXmlTextBox.Text.Length > 0)
+			{
+				_rule.RuleXml = new XmlDocument();
+				_rule.RuleXml.Load(new StringReader(RuleXmlTextBox.Text));
+			}
 
-                XmlWriterSettings xmlSettings = new XmlWriterSettings();
+			_rule.RuleName = RuleNameTextBox.Text;
 
-                xmlSettings.Encoding = Encoding.UTF8;
-                xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
-                xmlSettings.Indent = true;
-                xmlSettings.NewLineOnAttributes = false;
-                xmlSettings.CheckCharacters = true;
-                xmlSettings.IndentChars = "  ";
+			_rule.ServerRuleTypeEnum = new ServerRuleTypeEnum();
+			_rule.ServerRuleTypeEnum.SetEnum(short.Parse(RuleTypeDropDownList.SelectedItem.Value));
 
-                XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
+			if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.GetEnum("AutoRoute"))
+				_rule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.GetEnum("SopProcessed");
+			else
+				_rule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.GetEnum("StudyProcessed");
 
-                _rule.RuleXml.WriteTo(tw);
+			_rule.Enabled = EnabledCheckBox.Checked;
+			_rule.DefaultRule = DefaultCheckBox.Checked;
+			_rule.ServerPartitionKey = Partition.GetKey();
+			_rule.ExemptRule = ExemptRuleCheckBox.Checked;
+		}
 
-                tw.Close();
+		#endregion Private Methods
 
-                RuleXmlTextBox.Text = sw.ToString();
-            }
-            else
-            {
-                ModalDialog.Title = "Add Server Rule";
-                OKButton.Text = "Add";
+		#region Public methods
 
-                DefaultCheckBox.Checked = false;
-                EnabledCheckBox.Checked = true;
+		/// <summary>
+		/// Displays the add/edit device dialog box.
+		/// </summary>
+		public void Show()
+		{
+			// update the dropdown list
+			RuleApplyTimeDropDownList.Items.Clear();
+			RuleTypeDropDownList.Items.Clear();
+			RuleXmlTabPanel.TabIndex = 0;
+			ServerPartitionTabContainer.ActiveTabIndex = 0;
 
-                RuleNameTextBox.Text = "";
-                RuleXmlTextBox.Text = "";
+			if (EditMode)
+			{
+				ModalDialog.Title = "Edit Server Rule";
+				OKButton.Text = "Update";
 
-                SampleRuleDropDownList.Visible = true;
-                SelectSampleRuleLabel.Visible = true;
+				DefaultCheckBox.Checked = _rule.DefaultRule;
+				EnabledCheckBox.Checked = _rule.Enabled;
+				ExemptRuleCheckBox.Checked = _rule.ExemptRule;
 
-                // Do the drop down lists
-                RuleTypeDropDownList.Items.Add(new ListItem(
-                                                   ServerRuleTypeEnum.GetEnum("AutoRoute").Description,
-                                                   ServerRuleTypeEnum.GetEnum("AutoRoute").Enum.ToString()));
+				//if (_rule.DefaultRule)
+				//	DefaultCheckBox.Enabled = false;
 
-                RuleTypeDropDownList.Items.Add(new ListItem(
-                                                   ServerRuleTypeEnum.GetEnum("StudyDelete").Description,
-                                                   ServerRuleTypeEnum.GetEnum("StudyDelete").Enum.ToString()));
+				RuleNameTextBox.Text = _rule.RuleName;
 
-                RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                        ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Description,
-                                                        ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Enum.ToString()));
+				SampleRuleDropDownList.Visible = false;
+				SelectSampleRuleLabel.Visible = false;
 
-                SampleRuleDropDownList.Items.Clear();
-                SampleRuleDropDownList.Items.Add(new ListItem("", ""));
-                SampleRuleDropDownList.Items.Add(new ListItem("Multi-Tag AutoRoute", "MultiTagAutoRoute"));
-                SampleRuleDropDownList.Items.Add(new ListItem("Simple AutoRoute", "SimpleAutoRoute"));
-            }
+				// Fill in the drop down menus
+				RuleTypeDropDownList.Items.Add(new ListItem(
+				                               	_rule.ServerRuleTypeEnum.Description,
+				                               	_rule.ServerRuleTypeEnum.Enum.ToString()));
 
-            ModalDialog.Show();
-            return;
-        }
+				if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("StudyDelete").Enum)
+				{
+					RuleApplyTimeDropDownList.Items.Add(new ListItem(
+					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").
+					                                    		Description,
+					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
+					                                    		ToString()));
+				}
+				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("Tier1Retention").Enum)
+				{
+					RuleApplyTimeDropDownList.Items.Add(new ListItem(
+					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").
+					                                    		Description,
+					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
+					                                    		ToString()));
+				}
+				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("AutoRoute").Enum)
+				{
+					RuleApplyTimeDropDownList.Items.Add(new ListItem(
+					                                    	ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Description,
+					                                    	ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Enum.
+					                                    		ToString()));
+				}
+				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("LosslessCompressStudy").Enum)
+				{
+					RuleApplyTimeDropDownList.Items.Add(new ListItem(
+					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Description,
+					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
+					                                    		ToString()));
+				}
+				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("LossyCompressStudy").Enum)
+				{
+					RuleApplyTimeDropDownList.Items.Add(new ListItem(
+					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Description,
+					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
+					                                    		ToString()));
+				}
+				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("LosslessCompressParameters").Enum)
+				{
+					RuleApplyTimeDropDownList.Items.Add(new ListItem(
+					                                    	ServerRuleApplyTimeEnum.GetEnum("CompressingStudy").Description,
+					                                    	ServerRuleApplyTimeEnum.GetEnum("CompressingStudy").Enum.
+					                                    		ToString()));
+				}
+				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("LossyCompressParameters").Enum)
+				{
+					RuleApplyTimeDropDownList.Items.Add(new ListItem(
+					                                    	ServerRuleApplyTimeEnum.GetEnum("CompressingStudy").Description,
+					                                    	ServerRuleApplyTimeEnum.GetEnum("CompressingStudy").Enum.
+					                                    		ToString()));
+				}
 
-        public void Close()
-        {
-            ModalDialog.Hide();
-        }
+				RuleApplyTimeDropDownList.SelectedValue = _rule.ServerRuleApplyTimeEnum.Enum.ToString();
+				RuleTypeDropDownList.SelectedValue = _rule.ServerRuleTypeEnum.Enum.ToString();
 
-        #endregion
-    }
+
+				// Fill in the Rule XML
+				StringWriter sw = new StringWriter();
+
+				XmlWriterSettings xmlSettings = new XmlWriterSettings();
+
+				xmlSettings.Encoding = Encoding.UTF8;
+				xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
+				xmlSettings.Indent = true;
+				xmlSettings.NewLineOnAttributes = false;
+				xmlSettings.CheckCharacters = true;
+				xmlSettings.IndentChars = "  ";
+
+				XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
+
+				_rule.RuleXml.WriteTo(tw);
+
+				tw.Close();
+
+				RuleXmlTextBox.Text = sw.ToString();
+			}
+			else
+			{
+				ModalDialog.Title = "Add Server Rule";
+				OKButton.Text = "Add";
+
+				DefaultCheckBox.Checked = false;
+				EnabledCheckBox.Checked = true;
+				ExemptRuleCheckBox.Checked = false;
+
+				RuleNameTextBox.Text = "";
+				RuleXmlTextBox.Text = "";
+
+				SampleRuleDropDownList.Visible = true;
+				SelectSampleRuleLabel.Visible = true;
+
+				// Do the drop down lists
+				RuleTypeDropDownList.Items.Add(new ListItem(
+				                               	ServerRuleTypeEnum.GetEnum("AutoRoute").Description,
+				                               	ServerRuleTypeEnum.GetEnum("AutoRoute").Enum.ToString()));
+				RuleTypeDropDownList.Items.Add(new ListItem(
+				                               	ServerRuleTypeEnum.GetEnum("StudyDelete").Description,
+				                               	ServerRuleTypeEnum.GetEnum("StudyDelete").Enum.ToString()));
+				RuleTypeDropDownList.Items.Add(new ListItem(
+				                               	ServerRuleTypeEnum.GetEnum("LosslessCompressStudy").Description,
+				                               	ServerRuleTypeEnum.GetEnum("LosslessCompressStudy").Enum.ToString()));
+				RuleTypeDropDownList.Items.Add(new ListItem(
+				                               	ServerRuleTypeEnum.GetEnum("LossyCompressStudy").Description,
+				                               	ServerRuleTypeEnum.GetEnum("LossyCompressStudy").Enum.ToString()));
+				RuleTypeDropDownList.Items.Add(new ListItem(
+				                               	ServerRuleTypeEnum.GetEnum("LosslessCompressParameters").Description,
+				                               	ServerRuleTypeEnum.GetEnum("LosslessCompressParameters").Enum.ToString()));
+				RuleTypeDropDownList.Items.Add(new ListItem(
+				                               	ServerRuleTypeEnum.GetEnum("LossyCompressParameters").Description,
+				                               	ServerRuleTypeEnum.GetEnum("LossyCompressParameters").Enum.ToString()));
+
+
+				RuleApplyTimeDropDownList.Items.Add(new ListItem(
+				                                    	ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Description,
+				                                    	ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Enum.ToString()));
+				RuleApplyTimeDropDownList.Items.Add(new ListItem(
+				                                    	ServerRuleApplyTimeEnum.GetEnum("CompressingStudy").Description,
+				                                    	ServerRuleApplyTimeEnum.GetEnum("CompressingStudy").Enum.ToString()));
+				
+				SampleRuleDropDownList.Items.Clear();
+				SampleRuleDropDownList.Items.Add(new ListItem("", ""));
+				SampleRuleDropDownList.Items.Add(new ListItem("Multi-Tag AutoRoute", "MultiTagAutoRoute"));
+				SampleRuleDropDownList.Items.Add(new ListItem("Simple AutoRoute", "SimpleAutoRoute"));
+			}
+
+			ModalDialog.Show();
+			return;
+		}
+
+		public void Close()
+		{
+			ModalDialog.Hide();
+		}
+
+		#endregion
+	}
 }

@@ -31,9 +31,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules
@@ -41,6 +39,7 @@ namespace ClearCanvas.ImageServer.Rules
     public class RuleTypeCollection
     {
         #region Private Members
+		private readonly List<Rule> _exemptRuleList = new List<Rule>();
         private readonly List<Rule> _ruleList = new List<Rule>();
         private readonly ServerRuleTypeEnum _type;
         private Rule _defaultRule;
@@ -79,7 +78,9 @@ namespace ClearCanvas.ImageServer.Rules
                 else
                     _defaultRule = rule;
             }
-            else
+            else if (rule.ServerRule.ExemptRule)
+            	_exemptRuleList.Add(rule);
+			else
                 _ruleList.Add(rule);
         }
 
@@ -88,6 +89,20 @@ namespace ClearCanvas.ImageServer.Rules
             bool doDefault = true;
             try
             {
+				foreach (Rule theRule in _exemptRuleList)
+				{
+					bool ruleApplied;
+					bool ruleSuccess;
+
+					theRule.Execute(context, false, out ruleApplied, out ruleSuccess);
+
+					if (ruleApplied)
+					{
+						Platform.Log(LogLevel.Info,"Exempt rule found that applies, ignoring action.");
+						return;
+					}
+				}
+
                 foreach (Rule theRule in _ruleList)
                 {
                     bool ruleApplied;

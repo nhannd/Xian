@@ -48,6 +48,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
         }
+        public System.Boolean ExemptRule
+        {
+            set { SubParameters["ExemptRule"] = new EntityUpdateColumn<System.Boolean>("ExemptRule", value); }
+        }
         public System.String RuleName
         {
             set { SubParameters["RuleName"] = new EntityUpdateColumn<System.String>("RuleName", value); }

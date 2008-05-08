@@ -63,6 +63,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
             } 
         }
+        public ISearchCondition<System.Boolean> ExemptRule
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ExemptRule"))
+              {
+                 SubCriteria["ExemptRule"] = new SearchCondition<System.Boolean>("ExemptRule");
+              }
+              return (ISearchCondition<System.Boolean>)SubCriteria["ExemptRule"];
+            } 
+        }
         public ISearchCondition<System.String> RuleName
         {
             get

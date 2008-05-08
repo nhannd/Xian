@@ -35,16 +35,16 @@ using ClearCanvas.Common.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
+namespace ClearCanvas.ImageServer.Rules.LossyCompressAction
 {
-    public class Tier1RetentionActionItem : IActionItem<ServerActionContext>
-    {
-        private string _failureReason = "Success";
+	public class LossyCompressActionItem : IActionItem<ServerActionContext>
+	{
+	    private string _failureReason = "Success";
         private readonly double _time;
         private readonly string _timeUnits;
-        private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("TierMigrate");
+		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("LossyCompress");
 
-        public Tier1RetentionActionItem(double time, string timeUnits)
+		public LossyCompressActionItem(double time, string timeUnits)
         {
             _time = time;
             _timeUnits = timeUnits.ToLower();
@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
             }
             else
             {
-                _failureReason = String.Format("Unexpected time units for tier1-retention action item: {0}", _timeUnits);
+                _failureReason = String.Format("Unexpected time units for lossy-compress action item: {0}", _timeUnits);
                 return false;
             }
 
@@ -82,5 +82,5 @@ namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
         {
             get { return _failureReason; }
         }
-    }
+	}
 }

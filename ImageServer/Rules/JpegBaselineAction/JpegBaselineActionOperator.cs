@@ -29,17 +29,38 @@
 
 #endregion
 
-
 using System;
-using ClearCanvas.ImageServer.Web.Application.Common;
+using System.Collections.Generic;
+using System.Text;
+using System.Xml;
+using System.Xml.Schema;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Actions;
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
+namespace ClearCanvas.ImageServer.Rules.JpegBaselineAction
 {
-	public partial class About : BasePage
+	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
+	public class JpegBaselineActionOperator : IXmlActionCompilerOperator<ServerActionContext>
 	{
-		protected void Page_Load(object sender, EventArgs e)
+		public string OperatorTag
 		{
+			get { return "jpeg-baseline"; }
+		}
 
+		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
+		{
+			return new JpegBaselineActionItem();
+		}
+
+		public XmlSchemaElement GetSchema()
+		{
+			XmlSchemaComplexType type = new XmlSchemaComplexType();			
+
+			XmlSchemaElement element = new XmlSchemaElement();
+			element.Name = "jpeg-baseline";
+			element.SchemaType = type;
+
+			return element;
 		}
 	}
 }

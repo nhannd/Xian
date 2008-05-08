@@ -29,16 +29,30 @@
 
 #endregion
 
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Model;
 
-using System;
-using ClearCanvas.ImageServer.Web.Application.Common;
-
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
+namespace ClearCanvas.ImageServer.Services.WorkQueue.LossyCompress
 {
-	public partial class About : BasePage
+	class LossyCompressItemProcessor : BaseItemProcessor
 	{
-		protected void Page_Load(object sender, EventArgs e)
+		protected override void ProcessItem(Model.WorkQueue item)
 		{
+			LoadUids(item);
+			LoadStorageLocation(item);
+
+			if (WorkQueueUidList.Count == 0)
+			{
+				// No UIDs associated with the WorkQueue item.  Set the status back to idle
+				PostProcessing(item, 0, false);
+				//CheckEmptyStudy(item);
+				return;
+			}
+
+			Platform.Log(LogLevel.Info, "Lossy compressing study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Load(item.ServerPartitionKey).AeTitle);
+
+
+			PostProcessing(item, WorkQueueUidList.Count, false);
 
 		}
 	}

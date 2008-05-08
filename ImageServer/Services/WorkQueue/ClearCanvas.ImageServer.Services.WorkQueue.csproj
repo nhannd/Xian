@@ -40,6 +40,10 @@
     <Compile Include="CleanupStudy\CleanupStudyItemProcessor.cs" />
     <Compile Include="DeleteStudy\DeleteStudyFactoryExtension.cs" />
     <Compile Include="DeleteStudy\DeleteStudyItemProcessor.cs" />
+    <Compile Include="LosslessCompress\LosslessCompressFactoryExtension.cs" />
+    <Compile Include="LosslessCompress\LosslessCompressItemProcessor.cs" />
+    <Compile Include="LossyCompress\LossyCompressFactoryExtension.cs" />
+    <Compile Include="LossyCompress\LossyCompressItemProcessor.cs" />
     <Compile Include="WebEditStudy\EditStudyCommand.cs" />
     <Compile Include="WebEditStudy\EditStudyContext.cs" />
     <Compile Include="WebEditStudy\ActionPlugins\SetValueActionItem.cs" />
