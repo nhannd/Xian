@@ -142,9 +142,16 @@ namespace ClearCanvas.Ris.Server
                 metadataBehavior.HttpGetEnabled = true;
                 host.Description.Behaviors.Add(metadataBehavior);
             }
+
+			// adjust some service behaviours
+			ServiceBehaviorAttribute serviceBehavior = host.Description.Behaviors.Find<ServiceBehaviorAttribute>();
+
+			// set instance mode to "per call"
+			serviceBehavior.InstanceContextMode = InstanceContextMode.PerCall;
+
+			// determine whether to send exception detail back to client
 #if DEBUG
-            ServiceBehaviorAttribute debuggingBehavior = host.Description.Behaviors.Find<ServiceBehaviorAttribute>();
-            debuggingBehavior.IncludeExceptionDetailInFaults = true;
+			serviceBehavior.IncludeExceptionDetailInFaults = true;
 #endif
             // set up the certificate - required for WSHttpBinding
             host.Credentials.ServiceCertificate.SetCertificate(

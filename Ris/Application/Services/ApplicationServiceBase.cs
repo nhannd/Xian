@@ -34,6 +34,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
+using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -74,8 +75,8 @@ namespace ClearCanvas.Ris.Application.Services
         {
             get
             {
-				//if (_currentUserStaff == null)
-				//{
+				if (_currentUserStaff == null)
+				{
                     try
                     {
                         StaffSearchCriteria where = new StaffSearchCriteria();
@@ -86,7 +87,7 @@ namespace ClearCanvas.Ris.Application.Services
                     {
                         throw new RequestValidationException(SR.ExceptionNoStaffForUser);
                     }
-                //}
+                }
 
                 return _currentUserStaff;
             }
@@ -100,8 +101,8 @@ namespace ClearCanvas.Ris.Application.Services
         {
             get
             {
-                //if(!_workingFacilityLoaded)
-                //{
+                if(!_workingFacilityLoaded)
+                {
                     WorkingFacilitySettings settings = new WorkingFacilitySettings();
                     if (!string.IsNullOrEmpty(settings.WorkingFacilityCode))
                     {
@@ -113,7 +114,7 @@ namespace ClearCanvas.Ris.Application.Services
                         _workingFacility = PersistenceContext.GetBroker<IFacilityBroker>().FindOne(where);
                     }
                     _workingFacilityLoaded = true;
-                //}
+                }
                 return _workingFacility;
             }
         }
