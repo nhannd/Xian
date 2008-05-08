@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Client
 
         public void AddNote()
         {
-            OrderNoteDetail note = new OrderNoteDetail(_category.Key, "", null, null);
+            OrderNoteDetail note = new OrderNoteDetail(_category.Key, "", null, null, null);
 
             try
             {
@@ -148,7 +148,7 @@ namespace ClearCanvas.Ris.Client
             OrderNoteDetail note = new OrderNoteDetail(
                 _currentNoteSelection.Category,
                 _currentNoteSelection.NoteBody,
-                null, null);
+                null, null, null);
 
             try
             {

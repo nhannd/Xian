@@ -339,6 +339,9 @@
   <data name="FormatFrom" xml:space="preserve">
     <value>From: {0} - {1}</value>
   </data>
+  <data name="FormatFromOnBehalf" xml:space="preserve">
+    <value>From: {0} on behalf of {1} - {2}</value>
+  </data>
   <data name="FormatNoteCategory" xml:space="preserve">
     <value>{0} - Severity {1}</value>
   </data>

@@ -25,7 +25,14 @@ namespace ClearCanvas.Ris.Client
 
 			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, string>(
 				SR.ColumnFrom,
-				delegate(Checkable<OrderNoteDetail> item) { return PersonNameFormat.Format(item.Item.Author.Name); },
+				delegate(Checkable<OrderNoteDetail> item)
+					{
+						StringBuilder sb = new StringBuilder();
+						sb.Append(PersonNameFormat.Format(item.Item.Author.Name));
+						if (item.Item.OnBehalfOfGroup != null)
+							sb.Append(string.Format(" on behalf of {0}", item.Item.OnBehalfOfGroup.Name));
+						return sb.ToString();
+					},
 				1.0f));
 
 			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, DateTime?>(

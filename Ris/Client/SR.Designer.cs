@@ -727,6 +727,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to From: {0} on behalf of {1} - {2}.
+        /// </summary>
+        internal static string FormatFromOnBehalf {
+            get {
+                return ResourceManager.GetString("FormatFromOnBehalf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} - Severity {1}.
         /// </summary>
         internal static string FormatNoteCategory {

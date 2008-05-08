@@ -67,6 +67,9 @@ namespace ClearCanvas.Ris.Client
 
 		private string _body;
 
+		private IList<StaffGroupSummary> _onBehalfOfChoices;
+		private StaffGroupSummary _onBehalfOf;
+
 		private readonly Table<string> _recipients;
 		private string _selectedRecipient;
 		private readonly CrudActionModel _recipientsActionModel;
@@ -129,6 +132,9 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IOrderNoteService>(
 				delegate(IOrderNoteService service)
 				{
+					GetConversationEditorFormDataResponse formDataResponse = service.GetConversationEditorFormData(new GetConversationEditorFormDataRequest());
+					_onBehalfOfChoices = formDataResponse.OnBehalfOfGroupChoices;
+
 					GetConversationRequest request = new GetConversationRequest(_orderRef, _orderNoteCategories, false);
 					GetConversationResponse response = service.GetConversation(request);
 
@@ -196,6 +202,31 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_body = value;
+			}
+		}
+
+		public IList<string> OnBehalfOfGroupChoices
+		{
+			get
+			{
+				return CollectionUtils.Map<StaffGroupSummary, string>(
+					_onBehalfOfChoices, 
+					delegate(StaffGroupSummary summary) { return summary.Name; });
+			}
+		}
+
+		public string OnBehalfOf
+		{
+			get
+			{
+				return _onBehalfOf != null ? _onBehalfOf.Name : string.Empty;
+			}
+			set
+			{
+				_onBehalfOf = CollectionUtils.SelectFirst(
+					_onBehalfOfChoices, 
+					delegate(StaffGroupSummary summary) { return string.Equals(summary.Name, value); });
+
 			}
 		}
 
@@ -387,7 +418,14 @@ namespace ClearCanvas.Ris.Client
 		{
 			foreach (OrderNoteDetail note in notes)
 			{
-				AddUnique(note.Author);
+				if(note.OnBehalfOfGroup != null)
+				{
+					AddUnique(note.OnBehalfOfGroup);
+				}
+				else
+				{
+					AddUnique(note.Author);
+				}
 
 				foreach (OrderNoteDetail.StaffRecipientDetail staffRecipient in note.StaffRecipients)
 				{
@@ -497,7 +535,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (string.IsNullOrEmpty(_body)) return null;
 
-			OrderNoteDetail reply = new OrderNoteDetail(OrderNoteCategory.PreliminaryDiagnosis.Key, _body, _staffRecipients, _groupRecipients);
+			OrderNoteDetail reply = new OrderNoteDetail(OrderNoteCategory.PreliminaryDiagnosis.Key, _body, _onBehalfOf, _staffRecipients, _groupRecipients);
 			return reply;
 		}
 

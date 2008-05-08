@@ -48,7 +48,13 @@ namespace ClearCanvas.Ris.Client
 				1.0f, 1));
 
 			this.Columns.Add(new TableColumn<OrderNoteboxItemSummary, string>(SR.ColumnFrom,
-				delegate(OrderNoteboxItemSummary item) { return String.Format(SR.FormatFrom, PersonNameFormat.Format(item.Author.Name), item.PostTime); },
+				delegate(OrderNoteboxItemSummary item)
+				{
+					if (item.OnBehalfOfGroup != null)
+						return String.Format(SR.FormatFromOnBehalf, PersonNameFormat.Format(item.Author.Name), item.OnBehalfOfGroup.Name, item.PostTime);
+					else
+						return String.Format(SR.FormatFrom, PersonNameFormat.Format(item.Author.Name), item.PostTime);
+				},
 				1.0f, 2));
 
 			this.Columns.Add(new TableColumn<OrderNoteboxItemSummary, string>(SR.ColumnTo,

@@ -157,12 +157,15 @@ namespace ClearCanvas.Ris.Application.Common
         /// </summary>
         /// <param name="category"></param>
         /// <param name="noteBody"></param>
+        /// <param name="onBehalfOfGroup"></param>
         /// <param name="staffRecipients"></param>
         /// <param name="groupRecipients"></param>
-        public OrderNoteDetail(string category, string noteBody, List<StaffSummary> staffRecipients, List<StaffGroupSummary> groupRecipients)
+		public OrderNoteDetail(string category, string noteBody, StaffGroupSummary onBehalfOfGroup, List<StaffSummary> staffRecipients, List<StaffGroupSummary> groupRecipients)
         {
             Category = category;
             NoteBody = noteBody;
+        	OnBehalfOfGroup = onBehalfOfGroup;
+
             StaffRecipients = staffRecipients == null ? null :
                 CollectionUtils.Map<StaffSummary, StaffRecipientDetail>(staffRecipients,
                     delegate(StaffSummary staff)

@@ -57,6 +57,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_notes.DataBindings.Add("Selection", _component, "SelectedNote", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_replyBody.DataBindings.Add("Text", _component, "Body", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_onBehalf.DataSource = _component.OnBehalfOfGroupChoices;
+			_onBehalf.DataBindings.Add("Value", _component, "OnBehalfOf", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_recipients.Table = _component.Recipients;
 			_recipients.MenuModel = _component.RecipientActionModel;
 			_recipients.ToolbarModel = _component.RecipientActionModel;
