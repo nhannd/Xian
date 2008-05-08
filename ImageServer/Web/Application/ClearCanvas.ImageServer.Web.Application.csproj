@@ -587,7 +587,6 @@
     <Content Include="Common\Controls\SectionPanel.ascx" />
     <Content Include="Common\Controls\ServerPartitionTabs.ascx" />
     <Content Include="Common\Controls\TimedDialog.ascx" />
-    <Content Include="Pages\Help\About.htm" />
     <Content Include="images\blank.gif" />
     <Content Include="images\icons\AutoRouteSmall.png" />
     <Content Include="images\icons\close.png" />
