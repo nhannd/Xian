@@ -214,7 +214,7 @@
     <EmbeddedResource Include="Mappings\EmergencyWorklists.hbm.xml" />
     <EmbeddedResource Include="Mappings\CannedText.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
-    <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
+    <EmbeddedResource Include="Mappings\PatientNoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
