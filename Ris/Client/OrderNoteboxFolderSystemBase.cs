@@ -152,9 +152,17 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public override void SelectedItemsChangedEventHandler(object sender, EventArgs e)
+		public override void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
 		{
-			base.SelectedItemsChangedEventHandler(sender, e);
+			base.SelectedItemDoubleClickedEventHandler(sender, e);
+
+			OrderNoteConversationTool<OrderNoteboxItemSummary, IOrderNoteboxItemToolContext> notesTool =
+				(OrderNoteConversationTool<OrderNoteboxItemSummary, IOrderNoteboxItemToolContext>)CollectionUtils.SelectFirst(
+					this.ItemTools.Tools,
+					delegate(ITool tool) { return tool is OrderNoteConversationTool<OrderNoteboxItemSummary, IOrderNoteboxItemToolContext>; });
+
+			if (notesTool != null && notesTool.Enabled)
+				notesTool.Open();
 		}
 	}
 }
