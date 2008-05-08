@@ -1,6 +1,8 @@
 using System;
 using System.Drawing;
 
+#pragma warning disable 0419,1574,1587,1591
+
 namespace ClearCanvas.ImageViewer.Clipboard
 {
 	internal static class IconCreator

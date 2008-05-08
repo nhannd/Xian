@@ -4,31 +4,43 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.ImageViewer.Clipboard
 {
+	/// <summary>
+	/// Base class for clipboard tools.
+	/// </summary>
+	/// <remarks>
+	/// Though not required, it is recommended that clipboard tools 
+	/// derive from this class.
+	/// </remarks>
 	public abstract class ClipboardTool : Tool<IClipboardToolContext>
 	{
 		private bool _enabled = false;
 		private event EventHandler _enabledChanged;
 		private bool _applyOnlyToSelected = true;
 
-		public override void Initialize()
+    	/// <summary>
+    	/// Called by the framework to allow the tool to initialize itself.
+    	/// </summary>
+    	/// <remarks>
+    	/// This method will be called after <see cref="ITool.SetContext"/> has been called, 
+    	/// which guarantees that the tool will have access to its context when this method is called.
+    	/// </remarks>
+    	public override void Initialize()
 		{
 			base.Initialize();
 			this.Context.ClipboardItemsChanged += OnClipboardItemsChanged;
 			this.Context.SelectedClipboardItemsChanged += OnSelectionChanged;
 		}
 
+		/// <summary>
+		/// Disposes of this object; override this method to do any necessary cleanup.
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized.</param>
 		protected override void Dispose(bool disposing)
 		{
 			this.Context.ClipboardItemsChanged -= OnClipboardItemsChanged;
 			this.Context.SelectedClipboardItemsChanged -= OnSelectionChanged;
 
 			base.Dispose(disposing);
-		}
-
-		public bool ApplyOnlyToSelected
-		{
-			get { return _applyOnlyToSelected; }
-			set { _applyOnlyToSelected = value; }
 		}
 
 		/// <summary>

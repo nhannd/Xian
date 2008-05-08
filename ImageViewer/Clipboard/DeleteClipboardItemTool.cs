@@ -3,6 +3,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 
+#pragma warning disable 0419,1574,1587,1591
+
 namespace ClearCanvas.ImageViewer.Clipboard
 {
 	[MenuAction("delete", "clipboard-contextmenu/MenuDeleteClipboardItem", "Delete")]

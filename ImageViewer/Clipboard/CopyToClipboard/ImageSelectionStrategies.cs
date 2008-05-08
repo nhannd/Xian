@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 
+#pragma warning disable 0419,1574,1587,1591
+
 namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 {
 	public partial class CopySubsetToClipboardComponent

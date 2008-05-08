@@ -5,6 +5,9 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using Path=System.IO.Path;
+
+#pragma warning disable 0419,1574,1587,1591
 
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {
@@ -93,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 			if (component.NumberOfImagesToExport == 1)
 			{
-				if (!Directory.Exists(System.IO.Path.GetDirectoryName(component.ExportFilePath ?? "")))
+				if (!Directory.Exists(Path.GetDirectoryName(component.ExportFilePath ?? "")))
 					throw new FileNotFoundException("The specified export directory does not exist.");
 
 				ClipboardItem clipboardItem = (ClipboardItem)this.Context.SelectedClipboardItems[0];

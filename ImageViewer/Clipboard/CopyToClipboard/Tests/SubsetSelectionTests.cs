@@ -1,6 +1,6 @@
 #if	UNIT_TESTS
 
-#pragma warning disable 1591,0419,1574,1587
+#pragma warning disable 0419,1574,1587,1591
 
 using System.Collections.Generic;
 using NUnit.Framework;

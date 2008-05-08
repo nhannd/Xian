@@ -30,12 +30,13 @@
 #endregion
 
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {
 	[SettingsGroupDescription("Stores the user's Image Export preferences.")]
-	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	[SettingsProvider(typeof(StandardSettingsProvider))]
 	internal sealed partial class ImageExportSettings
 	{
 		private ImageExportSettings()

@@ -2,6 +2,8 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
+#pragma warning disable 0419,1574,1587,1591
+
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {
 	public enum ExportOption

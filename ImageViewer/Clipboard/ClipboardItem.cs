@@ -5,16 +5,40 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Clipboard
 {
+	/// <summary>
+	/// Defines an item that can be stored in the clipboard.
+	/// </summary>
 	public interface IClipboardItem
 	{
+		/// <summary>
+		/// Returns the actual clipboard item.
+		/// </summary>
 		object Item { get; }
 
 		// stops the user from clearing the item while it's in use,
 		// for example by another thread.
+
+		/// <summary>
+		/// Gets a value indicating whether the clipboard item is currently in use.
+		/// </summary>
 		bool Locked { get; }
 
+		/// <summary>
+		/// Locks a clipboard item.
+		/// </summary>
+		/// <remarks>
+		/// Calling this method increases the reference count of the object. When the reference
+		/// count is 1 or greater, the <see cref="Locked"/> property will be <b>true</b>.
+		/// </remarks>
 		void Lock();
-		
+
+		/// <summary>
+		/// Unlocks a clipboard item.
+		/// </summary>
+		/// <remarks>
+		/// Calling this method decreases the reference count of the object.  When the
+		/// reference count is zero, the <see cref="Locked"/> property will be <b>false</b>.
+		/// </remarks>
 		void Unlock();
 	}
 

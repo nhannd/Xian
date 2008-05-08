@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 
+#pragma warning disable 0419,1574,1587,1591
+
 namespace ClearCanvas.ImageViewer.Clipboard
 {
 	public delegate IEnumerable<IPresentationImage> GetImagesDelegate(IDisplaySet displaySet);

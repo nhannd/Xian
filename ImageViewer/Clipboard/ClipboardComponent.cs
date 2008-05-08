@@ -40,6 +40,8 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 
+#pragma warning disable 0419,1574,1587,1591
+
 namespace ClearCanvas.ImageViewer.Clipboard
 {
 	[ExtensionPoint()]
@@ -53,17 +55,6 @@ namespace ClearCanvas.ImageViewer.Clipboard
 	[ExtensionPoint]
 	public sealed class ClipboardComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
-	}
-
-	public interface IClipboardToolContext : IToolContext
-	{
-		IDesktopWindow DesktopWindow { get; }
-
-		IList<IClipboardItem> ClipboardItems { get; }
-		ReadOnlyCollection<IClipboardItem> SelectedClipboardItems { get; }
-
-		event EventHandler ClipboardItemsChanged;
-		event EventHandler SelectedClipboardItemsChanged;
 	}
 
 	/// <summary>

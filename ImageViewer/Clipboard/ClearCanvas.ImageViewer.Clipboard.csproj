@@ -18,6 +18,7 @@
     <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\ClearCanvas.ImageViewer.Clipboard.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -26,6 +27,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\ClearCanvas.ImageViewer.Clipboard.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
@@ -45,6 +47,7 @@
     <Compile Include="ClipboardItemList.cs" />
     <Compile Include="ClipboardTool.cs" />
     <Compile Include="CopyToClipboard\CopySubsetToClipboardComponent.cs" />
+    <Compile Include="IClipboardToolContext.cs" />
     <Compile Include="ImageExport\ExportToImageTool.cs" />
     <Compile Include="DeleteAllClipboardItemsTool.cs" />
     <Compile Include="IconCreator.cs" />

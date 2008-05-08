@@ -38,6 +38,8 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using Path=System.IO.Path;
 
+#pragma warning disable 0419,1574,1587,1591
+
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {
 	[ExtensionPoint]
@@ -316,7 +318,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 					return;
 
 				string title = String.Format("{0} ({1})", SR.ConfigureImageExport, exporter.Description);
-				ApplicationComponent.LaunchAsDialog(Host.DesktopWindow, component, title);
+				LaunchAsDialog(Host.DesktopWindow, component, title);
 			}
 			catch(Exception e)
 			{

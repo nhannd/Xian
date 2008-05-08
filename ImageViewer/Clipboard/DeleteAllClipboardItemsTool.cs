@@ -4,6 +4,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 
+#pragma warning disable 0419,1574,1587,1591
+
 namespace ClearCanvas.ImageViewer.Clipboard
 {
 	[MenuAction("deleteAll", "clipboard-contextmenu/MenuDeleteAllClipboardItems", "DeleteAll")]
@@ -22,7 +24,6 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		public override void Initialize()
 		{
 			this.Enabled = this.Context.ClipboardItems.Count > 0;
-			this.ApplyOnlyToSelected = false;
 
 			base.Initialize();
 		}

@@ -8,14 +8,19 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.CodeDom.Compiler;
+using System.Configuration;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport {
     
     
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class ImageExportSettings : global::System.Configuration.ApplicationSettingsBase {
+    [CompilerGenerated()]
+    [GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
+    internal sealed partial class ImageExportSettings : ApplicationSettingsBase {
         
-        private static ImageExportSettings defaultInstance = ((ImageExportSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ImageExportSettings())));
+        private static ImageExportSettings defaultInstance = ((ImageExportSettings)(Synchronized(new ImageExportSettings())));
         
         public static ImageExportSettings Default {
             get {
@@ -23,9 +28,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Jpg")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("Jpg")]
         public string SelectedImageExporterId {
             get {
                 return ((string)(this["SelectedImageExporterId"]));
@@ -35,9 +40,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("0")]
         public int SelectedImageExportOption {
             get {
                 return ((int)(this["SelectedImageExportOption"]));
