@@ -156,10 +156,10 @@ namespace ClearCanvas.Ris.Client
 		{
 			base.SelectedItemDoubleClickedEventHandler(sender, e);
 
-			OrderNoteConversationTool<OrderNoteboxItemSummary, IOrderNoteboxItemToolContext> notesTool =
-				(OrderNoteConversationTool<OrderNoteboxItemSummary, IOrderNoteboxItemToolContext>)CollectionUtils.SelectFirst(
+			OrderNoteConversationTool notesTool =
+				(OrderNoteConversationTool)CollectionUtils.SelectFirst(
 					this.ItemTools.Tools,
-					delegate(ITool tool) { return tool is OrderNoteConversationTool<OrderNoteboxItemSummary, IOrderNoteboxItemToolContext>; });
+					delegate(ITool tool) { return tool is OrderNoteConversationTool; });
 
 			if (notesTool != null && notesTool.Enabled)
 				notesTool.Open();

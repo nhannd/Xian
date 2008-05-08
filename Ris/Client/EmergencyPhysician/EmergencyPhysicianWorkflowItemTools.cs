@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Adt;
 
@@ -17,26 +15,12 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 
 		protected override string Title
 		{
-			get { return this.SummaryItem.AccessionNumber; }
+			get { return "A# " + this.SummaryItem.AccessionNumber; }
 		}
 	}
 
 	[ExtensionOf(typeof(EmergencyPhysicianOrderNoteboxItemToolExtensionPoint))]
-	public class EmergencyPhysicianOrderNoteboxConversationTool : OrderNoteConversationTool<OrderNoteboxItemSummary, IOrderNoteboxItemToolContext>
+	public class EmergencyPhysicianOrderNoteboxConversationTool : OrderNoteConversationTool
 	{
-		protected override EntityRef OrderRef
-		{
-			get { return this.SummaryItem.OrderRef; }
-		}
-
-		protected override string Title
-		{
-			get { return this.SummaryItem.AccessionNumber; }
-		}
-
-		protected override IEnumerable<string> OrderNoteCategories
-		{
-			get { return new string[] { this.SummaryItem.Category }; }
-		}
 	}
 }

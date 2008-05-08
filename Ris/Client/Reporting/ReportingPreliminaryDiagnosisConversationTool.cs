@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -16,26 +14,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		protected override string Title
 		{
-			get { return this.SummaryItem.AccessionNumber; }
+			get { return "A# " + this.SummaryItem.AccessionNumber; }
 		}
 	}
 
 	[ExtensionOf(typeof(ReportingOrderNoteboxItemToolExtensionPoint))]
-	public class ReportingOrderNoteboxConversationTool : OrderNoteConversationTool<OrderNoteboxItemSummary, IOrderNoteboxItemToolContext>
+	public class ReportingOrderNoteboxConversationTool : OrderNoteConversationTool
 	{
-		protected override EntityRef OrderRef
-		{
-			get { return this.SummaryItem.OrderRef; }
-		}
-
-		protected override string Title
-		{
-			get { return this.SummaryItem.AccessionNumber; }
-		}
-
-		protected override IEnumerable<string> OrderNoteCategories
-		{
-			get { return new string[] { this.SummaryItem.Category }; }
-		}
 	}
 }

@@ -6,7 +6,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Client
 {
 	/// <summary>
-	/// Extends <see cref="OrderNoteConversationTool{TSummaryItem,TToolContext}"/> to provide a base class for tools which open an 
+	/// Extends <see cref="OrderNoteConversationToolBase{TSummaryItem,TToolContext}"/> to provide a base class for tools which open an 
 	/// <see cref="OrderNoteConversationComponent"/> for the purpose of creating a preliminary diagnosis
 	/// </summary>
 	/// <typeparam name="TSummaryItem"></typeparam>
@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Client
 	[ButtonAction("pd", "folderexplorer-items-toolbar/Preliminary Diagnosis", "Open")]
 	[Tooltip("pd", "Create/view the preliminary diagnosis for the selected item")]
 	[IconSet("pd", IconScheme.Colour, "Icons.PreliminaryDiagnosisToolSmall.png", "Icons.PreliminaryDiagnosisToolSmall.png", "Icons.PreliminaryDiagnosisToolSmall.png")]
-	public abstract class PreliminaryDiagnosisConversationTool<TSummaryItem, TToolContext> : OrderNoteConversationTool<TSummaryItem, TToolContext>
+	public abstract class PreliminaryDiagnosisConversationTool<TSummaryItem, TToolContext> : OrderNoteConversationToolBase<TSummaryItem, TToolContext>
 		where TSummaryItem : DataContractBase
 		where TToolContext : IWorkflowItemToolContext<TSummaryItem>
 	{

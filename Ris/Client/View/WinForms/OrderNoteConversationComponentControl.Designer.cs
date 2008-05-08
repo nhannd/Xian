@@ -70,11 +70,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._replyBody = new System.Windows.Forms.TextBox();
 			this._onBehalf = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._recipientsTableLayout = new System.Windows.Forms.TableLayoutPanel();
+			this._recipients = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._staffRecipientLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._groupRecipientLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
-			this._staffRecipientAddButton = new System.Windows.Forms.Button();
 			this._groupRecipientAddButton = new System.Windows.Forms.Button();
-			this._recipients = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this._staffRecipientAddButton = new System.Windows.Forms.Button();
 			this._componentTableLayout.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this._notesGroupBox.SuspendLayout();
@@ -159,6 +159,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._notes.MultiLine = true;
 			this._notes.Name = "_notes";
 			this._notes.ReadOnly = false;
+			this._notes.ShowToolbar = false;
 			this._notes.Size = new System.Drawing.Size(831, 343);
 			this._notes.TabIndex = 0;
 			this._notes.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -246,6 +247,19 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipientsTableLayout.Size = new System.Drawing.Size(312, 267);
 			this._recipientsTableLayout.TabIndex = 0;
 			// 
+			// _recipients
+			// 
+			this._recipients.AutoSize = true;
+			this._recipients.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._recipientsTableLayout.SetColumnSpan(this._recipients, 2);
+			this._recipients.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._recipients.Location = new System.Drawing.Point(3, 85);
+			this._recipients.Name = "_recipients";
+			this._recipients.ReadOnly = false;
+			this._recipients.Size = new System.Drawing.Size(306, 179);
+			this._recipients.TabIndex = 4;
+			this._recipients.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			// 
 			// _staffRecipientLookup
 			// 
 			this._staffRecipientLookup.AutoSize = true;
@@ -272,19 +286,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._groupRecipientLookup.TabIndex = 2;
 			this._groupRecipientLookup.Value = null;
 			// 
-			// _staffRecipientAddButton
-			// 
-			this._staffRecipientAddButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._staffRecipientAddButton.AutoSize = true;
-			this._staffRecipientAddButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._staffRecipientAddButton.Location = new System.Drawing.Point(273, 56);
-			this._staffRecipientAddButton.Name = "_staffRecipientAddButton";
-			this._staffRecipientAddButton.Size = new System.Drawing.Size(36, 23);
-			this._staffRecipientAddButton.TabIndex = 1;
-			this._staffRecipientAddButton.Text = "Add";
-			this._staffRecipientAddButton.UseVisualStyleBackColor = true;
-			this._staffRecipientAddButton.Click += new System.EventHandler(this._staffRecipientAddButton_Click);
-			// 
 			// _groupRecipientAddButton
 			// 
 			this._groupRecipientAddButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -298,18 +299,18 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._groupRecipientAddButton.UseVisualStyleBackColor = true;
 			this._groupRecipientAddButton.Click += new System.EventHandler(this._groupRecipientAddButton_Click);
 			// 
-			// _recipients
+			// _staffRecipientAddButton
 			// 
-			this._recipients.AutoSize = true;
-			this._recipients.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._recipientsTableLayout.SetColumnSpan(this._recipients, 2);
-			this._recipients.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._recipients.Location = new System.Drawing.Point(3, 85);
-			this._recipients.Name = "_recipients";
-			this._recipients.ReadOnly = false;
-			this._recipients.Size = new System.Drawing.Size(306, 179);
-			this._recipients.TabIndex = 4;
-			this._recipients.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this._staffRecipientAddButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._staffRecipientAddButton.AutoSize = true;
+			this._staffRecipientAddButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._staffRecipientAddButton.Location = new System.Drawing.Point(273, 56);
+			this._staffRecipientAddButton.Name = "_staffRecipientAddButton";
+			this._staffRecipientAddButton.Size = new System.Drawing.Size(36, 23);
+			this._staffRecipientAddButton.TabIndex = 1;
+			this._staffRecipientAddButton.Text = "Add";
+			this._staffRecipientAddButton.UseVisualStyleBackColor = true;
+			this._staffRecipientAddButton.Click += new System.EventHandler(this._staffRecipientAddButton_Click);
 			// 
 			// OrderNoteConversationComponentControl
 			// 
