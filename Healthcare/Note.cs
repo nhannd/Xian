@@ -164,7 +164,7 @@ namespace ClearCanvas.Healthcare {
 					  delegate(NotePosting a)
 					  {
 						  return !a.IsAcknowledged 
-							  && ((a.Recipient.IsStaffRecipient && Equals(a.Recipient.Staff.Id, staff.Id)) 
+							  && ((a.Recipient.IsStaffRecipient && Equals(a.Recipient.Staff, staff)) 
 									|| (a.Recipient.IsGroupRecipient && a.Recipient.Group.Members.Contains(staff)));
 					  });
 		}
