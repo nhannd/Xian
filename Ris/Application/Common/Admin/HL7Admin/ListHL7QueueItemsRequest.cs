@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
         public DateTime? EndingUpdateTime;
 
         [DataMember]
-        public EnumValueInfo Peer;
+        public string Peer;
 
         [DataMember]
         public string MessageType;

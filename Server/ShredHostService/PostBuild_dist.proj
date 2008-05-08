@@ -38,6 +38,7 @@
   <!-- Config files, to be placed in distribution directory -->
   <ItemGroup>
     <ConfigFiles Include="$(ProjectDir)\Logging.config" />
+    <ConfigFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Server.ShredHostService.exe.config" />
   </ItemGroup>
 
   <!-- Shared library files, to be placed in common directory -->
@@ -58,7 +59,6 @@
   <!-- Execution files -->
   <ItemGroup>
     <ExecutionFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Server.ShredHostService.exe" />
-    <ExecutionFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Server.ShredHostService.exe.config" />
   </ItemGroup>
 
   <!-- Plugin files -->
@@ -75,7 +75,7 @@
     <Delete Condition="$(DeletePlugins)" Files="@(PluginDeleteFiles)" ContinueOnError="true"/>
     
     <!-- Copy shared config files -->
-    <Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
+    <Copy SourceFiles="@(ConfigFiles)" Condition="!Exists('$(DistributionDirectory)\%(FileName).%(Extension)')" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
 
     <!-- Copy shared libraries -->
     <Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(CommonDirectory)" />

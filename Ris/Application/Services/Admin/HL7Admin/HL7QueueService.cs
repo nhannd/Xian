@@ -31,7 +31,6 @@
 
 using System.Collections.Generic;
 using System.Security.Permissions;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -73,7 +72,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
             response.MessageTypeChoices.Add("ORM_O01");
             response.MessageFormatChoices = EnumUtils.GetEnumValueList<HL7MessageFormatEnum>(PersistenceContext);
             response.MessageVersionChoices = EnumUtils.GetEnumValueList<HL7MessageVersionEnum>(PersistenceContext);
-            response.PeerChoices = EnumUtils.GetEnumValueList<HL7MessagePeerEnum>(PersistenceContext);
+			response.PeerChoices = new List<string>(); // TODO: get values of peers from all existing messages
 
             return response;
         }
@@ -116,12 +115,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 
             try
             {
-                IHL7PreProcessor preProcessor = new HL7PreProcessor();
-                HL7QueueItem preProcessedQueueItem = preProcessor.ApplyAll(queueItem);
+				IHL7Processor processor = HL7ProcessorFactory.GetProcessor(queueItem.Message.Peer);
 
-                IHL7Processor processor = HL7ProcessorFactory.GetProcessor(preProcessedQueueItem.Message);
+				if (null == processor)
+				{
+					// no process was found that can process the message
+					// TODO: it will be problematic if queueItem doesn't exist
+					throw new System.Exception(string.Format("Cold not find processor for peer: {0}", queueItem.Message.Peer));
+				}
 
-                identifiers = processor.ListReferencedPatientIdentifiers();
+				identifiers = processor.ListReferencedPatientIdentifiers();
                 if (identifiers.Count == 0)
                 {
                     return null;
@@ -159,12 +162,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 
             try
             {
-                IHL7PreProcessor preProcessor = new HL7PreProcessor();
-                HL7QueueItem preProcessedQueueItem = preProcessor.ApplyAll(queueItem);
-
-                IHL7Processor processor = HL7ProcessorFactory.GetProcessor(preProcessedQueueItem.Message);
-                processor.Process(PersistenceContext);
-
+				IHL7Processor processor = HL7ProcessorFactory.GetProcessor(queueItem.Message.Peer);
+                processor.Process(PersistenceContext, queueItem.Message);
                 PersistenceContext.Lock(queueItem);
                 queueItem.SetComplete();
             }

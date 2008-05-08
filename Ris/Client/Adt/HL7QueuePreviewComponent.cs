@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private ClickHandlerDelegate _defaultAction;
 
         private EnumValueInfo _direction;
-        private EnumValueInfo _peer;
+        private string _peer;
         private string _type;        
         private EnumValueInfo _status;
         private DateTime? _createdOnStart;
@@ -150,7 +150,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private bool _statusChecked;
 
         private List<EnumValueInfo> _directionChoices;
-        private List<EnumValueInfo> _peerChoices;
+        private List<string> _peerChoices;
         private List<string> _typeChoices;
         private List<EnumValueInfo> _statusChoices;
 
@@ -256,15 +256,8 @@ namespace ClearCanvas.Ris.Client.Adt
         #region Peer
         public string Peer
         {
-            get { return _peer.Value; }
-            set
-            {
-                _peer = string.IsNullOrEmpty(value)
-                    ? null
-                    : CollectionUtils.SelectFirst<EnumValueInfo>(
-                        _peerChoices,
-                        delegate(EnumValueInfo info) { return info.Value == value; });
-            }
+			get { return _peer; }
+            set { _peer = value; }
         }
 
         public bool PeerChecked
@@ -275,7 +268,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public IList<string> PeerChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_peerChoices); }
+            get { return _peerChoices; }
         }
         #endregion
 

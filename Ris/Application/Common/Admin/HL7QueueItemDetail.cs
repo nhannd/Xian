@@ -58,7 +58,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         public DateTime? UpdateTime;
 
         [DataMember]
-        public EnumValueInfo Peer;
+        public string Peer;
 
         [DataMember]
         public string MessageType;

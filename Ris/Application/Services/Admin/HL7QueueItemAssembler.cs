@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             summary.CreationTime = queueItem.Status.CreationTime;
             summary.UpdateTime = queueItem.Status.UpdateTime;
 
-            summary.Peer = EnumUtils.GetValue(queueItem.Message.Peer, context);
+            summary.Peer = queueItem.Message.Peer;
             summary.MessageType = queueItem.Message.MessageType;
             summary.MessageEvent = queueItem.Message.Event;
             summary.MessageVersion = EnumUtils.GetValue(queueItem.Message.Version, context);
@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             detail.CreationTime = queueItem.Status.CreationTime;
             detail.UpdateTime = queueItem.Status.UpdateTime;
 
-            detail.Peer = EnumUtils.GetEnumValueInfo(queueItem.Message.Peer, context);
+            detail.Peer = queueItem.Message.Peer;
 
             detail.MessageType = queueItem.Message.MessageType;
             detail.MessageEvent = queueItem.Message.Event;
@@ -115,7 +115,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                 criteria.Message.MessageType.EqualTo(request.MessageType);
     
             if (request.Peer != null)
-                criteria.Message.Peer.EqualTo(EnumUtils.GetEnumValue<HL7MessagePeer>(request.Peer));
+                criteria.Message.Peer.EqualTo(request.Peer);
 
             return criteria;
         }

@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
         public List<EnumValueInfo> StatusCodeChoices;
 
         [DataMember]
-        public List<EnumValueInfo> PeerChoices;
+        public List<string> PeerChoices;
 
         [DataMember]
         public List<string> MessageTypeChoices;
