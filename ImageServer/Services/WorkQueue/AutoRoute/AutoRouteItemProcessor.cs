@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
     /// <summary>
     /// Processor for 'AutoRoute <see cref="WorkQueue"/> entries
     /// </summary>
-    public class AutoRouteItemProcessor : BaseItemProcessor, IWorkQueueItemProcessor
+    public class AutoRouteItemProcessor : BaseItemProcessor
     {
         #region Protected Methods
         /// <summary>
@@ -123,30 +123,37 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                                             || instance.SendStatus.Status == DicomState.Warning
                                             || instance.SendStatus.Equals(DicomStatuses.SOPClassNotSupported))
                                         {
-                                            WorkQueueUid foundUid = null;
-                                            foreach (WorkQueueUid uid in WorkQueueUidList)
-                                            {
-                                                if (uid.SopInstanceUid.Equals(instance.SopInstanceUid))
-                                                {
-                                                    foundUid = uid;
-                                                    break;
-                                                }
-                                            }
-                                            if (foundUid != null)
-                                            {
-                                                if (instance.SendStatus.Status == DicomState.Failure)
-                                                {
-                                                    item.FailureDescription = instance.SendStatus.Description;
-                                                    foundUid.FailureCount++;
-                                                    UpdateWorkQueueUid(foundUid);
-                                                }
-                                                else
-                                                {
-                                                    DeleteWorkQueueUid(foundUid);
-                                                    WorkQueueUidList.Remove(foundUid);
-                                                }
-                                            }
-                                            if (instance.SendStatus.Equals(DicomStatuses.SOPClassNotSupported))
+                                        	WorkQueueUid foundUid = null;
+                                        	foreach (WorkQueueUid uid in WorkQueueUidList)
+                                        	{
+                                        		if (uid.SopInstanceUid.Equals(instance.SopInstanceUid))
+                                        		{
+                                        			foundUid = uid;
+                                        			break;
+                                        		}
+                                        	}
+
+                                        	if (instance.SendStatus.Status == DicomState.Failure)
+                                        	{
+                                        		item.FailureDescription =
+                                        			scu.FailureDescription = instance.SendStatus.Description;
+                                        		if (foundUid != null)
+                                        		{
+                                        			foundUid.FailureCount++;
+                                        			UpdateWorkQueueUid(foundUid);
+                                        		}
+                                        	}
+                                        	else
+                                        	{
+                                        		if (foundUid != null)
+                                        		{
+                                        			DeleteWorkQueueUid(foundUid);
+                                        			WorkQueueUidList.Remove(foundUid);
+                                        		}
+                                        	}
+                                        }
+
+                                    	if (instance.SendStatus.Equals(DicomStatuses.SOPClassNotSupported))
                                             {
                                                 item.FailureDescription =
                                                     String.Format("SOP Class not supported by remote device: {0}",
@@ -155,7 +162,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                                                              "Unable to transfer SOP Instance, SOP Class is not supported by remote device: {0}",
                                                              instance.SopClass.Name);
                                             }
-                                        }
+                                        
                                     };
 
             // Block until send is complete
@@ -167,8 +174,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             // Dispose to cleanup properly
             scu.Dispose();
 
-            // Reset the WorkQueue entry status
-            if (WorkQueueUidList.Count > 0)
+			if (scu.FailureDescription.Length > 0)
+			{
+				item.FailureDescription = scu.FailureDescription;
+				scu.Status = ScuOperationStatus.Failed;
+			}
+
+        	// Reset the WorkQueue entry status
+            if (WorkQueueUidList.Count > 0 || scu.Status == ScuOperationStatus.Failed)
                 PostProcessing(item,WorkQueueUidList.Count, true); // failures occurred
             else
                 PostProcessing(item, WorkQueueUidList.Count, false); // no failures

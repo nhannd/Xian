@@ -55,8 +55,7 @@
         </asp:TemplateField>
        
         <asp:BoundField HeaderText="Failure Count" DataField="FailureCount" />
-        <asp:BoundField HeaderText="Failure Description" DataField="FailureDescription" />
-        
+        <asp:BoundField HeaderText="Failure Description" DataField="FailureDescription" />        
         <asp:BoundField HeaderText="Number of Instances Pending" DataField="NumInstancesPending" />
         <asp:BoundField HeaderText="Number of Series Pending" DataField="NumSeriesPending" />
        

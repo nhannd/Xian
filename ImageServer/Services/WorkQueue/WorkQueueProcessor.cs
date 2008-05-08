@@ -123,7 +123,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// Simple routine for failing a work queue item.
         /// </summary>
         /// <param name="item">The item to fail.</param>
-        public void FailQueueItem(Model.WorkQueue item)
+		/// <param name="failureDescription">The reason for the failure.</param>
+        public void FailQueueItem(Model.WorkQueue item, string failureDescription)
         {
             using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -134,6 +135,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 parms.WorkQueueKey = item.GetKey();
                 parms.StudyStorageKey = item.StudyStorageKey;
                 parms.FailureCount = item.FailureCount + 1;
+				parms.FailureDescription = failureDescription;
 
                 WorkQueueSettings settings = WorkQueueSettings.Default;
                 if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
@@ -278,7 +280,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                              queueItem.WorkQueueTypeEnum.Description);
 
                                 //Just fail the WorkQueue item, not much else we can do
-                                FailQueueItem(queueItem);
+                                FailQueueItem(queueItem, "No plugin to handle Workqueue type: " + queueItem.WorkQueueTypeEnum.Description );
                                 continue;
                             }
 
@@ -292,7 +294,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             catch (Exception e)
                             {
                                 Platform.Log(LogLevel.Error, e, "Unexpected exception creating WorkQueue processor.");
-                                FailQueueItem(queueItem);
+                                FailQueueItem(queueItem, "Failure getting WorkQueue processor: " + e.Message);
                                 continue;
                             }
 
@@ -310,8 +312,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                                                          "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
                                                                          queueItem.WorkQueueTypeEnum.Description,
                                                                          queueItem.GetKey());
-
-                                                            FailQueueItem(queueItem);
+															if (e.InnerException != null)
+																FailQueueItem(queueItem, e.InnerException.Message);
+															else
+																FailQueueItem(queueItem, e.Message);
                                                         }
 
                                                         // Cleanup the processor
