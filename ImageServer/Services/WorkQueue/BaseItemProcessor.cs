@@ -217,16 +217,30 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <return>A truncated list of <see cref="WorkQueueUid"/></return>
         protected static IList<WorkQueueUid> TruncateList(Model.WorkQueue item, IList<WorkQueueUid> list)
         {
-            if (item != null && list != null)
-            {
-                int maxSize = GetMaxBatchSize(item);
-                while (list.Count > maxSize)
-                {
-                    list.RemoveAt(list.Count - 1);
-                }
-            }
+			if (item != null && list != null)
+			{
+				int maxSize = GetMaxBatchSize(item);
+				if (list.Count <= maxSize)
+					return list;
 
-            return list;
+				List<WorkQueueUid> newList = new List<WorkQueueUid>();
+				foreach (WorkQueueUid uid in list)
+				{
+					if (!uid.Failed)
+						newList.Add(uid);
+
+					if (newList.Count >= maxSize)
+						return newList;
+				}
+
+				// just return the whole list, they're all going to be skipped anyways!
+				if (newList.Count == 0)
+					return list;
+
+				return newList;
+			}
+
+			return list;
         }
 
         /// <summary>
@@ -421,49 +435,35 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 TimeSpanStatisticsHelper.Measure(
                     delegate
                         {
-                            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-                            {
-                                IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-                                WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
-                                parms.ProcessorID = ServiceTools.ProcessorId;
+							using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+							{
+								IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
+								WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+								parms.ProcessorID = ServiceTools.ProcessorId;
 
-                                parms.WorkQueueKey = item.GetKey();
-                                parms.StudyStorageKey = item.StudyStorageKey;
-                                parms.FailureCount = item.FailureCount + 1;
+								parms.WorkQueueKey = item.GetKey();
+								parms.StudyStorageKey = item.StudyStorageKey;
+								parms.FailureCount = item.FailureCount + 1;
+								if (item.FailureDescription != null)
+									parms.FailureDescription = item.FailureDescription;
 
-                                WorkQueueSettings settings = WorkQueueSettings.Default;
-                                if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
-                                {
-                                    Platform.Log(LogLevel.Error,
-                                                 "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
-                                                 item.WorkQueueTypeEnum.Description,
-                                                 item.GetKey(),
-                                                 item.FailureCount +1);
-                                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
-                                    parms.ScheduledTime = Platform.Time;
-                                    parms.ExpirationTime = Platform.Time.AddDays(1);
-                                }
-                                else
-                                {
-                                    Platform.Log(LogLevel.Error,
-                                                 "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
-                                                 item.WorkQueueTypeEnum.Description,
-                                                 item.GetKey(),
-                                                 item.FailureCount +1);
-                                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
-                                    parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
-                                    parms.ExpirationTime = Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount)*settings.WorkQueueFailureDelayMinutes);
-                                }
+								Platform.Log(LogLevel.Error,
+								             "Failing {0} WorkQueue entry ({1})",
+								             item.WorkQueueTypeEnum.Description,
+								             item.GetKey());
+								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
+								parms.ScheduledTime = Platform.Time;
+								parms.ExpirationTime = Platform.Time.AddDays(1);
 
-                                if (false == update.Execute(parms))
-                                {
-                                    Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}",
-                                                 item.WorkQueueTypeEnum.Name,
-                                                 item.GetKey().ToString());
-                                }
+								if (false == update.Execute(parms))
+								{
+									Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}",
+									             item.WorkQueueTypeEnum.Name,
+									             item.GetKey().ToString());
+								}
 
-                                updateContext.Commit();
-                            }
+								updateContext.Commit();
+							}
                         }));
 
             

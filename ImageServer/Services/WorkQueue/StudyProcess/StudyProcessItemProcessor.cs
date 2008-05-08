@@ -515,6 +515,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         }
                 );
 
+			if (!successful)
+			{
+				bool failNow = true;
+				foreach (WorkQueueUid uid in WorkQueueUidList)
+				{
+					if (uid.Failed && !uid.Duplicate)
+					{
+						failNow = false;
+						break;
+					}
+				}
+				if (failNow)
+				{
+					Platform.Log(LogLevel.Error, "Failing queue entry, all entries are duplicates.");
+					FailQueueItem(item);
+					return;
+				}
+			}
+
             PostProcessing(item, WorkQueueUidList.Count, !successful);
         }
 
