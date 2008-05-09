@@ -1348,7 +1348,7 @@ namespace ClearCanvas.Dicom.Network
 
                         if (_dimse.Dataset == null)
                         {
-                            _dimse.Dataset = new DicomAttributeCollection(0x00080000, 0xFFFFFFFF);
+                            _dimse.Dataset = new DicomAttributeCollection(0x00040000, 0xFFFFFFFF);
                         }
 
                         if (_dimse.DatasetReader == null)

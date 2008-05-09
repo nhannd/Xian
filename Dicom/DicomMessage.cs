@@ -316,7 +316,7 @@ namespace ClearCanvas.Dicom
                 _metaInfo = command;
 
             if (data == null)
-                _dataSet = new DicomAttributeCollection(0x00080000,0xFFFFFFFF);
+                _dataSet = new DicomAttributeCollection(0x00040000,0xFFFFFFFF);
             else
                 _dataSet = data;
         }
@@ -341,7 +341,7 @@ namespace ClearCanvas.Dicom
         public DicomMessage()
         {
             _metaInfo = new DicomAttributeCollection(0x00000000, 0x0000FFFF);
-            _dataSet = new DicomAttributeCollection(0x00080000, 0xFFFFFFFF);
+            _dataSet = new DicomAttributeCollection(0x00040000, 0xFFFFFFFF);
         }
         #endregion
 
