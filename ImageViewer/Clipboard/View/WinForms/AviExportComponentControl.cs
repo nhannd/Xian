@@ -38,78 +38,65 @@ using ClearCanvas.ImageViewer.Clipboard.ImageExport;
 namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="ImageExportComponent"/>.
+    /// Provides a Windows Forms user-interface for <see cref="AviExportComponent"/>.
     /// </summary>
-    public partial class ImageExportComponentControl : ApplicationComponentUserControl
+    public partial class AviExportComponentControl : ApplicationComponentUserControl
     {
-        private ImageExportComponent _component;
+        private AviExportComponent _component;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ImageExportComponentControl(ImageExportComponent component)
+        public AviExportComponentControl(AviExportComponent component)
             :base(component)
         {
-			_component = component;
             InitializeComponent();
+			_component = component;
 
-        	base.CancelButton = _buttonCancel;
         	base.AcceptButton = _buttonOk;
+        	base.CancelButton = _buttonCancel;
 
-			_imageExporters.DataSource = _component.ImageExporters;
-        	_imageExporters.DisplayMember = "Description";
-        	_imageExporters.DataBindings.Add("Value", _component, "SelectedImageExporter", true, DataSourceUpdateMode.OnPropertyChanged);
+			_trackBarFrameRate.DataBindings.Add("Minimum", _component, "MinFrameRate", true, DataSourceUpdateMode.OnPropertyChanged);
+			_trackBarFrameRate.DataBindings.Add("Maximum", _component, "MaxFrameRate", true, DataSourceUpdateMode.OnPropertyChanged);
+			_trackBarFrameRate.DataBindings.Add("Value", _component, "FrameRate", true, DataSourceUpdateMode.OnPropertyChanged);
+			_frameRate.DataBindings.Add("Text", _component, "FrameRate", true, DataSourceUpdateMode.OnPropertyChanged);
+			Binding binding = new Binding("Text", _component, "DurationSeconds", true, DataSourceUpdateMode.OnPropertyChanged);
+			binding.Format += new ConvertEventHandler(OnParseDuration);
+        	_duration.DataBindings.Add(binding);
 
-			_path.DataBindings.Add("Value", _component, "ExportFilePath", true, DataSourceUpdateMode.OnPropertyChanged);
-			_path.DataBindings.Add("LabelText", _component, "ExportFilePathLabel", true, DataSourceUpdateMode.OnPropertyChanged);
-			
 			_checkOptionWysiwyg.DataBindings.Add("Checked", _component, "OptionWysiwyg", true, DataSourceUpdateMode.OnPropertyChanged);
 			_checkOptionCompleteImage.DataBindings.Add("Checked", _component, "OptionCompleteImage", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_scale.DataBindings.Add("Maximum", _component, "MaximumScale", true, DataSourceUpdateMode.OnPropertyChanged);
 			_scale.DataBindings.Add("Minimum", _component, "MinimumScale", true, DataSourceUpdateMode.OnPropertyChanged);
 			_scale.DataBindings.Add("Value", _component, "Scale", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_buttonConfigure.DataBindings.Add("Visible", _component, "ConfigureVisible", true, DataSourceUpdateMode.OnPropertyChanged);
-			_buttonConfigure.DataBindings.Add("Enabled", _component, "ConfigureEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_buttonOk.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-			_path.DataBindings.Add("Enabled", _component, "ExportFilePathEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
-		private void OnConfigureExporter(object sender, EventArgs e)
+		void OnParseDuration(object sender, ConvertEventArgs e)
 		{
-			_component.Configure();
-		}
+			if (e.DesiredType != typeof(string))
+				return;
 
-		private void OnBrowse(object sender, EventArgs e)
-		{
-			if (_component.NumberOfImagesToExport > 1)
-			{
-				FolderBrowserDialog dialog = new FolderBrowserDialog();
-				if (DialogResult.OK == dialog.ShowDialog())
-					_component.ExportFilePath = dialog.SelectedPath;
-			}
-			else
-			{
-				SaveFileDialog dialog = new SaveFileDialog();
-				dialog.Filter = _component.SelectedImageExporter.FileExtensionFilter;
-				dialog.DefaultExt = _component.SelectedImageExporter.DefaultExtension;
-				dialog.AddExtension = true;
-
-				if (DialogResult.OK == dialog.ShowDialog())
-					_component.ExportFilePath = dialog.FileName;
-			}
-		}
-
-		private void OnOk(object sender, EventArgs e)
-		{
-			_component.Accept();
+			e.Value = String.Format(((float) e.Value).ToString("F2"));
 		}
 
 		private void OnCancel(object sender, EventArgs e)
 		{
 			_component.Cancel();
+		}
+
+		private void OnOk(object sender, EventArgs e)
+		{
+			SaveFileDialog dialog = new SaveFileDialog();
+			dialog.Filter = "Avi Files|*.avi;";
+			dialog.DefaultExt = "avi";
+			dialog.AddExtension = true;
+
+			if (DialogResult.OK == dialog.ShowDialog())
+			{
+				_component.FilePath = dialog.FileName;
+				_component.Accept();
+			}
 		}
     }
 }

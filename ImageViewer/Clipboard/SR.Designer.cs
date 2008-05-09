@@ -214,6 +214,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export to Video.
+        /// </summary>
+        internal static string MenuExportToVideo {
+            get {
+                return ResourceManager.GetString("MenuExportToVideo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clipboard.
         /// </summary>
         internal static string MenuShowClipboard {
@@ -241,6 +250,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Creating video ....
+        /// </summary>
+        internal static string MessageCreatingVideo {
+            get {
+                return ResourceManager.GetString("MessageCreatingVideo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The custom range is invalid..
         /// </summary>
         internal static string MessageCustomRangeInvalid {
@@ -255,6 +273,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         internal static string MessageDirectoryDoesNotExist {
             get {
                 return ResourceManager.GetString("MessageDirectoryDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The display set must have 2 or more images to be exported to video..
+        /// </summary>
+        internal static string MessageDisplaySetTooFewImagesForVideo {
+            get {
+                return ResourceManager.GetString("MessageDisplaySetTooFewImagesForVideo", resourceCulture);
             }
         }
         
@@ -295,7 +322,7 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Export failed.  Please check the logs for more details..
+        ///   Looks up a localized string similar to Export failed.  Please check the log for more details..
         /// </summary>
         internal static string MessageExportFailed {
             get {
@@ -313,11 +340,29 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export to video failed.  Please see the log for more details..
+        /// </summary>
+        internal static string MessageExportToVideoFailed {
+            get {
+                return ResourceManager.GetString("MessageExportToVideoFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exporting frame #{0} of {1}.
+        /// </summary>
+        internal static string MessageFormatExportingFrame {
+            get {
+                return ResourceManager.GetString("MessageFormatExportingFrame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Another export job is currently running.  You must wait until it completes to export more images..
         /// </summary>
-        internal static string MessageExportStillRunning {
+        internal static string MessageImageExportStillRunning {
             get {
-                return ResourceManager.GetString("MessageExportStillRunning", resourceCulture);
+                return ResourceManager.GetString("MessageImageExportStillRunning", resourceCulture);
             }
         }
         
@@ -358,6 +403,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Another video is currently being created.  You must wait until it completes to create another..
+        /// </summary>
+        internal static string MessageVideoExportStillRunning {
+            get {
+                return ResourceManager.GetString("MessageVideoExportStillRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clipboard.
         /// </summary>
         internal static string TitleClipboard {
@@ -372,6 +426,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         internal static string TitleCopySubsetToClipboard {
             get {
                 return ResourceManager.GetString("TitleCopySubsetToClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creating Video.
+        /// </summary>
+        internal static string TitleCreatingVideo {
+            get {
+                return ResourceManager.GetString("TitleCreatingVideo", resourceCulture);
             }
         }
         
@@ -403,6 +466,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export to Video.
+        /// </summary>
+        internal static string TitleExportToVideo {
+            get {
+                return ResourceManager.GetString("TitleExportToVideo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete All.
         /// </summary>
         internal static string ToolbalDeleteAllClipboardItems {
@@ -426,6 +498,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         internal static string ToolbarExportToImage {
             get {
                 return ResourceManager.GetString("ToolbarExportToImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export to Video.
+        /// </summary>
+        internal static string ToolbarExportToVideo {
+            get {
+                return ResourceManager.GetString("ToolbarExportToVideo", resourceCulture);
             }
         }
         
@@ -462,6 +543,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         internal static string TooltipExportToImage {
             get {
                 return ResourceManager.GetString("TooltipExportToImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export to Video.
+        /// </summary>
+        internal static string TooltipExportToVideo {
+            get {
+                return ResourceManager.GetString("TooltipExportToVideo", resourceCulture);
             }
         }
         

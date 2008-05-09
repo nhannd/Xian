@@ -8,19 +8,14 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.CodeDom.Compiler;
-using System.Configuration;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport {
     
     
-    [CompilerGenerated()]
-    [GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class ImageExportSettings : ApplicationSettingsBase {
+    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
+    internal sealed partial class ImageExportSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static ImageExportSettings defaultInstance = ((ImageExportSettings)(Synchronized(new ImageExportSettings())));
+        private static ImageExportSettings defaultInstance = ((ImageExportSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ImageExportSettings())));
         
         public static ImageExportSettings Default {
             get {
@@ -28,9 +23,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("Jpg")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Jpg")]
         public string SelectedImageExporterId {
             get {
                 return ((string)(this["SelectedImageExporterId"]));
@@ -40,15 +35,39 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("0")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int SelectedImageExportOption {
             get {
                 return ((int)(this["SelectedImageExportOption"]));
             }
             set {
                 this["SelectedImageExportOption"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SelectedVideoExportOption {
+            get {
+                return ((int)(this["SelectedVideoExportOption"]));
+            }
+            set {
+                this["SelectedVideoExportOption"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        public int SelectedVideoExportFrameRate {
+            get {
+                return ((int)(this["SelectedVideoExportFrameRate"]));
+            }
+            set {
+                this["SelectedVideoExportFrameRate"] = value;
             }
         }
     }

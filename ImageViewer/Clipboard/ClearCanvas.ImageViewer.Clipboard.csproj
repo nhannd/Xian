@@ -48,10 +48,14 @@
     <Compile Include="ClipboardTool.cs" />
     <Compile Include="CopyToClipboard\CopySubsetToClipboardComponent.cs" />
     <Compile Include="IClipboardToolContext.cs" />
+    <Compile Include="ImageExport\AviExportComponent.cs" />
+    <Compile Include="ImageExport\Avi.cs" />
+    <Compile Include="ImageExport\AviVideoStreamWriter.cs" />
     <Compile Include="ImageExport\ExportToImageTool.cs" />
     <Compile Include="DeleteAllClipboardItemsTool.cs" />
     <Compile Include="IconCreator.cs" />
     <Compile Include="DeleteClipboardItemTool.cs" />
+    <Compile Include="ImageExport\ExportToVideoTool.cs" />
     <Compile Include="ImageExport\FileUtilities.cs" />
     <Compile Include="ImageExport\ImageExportSettings.cs" />
     <Compile Include="ImageExport\ImageExportSettings.Designer.cs">
@@ -131,6 +135,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ImageExportSettings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ExportToVideoToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

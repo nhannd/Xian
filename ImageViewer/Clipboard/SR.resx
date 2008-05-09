@@ -168,6 +168,9 @@
   <data name="MenuExportToImage" xml:space="preserve">
     <value>Export to Image</value>
   </data>
+  <data name="MenuExportToVideo" xml:space="preserve">
+    <value>Export to Video</value>
+  </data>
   <data name="MenuShowClipboard" xml:space="preserve">
     <value>Clipboard</value>
   </data>
@@ -177,11 +180,17 @@
   <data name="MessageCancelled" xml:space="preserve">
     <value>Cancelled.</value>
   </data>
+  <data name="MessageCreatingVideo" xml:space="preserve">
+    <value>Creating video ...</value>
+  </data>
   <data name="MessageCustomRangeInvalid" xml:space="preserve">
     <value>The custom range is invalid.</value>
   </data>
   <data name="MessageDirectoryDoesNotExist" xml:space="preserve">
     <value>The specified directory does not exist.</value>
+  </data>
+  <data name="MessageDisplaySetTooFewImagesForVideo" xml:space="preserve">
+    <value>The display set must have 2 or more images to be exported to video.</value>
   </data>
   <data name="MessageEndValueLargerThanStart" xml:space="preserve">
     <value>The end value must be less than or equal to the start value.</value>
@@ -196,12 +205,18 @@
     <value>Complete.</value>
   </data>
   <data name="MessageExportFailed" xml:space="preserve">
-    <value>Export failed.  Please check the logs for more details.</value>
+    <value>Export failed.  Please check the log for more details.</value>
   </data>
   <data name="MessageExportingImages" xml:space="preserve">
     <value>Exporting Images ...</value>
   </data>
-  <data name="MessageExportStillRunning" xml:space="preserve">
+  <data name="MessageExportToVideoFailed" xml:space="preserve">
+    <value>Export to video failed.  Please see the log for more details.</value>
+  </data>
+  <data name="MessageFormatExportingFrame" xml:space="preserve">
+    <value>Exporting frame #{0} of {1}</value>
+  </data>
+  <data name="MessageImageExportStillRunning" xml:space="preserve">
     <value>Another export job is currently running.  You must wait until it completes to export more images.</value>
   </data>
   <data name="MessageInvalidFilePath" xml:space="preserve">
@@ -216,11 +231,17 @@
   <data name="MessageUnableToClearClipboardItems" xml:space="preserve">
     <value>At least one of the items could not be removed from the clipboard because it is in use.</value>
   </data>
+  <data name="MessageVideoExportStillRunning" xml:space="preserve">
+    <value>Another video is currently being created.  You must wait until it completes to create another.</value>
+  </data>
   <data name="TitleClipboard" xml:space="preserve">
     <value>Clipboard</value>
   </data>
   <data name="TitleCopySubsetToClipboard" xml:space="preserve">
     <value>Copy Images to Clipboard</value>
+  </data>
+  <data name="TitleCreatingVideo" xml:space="preserve">
+    <value>Creating Video</value>
   </data>
   <data name="TitleExportImages" xml:space="preserve">
     <value>Export Images</value>
@@ -231,6 +252,9 @@
   <data name="TitleExportSingleImage" xml:space="preserve">
     <value>Export Single Image</value>
   </data>
+  <data name="TitleExportToVideo" xml:space="preserve">
+    <value>Export to Video</value>
+  </data>
   <data name="ToolbalDeleteAllClipboardItems" xml:space="preserve">
     <value>Delete All</value>
   </data>
@@ -239,6 +263,9 @@
   </data>
   <data name="ToolbarExportToImage" xml:space="preserve">
     <value>Export to Image</value>
+  </data>
+  <data name="ToolbarExportToVideo" xml:space="preserve">
+    <value>Export to Video</value>
   </data>
   <data name="ToolbarShowClipboard" xml:space="preserve">
     <value>Clipboard</value>
@@ -251,6 +278,9 @@
   </data>
   <data name="TooltipExportToImage" xml:space="preserve">
     <value>Export to different image formats</value>
+  </data>
+  <data name="TooltipExportToVideo" xml:space="preserve">
+    <value>Export to Video</value>
   </data>
   <data name="TooltipShowClipboard" xml:space="preserve">
     <value>Show Clipboard</value>

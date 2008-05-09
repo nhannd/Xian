@@ -80,6 +80,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			context.CloneFields(source, this);
 			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
+			this.AnnotationLayoutProvider.AnnotationLayout.Visible = source.AnnotationLayoutProvider.AnnotationLayout.Visible;
 		}
 
 		/// <summary>

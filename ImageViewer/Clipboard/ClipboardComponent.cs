@@ -39,6 +39,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Annotations;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -208,8 +209,12 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			Platform.CheckForNullReference(image, "image");
 
 			Rectangle clientRectangle = image.ClientRectangle;
+			
+			image = image.Clone();
+			HideTextOverlay(image);
+
 			Bitmap bmp = IconCreator.CreatePresentationImageIcon(image);
-			_clipboardItems.Add(new ClipboardItem(image.Clone(), bmp, "", clientRectangle));
+			_clipboardItems.Add(new ClipboardItem(image, bmp, "", clientRectangle));
 		}
 
 		internal static void AddToClipboard(IDisplaySet displaySet)
@@ -242,9 +247,23 @@ namespace ClearCanvas.ImageViewer.Clipboard
 					displaySet.PresentationImages.Add(image.Clone());
 			}
 
+			HideTextOverlay(displaySet.PresentationImages);
+
 			Bitmap bmp = IconCreator.CreateDisplaySetIcon(displaySet, clientRectangle);
 			ClipboardItem item = new ClipboardItem(displaySet, bmp, displaySet.Name, clientRectangle);
 			_clipboardItems.Add(item);
+		}
+
+		internal static void HideTextOverlay(IEnumerable<IPresentationImage> images)
+		{
+			foreach (IPresentationImage image in images)
+				HideTextOverlay(image);
+		}
+
+		internal static void HideTextOverlay(IPresentationImage image)
+		{
+			if (image is IAnnotationLayoutProvider)
+				((IAnnotationLayoutProvider) image).AnnotationLayout.Visible = false;
 		}
 	}
 }

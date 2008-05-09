@@ -35,6 +35,21 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
+	internal class SharedAnnotationLayoutProxy : AnnotationLayout
+	{
+		private readonly IAnnotationLayout _realLayout;
+
+		public SharedAnnotationLayoutProxy(IAnnotationLayout realLayout)
+		{
+			_realLayout = realLayout;
+		}
+
+		public override IEnumerable<AnnotationBox> AnnotationBoxes
+		{
+			get { return _realLayout.AnnotationBoxes; }
+		}
+	}
+
 	internal class EmptyAnnotationLayout : AnnotationLayout
 	{
 		public EmptyAnnotationLayout()

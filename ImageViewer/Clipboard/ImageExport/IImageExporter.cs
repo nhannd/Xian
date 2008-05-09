@@ -14,25 +14,13 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 	public class ExportImageParams
 	{
-		private readonly ExportOption _exportOption;
-		private readonly Rectangle _displayRectangle;
-
-		public ExportImageParams(ExportOption exportOption, Rectangle displayRectangle)
+		public ExportImageParams()
 		{
-			_exportOption = exportOption;
-			_displayRectangle = displayRectangle;
 		}
 
-		public ExportOption ExportOption
-		{
-			get { return _exportOption; }
-		}
-
-		//for wysiwyg
-		public Rectangle DisplayRectangle
-		{
-			get { return _displayRectangle; }
-		}
+		public ExportOption ExportOption = ImageExport.ExportOption.Wysiwyg;
+		public Rectangle DisplayRectangle;
+		public float Scale = 1F;
 	}
 
 	public interface IImageExporter

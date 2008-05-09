@@ -35,6 +35,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AviExportComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AviExportComponentControl.Designer.cs">
+      <DependentUpon>AviExportComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AviExportComponentView.cs" />
     <Compile Include="ClipboardComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -82,6 +89,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AviExportComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AviExportComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ClipboardComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ClipboardComponentControl.cs</DependentUpon>

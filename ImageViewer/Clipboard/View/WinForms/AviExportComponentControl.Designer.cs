@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 {
-    partial class ImageExportComponentControl
+    partial class AviExportComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -59,86 +59,96 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			this._imageExporters = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-			this._path = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._buttonBrowse = new System.Windows.Forms.Button();
-			this._buttonConfigure = new System.Windows.Forms.Button();
-			this._buttonOk = new System.Windows.Forms.Button();
 			this._buttonCancel = new System.Windows.Forms.Button();
+			this._buttonOk = new System.Windows.Forms.Button();
+			this._trackBarFrameRate = new System.Windows.Forms.TrackBar();
+			this.label3 = new System.Windows.Forms.Label();
+			this._frameRate = new System.Windows.Forms.TextBox();
+			this._duration = new System.Windows.Forms.TextBox();
+			this.label5 = new System.Windows.Forms.Label();
 			this._groupOptions = new System.Windows.Forms.GroupBox();
-			this._checkOptionCompleteImage = new System.Windows.Forms.RadioButton();
-			this._checkOptionWysiwyg = new System.Windows.Forms.RadioButton();
 			this._scale = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			this.scaleLabel = new System.Windows.Forms.Label();
+			this._checkOptionCompleteImage = new System.Windows.Forms.RadioButton();
+			this._checkOptionWysiwyg = new System.Windows.Forms.RadioButton();
+			((System.ComponentModel.ISupportInitialize)(this._trackBarFrameRate)).BeginInit();
 			this._groupOptions.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._scale)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// _imageExporters
+			// _buttonCancel
 			// 
-			this._imageExporters.DataSource = null;
-			this._imageExporters.DisplayMember = "";
-			this._imageExporters.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._imageExporters.LabelText = "Export As";
-			this._imageExporters.Location = new System.Drawing.Point(10, 74);
-			this._imageExporters.Margin = new System.Windows.Forms.Padding(2);
-			this._imageExporters.Name = "_imageExporters";
-			this._imageExporters.Size = new System.Drawing.Size(315, 41);
-			this._imageExporters.TabIndex = 2;
-			this._imageExporters.Value = null;
-			// 
-			// _path
-			// 
-			this._path.LabelText = "Path";
-			this._path.Location = new System.Drawing.Point(10, 15);
-			this._path.Margin = new System.Windows.Forms.Padding(2);
-			this._path.Mask = "";
-			this._path.Name = "_path";
-			this._path.PasswordChar = '\0';
-			this._path.Size = new System.Drawing.Size(315, 41);
-			this._path.TabIndex = 0;
-			this._path.ToolTip = null;
-			this._path.Value = null;
-			// 
-			// _buttonBrowse
-			// 
-			this._buttonBrowse.Location = new System.Drawing.Point(330, 31);
-			this._buttonBrowse.Name = "_buttonBrowse";
-			this._buttonBrowse.Size = new System.Drawing.Size(70, 23);
-			this._buttonBrowse.TabIndex = 1;
-			this._buttonBrowse.Text = "Browse";
-			this._buttonBrowse.UseVisualStyleBackColor = true;
-			this._buttonBrowse.Click += new System.EventHandler(this.OnBrowse);
-			// 
-			// _buttonConfigure
-			// 
-			this._buttonConfigure.Location = new System.Drawing.Point(330, 91);
-			this._buttonConfigure.Name = "_buttonConfigure";
-			this._buttonConfigure.Size = new System.Drawing.Size(70, 23);
-			this._buttonConfigure.TabIndex = 3;
-			this._buttonConfigure.Text = "Configure";
-			this._buttonConfigure.UseVisualStyleBackColor = true;
-			this._buttonConfigure.Click += new System.EventHandler(this.OnConfigureExporter);
+			this._buttonCancel.Location = new System.Drawing.Point(259, 165);
+			this._buttonCancel.Name = "_buttonCancel";
+			this._buttonCancel.Size = new System.Drawing.Size(70, 23);
+			this._buttonCancel.TabIndex = 9;
+			this._buttonCancel.Text = "Cancel";
+			this._buttonCancel.UseVisualStyleBackColor = true;
+			this._buttonCancel.Click += new System.EventHandler(this.OnCancel);
 			// 
 			// _buttonOk
 			// 
-			this._buttonOk.Location = new System.Drawing.Point(254, 226);
+			this._buttonOk.Location = new System.Drawing.Point(183, 165);
 			this._buttonOk.Name = "_buttonOk";
 			this._buttonOk.Size = new System.Drawing.Size(70, 23);
-			this._buttonOk.TabIndex = 5;
+			this._buttonOk.TabIndex = 8;
 			this._buttonOk.Text = "Ok";
 			this._buttonOk.UseVisualStyleBackColor = true;
 			this._buttonOk.Click += new System.EventHandler(this.OnOk);
 			// 
-			// _buttonCancel
+			// _trackBarFrameRate
 			// 
-			this._buttonCancel.Location = new System.Drawing.Point(330, 226);
-			this._buttonCancel.Name = "_buttonCancel";
-			this._buttonCancel.Size = new System.Drawing.Size(70, 23);
-			this._buttonCancel.TabIndex = 6;
-			this._buttonCancel.Text = "Cancel";
-			this._buttonCancel.UseVisualStyleBackColor = true;
-			this._buttonCancel.Click += new System.EventHandler(this.OnCancel);
+			this._trackBarFrameRate.LargeChange = 1;
+			this._trackBarFrameRate.Location = new System.Drawing.Point(12, 32);
+			this._trackBarFrameRate.Margin = new System.Windows.Forms.Padding(2);
+			this._trackBarFrameRate.Maximum = 25;
+			this._trackBarFrameRate.Minimum = 1;
+			this._trackBarFrameRate.Name = "_trackBarFrameRate";
+			this._trackBarFrameRate.Size = new System.Drawing.Size(189, 42);
+			this._trackBarFrameRate.TabIndex = 1;
+			this._trackBarFrameRate.Value = 1;
+			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(11, 17);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(97, 13);
+			this.label3.TabIndex = 0;
+			this.label3.Text = "Frames per second";
+			// 
+			// _frameRate
+			// 
+			this._frameRate.BackColor = System.Drawing.SystemColors.Control;
+			this._frameRate.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this._frameRate.Location = new System.Drawing.Point(206, 36);
+			this._frameRate.Name = "_frameRate";
+			this._frameRate.ReadOnly = true;
+			this._frameRate.Size = new System.Drawing.Size(47, 13);
+			this._frameRate.TabIndex = 2;
+			this._frameRate.TabStop = false;
+			this._frameRate.Text = "frames/sec";
+			// 
+			// _duration
+			// 
+			this._duration.BackColor = System.Drawing.SystemColors.Control;
+			this._duration.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this._duration.Location = new System.Drawing.Point(282, 34);
+			this._duration.Name = "_duration";
+			this._duration.ReadOnly = true;
+			this._duration.Size = new System.Drawing.Size(47, 20);
+			this._duration.TabIndex = 4;
+			this._duration.TabStop = false;
+			// 
+			// label5
+			// 
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(261, 16);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(73, 13);
+			this.label5.TabIndex = 3;
+			this.label5.Text = "Duration (sec)";
+			this.label5.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// _groupOptions
 			// 
@@ -146,32 +156,12 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._groupOptions.Controls.Add(this.scaleLabel);
 			this._groupOptions.Controls.Add(this._checkOptionCompleteImage);
 			this._groupOptions.Controls.Add(this._checkOptionWysiwyg);
-			this._groupOptions.Location = new System.Drawing.Point(10, 133);
+			this._groupOptions.Location = new System.Drawing.Point(14, 74);
 			this._groupOptions.Name = "_groupOptions";
 			this._groupOptions.Size = new System.Drawing.Size(315, 72);
-			this._groupOptions.TabIndex = 4;
+			this._groupOptions.TabIndex = 10;
 			this._groupOptions.TabStop = false;
 			this._groupOptions.Text = "Options";
-			// 
-			// _checkOptionCompleteImage
-			// 
-			this._checkOptionCompleteImage.AutoSize = true;
-			this._checkOptionCompleteImage.Location = new System.Drawing.Point(101, 35);
-			this._checkOptionCompleteImage.Name = "_checkOptionCompleteImage";
-			this._checkOptionCompleteImage.Size = new System.Drawing.Size(101, 17);
-			this._checkOptionCompleteImage.TabIndex = 1;
-			this._checkOptionCompleteImage.Text = "Complete Image";
-			this._checkOptionCompleteImage.UseVisualStyleBackColor = true;
-			// 
-			// _checkOptionWysiwyg
-			// 
-			this._checkOptionWysiwyg.AutoSize = true;
-			this._checkOptionWysiwyg.Location = new System.Drawing.Point(16, 35);
-			this._checkOptionWysiwyg.Name = "_checkOptionWysiwyg";
-			this._checkOptionWysiwyg.Size = new System.Drawing.Size(67, 17);
-			this._checkOptionWysiwyg.TabIndex = 0;
-			this._checkOptionWysiwyg.Text = "Wysiwyg";
-			this._checkOptionWysiwyg.UseVisualStyleBackColor = true;
 			// 
 			// _scale
 			// 
@@ -210,38 +200,62 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this.scaleLabel.TabIndex = 2;
 			this.scaleLabel.Text = "Scale";
 			// 
-			// ImageExportComponentControl
+			// _checkOptionCompleteImage
+			// 
+			this._checkOptionCompleteImage.AutoSize = true;
+			this._checkOptionCompleteImage.Location = new System.Drawing.Point(105, 37);
+			this._checkOptionCompleteImage.Name = "_checkOptionCompleteImage";
+			this._checkOptionCompleteImage.Size = new System.Drawing.Size(101, 17);
+			this._checkOptionCompleteImage.TabIndex = 1;
+			this._checkOptionCompleteImage.Text = "Complete Image";
+			this._checkOptionCompleteImage.UseVisualStyleBackColor = true;
+			// 
+			// _checkOptionWysiwyg
+			// 
+			this._checkOptionWysiwyg.AutoSize = true;
+			this._checkOptionWysiwyg.Location = new System.Drawing.Point(16, 37);
+			this._checkOptionWysiwyg.Name = "_checkOptionWysiwyg";
+			this._checkOptionWysiwyg.Size = new System.Drawing.Size(67, 17);
+			this._checkOptionWysiwyg.TabIndex = 0;
+			this._checkOptionWysiwyg.Text = "Wysiwyg";
+			this._checkOptionWysiwyg.UseVisualStyleBackColor = true;
+			// 
+			// AviExportComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._groupOptions);
+			this.Controls.Add(this.label5);
+			this.Controls.Add(this._duration);
+			this.Controls.Add(this._frameRate);
+			this.Controls.Add(this.label3);
+			this.Controls.Add(this._trackBarFrameRate);
 			this.Controls.Add(this._buttonCancel);
 			this.Controls.Add(this._buttonOk);
-			this.Controls.Add(this._buttonConfigure);
-			this.Controls.Add(this._buttonBrowse);
-			this.Controls.Add(this._path);
-			this.Controls.Add(this._imageExporters);
-			this.Name = "ImageExportComponentControl";
-			this.Size = new System.Drawing.Size(414, 268);
+			this.Name = "AviExportComponentControl";
+			this.Size = new System.Drawing.Size(349, 209);
+			((System.ComponentModel.ISupportInitialize)(this._trackBarFrameRate)).EndInit();
 			this._groupOptions.ResumeLayout(false);
 			this._groupOptions.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._scale)).EndInit();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
         #endregion
 
-		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _imageExporters;
-		private ClearCanvas.Desktop.View.WinForms.TextField _path;
-		private System.Windows.Forms.Button _buttonBrowse;
-		private System.Windows.Forms.Button _buttonConfigure;
-		private System.Windows.Forms.Button _buttonOk;
 		private System.Windows.Forms.Button _buttonCancel;
+		private System.Windows.Forms.Button _buttonOk;
+		private System.Windows.Forms.TrackBar _trackBarFrameRate;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.TextBox _frameRate;
+		private System.Windows.Forms.TextBox _duration;
+		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.GroupBox _groupOptions;
-		private System.Windows.Forms.RadioButton _checkOptionCompleteImage;
-		private System.Windows.Forms.RadioButton _checkOptionWysiwyg;
 		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _scale;
 		private System.Windows.Forms.Label scaleLabel;
+		private System.Windows.Forms.RadioButton _checkOptionCompleteImage;
+		private System.Windows.Forms.RadioButton _checkOptionWysiwyg;
     }
 }

@@ -98,83 +98,27 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 	[AssociateView(typeof(ImageExportComponentViewExtensionPoint))]
 	public class ImageExportComponent : ApplicationComponent
 	{
-		#region Path Validation Rule
+		private static IShelf _progressComponentShelf;
 
-		private class PathValidationRule : IValidationRule
-		{
-			public PathValidationRule()
-			{
-			}
-
-			#region IValidationRule Members
-
-			public string PropertyName
-			{
-				get { return "ExportFilePath"; }
-			}
-
-			public ValidationResult GetResult(IApplicationComponent component)
-			{
-				ImageExportComponent exportComponent = (ImageExportComponent)component;
-
-				bool valid = true;
-				string message = null;
-
-				if (exportComponent.NumberOfImagesToExport == 1)
-				{
-					string correctedFilename = exportComponent.GetCorrectedExportFilePath();
-					string directory = Path.GetDirectoryName(exportComponent.ExportFilePath);
-
-					if (!String.IsNullOrEmpty(directory) && Directory.Exists(directory))
-					{
-						string fileName = Path.GetFileName(correctedFilename);
-						if (String.IsNullOrEmpty(fileName))
-						{
-							valid = false;
-							message = SR.MessageInvalidFilePath;
-						}
-					}
-					else
-					{
-						valid = false;
-						message = SR.MessageInvalidFilePath;
-					}
-				}
-				else
-				{
-					valid = (!String.IsNullOrEmpty(exportComponent.ExportFilePath) &&
-							 Directory.Exists(exportComponent.ExportFilePath));
-					
-					if (!valid)
-					{
-						message = SR.MessageDirectoryDoesNotExist;
-					}
-				}
-
-				if (valid)
-					return new ValidationResult(true, "");
-				else
-					return new ValidationResult(false, message);
-			}
-
-			#endregion
-		}
-
-		#endregion
-		
 		private List<ImageExporterInfo> _imageExporters;
-		private ImageExporterInfo _selectedImageExporter;
-		private readonly int _numberOfImagesToExport;
-		private string _exportFilePath;
-		private ExportOption _exportOption;
 
-		internal ImageExportComponent(int numberOfImagesToExport)
+		private volatile ImageExporterInfo _selectedImageExporter;
+		private readonly List<IClipboardItem> _itemsToExport;
+		private readonly int _numberOfImagesToExport;
+		private volatile string _exportFilePath;
+		private volatile ExportOption _exportOption;
+		private volatile float _scale = 1;
+		private volatile Exception _error;
+
+		private ImageExportComponent(List<IClipboardItem> itemsToExport, int numberOfImagesToExport)
 		{
-			Platform.CheckPositive(numberOfImagesToExport, "numberOfImagesToExport");
+			_itemsToExport = itemsToExport;
 			_numberOfImagesToExport = numberOfImagesToExport;
 		}
 
-		internal IImageExporter SelectedExporter
+		#region Component
+
+		private IImageExporter SelectedExporter
 		{
 			get
 			{
@@ -185,15 +129,50 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
-		internal ExportOption ExportOption
+		[ValidationMethodFor("ExportFilePath")]
+		private ValidationResult ValidatePath()
 		{
-			get { return _exportOption; }
+			bool valid = true;
+			string message = null;
+
+			if (NumberOfImagesToExport == 1)
+			{
+				string correctedFilename = GetCorrectedExportFilePath();
+				string directory = Path.GetDirectoryName(ExportFilePath);
+
+				if (!String.IsNullOrEmpty(directory) && Directory.Exists(directory))
+				{
+					string fileName = Path.GetFileName(correctedFilename);
+					if (String.IsNullOrEmpty(fileName))
+					{
+						valid = false;
+						message = SR.MessageInvalidFilePath;
+					}
+				}
+				else
+				{
+					valid = false;
+					message = SR.MessageInvalidFilePath;
+				}
+			}
+			else
+			{
+				valid = (!String.IsNullOrEmpty(ExportFilePath) && Directory.Exists(ExportFilePath));
+
+				if (!valid)
+				{
+					message = SR.MessageDirectoryDoesNotExist;
+				}
+			}
+
+			if (valid)
+				return new ValidationResult(true, "");
+			else
+				return new ValidationResult(false, message);
 		}
-		
+
 		public override void Start()
 		{
-			Validation.Add(new PathValidationRule());
-
 			LoadExporters();
 			SetDefaults();
 
@@ -276,6 +255,29 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
+		public float MinimumScale
+		{
+			get { return 0.1F; }
+		}
+
+		public float MaximumScale
+		{
+			get { return 25F; }
+		}
+
+		public float Scale
+		{
+			get { return _scale; }
+			set
+			{
+				if (value == _scale)
+					return;
+
+				_scale = value;
+				NotifyPropertyChanged("Scale");
+			}
+		}
+
 		public bool AcceptEnabled
 		{
 			get { return Modified; }
@@ -350,7 +352,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		}
 
 		#endregion
-
+		
 		private void LoadExporters()
 		{
 			_imageExporters = CollectionUtils.Map<object, ImageExporterInfo>
@@ -420,5 +422,227 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			ImageExportSettings.Default.SelectedImageExporterId = SelectedExporter.Identifier;
 			ImageExportSettings.Default.Save();
 		}
+
+		#endregion
+
+		internal static void Launch(IDesktopWindow desktopWindow, List<IClipboardItem> clipboardItems)
+		{
+			Platform.CheckForNullReference(clipboardItems, "clipboardItems");
+
+			if (_progressComponentShelf != null)
+			{
+				desktopWindow.ShowMessageBox(SR.MessageImageExportStillRunning, MessageBoxActions.Ok);
+				return;
+			}
+
+			int numberOfImagesToExport = GetNumberOfImagesToExport(clipboardItems);
+			Platform.CheckPositive(numberOfImagesToExport, "numberOfImagesToExport");
+
+			string title = SR.TitleExportImages;
+			if (numberOfImagesToExport == 1)
+				title = SR.TitleExportSingleImage;
+
+			ImageExportComponent component = new ImageExportComponent(clipboardItems, numberOfImagesToExport);
+			if (ApplicationComponentExitCode.Accepted !=
+				ApplicationComponent.LaunchAsDialog(desktopWindow, component, title))
+			{
+				return;
+			}
+
+			component.Export();
+		}
+
+		#region Export
+
+		private void Export()
+		{
+			if (SelectedExporter == null)
+				throw new InvalidOperationException("No exporter was chosen; unable to export any images.");
+
+			if (NumberOfImagesToExport == 1)
+			{
+				if (!Directory.Exists(Path.GetDirectoryName(ExportFilePath ?? "")))
+					throw new FileNotFoundException("The specified export directory does not exist.");
+
+				ClipboardItem clipboardItem = (ClipboardItem) _itemsToExport[0];
+
+				ExportImageParams exportParams = new ExportImageParams();
+				exportParams.ExportOption = _exportOption;
+				exportParams.DisplayRectangle = clipboardItem.DisplayRectangle;
+				exportParams.Scale = Scale;
+				SelectedExporter.Export((IPresentationImage)clipboardItem.Item, ExportFilePath, exportParams);
+			}
+			else
+			{
+				if (!Directory.Exists(ExportFilePath ?? ""))
+					throw new FileNotFoundException("The specified export directory does not exist.");
+
+
+				if (NumberOfImagesToExport <= 5)
+				{
+					BlockingOperation.Run(delegate { ExportMultipleImages(null); });
+					Cleanup(false);
+				}
+				else
+				{
+					_itemsToExport.ForEach(delegate(IClipboardItem item) { item.Lock(); });
+
+					BackgroundTask task = new BackgroundTask(ExportMultipleImages, true);
+
+					ProgressDialogComponent progressComponent = 
+						new ProgressDialogComponent(task, true, ProgressBarStyle.Blocks);
+					_progressComponentShelf = ApplicationComponent.LaunchAsShelf(
+						this.Host.DesktopWindow,
+						progressComponent, 
+						SR.TitleExportingImages, "ExportingImages",
+						ShelfDisplayHint.DockFloat);
+
+					_progressComponentShelf.Closed +=
+						delegate
+							{
+								Cleanup(true);
+								task.Dispose();
+							};
+				}
+			}
+		}
+
+		#region Shared Sync/Async Export method
+
+		private void ExportMultipleImages(IBackgroundTaskContext context)
+		{
+			int progress = 0;
+			List<IPresentationImage> imagesToDispose = new List<IPresentationImage>();
+
+			try
+			{
+				MultipleImageExportFileNamingStrategy fileNamingStrategy = 
+					new MultipleImageExportFileNamingStrategy(ExportFilePath);
+
+				string fileExtension = SelectedExporter.FileExtensions[0];
+				ReportProgress(context, SR.MessageExportingImages, progress);
+
+				foreach (ClipboardItem clipboardItem in _itemsToExport)
+				{
+					if (context != null && context.CancelRequested)
+						break;
+
+					ExportImageParams exportParams = new ExportImageParams();
+					exportParams.ExportOption = _exportOption;
+					exportParams.DisplayRectangle = clipboardItem.DisplayRectangle;
+					exportParams.Scale = Scale;
+					if (clipboardItem.Item is IPresentationImage)
+					{
+						IPresentationImage image = (IPresentationImage) clipboardItem.Item;
+						if (context != null)
+						{
+							// A graphic should belong to (and be disposed on) a single thread 
+							// and should not be rendered on multiple threads, so we clone it.
+							// Technically, we should be doing the clone on the main thread
+							// and then passing it to the worker, but that would require blocking
+							// the main thread while we cloned all the images.
+							imagesToDispose.Add(image = image.Clone());
+						}
+
+						string fileName = fileNamingStrategy.GetSingleImageFileName(image, fileExtension);
+						SelectedExporter.Export(image, fileName, exportParams);
+
+						ReportProgress(context, fileName, ++progress);
+					}
+					else if (clipboardItem.Item is IDisplaySet)
+					{
+						IDisplaySet displaySet = (IDisplaySet) clipboardItem.Item;
+						foreach (ImageFileNamePair pair in fileNamingStrategy.GetImagesAndFileNames(displaySet, fileExtension))
+						{
+							if (context != null && context.CancelRequested)
+								break;
+
+							IPresentationImage image = pair.Image;
+							if (context != null)
+							{
+								// A graphic should belong to (and be disposed on) a single thread 
+								// and should not be rendered on multiple threads, so we clone it.
+								// Technically, we should be doing the clone on the main thread
+								// and then passing it to the worker, but that would require blocking
+								// the main thread while we cloned all the images.
+								imagesToDispose.Add(image = image.Clone());
+							}
+
+							SelectedExporter.Export(image, pair.FileName, exportParams);
+
+							ReportProgress(context, pair.FileName, ++progress);
+						}
+					}
+				}
+
+				if (context != null)
+				{
+					if (context.CancelRequested)
+					{
+						ReportProgress(context, SR.MessageCancelled, progress);
+						context.Cancel();
+					}
+					else
+					{
+						ReportProgress(context, SR.MessageExportComplete, progress);
+						context.Complete();
+					}
+				}
+			}
+			catch(Exception e)
+			{
+				_error = e;
+				Platform.Log(LogLevel.Error, e);
+			}
+			finally
+			{
+				imagesToDispose.ForEach(delegate (IPresentationImage image) { image.Dispose(); });
+			}
+		}
+
+		private void ReportProgress(IBackgroundTaskContext context, string message, int currentStep)
+		{
+			if (context == null)
+				return;
+
+			int percent = Math.Min((int)(currentStep/(float) NumberOfImagesToExport * 100), 100);
+			context.ReportProgress(new BackgroundTaskProgress(percent, message));
+		}
+
+		#endregion
+
+		private void Cleanup(bool asynchronous)
+		{
+			if (asynchronous)
+				_itemsToExport.ForEach(delegate(IClipboardItem item) { item.Unlock(); });
+
+			_progressComponentShelf = null;
+
+			if (_error != null)
+			{
+				this.Host.DesktopWindow.ShowMessageBox(SR.MessageExportFailed, MessageBoxActions.Ok);
+				_error = null;
+			}
+		}
+
+		private static int GetNumberOfImagesToExport(IEnumerable<IClipboardItem> itemsToExport)
+		{
+			int number = 0;
+			foreach (ClipboardItem clipboardItem in itemsToExport)
+			{
+				if (clipboardItem.Item is IPresentationImage)
+				{
+					++number;
+				}
+				else if (clipboardItem.Item is IDisplaySet)
+				{
+					number += ((IDisplaySet)clipboardItem.Item).PresentationImages.Count;
+				}
+			}
+
+			return number;
+		}
+
+		#endregion
 	}
 }

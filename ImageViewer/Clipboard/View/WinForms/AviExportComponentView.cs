@@ -30,59 +30,50 @@
 #endregion
 
 using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.Text;
+
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Clipboard.ImageExport;
 
-namespace ClearCanvas.ImageViewer.Annotations
+namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 {
-	internal abstract class StoredAnnotatationLayoutProvider : AnnotationLayoutProvider
-	{
-		private IAnnotationLayout _layout;
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="AviExportComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(AviExportComponentViewExtensionPoint))]
+    public class AviExportComponentView : WinFormsView, IApplicationComponentView
+    {
+        private AviExportComponent _component;
+        private AviExportComponentControl _control;
 
-		protected StoredAnnotatationLayoutProvider()
-		{
-		}
+        #region IApplicationComponentView Members
 
-		protected abstract string StoredLayoutId { get; }
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (AviExportComponent)component;
+        }
 
-		#region IAnnotationLayoutProvider Members
+        #endregion
 
-		public override IAnnotationLayout  AnnotationLayout
-		{
-			get
-			{
-				if (_layout != null)
-					return _layout;
-
-				try
-				{
-					_layout = new SharedAnnotationLayoutProxy(
-						AnnotationLayoutStore.Instance.GetLayout(this.StoredLayoutId, this.AvailableAnnotationItems) ?? 
-						ClearCanvas.ImageViewer.Annotations.AnnotationLayout.Empty);
-				}
-				catch(Exception e)
-				{
-					Platform.Log(LogLevel.Error, e);
-
-					StoredAnnotationLayout layout = new StoredAnnotationLayout("error");
-					layout.AnnotationBoxGroups.Add(new StoredAnnotationBoxGroup("errorgroup"));
-					IAnnotationItem item = new BasicTextAnnotationItem("errorbox", "errorbox", SR.LabelError, SR.MessageErrorLoadingAnnotationLayout);
-
-					AnnotationBox box = new AnnotationBox(new RectangleF(0.5F,0.90F, 0.5F, 0.10F), item);
-					box.Bold = true;
-					box.Color = "Red";
-					box.Justification = AnnotationBox.JustificationBehaviour.Right;
-					box.NumberOfLines = 5;
-					box.VerticalAlignment = AnnotationBox.VerticalAlignmentBehaviour.Bottom;
-
-					layout.AnnotationBoxGroups[0].AnnotationBoxes.Add(box);
-					_layout = layout;
-				}
-
-				return _layout;
-			}
-		}
-
-		#endregion
-	}
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new AviExportComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

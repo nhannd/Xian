@@ -15,7 +15,6 @@ namespace ClearCanvas.ImageViewer.Clipboard
 	{
 		private bool _enabled = false;
 		private event EventHandler _enabledChanged;
-		private bool _applyOnlyToSelected = true;
 
     	/// <summary>
     	/// Called by the framework to allow the tool to initialize itself.
@@ -24,9 +23,12 @@ namespace ClearCanvas.ImageViewer.Clipboard
     	/// This method will be called after <see cref="ITool.SetContext"/> has been called, 
     	/// which guarantees that the tool will have access to its context when this method is called.
     	/// </remarks>
-    	public override void Initialize()
+		public override void Initialize()
 		{
 			base.Initialize();
+
+			UpdateEnabled();
+			
 			this.Context.ClipboardItemsChanged += OnClipboardItemsChanged;
 			this.Context.SelectedClipboardItemsChanged += OnSelectionChanged;
 		}
@@ -68,26 +70,42 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			remove { _enabledChanged -= value; }
 		}
 
+		/// <summary>
+		/// Called when the selection has changed.
+		/// </summary>
+		/// <remarks>
+		/// By default, this method sets the <see cref="Enabled"/> property based
+		/// on whether or not anything is currently selected.  If you want to change
+		/// this behaviour you should override this method (and not call the base method).
+		/// </remarks>
+		protected virtual void OnSelectionChanged()
+		{
+			UpdateEnabled();
+		}
+
+		/// <summary>
+		/// Called when the items on the clipboard have changed.
+		/// </summary>
+		protected virtual void OnClipboardItemsChanged()
+		{
+		}
+
 		private void OnClipboardItemsChanged(object sender, EventArgs e)
 		{
-			if (!_applyOnlyToSelected)
-			{
-				if (this.Context.ClipboardItems.Count != 0)
-					this.Enabled = true;
-				else
-					this.Enabled = false;
-			}
+			OnClipboardItemsChanged();
 		}
 
 		private void OnSelectionChanged(object sender, EventArgs e)
 		{
-			if (_applyOnlyToSelected)
-			{
-				if (this.Context.SelectedClipboardItems.Count != 0)
-					this.Enabled = true;
-				else
-					this.Enabled = false;
-			}
+			OnSelectionChanged();
+		}
+
+		private void UpdateEnabled()
+		{
+			if (this.Context.SelectedClipboardItems.Count != 0)
+				this.Enabled = true;
+			else
+				this.Enabled = false;
 		}
 	}
 }

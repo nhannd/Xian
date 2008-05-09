@@ -50,6 +50,52 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		#endregion
 
+		private static Bitmap ExportCompleteImage(IPresentationImage image, float scale)
+		{
+			ImageSpatialTransform transform = (ImageSpatialTransform)((ISpatialTransformProvider)image).SpatialTransform;
+			object restoreMemento = transform.CreateMemento();
+
+			ImageGraphic imageGraphic = ((IImageGraphicProvider)image).ImageGraphic;
+			Rectangle imageRectangle = new Rectangle(0, 0, imageGraphic.Columns, imageGraphic.Rows);
+
+			transform.Initialize();
+			transform.ScaleToFit = false;
+			transform.Scale = scale;
+			RectangleF displayRectangle = imageGraphic.SpatialTransform.ConvertToDestination(imageRectangle);
+			int width = (int)Math.Round(displayRectangle.Width);
+			int height = (int)Math.Round(displayRectangle.Height);
+
+			transform.ScaleToFit = true;
+			try
+			{
+				return image.DrawToBitmap(width, height);
+			}
+			finally
+			{
+				transform.SetMemento(restoreMemento);
+			}
+		}
+
+		private static Bitmap ExportWysiwyg(IPresentationImage image, Rectangle displayRectangle, float scale)
+		{
+			ImageSpatialTransform transform = (ImageSpatialTransform)((ISpatialTransformProvider)image).SpatialTransform;
+			object restoreMemento = transform.CreateMemento();
+
+			int width = (int)(displayRectangle.Width * scale);
+			int height = (int)(displayRectangle.Height * scale);
+
+			transform.Scale *= scale;
+
+			try
+			{
+				return image.DrawToBitmap(width, height);
+			}
+			finally
+			{
+				transform.SetMemento(restoreMemento);
+			}
+		}
+
 		public static Bitmap DrawToBitmap(IPresentationImage image, ExportImageParams exportParams)
 		{
 			Platform.CheckForNullReference(image, "image");
@@ -63,30 +109,11 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				
 				if (exportParams.ExportOption == ExportOption.Wysiwyg)
 				{
-					int width = exportParams.DisplayRectangle.Width;
-					int height = exportParams.DisplayRectangle.Height;
-					return image.DrawToBitmap(width, height);
+					return ExportWysiwyg(image, exportParams.DisplayRectangle, exportParams.Scale);
 				}
 				else
 				{
-					object restoreMemento = transform.CreateMemento();
-
-					ImageGraphic imageGraphic = ((IImageGraphicProvider) image).ImageGraphic;
-					Rectangle imageRectangle = new Rectangle(0, 0, imageGraphic.Columns, imageGraphic.Rows);
-
-					transform.Initialize();
-					transform.ScaleToFit = false;
-
-					RectangleF displayRectangle = imageGraphic.SpatialTransform.ConvertToDestination(imageRectangle);
-					int width = (int)Math.Round(displayRectangle.Width);
-					int height = (int)Math.Round(displayRectangle.Height);
-
-					transform.ScaleToFit = true;
-					Bitmap bitmap = image.DrawToBitmap(width, height);
-					
-					//restore previous state.
-					transform.SetMemento(restoreMemento);
-					return bitmap;
+					return ExportCompleteImage(image, exportParams.Scale);
 				}
 			}
 

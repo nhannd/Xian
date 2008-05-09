@@ -23,9 +23,18 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		public override void Initialize()
 		{
-			this.Enabled = this.Context.ClipboardItems.Count > 0;
-
 			base.Initialize();
+			this.Enabled = this.Context.ClipboardItems.Count > 0;
+		}
+
+		protected override void OnSelectionChanged()
+		{
+			this.Enabled = this.Context.ClipboardItems.Count > 0;
+		}
+
+		protected override void OnClipboardItemsChanged()
+		{
+			this.Enabled = this.Context.ClipboardItems.Count > 0;
 		}
 
 		public void DeleteAll()

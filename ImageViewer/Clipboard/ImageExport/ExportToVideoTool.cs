@@ -29,60 +29,55 @@
 
 #endregion
 
-using System;
-using System.Drawing;
+using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
+using System.Drawing;
+using System;
 
-namespace ClearCanvas.ImageViewer.Annotations
+#pragma warning disable 0419,1574,1587,1591
+
+namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {
-	internal abstract class StoredAnnotatationLayoutProvider : AnnotationLayoutProvider
-	{
-		private IAnnotationLayout _layout;
+	[MenuAction("export", "clipboard-contextmenu/MenuExportToVideo", "Export")]
+	[ButtonAction("export", "clipboard-toolbar/ToolbarExportToVideo", "Export")]
+	[Tooltip("export", "TooltipExportToVideo")]
+	[IconSet("export", IconScheme.Colour, "Icons.ExportToVideoToolSmall.png", "Icons.ExportToVideoToolSmall.png", "Icons.ExportToVideoToolSmall.png")]
+	[EnabledStateObserver("export", "Enabled", "EnabledChanged")]
 
-		protected StoredAnnotatationLayoutProvider()
+	[ExtensionOf(typeof(ClipboardToolExtensionPoint))]
+	public class ExportToVideoTool : ClipboardTool
+	{
+		public ExportToVideoTool()
 		{
 		}
 
-		protected abstract string StoredLayoutId { get; }
-
-		#region IAnnotationLayoutProvider Members
-
-		public override IAnnotationLayout  AnnotationLayout
+		public override void Initialize()
 		{
-			get
+			base.Initialize();
+			this.Enabled = this.Context.SelectedClipboardItems.Count == 1 &&
+				this.Context.SelectedClipboardItems[0].Item is IDisplaySet;
+		}
+
+		protected override void  OnSelectionChanged()
+		{
+			Enabled = this.Context.SelectedClipboardItems.Count == 1 &&
+				this.Context.SelectedClipboardItems[0].Item is IDisplaySet;
+		}
+
+		public void Export()
+		{
+			try
 			{
-				if (_layout != null)
-					return _layout;
-
-				try
-				{
-					_layout = new SharedAnnotationLayoutProxy(
-						AnnotationLayoutStore.Instance.GetLayout(this.StoredLayoutId, this.AvailableAnnotationItems) ?? 
-						ClearCanvas.ImageViewer.Annotations.AnnotationLayout.Empty);
-				}
-				catch(Exception e)
-				{
-					Platform.Log(LogLevel.Error, e);
-
-					StoredAnnotationLayout layout = new StoredAnnotationLayout("error");
-					layout.AnnotationBoxGroups.Add(new StoredAnnotationBoxGroup("errorgroup"));
-					IAnnotationItem item = new BasicTextAnnotationItem("errorbox", "errorbox", SR.LabelError, SR.MessageErrorLoadingAnnotationLayout);
-
-					AnnotationBox box = new AnnotationBox(new RectangleF(0.5F,0.90F, 0.5F, 0.10F), item);
-					box.Bold = true;
-					box.Color = "Red";
-					box.Justification = AnnotationBox.JustificationBehaviour.Right;
-					box.NumberOfLines = 5;
-					box.VerticalAlignment = AnnotationBox.VerticalAlignmentBehaviour.Bottom;
-
-					layout.AnnotationBoxGroups[0].AnnotationBoxes.Add(box);
-					_layout = layout;
-				}
-
-				return _layout;
+				AviExportComponent.Launch(this.Context.DesktopWindow,
+				                          (ClipboardItem) this.Context.SelectedClipboardItems[0]);
+			}
+			catch(Exception e)
+			{
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
 		}
-
-		#endregion
 	}
 }

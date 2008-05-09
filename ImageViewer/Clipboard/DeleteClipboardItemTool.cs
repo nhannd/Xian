@@ -20,12 +20,6 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		{
 		}
 
-		public override void Initialize()
-		{
-			this.Enabled = this.Context.SelectedClipboardItems.Count > 0;
-			base.Initialize();
-		}
-
 		public void Delete()
 		{
 			bool anyLocked = false;

@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			_getImagesDelegate = getImagesDelegate;
 		}
 
-		#region IImageSubsetSelectionStrategy Members
+		#region IImageSelectionStrategy Members
 
 		public string Description
 		{
