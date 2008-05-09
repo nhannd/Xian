@@ -31,5 +31,14 @@ namespace ClearCanvas.Ris.Server {
                 return ((string)(this["BaseUrl"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SendExceptionDetailToClient {
+            get {
+                return ((bool)(this["SendExceptionDetailToClient"]));
+            }
+        }
     }
 }

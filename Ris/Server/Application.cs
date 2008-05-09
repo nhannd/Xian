@@ -111,66 +111,36 @@ namespace ClearCanvas.Ris.Server
 
             Platform.Log(LogLevel.Info, "Mounting service {0}", serviceClass.Name);
 
+			// determine if service requires authentication
             AuthenticationAttribute authenticationAttribute = AttributeUtils.GetAttribute<AuthenticationAttribute>(contractAttribute.ServiceContract);
             bool authenticated = authenticationAttribute == null ? true : authenticationAttribute.AuthenticationRequired;
 
-            WSHttpBinding binding = new WSHttpBinding();
-            binding.MaxReceivedMessageSize = OneMegaByte;
-            binding.ReaderQuotas.MaxStringContentLength = OneMegaByte;
-            binding.ReaderQuotas.MaxArrayLength = OneMegaByte;
-            binding.Security.Mode = SecurityMode.Message;
-            binding.Security.Message.ClientCredentialType = authenticated ?
-                MessageCredentialType.UserName : MessageCredentialType.None;
-
-            // create service host
+            // create service URI
             Uri uri = new Uri(new Uri(baseAddress), contractAttribute.ServiceContract.FullName);
-            
 
-            ServiceHost host = new ServiceHost(serviceClass, uri);
+			// create service host
+			ServiceHost host = new ServiceHost(serviceClass, uri);
+
+			// build service according to binding
+			WSHttpConfiguration configuration = new WSHttpConfiguration();
+        	configuration.ConfigureServiceHost(host, contractAttribute.ServiceContract, uri, authenticated);
 
             // add behaviour to grab AOP proxied service instance
             host.Description.Behaviors.Add(new InstanceManagementServiceBehavior(contractAttribute.ServiceContract, serviceFactory));
 
-            // establish endpoint
-            host.AddServiceEndpoint(contractAttribute.ServiceContract, binding, "");
-
-            // expose meta-data via HTTP GET
-            ServiceMetadataBehavior metadataBehavior = host.Description.Behaviors.Find<ServiceMetadataBehavior>();
-            if (metadataBehavior == null)
-            {
-                metadataBehavior = new ServiceMetadataBehavior();
-                metadataBehavior.HttpGetEnabled = true;
-                host.Description.Behaviors.Add(metadataBehavior);
-            }
-
 			// adjust some service behaviours
 			ServiceBehaviorAttribute serviceBehavior = host.Description.Behaviors.Find<ServiceBehaviorAttribute>();
+			if (serviceBehavior != null)
+			{
+				// set instance mode to "per call"
+				serviceBehavior.InstanceContextMode = InstanceContextMode.PerCall;
 
-			// set instance mode to "per call"
-			serviceBehavior.InstanceContextMode = InstanceContextMode.PerCall;
-
-			// determine whether to send exception detail back to client
-#if DEBUG
-			serviceBehavior.IncludeExceptionDetailInFaults = true;
-#endif
-            // set up the certificate - required for WSHttpBinding
-            host.Credentials.ServiceCertificate.SetCertificate(
-                StoreLocation.LocalMachine, StoreName.My, X509FindType.FindBySubjectName, uri.Host);
-
-            if (authenticated)
-            {
-                // set up authentication model
-                host.Credentials.UserNameAuthentication.UserNamePasswordValidationMode = UserNamePasswordValidationMode.Custom;
-                host.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator = new CustomUserValidator();
-
-
-                // set up authorization
-                List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
-                policies.Add(new CustomAuthorizationPolicy());
-                host.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
-                host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
-            }
-
+				// determine whether to send exception detail back to client
+				if (WebServicesSettings.Default.SendExceptionDetailToClient)
+				{
+					serviceBehavior.IncludeExceptionDetailInFaults = true;
+				}
+			}
 
             _serviceHosts.Add(host);
         }
