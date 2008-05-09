@@ -53,6 +53,31 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         public abstract void DeleteSelectedItems();
 
+		/// <summary>
+		/// Gets a value indicating whether dialog accept/cancel buttons are visible.
+		/// </summary>
+		public abstract bool ShowAcceptCancelButtons { get; }
+
+		/// <summary>
+		/// Gets a value indicating whether accept button is enabled.
+		/// </summary>
+		public abstract bool AcceptEnabled { get; }
+
+		/// <summary>
+		/// Handles double-clicking on a list item.
+		/// </summary>
+    	public abstract void DoubleClickSelectedItem();
+
+		/// <summary>
+		/// Handles the accept button.
+		/// </summary>
+    	public abstract void Accept();
+
+		/// <summary>
+		/// Handles the cancel button.
+		/// </summary>
+    	public abstract void Cancel();
+
         #endregion
     }
 
@@ -70,6 +95,19 @@ namespace ClearCanvas.Ris.Client
 
         private CrudActionModel _actionModel;
         private PagingController<TSummary> _pagingController;
+
+    	private readonly bool _dialogMode;
+
+
+		public SummaryComponentBase()
+		{
+		}
+
+		public SummaryComponentBase(bool dialogMode)
+		{
+			_dialogMode = dialogMode;
+		}
+
 
         #region ApplicationComponent overrides
 
@@ -219,6 +257,37 @@ namespace ClearCanvas.Ris.Client
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
+
+		public override bool ShowAcceptCancelButtons
+		{
+			get { return _dialogMode; }
+		}
+
+		public override bool AcceptEnabled
+		{
+			get { return _selectedItems.Count > 0; }
+		}
+
+		public override void DoubleClickSelectedItem()
+		{
+			// double-click behaviour is different depending on whether we're running as a dialog box or not
+			if (_dialogMode)
+				Accept();
+			else
+				EditSelectedItems();
+		}
+
+		public override void Accept()
+		{
+			this.ExitCode = ApplicationComponentExitCode.Accepted;
+			this.Host.Exit();
+		}
+
+		public override void Cancel()
+		{
+			this.ExitCode = ApplicationComponentExitCode.None;
+			this.Host.Exit();
+		}
 
         #endregion
 

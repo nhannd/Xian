@@ -102,7 +102,12 @@ namespace ClearCanvas.Desktop.Tables
         /// </summary>
         void RemoveFilter();
 
-        /// <summary>
+		/// <summary>
+		/// Gets the cached filter parameters, or returns null if this table has not been filtered.
+		/// </summary>
+		TableFilterParams FilterParams { get; }
+
+		/// <summary>
         /// Gets the base column width for this table, in units that correspond roughly to the
         /// width of one character.
         /// </summary>

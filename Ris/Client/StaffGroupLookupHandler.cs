@@ -2,12 +2,13 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
 	public class StaffGroupLookupHandler : LookupHandler<TextQueryRequest, StaffGroupSummary>
 	{
-		private DesktopWindow _desktopWindow;
+		private readonly DesktopWindow _desktopWindow;
 
 		public StaffGroupLookupHandler(DesktopWindow desktopWindow)
 		{
@@ -17,7 +18,17 @@ namespace ClearCanvas.Ris.Client
 		public override bool ResolveNameInteractive(string query, out StaffGroupSummary result)
 		{
 			result = null;
-			return false;
+
+			StaffGroupSummaryComponent staffComponent = new StaffGroupSummaryComponent(true, query);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				_desktopWindow, staffComponent, SR.TitleStaff);
+
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				result = (StaffGroupSummary)CollectionUtils.FirstElement(staffComponent.SummarySelection.Items);
+			}
+
+			return (result != null);
 		}
 
 		public override string FormatItem(StaffGroupSummary item)

@@ -904,6 +904,13 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void IntializeFilter()
         {
             _filterTextBox.Enabled = (_table != null);
+
+			if (_table != null && _table.FilterParams != null && _table.FilterParams.Value is string)
+			{
+				_filterTextBox.Text = (string)_table.FilterParams.Value;
+			}
+			else
+				_filterTextBox.Text = "";
         }
 
         private void _clearFilterButton_Click(object sender, EventArgs e)

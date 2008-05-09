@@ -243,6 +243,14 @@ namespace ClearCanvas.Desktop.Tables
         }
 
     	/// <summary>
+    	/// Gets the cached filter parameters, or returns null if this table is not filtered.
+    	/// </summary>
+    	public TableFilterParams FilterParams
+		{
+			get { return _isFiltered ? _filterParams : null; }
+		}
+
+    	/// <summary>
     	/// Gets the number of cell rows in each row.
     	/// </summary>
     	public int CellRowCount

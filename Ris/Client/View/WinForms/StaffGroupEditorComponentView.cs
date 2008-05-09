@@ -31,47 +31,43 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Text;
-using System.Windows.Forms;
 
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="StaffGroupEditorComponent"/>
+    /// Provides a Windows Forms view onto <see cref="StaffGroupEditorComponent"/>
     /// </summary>
-    public partial class StaffGroupEditorComponentControl : ApplicationComponentUserControl
+    [ExtensionOf(typeof(StaffGroupEditorComponentViewExtensionPoint))]
+    public class StaffGroupEditorComponentView : WinFormsView, IApplicationComponentView
     {
         private StaffGroupEditorComponent _component;
+        private StaffGroupEditorComponentControl _control;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public StaffGroupEditorComponentControl(StaffGroupEditorComponent component)
-            :base(component)
+
+        #region IApplicationComponentView Members
+
+        public void SetComponent(IApplicationComponent component)
         {
-            InitializeComponent();
-
-            _component = component;
-            _name.DataBindings.Add("Value", _component, "GroupName", true, DataSourceUpdateMode.OnPropertyChanged);
-            _description.DataBindings.Add("Value", _component, "GroupDescription", true, DataSourceUpdateMode.OnPropertyChanged);
-
-            _staffMemberSelector.AvailableItemsTable = _component.AvailableStaffTable;
-            _staffMemberSelector.SelectedItemsTable = _component.SelectedStaffTable;
+            _component = (StaffGroupEditorComponent)component;
         }
 
-        private void _okButton_Click(object sender, EventArgs e)
-        {
-            _component.Accept();
-        }
+        #endregion
 
-        private void _cancelButton_Click(object sender, EventArgs e)
+        public override object GuiElement
         {
-            _component.Cancel();
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new StaffGroupEditorComponentControl(_component);
+                }
+                return _control;
+            }
         }
     }
 }

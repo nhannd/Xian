@@ -167,13 +167,6 @@
       <DependentUpon>ProcedureTypeGroupSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ProcedureTypeGroupSummaryComponentView.cs" />
-    <Compile Include="StaffGroupEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="StaffGroupEditorComponentControl.Designer.cs">
-      <DependentUpon>StaffGroupEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="StaffGroupEditorComponentView.cs" />
     <Compile Include="UserEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -340,10 +333,6 @@
     <EmbeddedResource Include="ProcedureTypeGroupSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ProcedureTypeGroupSummaryComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="StaffGroupEditorComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>StaffGroupEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserEditorComponentControl.resx">
       <SubType>Designer</SubType>

@@ -43,7 +43,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client.Admin
+namespace ClearCanvas.Ris.Client
 {
     [MenuAction("launch", "global-menus/Admin/Staff Groups", "Launch")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
@@ -95,12 +95,40 @@ namespace ClearCanvas.Ris.Client.Admin
     /// </summary>
     public class StaffGroupSummaryComponent : SummaryComponentBase<StaffGroupSummary, StaffGroupSummaryTable>
     {
+    	private readonly string _initialFilterText;
+
         /// <summary>
         /// Constructor
         /// </summary>
         public StaffGroupSummaryComponent()
         {
         }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="dialogMode"></param>
+		/// <param name="intialFilterText"></param>
+		public StaffGroupSummaryComponent(bool dialogMode, string intialFilterText)
+			:base(dialogMode)
+		{
+			_initialFilterText = intialFilterText;
+		}
+
+    	/// <summary>
+    	/// Initializes the table.  Override this method to perform custom initialization of the table,
+    	/// such as adding columns or setting other properties that control the table behaviour.
+    	/// </summary>
+    	/// <param name="table"></param>
+    	protected override void InitializeTable(StaffGroupSummaryTable table)
+		{
+			base.InitializeTable(table);
+
+			if (!string.IsNullOrEmpty(_initialFilterText))
+			{
+				table.Filter(new TableFilterParams(null, _initialFilterText));
+			}
+		}
 
         /// <summary>
         /// Gets the list of items to show in the table, according to the specifed first and max items.

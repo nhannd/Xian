@@ -59,35 +59,63 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._summaryTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this.SuspendLayout();
-            // 
-            // _summaryTableView
-            // 
-            this._summaryTableView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._summaryTableView.FilterTextBoxVisible = true;
-            this._summaryTableView.Location = new System.Drawing.Point(0, 0);
-            this._summaryTableView.MultiSelect = false;
-            this._summaryTableView.Name = "_summaryTableView";
-            this._summaryTableView.ReadOnly = false;
-            this._summaryTableView.Size = new System.Drawing.Size(650, 492);
-            this._summaryTableView.TabIndex = 0;
-            this._summaryTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._summaryTableView.ItemDoubleClicked += new System.EventHandler(this._staffGroupTableView_ItemDoubleClicked);
-            // 
-            // StaffGroupSummaryComponentControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._summaryTableView);
-            this.Name = "StaffGroupSummaryComponentControl";
-            this.Size = new System.Drawing.Size(650, 492);
-            this.ResumeLayout(false);
+			this._summaryTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this._cancelButton = new System.Windows.Forms.Button();
+			this._okButton = new System.Windows.Forms.Button();
+			this.SuspendLayout();
+			// 
+			// _summaryTableView
+			// 
+			this._summaryTableView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._summaryTableView.FilterTextBoxVisible = true;
+			this._summaryTableView.Location = new System.Drawing.Point(3, 3);
+			this._summaryTableView.MultiSelect = false;
+			this._summaryTableView.Name = "_summaryTableView";
+			this._summaryTableView.ReadOnly = false;
+			this._summaryTableView.Size = new System.Drawing.Size(644, 457);
+			this._summaryTableView.TabIndex = 0;
+			this._summaryTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this._summaryTableView.ItemDoubleClicked += new System.EventHandler(this._staffGroupTableView_ItemDoubleClicked);
+			// 
+			// _cancelButton
+			// 
+			this._cancelButton.Location = new System.Drawing.Point(572, 466);
+			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
+			this._cancelButton.TabIndex = 1;
+			this._cancelButton.Text = "Cancel";
+			this._cancelButton.UseVisualStyleBackColor = true;
+			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+			// 
+			// _okButton
+			// 
+			this._okButton.Location = new System.Drawing.Point(491, 466);
+			this._okButton.Name = "_okButton";
+			this._okButton.Size = new System.Drawing.Size(75, 23);
+			this._okButton.TabIndex = 2;
+			this._okButton.Text = "OK";
+			this._okButton.UseVisualStyleBackColor = true;
+			this._okButton.Click += new System.EventHandler(this._okButton_Click);
+			// 
+			// SummaryComponentBaseControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._okButton);
+			this.Controls.Add(this._cancelButton);
+			this.Controls.Add(this._summaryTableView);
+			this.Name = "SummaryComponentBaseControl";
+			this.Size = new System.Drawing.Size(650, 492);
+			this.ResumeLayout(false);
 
         }
 
         #endregion
 
         private ClearCanvas.Desktop.View.WinForms.TableView _summaryTableView;
+		private System.Windows.Forms.Button _cancelButton;
+		private System.Windows.Forms.Button _okButton;
     }
 }
