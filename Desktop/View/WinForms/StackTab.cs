@@ -29,16 +29,6 @@
 
 #endregion
 
-// *****************************************************************************
-// 
-//  (c) Crownwood Software Ltd 2004-2006. All rights reserved. 
-//	The software and associated documentation supplied hereunder are the 
-//	proprietary information of Crownwood Software Ltd, Bracknell, 
-//	Berkshire, England and are supplied subject to licence terms.
-// 
-//  Version 5.2.2.0 	www.dotnetmagic.com
-// *****************************************************************************
-
 using System;
 using System.Drawing;
 using System.Windows.Forms;
