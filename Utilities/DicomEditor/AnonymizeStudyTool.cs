@@ -44,7 +44,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuAnonymizeStudy", "AnonymizeStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipAnonymizeStudy")]
-	[IconSet("activate", IconScheme.Colour, "Icons.AnonymizeStudyToolSmall.png", "Icons.AnonymizeStudyToolSmall.png", "Icons.AnonymizeStudyToolSmall.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png")]
 
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class AnonymizeStudyTool : StudyBrowserTool, IAnonymizationCallback
