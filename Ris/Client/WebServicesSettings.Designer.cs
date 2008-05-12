@@ -25,10 +25,28 @@ namespace ClearCanvas.Ris.Client {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:8000/")]
+        [global::System.Configuration.DefaultSettingValueAttribute("net.tcp://localhost:8000/")]
         public string ApplicationServicesBaseUrl {
             get {
                 return ((string)(this["ApplicationServicesBaseUrl"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ClearCanvas.Ris.Client.NetTcpConfiguration, ClearCanvas.Ris.Client")]
+        public string ConfigurationClass {
+            get {
+                return ((string)(this["ConfigurationClass"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000000")]
+        public int MaxReceivedMessageSize {
+            get {
+                return ((int)(this["MaxReceivedMessageSize"]));
             }
         }
     }

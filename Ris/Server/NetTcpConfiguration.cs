@@ -9,35 +9,26 @@ using System.Text;
 
 namespace ClearCanvas.Ris.Server
 {
-	class WSHttpConfiguration : IServiceHostConfiguration
+	class NetTcpConfiguration : IServiceHostConfiguration
 	{
 		#region IServiceHostConfiguration Members
 
         public void ConfigureServiceHost(ServiceHost host, ServiceHostConfigurationParams args)
 		{
-			WSHttpBinding binding = new WSHttpBinding();
+            NetTcpBinding binding = new NetTcpBinding();
 			binding.MaxReceivedMessageSize = args.MaxReceivedMessageSize;
             binding.ReaderQuotas.MaxStringContentLength = args.MaxReceivedMessageSize;
             binding.ReaderQuotas.MaxArrayLength = args.MaxReceivedMessageSize;
-			binding.Security.Mode = SecurityMode.Message;
+			binding.Security.Mode = args.Authenticated ? SecurityMode.TransportWithMessageCredential : SecurityMode.Transport;
 			binding.Security.Message.ClientCredentialType = args.Authenticated ?
 				MessageCredentialType.UserName : MessageCredentialType.None;
 
 			// establish endpoint
 			host.AddServiceEndpoint(args.ServiceContract, binding, "");
 
-			// expose meta-data via HTTP GET
-			ServiceMetadataBehavior metadataBehavior = host.Description.Behaviors.Find<ServiceMetadataBehavior>();
-			if (metadataBehavior == null)
-			{
-				metadataBehavior = new ServiceMetadataBehavior();
-				metadataBehavior.HttpGetEnabled = true;
-				host.Description.Behaviors.Add(metadataBehavior);
-			}
-
-			// set up the certificate - required for WSHttpBinding
-			host.Credentials.ServiceCertificate.SetCertificate(
-				StoreLocation.LocalMachine, StoreName.My, X509FindType.FindBySubjectName, args.HostUri.Host);
+			// set up the certificate - required for transmitting custom credentials
+            host.Credentials.ServiceCertificate.SetCertificate(
+                StoreLocation.LocalMachine, StoreName.My, X509FindType.FindBySubjectName, args.HostUri.Host);
 
             if (args.Authenticated)
 			{

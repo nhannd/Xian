@@ -49,7 +49,6 @@ namespace ClearCanvas.Ris.Server
     public class Application : IApplicationRoot
     {
         private List<ServiceHost> _serviceHosts = new List<ServiceHost>();
-        private const int OneMegaByte = 1048576;
 
         #region IApplicationRoot Members
 
@@ -122,8 +121,10 @@ namespace ClearCanvas.Ris.Server
 			ServiceHost host = new ServiceHost(serviceClass, uri);
 
 			// build service according to binding
-			WSHttpConfiguration configuration = new WSHttpConfiguration();
-        	configuration.ConfigureServiceHost(host, contractAttribute.ServiceContract, uri, authenticated);
+            Type configClass = Type.GetType(WebServicesSettings.Default.ConfigurationClass);
+            IServiceHostConfiguration configuration = (IServiceHostConfiguration)Activator.CreateInstance(configClass);
+        	configuration.ConfigureServiceHost(host, 
+                new ServiceHostConfigurationParams(contractAttribute.ServiceContract, uri, authenticated, WebServicesSettings.Default.MaxReceivedMessageSize));
 
             // add behaviour to grab AOP proxied service instance
             host.Description.Behaviors.Add(new InstanceManagementServiceBehavior(contractAttribute.ServiceContract, serviceFactory));

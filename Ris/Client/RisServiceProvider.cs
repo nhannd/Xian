@@ -44,52 +44,39 @@ namespace ClearCanvas.Ris.Client
     /// services.
     /// </summary>
     [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
-    public class RisServiceProvider : RemoteServiceProviderBase<RisServiceProviderAttribute>
+    internal class RisServiceProvider : RemoteServiceProviderBase<RisServiceProviderAttribute>
     {
-        private bool _authenticationRequired = false;
+        private IServiceChannelConfiguration _channelConfiguration;
 
-        protected override string ApplicationServicesBaseUrl
+        private IServiceChannelConfiguration ChannelConfiguration
+        {
+            get
+            {
+                if (_channelConfiguration == null)
+                {
+                    Type configClass = Type.GetType(WebServicesSettings.Default.ConfigurationClass);
+                    _channelConfiguration = (IServiceChannelConfiguration)Activator.CreateInstance(configClass);
+                }
+                return _channelConfiguration;
+            }
+        }
+
+        protected override string ServicesBaseUrl
         {
             get { return WebServicesSettings.Default.ApplicationServicesBaseUrl; }
         }
 
-        protected override bool AuthenticationRequired(Type serviceType)
+        protected override ChannelFactory ConfigureChannelFactory(Type channelFactoryClass, Uri serviceUri, bool authenticationRequired)
         {
-            AuthenticationAttribute authAttr = AttributeUtils.GetAttribute<AuthenticationAttribute>(serviceType);
-            _authenticationRequired = authAttr == null ? true : authAttr.AuthenticationRequired;
-            return _authenticationRequired;
-        }
+            ChannelFactory channelFactory = ChannelConfiguration.ConfigureChannelFactory(
+                new ServiceChannelConfigurationArgs(channelFactoryClass, serviceUri, authenticationRequired, WebServicesSettings.Default.MaxReceivedMessageSize));
 
-        protected override void ValidateAuthentification()
-        {
-            if (LoginSession.Current == null)
-                throw new InvalidOperationException("User login credentials have not been provided.");
-        }
-
-        protected override void GetValidationInfo(out string userName, out string password)
-        {
-            userName = LoginSession.Current.UserName;
-
-            // use session token in place of password
-            password = LoginSession.Current.SessionToken;
-        }
-
-        protected override Binding GetBinding()
-        {
-            WSHttpBinding binding = new WSHttpBinding();
-            binding.Security.Mode = SecurityMode.Message;
-            binding.Security.Message.ClientCredentialType =
-                _authenticationRequired ? MessageCredentialType.UserName : MessageCredentialType.None;
-            binding.MaxReceivedMessageSize = OneMegaByte;
-
-            // allow individual string content to be same size as entire message
-            binding.ReaderQuotas.MaxStringContentLength = OneMegaByte;
-            binding.ReaderQuotas.MaxArrayLength = OneMegaByte;
-
-            //binding.ReceiveTimeout = new TimeSpan(0, 0 , 20);
-            //binding.SendTimeout = new TimeSpan(0, 0, 10);
-
-            return binding;
+            if (authenticationRequired)
+            {
+                channelFactory.Credentials.UserName.UserName = LoginSession.Current.UserName;
+                channelFactory.Credentials.UserName.Password = LoginSession.Current.SessionToken;
+            }
+            return channelFactory;
         }
     }
 }

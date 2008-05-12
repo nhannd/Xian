@@ -5,8 +5,8 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Server
 {
-	public interface IServiceConfiguration
+	public interface IServiceHostConfiguration
 	{
-		void ConfigureServiceHost(ServiceHost host, Type serviceContract, Uri hostUri, bool authenticated);
+		void ConfigureServiceHost(ServiceHost host, ServiceHostConfigurationParams args);
 	}
 }

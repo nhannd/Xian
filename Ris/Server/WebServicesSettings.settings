@@ -3,10 +3,16 @@
   <Profiles />
   <Settings>
     <Setting Name="BaseUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://localhost:8000/</Value>
+      <Value Profile="(Default)">net.tcp://localhost:8000/</Value>
     </Setting>
     <Setting Name="SendExceptionDetailToClient" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ConfigurationClass" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ClearCanvas.Ris.Server.NetTcpConfiguration, ClearCanvas.Ris.Server</Value>
+    </Setting>
+    <Setting Name="MaxReceivedMessageSize" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">1000000</Value>
     </Setting>
   </Settings>
 </SettingsFile>

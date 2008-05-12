@@ -50,13 +50,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
+    <Compile Include="NetTcpConfiguration.cs" />
     <Compile Include="CustomAuthorizationPolicy.cs" />
     <Compile Include="CustomPrincipal.cs" />
     <Compile Include="ExceptionPromotionAdvice.cs" />
     <Compile Include="InstanceManagementServiceBehavior.cs" />
-    <Compile Include="IServiceConfiguration.cs" />
+    <Compile Include="IServiceHostConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxiedServiceInstanceProvider.cs" />
+    <Compile Include="ServiceHostConfigurationParams.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
