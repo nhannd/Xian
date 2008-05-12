@@ -90,7 +90,7 @@ namespace ClearCanvas.Ris.Server
         private void MountServices(IExtensionPoint serviceLayer, string baseAddress)
         {
             IServiceFactory serviceFactory = new ServiceFactory(serviceLayer);
-            serviceFactory.ServiceCreation += ServiceCreationEventHandler;
+			ApplyInterceptors(serviceFactory);
 
             ICollection<Type> serviceClasses = serviceFactory.ListServiceClasses();
             foreach (Type serviceClass in serviceClasses)
@@ -151,11 +151,28 @@ namespace ClearCanvas.Ris.Server
             _serviceHosts.Add(host);
         }
 
-        private void ServiceCreationEventHandler(object sender, ServiceCreationEventArgs e)
-        {
-            // insert the exception promotion advice at the beginning of the interception chain (outside of the service transaction)
-            e.ServiceOperationInterceptors.Insert(0, new ExceptionPromotionAdvice());
+		private void ApplyInterceptors(IServiceFactory serviceFactory)
+		{
+			// the order in which the interceptors are added is extremely important
+			// the first interceptor in the list will be the outermost, and
+			// the last interceptor in the list will be the innermost
 
-        }
+			// add exception promotion advice at the beginning of the interception chain (outside of the service transaction)
+			serviceFactory.Interceptors.Add(new ExceptionPromotionAdvice());
+
+			// add performance logging advice
+			serviceFactory.Interceptors.Add(new PerformanceLoggingAdvice());
+
+			// exception logging occurs outside of the main persistence context
+			serviceFactory.Interceptors.Add(new ExceptionLoggingAdvice());
+
+			// add persistence context advice, that controls the persistence context for the main transaction
+			serviceFactory.Interceptors.Add(new PersistenceContextAdvice());
+
+			// add audit advice inside of main persistence context advice,
+			// so that the audit record will be inserted as part of the main transaction (this applies only to update contexts)
+			serviceFactory.Interceptors.Add(new AuditAdvice());
+
+		}
     }
 }

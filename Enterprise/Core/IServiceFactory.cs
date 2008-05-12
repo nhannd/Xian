@@ -37,41 +37,19 @@ using Castle.DynamicProxy;
 namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
-    /// Event data for <see cref="IServiceFactory.ServiceCreation"/>
-    /// </summary>
-    public class ServiceCreationEventArgs : EventArgs
-    {
-        private readonly IList<IInterceptor> _interceptors;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="interceptors"></param>
-        internal ServiceCreationEventArgs(IList<IInterceptor> interceptors)
-        {
-            _interceptors = interceptors;
-        }
-
-        /// <summary>
-        /// Gets the list of AOP interceptors that will be applied to the new service instance.
-        /// The event handler may modify this list.
-        /// </summary>
-        public IList<IInterceptor> ServiceOperationInterceptors
-        {
-            get { return _interceptors; }
-        }
-    }
-
-    /// <summary>
     /// Defines the interface to a service factory, which instantiates a service based on a specified
     /// contract.
     /// </summary>
     public interface IServiceFactory
     {
-        /// <summary>
-        /// Occurs when a new service instance is created.
-        /// </summary>
-        event EventHandler<ServiceCreationEventArgs> ServiceCreation;
+		/// <summary>
+		/// Gets the list of interceptors that will be applied to service instances created by this factory.
+		/// </summary>
+		/// <remarks>
+		/// Interceptors must be thread-safe, since the same interceptor instance is applied to every service object
+		/// that is created.
+		/// </remarks>
+		IList<IInterceptor> Interceptors { get; }
 
         /// <summary>
         /// Obtains an instance of the service that implements the specified contract.

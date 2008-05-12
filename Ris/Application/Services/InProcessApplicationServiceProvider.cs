@@ -49,7 +49,18 @@ namespace ClearCanvas.Ris.Application.Services
         public InProcessApplicationServiceProvider()
         {
             _serviceFactory = new ServiceFactory(new ApplicationServiceExtensionPoint());
-        }
+
+			// exception logging occurs outside of the main persistence context
+			// JR: is there any point in logging exceptions from the in-process provider?  Or is this just redundant?
+			//_serviceFactory.Interceptors.Add(new ExceptionLoggingAdvice());
+
+			// add persistence context advice, that controls the persistence context for the main transaction
+			_serviceFactory.Interceptors.Add(new PersistenceContextAdvice());
+
+			// add audit advice inside of main persistence context advice,
+			// so that the audit record will be inserted as part of the main transaction (this applies only to update contexts)
+			_serviceFactory.Interceptors.Add(new AuditAdvice());
+		}
 
         #region IServiceProvider Members
 

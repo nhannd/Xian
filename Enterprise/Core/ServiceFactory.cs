@@ -47,7 +47,8 @@ namespace ClearCanvas.Enterprise.Core
         private readonly ProxyGenerator _proxyGenerator;
         private readonly IExtensionPoint _serviceExtensionPoint;
         private readonly object _syncLock = new object();
-        private event EventHandler<ServiceCreationEventArgs> _serviceCreation;
+
+    	private readonly List<IInterceptor> _interceptors;
 
         /// <summary>
         /// Constructs a service factory that instantiates services based on the specified extension point.
@@ -57,16 +58,13 @@ namespace ClearCanvas.Enterprise.Core
         {
             _serviceExtensionPoint = serviceExtensionPoint;
             _proxyGenerator = new ProxyGenerator();
+			_interceptors = new List<IInterceptor>();
         }
 
-        /// <summary>
-        /// Occurs when a new service instance is created.
-        /// </summary>
-        public event EventHandler<ServiceCreationEventArgs> ServiceCreation
-        {
-            add { _serviceCreation += value; }
-            remove { _serviceCreation -= value; }
-        }
+    	public IList<IInterceptor> Interceptors
+    	{
+			get { return _interceptors; }
+    	}
 
         /// <summary>
         /// Obtains an instance of the service that implements the specified contract.
@@ -86,26 +84,11 @@ namespace ClearCanvas.Enterprise.Core
         {
             lock (_syncLock)
             {
-                // create a list of interceptors
-                List<IInterceptor> interceptors = new List<IInterceptor>();
-
-                // add default interceptors in correct order
-                interceptors.Add(new PerformanceLoggingAdvice());
-
-                // exception logging occurs outside of the main persistence context
-                interceptors.Add(new ExceptionLoggingAdvice());
-                interceptors.Add(new PersistenceContextAdvice());
-                // must add audit advice inside of context advice, because it requires a persistence context to work
-                interceptors.Add(new AuditAdvice());
-
-                // allow addition of other interceptors by consumer
-                EventsHelper.Fire(_serviceCreation, this, new ServiceCreationEventArgs(interceptors));
-
                 // instantiate service object
                 object service = _serviceExtensionPoint.CreateExtension(new TypeExtensionFilter(serviceContract));
 
                 // combine service and interceptors
-                AopInterceptorChain aopIntercept = new AopInterceptorChain(interceptors);
+                AopInterceptorChain aopIntercept = new AopInterceptorChain(_interceptors);
 
                 // note: _proxyGenerator does internal caching based on service contract
                 // so subsequent calls based on the same contract will be fast

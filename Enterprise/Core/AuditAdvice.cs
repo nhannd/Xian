@@ -42,9 +42,9 @@ namespace ClearCanvas.Enterprise.Core
     /// <summary>
     /// Advice class responsible for honouring <see cref="AuditAttribute"/>s applied to service operation methods.
     /// </summary>
-    class AuditAdvice : ServiceOperationAdvice, IInterceptor
+    public class AuditAdvice : ServiceOperationAdvice, IInterceptor
     {
-        internal AuditAdvice()
+		public AuditAdvice()
         {
         }
 

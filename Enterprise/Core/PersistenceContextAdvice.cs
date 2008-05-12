@@ -42,9 +42,9 @@ namespace ClearCanvas.Enterprise.Core
     /// <summary>
     /// Advice class responsible for honouring <see cref="ReadOperationAttribute"/> and <see cref="UpdateOperationAttribute"/>.
     /// </summary>
-    class PersistenceContextAdvice : ServiceOperationAdvice, IInterceptor
+    public class PersistenceContextAdvice : ServiceOperationAdvice, IInterceptor
     {
-        internal PersistenceContextAdvice()
+		public PersistenceContextAdvice()
         {
         }
 

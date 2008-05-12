@@ -10,7 +10,7 @@ namespace ClearCanvas.Enterprise.Core
     /// <summary>
     /// Advice class responsbile for logging unhandled exceptions thrown from service operation methods.
     /// </summary>
-    class ExceptionLoggingAdvice : IInterceptor
+    public class ExceptionLoggingAdvice : IInterceptor
     {
         #region IInterceptor Members
 
