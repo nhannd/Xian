@@ -124,7 +124,12 @@ namespace ClearCanvas.Ris.Server
             Type configClass = Type.GetType(WebServicesSettings.Default.ConfigurationClass);
             IServiceHostConfiguration configuration = (IServiceHostConfiguration)Activator.CreateInstance(configClass);
         	configuration.ConfigureServiceHost(host, 
-                new ServiceHostConfigurationParams(contractAttribute.ServiceContract, uri, authenticated, WebServicesSettings.Default.MaxReceivedMessageSize));
+                new ServiceHostConfigurationArgs(
+					contractAttribute.ServiceContract,
+					uri, authenticated,
+					WebServicesSettings.Default.MaxReceivedMessageSize,
+					authenticated ? new CustomUserValidator() : null,
+					authenticated ? new CustomAuthorizationPolicy() : null));
 
             // add behaviour to grab AOP proxied service instance
             host.Description.Behaviors.Add(new InstanceManagementServiceBehavior(contractAttribute.ServiceContract, serviceFactory));

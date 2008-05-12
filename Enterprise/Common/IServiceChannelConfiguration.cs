@@ -4,7 +4,7 @@ using System.Text;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Enterprise.Common
 {
     public interface IServiceChannelConfiguration
     {

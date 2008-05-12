@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.ServiceModel;
 
-namespace ClearCanvas.Ris.Server
+namespace ClearCanvas.Enterprise.Common
 {
 	public interface IServiceHostConfiguration
 	{
-		void ConfigureServiceHost(ServiceHost host, ServiceHostConfigurationParams args);
+		void ConfigureServiceHost(ServiceHost host, ServiceHostConfigurationArgs args);
 	}
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ServiceModel;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Client
 {
     public class NetTcpConfiguration : IServiceChannelConfiguration
     {

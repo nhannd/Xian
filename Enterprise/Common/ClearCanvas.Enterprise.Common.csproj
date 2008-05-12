@@ -30,6 +30,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.IdentityModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.IdentityModel.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Runtime.Serialization.dll</HintPath>
@@ -55,6 +59,8 @@
     <Compile Include="EntityRefUtils.cs" />
     <Compile Include="IConfigurationService.cs" />
     <Compile Include="ICoreServiceLayer.cs" />
+    <Compile Include="IServiceChannelConfiguration.cs" />
+    <Compile Include="IServiceHostConfiguration.cs" />
     <Compile Include="ITimeService.cs" />
     <Compile Include="JsmlSerializer.cs" />
     <Compile Include="PasswordExpiredException.cs" />
@@ -62,6 +68,12 @@
     <Compile Include="PropertyChange.cs" />
     <Compile Include="RemoteServiceProviderBase.cs" />
     <Compile Include="SearchResultPage.cs" />
+    <Compile Include="ServiceChannelConfigurationArgs.cs" />
+    <Compile Include="ServiceConfiguration\Client\NetTcpConfiguration.cs" />
+    <Compile Include="ServiceConfiguration\Client\WSHttpConfiguration.cs" />
+    <Compile Include="ServiceConfiguration\Server\NetTcpConfiguration.cs" />
+    <Compile Include="ServiceConfiguration\Server\WSHttpConfiguration.cs" />
+    <Compile Include="ServiceHostConfigurationArgs.cs" />
     <Compile Include="SessionToken.cs" />
     <Compile Include="SettingsParser.cs" />
     <Compile Include="SR.Designer.cs">

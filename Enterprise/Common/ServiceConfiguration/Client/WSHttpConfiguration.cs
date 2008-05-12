@@ -4,7 +4,7 @@ using System.Text;
 using System.ServiceModel.Channels;
 using System.ServiceModel;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Client
 {
     public class WSHttpConfiguration : IServiceChannelConfiguration
     {

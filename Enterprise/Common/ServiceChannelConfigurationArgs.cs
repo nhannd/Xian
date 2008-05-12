@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Enterprise.Common
 {
     public struct ServiceChannelConfigurationArgs
     {

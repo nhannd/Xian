@@ -7,13 +7,13 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.Text;
 
-namespace ClearCanvas.Ris.Server
+namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Server
 {
 	class WSHttpConfiguration : IServiceHostConfiguration
 	{
 		#region IServiceHostConfiguration Members
 
-        public void ConfigureServiceHost(ServiceHost host, ServiceHostConfigurationParams args)
+        public void ConfigureServiceHost(ServiceHost host, ServiceHostConfigurationArgs args)
 		{
 			WSHttpBinding binding = new WSHttpBinding();
 			binding.MaxReceivedMessageSize = args.MaxReceivedMessageSize;
@@ -43,12 +43,12 @@ namespace ClearCanvas.Ris.Server
 			{
 				// set up authentication model
 				host.Credentials.UserNameAuthentication.UserNamePasswordValidationMode = UserNamePasswordValidationMode.Custom;
-				host.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator = new CustomUserValidator();
+				host.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator = args.UserNamePasswordValidator;
 
 
 				// set up authorization
 				List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
-				policies.Add(new CustomAuthorizationPolicy());
+				policies.Add(args.AuthorizationPolicy);
 				host.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
 				host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
 			}

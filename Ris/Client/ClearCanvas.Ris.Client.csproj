@@ -62,8 +62,6 @@
     </Compile>
     <Compile Include="HomeTool.cs" />
     <Compile Include="IChangePasswordDialog.cs" />
-    <Compile Include="IServiceChannelConfiguration.cs" />
-    <Compile Include="NetTcpConfiguration.cs" />
     <Compile Include="OrderAdditionalInfoComponent.cs" />
     <Compile Include="OrderDetailViewComponent.cs" />
     <Compile Include="OrderNoteboxFolder.cs" />
@@ -84,7 +82,6 @@
     <Compile Include="PreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="RefreshTool.cs" />
     <Compile Include="SearchTool.cs" />
-    <Compile Include="ServiceChannelConfigurationArgs.cs" />
     <Compile Include="SessionManagerTool.cs" />
     <Compile Include="StaffGroupEditorComponent.cs" />
     <Compile Include="StaffGroupLookupHandler.cs" />
@@ -217,7 +214,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>LoginDialogSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="WSHttpConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
