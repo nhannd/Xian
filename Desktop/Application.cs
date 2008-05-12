@@ -319,9 +319,17 @@ namespace ClearCanvas.Desktop
             // load tools
             _toolSet = new ToolSet(new ApplicationToolExtensionPoint(), new ApplicationToolContext(this));
 
-            // create a root window
-            _windows.AddNew("Root");
-
+            try
+            {
+                // create a root window
+                _windows.AddNew("Root");
+            }
+            catch (Exception e)
+            {
+                // failed to create root window... this is a problem
+                Platform.Log(LogLevel.Fatal, e);
+                return false;
+            }
             return true;
         }
 
