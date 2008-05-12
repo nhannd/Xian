@@ -1,5 +1,11 @@
-
-// Adapted from CodeProject: http://www.codeproject.com/KB/audio-video/avifilewrapper.aspx
+/* Adapted from CodeProject: http://www.codeproject.com/KB/audio-video/avifilewrapper.aspx
+ * Thanks to:
+ * 
+ * Corinna John (Hannover, Germany)
+ * cj@binary-universe.net
+ * 
+ * for making her code publicly available.
+ */
 
 using System;
 using System.Runtime.InteropServices;
@@ -44,10 +50,10 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		[StructLayout(LayoutKind.Sequential, Pack=1)]
 		public struct RECT{ 
-			public UInt32 left; 
-			public UInt32 top; 
-			public UInt32 right; 
-			public UInt32 bottom; 
+			public Int32 left; 
+			public Int32 top; 
+			public Int32 right; 
+			public Int32 bottom; 
 		} 		
 
 		[StructLayout(LayoutKind.Sequential, Pack=1)]
@@ -127,33 +133,33 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		[StructLayout(LayoutKind.Sequential, Pack=1)]
 			public struct AVICOMPRESSOPTIONS {
-			public UInt32   fccType;
-			public UInt32   fccHandler;
-			public UInt32   dwKeyFrameEvery;  // only used with AVICOMRPESSF_KEYFRAMES
-			public UInt32   dwQuality;
-			public UInt32   dwBytesPerSecond; // only used with AVICOMPRESSF_DATARATE
-			public UInt32   dwFlags;
+			public Int32   fccType;
+			public Int32   fccHandler;
+			public Int32   dwKeyFrameEvery;  // only used with AVICOMRPESSF_KEYFRAMES
+			public Int32   dwQuality;
+			public Int32   dwBytesPerSecond; // only used with AVICOMPRESSF_DATARATE
+			public Int32   dwFlags;
 			public IntPtr   lpFormat;
-			public UInt32   cbFormat;
+			public Int32   cbFormat;
 			public IntPtr   lpParms;
-			public UInt32   cbParms;
-			public UInt32   dwInterleaveEvery;
+			public Int32   cbParms;
+			public Int32   dwInterleaveEvery;
 		}
 
 		/// <summary>AviSaveV needs a pointer to a pointer to an AVICOMPRESSOPTIONS structure</summary>
 		[StructLayout(LayoutKind.Sequential, Pack=1)]
 			public class AVICOMPRESSOPTIONS_CLASS {
-			public UInt32   fccType;
-			public UInt32   fccHandler;
-			public UInt32   dwKeyFrameEvery;  // only used with AVICOMRPESSF_KEYFRAMES
-			public UInt32   dwQuality;
-			public UInt32   dwBytesPerSecond; // only used with AVICOMPRESSF_DATARATE
-			public UInt32   dwFlags;
+			public Int32   fccType;
+			public Int32   fccHandler;
+			public Int32   dwKeyFrameEvery;  // only used with AVICOMRPESSF_KEYFRAMES
+			public Int32   dwQuality;
+			public Int32   dwBytesPerSecond; // only used with AVICOMPRESSF_DATARATE
+			public Int32   dwFlags;
 			public IntPtr   lpFormat;
-			public UInt32   cbFormat;
+			public Int32   cbFormat;
 			public IntPtr   lpParms;
-			public UInt32   cbParms;
-			public UInt32   dwInterleaveEvery;
+			public Int32   cbParms;
+			public Int32   dwInterleaveEvery;
 
 			public AVICOMPRESSOPTIONS ToStruct(){
 				AVICOMPRESSOPTIONS returnVar = new AVICOMPRESSOPTIONS();
@@ -171,22 +177,6 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				return returnVar;
 			}
 		}
-
-		[StructLayout(LayoutKind.Sequential, Pack = 1)]
-		public struct ICINFO { 
-			Int32 dwSize; 
-			Int32 fccType; 
-			Int32 fccHandler; 
-			Int32 dwFlags; 
-			Int32 dwVersion; 
-			Int32 dwVersionICM; 
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst=16)]
-			public UInt16[] szName;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst=128)]
-			public UInt16[] szDescription;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst=128)]
-			public UInt16[] szDriver;
-		}; 
 
 		#endregion structure declarations
 
@@ -404,23 +394,69 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			ref AVICOMPRESSOPTIONS_CLASS plpOptions
 			);
 
-		[DllImport("avifil32.dll")]
-		public static extern int ICInfo(
-			Int32 fccType,
-			Int32 fddHandler,
-			[MarshalAs(UnmanagedType.LPArray)]
-			out ICINFO[] icInfo);
-
-		[DllImport("avifil32.dll")]
-		public static extern IntPtr ICLocate(
-		  Int32 fccType,
-		  Int32 fccHandler,
-		  ref BITMAPINFOHEADER lpFormatIn,
-		  ref BITMAPINFOHEADER lpFormatOut,
-		  Int16 wFlags
-		);
-
 		#endregion method declarations
 
+		#region Video Compression Manager
+
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		public struct ICINFO
+		{
+			public Int32 dwSize;
+			public Int32 fccType;
+			public Int32 fccHandler;
+			public Int32 dwFlags;
+			public Int32 dwVersion;
+			public Int32 dwVersionICM;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+			public UInt16[] szName;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+			public UInt16[] szDescription;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+			public UInt16[] szDriver;
+		}; 
+
+		[Flags]
+		public enum ICInfoFlags
+		{
+			VIDCF_QUALITY = 0x0001, // supports quality
+			VIDCF_CRUNCH = 0x0002, // supports crunching to a frame size
+			VIDCF_TEMPORAL = 0x0004, // supports inter-frame compress
+			VIDCF_COMPRESSFRAMES = 0x0008, // wants the compress all frames message
+			VIDCF_DRAW = 0x0010, // supports drawing
+			VIDCF_FASTTEMPORALC = 0x0020, // does not need prev frame on compress
+			VIDCF_FASTTEMPORALD = 0x0080 // does not need prev frame on decompress
+		}
+
+		[DllImport("msvfw32.dll")]
+		public static extern int ICInfo(
+			Int32 fccType,
+			Int32 fccHandler,
+			ref ICINFO icInfo);
+
+		[DllImport("msvfw32.dll")]
+		public static extern IntPtr ICOpen(
+			Int32 fccType,
+			Int32 fccHandler,
+			Int32 wMode
+			);
+
+		[DllImport("msvfw32.dll")]
+		public static extern Int32 ICClose(IntPtr hic);
+
+		[Flags]
+		public enum ICModeFlags
+		{
+			ICMODE_COMPRESS = 1,
+			ICMODE_DECOMPRESS = 2,
+			ICMODE_FASTDECOMPRESS = 3,
+			ICMODE_QUERY = 4,
+			ICMODE_FASTCOMPRESS = 5,
+			ICMODE_DRAW = 8
+		}
+
+		[DllImport("msvfw32.dll")]
+		public static extern Int32 ICGetInfo(IntPtr hic, ref ICINFO picinfo, Int32 size);
+
+		#endregion
 	}
 }

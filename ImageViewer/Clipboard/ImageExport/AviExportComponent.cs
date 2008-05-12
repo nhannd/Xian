@@ -331,6 +331,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 			catch(Exception e)
 			{
+				_error = e;
 				Platform.Log(LogLevel.Error, e);
 			}
 			finally
