@@ -160,8 +160,11 @@ namespace ClearCanvas.Ris.Server
 			// add exception promotion advice at the beginning of the interception chain (outside of the service transaction)
 			serviceFactory.Interceptors.Add(new ExceptionPromotionAdvice());
 
-			// add performance logging advice
-			serviceFactory.Interceptors.Add(new PerformanceLoggingAdvice());
+			if(WebServicesSettings.Default.EnablePerformanceLogging)
+			{
+				// add performance logging advice
+				serviceFactory.Interceptors.Add(new PerformanceLoggingAdvice());
+			}
 
 			// exception logging occurs outside of the main persistence context
 			serviceFactory.Interceptors.Add(new ExceptionLoggingAdvice());

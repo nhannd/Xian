@@ -23,7 +23,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Specifies the URL on which the application services are hosted.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies the URL on which the application services are hosted.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("net.tcp://localhost:8000/")]
         public string ApplicationServicesBaseUrl {
@@ -32,7 +36,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Specifies the name of the service configuration class.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies the name of the service configuration class.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("ClearCanvas.Enterprise.Common.ServiceConfiguration.Client.NetTcpConfiguration, Cl" +
             "earCanvas.Enterprise.Common")]
@@ -42,7 +50,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Specifies the maximum size of received messages in bytes.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies the maximum size of received messages in bytes.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1000000")]
         public int MaxReceivedMessageSize {
