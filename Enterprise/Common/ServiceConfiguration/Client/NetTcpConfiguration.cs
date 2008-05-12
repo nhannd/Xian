@@ -5,11 +5,19 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Client
 {
+	/// <summary>
+	/// Creates and configures a TCP service channel.
+	/// </summary>
     public class NetTcpConfiguration : IServiceChannelConfiguration
     {
         #region IServiceChannelConfiguration Members
 
-        public ChannelFactory ConfigureChannelFactory(ServiceChannelConfigurationArgs args)
+		/// <summary>
+		/// Configures and returns an instance of the specified service channel factory, according to the specified arguments.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		public ChannelFactory ConfigureChannelFactory(ServiceChannelConfigurationArgs args)
         {
             NetTcpBinding binding = new NetTcpBinding();
             binding.Security.Mode = args.AuthenticationRequired ? SecurityMode.TransportWithMessageCredential : SecurityMode.Transport;

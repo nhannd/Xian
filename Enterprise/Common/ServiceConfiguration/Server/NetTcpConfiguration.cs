@@ -9,11 +9,19 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Server
 {
-	class NetTcpConfiguration : IServiceHostConfiguration
+	/// <summary>
+	/// Configures a TCP service host.
+	/// </summary>
+	public class NetTcpConfiguration : IServiceHostConfiguration
 	{
 		#region IServiceHostConfiguration Members
 
-        public void ConfigureServiceHost(ServiceHost host, ServiceHostConfigurationArgs args)
+		/// <summary>
+		/// Configures the specified service host, according to the specified arguments.
+		/// </summary>
+		/// <param name="host"></param>
+		/// <param name="args"></param>
+		public void ConfigureServiceHost(ServiceHost host, ServiceHostConfigurationArgs args)
 		{
             NetTcpBinding binding = new NetTcpBinding();
 			binding.MaxReceivedMessageSize = args.MaxReceivedMessageSize;

@@ -9,11 +9,19 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Server
 {
-	class WSHttpConfiguration : IServiceHostConfiguration
+	/// <summary>
+	/// Configures a WS-HTTP service host.
+	/// </summary>
+	public class WSHttpConfiguration : IServiceHostConfiguration
 	{
 		#region IServiceHostConfiguration Members
 
-        public void ConfigureServiceHost(ServiceHost host, ServiceHostConfigurationArgs args)
+		/// <summary>
+		/// Configures the specified service host, according to the specified arguments.
+		/// </summary>
+		/// <param name="host"></param>
+		/// <param name="args"></param>
+		public void ConfigureServiceHost(ServiceHost host, ServiceHostConfigurationArgs args)
 		{
 			WSHttpBinding binding = new WSHttpBinding();
 			binding.MaxReceivedMessageSize = args.MaxReceivedMessageSize;

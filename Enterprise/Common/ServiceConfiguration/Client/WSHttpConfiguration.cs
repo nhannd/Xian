@@ -6,11 +6,19 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Client
 {
+	/// <summary>
+	/// Creates and configures a WS-HTTP service channel.
+	/// </summary>
     public class WSHttpConfiguration : IServiceChannelConfiguration
     {
         #region IServiceChannelConfiguration Members
 
-        public ChannelFactory ConfigureChannelFactory(ServiceChannelConfigurationArgs args)
+		/// <summary>
+		/// Configures and returns an instance of the specified service channel factory, according to the specified arguments.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		public ChannelFactory ConfigureChannelFactory(ServiceChannelConfigurationArgs args)
         {
             WSHttpBinding binding = new WSHttpBinding();
             binding.Security.Mode = SecurityMode.Message;
