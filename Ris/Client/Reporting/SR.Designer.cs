@@ -187,7 +187,7 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are already editing a report.  Do you want to close it and open the new one?.
+        ///   Looks up a localized string similar to You are currently editing {0}.  Do you want to close it and open the report for {1} instead?.
         /// </summary>
         internal static string MessageReportingComponentAlreadyOpened {
             get {

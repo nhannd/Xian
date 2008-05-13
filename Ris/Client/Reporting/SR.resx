@@ -160,7 +160,7 @@
     <value>You must choose a radiologist to dictate for.</value>
   </data>
   <data name="MessageReportingComponentAlreadyOpened" xml:space="preserve">
-    <value>You are already editing a report.  Do you want to close it and open the new one?</value>
+    <value>You are currently editing {0}.  Do you want to close it and open the report for {1} instead?</value>
   </data>
   <data name="TitleChooseRadiologist" xml:space="preserve">
     <value>Choose Radiologist</value>

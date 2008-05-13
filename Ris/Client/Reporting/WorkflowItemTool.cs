@@ -36,6 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -119,10 +120,11 @@ namespace ClearCanvas.Ris.Client.Reporting
                         Workspace firstDocument = CollectionUtils.FirstElement(documents);
                         firstDocument.Activate();
 
-                        if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(SR.MessageReportingComponentAlreadyOpened, MessageBoxActions.YesNo))
+						string message = string.Format(SR.MessageReportingComponentAlreadyOpened, firstDocument.Title, PersonNameFormat.Format(item.PatientName));
+						if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
                         {
                             // Leave the existing document open
-                            return;                            
+                            return;
                         }
                         else
                         {
