@@ -29,39 +29,32 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Rules;
+using System.IO;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.LossyCompress
+namespace ClearCanvas.ImageServer.Common
 {
-	public class LossyCompressItemProcessor : BaseCompressItemProcessor
+	/// <summary>
+	/// <see cref="ServerCommand"/> for deleting a file, not that there is no rollback.  Rollback
+	/// should be accomplished by other means.  IE, do a rename of the file, then delete when everything
+	/// else is done.
+	/// </summary>
+	public class FileDeleteCommand : ServerCommand
 	{
-		protected override void ProcessItem(Model.WorkQueue item)
+		private readonly string _path;
+
+		public FileDeleteCommand(string path, bool requiresRollback) : base("Delete File", requiresRollback)
 		{
-			CompressionRulesEngine =
-				new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"),
-				                      ServerRuleTypeEnum.GetEnum("LossyCompressParameters"), item.ServerPartitionKey);
+			_path = path;
+		}
 
-			CompressionRulesEngine.Load();
+		protected override void OnExecute()
+		{
+			File.Delete(_path);
+		}
 
-			LoadUids(item);
-			LoadStorageLocation(item);
-
-			if (WorkQueueUidList.Count == 0)
-			{
-				// No UIDs associated with the WorkQueue item.  Set the status back to idle
-				PostProcessing(item, 0, false);
-				//CheckEmptyStudy(item);
-				return;
-			}
-
-			Platform.Log(LogLevel.Info, "Lossy compressing study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Load(item.ServerPartitionKey).AeTitle);
-
-			if (!ProcessUidList(item))
-				PostProcessing(item, WorkQueueUidList.Count, true);
-			else
-				PostProcessing(item, WorkQueueUidList.Count, false);
+		protected override void OnUndo()
+		{
+			
 		}
 	}
 }

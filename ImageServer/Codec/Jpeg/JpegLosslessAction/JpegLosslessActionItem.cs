@@ -29,39 +29,34 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.Common.Actions;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Codec;
+using ClearCanvas.Dicom.Codec.Jpeg;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Rules;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.LossyCompress
+namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegLosslessAction
 {
-	public class LossyCompressItemProcessor : BaseCompressItemProcessor
+	public class JpegLosslessActionItem : IActionItem<ServerActionContext>
 	{
-		protected override void ProcessItem(Model.WorkQueue item)
+		private string _failureReason = "Success";
+
+		public bool Execute(ServerActionContext context)
 		{
-			CompressionRulesEngine =
-				new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"),
-				                      ServerRuleTypeEnum.GetEnum("LossyCompressParameters"), item.ServerPartitionKey);
+			IDicomCodecFactory factory = new JpegLosslessNonHierarchicalProcess14SV1Factory();
+			IDicomCodec codec = factory.GetDicomCodec();
+			DicomJpegParameters parms = factory.GetCodecParameters(context.Message.DataSet) as DicomJpegParameters;
 
-			CompressionRulesEngine.Load();
+			context.CommandProcessor.AddCommand(new DicomCompressCommand(
+										context.Message, TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1, codec, parms, false));
 
-			LoadUids(item);
-			LoadStorageLocation(item);
+			return true;
+		}
 
-			if (WorkQueueUidList.Count == 0)
-			{
-				// No UIDs associated with the WorkQueue item.  Set the status back to idle
-				PostProcessing(item, 0, false);
-				//CheckEmptyStudy(item);
-				return;
-			}
-
-			Platform.Log(LogLevel.Info, "Lossy compressing study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Load(item.ServerPartitionKey).AeTitle);
-
-			if (!ProcessUidList(item))
-				PostProcessing(item, WorkQueueUidList.Count, true);
-			else
-				PostProcessing(item, WorkQueueUidList.Count, false);
+		public string FailureReason
+		{
+			get { return _failureReason; }
 		}
 	}
 }

@@ -33,30 +33,31 @@ using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Rules;
 
-namespace ClearCanvas.ImageServer.Rules.LossyCompressAction
+namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LossyAction
 {
 	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
-	public class LossyCompressSample : ISampleRule
+	public class Jpeg2000LossySamples : ISampleRule
 	{
 		private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
 
-		public LossyCompressSample()
+		public Jpeg2000LossySamples()
 		{
-			_applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+			_applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"));
 		}
 		public string Name
 		{
-			get { return "LossyCompressExempt"; }
+			get { return "Jpeg2000LossyParameters"; }
 		}
 		public string Description
 		{
-			get { return "Lossy Compress Exempt Rule"; }
+			get { return "JPEG 2000 Lossy Parameters"; }
 		}
 
 		public ServerRuleTypeEnum Type
 		{
-			get { return ServerRuleTypeEnum.GetEnum("LossyCompressStudy"); }
+			get { return ServerRuleTypeEnum.GetEnum("LossyCompressParameters"); }
 		}
 
 		public IList<ServerRuleApplyTimeEnum> ApplyTimeList
@@ -77,27 +78,21 @@ namespace ClearCanvas.ImageServer.Rules.LossyCompressAction
 				XmlNode actionNode = doc.CreateElement("action");
 				node.AppendChild(actionNode);
 
-				XmlElement andNode = doc.CreateElement("or");
-				conditionNode.AppendChild(andNode);
+				XmlElement orNode = doc.CreateElement("or");
+				conditionNode.AppendChild(conditionNode);
+
 				XmlElement equalNode = doc.CreateElement("equal");
 				equalNode.SetAttribute("test", "$Modality");
-				equalNode.SetAttribute("refValue", "MG");
-				andNode.AppendChild(equalNode);
-				equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$TransferSyntaxUid");
-				equalNode.SetAttribute("refValue", "1.2.840.10008.1.2.4.50");
-				andNode.AppendChild(equalNode);
-				equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$TransferSyntaxUid");
-				equalNode.SetAttribute("refValue", "1.2.840.10008.1.2.4.51");
-				andNode.AppendChild(equalNode);
-				equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$TransferSyntaxUid");
-				equalNode.SetAttribute("refValue", "1.2.840.10008.1.2.4.91");
-				andNode.AppendChild(equalNode);
+				equalNode.SetAttribute("refValue", "DX");
+				orNode.AppendChild(equalNode);
 
-				XmlElement losslessCompress = doc.CreateElement("no-op");
-				actionNode.AppendChild(losslessCompress);
+				equalNode = doc.CreateElement("equal");
+				equalNode.SetAttribute("test", "$Modality");
+				equalNode.SetAttribute("refValue", "CR");
+				orNode.AppendChild(equalNode);
+
+				XmlElement lossyCompress = doc.CreateElement("jpeg-2000-lossy");
+				actionNode.AppendChild(lossyCompress);
 				return doc;
 			}
 		}

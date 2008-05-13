@@ -29,32 +29,36 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Xml;
+using System.Xml.Schema;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.ImageServer.Rules;
 
-namespace ClearCanvas.ImageServer.Rules.Jpeg2000LosslessAction
+namespace ClearCanvas.ImageServer.Codec.Rle.RleCompressAction
 {
-
-	public class Jpeg2000LosslessActionItem : IActionItem<ServerActionContext>
+	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
+	public class RleActionOperator : IXmlActionCompilerOperator<ServerActionContext>
 	{
-		private string _failureReason = "Success";
-
-		public Jpeg2000LosslessActionItem()
+		public string OperatorTag
 		{
-
-		}
-		public bool Execute(ServerActionContext context)
-		{
-			//	DicomJpeg2000Parameters parms;
-
-			return true;
+			get { return "rle"; }
 		}
 
-		public string FailureReason
+		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
 		{
-			get { return _failureReason; }
+			return new RleActionItem();
+		}
+
+		public XmlSchemaElement GetSchema()
+		{
+			XmlSchemaComplexType type = new XmlSchemaComplexType();			
+
+			XmlSchemaElement element = new XmlSchemaElement();
+			element.Name = "rle";
+			element.SchemaType = type;
+
+			return element;
 		}
 	}
 }

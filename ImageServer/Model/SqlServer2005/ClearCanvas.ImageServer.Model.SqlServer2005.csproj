@@ -35,6 +35,7 @@
   <ItemGroup>
     <Compile Include="Brokers\DeleteServerPartition.cs" />
     <Compile Include="Brokers\DeleteWorkQueue.cs" />
+    <Compile Include="Brokers\InsertWorkQueueCompressStudy.cs" />
     <Compile Include="Brokers\WebQueryWorkQueue.cs" />
     <Compile Include="Brokers\DeleteStudyStorage.cs" />
     <Compile Include="Brokers\InsertFilesystem.cs" />

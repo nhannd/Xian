@@ -29,39 +29,68 @@
 
 #endregion
 
+using System.Collections.Generic;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.LossyCompress
+namespace ClearCanvas.ImageServer.Codec.Rle.RleCompressAction
 {
-	public class LossyCompressItemProcessor : BaseCompressItemProcessor
+	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
+	public class RleSamples : ISampleRule
 	{
-		protected override void ProcessItem(Model.WorkQueue item)
+		private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
+
+		public RleSamples()
 		{
-			CompressionRulesEngine =
-				new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"),
-				                      ServerRuleTypeEnum.GetEnum("LossyCompressParameters"), item.ServerPartitionKey);
+			_applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"));
+		}
+		public string Name
+		{
+			get { return "RleParameters"; }
+		}
+		public string Description
+		{
+			get { return "RLE Sample Parameters"; }
+		}
 
-			CompressionRulesEngine.Load();
+		public ServerRuleTypeEnum Type
+		{
+			get { return ServerRuleTypeEnum.GetEnum("LosslessCompressParameters"); }
+		}
 
-			LoadUids(item);
-			LoadStorageLocation(item);
+		public IList<ServerRuleApplyTimeEnum> ApplyTimeList
+		{
+			get { return _applyTime; }
+		}
 
-			if (WorkQueueUidList.Count == 0)
+		public XmlDocument Rule
+		{
+			get
 			{
-				// No UIDs associated with the WorkQueue item.  Set the status back to idle
-				PostProcessing(item, 0, false);
-				//CheckEmptyStudy(item);
-				return;
+				XmlDocument doc = new XmlDocument();
+				XmlNode node = doc.CreateElement("rule");
+				doc.AppendChild(node);
+				XmlElement conditionNode = doc.CreateElement("condition");
+				node.AppendChild(conditionNode);
+				conditionNode.SetAttribute("expressionLanguage", "dicom");
+				XmlNode actionNode = doc.CreateElement("action");
+				node.AppendChild(actionNode);
+
+				XmlElement andNode = doc.CreateElement("and");
+				conditionNode.AppendChild(andNode);
+
+
+				XmlElement equalNode = doc.CreateElement("equal");
+				equalNode.SetAttribute("test", "$Modality");
+				equalNode.SetAttribute("refValue", "US");
+				andNode.AppendChild(equalNode);
+
+				XmlElement baselineCompress = doc.CreateElement("rle");
+				actionNode.AppendChild(baselineCompress);
+				return doc;
 			}
-
-			Platform.Log(LogLevel.Info, "Lossy compressing study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Load(item.ServerPartitionKey).AeTitle);
-
-			if (!ProcessUidList(item))
-				PostProcessing(item, WorkQueueUidList.Count, true);
-			else
-				PostProcessing(item, WorkQueueUidList.Count, false);
 		}
 	}
 }

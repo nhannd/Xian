@@ -100,6 +100,10 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteServerPartition]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[DeleteServerPartition]
 GO
+/****** Object:  StoredProcedure [dbo].[InsertWorkQueueCompressStudy]    Script Date: 05/12/2008 12:21:23 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueCompressStudy]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[InsertWorkQueueCompressStudy]
+GO
 /****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
 SET ANSI_NULLS ON
 GO
@@ -1039,11 +1043,11 @@ BEGIN
 
 	INSERT INTO [ImageServer].[dbo].ServiceLock
 		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
-	VALUES (newid(),@FilesystemLosslessCompressServiceLockTypeEnum,0,getdate(),@GUID,0)
+	VALUES (newid(),@FilesystemLosslessCompressServiceLockTypeEnum,0,getdate(),@GUID,1)
 
 	INSERT INTO [ImageServer].[dbo].ServiceLock
 		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
-	VALUES (newid(),@FilesystemLossyCompressServiceLockTypeEnum,0,getdate(),@GUID,0)
+	VALUES (newid(),@FilesystemLossyCompressServiceLockTypeEnum,0,getdate(),@GUID,1)
 
 	COMMIT TRANSACTION
 
@@ -1775,7 +1779,6 @@ END
 END
 GO
 
-
 set ANSI_NULLS ON
 set QUOTED_IDENTIFIER ON
 go
@@ -1952,6 +1955,70 @@ BEGIN
 		RAISERROR (N''Study could not be locked for deletion of WorkQueue entry.'', 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
 		RETURN 50000
 	END
+
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[InsertWorkQueueCompressStudy]    Script Date: 05/12/2008 12:21:23 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueCompressStudy]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: May 9, 2008
+-- Description:	Stored procedure for inserting Compress WorkQueue entries
+-- =============================================
+CREATE PROCEDURE [dbo].[InsertWorkQueueCompressStudy] 
+	@WorkQueueTypeEnum smallint,
+	@FilesystemQueueTypeEnum smallint,
+	@StudyStorageGUID uniqueidentifier, 
+	@ServerPartitionGUID uniqueidentifier,
+	@ExpirationTime datetime,
+	@ScheduledTime datetime,
+	@DeleteFilesystemQueue bit 
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	declare @WorkQueueGUID as uniqueidentifier
+	declare @PendingStatusEnum as smallint
+
+	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+
+	BEGIN TRANSACTION
+
+    -- Insert statements for procedure here
+	SELECT @WorkQueueGUID = GUID from WorkQueue 
+		where StudyStorageGUID = @StudyStorageGUID
+		AND WorkQueueTypeEnum = @WorkQueueTypeEnum
+	if @@ROWCOUNT = 0
+	BEGIN
+		set @WorkQueueGUID = NEWID();
+
+		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime)
+			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @WorkQueueTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
+		IF @DeleteFilesystemQueue = 1
+		BEGIN
+			DELETE FROM FilesystemQueue
+			WHERE StudyStorageGUID = @StudyStorageGUID AND FilesystemQueueTypeEnum = @FilesystemQueueTypeEnum
+		END
+	END
+	ELSE
+	BEGIN
+		UPDATE WorkQueue 
+			set ExpirationTime = @ExpirationTime
+			where GUID = @WorkQueueGUID
+	END
+
+	COMMIT TRANSACTION
+
+	SELECT * FROM WorkQueue WHERE GUID = @WorkQueueGUID
 
 END
 ' 

@@ -36,6 +36,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CreateDirectoryCommand.cs" />
+    <Compile Include="DicomCompressCommand.cs" />
+    <Compile Include="FileDeleteCommand.cs" />
     <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="FilesystemSelector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

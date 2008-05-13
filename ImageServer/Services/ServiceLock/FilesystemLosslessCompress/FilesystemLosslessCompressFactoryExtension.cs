@@ -29,31 +29,26 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Actions;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Rules.JpegLosslessAction
+namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompress
 {
-	public class JpegLosslessActionItem : IActionItem<ServerActionContext>
+	[ExtensionOf(typeof(ServiceLockFactoryExtensionPoint))]
+	class FilesystemLosslessCompressFactoryExtension : IServiceLockProcessorFactory
 	{
-		private string _failureReason = "Success";
+		#region IServiceLockProcessorFactory Members
 
-		public JpegLosslessActionItem()
+		public ServiceLockTypeEnum GetServiceLockType()
 		{
-
-		}
-		public bool Execute(ServerActionContext context)
-		{
-			//	DicomJpeg2000Parameters parms;
-
-			return true;
+			return ServiceLockTypeEnum.GetEnum("FilesystemLosslessCompress");
 		}
 
-		public string FailureReason
+		public IServiceLockItemProcessor GetItemProcessor()
 		{
-			get { return _failureReason; }
+			return new FilesystemLosslessCompressItemProcessor();
 		}
+
+		#endregion
 	}
 }

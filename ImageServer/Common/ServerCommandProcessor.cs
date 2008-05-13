@@ -93,6 +93,15 @@ namespace ClearCanvas.ImageServer.Common
         {
             get { return _failureReason; }
         }
+
+		/// <summary>
+		/// Number of commands stored in the processor queue.
+		/// </summary>
+    	public int CommandCount
+    	{
+			get { return _queue.Count; }
+    	}
+
         #endregion
 
         #region Public Methods

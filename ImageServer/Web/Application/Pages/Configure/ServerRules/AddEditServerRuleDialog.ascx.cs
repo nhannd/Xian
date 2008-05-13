@@ -226,7 +226,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             {
                 var type = oList.value;
              
-                ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRules.ServerRuleSamples.GetXml(type,
+                ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules.ServerRuleSamples.GetXml(type,
                     OnSucess, OnError);
             }
             function OnError(result)
@@ -318,10 +318,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			_rule.ServerRuleTypeEnum = new ServerRuleTypeEnum();
 			_rule.ServerRuleTypeEnum.SetEnum(short.Parse(RuleTypeDropDownList.SelectedItem.Value));
 
-			if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.GetEnum("AutoRoute"))
-				_rule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.GetEnum("SopProcessed");
-			else
-				_rule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.GetEnum("StudyProcessed");
+			_rule.ServerRuleApplyTimeEnum = new ServerRuleApplyTimeEnum();
+			_rule.ServerRuleApplyTimeEnum.SetEnum(short.Parse(RuleApplyTimeDropDownList.SelectedItem.Value));
 
 			_rule.Enabled = EnabledCheckBox.Checked;
 			_rule.DefaultRule = DefaultCheckBox.Checked;
@@ -417,8 +415,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 					                                    	ServerRuleApplyTimeEnum.GetEnum("CompressingStudy").Enum.
 					                                    		ToString()));
 				}
-
-				RuleApplyTimeDropDownList.SelectedValue = _rule.ServerRuleApplyTimeEnum.Enum.ToString();
+				if (RuleApplyTimeDropDownList.Items.FindByValue(_rule.ServerRuleApplyTimeEnum.Enum.ToString())!= null)
+					RuleApplyTimeDropDownList.SelectedValue = _rule.ServerRuleApplyTimeEnum.Enum.ToString();
 				RuleTypeDropDownList.SelectedValue = _rule.ServerRuleTypeEnum.Enum.ToString();
 
 

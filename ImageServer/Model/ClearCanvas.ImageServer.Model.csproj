@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Brokers\IDeleteServerPartition.cs" />
     <Compile Include="Brokers\IDeleteWorkQueue.cs" />
+    <Compile Include="Brokers\IInsertWorkQueueCompressStudy.cs" />
     <Compile Include="Brokers\IWebQueryWorkQueue.cs" />
     <Compile Include="Brokers\IDeleteStudyStorage.cs" />
     <Compile Include="Brokers\IInsertFilesystemQueue.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Parameters\FilesystemInsertParameters.cs" />
     <Compile Include="Parameters\ServerPartitionDeleteParameters.cs" />
     <Compile Include="Parameters\WebWorkQueueQueryParameters.cs" />
+    <Compile Include="Parameters\WorkQueueCompressStudyInsertParameters.cs" />
     <Compile Include="Parameters\WorkQueueDeleteParameters.cs" />
     <Compile Include="PartitionSopClass.cs" />
     <Compile Include="PartitionSopClass.gen.cs" />

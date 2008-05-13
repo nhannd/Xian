@@ -29,39 +29,36 @@
 
 #endregion
 
+using System.Xml;
+using System.Xml.Schema;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.Common.Actions;
 using ClearCanvas.ImageServer.Rules;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.LossyCompress
+namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegBaselineAction
 {
-	public class LossyCompressItemProcessor : BaseCompressItemProcessor
+	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
+	public class JpegBaselineActionOperator : IXmlActionCompilerOperator<ServerActionContext>
 	{
-		protected override void ProcessItem(Model.WorkQueue item)
+		public string OperatorTag
 		{
-			CompressionRulesEngine =
-				new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"),
-				                      ServerRuleTypeEnum.GetEnum("LossyCompressParameters"), item.ServerPartitionKey);
+			get { return "jpeg-baseline"; }
+		}
 
-			CompressionRulesEngine.Load();
+		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
+		{
+			return new JpegBaselineActionItem();
+		}
 
-			LoadUids(item);
-			LoadStorageLocation(item);
+		public XmlSchemaElement GetSchema()
+		{
+			XmlSchemaComplexType type = new XmlSchemaComplexType();			
 
-			if (WorkQueueUidList.Count == 0)
-			{
-				// No UIDs associated with the WorkQueue item.  Set the status back to idle
-				PostProcessing(item, 0, false);
-				//CheckEmptyStudy(item);
-				return;
-			}
+			XmlSchemaElement element = new XmlSchemaElement();
+			element.Name = "jpeg-baseline";
+			element.SchemaType = type;
 
-			Platform.Log(LogLevel.Info, "Lossy compressing study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Load(item.ServerPartitionKey).AeTitle);
-
-			if (!ProcessUidList(item))
-				PostProcessing(item, WorkQueueUidList.Count, true);
-			else
-				PostProcessing(item, WorkQueueUidList.Count, false);
+			return element;
 		}
 	}
 }

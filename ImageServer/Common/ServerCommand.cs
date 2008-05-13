@@ -29,8 +29,6 @@
 
 #endregion
 
-using System;
-
 namespace ClearCanvas.ImageServer.Common
 {
     /// <summary>

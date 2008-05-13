@@ -29,34 +29,41 @@
 
 #endregion
 
-using System.Xml;
-using System.Xml.Schema;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Actions;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Codec;
 
-namespace ClearCanvas.ImageServer.Rules.Jpeg2000LossyAction
+namespace ClearCanvas.ImageServer.Common
 {
-	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-	public class Jpeg2000LossyActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+	public class DicomCompressCommand : ServerCommand
 	{
-		public string OperatorTag
+		private readonly DicomMessageBase _file;
+		private readonly IDicomCodec _codec;
+		private readonly DicomCodecParameters _parms;
+		private readonly TransferSyntax _syntax;
+		private bool _lossy;
+
+		public DicomCompressCommand(DicomMessageBase file, TransferSyntax syntax, IDicomCodec codec, DicomCodecParameters parms, bool lossy) 
+			: base("DICOM Compress Command",false)
 		{
-			get { return "jpeg-2000-lossy"; }
+			_file = file;
+			_syntax = syntax;
+			_codec = codec;
+			_parms = parms;
+			_lossy = lossy;
 		}
 
-		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
+		protected override void OnExecute()
 		{
-			return new Jpeg2000LossyActionItem();
+			// Check for decompression first
+			if (_file.TransferSyntax.Encapsulated)
+				_file.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
+
+			_file.ChangeTransferSyntax(_syntax, _codec, _parms);
 		}
-		public XmlSchemaElement GetSchema()
+
+		protected override void OnUndo()
 		{
-			XmlSchemaComplexType type = new XmlSchemaComplexType();			
-
-			XmlSchemaElement element = new XmlSchemaElement();
-			element.Name = "jpeg-2000-lossy";
-			element.SchemaType = type;
-
-			return element;
+			
 		}
 	}
 }

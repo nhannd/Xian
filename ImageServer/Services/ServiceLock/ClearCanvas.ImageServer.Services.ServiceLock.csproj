@@ -36,6 +36,10 @@
     <Compile Include="BaseServiceLockItemProcessor.cs" />
     <Compile Include="FilesystemDelete\FilesystemDeleteFactoryExtension.cs" />
     <Compile Include="FilesystemDelete\FilesystemDeleteItemProcessor.cs" />
+    <Compile Include="FilesystemLosslessCompress\FilesystemLosslessCompressFactoryExtension.cs" />
+    <Compile Include="FilesystemLosslessCompress\FilesystemLosslessCompressItemProcessor.cs" />
+    <Compile Include="FilesystemLossyCompress\FilesystemLossyCompressFactoryExtension.cs" />
+    <Compile Include="FilesystemLossyCompress\FilesystemLossyCompressItemProcessor.cs" />
     <Compile Include="FilesystemReinventory\FilesystemReinventoryFactoryExtension.cs" />
     <Compile Include="FilesystemReinventory\FilesystemReinventoryItemProcessor.cs" />
     <Compile Include="FilesystemStudyProcess\DeleteFilesystemQueueCommand.cs" />
@@ -93,10 +97,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ServiceLockSettings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="FilesystemCompress\" />
-    <Folder Include="FilesystemLossyCompress\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

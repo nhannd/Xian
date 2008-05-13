@@ -32,11 +32,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock
@@ -100,6 +103,61 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             }
             return storageLocationList[0];
         }
+
+		/// <summary>
+		/// Load a <see cref="StudyXml"/> file for a given <see cref="StudyStorageLocation"/>
+		/// </summary>
+		/// <param name="location">The location a study is stored.</param>
+		/// <returns>The <see cref="StudyXml"/> instance for <paramref name="location"/></returns>
+		protected virtual StudyXml LoadStudyXml(StudyStorageLocation location)
+		{
+			StudyXml theXml = new StudyXml();
+
+			String streamFile = Path.Combine(location.GetStudyPath(), location.StudyInstanceUid + ".xml");
+			if (File.Exists(streamFile))
+			{
+				using (Stream fileStream = new FileStream(streamFile, FileMode.Open))
+				{
+					XmlDocument theDoc = new XmlDocument();
+
+					StudyXmlIo.Read(theDoc, fileStream);
+
+					theXml.SetMemento(theDoc);
+
+					fileStream.Close();
+				}
+			}
+
+			return theXml;
+		}
+
+    	/// <summary>
+		/// Load all of the instances in a given <see cref="StudyXml"/> file into the component for sending.
+		/// </summary>
+		/// <param name="studyXml">The <see cref="StudyXml"/> file to load from</param>
+		/// <param name="context"></param>
+		/// <param name="workQueueKey"></param>
+		protected void InsertWorkQueueUidFromStudyXml(StudyXml studyXml, IUpdateContext context, ServerEntityKey workQueueKey)
+		{
+			foreach (SeriesXml seriesXml in studyXml)
+			{
+				foreach (InstanceXml instanceXml in seriesXml)
+				{
+					WorkQueueUidUpdateColumns updateColumns = new WorkQueueUidUpdateColumns();
+					updateColumns.Duplicate = false;
+					updateColumns.Failed = false;
+					updateColumns.SeriesInstanceUid = seriesXml.SeriesInstanceUid;
+					updateColumns.SopInstanceUid = instanceXml.SopInstanceUid;
+					updateColumns.WorkQueueKey = workQueueKey;
+
+					IWorkQueueUidEntityBroker broker = context.GetBroker<IWorkQueueUidEntityBroker>();
+
+					broker.Insert(updateColumns);
+				}
+			}
+		}
+
+
         #endregion
 
         #region Static Methods

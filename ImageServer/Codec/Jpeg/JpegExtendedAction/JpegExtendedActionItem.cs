@@ -29,39 +29,34 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Xml.Schema;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
-using ClearCanvas.ImageServer.Rules.JpegExtendedAction;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Codec;
+using ClearCanvas.Dicom.Codec.Jpeg;
+using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Rules;
 
-namespace ClearCanvas.ImageServer.Rules.JpegLosslessAction
+namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegExtendedAction
 {
-	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-	public class JpegLosslessActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+	public class JpegExtendedActionItem : IActionItem<ServerActionContext>
 	{
-		public string OperatorTag
+		private string _failureReason = "Success";
+
+		public bool Execute(ServerActionContext context)
 		{
-			get { return "jpeg-lossless"; }
+			IDicomCodecFactory factory = new JpegExtendedProcess24Factory();
+			IDicomCodec codec = factory.GetDicomCodec();
+			DicomJpegParameters parms = factory.GetCodecParameters(context.Message.DataSet) as DicomJpegParameters;
+
+			context.CommandProcessor.AddCommand(
+				new DicomCompressCommand(context.Message, TransferSyntax.JpegExtendedProcess24, codec, parms, true));
+
+			return true;
 		}
 
-		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
+		public string FailureReason
 		{
-			return new JpegExtendedActionItem();
-		}
-
-		public XmlSchemaElement GetSchema()
-		{
-			XmlSchemaComplexType type = new XmlSchemaComplexType();			
-
-			XmlSchemaElement element = new XmlSchemaElement();
-			element.Name = "jpeg-lossless";
-			element.SchemaType = type;
-
-			return element;
+			get { return _failureReason; }
 		}
 	}
 }

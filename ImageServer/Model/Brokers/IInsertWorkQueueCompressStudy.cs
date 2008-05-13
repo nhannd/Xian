@@ -29,34 +29,12 @@
 
 #endregion
 
-using System.Xml;
-using System.Xml.Schema;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Actions;
+using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Rules.Jpeg2000LosslessAction
+namespace ClearCanvas.ImageServer.Model.Brokers
 {
-	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-	public class Jpeg2000LosslessActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+	public interface IInsertWorkQueueCompressStudy : IProcedureQueryBroker<WorkQueueCompressStudyInsertParameters, WorkQueue>
 	{
-		public string OperatorTag
-		{
-			get { return "jpeg-2000-lossless"; }
-		}
-
-		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
-		{
-			return new Jpeg2000LosslessActionItem();
-		}
-		public XmlSchemaElement GetSchema()
-		{
-			XmlSchemaComplexType type = new XmlSchemaComplexType();			
-
-			XmlSchemaElement element = new XmlSchemaElement();
-			element.Name = "jpeg-2000-lossless";
-			element.SchemaType = type;
-
-			return element;
-		}
 	}
 }

@@ -29,38 +29,33 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Xml.Schema;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Codec;
+using ClearCanvas.Dicom.Codec.Rle;
+using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Rules;
 
-namespace ClearCanvas.ImageServer.Rules.JpegExtendedAction
+namespace ClearCanvas.ImageServer.Codec.Rle.RleCompressAction
 {
-	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-	public class JpegExtendedActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+	public class RleActionItem : IActionItem<ServerActionContext>
 	{
-		public string OperatorTag
+		private string _failureReason = "Success";
+
+		public bool Execute(ServerActionContext context)
 		{
-			get { return "jpeg-extended"; }
+			IDicomCodecFactory factory = new RleFactory();
+			IDicomCodec codec = factory.GetDicomCodec();
+			DicomRleCodecParameters parms = factory.GetCodecParameters(context.Message.DataSet) as DicomRleCodecParameters;
+
+			context.CommandProcessor.AddCommand(new DicomCompressCommand(
+													context.Message, TransferSyntax.RleLossless, codec, parms, false));	
+			return true;
 		}
 
-		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
+		public string FailureReason
 		{
-			return new JpegExtendedActionItem();
-		}
-
-		public XmlSchemaElement GetSchema()
-		{
-			XmlSchemaComplexType type = new XmlSchemaComplexType();			
-
-			XmlSchemaElement element = new XmlSchemaElement();
-			element.Name = "jpeg-extended";
-			element.SchemaType = type;
-
-			return element;
+			get { return _failureReason; }
 		}
 	}
 }

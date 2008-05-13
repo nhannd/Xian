@@ -29,38 +29,19 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Xml.Schema;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Actions;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Rules.JpegBaselineAction
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
-	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-	public class JpegBaselineActionOperator : IXmlActionCompilerOperator<ServerActionContext>
-	{
-		public string OperatorTag
-		{
-			get { return "jpeg-baseline"; }
-		}
-
-		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
-		{
-			return new JpegBaselineActionItem();
-		}
-
-		public XmlSchemaElement GetSchema()
-		{
-			XmlSchemaComplexType type = new XmlSchemaComplexType();			
-
-			XmlSchemaElement element = new XmlSchemaElement();
-			element.Name = "jpeg-baseline";
-			element.SchemaType = type;
-
-			return element;
-		}
-	}
+	[ExtensionOf(typeof(BrokerExtensionPoint))]
+	public class InsertWorkQueueCompressStudy : ProcedureQueryBroker<WorkQueueCompressStudyInsertParameters,WorkQueue>, IInsertWorkQueueCompressStudy
+    {
+        public InsertWorkQueueCompressStudy()
+            : base("InsertWorkQueueCompressStudy")
+        {
+        }
+    }
 }

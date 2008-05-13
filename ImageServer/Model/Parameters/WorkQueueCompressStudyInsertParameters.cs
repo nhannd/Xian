@@ -30,30 +30,49 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Actions;
+using ClearCanvas.ImageServer.Enterprise;
 
-namespace ClearCanvas.ImageServer.Rules.Jpeg2000LossyAction
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-	public class Jpeg2000LossyActionItem : IActionItem<ServerActionContext>
-	{
-		private string _failureReason = "Success";
+	public class WorkQueueCompressStudyInsertParameters : ProcedureParameters
+    {
+		public WorkQueueCompressStudyInsertParameters()
+            : base("InsertWorkQueueCompressStudy")
+        { }
 
-		public Jpeg2000LossyActionItem()
+		public WorkQueueTypeEnum WorkQueueTypeEnum
 		{
-
-		}
-		public bool Execute(ServerActionContext context)
-		{
-			//	DicomJpeg2000Parameters parms;
-
-			return true;
+			set { SubCriteria["WorkQueueTypeEnum"] = new ProcedureParameter<ServerEnum>("WorkQueueTypeEnum", value); }
 		}
 
-		public string FailureReason
+		public FilesystemQueueTypeEnum FilesystemQueueTypeEnum
 		{
-			get { return _failureReason; }
+			set { SubCriteria["FilesystemQueueTypeEnum"] = new ProcedureParameter<ServerEnum>("FilesystemQueueTypeEnum", value); }
 		}
-	}
+
+		public ServerEntityKey ServerPartitionKey
+		{
+			set { SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
+		}
+
+		public ServerEntityKey StudyStorageKey
+		{
+			set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
+		}
+
+		public DateTime ExpirationTime
+		{
+			set { SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
+		}
+
+		public DateTime ScheduledTime
+		{
+			set { SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
+		}
+
+		public bool DeleteFilesystemQueue
+		{
+			set { SubCriteria["DeleteFilesystemQueue"] = new ProcedureParameter<bool>("DeleteFilesystemQueue", value); }
+		}
+    }
 }

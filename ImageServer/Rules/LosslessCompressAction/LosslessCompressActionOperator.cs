@@ -37,7 +37,7 @@ using ClearCanvas.Common.Actions;
 namespace ClearCanvas.ImageServer.Rules.LosslessCompressAction
 {
 	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-	class LosslessCompressActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+	public class LosslessCompressActionOperator : IXmlActionCompilerOperator<ServerActionContext>
 	{
 		public string OperatorTag
 		{

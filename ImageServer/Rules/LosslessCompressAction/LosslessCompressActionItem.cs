@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Rules.LosslessCompressAction
 {
 	public class LosslessCompressActionItem : IActionItem<ServerActionContext>
 	{
-		    private string _failureReason = "Success";
+	    private string _failureReason = "Success";
         private readonly double _time;
         private readonly string _timeUnits;
 		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("LosslessCompress");
