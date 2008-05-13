@@ -296,6 +296,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			{
 				RangeMaxInterval = Math.Max(RangeMinInterval, CopyRangeEnd - CopyRangeStart);
 				CopyRangeInterval = Math.Min(CopyRangeInterval, RangeMaxInterval);
+				CopyRangeInterval = Math.Max(CopyRangeInterval, RangeMinInterval);
 
 				if (!CopyRangeAtIntervalEnabled)
 					CopyRangeAtInterval = false;
