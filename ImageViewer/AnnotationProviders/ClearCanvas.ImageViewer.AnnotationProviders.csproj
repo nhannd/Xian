@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dicom\ImagePlaneAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\InstanceNumberAnnotationItem.cs" />
     <Compile Include="Dicom\MRImageAnnotationItemProvider.cs" />
     <Compile Include="Dicom\CTImageAnnotationItemProvider.cs" />
     <Compile Include="Dicom\GeneralEquipmentAnnotationItemProvider.cs" />

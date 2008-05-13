@@ -164,33 +164,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 					)
 				);
 
-			_annotationItems.Add
-				(
-					new DicomAnnotationItem<string>
-					(
-						"Dicom.GeneralImage.InstanceNumber",
-						resolver,
-						delegate(Frame frame)
-						{
-							string str = String.Format("{0}/{1}",
-												frame.ParentImageSop.InstanceNumber,
-												frame.ParentImageSop.ParentSeries.Sops.Count);
-
-							if (frame.ParentImageSop.NumberOfFrames > 1)
-							{
-								string frameString = String.Format(
-									"Fr: {0}/{1}", 
-									frame.FrameNumber, 
-									frame.ParentImageSop.NumberOfFrames);
-
-								str += " " + frameString;
-							}
-
-							return str;
-						},
-						DicomDataFormatHelper.RawStringFormat
-					)
-				);
+			_annotationItems.Add(new InstanceNumberAnnotationItem());
 
 			_annotationItems.Add
 				(
