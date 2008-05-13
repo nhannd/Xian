@@ -76,11 +76,16 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				}
 			}
 
+			//replace directory separators with spaces.
+			prefix = prefix.Replace('\\', ' ');
+			prefix = prefix.Replace('/', ' '); 
+
 			char[] invalidChars = Path.GetInvalidPathChars();
+
 			foreach (char invalidChar in invalidChars)
 				prefix = prefix.Replace(invalidChar, ' '); //replace invalid characters with spaces.
 
-			return prefix;
+			return prefix.Trim();
 		}
 
 		private static string GetDisplaySetDirectory(IDisplaySet displaySet, string baseDirectory)
