@@ -66,20 +66,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         internal void UpdateAuthorityGroup(AuthorityGroup authorityGroup, AuthorityGroupDetail detail, IPersistenceContext persistenceContext)
         {
             authorityGroup.Name = detail.Name;
+			authorityGroup.AuthorityTokens.Clear();
 
-            // process authority tokens
-            List<string> tokenNames = CollectionUtils.Map<AuthorityTokenSummary, string>(detail.AuthorityTokens,
-                delegate(AuthorityTokenSummary token)
-                {
-                    return token.Name;
-                });
+			if (detail.AuthorityTokens.Count > 0)
+			{
+				// process authority tokens
+				List<string> tokenNames = CollectionUtils.Map<AuthorityTokenSummary, string>(detail.AuthorityTokens,
+				                                                                             delegate(AuthorityTokenSummary token)
+				                                                                             {
+				                                                                             	return token.Name;
+				                                                                             });
 
-            AuthorityTokenSearchCriteria where = new AuthorityTokenSearchCriteria();
-            where.Name.In(tokenNames);
-            IList<AuthorityToken> authTokens = persistenceContext.GetBroker<IAuthorityTokenBroker>().Find(where);
-            
-            authorityGroup.AuthorityTokens.Clear();
-            authorityGroup.AuthorityTokens.AddAll(authTokens);
+
+				AuthorityTokenSearchCriteria where = new AuthorityTokenSearchCriteria();
+				where.Name.In(tokenNames);
+				IList<AuthorityToken> authTokens = persistenceContext.GetBroker<IAuthorityTokenBroker>().Find(where);
+
+				authorityGroup.AuthorityTokens.AddAll(authTokens);
+			}
         }
     }
 }

@@ -44,15 +44,17 @@ namespace ClearCanvas.Ris.Client.Admin
 {
     public class AuthorityTokenTableEntry
     {
-        private AuthorityTokenSummary _summary;
+        private readonly AuthorityTokenSummary _summary;
         private bool _selected;
         private event EventHandler _selectedChanged;
+    	private readonly Path _path;
 
         public AuthorityTokenTableEntry(AuthorityTokenSummary authorityTokenSummary, EventHandler onChanged)
         {
             _summary = authorityTokenSummary;
             _selected = false;
             _selectedChanged = onChanged;
+			_path = new Path(_summary.Name, new ResourceResolver(this.GetType().Assembly));
         }
 
         public bool Selected
@@ -68,10 +70,25 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        public AuthorityTokenSummary AuthorityTokenSummary
-        {
-            get { return _summary; }
-        }
+    	public string Name
+    	{
+			get { return _summary.Name; }
+    	}
+
+    	public string Description
+    	{
+			get { return _summary.Description; }
+    	}
+
+    	public Path Path
+    	{
+			get { return _path; }
+    	}
+
+    	internal AuthorityTokenSummary Summary
+    	{
+			get { return _summary; }
+    	}
     }
 
     public class SelectableAuthorityTokenTable : Table<AuthorityTokenTableEntry>
@@ -84,11 +101,11 @@ namespace ClearCanvas.Ris.Client.Admin
                 0.5f));
 
             this.Columns.Add(new TableColumn<AuthorityTokenTableEntry, string>(SR.ColumnAuthorityTokenName,
-                delegate(AuthorityTokenTableEntry entry) { return entry.AuthorityTokenSummary.Name; },
+                delegate(AuthorityTokenTableEntry entry) { return entry.Name; },
                 1.5f));
 
             this.Columns.Add(new TableColumn<AuthorityTokenTableEntry, string>(SR.ColumnAuthorityTokenDescription,
-                delegate(AuthorityTokenTableEntry entry) { return entry.AuthorityTokenSummary.Description; },
+                delegate(AuthorityTokenTableEntry entry) { return entry.Description; },
                 3.5f));
 	    }
     }
@@ -110,8 +127,7 @@ namespace ClearCanvas.Ris.Client.Admin
         private bool _isNew;
         private string _authorityGroupName;
         private AuthorityGroupDetail _authorityGroupDetail;
-        private List<AuthorityTokenTableEntry> _authorityTokens;
-        private SelectableAuthorityTokenTable _authorityTokenTable;
+		private List<AuthorityTokenTableEntry> _authorityTokens;
 
         /// <summary>
         /// Constructor
@@ -119,7 +135,6 @@ namespace ClearCanvas.Ris.Client.Admin
         public AuthorityGroupEditorComponent()
         {
             _isNew = true;
-            _authorityTokenTable = new SelectableAuthorityTokenTable();
         }
 
         public AuthorityGroupEditorComponent(string authorityGroupName)
@@ -128,7 +143,6 @@ namespace ClearCanvas.Ris.Client.Admin
 
             _isNew = false;
             _authorityGroupName = authorityGroupName;
-            _authorityTokenTable = new SelectableAuthorityTokenTable();
         }
 
         public override void Start()
@@ -178,9 +192,9 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        public ITable AuthorityTokenTable
+        public List<AuthorityTokenTableEntry> AuthorityTokens
         {
-            get { return _authorityTokenTable; }
+            get { return _authorityTokens; }
         }
 
         public void Accept()
@@ -246,7 +260,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     _authorityGroupDetail.AuthorityTokens,
                     delegate(AuthorityTokenSummary summary)
                     {
-                        return summary.Name == changedEntry.AuthorityTokenSummary.Name;
+                        return summary.Name == changedEntry.Summary.Name;
                     });
                 this.Modified = true;
             }
@@ -256,12 +270,12 @@ namespace ClearCanvas.Ris.Client.Admin
                     _authorityGroupDetail.AuthorityTokens,
                     delegate(AuthorityTokenSummary summary)
                     {
-                        return summary.Name == changedEntry.AuthorityTokenSummary.Name;
+						return summary.Name == changedEntry.Summary.Name;
                     });
 
                 if (alreadyAdded == false)
                 {
-                    _authorityGroupDetail.AuthorityTokens.Add(changedEntry.AuthorityTokenSummary);
+					_authorityGroupDetail.AuthorityTokens.Add(changedEntry.Summary);
                     this.Modified = true;
                 }
             }
@@ -272,16 +286,13 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private void InitialiseTable()
         {
-            _authorityTokenTable.Items.Clear();
-            _authorityTokenTable.Items.AddRange(_authorityTokens);
-
             foreach (AuthorityTokenSummary selectedToken in _authorityGroupDetail.AuthorityTokens)
             {
                 AuthorityTokenTableEntry foundEntry = CollectionUtils.SelectFirst(
                     _authorityTokens,
                     delegate(AuthorityTokenTableEntry entry)
                     {
-                        return selectedToken.Name == entry.AuthorityTokenSummary.Name;
+                        return selectedToken.Name == entry.Summary.Name;
                     });
 
                 if (foundEntry != null) foundEntry.Selected = true;
