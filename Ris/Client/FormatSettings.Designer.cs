@@ -176,7 +176,12 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Default display format for accession numbers.  Eligible placeholders are:  &apos;%N&apos; number (masked);  &apos;%n&apos; number (unmasked);  &apos;%L&apos; label
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Default display format for accession numbers.  Eligible placeholders are:  \'%N\' n" +
+            "umber (masked);  \'%n\' number (unmasked);  \'%L\' label")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("%L %N")]
         public string AccessionNumberDefaultFormat {
@@ -185,7 +190,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Text substited for the &apos;%L&apos; placeholder in an Accession number format string
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Text substited for the \'%L\' placeholder in an Accession number format string")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("A#")]
         public string AccessionNumberLabel {
@@ -194,9 +203,13 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Mask applied to the &apos;%N&apos; placeholder in an Accession number format string
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Mask applied to the \'%N\' placeholder in an Accession number format string")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("000 000 000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("000-000-000")]
         public string AccessionNumberMask {
             get {
                 return ((string)(this["AccessionNumberMask"]));
