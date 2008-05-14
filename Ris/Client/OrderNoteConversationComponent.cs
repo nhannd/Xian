@@ -82,7 +82,6 @@ namespace ClearCanvas.Ris.Client
 		private StaffGroupSummary _selectedStaffGroup = null;
 		private readonly List<StaffGroupSummary> _groupRecipients;
 
-
 		#endregion
 
 		#region Constructors
@@ -134,6 +133,8 @@ namespace ClearCanvas.Ris.Client
 				{
 					GetConversationEditorFormDataResponse formDataResponse = service.GetConversationEditorFormData(new GetConversationEditorFormDataRequest());
 					_onBehalfOfChoices = formDataResponse.OnBehalfOfGroupChoices;
+
+					this.OnBehalfOf = OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName;
 
 					GetConversationRequest request = new GetConversationRequest(_orderRef, _orderNoteCategories, false);
 					GetConversationResponse response = service.GetConversation(request);
@@ -209,9 +210,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				return CollectionUtils.Map<StaffGroupSummary, string>(
+				List<string> choices = CollectionUtils.Map<StaffGroupSummary, string>(
 					_onBehalfOfChoices, 
 					delegate(StaffGroupSummary summary) { return summary.Name; });
+				choices.Insert(0, string.Empty);
+				return choices;
 			}
 		}
 
@@ -224,9 +227,10 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_onBehalfOf = CollectionUtils.SelectFirst(
-					_onBehalfOfChoices, 
+					_onBehalfOfChoices,
 					delegate(StaffGroupSummary summary) { return string.Equals(summary.Name, value); });
 
+				OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName = _onBehalfOf != null ? _onBehalfOf.Name : string.Empty;
 			}
 		}
 

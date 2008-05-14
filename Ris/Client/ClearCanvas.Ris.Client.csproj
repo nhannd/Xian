@@ -70,6 +70,12 @@
     <Compile Include="OrderNoteboxFolderSystemBase.cs" />
     <Compile Include="OrderNoteboxTable.cs" />
     <Compile Include="OrderNoteCategory.cs" />
+    <Compile Include="OrderNoteConversationComponentSettings.cs" />
+    <Compile Include="OrderNoteConversationComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>OrderNoteConversationComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="OrderNoteConversationTable.cs" />
     <Compile Include="OrderNoteEditorComponent.cs" />
     <Compile Include="OrderNoteSummaryComponent.cs" />
@@ -262,6 +268,10 @@
     <None Include="HomePageSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>HomePageSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="OrderNoteConversationComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>OrderNoteConversationComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="RandomUtilsSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
