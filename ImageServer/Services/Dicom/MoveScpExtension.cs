@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.DicomServices;
+using ClearCanvas.DicomServices.Scu;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
