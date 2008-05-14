@@ -71,6 +71,24 @@ namespace ClearCanvas.Ris.Client
 			remove { _checkedItemsChanged -= value; }
 		}
 
+		public bool HasUncheckedUnacknowledgedNotes()
+		{
+			return CollectionUtils.Contains(this.Items,
+											delegate(Checkable<OrderNoteDetail> checkableOrderNoteDetail)
+											{
+												return !checkableOrderNoteDetail.IsChecked && checkableOrderNoteDetail.Item.CanAcknowledge;
+											});
+		}
+
+		public bool HasUnacknowledgedNotes()
+		{
+			return CollectionUtils.Contains(this.Items,
+											delegate(Checkable<OrderNoteDetail> checkableOrderNoteDetail)
+											{
+												return checkableOrderNoteDetail.Item.CanAcknowledge;
+											});
+		}
+
 		private static IconSet GetCanAcknowledgeIcon(bool canAcknowledge)
 		{
 			return canAcknowledge ? new IconSet("WarningHS.png") : null;

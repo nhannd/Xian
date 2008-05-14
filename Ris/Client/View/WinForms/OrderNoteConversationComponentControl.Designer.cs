@@ -256,6 +256,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipients.Location = new System.Drawing.Point(3, 85);
 			this._recipients.Name = "_recipients";
 			this._recipients.ReadOnly = false;
+			this._recipients.ShowToolbar = false;
 			this._recipients.Size = new System.Drawing.Size(306, 179);
 			this._recipients.TabIndex = 4;
 			this._recipients.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;

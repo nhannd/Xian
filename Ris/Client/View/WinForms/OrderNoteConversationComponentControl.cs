@@ -62,9 +62,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_onBehalf.DataBindings.Add("Value", _component, "OnBehalfOf", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_recipients.Table = _component.Recipients;
-			_recipients.MenuModel = _component.RecipientActionModel;
-			_recipients.ToolbarModel = _component.RecipientActionModel;
-			_recipients.DataBindings.Add("Selection", _component, "SelectedRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_staffRecipientLookup.LookupHandler = _component.StaffRecipientLookupHandler;
 			_staffRecipientLookup.DataBindings.Add("Value", _component, "SelectedStaffRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
