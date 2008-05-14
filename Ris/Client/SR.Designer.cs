@@ -124,6 +124,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to !.
+        /// </summary>
+        internal static string ColumnCanAcknowledge {
+            get {
+                return ResourceManager.GetString("ColumnCanAcknowledge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Category.
         /// </summary>
         internal static string ColumnCategory {
@@ -354,6 +363,24 @@ namespace ClearCanvas.Ris.Client {
         internal static string ColumnName {
             get {
                 return ResourceManager.GetString("ColumnName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Message.
+        /// </summary>
+        internal static string ColumnNoteBody {
+            get {
+                return ResourceManager.GetString("ColumnNoteBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Posted.
+        /// </summary>
+        internal static string ColumnNotePostTime {
+            get {
+                return ResourceManager.GetString("ColumnNotePostTime", resourceCulture);
             }
         }
         
@@ -610,6 +637,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ack.
+        /// </summary>
+        internal static string ColumnWillAcknowledge {
+            get {
+                return ResourceManager.GetString("ColumnWillAcknowledge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Work Address.
         /// </summary>
         internal static string ColumnWorkAddress {
@@ -741,6 +777,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string FormatNoteCategory {
             get {
                 return ResourceManager.GetString("FormatNoteCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  on behalf of {0}.
+        /// </summary>
+        internal static string FormatOnBehalfOf {
+            get {
+                return ResourceManager.GetString("FormatOnBehalfOf", resourceCulture);
             }
         }
         

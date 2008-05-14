@@ -138,6 +138,9 @@
   <data name="ColumnAuthor" xml:space="preserve">
     <value>Author</value>
   </data>
+  <data name="ColumnCanAcknowledge" xml:space="preserve">
+    <value>!</value>
+  </data>
   <data name="ColumnCategory" xml:space="preserve">
     <value>Category</value>
   </data>
@@ -215,6 +218,12 @@
   </data>
   <data name="ColumnName" xml:space="preserve">
     <value>Name</value>
+  </data>
+  <data name="ColumnNoteBody" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="ColumnNotePostTime" xml:space="preserve">
+    <value>Posted</value>
   </data>
   <data name="ColumnNumber" xml:space="preserve">
     <value>Number</value>
@@ -300,6 +309,9 @@
   <data name="ColumnVisitType" xml:space="preserve">
     <value>Visit Type</value>
   </data>
+  <data name="ColumnWillAcknowledge" xml:space="preserve">
+    <value>Ack</value>
+  </data>
   <data name="ColumnWorkAddress" xml:space="preserve">
     <value>Work Address</value>
   </data>
@@ -344,6 +356,9 @@
   </data>
   <data name="FormatNoteCategory" xml:space="preserve">
     <value>{0} - Severity {1}</value>
+  </data>
+  <data name="FormatOnBehalfOf" xml:space="preserve">
+    <value> on behalf of {0}</value>
   </data>
   <data name="FormatTitleContextDescriptionOrderNoteConversation" xml:space="preserve">
     <value> - {0} {1} - {2}</value>
