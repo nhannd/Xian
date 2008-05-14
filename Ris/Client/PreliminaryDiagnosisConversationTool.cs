@@ -16,6 +16,7 @@ namespace ClearCanvas.Ris.Client
 	[MenuAction("pd", "folderexplorer-items-contextmenu/Preliminary Diagnosis", "Open")]
 	[ButtonAction("pd", "folderexplorer-items-toolbar/Preliminary Diagnosis", "Open")]
 	[Tooltip("pd", "Create/view the preliminary diagnosis for the selected item")]
+	[EnabledStateObserver("pd", "Enabled", "EnabledChanged")]
 	[IconSet("pd", IconScheme.Colour, "Icons.PreliminaryDiagnosisToolSmall.png", "Icons.PreliminaryDiagnosisToolSmall.png", "Icons.PreliminaryDiagnosisToolSmall.png")]
 	public abstract class PreliminaryDiagnosisConversationTool<TSummaryItem, TToolContext> : OrderNoteConversationToolBase<TSummaryItem, TToolContext>
 		where TSummaryItem : WorklistItemSummaryBase
