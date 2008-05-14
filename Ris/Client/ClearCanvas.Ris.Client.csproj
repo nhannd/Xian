@@ -53,7 +53,9 @@
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointSummaryComponent.cs" />
+    <Compile Include="Formatting\AccessionFormat.cs" />
     <Compile Include="Formatting\ExternalPractitionerContactPointFormat.cs" />
+    <Compile Include="Formatting\StringMask.cs" />
     <Compile Include="HomePageSettings.cs" />
     <Compile Include="HomePageSettings.Designer.cs">
       <AutoGen>True</AutoGen>

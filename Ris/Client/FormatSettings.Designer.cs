@@ -175,5 +175,32 @@ namespace ClearCanvas.Ris.Client {
                 return ((string)(this["ExternalPractitionerContactPointDefaultFormat"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("%L %N")]
+        public string AccessionNumberDefaultFormat {
+            get {
+                return ((string)(this["AccessionNumberDefaultFormat"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("A#")]
+        public string AccessionNumberLabel {
+            get {
+                return ((string)(this["AccessionNumberLabel"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("000 000 000")]
+        public string AccessionNumberMask {
+            get {
+                return ((string)(this["AccessionNumberMask"]));
+            }
+        }
     }
 }

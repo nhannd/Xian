@@ -8,6 +8,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -38,7 +39,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// A title for the <see cref="OrderNoteConversationComponent"/> from the derived class' <see cref="TSummaryItem"/>
 		/// </summary>
-		protected abstract string Title { get; }
+		protected abstract string TitleContextDescription { get; }
 
 		/// <summary>
 		/// An <see cref="EntityRef"/> for an Order from the derived class' <see cref="TSummaryItem"/>.
@@ -87,7 +88,7 @@ namespace ClearCanvas.Ris.Client
 		public void Open()
 		{
 			IWorkflowItemToolContext context = (IWorkflowItemToolContext) this.ContextBase;
-			Open(this.OrderRef, FormatTitle(), this.OrderNoteCategories, context.DesktopWindow);
+			Open(this.OrderRef, GetTitle(), this.OrderNoteCategories, context.DesktopWindow);
 		}
 
 		private static void Open(EntityRef orderRef, string title, IEnumerable<string> orderNoteCategories, IDesktopWindow desktopWindow)
@@ -106,9 +107,10 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		private string FormatTitle()
+		private string GetTitle()
 		{
 			StringBuilder sb = new StringBuilder();
+
 			sb.Append(
 				CollectionUtils.Reduce<string, string>(
 					this.OrderNoteCategories, 
@@ -119,8 +121,9 @@ namespace ClearCanvas.Ris.Client
 						category = OrderNoteCategory.FromKey(categoryKey);
 						return memo + (category != null ? category.DisplayValue : "");
 					}));
-			sb.Append(" Conversation for Order ");
-			sb.Append(this.Title);
+			sb.Append(" Conversation");
+			sb.Append(this.TitleContextDescription);
+
 			return sb.ToString();
 		}
 	}
@@ -140,9 +143,15 @@ namespace ClearCanvas.Ris.Client
 			get { return this.SummaryItem.OrderRef; }
 		}
 
-		protected override string Title
+		protected override string TitleContextDescription
 		{
-			get { return "A# " + this.SummaryItem.AccessionNumber; }
+			get
+			{
+				return string.Format(SR.FormatTitleContextDescriptionOrderNoteConversation,
+					PersonNameFormat.Format(this.SummaryItem.PatientName),
+					MrnFormat.Format(this.SummaryItem.Mrn),
+					AccessionFormat.Format(this.SummaryItem.AccessionNumber));
+			}
 		}
 
 		protected override IEnumerable<string> OrderNoteCategories

@@ -745,6 +745,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to  - {0} {1} - {2}.
+        /// </summary>
+        internal static string FormatTitleContextDescriptionOrderNoteConversation {
+            get {
+                return ResourceManager.GetString("FormatTitleContextDescriptionOrderNoteConversation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to To:     {0}.
         /// </summary>
         internal static string FormatTo {

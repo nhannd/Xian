@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -16,9 +18,25 @@ namespace ClearCanvas.Ris.Client
 	[Tooltip("pd", "Create/view the preliminary diagnosis for the selected item")]
 	[IconSet("pd", IconScheme.Colour, "Icons.PreliminaryDiagnosisToolSmall.png", "Icons.PreliminaryDiagnosisToolSmall.png", "Icons.PreliminaryDiagnosisToolSmall.png")]
 	public abstract class PreliminaryDiagnosisConversationTool<TSummaryItem, TToolContext> : OrderNoteConversationToolBase<TSummaryItem, TToolContext>
-		where TSummaryItem : DataContractBase
+		where TSummaryItem : WorklistItemSummaryBase
 		where TToolContext : IWorkflowItemToolContext<TSummaryItem>
 	{
+		protected override EntityRef OrderRef
+		{
+			get { return this.SummaryItem.OrderRef; }
+		}
+
+		protected override string TitleContextDescription
+		{
+			get
+			{
+				return string.Format(SR.FormatTitleContextDescriptionOrderNoteConversation,
+					PersonNameFormat.Format(this.SummaryItem.PatientName),
+					MrnFormat.Format(this.SummaryItem.Mrn),
+					AccessionFormat.Format(this.SummaryItem.AccessionNumber));
+			}
+		}
+
 		protected override IEnumerable<string> OrderNoteCategories
 		{
 			get { return new string[] { OrderNoteCategory.PreliminaryDiagnosis.Key }; }

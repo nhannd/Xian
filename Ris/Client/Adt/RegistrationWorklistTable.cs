@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     // if there is no accession number, this item represents a patient only, not an order
                     return item.AccessionNumber == null ? null : 
-                        string.Format("{0} {1} - {2}", item.AccessionNumber, item.DiagnosticServiceName, item.Time);
+                        string.Format("{0} {1} - {2}", AccessionFormat.Format(item.AccessionNumber), item.DiagnosticServiceName, item.Time);
                 },
                 1.0f, DescriptionRow);
             descriptionRow.Comparison = null;

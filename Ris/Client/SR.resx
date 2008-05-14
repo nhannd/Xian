@@ -345,6 +345,9 @@
   <data name="FormatNoteCategory" xml:space="preserve">
     <value>{0} - Severity {1}</value>
   </data>
+  <data name="FormatTitleContextDescriptionOrderNoteConversation" xml:space="preserve">
+    <value> - {0} {1} - {2}</value>
+  </data>
   <data name="FormatTo" xml:space="preserve">
     <value>To:     {0}</value>
   </data>
