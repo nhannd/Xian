@@ -43,16 +43,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
         {
         }
 
-        //public ListUsersRequest(string userIDFilter, string familyNameFilter)
-        //{
-        //    UserIDFilter = userIDFilter;
-        //    FamilyNameFilter = familyNameFilter;
-        //}
-
-        //[DataMember]
-        //public string UserIDFilter;
-
-        //[DataMember]
-        //public string FamilyNameFilter;
+		public ListUsersRequest(SearchResultPage page)
+			:base(page)
+		{
+		}
     }
 }

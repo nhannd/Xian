@@ -40,12 +40,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin
     [DataContract]
     public class ListAllModalitiesRequest : PagedDataContractBase
     {
-        public ListAllModalitiesRequest(bool activeOnly)
+        public ListAllModalitiesRequest()
         {
-            this.ActiveOnly = activeOnly;
         }
 
-        [DataMember]
-        public bool ActiveOnly;
+		public ListAllModalitiesRequest(SearchResultPage page)
+            :base(page)
+        {
+        }
     }
 }

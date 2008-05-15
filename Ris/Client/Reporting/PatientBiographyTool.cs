@@ -37,6 +37,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -47,7 +48,8 @@ namespace ClearCanvas.Ris.Client.Reporting
     [EnabledStateObserver("view", "Enabled", "EnabledChanged")]
     [Tooltip("view", "Open patient biography")]
 	[IconSet("view", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
-    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+	[ActionPermission("view", AuthorityTokens.Workflow.PatientBiography.View)]
+	[ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(ReportingProtocolWorkflowItemToolExtensionPoint))]
     public class PatientBiographyTool : Tool<IToolContext>
     {

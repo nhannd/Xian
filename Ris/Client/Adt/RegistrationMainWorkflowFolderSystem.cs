@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Adt
 			new RegistrationMainWorkflowItemToolExtensionPoint(),
 			new RegistrationMainWorkflowFolderToolExtensionPoint())
 		{
-			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
 			{
 				this.AddFolder(new Folders.ScheduledFolder(this));
 				this.AddFolder(new Folders.CheckedInFolder(this));

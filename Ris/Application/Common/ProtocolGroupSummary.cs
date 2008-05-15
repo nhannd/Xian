@@ -39,13 +39,13 @@ namespace ClearCanvas.Ris.Application.Common
     {
         public ProtocolGroupSummary(EntityRef entityRef, string name, string description)
         {
-            EntityRef = entityRef;
+			ProtocolGroupRef = entityRef;
             Name = name;
             Description = description;
         }
 
         [DataMember]
-        public EntityRef EntityRef;
+        public EntityRef ProtocolGroupRef;
 
         [DataMember]
         public string Name;

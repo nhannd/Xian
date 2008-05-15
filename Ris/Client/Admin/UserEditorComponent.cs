@@ -241,7 +241,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, staffComponent, "Select Staff");
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    StaffSummary staffSummary = (StaffSummary)staffComponent.SelectedStaff.Item;
+                    StaffSummary staffSummary = (StaffSummary)staffComponent.SummarySelection.Item;
                     _userDetail.StaffRef = staffSummary.StaffRef;
                     _userDetail.StaffName = staffSummary.Name;
                     _userDetail.DisplayName =

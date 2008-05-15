@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -80,7 +81,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
         }
 
         [ReadOperation]
-        public LoadProtocolGroupForEditResponse LoadProtocolGroupForEdit(LoadProtocolGroupForEditRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ProtocolGroups)]
+		public LoadProtocolGroupForEditResponse LoadProtocolGroupForEdit(LoadProtocolGroupForEditRequest request)
         {
             ProtocolGroup group = this.PersistenceContext.Load<ProtocolGroup>(request.ProtocolGroupRef);
 
@@ -107,7 +109,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
         }
 
         [UpdateOperation]
-        public AddProtocolGroupResponse AddProtocolGroup(AddProtocolGroupRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ProtocolGroups)]
+		public AddProtocolGroupResponse AddProtocolGroup(AddProtocolGroupRequest request)
         {
             ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
 
@@ -121,7 +124,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
         }
 
         [UpdateOperation]
-        public UpdateProtocolGroupResponse UpdateProtocolGroup(UpdateProtocolGroupRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ProtocolGroups)]
+		public UpdateProtocolGroupResponse UpdateProtocolGroup(UpdateProtocolGroupRequest request)
         {
             ProtocolGroup group = this.PersistenceContext.Load<ProtocolGroup>(request.ProtocolGroupRef);
 
@@ -134,7 +138,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
         }
 
         [UpdateOperation]
-        public DeleteProtocolGroupResonse DeleteProtocolGroup(DeleteProtocolGroupRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ProtocolGroups)]
+		public DeleteProtocolGroupResonse DeleteProtocolGroup(DeleteProtocolGroupRequest request)
         {
             throw new System.NotImplementedException();
         }

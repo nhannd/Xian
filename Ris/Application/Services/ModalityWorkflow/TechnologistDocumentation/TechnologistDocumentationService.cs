@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -40,6 +41,8 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentat
 using ClearCanvas.Workflow;
 using Iesi.Collections.Generic;
 using System;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using System.Threading;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocumentation
 {
@@ -92,6 +95,9 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 		[ReadOperation]
 		public CanCompleteOrderDocumentationResponse CanCompleteOrderDocumentation(CanCompleteOrderDocumentationRequest request)
 		{
+			if(!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Documentation.Accept))
+				return new CanCompleteOrderDocumentationResponse(false);
+
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 			return new CanCompleteOrderDocumentationResponse(CollectionUtils.TrueForAll(order.Procedures,
 				delegate(Procedure p) { return AreAllModalityStepsTerminated(p); }));
@@ -99,6 +105,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 
 
 		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Documentation.Create)]
 		public SaveDataResponse SaveData(SaveDataRequest request)
 		{
 			Order order = PersistenceContext.Load<Order>(request.OrderRef);
@@ -141,6 +148,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 		}
 
 		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Documentation.Accept)]
 		public CompleteOrderDocumentationResponse CompleteOrderDocumentation(CompleteOrderDocumentationRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);

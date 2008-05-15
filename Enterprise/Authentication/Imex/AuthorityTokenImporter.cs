@@ -57,57 +57,52 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
         /// Imports authority tokens from all installed plugins.
         /// </summary>
         /// <param name="context">Persistence context</param>
-        /// <param name="statusLog">A log to which the importer will write status messages</param>
         /// <returns>A complete list of all existing authority tokens (including any that existed prior to this import).</returns>
-        public IList<AuthorityToken> ImportFromPlugins(IUpdateContext context, TextWriter statusLog)
+        public IList<AuthorityToken> ImportFromPlugins(IUpdateContext context)
         {
-            statusLog.WriteLine("Loading existing tokens...");
-
-            // first load all the existing tokens into memory
-            // there should not be that many tokens ( < 500), so this should not be a problem
-            IAuthorityTokenBroker broker = context.GetBroker<IAuthorityTokenBroker>();
-            IList<AuthorityToken> existingTokens = broker.FindAll();
-
             // scan all plugins for token definitions
-            foreach (PluginInfo plugin in Platform.PluginManager.Plugins)
-            {
-                statusLog.WriteLine(string.Format("Processing plugin {0}...", plugin.FormalName));
-                foreach (Type type in plugin.Assembly.GetTypes())
-                {
-                    // look at public fields
-                    foreach (FieldInfo field in type.GetFields())
-                    {
-                        object[] attrs = field.GetCustomAttributes(typeof(AuthorityTokenAttribute), false);
-                        if (attrs.Length == 1)
-                        {
-                            AuthorityToken token = ProcessToken(field, (AuthorityTokenAttribute)attrs[0], existingTokens, context);
-                            existingTokens.Add(token);
-                        }
-                    }
-                }
-            }
-
-            return existingTokens;
+        	AuthorityTokenDefinition[] tokenDefs = AuthorityGroupSetup.GetAuthorityTokens();
+        	return Import(tokenDefs, context);
         }
 
-        private static AuthorityToken ProcessToken(FieldInfo field, AuthorityTokenAttribute a, IList<AuthorityToken> existingTokens, IUpdateContext context)
-        {
-            string tokenName = (string)field.GetValue(null);
+		/// <summary>
+		/// Imports the specified set of authority tokens.
+		/// </summary>
+		/// <param name="tokenDefs"></param>
+		/// <param name="context"></param>
+		/// <returns></returns>
+		public IList<AuthorityToken> Import(IEnumerable<AuthorityTokenDefinition> tokenDefs, IUpdateContext context)
+		{
+			// first load all the existing tokens into memory
+			// there should not be that many tokens ( < 500), so this should not be a problem
+			IAuthorityTokenBroker broker = context.GetBroker<IAuthorityTokenBroker>();
+			IList<AuthorityToken> existingTokens = broker.FindAll();
 
-            AuthorityToken token = CollectionUtils.SelectFirst<AuthorityToken>(existingTokens,
-                delegate(AuthorityToken t) { return t.Name == tokenName; });
+			foreach (AuthorityTokenDefinition tokenDef in tokenDefs)
+			{
+				AuthorityToken token = ProcessToken(tokenDef, existingTokens, context);
+				existingTokens.Add(token);
+			}
+
+			return existingTokens;
+		}
+
+		private static AuthorityToken ProcessToken(AuthorityTokenDefinition tokenDef, IList<AuthorityToken> existingTokens, IUpdateContext context)
+        {
+            AuthorityToken token = CollectionUtils.SelectFirst(existingTokens,
+                delegate(AuthorityToken t) { return t.Name == tokenDef.Token; });
 
             // if token does not already exist, create it
             if (token == null)
             {
                 token = new AuthorityToken();
-                token.Name = tokenName;
+                token.Name = tokenDef.Token;
 
                 context.Lock(token, DirtyState.New);
             }
 
             // update the description
-            token.Description = a.Description;
+			token.Description = tokenDef.Description;
 
             return token;
         }
@@ -119,7 +114,7 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
             using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
             {
                 ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
-                ImportFromPlugins((IUpdateContext)PersistenceScope.Current, Console.Out);
+                ImportFromPlugins((IUpdateContext)PersistenceScope.Current);
 
                 scope.Complete();
             }

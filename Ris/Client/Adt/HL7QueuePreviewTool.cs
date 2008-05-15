@@ -41,8 +41,7 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("show", "global-menus/Admin/HL7/Queue", "Show")]
     [Tooltip("show", "HL7 Queue")]
-    [ActionPermission("show", AuthorityTokens.HL7Admin)]
-
+    [ActionPermission("show", AuthorityTokens.Management.HL7.QueueMonitor)]
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
     class HL7QueuePreviewTool : Tool<IDesktopToolContext>
     {

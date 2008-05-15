@@ -30,12 +30,13 @@
 #endregion
 
 using System;
-
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin;
 
@@ -52,149 +53,100 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// ProcedureTypeGroupSummaryComponent class
     /// </summary>
-    [AssociateView(typeof(ProcedureTypeGroupSummaryComponentViewExtensionPoint))]
-    public class ProcedureTypeGroupSummaryComponent : ApplicationComponent
+    public class ProcedureTypeGroupSummaryComponent : SummaryComponentBase<ProcedureTypeGroupSummary, ProcedureTypeGroupSummaryTable>
     {
-        private ProcedureTypeGroupSummary _selectedProcedureTypeGroup;
-        private ProcedureTypeGroupSummaryTable _procedureTypeGroupSummaryTable;
 
-        private SimpleActionModel _procedureTypeGroupActionHandler;
-        private readonly string _addProcedureTypeGroupKey = "AddProcedureTypeGroup";
-        private readonly string _updateProcedureTypeGroupKey = "UpdateProcedureTypeGroup";
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-        private IPagingController<ProcedureTypeGroupSummary> _pagingController;
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProcedureTypeGroup);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProcedureTypeGroup);
+		}
 
-        public override void Start()
-        {
-            _procedureTypeGroupSummaryTable = new ProcedureTypeGroupSummaryTable();
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<ProcedureTypeGroupSummary> ListItems(int firstItem, int maxItems)
+		{
+			ListProcedureTypeGroupsResponse listResponse = null;
+			Platform.GetService<IProcedureTypeGroupAdminService>(
+				delegate(IProcedureTypeGroupAdminService service)
+				{
+					listResponse = service.ListProcedureTypeGroups(new ListProcedureTypeGroupsRequest(new SearchResultPage(firstItem, maxItems)));
+				});
 
-            _procedureTypeGroupActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _procedureTypeGroupActionHandler.AddAction(_addProcedureTypeGroupKey, SR.TitleAddProcedureTypeGroup, "Icons.AddToolSmall.png", SR.TitleAddProcedureTypeGroup, AddProcedureTypeGroup);
-            _procedureTypeGroupActionHandler.AddAction(_updateProcedureTypeGroupKey, SR.TitleUpdateProcedureTypeGroup, "Icons.EditToolSmall.png", SR.TitleUpdateProcedureTypeGroup, UpdateProcedureTypeGroup);
-            _procedureTypeGroupActionHandler[_addProcedureTypeGroupKey].Enabled = true;
-            _procedureTypeGroupActionHandler[_updateProcedureTypeGroupKey].Enabled = false;
+			return listResponse.Items;
+		}
 
-            InitialisePaging(_procedureTypeGroupActionHandler);
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<ProcedureTypeGroupSummary> addedItems)
+		{
+			addedItems = new List<ProcedureTypeGroupSummary>();
+			ProcedureTypeGroupEditorComponent editor = new ProcedureTypeGroupEditorComponent();
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleAddProcedureTypeGroup);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(editor.ProcedureTypeGroupSummary);
+				return true;
+			}
+			return false;
+		}
 
-            LoadProcedureTypeGroupTable();
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<ProcedureTypeGroupSummary> items, out IList<ProcedureTypeGroupSummary> editedItems)
+		{
+			editedItems = new List<ProcedureTypeGroupSummary>();
+			ProcedureTypeGroupSummary item = CollectionUtils.FirstElement(items);
 
-            base.Start();
-        }
+			ProcedureTypeGroupEditorComponent editor = new ProcedureTypeGroupEditorComponent(item.ProcedureTypeGroupRef);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleUpdateProcedureTypeGroup);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(editor.ProcedureTypeGroupSummary);
+				return true;
+			}
+			return false;
+		}
 
-        private void InitialisePaging(ActionModelNode actionModelNode)
-        {
-            _pagingController = new PagingController<ProcedureTypeGroupSummary>(
-                delegate(int firstRow, int maxRows)
-                {
-                    ListProcedureTypeGroupsResponse listResponse = null;
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<ProcedureTypeGroupSummary> items)
+		{
+			throw new NotImplementedException();
+		}
 
-                    Platform.GetService<IProcedureTypeGroupAdminService>(
-                        delegate(IProcedureTypeGroupAdminService service)
-                        {
-                            ListProcedureTypeGroupsRequest listRequest = new ListProcedureTypeGroupsRequest();
-                            listRequest.Page.FirstRow = firstRow;
-                            listRequest.Page.MaxRows = maxRows;
-
-                            listResponse = service.ListProcedureTypeGroups(listRequest);
-                        });
-
-                    return listResponse.Items;
-                }
-            );
-
-            if (actionModelNode != null)
-            {
-                actionModelNode.Merge(new PagingActionModel<ProcedureTypeGroupSummary>(_pagingController, _procedureTypeGroupSummaryTable, Host.DesktopWindow));
-            }
-        }
-
-
-        private void LoadProcedureTypeGroupTable()
-        {
-            _procedureTypeGroupSummaryTable.Items.Clear();
-            _procedureTypeGroupSummaryTable.Items.AddRange(_pagingController.GetFirst());
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
-        #region Presentation Model
-
-        public ITable ProcedureTypeGroups
-        {
-            get { return _procedureTypeGroupSummaryTable; }
-        }
-
-        public ActionModelNode ProcedureTypeGroupListActionModel
-        {
-            get { return _procedureTypeGroupActionHandler; }
-        }
-
-        public ISelection SelectedProcedureTypeGroup
-        {
-            get 
-            {
-                return _selectedProcedureTypeGroup == null
-                        ? Selection.Empty
-                        : new Selection(_selectedProcedureTypeGroup);  
-            }
-            set
-            {
-                _selectedProcedureTypeGroup = (ProcedureTypeGroupSummary) value.Item;
-                ProcedureTypeGroupChanged();
-            }
-        }
-
-        private void ProcedureTypeGroupChanged()
-        {
-            _procedureTypeGroupActionHandler[_updateProcedureTypeGroupKey].Enabled =
-                _selectedProcedureTypeGroup != null;
-        }
-
-        #endregion
-
-        #region Action Model Handlers
-
-        private void AddProcedureTypeGroup()
-        {
-            try
-            {
-                ProcedureTypeGroupEditorComponent editor = new ProcedureTypeGroupEditorComponent();
-                ApplicationComponentExitCode exitCode =  ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddProcedureTypeGroup);
-
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    LoadProcedureTypeGroupTable();
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-        
-        public void UpdateProcedureTypeGroup()
-        {
-            try
-            {
-                if (_selectedProcedureTypeGroup == null) return;
-
-                ProcedureTypeGroupEditorComponent editor = new ProcedureTypeGroupEditorComponent(_selectedProcedureTypeGroup.EntityRef);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateProcedureTypeGroup);
-
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    LoadProcedureTypeGroupTable();
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-	    #endregion    
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(ProcedureTypeGroupSummary x, ProcedureTypeGroupSummary y)
+		{
+			return x.ProcedureTypeGroupRef.Equals(y.ProcedureTypeGroupRef, true);
+		}
     }
 }

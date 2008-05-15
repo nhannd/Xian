@@ -47,14 +47,12 @@ namespace ClearCanvas.Ris.Application.Common
         // note: we do not define the sys admin ("Administrators") group here because it is defined 
         // automatically in ClearCanvas.Enterprise.Authentication
 
-        private const string HealthcareAdmin = "Healthcare Administrators";
-        private const string TechnicalSupport = "Technical Support";
-        private const string Clerical = "Clerical";
-        private const string Transcriptionists = "Transcriptionists";
-        private const string Technologists = "Technologists";
-        private const string Radiologists = "Radiologists";
-        private const string RadiologyResidents = "Radiology Residents";
-        private const string Engineers = "Engineers";
+        public const string HealthcareAdmin = "Healthcare Administrators";
+		public const string Clerical = "Clerical";
+		public const string Technologists = "Technologists";
+		public const string Radiologists = "Radiologists";
+		public const string RadiologyResidents = "Radiology Residents";
+		public const string EmergencyPhysicians = "Emergency Physicians";
 
 
         #region IDefineAuthorityGroups Members
@@ -66,92 +64,140 @@ namespace ClearCanvas.Ris.Application.Common
                 new AuthorityGroupDefinition(HealthcareAdmin,
                     new string[] 
                     {
-                        AuthorityTokens.PatientProfileAdmin,
-                        AuthorityTokens.ReconcilePatients,
-                        AuthorityTokens.DiagnosticServiceAdmin,
-                        AuthorityTokens.FacilityAdmin,
-                        AuthorityTokens.LocationAdmin,
-                        AuthorityTokens.ModalityAdmin,
-                        AuthorityTokens.HL7Admin,
-                        AuthorityTokens.NoteAdmin,
-                        AuthorityTokens.StaffAdmin,
-                        AuthorityTokens.ExternalPractitionerAdmin,
-                        AuthorityTokens.VisitAdmin,
-                        AuthorityTokens.UserAdmin,
-                        AuthorityTokens.AuthorityGroupAdmin,
-                        AuthorityTokens.ProcedureTypeGroupAdmin,
-                        AuthorityTokens.WorklistAdmin
-                    }),
+                        AuthorityTokens.Workflow.PatientBiography.View,
+                        AuthorityTokens.Workflow.CannedText.Personal,
+                        AuthorityTokens.Workflow.CannedText.Group,
+                        AuthorityTokens.Workflow.Patient.Create,
+                        AuthorityTokens.Workflow.Patient.Update,
+                        AuthorityTokens.Workflow.Patient.Reconcile,
+                        AuthorityTokens.Workflow.PatientProfile.Update,
+                        AuthorityTokens.Workflow.Visit.Create,
+                        AuthorityTokens.Workflow.Visit.Update,
+                        AuthorityTokens.Workflow.Order.Create,
+                        AuthorityTokens.Workflow.Order.Modify,
+                        AuthorityTokens.Workflow.Order.Cancel,
+                        AuthorityTokens.Workflow.Order.Replace,
+                        AuthorityTokens.Workflow.Procedure.CheckIn,
+                        AuthorityTokens.Workflow.Protocol.Accept,
+                        AuthorityTokens.Workflow.Protocol.Create,
+                        AuthorityTokens.Workflow.Protocol.Resolve,
+                        AuthorityTokens.Workflow.Documentation.Create,
+                        AuthorityTokens.Workflow.Documentation.Accept,
+                        AuthorityTokens.Workflow.PreliminaryDiagnosis.Create,
+                        AuthorityTokens.Workflow.Report.Create,
+                        AuthorityTokens.Workflow.Report.Cancel,
+                        AuthorityTokens.Workflow.Report.Verify,
+                        AuthorityTokens.Workflow.Report.Publish,
+                        AuthorityTokens.Workflow.Report.UnsupervisedReporting,
+                        AuthorityTokens.Workflow.ExternalPractitioner.Create,
+                        AuthorityTokens.Workflow.ExternalPractitioner.Update,
+                        AuthorityTokens.Workflow.ExternalPractitioner.Merge,
 
-                new AuthorityGroupDefinition(TechnicalSupport,
-                    new string[] 
-                    {
-                        AuthorityTokens.PatientProfileAdmin,
-                        AuthorityTokens.ReconcilePatients,
-                        AuthorityTokens.DiagnosticServiceAdmin,
-                        AuthorityTokens.FacilityAdmin,
-                        AuthorityTokens.LocationAdmin,
-                        AuthorityTokens.ModalityAdmin,
-                        AuthorityTokens.HL7Admin,
-                        AuthorityTokens.NoteAdmin,
-                        AuthorityTokens.StaffAdmin,
-                        AuthorityTokens.ExternalPractitionerAdmin,
-                        AuthorityTokens.VisitAdmin,
-                        AuthorityTokens.UserAdmin,
-                        AuthorityTokens.AuthorityGroupAdmin,
-                        AuthorityTokens.ProcedureTypeGroupAdmin,
-                        AuthorityTokens.WorklistAdmin
-                   }),
+                        AuthorityTokens.Admin.Data.DiagnosticService,
+                        AuthorityTokens.Admin.Data.Enumeration,
+                        AuthorityTokens.Admin.Data.ExternalPractitioner,
+                        AuthorityTokens.Admin.Data.Facility,
+                        AuthorityTokens.Admin.Data.Location,
+                        AuthorityTokens.Admin.Data.Modality,
+                        AuthorityTokens.Admin.Data.PatientNoteCategory,
+                        AuthorityTokens.Admin.Data.ProcedureType,
+                        AuthorityTokens.Admin.Data.ProcedureTypeGroup,
+                        AuthorityTokens.Admin.Data.ProtocolGroups,
+                        AuthorityTokens.Admin.Data.Staff,
+                        AuthorityTokens.Admin.Data.StaffGroup,
+                        AuthorityTokens.Admin.Data.Worklist,
+
+						AuthorityTokens.Management.HL7.QueueMonitor,
+
+						AuthorityTokens.FolderSystems.Booking,
+						AuthorityTokens.FolderSystems.Registration,
+						AuthorityTokens.FolderSystems.Performing,
+						AuthorityTokens.FolderSystems.Protocolling,
+						AuthorityTokens.FolderSystems.Reporting,
+						AuthorityTokens.FolderSystems.OrderNotes,
+						AuthorityTokens.FolderSystems.Emergency,
+                    }),
 
                 new AuthorityGroupDefinition(Clerical,
                     new string[] 
                     {
-                        AuthorityTokens.PatientProfileAdmin,
-                        AuthorityTokens.ExternalPractitionerAdmin,
-                        AuthorityTokens.ReconcilePatients
-                    }),
+                        AuthorityTokens.Workflow.PatientBiography.View,
+                        AuthorityTokens.Workflow.CannedText.Personal,
+                        AuthorityTokens.Workflow.Patient.Create,
+                        AuthorityTokens.Workflow.Patient.Update,
+                        AuthorityTokens.Workflow.Patient.Reconcile,
+                        AuthorityTokens.Workflow.PatientProfile.Update,
+                        AuthorityTokens.Workflow.Visit.Create,
+                        AuthorityTokens.Workflow.Visit.Update,
+                        AuthorityTokens.Workflow.Order.Create,
+                        AuthorityTokens.Workflow.Order.Modify,
+                        AuthorityTokens.Workflow.Order.Cancel,
+                        AuthorityTokens.Workflow.Order.Replace,
+                        AuthorityTokens.Workflow.Procedure.CheckIn,
+                        AuthorityTokens.Workflow.Protocol.Resolve,
+                        AuthorityTokens.Workflow.ExternalPractitioner.Create,
+                        AuthorityTokens.Workflow.ExternalPractitioner.Update,
 
-                new AuthorityGroupDefinition(Transcriptionists,
-                    new string[] 
-                    {
-                    }),
+ 						AuthorityTokens.FolderSystems.Booking,
+						AuthorityTokens.FolderSystems.Registration,
+                   }),
 
                 new AuthorityGroupDefinition(Technologists,
                     new string[] 
                     {
+                        AuthorityTokens.Workflow.PatientBiography.View,
+                        AuthorityTokens.Workflow.CannedText.Personal,
+                        AuthorityTokens.Workflow.Order.Create,
+                        AuthorityTokens.Workflow.Order.Modify,
+                        AuthorityTokens.Workflow.Order.Cancel,
+                        AuthorityTokens.Workflow.Order.Replace,
+                        AuthorityTokens.Workflow.Procedure.CheckIn,
+                        AuthorityTokens.Workflow.Documentation.Create,
+                        AuthorityTokens.Workflow.Documentation.Accept,
+
+						AuthorityTokens.FolderSystems.Registration,
+						AuthorityTokens.FolderSystems.Performing,
                     }),
 
                 new AuthorityGroupDefinition(Radiologists,
                     new string[] 
                     {
-                        AuthorityTokens.VerifyReport
-                    }),
+                        AuthorityTokens.Workflow.PatientBiography.View,
+                        AuthorityTokens.Workflow.CannedText.Personal,
+                        AuthorityTokens.Workflow.Report.Create,
+                        AuthorityTokens.Workflow.Report.Verify,
+                        AuthorityTokens.Workflow.Report.UnsupervisedReporting,
+                        AuthorityTokens.Workflow.Protocol.Create,
+                        AuthorityTokens.Workflow.Protocol.Accept,
+
+						AuthorityTokens.FolderSystems.Protocolling,
+						AuthorityTokens.FolderSystems.Reporting,
+						AuthorityTokens.FolderSystems.OrderNotes,
+                   }),
 
                 new AuthorityGroupDefinition(RadiologyResidents,
                     new string[] 
                     {
-                    }),
+						AuthorityTokens.Workflow.PatientBiography.View,
+						AuthorityTokens.Workflow.CannedText.Personal,
+						AuthorityTokens.Workflow.Report.Create,
+						AuthorityTokens.Workflow.Protocol.Create,
 
-                new AuthorityGroupDefinition(Engineers,
-                    new string[]
+						AuthorityTokens.FolderSystems.Protocolling,
+						AuthorityTokens.FolderSystems.Reporting,
+						AuthorityTokens.FolderSystems.OrderNotes,
+                   }),
+
+                new AuthorityGroupDefinition(EmergencyPhysicians,
+                    new string[] 
                     {
-                        AuthorityTokens.PatientProfileAdmin,
-                        AuthorityTokens.ReconcilePatients,
-                        AuthorityTokens.DiagnosticServiceAdmin,
-                        AuthorityTokens.FacilityAdmin,
-                        AuthorityTokens.LocationAdmin,
-                        AuthorityTokens.ModalityAdmin,
-                        AuthorityTokens.HL7Admin,
-                        AuthorityTokens.NoteAdmin,
-                        AuthorityTokens.StaffAdmin,
-                        AuthorityTokens.ExternalPractitionerAdmin,
-                        AuthorityTokens.VisitAdmin,
-                        AuthorityTokens.UserAdmin,
-                        AuthorityTokens.AuthorityGroupAdmin,
-                        AuthorityTokens.ProcedureTypeGroupAdmin,
-                        AuthorityTokens.WorklistAdmin,
-                        AuthorityTokens.ViewUnfilteredWorkflowFolders
-                    }), 
+                        AuthorityTokens.Workflow.PatientBiography.View,
+                        AuthorityTokens.Workflow.CannedText.Personal,
+                        AuthorityTokens.Workflow.PreliminaryDiagnosis.Create,
+
+						AuthorityTokens.FolderSystems.OrderNotes,
+						AuthorityTokens.FolderSystems.Emergency,
+                    }),
 
             };
         }

@@ -43,6 +43,8 @@ using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using ClearCanvas.Ris.Application.Common;
 using System.Security.Permissions;
 using System.ServiceModel;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using System.Threading;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 {
@@ -78,7 +80,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Staff)]
         public LoadStaffForEditResponse LoadStaffForEdit(LoadStaffForEditRequest request)
         {
             // note that the version of the StaffRef is intentionally ignored here (default behaviour of ReadOperation)
@@ -103,14 +105,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin)]
-        public AddStaffResponse AddStaff(AddStaffRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Staff)]
+		public AddStaffResponse AddStaff(AddStaffRequest request)
         {
             StaffType staffType = EnumUtils.GetEnumValue<StaffType>(request.StaffDetail.StaffType);
             Staff staff = new Staff();
 
             StaffAssembler assembler = new StaffAssembler();
-            assembler.UpdateStaff(request.StaffDetail, staff, PersistenceContext);
+            assembler.UpdateStaff(request.StaffDetail, staff, Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup), PersistenceContext);
 
             PersistenceContext.Lock(staff, DirtyState.New);
 
@@ -121,13 +123,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin)]
-        public UpdateStaffResponse UpdateStaff(UpdateStaffRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Staff)]
+		public UpdateStaffResponse UpdateStaff(UpdateStaffRequest request)
         {
             Staff staff = PersistenceContext.Load<Staff>(request.StaffRef, EntityLoadFlags.CheckVersion);
 
             StaffAssembler assembler = new StaffAssembler();
-            assembler.UpdateStaff(request.StaffDetail, staff, PersistenceContext);
+			assembler.UpdateStaff(request.StaffDetail, staff, Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup), PersistenceContext);
 
             return new UpdateStaffResponse(assembler.CreateStaffSummary(staff, PersistenceContext));
         }

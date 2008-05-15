@@ -5,16 +5,16 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using System.Reflection;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using System.Xml;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/UI Validation", "Launch")]
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	[ActionPermission("launch", AuthorityTokens.Admin.System.UIValidationRules)]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ValidationManagementTool : Tool<IDesktopToolContext>
     {
         private Workspace _workspace;

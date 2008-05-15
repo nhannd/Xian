@@ -153,7 +153,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             {
                 worklist.ProcedureTypeGroupFilter.Values.AddAll(CollectionUtils.Map<ProcedureTypeGroupSummary, ProcedureTypeGroup>(
                     detail.ProcedureTypeGroups,
-                    delegate(ProcedureTypeGroupSummary g) { return context.Load<ProcedureTypeGroup>(g.EntityRef, EntityLoadFlags.Proxy); }));
+                    delegate(ProcedureTypeGroupSummary g) { return context.Load<ProcedureTypeGroup>(g.ProcedureTypeGroupRef, EntityLoadFlags.Proxy); }));
             }
             worklist.ProcedureTypeGroupFilter.IsEnabled = worklist.ProcedureTypeGroupFilter.Values.Count > 0;
 

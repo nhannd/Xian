@@ -121,10 +121,13 @@ namespace ClearCanvas.Ris.Client
             _actionModel = new CrudActionModel(true, true, this.SupportsDelete);
             _actionModel.Add.SetClickHandler(AddItems);
             _actionModel.Edit.SetClickHandler(EditSelectedItems);
+
             if(SupportsDelete)
                 _actionModel.Delete.SetClickHandler(DeleteSelectedItems);
 
-            _pagingController = new PagingController<TSummary>(
+			InitializeActionModel(_actionModel);
+
+			_pagingController = new PagingController<TSummary>(
                 delegate(int firstRow, int maxRows)
                 {
                     return ListItems(firstRow, maxRows);
@@ -332,7 +335,7 @@ namespace ClearCanvas.Ris.Client
         protected abstract bool IsSameItem(TSummary x, TSummary y);
 
         /// <summary>
-        /// Initializes the table.  Override this method to perform custom initialization of the table,
+        /// Override this method to perform custom initialization of the table,
         /// such as adding columns or setting other properties that control the table behaviour.
         /// </summary>
         /// <param name="table"></param>
@@ -340,6 +343,16 @@ namespace ClearCanvas.Ris.Client
         {
 
         }
+
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected virtual void InitializeActionModel(CrudActionModel model)
+		{
+			
+		}
 
         /// <summary>
         /// Called when the user changes the selected items in the table.
@@ -378,6 +391,14 @@ namespace ClearCanvas.Ris.Client
         {
             get { return _summaryTable; }
         }
+
+		/// <summary>
+		/// Gets the paging controller.
+		/// </summary>
+    	protected IPagingController<TSummary> PagingController
+    	{
+			get { return _pagingController; }
+    	}
 
         /// <summary>
         /// Gets the selected items.

@@ -34,74 +34,249 @@ using ClearCanvas.Common.Authorization;
 namespace ClearCanvas.Ris.Application.Common
 {
 	/// <summary>
-	/// Defines constants for all RIS authority tokens.
+	/// Defines constants for all core RIS authority tokens.
 	/// </summary>
 	public static class AuthorityTokens
 	{
-		[AuthorityToken(Description = "Allow administration of patient profiles")]
-		public const string PatientProfileAdmin = "PatientProfileAdmin";
+		/// <summary>
+		/// Tokens that allow access to administrative functionality.
+		/// </summary>
+		public static class Admin
+		{
+			public static class System
+			{
+				[AuthorityToken(Description = "Allow administration of User-Interface validation rules.")]
+				public const string UIValidationRules = "Admin/System/UI Validation Rules";
+			}
 
-        [AuthorityToken(Description = "Allow administration of patient")]
-        public const string PatientAdmin = "PatientAdmin";
+			public static class Security
+			{
+				[AuthorityToken(Description = "Allow administration of User Accounts.")]
+				public const string User = "Admin/Security/User";
 
-		[AuthorityToken(Description = "Allow reconciliation of patient profiles")]
-		public const string ReconcilePatients = "ReconcilePatients";
+				[AuthorityToken(Description = "Allow administration of Authority Groups.")]
+				public const string AuthorityGroup = "Admin/Security/Authority Group";
+			}
 
-		[AuthorityToken(Description = "Allow administration of diagnostic services")]
-		public const string DiagnosticServiceAdmin = "DiagnosticServiceAdmin";
+			public static class Data
+			{
+				[AuthorityToken(Description = "Allow administration of Facilities.")]
+				public const string Facility = "Admin/Data/Facility";
 
-		[AuthorityToken(Description = "Allow administration of facilities")]
-		public const string FacilityAdmin = "FacilityAdmin";
+				[AuthorityToken(Description = "Allow administration of Patient Locations.")]
+				public const string Location = "Admin/Data/Location";
 
-		[AuthorityToken(Description = "Allow administration of HL7 messages")]
-		public const string HL7Admin = "HL7Admin";
+				[AuthorityToken(Description = "Allow administration of Modalities.")]
+				public const string Modality = "Admin/Data/Modality";
 
-		[AuthorityToken(Description = "Allow administration of locations")]
-		public const string LocationAdmin = "LocationAdmin";
+				[AuthorityToken(Description = "Allow administration of Procedure Types.")]
+				public const string ProcedureType = "Admin/Data/Procedure Type";
 
-		[AuthorityToken(Description = "Allow administration of modalities")]
-		public const string ModalityAdmin = "ModalityAdmin";
+				[AuthorityToken(Description = "Allow administration of Procedure Type Groups (such as Performing, Reading, and Relevance Groups.")]
+				public const string ProcedureTypeGroup = "Admin/Data/Procedure Type Group";
 
-		[AuthorityToken(Description = "Allow administration of notes")]
-		public const string NoteAdmin = "NoteAdmin";
+				[AuthorityToken(Description = "Allow administration of Diagnostic Services and the Diagnostic Service Tree.")]
+				public const string DiagnosticService = "Admin/Data/Diagnostic Service";
 
-		[AuthorityToken(Description = "Allow administration of staff")]
-		public const string StaffAdmin = "StaffAdmin";
+				[AuthorityToken(Description = "Allow administration of Enumerations.")]
+				public const string Enumeration = "Admin/Data/Enumeration";
 
-		[AuthorityToken(Description = "Allow administration of external practitioners")]
-		public const string ExternalPractitionerAdmin = "ExternalPractitionerAdmin";
+				[AuthorityToken(Description = "Allow administration of Worklists.")]
+				public const string Worklist = "Admin/Data/Worklist";
 
-		[AuthorityToken(Description = "Allow administration of visit details")]
-		public const string VisitAdmin = "VisitAdmin";
+				[AuthorityToken(Description = "Allow administration of Protocol Groups and Codes.")]
+				public const string ProtocolGroups = "Admin/Data/Protocol Groups";
 
-		[AuthorityToken(Description = "Allow administration of user accounts")]
-		public const string UserAdmin = "UserAdmin";
+				[AuthorityToken(Description = "Allow administration of Staff.")]
+				public const string Staff = "Admin/Data/Staff";
 
-		[AuthorityToken(Description = "Allow administration of authority groups")]
-		public const string AuthorityGroupAdmin = "AuthorityGroupAdmin";
+				[AuthorityToken(Description = "Allow administration of Staff Groups.")]
+				public const string StaffGroup = "Admin/Data/Staff Group";
 
-		[AuthorityToken(Description = "Allow administration of procedure type groups")]
-		public const string ProcedureTypeGroupAdmin = "ProcedureTypeGroupAdmin";
+				[AuthorityToken(Description = "Allow administration of External Practitioners.")]
+				public const string ExternalPractitioner = "Admin/Data/External Practitioner";
 
-		[AuthorityToken(Description = "Allow administration of worklists")]
-		public const string WorklistAdmin = "WorklistAdmin";
+				[AuthorityToken(Description = "Allow administration of Patient Note Categories.")]
+				public const string PatientNoteCategory = "Admin/Data/Patient Note Category";
+			}
+		}
 
-		[AuthorityToken(Description = "Allow access to the Demo components")]
-		public const string DemoAdmin = "DemoAdmin";
+		/// <summary>
+		/// Tokens that allow access to management tools and functionality.
+		/// </summary>
+		public static class Management
+		{
+			public static class HL7
+			{
+				[AuthorityToken(Description = "Allow access to the HL7 Interface Queue Monitor.")]
+				public const string QueueMonitor = "Management/HL7/Queue Monitor";
+			}
+		}
 
-		[AuthorityToken(Description = "Allow verification of reports")]
-		public const string VerifyReport = "VerifyReport";
+		/// <summary>
+		/// Tokens that allow access to development tools and functionality.
+		/// </summary>
+		public static class Development
+		{
+			[AuthorityToken(Description = "Allow viewing of unfiltered worklists in top-level folders.")]
+			public const string ViewUnfilteredWorkflowFolders = "Development/View Unfiltered Workflow Folders";
 
-		[AuthorityToken(Description = "Enable Transcription workflow features")]
-		public const string UseTranscriptionWorkflow = "UseTranscriptionWorkflow";
+			[AuthorityToken(Description = "Allow creation of randomly generated test orders.")]
+			public const string CreateTestOrder = "Development/Create Test Order";
+		}
 
-		[AuthorityToken(Description = "Allow creation of reports without specifying a supervisor")]
-		public const string UnsupervisedReporting = "UnsupervisedReporting";
+		/// <summary>
+		/// Tokens that permit workflow actions.
+		/// </summary>
+		public static class Workflow
+		{
+			public static class PatientBiography
+			{
+				[AuthorityToken(Description = "Allow viewing of Patient Biography.")]
+				public const string View = "Workflow/Patient Biography/View";
+			}
 
-		[AuthorityToken(Description = "Allow administration of protocol groups and codes")]
-		public const string ProtocolGroupAdmin = "ProtocolGroupAdmin";
+			public static class CannedText
+			{
+				[AuthorityToken(Description = "Allow creation of personal Canned Texts.")]
+				public const string Personal = "Workflow/Canned Text/Personal";
 
-        [AuthorityToken(Description = "Allows viewing of unfiltered workflow folders")]
-        public const string ViewUnfilteredWorkflowFolders = "ViewUnfilteredWorkflowFolders";
+				[AuthorityToken(Description = "Allow creation of group Canned Texts.")]
+				public const string Group = "Workflow/Canned Text/Group";
+			}
+
+
+			public static class Report
+			{
+				[AuthorityToken(Description = "Allow access to the Report Editor and creation of radiology reports.")]
+				public const string Create = "Workflow/Report/Create";
+
+				[AuthorityToken(Description = "Allow verification of radiology reports.")]
+				public const string Verify = "Workflow/Report/Verify";
+
+				[AuthorityToken(Description = "Allow radiology reports to be cancelled and returned to the communal worklist.")]
+				public const string Cancel = "Workflow/Report/Cancel";
+
+				[AuthorityToken(Description = "Allow manual publication of radiology reports.")]
+				public const string Publish = "Workflow/Report/Publish";
+
+				[AuthorityToken(Description = "Allow creation of radiology reports without specifying a supervising radiologist.")]
+				public const string UnsupervisedReporting = "Workflow/Report/Unsupervised Reporting";
+			}
+
+			public static class Protocol
+			{
+				[AuthorityToken(Description = "Allow access to the Protocol Editor and creation of procedure Protocols.")]
+				public const string Create = "Workflow/Protocol/Create";
+
+				[AuthorityToken(Description = "Allow acceptance of procedure Protocols.")]
+				public const string Accept = "Workflow/Protocol/Accept";
+
+				[AuthorityToken(Description = "Allow orders that were rejected/suspended by the protocolling radiologist to be cancelled, or re-submitted for protocoling.")]
+				public const string Resolve = "Workflow/Protocol/Resolve";
+			}
+
+			public static class Patient
+			{
+				[AuthorityToken(Description = "Allow creation of new Patient records.")]
+				public const string Create = "Workflow/Patient/Create";
+
+				[AuthorityToken(Description = "Allow updating of Patient records (excluding Patient Profile information).")]
+				public const string Update = "Workflow/Patient/Update";
+
+				[AuthorityToken(Description = "Allow reconciliation of existing Patient records.")]
+				public const string Reconcile = "Workflow/Patient/Reconcile";
+			}
+
+			public static class PatientProfile
+			{
+				[AuthorityToken(Description = "Allow updating of existing Patient Profile records.")]
+				public const string Update = "Workflow/Patient Profile/Update";
+			}
+
+			public static class Visit
+			{
+				[AuthorityToken(Description = "Allow creation of new Visit records.")]
+				public const string Create = "Workflow/Visit/Create";
+
+				[AuthorityToken(Description = "Allow updating of existing Visit records.")]
+				public const string Update = "Workflow/Visit/Update";
+			}
+
+			public static class Order
+			{
+				[AuthorityToken(Description = "Allow creation of new Orders.")]
+				public const string Create = "Workflow/Order/Create";
+
+				[AuthorityToken(Description = "Allow modification of existing Orders.")]
+				public const string Modify = "Workflow/Order/Modify";
+
+				[AuthorityToken(Description = "Allow replacement of existing Orders.")]
+				public const string Replace = "Workflow/Order/Replace";
+
+				[AuthorityToken(Description = "Allow cancellation of existing Orders.")]
+				public const string Cancel = "Workflow/Order/Cancel";
+			}
+
+			public static class ExternalPractitioner
+			{
+				[AuthorityToken(Description = "Allow creation of External Practitioner records.")]
+				public const string Create = "Workflow/External Practitioner/Create";
+
+				[AuthorityToken(Description = "Allow updating of existing External Practitioner records.")]
+				public const string Update = "Workflow/External Practitioner/Update";
+
+				[AuthorityToken(Description = "Allow merging of existing External Practitioner records.")]
+				public const string Merge = "Workflow/External Practitioner/Merge";
+			}
+
+			public static class Procedure
+			{
+				[AuthorityToken(Description = "Allow access to the Procedure Check-In function.")]
+				public const string CheckIn = "Workflow/Procedure/Check In";
+			}
+
+			public static class Documentation
+			{
+				[AuthorityToken(Description = "Allow access to the Exam Documentation function, and creation of Exam Documentation.")]
+				public const string Create = "Workflow/Documentation/Create";
+
+				[AuthorityToken(Description = "Allow acceptance of Exam Documentation.")]
+				public const string Accept = "Workflow/Documentation/Accept";
+			}
+
+			public static class PreliminaryDiagnosis
+			{
+				[AuthorityToken(Description = "Allow creation of Preliminary Diagnosis conversations.")]
+				public const string Create = "Workflow/Preliminary Diagnosis/Create";
+			}
+		}
+
+		/// <summary>
+		/// Tokens that control access to Folder Systems.
+		/// </summary>
+		public static class FolderSystems
+		{
+			[AuthorityToken(Description = "Allow access to the Booking folder system.")]
+			public const string Booking = "Folder Systems/Booking";
+
+			[AuthorityToken(Description = "Allow access to the Registration folder system.")]
+			public const string Registration = "Folder Systems/Registration";
+
+			[AuthorityToken(Description = "Allow access to the Performing folder system.")]
+			public const string Performing = "Folder Systems/Performing";
+
+			[AuthorityToken(Description = "Allow access to the Reporting folder system.")]
+			public const string Reporting = "Folder Systems/Reporting";
+
+			[AuthorityToken(Description = "Allow access to the Protocolling folder system.")]
+			public const string Protocolling = "Folder Systems/Protocolling";
+
+			[AuthorityToken(Description = "Allow access to the Order Notes folder system.")]
+			public const string OrderNotes = "Folder Systems/Order Notes";
+
+			[AuthorityToken(Description = "Allow access to the Emergency folder system.")]
+			public const string Emergency = "Folder Systems/Emergency";
+		}
     }
 }

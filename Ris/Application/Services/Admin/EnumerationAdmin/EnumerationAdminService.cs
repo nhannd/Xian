@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Application.Common;
+using System.Security.Permissions;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
 {
@@ -62,7 +63,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
         }
 
         [ReadOperation]
-        public ListEnumerationValuesResponse ListEnumerationValues(ListEnumerationValuesRequest request)
+		public ListEnumerationValuesResponse ListEnumerationValues(ListEnumerationValuesRequest request)
         {
             IEnumBroker enumBroker = PersistenceContext.GetBroker<IEnumBroker>();
             IList<EnumValue> enumValues = enumBroker.Load(GetEnumClass(request.AssemblyQualifiedClassName));
@@ -72,7 +73,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
         }
 
         [UpdateOperation]
-        public AddValueResponse AddValue(AddValueRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Enumeration)]
+		public AddValueResponse AddValue(AddValueRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.Value, "Value");
@@ -91,7 +93,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
         }
 
         [UpdateOperation]
-        public EditValueResponse EditValue(EditValueRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Enumeration)]
+		public EditValueResponse EditValue(EditValueRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.Value, "Value");
@@ -109,7 +112,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
         }
 
         [UpdateOperation]
-        public RemoveValueResponse RemoveValue(RemoveValueRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Enumeration)]
+		public RemoveValueResponse RemoveValue(RemoveValueRequest request)
         {
             Type enumClass = GetEnumClass(request.AssemblyQualifiedClassName);
 

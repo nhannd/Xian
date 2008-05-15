@@ -130,7 +130,20 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-        /// <summary>
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
+
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
+		}
+
+		/// <summary>
         /// Gets the list of items to show in the table, according to the specifed first and max items.
         /// </summary>
         /// <param name="firstItem"></param>

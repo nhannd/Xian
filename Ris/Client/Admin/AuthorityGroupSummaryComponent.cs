@@ -30,19 +30,21 @@
 #endregion
 
 using System;
-
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
+using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Authority Groups", "Launch")]
-    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class AuthorityGroupSummaryTool : Tool<IDesktopToolContext>
@@ -86,137 +88,179 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// AuthorityGroupSummaryComponent class
     /// </summary>
-    [AssociateView(typeof(AuthorityGroupSummaryComponentViewExtensionPoint))]
-    public class AuthorityGroupSummaryComponent : ApplicationComponent
+    public class AuthorityGroupSummaryComponent : SummaryComponentBase<AuthorityGroupSummary, AuthorityGroupTable>
     {
-        private AuthorityGroupSummary _selectedAuthorityGroup;
-        private AuthorityGroupTable _authorityGroupTable;
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-        private SimpleActionModel _authorityGroupActionHandler;
-        private readonly string _addAuthorityGroupKey = "AddAuthorityGroup";
-        private readonly string _updateAuthorityGroupKey = "UpdateAuthorityGroup";
+			//TODO: need an icon
+			model.AddAction("duplicate", "Duplicate", null, "Duplicate the selected authority group",
+								DuplicateSelectedItem,
+								ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
 
-        private IPagingController<AuthorityGroupSummary> _pagingController;
+			//TODO: need an icon
+			model.AddAction("import", "Import", null, "Import authority tokens and groups from local plugins",
+								Import,
+				                ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
 
-        public override void Start()
-        {
-            _authorityGroupTable = new AuthorityGroupTable();
 
-            _authorityGroupActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _authorityGroupActionHandler.AddAction(_addAuthorityGroupKey, SR.TitleAddAuthorityGroup, "Icons.AddToolSmall.png", SR.TitleAddAuthorityGroup, AddAuthorityGroup);
-            _authorityGroupActionHandler.AddAction(_updateAuthorityGroupKey, SR.TitleUpdateAuthorityGroup, "Icons.EditToolSmall.png", SR.TitleUpdateAuthorityGroup, UpdateSelectedAuthorityGroup);
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
+		}
 
-            InitialisePaging(_authorityGroupActionHandler);
+		#region Presentation Model
 
-            LoadAuthorityGroupTable();
+		public void Import()
+		{
+			try
+			{
+				DialogBoxAction action = this.Host.ShowMessageBox("Import authority tokens and groups defined in locally installed plugins?",
+								 MessageBoxActions.OkCancel);
+				if (action == DialogBoxAction.Ok)
+				{
+					AuthorityTokenDefinition[] tokens = AuthorityGroupSetup.GetAuthorityTokens();
+					AuthorityGroupDefinition[] groups = AuthorityGroupSetup.GetDefaultAuthorityGroups();
 
-            base.Start();
-        }
+					Platform.GetService<IUserAdminService>(
+						delegate(IUserAdminService service)
+						{
+							// first import the tokens, since the default groups will likely depend on these tokens
+							service.ImportAuthorityTokens(
+								new ImportAuthorityTokensRequest(
+									CollectionUtils.Map<AuthorityTokenDefinition, AuthorityTokenSummary>(tokens,
+										delegate(AuthorityTokenDefinition t) { return new AuthorityTokenSummary(t.Token, t.Description); })));
 
-        private void InitialisePaging(ActionModelNode actionModelNode)
-        {
-            _pagingController = new PagingController<AuthorityGroupSummary>(
-                delegate(int firstRow, int maxRows)
-                {
-                    ListAuthorityGroupsResponse listResponse = null;
+							// then import the default groups
+							service.ImportAuthorityGroups(
+								new ImportAuthorityGroupsRequest(
+									CollectionUtils.Map<AuthorityGroupDefinition, AuthorityGroupDetail>(groups,
+										delegate(AuthorityGroupDefinition g)
+										{
+											return new AuthorityGroupDetail(g.Name,
+												CollectionUtils.Map<string, AuthorityTokenSummary>(g.Tokens,
+													delegate(string t) { return new AuthorityTokenSummary(t, null); }));
+										})));
+						});
 
-                    Platform.GetService<IUserAdminService>(
-                        delegate(IUserAdminService service)
-                        {
-                            ListAuthorityGroupsRequest listRequest = new ListAuthorityGroupsRequest();
-                            listRequest.Page.FirstRow = firstRow;
-                            listRequest.Page.MaxRows = maxRows;
+				}
 
-                            listResponse = service.ListAuthorityGroups(listRequest);
-                        });
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
 
-                    return listResponse.AuthorityGroups;
-                }
-            );
+		public void DuplicateSelectedItem()
+		{
+			try
+			{
+				AuthorityGroupSummary item = CollectionUtils.FirstElement(this.SelectedItems);
+				if(item == null) return;
 
-            if (actionModelNode != null)
-            {
-                actionModelNode.Merge(new PagingActionModel<AuthorityGroupSummary>(_pagingController, _authorityGroupTable, Host.DesktopWindow));
-            }
-        }
+				AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent(item.Name, true);
+				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+					this.Host.DesktopWindow, editor, SR.TitleUpdateAuthorityGroup);
+				if (exitCode == ApplicationComponentExitCode.Accepted)
+				{
+					this.Table.Items.Add(editor.AuthorityGroupSummary);
+					this.SummarySelection = new Selection(editor.AuthorityGroupSummary);
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
 
-        public override void Stop()
-        {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
-            base.Stop();
-        }
 
-        #region Presentation Model
 
-        public ITable AuthorityGroups
-        {
-            get { return _authorityGroupTable; }
-        }
+		#endregion
 
-        public ActionModelNode AuthorityGroupListActionModel
-        {
-            get { return _authorityGroupActionHandler; }
-        }
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<AuthorityGroupSummary> ListItems(int firstItem, int maxItems)
+		{
+			ListAuthorityGroupsResponse listResponse = null;
+			Platform.GetService<IUserAdminService>(
+				delegate(IUserAdminService service)
+				{
+					listResponse = service.ListAuthorityGroups(new ListAuthorityGroupsRequest(new SearchResultPage(firstItem, maxItems)));
+				});
 
-        public ISelection SelectedAuthorityGroup
-        {
-            get { return _selectedAuthorityGroup == null ? Selection.Empty : new Selection(_selectedAuthorityGroup); }
-            set
-            {
-                _selectedAuthorityGroup = (AuthorityGroupSummary)value.Item;
-                AuthorityGroupSelectionChanged();
-            }
-        }
+			return listResponse.AuthorityGroups;
+		}
 
-        #endregion
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<AuthorityGroupSummary> addedItems)
+		{
+			addedItems = new List<AuthorityGroupSummary>();
+			AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent();
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleAddAuthorityGroup);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(editor.AuthorityGroupSummary);
+				return true;
+			}
+			return false;
+		}
 
-        private void LoadAuthorityGroupTable()
-        {
-            _authorityGroupTable.Items.Clear();
-            _authorityGroupTable.Items.AddRange(_pagingController.GetFirst());
-        }
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<AuthorityGroupSummary> items, out IList<AuthorityGroupSummary> editedItems)
+		{
+			editedItems = new List<AuthorityGroupSummary>();
+			AuthorityGroupSummary item = CollectionUtils.FirstElement(items);
 
-        public void AddAuthorityGroup()
-        {
-            try
-            {
-                AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent();
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleAddAuthorityGroup);
+			AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent(item.Name, false);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleUpdateAuthorityGroup);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(editor.AuthorityGroupSummary);
+				return true;
+			}
+			return false;
+		}
 
-                LoadAuthorityGroupTable();
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<AuthorityGroupSummary> items)
+		{
+			throw new NotImplementedException();
+		}
 
-        public void UpdateSelectedAuthorityGroup()
-        {
-            try
-            {
-                if (_selectedAuthorityGroup == null) return;
-
-                AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent(_selectedAuthorityGroup.Name);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleUpdateAuthorityGroup);
-
-                LoadAuthorityGroupTable();
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        private void AuthorityGroupSelectionChanged()
-        {
-            if (_selectedAuthorityGroup != null)
-                _authorityGroupActionHandler[_updateAuthorityGroupKey].Enabled = true;
-            else
-                _authorityGroupActionHandler[_updateAuthorityGroupKey].Enabled = false;
-        }
-    }
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(AuthorityGroupSummary x, AuthorityGroupSummary y)
+		{
+			return x.Name.Equals(y.Name);
+		}
+	}
 }

@@ -49,7 +49,8 @@ namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Import Data", "Launch")]
 
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	// JR (may 2008): this tool is not terribly useful or usable - arguably all importing should be done via command line on server
+    //[ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class DataImportTool : Tool<IDesktopToolContext>
     {
         private IWorkspace _workspace;

@@ -75,6 +75,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			_protocolCodesSelector.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_btnAccept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnAccept.DataBindings.Add("Visible", _component, "AcceptVisible", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_btnReject.DataBindings.Add("Enabled", _component, "RejectEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_btnSuspend.DataBindings.Add("Enabled", _component, "SuspendEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);

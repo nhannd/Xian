@@ -56,5 +56,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
 
         [DataMember]
         public List<AuthorityTokenSummary> AuthorityTokens;
+
+		public AuthorityGroupSummary GetSummary()
+		{
+			return new AuthorityGroupSummary(this.Name);
+		}
     }
 }

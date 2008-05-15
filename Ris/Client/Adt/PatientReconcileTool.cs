@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [Tooltip("apply", "Reconcile patient profiles")]
 	[IconSet("apply", IconScheme.Colour, "Icons.ReconcilePatientToolSmall.png", "Icons.ReconcilePatientToolMedium.png", "Icons.ReconcilePatientToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.ReconcilePatients)]
+    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Reconcile)]
 
     [ExtensionOf(typeof(PatientBiographyToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]

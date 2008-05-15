@@ -105,6 +105,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         [UpdateOperation]
         [OperationEnablement("CanStartInterpretation")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Create)]
         public StartInterpretationResponse StartInterpretation(StartInterpretationRequest request)
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
@@ -129,7 +130,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public CompleteInterpretationForTranscriptionResponse CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request)
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
-            Staff supervisor = GetSupervisor(interpretation, request.SupervisorRef);
+            Staff supervisor = ResolveSupervisor(interpretation, request.SupervisorRef);
 
             SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor);
 
@@ -150,10 +151,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
-            Staff supervisor = GetSupervisor(interpretation, request.SupervisorRef);
-
-            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && supervisor == null)
-                throw new RequestValidationException(SR.ExceptionResidentReportMissingSupervisor);
+            Staff supervisor = ResolveSupervisor(interpretation, request.SupervisorRef);
 
             SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor);
 
@@ -171,11 +169,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         [UpdateOperation]
         [OperationEnablement("CanCompleteInterpretationAndVerify")]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.VerifyReport)]
-        public CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Verify)]
+		public CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
-            Staff supervisor = GetSupervisor(interpretation, request.SupervisorRef);
+            Staff supervisor = ResolveSupervisor(interpretation, request.SupervisorRef);
 
             SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor);
 
@@ -225,8 +223,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         [UpdateOperation]
         [OperationEnablement("CanStartVerification")]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.VerifyReport)]
-        public StartVerificationResponse StartVerification(StartVerificationRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Verify)]
+		public StartVerificationResponse StartVerification(StartVerificationRequest request)
         {
             VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
 
@@ -239,12 +237,13 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         [UpdateOperation]
         [OperationEnablement("CanCompleteVerification")]
-        [PrincipalPermission(SecurityAction.Demand, Role=AuthorityTokens.VerifyReport)]
-        public CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Verify)]
+		public CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request)
         {
             VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
+			Staff supervisor = ResolveSupervisor(verification, request.SupervisorRef);
 
-            SaveReportHelper(request.ReportPartExtendedProperties, verification, null);
+			SaveReportHelper(request.ReportPartExtendedProperties, verification, supervisor);
 
             if (verification.ReportPart == null || String.IsNullOrEmpty(verification.ReportPart.ExtendedProperties[ReportPartDetail.ReportContentKey]))
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
@@ -278,7 +277,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         [UpdateOperation]
         [OperationEnablement("CanReviseUnpublishedReport")]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.VerifyReport)]
         public ReviseUnpublishedReportResponse ReviseUnpublishedReport(ReviseUnpublishedReportRequest request)
         {
             PublicationStep publication = PersistenceContext.Load<PublicationStep>(request.PublicationStepRef, EntityLoadFlags.CheckVersion);
@@ -295,7 +293,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         [UpdateOperation]
         [OperationEnablement("CanPublishReport")]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.VerifyReport)]
         public PublishReportResponse PublishReport(PublishReportRequest request)
         {
             PublicationStep publication = PersistenceContext.Load<PublicationStep>(request.PublicationStepRef, EntityLoadFlags.CheckVersion);
@@ -308,7 +305,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [ReadOperation]
-        public LoadReportForEditResponse LoadReportForEdit(LoadReportForEditRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Create)]
+		public LoadReportForEditResponse LoadReportForEdit(LoadReportForEditRequest request)
         {
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
             ReportAssembler assembler = new ReportAssembler();
@@ -324,10 +322,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         [UpdateOperation]
         [OperationEnablement("CanSaveReport")]
-        public SaveReportResponse SaveReport(SaveReportRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Create)]
+		public SaveReportResponse SaveReport(SaveReportRequest request)
         {
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
-            Staff supervisor = GetSupervisor(step, request.SupervisorRef);
+            Staff supervisor = ResolveSupervisor(step, request.SupervisorRef);
 
 			SaveReportHelper(request.ReportPartExtendedProperties, step, supervisor);
 
@@ -456,22 +455,29 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanStartInterpretation(WorklistItemKey itemKey)
         {
-            return CanExecuteOperation(new Operations.StartInterpretation(), itemKey);
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Create))
+				return false;
+			return CanExecuteOperation(new Operations.StartInterpretation(), itemKey);
         }
 
         public bool CanCompleteInterpretationForTranscription(WorklistItemKey itemKey)
         {
-            return CanExecuteOperation(new Operations.CompleteInterpretationForTranscription(), itemKey);
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Create))
+				return false;
+			return CanExecuteOperation(new Operations.CompleteInterpretationForTranscription(), itemKey);
         }
 
         public bool CanCompleteInterpretationForVerification(WorklistItemKey itemKey)
         {
-            return CanExecuteOperation(new Operations.CompleteInterpretationForVerification(), itemKey);
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Create))
+				return false;
+
+			return CanExecuteOperation(new Operations.CompleteInterpretationForVerification(), itemKey);
         }
 
         public bool CanCompleteInterpretationAndVerify(WorklistItemKey itemKey)
         {
-            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify))
                 return false;
 
             return CanExecuteOperation(new Operations.CompleteInterpretationAndVerify(), itemKey);
@@ -479,14 +485,16 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanCancelReportingStep(WorklistItemKey itemKey)
         {
-            return CanExecuteOperation(new Operations.CancelReportingStep(), itemKey);
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Cancel))
+				return false;
+			return CanExecuteOperation(new Operations.CancelReportingStep(), itemKey);
         }
 
         public bool CanReviseResidentReport(WorklistItemKey itemKey)
         {
             // only available to users that can't verify reports
             // there is no need to revise an interpretation if you have the authority to verify it
-            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify))
                 return false;
 
             return CanExecuteOperation(new Operations.ReviseResidentReport(), itemKey);
@@ -494,7 +502,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanStartVerification(WorklistItemKey itemKey)
         {
-            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify))
                 return false;
 
             return CanExecuteOperation(new Operations.StartVerification(), itemKey);
@@ -502,7 +510,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanCompleteVerification(WorklistItemKey itemKey)
         {
-            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify))
                 return false;
 
             return CanExecuteOperation(new Operations.CompleteVerification(), itemKey);
@@ -510,26 +518,19 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanCreateAddendum(WorklistItemKey itemKey)
         {
-            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
-                return false;
-
             return CanExecuteOperation(new Operations.CreateAddendum(), itemKey);
         }
 
         public bool CanReviseUnpublishedReport(WorklistItemKey itemKey)
         {
-            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
-                return false;
-
             return CanExecuteOperation(new Operations.ReviseUnpublishedReport(), itemKey);
         }
 
         public bool CanPublishReport(WorklistItemKey itemKey)
         {
-            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
-                return false;
-
-            return CanExecuteOperation(new Operations.PublishReport(), itemKey);
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Publish))
+				return false;
+			return CanExecuteOperation(new Operations.PublishReport(), itemKey);
         }
 
         public bool CanSaveReport(WorklistItemKey itemKey)
@@ -550,18 +551,34 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         #endregion
 
-        private Staff GetSupervisor(ReportingProcedureStep step, EntityRef newSupervisorRef)
+		/// <summary>
+		/// Get the supervisor, using the new supervisor if supplied, otherwise using an existing supervisor if found.
+		/// </summary>
+		/// <param name="step"></param>
+		/// <param name="newSupervisorRef"></param>
+		/// <returns></returns>
+        private Staff ResolveSupervisor(ReportingProcedureStep step, EntityRef newSupervisorRef)
         {
             Staff supervisor = newSupervisorRef == null ? null : PersistenceContext.Load<Staff>(newSupervisorRef, EntityLoadFlags.Proxy);
 
             if (supervisor == null && step.ReportPart != null)
                 supervisor = step.ReportPart.Supervisor;
 
-            return supervisor;
+			
+			return supervisor;
         }
 
+		/// <summary>
+		/// Saves the report, and validates that a supervisor is present if the current user does not have 'unsupervised reporting' permissions.
+		/// </summary>
+		/// <param name="reportPartExtendedProperties"></param>
+		/// <param name="step"></param>
+		/// <param name="supervisor"></param>
         private void SaveReportHelper(Dictionary<string, string> reportPartExtendedProperties, ReportingProcedureStep step, Staff supervisor)
         {
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.UnsupervisedReporting) == false && supervisor == null)
+				throw new RequestValidationException(SR.ExceptionSupervisorRequired);
+
 			if (reportPartExtendedProperties == null)
 				return;
 

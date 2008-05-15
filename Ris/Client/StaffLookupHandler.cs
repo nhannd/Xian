@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Client
 
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
-				result = (StaffSummary)staffComponent.SelectedStaff.Item;
+				result = (StaffSummary)staffComponent.SummarySelection.Item;
 			}
 
 			return (result != null);

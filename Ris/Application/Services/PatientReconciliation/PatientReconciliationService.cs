@@ -44,6 +44,7 @@ using System.Security.Permissions;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Healthcare.Workflow;
 using ClearCanvas.Healthcare.Workflow.Registration;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
 {
@@ -118,7 +119,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.ReconcilePatients)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Patient.Reconcile)]
         public ReconcilePatientsResponse ReconcilePatients(ReconcilePatientsRequest request)
         {
             List<Patient> patients = CollectionUtils.Map<EntityRef, Patient, List<Patient>>(

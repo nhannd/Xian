@@ -45,6 +45,7 @@ using ClearCanvas.Desktop.Tools;
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Enumerations", "Launch")]
+	[ActionPermission("launch", AuthorityTokens.Admin.Data.Enumeration)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class EnumerationAdminTool : Tool<IDesktopToolContext>
     {
@@ -122,8 +123,11 @@ namespace ClearCanvas.Ris.Client.Admin
 
             _crudActionModel = new CrudActionModel();
             _crudActionModel.Add.SetClickHandler(AddValue);
+			_crudActionModel.Add.SetPermissibility(AuthorityTokens.Admin.Data.Enumeration);
             _crudActionModel.Edit.SetClickHandler(EditValue);
-            _crudActionModel.Delete.SetClickHandler(RemoveValue);
+			_crudActionModel.Edit.SetPermissibility(AuthorityTokens.Admin.Data.Enumeration);
+			_crudActionModel.Delete.SetClickHandler(RemoveValue);
+			_crudActionModel.Delete.SetPermissibility(AuthorityTokens.Admin.Data.Enumeration);
 
             Platform.GetService<IEnumerationAdminService>(
                 delegate(IEnumerationAdminService service)
@@ -133,7 +137,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     _enumerations.Sort(delegate(EnumerationSummary x, EnumerationSummary y) { return x.DisplayName.CompareTo(y.DisplayName); });
                 });
 
-            _selectedEnumeration = CollectionUtils.FirstElement<EnumerationSummary>(_enumerations);
+            _selectedEnumeration = CollectionUtils.FirstElement(_enumerations);
 
             LoadEnumerationValues();
             UpdateCrudEnablement();

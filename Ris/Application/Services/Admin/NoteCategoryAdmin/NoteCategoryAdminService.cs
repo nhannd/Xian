@@ -42,6 +42,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin;
 using System.Security.Permissions;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
 {
@@ -56,7 +57,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         /// </summary>
         /// <returns></returns>
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
         public ListAllNoteCategoriesResponse ListAllNoteCategories(ListAllNoteCategoriesRequest request)
         {
             PatientNoteCategorySearchCriteria criteria = new PatientNoteCategorySearchCriteria();
@@ -80,7 +80,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
         public LoadNoteCategoryForEditResponse LoadNoteCategoryForEdit(LoadNoteCategoryForEditRequest request)
         {
             // note that the version of the NoteCategoryRef is intentionally ignored here (default behaviour of ReadOperation)
@@ -93,9 +92,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         /// <summary>
         /// Add the specified NoteCategory
         /// </summary>
-        /// <param name="NoteCategory"></param>
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.PatientNoteCategory)]
         public AddNoteCategoryResponse AddNoteCategory(AddNoteCategoryRequest request)
         {
             PatientNoteCategory noteCategory = new PatientNoteCategory();
@@ -115,10 +113,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         /// <summary>
         /// Update the specified NoteCategory
         /// </summary>
-        /// <param name="NoteCategory"></param>
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
-        public UpdateNoteCategoryResponse UpdateNoteCategory(UpdateNoteCategoryRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.PatientNoteCategory)]
+		public UpdateNoteCategoryResponse UpdateNoteCategory(UpdateNoteCategoryRequest request)
         {
             PatientNoteCategory noteCategory = PersistenceContext.Load<PatientNoteCategory>(request.NoteCategoryRef, EntityLoadFlags.CheckVersion);
 

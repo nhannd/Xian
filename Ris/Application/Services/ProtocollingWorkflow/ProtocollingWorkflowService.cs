@@ -39,6 +39,7 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Workflow;
+using System.Security.Permissions;
 
 namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 {
@@ -74,7 +75,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		[ReadOperation]
 		public GetProtocolGroupDetailResponse GetProtocolGroupDetail(GetProtocolGroupDetailRequest request)
 		{
-			ProtocolGroup protocolGroup = this.PersistenceContext.Load<ProtocolGroup>(request.ProtocolGroup.EntityRef);
+			ProtocolGroup protocolGroup = this.PersistenceContext.Load<ProtocolGroup>(request.ProtocolGroup.ProtocolGroupRef);
 
 			ProtocolAssembler assembler = new ProtocolAssembler();
 
@@ -191,6 +192,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role=AuthorityTokens.Workflow.Protocol.Create)]
 		public StartOrderProtocolResponse StartOrderProtocol(StartOrderProtocolRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
@@ -227,6 +229,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public DiscardOrderProtocolResponse DiscardOrderProtocol(DiscardOrderProtocolRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
@@ -254,6 +257,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Accept)]
 		public AcceptOrderProtocolResponse AcceptOrderProtocol(AcceptOrderProtocolRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
@@ -273,6 +277,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public RejectOrderProtocolResponse RejectOrderProtocol(RejectOrderProtocolRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
@@ -295,6 +300,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public SuspendOrderProtocolResponse SuspendOrderProtocol(SuspendOrderProtocolRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
@@ -317,6 +323,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public SaveProtocolResponse SaveProtocol(SaveProtocolRequest request)
 		{
 			Protocol protocol = this.PersistenceContext.Load<Protocol>(request.ProtocolRef);
@@ -328,6 +335,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Resolve)]
 		public ResubmitProtocolResponse ResubmitProtocol(ResubmitProtocolRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
@@ -349,6 +357,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Resolve)]
 		public CancelProtocolAndOrderResponse CancelProtocolAndOrder(CancelProtocolAndOrderRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
@@ -371,6 +380,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Accept)]
 		public ApproveResidentProtocolResponse ApproveResidentProtocol(ApproveResidentProtocolRequest request)
 		{
 			Protocol protocol = this.PersistenceContext.Load<Protocol>(request.ProtocolRef);

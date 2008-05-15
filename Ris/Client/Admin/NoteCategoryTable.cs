@@ -36,7 +36,7 @@ using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    class NoteCategoryTable : Table<PatientNoteCategorySummary>
+    public class NoteCategoryTable : Table<PatientNoteCategorySummary>
     {
         public NoteCategoryTable()
         {

@@ -38,15 +38,17 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Common.Specifications;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client
 {
     [MenuAction("launch", "global-menus/Admin/ExternalPractitioner", "Launch")]
-    //[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.ExternalPractitionerAdmin)]
-
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ExternalPractitionerSummaryTool : Tool<IDesktopToolContext>
     {
@@ -80,6 +82,24 @@ namespace ClearCanvas.Ris.Client
         }
     }
 
+	public class ExternalPractitionerTable : Table<ExternalPractitionerSummary>
+	{
+		public ExternalPractitionerTable()
+		{
+			this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnFamilyName,
+			   delegate(ExternalPractitionerSummary item) { return item.Name.FamilyName; },
+			   1.0f));
+
+			this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnGivenName,
+				delegate(ExternalPractitionerSummary item) { return item.Name.GivenName; },
+				1.0f));
+
+			this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnLicenseNumber,
+				delegate(ExternalPractitionerSummary item) { return item.LicenseNumber; },
+				1.0f));
+		}
+	}
+
     /// <summary>
     /// Extension point for views onto <see cref="ExternalPractitionerSummaryComponent"/>
     /// </summary>
@@ -92,22 +112,11 @@ namespace ClearCanvas.Ris.Client
     /// ExternalPractitionerSummaryComponent class
     /// </summary>
     [AssociateView(typeof(ExternalPractitionerSummaryComponentViewExtensionPoint))]
-    public class ExternalPractitionerSummaryComponent : ApplicationComponent
+	public class ExternalPractitionerSummaryComponent : SummaryComponentBase<ExternalPractitionerSummary, ExternalPractitionerTable>
     {
-        private ExternalPractitionerSummary _selectedPractitioner;
-        private Table<ExternalPractitionerSummary> _practitioners;
-
-        private SimpleActionModel _staffActionHandler;
-        private readonly string _addPractitionerKey = "AddPractitioner";
-        private readonly string _updatePractitionerKey = "UpdatePractitioner";
-
-        private PagingController<ExternalPractitionerSummary> _pagingController;
-
         private ListExternalPractitionersRequest _listRequest;
         private string _firstName;
         private string _lastName;
-
-        private bool _dialogMode;
 
 
         /// <summary>
@@ -122,86 +131,20 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         /// <param name="dialogMode">Indicates whether the component will be shown in a dialog box or not</param>
         public ExternalPractitionerSummaryComponent(bool dialogMode)
+			:base(dialogMode)
         {
-            _dialogMode = dialogMode;
         }
 
         public override void Start()
         {
-            _practitioners = new Table<ExternalPractitionerSummary>();
-            _practitioners.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnFamilyName,
-               delegate(ExternalPractitionerSummary staff) { return staff.Name.FamilyName; },
-               1.0f));
+			_listRequest = new ListExternalPractitionersRequest();
+			_listRequest.LastName = _lastName;
+			_listRequest.FirstName = _firstName;
 
-            _practitioners.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnGivenName,
-                delegate(ExternalPractitionerSummary staff) { return staff.Name.GivenName; },
-                1.0f));
-
-            _practitioners.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnLicenseNumber,
-                delegate(ExternalPractitionerSummary staff) { return staff.LicenseNumber; },
-                1.0f));
-
-            _staffActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _staffActionHandler.AddAction(_addPractitionerKey, SR.TitleAddExternalPractitioner, "Icons.AddToolSmall.png", SR.TitleAddExternalPractitioner, AddPractitioner, ClearCanvas.Ris.Application.Common.AuthorityTokens.ExternalPractitionerAdmin);
-            _staffActionHandler.AddAction(_updatePractitionerKey, SR.TitleUpdateExternalPractitioner, "Icons.EditToolSmall.png", SR.TitleUpdateExternalPractitioner, UpdateSelectedPractitioner, ClearCanvas.Ris.Application.Common.AuthorityTokens.ExternalPractitionerAdmin);
-
-            InitialisePaging(_staffActionHandler);
-
-            _listRequest = new ListExternalPractitionersRequest();
-
-            // if the last name or first name properties are valued, generate an initial search
-            if (!string.IsNullOrEmpty(_lastName) || !string.IsNullOrEmpty(_firstName))
-            {
-                // do not handle exceptions here - allow to propagate to caller
-                DoSearch();
-            }
-
-            base.Start();
-        }
-
-        private void InitialisePaging(ActionModelNode actionModelNode)
-        {
-            _pagingController = new PagingController<ExternalPractitionerSummary>(
-                delegate(int firstRow, int maxRows)
-                {
-                    ListExternalPractitionersResponse listResponse = null;
-
-                    Platform.GetService<IExternalPractitionerAdminService>(
-                        delegate(IExternalPractitionerAdminService service)
-                        {
-                            _listRequest.Page.FirstRow = firstRow;
-                            _listRequest.Page.MaxRows = maxRows;
-
-                            listResponse = service.ListExternalPractitioners(_listRequest);
-                        });
-
-                    return listResponse.Practitioners;
-                }
-            );
-
-            if (actionModelNode != null)
-            {
-                actionModelNode.Merge(new PagingActionModel<ExternalPractitionerSummary>(_pagingController, _practitioners, Host.DesktopWindow));
-            }
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
-        #region Event Handler
-
-
-        #endregion
+			base.Start();
+		}
 
         #region Presentation Model
-
-        public bool ShowAcceptCancelButtons
-        {
-            get { return _dialogMode; }
-            set { _dialogMode = value; }
-        }
 
         public string FirstName
         {
@@ -214,79 +157,6 @@ namespace ClearCanvas.Ris.Client
             get { return _lastName; }
             set { _lastName = value; }
         }
-
-        public ITable Practitioners
-        {
-            get { return _practitioners; }
-        }
-
-        public ActionModelNode PractitionersListActionModel
-        {
-            get { return _staffActionHandler; }
-        }
-
-        public ISelection SelectedPractitioner
-        {
-            get { return _selectedPractitioner == null ? Selection.Empty : new Selection(_selectedPractitioner); }
-            set
-            {
-                _selectedPractitioner = (ExternalPractitionerSummary)value.Item;
-                PractitionerSelectionChanged();
-            }
-        }
-
-        public void AddPractitioner()
-        {
-            try
-            {
-                ExternalPractitionerEditorComponent editor = new ExternalPractitionerEditorComponent();
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleAddExternalPractitioner);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _practitioners.Items.Add(editor.ExternalPractitionerSummary);
-                }
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void UpdateSelectedPractitioner()
-        {
-            try
-            {
-                // can occur if user double clicks while holding control
-                if (_selectedPractitioner == null) return;
-
-                ExternalPractitionerEditorComponent editor = new ExternalPractitionerEditorComponent(_selectedPractitioner.PractitionerRef);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleUpdateExternalPractitioner);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _practitioners.Items.Replace(
-                        delegate(ExternalPractitionerSummary s) { return s.PractitionerRef.Equals(editor.ExternalPractitionerSummary.PractitionerRef, true); },
-                        editor.ExternalPractitionerSummary);
-                }
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void DoubleClickSelectedPractitioner()
-        {
-            // double-click behaviour is different depending on whether we're running as a dialog box or not
-            if (_dialogMode)
-                Accept();
-            else
-                UpdateSelectedPractitioner();
-        }
-
 
         public void Search()
         {
@@ -301,40 +171,119 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public bool AcceptEnabled
-        {
-            get { return _selectedPractitioner != null; }
-        }
-
-        public void Accept()
-        {
-            this.ExitCode = ApplicationComponentExitCode.Accepted;
-            this.Host.Exit();
-        }
-
-        public void Cancel()
-        {
-            this.ExitCode = ApplicationComponentExitCode.None;
-            this.Host.Exit();
-        }
-
         #endregion
 
-        private void DoSearch()
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
+
+			model.Add.SetPermissibility(
+				OrPermissions(AuthorityTokens.Admin.Data.ExternalPractitioner, AuthorityTokens.Workflow.ExternalPractitioner.Create));
+			model.Edit.SetPermissibility(
+				OrPermissions(AuthorityTokens.Admin.Data.ExternalPractitioner, AuthorityTokens.Workflow.ExternalPractitioner.Update));
+		}
+
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<ExternalPractitionerSummary> ListItems(int firstItem, int maxItems)
+		{
+			ListExternalPractitionersResponse listResponse = null;
+			Platform.GetService<IExternalPractitionerAdminService>(
+				delegate(IExternalPractitionerAdminService service)
+				{
+					_listRequest.Page = new SearchResultPage(firstItem, maxItems);
+					listResponse = service.ListExternalPractitioners(_listRequest);
+				});
+
+			return listResponse.Practitioners;
+		}
+
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<ExternalPractitionerSummary> addedItems)
+		{
+			addedItems = new List<ExternalPractitionerSummary>();
+			ExternalPractitionerEditorComponent editor = new ExternalPractitionerEditorComponent();
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleAddExternalPractitioner);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(editor.ExternalPractitionerSummary);
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<ExternalPractitionerSummary> items, out IList<ExternalPractitionerSummary> editedItems)
+		{
+			editedItems = new List<ExternalPractitionerSummary>();
+			ExternalPractitionerSummary item = CollectionUtils.FirstElement(items);
+
+			ExternalPractitionerEditorComponent editor = new ExternalPractitionerEditorComponent(item.PractitionerRef);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleUpdateExternalPractitioner);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(editor.ExternalPractitionerSummary);
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<ExternalPractitionerSummary> items)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(ExternalPractitionerSummary x, ExternalPractitionerSummary y)
+		{
+			return x.PractitionerRef.Equals(y.PractitionerRef, true);
+		}
+
+		private void DoSearch()
         {
             _listRequest.FirstName = _firstName;
             _listRequest.LastName = _lastName;
 
-            _practitioners.Items.Clear();
-            _practitioners.Items.AddRange(_pagingController.GetFirst());
+            this.Table.Items.Clear();
+			this.Table.Items.AddRange(this.PagingController.GetFirst());
         }
 
-        private void PractitionerSelectionChanged()
-        {
-            if (_selectedPractitioner != null)
-                _staffActionHandler[_updatePractitionerKey].Enabled = true;
-            else
-                _staffActionHandler[_updatePractitionerKey].Enabled = false;
-        }
+		private ISpecification OrPermissions(string token1, string token2)
+		{
+			OrSpecification or = new OrSpecification();
+			or.Add(new PrincipalPermissionSpecification(token1));
+			or.Add(new PrincipalPermissionSpecification(token2));
+			return or;
+		}
     }
 }

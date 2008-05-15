@@ -39,6 +39,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -125,6 +126,7 @@ namespace ClearCanvas.Ris.Client.Admin
     public class AuthorityGroupEditorComponent : ApplicationComponent
     {
         private bool _isNew;
+    	private bool _duplicate;
         private string _authorityGroupName;
         private AuthorityGroupDetail _authorityGroupDetail;
 		private List<AuthorityTokenTableEntry> _authorityTokens;
@@ -135,15 +137,27 @@ namespace ClearCanvas.Ris.Client.Admin
         public AuthorityGroupEditorComponent()
         {
             _isNew = true;
+        	_duplicate = false;
         }
 
-        public AuthorityGroupEditorComponent(string authorityGroupName)
+		/// <summary>
+		/// Constructor for editing or duplicating an authority group.
+		/// </summary>
+		/// <param name="authorityGroupName"></param>
+		/// <param name="duplicate"></param>
+        public AuthorityGroupEditorComponent(string authorityGroupName, bool duplicate)
         {
             Platform.CheckForNullReference(authorityGroupName, "authorityGroupName");
 
-            _isNew = false;
+        	_duplicate = duplicate;
+            _isNew = _duplicate;
             _authorityGroupName = authorityGroupName;
         }
+
+    	public AuthorityGroupSummary AuthorityGroupSummary
+    	{
+			get { return _authorityGroupDetail == null ? null : _authorityGroupDetail.GetSummary(); }
+    	}
 
         public override void Start()
         {
@@ -152,14 +166,18 @@ namespace ClearCanvas.Ris.Client.Admin
                 {
                     ListAuthorityTokensResponse authorityTokenResponse = service.ListAuthorityTokens(new ListAuthorityTokensRequest());
 
-                    _authorityTokens = CollectionUtils.Map<AuthorityTokenSummary, AuthorityTokenTableEntry, List<AuthorityTokenTableEntry>>(
-                        authorityTokenResponse.AuthorityTokens,
+                    _authorityTokens = CollectionUtils.Map<AuthorityTokenSummary, AuthorityTokenTableEntry>(
+                        CollectionUtils.Sort(authorityTokenResponse.AuthorityTokens,
+							delegate (AuthorityTokenSummary x, AuthorityTokenSummary y)
+							{
+								return x.Name.CompareTo(y.Name);
+							}),
                         delegate(AuthorityTokenSummary summary)
                         {
                             return new AuthorityTokenTableEntry(summary, this.OnAuthorityTokenChecked);
                         });
 
-                    if (_isNew)
+                    if (_isNew && !_duplicate)
                     {
                         _authorityGroupDetail = new AuthorityGroupDetail();
                     }
@@ -167,6 +185,10 @@ namespace ClearCanvas.Ris.Client.Admin
                     {
                         LoadAuthorityGroupForEditResponse response = service.LoadAuthorityGroupForEdit(new LoadAuthorityGroupForEditRequest(_authorityGroupName));
                         _authorityGroupDetail = response.AuthorityGroupDetail;
+
+						// if duplicating, append something to the name
+						if (_duplicate)
+							_authorityGroupDetail.Name = _authorityGroupDetail.Name + " Copy";
                     }
 
                     InitialiseTable();
@@ -182,6 +204,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #region Presentation Model
 
+		[ValidateNotNull]
         public string Name
         {
             get { return _authorityGroupDetail.Name; }
@@ -191,6 +214,11 @@ namespace ClearCanvas.Ris.Client.Admin
                 this.Modified = true;
             }
         }
+
+    	public bool IsNameReadOnly
+    	{
+			get { return !_isNew; }
+    	}
 
         public List<AuthorityTokenTableEntry> AuthorityTokens
         {

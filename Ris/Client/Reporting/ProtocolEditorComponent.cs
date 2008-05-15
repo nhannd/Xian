@@ -39,6 +39,9 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using System.Threading;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using System.Security.Permissions;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -359,6 +362,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		#region Accept
 
+		[PrincipalPermission(SecurityAction.Demand, Role=AuthorityTokens.Workflow.Protocol.Accept)]
 		public void Accept()
 		{
 			// don't allow accept if there are validation errors
@@ -385,6 +389,14 @@ namespace ClearCanvas.Ris.Client.Reporting
 			}
 		}
 
+		public bool AcceptVisible
+		{
+			get
+			{
+				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Accept);
+			}
+		}
+
 		public bool AcceptEnabled
 		{
 			get { return _acceptEnabled; }
@@ -400,6 +412,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		#region Reject
 
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public void Reject()
 		{
 			try
@@ -439,6 +452,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		#region Suspend
 
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public void Suspend()
 		{
 			try
@@ -478,6 +492,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		#region Save
 
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public void Save()
 		{
 			try

@@ -48,7 +48,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         #region IFacilityAdminService Members
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FacilityAdmin)]
         public ListAllFacilitiesResponse ListAllFacilities(ListAllFacilitiesRequest request)
         {
             FacilitySearchCriteria criteria = new FacilitySearchCriteria();
@@ -70,7 +69,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FacilityAdmin)]
         public LoadFacilityForEditResponse LoadFacilityForEdit(LoadFacilityForEditRequest request)
         {
             // note that the version of the FacilityRef is intentionally ignored here (default behaviour of ReadOperation)
@@ -81,7 +79,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FacilityAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Facility)]
         public AddFacilityResponse AddFacility(AddFacilityRequest request)
         {
             Facility facility = new Facility();
@@ -97,8 +95,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FacilityAdmin)]
-        public UpdateFacilityResponse UpdateFacility(UpdateFacilityRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Facility)]
+		public UpdateFacilityResponse UpdateFacility(UpdateFacilityRequest request)
         {
             Facility facility = PersistenceContext.Load<Facility>(request.FacilityRef, EntityLoadFlags.CheckVersion);
 

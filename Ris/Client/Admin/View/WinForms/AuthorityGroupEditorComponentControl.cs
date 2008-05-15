@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="AuthorityGroupEditorComponent"/>
     /// </summary>
-    public partial class AuthorityGroupEditorComponentControl : CustomUserControl
+    public partial class AuthorityGroupEditorComponentControl : ApplicationComponentUserControl
     {
         private AuthorityGroupEditorComponent _component;
     	private bool _ignoreCheckStateChanges;
@@ -59,16 +59,22 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// Constructor
         /// </summary>
         public AuthorityGroupEditorComponentControl(AuthorityGroupEditorComponent component)
+			:base(component)
         {
             InitializeComponent();
 
             _component = component;
 
             _authorityGroupName.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
+			_authorityGroupName.DataBindings.Add("ReadOnly", _component, "IsNameReadOnly", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			BuildTree(_component.AuthorityTokens);
+			ExpandCheckedNodes(_tokenTreeView.Nodes);
 
-			_tokenTreeView.ExpandAll();
+			// make sure a node is selected prior to displaying the tree ctrl, otherwise it does some annoying things
+        	Node firstNode = CollectionUtils.FirstElement<Node>(_tokenTreeView.Nodes);
+			if(firstNode != null)
+				firstNode.Select();
         }
 
 		private void BuildTree(IEnumerable<AuthorityTokenTableEntry> tokens)
@@ -103,6 +109,18 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			else
 			{
 				InsertToken(node.Nodes, token, depth + 1);
+			}
+		}
+
+		private void ExpandCheckedNodes(NodeCollection nodes)
+		{
+			foreach (Node node in nodes)
+			{
+				if(node.CheckState == CheckState.Checked || node.CheckState == CheckState.Mixed)
+				{
+					node.Expand();
+					ExpandCheckedNodes(node.Nodes);
+				}
 			}
 		}
 
@@ -178,5 +196,18 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         {
             _component.Cancel();
         }
+
+		private void _tokenTreeView_AfterSelect(TreeControl tc, NodeEventArgs e)
+		{
+			Node node = e.Node;
+			if(node != null && node.Tag != null)
+			{
+				_description.Value = ((AuthorityTokenTableEntry) node.Tag).Description;
+			}
+			else
+			{
+				_description.Value = "";
+			}
+		}
     }
 }

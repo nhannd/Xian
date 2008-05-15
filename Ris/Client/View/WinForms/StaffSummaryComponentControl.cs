@@ -57,11 +57,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _staffTableView.ToolbarModel = _component.StaffListActionModel;
-            _staffTableView.MenuModel = _component.StaffListActionModel;
+            _staffTableView.ToolbarModel = _component.SummaryTableActionModel;
+			_staffTableView.MenuModel = _component.SummaryTableActionModel;
 
-            _staffTableView.Table = _component.Staffs;
-            _staffTableView.DataBindings.Add("Selection", _component, "SelectedStaff", true, DataSourceUpdateMode.OnPropertyChanged);
+            _staffTableView.Table = _component.SummaryTable;
+            _staffTableView.DataBindings.Add("Selection", _component, "SummarySelection", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _firstName.DataBindings.Add("Value", _component, "FirstName", true, DataSourceUpdateMode.OnPropertyChanged);
             _lastName.DataBindings.Add("Value", _component, "LastName", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private void _staffTableView_ItemDoubleClicked(object sender, EventArgs e)
         {
-            _component.DoubleClickSelectedStaff();
+            _component.DoubleClickSelectedItem();
         }
     }
 }

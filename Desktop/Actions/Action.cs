@@ -32,6 +32,7 @@
 using System;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Desktop.Actions
 {
@@ -89,17 +90,44 @@ namespace ClearCanvas.Desktop.Actions
         }
 
         /// <summary>
-        /// Gets or sets a <see cref="ISpecification"/> that is tested to establish whether the 
+        /// Sets the <see cref="ISpecification"/> that is tested to establish whether the 
         /// current user has sufficient privileges to access the action.
         /// </summary>
         /// <remarks>
-		///  The visibility of the action is affected.
+		/// This overload is useful when an actions permissibility is a boolean function of a
+		/// multiple authority tokens.  Use the <see cref="PrincipalPermissionSpecification"/>, in 
+		/// combination with the <see cref="AndSpecification"/> and <see cref="OrSpecification"/> classes
+		/// to build up a complex specification for permissibility.
 		/// </remarks>
-		internal ISpecification PermissionSpecification
+		public void SetPermissibility(ISpecification permissionSpecification)
         {
-            get { return _permissionSpec; }
-            set { _permissionSpec = value; }
+        	_permissionSpec = permissionSpecification;
         }
+
+		/// <summary>
+		/// Sets a single authority token that is tested to establish whether the 
+		/// current user has sufficient privileges to access the action.
+		/// </summary>
+		/// <remarks>
+		/// This overload is useful in the common case where an actions permissibility
+		/// is tied to a single authority token.  To handle a situation where the permissibility
+		/// is a function of multiple authority tokens, use the <see cref="SetPermissibility(ISpecification)"/>
+		/// overload.
+		/// </remarks>
+		/// <param name="authorityToken"></param>
+		public void SetPermissibility(string authorityToken)
+		{
+			SetPermissibility(new PrincipalPermissionSpecification(authorityToken));
+		}
+
+		/// <summary>
+		/// Provides internal access to the permission specification.
+		/// </summary>
+    	internal ISpecification PermissionSpecification
+    	{
+			get { return _permissionSpec; }
+			set { _permissionSpec = value; }
+    	}
 
         #region IAction members
 

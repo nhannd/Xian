@@ -39,6 +39,8 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using System.Threading;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -46,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Adt
     //[ButtonAction("apply", "global-toolbars/Patient/PatientAddTool", "Apply")]
     [Tooltip("apply", "New Patient")]
 	[IconSet("apply", IconScheme.Colour, "Icons.AddPatientToolSmall.png", "Icons.AddPatientToolMedium.png", "Icons.AddPatientToolLarge.png")]
-    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
+    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create)]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
     public class PatientAddTool : Tool<IDesktopToolContext>
@@ -72,7 +74,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     editor,
                     SR.TitleNewPatient);
 
-                if (result == ApplicationComponentExitCode.Accepted)
+                if (result == ApplicationComponentExitCode.Accepted && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.PatientBiography.View))
                 {
                     // open the patient overview for the newly created patient
                     Document doc = new PatientBiographyDocument(editor.PatientRef, editor.PatientProfileRef, this.Context.DesktopWindow);

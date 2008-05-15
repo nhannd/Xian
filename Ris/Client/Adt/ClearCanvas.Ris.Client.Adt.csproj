@@ -65,7 +65,6 @@
     <Compile Include="PatientEditTool.cs" />
     <Compile Include="PatientProfileDiffComponent.cs" />
     <Compile Include="PatientReconciliation.cs" />
-    <Compile Include="ProtocolTestTool.cs" />
     <Compile Include="RandomOrderTool.cs" />
     <Compile Include="ReconciliationConfirmComponent.cs" />
     <Compile Include="JscriptComponent.cs" />

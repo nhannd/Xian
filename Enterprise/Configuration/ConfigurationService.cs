@@ -157,7 +157,7 @@ namespace ClearCanvas.Enterprise.Configuration
             if (string.IsNullOrEmpty(user))
             {
                 // this is an application configuration doc - need admin permission
-                if (!Thread.CurrentPrincipal.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.ConfigurationAdmin))
+                if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.System.EnterpriseConfiguration))
                     throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
             }
             else

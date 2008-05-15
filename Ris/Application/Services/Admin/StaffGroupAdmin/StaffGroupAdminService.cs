@@ -42,6 +42,7 @@ using ClearCanvas.Ris.Application.Common;
 using System.Security.Permissions;
 using System.ServiceModel;
 using ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
 {
@@ -102,7 +103,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
         }
 
         [ReadOperation]
-        public LoadStaffGroupForEditResponse LoadStaffGroupForEdit(LoadStaffGroupForEditRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.StaffGroup)]
+		public LoadStaffGroupForEditResponse LoadStaffGroupForEdit(LoadStaffGroupForEditRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.StaffGroupRef, "request.StaffGroupRef");
@@ -124,7 +126,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
         }
 
         [UpdateOperation]
-        public AddStaffGroupResponse AddStaffGroup(AddStaffGroupRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.StaffGroup)]
+		public AddStaffGroupResponse AddStaffGroup(AddStaffGroupRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.StaffGroup, "request.StaffGroup");
@@ -141,7 +144,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
         }
 
         [UpdateOperation]
-        public UpdateStaffGroupResponse UpdateStaffGroup(UpdateStaffGroupRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.StaffGroup)]
+		public UpdateStaffGroupResponse UpdateStaffGroup(UpdateStaffGroupRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.StaffGroup, "request.StaffGroup");

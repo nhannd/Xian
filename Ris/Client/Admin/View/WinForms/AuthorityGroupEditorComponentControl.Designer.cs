@@ -63,12 +63,14 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._acceptButton = new System.Windows.Forms.Button();
 			this._authorityGroupName = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._tokenTreeView = new Crownwood.DotNetMagic.Controls.TreeControl();
+			this.label1 = new System.Windows.Forms.Label();
+			this._description = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this.SuspendLayout();
 			// 
 			// _cancelButton
 			// 
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(475, 355);
+			this._cancelButton.Location = new System.Drawing.Point(475, 458);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 0;
@@ -79,7 +81,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// _acceptButton
 			// 
 			this._acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._acceptButton.Location = new System.Drawing.Point(394, 355);
+			this._acceptButton.Location = new System.Drawing.Point(394, 458);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 1;
@@ -98,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._authorityGroupName.Mask = "";
 			this._authorityGroupName.Name = "_authorityGroupName";
 			this._authorityGroupName.PasswordChar = '\0';
-			this._authorityGroupName.Size = new System.Drawing.Size(549, 40);
+			this._authorityGroupName.Size = new System.Drawing.Size(282, 40);
 			this._authorityGroupName.TabIndex = 1;
 			this._authorityGroupName.ToolTip = null;
 			this._authorityGroupName.Value = null;
@@ -108,29 +110,56 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._tokenTreeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
+			this._tokenTreeView.AutoEdit = false;
 			this._tokenTreeView.CheckStates = Crownwood.DotNetMagic.Controls.CheckStates.ThreeStateCheck;
 			this._tokenTreeView.FocusNode = null;
 			this._tokenTreeView.HotBackColor = System.Drawing.Color.Empty;
 			this._tokenTreeView.HotForeColor = System.Drawing.Color.Empty;
-			this._tokenTreeView.Location = new System.Drawing.Point(3, 59);
+			this._tokenTreeView.Location = new System.Drawing.Point(3, 71);
 			this._tokenTreeView.Name = "_tokenTreeView";
 			this._tokenTreeView.SelectedNode = null;
 			this._tokenTreeView.SelectedNoFocusBackColor = System.Drawing.SystemColors.Control;
-			this._tokenTreeView.Size = new System.Drawing.Size(549, 290);
+			this._tokenTreeView.Size = new System.Drawing.Size(549, 334);
 			this._tokenTreeView.TabIndex = 3;
-			this._tokenTreeView.Text = "treeControl1";
+			this._tokenTreeView.Text = "Permissions";
+			this._tokenTreeView.AfterSelect += new Crownwood.DotNetMagic.Controls.NodeEventHandler(this._tokenTreeView_AfterSelect);
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(3, 52);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(62, 13);
+			this.label1.TabIndex = 4;
+			this.label1.Text = "Permissions";
+			// 
+			// _description
+			// 
+			this._description.LabelText = "Description of selected permission";
+			this._description.Location = new System.Drawing.Point(3, 410);
+			this._description.Margin = new System.Windows.Forms.Padding(2);
+			this._description.Mask = "";
+			this._description.Name = "_description";
+			this._description.PasswordChar = '\0';
+			this._description.ReadOnly = true;
+			this._description.Size = new System.Drawing.Size(547, 41);
+			this._description.TabIndex = 5;
+			this._description.ToolTip = null;
+			this._description.Value = null;
 			// 
 			// AuthorityGroupEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
+			this.Controls.Add(this._description);
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this._tokenTreeView);
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._acceptButton);
 			this.Controls.Add(this._authorityGroupName);
 			this.Name = "AuthorityGroupEditorComponentControl";
-			this.Size = new System.Drawing.Size(561, 388);
+			this.Size = new System.Drawing.Size(561, 491);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -142,5 +171,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private System.Windows.Forms.Button _acceptButton;
 		private ClearCanvas.Desktop.View.WinForms.TextField _authorityGroupName;
 		private Crownwood.DotNetMagic.Controls.TreeControl _tokenTreeView;
+		private System.Windows.Forms.Label label1;
+		private ClearCanvas.Desktop.View.WinForms.TextField _description;
     }
 }

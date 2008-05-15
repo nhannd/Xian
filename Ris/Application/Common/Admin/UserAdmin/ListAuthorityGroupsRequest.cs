@@ -42,5 +42,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
         public ListAuthorityGroupsRequest()
         {
         }
+
+		public ListAuthorityGroupsRequest(SearchResultPage page)
+			:base(page)
+		{
+		}
     }
 }

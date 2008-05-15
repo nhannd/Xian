@@ -36,6 +36,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -47,6 +48,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 	[IconSet("apply", IconScheme.Colour, "Icons.ProtocolEditorToolSmall.png", "Icons.ProtocolEditorToolMedium.png", "Icons.ProtocolEditorToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[LabelValueObserver("apply", "Label", "LabelChanged")]
+	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Create)]
 	[ExtensionOf(typeof(ReportingProtocolWorkflowItemToolExtensionPoint))]
 	public class ProtocollingTool : Tool<IReportingWorkflowItemToolContext>
 	{

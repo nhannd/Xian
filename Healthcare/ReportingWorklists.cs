@@ -112,7 +112,9 @@ namespace ClearCanvas.Healthcare
             ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
             criteria.ProcedureStepClass = typeof(VerificationStep);
             criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
-            criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+
+			// things that I'm assigned to verify
+			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
 
             ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems);
             return new WorklistItemSearchCriteria[] { criteria };
@@ -130,6 +132,8 @@ namespace ClearCanvas.Healthcare
             ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
             criteria.ProcedureStepClass = typeof(VerificationStep);
             criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
+
+			// things that were interpreted by me, even though I'm not assigned to verify them
             criteria.ReportPart.Interpreter.EqualTo(wqc.Staff);
 
             ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems);

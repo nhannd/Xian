@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         {
             get
             {
-                return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) ?
+                return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify) ?
                     WorklistClassNames.ReportingRadiologistToBeVerifiedWorklist :
                     WorklistClassNames.ReportingResidentToBeVerifiedWorklist;
                 }
@@ -170,7 +170,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         {
             get
             {
-                return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) ?
+                return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify) ?
                     WorklistClassNames.ReportingRadiologistVerifiedWorklist :
                     WorklistClassNames.ReportingResidentVerifiedWorklist;
             }

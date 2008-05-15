@@ -40,12 +40,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.LocationAdmin
     [DataContract]
     public class ListAllLocationsRequest : PagedDataContractBase
     {
-        public ListAllLocationsRequest(bool activeOnly)
+        public ListAllLocationsRequest()
         {
-            this.ActiveOnly = activeOnly;
         }
 
-        [DataMember]
-        public bool ActiveOnly;
+		public ListAllLocationsRequest(SearchResultPage page)
+            :base(page)
+        {
+        }
     }
 }

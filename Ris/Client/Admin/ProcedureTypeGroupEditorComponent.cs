@@ -140,7 +140,7 @@ namespace ClearCanvas.Ris.Client.Admin
             base.Stop();
         }
 
-        public ProcedureTypeGroupSummary EditedProcedureTypeGroupSummary
+        public ProcedureTypeGroupSummary ProcedureTypeGroupSummary
         {
             get { return _editedItemSummary; }
         }
@@ -219,14 +219,14 @@ namespace ClearCanvas.Ris.Client.Admin
                             {
                                 AddProcedureTypeGroupResponse response = 
                                     service.AddProcedureTypeGroup(new AddProcedureTypeGroupRequest(_editedItemDetail));
-                                _editedItemEntityRef = response.AddedProcedureTypeGroupSummary.EntityRef;
+                                _editedItemEntityRef = response.AddedProcedureTypeGroupSummary.ProcedureTypeGroupRef;
                                 _editedItemSummary = response.AddedProcedureTypeGroupSummary;
                             }
                             else
                             {
                                 UpdateProcedureTypeGroupResponse response = 
                                     service.UpdateProcedureTypeGroup(new UpdateProcedureTypeGroupRequest(_editedItemEntityRef, _editedItemDetail));
-                                _editedItemEntityRef = response.UpdatedProcedureTypeGroupSummary.EntityRef;
+								_editedItemEntityRef = response.UpdatedProcedureTypeGroupSummary.ProcedureTypeGroupRef;
                                 _editedItemSummary = response.UpdatedProcedureTypeGroupSummary;
                             }
                         });

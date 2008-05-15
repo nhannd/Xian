@@ -40,8 +40,8 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
-using ClearCanvas.Ris.Application.Common.Admin;
 using System.Security.Permissions;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
 {
@@ -111,7 +111,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.VisitAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Visit.Update)]
         public UpdateVisitResponse UpdateVisit(UpdateVisitRequest request)
         {
             Visit visit = PersistenceContext.Load<Visit>(request.VisitRef);
@@ -123,8 +123,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.VisitAdmin)]
-        public AddVisitResponse AddVisit(AddVisitRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Visit.Create)]
+		public AddVisitResponse AddVisit(AddVisitRequest request)
         {
             Visit visit = new Visit();
 

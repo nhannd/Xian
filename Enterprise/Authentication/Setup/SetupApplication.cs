@@ -61,7 +61,7 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
 
                 // import authority tokens
                 AuthorityTokenImporter tokenImporter = new AuthorityTokenImporter();
-                IList<AuthorityToken> allTokens = tokenImporter.ImportFromPlugins((IUpdateContext)PersistenceScope.Current, Console.Out);
+                IList<AuthorityToken> allTokens = tokenImporter.ImportFromPlugins((IUpdateContext)PersistenceScope.Current);
 
 
                 // create the sys admin group, which has all tokens assigned by default
@@ -69,10 +69,10 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
                    delegate(AuthorityToken t) { return t.Name; }).ToArray();
                 AuthorityGroupDefinition adminGroupDef = new AuthorityGroupDefinition(SysAdminGroup, tokenStrings);
                 AuthorityGroupImporter groupImporter = new AuthorityGroupImporter();
-                groupImporter.Import(new AuthorityGroupDefinition[] { adminGroupDef }, (IUpdateContext)PersistenceScope.Current, Console.Out);
+                groupImporter.Import(new AuthorityGroupDefinition[] { adminGroupDef }, (IUpdateContext)PersistenceScope.Current);
 
                 // import any other authority groups defined in other plugins
-                IList<AuthorityGroup> allGroups = groupImporter.ImportFromPlugins((IUpdateContext)PersistenceScope.Current, Console.Out);
+                IList<AuthorityGroup> allGroups = groupImporter.ImportFromPlugins((IUpdateContext)PersistenceScope.Current);
 
                 // find the admin group that was just created
                 AuthorityGroup adminGroup = CollectionUtils.SelectFirst(allGroups,

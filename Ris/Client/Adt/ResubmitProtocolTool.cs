@@ -37,12 +37,14 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("apply", "folderexplorer-items-contextmenu/Resolve Protocol - Resubmit", "ResolveProtocol")]
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Resolve)]
     [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     public class ResubmitProtocolTool : Tool<IRegistrationWorkflowItemToolContext>
     {
@@ -119,7 +121,8 @@ namespace ClearCanvas.Ris.Client.Adt
     [MenuAction("apply", "folderexplorer-items-contextmenu/Resolve Protocol - Cancel Order", "ResolveProtocol")]
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
+	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Resolve)]
+	[ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     public class CancelProtocolTool : Tool<IRegistrationWorkflowItemToolContext>
     {
         public void ResolveProtocol()

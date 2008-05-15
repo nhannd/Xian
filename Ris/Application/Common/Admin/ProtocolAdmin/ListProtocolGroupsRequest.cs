@@ -37,6 +37,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin
     [DataContract]
     public class ListProtocolGroupsRequest : PagedDataContractBase
     {
-        // Nothing yet, perhaps site later
+        public ListProtocolGroupsRequest()
+        {
+        }
+
+		public ListProtocolGroupsRequest(SearchResultPage page)
+            :base(page)
+        {
+        }
     }
 }

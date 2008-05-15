@@ -34,7 +34,7 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    class ModalityTable : Table<ModalitySummary>
+    public class ModalityTable : Table<ModalitySummary>
     {
         public ModalityTable()
         {

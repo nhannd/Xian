@@ -39,6 +39,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Client;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -72,11 +73,13 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _visitTable = new VisitSummaryTable();
 
-            _visitActionHandler = new CrudActionModel();
+            _visitActionHandler = new CrudActionModel(true, true, false);
             _visitActionHandler.Add.SetClickHandler(AddVisit);
+			_visitActionHandler.Add.SetPermissibility(AuthorityTokens.Workflow.Visit.Create);
+			_visitActionHandler.Add.Enabled = true;
+
             _visitActionHandler.Edit.SetClickHandler(UpdateSelectedVisit);
-            _visitActionHandler.Delete.SetClickHandler(DeleteSelectedVisit);
-            _visitActionHandler.Add.Enabled = true;
+			_visitActionHandler.Add.SetPermissibility(AuthorityTokens.Workflow.Visit.Update);
 
             _visitTable.Items.Clear();
 
@@ -165,14 +168,6 @@ namespace ClearCanvas.Ris.Client.Adt
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void DeleteSelectedVisit()
-        {
-            if (this.Host.ShowMessageBox(SR.MessageDeleteSelectedVisit, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
-            {
-                //TODO: delete or de-activate the visit
             }
         }
 

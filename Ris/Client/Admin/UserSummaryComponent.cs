@@ -49,8 +49,7 @@ using ClearCanvas.Ris.Application.Common;
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Users", "Launch")]
-    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
-
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.User)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class UserSummaryTool : Tool<IDesktopToolContext>
     {
@@ -85,28 +84,11 @@ namespace ClearCanvas.Ris.Client.Admin
     }
 
     /// <summary>
-    /// Extension point for views onto <see cref="UserSummaryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class UserSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
-
-    /// <summary>
     /// UserSummaryComponent class
     /// </summary>
-    [AssociateView(typeof(UserSummaryComponentViewExtensionPoint))]
-    public class UserSummaryComponent : ApplicationComponent
+    public class UserSummaryComponent : SummaryComponentBase<UserSummary, UserTable>
     {
-        private UserSummary _selectedUser;
-        private UserTable _userTable;
-
-        private SimpleActionModel _userActionHandler;
-        private Action _addUserAction;
-        private Action _updateUserAction;
         private Action _resetPasswordAction;
-
-        private IPagingController<UserSummary> _pagingController;
 
         /// <summary>
         /// Constructor
@@ -115,133 +97,24 @@ namespace ClearCanvas.Ris.Client.Admin
         {
         }
 
-        public override void Start()
-        {
-            _userTable = new UserTable();
-
-            _userActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _addUserAction = _userActionHandler.AddAction("add", SR.TitleAddUser, "Icons.AddToolSmall.png", SR.TitleAddUser, AddUser);
-            _updateUserAction = _userActionHandler.AddAction("update", SR.TitleUpdateUser, "Icons.EditToolSmall.png", SR.TitleUpdateUser, UpdateSelectedUser);
-            _resetPasswordAction = _userActionHandler.AddAction("resetPassword", SR.TitleResetPassword, "Icons.EditToolSmall.png", SR.TitleResetPassword, ResetUserPassword);
-
-            InitialisePaging(_userActionHandler);
-
-            LoadUserTable();
-
-            base.Start();
-        }
-
-        private void InitialisePaging(ActionModelNode actionModelNode)
-        {
-            _pagingController = new PagingController<UserSummary>(
-                delegate(int firstRow, int maxRows)
-                {
-                    ListUsersResponse listResponse = null;
-
-                    Platform.GetService<IUserAdminService>(
-                        delegate(IUserAdminService service)
-                        {
-                            ListUsersRequest listRequest = new ListUsersRequest();
-                            listRequest.Page.FirstRow = firstRow;
-                            listRequest.Page.MaxRows = maxRows;
-
-                            listResponse = service.ListUsers(listRequest);
-                        });
-
-                    return listResponse.Users;
-                }
-            );
-
-            if (actionModelNode != null)
-            {
-                actionModelNode.Merge(new PagingActionModel<UserSummary>(_pagingController, _userTable, Host.DesktopWindow));
-            }
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
         #region Presentation Model
 
-        public ITable Users
-        {
-            get { return _userTable; }
-        }
-
-        public ActionModelNode UserListActionModel
-        {
-            get { return (ActionModelNode)_userActionHandler; }
-        }
-
-        public ISelection SelectedUser
-        {
-            get { return _selectedUser == null ? Selection.Empty : new Selection(_selectedUser); }
-            set
-            {
-                _selectedUser = (UserSummary)value.Item;
-                UserSelectionChanged();
-            }
-        }
-
-        public void AddUser()
-        {
-            try
-            {
-                UserEditorComponent editor = new UserEditorComponent();
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleAddUser);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _userTable.Items.Add(editor.UserSummary);
-                }
-            }
-            catch (Exception e)
-            {
-                // could not launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void UpdateSelectedUser()
-        {
-            try
-            {
-                if (_selectedUser == null) return;
-
-                UserEditorComponent editor = new UserEditorComponent(_selectedUser.UserName);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleUpdateUser);
-
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _userTable.Items.Replace(delegate(UserSummary u) { return u.UserName == editor.UserSummary.UserName; },
-                        editor.UserSummary);
-                }
-            }
-            catch (Exception e)
-            {
-                // could not launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-        
         public void ResetUserPassword()
         {
             try
             {
-                if (_selectedUser == null) return;
+            	UserSummary selectedUser = CollectionUtils.FirstElement(this.SelectedItems);
+				if (selectedUser == null) return;
 
                 // confirm this action
-                if(this.Host.ShowMessageBox(string.Format("Reset password for user {0}?", _selectedUser.UserName), MessageBoxActions.OkCancel) == DialogBoxAction.Cancel)
+				if (this.Host.ShowMessageBox(string.Format("Reset password for user {0}?", selectedUser.UserName), MessageBoxActions.OkCancel) == DialogBoxAction.Cancel)
                     return;
 
                 Platform.GetService<IUserAdminService>(
                     delegate(IUserAdminService service)
                     {
-                        ResetUserPasswordResponse response = service.ResetUserPassword(new ResetUserPasswordRequest(_selectedUser.UserName));
-                        _userTable.Items.Replace(delegate(UserSummary u) { return u.UserName == response.UserSummary.UserName; },
+						ResetUserPasswordResponse response = service.ResetUserPassword(new ResetUserPasswordRequest(selectedUser.UserName));
+                        this.Table.Items.Replace(delegate(UserSummary u) { return u.UserName == response.UserSummary.UserName; },
                            response.UserSummary);
                     });
             }
@@ -254,16 +127,110 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #endregion
 
-        private void LoadUserTable()
-        {
-            _userTable.Items.Clear();
-            _userTable.Items.AddRange(_pagingController.GetFirst());
-        }
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-        private void UserSelectionChanged()
-        {
-            _updateUserAction.Enabled = (_selectedUser != null);
-            _resetPasswordAction.Enabled = (_selectedUser != null);
-        }
-    }
+			_resetPasswordAction = model.AddAction("resetPassword", SR.TitleResetPassword, "Icons.EditToolSmall.png",
+				SR.TitleResetPassword, ResetUserPassword, ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.User);
+
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.User);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.User);
+		}
+
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<UserSummary> ListItems(int firstItem, int maxItems)
+		{
+			ListUsersResponse listResponse = null;
+			Platform.GetService<IUserAdminService>(
+				delegate(IUserAdminService service)
+				{
+					listResponse = service.ListUsers(new ListUsersRequest(new SearchResultPage(firstItem, maxItems)));
+				});
+
+			return listResponse.Users;
+		}
+
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<UserSummary> addedItems)
+		{
+			addedItems = new List<UserSummary>();
+			UserEditorComponent editor = new UserEditorComponent();
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleAddUser);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(editor.UserSummary);
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<UserSummary> items, out IList<UserSummary> editedItems)
+		{
+			editedItems = new List<UserSummary>();
+			UserSummary item = CollectionUtils.FirstElement(items);
+
+			UserEditorComponent editor = new UserEditorComponent(item.UserName);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleUpdateUser);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(editor.UserSummary);
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<UserSummary> items)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(UserSummary x, UserSummary y)
+		{
+			return x.UserName.Equals(y.UserName);
+		}
+
+    	/// <summary>
+    	/// Called when the user changes the selected items in the table.
+    	/// </summary>
+    	protected override void OnSelectedItemsChanged()
+		{
+			base.OnSelectedItemsChanged();
+
+			_resetPasswordAction.Enabled = this.SelectedItems.Count == 1;
+		}
+	}
 }

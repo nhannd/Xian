@@ -29,7 +29,10 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Reflection;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Authorization
 {
@@ -46,6 +49,38 @@ namespace ClearCanvas.Common.Authorization
     /// </summary>
 	public static class AuthorityGroupSetup
     {
+		/// <summary>
+		/// Returns the set of authority tokens defined by all plugins.
+		/// </summary>
+		/// <returns></returns>
+		public static AuthorityTokenDefinition[] GetAuthorityTokens()
+		{
+			List<AuthorityTokenDefinition> tokens = new List<AuthorityTokenDefinition>();
+			// scan all plugins for token definitions
+			foreach (PluginInfo plugin in Platform.PluginManager.Plugins)
+			{
+				IResourceResolver resolver = new ResourceResolver(plugin.Assembly);
+				foreach (Type type in plugin.Assembly.GetTypes())
+				{
+					// look at public fields
+					foreach (FieldInfo field in type.GetFields())
+					{
+						AuthorityTokenAttribute attr = AttributeUtils.GetAttribute<AuthorityTokenAttribute>(field, false);
+						if (attr != null)
+						{
+							string token = (string)field.GetValue(null);
+							string description = resolver.LocalizeString(attr.Description);
+
+							tokens.Add(new AuthorityTokenDefinition(token, description));
+
+						}
+					}
+				}
+			}
+			return tokens.ToArray();
+		}
+
+
         /// <summary>
         /// Returns the set of default authority groups defined by all plugins.
         /// </summary>

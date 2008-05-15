@@ -51,8 +51,8 @@ namespace ClearCanvas.Ris.Client.Adt
     [EnabledStateObserver("edit", "Enabled", "EnabledChanged")]
     [Tooltip("edit", "Edit Patient Information")]
     [IconSet("edit", IconScheme.Colour, "Icons.EditPatientToolSmall.png", "Icons.EditPatientToolMedium.png", "Icons.EditPatientToolLarge.png")]
-    [ActionPermission("edit", ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
-    [ActionPermission("edit", ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientAdmin)]
+    [ActionPermission("edit", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Update)]
+	[ActionPermission("edit", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.PatientProfile.Update)]
 
     [ExtensionOf(typeof(PatientBiographyToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]

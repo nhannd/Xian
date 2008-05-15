@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
@@ -48,8 +49,7 @@ using ClearCanvas.Ris.Application.Common;
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Locations", "Launch")]
-    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.LocationAdmin)]
-
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Location)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class LocationSummaryTool : Tool<IDesktopToolContext>
     {
@@ -94,15 +94,8 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// LocationSummaryComponent class
     /// </summary>
-    [AssociateView(typeof(LocationSummaryComponentViewExtensionPoint))]
-    public class LocationSummaryComponent : ApplicationComponent
+    public class LocationSummaryComponent : SummaryComponentBase<LocationSummary, LocationTable>
     {
-        private LocationSummary _selectedLocation;
-        private LocationTable _locationTable;
-        private CrudActionModel _locationActionHandler;
-
-        private PagingController<LocationSummary> _pagingController;
-        private PagingActionModel<LocationSummary> _pagingActionHandler;
 
         /// <summary>
         /// Constructor
@@ -111,135 +104,98 @@ namespace ClearCanvas.Ris.Client.Admin
         {
         }
 
-        public override void Start()
-        {
-            _locationTable = new LocationTable();
-            _locationActionHandler = new CrudActionModel();
-            _locationActionHandler.Add.SetClickHandler(AddLocation);
-            _locationActionHandler.Edit.SetClickHandler(UpdateSelectedLocation);
-            _locationActionHandler.Add.Enabled = true;
-            _locationActionHandler.Delete.Enabled = false;
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-            InitialisePaging();
-            _locationActionHandler.Merge(_pagingActionHandler);
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Location);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Location);
+		}
 
-            LoadLocationTable();
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<LocationSummary> ListItems(int firstItem, int maxItems)
+		{
+			ListAllLocationsResponse listResponse = null;
+			Platform.GetService<ILocationAdminService>(
+				delegate(ILocationAdminService service)
+				{
+					listResponse = service.ListAllLocations(new ListAllLocationsRequest(new SearchResultPage(firstItem, maxItems)));
+				});
 
-            base.Start();
-        }
+			return listResponse.Locations;
+		}
 
-        private void InitialisePaging()
-        {
-            _pagingController = new PagingController<LocationSummary>(
-                delegate(int firstRow, int maxRows)
-                {
-                    ListAllLocationsResponse listResponse = null;
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<LocationSummary> addedItems)
+		{
+			addedItems = new List<LocationSummary>();
+			LocationEditorComponent editor = new LocationEditorComponent();
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleAddLocation);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(editor.LocationSummary);
+				return true;
+			}
+			return false;
+		}
 
-                    Platform.GetService<ILocationAdminService>(
-                        delegate(ILocationAdminService service)
-                        {
-                            ListAllLocationsRequest listRequest = new ListAllLocationsRequest(false);
-                            listRequest.Page.FirstRow = firstRow;
-                            listRequest.Page.MaxRows = maxRows;
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<LocationSummary> items, out IList<LocationSummary> editedItems)
+		{
+			editedItems = new List<LocationSummary>();
+			LocationSummary item = CollectionUtils.FirstElement(items);
 
-                            listResponse = service.ListAllLocations(listRequest);
-                        });
+			LocationEditorComponent editor = new LocationEditorComponent(item.LocationRef);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleUpdateLocation);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(editor.LocationSummary);
+				return true;
+			}
+			return false;
+		}
 
-                    return listResponse.Locations;
-                }
-            );
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<LocationSummary> items)
+		{
+			throw new NotImplementedException();
+		}
 
-            _pagingActionHandler = new PagingActionModel<LocationSummary>(_pagingController, _locationTable, Host.DesktopWindow);
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
-        #region Presentation Model
-
-        public ITable Locations
-        {
-            get { return _locationTable; }
-        }
-
-        public ActionModelNode LocationListActionModel
-        {
-            get { return _locationActionHandler; }
-        }
-
-        public ISelection SelectedLocation
-        {
-            get { return _selectedLocation == null ? Selection.Empty : new Selection(_selectedLocation); }
-            set
-            {
-                _selectedLocation = (LocationSummary)value.Item;
-                LocationSelectionChanged();
-            }
-        }
-
-        public void AddLocation()
-        {
-            try
-            {
-                LocationEditorComponent editor = new LocationEditorComponent();
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleAddLocation);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _locationTable.Items.Add(_selectedLocation = editor.LocationSummary);
-                    LocationSelectionChanged();
-                }
-            }
-            catch (Exception e)
-            {
-                // could not launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void UpdateSelectedLocation()
-        {
-            try
-            {
-                // can occur if user double clicks while holding control
-                if (_selectedLocation == null) return;
-
-                LocationEditorComponent editor = new LocationEditorComponent(_selectedLocation.LocationRef);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleUpdateLocation);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _locationTable.Items.Replace(delegate(LocationSummary l) { return l.LocationRef.Equals(editor.LocationSummary.LocationRef, true); },
-                        editor.LocationSummary);
-                }
-            }
-            catch (Exception e)
-            {
-                // could not launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-
-        #endregion
-
-        private void LoadLocationTable()
-        {
-            _locationTable.Items.Clear();
-            _locationTable.Items.AddRange(_pagingController.GetFirst());
-        }
-
-        private void LocationSelectionChanged()
-        {
-            if (_selectedLocation != null)
-                _locationActionHandler.Edit.Enabled = true;
-            else
-                _locationActionHandler.Edit.Enabled = false;
-
-            this.NotifyPropertyChanged("SelectedLocation");
-        }
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(LocationSummary x, LocationSummary y)
+		{
+			return x.LocationRef.Equals(y.LocationRef, true);
+		}
 
     }
 }

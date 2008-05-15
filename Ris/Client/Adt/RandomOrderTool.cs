@@ -39,6 +39,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -47,6 +48,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [Tooltip("apply", "Random Order")]
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[ActionPermission("apply", AuthorityTokens.Development.CreateTestOrder)]
 
     [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]

@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Adt
 			new TechnologistMainWorkflowItemToolExtensionPoint(),
 			new TechnologistMainWorkflowFolderToolExtensionPoint())
 		{
-			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
 			{
 				this.AddFolder(new Folders.ScheduledTechnologistWorkflowFolder(this));
 				this.AddFolder(new Folders.CheckedInTechnologistWorkflowFolder(this));

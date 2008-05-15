@@ -33,18 +33,19 @@ using System;
 using System.Collections.Generic;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
-
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("launch", "global-menus/Admin/Note Categories", "Launch")]
-    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
+    [MenuAction("launch", "global-menus/Admin/Patient Note Categories", "Launch")]
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.PatientNoteCategory)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class NoteCategorySummaryTool : Tool<IDesktopToolContext>
@@ -90,16 +91,8 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// NoteCategorySummaryComponent class
     /// </summary>
-    [AssociateView(typeof(NoteCategorySummaryComponentViewExtensionPoint))]
-    public class NoteCategorySummaryComponent : ApplicationComponent
+    public class NoteCategorySummaryComponent : SummaryComponentBase<PatientNoteCategorySummary, NoteCategoryTable>
     {
-        private PatientNoteCategorySummary _selectedNoteCategory;
-        private NoteCategoryTable _noteCategoryTable;
-        private CrudActionModel _noteCategoryActionHandler;
-
-        private PagingController<PatientNoteCategorySummary> _pagingController;
-        private PagingActionModel<PatientNoteCategorySummary> _pagingActionHandler;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -107,138 +100,97 @@ namespace ClearCanvas.Ris.Client.Admin
         {
         }
 
-        public override void Start()
-        {
-            _noteCategoryTable = new NoteCategoryTable();
-            _noteCategoryActionHandler = new CrudActionModel();
-            _noteCategoryActionHandler.Add.SetClickHandler(AddNoteCategory);
-            _noteCategoryActionHandler.Edit.SetClickHandler(UpdateSelectedNoteCategory);
-            _noteCategoryActionHandler.Add.Enabled = true;
-            _noteCategoryActionHandler.Delete.Enabled = false;
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-            InitialisePaging();
-            _noteCategoryActionHandler.Merge(_pagingActionHandler);
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.PatientNoteCategory);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.PatientNoteCategory);
+		}
 
-            LoadNoteCategoryTable();
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<PatientNoteCategorySummary> ListItems(int firstItem, int maxItems)
+		{
+			ListAllNoteCategoriesResponse listResponse = null;
+			Platform.GetService<INoteCategoryAdminService>(
+				delegate(INoteCategoryAdminService service)
+				{
+					listResponse = service.ListAllNoteCategories(new ListAllNoteCategoriesRequest(new SearchResultPage(firstItem, maxItems)));
+				});
 
-            base.Start();
-        }
+			return listResponse.NoteCategories;
+		}
 
-        private void InitialisePaging()
-        {
-            _pagingController = new PagingController<PatientNoteCategorySummary>(
-                delegate(int firstRow, int maxRows)
-                {
-                    ListAllNoteCategoriesResponse listResponse = null;
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<PatientNoteCategorySummary> addedItems)
+		{
+			addedItems = new List<PatientNoteCategorySummary>();
+			NoteCategoryEditorComponent editor = new NoteCategoryEditorComponent();
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleAddNoteCategory);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(editor.NoteCategorySummary);
+				return true;
+			}
+			return false;
+		}
 
-                    Platform.GetService<INoteCategoryAdminService>(
-                        delegate(INoteCategoryAdminService service)
-                        {
-                            ListAllNoteCategoriesRequest listRequest = new ListAllNoteCategoriesRequest();
-                            listRequest.Page.FirstRow = firstRow;
-                            listRequest.Page.MaxRows = maxRows;
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<PatientNoteCategorySummary> items, out IList<PatientNoteCategorySummary> editedItems)
+		{
+			editedItems = new List<PatientNoteCategorySummary>();
+			PatientNoteCategorySummary item = CollectionUtils.FirstElement(items);
 
-                            listResponse = service.ListAllNoteCategories(listRequest);
-                        });
+			NoteCategoryEditorComponent editor = new NoteCategoryEditorComponent(item.NoteCategoryRef);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleUpdateNoteCategory);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(editor.NoteCategorySummary);
+				return true;
+			}
+			return false;
+		}
 
-                    return listResponse.NoteCategories;
-                }
-            );
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<PatientNoteCategorySummary> items)
+		{
+			throw new NotImplementedException();
+		}
 
-            _pagingActionHandler = new PagingActionModel<PatientNoteCategorySummary>(_pagingController, _noteCategoryTable, Host.DesktopWindow);
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
-
-        #region Presentation Model
-
-        public ITable NoteCategories
-        {
-            get { return _noteCategoryTable; }
-        }
-
-        public ActionModelNode NoteCategoryListActionModel
-        {
-            get { return _noteCategoryActionHandler; }
-        }
-
-        public ISelection SelectedNoteCategory
-        {
-            get { return _selectedNoteCategory == null ? Selection.Empty : new Selection(_selectedNoteCategory); }
-            set
-            {
-                _selectedNoteCategory = (PatientNoteCategorySummary)value.Item;
-                NoteCategorySelectionChanged();
-            }
-        }
-
-        public void AddNoteCategory()
-        {
-            try
-            {
-                NoteCategoryEditorComponent editor = new NoteCategoryEditorComponent();
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleAddNoteCategory);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _noteCategoryTable.Items.Add(_selectedNoteCategory = editor.NoteCategorySummary);
-                    NoteCategorySelectionChanged();
-                }
-
-            }
-            catch (Exception e)
-            {
-                // could not launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void UpdateSelectedNoteCategory()
-        {
-            try
-            {
-                // can occur if user double clicks while holding control
-                if (_selectedNoteCategory == null) return;
-
-                NoteCategoryEditorComponent editor = new NoteCategoryEditorComponent(_selectedNoteCategory.NoteCategoryRef);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleUpdateNoteCategory);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _noteCategoryTable.Items.Replace(
-                        delegate(PatientNoteCategorySummary s) { return s.NoteCategoryRef.Equals(editor.NoteCategorySummary.NoteCategoryRef, true); },
-                        editor.NoteCategorySummary);
-                }
-
-            }
-            catch (Exception e)
-            {
-                // could not launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        private void LoadNoteCategoryTable()
-        {
-            _noteCategoryTable.Items.Clear();
-            _noteCategoryTable.Items.AddRange(_pagingController.GetFirst());
-        }
-
-        #endregion
-
-        private void NoteCategorySelectionChanged()
-        {
-            if (_selectedNoteCategory != null)
-                _noteCategoryActionHandler.Edit.Enabled = true;
-            else
-                _noteCategoryActionHandler.Edit.Enabled = false;
-
-            NotifyPropertyChanged("SelectedNoteCategory");
-        }
-
-    }
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(PatientNoteCategorySummary x, PatientNoteCategorySummary y)
+		{
+			return x.NoteCategoryRef.Equals(y.NoteCategoryRef, true);
+		}
+	}
 }

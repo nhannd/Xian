@@ -79,7 +79,7 @@ namespace ClearCanvas.Ris.Client
 
             if (exitCode == ApplicationComponentExitCode.Accepted)
             {
-                result = (ExternalPractitionerSummary)component.SelectedPractitioner.Item;
+                result = (ExternalPractitionerSummary)component.SummarySelection.Item;
             }
 
             return (result != null);

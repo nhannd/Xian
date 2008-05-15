@@ -35,7 +35,7 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    class LocationTable : Table<LocationSummary>
+    public class LocationTable : Table<LocationSummary>
     {
         public LocationTable()
         {

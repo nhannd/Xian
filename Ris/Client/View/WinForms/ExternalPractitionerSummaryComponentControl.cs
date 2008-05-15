@@ -57,11 +57,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _practitionerTableView.ToolbarModel = _component.PractitionersListActionModel;
-            _practitionerTableView.MenuModel = _component.PractitionersListActionModel;
+            _practitionerTableView.ToolbarModel = _component.SummaryTableActionModel;
+			_practitionerTableView.MenuModel = _component.SummaryTableActionModel;
 
-            _practitionerTableView.Table = _component.Practitioners;
-            _practitionerTableView.DataBindings.Add("Selection", _component, "SelectedPractitioner", true, DataSourceUpdateMode.OnPropertyChanged);
+            _practitionerTableView.Table = _component.SummaryTable;
+			_practitionerTableView.DataBindings.Add("Selection", _component, "SummaryTableSelection", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _firstName.DataBindings.Add("Value", _component, "FirstName", true, DataSourceUpdateMode.OnPropertyChanged);
             _lastName.DataBindings.Add("Value", _component, "LastName", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -73,12 +73,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private void _staffs_Load(object sender, EventArgs e)
         {
-            //_component.LoadStaffTable();
         }
 
         private void _staffs_ItemDoubleClicked(object sender, EventArgs e)
         {
-            _component.DoubleClickSelectedPractitioner();
+            _component.DoubleClickSelectedItem();
         }
 
         private void _searchButton_Click(object sender, EventArgs e)

@@ -32,6 +32,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -42,6 +43,8 @@ using ClearCanvas.Healthcare.Workflow;
 using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using System.Threading;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -147,7 +150,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         [UpdateOperation]
         [OperationEnablement("CanCheckInProcedure")]
-        public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Procedure.CheckIn)]
+		public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
         {
             IProcedureBroker broker = PersistenceContext.GetBroker<IProcedureBroker>();
             Operations.CheckIn op = new Operations.CheckIn();
@@ -162,7 +166,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         [UpdateOperation]
         [OperationEnablement("CanCancelOrder")]
-        public CancelOrderResponse CancelOrder(CancelOrderRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Cancel)]
+		public CancelOrderResponse CancelOrder(CancelOrderRequest request)
         {
             Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
             OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext);
@@ -177,7 +182,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         public bool CanCheckInProcedure(WorklistItemKey itemKey)
         {
-            // the worklist item may represent a patient without an order,
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Procedure.CheckIn))
+				return false;
+
+			// the worklist item may represent a patient without an order,
             // in which case there is no order to check-in
             if(itemKey.OrderRef == null)
                 return false;
@@ -200,6 +208,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         public bool CanCancelOrder(WorklistItemKey itemKey)
         {
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Order.Cancel))
+				return false;
+
             // the worklist item may represent a patient without an order,
             // in which case there is no order to cancel
             if (itemKey.OrderRef == null)

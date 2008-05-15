@@ -292,13 +292,13 @@ namespace ClearCanvas.Ris.Client.Admin
                     if (_isNew)
                     {
                         AddProtocolGroupResponse response = service.AddProtocolGroup(new AddProtocolGroupRequest(_protocolGroupDetail));
-                        _protocolGroupRef = response.Summary.EntityRef;
+                        _protocolGroupRef = response.Summary.ProtocolGroupRef;
                         _protocolGroupSummary = response.Summary;
                     }
                     else
                     {
                         UpdateProtocolGroupResponse response = service.UpdateProtocolGroup(new UpdateProtocolGroupRequest(_protocolGroupRef, _protocolGroupDetail));
-                        _protocolGroupRef = response.Summary.EntityRef;
+						_protocolGroupRef = response.Summary.ProtocolGroupRef;
                         _protocolGroupSummary = response.Summary;
                     }
                 });

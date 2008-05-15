@@ -115,7 +115,7 @@ namespace ClearCanvas.Ris.Client.Admin
             _procedureTypeGroupChoices = procedureTypeGroupChoices;
             _availableProcedureTypeGroups = new ProcedureTypeGroupSummaryTable();
             _availableProcedureTypeGroups.Items.AddRange(Subtract(_worklistDetail.ProcedureTypeGroups, _procedureTypeGroupChoices,
-                     delegate(ProcedureTypeGroupSummary item) { return item.EntityRef; }));
+                     delegate(ProcedureTypeGroupSummary item) { return item.ProcedureTypeGroupRef; }));
             _selectedProcedureTypeGroups = new ProcedureTypeGroupSummaryTable();
             _selectedProcedureTypeGroups.Items.AddRange(_worklistDetail.ProcedureTypeGroups);
 

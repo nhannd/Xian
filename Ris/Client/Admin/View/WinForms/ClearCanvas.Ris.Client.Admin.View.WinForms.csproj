@@ -47,13 +47,6 @@
       <DependentUpon>AuthorityGroupEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="AuthorityGroupEditorComponentView.cs" />
-    <Compile Include="AuthorityGroupSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="AuthorityGroupSummaryComponentControl.Designer.cs">
-      <DependentUpon>AuthorityGroupSummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="AuthorityGroupSummaryComponentView.cs" />
     <Compile Include="EnumerationEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -68,13 +61,6 @@
       <DependentUpon>EnumerationSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="EnumerationSummaryComponentView.cs" />
-    <Compile Include="FacilitySummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FacilitySummaryComponentControl.Designer.cs">
-      <DependentUpon>FacilitySummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FacilitySummaryComponentView.cs" />
     <Compile Include="FacilityEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -89,13 +75,6 @@
       <DependentUpon>DataImportComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DataImportComponentView.cs" />
-    <Compile Include="LocationSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LocationSummaryComponentControl.Designer.cs">
-      <DependentUpon>LocationSummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LocationSummaryComponentView.cs" />
     <Compile Include="LocationEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -103,13 +82,6 @@
       <DependentUpon>LocationEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="LocationEditorComponentView.cs" />
-    <Compile Include="ModalitySummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ModalitySummaryComponentControl.Designer.cs">
-      <DependentUpon>ModalitySummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ModalitySummaryComponentView.cs" />
     <Compile Include="ModalityEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -124,13 +96,6 @@
       <DependentUpon>NoteCategoryEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="NoteCategoryEditorComponentView.cs" />
-    <Compile Include="NoteCategorySummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="NoteCategorySummaryComponentControl.designer.cs">
-      <DependentUpon>NoteCategorySummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="NoteCategorySummaryComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -151,13 +116,6 @@
       <DependentUpon>ProtocolGroupEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ProtocolGroupEditorComponentView.cs" />
-    <Compile Include="ProtocolGroupSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProtocolGroupSummaryComponentControl.Designer.cs">
-      <DependentUpon>ProtocolGroupSummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProtocolGroupSummaryComponentView.cs" />
     <Compile Include="ProcedureTypeGroupEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -165,13 +123,6 @@
       <DependentUpon>ProcedureTypeGroupEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ProcedureTypeGroupEditorComponentView.cs" />
-    <Compile Include="ProcedureTypeGroupSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProcedureTypeGroupSummaryComponentControl.Designer.cs">
-      <DependentUpon>ProcedureTypeGroupSummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProcedureTypeGroupSummaryComponentView.cs" />
     <Compile Include="UserEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -179,13 +130,6 @@
       <DependentUpon>UserEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UserEditorComponentView.cs" />
-    <Compile Include="UserSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UserSummaryComponentControl.Designer.cs">
-      <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UserSummaryComponentView.cs" />
     <Compile Include="ValidationEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -266,10 +210,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>AuthorityGroupEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AuthorityGroupSummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>AuthorityGroupSummaryComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="EnumerationEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>EnumerationEditorComponentControl.cs</DependentUpon>
@@ -277,10 +217,6 @@
     <EmbeddedResource Include="EnumerationSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>EnumerationSummaryComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FacilitySummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>FacilitySummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FacilityEditorComponentControl.resx">
       <SubType>Designer</SubType>
@@ -290,17 +226,9 @@
       <DependentUpon>DataImportComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LocationSummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>LocationSummaryComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="LocationEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>LocationEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ModalitySummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ModalitySummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ModalityEditorComponentControl.resx">
       <SubType>Designer</SubType>
@@ -308,10 +236,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="NoteCategoryEditorComponentControl.resx">
       <DependentUpon>NoteCategoryEditorComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="NoteCategorySummaryComponentControl.resx">
-      <DependentUpon>NoteCategorySummaryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -327,25 +251,13 @@
       <SubType>Designer</SubType>
       <DependentUpon>ProtocolGroupEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ProtocolGroupSummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ProtocolGroupSummaryComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ProcedureTypeGroupEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ProcedureTypeGroupEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ProcedureTypeGroupSummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ProcedureTypeGroupSummaryComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UserEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>UserEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UserSummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ValidationEditorComponentControl.resx">
       <SubType>Designer</SubType>

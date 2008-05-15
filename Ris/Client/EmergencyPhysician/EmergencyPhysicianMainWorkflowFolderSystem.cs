@@ -36,7 +36,7 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 			       new EmergencyPhysicianMainWorkflowItemToolExtensionPoint(),
 			       new EmergencyPhysicianMainWorkflowFolderToolExtensionPoint())
 		{
-			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
 			{
 				this.AddFolder(new EROrdersFolder(this));
 			}

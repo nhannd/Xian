@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Adt
 			new RegistrationBookingWorkflowItemToolExtensionPoint(),
 			new RegistrationBookingWorkflowFolderToolExtensionPoint())
 		{
-			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
 			{
 				this.AddFolder(new Folders.CompletedProtocolFolder(this));
 				this.AddFolder(new Folders.SuspendedProtocolFolder(this));

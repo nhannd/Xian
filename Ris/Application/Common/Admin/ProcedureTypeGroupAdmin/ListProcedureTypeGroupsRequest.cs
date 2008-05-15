@@ -30,11 +30,20 @@
 #endregion
 
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin
 {
     [DataContract]
     public class ListProcedureTypeGroupsRequest : PagedDataContractBase
     {
+		public ListProcedureTypeGroupsRequest()
+		{
+		}
+
+		public ListProcedureTypeGroupsRequest(SearchResultPage page)
+			:base(page)
+		{
+		}
     }
 }

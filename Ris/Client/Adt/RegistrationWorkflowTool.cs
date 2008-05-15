@@ -39,6 +39,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -112,7 +113,8 @@ namespace ClearCanvas.Ris.Client.Adt
         [ButtonAction("apply", "folderexplorer-items-toolbar/Check-in", "Apply")]
 		[IconSet("apply", IconScheme.Colour, "Icons.CheckInToolSmall.png", "Icons.CheckInToolMedium.png", "Icons.CheckInToolLarge.png")]
 		[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
+		[ActionPermission("apply", AuthorityTokens.Workflow.Procedure.CheckIn)]
+		[ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
         [ExtensionOf(typeof(Folders.CheckedInFolder.DropHandlerExtensionPoint))]
         public class CheckInTool : WorkflowItemTool
         {
@@ -159,6 +161,7 @@ namespace ClearCanvas.Ris.Client.Adt
         [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel Order", "Apply")]
 		[IconSet("apply", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
 		[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+		[ActionPermission("apply", AuthorityTokens.Workflow.Order.Cancel)]
         [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
         [ExtensionOf(typeof(Folders.CancelledFolder.DropHandlerExtensionPoint))]
         public class CancelTool : WorkflowItemTool

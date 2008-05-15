@@ -38,7 +38,16 @@ namespace ClearCanvas.Enterprise.Common
 {
     public class AuthorityTokens
     {
-        [AuthorityToken(Description = "Allow administration of application configuration")]
-        public const string ConfigurationAdmin = "ConfigurationAdmin";
+		/// <summary>
+		/// Tokens that allow access to administrative functionality.
+		/// </summary>
+		public static class Admin
+		{
+			public static class System
+			{
+				[AuthorityToken(Description = "Allow modification of enterprise configuration store data.")]
+				public const string EnterpriseConfiguration = "Admin/System/Enterprise Configuration";
+			}
+		}
     }
 }

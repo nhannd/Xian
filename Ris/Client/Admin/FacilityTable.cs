@@ -34,7 +34,7 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    class FacilityTable : Table<FacilitySummary>
+    public class FacilityTable : Table<FacilitySummary>
     {
         public FacilityTable()
         {

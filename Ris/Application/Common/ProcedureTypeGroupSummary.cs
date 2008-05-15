@@ -40,14 +40,14 @@ namespace ClearCanvas.Ris.Application.Common
     {
         public ProcedureTypeGroupSummary(EntityRef entityRef, string name, string description, EnumValueInfo category)
         {
-            EntityRef = entityRef;
+			ProcedureTypeGroupRef = entityRef;
             Name = name;
             Description = description;
             Category = category;
         }
 
         [DataMember]
-        public EntityRef EntityRef;
+        public EntityRef ProcedureTypeGroupRef;
 
         [DataMember]
         public string Name;

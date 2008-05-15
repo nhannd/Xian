@@ -35,6 +35,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 
@@ -44,6 +45,8 @@ namespace ClearCanvas.Ris.Client.Adt
     [ButtonAction("apply", "folderexplorer-items-toolbar/Modify Order", "Apply")]
     [IconSet("apply", IconScheme.Colour, "EditToolSmall.png", "EditToolMedium.png", "EditToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[ActionPermission("apply", AuthorityTokens.Workflow.Order.Modify)]
+
     [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     public class ModifyOrderTool : Tool<IRegistrationWorkflowItemToolContext>

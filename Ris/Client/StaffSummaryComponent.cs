@@ -38,14 +38,15 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client
 {
     [MenuAction("launch", "global-menus/Admin/Staff", "Launch")]
-    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin)]
-
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Staff)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class StaffSummaryTool : Tool<IDesktopToolContext>
     {
@@ -91,23 +92,12 @@ namespace ClearCanvas.Ris.Client
     /// StaffSummaryComponent class
     /// </summary>
     [AssociateView(typeof(StaffSummaryComponentViewExtensionPoint))]
-    public class StaffSummaryComponent : ApplicationComponent
+    public class StaffSummaryComponent : SummaryComponentBase<StaffSummary, StaffTable>
     {
-        private StaffSummary _selectedStaff;
-        private StaffTable _staffTable;
-
-        private SimpleActionModel _staffActionHandler;
-        private readonly string _addStaffKey = "AddStaff";
-        private readonly string _updateStaffKey = "UpdateStaff";
-
-        private PagingController<StaffSummary> _pagingController;
-
         private ListStaffRequest _listRequest;
         private string _firstName;
         private string _lastName;
-        private string[] _staffTypesFilter;
-
-        private bool _dialogMode;
+        private readonly string[] _staffTypesFilter;
 
 
         /// <summary>
@@ -133,78 +123,22 @@ namespace ClearCanvas.Ris.Client
         /// <param name="dialogMode">Indicates whether the component will be shown in a dialog box or not</param>
         /// <param name="staffTypesFilter">Filters the staff list according to the specified staff types.</param>
         public StaffSummaryComponent(bool dialogMode, string[] staffTypesFilter)
+			:base(dialogMode)
         {
-            _dialogMode = dialogMode;
             _staffTypesFilter = staffTypesFilter;
         }
 
         public override void Start()
         {
-            _staffTable = new StaffTable();
+			_listRequest = new ListStaffRequest();
+        	_listRequest.LastName = _lastName;
+        	_listRequest.FirstName = _firstName;
 
-            _staffActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _staffActionHandler.AddAction(_addStaffKey, SR.TitleAddStaff, "Icons.AddToolSmall.png", SR.TitleAddStaff, AddStaff, ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin);
-            _staffActionHandler.AddAction(_updateStaffKey, SR.TitleUpdateStaff, "Icons.EditToolSmall.png", SR.TitleUpdateStaff, UpdateSelectedStaff, ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin);
+			base.Start();
+		}
 
-            InitialisePaging(_staffActionHandler);
-
-            _listRequest = new ListStaffRequest();
-
-            // if the last name or first name properties are valued, generate an initial search
-            if (!string.IsNullOrEmpty(_lastName) || !string.IsNullOrEmpty(_firstName))
-            {
-                // do not handle exceptions here - allow to propagate to caller
-                DoSearch();
-            }
-
-            base.Start();
-        }
-
-        private void InitialisePaging(ActionModelNode actionModelNode)
-        {
-            _pagingController = new PagingController<StaffSummary>(
-                delegate(int firstRow, int maxRows)
-                {
-                    ListStaffResponse listResponse = null;
-
-                    Platform.GetService<IStaffAdminService>(
-                        delegate(IStaffAdminService service)
-                        {
-                            _listRequest.Page.FirstRow = firstRow;
-                            _listRequest.Page.MaxRows = maxRows;
-                            _listRequest.StaffTypesFilter = _staffTypesFilter;
-
-                            listResponse = service.ListStaff(_listRequest);
-                        });
-
-                    return listResponse.Staffs;
-                }
-            );
-
-            if (actionModelNode != null)
-            {
-                actionModelNode.Merge(new PagingActionModel<StaffSummary>(_pagingController, _staffTable, Host.DesktopWindow));
-                
-            }
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
-        #region Event Handler
-
-
-        #endregion
 
         #region Presentation Model
-
-        public bool ShowAcceptCancelButtons
-        {
-            get { return _dialogMode; }
-            set { _dialogMode = value; }
-        }
 
         public string FirstName
         {
@@ -217,79 +151,6 @@ namespace ClearCanvas.Ris.Client
             get { return _lastName; }
             set { _lastName = value; }
         }
-
-        public ITable Staffs
-        {
-            get { return _staffTable; }
-        }
-
-        public ActionModelNode StaffListActionModel
-        {
-            get { return _staffActionHandler; }
-        }
-
-        public ISelection SelectedStaff
-        {
-            get { return _selectedStaff == null ? Selection.Empty : new Selection(_selectedStaff); }
-            set
-            {
-                _selectedStaff = (StaffSummary)value.Item;
-                StaffSelectionChanged();
-            }
-        }
-
-        public void AddStaff()
-        {
-            try
-            {
-                StaffEditorComponent editor = new StaffEditorComponent();
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleAddStaff);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _staffTable.Items.Add(editor.StaffSummary);
-                }
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void UpdateSelectedStaff()
-        {
-            try
-            {
-                // can occur if user double clicks while holding control
-                if (_selectedStaff == null) return;
-
-                StaffEditorComponent editor = new StaffEditorComponent(_selectedStaff.StaffRef);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleUpdateStaff);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _staffTable.Items.Replace(
-                        delegate(StaffSummary s) { return s.StaffRef.Equals(editor.StaffSummary.StaffRef, true); },
-                        editor.StaffSummary);
-                }
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void DoubleClickSelectedStaff()
-        {
-            // double-click behaviour is different depending on whether we're running as a dialog box or not
-            if (_dialogMode)
-                Accept();
-            else
-                UpdateSelectedStaff();
-        }
-
 
         public void Search()
         {
@@ -304,40 +165,111 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public bool AcceptEnabled
-        {
-            get { return _selectedStaff != null; }
-        }
-
-        public void Accept()
-        {
-            this.ExitCode = ApplicationComponentExitCode.Accepted;
-            this.Host.Exit();
-        }
-
-        public void Cancel()
-        {
-            this.ExitCode = ApplicationComponentExitCode.None;
-            this.Host.Exit();
-        }
-
         #endregion
 
-        private void DoSearch()
-        {
-            _listRequest.FirstName = _firstName;
-            _listRequest.LastName = _lastName;
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-            _staffTable.Items.Clear();
-            _staffTable.Items.AddRange(_pagingController.GetFirst());
-        }
+			model.Add.SetPermissibility(AuthorityTokens.Admin.Data.Staff);
+			model.Edit.SetPermissibility(AuthorityTokens.Admin.Data.Staff);
+		}
 
-        private void StaffSelectionChanged()
-        {
-            if (_selectedStaff != null)
-                _staffActionHandler[_updateStaffKey].Enabled = true;
-            else
-                _staffActionHandler[_updateStaffKey].Enabled = false;
-        }
-    }
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<StaffSummary> ListItems(int firstItem, int maxItems)
+		{
+			ListStaffResponse listResponse = null;
+			Platform.GetService<IStaffAdminService>(
+				delegate(IStaffAdminService service)
+				{
+					_listRequest.Page = new SearchResultPage(firstItem, maxItems);
+					_listRequest.StaffTypesFilter = _staffTypesFilter;
+					listResponse = service.ListStaff(_listRequest);
+				});
+
+			return listResponse.Staffs;
+		}
+
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<StaffSummary> addedItems)
+		{
+			addedItems = new List<StaffSummary>();
+			StaffEditorComponent editor = new StaffEditorComponent();
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleAddStaff);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(editor.StaffSummary);
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<StaffSummary> items, out IList<StaffSummary> editedItems)
+		{
+			editedItems = new List<StaffSummary>();
+			StaffSummary item = CollectionUtils.FirstElement(items);
+
+			StaffEditorComponent editor = new StaffEditorComponent(item.StaffRef);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleUpdateStaff);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(editor.StaffSummary);
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<StaffSummary> items)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(StaffSummary x, StaffSummary y)
+		{
+			return x.StaffRef.Equals(y.StaffRef, true);
+		}
+
+		private void DoSearch()
+		{
+			_listRequest.FirstName = _firstName;
+			_listRequest.LastName = _lastName;
+
+			this.Table.Items.Clear();
+			this.Table.Items.AddRange(this.PagingController.GetFirst());
+		}
+
+	}
 }

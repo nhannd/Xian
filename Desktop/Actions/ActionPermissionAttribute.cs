@@ -37,8 +37,8 @@ namespace ClearCanvas.Desktop.Actions
     /// Associates authority tokens with an action.
     /// </summary>
     /// <remarks>
-    /// This attribute sets the <see cref="Action.PermissionSpecification"/> property.  If multiple authority tokens
-    /// are supplied in an array to a single instance of the attribute, those tokens will be combined using AND.  If
+    /// This attribute sets the action permissibility via the <see cref="Action.SetPermissibility(ISpecification)"/> method.
+    /// If multiple authority tokens are supplied in an array to a single instance of the attribute, those tokens will be combined using AND.  If
     /// multiple instances of this attribute are specified, the tokens associated with each instance are combined
     /// using OR logic.  This allows for the possibility of constructing a permission specification based on a complex boolean
     /// combination of authority tokens.
@@ -58,7 +58,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Constructor - all of the specified tokens will combined using AND and associated with the specified action ID.
         /// </summary>
-        public ActionPermissionAttribute(string actionID, string[] authorityTokens)
+        public ActionPermissionAttribute(string actionID, params string[] authorityTokens)
             :base(actionID)
         {
             _authorityTokens = authorityTokens;

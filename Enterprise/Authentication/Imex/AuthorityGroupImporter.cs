@@ -62,14 +62,23 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
         /// remove authority tokens from an existing group.
         /// </remarks>
         /// <param name="context"></param>
-        /// <param name="statusLog"></param>
-        public IList<AuthorityGroup> ImportFromPlugins(IUpdateContext context, TextWriter statusLog)
+        public IList<AuthorityGroup> ImportFromPlugins(IUpdateContext context)
         {
             AuthorityGroupDefinition[] groupDefs = AuthorityGroupSetup.GetDefaultAuthorityGroups();
-            return Import(groupDefs, context, statusLog);
+            return Import(groupDefs, context);
         }
 
-        public IList<AuthorityGroup> Import(IEnumerable<AuthorityGroupDefinition> groupDefs, IUpdateContext context, TextWriter statusLog)
+		/// <summary>
+		/// Import authority groups.
+		/// </summary>
+		/// <remarks>
+		/// Creates any authority groups that do not already exist.
+		/// This method performs an additive import.  It will never remove an existing authority group or
+		/// remove authority tokens from an existing group.
+		/// </remarks>
+		/// <param name="groupDefs"></param>
+		/// <param name="context"></param>
+		public IList<AuthorityGroup> Import(IEnumerable<AuthorityGroupDefinition> groupDefs, IUpdateContext context)
         {
             // first load all the existing tokens into memory
             // there should not be that many tokens ( < 500), so this should not be a problem
@@ -82,9 +91,7 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
 
             foreach (AuthorityGroupDefinition groupDef in groupDefs)
             {
-                statusLog.WriteLine(string.Format("Processing group {0}...", groupDef.Name));
-
-                AuthorityGroup group = CollectionUtils.SelectFirst<AuthorityGroup>(existingGroups,
+                AuthorityGroup group = CollectionUtils.SelectFirst(existingGroups,
                     delegate(AuthorityGroup g) { return g.Name == groupDef.Name; });
 
                 // if group does not exist, create it
@@ -99,15 +106,12 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
                 // process all token nodes contained in group
                 foreach (string tokenName in groupDef.Tokens)
                 {
-                    AuthorityToken token = CollectionUtils.SelectFirst<AuthorityToken>(existingTokens,
+                    AuthorityToken token = CollectionUtils.SelectFirst(existingTokens,
                         delegate(AuthorityToken t) { return t.Name == tokenName; });
 
                     // ignore non-existent tokens
                     if (token == null)
-                    {
-                        statusLog.WriteLine(string.Format("Warning: Group {0} references non-existent token {1}", groupDef.Name, tokenName));
                         continue;
-                    }
 
                     // add the token to the group
                     group.AuthorityTokens.Add(token);
@@ -124,7 +128,7 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
             using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
             {
                 ((IUpdateContext) PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
-                ImportFromPlugins((IUpdateContext)PersistenceScope.Current, Console.Out);
+                ImportFromPlugins((IUpdateContext)PersistenceScope.Current);
 
                 scope.Complete();
             }

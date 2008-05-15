@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Desktop.Actions
 {
@@ -116,10 +117,24 @@ namespace ClearCanvas.Desktop.Actions
 		/// <param name="authorityToken">The authority token for the action.</param>
 		public ClickAction AddAction(object key, string displayName, string icon, string tooltip, ClickHandlerDelegate clickHandler, string authorityToken)
         {
-            return AddActionHelper(key, displayName, icon, tooltip, clickHandler, authorityToken);
+            return AddActionHelper(key, displayName, icon, tooltip, clickHandler, new PrincipalPermissionSpecification(authorityToken));
         }
 
-        private ClickAction AddActionHelper(object key, string displayName, string icon, string tooltip, ClickHandlerDelegate clickHandler, string authorityToken)
+		/// <summary>
+		/// Adds an action to the action model.
+		/// </summary>
+		/// <param name="key">The action key, so that actions can be easily retrieve via the <see cref="SimpleActionModel.this"/> indexer.</param>
+		/// <param name="displayName">The display name for the action.</param>
+		/// <param name="icon">The resource name of the icon.</param>
+		/// <param name="tooltip">The action tooltip.</param>
+		/// <param name="clickHandler">The click handler of the action.</param>
+		/// <param name="permissionSpec">The permission specification for the action.</param>
+		public ClickAction AddAction(object key, string displayName, string icon, string tooltip, ClickHandlerDelegate clickHandler, ISpecification permissionSpec)
+		{
+			return AddActionHelper(key, displayName, icon, tooltip, clickHandler, permissionSpec);
+		}
+		
+		private ClickAction AddActionHelper(object key, string displayName, string icon, string tooltip, ClickHandlerDelegate clickHandler, ISpecification permissionSpec)
         {
             Platform.CheckForNullReference(key, "key");
 
@@ -131,9 +146,9 @@ namespace ClearCanvas.Desktop.Actions
             {
                 action.SetClickHandler(clickHandler);
             }
-            if (authorityToken != null)
+            if (permissionSpec != null)
             {
-                action.PermissionSpecification = new PrincipalPermissionSpecification(authorityToken);
+				action.SetPermissibility(permissionSpec);
             }
 
             this.InsertAction(action);

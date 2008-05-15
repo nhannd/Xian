@@ -33,18 +33,19 @@ using System;
 using System.Collections.Generic;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Modality", "Launch")]
-    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.ModalityAdmin)]
-
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Modality)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ModalitySummaryTool : Tool<IDesktopToolContext>
     {
@@ -89,15 +90,8 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// ModalitySummaryComponent class
     /// </summary>
-    [AssociateView(typeof(ModalitySummaryComponentViewExtensionPoint))]
-    public class ModalitySummaryComponent : ApplicationComponent
+    public class ModalitySummaryComponent : SummaryComponentBase<ModalitySummary, ModalityTable>
     {
-        private ModalitySummary _selectedModality;
-        private ModalityTable _modalityTable;
-        private CrudActionModel _modalityActionHandler;
-
-        private PagingController<ModalitySummary> _pagingController;
-        private PagingActionModel<ModalitySummary> _pagingActionHandler;
 
         /// <summary>
         /// Constructor
@@ -106,135 +100,97 @@ namespace ClearCanvas.Ris.Client.Admin
         {
         }
 
-        public override void Start()
-        {
-            _modalityTable = new ModalityTable();
-            _modalityActionHandler = new CrudActionModel();
-            _modalityActionHandler.Add.SetClickHandler(AddModality);
-            _modalityActionHandler.Edit.SetClickHandler(UpdateSelectedModality);
-            _modalityActionHandler.Add.Enabled = true;
-            _modalityActionHandler.Delete.Enabled = false;
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-            InitialisePaging();
-            _modalityActionHandler.Merge(_pagingActionHandler);
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Modality);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Modality);
+		}
 
-            LoadModalityTable();
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<ModalitySummary> ListItems(int firstItem, int maxItems)
+		{
+			ListAllModalitiesResponse listResponse = null;
+			Platform.GetService<IModalityAdminService>(
+				delegate(IModalityAdminService service)
+				{
+					listResponse = service.ListAllModalities(new ListAllModalitiesRequest(new SearchResultPage(firstItem, maxItems)));
+				});
 
-            base.Start();
-        }
+			return listResponse.Modalities;
+		}
 
-        private void InitialisePaging()
-        {
-            _pagingController = new PagingController<ModalitySummary>(
-                delegate(int firstRow, int maxRows)
-                {
-                    ListAllModalitiesResponse listResponse = null;
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<ModalitySummary> addedItems)
+		{
+			addedItems = new List<ModalitySummary>();
+			ModalityEditorComponent editor = new ModalityEditorComponent();
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleAddModality);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(editor.ModalitySummary);
+				return true;
+			}
+			return false;
+		}
 
-                    Platform.GetService<IModalityAdminService>(
-                        delegate(IModalityAdminService service)
-                        {
-                            ListAllModalitiesRequest listRequest = new ListAllModalitiesRequest(false);
-                            listRequest.Page.FirstRow = firstRow;
-                            listRequest.Page.MaxRows = maxRows;
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<ModalitySummary> items, out IList<ModalitySummary> editedItems)
+		{
+			editedItems = new List<ModalitySummary>();
+			ModalitySummary item = CollectionUtils.FirstElement(items);
 
-                            listResponse = service.ListAllModalities(listRequest);
-                        });
+			ModalityEditorComponent editor = new ModalityEditorComponent(item.ModalityRef);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleUpdateModality);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(editor.ModalitySummary);
+				return true;
+			}
+			return false;
+		}
 
-                    return listResponse.Modalities;
-                }
-            );
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<ModalitySummary> items)
+		{
+			throw new NotImplementedException();
+		}
 
-            _pagingActionHandler = new PagingActionModel<ModalitySummary>(_pagingController, _modalityTable, Host.DesktopWindow);
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
-        #region Presentation Model
-
-        public ITable Modalities
-        {
-            get { return _modalityTable; }
-        }
-
-        public ActionModelNode ModalityListActionModel
-        {
-            get { return _modalityActionHandler; }
-        }
-
-        public ISelection SelectedModality
-        {
-            get { return _selectedModality == null ? Selection.Empty : new Selection(_selectedModality); }
-            set
-            {
-                _selectedModality = (ModalitySummary)value.Item;
-                ModalitySelectionChanged();
-            }
-        }
-
-        public void AddModality()
-        {
-            try
-            {
-                ModalityEditorComponent editor = new ModalityEditorComponent();
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleAddModality);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _modalityTable.Items.Add(_selectedModality = editor.ModalitySummary);
-                    ModalitySelectionChanged();
-                }
-
-            }
-            catch (Exception e)
-            {
-                // could not launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void UpdateSelectedModality()
-        {
-            try
-            {
-                // can occur if user double clicks while holding control
-                if (_selectedModality == null) return;
-
-                ModalityEditorComponent editor = new ModalityEditorComponent(_selectedModality.ModalityRef);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleUpdateModality);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _modalityTable.Items.Replace(delegate(ModalitySummary m) { return m.ModalityRef.Equals(editor.ModalitySummary.ModalityRef, true); },
-                        editor.ModalitySummary);
-                }
-
-            }
-            catch (Exception e)
-            {
-                // could not launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        #endregion
-
-        private void LoadModalityTable()
-        {
-            _modalityTable.Items.Clear();
-            _modalityTable.Items.AddRange(_pagingController.GetFirst());
-        }
-
-        private void ModalitySelectionChanged()
-        {
-            if (_selectedModality != null)
-                _modalityActionHandler.Edit.Enabled = true;
-            else
-                _modalityActionHandler.Edit.Enabled = false;
-
-            this.NotifyPropertyChanged("SelectedModality");
-        }
-    }
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(ModalitySummary x, ModalitySummary y)
+		{
+			return x.ModalityRef.Equals(y.ModalityRef, true);
+		}
+	}
 }

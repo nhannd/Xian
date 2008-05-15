@@ -39,6 +39,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -52,6 +53,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [EnabledStateObserver("view", "Enabled", "EnabledChanged")]
     [Tooltip("view", "Open patient biography")]
 	[IconSet("view", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
+	[ActionPermission("view", AuthorityTokens.Workflow.PatientBiography.View)]
     [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(PreviewToolExtensionPoint))]

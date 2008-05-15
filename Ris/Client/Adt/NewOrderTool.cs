@@ -35,9 +35,10 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -48,7 +49,9 @@ namespace ClearCanvas.Ris.Client.Adt
     [MenuAction("neworder", "patientsearch-items-contextmenu/New Order", "NewOrder")]
     [IconSet("neworder", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("neworder", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Create)]
+
+	[ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
     public class NewOrderTool : Tool<IToolContext>

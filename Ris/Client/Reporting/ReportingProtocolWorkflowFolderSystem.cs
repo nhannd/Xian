@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			new ReportingProtocolWorkflowItemToolExtensionPoint(),
 			new ReportingProtocolWorkflowFolderToolExtensionPoint())
 		{
-			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
 			{
 				this.AddFolder(new Folders.ToBeProtocolledFolder(this));
 			}

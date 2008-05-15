@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             new ReportingMainWorkflowItemToolExtensionPoint(),
             new ReportingMainWorkflowFolderToolExtensionPoint())
         {
-            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewUnfilteredWorkflowFolders))
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
             {
                 this.AddFolder(new Folders.ToBeReportedFolder(this));
             }
@@ -70,13 +70,13 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.AddFolder(new Folders.AssignedFolder(this));
             this.AddFolder(new Folders.DraftFolder(this));
 
-            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow))
+            if (ReportingSettings.Default.EnableTranscriptionWorkflow)
                 this.AddFolder(new Folders.InTranscriptionFolder(this));
 
             this.AddFolder(new Folders.ToBeVerifiedFolder(this));
             this.AddFolder(new Folders.VerifiedFolder(this));
 
-            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
+            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.UnsupervisedReporting))
                 this.AddFolder(new Folders.ReviewResidentReportFolder(this));
 
 

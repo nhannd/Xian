@@ -47,14 +47,24 @@ namespace ClearCanvas.Ris.Client.Admin
     {
         private readonly object _duplicateWorklistActionKey = new object();
 
-        public override void Start()
-        {
-            base.Start();
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-            // add a "duplicate worklist" action 
-            //TODO: change the icon
-            this.ActionModel.AddAction(_duplicateWorklistActionKey, SR.TitleDuplicate, "Icons.EditToolSmall.png", DuplicateWorklist);
-        }
+			// add a "duplicate worklist" action 
+			//TODO: change the icon
+			this.ActionModel.AddAction(_duplicateWorklistActionKey, SR.TitleDuplicate, "Icons.EditToolSmall.png", DuplicateWorklist);
+
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Worklist);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Worklist);
+			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Worklist);
+			model[_duplicateWorklistActionKey].SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Worklist);
+		}
 
         #region Presentation Model
 

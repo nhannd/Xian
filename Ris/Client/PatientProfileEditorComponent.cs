@@ -135,8 +135,11 @@ namespace ClearCanvas.Ris.Client
                             string.Format(SR.TitlePatientComponent, PersonNameFormat.Format(_profile.Name), MrnFormat.Format(_profile.Mrn));
                     }
 
-                    if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.PatientProfileAdmin))
-                    {
+					// if the user has permission to either a) create a new patient, or b) update the patient profile, then 
+					// these pages should be displayed
+					if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.PatientProfile.Update)
+						|| Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Patient.Create))
+					{
                         this.Pages.Add(new NavigatorPage("Patient", _patientEditor = new PatientProfileDetailsEditorComponent(formData.SexChoices, formData.MrnAssigningAuthorityChoices, formData.HealthcardAssigningAuthorityChoices)));
                         this.Pages.Add(new NavigatorPage("Patient/Addresses", _addressesSummary = new AddressesSummaryComponent(formData.AddressTypeChoices)));
                         this.Pages.Add(new NavigatorPage("Patient/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formData.PhoneTypeChoices)));
@@ -152,7 +155,10 @@ namespace ClearCanvas.Ris.Client
                         _additionalPatientInfoSummary.Subject = _profile;
                     }
 
-                    if(Thread.CurrentPrincipal.IsInRole(AuthorityTokens.PatientAdmin))
+					// if the user has permission to either a) create a new patient, or b) update a patient, then
+					// these pages should be displayed
+					if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Patient.Create)
+						|| Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Patient.Update))
                     {
                         this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new PatientNoteSummaryComponent(formData.NoteCategoryChoices)));
                         this.Pages.Add(new NavigatorPage("Patient/Documents", _documentSummary = new MimeDocumentPreviewComponent(true, true)));

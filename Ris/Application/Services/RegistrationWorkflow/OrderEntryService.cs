@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -228,7 +229,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [UpdateOperation]
-        public PlaceOrderResponse PlaceOrder(PlaceOrderRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Create)]
+		public PlaceOrderResponse PlaceOrder(PlaceOrderRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.Requisition, "Requisition");
@@ -245,7 +247,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [UpdateOperation]
-        public ModifyOrderResponse ModifyOrder(ModifyOrderRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Modify)]
+		public ModifyOrderResponse ModifyOrder(ModifyOrderRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
@@ -267,7 +270,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [UpdateOperation]
-        public ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Replace)]
+		public ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");

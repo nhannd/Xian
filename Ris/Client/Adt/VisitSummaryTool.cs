@@ -48,9 +48,10 @@ namespace ClearCanvas.Ris.Client.Adt
     [IconSet("apply", IconScheme.Colour, "Icons.VisitSummaryToolSmall.png", "Icons.VisitSummaryToolMedium.png", "Icons.VisitSummaryToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 
-    [ExtensionOf(typeof(PatientBiographyToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
+	// JR (May 2008): removed this tool because I don't think it makes any sense - this should be built into the biography
+    //[ExtensionOf(typeof(PatientBiographyToolExtensionPoint))]
+    //[ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
+    //[ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     public class VisitSummaryTool : ToolBase
     {
         private bool _enabled;

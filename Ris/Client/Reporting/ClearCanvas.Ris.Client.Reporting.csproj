@@ -51,11 +51,11 @@
     </Compile>
     <Compile Include="ProtocollingComponent.cs" />
     <Compile Include="ProtocollingComponentMode.cs" />
-    <Compile Include="ReportDocumentSettings.cs" />
-    <Compile Include="ReportDocumentSettings.Designer.cs">
+    <Compile Include="ReportingSettings.cs" />
+    <Compile Include="ReportingSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ReportDocumentSettings.settings</DependentUpon>
+      <DependentUpon>ReportingSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="ReportingOrderNoteboxFolderSystem.cs" />
     <Compile Include="ReportingOrderNoteboxFolderSystemTool.cs" />
@@ -175,9 +175,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ProtocolGroupSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="ReportDocumentSettings.settings">
+    <None Include="ReportingSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>ReportDocumentSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>ReportingSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="SupervisorSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

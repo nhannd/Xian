@@ -42,6 +42,7 @@ using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.LocationAdmin;
 using System.Security.Permissions;
 using ClearCanvas.Ris.Application.Common;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
 {
@@ -56,7 +57,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         /// </summary>
         /// <returns></returns>
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.LocationAdmin)]
         public ListAllLocationsResponse ListAllLocations(ListAllLocationsRequest request)
         {
             LocationSearchCriteria criteria = new LocationSearchCriteria();
@@ -85,7 +85,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.LocationAdmin)]
         public LoadLocationForEditResponse LoadLocationForEdit(LoadLocationForEditRequest request)
         {
             // note that the version of the LocationRef is intentionally ignored here (default behaviour of ReadOperation)
@@ -98,9 +97,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         /// <summary>
         /// Add the specified location
         /// </summary>
-        /// <param name="location"></param>
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.LocationAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Location)]
         public AddLocationResponse AddLocation(AddLocationRequest request)
         {
             Location location = new Location();
@@ -120,10 +118,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         /// <summary>
         /// Update the specified location
         /// </summary>
-        /// <param name="location"></param>
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.LocationAdmin)]
-        public UpdateLocationResponse UpdateLocation(UpdateLocationRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Location)]
+		public UpdateLocationResponse UpdateLocation(UpdateLocationRequest request)
         {
             Location location = PersistenceContext.Load<Location>(request.LocationRef, EntityLoadFlags.CheckVersion);
 

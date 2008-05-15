@@ -49,7 +49,8 @@ namespace ClearCanvas.Ris.Client.Reporting
     [IconSet("apply", IconScheme.Colour, "Icons.EditToolSmall.png", "Icons.EditToolSmall.png", "Icons.EditToolSmall.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [LabelValueObserver("apply", "Label", "LabelChanged")]
-    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
+	[ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(Folders.DraftFolder.DropHandlerExtensionPoint))]
     public class EditReportTool : WorkflowItemTool
     {
@@ -177,7 +178,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.VerifyReport)]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify)]
         private EntityRef StartVerification(ReportingWorklistItem item)
         {
             EntityRef result = null;
@@ -191,7 +192,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             return result;
         }
 
-        private EntityRef StartInterpretation(ReportingWorklistItem item, List<ReportingWorklistItem> linkedInterpretations)
+		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
+		private EntityRef StartInterpretation(ReportingWorklistItem item, List<ReportingWorklistItem> linkedInterpretations)
         {
             List<EntityRef> linkedInterpretationRefs = linkedInterpretations.ConvertAll<EntityRef>(
                 delegate(ReportingWorklistItem x) { return x.ProcedureStepRef; });

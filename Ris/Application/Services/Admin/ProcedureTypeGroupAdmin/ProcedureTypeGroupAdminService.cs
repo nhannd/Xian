@@ -52,7 +52,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
         #region IProcedureTypeGroupAdminService Members
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.ProcedureTypeGroupAdmin)]
         public GetProcedureTypeGroupEditFormDataResponse GetProcedureTypeGroupEditFormData(
             GetProcedureTypeGroupEditFormDataRequest request)
         {
@@ -80,7 +79,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.ProcedureTypeGroupAdmin)]
         public ListProcedureTypeGroupsResponse ListProcedureTypeGroups(
             ListProcedureTypeGroupsRequest request)
         {
@@ -100,7 +98,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.ProcedureTypeGroupAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ProcedureTypeGroup)]
         public LoadProcedureTypeGroupForEditResponse LoadProcedureTypeGroupForEdit(
             LoadProcedureTypeGroupForEditRequest request)
         {
@@ -111,8 +109,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.ProcedureTypeGroupAdmin)]
-        public AddProcedureTypeGroupResponse AddProcedureTypeGroup(
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ProcedureTypeGroup)]
+		public AddProcedureTypeGroupResponse AddProcedureTypeGroup(
             AddProcedureTypeGroupRequest request)
         {
             if (string.IsNullOrEmpty(request.Detail.Name))
@@ -133,8 +131,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.ProcedureTypeGroupAdmin)]
-        public UpdateProcedureTypeGroupResponse UpdateProcedureTypeGroup(
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ProcedureTypeGroup)]
+		public UpdateProcedureTypeGroupResponse UpdateProcedureTypeGroup(
             UpdateProcedureTypeGroupRequest request)
         {
             ProcedureTypeGroup group = PersistenceContext.Load<ProcedureTypeGroup>(request.EntityRef);

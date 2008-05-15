@@ -456,17 +456,17 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		public bool SendToTranscriptionVisible
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow); }
+			get { return ReportingSettings.Default.EnableTranscriptionWorkflow; }
 		}
 
 		public bool VerifyReportVisible
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport); }
+			get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify); }
 		}
 
 		public bool SupervisorVisible
 		{
-			get { return !Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UnsupervisedReporting); }
+			get { return !Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.UnsupervisedReporting); }
 		}
 
 		public void Verify()
@@ -530,7 +530,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 				if (!_reportEditor.Save(ReportEditorCloseReason.SendToBeVerified))
 					return;
 
-				if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && _supervisor == null)
+				if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.UnsupervisedReporting) == false && _supervisor == null)
 				{
 					this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
 					return;
@@ -643,17 +643,28 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		private bool CanVerify
 		{
-			get { return (_canCompleteInterpretationAndVerify || _canCompleteVerification) && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport); }
+			get
+			{
+				 return (_canCompleteInterpretationAndVerify || _canCompleteVerification)
+					 && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify);
+			}
 		}
 
 		private bool CanSendToBeVerified
 		{
-			get { return _canCompleteInterpretationForVerification; }
+			get
+			{
+				 return _canCompleteInterpretationForVerification;
+			}
 		}
 
 		private bool CanSendToTranscription
 		{
-			get { return _canCompleteInterpretationForTranscription && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow); }
+			get
+			{
+				 return _canCompleteInterpretationForTranscription
+					 && ReportingSettings.Default.EnableTranscriptionWorkflow;
+			}
 		}
 
 

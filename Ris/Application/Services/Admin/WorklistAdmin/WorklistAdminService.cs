@@ -79,7 +79,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
         public ListWorklistsResponse ListWorklists(ListWorklistsRequest request)
         {
             Platform.CheckForNullReference(request, "request");
@@ -115,7 +114,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
         public ListProcedureTypeGroupsResponse ListProcedureTypeGroups(ListProcedureTypeGroupsRequest request)
         {
             Platform.CheckForNullReference(request, "request");
@@ -141,7 +139,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
         public GetWorklistEditFormDataResponse GetWorklistEditFormData(GetWorklistEditFormDataRequest request)
         {
             GetWorklistEditFormDataResponse response = new GetWorklistEditFormDataResponse();
@@ -187,7 +184,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
         public LoadWorklistForEditResponse LoadWorklistForEdit(LoadWorklistForEditRequest request)
         {
             Worklist worklist = PersistenceContext.Load<Worklist>(request.EntityRef);
@@ -197,8 +194,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
-        public AddWorklistResponse AddWorklist(AddWorklistRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
+		public AddWorklistResponse AddWorklist(AddWorklistRequest request)
         {
             if(string.IsNullOrEmpty(request.Detail.Name))
             {
@@ -216,8 +213,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
-        public UpdateWorklistResponse UpdateWorklist(UpdateWorklistRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
+		public UpdateWorklistResponse UpdateWorklist(UpdateWorklistRequest request)
         {
             Worklist worklist = this.PersistenceContext.Load<Worklist>(request.EntityRef);
 
@@ -228,8 +225,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
-        public DeleteWorklistResponse DeleteWorklist(DeleteWorklistRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
+		public DeleteWorklistResponse DeleteWorklist(DeleteWorklistRequest request)
         {
             Worklist worklist = this.PersistenceContext.Load<Worklist>(request.WorklistRef, EntityLoadFlags.Proxy);
             PersistenceContext.GetBroker<IWorklistBroker>().Delete(worklist);

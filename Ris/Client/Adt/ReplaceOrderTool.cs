@@ -46,7 +46,9 @@ namespace ClearCanvas.Ris.Client.Adt
     [ButtonAction("apply", "folderexplorer-items-toolbar/Replace Order", "Apply")]
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Replace)]
+
+	[ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(TechnologistMainWorkflowItemToolExtensionPoint))]
     public class ReplaceOrderTool : Tool<IWorkflowItemToolContext>

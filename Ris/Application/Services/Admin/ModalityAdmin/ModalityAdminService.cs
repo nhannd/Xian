@@ -42,6 +42,7 @@ using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin;
 using System.Security.Permissions;
 using ClearCanvas.Ris.Application.Common;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
 {
@@ -52,7 +53,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
         #region IModalityAdminService Members
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.ModalityAdmin)]
         public ListAllModalitiesResponse ListAllModalities(ListAllModalitiesRequest request)
         {
             ModalitySearchCriteria criteria = new ModalitySearchCriteria();
@@ -68,7 +68,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.ModalityAdmin)]
         public LoadModalityForEditResponse LoadModalityForEdit(LoadModalityForEditRequest request)
         {
             // note that the version of the ModalityRef is intentionally ignored here (default behaviour of ReadOperation)
@@ -79,7 +78,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.ModalityAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Modality)]
         public AddModalityResponse AddModality(AddModalityRequest request)
         {
             Modality modality = new Modality();
@@ -95,8 +94,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.ModalityAdmin)]
-        public UpdateModalityResponse UpdateModality(UpdateModalityRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Modality)]
+		public UpdateModalityResponse UpdateModality(UpdateModalityRequest request)
         {
             Modality modality = PersistenceContext.Load<Modality>(request.ModalityRef, EntityLoadFlags.CheckVersion);
 

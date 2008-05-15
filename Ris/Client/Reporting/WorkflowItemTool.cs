@@ -110,7 +110,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             if(!ActivateIfAlreadyOpen(item))
             {
-                if (ReportDocumentSettings.Default.AllowOnlyOneReportingComponent)
+                if (!ReportingSettings.Default.AllowMultipleReportingWorkspaces)
                 {
                     List<Workspace> documents = DocumentManager.GetAll<ReportDocument>();
 

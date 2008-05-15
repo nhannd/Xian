@@ -44,6 +44,9 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 using System.ServiceModel;
 using System.Security.Permissions;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using ClearCanvas.Common.Authorization;
+using ClearCanvas.Enterprise.Authentication.Imex;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 {
@@ -54,7 +57,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         #region IUserAdminService Members
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role=ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
         public ListUsersResponse ListUsers(ListUsersRequest request)
         {
             UserSearchCriteria criteria = new UserSearchCriteria();
@@ -70,8 +73,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
-        public LoadUserForEditResponse LoadUserForEdit(LoadUserForEditRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
+		public LoadUserForEditResponse LoadUserForEdit(LoadUserForEditRequest request)
         {
             User user = FindUserByName(request.UserName);
             Staff staff = null;
@@ -94,9 +97,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
-        public ListAuthorityGroupsResponse ListAuthorityGroups(ListAuthorityGroupsRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.AuthorityGroup)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
+		public ListAuthorityGroupsResponse ListAuthorityGroups(ListAuthorityGroupsRequest request)
         {
             AuthorityGroupSearchCriteria criteria = new AuthorityGroupSearchCriteria();
 
@@ -111,8 +114,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
-        public LoadAuthorityGroupForEditResponse LoadAuthorityGroupForEdit(LoadAuthorityGroupForEditRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.AuthorityGroup)]
+		public LoadAuthorityGroupForEditResponse LoadAuthorityGroupForEdit(LoadAuthorityGroupForEditRequest request)
         {
             AuthorityGroup authorityGroup = FindAuthorityGroupByName(request.AuthorityGroupName);
             AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
@@ -120,8 +123,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
-        public ListAuthorityTokensResponse ListAuthorityTokens(ListAuthorityTokensRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.AuthorityGroup)]
+		public ListAuthorityTokensResponse ListAuthorityTokens(ListAuthorityTokensRequest request)
         {
             AuthorityTokenAssembler assembler = new AuthorityTokenAssembler();
             List<AuthorityTokenSummary> authorityTokens = CollectionUtils.Map<AuthorityToken, AuthorityTokenSummary, List<AuthorityTokenSummary>>(
@@ -133,9 +136,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             return new ListAuthorityTokensResponse(authorityTokens);
         }
 
-        [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
-        public AddUserResponse AddUser(AddUserRequest request)
+    	[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
+		public AddUserResponse AddUser(AddUserRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.UserDetail, "UserDetail");
@@ -164,8 +167,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
-        public UpdateUserResponse UpdateUser(UpdateUserRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
+		public UpdateUserResponse UpdateUser(UpdateUserRequest request)
         {
             User user = FindUserByName(request.UserDetail.UserName);
 
@@ -202,8 +205,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
-        public ResetUserPasswordResponse ResetUserPassword(ResetUserPasswordRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
+		public ResetUserPasswordResponse ResetUserPassword(ResetUserPasswordRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.UserName, "UserName");
@@ -216,8 +219,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
-        public AddAuthorityGroupResponse AddAuthorityGroup(AddAuthorityGroupRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.AuthorityGroup)]
+		public AddAuthorityGroupResponse AddAuthorityGroup(AddAuthorityGroupRequest request)
         {
             AuthorityGroup authorityGroup = new AuthorityGroup();
             AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
@@ -230,8 +233,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
-        public UpdateAuthorityGroupResponse UpdateAuthorityGroup(UpdateAuthorityGroupRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.AuthorityGroup)]
+		public UpdateAuthorityGroupResponse UpdateAuthorityGroup(UpdateAuthorityGroupRequest request)
         {
             AuthorityGroup authorityGroup = FindAuthorityGroupByName(request.AuthorityGroupDetail.Name);
             AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
@@ -242,7 +245,52 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             return new UpdateAuthorityGroupResponse(assembler.GetAuthorityGroupSummary(authorityGroup));
         }
 
-        #endregion
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.AuthorityGroup)]
+		public ImportAuthorityTokensResponse ImportAuthorityTokens(ImportAuthorityTokensRequest request)
+		{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.Tokens, "Tokens");
+
+			if(request.Tokens.Count > 0)
+			{
+				AuthorityTokenImporter importer = new AuthorityTokenImporter();
+				importer.Import(
+					CollectionUtils.Map<AuthorityTokenSummary, AuthorityTokenDefinition>(request.Tokens,
+						delegate(AuthorityTokenSummary s) { return new AuthorityTokenDefinition(s.Name, s.Description); }),
+						(IUpdateContext)PersistenceContext);
+
+			}
+
+			return new ImportAuthorityTokensResponse();
+		}
+
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.AuthorityGroup)]
+		public ImportAuthorityGroupsResponse ImportAuthorityGroups(ImportAuthorityGroupsRequest request)
+    	{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.AuthorityGroups, "AuthorityGroups");
+
+			if (request.AuthorityGroups.Count > 0)
+			{
+				AuthorityGroupImporter importer = new AuthorityGroupImporter();
+				importer.Import(
+					CollectionUtils.Map<AuthorityGroupDetail, AuthorityGroupDefinition>(request.AuthorityGroups,
+						delegate(AuthorityGroupDetail g)
+						{
+							return new AuthorityGroupDefinition(g.Name,
+								CollectionUtils.Map<AuthorityTokenSummary, string>(g.AuthorityTokens,
+								   delegate(AuthorityTokenSummary s) { return s.Name; }).ToArray());
+						}),
+						(IUpdateContext)PersistenceContext);
+
+			}
+
+			return new ImportAuthorityGroupsResponse();
+		}
+
+    	#endregion
 
         private AuthorityGroup FindAuthorityGroupByName(string name)
         {

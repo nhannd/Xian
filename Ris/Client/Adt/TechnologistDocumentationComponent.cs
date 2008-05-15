@@ -42,6 +42,9 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
+using System.Security.Permissions;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using System.Threading;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -181,7 +184,6 @@ namespace ClearCanvas.Ris.Client.Adt
         private TechnologistDocumentationOrderDetailsComponent _orderDetailsComponent;
 
         private bool _completeEnabled;
-        private bool _saveEnabled = true;
 
         private event EventHandler _documentCompleted;
         private event EventHandler _documentSaved;
@@ -268,6 +270,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Documentation.Create)]
         public void SaveDocumentation()
         {
             try
@@ -283,7 +286,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public bool SaveEnabled
         {
-            get { return _saveEnabled; }
+			get { return true; }
         }
 
         public event EventHandler DocumentSaved
@@ -292,7 +295,8 @@ namespace ClearCanvas.Ris.Client.Adt
             remove { _documentSaved -= value; }
         }
 
-        public void CompleteDocumentation()
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Documentation.Accept)]
+		public void CompleteDocumentation()
         {
             try
             {
@@ -310,6 +314,14 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get { return _completeEnabled; }
         }
+
+    	public bool CompleteVisible
+    	{
+    		get
+    		{
+    			return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Documentation.Accept);
+    		}
+    	}
 
         public event EventHandler DocumentCompleted
         {

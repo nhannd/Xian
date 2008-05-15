@@ -142,7 +142,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void AddVisitLocation()
         {
-            DummyAddVisitLocation();
+            //DummyAddVisitLocation();
             
             LoadVisitLocations();
             this.Modified = true;
@@ -150,7 +150,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void UpdateSelectedVisitLocation()
         {
-            DummyUpdateSelectedVisitLocation();
+            //DummyUpdateSelectedVisitLocation();
 
             LoadVisitLocations();
             this.Modified = true;
@@ -169,103 +169,5 @@ namespace ClearCanvas.Ris.Client.Adt
             _locationsTable.Items.Clear();
             _locationsTable.Items.AddRange(_visit.Locations);
         }
-
-        #region Dummy Code
-
-        // TODO: remove dummy codes
-        private void DummyAddVisitLocation()
-        {
-            try
-            {
-                FacilitySummary facility = new FacilitySummary();
-                LocationSummary location = new LocationSummary();
-                EnumValueInfo randomInformationAuthority = null;
-
-                Platform.GetService<IFacilityAdminService>(
-                    delegate(IFacilityAdminService service)
-                    {
-                        GetFacilityEditFormDataResponse formResponse = service.GetFacilityEditFormData(new GetFacilityEditFormDataRequest());
-                        randomInformationAuthority = RandomUtils.ChooseRandom(formResponse.InformationAuthorityChoices);
-
-                        ListAllFacilitiesResponse listResponse = service.ListAllFacilities(new ListAllFacilitiesRequest());
-                        if (listResponse.Facilities.Count == 0)
-                        {
-                            AddFacilityResponse addResponse = service.AddFacility(new AddFacilityRequest(new FacilityDetail("", "Test Facility", randomInformationAuthority)));
-                            facility = addResponse.Facility;
-                        }
-                        else
-                        {
-                            facility = listResponse.Facilities[0];
-                        }
-
-                    });
-
-                Platform.GetService<ILocationAdminService>(
-                    delegate(ILocationAdminService service)
-                    {
-                        ListAllLocationsResponse listResponse= service.ListAllLocations(new ListAllLocationsRequest(true));
-                        if (listResponse.Locations.Count == 0)
-                        {
-                            LocationDetail locationDetail = new LocationDetail(
-                                    facility,
-                                    "Building",
-                                    "Floor",
-                                    "Point of Care",
-                                    "Room",
-                                    "Bed");
-
-                            AddLocationResponse response = service.AddLocation(new AddLocationRequest(locationDetail));
-                            location = response.Location;
-                        }
-                        else
-                        {
-                            location = listResponse.Locations[0];
-                        }
-                    });
-
-                VisitLocationDetail vl = new VisitLocationDetail();
-
-                vl.Role = CollectionUtils.SelectFirst<EnumValueInfo>(_visitLocationRoleChoices,
-                        delegate(EnumValueInfo e) { return e.Code == "CR"; });
-                vl.Location = location;
-                vl.StartTime = Platform.Time;
-                vl.EndTime = null;
-
-                _visit.Locations.Add(vl);
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, SR.ExceptionCannotAddVisitLocation, this.Host.DesktopWindow,
-                    delegate
-                    {
-                        this.ExitCode = ApplicationComponentExitCode.Error;
-                        this.Host.Exit();
-                    });
-            }
-        }
-
-        private void DummyUpdateSelectedVisitLocation()
-        {
-            try
-            {
-                VisitLocationDetail vl = _currentVisitLocationSelection;
-
-                vl.Role = CollectionUtils.SelectFirst<EnumValueInfo>(_visitLocationRoleChoices,
-                    delegate(EnumValueInfo e) { return e.Code == "PR"; });
-                vl.EndTime = Platform.Time;
-
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, SR.ExceptionCannotAddVisitLocation, this.Host.DesktopWindow,
-                    delegate
-                    {
-                        this.ExitCode = ApplicationComponentExitCode.Error;
-                        this.Host.Exit();
-                    });
-            }
-        }
-
-        #endregion
     }
 }

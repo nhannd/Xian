@@ -40,6 +40,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin
     [DataContract]
     public class ListAllNoteCategoriesRequest : PagedDataContractBase
     {
-        // none
+        public ListAllNoteCategoriesRequest()
+        {
+        }
+
+		public ListAllNoteCategoriesRequest(SearchResultPage page)
+            :base(page)
+        {
+        }
     }
 }

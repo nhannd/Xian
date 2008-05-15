@@ -30,18 +30,22 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Protocol Groups", "Launch")]
-    [ActionPermission("launch", AuthorityTokens.ProtocolGroupAdmin)]
+    [ActionPermission("launch", AuthorityTokens.Admin.Data.ProtocolGroups)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ProtocolGroupSummaryTool : Tool<IDesktopToolContext>
     {
@@ -85,167 +89,108 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// ProtocolGroupSummaryComponent class
     /// </summary>
-    [AssociateView(typeof(ProtocolGroupSummaryComponentViewExtensionPoint))]
-    public class ProtocolGroupSummaryComponent : ApplicationComponent
+    public class ProtocolGroupSummaryComponent : SummaryComponentBase<ProtocolGroupSummary, ProtocolGroupTable>
     {
-        #region Private fields
-
-        private ProtocolGroupSummary _selectedProtocolGroup;
-        private readonly ProtocolGroupTable _protocolGroupTable;
-        private readonly CrudActionModel _protocolGroupActionHandler;
-
-        private PagingController<ProtocolGroupSummary> _pagingController;
-        private PagingActionModel<ProtocolGroupSummary> _pagingActionHandler;
-
-        #endregion
-
-        #region Constructors
 
         /// <summary>
         /// Constructor
         /// </summary>
         public ProtocolGroupSummaryComponent()
         {
-            _protocolGroupTable = new ProtocolGroupTable();
-            _protocolGroupActionHandler = new CrudActionModel();
         }
 
-        #endregion
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-        #region ApplicationComponent overrides
+			model.Add.SetPermissibility(AuthorityTokens.Admin.Data.ProtocolGroups);
+			model.Edit.SetPermissibility(AuthorityTokens.Admin.Data.ProtocolGroups);
+		}
 
-        public override void Start()
-        {
-            _protocolGroupActionHandler.Add.SetClickHandler(AddProtocolGroup);
-            _protocolGroupActionHandler.Edit.SetClickHandler(EditSelectedProtocolGroup);
-            _protocolGroupActionHandler.Add.Enabled = true;
-            _protocolGroupActionHandler.Edit.Enabled = false;
-            _protocolGroupActionHandler.Delete.Visible = false;
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<ProtocolGroupSummary> ListItems(int firstItem, int maxItems)
+		{
+			ListProtocolGroupsResponse listResponse = null;
+			Platform.GetService<IProtocolAdminService>(
+				delegate(IProtocolAdminService service)
+				{
+					listResponse = service.ListProtocolGroups(new ListProtocolGroupsRequest(new SearchResultPage(firstItem, maxItems)));
+				});
 
-            InitialisePaging();
-            _protocolGroupActionHandler.Merge(_pagingActionHandler);
+			return listResponse.ProtocolGroups;
+		}
 
-            LoadProtocolGroupTable();
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<ProtocolGroupSummary> addedItems)
+		{
+			addedItems = new List<ProtocolGroupSummary>();
+			ProtocolGroupEditorComponent editor = new ProtocolGroupEditorComponent();
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleAddProtocolGroup);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(editor.ProtocolGroupSummary);
+				return true;
+			}
+			return false;
+		}
 
-            base.Start();
-        }
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<ProtocolGroupSummary> items, out IList<ProtocolGroupSummary> editedItems)
+		{
+			editedItems = new List<ProtocolGroupSummary>();
+			ProtocolGroupSummary item = CollectionUtils.FirstElement(items);
 
-        public override void Stop()
-        {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
-            base.Stop();
-        }
+			ProtocolGroupEditorComponent editor = new ProtocolGroupEditorComponent(item.ProtocolGroupRef);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleEditProtocolGroup);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(editor.ProtocolGroupSummary);
+				return true;
+			}
+			return false;
+		}
 
-        #endregion
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<ProtocolGroupSummary> items)
+		{
+			throw new NotImplementedException();
+		}
 
-        #region ActionModel handlers
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(ProtocolGroupSummary x, ProtocolGroupSummary y)
+		{
+			return x.ProtocolGroupRef.Equals(y.ProtocolGroupRef, true);
+		}
 
-        public void AddProtocolGroup()
-        {
-            try
-            {
-                ProtocolGroupEditorComponent editor = new ProtocolGroupEditorComponent();
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleAddProtocolGroup);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _protocolGroupTable.Items.Add(_selectedProtocolGroup = editor.ProtocolGroupSummary);
-                    ProtocolGroupSelectionChanged();
-                }
-            }
-            catch (Exception e)
-            {
-                // could not launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void EditSelectedProtocolGroup()
-        {
-            try
-            {
-                ProtocolGroupEditorComponent editor = new ProtocolGroupEditorComponent(_selectedProtocolGroup.EntityRef);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleEditProtocolGroup);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _protocolGroupTable.Items.Replace(
-                        delegate(ProtocolGroupSummary s) { return s.EntityRef.Equals(editor.ProtocolGroupSummary.EntityRef, true); },
-                        editor.ProtocolGroupSummary);
-                    _selectedProtocolGroup = editor.ProtocolGroupSummary;
-                }
-            }
-            catch (Exception e)
-            {
-                // could not launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        #endregion
-
-        #region Presentation Model
-
-        public ITable ProtocolGroups
-        {
-            get { return _protocolGroupTable; }
-        }
-
-        public ActionModelNode ProtocolGroupListActionModel
-        {
-            get { return _protocolGroupActionHandler; }
-        }
-
-        public ISelection SelectedProtocolGroup
-        {
-            get { return new Selection(_selectedProtocolGroup); }
-            set
-            {
-                _selectedProtocolGroup = (ProtocolGroupSummary) value.Item;
-                ProtocolGroupSelectionChanged();
-            }
-        }
-
-        #endregion
-
-        #region private methods
-
-        private void InitialisePaging()
-        {
-            _pagingController = new PagingController<ProtocolGroupSummary>(
-                delegate(int firstRow, int maxRows)
-                {
-                    ListProtocolGroupsResponse listResponse = null;
-
-                    Platform.GetService<IProtocolAdminService>(
-                        delegate(IProtocolAdminService service)
-                        {
-                            ListProtocolGroupsRequest listRequest = new ListProtocolGroupsRequest();
-                            listRequest.Page.FirstRow = firstRow;
-                            listRequest.Page.MaxRows = maxRows;
-
-                            listResponse = service.ListProtocolGroups(listRequest);
-                        });
-
-                    return listResponse.ProtocolGroups;
-                }
-            );
-
-            _pagingActionHandler = new PagingActionModel<ProtocolGroupSummary>(_pagingController, _protocolGroupTable, Host.DesktopWindow);
-        }
-
-        private void LoadProtocolGroupTable()
-        {
-            _protocolGroupTable.Items.Clear();
-            _protocolGroupTable.Items.AddRange(_pagingController.GetFirst());
-        }
-
-        private void ProtocolGroupSelectionChanged()
-        {
-            _protocolGroupActionHandler.Edit.Enabled = _selectedProtocolGroup != null;
-        }
-
-        #endregion
     }
 }

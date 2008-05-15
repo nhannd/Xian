@@ -33,18 +33,20 @@ using System;
 using System.Collections.Generic;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Facilities", "Launch")]
-    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.FacilityAdmin)]
-
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Facility)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class FacilitySummaryTool : Tool<IDesktopToolContext>
     {
@@ -89,16 +91,8 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// FacilitySummaryComponent class
     /// </summary>
-    [AssociateView(typeof(FacilitySummaryComponentViewExtensionPoint))]
-    public class FacilitySummaryComponent : ApplicationComponent
+    public class FacilitySummaryComponent : SummaryComponentBase<FacilitySummary, FacilityTable>
     {
-        private FacilitySummary _selectedFacility;
-        private FacilityTable _facilityTable;
-        private CrudActionModel _facilityActionHandler;
-
-        private PagingController<FacilitySummary> _pagingController;
-        private PagingActionModel<FacilitySummary> _pagingActionHandler;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -106,135 +100,97 @@ namespace ClearCanvas.Ris.Client.Admin
         {
         }
 
-        public override void Start()
-        {
-            _facilityTable = new FacilityTable();
-            _facilityActionHandler = new CrudActionModel();
-            _facilityActionHandler.Add.SetClickHandler(AddFacility);
-            _facilityActionHandler.Edit.SetClickHandler(UpdateSelectedFacility);
-            _facilityActionHandler.Add.Enabled = true;
-            _facilityActionHandler.Delete.Enabled = false;
+    	/// <summary>
+    	/// Override this method to perform custom initialization of the action model,
+    	/// such as adding permissions or adding custom actions.
+    	/// </summary>
+    	/// <param name="model"></param>
+    	protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-            InitialisePaging();
-            _facilityActionHandler.Merge(_pagingActionHandler);
+			model.Add.SetPermissibility(AuthorityTokens.Admin.Data.Facility);
+			model.Edit.SetPermissibility(AuthorityTokens.Admin.Data.Facility);
+		}
 
-            LoadFacilityTable();
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<FacilitySummary> ListItems(int firstItem, int maxItems)
+		{
+			ListAllFacilitiesResponse listResponse = null;
+			Platform.GetService<IFacilityAdminService>(
+				delegate(IFacilityAdminService service)
+				{
+					listResponse = service.ListAllFacilities(new ListAllFacilitiesRequest(new SearchResultPage(firstItem, maxItems)));
+				});
 
-            base.Start();
-        }
+			return listResponse.Facilities;
+		}
 
-        private void InitialisePaging()
-        {
-            _pagingController = new PagingController<FacilitySummary>(
-                delegate(int firstRow, int maxRows)
-                {
-                    ListAllFacilitiesResponse listResponse = null;
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<FacilitySummary> addedItems)
+		{
+			addedItems = new List<FacilitySummary>();
+			FacilityEditorComponent editor = new FacilityEditorComponent();
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleAddFacility);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(editor.FacilitySummary);
+				return true;
+			}
+			return false;
+		}
 
-                    Platform.GetService<IFacilityAdminService>(
-                        delegate(IFacilityAdminService service)
-                        {
-                            ListAllFacilitiesRequest listRequest = new ListAllFacilitiesRequest();
-                            listRequest.Page.FirstRow = firstRow;
-                            listRequest.Page.MaxRows = maxRows;
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<FacilitySummary> items, out IList<FacilitySummary> editedItems)
+		{
+			editedItems = new List<FacilitySummary>();
+			FacilitySummary item = CollectionUtils.FirstElement(items);
 
-                            listResponse = service.ListAllFacilities(listRequest);
-                        });
+			FacilityEditorComponent editor = new FacilityEditorComponent(item.FacilityRef);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleUpdateFacility);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(editor.FacilitySummary);
+				return true;
+			}
+			return false;
+		}
 
-                    return listResponse.Facilities;
-                }
-            );
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<FacilitySummary> items)
+		{
+			throw new NotImplementedException();
+		}
 
-            _pagingActionHandler = new PagingActionModel<FacilitySummary>(_pagingController, _facilityTable, Host.DesktopWindow);
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
-
-        #region Presentation Model
-
-        public ITable Facilities
-        {
-            get { return _facilityTable; }
-        }
-
-        public ActionModelNode FacilityListActionModel
-        {
-            get { return _facilityActionHandler; }
-        }
-
-        public ISelection SelectedFacility
-        {
-            get { return _selectedFacility == null ? Selection.Empty : new Selection(_selectedFacility); }
-            set
-            {
-                _selectedFacility = (FacilitySummary)value.Item;
-                FacilitySelectionChanged();
-            }
-        }
-
-        public void AddFacility()
-        {
-            try
-            {
-                FacilityEditorComponent editor = new FacilityEditorComponent();
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleAddFacility);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _facilityTable.Items.Add(_selectedFacility = editor.FacilitySummary);
-                    FacilitySelectionChanged();
-                }
-
-            }
-            catch (Exception e)
-            {
-                // could not launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void UpdateSelectedFacility()
-        {
-            try
-            {
-                // can occur if user double clicks while holding control
-                if (_selectedFacility == null) return;
-
-                FacilityEditorComponent editor = new FacilityEditorComponent(_selectedFacility.FacilityRef);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleUpdateFacility);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _facilityTable.Items.Replace(delegate(FacilitySummary f) { return f.FacilityRef.Equals(editor.FacilitySummary.FacilityRef, true); },
-                        editor.FacilitySummary);
-                }
-            }
-            catch (Exception e)
-            {
-                // could not launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        #endregion
-
-        private void LoadFacilityTable()
-        {
-            _facilityTable.Items.Clear();
-            _facilityTable.Items.AddRange(_pagingController.GetFirst());
-        }
-
-        private void FacilitySelectionChanged()
-        {
-            if (_selectedFacility != null)
-                _facilityActionHandler.Edit.Enabled = true;
-            else
-                _facilityActionHandler.Edit.Enabled = false;
-
-            NotifyPropertyChanged("SelectedFacility");
-        }
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(FacilitySummary x, FacilitySummary y)
+		{
+			return x.FacilityRef.Equals(y.FacilityRef, true);
+		}
     }
 }

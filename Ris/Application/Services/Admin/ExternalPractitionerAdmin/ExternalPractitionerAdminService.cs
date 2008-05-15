@@ -42,6 +42,7 @@ using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common;
 using System.Security.Permissions;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 {
@@ -104,8 +105,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
         }
 
         [UpdateOperation]
-        //[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.ExternalPractitionerAdmin)]
-        public AddExternalPractitionerResponse AddExternalPractitioner(AddExternalPractitionerRequest request)
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ExternalPractitioner)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.ExternalPractitioner.Create)]
+		public AddExternalPractitionerResponse AddExternalPractitioner(AddExternalPractitionerRequest request)
         {
             ExternalPractitioner prac = new ExternalPractitioner();
 
@@ -121,8 +123,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
         }
 
         [UpdateOperation]
-        //[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.ExternalPractitionerAdmin)]
-        public UpdateExternalPractitionerResponse UpdateExternalPractitioner(UpdateExternalPractitionerRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ExternalPractitioner)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.ExternalPractitioner.Update)]
+		public UpdateExternalPractitionerResponse UpdateExternalPractitioner(UpdateExternalPractitionerRequest request)
         {
             ExternalPractitioner prac = PersistenceContext.Load<ExternalPractitioner>(request.PractitionerRef, EntityLoadFlags.CheckVersion);
 

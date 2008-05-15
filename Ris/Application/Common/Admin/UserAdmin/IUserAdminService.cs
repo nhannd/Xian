@@ -129,5 +129,21 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
         /// <returns><see cref="ListAuthorityTokensResponse"/></returns>
         [OperationContract]
         ListAuthorityTokensResponse ListAuthorityTokens(ListAuthorityTokensRequest request);
-    }
+
+		/// <summary>
+		/// Imports authority tokens from a remote source.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		ImportAuthorityTokensResponse ImportAuthorityTokens(ImportAuthorityTokensRequest request);
+
+		/// <summary>
+		/// Imports authority groups from a remote source.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		ImportAuthorityGroupsResponse ImportAuthorityGroups(ImportAuthorityGroupsRequest request);
+	}
 }

@@ -40,6 +40,8 @@ using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
+using System.Threading;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -175,7 +177,11 @@ namespace ClearCanvas.Ris.Client
                     this.Pages.Add(new NavigatorPage("Staff", _detailsEditor = new StaffDetailsEditorComponent(_isNew, formDataResponse.StaffTypeChoices)));
                     _detailsEditor.StaffDetail = _staffDetail;
 
-                    this.Pages.Add(new NavigatorPage("Staff/Groups", _groupsEditor = new StaffStaffGroupEditorComponent(_staffDetail.Groups, formDataResponse.StaffGroupChoices)));
+					// allow modification of groups only iff the user has StaffGroup admin permissions
+					if(Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup))
+					{
+						this.Pages.Add(new NavigatorPage("Staff/Groups", _groupsEditor = new StaffStaffGroupEditorComponent(_staffDetail.Groups, formDataResponse.StaffGroupChoices)));
+					}
                 });
 
             // instantiate all extension pages
@@ -214,7 +220,10 @@ namespace ClearCanvas.Ris.Client
                 _extensionPages.ForEach(delegate (IStaffEditorPage page) { page.Save(); });
 
                 // update groups
-                _staffDetail.Groups = new List<StaffGroupSummary>(_groupsEditor.SelectedItems);
+				if(_groupsEditor != null)
+				{
+					_staffDetail.Groups = new List<StaffGroupSummary>(_groupsEditor.SelectedItems);
+				}
 
                 Platform.GetService<IStaffAdminService>(
                     delegate(IStaffAdminService service)

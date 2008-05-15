@@ -40,5 +40,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin
     [DataContract]
     public class ListAllFacilitiesRequest : PagedDataContractBase
     {
+        public ListAllFacilitiesRequest()
+        {
+        }
+
+		public ListAllFacilitiesRequest(SearchResultPage page)
+            :base(page)
+        {
+        }
     }
 }

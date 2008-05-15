@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -41,8 +42,8 @@ namespace ClearCanvas.Ris.Client.Reporting
     [MenuAction("apply", "folderexplorer-items-contextmenu/Send/To Transcription", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.UseTranscriptionWorkflow)]
-    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+	[EnabledStateObserver("apply", "Visible", "VisibleChanged")]
+	[ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(Folders.InTranscriptionFolder.DropHandlerExtensionPoint))]
     public class CompleteInterpretationForTranscriptionTool : WorkflowItemTool
     {
@@ -50,6 +51,17 @@ namespace ClearCanvas.Ris.Client.Reporting
             : base("CompleteInterpretationForTranscription")
         {
         }
+
+    	public bool Visible
+    	{
+			get { return ReportingSettings.Default.EnableTranscriptionWorkflow; }
+    	}
+
+		public event EventHandler VisibleChanged
+		{
+			add {}
+			remove { }
+		}
 
         protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
         {
@@ -76,7 +88,8 @@ namespace ClearCanvas.Ris.Client.Reporting
     [MenuAction("apply", "folderexplorer-items-contextmenu/Send/To be Verified", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
+	[ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(Folders.ToBeVerifiedFolder.DropHandlerExtensionPoint))]
     public class CompleteInterpretationForVerificationTool : WorkflowItemTool
     {
@@ -110,7 +123,8 @@ namespace ClearCanvas.Ris.Client.Reporting
     [MenuAction("apply", "folderexplorer-items-contextmenu/Send/To be Reported", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+	[ActionPermission("apply", AuthorityTokens.Workflow.Report.Cancel)]
+	[ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
     public class CancelReportingStepTool : WorkflowItemTool
     {
         public CancelReportingStepTool()
@@ -149,7 +163,7 @@ namespace ClearCanvas.Ris.Client.Reporting
     [ButtonAction("apply", "folderexplorer-items-toolbar/Verify", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.VerifyReport)]
+	[ActionPermission("apply", AuthorityTokens.Workflow.Report.Create, AuthorityTokens.Workflow.Report.Verify)]
     [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(Folders.VerifiedFolder.DropHandlerExtensionPoint))]
     public class VerifyTool : WorkflowItemTool
@@ -225,7 +239,8 @@ namespace ClearCanvas.Ris.Client.Reporting
     [ButtonAction("apply", "folderexplorer-items-toolbar/Add Addendum", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+	[ActionPermission("apply", AuthorityTokens.Workflow.Report.Create)]
+	[ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
     public class AddendumTool : WorkflowItemTool
     {
         public AddendumTool()
@@ -265,7 +280,8 @@ namespace ClearCanvas.Ris.Client.Reporting
     [ButtonAction("apply", "folderexplorer-items-toolbar/Publish (testing)", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+	[ActionPermission("apply", AuthorityTokens.Workflow.Report.Publish)]
+	[ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
     public class PublishReportTool : WorkflowItemTool
     {
         public PublishReportTool()

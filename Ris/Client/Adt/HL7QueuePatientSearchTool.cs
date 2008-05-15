@@ -36,6 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 
@@ -52,8 +53,8 @@ namespace ClearCanvas.Ris.Client.Adt
     [EnabledStateObserver("view2", "Enabled", "EnabledChanged")]
     [Tooltip("view2", "Open patient details")]
 	[IconSet("view2", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolSmall.png", "PatientDetailsToolSmall.png")]
-
-    [ExtensionOf(typeof(HL7QueueToolExtensionPoint))]
+	[ActionPermission("view", AuthorityTokens.Workflow.PatientBiography.View)]
+	[ExtensionOf(typeof(HL7QueueToolExtensionPoint))]
     public class HL7QueuePatientSearchTool : Tool<IHL7QueueToolContext>
     {
         private bool _enabled;

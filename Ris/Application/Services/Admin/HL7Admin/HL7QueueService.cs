@@ -44,6 +44,7 @@ using ClearCanvas.HL7.Processing;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 {
@@ -78,7 +79,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.HL7Admin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Management.HL7.QueueMonitor)]
         public ListHL7QueueItemsResponse ListHL7QueueItems(ListHL7QueueItemsRequest request)
         {
             HL7QueueItemAssembler assembler = new HL7QueueItemAssembler();
@@ -94,8 +95,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         }
 
         [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.HL7Admin)]
-        public LoadHL7QueueItemResponse LoadHL7QueueItem(LoadHL7QueueItemRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Management.HL7.QueueMonitor)]
+		public LoadHL7QueueItemResponse LoadHL7QueueItem(LoadHL7QueueItemRequest request)
         {
             HL7QueueItem queueItem = PersistenceContext.Load<HL7QueueItem>(request.QueueItemRef);
             HL7QueueItemAssembler assembler = new HL7QueueItemAssembler();
@@ -155,8 +156,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.HL7Admin)]
-        public ProcessHL7QueueItemResponse ProcessHL7QueueItem(ProcessHL7QueueItemRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Management.HL7.QueueMonitor)]
+		public ProcessHL7QueueItemResponse ProcessHL7QueueItem(ProcessHL7QueueItemRequest request)
         {
             HL7QueueItem queueItem = PersistenceContext.Load<HL7QueueItem>(request.QueueItemRef);
 
