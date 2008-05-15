@@ -178,6 +178,24 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Protocolling from the \&quot;{0}\&quot; worklist.
+        /// </summary>
+        internal static string FormatProtocolFolderName {
+            get {
+                return ResourceManager.GetString("FormatProtocolFolderName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to - {0} more item(s) available - {1} item(s) completed, {2} item(s) skipped.
+        /// </summary>
+        internal static string FormatProtocolStatusText {
+            get {
+                return ResourceManager.GetString("FormatProtocolStatusText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You must choose a radiologist to dictate for..
         /// </summary>
         internal static string MessageChooseRadiologist {

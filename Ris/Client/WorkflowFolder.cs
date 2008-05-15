@@ -158,9 +158,8 @@ namespace ClearCanvas.Ris.Client
         {
             get
             {
-                string folderName = _folderPath.LastSegment.LocalizedText;
                 return _isPopulated || _itemCount >= 0 ?
-                    string.Format("{0} ({1})", folderName, _itemCount) : folderName;
+                    string.Format("{0} ({1})", this.Name, _itemCount) : this.Name;
             }
         }
 

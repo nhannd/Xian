@@ -30,51 +30,56 @@
 #endregion
 
 using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    /// <summary>
-    /// Document container for <see cref="ProtocolEditorComponent"/>
-    /// </summary>
-    class ProtocollingComponentDocument : Document
-    {
-        #region Private Members
+	/// <summary>
+	/// Document container for <see cref="ProtocolEditorComponent"/>
+	/// </summary>
+	class ProtocollingComponentDocument : Document
+	{
+		#region Private Members
 
-        private readonly ReportingWorklistItem _item;
-        private readonly ProtocollingComponentMode _mode;
+		private readonly ReportingWorklistItem _item;
+		private readonly ProtocollingComponentMode _mode;
+		private readonly string _folderName;
+		private readonly EntityRef _worklistRef;
 
-        #endregion
+		#endregion
 
-        #region Constructor
+		#region Constructor
 
-        public ProtocollingComponentDocument(ReportingWorklistItem item, ProtocollingComponentMode mode, IReportingWorkflowItemToolContext context)
-            : base(null, context.DesktopWindow)
-        {
-            _item = item;
-            _mode = mode;
-        }
+		public ProtocollingComponentDocument(ReportingWorklistItem item, ProtocollingComponentMode mode, IReportingWorkflowItemToolContext context)
+			: base(null, context.DesktopWindow)
+		{
+			_item = item;
+			_mode = mode;
+			_folderName = context.SelectedFolder.Name;
+			_worklistRef = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistRef;
+		}
 
-        #endregion
+		#endregion
 
-        #region Document overrides
+		#region Document overrides
 
-        public override string GetTitle()
-        {
-            return ProtocollingComponentDocument.GetTitle(_item);
-        }
+		public override string GetTitle()
+		{
+			return ProtocollingComponentDocument.GetTitle(_item);
+		}
 
-        public override IApplicationComponent GetComponent()
-        {
-            return new ProtocollingComponent(_item, _mode);
-        }
+		public override IApplicationComponent GetComponent()
+		{
+			return new ProtocollingComponent(_item, _mode, _folderName, _worklistRef);
+		}
 
-        #endregion
+		#endregion
 
-        public static string GetTitle(ReportingWorklistItem item)
-        {
-            return string.Format("Protocol - {0}", PersonNameFormat.Format(item.PatientName));
-        }
-    }
+		public static string GetTitle(ReportingWorklistItem item)
+		{
+			return string.Format("Protocol - {0}", PersonNameFormat.Format(item.PatientName));
+		}
+	}
 }

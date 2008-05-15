@@ -93,6 +93,10 @@ namespace ClearCanvas.Ris.Client.Reporting
 		#region Private Fields
 
 		private readonly ProtocollingComponentMode _componentMode;
+		private readonly string _folderName;
+		private readonly EntityRef _worklistRef;
+		private int _completedItems = 0;
+		private bool _isInitialItem = true;
 
 		private ReportingWorklistItem _worklistItem;
 
@@ -113,10 +117,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ProtocollingComponent(ReportingWorklistItem worklistItem, ProtocollingComponentMode mode)
+		public ProtocollingComponent(ReportingWorklistItem worklistItem, ProtocollingComponentMode mode, string folderName, EntityRef worklistRef)
 		{
 			_worklistItem = worklistItem;
 			_componentMode = mode;
+			_folderName = folderName;
+			_worklistRef = worklistRef;
 
 			_skippedItems = new List<ReportingWorklistItem>();
 			_worklistCache = new Stack<ReportingWorklistItem>();
@@ -186,6 +192,26 @@ namespace ClearCanvas.Ris.Client.Reporting
 			get { return _priorReportsComponentHost; }
 		}
 
+		public string StatusText
+		{
+			get 
+			{
+				string status = string.Format(SR.FormatProtocolFolderName, _folderName);
+
+				if(!_isInitialItem)
+				{
+					status = status + string.Format(SR.FormatProtocolStatusText, _worklistCache.Count, _completedItems, _skippedItems.Count);
+				}
+
+				return status;
+			}
+		}
+
+		public bool ShowStatusText
+		{
+			get { return _componentMode == ProtocollingComponentMode.Assign; }
+		}
+
 		#endregion
 
 		#region ProtocolEditorComponent event handlers
@@ -221,6 +247,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 			if (_protocolEditorComponent.ProtocolNextItem)
 			{
+				_completedItems++;
 				LoadNextProtocol();
 			}
 			else
@@ -236,6 +263,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 			if (_protocolEditorComponent.ProtocolNextItem)
 			{
+				_completedItems++;
 				LoadNextProtocol();
 			}
 			else
@@ -246,7 +274,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		private void OnProtocolSkipped(object sender, EventArgs e)
 		{
-
 			// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
 			// discontinued with a new scheduled one replacing it
 			DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
@@ -285,6 +312,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 					// Update title
 					this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);
+
+					_isInitialItem = false;
+					NotifyPropertyChanged("StatusText");
 				}
 				else
 				{
@@ -312,7 +342,10 @@ namespace ClearCanvas.Ris.Client.Reporting
 					Platform.GetService<IReportingWorkflowService>(
 						delegate(IReportingWorkflowService service)
 						{
-                            QueryWorklistRequest request = new QueryWorklistRequest(WorklistClassNames.ReportingToBeProtocolledWorklist, true, true);
+							QueryWorklistRequest request = _worklistRef != null
+								? new QueryWorklistRequest(_worklistRef, true, true)
+								: new QueryWorklistRequest(WorklistClassNames.ReportingToBeProtocolledWorklist, true, true);
+
 							QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);
 
 							foreach (ReportingWorklistItem item in response.WorklistItems)

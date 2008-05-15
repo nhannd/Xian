@@ -38,374 +38,382 @@ using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Specifies a folder's default path within its folder system.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-    public class FolderPathAttribute : Attribute
-    {
-        private readonly string _path;
-        private readonly bool _startExpanded;
+	/// <summary>
+	/// Specifies a folder's default path within its folder system.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+	public class FolderPathAttribute : Attribute
+	{
+		private readonly string _path;
+		private readonly bool _startExpanded;
 
-        public FolderPathAttribute(string path)
-        {
-            _path = path;
-        }
+		public FolderPathAttribute(string path)
+		{
+			_path = path;
+		}
 
-        public FolderPathAttribute(string path, bool startExpanded)
-        {
-            _path = path;
-            _startExpanded = startExpanded;
-        }
+		public FolderPathAttribute(string path, bool startExpanded)
+		{
+			_path = path;
+			_startExpanded = startExpanded;
+		}
 
-        public string Path
-        {
-            get { return _path; }
-        }
+		public string Path
+		{
+			get { return _path; }
+		}
 
-        public bool StartExpanded
-        {
-            get { return _startExpanded; }
-        }
-    }
+		public bool StartExpanded
+		{
+			get { return _startExpanded; }
+		}
+	}
 
-    /// <summary>
-    /// Abstract base implementation of <see cref="IFolder"/>.
-    /// </summary>
-    public abstract class Folder : IFolder
-    {
-        private event EventHandler _textChanged;
-        private event EventHandler _iconChanged;
-        private event EventHandler _tooltipChanged;
-        private event EventHandler _refreshBegin;
-        private event EventHandler _refreshFinish;
-        private event EventHandler _totalItemCountChanged;
+	/// <summary>
+	/// Abstract base implementation of <see cref="IFolder"/>.
+	/// </summary>
+	public abstract class Folder : IFolder
+	{
+		private event EventHandler _textChanged;
+		private event EventHandler _iconChanged;
+		private event EventHandler _tooltipChanged;
+		private event EventHandler _refreshBegin;
+		private event EventHandler _refreshFinish;
+		private event EventHandler _totalItemCountChanged;
 
-        private ActionModelNode _menuModel;
+		private ActionModelNode _menuModel;
 
-        protected IconSet _iconSet;
-        protected IResourceResolver _resourceResolver;
-        private bool _isOpen;
+		protected IconSet _iconSet;
+		protected IResourceResolver _resourceResolver;
+		private bool _isOpen;
 
-        protected readonly IList<IFolder> _subfolders;
-        protected Path _folderPath;
-        protected bool _startExpanded;
-        protected bool _isStatic = true;
+		protected readonly IList<IFolder> _subfolders;
+		protected Path _folderPath;
+		protected bool _startExpanded;
+		protected bool _isStatic = true;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public Folder()
-        {
-            // establish default resource resolver on this assembly (not the assembly of the derived class)
-            _resourceResolver = new ResourceResolver(typeof(Folder).Assembly);
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public Folder()
+		{
+			// establish default resource resolver on this assembly (not the assembly of the derived class)
+			_resourceResolver = new ResourceResolver(typeof(Folder).Assembly);
 
-            _subfolders = new List<IFolder>();
+			_subfolders = new List<IFolder>();
 
-            // Initialize folder Path
-            FolderPathAttribute attrib = (FolderPathAttribute) CollectionUtils.SelectFirst(
-                this.GetType().GetCustomAttributes(false),
-                delegate(object o)
-                    {
-                        return o is FolderPathAttribute;
-                    });
+			// Initialize folder Path
+			FolderPathAttribute attrib = (FolderPathAttribute)CollectionUtils.SelectFirst(
+				this.GetType().GetCustomAttributes(false),
+				delegate(object o)
+				{
+					return o is FolderPathAttribute;
+				});
 
-            if (attrib != null)
-            {
-                _folderPath = new Path(attrib.Path, _resourceResolver);
-                _startExpanded = attrib.StartExpanded;
-            }
-        }
+			if (attrib != null)
+			{
+				_folderPath = new Path(attrib.Path, _resourceResolver);
+				_startExpanded = attrib.StartExpanded;
+			}
+		}
 
 
-        #region IFolder Members
+		#region IFolder Members
 
-        /// <summary>
-        /// Gets the ID that identifies the folder
-        /// </summary>
-        public virtual string Id
-        {
-            get { return this.GetType().Name; }
-        }
+		/// <summary>
+		/// Gets the ID that identifies the folder
+		/// </summary>
+		public virtual string Id
+		{
+			get { return this.GetType().Name; }
+		}
 
-        /// <summary>
-        /// Gets the text that should be displayed for the folder
-        /// </summary>
-        public abstract string Text { get; }
+		/// <summary>
+		/// Gets the text that should be displayed for the folder
+		/// </summary>
+		public abstract string Text { get; }
 
-        /// <summary>
-        /// Allows the folder to notify that it's text has changed
-        /// </summary>
-        public virtual event EventHandler TextChanged
-        {
-            add { _textChanged += value; }
-            remove { _textChanged -= value; }
-        }
+		/// <summary>
+		/// Gets the folder name
+		/// </summary>
+		public virtual string Name
+		{
+			get { return _folderPath != null ? _folderPath.LastSegment.LocalizedText : string.Empty; }
+		}
 
-        /// <summary>
-        /// Asks the folder to refresh its contents.  The implementation may be asynchronous.
-        /// </summary>
-        public abstract void Refresh();
+		/// <summary>
+		/// Allows the folder to notify that it's text has changed
+		/// </summary>
+		public virtual event EventHandler TextChanged
+		{
+			add { _textChanged += value; }
+			remove { _textChanged -= value; }
+		}
 
-        /// <summary>
-        /// Asks the folder to refresh the count of its contents, without actually refreshing the contents.
-        /// The implementation may be asynchronous.
-        /// </summary>
-        public abstract void RefreshCount();
+		/// <summary>
+		/// Asks the folder to refresh its contents.  The implementation may be asynchronous.
+		/// </summary>
+		public abstract void Refresh();
 
-        /// <summary>
-        /// Opens the folder (i.e. instructs the folder to show its "open" state icon).
-        /// </summary>
-        public virtual void OpenFolder() 
-        {
-            _isOpen = true;
-            Refresh();
-        }
+		/// <summary>
+		/// Asks the folder to refresh the count of its contents, without actually refreshing the contents.
+		/// The implementation may be asynchronous.
+		/// </summary>
+		public abstract void RefreshCount();
 
-        /// <summary>
-        /// Closes the folder (i.e. instructs the folder to show its "closed" state icon).
-        /// </summary>
-        public virtual void CloseFolder()
-        {
-            _isOpen = false;
-        }
+		/// <summary>
+		/// Opens the folder (i.e. instructs the folder to show its "open" state icon).
+		/// </summary>
+		public virtual void OpenFolder()
+		{
+			_isOpen = true;
+			Refresh();
+		}
 
-        /// <summary>
-        /// Indicates if the folder should be initially expanded
-        /// </summary>
-        public virtual bool StartExpanded
-        {
-            get { return _startExpanded; }
-        }
+		/// <summary>
+		/// Closes the folder (i.e. instructs the folder to show its "closed" state icon).
+		/// </summary>
+		public virtual void CloseFolder()
+		{
+			_isOpen = false;
+		}
 
-        /// <summary>
-        /// Gets the iconset that should be displayed for the folder
-        /// </summary>
-        public IconSet IconSet
-        {
-            get { return _iconSet; }
-            protected set
-            {
-                _iconSet = value;
-                EventsHelper.Fire(_iconChanged, this, EventArgs.Empty);
-            }
-        }
+		/// <summary>
+		/// Indicates if the folder should be initially expanded
+		/// </summary>
+		public virtual bool StartExpanded
+		{
+			get { return _startExpanded; }
+		}
 
-        /// <summary>
-        /// Allows the folder to nofity that it's icon has changed
-        /// </summary>
-        public virtual event EventHandler IconChanged
-        {
-            add { _iconChanged += value; }
-            remove { _iconChanged -= value; }
-        }
+		/// <summary>
+		/// Gets the iconset that should be displayed for the folder
+		/// </summary>
+		public IconSet IconSet
+		{
+			get { return _iconSet; }
+			protected set
+			{
+				_iconSet = value;
+				EventsHelper.Fire(_iconChanged, this, EventArgs.Empty);
+			}
+		}
 
-        /// <summary>
-        /// Gets the resource resolver that is used to resolve the Icon
-        /// </summary>
-        public IResourceResolver ResourceResolver
-        {
-            get { return _resourceResolver; }
-            set { _resourceResolver = value; }
-        }
+		/// <summary>
+		/// Allows the folder to nofity that it's icon has changed
+		/// </summary>
+		public virtual event EventHandler IconChanged
+		{
+			add { _iconChanged += value; }
+			remove { _iconChanged -= value; }
+		}
 
-        /// <summary>
-        /// Gets the tooltip that should be displayed for the folder
-        /// </summary>
-        public virtual string Tooltip
-        {
-            get { return null; }
-        }
+		/// <summary>
+		/// Gets the resource resolver that is used to resolve the Icon
+		/// </summary>
+		public IResourceResolver ResourceResolver
+		{
+			get { return _resourceResolver; }
+			set { _resourceResolver = value; }
+		}
 
-        /// <summary>
-        /// Allows the folder to notify that it's tooltip has changed
-        /// </summary>
-        public event EventHandler TooltipChanged
-        {
-            add { _tooltipChanged += value; }
-            remove { _tooltipChanged -= value; }
-        }
+		/// <summary>
+		/// Gets the tooltip that should be displayed for the folder
+		/// </summary>
+		public virtual string Tooltip
+		{
+			get { return null; }
+		}
 
-        /// <summary>
-        /// Occurs when refresh is about to begin
-        /// </summary>
-        public event EventHandler RefreshBegin
-        {
-            add { _refreshBegin += value; }
-            remove { _refreshBegin -= value; }
-        }
+		/// <summary>
+		/// Allows the folder to notify that it's tooltip has changed
+		/// </summary>
+		public event EventHandler TooltipChanged
+		{
+			add { _tooltipChanged += value; }
+			remove { _tooltipChanged -= value; }
+		}
 
-        /// <summary>
-        /// Occurs when refresh is about to finish
-        /// </summary>
-        public event EventHandler RefreshFinish
-        {
-            add { _refreshFinish += value; }
-            remove { _refreshFinish -= value; }
-        }
+		/// <summary>
+		/// Occurs when refresh is about to begin
+		/// </summary>
+		public event EventHandler RefreshBegin
+		{
+			add { _refreshBegin += value; }
+			remove { _refreshBegin -= value; }
+		}
 
-        /// <summary>
-        /// Gets the menu model for the context menu that should be displayed when the user right-clicks on the folder.
-        /// </summary>
-        public ActionModelNode MenuModel
-        {
-            get { return _menuModel; }
-            protected set { _menuModel = value; }
-        }
+		/// <summary>
+		/// Occurs when refresh is about to finish
+		/// </summary>
+		public event EventHandler RefreshFinish
+		{
+			add { _refreshFinish += value; }
+			remove { _refreshFinish -= value; }
+		}
 
-        /// <summary>
-        /// Gets the open/close state of the current folder
-        /// </summary>
-        public bool IsOpen
-        {
-            get { return _isOpen; }
-            protected set { _isOpen = value; }
-        }
+		/// <summary>
+		/// Gets the menu model for the context menu that should be displayed when the user right-clicks on the folder.
+		/// </summary>
+		public ActionModelNode MenuModel
+		{
+			get { return _menuModel; }
+			protected set { _menuModel = value; }
+		}
 
-        /// <summary>
-        /// Asks the folder if it can accept a drop of the specified items
-        /// </summary>
-        /// <param name="items"></param>
-        /// <param name="kind"></param>
-        /// <returns></returns>
-        public virtual DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)
-        {
-            return DragDropKind.None;
-        }
+		/// <summary>
+		/// Gets the open/close state of the current folder
+		/// </summary>
+		public bool IsOpen
+		{
+			get { return _isOpen; }
+			protected set { _isOpen = value; }
+		}
 
-        /// <summary>
-        /// Instructs the folder to accept the specified items
-        /// </summary>
-        /// <param name="items"></param>
-        /// <param name="kind"></param>
-        public virtual DragDropKind AcceptDrop(object[] items, DragDropKind kind)
-        {
-            return DragDropKind.None;
-        }
+		/// <summary>
+		/// Asks the folder if it can accept a drop of the specified items
+		/// </summary>
+		/// <param name="items"></param>
+		/// <param name="kind"></param>
+		/// <returns></returns>
+		public virtual DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)
+		{
+			return DragDropKind.None;
+		}
 
-        /// <summary>
-        /// Informs the folder that the specified items were dragged from it.  It is up to the implementation
-        /// of the folder to determine the appropriate response (e.g. whether the items should be removed or not).
-        /// </summary>
-        /// <param name="items"></param>
-        /// <param name="result">The result of the drag drop operation</param>
-        public virtual void DragComplete(object[] items, DragDropKind result)
-        {
-        }
+		/// <summary>
+		/// Instructs the folder to accept the specified items
+		/// </summary>
+		/// <param name="items"></param>
+		/// <param name="kind"></param>
+		public virtual DragDropKind AcceptDrop(object[] items, DragDropKind kind)
+		{
+			return DragDropKind.None;
+		}
 
-        /// <summary>
-        /// Gets a table of the items that are contained in this folder
-        /// </summary>
-        public abstract ITable ItemsTable
-        {
-            get;
-        }
+		/// <summary>
+		/// Informs the folder that the specified items were dragged from it.  It is up to the implementation
+		/// of the folder to determine the appropriate response (e.g. whether the items should be removed or not).
+		/// </summary>
+		/// <param name="items"></param>
+		/// <param name="result">The result of the drag drop operation</param>
+		public virtual void DragComplete(object[] items, DragDropKind result)
+		{
+		}
 
-        /// <summary>
-        /// Gets the total number of items "contained" in this folder, which may be the same
-        /// as the number of items displayed in the <see cref="IFolder.ItemsTable"/>, or may be larger
-        /// in the event the table is only showing a subset of the total number of items.
-        /// </summary>
-        public abstract int TotalItemCount
-        {
-            get;
-        }
+		/// <summary>
+		/// Gets a table of the items that are contained in this folder
+		/// </summary>
+		public abstract ITable ItemsTable
+		{
+			get;
+		}
 
-        /// <summary>
-        /// Occurs when the value of the <see cref="IFolder.TotalItemCount"/> property changes.
-        /// </summary>
-        public event EventHandler TotalItemCountChanged
-        {
-            add { _totalItemCountChanged += value; }
-            remove { _totalItemCountChanged -= value; }
-        }
+		/// <summary>
+		/// Gets the total number of items "contained" in this folder, which may be the same
+		/// as the number of items displayed in the <see cref="IFolder.ItemsTable"/>, or may be larger
+		/// in the event the table is only showing a subset of the total number of items.
+		/// </summary>
+		public abstract int TotalItemCount
+		{
+			get;
+		}
 
-        /// <summary>
-        /// Gets or sets the folder path which sets up the tree structure
-        /// </summary>
-        public Path FolderPath
-        {
-            get { return _folderPath; }
-            set { _folderPath = value; }
-        }
+		/// <summary>
+		/// Occurs when the value of the <see cref="IFolder.TotalItemCount"/> property changes.
+		/// </summary>
+		public event EventHandler TotalItemCountChanged
+		{
+			add { _totalItemCountChanged += value; }
+			remove { _totalItemCountChanged -= value; }
+		}
 
-        /// <summary>
-        /// Gets a list of sub folders
-        /// </summary>
-        public IList<IFolder> Subfolders
-        {
-            get { return _subfolders; }
-        }
+		/// <summary>
+		/// Gets or sets the folder path which sets up the tree structure
+		/// </summary>
+		public Path FolderPath
+		{
+			get { return _folderPath; }
+			set { _folderPath = value; }
+		}
 
-        /// <summary>
-        /// Add a subfolder
-        /// </summary>
-        /// <param name="subFolder"></param>
-        public void AddFolder(IFolder subFolder)
-        {
-            _subfolders.Add(subFolder);
-        }
+		/// <summary>
+		/// Gets a list of sub folders
+		/// </summary>
+		public IList<IFolder> Subfolders
+		{
+			get { return _subfolders; }
+		}
 
-        /// <summary>
-        /// Remove a sub folder
-        /// </summary>
-        /// <param name="subFolder"></param>
-        /// <returns></returns>
-        public bool RemoveFolder(IFolder subFolder)
-        {
-            return _subfolders.Remove(subFolder);
-        }
+		/// <summary>
+		/// Add a subfolder
+		/// </summary>
+		/// <param name="subFolder"></param>
+		public void AddFolder(IFolder subFolder)
+		{
+			_subfolders.Add(subFolder);
+		}
 
-        /// <summary>
-        /// Replace a sub folder with another in its place.  The order of the subfolders is retained
-        /// </summary>
-        /// <param name="oldSubFolder"></param>
-        /// <param name="newSubFolder"></param>
-        /// <returns></returns>
-        public bool ReplaceFolder(IFolder oldSubFolder, IFolder newSubFolder)
-        {
-            int oldFolderIndex = _subfolders.IndexOf(oldSubFolder);
-            _subfolders.Insert(oldFolderIndex, newSubFolder);
-            return _subfolders.Remove(oldSubFolder);
-        }
+		/// <summary>
+		/// Remove a sub folder
+		/// </summary>
+		/// <param name="subFolder"></param>
+		/// <returns></returns>
+		public bool RemoveFolder(IFolder subFolder)
+		{
+			return _subfolders.Remove(subFolder);
+		}
 
-        /// <summary>
-        /// Gets a value indicating whether or not the folder is 'static'.
-        /// </summary>
-        /// <remarks>
-        /// In the context of workflow, folders created via the normal constructor (new Folder(...)) are considered static and are
-        /// otherwise they are considered generated if created by Activator.CreateInstance.
-        /// </remarks>
-        public bool IsStatic
-        {
-            get { return _isStatic; }
-            set { _isStatic = value;  }
-        }
+		/// <summary>
+		/// Replace a sub folder with another in its place.  The order of the subfolders is retained
+		/// </summary>
+		/// <param name="oldSubFolder"></param>
+		/// <param name="newSubFolder"></param>
+		/// <returns></returns>
+		public bool ReplaceFolder(IFolder oldSubFolder, IFolder newSubFolder)
+		{
+			int oldFolderIndex = _subfolders.IndexOf(oldSubFolder);
+			_subfolders.Insert(oldFolderIndex, newSubFolder);
+			return _subfolders.Remove(oldSubFolder);
+		}
 
-        #endregion
+		/// <summary>
+		/// Gets a value indicating whether or not the folder is 'static'.
+		/// </summary>
+		/// <remarks>
+		/// In the context of workflow, folders created via the normal constructor (new Folder(...)) are considered static and are
+		/// otherwise they are considered generated if created by Activator.CreateInstance.
+		/// </remarks>
+		public bool IsStatic
+		{
+			get { return _isStatic; }
+			set { _isStatic = value; }
+		}
 
-        #region Protected members
+		#endregion
 
-        protected void NotifyTextChanged()
-        {
-            EventsHelper.Fire(_textChanged, this, EventArgs.Empty);
-        }
+		#region Protected members
 
-        protected void NotifyRefreshBegin()
-        {
-            EventsHelper.Fire(_refreshBegin, this, EventArgs.Empty);
-        }
+		protected void NotifyTextChanged()
+		{
+			EventsHelper.Fire(_textChanged, this, EventArgs.Empty);
+		}
 
-        protected void NotifyRefreshFinish()
-        {
-            EventsHelper.Fire(_refreshFinish, this, EventArgs.Empty);
-        }
+		protected void NotifyRefreshBegin()
+		{
+			EventsHelper.Fire(_refreshBegin, this, EventArgs.Empty);
+		}
 
-        protected void NotifyTotalItemCountChanged()
-        {
-            EventsHelper.Fire(_totalItemCountChanged, this, EventArgs.Empty);
-        }
+		protected void NotifyRefreshFinish()
+		{
+			EventsHelper.Fire(_refreshFinish, this, EventArgs.Empty);
+		}
 
-        #endregion
-    }
+		protected void NotifyTotalItemCountChanged()
+		{
+			EventsHelper.Fire(_totalItemCountChanged, this, EventArgs.Empty);
+		}
+
+		#endregion
+	}
 }
