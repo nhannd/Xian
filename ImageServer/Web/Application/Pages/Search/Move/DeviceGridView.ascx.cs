@@ -174,7 +174,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             else
             {
                 //img.Visible = false;
-                img.ImageUrl = "~/images/blank.gif";
+                img.ImageUrl = "~/images/blankfeature.gif";
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             else
             {
                 //img.Visible = false;
-                img.ImageUrl = "~/images/blank.gif";
+                img.ImageUrl = "~/images/blankfeature.gif";
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -210,7 +210,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             else
             {
                 //img.Visible = false;
-                img.ImageUrl = "~/images/blank.gif";
+                img.ImageUrl = "~/images/blankfeature.gif";
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -227,7 +227,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             else
             {
                 //img.Visible = false;
-                img.ImageUrl = "~/images/blank.gif";
+                img.ImageUrl = "~/images/blankfeature.gif";
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
