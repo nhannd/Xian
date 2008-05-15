@@ -1,6 +1,6 @@
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true"
     EnableEventValidation="false" Codebehind="SearchPage.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Search.SearchPage"
-    Title="ImageServer Search" %>
+    Title="Search" %>
 
 <asp:Content ID="LocationName" ContentPlaceHolderID="LocationNamePlaceHolder" runat="server">Search</asp:Content>
 

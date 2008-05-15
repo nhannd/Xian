@@ -1,6 +1,6 @@
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true"
     EnableEventValidation="false" Codebehind="FileSystemsPage.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems.FileSystemsPage"
-    Title="ClearCanvas ImageServer" %>
+    Title="Configure > Filesystems" %>
 
 <%@ Register Src="AddEditFileSystemDialog.ascx" TagName="AddEditFileSystemDialog"
     TagPrefix="uc3" %>

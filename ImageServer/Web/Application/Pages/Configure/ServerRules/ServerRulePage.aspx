@@ -1,6 +1,6 @@
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true"
     Codebehind="ServerRulePage.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules.ServerRulePage"
-    Title="ImageServer Rules Engine" ValidateRequest="false" %>
+    Title="Configure > Server Rules" ValidateRequest="false" %>
 
 <%@ Register Src="AddEditServerRuleDialog.ascx" TagName="AddEditServerRuleDialog"TagPrefix="uc3" %>
 
