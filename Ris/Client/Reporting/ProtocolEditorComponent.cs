@@ -100,6 +100,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 		private ReportingWorklistItem _worklistItem;
 		private EntityRef _orderRef;
 
+		private List<EnumValueInfo> _protocolUrgencyChoices;
+
 		private readonly ProtocolEditorProcedurePlanSummaryTable _procedurePlanSummaryTable;
 		private ProtocolEditorProcedurePlanSummaryTableItem _selectedProcodurePlanSummaryTableItem;
 		private event EventHandler _selectedProcedurePlanSummaryTableItemChanged;
@@ -118,7 +120,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 		private string _defaultProtocolGroupName;
 		private readonly IDefaultProtocolGroupSettingsProvider _defaultProtocolGroupProvider = new DefaultProtocolGroupSettingsProvider();
 
-		private bool _protocolNextItem = true;
+		private bool _protocolNextItem;
 		private readonly ProtocollingComponentMode _componentMode;
 
 		private event EventHandler _protocolAccepted;
@@ -138,6 +140,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 			_worklistItem = worklistItem;
 			_componentMode = mode;
 
+			_protocolNextItem = _componentMode == ProtocollingComponentMode.Assign;
+
 			_availableProtocolCodes = new ProtocolCodeTable();
 			_selectedProtocolCodes = new ProtocolCodeTable();
 			_selectedProtocolCodes.Items.ItemsChanged += SelectedProtocolCodesChanged;
@@ -152,7 +156,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 			set
 			{
 				_worklistItem = value;
-
 				StartWorklistItem();
 			}
 		}
@@ -173,6 +176,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 			Platform.GetService<IProtocollingWorkflowService>(
 				delegate(IProtocollingWorkflowService service)
 				{
+					GetProtocolFormDataResponse response = service.GetProtocolFormData(new GetProtocolFormDataRequest());
+					_protocolUrgencyChoices = response.ProtocolUrgencyChoices;
+
 					ClaimProtocolResult claimResult = ClaimProtocolResult.AlreadyClaimed;
 
 					// Only claim unassigned protocols
@@ -210,6 +216,32 @@ namespace ClearCanvas.Ris.Client.Reporting
 		#endregion
 
 		#region Presentation Model
+
+		public string Urgency
+		{
+			get
+			{
+				if (_selectedProcodurePlanSummaryTableItem != null &&
+					_selectedProcodurePlanSummaryTableItem.ProtocolDetail.Urgency != null)
+				{
+					return _selectedProcodurePlanSummaryTableItem.ProtocolDetail.Urgency.Value;
+				}
+				else
+				{
+					return null;
+				}
+			}
+			set
+			{
+				_selectedProcodurePlanSummaryTableItem.ProtocolDetail.Urgency = EnumValueUtils.MapDisplayValue(_protocolUrgencyChoices, value);
+				this.Modified = true;
+			}
+		}
+
+		public List<string> UrgencyChoices
+		{
+			get { return EnumValueUtils.GetDisplayValues(_protocolUrgencyChoices); }
+		}
 
 		public IList<string> ProtocolGroupChoices
 		{
@@ -661,6 +693,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			EventsHelper.Fire(_selectedProcedurePlanSummaryTableItemChanged, this, EventArgs.Empty);
 
 			NotifyPropertyChanged("ProtocolGroupChoices");
+			//NotifyPropertyChanged("Urgency");
 		}
 
 		private ProtocolGroupSummary GetInitialProtocolGroup(ProtocolEditorProcedurePlanSummaryTableItem item)
@@ -686,9 +719,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		private string GetSuggestedDefault(string procedureName)
 		{
-			if(CollectionUtils.Contains(
-				_protocolGroupChoices, 
-				delegate (ProtocolGroupSummary pgs) { return pgs.Name == _defaultProtocolGroupProvider.GetSuggestedDefault(); }))
+			if (CollectionUtils.Contains(
+				_protocolGroupChoices,
+				delegate(ProtocolGroupSummary pgs) { return pgs.Name == _defaultProtocolGroupProvider.GetSuggestedDefault(); }))
 			{
 				return _defaultProtocolGroupProvider.GetSuggestedDefault();
 			}

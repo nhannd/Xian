@@ -11,6 +11,7 @@
 
     <many-to-one name="Author" class="Staff" column="AuthorOID_"/>
     <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ProtocolStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+    <many-to-one name="Urgency" class="ProtocolUrgencyEnum" column="Urgency_" />
     <many-to-one name="SuspendRejectReason" class="ProtocolSuspendRejectReasonEnum" column="SuspendRejectReason_"/>
 
     <set name="Codes" table="ProtocolProtocolCode_" lazy="true" access="nosetter.camelcase-underscore">

@@ -37,6 +37,9 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
     [ServiceContract]
     public interface IProtocollingWorkflowService
     {
+    	[OperationContract]
+    	GetProtocolFormDataResponse GetProtocolFormData(GetProtocolFormDataRequest request);
+
         [OperationContract]
         ListProtocolGroupsForProcedureResponse ListProtocolGroupsForProcedure(ListProtocolGroupsForProcedureRequest request);
 

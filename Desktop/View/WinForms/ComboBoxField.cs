@@ -78,7 +78,19 @@ namespace ClearCanvas.Desktop.View.WinForms
         public object Value
         {
             get { return _comboBox.SelectedItem; }
-            set { _comboBox.SelectedItem = value; }
+            set
+            {
+				// Conver DBNUll to null.  If this is not done and a property bound to Value is set to null,
+				// the displayed value of the combo box is not updated correctly.
+				if (value is DBNull)
+				{
+					_comboBox.SelectedItem = null;
+				}
+				else
+				{
+					_comboBox.SelectedItem = value;
+				}
+            }
         }
 
         public event EventHandler ValueChanged
