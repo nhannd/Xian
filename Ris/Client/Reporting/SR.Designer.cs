@@ -196,6 +196,15 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Assign Protocol.
+        /// </summary>
+        internal static string TitleAssignProtocol {
+            get {
+                return ResourceManager.GetString("TitleAssignProtocol", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose Radiologist.
         /// </summary>
         internal static string TitleChooseRadiologist {
@@ -210,6 +219,15 @@ namespace ClearCanvas.Ris.Client.Reporting {
         internal static string TitleCreateReport {
             get {
                 return ResourceManager.GetString("TitleCreateReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Protocol.
+        /// </summary>
+        internal static string TitleEditProtocol {
+            get {
+                return ResourceManager.GetString("TitleEditProtocol", resourceCulture);
             }
         }
         
@@ -246,6 +264,15 @@ namespace ClearCanvas.Ris.Client.Reporting {
         internal static string TitleRadiologistHome {
             get {
                 return ResourceManager.GetString("TitleRadiologistHome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Review Protocol.
+        /// </summary>
+        internal static string TitleReviewProtocol {
+            get {
+                return ResourceManager.GetString("TitleReviewProtocol", resourceCulture);
             }
         }
         

@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(OrderNoteConversationComponentViewExtensionPoint))]
 	public class OrderNoteConversationComponent : ApplicationComponent
 	{
-		public class RecipientTableItem
+		private class RecipientTableItem
 		{
 			private readonly bool _isStaffRecipient = false;
 			private readonly StaffSummary _staffSummary = null;
@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Client
 
 		}
 
-		public class RecipientTable : Table<Checkable<RecipientTableItem>>
+		private class RecipientTable : Table<Checkable<RecipientTableItem>>
 		{
 			public RecipientTable()
 			{

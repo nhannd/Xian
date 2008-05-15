@@ -39,104 +39,137 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Protocol", "Apply")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Protocol", "Apply")]
-    [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [LabelValueObserver("apply", "Label", "LabelChanged")]
-    [ExtensionOf(typeof(ReportingProtocolWorkflowItemToolExtensionPoint))]
-    public class ProtocollingTool : Tool<IReportingWorkflowItemToolContext>
-    {
-        public void Apply()
-        {
-            try
-            {
-                ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(this.Context.SelectedItems);
-                OpenItem(item);
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Context.DesktopWindow);
-            }
-        }
+	/// <summary>
+	/// Opens a <see cref="ReportingWorklistItem"/> selection in a <see cref="ProtocolEditorComponent"/>
+	/// </summary>
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Protocol", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Protocol", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.ProtocolEditorToolSmall.png", "Icons.ProtocolEditorToolMedium.png", "Icons.ProtocolEditorToolLarge.png")]
+	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[LabelValueObserver("apply", "Label", "LabelChanged")]
+	[ExtensionOf(typeof(ReportingProtocolWorkflowItemToolExtensionPoint))]
+	public class ProtocollingTool : Tool<IReportingWorkflowItemToolContext>
+	{
+		#region public properties
 
-        private void OpenItem(ReportingWorklistItem item)
-        {
-            if (item == null)
-                return;
+		/// <summary>
+		/// Used by tool's <see cref="EnabledStateObserverAttribute"/>
+		/// </summary>
+		public bool Enabled
+		{
+			get
+			{
+				ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(this.Context.SelectedItems);
+				return item != null && item.ProcedureStepName == "Protocol";
+			}
+		}
 
-            Workspace workspace = DocumentManager.Get<ProtocollingComponentDocument>(item.OrderRef);
-            if (workspace == null)
-            {
-                ProtocollingComponentDocument protocollingComponentDocument = new ProtocollingComponentDocument(item, GetMode(item), this.Context);
-                protocollingComponentDocument.Open();
-            }
-            else
-            {
-                workspace.Activate();
-            }
-        }
+		/// <summary>
+		/// Used by tool's <see cref="EnabledStateObserverAttribute"/>
+		/// </summary>
+		public virtual event EventHandler EnabledChanged
+		{
+			add { this.Context.SelectionChanged += value; }
+			remove { this.Context.SelectionChanged -= value; }
+		}
 
-        public bool Enabled
-        {
-            get
-            {
-                ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(this.Context.SelectedItems);
-                return item != null && item.ProcedureStepName == "Protocol";
-            }
-        }
+		/// <summary>
+		/// Used by tool's <see cref="LabelValueObserverAttribute"/>
+		/// </summary>
+		public string Label
+		{
+			get
+			{
+				ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(this.Context.SelectedItems);
+				return GetLabel(item);
+			}
+		}
 
-        public virtual event EventHandler EnabledChanged
-        {
-            add { this.Context.SelectionChanged += value; }
-            remove { this.Context.SelectionChanged -= value; }
-        }
+		/// <summary>
+		/// Used by tool's <see cref="LabelValueObserverAttribute"/>
+		/// </summary>
+		public virtual event EventHandler LabelChanged
+		{
+			add { this.Context.SelectionChanged += value; }
+			remove { this.Context.SelectionChanged -= value; }
+		}
 
-        public string Label
-        {
-            get
-            {
-                ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(this.Context.SelectedItems);
-                return GetLabel(item);
-            }
-        }
+		#endregion
 
-        public virtual event EventHandler LabelChanged
-        {
-            add { this.Context.SelectionChanged += value; }
-            remove { this.Context.SelectionChanged -= value; }
-        }
+		#region Public Methods
 
-        private ProtocollingComponentMode GetMode(ReportingWorklistItem item)
-        {
-            if (item == null)
-                return ProtocollingComponentMode.Review;
+		/// <summary>
+		/// Callback for tool's <see cref="MenuActionAttribute"/> and <see cref="ButtonActionAttribute"/>
+		/// </summary>
+		public void Apply()
+		{
+			try
+			{
+				ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(this.Context.SelectedItems);
+				OpenItem(item);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+			}
+		}
 
-            switch(item.ActivityStatus.Code)
-            {
-                case "SC":
-                    return ProtocollingComponentMode.Assign;
-                case "IP":
-                    return ProtocollingComponentMode.Edit;
-                default:
-                    return ProtocollingComponentMode.Review;
-            }
-        }
+		#endregion
 
-        private string GetLabel(ReportingWorklistItem item)
-        {
-            if (item == null)
-                return "Review Protocol";
+		#region Private Methods
 
-            switch (item.ActivityStatus.Code)
-            {
-                case "SC":
-                    return "Assign Protocol";
-                case "IP":
-                    return "Edit Protocol";
-                default:
-                    return "Review Protocol";
-            }
-        }
-    }
+		// Opens the specified ReportingWorklistItem in either a new or existing ProtocollingComponentDocument
+		private void OpenItem(ReportingWorklistItem item)
+		{
+			if (item == null)
+				return;
+
+			Workspace workspace = DocumentManager.Get<ProtocollingComponentDocument>(item.OrderRef);
+			if (workspace == null)
+			{
+				ProtocollingComponentDocument protocollingComponentDocument = new ProtocollingComponentDocument(item, GetMode(item), this.Context);
+				protocollingComponentDocument.Open();
+			}
+			else
+			{
+				workspace.Activate();
+			}
+		}
+
+		// Determine the ProtocollingComponentMode from the ReportingWorklistItem's ActivityStatus
+		private static ProtocollingComponentMode GetMode(ReportingWorklistItem item)
+		{
+			if (item == null)
+				return ProtocollingComponentMode.Review;
+
+			switch (item.ActivityStatus.Code)
+			{
+				case "SC":
+					return ProtocollingComponentMode.Assign;
+				case "IP":
+					return ProtocollingComponentMode.Edit;
+				default:
+					return ProtocollingComponentMode.Review;
+			}
+		}
+
+		// Update the tools displayed text based on the ReportingWorklistItem's ActivityStatus
+		private static string GetLabel(ReportingWorklistItem item)
+		{
+			if (item == null)
+				return SR.TitleReviewProtocol;
+
+			switch (item.ActivityStatus.Code)
+			{
+				case "SC":
+					return SR.TitleAssignProtocol;
+				case "IP":
+					return SR.TitleEditProtocol;
+				default:
+					return SR.TitleReviewProtocol;
+			}
+		}
+
+		#endregion
+	}
 }

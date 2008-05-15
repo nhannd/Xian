@@ -162,11 +162,17 @@
   <data name="MessageReportingComponentAlreadyOpened" xml:space="preserve">
     <value>You are currently editing {0}.  Do you want to close it and open the report for {1} instead?</value>
   </data>
+  <data name="TitleAssignProtocol" xml:space="preserve">
+    <value>Assign Protocol</value>
+  </data>
   <data name="TitleChooseRadiologist" xml:space="preserve">
     <value>Choose Radiologist</value>
   </data>
   <data name="TitleCreateReport" xml:space="preserve">
     <value>Create Report</value>
+  </data>
+  <data name="TitleEditProtocol" xml:space="preserve">
+    <value>Edit Protocol</value>
   </data>
   <data name="TitleEditReport" xml:space="preserve">
     <value>Edit Report</value>
@@ -179,6 +185,9 @@
   </data>
   <data name="TitleRadiologistHome" xml:space="preserve">
     <value>Radiologist Home</value>
+  </data>
+  <data name="TitleReviewProtocol" xml:space="preserve">
+    <value>Review Protocol</value>
   </data>
   <data name="TitleReviseReport" xml:space="preserve">
     <value>Revise Report</value>
