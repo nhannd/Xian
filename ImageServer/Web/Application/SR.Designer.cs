@@ -106,6 +106,15 @@ namespace ClearCanvas.ImageServer.Web.Application {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This study has been scheduled for deletion..
+        /// </summary>
+        internal static string StudyScheduledForDeletion {
+            get {
+                return ResourceManager.GetString("StudyScheduledForDeletion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This work queue item is being processed. Try again later..
         /// </summary>
         internal static string WorkQueueBeingProcessed {

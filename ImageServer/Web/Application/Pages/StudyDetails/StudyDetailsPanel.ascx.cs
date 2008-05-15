@@ -75,29 +75,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
 
         #region Protected Methods
 
-        
-
         [ExtenderControlProperty]
-        [ClientPropertyName("OpenSeriesButtonClientID")]
-        public string OpenSeriesButtonClientID
+        [ClientPropertyName("ViewSeriesButtonClientID")]
+        public string ViewSeriesButtonClientID
         {
-            get
-            {
-                ToolbarButton openSeriesBtn= (ToolbarButton)SeriesSectionPanel.FindControl("OpenSeriesButton");
-
-                return openSeriesBtn.ClientID;
-            }
+            get { return this.ViewSeriesButton.ClientID; }
         }
 
         [ExtenderControlProperty]
         [ClientPropertyName("SeriesListClientID")]
         public string SeriesListClientID
         {
-            get
-            {
-                SeriesGridView seriesView = (SeriesGridView)SeriesSectionPanel.FindControl("SeriesGridView");
-                return seriesView.SeriesListClientID;
-            }
+            get { return SeriesGridView.SeriesListControl.ClientID; }
         }
 
         [ExtenderControlProperty]
@@ -130,12 +119,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
 
                 PatientSummaryPanel.PatientSummary = PatientSummaryAssembler.CreatePatientSummary(Study);
 
-                StudyDetailsView studyView = (StudyDetailsView)StudySectionPanel.FindControl("StudyDetailsView");
-                studyView.Studies.Add(Study);
-
-                SeriesGridView seriesView = (SeriesGridView)SeriesSectionPanel.FindControl("SeriesGridView");
-                seriesView.Partition = partition;
-                seriesView.Study = Study;
+                StudyDetailsView.Studies.Add(Study);
+             
+                SeriesGridView.Partition = partition;
+                SeriesGridView.Study = Study;
             } 
             
             base.DataBind();
@@ -156,10 +143,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
                 StudyController controller = new StudyController();
                 bool scheduledForDelete = controller.IsScheduledForDelete(Study);
 
-                //TODO: make Delete button enabled/disabled based on user permission too
-                ToolbarButton deleteBtn = (ToolbarButton)StudySectionPanel.FindControl("DeleteToolbarButton");
-
-                deleteBtn.Enabled = !scheduledForDelete;
+                DeleteStudyButton.Enabled = !scheduledForDelete;
 
                 if (scheduledForDelete)
                 {
@@ -171,17 +155,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
                 }
 
 
-                ToolbarButton openSeriesBtn = (ToolbarButton)SeriesSectionPanel.FindControl("OpenSeriesButton");
-                SeriesGridView seriesView = (SeriesGridView)SeriesSectionPanel.FindControl("SeriesGridView");
-
-                int[] selectedSeriesIndices = seriesView.SeriesListControl.SelectedIndices;
-                openSeriesBtn.Enabled = selectedSeriesIndices != null && selectedSeriesIndices.Length > 0; 
-            
+                int[] selectedSeriesIndices = SeriesGridView.SeriesListControl.SelectedIndices;
+                ViewSeriesButton.Enabled = selectedSeriesIndices != null && selectedSeriesIndices.Length > 0;             
             }
            
         }
 
-        protected void DeleteToolbarButton_Click(object sender, ImageClickEventArgs e)
+        protected void DeleteStudyButton_Click(object sender, EventArgs e)
         {
             ConfirmDialog.MessageType = ConfirmationDialog.MessageTypeEnum.YESNO;
             ConfirmDialog.Message = SR.SingleStudyDelete;
@@ -201,7 +181,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
             Study study = ConfirmDialog.Data as Study;
             if (controller.DeleteStudy(study))
             {
-                DeleteToolbarButton.Enabled = false;
+                DeleteStudyButton.Enabled = false;
 
                 ShowScheduledForDeleteAlert();
                 
@@ -210,17 +190,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
             {
                 throw new Exception("Unable to delete the study. See server log for more details");
 
-            }
-
-            
+            } 
         }
 
         private void ShowScheduledForDeleteAlert()
         {
             MessagePanel.Visible = true;
-            ConfirmationMessage.Text = "This study has been scheduled for deletion.";
-            ConfirmationMessage.ForeColor = Color.Red;
-                
+            ConfirmationMessage.Text = SR.StudyScheduledForDeletion;               
             UpdatePanel1.Update();
         }
 

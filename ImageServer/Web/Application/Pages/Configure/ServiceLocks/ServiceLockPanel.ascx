@@ -5,7 +5,7 @@
 
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="Panel1" runat="server">
+        <asp:Panel ID="Panel1" runat="server" style="border: solid 1px #6699CC">
             <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0"
                 BorderWidth="0px">
                 <asp:TableHeaderRow>

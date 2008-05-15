@@ -110,14 +110,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             }
         }
 
-        public string HeadingText
-        {
-            get { return _headingText; }
-            set { _headingText = value;
-                HeadingTextLabel.Text = value;
-            }
-        }
-
         public string CssClass
         {
             get { return _cssClass; }
@@ -125,23 +117,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             {
                 _cssClass = value;
                 Container.CssClass = value;
-            }
-        }
-
-        public string HeadingCSS
-        {
-            get { return _headingCSS; }
-            set { _headingCSS = value;
-                HeadingPanel.CssClass = value;
-            }
-        }
-
-        public string ContentAreaCSS
-        {
-            get { return _contentAreaCSS; }
-            set { 
-                _contentAreaCSS = value;
-                ContentPanel.CssClass = value;   
             }
         }
 

@@ -38,24 +38,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails {
         protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// ListContainerTable control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Table ListContainerTable;
-        
-        /// <summary>
-        /// ListContainerCell control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TableCell ListContainerCell;
-        
-        /// <summary>
         /// GridView1 control.
         /// </summary>
         /// <remarks>

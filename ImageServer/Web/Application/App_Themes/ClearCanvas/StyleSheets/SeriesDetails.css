@@ -1,0 +1,62 @@
+.StudySummaryContent
+{
+    padding: 0px 3px 0px 3px;
+}
+
+.SeriesDetailsContent
+{
+    padding: 0px 3px 0px 3px;
+}
+
+.StudySummary
+{
+    border: solid 1px #3d98d1;
+    background-color: White;
+}
+
+.StudySummaryHeader
+{
+    padding-left: 5px;
+    color: #205F87;
+	font-weight: bold;
+	width: 200px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.StudySummaryRow td
+{
+    border-bottom: solid 2px #eeeeee;
+}
+
+/*****************************************************************************************
+	Series gridview styles
+*****************************************************************************************/
+
+.SeriesDetailsGridView
+{
+    border: solid 1px #3d98d1;
+}
+
+.SeriesDetailsGridViewHeader
+{
+	background-color: White;
+	text-align: left;
+	color: #205F87;
+	font-weight: bold;
+	width: 200px;
+}
+
+/* gridview control selected row */
+.SeriesDetailsGridViewRow
+{
+    
+}
+
+/* gridview control cell */
+.SeriesDetailsGridViewRow td
+{
+    border-bottom: solid 2px #eeeeee;
+    border-top: solid 2px #eeeeee;
+    background-color: White;
+}

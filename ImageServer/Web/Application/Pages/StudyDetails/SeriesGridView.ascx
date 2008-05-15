@@ -6,16 +6,12 @@
 </asp:ScriptManagerProxy>
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Table runat="server" ID="ListContainerTable" Height="100%" CellPadding="0" CellSpacing="0" Width="100%" >
-            <asp:TableRow VerticalAlign="top">
-                <asp:TableCell ID="ListContainerCell" CssClass="CSSGridViewPanelContent" VerticalAlign="top">
-            
                     <ccUI:GridView ID="GridView1" runat="server" 
-                        AutoGenerateColumns="False" CssClass="CSSGridView" 
+                        AutoGenerateColumns="False" CssClass="SeriesGridView" 
                         CellPadding="4" CaptionAlign="Top" Width="100%" 
                         OnPageIndexChanged="GridView1_PageIndexChanged" 
                         OnPageIndexChanging="GridView1_PageIndexChanging" SelectionMode="Multiple"
-                        GridLines="Horizontal" BorderWidth="1px">
+                        GridLines="Horizontal" BackColor="White">
                         <Columns>
                             <asp:BoundField DataField="SeriesNumber" HeaderText="Series #">
                                 <HeaderStyle Wrap="False" />    
@@ -42,8 +38,7 @@
                              
                         </Columns>
                         <EmptyDataTemplate>
-                            <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                                CssClass="CSSSeriesGridViewHeaderStyle">
+                            <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0">
                                 <asp:TableHeaderRow>
                                     <asp:TableHeaderCell>Series#</asp:TableHeaderCell>
                                     <asp:TableHeaderCell>Modality</asp:TableHeaderCell>
@@ -54,13 +49,10 @@
                             </asp:Table>
                         </EmptyDataTemplate>
                         
-                        <RowStyle CssClass="CSSSeriesGridViewRowStyle"/>
-                        <HeaderStyle CssClass="CSSSeriesGridViewHeaderStyle"/>
-                        <AlternatingRowStyle CssClass="CSSSeriesGridViewAlternatingRowStyle" />
-                        <SelectedRowStyle  CssClass="CSSSeriesGridSelectedRowStyle" />
+                        <RowStyle CssClass="SeriesGridViewRow"/>
+                        <HeaderStyle CssClass="SeriesGridViewHeader"/>
+                        <AlternatingRowStyle CssClass="SeriesGridViewAlternatingRow" />
+                        <SelectedRowStyle  CssClass="SeriesGridSelectedRow" />
                     </ccUI:GridView>
-            </asp:TableCell>
-        </asp:TableRow>
-    </asp:Table>
     </ContentTemplate>
 </asp:UpdatePanel>

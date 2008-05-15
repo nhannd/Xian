@@ -292,6 +292,13 @@
     <Compile Include="Pages\Help\About.aspx.designer.cs">
       <DependentUpon>About.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Help\Documentation.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Documentation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Help\Documentation.aspx.designer.cs">
+      <DependentUpon>Documentation.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Search\Move\DeviceGridView.ascx.cs">
       <DependentUpon>DeviceGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -562,6 +569,8 @@
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Global.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Header.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Filter.css" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\SeriesDetails.css" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\StudyDetails.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Toolbar.css" />
     <Content Include="Common\Controls\ConfirmationDialog.ascx" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Accordian.css" />
@@ -579,7 +588,6 @@
     <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-line.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-right.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab.gif" />
-    <Content Include="App_Themes\ClearCanvas\StyleSheets\Section.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\Tabs.css" />
     <Content Include="Common\Pages\BasePage.aspx" />
     <Content Include="Common\Controls\InvalidInputIndicator.ascx" />
@@ -627,6 +635,7 @@
     <Content Include="Pages\Configure\ServiceLocks\ServiceLockPage.aspx" />
     <Content Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx" />
     <Content Include="Pages\Help\About.aspx" />
+    <Content Include="Pages\Help\Documentation.aspx" />
     <Content Include="Pages\Search\Move\DeviceGridView.ascx" />
     <Content Include="Pages\Search\Move\MovePage.aspx" />
     <Content Include="Pages\Search\Move\MovePanel.ascx" />

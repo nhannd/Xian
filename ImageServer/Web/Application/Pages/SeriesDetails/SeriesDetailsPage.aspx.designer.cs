@@ -20,31 +20,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails {
     public partial class SeriesDetailsPage {
         
         /// <summary>
-        /// form1 control.
+        /// updatepanel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        protected global::System.Web.UI.UpdatePanel updatepanel1;
         
         /// <summary>
-        /// ScriptManager1 control.
+        /// Panel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.ScriptManager ScriptManager1;
-        
-        /// <summary>
-        /// updatepanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel updatepanel;
+        protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
         /// SeriesDetailsPanel1 control.

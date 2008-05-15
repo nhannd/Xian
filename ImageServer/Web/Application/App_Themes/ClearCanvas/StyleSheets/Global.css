@@ -53,6 +53,79 @@ Global.css - Defines the global styles for the entire web application relating
 	height: 14px;   
 }
 
+.MainContentTitle
+{
+    color: White; 
+    font-family: Sans-serif; 
+    font-weight: bold; 
+    font-size: 24px;
+    padding-left: 8px;
+}
+
+/*=======================================
+ * Rounded Corner Items
+ *======================================*/
+
+.roundedCorners{display:block}
+.roundedCorners *{
+  display:block;
+  height:1px;
+  overflow:hidden;
+  font-size:.01em;
+  background:#3d98d1}
+.roundedCorners1{
+  margin-left:3px;
+  margin-right:3px;
+  padding-left:1px;
+  padding-right:1px;
+  border-left:1px solid #abd2eb;
+  border-right:1px solid #abd2eb;
+  background:#6db1dc}
+.roundedCorners2{
+  margin-left:1px;
+  margin-right:1px;
+  padding-right:1px;
+  padding-left:1px;
+  border-left:1px solid #ebf4fa;
+  border-right:1px solid #ebf4fa;
+  background:#61abd9}
+.roundedCorners3{
+  margin-left:1px;
+  margin-right:1px;
+  border-left:1px solid #61abd9;
+  border-right:1px solid #61abd9;}
+.roundedCorners4{
+  border-left:1px solid #abd2eb;
+  border-right:1px solid #abd2eb}
+.roundedCorners5{
+  border-left:1px solid #6db1dc;
+  border-right:1px solid #6db1dc}
+.roundedCornersfg{
+  background:#3d98d1}
+
+/* Buttons */
+
+.ButtonStyle
+{
+    width: 100px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #336699;
+}
+
+/* Right aligned Buttons */
+
+.ButtonPanel
+{
+    padding-right: 5px;
+    text-align: right;
+}
+
+
+
+
+
+
 /*************************************************************************************************
 	Popup Dialog
 *************************************************************************************************/
@@ -96,119 +169,6 @@ Global.css - Defines the global styles for the entire web application relating
 .CSSInvalidIndicatorTooltip
 {
 }
-
-
-/*****************************************************************************************
-	Study Details view styles
-*****************************************************************************************/
-.CSSStudyDetailsView
-{
-}
-
-.CSSStudyDetailsViewRowStyle
-{
-
-}
-
-.CSSStudyDetailsViewRowStyle td
-{
-
-}
-
-
-.CSSStudyDetailsViewAlternatingRowStyle
-{
-	background-color:#F7F6F3;
-}
-
-
-.CSSStudyDetailsViewAlternatingRowStyle td
-{
-	background-color:#F7F6F3;
-}
-
-
-/*****************************************************************************************
-	Series grid view styles
-*****************************************************************************************/
-
-.CSSSeriesGridView
-{
-}
-
-.CSSSeriesGridViewHeaderStyle
-{
-	background-image: url(images/gridheaderbackground.png);
-	background-repeat: repeat-x;
-}
-
-/* gridview control selected row */
-.CSSSeriesGridViewRowStyle
-{
-
-}
-
-/* gridview control cell */
-.CSSSeriesGridViewRowStyle td
-{
-	background-color:#F7F6F3;
-}
-
-/* gridview control cell */
-.CSSSeriesGridViewAlternatingRowStyle
-{
-
-}
-
-
-/* gridview control cell */
-.CSSSeriesGridViewAlternatingRowStyle td
-{
-	background-color:Transparent;
-}
-
-/* gridview control selected row */
-.CSSSeriesGridSelectedRowStyle
-{
-	background-color:#316AC5;
-}
-
-
-/* gridview cell of the selected row */
-.CSSSeriesGridSelectedRowStyle td
-{
-}
-
-
-/*************************************************************************************************
-	About Page 
-*************************************************************************************************/
-
-
-/* Container for the gridview */
-.CSSAboutPanelContainer
-{
-	
-}
-
-/* border of the gridview */
-.CSSAboutPanelBorder
-{
-	border-right: darkgray 1px solid;
-	border-top: darkgray 1px solid;
-	border-left: darkgray 1px solid;
-	border-bottom:darkgray 1px solid;
-}
-
-/* gridview content panel */
-.CSSAboutPanelContent
-{
-	
-}
-
-
-
-
 
 /*************************************************************************************************
 	Popup Dialog
@@ -261,128 +221,8 @@ Global.css - Defines the global styles for the entire web application relating
 }
 
 
-/*****************************************************************************************
-	Study Details view styles
-*****************************************************************************************/
-.CSSStudyDetailsView
-{
-	border-right: #b0c4de 1px solid;
-	border-top: #b0c4de 1px solid;
-	border-left: #b0c4de 1px solid;
-	border-bottom: #b0c4de 1px solid;
-}
-
-.CSSStudyDetailsViewRowStyle
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-.CSSStudyDetailsViewRowStyle td
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
 
 
-.CSSStudyDetailsViewAlternatingRowStyle
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-
-.CSSStudyDetailsViewAlternatingRowStyle td
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-
-/*****************************************************************************************
-	Series grid view styles
-*****************************************************************************************/
-
-.CSSSeriesGridView
-{
-	border-right: #b0c4de 1px solid;
-	border-top: #b0c4de 1px solid;
-	border-left: #b0c4de 1px solid;
-	border-bottom: #b0c4de 1px solid;
-}
-
-.CSSSeriesGridViewHeaderStyle
-{
-	border-right: #eeeeee 1px solid;
-	border-top: #eeeeee 1px solid;
-	border-left: #eeeeee 1px solid;
-	border-bottom: #eeeeee 1px solid;
-	
-}
-
-/* gridview control selected row */
-.CSSSeriesGridViewRowStyle
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-/* gridview control cell */
-.CSSSeriesGridViewRowStyle td
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-/* gridview control cell */
-.CSSSeriesGridViewAlternatingRowStyle
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-
-/* gridview control cell */
-.CSSSeriesGridViewAlternatingRowStyle td
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-/* gridview control selected row */
-.CSSSeriesGridSelectedRowStyle
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-
-/* gridview cell of the selected row */
-.CSSSeriesGridSelectedRowStyle td
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
 
 
 /*************************************************************************************************
@@ -429,117 +269,6 @@ Global.css - Defines the global styles for the entire web application relating
 .CSSInvalidIndicatorTooltip
 {
 }
-
-
-/*****************************************************************************************
-	Study Details view styles
-*****************************************************************************************/
-.CSSStudyDetailsView
-{
-}
-
-.CSSStudyDetailsViewRowStyle
-{
-
-}
-
-.CSSStudyDetailsViewRowStyle td
-{
-
-}
-
-
-.CSSStudyDetailsViewAlternatingRowStyle
-{
-
-}
-
-
-.CSSStudyDetailsViewAlternatingRowStyle td
-{
-
-}
-
-/*****************************************************************************************
-	Series grid view styles
-*****************************************************************************************/
-.CSSSeriesGridView
-{
-}
-
-
-.CSSSeriesGridViewHeaderStyle
-{
-	
-}
-
-.CSSSeriesGridViewHeaderStyle th
-{
-	font-weight:normal;
-	text-align:left;
-}
-
-/* gridview control selected row */
-.CSSSeriesGridViewRowStyle
-{
-
-}
-
-/* gridview control cell */
-.CSSSeriesGridViewRowStyle td
-{
-	color:#333333;
-}
-
-/* gridview control cell */
-.CSSSeriesGridViewAlternatingRowStyle
-{
-
-}
-
-
-/* gridview control cell */
-.CSSSeriesGridViewAlternatingRowStyle td
-{
-	color:#333333;
-}
-
-/* gridview control selected row */
-.CSSSeriesGridSelectedRowStyle
-{
-	color:White;
-}
-
-
-/* gridview cell of the selected row */
-.CSSSeriesGridSelectedRowStyle td
-{
-}
-
-/*************************************************************************************************
-	About layout
-*************************************************************************************************/
-
-
-/* Container for the gridview */
-.CSSAboutPanelContainer
-{
-	margin-top:3px;
-}
-
-/* border of the gridview */
-.CSSAboutPanelBorder
-{
-}
-
-/* gridview content panel */
-.CSSAboutPanelContent
-{
-	height:600px;
-	padding:1px;
-}
-
-
 
 
 /*************************************************************************************************
@@ -596,95 +325,6 @@ Global.css - Defines the global styles for the entire web application relating
 }
 
 
-/*****************************************************************************************
-	Study Details view styles
-*****************************************************************************************/
-.CSSStudyDetailsView
-{
-}
-
-.CSSStudyDetailsViewHeaderStyle
-{
-
-}
-
-.CSSStudyDetailsViewHeaderStyle
-{
-
-
-}
-
-
-
-.CSSStudyDetailsViewRowStyle
-{
-
-}
-
-.CSSStudyDetailsViewRowStyle td
-{
-
-}
-
-.CSSStudyDetailsAlternatingRowStyle
-{
-}
-
-
-/*****************************************************************************************
-	Series grid view styles
-*****************************************************************************************/
-.CSSSeriesGridView
-{
-}
-
-
-.CSSSeriesGridViewHeaderStyle
-{
-	
-/*	text-wrap: suppress; */
-	overflow: visible;
-
-}
-
-/* gridview control selected row */
-.CSSSeriesGridViewRowStyle
-{
-
-}
-
-/* gridview control cell */
-.CSSSeriesGridViewRowStyle td
-{
-	
-}
-
-/* gridview control cell */
-.CSSSeriesGridViewAlternatingRowStyle
-{
-
-}
-
-
-/* gridview control cell */
-.CSSSeriesGridViewAlternatingRowStyle td
-{
-	
-}
-
-/* gridview control selected row */
-.CSSSeriesGridSelectedRowStyle
-{
-
-}
-
-
-/* gridview cell of the selected row */
-.CSSSeriesGridSelectedRowStyle td
-{
-
-}
-
 
 
 .InvalidInputHilight
@@ -692,32 +332,6 @@ Global.css - Defines the global styles for the entire web application relating
 	background-color:Yellow;
 }
 
-
-/*************************************************************************************************
-	About Page 
-*************************************************************************************************/
-
-
-/* Container for the gridview */
-.CSSAboutPanelContainer
-{
-	
-}
-
-/* border of the gridview */
-.CSSAboutPanelBorder
-{
-	border-right: darkgray 1px solid;
-	border-top: darkgray 1px solid;
-	border-left: darkgray 1px solid;
-	border-bottom:darkgray 1px solid;
-}
-
-/* gridview content panel */
-.CSSAboutPanelContent
-{
-	
-}
 
 /*************************************************************************************************
 	Popup Dialog
@@ -767,128 +381,4 @@ Global.css - Defines the global styles for the entire web application relating
 
 .CSSInvalidIndicatorTooltip
 {
-}
-
-
-/*****************************************************************************************
-	Study Details view styles
-*****************************************************************************************/
-.CSSStudyDetailsView
-{
-	border-right: #b0c4de 1px solid;
-	border-top: #b0c4de 1px solid;
-	border-left: #b0c4de 1px solid;
-	border-bottom: #b0c4de 1px solid;
-}
-
-.CSSStudyDetailsViewRowStyle
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-.CSSStudyDetailsViewRowStyle td
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-
-.CSSStudyDetailsViewAlternatingRowStyle
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-
-.CSSStudyDetailsViewAlternatingRowStyle td
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-
-/*****************************************************************************************
-	Series grid view styles
-*****************************************************************************************/
-
-.CSSSeriesGridView
-{
-	border-right: #b0c4de 1px solid;
-	border-top: #b0c4de 1px solid;
-	border-left: #b0c4de 1px solid;
-	border-bottom: #b0c4de 1px solid;
-}
-
-.CSSSeriesGridViewHeaderStyle
-{
-	border-right: #eeeeee 1px solid;
-	border-top: #eeeeee 1px solid;
-	border-left: #eeeeee 1px solid;
-	border-bottom: #eeeeee 1px solid;
-	
-}
-
-/* gridview control selected row */
-.CSSSeriesGridViewRowStyle
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-/* gridview control cell */
-.CSSSeriesGridViewRowStyle td
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-/* gridview control cell */
-.CSSSeriesGridViewAlternatingRowStyle
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-
-/* gridview control cell */
-.CSSSeriesGridViewAlternatingRowStyle td
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-/* gridview control selected row */
-.CSSSeriesGridSelectedRowStyle
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
-}
-
-
-/* gridview cell of the selected row */
-.CSSSeriesGridSelectedRowStyle td
-{
-	border-right: #d2d2d2 1px solid;
-	border-top: #d2d2d2 1px solid;
-	border-left: #d2d2d2 1px solid;
-	border-bottom: #d2d2d2 1px solid;
 }

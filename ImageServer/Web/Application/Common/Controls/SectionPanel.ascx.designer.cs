@@ -29,33 +29,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
         protected global::System.Web.UI.WebControls.Panel Container;
         
         /// <summary>
-        /// HeadingPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel HeadingPanel;
-        
-        /// <summary>
-        /// HeadingTextLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label HeadingTextLabel;
-        
-        /// <summary>
-        /// ContentPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel ContentPanel;
-        
-        /// <summary>
         /// placeholder control.
         /// </summary>
         /// <remarks>

@@ -37,7 +37,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             
             this._OnLoadHandler = Function.createDelegate(this,this._OnLoad);
             this._OnSeriesListClickedHandler = Function.createDelegate(this,this._OnSeriesListClicked);
-            this._OnOpenSeriesButtonClickedHandler = Function.createDelegate(this,this._OnOpenSeriesButtonClicked);
+            this._OnViewSeriesButtonClickedHandler = Function.createDelegate(this,this._OnViewSeriesButtonClicked);
             
             Sys.Application.add_load(this._OnLoadHandler);
                  
@@ -54,10 +54,10 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                 serieslist.remove_onClientRowClick(this._OnSeriesListClickedHandler);
             }
             
-            var openSeriesBtn = $find(this._OpenSeriesButtonClientID);
-            if (openSeriesBtn!=null)
+            var viewSeriesBtn = $get(this._ViewSeriesButtonClientID);
+            if (viewSeriesBtn!=null)
             {
-                openSeriesBtn.remove_onClientClick(this._OnOpenSeriesButtonClickedHandler);
+                viewSeriesBtn.onClientClick = null;
             }
             
             Sys.Application.remove_load(this._OnLoadHandler);
@@ -69,8 +69,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
         // Events
         //
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
-        
+              
         /// called whenever the page is reloaded or partially reloaded
         _OnLoad : function()
         {
@@ -81,10 +80,10 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                 // serieslist.add_onClientRowDblClick(this._OnSeriesListDoubleClickedHandler);
             }
             
-            var openSeriesBtn = $find(this._OpenSeriesButtonClientID);
-            if (openSeriesBtn!=null)
+            var viewSeriesBtn = $get(this._ViewSeriesButtonClientID);
+            if (viewSeriesBtn!=null)
             {
-                openSeriesBtn.add_onClientClick(this._OnOpenSeriesButtonClickedHandler);
+                viewSeriesBtn.onClientClick = this._OnViewSeriesButtonClicked();
             }
         },
         
@@ -95,13 +94,14 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             if (serieslist!=null)
             {
                 var rows = serieslist.getSelectedRowElements();
-                var openBtn = $find(this._OpenSeriesButtonClientID);
-                if (openBtn!=null)
-                    openBtn.set_enable(rows.length>0);
+                var viewSeriesBtn = $get(this._ViewSeriesButtonClientID);
+                if (viewSeriesBtn!=null) {
+                    viewSeriesBtn.disabled = rows.length>0 ? false : true;
+                }
             }
         },
         
-        _OnOpenSeriesButtonClicked : function()
+        _OnViewSeriesButtonClicked : function()
         {
             var serieslist = $find(this._SeriesListClientID);
             if (serieslist!=null)
@@ -119,14 +119,13 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                 }
             }
         },
-        
-        
-        
+                
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
         // Private Methods
         //
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
+             
         _getServerAE:function(row)
         {
             return row.getAttribute("serverae");
@@ -174,13 +173,13 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             this.raisePropertyChanged('OpenSeriesPageUrl');
         },
         
-        get_OpenSeriesButtonClientID : function() {
-            return this._OpenSeriesButtonClientID;
+        get_ViewSeriesButtonClientID : function() {
+            return this._ViewSeriesButtonClientID;
         },
        
-        set_OpenSeriesButtonClientID : function(value) {
-            this._OpenSeriesButtonClientID = value;
-            this.raisePropertyChanged('OpenSeriesButtonClientID');
+        set_ViewSeriesButtonClientID : function(value) {
+            this._ViewSeriesButtonClientID = value;
+            this.raisePropertyChanged('ViewSeriesButtonClientID');
         }
         
 

@@ -132,6 +132,9 @@
   <data name="SingleStudyDelete" xml:space="preserve">
     <value>Are you sure you want to delete this study?</value>
   </data>
+  <data name="StudyScheduledForDeletion" xml:space="preserve">
+    <value>This study has been scheduled for deletion.</value>
+  </data>
   <data name="WorkQueueBeingProcessed" xml:space="preserve">
     <value>This work queue item is being processed. Try again later.</value>
   </data>

@@ -201,11 +201,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                 default:
                     break;
             }
-
-            if (NoButton.Visible)
-            {
-                Page.ClientScript.RegisterStartupScript(GetType(), "SetFocus", "<script>alert('!!!');</script>");
-            }
             
             base.OnPreRender(e);
         }

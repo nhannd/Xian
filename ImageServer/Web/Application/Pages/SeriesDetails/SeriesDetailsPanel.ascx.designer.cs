@@ -38,57 +38,30 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails {
         protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// SeriesDetailsPanelContainer control.
+        /// PatientSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel SeriesDetailsPanelContainer;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails.PatientSummaryPanel PatientSummary;
         
         /// <summary>
-        /// PatientSummaryPanel1 control.
+        /// StudySummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails.PatientSummaryPanel PatientSummaryPanel1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails.StudySummaryPanel StudySummary;
         
         /// <summary>
-        /// StudySectionPanel control.
+        /// SeriesDetails control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.SectionPanel StudySectionPanel;
-        
-        /// <summary>
-        /// StudySummaryPanel1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails.StudySummaryPanel StudySummaryPanel1;
-        
-        /// <summary>
-        /// SeriesSectionPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.SectionPanel SeriesSectionPanel;
-        
-        /// <summary>
-        /// SeriesDetailsView1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails.SeriesDetailsView SeriesDetailsView1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails.SeriesDetailsView SeriesDetails;
     }
 }

@@ -66,13 +66,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails
         {
             if (_study != null)
             {
-                PatientSummaryPanel1.PatientSummary = PatientSummaryAssembler.CreatePatientSummary(_study);
+                PatientSummary.PatientSummary = PatientSummaryAssembler.CreatePatientSummary(_study);
 
-                StudySummaryPanel summary = (StudySummaryPanel)StudySectionPanel.FindControl("StudySummaryPanel1");
-                summary.Study = _study;
+                StudySummary.Study = _study;
 
                 if (Series != null)
-                    SeriesDetailsView1.Series = _series;
+                    SeriesDetails.Series = _series;
 
             }
 
