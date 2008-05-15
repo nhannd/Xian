@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client.Reporting
     [MenuAction("apply", "folderexplorer-items-contextmenu/Send/To Transcription", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[EnabledStateObserver("apply", "Visible", "VisibleChanged")]
+	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
 	[ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(Folders.InTranscriptionFolder.DropHandlerExtensionPoint))]
     public class CompleteInterpretationForTranscriptionTool : WorkflowItemTool
@@ -54,7 +54,10 @@ namespace ClearCanvas.Ris.Client.Reporting
 
     	public bool Visible
     	{
-			get { return ReportingSettings.Default.EnableTranscriptionWorkflow; }
+			get
+			{
+				return ReportingSettings.Default.EnableTranscriptionWorkflow;
+			}
     	}
 
 		public event EventHandler VisibleChanged
@@ -276,8 +279,8 @@ namespace ClearCanvas.Ris.Client.Reporting
         }
     }
 
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Publish (testing)", "Apply")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Publish (testing)", "Apply")]
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Publish", "Apply")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Publish", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", AuthorityTokens.Workflow.Report.Publish)]

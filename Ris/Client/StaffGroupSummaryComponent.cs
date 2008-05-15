@@ -42,10 +42,12 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin;
 using ClearCanvas.Common.Utilities;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client
 {
     [MenuAction("launch", "global-menus/Admin/Staff Groups", "Launch")]
+	[ActionPermission("launch", AuthorityTokens.Admin.Data.StaffGroup)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class StaffGroupAdminTool : Tool<IDesktopToolContext>
     {

@@ -31,15 +31,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
-using Crownwood.DotNetMagic;
-using System.Collections;
 using ClearCanvas.Desktop;
 using Crownwood.DotNetMagic.Controls;
 using ClearCanvas.Common.Utilities;

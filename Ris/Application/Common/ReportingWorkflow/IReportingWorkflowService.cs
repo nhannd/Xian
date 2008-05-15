@@ -68,7 +68,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="StartInterpretationRequest"/></param>
         /// <returns><see cref="StartInterpretationResponse"/></returns>
         [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
         StartInterpretationResponse StartInterpretation(StartInterpretationRequest request);
 
         /// <summary>
@@ -77,7 +78,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="CompleteInterpretationForTranscriptionRequest"/></param>
         /// <returns><see cref="CompleteInterpretationForTranscriptionResponse"/></returns>
         [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
         CompleteInterpretationForTranscriptionResponse CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request);
 
         /// <summary>
@@ -106,7 +108,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="CancelReportingStepRequest"/></param>
         /// <returns><see cref="CancelReportingStepResponse"/></returns>
         [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
         CancelReportingStepResponse CancelReportingStep(CancelReportingStepRequest request);
 
         /// <summary>
@@ -116,7 +119,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="ReviseResidentReportRequest"/></param>
         /// <returns><see cref="ReviseResidentReportResponse"/></returns>
         [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
         ReviseResidentReportResponse ReviseResidentReport(ReviseResidentReportRequest request);
 
         /// <summary>
@@ -125,7 +129,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="StartVerificationRequest"/></param>
         /// <returns><see cref="StartVerificationResponse"/></returns>
         [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
         StartVerificationResponse StartVerification(StartVerificationRequest request);
 
         /// <summary>
@@ -144,7 +149,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="CreateAddendumRequest"/></param>
         /// <returns><see cref="CreateAddendumResponse"/></returns>
         [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
         CreateAddendumResponse CreateAddendum(CreateAddendumRequest request);
 
         /// <summary>
@@ -154,7 +160,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="ReviseUnpublishedReportRequest"/></param>
         /// <returns><see cref="ReviseUnpublishedReportResponse"/></returns>
         [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
         ReviseUnpublishedReportResponse ReviseUnpublishedReport(ReviseUnpublishedReportRequest request);
 
         /// <summary>
@@ -162,7 +169,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// </summary>
         /// TODO: to be removed
         [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
         PublishReportResponse PublishReport(PublishReportRequest request);
 
         /// <summary>
@@ -188,7 +196,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="SaveReportRequest"/></param>
         /// <returns><see cref="SaveReportResponse"/></returns>
         [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
         SaveReportResponse SaveReport(SaveReportRequest request);
 
         /// <summary>

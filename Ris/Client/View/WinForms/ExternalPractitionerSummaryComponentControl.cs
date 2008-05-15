@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_practitionerTableView.MenuModel = _component.SummaryTableActionModel;
 
             _practitionerTableView.Table = _component.SummaryTable;
-			_practitionerTableView.DataBindings.Add("Selection", _component, "SummaryTableSelection", true, DataSourceUpdateMode.OnPropertyChanged);
+			_practitionerTableView.DataBindings.Add("Selection", _component, "SummarySelection", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _firstName.DataBindings.Add("Value", _component, "FirstName", true, DataSourceUpdateMode.OnPropertyChanged);
             _lastName.DataBindings.Add("Value", _component, "LastName", true, DataSourceUpdateMode.OnPropertyChanged);

@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [MenuAction("neworder", "patientsearch-items-contextmenu/New Order", "NewOrder")]
     [IconSet("neworder", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("neworder", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Create)]
+	[ActionPermission("neworder", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Create)]
 
 	[ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
