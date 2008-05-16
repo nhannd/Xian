@@ -54,6 +54,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		private static readonly HqlJoin JoinReportPart = new HqlJoin("ps.ReportPart", "rpp", HqlJoinMode.Left);
 		private static readonly HqlJoin JoinReport = new HqlJoin("rpp.Report", "r", HqlJoinMode.Left);
 
+		private static readonly string OnlyMostRecentProtocolAssignmentStepIfRejectedHql = 
+			"((pr.Status not in ('RJ')) or (ps.EndTime = (select max(ps2.EndTime) from ProcedureStep ps2 where ps.Protocol = ps2.Protocol)))";
+
+		private static readonly string OnlyMostRecentPublicationStepHql =
+			"(ps.Scheduling.StartTime = (select max(ps2.Scheduling.StartTime) from ProcedureStep ps2 where ps.ReportPart.Report = ps2.ReportPart.Report))";
+
 		#endregion
 
 		#region IReportingWorklistItemBroker Members
@@ -190,12 +196,22 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			if (stepClass == typeof(ProtocolAssignmentStep))
 			{
 				from.Joins.Add(JoinProtocol);
+
+				// when querying for Rejected protocols, only show the most recent ProtocolAssignmentStep, as there may be many of them
+				query.Conditions.Add(new HqlCondition(OnlyMostRecentProtocolAssignmentStepIfRejectedHql));
+			}
+			else if (stepClass == typeof(ProtocolResolutionStep))
+			{
+				from.Joins.Add(JoinProtocol);
 			}
 			else
 			{
 				// if this is a reporting step, rather than a protocoling step, include the report object
 				from.Joins.Add(JoinReportPart);
 				from.Joins.Add(JoinReport);
+
+				if(stepClass == typeof(PublicationStep))
+					query.Conditions.Add(new HqlCondition(OnlyMostRecentPublicationStepHql));
 
 				if (!isCountQuery)
 					query.Selects.Add(SelectReport);

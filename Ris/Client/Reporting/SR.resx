@@ -157,7 +157,7 @@
     <value>Cannot determine enablement for operation: {0}</value>
   </data>
   <data name="FormatProtocolFolderName" xml:space="preserve">
-    <value>Protocolling from the \"{0}\" worklist</value>
+    <value>Protocolling from the "{0}" worklist</value>
   </data>
   <data name="FormatProtocolStatusText" xml:space="preserve">
     <value>- {0} more item(s) available - {1} item(s) completed, {2} item(s) skipped</value>

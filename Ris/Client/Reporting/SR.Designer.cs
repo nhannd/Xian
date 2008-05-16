@@ -178,7 +178,7 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Protocolling from the \&quot;{0}\&quot; worklist.
+        ///   Looks up a localized string similar to Protocolling from the &quot;{0}&quot; worklist.
         /// </summary>
         internal static string FormatProtocolFolderName {
             get {

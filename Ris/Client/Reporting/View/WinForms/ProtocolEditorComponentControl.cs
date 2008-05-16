@@ -92,11 +92,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 				_protocolGroup.DataSource = _component.ProtocolGroupChoices;
 				_protocolGroup.DataBindings.Add("Value", _component, "ProtocolGroup", true, DataSourceUpdateMode.OnPropertyChanged);
 			}
-			//else if(e.PropertyName == "Urgency")
-			//{
-			//    _urgency.DataBindings.Clear();
-			//    _urgency.DataBindings.Add("Value", _component, "Urgency", true, DataSourceUpdateMode.OnPropertyChanged);
-			//}
 		}
 
 		private void RefreshTables(object sender, EventArgs e)

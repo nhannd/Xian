@@ -207,6 +207,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 				{
 					// Scheduled assignment step exists (i.e. Protocol has not been claimed), so claim it
 					assignmentStep.Start(this.CurrentUserStaff);
+					assignmentStep.Protocol.Author = this.CurrentUserStaff;
 					protocolClaimed = true;
 				}
 				else
@@ -242,6 +243,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 				if (existingAssignmentStep != null)
 				{
 					existingAssignmentStep.Discontinue();
+					existingAssignmentStep.Protocol.Author = null;
 
 					// Replace with new step scheduled step
 					ProtocolAssignmentStep replacementAssignmentStep = new ProtocolAssignmentStep(existingAssignmentStep.Protocol);
