@@ -121,6 +121,16 @@ Global.css - Defines the global styles for the entire web application relating
     text-align: right;
 }
 
+/* About */
+
+.AboutPanel
+{
+    padding-left: 10px;
+    padding-right: 10px;
+    font-family: Sans-Serif;
+    font-size: 14px;
+}
+
 /*************************************************************************************************
 	Popup Dialog
 *************************************************************************************************/

@@ -3,7 +3,7 @@
 	<siteMapNode url="" title="Root"  description="">
 		<siteMapNode url="~/Pages/Search/SearchPage.aspx" title="Search"  />
 		<siteMapNode url="~/Pages/WorkQueue/SearchPage.aspx" title="Work Queue"  />
-		
+	
 		<siteMapNode url="" title="Configure">
 				<siteMapNode url="~/Pages/Configure/Devices/DevicePage.aspx" title="Devices"  />
 				<siteMapNode url="~/Pages/Configure/ServerPartitions/ServerPartitionPage.aspx" title="Server Partitions"  />
@@ -11,5 +11,7 @@
 			<siteMapNode url="~/Pages/Configure/ServerRules/ServerRulePage.aspx" title="Server Rules" />
 			<siteMapNode url="~/Pages/Configure/ServiceLocks/ServiceLockPage.aspx" title="Service Scheduling" />
 		</siteMapNode>
-	</siteMapNode>
+
+    <siteMapNode url="~/Pages/Help/About.aspx" title="About"  />
+  </siteMapNode>
 </siteMap>

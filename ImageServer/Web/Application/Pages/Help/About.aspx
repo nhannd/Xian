@@ -1,14 +1,30 @@
-<%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" CodeBehind="About.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Help.About" Title="About ClearCanvas ImageServer" %>
+<%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" CodeBehind="About.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.About.About" Title="About ClearCanvas ImageServer" %>
+
+<asp:Content ID="MainMenuContent" ContentPlaceHolderID="MainMenuPlaceHolder" runat="server">
+    <asp:SiteMapDataSource ID="MainMenuSiteMapDataSource" runat="server" ShowStartingNode="False" />
+    <asp:Menu runat="server" ID="MainMenu" SkinID="MainMenu" DataSourceID="MainMenuSiteMapDataSource" style="font-family: Sans-Serif"></asp:Menu>
+</asp:Content>
+
+<asp:Content ID="LocationName" ContentPlaceHolderID="LocationNamePlaceHolder" runat="server">About</asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
- <asp:Panel runat="server" ID="PageContent">
-    <asp:Panel ID="Panel1" runat="server" CssClass="CSSAboutPanelContainer">
-    <asp:Panel ID="Panel3" runat="server" CssClass="CSSAboutPanelBorder">
-        <asp:Panel ID="Panel4" runat="server" CssClass="CSSAboutPanelContent" ScrollBars="Vertical">
-<pre>
-    <code><h4>
-ClearCanvas Inc.
-</h4>
+
+<div>
+  <b class="roundedCorners">
+  <b class="roundedCorners1"><b></b></b>
+  <b class="roundedCorners2"><b></b></b>
+  <b class="roundedCorners3"></b>
+  <b class="roundedCorners4"></b>
+  <b class="roundedCorners5"></b></b>
+
+  <div class="roundedCornersfg">
+  
+  <table cellpadding="0" cellspacing="0" width="100%">
+  <tr><td class="MainContentTitle">About ClearCanvas</td></tr>
+  <tr><td style="padding-left: 3px; padding-right: 3px; padding-top: 2px;">
+    <asp:Panel runat="server" ScrollBars="Vertical" Height="500" BackColor="white"  CssClass="AboutPanel">
+<pre style="font-family: Sans-Serif; font-size: 14px;">
+<b>ClearCanvas Inc.</b>
 
 Copyright (c) 2008, ClearCanvas Inc.
 All rights reserved.
@@ -1225,9 +1241,19 @@ commercial applications and libraries, but to keep the source code together
 and to give credit to the NUnit contributors for their efforts. While this 
 license allows shipping NUnit in source and binary form, if shipping a NUnit 
 variant is the sole purpose of your product, please let us know.
-</code></pre>
-</asp:Panel>
-</asp:Panel>
-</asp:Panel>
+</pre> 
     </asp:Panel>
+  </td></tr>
+  </table>
+
+  </div>
+
+    
+  <b class="roundedCorners">
+  <b class="roundedCorners5"></b>
+  <b class="roundedCorners4"></b>
+  <b class="roundedCorners3"></b>
+  <b class="roundedCorners2"><b></b></b>
+  <b class="roundedCorners1"><b></b></b></b>    
+</div>    
 </asp:Content>
