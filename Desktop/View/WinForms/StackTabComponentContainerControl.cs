@@ -199,13 +199,11 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 stackTab = new StackTab(string.Empty, name, string.Empty,
                     Crownwood.DotNetMagic.Controls.ArrowButton.UpArrow, new EventHandler(OnArrowClick));
-            }
+			}
             else
             {
                 stackTab = new StackTab(string.Empty, name, string.Empty,
                     Crownwood.DotNetMagic.Controls.ArrowButton.None, new EventHandler(OnTitleClick));
-
-                stackTab.TitleBar.ActAsButton = Crownwood.DotNetMagic.Controls.ActAsButton.WholeControl;
 
                 // Customize titlebar colours
                 //stackTab.TitleBar.BackColor = Color.SlateBlue;
@@ -217,7 +215,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                 //stackTab.TitleBar.MouseOverColor = Color.SkyBlue;
             }
 
-            return stackTab;
+			stackTab.TitleBar.ActAsButton = Crownwood.DotNetMagic.Controls.ActAsButton.WholeControl;
+			
+			return stackTab;
         }
 
         private void OpenTabGroup(Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl, decimal space)
