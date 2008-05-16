@@ -2,8 +2,12 @@
     EnableEventValidation="false" CodeBehind="MovePage.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Search.Move.MovePage" 
     Title="Move Studies" %>
 
-
 <%@ Register Src="MovePanel.ascx" TagName="MovePanel" TagPrefix="move" %>
+
+<asp:Content ID="MainMenuContent" ContentPlaceHolderID="MainMenuPlaceHolder" runat="server">
+    <asp:SiteMapDataSource ID="MainMenuSiteMapDataSource" runat="server" ShowStartingNode="False" />
+    <asp:Menu runat="server" ID="MainMenu" SkinID="MainMenu" DataSourceID="MainMenuSiteMapDataSource" style="font-family: Sans-Serif"></asp:Menu>
+</asp:Content>
 
 <asp:Content ID="LocationName" ContentPlaceHolderID="LocationNamePlaceHolder" runat="server">Move Studies</asp:Content>
 

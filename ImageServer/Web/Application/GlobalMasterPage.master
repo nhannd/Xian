@@ -37,9 +37,7 @@
                             <asp:TableRow VerticalAlign="Bottom">
                                 <asp:TableCell runat="server" Width="100%" >
                                     <asp:Panel runat="server" CssClass="MainMenuPanel">
-                                        <asp:SiteMapDataSource ID="MainMenuSiteMapDataSource" runat="server" ShowStartingNode="False" />
-                                        <asp:Menu runat="server" ID="MainMenu" SkinID="MainMenu" DataSourceID="MainMenuSiteMapDataSource" style="font-family: Sans-Serif">
-                                        </asp:Menu>
+                                        <asp:ContentPlaceHolder ID="MainMenuPlaceHolder" runat="server" />
                                     </asp:Panel>
                                 </asp:TableCell>
                                 <asp:TableCell VerticalAlign="Bottom">

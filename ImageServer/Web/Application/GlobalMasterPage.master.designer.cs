@@ -64,22 +64,13 @@ public partial class GlobalMasterPage {
     protected global::System.Web.UI.WebControls.ImageButton LogoImage;
     
     /// <summary>
-    /// MainMenuSiteMapDataSource control.
+    /// MainMenuPlaceHolder control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.SiteMapDataSource MainMenuSiteMapDataSource;
-    
-    /// <summary>
-    /// MainMenu control.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated field.
-    /// To modify move field declaration from designer file to code-behind file.
-    /// </remarks>
-    protected global::System.Web.UI.WebControls.Menu MainMenu;
+    protected global::System.Web.UI.WebControls.ContentPlaceHolder MainMenuPlaceHolder;
     
     /// <summary>
     /// LocationNamePlaceHolder control.
