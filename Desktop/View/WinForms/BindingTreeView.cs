@@ -50,7 +50,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private BindingTreeLevelManager _rootLevelManager;
         private event EventHandler _selectionChanged;
         private event EventHandler _nodeMouseDoubleClicked;
-        private event EventHandler<ItemDragEventArgs> _itemDrag;
+		private event EventHandler _nodeMouseClicked;
+		private event EventHandler<ItemDragEventArgs> _itemDrag;
 
         private BindingTreeNode _dropTargetNode;
         private DragDropEffects _dropEffect;
@@ -177,7 +178,16 @@ namespace ClearCanvas.Desktop.View.WinForms
             remove { _nodeMouseDoubleClicked -= value; }
         }
 
-        /// <summary>
+		/// <summary>
+		/// Notifies that the selection is clicked
+		/// </summary>
+		public event EventHandler NodeMouseClicked
+		{
+			add { _nodeMouseClicked += value; }
+			remove { _nodeMouseClicked -= value; }
+		}
+
+		/// <summary>
         /// Expands the entire tree
         /// </summary>
         public void ExpandAll()
@@ -432,8 +442,13 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             EventsHelper.Fire(_nodeMouseDoubleClicked, this, e);
         }
-        
-        #endregion
+
+		private void _treeCtrl_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+		{
+			EventsHelper.Fire(_nodeMouseClicked, this, e);
+		}
+
+		#endregion
 
         #region Drag Drop support
 
@@ -658,6 +673,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             ItemDragEventArgs args = new ItemDragEventArgs(e.Button, this.GetSelectionHelper());
             EventsHelper.Fire(_itemDrag, this, args);
         }
+
 
 
     }

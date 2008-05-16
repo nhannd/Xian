@@ -122,7 +122,7 @@ namespace ClearCanvas.Ris.Client
             _tools = new ToolSet(folderExplorerExtensionPoint, new FolderExplorerToolContext(this));
 
             // Construct the explorer component and place each into a stack tab
-            _stackContainers = new StackTabComponentContainer(StackStyle.ShowOneOnly);
+            _stackContainers = new StackTabComponentContainer(StackStyle.ShowMultiple, true);
             _stackContainers.CurrentPageChanged += OnSelectedFolderSystemChanged;
 
             List<IFolderSystem> folderSystems = CollectionUtils.Map<ITool, IFolderSystem, List<IFolderSystem>>(_tools.Tools,
@@ -210,8 +210,16 @@ namespace ClearCanvas.Ris.Client
 
         void OnSelectedFolderChanged(object sender, EventArgs e)
         {
-            IFolder selectedFolder = ((IFolder) _selectedFolderExplorer.SelectedFolder.Item);
-            _folderContentComponent.SelectedFolder = selectedFolder;
+        	FolderExplorerComponent previousFolderExplorerSelection = this.SelectedFolderExplorer;
+			FolderExplorerComponent newFolderExplorerSelection = (FolderExplorerComponent)sender;
+			IFolder previousFolderSelection = _folderContentComponent.SelectedFolder;
+
+			if (newFolderExplorerSelection != previousFolderExplorerSelection)
+				this.SelectedFolderExplorer = newFolderExplorerSelection;
+
+			IFolder newSelectedFolder = ((IFolder) _selectedFolderExplorer.SelectedFolder.Item);
+			if (newSelectedFolder != previousFolderSelection)
+	            _folderContentComponent.SelectedFolder = newSelectedFolder;
         }
 
         public FolderContentsComponent ContentsComponent

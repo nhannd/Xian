@@ -70,14 +70,16 @@ namespace ClearCanvas.Desktop
     [AssociateView(typeof(StackTabComponentContainerViewExtensionPoint))]
     public class StackTabComponentContainer : PagedComponentContainer<TabPage>
     {
-        private StackStyle _stackStyle;
+        private readonly StackStyle _stackStyle;
+		private readonly bool _openAllTabsInitially;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public StackTabComponentContainer(StackStyle stackStyle)
+		public StackTabComponentContainer(StackStyle stackStyle, bool openAllTabsInitially)
         {
             _stackStyle = stackStyle;
+        	_openAllTabsInitially = openAllTabsInitially;
         }
 
 		/// <summary>
@@ -87,5 +89,13 @@ namespace ClearCanvas.Desktop
         {
             get { return _stackStyle; }
         }
+
+		/// <summary>
+		/// Gets the settings for opening all tabs initially.  This is applicable to StackStyle.ShowMultiple only
+		/// </summary>
+    	public bool OpenAllTabsInitially
+    	{
+			get { return _openAllTabsInitially; }
+    	}
     }
 }

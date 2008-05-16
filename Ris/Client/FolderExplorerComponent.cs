@@ -234,9 +234,10 @@ namespace ClearCanvas.Ris.Client
                     _selectedFolder.RefreshFinish += OnSelectedFolderRefreshFinish;
                     _selectedFolder.OpenFolder();
                 }
-                EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
             }
-        }
+
+			EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
+		}
 
         void OnSelectedFolderRefreshBegin(object sender, EventArgs e)
         {

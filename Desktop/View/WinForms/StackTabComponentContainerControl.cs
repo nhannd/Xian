@@ -78,7 +78,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl = _stackTabControl.RootSequence[i] as Crownwood.DotNetMagic.Controls.TabGroupLeaf;
 
-                if (_component.StackStyle == StackStyle.ShowMultiple)
+                if (_component.StackStyle == StackStyle.ShowMultiple && _component.OpenAllTabsInitially)
                 {
                     OpenTabGroup(tgl, (decimal)100 / _stackTabControl.RootSequence.Count);
                 }
