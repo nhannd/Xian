@@ -387,6 +387,9 @@
   <data name="TitleAddVisit" xml:space="preserve">
     <value>Add Visit...</value>
   </data>
+  <data name="TitleBookingFolderSystem" xml:space="preserve">
+    <value>Booking</value>
+  </data>
   <data name="TitleCancelOrder" xml:space="preserve">
     <value>Cancel Order for {0}</value>
   </data>
@@ -465,6 +468,9 @@
   <data name="TitlePreview" xml:space="preserve">
     <value>Preview</value>
   </data>
+  <data name="TitleRegistrationFolderSystem" xml:space="preserve">
+    <value>Registration</value>
+  </data>
   <data name="TitleRegistrationHome" xml:space="preserve">
     <value>Registration Home</value>
   </data>
@@ -482,6 +488,9 @@
   </data>
   <data name="TitleStopMpps" xml:space="preserve">
     <value>Stop</value>
+  </data>
+  <data name="TitleTechnologistFolderSystem" xml:space="preserve">
+    <value>Technologist</value>
   </data>
   <data name="TitleTechnologistHome" xml:space="preserve">
     <value>Technologist Home</value>

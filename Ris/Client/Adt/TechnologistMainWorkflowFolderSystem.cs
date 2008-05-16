@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Adt
 		private readonly Folders.TechnologistSearchFolder _searchFolder;
 
 		public TechnologistMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(folderExplorer,
+			: base(SR.TitleTechnologistFolderSystem, folderExplorer,
 			new TechnologistMainWorkflowFolderExtensionPoint(),
 			new TechnologistMainWorkflowItemToolExtensionPoint(),
 			new TechnologistMainWorkflowFolderToolExtensionPoint())
@@ -74,11 +74,6 @@ namespace ClearCanvas.Ris.Client.Adt
 			}
 			this.AddFolder(_searchFolder = new Folders.TechnologistSearchFolder(this));
 			folderExplorer.RegisterSearchDataHandler(this);
-		}
-
-		public override string DisplayName
-		{
-			get { return "Technologist"; }
 		}
 
 		public override string PreviewUrl

@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 	public class ReportingProtocolWorkflowFolderSystem : ReportingWorkflowFolderSystemBase
 	{
 		public ReportingProtocolWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(folderExplorer,
+			: base(SR.TitleProtocollingFolderSystem, folderExplorer,
 			new ReportingProtocolWorkflowFolderExtensionPoint(),
 			new ReportingProtocolWorkflowItemToolExtensionPoint(),
 			new ReportingProtocolWorkflowFolderToolExtensionPoint())
@@ -68,11 +68,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 			this.AddFolder(new Folders.CompletedProtocolFolder(this));
 			this.AddFolder(new Folders.SuspendedProtocolFolder(this));
 			this.AddFolder(new Folders.RejectedProtocolFolder(this));
-		}
-
-		public override string DisplayName
-		{
-			get { return "Protocolling"; }
 		}
 
 		public override string PreviewUrl

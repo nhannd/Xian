@@ -22,18 +22,13 @@ namespace ClearCanvas.Ris.Client.Reporting
 	public class ReportingOrderNoteboxFolderSystem : OrderNoteboxFolderSystemBase
 	{
 		public ReportingOrderNoteboxFolderSystem(IFolderExplorerToolContext folderExplorer)
-				: base(folderExplorer,
+			: base(SR.TitleOrderNoteboxFolderSystem, folderExplorer,
 				new ReportingOrderNoteboxFolderExtensionPoint(),
 				new ReportingOrderNoteboxItemToolExtensionPoint(),
 				new ReportingOrderNoteboxFolderToolExtensionPoint())
 			{
 				this.AddFolder(new InboxFolder(this));
 				this.AddFolder(new SentItemsFolder(this));
-			}
-
-			public override string DisplayName
-			{
-				get { return SR.TitleOrderNoteboxFolderSystem; }
 			}
 
 			public override string PreviewUrl

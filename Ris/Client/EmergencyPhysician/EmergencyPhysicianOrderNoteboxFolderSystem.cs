@@ -22,19 +22,14 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 
 	public class EmergencyPhysicianOrderNoteboxFolderSystem : OrderNoteboxFolderSystemBase
 	{
-		public EmergencyPhysicianOrderNoteboxFolderSystem(IFolderExplorerToolContext folderExplorer) 
-			: base(folderExplorer, 
+		public EmergencyPhysicianOrderNoteboxFolderSystem(IFolderExplorerToolContext folderExplorer)
+			: base(SR.TitleOrderNoteboxFolderSystem, folderExplorer, 
 			       new EmergencyPhysicianOrderNoteboxFolderExtensionPoint(), 
 			       new EmergencyPhysicianOrderNoteboxItemToolExtensionPoint(), 
 			       new EmergencyPhysicianOrderNoteboxFolderToolExtensionPoint())
 		{
 			this.AddFolder(new InboxFolder(this));
 			this.AddFolder(new SentItemsFolder(this));
-		}
-
-		public override string DisplayName
-		{
-			get { return SR.TitleOrderNoteboxFolderSystem; }
 		}
 
 		public override string PreviewUrl

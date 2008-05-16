@@ -149,11 +149,12 @@ namespace ClearCanvas.Ris.Client.Adt
         private IDictionary<string, bool> _workflowEnablment;
 
         public RegistrationWorkflowFolderSystemBase(
+			string displayName,
             IFolderExplorerToolContext folderExplorer, 
             ExtensionPoint<IFolder> folderExtensionPoint,
             ExtensionPoint<ITool> itemToolExtensionPoint,
             ExtensionPoint<ITool> folderToolExtensionPoint)
-            : base(folderExplorer, folderExtensionPoint)
+            : base(displayName, folderExplorer, folderExtensionPoint)
         {
             if (this.WorklistClassNames.Count > 0)
             {

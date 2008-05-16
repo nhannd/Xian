@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Adt
 		private readonly Folders.RegistrationSearchFolder _searchFolder;
 
 		public RegistrationMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(folderExplorer,
+			: base(SR.TitleRegistrationFolderSystem, folderExplorer,
 			new RegistrationMainWorkflowFolderExtensionPoint(),
 			new RegistrationMainWorkflowItemToolExtensionPoint(),
 			new RegistrationMainWorkflowFolderToolExtensionPoint())
@@ -72,11 +72,6 @@ namespace ClearCanvas.Ris.Client.Adt
 			}
 			this.AddFolder(_searchFolder = new Folders.RegistrationSearchFolder(this));
 			folderExplorer.RegisterSearchDataHandler(this);
-		}
-
-		public override string DisplayName
-		{
-			get { return "Registration"; }
 		}
 
 		public override string PreviewUrl

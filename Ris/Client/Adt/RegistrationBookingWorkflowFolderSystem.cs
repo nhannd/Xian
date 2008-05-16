@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Client.Adt
 	public class RegistrationBookingWorkflowFolderSystem : RegistrationWorkflowFolderSystemBase
 	{
 		public RegistrationBookingWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(folderExplorer,
+			: base(SR.TitleBookingFolderSystem, folderExplorer,
 			new RegistrationBookingWorkflowFolderExtensionPoint(),
 			new RegistrationBookingWorkflowItemToolExtensionPoint(),
 			new RegistrationBookingWorkflowFolderToolExtensionPoint())
@@ -68,11 +68,6 @@ namespace ClearCanvas.Ris.Client.Adt
 				this.AddFolder(new Folders.PendingProtocolFolder(this));
 				this.AddFolder(new Folders.ToBeScheduledFolder(this));
 			}
-		}
-
-		public override string DisplayName
-		{
-			get { return "Booking"; }
 		}
 
 		public override string PreviewUrl

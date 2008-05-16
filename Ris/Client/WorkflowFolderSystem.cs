@@ -41,11 +41,13 @@ namespace ClearCanvas.Ris.Client
     public interface IFolderSystem : IDisposable
     {
         string Id { get; }
-        string DisplayName { get; }
+		string DisplayName { get; set; }
         IList<IFolder> Folders { get; }
         IToolSet FolderTools { get; }
         IToolSet ItemTools { get; }
         string PreviewUrl { get; }
+
+    	event EventHandler DisplayNameChanged;
 
         void InvalidateFolder(Type folderType);
 
@@ -63,17 +65,22 @@ namespace ClearCanvas.Ris.Client
         private event EventHandler _selectedItemDoubleClicked;
         private event EventHandler _selectedItemsChanged;
         private event EventHandler _selectedFolderChanged;
+    	private event EventHandler _displayNameChanged;
 
-        protected IToolSet _itemTools;
+		private string _displayName;
+		
+		protected IToolSet _itemTools;
         protected IToolSet _folderTools;
 
-        public WorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            : this(folderExplorer, null)
+        public WorkflowFolderSystem(string displayName, IFolderExplorerToolContext folderExplorer)
+            : this(displayName, folderExplorer, null)
         {
         }
 
-        public WorkflowFolderSystem(IFolderExplorerToolContext folderExplorer, ExtensionPoint<IFolder> folderExtensionPoint)
+		public WorkflowFolderSystem(string displayName, IFolderExplorerToolContext folderExplorer, ExtensionPoint<IFolder> folderExtensionPoint)
         {
+			_displayName = displayName;
+
             _workflowFolders = new List<IFolder>();
 
             _folderExplorer = folderExplorer;
@@ -109,7 +116,15 @@ namespace ClearCanvas.Ris.Client
             get { return this.GetType().FullName; }
         }
 
-        public abstract string DisplayName { get; }
+    	public string DisplayName
+    	{
+    		get { return _displayName; }
+			set 
+			{ 
+				_displayName = value;
+				EventsHelper.Fire(_displayNameChanged, this, EventArgs.Empty);
+			}
+    	}
 
         public IList<IFolder> Folders
         {
@@ -194,7 +209,13 @@ namespace ClearCanvas.Ris.Client
             remove { _selectedFolderChanged -= value; }
         }
 
-        public IFolder SelectedFolder
+		public event EventHandler DisplayNameChanged
+		{
+			add { _displayNameChanged += value; }
+			remove { _displayNameChanged -= value; }
+		}
+		
+		public IFolder SelectedFolder
         {
             get { return _folderExplorer.SelectedFolder; }
             set { _folderExplorer.SelectedFolder = value; }

@@ -40,7 +40,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// </summary>
     public partial class StackTabComponentContainerControl : CustomUserControl
     {
-        private StackTabComponentContainer _component;
+        private readonly StackTabComponentContainer _component;
 
         public StackTabComponentContainerControl(StackTabComponentContainer component)
         {
@@ -54,11 +54,18 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             _stackTabControl.RootDirection = Crownwood.DotNetMagic.Common.LayoutDirection.Vertical;
 
-            foreach (TabPage page in _component.Pages)
+            foreach (StackTabPage page in _component.Pages)
             {
-                StackTab stackTab = CreateStackTab(page.Name, _component.StackStyle);
+                StackTab stackTab = CreateStackTab(page.PreText, page.Text, page.PostText, _component.StackStyle);
 
-                Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl = _stackTabControl.RootSequence.AddNewLeaf() as Crownwood.DotNetMagic.Controls.TabGroupLeaf;
+            	page.TextChanged += delegate
+                	{
+						stackTab.TitleBar.PreText = page.PreText;
+						stackTab.TitleBar.Text = page.Text;
+						stackTab.TitleBar.PostText = page.PostText;
+                	};
+
+                Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl = _stackTabControl.RootSequence.AddNewLeaf();
                 tgl.MinimumSize = stackTab.MinimumRequestedSize;
 
                 // Prevent user from resizing
@@ -97,7 +104,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Event Handlers
 
-        private void OnArrowClick(object sender, System.EventArgs e)
+        private void OnArrowClick(object sender, EventArgs e)
         {
             // Remember which title bar sent message
             Crownwood.DotNetMagic.Controls.TitleBar tbClick = sender as Crownwood.DotNetMagic.Controls.TitleBar;
@@ -155,7 +162,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _stackTabControl.RootSequence.Reposition();
         }
 
-        private void OnTitleClick(object sender, System.EventArgs e)
+        private void OnTitleClick(object sender, EventArgs e)
         {
             // Remember which title bar sent message
             Crownwood.DotNetMagic.Controls.TitleBar tbClick = sender as Crownwood.DotNetMagic.Controls.TitleBar;
@@ -191,19 +198,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Private Helpers
 
-        private StackTab CreateStackTab(string name, StackStyle stackStyle)
+        private StackTab CreateStackTab(string preText, string text, string postText, StackStyle stackStyle)
         {
-            StackTab stackTab = null;
+            StackTab stackTab;
 
             if (stackStyle == StackStyle.ShowMultiple)
             {
-                stackTab = new StackTab(string.Empty, name, string.Empty,
-                    Crownwood.DotNetMagic.Controls.ArrowButton.UpArrow, new EventHandler(OnArrowClick));
+                stackTab = new StackTab(preText, text, postText,
+                    Crownwood.DotNetMagic.Controls.ArrowButton.UpArrow, OnArrowClick);
 			}
             else
             {
-                stackTab = new StackTab(string.Empty, name, string.Empty,
-                    Crownwood.DotNetMagic.Controls.ArrowButton.None, new EventHandler(OnTitleClick));
+				stackTab = new StackTab(preText, text, postText,
+                    Crownwood.DotNetMagic.Controls.ArrowButton.None, OnTitleClick);
 
                 // Customize titlebar colours
                 //stackTab.TitleBar.BackColor = Color.SlateBlue;
@@ -222,8 +229,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void OpenTabGroup(Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl, decimal space)
         {
-            Crownwood.DotNetMagic.Controls.TabPage tabPageUI = tgl.TabPages[0] as Crownwood.DotNetMagic.Controls.TabPage;
-            TabPage page = tabPageUI.Tag as TabPage;
+            Crownwood.DotNetMagic.Controls.TabPage tabPageUI = tgl.TabPages[0];
+			StackTabPage page = tabPageUI.Tag as StackTabPage;
             StackTab stackTab = tabPageUI.Control as StackTab;
 
             if (page.Component.IsStarted == false)

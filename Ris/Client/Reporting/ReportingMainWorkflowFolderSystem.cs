@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         private readonly Folders.SearchFolder _searchFolder;
 
         public ReportingMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            : base(folderExplorer, 
+            : base(SR.TitleReportingFolderSystem, folderExplorer, 
             new ReportingMainWorkflowFolderExtensionPoint(),
             new ReportingMainWorkflowItemToolExtensionPoint(),
             new ReportingMainWorkflowFolderToolExtensionPoint())
@@ -82,11 +82,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
             folderExplorer.RegisterSearchDataHandler(this);
-        }
-
-        public override string DisplayName
-        {
-            get { return "Reporting"; }
         }
 
         public override string PreviewUrl

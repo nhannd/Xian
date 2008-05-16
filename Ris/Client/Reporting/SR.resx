@@ -189,11 +189,17 @@
   <data name="TitleOrderNoteboxFolderSystem" xml:space="preserve">
     <value>Order Notes</value>
   </data>
+  <data name="TitleProtocollingFolderSystem" xml:space="preserve">
+    <value>Protocolling</value>
+  </data>
   <data name="TitleRadiologistHome" xml:space="preserve">
     <value>Radiologist Home</value>
   </data>
   <data name="TitleReviewProtocol" xml:space="preserve">
     <value>Review Protocol</value>
+  </data>
+  <data name="TitleReportingFolderSystem" xml:space="preserve">
+    <value>Reporting</value>
   </data>
   <data name="TitleReviseReport" xml:space="preserve">
     <value>Revise Report</value>

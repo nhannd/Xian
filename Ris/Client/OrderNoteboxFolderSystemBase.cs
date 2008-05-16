@@ -129,11 +129,12 @@ namespace ClearCanvas.Ris.Client
 		#endregion
 
 		public OrderNoteboxFolderSystemBase(
+			string displayName,
 			IFolderExplorerToolContext folderExplorer, 
 			ExtensionPoint<IFolder> folderExtensionPoint,
 			ExtensionPoint<ITool> itemToolExtensionPoint,
 			ExtensionPoint<ITool> folderToolExtensionPoint)
-			: base(folderExplorer, folderExtensionPoint)
+			: base(displayName, folderExplorer, folderExtensionPoint)
 		{
 			_itemTools = new ToolSet(itemToolExtensionPoint, new OrderNoteboxItemToolContext(this));
 			_folderTools = new ToolSet(folderToolExtensionPoint, new OrderNoteboxFolderToolContext(this));

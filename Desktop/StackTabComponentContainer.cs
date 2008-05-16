@@ -68,7 +68,7 @@ namespace ClearCanvas.Desktop
     /// 'stacked' UI representation.
     /// </summary>
     [AssociateView(typeof(StackTabComponentContainerViewExtensionPoint))]
-    public class StackTabComponentContainer : PagedComponentContainer<TabPage>
+    public class StackTabComponentContainer : PagedComponentContainer<StackTabPage>
     {
         private readonly StackStyle _stackStyle;
 		private readonly bool _openAllTabsInitially;

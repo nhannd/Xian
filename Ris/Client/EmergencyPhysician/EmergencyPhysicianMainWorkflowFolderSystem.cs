@@ -30,8 +30,8 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 	{
 		private readonly RegistrationSearchFolder _searchFolder;
 
-		public EmergencyPhysicianMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer) 
-			: base(folderExplorer,
+		public EmergencyPhysicianMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
+			: base(SR.TitleEmergencyFolderSystem, folderExplorer,
 			       new EmergencyPhysicianMainWorkflowFolderExtensionPoint(),
 			       new EmergencyPhysicianMainWorkflowItemToolExtensionPoint(),
 			       new EmergencyPhysicianMainWorkflowFolderToolExtensionPoint())
@@ -43,11 +43,6 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 
 			this.AddFolder(_searchFolder = new RegistrationSearchFolder(this));
 			folderExplorer.RegisterSearchDataHandler(this);
-		}
-
-		public override string DisplayName
-		{
-			get { return SR.TitleEmergency; }
 		}
 
 		public override string PreviewUrl

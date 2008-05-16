@@ -144,7 +144,18 @@ namespace ClearCanvas.Ris.Client
                         //component.SuppressSelectionChanged += _folderContentComponent.OnSuppressSelectionChanged;
 
                         _folderExplorerComponents.Add(folderSystem, component);
-                        _stackContainers.Pages.Add(new TabPage(folderSystem.DisplayName, component));
+
+                    	StackTabPage thisPage = new StackTabPage(
+                    		folderSystem.DisplayName,
+                    		string.Empty,
+							folderSystem.DisplayName,
+							string.Empty,
+                    		component);
+
+                        _stackContainers.Pages.Add(thisPage);
+
+                    	folderSystem.DisplayNameChanged +=
+                    		delegate { thisPage.SetTitle(string.Empty, folderSystem.DisplayName, string.Empty); };
                     });
 
             // Construct the home page

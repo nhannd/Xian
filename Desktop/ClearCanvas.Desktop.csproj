@@ -105,6 +105,7 @@
     <Compile Include="IShelfHost.cs" />
     <Compile Include="ISuggestionProvider.cs" />
     <Compile Include="IWorkspaceHost.cs" />
+    <Compile Include="StackTabPage.cs" />
     <Compile Include="StockDesktopTools.cs" />
     <Compile Include="Tables\FilteredItemCollection.cs" />
     <Compile Include="Tables\TableFilterParams.cs" />
