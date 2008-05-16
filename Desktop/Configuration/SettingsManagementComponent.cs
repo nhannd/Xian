@@ -31,9 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Configuration;
-using System.Reflection;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -42,7 +39,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.Desktop.Configuration
 {
@@ -50,6 +46,7 @@ namespace ClearCanvas.Desktop.Configuration
 	/// Launches the <see cref="SettingsManagementComponent"/>.
 	/// </summary>
 	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuConfigureSettings", "Activate")]
+	[ActionPermission("activate", AuthorityTokens.Admin.System.SettingsManagement)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class SettingsManagementLaunchTool : Tool<IDesktopToolContext>
     {

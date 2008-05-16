@@ -40,7 +40,7 @@ namespace ClearCanvas.Desktop
     /// </summary>
     public class PrincipalPermissionSpecification : ISpecification
     {
-        private string _role;
+        private readonly string _role;
 
         /// <summary>
         /// Constructs an instance of this class for the specified role.
@@ -56,12 +56,23 @@ namespace ClearCanvas.Desktop
         /// Tests the <see cref="Thread.CurrentPrincipal"/> for the permission represented by this object.
         /// </summary>
 		/// <remarks>
-		/// Note that the argument obj is ignored.
+		/// If the application is running in non-authenticated (stand-alone) mode, the test will always
+		/// succeed.  If the application is running in authenticated (enterprise) mode, the test succeeds only
+		/// if the thread current principal is in the role assigned to this instance.
 		/// </remarks>
-		/// <param name="obj">Ignored.</param>
+		/// <param name="obj">This parameter is ignored.</param>
         public TestResult Test(object obj)
         {
-            return new TestResult(Thread.CurrentPrincipal == null ? false : Thread.CurrentPrincipal.IsInRole(_role));
+			// if the thread is running in a non-authenticated mode, then we have no choice but to allow.
+			// this seems a little counter-intuitive, but basically we're counting on the fact that if
+			// the desktop is running in an enterprise environment, then the thread *will* be authenticated,
+			// and that this is enforced by some mechanism outside the scope of this class.  The only
+			// scenario in which the thread would ever be unauthenticated is the stand-alone scenario.
+			if(Thread.CurrentPrincipal == null || Thread.CurrentPrincipal.Identity.IsAuthenticated == false)
+				return new TestResult(true);
+
+			// if running in authenticated mode, test the role
+            return new TestResult(Thread.CurrentPrincipal.IsInRole(_role));
         }
 
         #endregion
