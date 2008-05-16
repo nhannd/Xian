@@ -81,6 +81,12 @@
       <Name>ClearCanvas.ImageServer.Rules</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Jpeg2000LosslessAction\Sample_JPEG2000Lossless.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Jpeg2000LossyAction\Sample_JPEG2000Lossy.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

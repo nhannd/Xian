@@ -1,0 +1,19 @@
+﻿<!-- -->
+<rule>
+	<condition
+	  expressionLanguage="dicom">
+		<or>
+			<equal
+			  test="$Modality"
+			  refValue="MR" />
+			<equal
+			  test="$Modality"
+			  refValue="CT" />
+		</or>
+	</condition>
+	<action>
+		<lossless-compress
+		  time="10"
+		  timeUnits="weeks" />
+	</action>
+</rule>

@@ -1,0 +1,22 @@
+﻿<!-- -->
+<rule>
+	<condition
+	  expressionLanguage="dicom">
+		<and>
+			<equal
+			  test="$BitsAllocated"
+			  refValue="8" />
+			<or>
+				<equal
+				  test="$Modality"
+				  refValue="US" />
+				<equal
+				  test="$Modality"
+				  refValue="RF" />
+			</or>
+		</and>
+	</condition>
+	<action>
+		<jpeg-baseline />
+	</action>
+</rule>

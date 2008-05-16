@@ -380,6 +380,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
 					                                    		ToString()));
 				}
+                else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("OnlineRetention").Enum)
+                {
+                    RuleApplyTimeDropDownList.Items.Add(new ListItem(
+                                                            ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").
+                                                                Description,
+                                                            ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
+                                                                ToString()));
+                }
 				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("AutoRoute").Enum)
 				{
 					RuleApplyTimeDropDownList.Items.Add(new ListItem(

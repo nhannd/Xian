@@ -1,0 +1,18 @@
+﻿<!-- -->
+<rule>
+	<condition
+	  expressionLanguage="dicom">
+		<or>
+			<equal
+			  test="$Modality"
+			  refValue="MR" />
+			<equal
+			  test="$Modality"
+			  refValue="CT" />
+		</or>
+	</condition>
+	<action>
+		<auto-route
+		  device="CLEARCANVAS" />
+	</action>
+</rule>

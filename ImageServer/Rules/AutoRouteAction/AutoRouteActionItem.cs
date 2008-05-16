@@ -32,36 +32,37 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.ImageServer.Rules.StudyDeleteAction;
 
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
     /// <summary>
     /// Class for implementing auto-route action as specified by <see cref="IActionItem{ServerActionContext}"/>
     /// </summary>
-    public class AutoRouteActionItem : IActionItem<ServerActionContext>
+    public class AutoRouteActionItem : ServerActionItemBase
     {
 
         #region Private Members
-        private string _failureReason = "Success";
-        private readonly string _device;
+
+        private string _device;        
         #endregion
 
         #region Constructors
+
+
         public AutoRouteActionItem(string device)
+            :base("AutoRoute Action")
         {
             _device = device;
         }
         #endregion
 
         #region Public Properties
-        public string FailureReason
-        {
-            get { return _failureReason; }
-        }
+        
         #endregion
 
         #region Public Methods
-        public bool Execute(ServerActionContext context)
+        protected override bool OnExecute(ServerActionContext context)
         {
             InsertAutoRouteCommand command = new InsertAutoRouteCommand(context, _device);
 
@@ -76,7 +77,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
                 catch (Exception e)
                 {
                     Platform.Log(LogLevel.Error, e, "Unexpected exception when inserting auto-route request");
-                    _failureReason = e.Message;
+                    
                     return false;
                 }
             }

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Dicom;
@@ -37,51 +38,53 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 {
-    public class StudyDeleteActionItem : IActionItem<ServerActionContext>
+
+
+    public class StudyDeleteActionItem : ServerActionItemBase
     {
-        private string _failureReason = "Success";
-        private readonly double _time;
-        private readonly string _timeUnits;
+
+        private readonly int _offsetTime;
+        private readonly TimeUnit _units;
+        private readonly ReferenceValue _referenceValue;
+
         private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("DeleteStudy");
 
-        public StudyDeleteActionItem(double time, string timeUnits)
+        public StudyDeleteActionItem(int time, TimeUnit unit, string refValue)
+            : base("Study Delete action")
         {
-            _time = time;
-            _timeUnits = timeUnits;
+            _offsetTime = time;
+            _units = unit;
+            _referenceValue = new ReferenceValue(refValue);
         }
 
-        public bool Execute(ServerActionContext context)
+        protected override bool OnExecute(ServerActionContext context)
         {
-            DateTime scheduledTime = Platform.Time;
+            _referenceValue.Context = context;
 
-            if (_timeUnits.Equals("hours"))
-                scheduledTime = scheduledTime.AddHours(_time);
-            else if (_timeUnits.Equals("days"))
-                scheduledTime = scheduledTime.AddDays(_time);
-            else if (_timeUnits.Equals("weeks"))
-                scheduledTime = scheduledTime.AddDays(_time * 7f);
-            else if (_timeUnits.Equals("months"))
-                scheduledTime = scheduledTime.AddMonths((int)_time);
-            else if (_timeUnits.Equals("patientAge"))
+            DateTime? scheduledTime = ResolveTime(context, _offsetTime, _units, _referenceValue, Platform.Time);
+            if (scheduledTime != null)
             {
-                DateTime birthDate = context.Message.DataSet[DicomTags.PatientsBirthDate].GetDateTime(0, Platform.Time);
+                int minRetention = RuleSettings.Default.MIN_RETENTION_MINUTES;
+                if (scheduledTime < Platform.Time.AddMinutes(minRetention))
+                {
+                    DateTime preferredScheduledTime = Platform.Time.AddMinutes(minRetention);
+                    Platform.Log(LogLevel.Warn, "Study Delete: calculated delete time is {1}. Min retention time = {0} minutes ==> preferred delete time is {2}", minRetention, scheduledTime, preferredScheduledTime);
+                    scheduledTime = preferredScheduledTime;
+                }
+                    
 
-                scheduledTime = birthDate.AddYears((int)_time);
+                Platform.Log(LogLevel.Debug, "Study Delete: This study will be deleted on {0}", scheduledTime);
+                context.CommandProcessor.AddCommand(new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey, scheduledTime.Value));
+
             }
-            else
-            {
-                _failureReason = String.Format("Unexpected time units for study-delete action item: {0}", _timeUnits);
-                return false;
-            }
 
-            context.CommandProcessor.AddCommand(new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey, scheduledTime));
-
-            return true;
+            return scheduledTime != null; 
+            
         }
 
-        public string FailureReason
-        {
-            get { return _failureReason; }
-        }
+        #region IActionItem<ServerActionContext> Members
+
+
+        #endregion
     }
 }

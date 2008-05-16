@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
@@ -69,27 +70,11 @@ namespace ClearCanvas.ImageServer.Codec.Rle.RleCompressAction
 		{
 			get
 			{
-				XmlDocument doc = new XmlDocument();
-				XmlNode node = doc.CreateElement("rule");
-				doc.AppendChild(node);
-				XmlElement conditionNode = doc.CreateElement("condition");
-				node.AppendChild(conditionNode);
-				conditionNode.SetAttribute("expressionLanguage", "dicom");
-				XmlNode actionNode = doc.CreateElement("action");
-				node.AppendChild(actionNode);
-
-				XmlElement andNode = doc.CreateElement("and");
-				conditionNode.AppendChild(andNode);
-
-
-				XmlElement equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$Modality");
-				equalNode.SetAttribute("refValue", "US");
-				andNode.AppendChild(equalNode);
-
-				XmlElement baselineCompress = doc.CreateElement("rle");
-				actionNode.AppendChild(baselineCompress);
-				return doc;
+                Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_RLE.xml");
+                XmlDocument doc = new XmlDocument();
+                doc.Load(stream);
+                stream.Close();
+                return doc;
 			}
 		}
 	}

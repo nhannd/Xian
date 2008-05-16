@@ -1,0 +1,17 @@
+﻿<!-- -->
+<rule>
+	<condition
+	  expressionLanguage="dicom">		
+			<and>
+				<equal
+				  test="$Modality"
+				  refValue="US" />
+				<equal
+				  test="$Modality"
+				  refValue="CR" />
+			</and>
+	</condition>
+	<action>
+		<rle/>
+	</action>
+</rule>

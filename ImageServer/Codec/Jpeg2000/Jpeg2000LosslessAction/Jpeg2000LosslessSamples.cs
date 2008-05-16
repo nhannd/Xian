@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
@@ -69,39 +70,11 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LosslessAction
 		{
 			get
 			{
-				XmlDocument doc = new XmlDocument();
-				XmlNode node = doc.CreateElement("rule");
-				doc.AppendChild(node);
-				XmlElement conditionNode = doc.CreateElement("condition");
-				node.AppendChild(conditionNode);
-				conditionNode.SetAttribute("expressionLanguage", "dicom");
-				XmlNode actionNode = doc.CreateElement("action");
-				node.AppendChild(actionNode);
-
-				XmlElement orNode = doc.CreateElement("or");
-				conditionNode.AppendChild(orNode);
-
-
-				XmlElement equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$Modality");
-				equalNode.SetAttribute("refValue", "CT");
-				orNode.AppendChild(equalNode);
-				equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$Modality");
-				equalNode.SetAttribute("refValue", "MR");
-				orNode.AppendChild(equalNode);
-				equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$Modality");
-				equalNode.SetAttribute("refValue", "CR");
-				orNode.AppendChild(equalNode);
-				equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$Modality");
-				equalNode.SetAttribute("refValue", "MG");
-				orNode.AppendChild(equalNode);
-
-				XmlElement baselineCompress = doc.CreateElement("jpeg-2000-lossless");
-				actionNode.AppendChild(baselineCompress);
-				return doc;
+                Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_JPEG2000Lossless.xml");
+                XmlDocument doc = new XmlDocument();
+                doc.Load(stream);
+                stream.Close();
+                return doc;
 			}
 		}
 	}

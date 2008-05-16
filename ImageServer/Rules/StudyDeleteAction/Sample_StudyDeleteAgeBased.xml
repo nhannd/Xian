@@ -1,0 +1,16 @@
+﻿<!-- this rule insert requests to delete the study when the patient reaches 21 years old. -->
+<rule>
+	<condition
+	  expressionLanguage="dicom">
+		<dicom-age-less-than
+		  test="$PatientsBirthDate"
+		  units="years"
+		  refValue="21" />
+	</condition>
+	<action>
+		<study-delete
+		  time="21"
+		  unit="years"
+		  refValue="$PatientsBirthDate"/>
+	</action>
+</rule>

@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
@@ -68,31 +69,11 @@ namespace ClearCanvas.ImageServer.Rules.LosslessCompressAction
 		{
 			get
 			{
-				XmlDocument doc = new XmlDocument();
-				XmlNode node = doc.CreateElement("rule");
-				doc.AppendChild(node);
-				XmlElement conditionNode = doc.CreateElement("condition");
-				node.AppendChild(conditionNode);
-				conditionNode.SetAttribute("expressionLanguage", "dicom");
-				XmlNode actionNode = doc.CreateElement("action");
-				node.AppendChild(actionNode);
-
-				XmlElement andNode = doc.CreateElement("or");
-				conditionNode.AppendChild(andNode);
-				XmlElement equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$Modality");
-				equalNode.SetAttribute("refValue", "MR");
-				andNode.AppendChild(equalNode);
-				equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$Modality");
-				equalNode.SetAttribute("refValue", "CT");
-				andNode.AppendChild(equalNode);
-
-				XmlElement losslessCompress = doc.CreateElement("lossless-compress");
-				losslessCompress.SetAttribute("time", "10");
-				losslessCompress.SetAttribute("timeUnits", "weeks");
-				actionNode.AppendChild(losslessCompress);
-				return doc;
+                Stream stream = this.GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_SimpleLossless.xml");
+                XmlDocument doc = new XmlDocument();
+                doc.Load(stream);
+                stream.Close();
+                return doc;
 			}
 		}
 	}
@@ -129,40 +110,11 @@ namespace ClearCanvas.ImageServer.Rules.LosslessCompressAction
 		{
 			get
 			{
-				XmlDocument doc = new XmlDocument();
-				XmlNode node = doc.CreateElement("rule");
-				doc.AppendChild(node);
-				XmlElement conditionNode = doc.CreateElement("condition");
-				node.AppendChild(conditionNode);
-				conditionNode.SetAttribute("expressionLanguage", "dicom");
-				XmlNode actionNode = doc.CreateElement("action");
-				node.AppendChild(actionNode);
-
-				XmlElement orNode = doc.CreateElement("or");
-				conditionNode.AppendChild(orNode);
-				XmlElement equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$TransferSyntaxUid");
-				equalNode.SetAttribute("refValue", "1.2.840.10008.1.2.4.50");
-				orNode.AppendChild(equalNode);
-				equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$TransferSyntaxUid");
-				equalNode.SetAttribute("refValue", "1.2.840.10008.1.2.4.51");
-				orNode.AppendChild(equalNode);
-				equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$TransferSyntaxUid");
-				equalNode.SetAttribute("refValue", "1.2.840.10008.1.2.4.70");
-				orNode.AppendChild(equalNode);
-				equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$TransferSyntaxUid");
-				equalNode.SetAttribute("refValue", "1.2.840.10008.1.2.4.91");
-				equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$TransferSyntaxUid");
-				equalNode.SetAttribute("refValue", "1.2.840.10008.1.2.4.90");
-				orNode.AppendChild(equalNode);
-
-				XmlElement losslessCompress = doc.CreateElement("no-op");
-				actionNode.AppendChild(losslessCompress);
-				return doc;
+                Stream stream = this.GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_LosslessWithExempt.xml");
+                XmlDocument doc = new XmlDocument();
+                doc.Load(stream);
+                stream.Close();
+                return doc;
 			}
 		}
 	}

@@ -1,0 +1,13 @@
+﻿<!-- this rule auto-forwards studies to "CLEARCANVAS" if the value of Study Description tag is "chest" -->
+<rule>
+	<condition
+	  expressionLanguage="dicom">
+		<regex
+		  test="$StudyDescription"
+		  pattern="chest" />
+	</condition>
+	<action>
+		<auto-route
+		  device="CLEARCANVAS" />
+	</action>
+</rule>

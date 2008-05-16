@@ -34,53 +34,48 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Rules.StudyDeleteAction;
 
 namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
 {
-    public class Tier1RetentionActionItem : IActionItem<ServerActionContext>
+    public class Tier1RetentionActionItem : ServerActionItemBase
     {
-        private string _failureReason = "Success";
-        private readonly double _time;
-        private readonly string _timeUnits;
+        private readonly int _offsetTime;
+        private readonly TimeUnit _units;
+        private readonly ReferenceValue _referenceValue;
         private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("TierMigrate");
 
-        public Tier1RetentionActionItem(double time, string timeUnits)
+        public Tier1RetentionActionItem(int time, TimeUnit unit, string refValue)
+            : base("Tier1 Retention action")
         {
-            _time = time;
-            _timeUnits = timeUnits.ToLower();
+            _offsetTime = time;
+            _units = unit;
+            _referenceValue = new ReferenceValue(refValue);
         }
-        public bool Execute(ServerActionContext context)
-        {
-            DateTime scheduledTime = Platform.Time;
 
-            if (_timeUnits.Equals("hours"))
-                scheduledTime = scheduledTime.AddHours(_time);
-            else if (_timeUnits.Equals("days"))
-                scheduledTime = scheduledTime.AddDays(_time);
-            else if (_timeUnits.Equals("weeks"))
-                scheduledTime = scheduledTime.AddDays(_time * 7f);
-            else if (_timeUnits.Equals("months"))
-                scheduledTime = scheduledTime.AddMonths((int)_time);
-            else if (_timeUnits.Equals("patientage"))
+        protected override bool OnExecute(ServerActionContext context)
+        {
+            _referenceValue.Context = context;
+            DateTime? scheduledTime = ResolveTime(context, _offsetTime, _units, _referenceValue, Platform.Time);
+            
+            if (scheduledTime != null)
             {
-                DateTime birthDate = context.Message.DataSet[DicomTags.PatientsBirthDate].GetDateTime(0, Platform.Time);
+                int minRetention = RuleSettings.Default.MIN_RETENTION_MINUTES;
+                if (scheduledTime < Platform.Time.AddMinutes(minRetention))
+                {
+                    DateTime preferredScheduledTime = Platform.Time.AddMinutes(minRetention);
+                    Platform.Log(LogLevel.Warn, "Tier1 Retention: calculated migration time is {1}. Min retention time = {0} minutes ==> preferred migration time is {2}", minRetention, scheduledTime, preferredScheduledTime);
+                    scheduledTime = preferredScheduledTime;
+                }
 
-                scheduledTime = birthDate.AddYears((int)_time);
+                Platform.Log(LogLevel.Debug, "Tier1 Retention: This study will be migrated off Tier 1 on {0}", scheduledTime);
+                context.CommandProcessor.AddCommand(new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey, scheduledTime.Value));
+            
             }
-            else
-            {
-                _failureReason = String.Format("Unexpected time units for tier1-retention action item: {0}", _timeUnits);
-                return false;
-            }
 
-            context.CommandProcessor.AddCommand(new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey, scheduledTime));
-
-            return true;
+            return scheduledTime != null; 
+            
         }
 
-        public string FailureReason
-        {
-            get { return _failureReason; }
-        }
     }
 }

@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
@@ -69,40 +70,11 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegBaselineAction
 		{
 			get
 			{
-				XmlDocument doc = new XmlDocument();
-				XmlNode node = doc.CreateElement("rule");
-				doc.AppendChild(node);
-				XmlElement conditionNode = doc.CreateElement("condition");
-				node.AppendChild(conditionNode);
-				conditionNode.SetAttribute("expressionLanguage", "dicom");
-				XmlNode actionNode = doc.CreateElement("action");
-				node.AppendChild(actionNode);
-
-				XmlElement andNode = doc.CreateElement("and");
-				conditionNode.AppendChild(andNode);
-				
-				XmlElement equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$BitsAllocated");
-				equalNode.SetAttribute("refValue", "8");
-				andNode.AppendChild(equalNode);
-				
-				XmlElement orNode = doc.CreateElement("or");
-				andNode.AppendChild(orNode);
-
-				equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$Modality");
-				equalNode.SetAttribute("refValue", "US");
-				orNode.AppendChild(equalNode);
-
-				equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$Modality");
-				equalNode.SetAttribute("refValue", "RF");
-				orNode.AppendChild(equalNode);
-				
-
-				XmlElement baselineCompress = doc.CreateElement("jpeg-baseline");
-				actionNode.AppendChild(baselineCompress);
-				return doc;
+                Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_JPEGBaseLine.xml");
+                XmlDocument doc = new XmlDocument();
+                doc.Load(stream);
+                stream.Close();
+                return doc;
 			}
 		}
 	}

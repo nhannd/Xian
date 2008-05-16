@@ -29,9 +29,13 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Xml;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -161,22 +165,43 @@ namespace ClearCanvas.ImageServer.Rules
 
                 foreach (ServerRule serverRule in list)
                 {
-                    Rule theRule = new Rule(serverRule);
-                    theRule.Compile(specCompiler, actionCompiler);
-
-                    RuleTypeCollection typeCollection;
-
-                    if (!_typeList.ContainsKey(serverRule.ServerRuleTypeEnum))
+                        
+                    try
                     {
-                        typeCollection = new RuleTypeCollection(serverRule.ServerRuleTypeEnum);
-                        _typeList.Add(serverRule.ServerRuleTypeEnum, typeCollection);
-                    }
-                    else
-                    {
-                        typeCollection = _typeList[serverRule.ServerRuleTypeEnum];
-                    }
+                        Rule theRule = new Rule();
+                        theRule.Name = serverRule.RuleName;
+                        theRule.Description = serverRule.ServerRuleApplyTimeEnum.Description;
 
-                    typeCollection.AddRule(theRule);
+                        XmlNode ruleNode =
+                            CollectionUtils.SelectFirst<XmlNode>(serverRule.RuleXml.ChildNodes,
+                                                                 delegate(XmlNode child)
+                                                                 { return child.Name.Equals("rule"); });
+
+
+                        theRule.Compile(ruleNode, specCompiler, actionCompiler);
+
+                        RuleTypeCollection typeCollection;
+
+                        if (!_typeList.ContainsKey(serverRule.ServerRuleTypeEnum))
+                        {
+                            typeCollection = new RuleTypeCollection(serverRule.ServerRuleTypeEnum);
+                            _typeList.Add(serverRule.ServerRuleTypeEnum, typeCollection);
+                        }
+                        else
+                        {
+                            typeCollection = _typeList[serverRule.ServerRuleTypeEnum];
+                        }
+
+                        typeCollection.AddRule(theRule);
+                    }
+                    catch(Exception e)
+                    {
+                        // something wrong with the rule...
+                        Platform.Log(LogLevel.Warn, e, "Unable to add rule {0} to the engine. It will be skipped", serverRule.RuleName);
+                    }
+                    
+
+                    
                 }
             }
 

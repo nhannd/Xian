@@ -35,41 +35,59 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules
 {
+    
     public class Rule
     {
         #region Private Members
         private ISpecification _conditions;
         private IActionSet<ServerActionContext> _actions;
-        private readonly ServerRule _serverRule;
+        private string _name;
+        private string _description;
+        private bool _isDefault;
+        private bool _isExempt;
         #endregion
 
         #region Constructors
-        public Rule(ServerRule serverRule)
-        {
-            _serverRule = serverRule;
-        }
+
         #endregion
 
         #region Public Properties
-        public ServerRule ServerRule
+        public string Name
         {
-            get { return _serverRule; }
+            get { return _name; }
+            set { _name = value; }
         }
+
+        public string Description
+        {
+            get { return _description; }
+            set { _description = value; }
+        }
+
+        public bool IsDefault
+        {
+            get { return _isDefault; }
+            set { _isDefault = value; }
+        }
+
+        public bool IsExempt
+        {
+            get { return _isExempt; }
+            set { _isExempt = value; }
+        }
+
         #endregion
 
         #region Public Methods
 
-        public void Compile(XmlSpecificationCompiler specCompiler, XmlActionCompiler<ServerActionContext> actionCompiler)
+        public void Compile(XmlNode ruleNode, XmlSpecificationCompiler specCompiler, XmlActionCompiler<ServerActionContext> actionCompiler)
         {
-            XmlNode ruleNode =
-                CollectionUtils.SelectFirst<XmlNode>(_serverRule.RuleXml.ChildNodes,
-                                                     delegate(XmlNode child)
-                                                         { return child.Name.Equals("rule"); });
-
+            
             XmlNode conditionNode =
                 CollectionUtils.SelectFirst<XmlNode>(ruleNode.ChildNodes,
                                                      delegate(XmlNode child)
@@ -86,26 +104,37 @@ namespace ClearCanvas.ImageServer.Rules
             _actions = actionCompiler.Compile(actionNode as XmlElement, true);
         }
 
+        /// <summary>
+        /// Returns true if the rule condition is passed for the specified context
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public TestResult Test(ServerActionContext context)
+        {
+            if (IsDefault)
+                return new TestResult(true);
+
+            return _conditions.Test(context.Message);
+        }
+
+
         public void Execute(ServerActionContext context, bool defaultRule, out bool ruleApplied, out bool ruleSuccess)
         {
             ruleApplied = false;
             ruleSuccess = true;
 
-            TestResult result;
-            if (defaultRule) // just skip the evaluation
-                result = new TestResult(true);
-            else
-                result = _conditions.Test(context.Message);
+            TestResult result = Test(context);
             
             if (result.Success)
             {
                 ruleApplied = true;
+                Platform.Log(LogLevel.Debug, "Applying rule {0}", Name);
                 TestResult actionResult = _actions.Execute(context);
                 if (actionResult.Fail)
                 {
                     foreach (TestResultReason reason in actionResult.Reasons)
                     {
-                        Platform.Log(LogLevel.Error, "Unexpected error performing action: {0}", reason.Message);
+                        Platform.Log(LogLevel.Error, "Unexpected error performing action {0}: {1}", Name, reason.Message);
                     }
                     ruleSuccess = false;
                 }
@@ -130,10 +159,18 @@ namespace ClearCanvas.ImageServer.Rules
             ServerRule theServerRule = new ServerRule();
             theServerRule.RuleXml = rule;
 
-            Rule theRule = new Rule(theServerRule);
+            Rule theRule = new Rule();
+            theRule.Name = theServerRule.RuleName;
+
+            XmlNode ruleNode =
+                CollectionUtils.SelectFirst<XmlNode>(theServerRule.RuleXml.ChildNodes,
+                                                     delegate(XmlNode child)
+                                                         { return child.Name.Equals("rule"); });
+
+
             try
             {
-                theRule.Compile(specCompiler, actionCompiler);
+                theRule.Compile(ruleNode,specCompiler, actionCompiler);
             }
             catch (Exception e)
             {

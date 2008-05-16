@@ -29,6 +29,9 @@
 
 #endregion
 
+using System;
+using System.IO;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
@@ -37,46 +40,50 @@ using ClearCanvas.Common.Actions;
 namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 {
     [ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-    public class StudyDeleteActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+    public class StudyDeleteActionOperator : ActionOperatorBase
     {
-        public string OperatorTag
+        public StudyDeleteActionOperator():
+            base("study-delete")
         {
-            get { return "study-delete"; }
+            
         }
 
-        public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
+        public override IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
         {
             if (xmlNode.Attributes["time"] == null)
                 throw new XmlActionCompilerException("Unexpected missing time attribute for study-delete action");
-            if (xmlNode.Attributes["timeUnits"] == null)
-                throw new XmlActionCompilerException("Unexpected missing timeUnits attribute for study-delete action");
+            if (xmlNode.Attributes["unit"] == null)
+                throw new XmlActionCompilerException("Unexpected missing unit attribute for study-delete action");
 
-            double time;
-            if (false == double.TryParse(xmlNode.Attributes["time"].Value, out time))
+            int time;
+            if (false == int.TryParse(xmlNode.Attributes["time"].Value, out time))
                 throw new XmlActionCompilerException("Unable to parse time value for study-delete rule");
             
-            string timeUnits = xmlNode.Attributes["timeUnits"].Value;
+            string xmlUnit = xmlNode.Attributes["unit"].Value;
+            TimeUnit unit = (TimeUnit) Enum.Parse(typeof(TimeUnit), xmlUnit, true); // this will throw exception if the unit is not defined
 
-            return new StudyDeleteActionItem(time, timeUnits);
+            string refValue = xmlNode.Attributes["refValue"]!=null?  xmlNode.Attributes["refValue"].Value:null;
+
+            return new StudyDeleteActionItem(time, unit, refValue);
         }
 
-        public XmlSchemaElement GetSchema()
+        public override XmlSchemaElement GetSchema()
         {
-            XmlSchemaComplexType type = new XmlSchemaComplexType();
-
-            XmlSchemaAttribute attrib = new XmlSchemaAttribute();
-            attrib.Name = "time";
-            attrib.Use = XmlSchemaUse.Required;
-            attrib.SchemaTypeName = new XmlQualifiedName("double", "http://www.w3.org/2001/XMLSchema");
-            type.Attributes.Add(attrib);
-
-            XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType();
+            XmlSchemaSimpleType timeUnitType = new XmlSchemaSimpleType();
 
             XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
             restriction.BaseTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
 
             XmlSchemaEnumerationFacet enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "minutes";
+            restriction.Facets.Add(enumeration);
+
+            enumeration = new XmlSchemaEnumerationFacet();
             enumeration.Value = "hours";
+            restriction.Facets.Add(enumeration);
+            
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "days";
             restriction.Facets.Add(enumeration);
 
             enumeration = new XmlSchemaEnumerationFacet();
@@ -84,29 +91,41 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
             restriction.Facets.Add(enumeration);
 
             enumeration = new XmlSchemaEnumerationFacet();
-            enumeration.Value = "days";
-            restriction.Facets.Add(enumeration);
-
-            enumeration = new XmlSchemaEnumerationFacet();
             enumeration.Value = "months";
             restriction.Facets.Add(enumeration);
 
             enumeration = new XmlSchemaEnumerationFacet();
-            enumeration.Value = "patientAge";
+            enumeration.Value = "years";
             restriction.Facets.Add(enumeration);
 
-            simpleType.Content = restriction;
+            timeUnitType.Content = restriction;
 
-            attrib = new XmlSchemaAttribute();
-            attrib.Name = "timeUnits";
+
+            XmlSchemaComplexType type = new XmlSchemaComplexType();
+
+            XmlSchemaAttribute attrib = new XmlSchemaAttribute();
+            attrib.Name = "time";
             attrib.Use = XmlSchemaUse.Required;
-            attrib.SchemaType = simpleType;
+            attrib.SchemaTypeName = new XmlQualifiedName("integer", "http://www.w3.org/2001/XMLSchema");
             type.Attributes.Add(attrib);
 
+            attrib = new XmlSchemaAttribute();
+            attrib.Name = "unit";
+            attrib.Use = XmlSchemaUse.Required;
+            attrib.SchemaType = timeUnitType;
+            type.Attributes.Add(attrib);
+
+            attrib = new XmlSchemaAttribute();
+            attrib.Name = "refValue";
+            attrib.Use = XmlSchemaUse.Optional;
+            attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+            type.Attributes.Add(attrib);
+            
 
             XmlSchemaElement element = new XmlSchemaElement();
-            element.Name = "study-delete";
+            element.Name = OperatorTag;
             element.SchemaType = type;
+            
 
             return element;
         }

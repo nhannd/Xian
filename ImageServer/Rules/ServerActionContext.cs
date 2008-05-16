@@ -29,12 +29,20 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Rules
 {
+    public class ServerActionException:Exception
+    {
+        public  ServerActionException(ServerActionContext context, string error)
+            :base(String.Format("{0}:{1}", context.CommandProcessor.Description, error))
+        {
+        }
+    }
     /// <summary>
     /// A context used when applying rules and actions within the ImageServer.
     /// </summary>

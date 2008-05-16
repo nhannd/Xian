@@ -1,0 +1,17 @@
+﻿<!-- -->
+<rule>
+	<condition
+	  expressionLanguage="dicom">		
+			<or>
+				<equal
+				  test="$Modality"
+				  refValue="DX" />
+				<equal
+				  test="$Modality"
+				  refValue="CR" />
+			</or>
+	</condition>
+	<action>
+		<jpeg-2000-lossy/>
+	</action>
+</rule>

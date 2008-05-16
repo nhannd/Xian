@@ -30,6 +30,8 @@
 #endregion
 
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
@@ -68,29 +70,10 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 		{
 			get
 			{
-				XmlDocument doc = new XmlDocument();
-				XmlNode node = doc.CreateElement("rule");
-				doc.AppendChild(node);
-				XmlElement conditionNode = doc.CreateElement("condition");
-				node.AppendChild(conditionNode);
-				conditionNode.SetAttribute("expressionLanguage", "dicom");
-				XmlNode actionNode = doc.CreateElement("action");
-				node.AppendChild(actionNode);
-
-				XmlElement orNode = doc.CreateElement("or");
-				conditionNode.AppendChild(orNode);
-				XmlElement equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$Modality");
-				equalNode.SetAttribute("refValue", "MR");
-				orNode.AppendChild(equalNode);
-				equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$Modality");
-				equalNode.SetAttribute("refValue", "CT");
-				orNode.AppendChild(equalNode);
-
-				XmlElement autoRoute = doc.CreateElement("auto-route");
-				autoRoute.SetAttribute("device", "CLEARCANVAS");
-				actionNode.AppendChild(autoRoute);
+                Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_AutoRouteMultiTag.xml");
+			    XmlDocument doc = new XmlDocument();
+			    doc.Load(stream);
+			    stream.Close();
 				return doc;
 			}
 		}
@@ -128,24 +111,11 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 		{
 			get
 			{
-				XmlDocument doc = new XmlDocument();
-				XmlNode node = doc.CreateElement("rule");
-				doc.AppendChild(node);
-				XmlElement conditionNode = doc.CreateElement("condition");
-				node.AppendChild(conditionNode);
-				conditionNode.SetAttribute("expressionLanguage", "dicom");
-				XmlNode actionNode = doc.CreateElement("action");
-				node.AppendChild(actionNode);
-
-				XmlElement regexNode = doc.CreateElement("regex");
-				regexNode.SetAttribute("test", "$StudyDescription");
-				regexNode.SetAttribute("pattern", "chest");
-				conditionNode.AppendChild(regexNode);
-
-				XmlElement autoRoute = doc.CreateElement("auto-route");
-				autoRoute.SetAttribute("device", "CLEARCANVAS");
-				actionNode.AppendChild(autoRoute);
-				return doc;
+                Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_AutoRouteSimple.xml");
+                XmlDocument doc = new XmlDocument();
+                doc.Load(stream);
+                stream.Close();
+                return doc;
 			}
 		}
 	}

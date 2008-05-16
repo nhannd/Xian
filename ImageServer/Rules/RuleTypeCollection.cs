@@ -67,18 +67,18 @@ namespace ClearCanvas.ImageServer.Rules
         #region Public Methods
         public void AddRule(Rule rule)
         {
-            if (rule.ServerRule.DefaultRule)
+            if (rule.IsDefault)
             {
                 if (_defaultRule != null)
                 {
                     Platform.Log(LogLevel.Error, "Unexpected multiple default rules for rule {0} of type {1}",
-                        rule.ServerRule.Name, rule.ServerRule.ServerRuleTypeEnum.Description);
-                    Platform.Log(LogLevel.Error, "Ignoring rule {0}", rule.ServerRule.Name);
+                        rule.Name, rule.Description);
+                    Platform.Log(LogLevel.Error, "Ignoring rule {0}", rule.Name);
                 }
                 else
                     _defaultRule = rule;
             }
-            else if (rule.ServerRule.ExemptRule)
+            else if (rule.IsExempt)
             	_exemptRuleList.Add(rule);
 			else
                 _ruleList.Add(rule);

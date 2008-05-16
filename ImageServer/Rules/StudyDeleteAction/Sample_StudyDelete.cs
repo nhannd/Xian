@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
@@ -68,26 +69,11 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 		{
 			get
 			{
-				XmlDocument doc = new XmlDocument();
-				XmlNode node = doc.CreateElement("rule");
-				doc.AppendChild(node);
-				XmlElement conditionNode = doc.CreateElement("condition");
-				node.AppendChild(conditionNode);
-				conditionNode.SetAttribute("expressionLanguage", "dicom");
-				XmlNode actionNode = doc.CreateElement("action");
-				node.AppendChild(actionNode);
-
-				XmlElement dicomAgeNode = doc.CreateElement("dicom-age-less-than");
-				dicomAgeNode.SetAttribute("test", "$PatientsBirthDate");
-				dicomAgeNode.SetAttribute("units", "years");
-				dicomAgeNode.SetAttribute("refValue", "21");
-				conditionNode.AppendChild(dicomAgeNode);
-
-				XmlElement studyDelete = doc.CreateElement("study-delete");
-				studyDelete.SetAttribute("time", "21");
-				studyDelete.SetAttribute("timeUnits", "patientAge");
-				actionNode.AppendChild(studyDelete);
-				return doc;
+                Stream stream = this.GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_StudyDeleteAgeBased.xml");
+                XmlDocument doc = new XmlDocument();
+                doc.Load(stream);
+                stream.Close();
+                return doc;
 			}
 		}
 	}
@@ -124,32 +110,11 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 		{
 			get
 			{
-				XmlDocument doc = new XmlDocument();
-				XmlNode node = doc.CreateElement("rule");
-				doc.AppendChild(node);
-				XmlElement conditionNode = doc.CreateElement("condition");
-				node.AppendChild(conditionNode);
-				conditionNode.SetAttribute("expressionLanguage", "dicom");
-				XmlNode actionNode = doc.CreateElement("action");
-				node.AppendChild(actionNode);
-
-				XmlElement andNode = doc.CreateElement("and");
-				conditionNode.AppendChild(andNode);
-				XmlElement equalNode = doc.CreateElement("equal");
-				equalNode.SetAttribute("test", "$Modality");
-				equalNode.SetAttribute("refValue", "MR");
-				andNode.AppendChild(equalNode);
-				equalNode = doc.CreateElement("regex");
-				equalNode.SetAttribute("test", "$PatientId");
-				equalNode.SetAttribute("pattern", "1");
-				andNode.AppendChild(equalNode);
-
-				XmlElement studyDelete = doc.CreateElement("study-delete");
-				studyDelete.SetAttribute("time", "10");
-				studyDelete.SetAttribute("timeUnits", "weeks");
-				actionNode.AppendChild(studyDelete);
-
-				return doc;
+                Stream stream = this.GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_StudyDeleteTagBased.xml");
+                XmlDocument doc = new XmlDocument();
+                doc.Load(stream);
+                stream.Close();
+                return doc;
 			}
 		}
 	}

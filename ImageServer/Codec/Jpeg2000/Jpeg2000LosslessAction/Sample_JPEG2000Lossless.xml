@@ -1,0 +1,23 @@
+﻿<!-- -->
+<rule>
+	<condition
+	  expressionLanguage="dicom">		
+			<or>
+				<equal
+				  test="$Modality"
+				  refValue="CT" />
+				<equal
+				  test="$Modality"
+				  refValue="MR" />
+				<equal
+				  test="$Modality"
+				  refValue="CR" />
+				<equal
+				  test="$Modality"
+				  refValue="MG" />
+			</or>
+	</condition>
+	<action>
+		<jpeg-2000-lossless />
+	</action>
+</rule>
