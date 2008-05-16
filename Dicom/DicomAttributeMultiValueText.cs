@@ -381,7 +381,7 @@ namespace ClearCanvas.Dicom
         {
             ValidateString(value);
 
-            if (index == Count)
+            if (index == Count || IsNull)
                 AppendString(value);
             else
             {
@@ -823,7 +823,7 @@ namespace ClearCanvas.Dicom
         public override void SetInt64(int index, Int64 value)
         {
 
-            if (index == Count)
+			if (index == Count || IsNull)
             {
                 AppendInt64(value);
             }
@@ -871,8 +871,8 @@ namespace ClearCanvas.Dicom
         /// If <i>index</i> equals to <seealso cref="Count"/>, this method behaves exactly as <seealso cref="AppendUInt64"/>
         /// </remarks>
         public override void SetUInt64(int index, UInt64 value)
-        {            
-            if (index == Count)
+        {
+			if (index == Count || IsNull)
             {
                 AppendUInt64(value);
             }
@@ -908,9 +908,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void SetFloat64(int index, double value)
         {
-
-
-            if (index == Count)
+			if (index == Count || IsNull)
             {
                 AppendFloat64(value);
             }

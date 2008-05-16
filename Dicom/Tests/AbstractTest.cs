@@ -65,6 +65,7 @@ namespace ClearCanvas.Dicom.Tests
             theSet[DicomTags.AccessionNumber].SetStringValue("A1234");
             theSet[DicomTags.Modality].SetStringValue("MR");
             theSet[DicomTags.Manufacturer].SetStringValue("ClearCanvas");
+			theSet[DicomTags.ManufacturersModelName].SetNullValue();
             theSet[DicomTags.InstitutionName].SetStringValue("Mount Sinai Hospital");
             theSet[DicomTags.ReferringPhysiciansName].SetStringValue("Last^First");
             theSet[DicomTags.StudyDescription].SetStringValue("HEART");

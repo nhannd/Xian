@@ -32,6 +32,7 @@
 #if UNIT_TESTS
 
 using System;
+using System.Diagnostics;
 using NUnit.Framework;
 
 namespace ClearCanvas.Dicom.Tests
@@ -369,6 +370,43 @@ namespace ClearCanvas.Dicom.Tests
             CheckPixels(file.Filename);
 
         }
+
+
+		[Test]
+		public void SimpleFileTest()
+		{
+
+			DicomFile file = new DicomFile("LittleEndianReadFileTest.dcm");
+
+			DicomAttributeCollection dataSet = file.DataSet;
+
+			SetupMR(dataSet);
+
+			SetupMetaInfo(file);
+
+			dataSet[DicomTags.StudyDescription].SetNullValue();
+
+			// Little Endian Tests
+			file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+
+			DicomReadOptions readOptions = DicomReadOptions.Default;
+
+			bool result = file.Save(DicomWriteOptions.Default);
+
+			Assert.AreEqual(result, true);
+
+			DicomFile newFile = new DicomFile(file.Filename);
+
+			newFile.Load(readOptions);
+
+			Assert.IsTrue(newFile.DataSet[DicomTags.StudyDescription].IsNull);
+
+			Assert.AreEqual(file.DataSet.Equals(newFile.DataSet), true);
+
+			DicomAttributeCollection dicomAttributeCollection = new DicomAttributeCollection();
+			dicomAttributeCollection[DicomTags.PatientId].SetNullValue();
+			Assert.IsFalse(dicomAttributeCollection[DicomTags.PatientId].IsEmpty, "Dicom Tag is empty, won't be written in DicomStreamWriter.Write()");
+		}
     }
 }
 #endif
