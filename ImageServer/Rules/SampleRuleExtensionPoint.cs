@@ -33,11 +33,11 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Rules
 {
-	/// <summary>
-	/// Plugin for Sample Rules used in the Web GUI.
-	/// </summary>
-	[ExtensionPoint()]
-	public class SampleRuleExtensionPoint : ExtensionPoint<ISampleRule>
-	{
-	}
+    /// <summary>
+    /// Plugin for Sample Rules used in the Web GUI.
+    /// </summary>
+    [ExtensionPoint()]
+    public class SampleRuleExtensionPoint : ExtensionPoint<ISampleRule>
+    {
+    }
 }

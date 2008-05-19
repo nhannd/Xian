@@ -29,7 +29,6 @@
 
 #endregion
 
-using ClearCanvas.Common.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Codec.Jpeg;
@@ -38,11 +37,15 @@ using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegBaselineAction
 {
-	public class JpegBaselineActionItem : IActionItem<ServerActionContext>
+    public class JpegBaselineActionItem : ServerActionItemBase
 	{
-		private string _failureReason = "Success";
+        public JpegBaselineActionItem()
+            :base("JPEG baseline compression action")
+        {
+          
+        }
 
-		public bool Execute(ServerActionContext context)
+		protected override bool OnExecute(ServerActionContext context)
 		{
 			IDicomCodecFactory factory = new JpegBaselineFactory();
 			IDicomCodec codec = factory.GetDicomCodec();
@@ -54,9 +57,5 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegBaselineAction
 			return true;
 		}
 
-		public string FailureReason
-		{
-			get { return _failureReason; }
-		}
 	}
 }

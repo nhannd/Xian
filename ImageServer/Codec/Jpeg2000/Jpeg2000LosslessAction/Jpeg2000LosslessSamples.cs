@@ -29,53 +29,22 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.IO;
-using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LosslessAction
 {
-	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
-	public class Jpeg2000LosslessSamples : ISampleRule
-	{
-		private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
-
-		public Jpeg2000LosslessSamples()
-		{
-			_applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"));
-		}
-		public string Name
-		{
-			get { return "Jpeg2000LosslessParameters"; }
-		}
-		public string Description
-		{
-			get { return "JPEG 2000 Lossless Sample Parameters"; }
-		}
-
-		public ServerRuleTypeEnum Type
-		{
-			get { return ServerRuleTypeEnum.GetEnum("LosslessCompressParameters"); }
-		}
-
-		public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-		{
-			get { return _applyTime; }
-		}
-
-		public XmlDocument Rule
-		{
-			get
-			{
-                Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_JPEG2000Lossless.xml");
-                XmlDocument doc = new XmlDocument();
-                doc.Load(stream);
-                stream.Close();
-                return doc;
-			}
-		}
-	}
+    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
+    public class Jpeg2000LosslessSamples : SampleRuleBase
+    {
+        public Jpeg2000LosslessSamples()
+            : base("Jpeg2000LosslessParameters",
+                   "JPEG 2000 Lossless Sample Parameters",
+                   ServerRuleTypeEnum.GetEnum("LosslessCompressParameters"),
+                   "Sample_JPEG2000Lossless.xml")
+        {
+            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"));
+        }
+    }
 }

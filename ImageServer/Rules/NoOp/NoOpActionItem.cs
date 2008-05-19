@@ -29,22 +29,22 @@
 
 #endregion
 
-using ClearCanvas.Common.Actions;
 
 namespace ClearCanvas.ImageServer.Rules.NoOp
 {
-	public class NoOpActionItem : IActionItem<ServerActionContext>
-	{
-	    private readonly string _failureReason = "Success";
-	
-        public bool Execute(ServerActionContext context)
+    public class NoOpActionItem : ServerActionItemBase
+    {
+        public NoOpActionItem()
+            : base("No-Op Action")
+        {
+        }
+
+        #region IActionItem<ServerActionContext> Members
+
+        protected override bool OnExecute(ServerActionContext context)
         {
             return true;
         }
-
-        public string FailureReason
-        {
-            get { return _failureReason; }
-        }
-	}
+        #endregion
+    }
 }

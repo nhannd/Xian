@@ -29,7 +29,6 @@
 
 #endregion
 
-using ClearCanvas.Common.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Codec.Rle;
@@ -38,11 +37,15 @@ using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Rle.RleCompressAction
 {
-	public class RleActionItem : IActionItem<ServerActionContext>
+	public class RleActionItem : ServerActionItemBase
 	{
-		private string _failureReason = "Success";
+        public RleActionItem()
+            :base("RLE compression action")
+        {
+          
+        }
 
-		public bool Execute(ServerActionContext context)
+		protected override bool OnExecute(ServerActionContext context)
 		{
 			IDicomCodecFactory factory = new RleFactory();
 			IDicomCodec codec = factory.GetDicomCodec();
@@ -53,9 +56,5 @@ namespace ClearCanvas.ImageServer.Codec.Rle.RleCompressAction
 			return true;
 		}
 
-		public string FailureReason
-		{
-			get { return _failureReason; }
-		}
 	}
 }

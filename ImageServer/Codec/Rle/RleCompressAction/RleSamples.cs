@@ -29,53 +29,22 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.IO;
-using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Rle.RleCompressAction
 {
-	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
-	public class RleSamples : ISampleRule
-	{
-		private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
-
-		public RleSamples()
-		{
-			_applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"));
-		}
-		public string Name
-		{
-			get { return "RleParameters"; }
-		}
-		public string Description
-		{
-			get { return "RLE Sample Parameters"; }
-		}
-
-		public ServerRuleTypeEnum Type
-		{
-			get { return ServerRuleTypeEnum.GetEnum("LosslessCompressParameters"); }
-		}
-
-		public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-		{
-			get { return _applyTime; }
-		}
-
-		public XmlDocument Rule
-		{
-			get
-			{
-                Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_RLE.xml");
-                XmlDocument doc = new XmlDocument();
-                doc.Load(stream);
-                stream.Close();
-                return doc;
-			}
-		}
-	}
+    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
+    public class RleSamples : SampleRuleBase
+    {
+        public RleSamples()
+            : base("RleParameters",
+                   "RLE Sample Parameters",
+                   ServerRuleTypeEnum.GetEnum("LosslessCompressParameters"),
+                   "Sample_RLE.xml")
+        {
+            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"));
+        }
+    }
 }

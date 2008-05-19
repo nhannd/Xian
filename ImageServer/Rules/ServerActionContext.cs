@@ -36,13 +36,8 @@ using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Rules
 {
-    public class ServerActionException:Exception
-    {
-        public  ServerActionException(ServerActionContext context, string error)
-            :base(String.Format("{0}:{1}", context.CommandProcessor.Description, error))
-        {
-        }
-    }
+
+
     /// <summary>
     /// A context used when applying rules and actions within the ImageServer.
     /// </summary>
@@ -54,46 +49,53 @@ namespace ClearCanvas.ImageServer.Rules
     /// <seealso cref="ServerRulesEngine"/>
     public class ServerActionContext
     {
-        #region Private Members
+        private readonly ServerEntityKey _filesystemKey;
         private readonly DicomMessageBase _msg;
-        private ServerCommandProcessor _commandProcessor;
         private readonly ServerEntityKey _serverPartitionKey;
         private readonly ServerEntityKey _studyLocationKey;
-        private readonly ServerEntityKey _filesystemKey;
-        #endregion
+        private ServerCommandProcessor _commandProcessor;
 
         #region Constructors
-        public ServerActionContext(DicomMessageBase msg, ServerEntityKey filesystemKey, ServerEntityKey serverPartitionKey, ServerEntityKey studyLocationKey)
+
+        public ServerActionContext(DicomMessageBase msg, ServerEntityKey filesystemKey,
+                                   ServerEntityKey serverPartitionKey, ServerEntityKey studyLocationKey)
         {
             _msg = msg;
             _serverPartitionKey = serverPartitionKey;
             _studyLocationKey = studyLocationKey;
             _filesystemKey = filesystemKey;
         }
+
         #endregion
 
         #region Public Properties
+
         public DicomMessageBase Message
         {
             get { return _msg; }
         }
+
         public ServerCommandProcessor CommandProcessor
         {
             get { return _commandProcessor; }
             set { _commandProcessor = value; }
         }
+
         public ServerEntityKey ServerPartitionKey
         {
             get { return _serverPartitionKey; }
         }
+
         public ServerEntityKey FilesystemKey
         {
             get { return _filesystemKey; }
         }
+
         public ServerEntityKey StudyLocationKey
         {
             get { return _studyLocationKey; }
         }
+
         #endregion
     }
 }

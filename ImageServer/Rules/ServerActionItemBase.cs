@@ -1,14 +1,10 @@
 using System;
-using System.Diagnostics;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
-using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Rules
 {
-
     /// <summary>
-    /// Defines constants for time unit used in defining server rule actions
+    /// Defines time unitS used in server rule actions
     /// </summary>
     public enum TimeUnit
     {
@@ -20,12 +16,11 @@ namespace ClearCanvas.ImageServer.Rules
         Years
     }
 
-    
 
     /// <summary>
     /// Base class for all server rule actions implementing <see cref="IActionItem{ServerActionContext}"/> 
     /// </summary>
-    public abstract class ServerActionItemBase: IActionItem<ServerActionContext>
+    public abstract class ServerActionItemBase : IActionItem<ServerActionContext>
     {
         #region Private Members
         private string _failureReason = "Success";
@@ -33,21 +28,15 @@ namespace ClearCanvas.ImageServer.Rules
         #endregion
 
         #region Constructors
+
         public ServerActionItemBase(string name)
         {
             Name = name;
         }
+
         #endregion
 
         #region Public Properties
-        /// <summary>
-        /// Gets or sets the description of the failure when the action execution fails.
-        /// </summary>
-        public string FailureReason
-        {
-            get { return _failureReason; }
-            set { _failureReason = value; }
-        }
 
         /// <summary>
         /// Gets or sets the name of the action
@@ -58,88 +47,17 @@ namespace ClearCanvas.ImageServer.Rules
             set { _name = value; }
         }
 
-        #endregion
-
         /// <summary>
-        /// Returns the time calculated off a dicom tag referenceValue
+        /// Gets or sets the description of the failure when the action execution fails.
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="offset"></param>
-        /// <param name="unit"></param>
-        /// <param name="referenceValue"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        protected DateTime? ResolveTime(ServerActionContext context, int offset, TimeUnit unit, ReferenceValue referenceValue, DateTime? defaultValue)
+        public string FailureReason
         {
-            DateTime? time = defaultValue;
-
-            if (referenceValue == null)
-            {
-                time = defaultValue;
-            }
-            else if (referenceValue.IsDicomTag)
-            {
-                time = referenceValue.GetDicomValue(defaultValue);
-            }
-            else
-            {
-                object rawValue = referenceValue.Value;
-                if (rawValue == null)
-                    time = defaultValue;
-                else
-                {
-                    if (rawValue.GetType() == typeof(DateTime))
-                        time = (DateTime)rawValue ;
-                    else if (rawValue.GetType() == typeof(string))
-                    {
-                        DateTime temp;
-                        if (DateTime.TryParse((string)rawValue, out temp))
-                            time = temp;
-                    }
-                        
-                }
-            }
-
-            if (time != null)
-            {
-                switch (unit)
-                {
-                    case TimeUnit.Minutes:
-                        time = time.Value.AddMinutes(offset);
-                        break;
-
-                    case TimeUnit.Hours:
-                        time = time.Value.AddHours(offset);
-                        break;
-
-                    case TimeUnit.Days:
-                        time = time.Value.AddDays(offset);
-                        break;
-
-                    case TimeUnit.Weeks:
-                        time = time.Value.AddDays(offset * 7);
-                        break;
-
-                    case TimeUnit.Months:
-                        time = time.Value.AddMonths(offset);
-                        break;
-
-                    case TimeUnit.Years:
-                        time = time.Value.AddYears(offset);
-                        break;
-
-                    default:
-                        throw new ServerActionException(context, String.Format("Unexpected time units for {0} action item: {1}", Name, unit));
-                }
-            }
-
-
-            return time;
+            get { return _failureReason; }
+            set { _failureReason = value; }
         }
 
-       
+        #endregion
 
-        
         #region IActionItem<ServerActionContext> Members
 
         public bool Execute(ServerActionContext context)
@@ -148,20 +66,68 @@ namespace ClearCanvas.ImageServer.Rules
             {
                 return OnExecute(context);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 FailureReason = String.Format("{0} {1}", e.Message, e.StackTrace);
                 return false;
             }
-            
         }
 
-        protected abstract bool OnExecute(ServerActionContext context);
+        #endregion
 
+        #region Public Static Methods
+        /// <summary>
+        /// Calculates the new time of the specified time, offset by a specified period.
+        /// </summary>
+        /// <param name="start">Starting time</param>
+        /// <param name="offset">The offset period</param>
+        /// <param name="unit">The unit of the offset period</param>
+        /// <returns></returns>
+        public static DateTime CalculateOffsetTime(DateTime start, int offset, TimeUnit unit)
+        {
+            DateTime time = start;
+
+            switch (unit)
+            {
+                case TimeUnit.Minutes:
+                    time = time.AddMinutes(offset);
+                    break;
+
+                case TimeUnit.Hours:
+                    time = time.AddHours(offset);
+                    break;
+
+                case TimeUnit.Days:
+                    time = time.AddDays(offset);
+                    break;
+
+                case TimeUnit.Weeks:
+                    time = time.AddDays(offset * 7);
+                    break;
+
+                case TimeUnit.Months:
+                    time = time.AddMonths(offset);
+                    break;
+
+                case TimeUnit.Years:
+                    time = time.AddYears(offset);
+                    break;
+
+                default:
+                    break;
+            }
+
+            return time;
+        }
+        #endregion
+
+        #region Protected Abstract Methods
+        /// <summary>
+        /// Called to execute the action.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns>true if the action execution succeeds. false otherwise.</returns>
+        protected abstract bool OnExecute(ServerActionContext context);
         #endregion
     }
-
-
-
-    
 }

@@ -68,15 +68,16 @@ namespace ClearCanvas.ImageServer.Rules
     /// </example>
     public class ServerRulesEngine
     {
-        #region Private Members
         private readonly ServerRuleApplyTimeEnum _applyTime;
-		private readonly ServerRuleTypeEnum _ruleType = null;
+        private readonly ServerRuleTypeEnum _ruleType = null;
         private readonly ServerEntityKey _serverPartitionKey;
-        private readonly Dictionary<ServerRuleTypeEnum, RuleTypeCollection> _typeList = new Dictionary<ServerRuleTypeEnum, RuleTypeCollection>();
         private readonly RuleEngineStatistics _stats;
-        #endregion
+
+        private readonly Dictionary<ServerRuleTypeEnum, RuleTypeCollection> _typeList =
+            new Dictionary<ServerRuleTypeEnum, RuleTypeCollection>();
 
         #region Constructors
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -94,29 +95,32 @@ namespace ClearCanvas.ImageServer.Rules
             _stats = new RuleEngineStatistics(applyTime.Lookup, applyTime.LongDescription);
         }
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <remarks>
-		/// A rules engine typically will only load rules that apply at a specific time.  The
-		/// apply time is specified by the <paramref name="applyTime"/> parameter.  This constructor
-		/// also allows for the loading of only certain types of rules through the <paramref name="type"/>
-		/// parameter.
-		/// </remarks>
-		/// <param name="applyTime">An enumerated value as to when the rules shall apply.</param>
-		/// <param name="type">A enumerated value as to the type of rule to load.</param>
-		/// <param name="serverPartitionKey">The Server Partition the rules engine applies to.</param>
-		public ServerRulesEngine(ServerRuleApplyTimeEnum applyTime, ServerRuleTypeEnum type, ServerEntityKey serverPartitionKey)
-		{
-			_applyTime = applyTime;
-			_serverPartitionKey = serverPartitionKey;
-			_ruleType = type;
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <remarks>
+        /// A rules engine typically will only load rules that apply at a specific time.  The
+        /// apply time is specified by the <paramref name="applyTime"/> parameter.  This constructor
+        /// also allows for the loading of only certain types of rules through the <paramref name="type"/>
+        /// parameter.
+        /// </remarks>
+        /// <param name="applyTime">An enumerated value as to when the rules shall apply.</param>
+        /// <param name="type">A enumerated value as to the type of rule to load.</param>
+        /// <param name="serverPartitionKey">The Server Partition the rules engine applies to.</param>
+        public ServerRulesEngine(ServerRuleApplyTimeEnum applyTime, ServerRuleTypeEnum type,
+                                 ServerEntityKey serverPartitionKey)
+        {
+            _applyTime = applyTime;
+            _serverPartitionKey = serverPartitionKey;
+            _ruleType = type;
 
-			_stats = new RuleEngineStatistics(applyTime.Lookup, applyTime.LongDescription);
-		}
+            _stats = new RuleEngineStatistics(applyTime.Lookup, applyTime.LongDescription);
+        }
+
         #endregion
 
         #region Properties
+
         /// <summary>
         /// Gets the <see cref="ServerRuleApplyTimeEnum"/> for the rules engine.
         /// </summary>
@@ -132,9 +136,11 @@ namespace ClearCanvas.ImageServer.Rules
         {
             get { return _stats; }
         }
+
         #endregion
 
         #region Public Methods
+
         /// <summary>
         /// Load the rules engine from the Persistent Store and compile the conditions and actions.
         /// </summary>
@@ -153,8 +159,8 @@ namespace ClearCanvas.ImageServer.Rules
                 criteria.Enabled.EqualTo(true);
                 criteria.ServerRuleApplyTimeEnum.EqualTo(_applyTime);
                 criteria.ServerPartitionKey.EqualTo(_serverPartitionKey);
-				if (_ruleType != null)
-					criteria.ServerRuleTypeEnum.EqualTo(_ruleType);
+                if (_ruleType != null)
+                    criteria.ServerRuleTypeEnum.EqualTo(_ruleType);
 
                 IList<ServerRule> list = broker.Find(criteria);
 
@@ -165,7 +171,6 @@ namespace ClearCanvas.ImageServer.Rules
 
                 foreach (ServerRule serverRule in list)
                 {
-                        
                     try
                     {
                         Rule theRule = new Rule();
@@ -174,8 +179,7 @@ namespace ClearCanvas.ImageServer.Rules
 
                         XmlNode ruleNode =
                             CollectionUtils.SelectFirst<XmlNode>(serverRule.RuleXml.ChildNodes,
-                                                                 delegate(XmlNode child)
-                                                                 { return child.Name.Equals("rule"); });
+                                                                 delegate(XmlNode child) { return child.Name.Equals("rule"); });
 
 
                         theRule.Compile(ruleNode, specCompiler, actionCompiler);
@@ -194,19 +198,16 @@ namespace ClearCanvas.ImageServer.Rules
 
                         typeCollection.AddRule(theRule);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         // something wrong with the rule...
-                        Platform.Log(LogLevel.Warn, e, "Unable to add rule {0} to the engine. It will be skipped", serverRule.RuleName);
+                        Platform.Log(LogLevel.Warn, e, "Unable to add rule {0} to the engine. It will be skipped",
+                                     serverRule.RuleName);
                     }
-                    
-
-                    
                 }
             }
 
             _stats.LoadTime.End();
-
         }
 
         /// <summary>
@@ -223,7 +224,6 @@ namespace ClearCanvas.ImageServer.Rules
             }
 
             _stats.ExecutionTime.End();
-
         }
 
         #endregion

@@ -31,51 +31,55 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Actions;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Rules.StudyDeleteAction;
 
 namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
 {
     public class Tier1RetentionActionItem : ServerActionItemBase
     {
-        private readonly int _offsetTime;
-        private readonly TimeUnit _units;
-        private readonly ReferenceValue _referenceValue;
         private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("TierMigrate");
+        private readonly int _offsetTime;
+        private readonly string _refValue;
+        private readonly TimeUnit _units;
 
         public Tier1RetentionActionItem(int time, TimeUnit unit, string refValue)
             : base("Tier1 Retention action")
         {
             _offsetTime = time;
             _units = unit;
-            _referenceValue = new ReferenceValue(refValue);
+            _refValue = refValue;
         }
 
         protected override bool OnExecute(ServerActionContext context)
         {
-            _referenceValue.Context = context;
-            DateTime? scheduledTime = ResolveTime(context, _offsetTime, _units, _referenceValue, Platform.Time);
+            DateTime? scheduledTime = Platform.Time;
+            if (String.IsNullOrEmpty(_refValue) == false)
+            {
+                IFunction<ServerActionContext> function = ReferenceValueParser.Parse(_refValue);
+                scheduledTime = function.GetValue<DateTime?>(context, null);
+            } 
             
             if (scheduledTime != null)
             {
-                int minRetention = RuleSettings.Default.MIN_RETENTION_MINUTES;
-                if (scheduledTime < Platform.Time.AddMinutes(minRetention))
+                scheduledTime = CalculateOffsetTime(scheduledTime.Value, _offsetTime, _units);
+
+                DateTime preferredScheduledTime = Platform.Time.AddMinutes(RuleSettings.Default.MIN_RETENTION_MINUTES);
+                if (scheduledTime < preferredScheduledTime)
                 {
-                    DateTime preferredScheduledTime = Platform.Time.AddMinutes(minRetention);
-                    Platform.Log(LogLevel.Warn, "Tier1 Retention: calculated migration time is {1}. Min retention time = {0} minutes ==> preferred migration time is {2}", minRetention, scheduledTime, preferredScheduledTime);
+                    Platform.Log(LogLevel.Warn,
+                                 "Tier1 Retention: calculated scheduled migration time is {0}. ==> preferred time is {1}",
+                                 scheduledTime, preferredScheduledTime);
                     scheduledTime = preferredScheduledTime;
                 }
 
-                Platform.Log(LogLevel.Debug, "Tier1 Retention: This study will be migrated off Tier 1 on {0}", scheduledTime);
-                context.CommandProcessor.AddCommand(new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey, scheduledTime.Value));
-            
+                Platform.Log(LogLevel.Debug, "Tier1 Retention: This study will be migrated off Tier 1 on {0}",
+                             scheduledTime);
+                context.CommandProcessor.AddCommand(
+                    new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
+                                                     scheduledTime.Value));
             }
 
-            return scheduledTime != null; 
-            
+            return scheduledTime != null;
         }
-
     }
 }

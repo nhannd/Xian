@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
@@ -39,9 +36,11 @@ using ClearCanvas.Common.Actions;
 
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
-    [ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
+    [ExtensionOf(typeof (XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
     public class AutoRouteActionOperator : IXmlActionCompilerOperator<ServerActionContext>
     {
+        #region IXmlActionCompilerOperator<ServerActionContext> Members
+
         public string OperatorTag
         {
             get { return "auto-route"; }
@@ -51,7 +50,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
         {
             if (xmlNode.Attributes["device"] == null)
                 throw new XmlActionCompilerException("Unexpected missing device attribute for auto-route action");
-                
+
             string device = xmlNode.Attributes["device"].Value;
 
             return new AutoRouteActionItem(device);
@@ -74,5 +73,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 
             return element;
         }
+
+        #endregion
     }
 }

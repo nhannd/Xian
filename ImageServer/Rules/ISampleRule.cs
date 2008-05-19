@@ -35,13 +35,12 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules
 {
-	public interface ISampleRule
-	{
-		string Name { get; }
-		string Description { get; }
-		ServerRuleTypeEnum Type { get; }
-		IList<ServerRuleApplyTimeEnum> ApplyTimeList { get;}
-		XmlDocument Rule { get;}
-	}
-	
+    public interface ISampleRule
+    {
+        string Name { get; }
+        string Description { get; }
+        ServerRuleTypeEnum Type { get; }
+        IList<ServerRuleApplyTimeEnum> ApplyTimeList { get; }
+        XmlDocument Rule { get; }
+    }
 }

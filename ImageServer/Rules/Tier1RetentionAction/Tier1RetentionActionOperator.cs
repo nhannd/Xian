@@ -37,14 +37,15 @@ using ClearCanvas.Common.Actions;
 
 namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
 {
-    [ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
+    [ExtensionOf(typeof (XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
     public class Tier1RetentionActionOperator : ActionOperatorBase, IXmlActionCompilerOperator<ServerActionContext>
     {
         public Tier1RetentionActionOperator()
             : base("tier1-retention")
         {
-            
         }
+
+        #region IXmlActionCompilerOperator<ServerActionContext> Members
 
         public override IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
         {
@@ -58,12 +59,12 @@ namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
                 throw new XmlActionCompilerException("Unable to parse time value for tier1-retention rule");
 
             string xmlUnit = xmlNode.Attributes["unit"].Value;
-            TimeUnit unit = (TimeUnit)Enum.Parse(typeof(TimeUnit), xmlUnit, true); // this will throw exception if the unit is not defined
+            TimeUnit unit = (TimeUnit) Enum.Parse(typeof (TimeUnit), xmlUnit, true);
+                // this will throw exception if the unit is not defined
 
             string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
 
             return new Tier1RetentionActionItem(time, unit, refValue);
-
         }
 
         public override XmlSchemaElement GetSchema()
@@ -119,13 +120,15 @@ namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
             attrib.Use = XmlSchemaUse.Optional;
             attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
             type.Attributes.Add(attrib);
-            
-       
+
+
             XmlSchemaElement element = new XmlSchemaElement();
             element.Name = "tier1-retention";
             element.SchemaType = type;
 
             return element;
         }
+
+        #endregion
     }
 }

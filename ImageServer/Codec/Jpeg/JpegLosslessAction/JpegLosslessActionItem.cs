@@ -29,7 +29,7 @@
 
 #endregion
 
-using ClearCanvas.Common.Actions;
+
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Codec.Jpeg;
@@ -38,11 +38,15 @@ using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegLosslessAction
 {
-	public class JpegLosslessActionItem : IActionItem<ServerActionContext>
+	public class JpegLosslessActionItem : ServerActionItemBase
 	{
-		private string _failureReason = "Success";
+        public JpegLosslessActionItem()
+            :base("JPEG Lossless compression action")
+        {
+          
+        }
 
-		public bool Execute(ServerActionContext context)
+		protected override bool OnExecute(ServerActionContext context)
 		{
 			IDicomCodecFactory factory = new JpegLosslessNonHierarchicalProcess14SV1Factory();
 			IDicomCodec codec = factory.GetDicomCodec();
@@ -54,9 +58,5 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegLosslessAction
 			return true;
 		}
 
-		public string FailureReason
-		{
-			get { return _failureReason; }
-		}
 	}
 }

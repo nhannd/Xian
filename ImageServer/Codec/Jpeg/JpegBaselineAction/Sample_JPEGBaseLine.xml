@@ -1,4 +1,7 @@
-﻿<!-- -->
+﻿<!-- 
+This rule instructs the server to use JPEG baseline compression
+on 8-bit US and RF studies.
+-->
 <rule>
 	<condition
 	  expressionLanguage="dicom">

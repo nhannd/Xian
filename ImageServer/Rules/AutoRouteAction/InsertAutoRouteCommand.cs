@@ -37,8 +37,8 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
@@ -47,10 +47,8 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
     /// </summary>
     public class InsertAutoRouteCommand : ServerDatabaseCommand
     {
-        #region Private Members
         private readonly ServerActionContext _context;
         private readonly string _deviceAe;
-        #endregion
 
         /// <summary>
         /// Constructor.
@@ -79,7 +77,8 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 
             Device dev = CollectionUtils.FirstElement<Device>(selectDevice.Find(deviceSelectCriteria));
             if (dev == null)
-                throw new ApplicationException(String.Format("Device '{0}' not in database for autoroute request!", _deviceAe));
+                throw new ApplicationException(
+                    String.Format("Device '{0}' not in database for autoroute request!", _deviceAe));
 
             if (!dev.AllowAutoRoute)
             {

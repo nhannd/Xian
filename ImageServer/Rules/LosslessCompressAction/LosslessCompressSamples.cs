@@ -29,93 +29,62 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.IO;
-using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.LosslessCompressAction
 {
-	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
-	public class LosslessCompressSample : ISampleRule
-	{
-		private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
+    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
+    public class LosslessCompressSample : SampleRuleBase
+    {
+        public LosslessCompressSample()
+            : base("SimpleLosslessCompress",
+                   "Simple Lossless Compress",
+                   ServerRuleTypeEnum.GetEnum("LosslessCompressStudy"),
+                   "Sample_SimpleLossless.xml")
+        {
+            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+        }
+    }
 
-		public LosslessCompressSample()
-		{
-			_applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
-		}
-		public string Name
-		{
-			get { return "SimpleLosslessCompress"; }
-		}
-		public string Description
-		{
-			get { return "Simple Lossless Compress"; }
-		}
+    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
+    public class LosslessCompressSample2 : SampleRuleBase
+    {
+        public LosslessCompressSample2()
+            : base("SimpleLosslessCompress2",
+                   "Simple Lossless Compress 2",
+                   ServerRuleTypeEnum.GetEnum("LosslessCompressStudy"),
+                   "Sample_SimpleLossless2.xml")
+        {
+            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+        }
+    }
 
-		public ServerRuleTypeEnum Type
-		{
-			get { return ServerRuleTypeEnum.GetEnum("LosslessCompressStudy"); }
-		}
 
-		public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-		{
-			get { return _applyTime; }
-		}
+    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
+    public class LosslessCompressSample3 : SampleRuleBase
+    {
+        public LosslessCompressSample3()
+            : base("Lossless Compression Sample x",
+                   "Lossless Compression Sample x",
+                   ServerRuleTypeEnum.GetEnum("LosslessCompressStudy"),
+                   "Sample_SimpleLossless3.xml")
+        {
+            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+        }
+    }
 
-		public XmlDocument Rule
-		{
-			get
-			{
-                Stream stream = this.GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_SimpleLossless.xml");
-                XmlDocument doc = new XmlDocument();
-                doc.Load(stream);
-                stream.Close();
-                return doc;
-			}
-		}
-	}
 
-	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
-	public class LosslessCompressExemptSample : ISampleRule
-	{
-		private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
-
-		public LosslessCompressExemptSample()
-		{
-			_applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
-		}
-		public string Name
-		{
-			get { return "LosslessCompressExempt"; }
-		}
-		public string Description
-		{
-			get { return "Lossless Compress Exempt Rule"; }
-		}
-
-		public ServerRuleTypeEnum Type
-		{
-			get { return ServerRuleTypeEnum.GetEnum("LosslessCompressStudy"); }
-		}
-
-		public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-		{
-			get { return _applyTime; }
-		}
-
-		public XmlDocument Rule
-		{
-			get
-			{
-                Stream stream = this.GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_LosslessWithExempt.xml");
-                XmlDocument doc = new XmlDocument();
-                doc.Load(stream);
-                stream.Close();
-                return doc;
-			}
-		}
-	}
+    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
+    public class LosslessCompressExemptSample : SampleRuleBase
+    {
+        public LosslessCompressExemptSample()
+            : base("LosslessCompressExempt",
+                   "Lossless Compress Exempt Rule",
+                   ServerRuleTypeEnum.GetEnum("LosslessCompressStudy"),
+                   "Sample_LosslessWithExempt.xml")
+        {
+            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+        }
+    }
 }

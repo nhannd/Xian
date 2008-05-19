@@ -29,53 +29,22 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.IO;
-using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LossyAction
 {
-	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
-	public class Jpeg2000LossySamples : ISampleRule
-	{
-		private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
-
-		public Jpeg2000LossySamples()
-		{
-			_applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"));
-		}
-		public string Name
-		{
-			get { return "Jpeg2000LossyParameters"; }
-		}
-		public string Description
-		{
-			get { return "JPEG 2000 Lossy Parameters"; }
-		}
-
-		public ServerRuleTypeEnum Type
-		{
-			get { return ServerRuleTypeEnum.GetEnum("LossyCompressParameters"); }
-		}
-
-		public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-		{
-			get { return _applyTime; }
-		}
-
-		public XmlDocument Rule
-		{
-			get
-			{
-                Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_JPEG2000Lossy.xml");
-                XmlDocument doc = new XmlDocument();
-                doc.Load(stream);
-                stream.Close();
-			    return doc;
-			}
-		}
-	}
+    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
+    public class Jpeg2000LossySamples : SampleRuleBase
+    {
+        public Jpeg2000LossySamples()
+            : base("Jpeg2000LossyParameters",
+                   "JPEG 2000 Lossy Sample Parameters",
+                   ServerRuleTypeEnum.GetEnum("LossyCompressParameters"),
+                   "Sample_JPEG2000Lossy.xml")
+        {
+            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"));
+        }
+    }
 }

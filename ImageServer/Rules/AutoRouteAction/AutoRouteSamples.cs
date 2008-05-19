@@ -31,92 +31,103 @@
 
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
-	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
-	public class MultiTagAutoRoute : ISampleRule
-	{
-		private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
+    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
+    public class MultiTagAutoRoute : ISampleRule
+    {
+        private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
 
-		public MultiTagAutoRoute()
-		{
-			_applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
-		}
-		public string Name
-		{
-			get { return "MultiTagAutoRoute";}
-		}
-		public string Description
-		{
-			get { return "Multi-Tag AutoRoute"; }
-		}
+        public MultiTagAutoRoute()
+        {
+            _applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
+        }
 
-		public ServerRuleTypeEnum Type
-		{
-			get { return ServerRuleTypeEnum.GetEnum("AutoRoute"); }
-		}
+        #region ISampleRule Members
 
-		public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-		{
-			get { return _applyTime; }
-		}
+        public string Name
+        {
+            get { return "MultiTagAutoRoute"; }
+        }
 
-		public XmlDocument Rule
-		{
-			get
-			{
+        public string Description
+        {
+            get { return "Multi-Tag AutoRoute"; }
+        }
+
+        public ServerRuleTypeEnum Type
+        {
+            get { return ServerRuleTypeEnum.GetEnum("AutoRoute"); }
+        }
+
+        public IList<ServerRuleApplyTimeEnum> ApplyTimeList
+        {
+            get { return _applyTime; }
+        }
+
+        public XmlDocument Rule
+        {
+            get
+            {
                 Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_AutoRouteMultiTag.xml");
-			    XmlDocument doc = new XmlDocument();
-			    doc.Load(stream);
-			    stream.Close();
-				return doc;
-			}
-		}
-	}
+                XmlDocument doc = new XmlDocument();
+                doc.Load(stream);
+                stream.Close();
+                return doc;
+            }
+        }
 
-	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
-	public class SimpleAutoRouteSample : ISampleRule
-	{
-		private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
+        #endregion
+    }
 
-		public SimpleAutoRouteSample()
-		{
-			_applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
-		}
-		public string Name
-		{
-			get { return "SimpleAutoRoute"; }
-		}
-		public string Description
-		{
-			get { return "Simple AutoRoute"; }
-		}
+    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
+    public class SimpleAutoRouteSample : ISampleRule
+    {
+        private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
 
-		public ServerRuleTypeEnum Type
-		{
-			get { return ServerRuleTypeEnum.GetEnum("AutoRoute"); }
-		}
+        public SimpleAutoRouteSample()
+        {
+            _applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
+        }
 
-		public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-		{
-			get { return _applyTime; }
-		}
+        #region ISampleRule Members
 
-		public XmlDocument Rule
-		{
-			get
-			{
+        public string Name
+        {
+            get { return "SimpleAutoRoute"; }
+        }
+
+        public string Description
+        {
+            get { return "Simple AutoRoute"; }
+        }
+
+        public ServerRuleTypeEnum Type
+        {
+            get { return ServerRuleTypeEnum.GetEnum("AutoRoute"); }
+        }
+
+        public IList<ServerRuleApplyTimeEnum> ApplyTimeList
+        {
+            get { return _applyTime; }
+        }
+
+        public XmlDocument Rule
+        {
+            get
+            {
                 Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_AutoRouteSimple.xml");
                 XmlDocument doc = new XmlDocument();
                 doc.Load(stream);
                 stream.Close();
                 return doc;
-			}
-		}
-	}
+            }
+        }
+
+        #endregion
+    }
 }

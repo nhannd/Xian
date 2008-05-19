@@ -42,12 +42,13 @@ namespace ClearCanvas.ImageServer.Rules
 {
     public class InsertFilesystemQueueCommand : ServerDatabaseCommand
     {
-        private readonly FilesystemQueueTypeEnum _queueType;
         private readonly ServerEntityKey _filesystemKey;
-        private readonly ServerEntityKey _studyStorageKey;
+        private readonly FilesystemQueueTypeEnum _queueType;
         private readonly DateTime _scheduledTime;
+        private readonly ServerEntityKey _studyStorageKey;
 
-        public InsertFilesystemQueueCommand(FilesystemQueueTypeEnum queueType, ServerEntityKey filesystemKey, ServerEntityKey studyStorageKey, DateTime scheduledTime )
+        public InsertFilesystemQueueCommand(FilesystemQueueTypeEnum queueType, ServerEntityKey filesystemKey,
+                                            ServerEntityKey studyStorageKey, DateTime scheduledTime)
             : base("Insert FilesystemQueue Record of type " + queueType.Description, true)
         {
             _queueType = queueType;

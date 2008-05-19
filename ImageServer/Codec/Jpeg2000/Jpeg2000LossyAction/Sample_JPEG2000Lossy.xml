@@ -1,4 +1,7 @@
-﻿<!-- -->
+﻿<!-- 
+This rule instructs the server to use JPEG 2000 Lossy compression
+on DX and CR studies.
+-->
 <rule>
 	<condition
 	  expressionLanguage="dicom">		

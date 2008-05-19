@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common.Statistics;
 
 namespace ClearCanvas.ImageServer.Rules
@@ -37,9 +36,10 @@ namespace ClearCanvas.ImageServer.Rules
     /// <summary>
     /// Stores the engine statistics of a rule engine.
     /// </summary>
-    public class RuleEngineStatistics:StatisticsSet
+    public class RuleEngineStatistics : StatisticsSet
     {
         #region Private members
+
         #endregion Private members
 
         public void Reset()
@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageServer.Rules
         }
 
         #region Public Properties
+
         /// <summary>
         /// Gets or sets the execution time of the rule engine in miliseconds.
         /// </summary>
@@ -76,7 +77,6 @@ namespace ClearCanvas.ImageServer.Rules
                     this["LoadTime"] = new TimeSpanStatistics("LoadTime");
                 return (this["LoadTime"] as TimeSpanStatistics);
             }
-
         }
 
         #endregion Public Properties
@@ -86,16 +86,14 @@ namespace ClearCanvas.ImageServer.Rules
         public RuleEngineStatistics()
             : base()
         {
-
         }
 
         public RuleEngineStatistics(string name, string description)
-            : base(name,description)
+            : base(name, description)
         {
             Context = new StatisticsContext(name);
         }
-        #endregion
 
-        
+        #endregion
     }
 }

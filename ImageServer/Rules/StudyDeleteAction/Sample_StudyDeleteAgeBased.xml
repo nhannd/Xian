@@ -1,4 +1,8 @@
-﻿<!-- this rule insert requests to delete the study when the patient reaches 21 years old. -->
+﻿<!-- 
+This rule instructs the server to do schedule the study for deletion when the patient 
+reaches 21 years of age. The patient must be younger than 21 years for the rule
+to apply.
+-->
 <rule>
 	<condition
 	  expressionLanguage="dicom">

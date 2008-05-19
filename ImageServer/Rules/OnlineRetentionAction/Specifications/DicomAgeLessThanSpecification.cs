@@ -39,15 +39,9 @@ using SR=ClearCanvas.Common.SR;
 
 namespace ClearCanvas.ImageServer.Rules.Specifications
 {
-    [ExtensionOf(typeof(XmlSpecificationCompilerOperatorExtensionPoint))]
+    [ExtensionOf(typeof (XmlSpecificationCompilerOperatorExtensionPoint))]
     public class DicomAgeLessThanSpecificationOperator : IXmlSpecificationCompilerOperator
     {
-        private string GetAttributeOrNull(XmlElement node, string attr)
-        {
-            string val = node.GetAttribute(attr);
-            return string.IsNullOrEmpty(val) ? null : val;
-        }
-
         #region IXmlSpecificationCompilerOperator Members
 
         public string OperatorTag
@@ -64,7 +58,8 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
             if (!units.Equals("years")
                 && !units.Equals("weeks")
                 && !units.Equals("days"))
-                throw new XmlSpecificationCompilerException("Incorrect value for 'units' Xml attribute.  Should be 'years', 'weeks', or 'days'");
+                throw new XmlSpecificationCompilerException(
+                    "Incorrect value for 'units' Xml attribute.  Should be 'years', 'weeks', or 'days'");
 
             string refValue = GetAttributeOrNull(xmlNode, "refValue");
             if (refValue == null)
@@ -127,13 +122,20 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
 
             return element;
         }
+
         #endregion
+
+        private string GetAttributeOrNull(XmlElement node, string attr)
+        {
+            string val = node.GetAttribute(attr);
+            return string.IsNullOrEmpty(val) ? null : val;
+        }
     }
 
     public class DicomAgeLessThanSpecification : PrimitiveSpecification
     {
-        private readonly string _units;
         private readonly string _refValue;
+        private readonly string _units;
 
         public DicomAgeLessThanSpecification(string units, string refValue)
         {
@@ -158,11 +160,11 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
                     throw new SpecificationException(SR.ExceptionCastExpressionString);
 
                 if (_units.Equals("weeks"))
-                    comparisonTime = comparisonTime.AddDays(time * -7f);
+                    comparisonTime = comparisonTime.AddDays(time*-7f);
                 else if (_units.Equals("days"))
                     comparisonTime = comparisonTime.AddDays(-1*time);
                 else
-                    comparisonTime = comparisonTime.AddYears((int)(-1*time));
+                    comparisonTime = comparisonTime.AddYears((int) (-1*time));
 
                 DateTime? testTime = DateTimeParser.Parse(exp as string);
 

@@ -1,4 +1,6 @@
-﻿<!-- -->
+﻿<!-- 
+This rule instructs the server to do nothing if the studies is already compressed with the specified transfer syntaxes.
+-->
 <rule>
 	<condition
 	  expressionLanguage="dicom">

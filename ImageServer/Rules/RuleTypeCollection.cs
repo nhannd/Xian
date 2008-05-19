@@ -38,21 +38,22 @@ namespace ClearCanvas.ImageServer.Rules
 {
     public class RuleTypeCollection
     {
-        #region Private Members
-		private readonly List<Rule> _exemptRuleList = new List<Rule>();
+        private readonly List<Rule> _exemptRuleList = new List<Rule>();
         private readonly List<Rule> _ruleList = new List<Rule>();
         private readonly ServerRuleTypeEnum _type;
         private Rule _defaultRule;
-        #endregion
 
         #region Constructors
+
         public RuleTypeCollection(ServerRuleTypeEnum type)
         {
-            _type = type;   
+            _type = type;
         }
+
         #endregion
 
         #region Public Properties
+
         public ServerRuleTypeEnum Type
         {
             get { return _type; }
@@ -62,9 +63,11 @@ namespace ClearCanvas.ImageServer.Rules
         {
             get { return _defaultRule; }
         }
+
         #endregion
 
         #region Public Methods
+
         public void AddRule(Rule rule)
         {
             if (rule.IsDefault)
@@ -72,15 +75,15 @@ namespace ClearCanvas.ImageServer.Rules
                 if (_defaultRule != null)
                 {
                     Platform.Log(LogLevel.Error, "Unexpected multiple default rules for rule {0} of type {1}",
-                        rule.Name, rule.Description);
+                                 rule.Name, rule.Description);
                     Platform.Log(LogLevel.Error, "Ignoring rule {0}", rule.Name);
                 }
                 else
                     _defaultRule = rule;
             }
             else if (rule.IsExempt)
-            	_exemptRuleList.Add(rule);
-			else
+                _exemptRuleList.Add(rule);
+            else
                 _ruleList.Add(rule);
         }
 
@@ -89,19 +92,19 @@ namespace ClearCanvas.ImageServer.Rules
             bool doDefault = true;
             try
             {
-				foreach (Rule theRule in _exemptRuleList)
-				{
-					bool ruleApplied;
-					bool ruleSuccess;
+                foreach (Rule theRule in _exemptRuleList)
+                {
+                    bool ruleApplied;
+                    bool ruleSuccess;
 
-					theRule.Execute(context, false, out ruleApplied, out ruleSuccess);
+                    theRule.Execute(context, false, out ruleApplied, out ruleSuccess);
 
-					if (ruleApplied)
-					{
-						Platform.Log(LogLevel.Info,"Exempt rule found that applies, ignoring action.");
-						return;
-					}
-				}
+                    if (ruleApplied)
+                    {
+                        Platform.Log(LogLevel.Info, "Exempt rule found that applies, ignoring action.");
+                        return;
+                    }
+                }
 
                 foreach (Rule theRule in _ruleList)
                 {
@@ -132,6 +135,7 @@ namespace ClearCanvas.ImageServer.Rules
                 Platform.Log(LogLevel.Error, e, "Unexpected exception when applying rule of type: {0}", Type.Description);
             }
         }
+
         #endregion
     }
 }

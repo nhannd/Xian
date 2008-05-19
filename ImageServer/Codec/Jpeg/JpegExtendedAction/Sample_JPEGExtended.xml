@@ -1,4 +1,7 @@
-﻿<!-- -->
+﻿<!-- 
+This rule instructs the server to use JPEG extended compression
+on CT and MR studies.
+-->
 <rule>
 	<condition
 	  expressionLanguage="dicom">

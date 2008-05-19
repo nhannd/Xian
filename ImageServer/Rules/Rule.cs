@@ -35,28 +35,28 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules
 {
-    
     public class Rule
     {
         #region Private Members
-        private ISpecification _conditions;
         private IActionSet<ServerActionContext> _actions;
-        private string _name;
+        private ISpecification _conditions;
         private string _description;
         private bool _isDefault;
         private bool _isExempt;
+        private string _name;
         #endregion
+
 
         #region Constructors
 
         #endregion
 
         #region Public Properties
+
         public string Name
         {
             get { return _name; }
@@ -85,20 +85,18 @@ namespace ClearCanvas.ImageServer.Rules
 
         #region Public Methods
 
-        public void Compile(XmlNode ruleNode, XmlSpecificationCompiler specCompiler, XmlActionCompiler<ServerActionContext> actionCompiler)
+        public void Compile(XmlNode ruleNode, XmlSpecificationCompiler specCompiler,
+                            XmlActionCompiler<ServerActionContext> actionCompiler)
         {
-            
             XmlNode conditionNode =
                 CollectionUtils.SelectFirst<XmlNode>(ruleNode.ChildNodes,
-                                                     delegate(XmlNode child)
-                                                     { return child.Name.Equals("condition"); });
+                                                     delegate(XmlNode child) { return child.Name.Equals("condition"); });
 
             _conditions = specCompiler.Compile(conditionNode as XmlElement, true);
 
             XmlNode actionNode =
                 CollectionUtils.SelectFirst<XmlNode>(ruleNode.ChildNodes,
-                                                     delegate(XmlNode child)
-                                                     { return child.Name.Equals("action"); });
+                                                     delegate(XmlNode child) { return child.Name.Equals("action"); });
 
 
             _actions = actionCompiler.Compile(actionNode as XmlElement, true);
@@ -124,7 +122,7 @@ namespace ClearCanvas.ImageServer.Rules
             ruleSuccess = true;
 
             TestResult result = Test(context);
-            
+
             if (result.Success)
             {
                 ruleApplied = true;
@@ -164,13 +162,12 @@ namespace ClearCanvas.ImageServer.Rules
 
             XmlNode ruleNode =
                 CollectionUtils.SelectFirst<XmlNode>(theServerRule.RuleXml.ChildNodes,
-                                                     delegate(XmlNode child)
-                                                         { return child.Name.Equals("rule"); });
+                                                     delegate(XmlNode child) { return child.Name.Equals("rule"); });
 
 
             try
             {
-                theRule.Compile(ruleNode,specCompiler, actionCompiler);
+                theRule.Compile(ruleNode, specCompiler, actionCompiler);
             }
             catch (Exception e)
             {

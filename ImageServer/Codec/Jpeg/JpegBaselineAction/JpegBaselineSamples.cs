@@ -29,53 +29,22 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.IO;
-using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegBaselineAction
 {
-	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
-	public class JpegBaselineSamples : ISampleRule
-	{
-		private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
-
-		public JpegBaselineSamples()
-		{
-			_applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"));
-		}
-		public string Name
-		{
-			get { return "JpegBaselineParameters"; }
-		}
-		public string Description
-		{
-			get { return "JPEG Baseline Parameters"; }
-		}
-
-		public ServerRuleTypeEnum Type
-		{
-			get { return ServerRuleTypeEnum.GetEnum("LossyCompressParameters"); }
-		}
-
-		public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-		{
-			get { return _applyTime; }
-		}
-
-		public XmlDocument Rule
-		{
-			get
-			{
-                Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_JPEGBaseLine.xml");
-                XmlDocument doc = new XmlDocument();
-                doc.Load(stream);
-                stream.Close();
-                return doc;
-			}
-		}
-	}
+    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
+    public class JpegBaselineSamples : SampleRuleBase
+    {
+        public JpegBaselineSamples()
+            : base("JpegBaselineParameters",
+                   "JPEG Baseline Parameters",
+                   ServerRuleTypeEnum.GetEnum("LossyCompressParameters"),
+                   "Sample_JPEGBaseLine.xml")
+        {
+            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"));
+        }
+    }
 }

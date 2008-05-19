@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
     /// <summary>
     /// Expression factory for evaluating expressions that reference attributes within a <see cref="DicomMessageBase"/>.
     /// </summary>
-    [ExtensionOf(typeof(ExpressionFactoryExtensionPoint))]
+    [ExtensionOf(typeof (ExpressionFactoryExtensionPoint))]
     [LanguageSupport("dicom")]
     public class DicomExpressionFactory : IExpressionFactory
     {
@@ -47,11 +47,11 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
 
         public Expression CreateExpression(string text)
         {
-            if(text.StartsWith("$"))
+            if (text.StartsWith("$"))
             {
                 DicomTag tag = DicomTagDictionary.GetDicomTag(text.Substring(1));
                 if (tag == null)
-                    throw new XmlSpecificationCompilerException("Invalid DICOM tag: " + text); 
+                    throw new XmlSpecificationCompilerException("Invalid DICOM tag: " + text);
             }
             return new DicomExpression(text);
         }

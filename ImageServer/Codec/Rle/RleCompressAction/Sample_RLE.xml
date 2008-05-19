@@ -1,4 +1,7 @@
-﻿<!-- -->
+﻿<!-- 
+This rule instructs the server to use RLE compression
+on US and CR studies.
+-->
 <rule>
 	<condition
 	  expressionLanguage="dicom">		

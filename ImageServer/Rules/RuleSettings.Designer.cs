@@ -25,10 +25,19 @@ namespace ClearCanvas.ImageServer.Rules {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
         public int MIN_RETENTION_MINUTES {
             get {
                 return ((int)(this["MIN_RETENTION_MINUTES"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int MIN_COMPRESSION_DELAY_MINUTES {
+            get {
+                return ((int)(this["MIN_COMPRESSION_DELAY_MINUTES"]));
             }
         }
     }

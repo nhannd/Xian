@@ -29,33 +29,49 @@
 
 #endregion
 
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Codec;
-using ClearCanvas.Dicom.Codec.Jpeg2000;
-using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Rules;
+using System;
 
-namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LosslessAction
+namespace ClearCanvas.ImageServer.Rules
 {
-	public class Jpeg2000LosslessActionItem : ServerActionItemBase
-	{
-        public Jpeg2000LosslessActionItem()
-            :base("JPEG 2000 Lossless compression action")
+    /// <summary>
+    /// Exception that is thrown when value conversion fails.
+    /// </summary>
+    public class TypeConversionException:Exception
+    {
+        public TypeConversionException(string message)
+            :base(message)
         {
-          
         }
+    }
 
-		protected override bool OnExecute(ServerActionContext context)
-		{
-			IDicomCodecFactory factory = new Jpeg2000LosslessFactory();
-			IDicomCodec codec = factory.GetDicomCodec();
-			DicomJpeg2000Parameters parms = factory.GetCodecParameters(context.Message.DataSet) as DicomJpeg2000Parameters;
+    /// <summary>
+    /// Defines the interface of a function.
+    /// </summary>
+    /// <remarks>
+    /// A function returns a value based on an input. An example usage of function 
+    /// is one that retrieves the value of a dicom tag (output) in a message (input).
+    /// </remarks>
+    /// <typeparam name="TInput">The type of input to the function</typeparam>
+    public interface IFunction<TInput>
+    {
+        /// <summary>
+        /// Gets the value of the function, converted into the specified input.
+        /// </summary>
+        /// <typeparam name="T">Expected returned type</typeparam>
+        /// <param name="input">Input to the function</param>
+        /// <param name="defaultValue">Default value when the function evaluation fails</param>
+        /// <returns></returns>
+        T GetValue<T>(TInput input, T defaultValue);
 
-			context.CommandProcessor.AddCommand(new DicomCompressCommand(
-				context.Message, TransferSyntax.Jpeg2000ImageCompressionLosslessOnly, codec, parms,false));
-
-			return true;
-		}
-
-	}
+        /// <summary>
+        /// Gets the value of the function, converted into the specified input.
+        /// </summary>
+        /// <typeparam name="T">Expected returned type</typeparam>
+        /// <param name="input">Input to the function</param>
+        /// <returns></returns>
+        /// <exception>
+        /// <see cref="TypeConversionException"/> thrown when the function cannot return the value of the specified type.
+        /// </exception>
+        T GetValue<T>(TInput input);
+    }
 }

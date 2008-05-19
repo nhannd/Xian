@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
@@ -36,79 +37,97 @@ using ClearCanvas.Common.Actions;
 
 namespace ClearCanvas.ImageServer.Rules.LosslessCompressAction
 {
-	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-	public class LosslessCompressActionOperator : IXmlActionCompilerOperator<ServerActionContext>
-	{
-		public string OperatorTag
-		{
-			get { return "lossless-compress"; }
-		}
+    [ExtensionOf(typeof (XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
+    public class LosslessCompressActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+    {
+        #region IXmlActionCompilerOperator<ServerActionContext> Members
 
-		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
-		{
-			if (xmlNode.Attributes["time"] == null)
-				throw new XmlActionCompilerException("Unexpected missing time attribute for lossless-compress action");
-			if (xmlNode.Attributes["timeUnits"] == null)
-				throw new XmlActionCompilerException("Unexpected missing timeUnits attribute for lossless-compress action");
+        public string OperatorTag
+        {
+            get { return "lossless-compress"; }
+        }
 
-			double time;
-			if (false == double.TryParse(xmlNode.Attributes["time"].Value, out time))
-				throw new XmlActionCompilerException("Unable to parse time value for lossless-compress rule");
+        public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
+        {
+            if (xmlNode.Attributes["time"] == null)
+                throw new XmlActionCompilerException("Unexpected missing time attribute for lossless-compress scheduling action");
+            if (xmlNode.Attributes["unit"] == null)
+                throw new XmlActionCompilerException("Unexpected missing unit attribute for lossless-compress scheduling action");
 
-			string timeUnits = xmlNode.Attributes["timeUnits"].Value;
+            int time;
+            if (false == int.TryParse(xmlNode.Attributes["time"].Value, out time))
+                throw new XmlActionCompilerException("Unable to parse time value for lossless-compress scheduling rule");
 
-			return new LosslessCompressActionItem(time, timeUnits);
-		}
+            string xmlUnit = xmlNode.Attributes["unit"].Value;
 
-		public XmlSchemaElement GetSchema()
-		{
-			XmlSchemaComplexType type = new XmlSchemaComplexType();
+            // this will throw exception if the unit is not defined
+            TimeUnit unit = (TimeUnit)Enum.Parse(typeof(TimeUnit), xmlUnit, true);
 
-			XmlSchemaAttribute attrib = new XmlSchemaAttribute();
-			attrib.Name = "time";
-			attrib.Use = XmlSchemaUse.Required;
-			attrib.SchemaTypeName = new XmlQualifiedName("double", "http://www.w3.org/2001/XMLSchema");
-			type.Attributes.Add(attrib);
+            string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
 
-			XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType();
+            return new LosslessCompressActionItem(time, unit, refValue);
+        }
 
-			XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
-			restriction.BaseTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+        public XmlSchemaElement GetSchema()
+        {
+            XmlSchemaComplexType type = new XmlSchemaComplexType();
 
-			XmlSchemaEnumerationFacet enumeration = new XmlSchemaEnumerationFacet();
-			enumeration.Value = "hours";
-			restriction.Facets.Add(enumeration);
+            XmlSchemaAttribute attrib = new XmlSchemaAttribute();
+            attrib.Name = "time";
+            attrib.Use = XmlSchemaUse.Required;
+            attrib.SchemaTypeName = new XmlQualifiedName("double", "http://www.w3.org/2001/XMLSchema");
+            type.Attributes.Add(attrib);
 
-			enumeration = new XmlSchemaEnumerationFacet();
-			enumeration.Value = "weeks";
-			restriction.Facets.Add(enumeration);
+            XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType();
 
-			enumeration = new XmlSchemaEnumerationFacet();
-			enumeration.Value = "days";
-			restriction.Facets.Add(enumeration);
+            XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
+            restriction.BaseTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
 
-			enumeration = new XmlSchemaEnumerationFacet();
-			enumeration.Value = "months";
-			restriction.Facets.Add(enumeration);
+            XmlSchemaEnumerationFacet enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "minutes";
+            restriction.Facets.Add(enumeration);
 
-			enumeration = new XmlSchemaEnumerationFacet();
-			enumeration.Value = "patientAge";
-			restriction.Facets.Add(enumeration);
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "hours";
+            restriction.Facets.Add(enumeration);
 
-			simpleType.Content = restriction;
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "weeks";
+            restriction.Facets.Add(enumeration);
 
-			attrib = new XmlSchemaAttribute();
-			attrib.Name = "timeUnits";
-			attrib.Use = XmlSchemaUse.Required;
-			attrib.SchemaType = simpleType;
-			type.Attributes.Add(attrib);
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "days";
+            restriction.Facets.Add(enumeration);
 
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "months";
+            restriction.Facets.Add(enumeration);
 
-			XmlSchemaElement element = new XmlSchemaElement();
-			element.Name = "lossless-compress";
-			element.SchemaType = type;
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "years";
+            restriction.Facets.Add(enumeration);
 
-			return element;
-		}
-	}
+            simpleType.Content = restriction;
+
+            attrib = new XmlSchemaAttribute();
+            attrib.Name = "unit";
+            attrib.Use = XmlSchemaUse.Required;
+            attrib.SchemaType = simpleType;
+            type.Attributes.Add(attrib);
+
+            attrib = new XmlSchemaAttribute();
+            attrib.Name = "refValue";
+            attrib.Use = XmlSchemaUse.Optional;
+            attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+            type.Attributes.Add(attrib);
+
+            XmlSchemaElement element = new XmlSchemaElement();
+            element.Name = "lossless-compress";
+            element.SchemaType = type;
+
+            return element;
+        }
+
+        #endregion
+    }
 }

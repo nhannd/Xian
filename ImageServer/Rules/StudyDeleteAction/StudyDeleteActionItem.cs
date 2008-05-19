@@ -30,61 +30,55 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Actions;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 {
-
-
     public class StudyDeleteActionItem : ServerActionItemBase
     {
-
-        private readonly int _offsetTime;
-        private readonly TimeUnit _units;
-        private readonly ReferenceValue _referenceValue;
-
         private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("DeleteStudy");
+        private readonly int _offsetTime;
+        private readonly string _refValue;
+        private readonly TimeUnit _units;
 
         public StudyDeleteActionItem(int time, TimeUnit unit, string refValue)
             : base("Study Delete action")
         {
             _offsetTime = time;
             _units = unit;
-            _referenceValue = new ReferenceValue(refValue);
+            _refValue = refValue;
         }
 
         protected override bool OnExecute(ServerActionContext context)
         {
-            _referenceValue.Context = context;
-
-            DateTime? scheduledTime = ResolveTime(context, _offsetTime, _units, _referenceValue, Platform.Time);
+            DateTime? scheduledTime = Platform.Time;
+            if (String.IsNullOrEmpty(_refValue) == false)
+            {
+                IFunction<ServerActionContext> function = ReferenceValueParser.Parse(_refValue);
+                scheduledTime = function.GetValue<DateTime?>(context, null);
+            } 
+            
             if (scheduledTime != null)
             {
-                int minRetention = RuleSettings.Default.MIN_RETENTION_MINUTES;
-                if (scheduledTime < Platform.Time.AddMinutes(minRetention))
+                scheduledTime = CalculateOffsetTime(scheduledTime.Value, _offsetTime, _units);
+
+                DateTime preferredScheduledTime = Platform.Time.AddMinutes(RuleSettings.Default.MIN_RETENTION_MINUTES);
+                if (scheduledTime < preferredScheduledTime)
                 {
-                    DateTime preferredScheduledTime = Platform.Time.AddMinutes(minRetention);
-                    Platform.Log(LogLevel.Warn, "Study Delete: calculated delete time is {1}. Min retention time = {0} minutes ==> preferred delete time is {2}", minRetention, scheduledTime, preferredScheduledTime);
+                    Platform.Log(LogLevel.Warn,
+                                 "Study Delete: calculated scheduled delete time is {0}. ==> preferred time is {1}",
+                                 scheduledTime, preferredScheduledTime);
                     scheduledTime = preferredScheduledTime;
                 }
-                    
 
                 Platform.Log(LogLevel.Debug, "Study Delete: This study will be deleted on {0}", scheduledTime);
-                context.CommandProcessor.AddCommand(new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey, scheduledTime.Value));
-
+                context.CommandProcessor.AddCommand(
+                    new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
+                                                     scheduledTime.Value));
             }
 
-            return scheduledTime != null; 
-            
+            return scheduledTime != null;
         }
-
-        #region IActionItem<ServerActionContext> Members
-
-
-        #endregion
     }
 }

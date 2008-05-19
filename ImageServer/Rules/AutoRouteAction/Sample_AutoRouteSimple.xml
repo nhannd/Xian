@@ -1,4 +1,6 @@
-﻿<!-- this rule auto-forwards studies to "CLEARCANVAS" if the value of Study Description tag is "chest" -->
+﻿<!-- 
+This rule instructs the server to auto-route Chest studies to CLEARCANVAS
+-->
 <rule>
 	<condition
 	  expressionLanguage="dicom">

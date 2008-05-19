@@ -32,53 +32,80 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Rules.LossyCompressAction
+namespace ClearCanvas.ImageServer.Rules
 {
-    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
-    public class LossyCompressSample : ISampleRule
+    /// <summary>
+    /// Base class for server rule samples that read samples from the embedded resource.
+    /// </summary>
+    public class SampleRuleBase : ISampleRule
     {
-        private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
+        #region Private members
 
-        public LossyCompressSample()
+        private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
+        private readonly string _embeddedXmlName;
+        private string _description;
+        private string _name;
+        private ServerRuleTypeEnum _type;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Creates an instance of <see cref="SampleRuleBase"/>
+        /// </summary>
+        /// <param name="name">Name of the sample rule</param>
+        /// <param name="description">Description of the sample rule</param>
+        /// <param name="type">Type of the sample rule</param>
+        /// <param name="embeddedXmlName">Name of the resource file containing the sample rule xml</param>
+        public SampleRuleBase(string name, string description, ServerRuleTypeEnum type, string embeddedXmlName)
         {
-            _applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+            _name = name;
+            _description = description;
+            _type = type;
+            _embeddedXmlName = embeddedXmlName;
         }
+
+        #endregion
 
         #region ISampleRule Members
 
         public string Name
         {
-            get { return "LossyCompressExempt"; }
+            get { return _name; }
+            set { _name = value; }
         }
 
         public string Description
         {
-            get { return "Lossy Compress Exempt Rule"; }
+            get { return _description; }
+            set { _description = value; }
         }
 
         public ServerRuleTypeEnum Type
         {
-            get { return ServerRuleTypeEnum.GetEnum("LossyCompressStudy"); }
+            get { return _type; }
+            set { _type = value; }
         }
 
-        public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-        {
-            get { return _applyTime; }
-        }
 
         public XmlDocument Rule
         {
             get
             {
-                Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_LossyWithExempt.xml");
+                Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), _embeddedXmlName);
                 XmlDocument doc = new XmlDocument();
                 doc.Load(stream);
                 stream.Close();
                 return doc;
             }
+        }
+
+        public IList<ServerRuleApplyTimeEnum> ApplyTimeList
+        {
+            get { return _applyTime; }
         }
 
         #endregion

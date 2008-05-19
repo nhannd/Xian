@@ -1,6 +1,6 @@
 ﻿<!-- 
 This rule instructs the server to schedule lossless compression 
-to occur in 10 weeks for MR or CT studies.
+for MR or CT studies. The compression will occur in 2 years after the study date.
 -->
 <rule>
 	<condition expressionLanguage="dicom">
@@ -15,7 +15,8 @@ to occur in 10 weeks for MR or CT studies.
 	</condition>
 	<action>
 		<lossless-compress
-		  time="10"
-		  unit="weeks" />
+		  time="2"
+		  unit="years"
+		  refValue="$StudyDate"/>
 	</action>
 </rule>

@@ -37,85 +37,99 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 {
-	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
-	public class AgeBasedDeleteSample : ISampleRule
-	{
-		private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
+    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
+    public class AgeBasedDeleteSample : ISampleRule
+    {
+        private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
 
-		public AgeBasedDeleteSample()
-		{
-			_applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
-		}
-		public string Name
-		{
-			get { return "AgeBasedDelete"; }
-		}
-		public string Description
-		{
-			get { return "Age Based Delete"; }
-		}
+        public AgeBasedDeleteSample()
+        {
+            _applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
+        }
 
-		public ServerRuleTypeEnum Type
-		{
-			get { return ServerRuleTypeEnum.GetEnum("StudyDelete"); }
-		}
+        #region ISampleRule Members
 
-		public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-		{
-			get { return _applyTime; }
-		}
+        public string Name
+        {
+            get { return "AgeBasedDelete"; }
+        }
 
-		public XmlDocument Rule
-		{
-			get
-			{
-                Stream stream = this.GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_StudyDeleteAgeBased.xml");
+        public string Description
+        {
+            get { return "Age Based Delete"; }
+        }
+
+        public ServerRuleTypeEnum Type
+        {
+            get { return ServerRuleTypeEnum.GetEnum("StudyDelete"); }
+        }
+
+        public IList<ServerRuleApplyTimeEnum> ApplyTimeList
+        {
+            get { return _applyTime; }
+        }
+
+        public XmlDocument Rule
+        {
+            get
+            {
+                Stream stream =
+                    GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_StudyDeleteAgeBased.xml");
                 XmlDocument doc = new XmlDocument();
                 doc.Load(stream);
                 stream.Close();
                 return doc;
-			}
-		}
-	}
+            }
+        }
 
-	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
-	public class MultiTagDeleteSample : ISampleRule
-	{
-		private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
+        #endregion
+    }
 
-		public MultiTagDeleteSample()
-		{
-			_applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
-		}
-		public string Name
-		{
-			get { return "TagBasedDelete"; }
-		}
-		public string Description
-		{
-			get { return "Tag Based Delete"; }
-		}
+    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
+    public class MultiTagDeleteSample : ISampleRule
+    {
+        private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
 
-		public ServerRuleTypeEnum Type
-		{
-			get { return ServerRuleTypeEnum.GetEnum("StudyDelete"); }
-		}
+        public MultiTagDeleteSample()
+        {
+            _applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
+        }
 
-		public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-		{
-			get { return _applyTime; }
-		}
+        #region ISampleRule Members
 
-		public XmlDocument Rule
-		{
-			get
-			{
-                Stream stream = this.GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_StudyDeleteTagBased.xml");
+        public string Name
+        {
+            get { return "TagBasedDelete"; }
+        }
+
+        public string Description
+        {
+            get { return "Tag Based Delete"; }
+        }
+
+        public ServerRuleTypeEnum Type
+        {
+            get { return ServerRuleTypeEnum.GetEnum("StudyDelete"); }
+        }
+
+        public IList<ServerRuleApplyTimeEnum> ApplyTimeList
+        {
+            get { return _applyTime; }
+        }
+
+        public XmlDocument Rule
+        {
+            get
+            {
+                Stream stream =
+                    GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_StudyDeleteTagBased.xml");
                 XmlDocument doc = new XmlDocument();
                 doc.Load(stream);
                 stream.Close();
                 return doc;
-			}
-		}
-	}
+            }
+        }
+
+        #endregion
+    }
 }

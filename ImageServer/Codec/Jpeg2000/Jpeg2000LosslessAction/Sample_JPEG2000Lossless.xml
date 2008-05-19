@@ -1,4 +1,7 @@
-﻿<!-- -->
+﻿<!-- 
+This rule instructs the server to use JPEG 2000 lossless compression
+on CT, MR, CR and MG studies.
+-->
 <rule>
 	<condition
 	  expressionLanguage="dicom">		

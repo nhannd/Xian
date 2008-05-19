@@ -31,56 +31,57 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Actions;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.LossyCompressAction
 {
-	public class LossyCompressActionItem : IActionItem<ServerActionContext>
-	{
-	    private string _failureReason = "Success";
-        private readonly double _time;
-        private readonly string _timeUnits;
-		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("LossyCompress");
+    public class LossyCompressActionItem : ServerActionItemBase
+    {
+        private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("LossyCompress");
+        private readonly int _offsetTime;
+        private readonly string _refValue;
+        private readonly TimeUnit _units;
 
-		public LossyCompressActionItem(double time, string timeUnits)
+
+        public LossyCompressActionItem(int time, TimeUnit unit, string refValue)
+            : base("Lossy Compression Scheduling Action")
         {
-            _time = time;
-            _timeUnits = timeUnits.ToLower();
+            _offsetTime = time;
+            _units = unit;
+            _refValue = refValue;
         }
-        public bool Execute(ServerActionContext context)
-        {
-            DateTime scheduledTime = Platform.Time;
 
-            if (_timeUnits.Equals("hours"))
-                scheduledTime = scheduledTime.AddHours(_time);
-            else if (_timeUnits.Equals("days"))
-                scheduledTime = scheduledTime.AddDays(_time);
-            else if (_timeUnits.Equals("weeks"))
-                scheduledTime = scheduledTime.AddDays(_time * 7f);
-            else if (_timeUnits.Equals("months"))
-                scheduledTime = scheduledTime.AddMonths((int)_time);
-            else if (_timeUnits.Equals("patientage"))
+
+        protected override bool OnExecute(ServerActionContext context)
+        {
+            DateTime? scheduledTime = Platform.Time;
+            if (String.IsNullOrEmpty(_refValue) == false)
             {
-                DateTime birthDate = context.Message.DataSet[DicomTags.PatientsBirthDate].GetDateTime(0, Platform.Time);
-
-                scheduledTime = birthDate.AddYears((int)_time);
-            }
-            else
+                IFunction<ServerActionContext> function = ReferenceValueParser.Parse(_refValue);
+                scheduledTime = function.GetValue<DateTime?>(context, null);
+            } 
+            
+            if (scheduledTime != null)
             {
-                _failureReason = String.Format("Unexpected time units for lossy-compress action item: {0}", _timeUnits);
-                return false;
+                scheduledTime = CalculateOffsetTime(scheduledTime.Value, _offsetTime, _units);
+
+                DateTime preferredScheduledTime = Platform.Time.AddMinutes(RuleSettings.Default.MIN_COMPRESSION_DELAY_MINUTES);
+                if (scheduledTime < preferredScheduledTime)
+                {
+                    Platform.Log(LogLevel.Warn,
+                                 "Lossy Compression Scheduling: calculated scheduled compression time is {0}. ==> preferred time is {1}",
+                                 scheduledTime, preferredScheduledTime);
+                    scheduledTime = preferredScheduledTime;
+                }
+
+                Platform.Log(LogLevel.Debug, "Lossy Compression Scheduling: This study will be compressed on {0}",
+                             scheduledTime);
+                context.CommandProcessor.AddCommand(
+                    new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
+                                                     scheduledTime.Value));
             }
 
-            context.CommandProcessor.AddCommand(new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey, scheduledTime));
-
-            return true;
+            return scheduledTime != null;
         }
-
-        public string FailureReason
-        {
-            get { return _failureReason; }
-        }
-	}
+    }
 }

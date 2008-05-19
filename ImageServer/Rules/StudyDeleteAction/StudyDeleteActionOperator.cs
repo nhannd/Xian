@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
@@ -39,13 +37,12 @@ using ClearCanvas.Common.Actions;
 
 namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 {
-    [ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
+    [ExtensionOf(typeof (XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
     public class StudyDeleteActionOperator : ActionOperatorBase
     {
-        public StudyDeleteActionOperator():
+        public StudyDeleteActionOperator() :
             base("study-delete")
         {
-            
         }
 
         public override IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
@@ -58,11 +55,12 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
             int time;
             if (false == int.TryParse(xmlNode.Attributes["time"].Value, out time))
                 throw new XmlActionCompilerException("Unable to parse time value for study-delete rule");
-            
-            string xmlUnit = xmlNode.Attributes["unit"].Value;
-            TimeUnit unit = (TimeUnit) Enum.Parse(typeof(TimeUnit), xmlUnit, true); // this will throw exception if the unit is not defined
 
-            string refValue = xmlNode.Attributes["refValue"]!=null?  xmlNode.Attributes["refValue"].Value:null;
+            string xmlUnit = xmlNode.Attributes["unit"].Value;
+            TimeUnit unit = (TimeUnit) Enum.Parse(typeof (TimeUnit), xmlUnit, true);
+                // this will throw exception if the unit is not defined
+
+            string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
 
             return new StudyDeleteActionItem(time, unit, refValue);
         }
@@ -81,7 +79,7 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
             enumeration = new XmlSchemaEnumerationFacet();
             enumeration.Value = "hours";
             restriction.Facets.Add(enumeration);
-            
+
             enumeration = new XmlSchemaEnumerationFacet();
             enumeration.Value = "days";
             restriction.Facets.Add(enumeration);
@@ -120,12 +118,12 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
             attrib.Use = XmlSchemaUse.Optional;
             attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
             type.Attributes.Add(attrib);
-            
+
 
             XmlSchemaElement element = new XmlSchemaElement();
             element.Name = OperatorTag;
             element.SchemaType = type;
-            
+
 
             return element;
         }

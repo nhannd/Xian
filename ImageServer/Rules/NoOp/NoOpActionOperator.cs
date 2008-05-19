@@ -36,28 +36,32 @@ using ClearCanvas.Common.Actions;
 
 namespace ClearCanvas.ImageServer.Rules.NoOp
 {
-    [ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
+    [ExtensionOf(typeof (XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
     public class NoOpActionOperator : IXmlActionCompilerOperator<ServerActionContext>
-	{
-		public string OperatorTag
-		{
-			get { return "no-op"; }
-		}
+    {
+        #region IXmlActionCompilerOperator<ServerActionContext> Members
 
-		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
-		{
-			return new NoOpActionItem();
-		}
+        public string OperatorTag
+        {
+            get { return "no-op"; }
+        }
 
-		public XmlSchemaElement GetSchema()
-		{
-			XmlSchemaComplexType type = new XmlSchemaComplexType();
+        public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
+        {
+            return new NoOpActionItem();
+        }
 
-			XmlSchemaElement element = new XmlSchemaElement();
-			element.Name = "no-op";
-			element.SchemaType = type;
+        public XmlSchemaElement GetSchema()
+        {
+            XmlSchemaComplexType type = new XmlSchemaComplexType();
 
-			return element;
-		}
-	}
+            XmlSchemaElement element = new XmlSchemaElement();
+            element.Name = "no-op";
+            element.SchemaType = type;
+
+            return element;
+        }
+
+        #endregion
+    }
 }

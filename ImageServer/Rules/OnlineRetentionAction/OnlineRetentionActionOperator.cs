@@ -30,31 +30,29 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
-using ClearCanvas.ImageServer.Rules.StudyDeleteAction;
 
 namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
 {
-    [ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-    public class OnlineRetentionActionOperator : 
-        ActionOperatorBase, 
+    [ExtensionOf(typeof (XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
+    public class OnlineRetentionActionOperator :
+        ActionOperatorBase,
         IXmlActionCompilerOperator<ServerActionContext>
     {
-
         public OnlineRetentionActionOperator()
             :
-            base("online-retention")
+                base("online-retention")
         {
         }
 
+        #region IXmlActionCompilerOperator<ServerActionContext> Members
+
         public override IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
         {
-           if (xmlNode.Attributes["time"] == null)
+            if (xmlNode.Attributes["time"] == null)
                 throw new XmlActionCompilerException("Unexpected missing time attribute for online-retention action");
             if (xmlNode.Attributes["unit"] == null)
                 throw new XmlActionCompilerException("Unexpected missing unit attribute for online-retention action");
@@ -62,9 +60,10 @@ namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
             int time;
             if (false == int.TryParse(xmlNode.Attributes["time"].Value, out time))
                 throw new XmlActionCompilerException("Unable to parse time value for online-retention rule");
-            
+
             string xmlUnit = xmlNode.Attributes["unit"].Value;
-            TimeUnit unit = (TimeUnit) Enum.Parse(typeof(TimeUnit), xmlUnit, true); // this will throw exception if the unit is not defined
+            TimeUnit unit = (TimeUnit) Enum.Parse(typeof (TimeUnit), xmlUnit, true);
+                // this will throw exception if the unit is not defined
 
             string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
 
@@ -131,5 +130,7 @@ namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
 
             return element;
         }
+
+        #endregion
     }
 }

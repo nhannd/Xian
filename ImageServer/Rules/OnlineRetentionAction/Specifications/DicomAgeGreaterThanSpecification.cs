@@ -39,15 +39,9 @@ using SR=ClearCanvas.Common.SR;
 
 namespace ClearCanvas.ImageServer.Rules.Specifications
 {
-    [ExtensionOf(typeof(XmlSpecificationCompilerOperatorExtensionPoint))]
+    [ExtensionOf(typeof (XmlSpecificationCompilerOperatorExtensionPoint))]
     public class DicomAgeGreaterThanSpecificationOperator : IXmlSpecificationCompilerOperator
     {
-        private string GetAttributeOrNull(XmlElement node, string attr)
-        {
-            string val = node.GetAttribute(attr);
-            return string.IsNullOrEmpty(val) ? null : val;
-        }
-
         #region IXmlSpecificationCompilerOperator Members
 
         public string OperatorTag
@@ -127,13 +121,20 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
 
             return element;
         }
+
         #endregion
+
+        private string GetAttributeOrNull(XmlElement node, string attr)
+        {
+            string val = node.GetAttribute(attr);
+            return string.IsNullOrEmpty(val) ? null : val;
+        }
     }
 
     public class DicomAgeGreaterThanSpecification : PrimitiveSpecification
     {
-        private readonly string _units;
         private readonly string _refValue;
+        private readonly string _units;
 
         public DicomAgeGreaterThanSpecification(string units, string refValue)
         {
@@ -157,11 +158,11 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
                 time = time*-1;
 
                 if (_units.Equals("weeks"))
-                    comparisonTime = comparisonTime.AddDays(time * 7f);
+                    comparisonTime = comparisonTime.AddDays(time*7f);
                 else if (_units.Equals("days"))
                     comparisonTime = comparisonTime.AddDays(time);
                 else
-                    comparisonTime = comparisonTime.AddYears((int)time);
+                    comparisonTime = comparisonTime.AddYears((int) time);
 
                 DateTime? testTime = DateTimeParser.Parse(exp as string);
 
