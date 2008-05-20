@@ -1,4 +1,5 @@
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Client.Reporting.Folders;
 
@@ -27,6 +28,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 				new ReportingOrderNoteboxItemToolExtensionPoint(),
 				new ReportingOrderNoteboxFolderToolExtensionPoint())
 			{
+				this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
+
 				this.AddFolder(new InboxFolder(this));
 				this.AddFolder(new SentItemsFolder(this));
 			}

@@ -40,13 +40,7 @@ namespace ClearCanvas.Desktop
 			_text = text;
 			_postText = postText;
 			_iconSet = iconSet;
-
-			// establish default resource resolver on this assembly (not the assembly of the derived class)
-
-			if (fallbackResolver == null)
-				_resourceResolver = new ResourceResolver(typeof(StackTabPage).Assembly);
-			else
-				_resourceResolver = new ResourceResolver(typeof(StackTabPage).Assembly, fallbackResolver);
+			_resourceResolver = new ResourceResolver(typeof(StackTabPage).Assembly, fallbackResolver);
 		}
 
 		/// <summary>

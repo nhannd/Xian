@@ -149,13 +149,15 @@ namespace ClearCanvas.Ris.Client.Reporting
         private IDictionary<string, bool> _workflowEnablement;
 
         public ReportingWorkflowFolderSystemBase(
-			string displayName,
+			string title,
             IFolderExplorerToolContext folderExplorer,
             ExtensionPoint<IFolder> folderExtensionPoint,
             ExtensionPoint<ITool> itemToolExtensionPoint,
             ExtensionPoint<ITool> folderToolExtensionPoint)
-            : base(displayName, folderExplorer, folderExtensionPoint)
+            : base(title, folderExplorer, folderExtensionPoint)
         {
+			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
+
             if (this.WorklistClassNames.Count > 0)
             {
                 Platform.GetService<IReportingWorkflowService>(

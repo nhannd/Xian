@@ -1,4 +1,5 @@
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Client.EmergencyPhysician.Folders;
@@ -28,6 +29,8 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 			       new EmergencyPhysicianOrderNoteboxItemToolExtensionPoint(), 
 			       new EmergencyPhysicianOrderNoteboxFolderToolExtensionPoint())
 		{
+			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
+
 			this.AddFolder(new InboxFolder(this));
 			this.AddFolder(new SentItemsFolder(this));
 		}

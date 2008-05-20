@@ -62,6 +62,8 @@ namespace ClearCanvas.Ris.Client.Adt
 			new TechnologistMainWorkflowItemToolExtensionPoint(),
 			new TechnologistMainWorkflowFolderToolExtensionPoint())
 		{
+			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
+
 			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
 			{
 				this.AddFolder(new Folders.ScheduledTechnologistWorkflowFolder(this));

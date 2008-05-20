@@ -38,26 +38,6 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client
 {
-    public interface IFolderSystem : IDisposable
-    {
-        string Id { get; }
-		string DisplayName { get; set; }
-		IconSet DisplayIcon { get; set; }
-        IList<IFolder> Folders { get; }
-        IToolSet FolderTools { get; }
-        IToolSet ItemTools { get; }
-        string PreviewUrl { get; }
-
-    	event EventHandler DisplayNameChanged;
-		event EventHandler DisplayIconChanged;
-
-        void InvalidateFolder(Type folderType);
-
-        void SelectedFolderChangedEventHandler(object sender, EventArgs e);
-        void SelectedItemsChangedEventHandler(object sender, EventArgs e);
-        void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e);
-    }
-
     public abstract class WorkflowFolderSystem<TItem> : IFolderSystem
     {
         private readonly IFolderExplorerToolContext _folderExplorer;
@@ -67,23 +47,27 @@ namespace ClearCanvas.Ris.Client
         private event EventHandler _selectedItemDoubleClicked;
         private event EventHandler _selectedItemsChanged;
         private event EventHandler _selectedFolderChanged;
-    	private event EventHandler _displayNameChanged;
-    	private event EventHandler _displayIconChanged;
+    	private event EventHandler _titleChanged;
+    	private event EventHandler _titleIconChanged;
 
-		private string _displayName;
-    	private IconSet _displayIcon;
+		private string _title;
+    	private IconSet _titleIcon;
+		protected IResourceResolver _resourceResolver;
 		
 		protected IToolSet _itemTools;
         protected IToolSet _folderTools;
 
-        public WorkflowFolderSystem(string displayName, IFolderExplorerToolContext folderExplorer)
-            : this(displayName, folderExplorer, null)
+        public WorkflowFolderSystem(string title, IFolderExplorerToolContext folderExplorer)
+            : this(title, folderExplorer, null)
         {
         }
 
-		public WorkflowFolderSystem(string displayName, IFolderExplorerToolContext folderExplorer, ExtensionPoint<IFolder> folderExtensionPoint)
+		public WorkflowFolderSystem(string title, IFolderExplorerToolContext folderExplorer, ExtensionPoint<IFolder> folderExtensionPoint)
         {
-			_displayName = displayName;
+			// establish default resource resolver on this assembly (not the assembly of the derived class)
+			_resourceResolver = new ResourceResolver(typeof(WorkflowFolderSystem<TItem>).Assembly);
+
+			_title = title;
 
             _workflowFolders = new List<IFolder>();
 
@@ -120,26 +104,32 @@ namespace ClearCanvas.Ris.Client
             get { return this.GetType().FullName; }
         }
 
-    	public string DisplayName
+    	public string Title
     	{
-    		get { return _displayName; }
+			get { return _title; }
 			set 
-			{ 
-				_displayName = value;
-				EventsHelper.Fire(_displayNameChanged, this, EventArgs.Empty);
+			{
+				_title = value;
+				EventsHelper.Fire(_titleChanged, this, EventArgs.Empty);
 			}
     	}
 
-		public IconSet DisplayIcon
+		public IconSet TitleIcon
 		{
-			get { return _displayIcon; }
+			get { return _titleIcon; }
 			set
 			{
-				_displayIcon = value;
-				EventsHelper.Fire(_displayIconChanged, this, EventArgs.Empty);
+				_titleIcon = value;
+				EventsHelper.Fire(_titleIconChanged, this, EventArgs.Empty);
 			}
 		}
-		
+
+		public IResourceResolver ResourceResolver
+		{
+			get { return _resourceResolver; }
+			set { _resourceResolver = value; }
+		}
+
 		public IList<IFolder> Folders
         {
             get { return _workflowFolders; }
@@ -223,16 +213,16 @@ namespace ClearCanvas.Ris.Client
             remove { _selectedFolderChanged -= value; }
         }
 
-		public event EventHandler DisplayNameChanged
+		public event EventHandler TextChanged
 		{
-			add { _displayNameChanged += value; }
-			remove { _displayNameChanged -= value; }
+			add { _titleChanged += value; }
+			remove { _titleChanged -= value; }
 		}
 
-		public event EventHandler DisplayIconChanged
+		public event EventHandler IconChanged
 		{
-			add { _displayIconChanged += value; }
-			remove { _displayIconChanged -= value; }
+			add { _titleIconChanged += value; }
+			remove { _titleIconChanged -= value; }
 		}
 
 		public IFolder SelectedFolder

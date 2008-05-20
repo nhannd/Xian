@@ -64,6 +64,7 @@
     </Compile>
     <Compile Include="HomeTool.cs" />
     <Compile Include="IChangePasswordDialog.cs" />
+    <Compile Include="IFolderSystem.cs" />
     <Compile Include="OrderAdditionalInfoComponent.cs" />
     <Compile Include="OrderDetailViewComponent.cs" />
     <Compile Include="OrderNoteboxFolder.cs" />
