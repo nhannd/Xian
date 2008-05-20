@@ -34,18 +34,21 @@ using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 {
     [ExtensionOf(typeof (XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-    public class StudyDeleteActionOperator : ActionOperatorBase
+    public class StudyDeleteActionOperator : ActionOperatorCompilerBase, IXmlActionCompilerOperator<ServerActionContext>
     {
         public StudyDeleteActionOperator() :
             base("study-delete")
         {
         }
 
-        public override IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
+        #region IXmlActionCompilerOperator<ServerActionContext> Members
+
+        public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
         {
             if (xmlNode.Attributes["time"] == null)
                 throw new XmlActionCompilerException("Unexpected missing time attribute for study-delete action");
@@ -58,14 +61,31 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 
             string xmlUnit = xmlNode.Attributes["unit"].Value;
             TimeUnit unit = (TimeUnit) Enum.Parse(typeof (TimeUnit), xmlUnit, true);
-                // this will throw exception if the unit is not defined
+            // this will throw exception if the unit is not defined
 
             string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
 
-            return new StudyDeleteActionItem(time, unit, refValue);
+            if (!String.IsNullOrEmpty(refValue))
+            {
+                if (xmlNode["expressionLanguage"] != null)
+                {
+                    string language = xmlNode["expressionLanguage"].Value;
+                    Expression scheduledTime = CreateExpression(refValue, language);
+                    return new StudyDeleteActionItem(time, unit, scheduledTime);
+                }
+                else
+                {
+                    Expression scheduledTime = CreateExpression(refValue);
+                    return new StudyDeleteActionItem(time, unit, scheduledTime);
+                }
+            }
+            else
+            {
+                return new StudyDeleteActionItem(time, unit);
+            }
         }
 
-        public override XmlSchemaElement GetSchema()
+        public XmlSchemaElement GetSchema()
         {
             XmlSchemaSimpleType timeUnitType = new XmlSchemaSimpleType();
 
@@ -98,6 +118,13 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 
             timeUnitType.Content = restriction;
 
+            XmlSchemaSimpleType languageType = new XmlSchemaSimpleType();
+            XmlSchemaSimpleTypeRestriction languageEnum = new XmlSchemaSimpleTypeRestriction();
+            languageEnum.BaseTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "dicom";
+            languageEnum.Facets.Add(enumeration);
+            languageType.Content = languageEnum;
 
             XmlSchemaComplexType type = new XmlSchemaComplexType();
 
@@ -119,6 +146,11 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
             attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
             type.Attributes.Add(attrib);
 
+            attrib = new XmlSchemaAttribute();
+            attrib.Name = "expressionLanguage";
+            attrib.Use = XmlSchemaUse.Optional;
+            attrib.SchemaType = languageType;
+            type.Attributes.Add(attrib);
 
             XmlSchemaElement element = new XmlSchemaElement();
             element.Name = OperatorTag;
@@ -127,5 +159,7 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 
             return element;
         }
+
+        #endregion
     }
 }

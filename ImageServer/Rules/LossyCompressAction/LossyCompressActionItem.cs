@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.LossyCompressAction
@@ -38,50 +39,51 @@ namespace ClearCanvas.ImageServer.Rules.LossyCompressAction
     public class LossyCompressActionItem : ServerActionItemBase
     {
         private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("LossyCompress");
+        private readonly Expression _exprScheduledTime;
         private readonly int _offsetTime;
-        private readonly string _refValue;
         private readonly TimeUnit _units;
 
+        public LossyCompressActionItem(int time, TimeUnit unit)
+            : this(time, unit, null)
+        {
+        }
 
-        public LossyCompressActionItem(int time, TimeUnit unit, string refValue)
-            : base("Lossy Compression Scheduling Action")
+        public LossyCompressActionItem(int time, TimeUnit unit, Expression exprScheduledTime)
+            : base("Study Delete action")
         {
             _offsetTime = time;
             _units = unit;
-            _refValue = refValue;
+            _exprScheduledTime = exprScheduledTime;
         }
-
 
         protected override bool OnExecute(ServerActionContext context)
         {
-            DateTime? scheduledTime = Platform.Time;
-            if (String.IsNullOrEmpty(_refValue) == false)
-            {
-                IFunction<ServerActionContext> function = ReferenceValueParser.Parse(_refValue);
-                scheduledTime = function.GetValue<DateTime?>(context, null);
-            } 
-            
-            if (scheduledTime != null)
-            {
-                scheduledTime = CalculateOffsetTime(scheduledTime.Value, _offsetTime, _units);
+            DateTime scheduledTime = Platform.Time;
 
-                DateTime preferredScheduledTime = Platform.Time.AddMinutes(RuleSettings.Default.MIN_COMPRESSION_DELAY_MINUTES);
-                if (scheduledTime < preferredScheduledTime)
-                {
-                    Platform.Log(LogLevel.Warn,
-                                 "Lossy Compression Scheduling: calculated scheduled compression time is {0}. ==> preferred time is {1}",
-                                 scheduledTime, preferredScheduledTime);
-                    scheduledTime = preferredScheduledTime;
-                }
-
-                Platform.Log(LogLevel.Debug, "Lossy Compression Scheduling: This study will be compressed on {0}",
-                             scheduledTime);
-                context.CommandProcessor.AddCommand(
-                    new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
-                                                     scheduledTime.Value));
+            if (_exprScheduledTime != null)
+            {
+                scheduledTime = Evaluate(_exprScheduledTime, context, Platform.Time);
             }
 
-            return scheduledTime != null;
+
+            scheduledTime = CalculateOffsetTime(scheduledTime, _offsetTime, _units);
+
+            DateTime preferredScheduledTime =
+                Platform.Time.AddMinutes(RuleSettings.Default.MIN_COMPRESSION_DELAY_MINUTES);
+            if (scheduledTime < preferredScheduledTime)
+            {
+                Platform.Log(LogLevel.Warn,
+                             "Lossy Compression Scheduling: calculated scheduled compression time is {0}. ==> preferred time is {1}",
+                             scheduledTime, preferredScheduledTime);
+                scheduledTime = preferredScheduledTime;
+            }
+
+            Platform.Log(LogLevel.Debug, "Lossy Compression Scheduling: This study will be compressed on {0}", scheduledTime);
+            context.CommandProcessor.AddCommand(
+                new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey, scheduledTime));
+
+
+            return true;
         }
     }
 }

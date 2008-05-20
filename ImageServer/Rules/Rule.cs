@@ -41,15 +41,12 @@ namespace ClearCanvas.ImageServer.Rules
 {
     public class Rule
     {
-        #region Private Members
         private IActionSet<ServerActionContext> _actions;
         private ISpecification _conditions;
         private string _description;
         private bool _isDefault;
         private bool _isExempt;
         private string _name;
-        #endregion
-
 
         #region Constructors
 

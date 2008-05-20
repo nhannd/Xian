@@ -30,30 +30,33 @@
 #endregion
 
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using ClearCanvas.Common;
 
-[assembly: ClearCanvas.Common.Plugin]
+[assembly : Plugin]
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ClearCanvas.ImageServer.Rules")]
-[assembly: AssemblyDescription("ClearCanvas ImageServer Rules Plugin")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ClearCanvas Inc.")]
-[assembly: AssemblyProduct("ImageServer")]
-[assembly: AssemblyCopyright("Copyright (c) 2006-2008")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+
+[assembly : AssemblyTitle("ClearCanvas.ImageServer.Rules")]
+[assembly : AssemblyDescription("ClearCanvas ImageServer Rules Plugin")]
+[assembly : AssemblyConfiguration("")]
+[assembly : AssemblyCompany("ClearCanvas Inc.")]
+[assembly : AssemblyProduct("ImageServer")]
+[assembly : AssemblyCopyright("Copyright (c) 2006-2008")]
+[assembly : AssemblyTrademark("")]
+[assembly : AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
+
+[assembly : ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f6d81a63-98cc-4fe7-981f-c69da55be467")]
+
+[assembly : Guid("f6d81a63-98cc-4fe7-981f-c69da55be467")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -64,5 +67,6 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("0.90.0.0")]
-[assembly: AssemblyFileVersion("0.90.0.0")]
+
+[assembly : AssemblyVersion("0.90.0.0")]
+[assembly : AssemblyFileVersion("0.90.0.0")]

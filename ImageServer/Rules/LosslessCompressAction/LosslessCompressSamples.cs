@@ -65,8 +65,8 @@ namespace ClearCanvas.ImageServer.Rules.LosslessCompressAction
     public class LosslessCompressSample3 : SampleRuleBase
     {
         public LosslessCompressSample3()
-            : base("Lossless Compression Sample x",
-                   "Lossless Compression Sample x",
+            : base("Lossless Compression Sample 3",
+                   "Lossless Compression Sample 3",
                    ServerRuleTypeEnum.GetEnum("LosslessCompressStudy"),
                    "Sample_SimpleLossless3.xml")
         {

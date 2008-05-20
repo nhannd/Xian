@@ -34,12 +34,13 @@ using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
 {
     [ExtensionOf(typeof (XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
     public class OnlineRetentionActionOperator :
-        ActionOperatorBase,
+        ActionOperatorCompilerBase,
         IXmlActionCompilerOperator<ServerActionContext>
     {
         public OnlineRetentionActionOperator()
@@ -50,7 +51,7 @@ namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
 
         #region IXmlActionCompilerOperator<ServerActionContext> Members
 
-        public override IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
+        public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
         {
             if (xmlNode.Attributes["time"] == null)
                 throw new XmlActionCompilerException("Unexpected missing time attribute for online-retention action");
@@ -63,23 +64,32 @@ namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
 
             string xmlUnit = xmlNode.Attributes["unit"].Value;
             TimeUnit unit = (TimeUnit) Enum.Parse(typeof (TimeUnit), xmlUnit, true);
-                // this will throw exception if the unit is not defined
+            // this will throw exception if the unit is not defined
 
             string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
 
-            return new OnlineRetentionActionItem(time, unit, refValue);
+            if (!String.IsNullOrEmpty(refValue))
+            {
+                if (xmlNode["expressionLanguage"] != null)
+                {
+                    string language = xmlNode["expressionLanguage"].Value;
+                    Expression scheduledTime = CreateExpression(refValue, language);
+                    return new OnlineRetentionActionItem(time, unit, scheduledTime);
+                }
+                else
+                {
+                    Expression scheduledTime = CreateExpression(refValue);
+                    return new OnlineRetentionActionItem(time, unit, scheduledTime);
+                }
+            }
+            else
+            {
+                return new OnlineRetentionActionItem(time, unit);
+            }
         }
 
-        public override XmlSchemaElement GetSchema()
+        public XmlSchemaElement GetSchema()
         {
-            XmlSchemaComplexType type = new XmlSchemaComplexType();
-
-            XmlSchemaAttribute attrib = new XmlSchemaAttribute();
-            attrib.Name = "time";
-            attrib.Use = XmlSchemaUse.Required;
-            attrib.SchemaTypeName = new XmlQualifiedName("double", "http://www.w3.org/2001/XMLSchema");
-            type.Attributes.Add(attrib);
-
             XmlSchemaSimpleType timeUnitType = new XmlSchemaSimpleType();
 
             XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
@@ -111,6 +121,22 @@ namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
 
             timeUnitType.Content = restriction;
 
+            XmlSchemaSimpleType languageType = new XmlSchemaSimpleType();
+            XmlSchemaSimpleTypeRestriction languageEnum = new XmlSchemaSimpleTypeRestriction();
+            languageEnum.BaseTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "dicom";
+            languageEnum.Facets.Add(enumeration);
+            languageType.Content = languageEnum;
+
+            XmlSchemaComplexType type = new XmlSchemaComplexType();
+
+            XmlSchemaAttribute attrib = new XmlSchemaAttribute();
+            attrib.Name = "time";
+            attrib.Use = XmlSchemaUse.Required;
+            attrib.SchemaTypeName = new XmlQualifiedName("double", "http://www.w3.org/2001/XMLSchema");
+            type.Attributes.Add(attrib);
+
 
             attrib = new XmlSchemaAttribute();
             attrib.Name = "unit";
@@ -124,6 +150,12 @@ namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
             attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
             type.Attributes.Add(attrib);
 
+            attrib = new XmlSchemaAttribute();
+            attrib.Name = "expressionLanguage";
+            attrib.Use = XmlSchemaUse.Optional;
+            attrib.SchemaType = languageType;
+
+            type.Attributes.Add(attrib);
             XmlSchemaElement element = new XmlSchemaElement();
             element.Name = "online-retention";
             element.SchemaType = type;

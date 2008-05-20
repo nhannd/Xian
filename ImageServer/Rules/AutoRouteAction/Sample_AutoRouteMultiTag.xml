@@ -1,6 +1,5 @@
 ﻿<!-- 
-This rule instructs the server to auto-route MR and CT
-studies to CLEARCANVAS
+This rule instructs the server to auto-route MR and CT studies to CLEARCANVAS 
 -->
 <rule>
 	<condition

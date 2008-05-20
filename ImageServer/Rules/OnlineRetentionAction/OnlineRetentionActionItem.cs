@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
@@ -38,50 +39,51 @@ namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
     public class OnlineRetentionActionItem : ServerActionItemBase
     {
         private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("PurgeStudy");
+        private readonly Expression _exprScheduledTime;
 
         private readonly int _offsetTime;
-        private readonly string _refValue;
         private readonly TimeUnit _units;
 
-        public OnlineRetentionActionItem(int time, TimeUnit unit, string refValue)
-            : base("Online Retention Action")
+        public OnlineRetentionActionItem(int time, TimeUnit unit)
+            : this(time, unit, null)
+        {
+        }
+
+        public OnlineRetentionActionItem(int time, TimeUnit unit, Expression exprScheduledTime)
+            : base("Study Delete action")
         {
             _offsetTime = time;
             _units = unit;
-            _refValue = refValue;
-            
+            _exprScheduledTime = exprScheduledTime;
         }
-
 
         protected override bool OnExecute(ServerActionContext context)
         {
-            DateTime? scheduledTime = Platform.Time;
-            if (String.IsNullOrEmpty(_refValue) == false)
+            DateTime scheduledTime = Platform.Time;
+
+            if (_exprScheduledTime != null)
             {
-                IFunction<ServerActionContext> function = ReferenceValueParser.Parse(_refValue);
-                scheduledTime = function.GetValue<DateTime?>(context, null);
+                scheduledTime = Evaluate(_exprScheduledTime, context, Platform.Time);
             }
 
-            if (scheduledTime != null)
+            scheduledTime = CalculateOffsetTime(scheduledTime, _offsetTime, _units);
+            DateTime preferredScheduledTime = Platform.Time.AddMinutes(RuleSettings.Default.MIN_RETENTION_MINUTES);
+
+            if (scheduledTime < preferredScheduledTime)
             {
-                scheduledTime = CalculateOffsetTime(scheduledTime.Value, _offsetTime, _units);
-
-                if (scheduledTime < Platform.Time)
-                {
-                    DateTime preferredScheduledTime = Platform.Time.AddMinutes(RuleSettings.Default.MIN_RETENTION_MINUTES);
-                    Platform.Log(LogLevel.Warn,
-                                 "Online Retention: calculated scheduled delete time is {0}. ==> preferred time is {1}",
-                                 scheduledTime, preferredScheduledTime);
-                    scheduledTime = preferredScheduledTime;
-                }
-
-                Platform.Log(LogLevel.Debug, "Online Retention: This study will be purged on {0}", scheduledTime);
-                context.CommandProcessor.AddCommand(
-                    new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
-                                                     scheduledTime.Value));
+                Platform.Log(LogLevel.Warn,
+                             "Online Retention: calculated scheduled delete time is {0}. ==> preferred time is {1}",
+                             scheduledTime, preferredScheduledTime);
+                scheduledTime = preferredScheduledTime;
             }
 
-            return scheduledTime != null;
+            Platform.Log(LogLevel.Debug, "Online Retention: This study will be purged on {0}", scheduledTime);
+            context.CommandProcessor.AddCommand(
+                new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
+                                                 scheduledTime));
+
+
+            return true;
         }
     }
 }

@@ -34,25 +34,30 @@ using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.ImageServer.Rules.LosslessCompressAction
 {
     [ExtensionOf(typeof (XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-    public class LosslessCompressActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+    public class LosslessCompressActionOperator : ActionOperatorCompilerBase,
+                                                  IXmlActionCompilerOperator<ServerActionContext>
     {
-        #region IXmlActionCompilerOperator<ServerActionContext> Members
-
-        public string OperatorTag
+        public LosslessCompressActionOperator()
+            :
+                base("lossless-compress")
         {
-            get { return "lossless-compress"; }
         }
+
+        #region IXmlActionCompilerOperator<ServerActionContext> Members
 
         public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
         {
             if (xmlNode.Attributes["time"] == null)
-                throw new XmlActionCompilerException("Unexpected missing time attribute for lossless-compress scheduling action");
+                throw new XmlActionCompilerException(
+                    "Unexpected missing time attribute for lossless-compress scheduling action");
             if (xmlNode.Attributes["unit"] == null)
-                throw new XmlActionCompilerException("Unexpected missing unit attribute for lossless-compress scheduling action");
+                throw new XmlActionCompilerException(
+                    "Unexpected missing unit attribute for lossless-compress scheduling action");
 
             int time;
             if (false == int.TryParse(xmlNode.Attributes["time"].Value, out time))
@@ -61,23 +66,33 @@ namespace ClearCanvas.ImageServer.Rules.LosslessCompressAction
             string xmlUnit = xmlNode.Attributes["unit"].Value;
 
             // this will throw exception if the unit is not defined
-            TimeUnit unit = (TimeUnit)Enum.Parse(typeof(TimeUnit), xmlUnit, true);
+            TimeUnit unit = (TimeUnit) Enum.Parse(typeof (TimeUnit), xmlUnit, true);
 
             string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
 
-            return new LosslessCompressActionItem(time, unit, refValue);
+
+            if (!String.IsNullOrEmpty(refValue))
+            {
+                if (xmlNode["expressionLanguage"] != null)
+                {
+                    string language = xmlNode["expressionLanguage"].Value;
+                    Expression scheduledTime = CreateExpression(refValue, language);
+                    return new LosslessCompressActionItem(time, unit, scheduledTime);
+                }
+                else
+                {
+                    Expression scheduledTime = CreateExpression(refValue);
+                    return new LosslessCompressActionItem(time, unit, scheduledTime);
+                }
+            }
+            else
+            {
+                return new LosslessCompressActionItem(time, unit);
+            }
         }
 
         public XmlSchemaElement GetSchema()
         {
-            XmlSchemaComplexType type = new XmlSchemaComplexType();
-
-            XmlSchemaAttribute attrib = new XmlSchemaAttribute();
-            attrib.Name = "time";
-            attrib.Use = XmlSchemaUse.Required;
-            attrib.SchemaTypeName = new XmlQualifiedName("double", "http://www.w3.org/2001/XMLSchema");
-            type.Attributes.Add(attrib);
-
             XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType();
 
             XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
@@ -109,6 +124,23 @@ namespace ClearCanvas.ImageServer.Rules.LosslessCompressAction
 
             simpleType.Content = restriction;
 
+
+            XmlSchemaSimpleType languageType = new XmlSchemaSimpleType();
+            XmlSchemaSimpleTypeRestriction languageEnum = new XmlSchemaSimpleTypeRestriction();
+            languageEnum.BaseTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "dicom";
+            languageEnum.Facets.Add(enumeration);
+            languageType.Content = languageEnum;
+
+            XmlSchemaComplexType type = new XmlSchemaComplexType();
+
+            XmlSchemaAttribute attrib = new XmlSchemaAttribute();
+            attrib.Name = "time";
+            attrib.Use = XmlSchemaUse.Required;
+            attrib.SchemaTypeName = new XmlQualifiedName("double", "http://www.w3.org/2001/XMLSchema");
+            type.Attributes.Add(attrib);
+
             attrib = new XmlSchemaAttribute();
             attrib.Name = "unit";
             attrib.Use = XmlSchemaUse.Required;
@@ -119,6 +151,12 @@ namespace ClearCanvas.ImageServer.Rules.LosslessCompressAction
             attrib.Name = "refValue";
             attrib.Use = XmlSchemaUse.Optional;
             attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+            type.Attributes.Add(attrib);
+
+            attrib = new XmlSchemaAttribute();
+            attrib.Name = "expressionLanguage";
+            attrib.Use = XmlSchemaUse.Optional;
+            attrib.SchemaType = languageType;
             type.Attributes.Add(attrib);
 
             XmlSchemaElement element = new XmlSchemaElement();

@@ -1,5 +1,8 @@
 using System;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.Common.Specifications;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Rules
 {
@@ -18,14 +21,23 @@ namespace ClearCanvas.ImageServer.Rules
 
 
     /// <summary>
+    /// Exception that is thrown when value conversion fails.
+    /// </summary>
+    public class TypeConversionException : Exception
+    {
+        public TypeConversionException(string message)
+            : base(message)
+        {
+        }
+    }
+
+    /// <summary>
     /// Base class for all server rule actions implementing <see cref="IActionItem{ServerActionContext}"/> 
     /// </summary>
     public abstract class ServerActionItemBase : IActionItem<ServerActionContext>
     {
-        #region Private Members
         private string _failureReason = "Success";
         private string _name;
-        #endregion
 
         #region Constructors
 
@@ -73,9 +85,8 @@ namespace ClearCanvas.ImageServer.Rules
             }
         }
 
-        #endregion
-
         #region Public Static Methods
+
         /// <summary>
         /// Calculates the new time of the specified time, offset by a specified period.
         /// </summary>
@@ -83,7 +94,7 @@ namespace ClearCanvas.ImageServer.Rules
         /// <param name="offset">The offset period</param>
         /// <param name="unit">The unit of the offset period</param>
         /// <returns></returns>
-        public static DateTime CalculateOffsetTime(DateTime start, int offset, TimeUnit unit)
+        protected static DateTime CalculateOffsetTime(DateTime start, int offset, TimeUnit unit)
         {
             DateTime time = start;
 
@@ -102,7 +113,7 @@ namespace ClearCanvas.ImageServer.Rules
                     break;
 
                 case TimeUnit.Weeks:
-                    time = time.AddDays(offset * 7);
+                    time = time.AddDays(offset*7);
                     break;
 
                 case TimeUnit.Months:
@@ -119,15 +130,141 @@ namespace ClearCanvas.ImageServer.Rules
 
             return time;
         }
+
+        /// <summary>
+        /// Evaluates an expression in the specified context.
+        /// </summary>
+        /// <param name="expression">The expression to be evaluated</param>
+        /// <param name="context">The context to evaluate the expression</param>
+        /// <returns></returns>
+        protected static object Evaluate(Expression expression, ServerActionContext context)
+        {
+            Platform.CheckForNullReference(expression, "expression");
+            Platform.CheckForNullReference(context, "context");
+            Platform.CheckForNullReference(context.Message, "context.Message");
+
+            return expression.Evaluate(context.Message);
+        }
+
+        /// <summary>
+        /// Evaluates an expression in the specified context and converts it to the specified type.
+        /// </summary>
+        /// <typeparam name="T">Expected returne type</typeparam>
+        /// <param name="expression">The expression to be evaluated</param>
+        /// <param name="context">The context to evaluate the expression</param>
+        /// <returns></returns>
+        /// <exception cref="TypeConversionException"/> thrown if the value of the expression cannot be converted into specified type</exception>
+        protected static T Evaluate<T>(Expression expression, ServerActionContext context)
+        {
+            object value = Evaluate(expression, context);
+
+            if (value is T)
+            {
+                // if the expression was evaluated to the same type then just return it
+                return (T) value;
+            }
+
+
+            if (typeof (T) == typeof (string))
+            {
+                return (T) (object) value.ToString();
+            }
+            else if (typeof (T) == typeof (int))
+            {
+                int result = int.Parse(value.ToString());
+                return (T) (object) result;
+            }
+            else if (typeof (T) == typeof (uint))
+            {
+                uint result = uint.Parse(value.ToString());
+                return (T) (object) result;
+            }
+            else if (typeof (T) == typeof (long))
+            {
+                long result = long.Parse(value.ToString());
+                return (T) (object) result;
+            }
+            else if (typeof (T) == typeof (ulong))
+            {
+                ulong result = ulong.Parse(value.ToString());
+                return (T) (object) result;
+            }
+            else if (typeof (T) == typeof (float))
+            {
+                float result = float.Parse(value.ToString());
+                return (T) (object) result;
+            }
+            else if (typeof (T) == typeof (double))
+            {
+                double result = double.Parse(value.ToString());
+                return (T) (object) result;
+            }
+            else if (typeof (T) == typeof (DateTime))
+            {
+                if (value == null || String.IsNullOrEmpty(value.ToString()))
+                {
+                    string error =
+                        String.Format("Unable to convert value for expression {0} (value={1}) to {2}", expression.Text,
+                                      value, typeof (T));
+                    throw new TypeConversionException(error);
+                }
+
+                DateTime? result = DateTimeParser.Parse(value.ToString());
+                if (result == null)
+                {
+                    string error =
+                        String.Format("Unable to convert value for expression {0} (value={1}) to {2}", expression.Text,
+                                      value, typeof (T));
+                    throw new TypeConversionException(error);
+                    ;
+                }
+                else
+                    return (T) (object) result.Value;
+            }
+            else
+            {
+                string error =
+                    String.Format("Unable to retrieve value for expression {0} as {1}: Unsupported conversion.",
+                                  expression.Text, typeof (T));
+                throw new TypeConversionException(error);
+            }
+        }
+
+        /// <summary>
+        /// Evaluates an expression in the specified context and converts it to the specified type.
+        /// </summary>
+        /// <typeparam name="T">Expected returne type</typeparam>
+        /// <param name="expression">The expression to be evaluated</param>
+        /// <param name="context">The context to evaluate the expression</param>
+        /// <param name="defaultValue">Returned value if the expression cannot be evaluated</param>
+        /// <returns></returns>
+        protected static T Evaluate<T>(Expression expression, ServerActionContext context, T defaultValue)
+        {
+            try
+            {
+                return Evaluate<T>(expression, context);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unable to evaluate expression {0}. Using default value={1}",
+                             expression.Text, defaultValue);
+                return defaultValue;
+            }
+        }
+
         #endregion
 
         #region Protected Abstract Methods
+
         /// <summary>
         /// Called to execute the action.
         /// </summary>
         /// <param name="context"></param>
         /// <returns>true if the action execution succeeds. false otherwise.</returns>
         protected abstract bool OnExecute(ServerActionContext context);
+
+        #endregion
+
         #endregion
     }
 }

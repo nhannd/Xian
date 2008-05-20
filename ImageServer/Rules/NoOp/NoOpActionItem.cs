@@ -29,7 +29,6 @@
 
 #endregion
 
-
 namespace ClearCanvas.ImageServer.Rules.NoOp
 {
     public class NoOpActionItem : ServerActionItemBase
@@ -39,12 +38,9 @@ namespace ClearCanvas.ImageServer.Rules.NoOp
         {
         }
 
-        #region IActionItem<ServerActionContext> Members
-
         protected override bool OnExecute(ServerActionContext context)
         {
             return true;
         }
-        #endregion
     }
 }

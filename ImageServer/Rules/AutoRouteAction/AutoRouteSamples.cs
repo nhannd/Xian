@@ -29,105 +29,34 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.IO;
-using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
     [ExtensionOf(typeof (SampleRuleExtensionPoint))]
-    public class MultiTagAutoRoute : ISampleRule
+    public class MultiTagAutoRoute : SampleRuleBase
     {
-        private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
-
         public MultiTagAutoRoute()
+            : base("MultiTagAutoRoute",
+                   "Multi-Tag AutoRoute",
+                   ServerRuleTypeEnum.GetEnum("AutoRoute"),
+                   "Sample_AutoRouteMultiTag.xml")
         {
-            _applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
+            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
         }
-
-        #region ISampleRule Members
-
-        public string Name
-        {
-            get { return "MultiTagAutoRoute"; }
-        }
-
-        public string Description
-        {
-            get { return "Multi-Tag AutoRoute"; }
-        }
-
-        public ServerRuleTypeEnum Type
-        {
-            get { return ServerRuleTypeEnum.GetEnum("AutoRoute"); }
-        }
-
-        public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-        {
-            get { return _applyTime; }
-        }
-
-        public XmlDocument Rule
-        {
-            get
-            {
-                Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_AutoRouteMultiTag.xml");
-                XmlDocument doc = new XmlDocument();
-                doc.Load(stream);
-                stream.Close();
-                return doc;
-            }
-        }
-
-        #endregion
     }
 
     [ExtensionOf(typeof (SampleRuleExtensionPoint))]
-    public class SimpleAutoRouteSample : ISampleRule
+    public class SimpleAutoRouteSample : SampleRuleBase
     {
-        private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
-
         public SimpleAutoRouteSample()
+            : base("SimpleAutoRoute",
+                   "Simple AutoRoute",
+                   ServerRuleTypeEnum.GetEnum("AutoRoute"),
+                   "Sample_AutoRouteSimple.xml")
         {
-            _applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
+            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
         }
-
-        #region ISampleRule Members
-
-        public string Name
-        {
-            get { return "SimpleAutoRoute"; }
-        }
-
-        public string Description
-        {
-            get { return "Simple AutoRoute"; }
-        }
-
-        public ServerRuleTypeEnum Type
-        {
-            get { return ServerRuleTypeEnum.GetEnum("AutoRoute"); }
-        }
-
-        public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-        {
-            get { return _applyTime; }
-        }
-
-        public XmlDocument Rule
-        {
-            get
-            {
-                Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_AutoRouteSimple.xml");
-                XmlDocument doc = new XmlDocument();
-                doc.Load(stream);
-                stream.Close();
-                return doc;
-            }
-        }
-
-        #endregion
     }
 }

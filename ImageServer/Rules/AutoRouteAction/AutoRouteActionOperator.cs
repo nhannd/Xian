@@ -37,14 +37,14 @@ using ClearCanvas.Common.Actions;
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
     [ExtensionOf(typeof (XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-    public class AutoRouteActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+    public class AutoRouteActionOperator : ActionOperatorCompilerBase, IXmlActionCompilerOperator<ServerActionContext>
     {
-        #region IXmlActionCompilerOperator<ServerActionContext> Members
-
-        public string OperatorTag
+        public AutoRouteActionOperator()
+            : base("auto-route")
         {
-            get { return "auto-route"; }
         }
+
+        #region IXmlActionCompilerOperator<ServerActionContext> Members
 
         public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
         {

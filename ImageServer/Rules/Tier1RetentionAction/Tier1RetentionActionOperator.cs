@@ -34,11 +34,13 @@ using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
 {
     [ExtensionOf(typeof (XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-    public class Tier1RetentionActionOperator : ActionOperatorBase, IXmlActionCompilerOperator<ServerActionContext>
+    public class Tier1RetentionActionOperator : ActionOperatorCompilerBase,
+                                                IXmlActionCompilerOperator<ServerActionContext>
     {
         public Tier1RetentionActionOperator()
             : base("tier1-retention")
@@ -47,7 +49,7 @@ namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
 
         #region IXmlActionCompilerOperator<ServerActionContext> Members
 
-        public override IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
+        public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
         {
             if (xmlNode.Attributes["time"] == null)
                 throw new XmlActionCompilerException("Unexpected missing time attribute for tier1-retention action");
@@ -60,14 +62,30 @@ namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
 
             string xmlUnit = xmlNode.Attributes["unit"].Value;
             TimeUnit unit = (TimeUnit) Enum.Parse(typeof (TimeUnit), xmlUnit, true);
-                // this will throw exception if the unit is not defined
+            // this will throw exception if the unit is not defined
 
             string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
-
-            return new Tier1RetentionActionItem(time, unit, refValue);
+            if (!String.IsNullOrEmpty(refValue))
+            {
+                if (xmlNode["expressionLanguage"] != null)
+                {
+                    string language = xmlNode["expressionLanguage"].Value;
+                    Expression scheduledTime = CreateExpression(refValue, language);
+                    return new Tier1RetentionActionItem(time, unit, scheduledTime);
+                }
+                else
+                {
+                    Expression scheduledTime = CreateExpression(refValue);
+                    return new Tier1RetentionActionItem(time, unit, scheduledTime);
+                }
+            }
+            else
+            {
+                return new Tier1RetentionActionItem(time, unit);
+            }
         }
 
-        public override XmlSchemaElement GetSchema()
+        public XmlSchemaElement GetSchema()
         {
             XmlSchemaSimpleType timeUnitType = new XmlSchemaSimpleType();
 
@@ -101,6 +119,14 @@ namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
             timeUnitType.Content = restriction;
 
 
+            XmlSchemaSimpleType languageType = new XmlSchemaSimpleType();
+            XmlSchemaSimpleTypeRestriction languageEnum = new XmlSchemaSimpleTypeRestriction();
+            languageEnum.BaseTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+            enumeration = new XmlSchemaEnumerationFacet();
+            enumeration.Value = "dicom";
+            languageEnum.Facets.Add(enumeration);
+            languageType.Content = languageEnum;
+
             XmlSchemaComplexType type = new XmlSchemaComplexType();
 
             XmlSchemaAttribute attrib = new XmlSchemaAttribute();
@@ -119,6 +145,12 @@ namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
             attrib.Name = "refValue";
             attrib.Use = XmlSchemaUse.Optional;
             attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+            type.Attributes.Add(attrib);
+
+            attrib = new XmlSchemaAttribute();
+            attrib.Name = "expressionLanguage";
+            attrib.Use = XmlSchemaUse.Optional;
+            attrib.SchemaType = languageType;
             type.Attributes.Add(attrib);
 
 

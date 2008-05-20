@@ -37,14 +37,14 @@ using ClearCanvas.Common.Actions;
 namespace ClearCanvas.ImageServer.Rules.NoOp
 {
     [ExtensionOf(typeof (XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-    public class NoOpActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+    public class NoOpActionOperator : ActionOperatorCompilerBase, IXmlActionCompilerOperator<ServerActionContext>
     {
-        #region IXmlActionCompilerOperator<ServerActionContext> Members
-
-        public string OperatorTag
+        public NoOpActionOperator()
+            : base("no-op")
         {
-            get { return "no-op"; }
         }
+
+        #region IXmlActionCompilerOperator<ServerActionContext> Members
 
         public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
         {

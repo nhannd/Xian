@@ -29,15 +29,12 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Rules
 {
-
-
     /// <summary>
     /// A context used when applying rules and actions within the ImageServer.
     /// </summary>
