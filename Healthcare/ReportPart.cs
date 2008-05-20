@@ -31,8 +31,10 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Workflow;
+using ClearCanvas.Common;
 
 
 namespace ClearCanvas.Healthcare {
@@ -43,6 +45,20 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class ReportPart
 	{
+		/// <summary>
+		/// Constructor used by <see cref="Report"/> class.
+		/// </summary>
+		/// <param name="owner"></param>
+		/// <param name="index"></param>
+		internal ReportPart(Report owner, int index)
+		{
+			_report = owner;
+			_index = index;
+			_extendedProperties = new Dictionary<string, string>();
+			_creationTime = Platform.Time;
+		}
+
+
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.
@@ -60,18 +76,23 @@ namespace ClearCanvas.Healthcare {
         }
 
         /// <summary>
-        /// Gets a value indicating whether this report part is modifiable.
+        /// Gets a value indicating whether this report part is modifiable,
+		/// which is true if the status is either <see cref="ReportPartStatus.D"/> or <see cref="ReportPartStatus.P"/>.
         /// </summary>
         public virtual bool IsModifiable
         {
             get { return _status == ReportPartStatus.D || _status == ReportPartStatus.P; }
         }
 
-        public virtual void Preliminary()
+		/// <summary>
+		/// Marks this report part as being preliminary.
+		/// </summary>
+        public virtual void MarkPreliminary()
         {
-            if(_status == ReportPartStatus.F || _status == ReportPartStatus.X)
-                throw new WorkflowException(string.Format("Cannot transition from {0} to P", _status));
+			if (_status != ReportPartStatus.D)
+				throw new WorkflowException(string.Format("Cannot transition from {0} to P", _status));
 
+			_preliminaryTime = Platform.Time;
             SetStatus(ReportPartStatus.P);
         }
 
@@ -80,9 +101,10 @@ namespace ClearCanvas.Healthcare {
         /// </summary>
         public virtual void Complete()
         {
-            if (_status == ReportPartStatus.X)
+            if (_status == ReportPartStatus.X || _status == ReportPartStatus.F)
                 throw new WorkflowException(string.Format("Cannot transition from {0} to F", _status));
 
+        	_completedTime = Platform.Time;
             SetStatus(ReportPartStatus.F);
         }
 
@@ -91,9 +113,10 @@ namespace ClearCanvas.Healthcare {
         /// </summary>
         public virtual void Cancel()
         {
-            if (_status == ReportPartStatus.F || _status == ReportPartStatus.X)
-                throw new WorkflowException(string.Format("Cannot transition from {0} to X", _status));
+			if (_status == ReportPartStatus.X || _status == ReportPartStatus.F)
+				throw new WorkflowException(string.Format("Cannot transition from {0} to X", _status));
 
+        	_cancelledTime = Platform.Time;
             SetStatus(ReportPartStatus.X);
         }
 
@@ -119,7 +142,10 @@ namespace ClearCanvas.Healthcare {
 		/// <param name="minutes"></param>
 		protected internal virtual void TimeShift(int minutes)
 		{
-			// no times to shift
+			_creationTime = _creationTime.AddMinutes(minutes);
+			_preliminaryTime = _preliminaryTime.HasValue ? _preliminaryTime.Value.AddMinutes(minutes) : _preliminaryTime;
+			_completedTime = _completedTime.HasValue ? _completedTime.Value.AddMinutes(minutes) : _completedTime;
+			_cancelledTime = _cancelledTime.HasValue ? _cancelledTime.Value.AddMinutes(minutes) : _cancelledTime;
 		}
 	}
 }

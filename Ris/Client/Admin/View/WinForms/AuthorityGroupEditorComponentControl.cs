@@ -46,6 +46,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
     /// </summary>
     public partial class AuthorityGroupEditorComponentControl : ApplicationComponentUserControl
     {
+		#region IgnoreCheckStateEventsScope class
+
 		class IgnoreCheckStateEventsScope : IDisposable
 		{
 			[ThreadStatic]
@@ -67,6 +69,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			}
 		}
 
+		#endregion
 
     	private AuthorityGroupEditorComponent _component;
 

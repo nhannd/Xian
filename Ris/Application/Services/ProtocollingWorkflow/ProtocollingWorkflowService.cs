@@ -374,9 +374,10 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 				}
 			}
 
-			EnumValueInfo reason =
+			EnumValueInfo reasonInfo =
 				CollectionUtils.FirstElement<EnumValueInfo>(EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(this.PersistenceContext));
-			order.Discontinue(EnumUtils.GetEnumValue<OrderCancelReasonEnum>(reason, this.PersistenceContext));
+			OrderCancelReasonEnum reason = reasonInfo == null ? null : EnumUtils.GetEnumValue<OrderCancelReasonEnum>(reasonInfo, this.PersistenceContext);
+			order.Cancel(new OrderCancelInfo(reason, this.CurrentUserStaff));
 
 			return new CancelProtocolAndOrderResponse();
 		}

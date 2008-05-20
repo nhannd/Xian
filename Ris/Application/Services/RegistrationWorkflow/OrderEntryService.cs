@@ -275,21 +275,23 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
-            Platform.CheckMemberIsSet(request.CancelReason, "CancelReason");
             Platform.CheckMemberIsSet(request.Requisition, "Requisition");
 
             Order orderToReplace = PersistenceContext.Load<Order>(request.OrderRef);
             ValidateOrderModifiable(orderToReplace);
 
-            OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext);
-
-            // cancel existing order
-            CancelOrderOperation op = new CancelOrderOperation();
-            op.Execute(orderToReplace, reason);
+			// reason is optional
+            OrderCancelReasonEnum reason = (request.CancelReason != null) ?
+				EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext) : null;
 
             // place new order
             Order newOrder = PlaceOrderHelper(request.Requisition);
             ValidatePatientProfilesExist(newOrder);
+
+            // cancel existing order
+            CancelOrderOperation op = new CancelOrderOperation();
+			op.Execute(orderToReplace, new OrderCancelInfo(reason, this.CurrentUserStaff, null, newOrder));
+
 
             PersistenceContext.SynchState();
 
@@ -382,6 +384,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             // generate a new order with the default set of procedures
             Order order = Order.NewOrder(
+				new OrderCreationArgs(
+					Platform.Time,
+					this.CurrentUserStaff,
+					null,
                     accNum,
                     patient,
                     visit,
@@ -392,7 +398,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     requisition.SchedulingRequestTime,
                     orderingPhysician,
                     resultRecipients,
-                    procedures);
+                    procedures));
 
             // note: need to lock the new order now, prior to creating the procedure steps
             // otherwise may get exceptions saying the Procedure is a transient object

@@ -173,7 +173,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext);
 
             CancelOrderOperation op = new CancelOrderOperation();
-            op.Execute(order, reason);
+            op.Execute(order, new OrderCancelInfo(reason, this.CurrentUserStaff));
 
             return new CancelOrderResponse();
         }

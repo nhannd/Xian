@@ -359,6 +359,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     _facilityChoices = formChoicesResponse.FacilityChoices;
                     _priorityChoices = formChoicesResponse.OrderPriorityChoices;
                     _cancelReasonChoices = formChoicesResponse.CancelReasonChoices;
+                	_selectedCancelReason = _cancelReasonChoices.Count > 0 ? _cancelReasonChoices[0] : null;
                     _lateralityChoices = formChoicesResponse.LateralityChoices;
 
                 });

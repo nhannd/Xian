@@ -6,16 +6,21 @@
     </id>
     <version name="Version" column="Version_"/>
 
-    <property name="Index" column="Index_" type="int" not-null="true"/>
+    <property name="Index" column="Index_" type="int" not-null="true" access="nosetter.camelcase-underscore"/>
 
     <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ReportPartStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true" access="nosetter.camelcase-underscore"/>
 
+    <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true" access="nosetter.camelcase-underscore"/>
+    <property name="PreliminaryTime" column="PreliminaryTime_" type="DateTime" access="nosetter.camelcase-underscore"/>
+    <property name="CompletedTime" column="CompletedTime_" type="DateTime" access="nosetter.camelcase-underscore"/>
+    <property name="CancelledTime" column="CancelledTime_" type="DateTime" access="nosetter.camelcase-underscore"/>
+    
     <many-to-one name="Supervisor" class="Staff" column="SupervisorOID_"/>
     <many-to-one name="Interpreter" class="Staff" column="InterpreterOID_"/>
     <many-to-one name="Transcriber" class="Staff" column="TranscriberOID_"/>
     <many-to-one name="Verifier" class="Staff" column="VerifierOID_"/>
 
-    <many-to-one name="Report" class="Report" column="ReportOID_" not-null="true" fetch="join"/>
+    <many-to-one name="Report" class="Report" column="ReportOID_" not-null="true" fetch="join" access="nosetter.camelcase-underscore"/>
 
     <map name="ExtendedProperties" lazy="true" table="ReportPartExtendedProperties_">
       <key column="ReportPartOID_"/>

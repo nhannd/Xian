@@ -49,6 +49,7 @@ namespace ClearCanvas.Healthcare {
             _type = type;
             _procedureSteps = new HashedSet<ProcedureStep>();
             _procedureCheckIn = new ProcedureCheckIn();
+        	_reports = new HashedSet<Report>();
         }
 	
         #region Public Properties

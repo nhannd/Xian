@@ -51,88 +51,73 @@ namespace ClearCanvas.Healthcare {
         #region Static Factory methods
 
         /// <summary>
-        /// Factory method to create a fully initialized new order for the default set of procedures
-        /// for the specified diagnostic service.
+        /// Factory method to create a new order.
         /// </summary>
-        public static Order NewOrder(
-            string accessionNumber,
-            Patient patient,
-            Visit visit,
-            DiagnosticService diagnosticService,
-            string reasonForStudy,
-            OrderPriority priority,
-            Facility orderingFacility,
-            Facility performingFacility,
-            DateTime? schedulingRequestTime,
-            ExternalPractitioner orderingPractitioner,
-            IList<ResultRecipient> resultRecipients
-            )
+        public static Order NewOrder(OrderCreationArgs args)
         {
-            // create procedures according to the diagnostic service plan
-            IList<Procedure> procedures = CollectionUtils.Map<ProcedureType, Procedure>(diagnosticService.ProcedureTypes,
-                delegate(ProcedureType type)
-                {
-                    Procedure rp = new Procedure(type);
-                    rp.PerformingFacility = performingFacility;
-                    return rp;
-                });
-
-            return NewOrder(accessionNumber, patient, visit, diagnosticService, reasonForStudy,
-                priority, orderingFacility, schedulingRequestTime, orderingPractitioner, resultRecipients,
-                procedures);
-        }
+			// validate required members are set
+			Platform.CheckMemberIsSet(args.Patient, "Patient");
+			Platform.CheckMemberIsSet(args.Visit, "Visit");
+			Platform.CheckMemberIsSet(args.AccessionNumber, "AccessionNumber");
+			Platform.CheckMemberIsSet(args.DiagnosticService, "DiagnosticService");
+			Platform.CheckMemberIsSet(args.ReasonForStudy, "ReasonForStudy");
+			Platform.CheckMemberIsSet(args.OrderingFacility, "OrderingFacility");
+			Platform.CheckMemberIsSet(args.OrderingPractitioner, "OrderingPractitioner");
 
 
-        /// <summary>
-        /// Factory method to create a fully initialized new order for the specified procedures.
-        /// </summary>
-        public static Order NewOrder(
-            string accessionNumber,
-            Patient patient,
-            Visit visit,
-            DiagnosticService diagnosticService,
-            string reasonForStudy,
-            OrderPriority priority,
-            Facility orderingFacility,
-            DateTime? schedulingRequestTime,
-            ExternalPractitioner orderingPractitioner,
-            IList<ResultRecipient> resultRecipients,
-            IList<Procedure> procedures)
-        {
-            // create the basic order
+            // create the order
             Order order = new Order();
 
-            order.Patient = patient;
-            order.Visit = visit;
-            order.AccessionNumber = accessionNumber;
-            order.DiagnosticService = diagnosticService;
-            order.ReasonForStudy = reasonForStudy;
-            order.Priority = priority;
-            order.OrderingFacility = orderingFacility;
-            order.EnteredTime = Platform.Time;
-            order.SchedulingRequestTime = schedulingRequestTime;
-            order.OrderingPractitioner = orderingPractitioner;
+            order.Patient = args.Patient;
+            order.Visit = args.Visit;
+            order.AccessionNumber = args.AccessionNumber;
+            order.DiagnosticService = args.DiagnosticService;
+            order.ReasonForStudy = args.ReasonForStudy;
+			order.OrderingFacility = args.OrderingFacility;
+			order.OrderingPractitioner = args.OrderingPractitioner;
 
-            // associate all procedures with the order
-            foreach (Procedure rp in procedures)
+			order.Priority = args.Priority;
+            order.SchedulingRequestTime = args.SchedulingRequestTime;
+			order.EnteredTime = args.EnteredTime;
+			order.EnteredBy = args.EnteredBy;
+			order.EnteredComment = args.EnteredComment;
+
+			if(args.Procedures == null || args.Procedures.Count == 0)
+			{
+				// create procedures according to the diagnostic service plan
+				args.Procedures = CollectionUtils.Map<ProcedureType, Procedure>(args.DiagnosticService.ProcedureTypes,
+					delegate(ProcedureType type)
+					{
+						Procedure rp = new Procedure(type);
+						rp.PerformingFacility = args.PerformingFacility ?? args.OrderingFacility;
+						return rp;
+					});
+			}
+
+
+			// associate all procedures with the order
+            foreach (Procedure rp in args.Procedures)
             {
                 order.AddProcedure(rp);
             }
 
             // add recipients
-            foreach (ResultRecipient recipient in resultRecipients)
-            {
-                order.ResultRecipients.Add(recipient);
-            }
+			if(args.ResultRecipients != null)
+			{
+				foreach (ResultRecipient recipient in args.ResultRecipients)
+				{
+					order.ResultRecipients.Add(recipient);
+				}
+			}
 
             bool recipientsContainsOrderingPractitioner = CollectionUtils.Contains(order.ResultRecipients,
-                    delegate(ResultRecipient r) { return r.PractitionerContactPoint.Practitioner.Equals(orderingPractitioner); });
+                    delegate(ResultRecipient r) { return r.PractitionerContactPoint.Practitioner.Equals(args.OrderingPractitioner); });
 
             // if the result recipients collection does not contain the ordering practitioner, add it by force, using the default contact point
             if (!recipientsContainsOrderingPractitioner)
             {
                 // find the default
-                ExternalPractitionerContactPoint defaultContactPoint = CollectionUtils.SelectFirst(orderingPractitioner.ContactPoints,
+                ExternalPractitionerContactPoint defaultContactPoint = CollectionUtils.SelectFirst(args.OrderingPractitioner.ContactPoints,
                     delegate(ExternalPractitionerContactPoint cp)
                     {
                         return cp.IsDefaultContactPoint;
@@ -140,7 +125,7 @@ namespace ClearCanvas.Healthcare {
 
                 // if no default, use first available
                 if (defaultContactPoint == null)
-                    defaultContactPoint = CollectionUtils.FirstElement(orderingPractitioner.ContactPoints);
+                    defaultContactPoint = CollectionUtils.FirstElement(args.OrderingPractitioner.ContactPoints);
 
                 if (defaultContactPoint != null)
                 {
@@ -162,7 +147,7 @@ namespace ClearCanvas.Healthcare {
         {
             get
             {
-                return _status == OrderStatus.CM || _status == OrderStatus.CA || _status == OrderStatus.DC;
+                return _status == OrderStatus.CM || _status == OrderStatus.CA || _status == OrderStatus.DC || _status == OrderStatus.RP;
             }
         }
 
@@ -223,41 +208,44 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
-        /// <summary>
-        /// Cancels the order.
-        /// </summary>
-        /// <param name="reason"></param>
-        public virtual void Cancel(OrderCancelReasonEnum reason)
-        {
-            if (this.Status != OrderStatus.SC)
-                throw new WorkflowException("Only orders in the SC status can be canceled");
+		/// <summary>
+		/// Cancels the order.
+		/// </summary>
+		/// <param name="cancelInfo"></param>
+		public virtual void Cancel(OrderCancelInfo cancelInfo)
+		{
+			if (this.Status != OrderStatus.SC)
+				throw new WorkflowException("Only orders in the SC status can be canceled");
 
-            _cancelReason = reason;
+			_cancelInfo = cancelInfo;
 
-            // update the status prior to cancelling the procedures
-            // (otherwise cancelling the procedures will cause them to try and update the order status)
-            //SetStatus(OrderStatus.CA);
+			// update the status prior to cancelling the procedures
+			// (otherwise cancelling the procedures will cause them to try and update the order status)
+			//SetStatus(OrderStatus.CA);
 
-            // cancel all procedures
-            foreach (Procedure rp in _procedures)
-            {
-                rp.Cancel();
-            }
+			// cancel all procedures
+			foreach (Procedure rp in _procedures)
+			{
+				rp.Cancel();
+			}
 
-            // need to update the end-time again, after cacnelling procedures
-            UpdateEndTime();
-        }
+			// if the order was replaced, change the status to RP
+			if(cancelInfo.ReplacementOrder != null)
+				SetStatus(OrderStatus.RP);
+
+			// need to update the end-time again, after cacnelling procedures
+			UpdateEndTime();
+		}
 
         /// <summary>
         /// Discontinues the order.
         /// </summary>
-        /// <param name="reason"></param>
-        public virtual void Discontinue(OrderCancelReasonEnum reason)
+		public virtual void Discontinue(OrderCancelInfo cancelInfo)
         {
             if (this.Status != OrderStatus.IP)
                 throw new WorkflowException("Only orders in the IP status can be discontinued");
 
-            _cancelReason = reason;
+            _cancelInfo = cancelInfo;
 
             // update the status prior to cancelling the procedures
             // (otherwise cancelling the procedures will cause them to try and update the order status)

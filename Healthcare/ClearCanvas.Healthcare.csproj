@@ -107,6 +107,8 @@
     <Compile Include="Imex\FacilityImporter.cs" />
     <Compile Include="Imex\ModalityImporter.cs" />
     <Compile Include="Imex\StaffImporter.cs" />
+    <Compile Include="OrderCancelInfo.cs" />
+    <Compile Include="OrderCreationArgs.cs" />
     <Compile Include="OrderNoteboxes.cs" />
     <Compile Include="OrderNoteboxItem.cs" />
     <Compile Include="ReportingProtocolWorklists.cs" />
@@ -129,6 +131,7 @@
     <Compile Include="StaffGroup.cs" />
     <Compile Include="Imex\StaffGroupImex.cs" />
     <Compile Include="TechnologistWorklists.cs" />
+    <Compile Include="Tests\ReportTests.cs" />
     <Compile Include="Tests\TestExtensionFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />
     <Compile Include="Tests\WorklistTimePointTests.cs" />

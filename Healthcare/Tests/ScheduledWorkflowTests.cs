@@ -73,9 +73,9 @@ namespace ClearCanvas.Healthcare.Tests
             ExternalPractitioner orderingPrac = TestExternalPractitionerFactory.CreatePractitioner();
             Facility facility = TestFacilityFactory.CreateFacility();
 
-            Order order = Order.NewOrder(
+            Order order = Order.NewOrder(new OrderCreationArgs(Platform.Time, TestStaffFactory.CreateStaff(StaffType.SCLR), null,
                 accession, patient, visit, ds, reasonForStudy, OrderPriority.R, facility, facility,
-                scheduleTime, orderingPrac, new List<ResultRecipient>());
+                scheduleTime, orderingPrac, new List<ResultRecipient>()));
 
             // check basics
             Assert.AreEqual(accession, order.AccessionNumber);
@@ -213,7 +213,7 @@ namespace ClearCanvas.Healthcare.Tests
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
             CheckStatus(OrderStatus.SC, order);
 
-            order.Cancel(_defaultCancelReason);
+            order.Cancel(new OrderCancelInfo(_defaultCancelReason, TestStaffFactory.CreateStaff(StaffType.SCLR), "", null));
 
             CheckStatus(OrderStatus.CA, order);
             Assert.IsNull(order.StartTime);
@@ -231,6 +231,36 @@ namespace ClearCanvas.Healthcare.Tests
             }
         }
 
+		/// <summary>
+		/// When an order is replaced, verify that all procedures are cancelled, and all
+		/// procedure steps are discontinued.
+		/// </summary>
+		[Test]
+		public void ReplaceOrderFromScheduled()
+		{
+			Order order = TestOrderFactory.CreateOrder(2, 2, true);
+			CheckStatus(OrderStatus.SC, order);
+
+			Order replacement = TestOrderFactory.CreateOrder(2, 2, true);
+
+			order.Cancel(new OrderCancelInfo(_defaultCancelReason, TestStaffFactory.CreateStaff(StaffType.SCLR), "", replacement));
+
+			CheckStatus(OrderStatus.RP, order);
+			Assert.IsNull(order.StartTime);
+			Assert.IsNotNull(order.EndTime);
+
+			foreach (Procedure rp in order.Procedures)
+			{
+				CheckStatus(ProcedureStatus.CA, rp);
+				Assert.IsNull(rp.StartTime);
+				Assert.IsNotNull(rp.EndTime);
+				foreach (ProcedureStep step in rp.ProcedureSteps)
+				{
+					CheckStatus(ActivityStatus.DC, step);
+				}
+			}
+		}
+
         /// <summary>
         /// Verify that an order cannot be cancelled after it is already in progress.
         /// </summary>
@@ -246,7 +276,7 @@ namespace ClearCanvas.Healthcare.Tests
 
             try
             {
-                order.Cancel(_defaultCancelReason);
+				order.Cancel(new OrderCancelInfo(_defaultCancelReason, TestStaffFactory.CreateStaff(StaffType.SCLR), "", null));
 
                 Assert.Fail("expected exception when trying to cancel non-scheduled order");
             }
@@ -274,7 +304,7 @@ namespace ClearCanvas.Healthcare.Tests
             // start rp 1
             rp1.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(StaffType.STEC));
 
-            order.Discontinue(_defaultCancelReason);
+			order.Discontinue(new OrderCancelInfo(_defaultCancelReason, TestStaffFactory.CreateStaff(StaffType.STEC), "", null));
 
             // rp 2 is canceled
             CheckStatus(ProcedureStatus.CA, rp2);

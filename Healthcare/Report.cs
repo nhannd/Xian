@@ -38,6 +38,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Workflow;
 using Iesi.Collections.Generic;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare {
 
@@ -53,16 +54,14 @@ namespace ClearCanvas.Healthcare {
         /// <param name="procedure">The procedure being reported.</param>
         public Report(Procedure procedure)
         {
-            _procedures = new HashedSet<ClearCanvas.Healthcare.Procedure>();
+            _procedures = new HashedSet<Procedure>();
             _parts = new List<ReportPart>();
 
             _procedures.Add(procedure);
             procedure.Reports.Add(this);
 
             // create the main report part
-            ReportPart mainReport = new ReportPart();
-            mainReport.Index = 0;
-            mainReport.Report = this;
+            ReportPart mainReport = new ReportPart(this, 0);
             _parts.Add(mainReport);
         }
 	
@@ -94,16 +93,58 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
+		/// <summary>
+		/// Gets the time this report was created.
+		/// </summary>
+    	public virtual DateTime CreationTime
+    	{
+			get { return _parts[0].CreationTime; }
+		}
+
+		/// <summary>
+		/// Gets the time this report was marked 'preliminary', or null if has not been marked preliminary.
+		/// </summary>
+    	public virtual DateTime? PreliminaryTime
+    	{
+    		get { return _parts.Count == 0 ? null : _parts[0].PreliminaryTime; }
+    	}
+
+		/// <summary>
+		/// Gets the time this report was completed (marked final), or null if it is not completed.
+		/// </summary>
+    	public virtual DateTime? CompletedTime
+    	{
+			get { return _parts.Count == 0 ? null : _parts[0].CompletedTime; }
+    	}
+
+		/// <summary>
+		/// Gets the time this report was cancelled, or null if it is not cancelled.
+		/// </summary>
+    	public virtual DateTime? CancelledTime
+    	{
+			get { return _parts.Count == 0 ? null : _parts[0].CancelledTime; }
+    	}
+
+		/// <summary>
+		/// Gets the time that the first addendum was completed, or null if no completed addenda exist.
+		/// </summary>
+    	public virtual DateTime? CorrectedTime
+    	{
+			get { return _parts.Count < 2 ? null : _parts[1].CompletedTime; }
+    	}
+
         /// <summary>
         /// Adds a new part to this report.
         /// </summary>
         /// <returns></returns>
         public virtual ReportPart AddAddendum()
         {
-            if(this.ActivePart != null)
+            if(_status == ReportStatus.X)
+				throw new WorkflowException("Cannot add an addendum because the report was cancelled.");
+			if (this.ActivePart != null)
                 throw new WorkflowException("Cannot add an addendum because the report, or a previous addendum, has not been completed.");
 
-            ReportPart part = new ReportPart(_parts.Count, ReportPartStatus.P, null, null, null, null, this, new Dictionary<string, string>());
+            ReportPart part = new ReportPart(this, _parts.Count);
             _parts.Add(part);
 
             UpdateStatus();
@@ -144,12 +185,18 @@ namespace ClearCanvas.Healthcare {
             else
             if (_status == ReportStatus.D)
             {
-                bool prelimParts =
-                    CollectionUtils.Contains(_parts,
-                        delegate(ReportPart part) { return part.Status == ReportPartStatus.P; });
-
-                if (prelimParts)
-                    _status = ReportStatus.P;
+				// check for final parts
+				if (CollectionUtils.Contains(_parts,
+						delegate(ReportPart part) { return part.Status == ReportPartStatus.F; }))
+				{
+					_status = ReportStatus.F;
+				}
+				// check for prelim parts
+				else if(CollectionUtils.Contains(_parts,
+						delegate(ReportPart part) { return part.Status == ReportPartStatus.P; }))
+				{
+					_status = ReportStatus.P;
+				}
             }
             else
             if (_status == ReportStatus.P || _status == ReportStatus.F)

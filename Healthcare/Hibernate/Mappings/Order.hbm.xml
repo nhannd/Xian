@@ -17,8 +17,11 @@
 
 		<!-- Time that the order was entered -->
 		<property name="EnteredTime" column="EnteredTime_" type="DateTime" not-null="true"/>
+    <many-to-one name="EnteredBy" class="Staff" column="EnteredByOID_"/>
+    <!-- If entered by HL7, this field could be using to capture the name of the person who ordered it -->
+    <property name="EnteredComment" column="EnteredComment_" type="String"/>
 
-		<!-- Time that the order should ideally be scheduled at -->
+    <!-- Time that the order should ideally be scheduled at -->
 		<property name="SchedulingRequestTime" column="SchedulingRequestTime_" type="DateTime" not-null="false"/>
 
 		<!-- Time the order is scheduled to start, if known -->
@@ -27,7 +30,7 @@
 		<!-- Time order status moved to IP -->
 		<property name="StartTime" column="StartTime_" type="DateTime" not-null="false" access="nosetter.camelcase-underscore"/>
 
-		<!-- Time order status moved to CM, CA, DC -->
+		<!-- Time order status moved to CM, CA, DC, RP -->
 		<property name="EndTime" column="EndTime_" type="DateTime" not-null="false" access="nosetter.camelcase-underscore"/>
 
 		<many-to-one name="OrderingPractitioner" class="ExternalPractitioner" column="OrderingPractitionerOID_" not-null="true"/>
@@ -66,9 +69,18 @@
 		<property name="ReasonForStudy" column="ReasonForStudy_" type="String" length="200"/>
 		<property name="Priority" column="Priority_" type="ClearCanvas.Healthcare.Hibernate.OrderPriorityEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
 		<property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.OrderStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true" access="nosetter.camelcase-underscore"/>
-		<many-to-one name="CancelReason" class="OrderCancelReasonEnum" column="CancelReason_"/>
+    
+    <!-- Information about why the order was cancelled, populated if the order status is CA, DC, or RP -->
+    <component name="CancelInfo" class="OrderCancelInfo" access="nosetter.camelcase-underscore">
+      <many-to-one name="Reason" class="OrderCancelReasonEnum" column="CancelReason_"/>
+      <many-to-one name="CancelledBy" class="Staff" column="CancelledByOID_"/>
+      <!-- If cancelled by HL7, this field could be using to capture the name of the person who cancelled it -->
+      <property name="Comment" column="CancelComment_" type="String"/>
+      <!-- Link to the replacment order, if the order was replaced -->
+      <many-to-one name="ReplacementOrder" class="Order" column="ReplacementOrderOID_"/>
+    </component>
 
-		<set name="Notes" lazy="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore"
+    <set name="Notes" lazy="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore"
          where="PostTime_ is not null">
 			<key column="OrderOID_"/>
 			<one-to-many class="OrderNote"/>

@@ -7,13 +7,14 @@
     <version name="Version" column="Version_"/>
 
     <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ReportStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true" access="nosetter.camelcase-underscore"/>
-    
+
+  
     <set name="Procedures" table="ProcedureReport_" lazy="true">
       <key column="ReportOID_"/>
       <many-to-many column="ProcedureOID_" class="Procedure" fetch="join"/>
     </set>
 
-    <!-- Note: Parts is an ordered set (the order-by attribute tells nhibernate to use an ISet implementation that preserves order -->
+    <!-- Note: Parts is an ordered bag (the order-by attribute tells nhibernate the order in which to load the elements) -->
     <bag name="Parts" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore" order-by="Index_ asc">
       <key column="ReportOID_"/>
       <one-to-many class="ReportPart"/>

@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare.Tests
 {
@@ -53,7 +54,10 @@ namespace ClearCanvas.Healthcare.Tests
             ExternalPractitioner orderingPrac = TestExternalPractitionerFactory.CreatePractitioner();
             Facility facility = TestFacilityFactory.CreateFacility();
 
-            Order order =  Order.NewOrder(
+            Order order =  Order.NewOrder(new OrderCreationArgs(
+				Platform.Time,
+				TestStaffFactory.CreateStaff(StaffType.SCLR),
+				null,
                 accession,
                 patient,
                 visit,
@@ -64,7 +68,7 @@ namespace ClearCanvas.Healthcare.Tests
                 facility,
                 scheduleTime,
                 orderingPrac,
-                new List<ResultRecipient>());
+                new List<ResultRecipient>()));
 
             if(createProcedureSteps)
             {

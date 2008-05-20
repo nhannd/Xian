@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <enum class="OrderCancelReason">
+  <enum-value code="IO">
+    <value>Inappropriate procedure ordered</value>
+    <description></description>
+  </enum-value>
   <enum-value code="PA">
     <value>Cancelled by patient</value>
     <description></description>

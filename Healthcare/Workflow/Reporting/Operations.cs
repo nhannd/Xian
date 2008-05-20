@@ -133,7 +133,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 				// move draft report to prelim status
 				if (step.ReportPart.Status == ReportPartStatus.D)
-					step.ReportPart.Preliminary();
+					step.ReportPart.MarkPreliminary();
 			}
 
 			public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)

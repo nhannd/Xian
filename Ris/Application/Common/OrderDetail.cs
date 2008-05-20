@@ -65,7 +65,13 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public DateTime? EnteredTime;
 
-        [DataMember]
+		[DataMember]
+		public StaffSummary EnteredBy;
+
+		[DataMember]
+		public string EnteredComment;
+
+		[DataMember]
         public DateTime? SchedulingRequestTime;
 
         [DataMember]
@@ -83,7 +89,13 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public EnumValueInfo CancelReason;
 
-        [DataMember]
+		[DataMember]
+		public StaffSummary CancelledBy;
+
+		[DataMember]
+		public string CancelComment;
+
+		[DataMember]
         public List<ProcedureDetail> Procedures;
 
         [DataMember]

@@ -113,7 +113,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.OrderingFacility = facilityAssembler.CreateFacilitySummary(order.OrderingFacility);
             data.ReasonForStudy = order.ReasonForStudy;
             data.OrderPriority = EnumUtils.GetEnumValueInfo(order.Priority, context);
-            data.CancelReason = EnumUtils.GetEnumValueInfo(order.CancelReason);
+            data.CancelReason = order.CancelInfo != null && order.CancelInfo.Reason != null ? EnumUtils.GetEnumValueInfo(order.CancelInfo.Reason) : null;
             data.OrderStatus = EnumUtils.GetEnumValueInfo(order.Status, context);
             data.OrderScheduledStartTime = order.ScheduledStartTime;
         }

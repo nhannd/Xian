@@ -56,6 +56,7 @@ namespace ClearCanvas.Ris.Application.Services
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
             ProcedureAssembler rpAssembler = new ProcedureAssembler();
+			StaffAssembler staffAssembler = new StaffAssembler();
 
             detail.OrderRef = order.GetRef();
             detail.PatientRef = order.Patient.GetRef();
@@ -69,13 +70,25 @@ namespace ClearCanvas.Ris.Application.Services
             detail.PlacerNumber = order.PlacerNumber;
             detail.AccessionNumber = order.AccessionNumber;
             detail.DiagnosticService = dsAssembler.CreateDiagnosticServiceDetail(order.DiagnosticService);
+
             detail.EnteredTime = order.EnteredTime;
-            detail.SchedulingRequestTime = order.SchedulingRequestTime;
+			detail.EnteredBy = order.EnteredBy == null ? null :
+				staffAssembler.CreateStaffSummary(order.EnteredBy, context);
+        	detail.EnteredComment = order.EnteredComment;
+
+			detail.SchedulingRequestTime = order.SchedulingRequestTime;
             detail.OrderingPractitioner = pracAssembler.CreateExternalPractitionerDetail(order.OrderingPractitioner, context);
             detail.OrderingFacility = facilityAssembler.CreateFacilityDetail(order.OrderingFacility);
             detail.ReasonForStudy = order.ReasonForStudy;
             detail.OrderPriority = EnumUtils.GetEnumValueInfo(order.Priority, context);
-            detail.CancelReason = EnumUtils.GetEnumValueInfo(order.CancelReason);
+
+			if(order.CancelInfo != null)
+			{
+				detail.CancelReason = order.CancelInfo.Reason == null ? null : EnumUtils.GetEnumValueInfo(order.CancelInfo.Reason);
+				detail.CancelledBy = order.CancelInfo.CancelledBy == null ? null : 
+					staffAssembler.CreateStaffSummary(order.CancelInfo.CancelledBy, context);
+				detail.CancelComment = order.CancelInfo.Comment;
+			}
 
             if (includeProcedures)
             {
