@@ -42,12 +42,14 @@ namespace ClearCanvas.Ris.Client
     {
         string Id { get; }
 		string DisplayName { get; set; }
+		IconSet DisplayIcon { get; set; }
         IList<IFolder> Folders { get; }
         IToolSet FolderTools { get; }
         IToolSet ItemTools { get; }
         string PreviewUrl { get; }
 
     	event EventHandler DisplayNameChanged;
+		event EventHandler DisplayIconChanged;
 
         void InvalidateFolder(Type folderType);
 
@@ -66,8 +68,10 @@ namespace ClearCanvas.Ris.Client
         private event EventHandler _selectedItemsChanged;
         private event EventHandler _selectedFolderChanged;
     	private event EventHandler _displayNameChanged;
+    	private event EventHandler _displayIconChanged;
 
 		private string _displayName;
+    	private IconSet _displayIcon;
 		
 		protected IToolSet _itemTools;
         protected IToolSet _folderTools;
@@ -126,7 +130,17 @@ namespace ClearCanvas.Ris.Client
 			}
     	}
 
-        public IList<IFolder> Folders
+		public IconSet DisplayIcon
+		{
+			get { return _displayIcon; }
+			set
+			{
+				_displayIcon = value;
+				EventsHelper.Fire(_displayIconChanged, this, EventArgs.Empty);
+			}
+		}
+		
+		public IList<IFolder> Folders
         {
             get { return _workflowFolders; }
         }
@@ -214,7 +228,13 @@ namespace ClearCanvas.Ris.Client
 			add { _displayNameChanged += value; }
 			remove { _displayNameChanged -= value; }
 		}
-		
+
+		public event EventHandler DisplayIconChanged
+		{
+			add { _displayIconChanged += value; }
+			remove { _displayIconChanged -= value; }
+		}
+
 		public IFolder SelectedFolder
         {
             get { return _folderExplorer.SelectedFolder; }

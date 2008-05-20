@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Crownwood.DotNetMagic.Controls;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -56,14 +57,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             foreach (StackTabPage page in _component.Pages)
             {
-                StackTab stackTab = CreateStackTab(page.PreText, page.Text, page.PostText, _component.StackStyle);
-
-            	page.TextChanged += delegate
-                	{
-						stackTab.TitleBar.PreText = page.PreText;
-						stackTab.TitleBar.Text = page.Text;
-						stackTab.TitleBar.PostText = page.PostText;
-                	};
+                StackTab stackTab = CreateStackTab(page, _component.StackStyle);
 
                 Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl = _stackTabControl.RootSequence.AddNewLeaf();
                 tgl.MinimumSize = stackTab.MinimumRequestedSize;
@@ -104,7 +98,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Event Handlers
 
-        private void OnArrowClick(object sender, EventArgs e)
+		/// <summary>
+		/// Event Handler when user click on one of the the title bar when StackStyle is ShowMultiple
+		/// </summary>
+        private void OnShowMultipleTitleClick(object sender, EventArgs e)
         {
             // Remember which title bar sent message
             Crownwood.DotNetMagic.Controls.TitleBar tbClick = sender as Crownwood.DotNetMagic.Controls.TitleBar;
@@ -162,7 +159,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             _stackTabControl.RootSequence.Reposition();
         }
 
-        private void OnTitleClick(object sender, EventArgs e)
+		/// <summary>
+		/// Event Handler when user click on one of the the title bar when StackStyle is ShowOnlyOne
+		/// </summary>
+		private void OnShowOnlyOneTitleClick(object sender, EventArgs e)
         {
             // Remember which title bar sent message
             Crownwood.DotNetMagic.Controls.TitleBar tbClick = sender as Crownwood.DotNetMagic.Controls.TitleBar;
@@ -198,32 +198,26 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Private Helpers
 
-        private StackTab CreateStackTab(string preText, string text, string postText, StackStyle stackStyle)
+        private StackTab CreateStackTab(StackTabPage page, StackStyle stackStyle)
         {
             StackTab stackTab;
+			
+			if (stackStyle == StackStyle.ShowMultiple)
+				stackTab = new StackTab(page, Crownwood.DotNetMagic.Controls.ArrowButton.None, OnShowMultipleTitleClick);
+			else
+				stackTab = new StackTab(page, Crownwood.DotNetMagic.Controls.ArrowButton.None, OnShowOnlyOneTitleClick);
 
-            if (stackStyle == StackStyle.ShowMultiple)
-            {
-                stackTab = new StackTab(preText, text, postText,
-                    Crownwood.DotNetMagic.Controls.ArrowButton.UpArrow, OnArrowClick);
-			}
-            else
-            {
-				stackTab = new StackTab(preText, text, postText,
-                    Crownwood.DotNetMagic.Controls.ArrowButton.None, OnTitleClick);
-
-                // Customize titlebar colours
-                //stackTab.TitleBar.BackColor = Color.SlateBlue;
-                //stackTab.TitleBar.ForeColor = Color.SteelBlue;
-                //stackTab.TitleBar.InactiveBackColor = ControlPaint.Light(Color.SlateBlue);
-                //stackTab.TitleBar.InactiveForeColor = ControlPaint.LightLight(Color.SlateBlue);
-                //stackTab.TitleBar.GradientActiveColor = Color.DarkSlateBlue;
-                //stackTab.TitleBar.GradientInactiveColor = ControlPaint.Light(Color.DarkSlateBlue);
-                //stackTab.TitleBar.MouseOverColor = Color.SkyBlue;
-            }
+            // Customize titlebar colours
+            //stackTab.TitleBar.BackColor = Color.SlateBlue;
+            //stackTab.TitleBar.ForeColor = Color.SteelBlue;
+            //stackTab.TitleBar.InactiveBackColor = ControlPaint.Light(Color.SlateBlue);
+            //stackTab.TitleBar.InactiveForeColor = ControlPaint.LightLight(Color.SlateBlue);
+            //stackTab.TitleBar.GradientActiveColor = Color.DarkSlateBlue;
+            //stackTab.TitleBar.GradientInactiveColor = ControlPaint.Light(Color.DarkSlateBlue);
+            //stackTab.TitleBar.MouseOverColor = Color.SkyBlue;
 
 			stackTab.TitleBar.ActAsButton = Crownwood.DotNetMagic.Controls.ActAsButton.WholeControl;
-			
+
 			return stackTab;
         }
 
@@ -242,8 +236,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 stackTab.ApplicationComponentControl.Dock = DockStyle.Fill;
             }
 
-            if (_component.StackStyle == StackStyle.ShowMultiple)
-                stackTab.TitleBar.ArrowButton = Crownwood.DotNetMagic.Controls.ArrowButton.UpArrow;
+			ToggleArrow(stackTab.TitleBar);
 
             _component.CurrentPage = page;
             tabPageUI.Select();
@@ -254,11 +247,37 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             StackTab stackTab = tgl.TabPages[0].Control as StackTab;
 
-            if (_component.StackStyle == StackStyle.ShowMultiple)
-                stackTab.TitleBar.ArrowButton = Crownwood.DotNetMagic.Controls.ArrowButton.DownArrow;
+			ToggleArrow(stackTab.TitleBar);
 
             tgl.Space = 0;
         }
+
+		private void ToggleArrow(TitleBar titleBar)
+		{
+			switch (titleBar.ArrowButton)
+			{
+				case ArrowButton.DownArrow:
+					titleBar.ArrowButton = ArrowButton.UpArrow;
+					break;
+				case ArrowButton.UpArrow:
+					titleBar.ArrowButton = ArrowButton.DownArrow;
+					break;
+				case ArrowButton.LeftArrow:
+					titleBar.ArrowButton = ArrowButton.RightArrow;
+					break;
+				case ArrowButton.RightArrow:
+					titleBar.ArrowButton = ArrowButton.LeftArrow;
+					break;
+				case ArrowButton.Pinned:
+					titleBar.ArrowButton = ArrowButton.Unpinned;
+					break;
+				case ArrowButton.Unpinned:
+					titleBar.ArrowButton = ArrowButton.Pinned;
+					break;
+				default:
+					break;
+			}
+		}
 
         #endregion
     }

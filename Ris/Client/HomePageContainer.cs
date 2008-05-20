@@ -147,16 +147,18 @@ namespace ClearCanvas.Ris.Client
 
                     	StackTabPage thisPage = new StackTabPage(
                     		folderSystem.DisplayName,
+                    		component,
                     		string.Empty,
-							folderSystem.DisplayName,
-							string.Empty,
-                    		component);
+                    		folderSystem.DisplayName,
+                    		string.Empty,
+                    		folderSystem.DisplayIcon,
+                    		new ResourceResolver(folderSystem.GetType().Assembly));
 
                         _stackContainers.Pages.Add(thisPage);
 
-                    	folderSystem.DisplayNameChanged +=
-                    		delegate { thisPage.SetTitle(string.Empty, folderSystem.DisplayName, string.Empty); };
-                    });
+                    	folderSystem.DisplayNameChanged += delegate { thisPage.SetTitle(string.Empty, folderSystem.DisplayName, string.Empty); };
+						folderSystem.DisplayIconChanged += delegate { thisPage.IconSet = folderSystem.DisplayIcon; };
+					});
 
             // Construct the home page
             SplitComponentContainer contentAndPreview = new SplitComponentContainer(

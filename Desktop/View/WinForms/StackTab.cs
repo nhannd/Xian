@@ -39,16 +39,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 	/// <summary>
 	/// Summary description for Example.
 	/// </summary>
-	public class StackTab : System.Windows.Forms.UserControl
+	public class StackTab : UserControl
 	{        
         // Private field
         private Control _applicationComponentControl;
-        private EventHandler _arrowClick;
+        private readonly EventHandler _titleClick;
 
 		// Designer generated
-        private Crownwood.DotNetMagic.Controls.TitleBar _titleBar;
+        private TitleBar _titleBar;
         private Panel _panel;
         private TableLayoutPanel tableLayoutPanel1;
+
+		private readonly StackTabPage _page;
 
 		/// <summary> 
 		/// Required designer variable.
@@ -62,20 +64,27 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		// New constructor
-        public StackTab(string preText, string text, string postText,
-					   ArrowButton arrow, EventHandler arrowClick)
+        public StackTab(StackTabPage page, ArrowButton arrow, EventHandler titleClick)
 		{
             // This call is required by the Windows.Forms Form Designer.
             InitializeComponent();
 
+        	_page = page;
+
             // Set initial values
-			_titleBar.PreText = preText;
-			_titleBar.Text = text;
-			_titleBar.PostText = postText;
+			_titleBar.PreText = _page.PreText;
+			_titleBar.Text = _page.Text;
+			_titleBar.PostText = _page.PostText;
+			if (_page.IconSet != null)
+				_titleBar.Image = IconFactory.CreateIcon(_page.IconSet.SmallIcon, _page.ResourceResolver);
+
 			_titleBar.ArrowButton = arrow;
-			
+
+			_page.TextChanged += _page_TextChanged;
+			_page.IconChanged += _page_IconChanged;
+
 			// Remember callback event handler
-			_arrowClick = arrowClick;
+			_titleClick = titleClick;
 
 			if ((arrow == ArrowButton.UpArrow) ||
 				(arrow == ArrowButton.DownArrow) || 
@@ -87,6 +96,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			if (arrow == ArrowButton.LeftArrow)
 				_titleBar.Dock = DockStyle.Left;
+		}
+
+		private void _page_TextChanged(object sender, EventArgs e)
+		{
+			_titleBar.PreText = _page.PreText;
+			_titleBar.Text = _page.Text;
+			_titleBar.PostText = _page.PostText;
+		}
+
+		private void _page_IconChanged(object sender, EventArgs e)
+		{
+			if (_page.IconSet != null)
+				_titleBar.Image = IconFactory.CreateIcon(_page.IconSet.SmallIcon, _page.ResourceResolver);
 		}
 
 		/// <summary> 
@@ -111,72 +133,73 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
-            this._panel = new System.Windows.Forms.Panel();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // _titleBar
-            // 
-            this._titleBar.ArrowButton = Crownwood.DotNetMagic.Controls.ArrowButton.DownArrow;
-            this._titleBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
-            this._titleBar.Location = new System.Drawing.Point(0, 0);
-            this._titleBar.Margin = new System.Windows.Forms.Padding(0);
-            this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
-            this._titleBar.Name = "_titleBar";
-            this._titleBar.Size = new System.Drawing.Size(368, 24);
-            this._titleBar.TabIndex = 0;
-            this._titleBar.Text = "titleBar1";
-            this._titleBar.ButtonClick += new System.EventHandler(this.OnArrowClick);
-            // 
-            // _panel
-            // 
-            this._panel.AutoScroll = true;
-            this._panel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._panel.Location = new System.Drawing.Point(0, 24);
-            this._panel.Margin = new System.Windows.Forms.Padding(0);
-            this._panel.Name = "_panel";
-            this._panel.Size = new System.Drawing.Size(368, 192);
-            this._panel.TabIndex = 1;
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this._titleBar, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this._panel, 0, 1);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(368, 216);
-            this.tableLayoutPanel1.TabIndex = 2;
-            // 
-            // StackTab
-            // 
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "StackTab";
-            this.Size = new System.Drawing.Size(368, 216);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.ResumeLayout(false);
+			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
+			this._panel = new System.Windows.Forms.Panel();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this.tableLayoutPanel1.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// _titleBar
+			// 
+			this._titleBar.ArrowButton = Crownwood.DotNetMagic.Controls.ArrowButton.DownArrow;
+			this._titleBar.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
+			this._titleBar.ImageAlignment = Crownwood.DotNetMagic.Controls.ImageAlignment.Far;
+			this._titleBar.Location = new System.Drawing.Point(0, 0);
+			this._titleBar.Margin = new System.Windows.Forms.Padding(0);
+			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
+			this._titleBar.Name = "_titleBar";
+			this._titleBar.Size = new System.Drawing.Size(368, 24);
+			this._titleBar.TabIndex = 0;
+			this._titleBar.Text = "titleBar1";
+			this._titleBar.ButtonClick += new System.EventHandler(this.OnArrowClick);
+			// 
+			// _panel
+			// 
+			this._panel.AutoScroll = true;
+			this._panel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._panel.Location = new System.Drawing.Point(0, 24);
+			this._panel.Margin = new System.Windows.Forms.Padding(0);
+			this._panel.Name = "_panel";
+			this._panel.Size = new System.Drawing.Size(368, 192);
+			this._panel.TabIndex = 1;
+			// 
+			// tableLayoutPanel1
+			// 
+			this.tableLayoutPanel1.ColumnCount = 1;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Controls.Add(this._titleBar, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this._panel, 0, 1);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 2;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(368, 216);
+			this.tableLayoutPanel1.TabIndex = 2;
+			// 
+			// StackTab
+			// 
+			this.Controls.Add(this.tableLayoutPanel1);
+			this.Name = "StackTab";
+			this.Size = new System.Drawing.Size(368, 216);
+			this.tableLayoutPanel1.ResumeLayout(false);
+			this.ResumeLayout(false);
 
 		}
 		#endregion
 
 		// Fire constructor provided event user clicks titlebar arrow
-		private void OnArrowClick(object sender, System.EventArgs e)
+		private void OnArrowClick(object sender, EventArgs e)
 		{
-			if (_arrowClick != null)
-				_arrowClick(sender, e);
+			if (_titleClick != null)
+				_titleClick(sender, e);
 		}
 		
 		// Allow direct access to the titlebar
-		public Crownwood.DotNetMagic.Controls.TitleBar TitleBar
+		public TitleBar TitleBar
 		{
 			get { return _titleBar; }
 		}
