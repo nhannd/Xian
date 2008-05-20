@@ -29,10 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
@@ -40,47 +37,84 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    public class StaffAssembler
-    {
-        public StaffSummary CreateStaffSummary(Staff staff, IPersistenceContext context)
-        {
-            if (staff == null)
-                return null;
+	public class StaffAssembler
+	{
+		public StaffSummary CreateStaffSummary(Staff staff, IPersistenceContext context)
+		{
+			if (staff == null)
+				return null;
 
-            return new StaffSummary(staff.GetRef(), staff.Id,
-                EnumUtils.GetEnumValueInfo(staff.Type, context),
-                new PersonNameAssembler().CreatePersonNameDetail(staff.Name));
-        }
+			return new StaffSummary(staff.GetRef(), staff.Id,
+				EnumUtils.GetEnumValueInfo(staff.Type, context),
+				new PersonNameAssembler().CreatePersonNameDetail(staff.Name));
+		}
 
-        public StaffDetail CreateStaffDetail(Staff staff, IPersistenceContext context)
-        {
-            PersonNameAssembler assembler = new PersonNameAssembler();
-            StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
+		public StaffDetail CreateStaffDetail(Staff staff, IPersistenceContext context)
+		{
+			PersonNameAssembler assembler = new PersonNameAssembler();
+			StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
+			EmailAddressAssembler emailAssembler = new EmailAddressAssembler();
+			TelephoneNumberAssembler telephoneAssembler = new TelephoneNumberAssembler();
 
-            return new StaffDetail(staff.Id, EnumUtils.GetEnumValueInfo(staff.Type, context),
-                assembler.CreatePersonNameDetail(staff.Name), staff.LicenseNumber, staff.BillingNumber,
-                    CollectionUtils.Map<StaffGroup, StaffGroupSummary>(staff.Groups,
-                        delegate(StaffGroup group) { return groupAssembler.CreateSummary(group); }),
-                    new Dictionary<string, string>(staff.ExtendedProperties));
-        }
+			return new StaffDetail(
+				staff.Id,
+				EnumUtils.GetEnumValueInfo(staff.Type, context),
+				assembler.CreatePersonNameDetail(staff.Name),
+				EnumUtils.GetEnumValueInfo(staff.Sex, context),
+				staff.Title,
+				staff.LicenseNumber,
+				staff.BillingNumber,
+				CollectionUtils.Map<TelephoneNumber, TelephoneDetail>(
+					staff.TelephoneNumbers,
+					delegate(TelephoneNumber tn) { return telephoneAssembler.CreateTelephoneDetail(tn, context); }),
+				CollectionUtils.Map<EmailAddress, EmailAddressDetail>(
+					staff.EmailAddresses,
+					delegate(EmailAddress ea) { return emailAssembler.CreateEmailAddressDetail(ea, context); }),
+				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
+					staff.Groups,
+					delegate(StaffGroup group) { return groupAssembler.CreateSummary(group); }),
+				new Dictionary<string, string>(staff.ExtendedProperties));
+		}
 
-        public void UpdateStaff(StaffDetail detail, Staff staff, bool updateGroups, IPersistenceContext context)
-        {
-            PersonNameAssembler assembler = new PersonNameAssembler();
+		public void UpdateStaff(StaffDetail detail, Staff staff, bool updateGroups, IPersistenceContext context)
+		{
+			PersonNameAssembler assembler = new PersonNameAssembler();
+			EmailAddressAssembler emailAssembler = new EmailAddressAssembler();
+			TelephoneNumberAssembler telephoneAssembler = new TelephoneNumberAssembler();
 
-            staff.Id = detail.StaffId;
-            staff.Type = EnumUtils.GetEnumValue<StaffType>(detail.StaffType);
-            assembler.UpdatePersonName(detail.Name, staff.Name);
-            staff.LicenseNumber = detail.LicenseNumber;
-            staff.BillingNumber = detail.BillingNumber;
+			staff.Id = detail.StaffId;
+			staff.Type = EnumUtils.GetEnumValue<StaffType>(detail.StaffType);
+			assembler.UpdatePersonName(detail.Name, staff.Name);
+			staff.Sex = EnumUtils.GetEnumValue<Sex>(detail.Sex);
+			staff.Title = detail.Title;
+			staff.LicenseNumber = detail.LicenseNumber;
+			staff.BillingNumber = detail.BillingNumber;
 
-            // explicitly copy each pair, so that we don't remove any properties that the client may have removed
-            foreach (KeyValuePair<string, string> pair in detail.ExtendedProperties)
-            {
-                staff.ExtendedProperties[pair.Key] = pair.Value;
-            }
+			staff.TelephoneNumbers.Clear();
+			if (detail.TelephoneNumbers != null)
+			{
+				foreach (TelephoneDetail phoneDetail in detail.TelephoneNumbers)
+				{
+					staff.TelephoneNumbers.Add(telephoneAssembler.CreateTelephoneNumber(phoneDetail));
+				}
+			}
 
-			if(updateGroups)
+			staff.EmailAddresses.Clear();
+			if (detail.EmailAddresses != null)
+			{
+				foreach (EmailAddressDetail emailAddressDetail in detail.EmailAddresses)
+				{
+					staff.EmailAddresses.Add(emailAssembler.CreateEmailAddress(emailAddressDetail));
+				}
+			}
+
+			// explicitly copy each pair, so that we don't remove any properties that the client may have removed
+			foreach (KeyValuePair<string, string> pair in detail.ExtendedProperties)
+			{
+				staff.ExtendedProperties[pair.Key] = pair.Value;
+			}
+
+			if (updateGroups)
 			{
 				// create a helper to sync staff group membership
 				CollectionSynchronizeHelper<StaffGroup, StaffGroupSummary> helper =
@@ -106,6 +140,6 @@ namespace ClearCanvas.Ris.Application.Services
 
 				helper.Synchronize(staff.Groups, detail.Groups);
 			}
-        }
-    }
+		}
+	}
 }

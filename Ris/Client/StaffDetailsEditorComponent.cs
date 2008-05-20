@@ -29,174 +29,194 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="StaffDetailsEditorComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class StaffDetailsEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="StaffDetailsEditorComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class StaffDetailsEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// StaffDetailsEditorComponent class
-    /// </summary>
-    [AssociateView(typeof(StaffDetailsEditorComponentViewExtensionPoint))]
-    public class StaffDetailsEditorComponent : ApplicationComponent
-    {
-        private StaffDetail _staffDetail;
-        private bool _isNew;
-        private IList<EnumValueInfo> _staffTypeChoices;
+	/// <summary>
+	/// StaffDetailsEditorComponent class
+	/// </summary>
+	[AssociateView(typeof(StaffDetailsEditorComponentViewExtensionPoint))]
+	public class StaffDetailsEditorComponent : ApplicationComponent
+	{
+		private StaffDetail _staffDetail;
+		private readonly IList<EnumValueInfo> _staffTypeChoices;
+		private readonly IList<EnumValueInfo> _sexChoices;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public StaffDetailsEditorComponent(bool isNew, IList<EnumValueInfo> staffTypeChoices)
-        {
-            _staffDetail = new StaffDetail();
-            _isNew = isNew;
-            _staffTypeChoices = staffTypeChoices;
-        }
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public StaffDetailsEditorComponent(IList<EnumValueInfo> staffTypeChoices, IList<EnumValueInfo> sexChoices)
+		{
+			_staffDetail = new StaffDetail();
+			_staffTypeChoices = staffTypeChoices;
+			_sexChoices = sexChoices;
+		}
 
-        public override void Start()
-        {
-            base.Start();
-        }
+		public override void Start()
+		{
+			base.Start();
+		}
 
-        public override void Stop()
-        {
-            base.Stop();
-        }
+		public override void Stop()
+		{
+			base.Stop();
+		}
 
-        public StaffDetail StaffDetail
-        {
-            get { return _staffDetail; }
-            set 
-            { 
-                _staffDetail = value;
-            }
-        }
+		public StaffDetail StaffDetail
+		{
+			get { return _staffDetail; }
+			set
+			{
+				_staffDetail = value;
+			}
+		}
 
-        #region Presentation Model
+		#region Presentation Model
 
-        public string StaffType
-        {
-            get { return _staffDetail.StaffType.Value; }
-            set
-            {
-                _staffDetail.StaffType = EnumValueUtils.MapDisplayValue(_staffTypeChoices, value);
+		public string StaffType
+		{
+			get { return _staffDetail.StaffType.Value; }
+			set
+			{
+				_staffDetail.StaffType = EnumValueUtils.MapDisplayValue(_staffTypeChoices, value);
 
-                this.Modified = true;
-            }
-        }
+				this.Modified = true;
+			}
+		}
 
-        public List<string> StaffTypeChoices
-        {
-            get { return EnumValueUtils.GetDisplayValues(_staffTypeChoices); }
-        }
+		public List<string> StaffTypeChoices
+		{
+			get { return EnumValueUtils.GetDisplayValues(_staffTypeChoices); }
+		}
 
-        public string StaffId
-        {
-            get { return _staffDetail.StaffId; }
-            set
-            {
-                _staffDetail.StaffId = value;
-                this.Modified = true;
-            }
-        }
+		public string StaffId
+		{
+			get { return _staffDetail.StaffId; }
+			set
+			{
+				_staffDetail.StaffId = value;
+				this.Modified = true;
+			}
+		}
 
-        public string FamilyName
-        {
-            get { return _staffDetail.Name.FamilyName; }
-            set 
-            {
-                _staffDetail.Name.FamilyName = value;
-                this.Modified = true;
-            }
-        }
+		public string FamilyName
+		{
+			get { return _staffDetail.Name.FamilyName; }
+			set
+			{
+				_staffDetail.Name.FamilyName = value;
+				this.Modified = true;
+			}
+		}
 
-        public string GivenName
-        {
-            get { return _staffDetail.Name.GivenName; }
-            set
-            {
-                _staffDetail.Name.GivenName = value;
-                this.Modified = true;
-            }
-        }
+		public string GivenName
+		{
+			get { return _staffDetail.Name.GivenName; }
+			set
+			{
+				_staffDetail.Name.GivenName = value;
+				this.Modified = true;
+			}
+		}
 
-        public string MiddleName
-        {
-            get { return _staffDetail.Name.MiddleName; }
-            set
-            {
-                _staffDetail.Name.MiddleName = value;
-                this.Modified = true;
-            }
-        }
+		public string MiddleName
+		{
+			get { return _staffDetail.Name.MiddleName; }
+			set
+			{
+				_staffDetail.Name.MiddleName = value;
+				this.Modified = true;
+			}
+		}
 
-        public string Prefix
-        {
-            get { return _staffDetail.Name.Prefix; }
-            set
-            {
-                _staffDetail.Name.Prefix = value;
-                this.Modified = true;
-            }
-        }
+		public string Prefix
+		{
+			get { return _staffDetail.Name.Prefix; }
+			set
+			{
+				_staffDetail.Name.Prefix = value;
+				this.Modified = true;
+			}
+		}
 
-        public string Suffix
-        {
-            get { return _staffDetail.Name.Suffix; }
-            set
-            {
-                _staffDetail.Name.Suffix = value;
-                this.Modified = true;
-            }
-        }
+		public string Suffix
+		{
+			get { return _staffDetail.Name.Suffix; }
+			set
+			{
+				_staffDetail.Name.Suffix = value;
+				this.Modified = true;
+			}
+		}
 
-        public string Degree
-        {
-            get { return _staffDetail.Name.Degree; }
-            set
-            {
-                _staffDetail.Name.Degree = value;
-                this.Modified = true;
-            }
-        }
+		public string Degree
+		{
+			get { return _staffDetail.Name.Degree; }
+			set
+			{
+				_staffDetail.Name.Degree = value;
+				this.Modified = true;
+			}
+		}
 
-        public string LicenseNumber
-        {
-            get { return _staffDetail.LicenseNumber; }
-            set
-            {
-                _staffDetail.LicenseNumber = value;
-                this.Modified = true;
-            }
-        }
+		public string Sex
+		{
+			get { return _staffDetail.Sex.Value; }
+			set
+			{
+				_staffDetail.Sex = EnumValueUtils.MapDisplayValue(_sexChoices, value);
 
-        public string BillingNumber
-        {
-            get { return _staffDetail.BillingNumber; }
-            set
-            {
-                _staffDetail.BillingNumber = value;
-                this.Modified = true;
-            }
-        }
+				this.Modified = true;
+			}
+		}
 
-        #endregion
-    }
+		public List<string> SexChoices
+		{
+			get { return EnumValueUtils.GetDisplayValues(_sexChoices); }
+		}
+
+		public string Title
+		{
+			get { return _staffDetail.Title; }
+			set
+			{
+				_staffDetail.Title = value;
+				this.Modified = true;
+			}
+		}
+
+		public string LicenseNumber
+		{
+			get { return _staffDetail.LicenseNumber; }
+			set
+			{
+				_staffDetail.LicenseNumber = value;
+				this.Modified = true;
+			}
+		}
+
+		public string BillingNumber
+		{
+			get { return _staffDetail.BillingNumber; }
+			set
+			{
+				_staffDetail.BillingNumber = value;
+				this.Modified = true;
+			}
+		}
+
+		#endregion
+	}
 }

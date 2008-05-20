@@ -29,26 +29,28 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Healthcare.Tests
 {
-    internal static class TestStaffFactory
-    {
-        internal static Staff CreateStaff(StaffType staffType)
-        {
-            return new Staff(
-                "01",
-                new PersonName("Simpson", "Bart", null, null, null, null),
-                null,   // license
-                null,   // billing
-                staffType,
-                null,
-                new Dictionary<string, string>(),
-                new HashedSet<StaffGroup>());
-        }
-    }
+	internal static class TestStaffFactory
+	{
+		internal static Staff CreateStaff(StaffType staffType)
+		{
+			return new Staff(
+				"01",
+				new PersonName("Simpson", "Bart", null, null, null, null),
+				Sex.M,
+				null,   // title
+				null,   // license
+				null,   // billing
+				staffType,
+				null,
+				new List<EmailAddress>(),
+				new List<TelephoneNumber>(),
+				new Dictionary<string, string>(),
+				new HashedSet<StaffGroup>());
+		}
+	}
 }

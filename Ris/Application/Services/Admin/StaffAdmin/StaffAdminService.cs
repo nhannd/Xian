@@ -31,189 +31,187 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Security.Permissions;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using ClearCanvas.Ris.Application.Common;
-using System.Security.Permissions;
-using System.ServiceModel;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
-using System.Threading;
+using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
+using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 {
-    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    [ServiceImplementsContract(typeof(IStaffAdminService))]
-    public class StaffAdminService : ApplicationServiceBase, IStaffAdminService
-    {
-        #region IStaffAdminService Members
+	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+	[ServiceImplementsContract(typeof(IStaffAdminService))]
+	public class StaffAdminService : ApplicationServiceBase, IStaffAdminService
+	{
+		#region IStaffAdminService Members
 
-        [ReadOperation]
-        // note: this operation is not protected with ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin
-        // because it is used in non-admin situations - perhaps we need to create a separate operation???
-        public ListStaffResponse ListStaff(ListStaffRequest request)
-        {
+		[ReadOperation]
+		// note: this operation is not protected with ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin
+		// because it is used in non-admin situations - perhaps we need to create a separate operation???
+		public ListStaffResponse ListStaff(ListStaffRequest request)
+		{
 
-            StaffAssembler assembler = new StaffAssembler();
+			StaffAssembler assembler = new StaffAssembler();
 
-            StaffSearchCriteria criteria = new StaffSearchCriteria();
-            if (!string.IsNullOrEmpty(request.FirstName))
-                criteria.Name.GivenName.StartsWith(request.FirstName);
-            if (!string.IsNullOrEmpty(request.LastName))
-                criteria.Name.FamilyName.StartsWith(request.LastName);
+			StaffSearchCriteria criteria = new StaffSearchCriteria();
+			if (!string.IsNullOrEmpty(request.FirstName))
+				criteria.Name.GivenName.StartsWith(request.FirstName);
+			if (!string.IsNullOrEmpty(request.LastName))
+				criteria.Name.FamilyName.StartsWith(request.LastName);
 
-            ApplyStaffTypesFilter(request.StaffTypesFilter, new StaffSearchCriteria[] { criteria });
+			ApplyStaffTypesFilter(request.StaffTypesFilter, new StaffSearchCriteria[] { criteria });
 
-            return new ListStaffResponse(
-                CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
-                    PersistenceContext.GetBroker<IStaffBroker>().Find(criteria, request.Page),
-                    delegate(Staff s)
-                    {
-                        return assembler.CreateStaffSummary(s, PersistenceContext);
-                    }));
-        }
+			return new ListStaffResponse(
+				CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
+					PersistenceContext.GetBroker<IStaffBroker>().Find(criteria, request.Page),
+					delegate(Staff s)
+					{
+						return assembler.CreateStaffSummary(s, PersistenceContext);
+					}));
+		}
 
-        [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Staff)]
-        public LoadStaffForEditResponse LoadStaffForEdit(LoadStaffForEditRequest request)
-        {
-            // note that the version of the StaffRef is intentionally ignored here (default behaviour of ReadOperation)
-            Staff s = PersistenceContext.Load<Staff>(request.StaffRef);
-            StaffAssembler assembler = new StaffAssembler();
+		[ReadOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Staff)]
+		public LoadStaffForEditResponse LoadStaffForEdit(LoadStaffForEditRequest request)
+		{
+			// note that the version of the StaffRef is intentionally ignored here (default behaviour of ReadOperation)
+			Staff s = PersistenceContext.Load<Staff>(request.StaffRef);
+			StaffAssembler assembler = new StaffAssembler();
 
-            return new LoadStaffForEditResponse(s.GetRef(), assembler.CreateStaffDetail(s, this.PersistenceContext));
-        }
+			return new LoadStaffForEditResponse(s.GetRef(), assembler.CreateStaffDetail(s, this.PersistenceContext));
+		}
 
-        [ReadOperation]
-        public LoadStaffEditorFormDataResponse LoadStaffEditorFormData(LoadStaffEditorFormDataRequest request)
-        {
-            StaffGroupAssembler groupAssember = new StaffGroupAssembler();
-            
+		[ReadOperation]
+		public LoadStaffEditorFormDataResponse LoadStaffEditorFormData(LoadStaffEditorFormDataRequest request)
+		{
+			StaffGroupAssembler groupAssember = new StaffGroupAssembler();
 
-            return new LoadStaffEditorFormDataResponse(
-                EnumUtils.GetEnumValueList<StaffTypeEnum>(PersistenceContext), 
-                CollectionUtils.Map<StaffGroup, StaffGroupSummary>(PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(),
-                    delegate(StaffGroup group) { return groupAssember.CreateSummary(group); })
-                );
 
-        }
+			return new LoadStaffEditorFormDataResponse(
+				EnumUtils.GetEnumValueList<StaffTypeEnum>(this.PersistenceContext),
+				EnumUtils.GetEnumValueList<SexEnum>(this.PersistenceContext),
+				(new SimplifiedPhoneTypeAssembler()).GetPatientPhoneTypeChoices(),
+				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(),
+					delegate(StaffGroup group) { return groupAssember.CreateSummary(group); })
+				);
 
-        [UpdateOperation]
+		}
+
+		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Staff)]
 		public AddStaffResponse AddStaff(AddStaffRequest request)
-        {
-            StaffType staffType = EnumUtils.GetEnumValue<StaffType>(request.StaffDetail.StaffType);
-            Staff staff = new Staff();
+		{
+			Staff staff = new Staff();
 
-            StaffAssembler assembler = new StaffAssembler();
-            assembler.UpdateStaff(request.StaffDetail, staff, Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup), PersistenceContext);
-
-            PersistenceContext.Lock(staff, DirtyState.New);
-
-            // ensure the new staff is assigned an OID before using it in the return value
-            PersistenceContext.SynchState();
-
-            return new AddStaffResponse(assembler.CreateStaffSummary(staff, PersistenceContext));
-        }
-
-        [UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Staff)]
-		public UpdateStaffResponse UpdateStaff(UpdateStaffRequest request)
-        {
-            Staff staff = PersistenceContext.Load<Staff>(request.StaffRef, EntityLoadFlags.CheckVersion);
-
-            StaffAssembler assembler = new StaffAssembler();
+			StaffAssembler assembler = new StaffAssembler();
 			assembler.UpdateStaff(request.StaffDetail, staff, Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup), PersistenceContext);
 
-            return new UpdateStaffResponse(assembler.CreateStaffSummary(staff, PersistenceContext));
-        }
+			PersistenceContext.Lock(staff, DirtyState.New);
 
-        [ReadOperation]
-        public TextQueryResponse<StaffSummary> TextQuery(StaffTextQueryRequest request)
-        {
-            IStaffBroker broker = PersistenceContext.GetBroker<IStaffBroker>();
-            StaffAssembler assembler = new StaffAssembler();
+			// ensure the new staff is assigned an OID before using it in the return value
+			PersistenceContext.SynchState();
 
-            TextQueryHelper<Staff, StaffSearchCriteria, StaffSummary> helper
-                = new TextQueryHelper<Staff, StaffSearchCriteria, StaffSummary>(
-                    delegate(string rawQuery)
-                    {
-                        // this will hold all criteria
-                        List<StaffSearchCriteria> criteria = new List<StaffSearchCriteria>();
+			return new AddStaffResponse(assembler.CreateStaffSummary(staff, PersistenceContext));
+		}
 
-                        // build criteria against names
-                        PersonName[] names = TextQueryHelper.ParsePersonNames(rawQuery);
-                        criteria.AddRange(CollectionUtils.Map<PersonName, StaffSearchCriteria>(names,
-                            delegate(PersonName n)
-                                {
-                                    StaffSearchCriteria sc = new StaffSearchCriteria();
-                                    sc.Name.FamilyName.StartsWith(n.FamilyName);
-                                    if (n.GivenName != null)
-                                        sc.Name.GivenName.StartsWith(n.GivenName);
-                                    return sc;
-                                }));
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Staff)]
+		public UpdateStaffResponse UpdateStaff(UpdateStaffRequest request)
+		{
+			Staff staff = PersistenceContext.Load<Staff>(request.StaffRef, EntityLoadFlags.CheckVersion);
 
-                        // build criteria against identifiers
-                        string[] ids = TextQueryHelper.ParseIdentifiers(rawQuery);
-                        criteria.AddRange(CollectionUtils.Map<string, StaffSearchCriteria>(ids,
-                                     delegate(string word)
-                                     {
-                                         StaffSearchCriteria c = new StaffSearchCriteria();
-                                         c.Id.StartsWith(word);
-                                         return c;
-                                     }));
+			StaffAssembler assembler = new StaffAssembler();
+			assembler.UpdateStaff(request.StaffDetail, staff, Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup), PersistenceContext);
+
+			return new UpdateStaffResponse(assembler.CreateStaffSummary(staff, PersistenceContext));
+		}
+
+		[ReadOperation]
+		public TextQueryResponse<StaffSummary> TextQuery(StaffTextQueryRequest request)
+		{
+			IStaffBroker broker = PersistenceContext.GetBroker<IStaffBroker>();
+			StaffAssembler assembler = new StaffAssembler();
+
+			TextQueryHelper<Staff, StaffSearchCriteria, StaffSummary> helper
+				= new TextQueryHelper<Staff, StaffSearchCriteria, StaffSummary>(
+					delegate(string rawQuery)
+					{
+						// this will hold all criteria
+						List<StaffSearchCriteria> criteria = new List<StaffSearchCriteria>();
+
+						// build criteria against names
+						PersonName[] names = TextQueryHelper.ParsePersonNames(rawQuery);
+						criteria.AddRange(CollectionUtils.Map<PersonName, StaffSearchCriteria>(names,
+							delegate(PersonName n)
+							{
+								StaffSearchCriteria sc = new StaffSearchCriteria();
+								sc.Name.FamilyName.StartsWith(n.FamilyName);
+								if (n.GivenName != null)
+									sc.Name.GivenName.StartsWith(n.GivenName);
+								return sc;
+							}));
+
+						// build criteria against identifiers
+						string[] ids = TextQueryHelper.ParseIdentifiers(rawQuery);
+						criteria.AddRange(CollectionUtils.Map<string, StaffSearchCriteria>(ids,
+									 delegate(string word)
+									 {
+										 StaffSearchCriteria c = new StaffSearchCriteria();
+										 c.Id.StartsWith(word);
+										 return c;
+									 }));
 
 
-                        ApplyStaffTypesFilter(request.StaffTypesFilter, criteria);
+						ApplyStaffTypesFilter(request.StaffTypesFilter, criteria);
 
-                        return criteria.ToArray();
-                    },
-                    delegate(Staff staff)
-                    {
-                        return assembler.CreateStaffSummary(staff, PersistenceContext);
-                    },
-                    delegate (StaffSearchCriteria[] criteria)
-                    {
-                        return broker.Count(criteria);
-                    },
-                    delegate (StaffSearchCriteria[] criteria, SearchResultPage page)
-                    {
-                        return broker.Find(criteria, page);
-                    });
+						return criteria.ToArray();
+					},
+					delegate(Staff staff)
+					{
+						return assembler.CreateStaffSummary(staff, PersistenceContext);
+					},
+					delegate(StaffSearchCriteria[] criteria)
+					{
+						return broker.Count(criteria);
+					},
+					delegate(StaffSearchCriteria[] criteria, SearchResultPage page)
+					{
+						return broker.Find(criteria, page);
+					});
 
-            return helper.Query(request);
-        }
+			return helper.Query(request);
+		}
 
-        #endregion
+		#endregion
 
-        /// <summary>
-        /// Applies the specified staff types filter to the specified set of criteria objects.
-        /// </summary>
-        /// <param name="staffTypesFilter"></param>
-        /// <param name="criteria"></param>
-        private void ApplyStaffTypesFilter(IEnumerable<string> staffTypesFilter, IEnumerable<StaffSearchCriteria> criteria)
-        {
-            if (staffTypesFilter != null)
-            {
-                // parse strings into StaffType 
-                List<StaffType> typeFilters = CollectionUtils.Map<string, StaffType>(staffTypesFilter,
-                       delegate(string t) { return (StaffType)Enum.Parse(typeof(StaffType), t); });
+		/// <summary>
+		/// Applies the specified staff types filter to the specified set of criteria objects.
+		/// </summary>
+		/// <param name="staffTypesFilter"></param>
+		/// <param name="criteria"></param>
+		private void ApplyStaffTypesFilter(IEnumerable<string> staffTypesFilter, IEnumerable<StaffSearchCriteria> criteria)
+		{
+			if (staffTypesFilter != null)
+			{
+				// parse strings into StaffType 
+				List<StaffType> typeFilters = CollectionUtils.Map<string, StaffType>(staffTypesFilter,
+					   delegate(string t) { return (StaffType)Enum.Parse(typeof(StaffType), t); });
 
-                if (typeFilters.Count > 0)
-                {
-                    // apply type filter to each criteria object
-                    foreach (StaffSearchCriteria criterion in criteria)
-                    {
-                        criterion.Type.In(typeFilters);
-                    }
-                }
-            }
-        }
-    }
+				if (typeFilters.Count > 0)
+				{
+					// apply type filter to each criteria object
+					foreach (StaffSearchCriteria criterion in criteria)
+					{
+						criterion.Type.In(typeFilters);
+					}
+				}
+			}
+		}
+	}
 }

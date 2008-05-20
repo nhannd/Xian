@@ -29,56 +29,74 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class StaffDetail : DataContractBase
-    {
-        public StaffDetail(string staffId, EnumValueInfo staffType,
-            PersonNameDetail personNameDetail, string licenseNumber, string billingNumber,
-            List<StaffGroupSummary> groups, Dictionary<string, string> extendedProperties)
-        {
-            this.StaffId = staffId;
-            this.StaffType = staffType;
-            this.Name = personNameDetail;
-            this.LicenseNumber = licenseNumber;
-            this.BillingNumber = billingNumber;
-            this.Groups = groups;
-            this.ExtendedProperties = extendedProperties;
-        }
+	[DataContract]
+	public class StaffDetail : DataContractBase
+	{
+		public StaffDetail(string staffId, EnumValueInfo staffType,
+			PersonNameDetail personNameDetail, EnumValueInfo sex,
+			string title, string licenseNumber, string billingNumber,
+			List<TelephoneDetail> telephoneNumbers, List<EmailAddressDetail> emailAddresses,
+			List<StaffGroupSummary> groups, Dictionary<string, string> extendedProperties)
+		{
+			this.StaffId = staffId;
+			this.StaffType = staffType;
+			this.Name = personNameDetail;
+			this.Sex = sex;
+			this.Title = title;
+			this.LicenseNumber = licenseNumber;
+			this.BillingNumber = billingNumber;
+			this.TelephoneNumbers = telephoneNumbers;
+			this.EmailAddresses = emailAddresses;
+			this.Groups = groups;
+			this.ExtendedProperties = extendedProperties;
+		}
 
-        public StaffDetail()
-        {
-            this.Name = new PersonNameDetail();
-            this.Groups = new List<StaffGroupSummary>();
-            this.ExtendedProperties = new Dictionary<string, string>();
-        }
+		public StaffDetail()
+		{
+			this.Name = new PersonNameDetail();
+			this.EmailAddresses = new List<EmailAddressDetail>();
+			this.TelephoneNumbers = new List<TelephoneDetail>();
+			this.Groups = new List<StaffGroupSummary>();
+			this.ExtendedProperties = new Dictionary<string, string>();
+		}
 
-        [DataMember]
-        public string StaffId;
+		[DataMember]
+		public string StaffId;
 
-        [DataMember]
-        public EnumValueInfo StaffType;
+		[DataMember]
+		public EnumValueInfo StaffType;
 
-        [DataMember]
-        public PersonNameDetail Name;
+		[DataMember]
+		public PersonNameDetail Name;
 
-        [DataMember]
-        public string LicenseNumber;
+		[DataMember]
+		public EnumValueInfo Sex;
 
-        [DataMember]
-        public string BillingNumber;
+		[DataMember]
+		public string Title;
 
-        [DataMember]
-        public List<StaffGroupSummary> Groups;
+		[DataMember]
+		public string LicenseNumber;
 
-        [DataMember]
-        public Dictionary<string, string> ExtendedProperties;
-    }
+		[DataMember]
+		public string BillingNumber;
+
+		[DataMember]
+		public List<TelephoneDetail> TelephoneNumbers;
+
+		[DataMember]
+		public List<EmailAddressDetail> EmailAddresses;
+
+		[DataMember]
+		public List<StaffGroupSummary> Groups;
+
+		[DataMember]
+		public Dictionary<string, string> ExtendedProperties;
+	}
 }
