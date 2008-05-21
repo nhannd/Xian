@@ -31,7 +31,10 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 		{
 			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
 
-			this.AddFolder(new InboxFolder(this));
+			InboxFolder inboxFolder = new InboxFolder(this);
+			inboxFolder.TotalItemCountChanged += OnPrimaryFolderCountChanged;
+
+			this.AddFolder(inboxFolder);
 			this.AddFolder(new SentItemsFolder(this));
 		}
 

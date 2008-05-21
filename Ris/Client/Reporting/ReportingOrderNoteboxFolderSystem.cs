@@ -27,16 +27,19 @@ namespace ClearCanvas.Ris.Client.Reporting
 				new ReportingOrderNoteboxFolderExtensionPoint(),
 				new ReportingOrderNoteboxItemToolExtensionPoint(),
 				new ReportingOrderNoteboxFolderToolExtensionPoint())
-			{
-				this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
+		{
+			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
 
-				this.AddFolder(new InboxFolder(this));
-				this.AddFolder(new SentItemsFolder(this));
-			}
+			InboxFolder inboxFolder = new InboxFolder(this);
+			inboxFolder.TotalItemCountChanged += OnPrimaryFolderCountChanged;
 
-			public override string PreviewUrl
-			{
-				get { return WebResourcesSettings.Default.ReportingOrderNoteboxFolderSystemUrl; }
-			}
+			this.AddFolder(inboxFolder);
+			this.AddFolder(new SentItemsFolder(this));
 		}
+
+		public override string PreviewUrl
+		{
+			get { return WebResourcesSettings.Default.ReportingOrderNoteboxFolderSystemUrl; }
+		}
+	}
 }

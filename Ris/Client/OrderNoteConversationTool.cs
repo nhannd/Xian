@@ -89,6 +89,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			IWorkflowItemToolContext context = (IWorkflowItemToolContext) this.ContextBase;
 			Open(this.OrderRef, GetTitle(), this.OrderNoteCategories, context.DesktopWindow);
+			OnOpenCompleted();
+		}
+
+		protected virtual void OnOpenCompleted()
+		{
 		}
 
 		private static void Open(EntityRef orderRef, string title, IEnumerable<string> orderNoteCategories, IDesktopWindow desktopWindow)

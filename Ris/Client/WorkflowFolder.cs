@@ -118,8 +118,7 @@ namespace ClearCanvas.Ris.Client
             _itemsTable = itemsTable;
             _itemsTable.Items.ItemsChanged += delegate
                 {
-                    _itemCount = _itemsTable.Items.Count;
-                    NotifyTextChanged();
+                    SetTotalItemCount(_itemsTable.Items.Count);
                 };
 
             Platform.CheckForNullReference(_folderPath, "FolderPath attribute");
@@ -240,8 +239,6 @@ namespace ClearCanvas.Ris.Client
                 _itemsTable.Items.Clear();
                 _itemsTable.Items.AddRange(result.Items);
                 _itemsTable.Sort();
-
-                SetTotalItemCount(result.TotalItemCount);
 
                 NotifyRefreshFinish();
             }

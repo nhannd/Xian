@@ -109,6 +109,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			if (_page.IconSet != null)
 				_titleBar.Image = IconFactory.CreateIcon(_page.IconSet.SmallIcon, _page.ResourceResolver);
+			else
+				_titleBar.Image = null;
 		}
 
 		/// <summary> 

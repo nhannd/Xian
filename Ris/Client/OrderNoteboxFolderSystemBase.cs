@@ -125,6 +125,7 @@ namespace ClearCanvas.Ris.Client
 		#region private fields
 
 		private IDictionary<string, bool> _workflowEnablement;
+		private readonly IconSet _unacknowledgedNotesIconSet;
 
 		#endregion
 
@@ -140,6 +141,8 @@ namespace ClearCanvas.Ris.Client
 
 			_itemTools = new ToolSet(itemToolExtensionPoint, new OrderNoteboxItemToolContext(this));
 			_folderTools = new ToolSet(folderToolExtensionPoint, new OrderNoteboxFolderToolContext(this));
+
+			_unacknowledgedNotesIconSet = new IconSet("NoteUnread.png");
 		}
 
 		public bool GetOperationEnablement(string operationName)
@@ -166,6 +169,12 @@ namespace ClearCanvas.Ris.Client
 
 			if (notesTool != null && notesTool.Enabled)
 				notesTool.Open();
+		}
+
+		protected void OnPrimaryFolderCountChanged(object sender, System.EventArgs e)
+		{
+			IFolder folder = (IFolder)sender;
+			this.TitleIcon = folder.TotalItemCount > 0 ? _unacknowledgedNotesIconSet : null;
 		}
 	}
 }
