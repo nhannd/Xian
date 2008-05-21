@@ -211,7 +211,15 @@ function createOrderNotesTable(htmlTable, notes)
 			},
 			{   label: "Author",
 				cellType: "text",
-				getValue: function(item) { return Ris.formatPersonName(item.Author.Name); }
+				getValue: function(item) 
+				{ 
+					var from = Ris.formatPersonName(item.Author.Name);
+					
+					if(item.OnBehalfOfGroup != null)
+						from = from + " on behalf of " + item.OnBehalfOfGroup.Name;
+					
+					return from;
+				}
 			}
 		 ]);
 		 
