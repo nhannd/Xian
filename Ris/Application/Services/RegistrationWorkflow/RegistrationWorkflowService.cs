@@ -66,13 +66,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     {
                         return assembler.CreateRegistrationWorklistItem(item, PersistenceContext);
                     },
-                    delegate (WorklistItemSearchCriteria[] criteria)
+                    delegate (WorklistItemSearchCriteria[] criteria, int threshold)
                     {
-                        return broker.CountSearchResultsApprox(criteria,request.ShowActiveOnly, this.WorkingFacility);
+                    	int count;
+						return broker.EstimateSearchResultsCount(criteria, threshold, out count);
                     },
                     delegate(WorklistItemSearchCriteria[] criteria, SearchResultPage page)
                     {
-                        return broker.GetSearchResults(criteria, page, request.ShowActiveOnly, this.WorkingFacility);
+                        return broker.GetSearchResults(criteria);
                     });
 
             return helper.Query(request);

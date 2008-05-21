@@ -72,9 +72,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
                     {
                         return assembler.CreateSummary(group);
                     },
-                    delegate(StaffGroupSearchCriteria[] criteria)
+                    delegate(StaffGroupSearchCriteria[] criteria, int threshold)
                     {
-                        return broker.Count(criteria);
+                        return broker.Count(criteria) <= threshold;
                     },
                     delegate(StaffGroupSearchCriteria[] criteria, SearchResultPage page)
                     {

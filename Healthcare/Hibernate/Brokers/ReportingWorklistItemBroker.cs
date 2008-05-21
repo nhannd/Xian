@@ -84,51 +84,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
 
 			HqlProjectionQuery query = CreateBaseItemQuery(worklistItemCriteria);
-			AddConditions(query, worklistItemCriteria, true, false);
+			AddConditions(query, worklistItemCriteria, true, true);
 
 			return DoQuery(query);
-		}
-
-		/// <summary>
-		/// Performs a search for modality worklist items using the specified criteria.
-		/// </summary>
-		/// <param name="where"></param>
-		/// <param name="page"></param>
-		/// <param name="showActiveOnly"></param>
-		/// <returns></returns>
-		public IList<WorklistItem> GetSearchResults(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly)
-		{
-			// ensure criteria are filtering on correct type of step, and display the correct time field
-			// ProcedureStartTime seems like a reasonable choice for rad homepage search,
-			// as it gives a general sense of when the procedure occured in time, regardless of the procedure step
-			CollectionUtils.ForEach(where,
-				delegate(WorklistItemSearchCriteria sc)
-				{
-					sc.ProcedureStepClass = typeof(ReportingProcedureStep);
-					sc.TimeField = WorklistTimeField.ProcedureStartTime;
-				});
-
-			HqlProjectionQuery query = CreateBaseItemQuery(where);
-			query.Page = page;
-			BuildSearchQuery(query, where, showActiveOnly, false);
-			return DoQuery(query);
-		}
-
-		/// <summary>
-		/// Obtains a count of the number of results that a search using the specified criteria would return.
-		/// </summary>
-		/// <param name="where"></param>
-		/// <param name="showActiveOnly"></param>
-		/// <returns></returns>
-		public int CountSearchResults(WorklistItemSearchCriteria[] where, bool showActiveOnly)
-		{
-			// ensure criteria are filtering on correct type of step
-			CollectionUtils.ForEach(where,
-				delegate(WorklistItemSearchCriteria sc) { sc.ProcedureStepClass = typeof(ReportingProcedureStep); });
-
-			HqlProjectionQuery query = CreateBaseCountQuery(where);
-			BuildSearchQuery(query, where, showActiveOnly, true);
-			return DoQueryCount(query);
 		}
 
 		/// <summary>
@@ -183,6 +141,29 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			return query;
 		}
 
+		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where)
+		{
+			// ensure criteria are filtering on correct type of step, and display the correct time field
+			// ProcedureStartTime seems like a reasonable choice for rad homepage search,
+			// as it gives a general sense of when the procedure occured in time, regardless of the procedure step
+			CollectionUtils.ForEach(where,
+				delegate(WorklistItemSearchCriteria sc)
+				{
+					sc.ProcedureStepClass = typeof(ReportingProcedureStep);
+					sc.TimeField = WorklistTimeField.ProcedureStartTime;
+				});
+
+			HqlProjectionQuery query = CreateBaseItemQuery(where);
+
+			// Active Set of RPS union with completed publication steps
+			query.Conditions.Add(new HqlCondition("(ps.State in (?, ?) or (ps.class = PublicationStep and ps.State = ?))",
+				ActivityStatus.SC, ActivityStatus.IP, ActivityStatus.CM));
+
+			AddConditions(query, where, true, false);
+
+			return query;
+		}
+
 		#endregion
 
 		#region Helpers
@@ -216,21 +197,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				if (!isCountQuery)
 					query.Selects.Add(SelectReport);
 			}
-		}
-
-		private void BuildSearchQuery(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool showActiveOnly, bool countQuery)
-		{
-			if (showActiveOnly)
-			{
-				query.Conditions.Add(new HqlCondition("ps.State in (?, ?)", ActivityStatus.SC, ActivityStatus.IP));
-			}
-			else // Active Set of RPS union with inactive set of verification Step
-			{
-				query.Conditions.Add(new HqlCondition("(ps.State in (?, ?) or (ps.class = PublicationStep and ps.State = ?))",
-					ActivityStatus.SC, ActivityStatus.IP, ActivityStatus.CM));
-			}
-
-			AddConditions(query, where, true, countQuery);
 		}
 
 		#endregion

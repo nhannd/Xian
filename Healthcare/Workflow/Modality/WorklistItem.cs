@@ -51,8 +51,71 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
     public class WorklistItem : WorklistItemBase
     {
-        /// <summary>
-        /// Constructor
+		/// <summary>
+		/// Constructor for patient search result item.
+		/// </summary>
+		/// <param name="patient"></param>
+		/// <param name="profile"></param>
+		/// <param name="mrn"></param>
+		/// <param name="patientName"></param>
+		public WorklistItem(
+			Patient patient,
+			PatientProfile profile,
+			PatientIdentifier mrn,
+			PersonName patientName)
+			: base(
+			null,
+			null,
+			null,
+			patient,
+			profile,
+			mrn,
+			patientName,
+			null,
+			Healthcare.OrderPriority.R,// technically this should be null, but we don't have that option because its a value type
+			null,
+			null,
+			null,
+			null)
+		{
+		}
+
+		/// <summary>
+		/// Constructor for procedure search result item.
+		/// </summary>
+		public WorklistItem(
+			Procedure procedure,
+			Order order,
+			Patient patient,
+			PatientProfile profile,
+			PatientIdentifier mrn,
+			PersonName patientName,
+			string accessionNumber,
+			OrderPriority orderPriority,
+			PatientClassEnum patientClass,
+			string diagnosticServiceName,
+			string procedureName,
+			DateTime? time)
+			: base(
+			null,
+			procedure,
+			order,
+			patient,
+			profile,
+			mrn,
+			patientName,
+			accessionNumber,
+			orderPriority,
+			patientClass,
+			diagnosticServiceName,
+			procedureName,
+			time)
+		{
+
+		}
+
+		/// <summary>
+        /// Constructor for worklist item.
         /// </summary>
         public WorklistItem(
             ProcedureStep procedureStep,

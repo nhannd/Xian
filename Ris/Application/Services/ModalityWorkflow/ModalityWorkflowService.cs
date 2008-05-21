@@ -67,13 +67,14 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                     {
                         return assembler.CreateModalityWorklistItem(item, PersistenceContext);
                     },
-                    delegate(WorklistItemSearchCriteria[] criteria)
+                    delegate(WorklistItemSearchCriteria[] criteria, int threshold)
                     {
-                        return broker.CountSearchResults(criteria, request.ShowActiveOnly);
+                    	int count;
+                        return broker.EstimateSearchResultsCount(criteria, threshold, out count);
                     },
                     delegate(WorklistItemSearchCriteria[] criteria, SearchResultPage page)
                     {
-                        return broker.GetSearchResults(criteria, page, request.ShowActiveOnly);
+                        return broker.GetSearchResults(criteria);
                     });
 
             return helper.Query(request);

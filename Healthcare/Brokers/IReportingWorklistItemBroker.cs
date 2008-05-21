@@ -43,23 +43,6 @@ namespace ClearCanvas.Healthcare.Brokers
     public interface IReportingWorklistItemBroker : IWorklistItemBroker<WorklistItem>
     {
         /// <summary>
-        /// Performs a search for modality worklist items using the specified criteria.
-        /// </summary>
-        /// <param name="where"></param>
-        /// <param name="page"></param>
-        /// <param name="showActiveOnly"></param>
-        /// <returns></returns>
-        IList<WorklistItem> GetSearchResults(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly);
-
-        /// <summary>
-        /// Obtains a count of the number of results that a search using the specified criteria would return.
-        /// </summary>
-        /// <param name="where"></param>
-        /// <param name="showActiveOnly"></param>
-        /// <returns></returns>
-        int CountSearchResults(WorklistItemSearchCriteria[] where, bool showActiveOnly);
-
-        /// <summary>
         /// Maps the specified set of reporting steps to a corresponding set of reporting worklist items.
         /// </summary>
         /// <param name="reportingSteps"></param>

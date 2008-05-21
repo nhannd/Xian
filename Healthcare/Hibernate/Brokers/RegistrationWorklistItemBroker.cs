@@ -90,77 +90,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #endregion
 
-        #region IRegistrationWorklistItemBroker members
-
-        /// <summary>
-        /// Performs a search using the specified criteria.
-        /// </summary>
-        /// <param name="where"></param>
-        /// <param name="page"></param>
-        /// <param name="activeOrdersOnly"></param>
-        /// <param name="workingFacility"></param>
-        /// <returns></returns>
-        public IList<WorklistItem> GetSearchResults(WorklistItemSearchCriteria[] where, SearchResultPage page, bool activeOrdersOnly, Facility workingFacility)
-        {
-            // ensure criteria are filtering on correct type of step, and display the correct time field
-            // ProcedureScheduledStartTime seems like a reasonable choice for registration homepage search,
-            // as it gives a general sense of when the procedure occurs in time
-            CollectionUtils.ForEach(where,
-                delegate(WorklistItemSearchCriteria sc)
-                {
-                    sc.TimeField = WorklistTimeField.ProcedureScheduledStartTime;
-                });
-
-            // note: use of the page here is somewhat meaningless given the way 2 result sets are being combined
-            // may need to think about this some more
-            HqlProjectionQuery orderQuery = new HqlProjectionQuery(WorklistItemFrom, GetWorklistItemProjection(WorklistTimeField.ProcedureScheduledStartTime));
-            orderQuery.Page = page;
-            BuildOrderSearchQuery(orderQuery, where, activeOrdersOnly, false);
-            List<WorklistItem> orders = DoQuery(orderQuery);
-
-            HqlProjectionQuery patientQuery = new HqlProjectionQuery(PatientFrom, PatientItemProjection);
-            patientQuery.Page = page;
-            BuildPatientSearchQuery(patientQuery, where, workingFacility, false);
-            List<WorklistItem> patients = DoQuery(patientQuery);
-
-            List<WorklistItem> results = new List<WorklistItem>(orders);
-            foreach (WorklistItem patient in patients)
-            {
-                if(!CollectionUtils.Contains(orders, delegate (WorklistItem item) { return item.PatientRef.Equals(patient.PatientRef, true); }))
-                    results.Add(patient);
-            }
-            return results;
-        }
-
-        /// <summary>
-        /// Gets a count of the results that a search using the specified criteria would return.
-        /// </summary>
-        /// <param name="where"></param>
-        /// <param name="activeOrdersOnly"></param>
-        /// <param name="workingFacility"></param>
-        /// <returns></returns>
-        public int CountSearchResultsApprox(WorklistItemSearchCriteria[] where, bool activeOrdersOnly, Facility workingFacility)
-        {
-            HqlProjectionQuery orderQuery = new HqlProjectionQuery(WorklistItemFrom, WorklistItemCount);
-            BuildOrderSearchQuery(orderQuery, where, activeOrdersOnly, true);
-            int orderCount = DoQueryCount(orderQuery);
-
-            HqlProjectionQuery patientQuery = new HqlProjectionQuery(PatientFrom, PatientCountProjection);
-            BuildPatientSearchQuery(patientQuery, where, workingFacility, true);
-            int patientCount = DoQueryCount(patientQuery);
-
-            // there is no clear way to combine these numbers, since the order count may include
-            // patients that are subsequently counted in the patientCount, and conversely, a single
-            // patient may have many orders
-
-            // however, the exact number doesn't matter that much, since this method is really just
-            // used to decide whether a given set of criteria is specific enough
-            // returning the larger number is probably adequate for this purpose
-            return Math.Max(orderCount, patientCount);
-        }
-
-        #endregion
-
         #region Overrides
 
         /// <summary>
@@ -195,6 +124,27 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
             return new HqlProjectionQuery(GetFromClause(procedureStepClass), WorklistItemCount);
         }
+
+		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where)
+		{
+			// ensure criteria are filtering on correct type of step, and display the correct time field
+			// ProcedureScheduledStartTime seems like a reasonable choice for registration homepage search,
+			// as it gives a general sense of when the procedure occurs in time
+			CollectionUtils.ForEach(where,
+				delegate(WorklistItemSearchCriteria sc)
+				{
+					sc.TimeField = WorklistTimeField.ProcedureScheduledStartTime;
+				});
+
+			//TODO: why don't we use GetBaseItemQuery here?
+			HqlProjectionQuery query = new HqlProjectionQuery(WorklistItemFrom, GetWorklistItemProjection(WorklistTimeField.ProcedureScheduledStartTime));
+			query.Conditions.Add(new HqlCondition("(o.Status in (?, ?))", OrderStatus.SC, OrderStatus.IP));
+			AddConditions(query, where, true, false);
+
+			//TODO: get rid of this - just temporary to null out this query
+			query.Page = new SearchResultPage(0, 0);
+			return query;
+		}
 
         #endregion
 
@@ -235,38 +185,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                       SelectDateOfBirth,
                       SelectSex
                   };
-        }
-
-        private void BuildOrderSearchQuery(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool showActiveOnly, bool countQuery)
-        {
-            if (showActiveOnly)
-            {
-                query.Conditions.Add(new HqlCondition("(o.Status in (?, ?))", OrderStatus.SC, OrderStatus.IP));
-            }
-
-            AddConditions(query, where, true, countQuery);
-        }
-
-        private void BuildPatientSearchQuery(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, Facility workingFacility, bool countQuery)
-        {
-            // create a copy of the criteria that contains only the patient profile criteria, as none of the others are relevant
-            List<WorklistItemSearchCriteria> patientCriteria = CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(where,
-                delegate(WorklistItemSearchCriteria criteria)
-                {
-                    WorklistItemSearchCriteria copy = new WorklistItemSearchCriteria();
-                    copy.SubCriteria["PatientProfile"] = criteria.PatientProfile;
-                    return copy;
-                });
-
-            // add the criteria, but do not attempt to constrain the patient profile, as we do this differently in this case (see below)
-            AddConditions(query, patientCriteria, false, countQuery);
-
-            // constrain patient profile to the working facility, if known
-            if (workingFacility != null)
-            {
-                query.Conditions.Add(
-                    new HqlCondition("pp.Mrn.AssigningAuthority = ?", workingFacility.InformationAuthority));
-            }
         }
 
         #endregion

@@ -104,16 +104,14 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         }
 
         /// <summary>
-        /// Constructor for a worklist item with patient information only.
+        /// Constructor for a patient search result item.
         /// </summary>
         public WorklistItem(
             Patient patient,
             PatientProfile profile,
             PatientIdentifier mrn,
-            PersonName patientName,
-            HealthcardNumber healthcardNumber,
-            DateTime? dateOfBirth,
-            Sex sex)
+            PersonName patientName
+            )
             : base(
                 null,
                 null,
@@ -130,10 +128,46 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
                 null
             )
         {
-            _healthcardNumber = healthcardNumber;
-            _dateOfBirth = dateOfBirth;
-            _sex = sex;
+            _healthcardNumber = profile.Healthcard;
+            _dateOfBirth = profile.DateOfBirth;
+            _sex = profile.Sex;
         }
+
+		/// <summary>
+		/// Constructor for procedure search result item.
+		/// </summary>
+		public WorklistItem(
+			Procedure procedure,
+			Order order,
+			Patient patient,
+			PatientProfile profile,
+			PatientIdentifier mrn,
+			PersonName patientName,
+			string accessionNumber,
+			OrderPriority orderPriority,
+			PatientClassEnum patientClass,
+			string diagnosticServiceName,
+			string procedureName,
+			DateTime? time)
+			: base(
+				null,
+				procedure,
+				order,
+				patient,
+				profile,
+				mrn,
+				patientName,
+				accessionNumber,
+				orderPriority,
+				patientClass,
+				diagnosticServiceName,
+				procedureName,
+				time)
+		{
+			_healthcardNumber = profile.Healthcard;
+			_dateOfBirth = profile.DateOfBirth;
+			_sex = profile.Sex;
+		}
 
         #region Public Properties
 

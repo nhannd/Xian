@@ -48,62 +48,28 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     [ExtensionOf(typeof(BrokerExtensionPoint))]
     public class ModalityWorklistItemBroker : WorklistItemBrokerBase<WorklistItem>, IModalityWorklistItemBroker
     {
-        #region IModalityWorklistItemBroker Members
-
-        /// <summary>
-        /// Performs a search for modality worklist items using the specified criteria.
-        /// </summary>
-        /// <param name="where"></param>
-        /// <param name="page"></param>
-        /// <param name="showActiveOnly"></param>
-        /// <returns></returns>
-        public IList<WorklistItem> GetSearchResults(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly)
-        {
-            // ensure criteria are filtering on correct type of step, and display the correct time field
-            // ProcedureScheduledStartTime seems like a reasonable choice for tech homepage search,
-            // as it gives a general sense of when the procedure occurs in time, regardless of the procedure step
-            CollectionUtils.ForEach(where,
-                delegate(WorklistItemSearchCriteria sc)
-                {
-                    sc.ProcedureStepClass = typeof(ModalityProcedureStep);
-                    sc.TimeField = WorklistTimeField.ProcedureScheduledStartTime;
-                });
-            HqlProjectionQuery query = CreateBaseItemQuery(where);
-            query.Page = page;
-            BuildSearchQuery(query, where, showActiveOnly, false);
-            return DoQuery(query);
-        }
-
-        /// <summary>
-        /// Obtains a count of the number of results that a search using the specified criteria would return.
-        /// </summary>
-        /// <param name="where"></param>
-        /// <param name="showActiveOnly"></param>
-        /// <returns></returns>
-        public int CountSearchResults(WorklistItemSearchCriteria[] where, bool showActiveOnly)
-        {
-            // ensure criteria are filtering on correct type of step
-            CollectionUtils.ForEach(where,
-                delegate(WorklistItemSearchCriteria sc) { sc.ProcedureStepClass = typeof(ModalityProcedureStep); });
-            HqlProjectionQuery query = CreateBaseCountQuery(where);
-            BuildSearchQuery(query, where, showActiveOnly, true);
-            return DoQueryCount(query);
-        }
-
-        #endregion
-
         #region Private Helpers
 
-        private void BuildSearchQuery(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool showActiveOnly, bool countQuery)
-        {
-            if (showActiveOnly)
-            {
-                query.Conditions.Add(new HqlCondition("ps.State in (?, ?)", ActivityStatus.SC, ActivityStatus.IP));
-            }
+		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where)
+		{
+			// ensure criteria are filtering on correct type of step, and display the correct time field
+			// ProcedureScheduledStartTime seems like a reasonable choice for tech homepage search,
+			// as it gives a general sense of when the procedure occurs in time, regardless of the procedure step
+			CollectionUtils.ForEach(where,
+				delegate(WorklistItemSearchCriteria sc)
+				{
+					sc.ProcedureStepClass = typeof(ModalityProcedureStep);
+					sc.TimeField = WorklistTimeField.ProcedureScheduledStartTime;
+				});
 
-            AddConditions(query, where, true, countQuery);
-        }
+			HqlProjectionQuery query = CreateBaseItemQuery(where);
+			query.Conditions.Add(new HqlCondition("ps.State in (?, ?)", ActivityStatus.SC, ActivityStatus.IP));
 
-        #endregion
+			AddConditions(query, where, true, false);
+
+			return query;
+		}
+
+		#endregion
     }
 }

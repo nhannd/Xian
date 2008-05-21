@@ -44,22 +44,5 @@ namespace ClearCanvas.Healthcare.Brokers
     /// </summary>
     public interface IRegistrationWorklistItemBroker : IWorklistItemBroker<WorklistItem>
     {
-        /// <summary>
-        /// Performs a search using the specified criteria.
-        /// </summary>
-        /// <param name="where"></param>
-        /// <param name="activeOrdersOnly"></param>
-        /// <param name="workingFacility"></param>
-        /// <returns></returns>
-        IList<WorklistItem> GetSearchResults(WorklistItemSearchCriteria[] where, SearchResultPage page, bool activeOrdersOnly, Facility workingFacility);
-        
-        /// <summary>
-        /// Gets a count of the results that a search using the specified criteria would return.
-        /// </summary>
-        /// <param name="where"></param>
-        /// <param name="activeOrdersOnly"></param>
-        /// <param name="workingFacility"></param>
-        /// <returns></returns>
-        int CountSearchResultsApprox(WorklistItemSearchCriteria[] where, bool activeOrdersOnly, Facility workingFacility);
     }
 }

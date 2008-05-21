@@ -84,9 +84,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
                     {
                         return assembler.CreateDiagnosticServiceSummary(ds);
                     },
-                    delegate(DiagnosticServiceSearchCriteria[] criteria)
+                    delegate(DiagnosticServiceSearchCriteria[] criteria, int threshold)
                     {
-                        return broker.Count(criteria);
+                    	return broker.Count(criteria) <= threshold;
                     },
                     delegate(DiagnosticServiceSearchCriteria[] criteria, SearchResultPage page)
                     {

@@ -175,9 +175,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 					{
 						return assembler.CreateStaffSummary(staff, PersistenceContext);
 					},
-					delegate(StaffSearchCriteria[] criteria)
+					delegate(StaffSearchCriteria[] criteria, int threshold)
 					{
-						return broker.Count(criteria);
+						return broker.Count(criteria) <= threshold;
 					},
 					delegate(StaffSearchCriteria[] criteria, SearchResultPage page)
 					{

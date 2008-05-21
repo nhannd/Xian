@@ -162,9 +162,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
                     {
                         return assembler.CreateExternalPractitionerSummary(prac, PersistenceContext);
                     },
-                    delegate(ExternalPractitionerSearchCriteria[] criteria)
+                    delegate(ExternalPractitionerSearchCriteria[] criteria, int threshold)
                     {
-                        return broker.Count(criteria);
+                    	return broker.Count(criteria) <= threshold;
                     },
                     delegate(ExternalPractitionerSearchCriteria[] criteria, SearchResultPage page)
                     {

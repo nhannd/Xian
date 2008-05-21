@@ -92,9 +92,9 @@ namespace ClearCanvas.Ris.Application.Services
             return criteria.ToArray();
         }
 
-        protected override long DoCount(PatientProfileSearchCriteria[] where)
+        protected override bool TestSpecificity(PatientProfileSearchCriteria[] where, int threshold)
         {
-            return _broker.Count(where);
+            return _broker.Count(where) <= threshold;
         }
 
         protected override IList<PatientProfile> DoQuery(PatientProfileSearchCriteria[] where, SearchResultPage page)

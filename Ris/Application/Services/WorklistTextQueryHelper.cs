@@ -46,13 +46,13 @@ namespace ClearCanvas.Ris.Application.Services
         /// Public constructor allows direct use of this class without the need to create a subclass.
         /// </summary>
         /// <param name="summaryAssembler"></param>
-        /// <param name="countCallback"></param>
+		/// <param name="specificityCallback"></param>
         /// <param name="queryCallback"></param>
         public WorklistTextQueryHelper(
             AssembleSummaryDelegate summaryAssembler,
-            DoCountDelegate countCallback, 
+			TestCriteriaSpecificityDelegate specificityCallback, 
             DoQueryDelegate queryCallback)
-            : base(null, summaryAssembler, countCallback, queryCallback)
+            : base(null, summaryAssembler, specificityCallback, queryCallback)
         {
         }
 

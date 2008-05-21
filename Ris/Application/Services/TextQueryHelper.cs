@@ -91,13 +91,13 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public delegate TSearchCriteria[] BuildCriteriaDelegate(string query);
         public delegate TSummary AssembleSummaryDelegate(TDomainItem domainItem);
-        public delegate long DoCountDelegate(TSearchCriteria[] where);
+        public delegate bool TestCriteriaSpecificityDelegate(TSearchCriteria[] where, int threshold);
         public delegate IList<TDomainItem> DoQueryDelegate(TSearchCriteria[] where, SearchResultPage page);
 
         private readonly BuildCriteriaDelegate _buildCriteriaCallback;
         private readonly AssembleSummaryDelegate _summaryAssembler;
         private readonly DoQueryDelegate _queryCallback;
-        private readonly DoCountDelegate _countCallback;
+		private readonly TestCriteriaSpecificityDelegate _specificityCallback;
 
         /// <summary>
         /// Protected constructor for subclasses.
@@ -115,11 +115,11 @@ namespace ClearCanvas.Ris.Application.Services
         /// <param name="countCallback"></param>
         /// <param name="queryCallback"></param>
         public TextQueryHelper(BuildCriteriaDelegate criteriaBuilder, AssembleSummaryDelegate summaryAssembler,
-            DoCountDelegate countCallback, DoQueryDelegate queryCallback)
+			TestCriteriaSpecificityDelegate countCallback, DoQueryDelegate queryCallback)
         {
             _buildCriteriaCallback = criteriaBuilder;
             _summaryAssembler = summaryAssembler;
-            _countCallback = countCallback;
+            _specificityCallback = countCallback;
             _queryCallback = queryCallback;
         }
 
@@ -139,8 +139,8 @@ namespace ClearCanvas.Ris.Application.Services
             // if a specificity threshold was specified, apply it now
             if (request.SpecificityThreshold > 0)
             {
-                // eliminate query that would return too many results by doing a count query first
-                if (DoCount(where) > request.SpecificityThreshold)
+                // eliminate query that would return too many results
+                if (!TestSpecificity(where, request.SpecificityThreshold))
                     return new TextQueryResponse<TSummary>(true, new List<TSummary>());
             }
 
@@ -163,11 +163,11 @@ namespace ClearCanvas.Ris.Application.Services
             return _buildCriteriaCallback(query);
         }
 
-        protected virtual long DoCount(TSearchCriteria[] where)
+        protected virtual bool TestSpecificity(TSearchCriteria[] where, int threshold)
         {
-            if (_countCallback == null)
+            if (_specificityCallback == null)
                 throw new NotImplementedException("Method must be overridden or a delegate supplied.");
-            return _countCallback(where);
+            return _specificityCallback(where, threshold);
         }
 
         protected virtual IList<TDomainItem> DoQuery(TSearchCriteria[] where, SearchResultPage page)
