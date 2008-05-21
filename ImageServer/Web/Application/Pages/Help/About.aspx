@@ -24,7 +24,7 @@
   <tr><td style="padding-left: 3px; padding-right: 3px; padding-top: 2px;">
     <asp:Panel runat="server" ScrollBars="Vertical" Height="500" BackColor="white"  CssClass="AboutPanel">
 <pre style="font-family: Sans-Serif; font-size: 14px;">
-<b>ClearCanvas Inc.</b>
+<h4>ClearCanvas Inc.</h4>
 
 Copyright (c) 2008, ClearCanvas Inc.
 All rights reserved.

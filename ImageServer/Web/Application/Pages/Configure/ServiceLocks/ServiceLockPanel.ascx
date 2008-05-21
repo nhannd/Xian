@@ -5,9 +5,8 @@
 
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="Panel1" runat="server" style="border: solid 1px #6699CC">
-            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0"
-                BorderWidth="0px">
+            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="2" style="border-color: #6699CC"
+                BorderWidth="2px">
                 <asp:TableHeaderRow>
                     <asp:TableHeaderCell HorizontalAlign="left" VerticalAlign="Bottom" Wrap="false" Width="100%">
                         <asp:UpdatePanel ID="ToolbarUpdatePanel" runat="server" UpdateMode="Conditional">
@@ -75,7 +74,6 @@
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
-        </asp:Panel>
         
         <ccAsp:ConfirmationDialog ID="ConfirmEditDialog" runat="server" />
         <localAsp:EditServiceLockDialog ID="EditServiceLockDialog" runat="server" />

@@ -58,11 +58,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
 
 
             // setup child controls
-            GridPager.ItemName = "Device";
-            GridPager.PuralItemName = "Devices";
-            GridPager.Target = DeviceGridPanel.TheGrid;
+            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerSingleItem;
+            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerMultipleItems;
+            GridPagerTop.Target = DeviceGridPanel.TheGrid;
+            GridPagerTop.PageCountVisible = false;
+            GridPagerTop.ItemCountVisible = true;
 
-            GridPager.GetRecordCountMethod = delegate { return DeviceGridPanel.Devices.Count; };
+            GridPagerBottom.Target = DeviceGridPanel.TheGrid;
+            GridPagerBottom.PageCountVisible = true;
+            GridPagerBottom.ItemCountVisible = false;
+
+            GridPagerTop.GetRecordCountMethod = delegate { return DeviceGridPanel.Devices.Count; };
 
             TimedDialog.Confirmed += delegate(object data)
                  {
@@ -85,16 +91,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             if (dev == null)
             {
                 // no device being selected
-                SendToolbarButton.Enabled = false;
+                MoveButton.Enabled = false;
             }
             else
             {
-                SendToolbarButton.Enabled = true;
+                MoveButton.Enabled = true;
             }
-
-            // UpdatePanel UpdateMode must be set to "conditional"
-            // Calling UpdatePanel.Update() will force the client to refresh the screen
-            //UpdatePanel.Update();
         }
 
         protected void Page_Load(object sender, EventArgs e)

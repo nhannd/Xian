@@ -260,7 +260,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                 // the item no longer exist on the list... either it is deleted or filtered
                 ConfirmationDialog.Title = "";
                 ConfirmationDialog.BackgroundCSS = "";
-                ConfirmationDialog.Message = SR.SelectedWorkQueueNoLongerOnTheList;
+                ConfirmationDialog.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;
                 ConfirmationDialog.MessageType =
                     ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                 ConfirmationDialog.Show();

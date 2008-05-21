@@ -6,7 +6,7 @@
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="Panel2" runat="server" Height="100%" style="border: solid 1px #6699CC;">
-            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0">
+            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="2" BorderColor="#6699CC" BorderWidth="2px">
                 <asp:TableHeaderRow>
                     <asp:TableHeaderCell HorizontalAlign="left" VerticalAlign="Bottom" Width="100%">
                         <asp:Panel ID="Panel1" runat="server" CssClass="ToolbarPanelContainer">

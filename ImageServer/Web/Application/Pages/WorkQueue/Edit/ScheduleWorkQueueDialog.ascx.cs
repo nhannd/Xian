@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 if (WorkQueueItemListPanel.WorkQueueItems!=null && 
                     WorkQueueItemListPanel.WorkQueueItems.Count != WorkQueueKeys.Count)
                 {
-                    MessageDialog.Message = SR.WorkQueueNoLongerAvailable;
+                    MessageDialog.Message = App_GlobalResources.SR.WorkQueueNoLongerAvailable;
                     MessageDialog.MessageType =
                         ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                     MessageDialog.Show();
@@ -164,7 +164,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 if (wq == null)
                 {
                     // the workqueue no longer exist in the db
-                    MessageDialog.Message = SR.WorkQueueRescheduleFailed_ItemNotAvailable;
+                    MessageDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_ItemNotAvailable;
                     MessageDialog.MessageType =
                         ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                     MessageDialog.Show();
@@ -177,11 +177,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                         // prompt the user first
                         if (_workQueues.Count > 1)
                         {
-                            PreApplyChangeConfirmDialog.Message = SR.WorkQueueRescheduleConfirm_OneOrMoreAreBeingProcessed;
+                            PreApplyChangeConfirmDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleConfirm_OneOrMoreAreBeingProcessed;
                         }
                         else
                         {
-                            PreApplyChangeConfirmDialog.Message = SR.WorkQueueRescheduleConfirm_ItemBeingProcessed;
+                            PreApplyChangeConfirmDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleConfirm_ItemBeingProcessed;
                         }
                         PreApplyChangeConfirmDialog.Title = "Warning";
                         PreApplyChangeConfirmDialog.MessageType =
@@ -192,7 +192,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                     }
                     else if (wq.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("Failed"))
                     {
-                        MessageDialog.Message = SR.WorkQueueRescheduleFailed_ItemHasFailed;
+                        MessageDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_ItemHasFailed;
                         MessageDialog.MessageType =
                             ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                         MessageDialog.Show();
@@ -236,7 +236,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                     {
                         MessageDialog.MessageType =
                                 ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
-                        MessageDialog.Message = SR.WorkQueueRescheduleFailed_MustBeInFuture;
+                        MessageDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_MustBeInFuture;
                         MessageDialog.Show();
                         ModalDialog.Show(); 
             
@@ -272,7 +272,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                             MessageDialog.MessageType =
                                     ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                             MessageDialog.Message =
-                                String.Format(SR.WorkQueueRescheduleFailed_Exception, e.Message);
+                                String.Format(App_GlobalResources.SR.WorkQueueRescheduleFailed_Exception, e.Message);
                             MessageDialog.Show();
                         }    
                     }
@@ -351,7 +351,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
             if (WorkQueueItemListPanel.WorkQueueItems.Count != WorkQueueKeys.Count)
             {
-                MessageDialog.Message = SR.WorkQueueNoLongerAvailable;
+                MessageDialog.Message = App_GlobalResources.SR.WorkQueueNoLongerAvailable;
                 MessageDialog.MessageType =
                     ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.INFORMATION;
                 MessageDialog.Show();    

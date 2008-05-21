@@ -4,9 +4,8 @@
 
 <asp:UpdatePanel ID="ServerRuleUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="Panel1" runat="server">
-            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0"
-                BorderWidth="0px">
+            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="2" style="border-color: #6699CC"
+                BorderWidth="2px">
                 <asp:TableHeaderRow>
                     <asp:TableHeaderCell ColumnSpan="1" Width="100%" HorizontalAlign="Left" VerticalAlign="Bottom">
                         <asp:Panel ID="Panel2" runat="server" CssClass="ToolbarPanelContainer">
@@ -85,6 +84,5 @@
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
-        </asp:Panel>
     </ContentTemplate>
 </asp:UpdatePanel>

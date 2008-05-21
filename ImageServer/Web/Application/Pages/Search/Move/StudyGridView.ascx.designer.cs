@@ -20,15 +20,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move {
     public partial class StudyGridView {
         
         /// <summary>
-        /// ContainerTable control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Table ContainerTable;
-        
-        /// <summary>
         /// StudyListControl control.
         /// </summary>
         /// <remarks>

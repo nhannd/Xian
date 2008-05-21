@@ -1,3 +1,66 @@
+.GlobalGridView
+{
+    font-family: Sans-Serif;
+    font-size: 12px;
+    background-color: White;
+    padding: 1px 1px 1px 1px;
+}
+
+.GlobalGridViewHeader
+{
+	background-color: #eeeeee;
+	text-align: left;
+	color: #205F87;
+}
+
+.GlobalGridViewRow
+{
+    
+}
+
+.GlobalGridViewRow td
+{
+    border-bottom: solid 2px #eeeeee;
+    border-top: solid 2px #eeeeee;
+}
+
+.GlobalGridViewSelectedRow
+{
+    background-color: #dddddd;
+    border-bottom: solid 2px #dddddd;
+    border-top: solid 2px #dddddd;
+    color: Black;
+}
+
+.GlobalGridViewSelectedRow td
+{
+    background-color: #dddddd;
+    border-bottom: solid 2px #dddddd;
+    border-top: solid 2px #dddddd;
+    color: Black;
+}
+
+.GlobalGridPagerLabel
+{
+    font-family: Sans-Serif;
+    font-size: 12px;
+    font-weight: bold;
+    color: #D13D4D; 
+    padding-left: 3px;
+    vertical-align: middle;
+}
+
+.GlobalGridPagerLink
+{
+    font-family: Sans-Serif;
+    font-size: 12px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #D13D4D; 
+    vertical-align: middle;
+}
+
+
 /* Container for the gridview */
 .CSSGridViewPanelContainer
 {

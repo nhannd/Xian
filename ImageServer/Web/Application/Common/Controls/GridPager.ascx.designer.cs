@@ -20,24 +20,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
     public partial class GridPager {
         
         /// <summary>
-        /// Panel1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
-        
-        /// <summary>
-        /// Panel3 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel3;
-        
-        /// <summary>
         /// ItemCountLabel control.
         /// </summary>
         /// <remarks>
@@ -56,22 +38,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
         protected global::System.Web.UI.WebControls.Label PageCountLabel;
         
         /// <summary>
-        /// GridPagerNavigation control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel GridPagerNavigation;
-        
-        /// <summary>
         /// PrevPageButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton PrevPageButton;
+        protected global::System.Web.UI.WebControls.LinkButton PrevPageButton;
+        
+        /// <summary>
+        /// LineSpacerLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LineSpacerLabel;
         
         /// <summary>
         /// NextPageButton control.
@@ -80,6 +62,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton NextPageButton;
+        protected global::System.Web.UI.WebControls.LinkButton NextPageButton;
     }
 }

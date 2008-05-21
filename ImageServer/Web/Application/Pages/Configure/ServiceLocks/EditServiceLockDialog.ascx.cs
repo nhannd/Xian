@@ -198,7 +198,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
                 }
                 else
                 {
-                    MessageBox.Message = SR.ServiceLockUpdateFailed_ContactAdmin;
+                    MessageBox.Message = App_GlobalResources.SR.ServiceLockUpdateFailed_ContactAdmin;
                     MessageBox.MessageType =
                         ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                     MessageBox.Show();

@@ -159,7 +159,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
             {
                 if (service.Lock)
                 {
-                    ConfirmEditDialog.Message = SR.ServiceLockUpdate_Confirm_ServiceIsLocked;
+                    ConfirmEditDialog.Message = App_GlobalResources.SR.ServiceLockUpdate_Confirm_ServiceIsLocked;
                     ConfirmEditDialog.MessageType =
                         ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.YESNO;
                     ConfirmEditDialog.Show();

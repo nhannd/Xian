@@ -7,17 +7,6 @@
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
     <ContentTemplate>
-
-      <div>
-  <b class="roundedCorners">
-  <b class="roundedCorners1"><b></b></b>
-  <b class="roundedCorners2"><b></b></b>
-  <b class="roundedCorners3"></b>
-  <b class="roundedCorners4"></b>
-  <b class="roundedCorners5"></b></b>
-
-  <div class="roundedCornersfg">
-  
             <table width="100%" cellpadding="0" cellspacing="0">
             <tr>
                 <td class="MainContentTitle">Study Details</td><td class="ButtonPanel"><asp:Button runat="server" ID="EditStudyButton" Text="Edit" CssClass="ButtonStyle" /> <asp:Button runat="server" ID="DeleteStudyButton" Text="Delete" OnClick="DeleteStudyButton_Click" CssClass="ButtonStyle" /></td>
@@ -52,17 +41,7 @@
             </table>
 
   </div>
-
-  <b class="roundedCorners">
-  <b class="roundedCorners5"></b>
-  <b class="roundedCorners4"></b>
-  <b class="roundedCorners3"></b>
-  <b class="roundedCorners2"><b></b></b>
-  <b class="roundedCorners1"><b></b></b></b>
-</div>
-      
-      
-      
+    
                
         <ccAsp:ConfirmationDialog ID="ConfirmDialog" runat="server" />
         

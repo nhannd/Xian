@@ -20,24 +20,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move {
     public partial class MovePage {
         
         /// <summary>
-        /// MainMenuSiteMapDataSource control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.SiteMapDataSource MainMenuSiteMapDataSource;
-        
-        /// <summary>
-        /// MainMenu control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Menu MainMenu;
-        
-        /// <summary>
         /// PageContent control.
         /// </summary>
         /// <remarks>
@@ -54,15 +36,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.UpdatePanel UpdatePanel1;
-        
-        /// <summary>
-        /// Panel1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
         /// Move control.

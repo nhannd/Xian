@@ -7,13 +7,10 @@ Global.css - Defines the global styles for the entire web application relating
 .GlobalBody
 {
 	background-color: #c5dee7;
-	margin-left:10px;
-	margin-top: 10px;
-	margin-right: 10px;
-	margin-bottom: 10px;
+	margin:10px 10px 10px 10px;
 	z-index: -1;
 	font-family: Sans-Serif;
-	font-size: small;
+	font-size: 14px;
 }
 
 /* Panel containing the contents of entire page */
@@ -29,7 +26,7 @@ Global.css - Defines the global styles for the entire web application relating
 .MainContentPanel 
 {
 	background-color: White;
-	padding: 25px 10px 10px 10px;
+	padding: 20px 5px 5px 5px;
 }
 
 .MainContentLeftEdge
@@ -38,7 +35,6 @@ Global.css - Defines the global styles for the entire web application relating
 	width: 14px;
 	height: 1px;
 }
-
 
 .MainContentRightEdge
 {
@@ -58,8 +54,18 @@ Global.css - Defines the global styles for the entire web application relating
     color: White; 
     font-family: Sans-serif; 
     font-weight: bold; 
-    font-size: 24px;
+    font-size: 20px;
     padding-left: 8px;
+    padding-bottom: 2px;
+}
+
+.MainContentSubTitle
+{
+    color: #205F87; 
+    font-family: Sans-serif; 
+    font-weight: bold; 
+    font-size: 18px;
+    padding-left: 5px;
 }
 
 /*=======================================
@@ -103,25 +109,54 @@ Global.css - Defines the global styles for the entire web application relating
 .roundedCornersfg{
   background:#3d98d1}
 
-/* Buttons */
+/*================================
+ * Buttons 
+ *================================*/
 
 .ButtonStyle
 {
-    width: 100px;
-    font-size: 16px;
+    width: 65px;
+    font-size: 12px;
     font-weight: bold;
     color: #336699;
+    margin-left: 1px;
 }
-
-/* Right aligned Buttons */
 
 .ButtonPanel
 {
-    padding-right: 5px;
     text-align: right;
 }
 
-/* About */
+/*==================================
+ * Labels
+ *==================================*/
+
+.SearchLabel
+{
+    font-family: Sans-Serif; 
+    font-size: 14px; 
+    font-weight: bold; 
+    margin-right: 5px; 
+    color: #205F87;
+}
+
+/*================================= 
+ * TextBoxes 
+ *=================================*/
+
+.SearchTextBox
+{
+    font-family: Sans-Serif;
+    font-size: 12px; 
+    width: 100px;
+}
+
+
+
+
+/*================================
+ * About 
+ *================================*/
 
 .AboutPanel
 {

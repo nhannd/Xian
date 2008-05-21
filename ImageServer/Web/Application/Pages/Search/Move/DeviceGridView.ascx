@@ -1,19 +1,18 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DeviceGridView.ascx.cs" 
 Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Search.Move.DeviceGridView" %>
 
-
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
     Width="100%">
     <asp:TableRow VerticalAlign="top">
-        <asp:TableCell CssClass="CSSGridViewPanelContent" VerticalAlign="top">
+        <asp:TableCell VerticalAlign="top">
         
-            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="CSSGridView"
+            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
                 Width="100%" OnRowDataBound="GridView1_RowDataBound" OnDataBound="GridView1_DataBound"
                 OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
-                EmptyDataText="" OnPageIndexChanging="GridView1_PageIndexChanging" CellPadding="0"
-                PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
+                EmptyDataText="" OnPageIndexChanging="GridView1_PageIndexChanging" CellPadding="4"
+                PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px" BackColor="White" Height="100%">
                 <Columns>
-                    <asp:BoundField DataField="AETitle" HeaderText="AE Title"></asp:BoundField>
+                    <asp:BoundField DataField="AETitle" HeaderText="AE Title" ></asp:BoundField>
                     <asp:BoundField DataField="Description" HeaderText="Description"></asp:BoundField>
                     <asp:TemplateField HeaderText="IPAddress">
                         <ItemTemplate>
@@ -50,11 +49,13 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Search.Move.DeviceGridVi
                         <ItemTemplate>
                             <asp:PlaceHolder ID="FeaturePlaceHolder" runat="server"></asp:PlaceHolder>
                         </ItemTemplate>
+                        <HeaderStyle HorizontalAlign="Center" />
+                        <ItemStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
-                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                        CssClass="CSSGridHeader">
+                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="4" CellSpacing="0"
+                        CssClass="GlobalGridViewHeader">
                         <asp:TableHeaderRow>
                             <asp:TableHeaderCell>
                             AE Title
@@ -74,15 +75,16 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Search.Move.DeviceGridVi
                             <asp:TableHeaderCell HorizontalAlign="Center">
                             DHCP
                             </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center">
                             Features
                             </asp:TableHeaderCell>
                         </asp:TableHeaderRow>
                     </asp:Table>
                 </EmptyDataTemplate>
-                <RowStyle CssClass="CSSGridRowStyle" />
-                <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
-                <HeaderStyle CssClass="CSSGridHeader" />
+                        <RowStyle CssClass="GlobalGridViewRow" />
+                        <HeaderStyle CssClass="GlobalGridViewHeader"/>
+                        <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
+                        <SelectedRowStyle  CssClass="GlobalGridViewSelectedRow" />
                 <PagerTemplate>
                 </PagerTemplate>
             </asp:GridView>

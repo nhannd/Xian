@@ -164,7 +164,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
         protected void DeleteStudyButton_Click(object sender, EventArgs e)
         {
             ConfirmDialog.MessageType = ConfirmationDialog.MessageTypeEnum.YESNO;
-            ConfirmDialog.Message = SR.SingleStudyDelete;
+            ConfirmDialog.Message = App_GlobalResources.SR.SingleStudyDelete;
             ConfirmDialog.Data = Study;
 
             ConfirmDialog.Show();
@@ -196,7 +196,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
         private void ShowScheduledForDeleteAlert()
         {
             MessagePanel.Visible = true;
-            ConfirmationMessage.Text = SR.StudyScheduledForDeletion;               
+            ConfirmationMessage.Text = App_GlobalResources.SR.StudyScheduledForDeletion;               
             UpdatePanel1.Update();
         }
 

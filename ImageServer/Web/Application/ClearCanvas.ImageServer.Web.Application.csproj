@@ -61,7 +61,6 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\KeyedCollectionBase.cs" />
     <Compile Include="Common\Controls\ConfirmationDialog.ascx.cs">
       <DependentUpon>ConfirmationDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -69,19 +68,12 @@
     <Compile Include="Common\Controls\ConfirmationDialog.ascx.designer.cs">
       <DependentUpon>ConfirmationDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Common\Pages\BarChart.aspx.cs">
-      <DependentUpon>BarChart.aspx</DependentUpon>
+    <Compile Include="Common\Controls\GridPager.ascx.cs">
+      <DependentUpon>GridPager.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Common\Pages\BarChart.aspx.designer.cs">
-      <DependentUpon>BarChart.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Common\Pages\BasePage.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-      <DependentUpon>BasePage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Common\Pages\BasePage.aspx.designer.cs">
-      <DependentUpon>BasePage.aspx</DependentUpon>
+    <Compile Include="Common\Controls\GridPager.ascx.designer.cs">
+      <DependentUpon>GridPager.ascx</DependentUpon>
     </Compile>
     <Compile Include="Common\Controls\InvalidInputIndicator.ascx.cs">
       <DependentUpon>InvalidInputIndicator.ascx</DependentUpon>
@@ -111,7 +103,6 @@
     <Compile Include="Common\Controls\ServerPartitionTabs.ascx.designer.cs">
       <DependentUpon>ServerPartitionTabs.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Common\EntityCollection.cs" />
     <Compile Include="Common\Controls\TimedDialog.ascx.cs">
       <DependentUpon>TimedDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -119,19 +110,35 @@
     <Compile Include="Common\Controls\TimedDialog.ascx.designer.cs">
       <DependentUpon>TimedDialog.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Common\KeyedCollectionBase.cs" />
+    <Compile Include="Common\Pages\BarChart.aspx.cs">
+      <DependentUpon>BarChart.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Common\Pages\BarChart.aspx.designer.cs">
+      <DependentUpon>BarChart.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Pages\BasePage.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>BasePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Pages\BasePage.aspx.designer.cs">
+      <DependentUpon>BasePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Common\EntityCollection.cs" />
+    <Compile Include="Common\Pages\MainContentSection.Master.cs">
+      <DependentUpon>MainContentSection.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Common\Pages\MainContentSection.Master.designer.cs">
+      <DependentUpon>MainContentSection.Master</DependentUpon>
+    </Compile>
     <Compile Include="GlobalMasterPage.master.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="GlobalMasterPage.master.designer.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
-    </Compile>
-    <Compile Include="Common\Controls\GridPager.ascx.cs">
-      <DependentUpon>GridPager.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Common\Controls\GridPager.ascx.designer.cs">
-      <DependentUpon>GridPager.ascx</DependentUpon>
     </Compile>
     <Compile Include="Default.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -541,7 +548,7 @@
       <DependentUpon>ValidationServices.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="SR.Designer.cs">
+    <Compile Include="App_GlobalResources\SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
@@ -565,6 +572,7 @@
     <Content Include="App_Themes\ClearCanvas\images\Header\MenuBackground.png" />
     <Content Include="App_Themes\ClearCanvas\images\Header\LocationBackground.png" />
     <Content Include="App_Themes\ClearCanvas\images\Header\MenuEdge.png" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\GridPager.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\GridView.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Global.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Header.css" />
@@ -572,7 +580,6 @@
     <Content Include="App_Themes\ClearCanvas\StyleSheets\SeriesDetails.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\StudyDetails.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Toolbar.css" />
-    <Content Include="Common\Controls\ConfirmationDialog.ascx" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Accordian.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\Calendar.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\Dialog.css" />
@@ -589,12 +596,14 @@
     <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-right.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab.gif" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\Tabs.css" />
-    <Content Include="Common\Pages\BasePage.aspx" />
+    <Content Include="Common\Controls\ConfirmationDialog.ascx" />
+    <Content Include="Common\Controls\GridPager.ascx" />
     <Content Include="Common\Controls\InvalidInputIndicator.ascx" />
     <Content Include="Common\Controls\ModalDialog.ascx" />
     <Content Include="Common\Controls\SectionPanel.ascx" />
     <Content Include="Common\Controls\ServerPartitionTabs.ascx" />
     <Content Include="Common\Controls\TimedDialog.ascx" />
+    <Content Include="Common\Pages\BasePage.aspx" />
     <Content Include="images\blank.gif" />
     <Content Include="images\icons\AutoRouteSmall.png" />
     <Content Include="images\icons\close.png" />
@@ -673,6 +682,7 @@
     <Content Include="Common\Pages\BarChart.aspx" />
     <Content Include="GlobalMasterPage.master" />
     <Content Include="App_Themes\ClearCanvas\Global.skin" />
+    <Content Include="Common\Pages\MainContentSection.Master" />
     <None Include="Pages\WorkQueue\WorkQueueSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
@@ -680,7 +690,6 @@
     <None Include="Scripts\.svn\entries" />
     <None Include="Scripts\.svn\format" />
     <None Include="Service References\FilesystemServiceProxy.map" />
-    <Content Include="Common\Controls\GridPager.ascx" />
     <Content Include="images\checked_tall.gif" />
     <Content Include="images\filter.gif" />
     <Content Include="images\filter_disabled.gif" />
@@ -715,7 +724,7 @@
     <Content Include="images\usage.png" />
     <Content Include="Services\FilesystemInfoService.asmx" />
     <Content Include="Services\ValidationServices.asmx" />
-    <EmbeddedResource Include="SR.resx">
+    <EmbeddedResource Include="App_GlobalResources\SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>

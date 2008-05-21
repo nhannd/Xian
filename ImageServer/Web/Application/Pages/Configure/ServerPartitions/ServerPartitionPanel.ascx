@@ -5,9 +5,8 @@
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="Panel1" runat="server" Height="100%" style="border: solid 1px #6699CC">
-            <asp:Table ID="Table" runat="server" Width="100%" Height="100%" CellPadding="0"
-                BorderWidth="0px">
+            <asp:Table ID="Table" runat="server" Width="100%" Height="100%" CellPadding="2" style="border-color: #6699CC"
+                BorderWidth="2px">
                 <asp:TableHeaderRow VerticalAlign="top" >
                     <asp:TableHeaderCell VerticalAlign="bottom" HorizontalAlign="Left" Width="100%">
                         <asp:Panel ID="Panel2" runat="server" CssClass="ToolbarPanelContainer">
@@ -86,6 +85,5 @@
                     </asp:TableCell>
                 </asp:TableFooterRow>
             </asp:Table>
-        </asp:Panel>
     </ContentTemplate>
 </asp:UpdatePanel>

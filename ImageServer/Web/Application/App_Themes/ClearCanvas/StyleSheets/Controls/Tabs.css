@@ -89,10 +89,7 @@
 .TabControl .ajax__tab_body
 {
 	padding: 5px;
-	border-right: #6699CC 1px solid;
-	border-top: #6699CC 1px solid;
-	border-left: #6699CC 1px solid;
-	border-bottom: #6699CC 1px solid;
+	border: #6699CC 2px solid;
 }
 
 .TabControl .ajax__tab_active .ajax__tab_tab

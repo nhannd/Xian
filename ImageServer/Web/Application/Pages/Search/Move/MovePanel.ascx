@@ -1,78 +1,57 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="MovePanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Search.Move.MovePanel" %>
-<%@ Register Src="DeviceGridView.ascx" TagName="DeviceGridView" TagPrefix="uc2" %>
-<%@ Register Src="StudyGridView.ascx" TagName="StudyGridView" TagPrefix="uc3" %>
+
+<%@ Register Src="DeviceGridView.ascx" TagName="DeviceGridView" TagPrefix="localAsp" %>
+<%@ Register Src="StudyGridView.ascx" TagName="StudyGridView" TagPrefix="localAsp" %>
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <ccAsp:SectionPanel ID="StudySectionPanel" runat="server" HeadingText="Studies to Move"
-            HeadingCSS="CSSStudyHeading" Width="100%" CssClass="CSSSection">
-            <SectionContentTemplate>
-            <br />
-                <asp:Panel ID="Panel10" runat="server" CssClass="CSSGridViewPanelBorder">
-                    <uc3:StudyGridView ID="StudyGridPanel" runat="server" Height="500px" />
-                </asp:Panel>
-            </SectionContentTemplate>
-        </ccAsp:SectionPanel>
-        <br />
-        <ccAsp:SectionPanel ID="DeviceSectionPanel" runat="server" HeadingText="Move Destination Devices"
-            HeadingCSS="CSSStudyHeading" Width="100%" CssClass="CSSSection">
-            <SectionContentTemplate>
-                <asp:Panel ID="Panel1" runat="server" Height="100%">
-                    <asp:Table ID="Table" runat="server" Width="100%" Height="100%" CellPadding="0" BorderWidth="0px">
-                        <asp:TableHeaderRow VerticalAlign="top">
-                            <asp:TableHeaderCell HorizontalAlign="left" VerticalAlign="Bottom" Wrap="false" Width="100%">
-                                <asp:Panel ID="Panel9" runat="server" CssClass="CSSToolbarPanelContainer">
-                                    <asp:Panel ID="Panel11" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
-                                        <asp:Panel ID="Panel12" runat="server" CssClass="CSSToolbarContent">
-                                            <ccUI:ToolbarButton ID="SendToolbarButton" runat="server" EnabledImageURL="~/images/icons/SendEnabled.png"
-                                                DisabledImageURL="~/images/icons/SendDisabled.png" OnClick="SendButton_Click"
-                                                AlternateText="Send Studies to device" />
-                                        </asp:Panel>
-                                    </asp:Panel>
-                                </asp:Panel>
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="right" Width="100%" Wrap="false">
-                                <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
-                                    <asp:Panel ID="Panel3" runat="server" CssClass="CSSFilterPanelBorder">
-                                        <asp:Panel ID="Panel6" runat="server" CssClass="CSSFilterPanelContent">
-                                            <table cellpadding="0" cellspacing="0">
-                                                <tr>
-                                                    <td align="left">
-                                                        <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="CSSTextBoxLabel"></asp:Label><br />
-                                                        <asp:TextBox ID="AETitleFilter" runat="server" CssClass="CSSFilterTextBox"></asp:TextBox>
-                                                    </td>
-                                                    <td align="right" valign="bottom">
-                                                        <asp:Panel ID="FilterButtonContainer" runat="server" CssClass="FilterButtonContainer">
-                                                            <ccUI:ToolbarButton ID="FilterToolbarButton" runat="server" EnabledImageURL="~/images/icons/QueryEnabled.png"
-                                                                DisabledImageURL="~/images/icons/QueryDisabled.png" OnClick="FilterButton_Click"
-                                                                ToolTip="Filter/Refresh" />
-                                                        </asp:Panel>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </asp:Panel>
-                                    </asp:Panel>
-                                </asp:Panel>
-                            </asp:TableHeaderCell>
-                        </asp:TableHeaderRow>
-                        <asp:TableRow VerticalAlign="Top">
-                            <asp:TableCell ColumnSpan="2">
-                                <asp:Panel ID="Panel7" runat="server" CssClass="CSSGridViewPanelContainer">
-                                    <asp:Panel ID="Panel8" runat="server" CssClass="CSSGridViewPanelBorder">
-                                        <uc2:DeviceGridView ID="DeviceGridPanel" runat="server" Height="500px" />
-                                    </asp:Panel>
-                                </asp:Panel>
-                            </asp:TableCell>
-                        </asp:TableRow>
-                        <asp:TableFooterRow VerticalAlign="bottom">
-                            <asp:TableCell ColumnSpan="2">
-                                <ccAsp:GridPager ID="GridPager" runat="server" />
-                            </asp:TableCell>
-                        </asp:TableFooterRow>
-                    </asp:Table>
-                </asp:Panel>
-            </SectionContentTemplate>
-        </ccAsp:SectionPanel>
-                <ccAsp:TimedDialog ID="TimedDialog" runat="server" Timeout="5000" ShowOkButton="false" Title="Move Complete" />
+    
+    <table cellpadding="0" cellspacing="0" width="100%">
+  
+  <tr>
+  <td class="MainContentTitle">Move Studies</td>  
+  </tr>
+  
+  <tr>
+  <td class="SeriesDetailsContent">
+    <table width="100%" cellpadding="2" cellspacing="0" style="background-color: #B8D9EE;">
+        <tr>
+            <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px;">Studies</td>
+            <td class="ButtonPanel"><asp:Button runat="server" ID="MoveButton" Text="Move" CssClass="ButtonStyle" /><asp:Button runat="server" ID="CancelButton" Text="Cancel" CssClass="ButtonStyle" OnClientClick="history.back();" /></td>
+        </tr>
+        <tr><td colspan="2">
+            <asp:Panel ID="Panel1" runat="server" style="border: solid 1px #3d98d1;">
+                <localAsp:StudyGridView ID="StudyGridPanel" runat="server" />
+            </asp:Panel>
+        </td></tr>
+    </table>
+  </tr>
+
+  <tr><td><img src="~/images/blank.gif" height="5px" /></td></tr>
+
+  <tr>
+  <td class="SeriesDetailsContent">
+     <table width="100%" cellpadding="2" cellspacing="0" style="background-color: #B8D9EE">
+        <tr>
+            <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px;">Destination Devices</td>
+            <td align="right" style="vertical-align: bottom"><asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchLabel" /><asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" /> <asp:button runat="server" ID="SearchButton" Text="Search" CssClass="ButtonStyle" />
+        </tr>
+
+        <tr><td colspan="2">
+            <asp:Panel runat="server" style="border: solid 1px #3d98d1; ">
+            <table width="100%" style="background-color: #E1EFF8;" cellpadding="0">
+                <tr><td style="border-bottom: solid 1px #3d98d1;"><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>
+                <tr><td style="background-color: White;"><localAsp:DeviceGridView ID="DeviceGridPanel" runat="server" Height="500px" /></td></tr>
+                <tr><td style="border-top: solid 1px #3d98d1;"><ccAsp:GridPager ID="GridPagerBottom" runat="server" /></td></tr>
+            </table>
+            </asp:Panel>
+        </td></tr>
+    </table>
+          </td>
+  </tr>
+  
+  </table>
+    
+            <ccAsp:TimedDialog ID="TimedDialog" runat="server" Timeout="5000" ShowOkButton="false" Title="Move Complete" />
     </ContentTemplate>
 </asp:UpdatePanel>

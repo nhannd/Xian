@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 WorkQueueItemDetailsPanel.Visible = false;
                 ResetWorkQueueDialog.Hide();
 
-                Message.Text = SR.WorkQueueNotAvailable;
+                Message.Text = App_GlobalResources.SR.WorkQueueNotAvailable;
                 Message.Visible = true;
 
                 UpdatePanel.Update();
@@ -186,14 +186,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             {
                 if (WorkQueueItemDetailsPanel.WorkQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("Failed"))
                 {
-                    InformationDialog.Message = SR.WorkQueueRescheduleFailed_ItemHasFailed;
+                    InformationDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_ItemHasFailed;
                     InformationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
                     return;
                 }
                 else if (WorkQueueItemDetailsPanel.WorkQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress"))
                 {
-                    InformationDialog.Message = SR.WorkQueueBeingProcessed;
+                    InformationDialog.Message = App_GlobalResources.SR.WorkQueueBeingProcessed;
                     InformationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
                     return;
@@ -257,7 +257,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 {
                     if (!ItemNotAvailableAlertShown)
                     {
-                        InformationDialog.Message = SR.WorkQueueNotAvailable;
+                        InformationDialog.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
                         InformationDialog.MessageType =
                                 ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR; 
                         InformationDialog.Show();

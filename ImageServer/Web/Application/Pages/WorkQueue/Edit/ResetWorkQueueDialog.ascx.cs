@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 Model.WorkQueue item = adaptor.Get(key);
                 if (item == null)
                 {
-                    ConfirmationDialog.Message = SR.WorkQueueNotAvailable;
+                    ConfirmationDialog.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
                     ConfirmationDialog.MessageType =
                         ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                     ConfirmationDialog.Show();
@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                             Platform.Log(LogLevel.Error,
                                          "PreResetConfirmDialog_Confirmed: Unable to reset work queue item. GUID={0}", item.GetKey());
 
-                            ConfirmationDialog.Message = SR.WorkQueueResetFailed;
+                            ConfirmationDialog.Message = App_GlobalResources.SR.WorkQueueResetFailed;
                             ConfirmationDialog.MessageType =
                                 ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                             ConfirmationDialog.Show();
@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                         Platform.Log(LogLevel.Error,
                                          "PreResetConfirmDialog_Confirmed: Unable to reset work queue item. GUID={0}. Error: {1}", item.GetKey().Key, e.StackTrace);
 
-                        ConfirmationDialog.Message = SR.WorkQueueResetFailed;
+                        ConfirmationDialog.Message = App_GlobalResources.SR.WorkQueueResetFailed;
                         ConfirmationDialog.MessageType =
                             ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                         ConfirmationDialog.Show();
@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                     {
                         PreResetConfirmDialog.MessageType =
                         ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.INFORMATION;
-                        PreResetConfirmDialog.Message = SR.WorkQueueBeingProcessed;
+                        PreResetConfirmDialog.Message = App_GlobalResources.SR.WorkQueueBeingProcessed;
                         PreResetConfirmDialog.Show();
                         return;
                     }
@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 PreResetConfirmDialog.Data = WorkQueueItemKey;
                 PreResetConfirmDialog.MessageType =
                     ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.YESNO;
-                PreResetConfirmDialog.Message = SR.WorkQueueResetConfirm;
+                PreResetConfirmDialog.Message = App_GlobalResources.SR.WorkQueueResetConfirm;
                 PreResetConfirmDialog.Show();
             }
             

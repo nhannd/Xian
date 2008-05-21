@@ -15,7 +15,7 @@
                 #3D98D1</td>
         </tr>
     </table>
-    <table cellpadding="4" cellspacing="4" align="center" style="background-color: #eeeeee">
+    <table cellpadding="4" cellspacing="4" align="center" style="background-color: #eeeeee; width: 600px">
         <tr>
             <td>
                 <table>
@@ -133,5 +133,129 @@
             </td>
         </tr>
     </table>
+    <br />
+    <table cellpadding="4" cellspacing="4" align="center" style="background-color: #eeeeee; width: 600px;">
+        <tr>
+            <td valign="top">
+                <table>
+                    <tr>
+                        <td colspan="2">
+                            Monotonic</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #3d98d1; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #3D98D1</td>
+                    </tr>                    
+                    <tr>
+                        <td style="background-color: #16425D; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #16425D</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #B8D9EE; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #B8D8EE</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #878787; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #878787</td>
+                    </tr>
+                </table>
+            </td>
+            <td valign="top">
+                <table>
+                    <tr>
+                        <td colspan="2">Analagous</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #3d98d1; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #3D98D1</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #3DC9D1; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #3DC9D1</td>
+                    </tr>                    
+                    <tr>
+                        <td style="background-color: #3D66D1; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #3D66D1</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #8FC3E4; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #8FC3E4</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #878787; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #878787</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #FFFFFF; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #FFFFFF</td>
+                    </tr>
+                </table>
+            </td>
+            <td valign="top">
+<table>
+                    <tr>
+                        <td colspan="2">Split Complimentary</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #3d98d1; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #3D98D1</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #3DC9D1; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #3DC9D1</td>
+                    </tr>                    
+                    <tr>
+                        <td style="background-color: #D13D4D; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #D13D4D</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #D1BF3D; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #D1BF3D</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #878787; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #878787</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #FFFFFF; width: 100px">
+                            &nbsp;</td>
+                        <td>
+                            #FFFFFF</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
     www.colorsontheweb.com
 </asp:Content>

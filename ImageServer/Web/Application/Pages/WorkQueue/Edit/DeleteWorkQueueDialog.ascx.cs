@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 Model.WorkQueue item = adaptor.Get(key);
                 if (item == null)
                 {
-                    ConfirmationDialog.Message = SR.WorkQueueNotAvailable;
+                    ConfirmationDialog.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
                     ConfirmationDialog.MessageType =
                         ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                     ConfirmationDialog.Show();
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
                     if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress"))
                     {
-                        ConfirmationDialog.Message = SR.WorkQueueBeingProcessed_CannotDelete;
+                        ConfirmationDialog.Message = App_GlobalResources.SR.WorkQueueBeingProcessed_CannotDelete;
                         ConfirmationDialog.MessageType =
                             ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                         ConfirmationDialog.Show();
@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                             Platform.Log(LogLevel.Error,
                                          "PreResetConfirmDialog_Confirmed: Unable to delete work queue item. GUID={0}", item.GetKey().Key);
 
-                            ConfirmationDialog.Message = SR.WorkQueueDeleteFailed;
+                            ConfirmationDialog.Message = App_GlobalResources.SR.WorkQueueDeleteFailed;
                             ConfirmationDialog.MessageType =
                                 ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                             ConfirmationDialog.Show();
@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                         Platform.Log(LogLevel.Error,
                                          "PreResetConfirmDialog_Confirmed: Unable to delete work queue item. GUID={0} : {1}", item.GetKey().Key, e.StackTrace);
 
-                        ConfirmationDialog.Message = String.Format(SR.WorkQueueDeleteFailed_WithException, e.Message);
+                        ConfirmationDialog.Message = String.Format(App_GlobalResources.SR.WorkQueueDeleteFailed_WithException, e.Message);
                         ConfirmationDialog.MessageType =
                             ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
                         ConfirmationDialog.Show();
@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 PreDeleteConfirmDialog.Data = WorkQueueItemKey;
                 PreDeleteConfirmDialog.MessageType =
                     ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.YESNO;
-                PreDeleteConfirmDialog.Message = SR.WorkQueueDeleteConfirm;
+                PreDeleteConfirmDialog.Message = App_GlobalResources.SR.WorkQueueDeleteConfirm;
                 PreDeleteConfirmDialog.Show();
             }
         }

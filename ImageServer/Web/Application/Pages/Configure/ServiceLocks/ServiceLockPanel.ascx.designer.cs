@@ -29,13 +29,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
         protected global::System.Web.UI.UpdatePanel UpdatePanel;
         
         /// <summary>
-        /// Panel1 control.
+        /// PanelBlah control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
+        protected global::System.Web.UI.WebControls.Panel PanelBlah;
         
         /// <summary>
         /// Table control.

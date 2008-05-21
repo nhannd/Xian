@@ -45,10 +45,30 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         private GridView _target;
         private string _itemName;
         private string _puralItemName;
+        private bool _pageCountVisible;
+        private bool _itemCountVisible;
 
         #endregion Private Members
 
         #region Public Properties
+
+        /// <summary>
+        /// Sets/Gets whether or not the page count label is visible
+        /// </summary>
+        public bool PageCountVisible
+        {
+            get { return _pageCountVisible; }
+            set { _pageCountVisible = value; }
+        }
+
+        /// <summary>
+        /// Sets/Gets the item count label is visible
+        /// </summary>
+        public bool ItemCountVisible
+        {
+            get { return _itemCountVisible; }
+            set { _itemCountVisible = value; }
+        }
 
         /// <summary>
         /// Sets/Gets the grid associated with this control
@@ -150,31 +170,40 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                     ItemCountLabel.Text = string.Format("{0} {1}", numRows, numRows == 1 ? ItemName : PuralItemName);
                 }
 
-
                 PageCountLabel.Text =
                     string.Format("Page {0} of {1}", _target.PageIndex + 1, _target.PageCount == 0 ? 1 : _target.PageCount);
 
+                PageCountLabel.Visible = _pageCountVisible;
+                ItemCountLabel.Visible = _itemCountVisible;
+
                 if (_target.PageIndex > 0)
                 {
-                    PrevPageButton.ImageUrl = "~/images/icons/BackEnabled.png";
-                    PrevPageButton.Enabled = true;
+                    PrevPageButton.Visible = true;
                 }
                 else
                 {
-                    PrevPageButton.ImageUrl = "~/images/icons/BackDisabled.png";
-                    PrevPageButton.Enabled = false;
+                    PrevPageButton.Visible = false;
                 }
 
 
                 if (_target.PageIndex < _target.PageCount - 1)
                 {
-                    NextPageButton.ImageUrl = "~/images/icons/ForwardEnabled.png";
-                    NextPageButton.Enabled = true;
+                    NextPageButton.Visible = true;
                 }
                 else
                 {
-                    NextPageButton.ImageUrl = "~/images/icons/ForwardDisabled.png";
-                    NextPageButton.Enabled = false;
+                    NextPageButton.Visible = false;
+                }
+
+                NextPageButton.Text = App_GlobalResources.SR.GridPagerNext;
+                PrevPageButton.Text = App_GlobalResources.SR.GridPagerPrevious;
+                if (PrevPageButton.Visible && NextPageButton.Visible)
+                {
+                    LineSpacerLabel.Visible = true;
+                }
+                else
+                {
+                    LineSpacerLabel.Visible = false;
                 }
             }
         }
