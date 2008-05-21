@@ -1,61 +1,26 @@
-﻿#region License
-
-// Copyright (c) 2006-2008, ClearCanvas Inc.
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
-
-#endregion
-
+using System;
+using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.Actions
 {
-	internal delegate ActionModelNode GetMenuModelDelegate();
-
 	/// <summary>
-	/// Models a toolbar item that, when clicked, displays a menu containing other actions.
+	/// Models a toolbar item that has both a drop-down and a button, where each can behave independently.
 	/// </summary>
-	/// <remarks>
-	/// The action is not itself an <see cref="IClickAction"/>, in that the action of
-	/// clicking it is not customizable; it can only show the associated menu items
-	/// (from <see cref="DropDownMenuModel"/>).
-	/// </remarks>
-	public class DropDownButtonAction : Action, IDropDownButtonAction
+	public class DropDownButtonAction : ButtonAction, IDropDownAction
 	{
 		private GetMenuModelDelegate _menuModelDelegate;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="actionID">The logical action ID.</param>
+		/// <param name="actionId">The fully qualified action ID.</param>
 		/// <param name="path">The action path.</param>
-		/// <param name="resourceResolver">A resource resolver that will be used to resolve resources associated with this action.</param>
-		public DropDownButtonAction(string actionID, ActionPath path, IResourceResolver resourceResolver)
-			: base(actionID, path, resourceResolver)
+		/// <param name="flags">Flags that control the style of the action.</param>
+		/// <param name="resolver">A resource resolver that will be used to resolve text and image resources.</param>
+		public DropDownButtonAction(string actionId, ActionPath path, ClickActionFlags flags, IResourceResolver resolver)
+			: base(actionId, path, flags, resolver)
 		{
 		}
 

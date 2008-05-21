@@ -33,14 +33,9 @@
 namespace ClearCanvas.Desktop.Actions
 {
 	/// <summary>
-	/// Models a toolbar item that, when clicked, displays a menu containing other actions.
+	/// Models a toolbar item that displays a menu containing other <see cref="IAction"/>s.
 	/// </summary>
-	/// <remarks>
-	/// The action is not itself an <see cref="IClickAction"/>, in that the action of
-	/// clicking it is not customizable; it can only show the associated menu items
-	/// (from <see cref="DropDownMenuModel"/>).
-	/// </remarks>
-	public interface IDropDownButtonAction : IAction
+	public interface IDropDownAction : IAction
 	{
 		/// <summary>
 		/// Gets the menu model for the dropdown.

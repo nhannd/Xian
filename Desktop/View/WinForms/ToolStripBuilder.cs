@@ -233,16 +233,24 @@ namespace ClearCanvas.Desktop.View.WinForms
             // however, an AssociateViewAttribute should always take precedence.
             if (action.GetType().GetCustomAttributes(typeof(AssociateViewAttribute), true).Length == 0)
             {
-                if (action is IClickAction)
-                {
-                    if (kind == ToolStripKind.Menu)
-                        return new ActiveMenuItem((IClickAction)action);
-                    else
-                        return new ActiveToolbarButton((IClickAction)action);
-                }
-				else if (action is IDropDownButtonAction && kind == ToolStripKind.Toolbar)
+				if (kind == ToolStripKind.Toolbar)
 				{
-					return new DropDownButtonItem((IDropDownButtonAction)action);
+					if (action is IDropDownAction)
+					{
+						if (action is IClickAction)
+							return new DropDownButtonToolbarItem((IClickAction)action);
+						
+						return new DropDownToolbarItem((IDropDownAction) action);
+					}
+					else if (action is IClickAction)
+					{
+						return new ActiveToolbarButton((IClickAction)action);
+					}
+				}
+				else
+				{
+					if (action is IClickAction)
+						return new ActiveMenuItem((IClickAction)action);
 				}
             }
 

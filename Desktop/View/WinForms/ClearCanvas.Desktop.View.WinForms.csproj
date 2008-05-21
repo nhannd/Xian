@@ -71,7 +71,10 @@
     <Compile Include="ComboBoxField.Designer.cs">
       <DependentUpon>ComboBoxField.cs</DependentUpon>
     </Compile>
-    <Compile Include="DropDownButtonItem.cs">
+    <Compile Include="DropDownButtonToolbarItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DropDownToolbarItem.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="GalleryView.cs">

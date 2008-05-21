@@ -37,16 +37,16 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-	public class DropDownButtonItem : ToolStripDropDownButton
+	public class DropDownToolbarItem : ToolStripDropDownButton
 	{
-		private IDropDownButtonAction _action;
+		private IDropDownAction _action;
 		private EventHandler _actionEnabledChangedHandler;
 		private EventHandler _actionVisibleChangedHandler;
 		private EventHandler _actionLabelChangedHandler;
 		private EventHandler _actionTooltipChangedHandler;
 		private EventHandler _actionIconSetChangedHandler;
 
-		public DropDownButtonItem(IDropDownButtonAction action)
+		public DropDownToolbarItem(IDropDownAction action)
 		{
 			_action = action;
 
