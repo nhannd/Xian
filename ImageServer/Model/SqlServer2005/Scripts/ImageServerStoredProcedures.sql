@@ -353,7 +353,7 @@ BEGIN
 				''<rule id="Default Delete">
 					<condition>
 					</condition>
-					<action><study-delete time="10" timeUnits="days"/></action>
+					<action><study-delete time="10" unit="days"/></action>
 				</rule>'' )
 
 	-- Insert a default Tier1Retention rule
@@ -364,7 +364,7 @@ BEGIN
 				''<rule id="Default Tier1 Retention">
 					<condition>
 					</condition>
-					<action><tier1-retention time="3" timeUnits="weeks"/></action>
+					<action><tier1-retention time="3" unit="weeks"/></action>
 				</rule>'' )
 
 	-- Insert a default Online Retention Rule
@@ -375,7 +375,7 @@ BEGIN
 				''<rule id="Default Online Retention">
 					<condition>
 					</condition>
-					<action><online-retention time="4" timeUnits="weeks"/></action>
+					<action><online-retention time="4" unit="weeks"/></action>
 				</rule>'' )
 
 	COMMIT TRANSACTION
