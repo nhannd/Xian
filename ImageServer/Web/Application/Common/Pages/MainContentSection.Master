@@ -1,0 +1,24 @@
+<%@ Master Language="C#" AutoEventWireup="true" MasterPageFile="~/GlobalMasterPage.master"
+    Codebehind="MainContentSection.master.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Common.Pages.MainContentSection" %>
+
+<%-- Make the Main Menu available to pages that use this master file. --%>
+<asp:Content runat="server" ContentPlaceHolderID="MainMenuPlaceHolder">
+    <asp:ContentPlaceHolder ID="MainMenuPlaceHolder" runat="server">
+        <asp:SiteMapDataSource ID="MainMenuSiteMapDataSource" runat="server" ShowStartingNode="False" />
+        <asp:Menu runat="server" ID="MainMenu" SkinID="MainMenu" DataSourceID="MainMenuSiteMapDataSource" style="font-family: Sans-Serif"></asp:Menu>
+    </asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content runat="server" ContentPlaceHolderID="MainContentPlaceHolder">
+    <div>
+        <b class="roundedCorners"><b class="roundedCorners1"><b></b></b><b class="roundedCorners2">
+            <b></b></b><b class="roundedCorners3"></b><b class="roundedCorners4"></b><b class="roundedCorners5">
+            </b></b>
+        <div class="roundedCornersfg">          
+            <asp:ContentPlaceHolder runat="server" ID="MainContent" />   
+        </div>
+        <b class="roundedCorners"><b class="roundedCorners5"></b><b class="roundedCorners4">
+        </b><b class="roundedCorners3"></b><b class="roundedCorners2"><b></b></b><b class="roundedCorners1">
+            <b></b></b></b>
+    </div>
+</asp:Content>
