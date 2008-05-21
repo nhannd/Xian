@@ -29,10 +29,8 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
@@ -51,12 +49,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
 
         [DataMember]
         public List<EnumValueInfo> AddressTypeChoices;
-
-        [DataMember]
-        public List<string> AddressProvinceChoices;
-
-        [DataMember]
-        public List<string> AddressCountryChoices;
 
         [DataMember]
         public List<EnumValueInfo> PhoneTypeChoices;

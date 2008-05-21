@@ -29,23 +29,16 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-
+using System.Security.Permissions;
+using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-
-using Iesi.Collections;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Common.Utilities;
-using System.Security.Permissions;
-using System.Threading;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 {
@@ -61,16 +54,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             // ignore request
 
             LoadPatientProfileEditorFormDataResponse response = new LoadPatientProfileEditorFormDataResponse();
-
-            //TODO:  replace "dummy" lists
-            
-            List<string> dummyCountries = new List<string>();
-            dummyCountries.Add("Canada");
-            response.AddressCountryChoices = dummyCountries;
-
-            List<string> dummyProvinces = new List<string>();
-            dummyProvinces.Add("Ontario");
-            response.AddressProvinceChoices = dummyProvinces;
 
             response.AddressTypeChoices = EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext);
             response.ContactPersonRelationshipChoices = EnumUtils.GetEnumValueList<ContactPersonRelationshipEnum>(PersistenceContext);

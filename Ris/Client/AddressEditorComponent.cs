@@ -31,18 +31,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
-    [ExtensionPoint()]
+    [ExtensionPoint]
     public class AddressesEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
@@ -52,7 +47,7 @@ namespace ClearCanvas.Ris.Client
     {
         private AddressDetail _address;
         private readonly IList<EnumValueInfo> _addressTypes;
-        private bool _addressTypeEnabled;
+        private readonly bool _addressTypeEnabled;
 
 
         public AddressEditorComponent(AddressDetail address, IList<EnumValueInfo> addressTypes)

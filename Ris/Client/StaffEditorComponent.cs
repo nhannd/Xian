@@ -121,6 +121,7 @@ namespace ClearCanvas.Ris.Client
 
 		private EmailAddressesSummaryComponent _emailAddressesSummary;
 		private PhoneNumbersSummaryComponent _phoneNumbersSummary;
+		private AddressesSummaryComponent _addressesSummary;
 
 		private StaffDetailsEditorComponent _detailsEditor;
 		private StaffStaffGroupEditorComponent _groupsEditor;
@@ -176,10 +177,12 @@ namespace ClearCanvas.Ris.Client
 
 					this.Pages.Add(new NavigatorPage("Staff", _detailsEditor = new StaffDetailsEditorComponent(formDataResponse.StaffTypeChoices, formDataResponse.SexChoices)));
 					this.Pages.Add(new NavigatorPage("Staff/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
+					this.Pages.Add(new NavigatorPage("Staff/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
 					this.Pages.Add(new NavigatorPage("Staff/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
 
 					_detailsEditor.StaffDetail = _staffDetail;
 					_phoneNumbersSummary.Subject = _staffDetail.TelephoneNumbers;
+					_addressesSummary.Subject = _staffDetail.Addresses;
 					_emailAddressesSummary.Subject = _staffDetail.EmailAddresses;
 
 					// allow modification of groups only iff the user has StaffGroup admin permissions

@@ -48,6 +48,7 @@ namespace ClearCanvas.Healthcare.Tests
 				staffType,
 				null,
 				new List<EmailAddress>(),
+				new List<Address>(),
 				new List<TelephoneNumber>(),
 				new Dictionary<string, string>(),
 				new HashedSet<StaffGroup>());

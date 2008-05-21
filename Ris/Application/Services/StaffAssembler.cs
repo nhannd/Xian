@@ -55,6 +55,7 @@ namespace ClearCanvas.Ris.Application.Services
 			StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
 			EmailAddressAssembler emailAssembler = new EmailAddressAssembler();
 			TelephoneNumberAssembler telephoneAssembler = new TelephoneNumberAssembler();
+			AddressAssembler addressAssembler = new AddressAssembler();
 
 			return new StaffDetail(
 				staff.Id,
@@ -67,6 +68,9 @@ namespace ClearCanvas.Ris.Application.Services
 				CollectionUtils.Map<TelephoneNumber, TelephoneDetail>(
 					staff.TelephoneNumbers,
 					delegate(TelephoneNumber tn) { return telephoneAssembler.CreateTelephoneDetail(tn, context); }),
+				CollectionUtils.Map<Address, AddressDetail>(
+					staff.Addresses,
+					delegate(Address a) { return addressAssembler.CreateAddressDetail(a, context); }),
 				CollectionUtils.Map<EmailAddress, EmailAddressDetail>(
 					staff.EmailAddresses,
 					delegate(EmailAddress ea) { return emailAssembler.CreateEmailAddressDetail(ea, context); }),
@@ -81,6 +85,7 @@ namespace ClearCanvas.Ris.Application.Services
 			PersonNameAssembler assembler = new PersonNameAssembler();
 			EmailAddressAssembler emailAssembler = new EmailAddressAssembler();
 			TelephoneNumberAssembler telephoneAssembler = new TelephoneNumberAssembler();
+			AddressAssembler addressAssembler = new AddressAssembler();
 
 			staff.Id = detail.StaffId;
 			staff.Type = EnumUtils.GetEnumValue<StaffType>(detail.StaffType);
@@ -96,6 +101,15 @@ namespace ClearCanvas.Ris.Application.Services
 				foreach (TelephoneDetail phoneDetail in detail.TelephoneNumbers)
 				{
 					staff.TelephoneNumbers.Add(telephoneAssembler.CreateTelephoneNumber(phoneDetail));
+				}
+			}
+
+			staff.Addresses.Clear();
+			if (detail.Addresses != null)
+			{
+				foreach (AddressDetail addressDetail in detail.Addresses)
+				{
+					staff.Addresses.Add(addressAssembler.CreateAddress(addressDetail));
 				}
 			}
 

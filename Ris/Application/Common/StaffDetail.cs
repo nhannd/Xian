@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Application.Common
 		public StaffDetail(string staffId, EnumValueInfo staffType,
 			PersonNameDetail personNameDetail, EnumValueInfo sex,
 			string title, string licenseNumber, string billingNumber,
-			List<TelephoneDetail> telephoneNumbers, List<EmailAddressDetail> emailAddresses,
+			List<TelephoneDetail> telephoneNumbers, List<AddressDetail> addresses, List<EmailAddressDetail> emailAddresses,
 			List<StaffGroupSummary> groups, Dictionary<string, string> extendedProperties)
 		{
 			this.StaffId = staffId;
@@ -52,6 +52,7 @@ namespace ClearCanvas.Ris.Application.Common
 			this.LicenseNumber = licenseNumber;
 			this.BillingNumber = billingNumber;
 			this.TelephoneNumbers = telephoneNumbers;
+			this.Addresses = addresses;
 			this.EmailAddresses = emailAddresses;
 			this.Groups = groups;
 			this.ExtendedProperties = extendedProperties;
@@ -61,6 +62,7 @@ namespace ClearCanvas.Ris.Application.Common
 		{
 			this.Name = new PersonNameDetail();
 			this.EmailAddresses = new List<EmailAddressDetail>();
+			this.Addresses = new List<AddressDetail>();
 			this.TelephoneNumbers = new List<TelephoneDetail>();
 			this.Groups = new List<StaffGroupSummary>();
 			this.ExtendedProperties = new Dictionary<string, string>();
@@ -89,6 +91,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public List<TelephoneDetail> TelephoneNumbers;
+
+		[DataMember]
+		public List<AddressDetail> Addresses;
 
 		[DataMember]
 		public List<EmailAddressDetail> EmailAddresses;

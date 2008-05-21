@@ -39,11 +39,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
 	public class LoadStaffEditorFormDataResponse : DataContractBase
 	{
 		public LoadStaffEditorFormDataResponse(
-			List<EnumValueInfo> staffTypeChoices, List<EnumValueInfo> sexChoices, List<EnumValueInfo> phoneTypeChoices, List<StaffGroupSummary> groupChoices)
+			List<EnumValueInfo> staffTypeChoices,
+			List<EnumValueInfo> sexChoices,
+			List<EnumValueInfo> phoneTypeChoices,
+			List<EnumValueInfo> addressTypeChoices,
+			List<StaffGroupSummary> groupChoices)
 		{
 			this.StaffTypeChoices = staffTypeChoices;
 			this.SexChoices = sexChoices;
 			this.PhoneTypeChoices = phoneTypeChoices;
+			this.AddressTypeChoices = addressTypeChoices;
 			this.StaffGroupChoices = groupChoices;
 		}
 
@@ -55,6 +60,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
 
 		[DataMember]
 		public List<EnumValueInfo> PhoneTypeChoices;
+
+		[DataMember]
+		public List<EnumValueInfo> AddressTypeChoices;
 
 		[DataMember]
 		public List<StaffGroupSummary> StaffGroupChoices;

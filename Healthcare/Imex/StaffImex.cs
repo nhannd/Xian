@@ -51,6 +51,9 @@ namespace ClearCanvas.Healthcare.Imex
 			public List<TelephoneNumberData> TelephoneNumbers;
 
 			[DataMember]
+			public List<AddressData> Addresses;
+
+			[DataMember]
 			public List<EmailAddressData> EmailAddresses;
 
 			[DataMember]
@@ -84,6 +87,8 @@ namespace ClearCanvas.Healthcare.Imex
 
 			data.TelephoneNumbers = CollectionUtils.Map<TelephoneNumber, TelephoneNumberData>(entity.TelephoneNumbers,
 				delegate(TelephoneNumber tn) { return new TelephoneNumberData(tn); });
+			data.Addresses = CollectionUtils.Map<Address, AddressData>(entity.Addresses,
+				delegate(Address a) { return new AddressData(a); });
 			data.EmailAddresses = CollectionUtils.Map<EmailAddress, EmailAddressData>(entity.EmailAddresses,
 				delegate(EmailAddress a) { return new EmailAddressData(a); });
 
@@ -115,6 +120,15 @@ namespace ClearCanvas.Healthcare.Imex
 				foreach (TelephoneNumberData phoneDetail in data.TelephoneNumbers)
 				{
 					staff.TelephoneNumbers.Add(phoneDetail.CreateTelephoneNumber());
+				}
+			}
+
+			if (data.Addresses != null)
+			{
+				staff.Addresses.Clear();
+				foreach (AddressData address in data.Addresses)
+				{
+					staff.Addresses.Add(address.CreateAddress());
 				}
 			}
 

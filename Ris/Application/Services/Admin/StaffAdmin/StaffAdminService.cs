@@ -92,15 +92,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 		{
 			StaffGroupAssembler groupAssember = new StaffGroupAssembler();
 
-
 			return new LoadStaffEditorFormDataResponse(
 				EnumUtils.GetEnumValueList<StaffTypeEnum>(this.PersistenceContext),
 				EnumUtils.GetEnumValueList<SexEnum>(this.PersistenceContext),
 				(new SimplifiedPhoneTypeAssembler()).GetPatientPhoneTypeChoices(),
+				EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext),
 				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(),
 					delegate(StaffGroup group) { return groupAssember.CreateSummary(group); })
 				);
-
 		}
 
 		[UpdateOperation]

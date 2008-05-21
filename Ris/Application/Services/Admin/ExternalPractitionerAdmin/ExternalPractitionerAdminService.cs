@@ -29,18 +29,15 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common;
-using System.Security.Permissions;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
@@ -88,20 +85,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
         [ReadOperation]
         public LoadExternalPractitionerEditorFormDataResponse LoadExternalPractitionerEditorFormData(LoadExternalPractitionerEditorFormDataRequest request)
         {
-            //TODO:  replace "dummy" lists
-            List<string> dummyCountries = new List<string>();
-            dummyCountries.Add("Canada");
-
-            List<string> dummyProvinces = new List<string>();
-            dummyProvinces.Add("Ontario");
-
             return new LoadExternalPractitionerEditorFormDataResponse(
                 EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext),
-                dummyProvinces,
-                dummyCountries,
                 (new SimplifiedPhoneTypeAssembler()).GetPractitionerPhoneTypeChoices(),
                 EnumUtils.GetEnumValueList<ResultCommunicationModeEnum>(PersistenceContext));
-
         }
 
         [UpdateOperation]
