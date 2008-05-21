@@ -32,7 +32,9 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Controls;
+using System.ComponentModel;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -41,6 +43,9 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// </summary>
     public partial class StackTabComponentContainerControl : CustomUserControl
     {
+    	private VisualStyle _activeStyle = VisualStyle.Office2007Blue;
+		private VisualStyle _inactiveStyle = VisualStyle.Office2007Black;
+
         private readonly StackTabComponentContainer _component;
 
         public StackTabComponentContainerControl(StackTabComponentContainer component)
@@ -51,55 +56,24 @@ namespace ClearCanvas.Desktop.View.WinForms
             CreateStackTabs();
         }
 
-        private void CreateStackTabs()
-        {
-            _stackTabControl.RootDirection = Crownwood.DotNetMagic.Common.LayoutDirection.Vertical;
+		[DefaultValue(VisualStyle.Office2007Blue)]
+    	public VisualStyle ActiveStyle
+    	{
+			get { return _activeStyle; }
+			set { _activeStyle = value; }
+    	}
 
-            foreach (StackTabPage page in _component.Pages)
-            {
-                StackTab stackTab = CreateStackTab(page, _component.StackStyle);
-
-                Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl = _stackTabControl.RootSequence.AddNewLeaf();
-                tgl.MinimumSize = stackTab.MinimumRequestedSize;
-
-                // Prevent user from resizing
-                tgl.ResizeBarLock = _component.StackStyle == StackStyle.ShowMultiple ? false : true;
-
-                Crownwood.DotNetMagic.Controls.TabPage tabPageUI = new Crownwood.DotNetMagic.Controls.TabPage(page.Name, stackTab);
-                tabPageUI.Tag = page;
-                tgl.TabPages.Add(tabPageUI);
-            }
-
-            // Set the sizing spaces between groups
-            _stackTabControl.ResizeBarVector = _component.StackStyle == StackStyle.ShowMultiple ? 1 : 0;
-
-            // The space of each tab group can only be set after each tab group is created
-            // Open up only the first tab group and close all others
-            for (int i = 0; i < _stackTabControl.RootSequence.Count; i++)
-            {
-                Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl = _stackTabControl.RootSequence[i] as Crownwood.DotNetMagic.Controls.TabGroupLeaf;
-
-                if (_component.StackStyle == StackStyle.ShowMultiple && _component.OpenAllTabsInitially)
-                {
-                    OpenTabGroup(tgl, (decimal)100 / _stackTabControl.RootSequence.Count);
-                }
-                else
-                {
-                    if (tgl == _stackTabControl.RootSequence[0])
-                        OpenTabGroup(tgl, 100);
-                    else
-                        CloseTabGroup(tgl);
-                }
-            }
-
-            // Reflect spacing changes immediately
-            _stackTabControl.RootSequence.Reposition();
-        }
+		[DefaultValue(VisualStyle.Office2007Black)]
+		public VisualStyle InactiveStyle
+		{
+			get { return _inactiveStyle; }
+			set { _inactiveStyle = value; }
+		}
 
         #region Event Handlers
 
 		/// <summary>
-		/// Event Handler when user click on one of the the title bar when StackStyle is ShowMultiple
+		/// Event Handler when user click on one of the title bar when StackStyle is ShowMultiple
 		/// </summary>
         private void OnShowMultipleTitleClick(object sender, EventArgs e)
         {
@@ -126,7 +100,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 else
                 {
                     // Remember which TabGroup is opened
-                    if (tgl.Space > 0)
+					if (tgl.Space > 0)
                         openedTabGroup.Add(tgl);
                 }
 
@@ -160,7 +134,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
 		/// <summary>
-		/// Event Handler when user click on one of the the title bar when StackStyle is ShowOnlyOne
+		/// Event Handler when user click on one of the title bar when StackStyle is ShowOnlyOne
 		/// </summary>
 		private void OnShowOnlyOneTitleClick(object sender, EventArgs e)
         {
@@ -194,11 +168,75 @@ namespace ClearCanvas.Desktop.View.WinForms
             _stackTabControl.RootSequence.Reposition();
         }
 
-        #endregion
+		/// <summary>
+		/// Event Handler when user click on one of the tab page 
+		/// </summary>
+		private void _stackTabControl_PageChanged(TabbedGroups tg, Crownwood.DotNetMagic.Controls.TabPage tp)
+		{
+			TabGroupLeaf tgl = tg.FirstLeaf();
+			while (tgl != null)
+			{
+				// Extract the StackTabTitleBar instance from page
+				TitleBar tb = (tgl.TabPages[0].Control as StackTab).TitleBar;
+				tb.Style = _inactiveStyle;
+
+				tgl = tg.NextLeaf(tgl);
+			}
+
+			TitleBar selectedTabPageTitle = (tp.Control as StackTab).TitleBar;
+			selectedTabPageTitle.Style = _activeStyle;
+		}
+		
+		#endregion
 
         #region Private Helpers
 
-        private StackTab CreateStackTab(StackTabPage page, StackStyle stackStyle)
+		private void CreateStackTabs()
+		{
+			_stackTabControl.RootDirection = Crownwood.DotNetMagic.Common.LayoutDirection.Vertical;
+
+			foreach (StackTabPage page in _component.Pages)
+			{
+				StackTab stackTab = CreateStackTab(page, _component.StackStyle);
+
+				Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl = _stackTabControl.RootSequence.AddNewLeaf();
+				tgl.MinimumSize = stackTab.MinimumRequestedSize;
+
+				// Prevent user from resizing
+				tgl.ResizeBarLock = _component.StackStyle == StackStyle.ShowMultiple ? false : true;
+
+				Crownwood.DotNetMagic.Controls.TabPage tabPageUI = new Crownwood.DotNetMagic.Controls.TabPage(page.Name, stackTab);
+				tabPageUI.Tag = page;
+				tgl.TabPages.Add(tabPageUI);
+			}
+
+			// Set the sizing spaces between groups
+			_stackTabControl.ResizeBarVector = _component.StackStyle == StackStyle.ShowMultiple ? 1 : 0;
+
+			// The space of each tab group can only be set after each tab group is created
+			// Open up only the first tab group and close all others
+			for (int i = 0; i < _stackTabControl.RootSequence.Count; i++)
+			{
+				Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl = _stackTabControl.RootSequence[i] as Crownwood.DotNetMagic.Controls.TabGroupLeaf;
+
+				if (_component.StackStyle == StackStyle.ShowMultiple && _component.OpenAllTabsInitially)
+				{
+					OpenTabGroup(tgl, (decimal)100 / _stackTabControl.RootSequence.Count);
+				}
+				else
+				{
+					if (tgl == _stackTabControl.RootSequence[0])
+						OpenTabGroup(tgl, 100);
+					else
+						CloseTabGroup(tgl);
+				}
+			}
+
+			// Reflect spacing changes immediately
+			_stackTabControl.RootSequence.Reposition();
+		}
+
+		private StackTab CreateStackTab(StackTabPage page, StackStyle stackStyle)
         {
             StackTab stackTab;
 			
@@ -238,7 +276,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			ToggleArrow(stackTab.TitleBar);
 
-            _component.CurrentPage = page;
+			_component.CurrentPage = page;
             tabPageUI.Select();
             tgl.Space = space;
         }

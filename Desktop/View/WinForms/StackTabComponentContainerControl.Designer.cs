@@ -59,32 +59,33 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._stackTabControl = new Crownwood.DotNetMagic.Controls.TabbedGroups();
-            ((System.ComponentModel.ISupportInitialize)(this._stackTabControl)).BeginInit();
-            this.SuspendLayout();
-            // 
-            // _stackTabControl
-            // 
-            this._stackTabControl.AllowDrop = true;
-            this._stackTabControl.AtLeastOneLeaf = false;
-            this._stackTabControl.DisplayTabMode = Crownwood.DotNetMagic.Controls.DisplayTabModes.HideAll;
-            this._stackTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._stackTabControl.Location = new System.Drawing.Point(0, 0);
-            this._stackTabControl.Name = "_stackTabControl";
-            this._stackTabControl.ProminentLeaf = null;
-            this._stackTabControl.ResizeBarColor = System.Drawing.SystemColors.Control;
-            this._stackTabControl.Size = new System.Drawing.Size(222, 258);
-            this._stackTabControl.TabIndex = 0;
-            // 
-            // StackTabComponentContainerControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._stackTabControl);
-            this.Name = "StackTabComponentContainerControl";
-            this.Size = new System.Drawing.Size(222, 258);
-            ((System.ComponentModel.ISupportInitialize)(this._stackTabControl)).EndInit();
-            this.ResumeLayout(false);
+			this._stackTabControl = new Crownwood.DotNetMagic.Controls.TabbedGroups();
+			((System.ComponentModel.ISupportInitialize)(this._stackTabControl)).BeginInit();
+			this.SuspendLayout();
+			// 
+			// _stackTabControl
+			// 
+			this._stackTabControl.AllowDrop = true;
+			this._stackTabControl.AtLeastOneLeaf = false;
+			this._stackTabControl.DisplayTabMode = Crownwood.DotNetMagic.Controls.DisplayTabModes.HideAll;
+			this._stackTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._stackTabControl.Location = new System.Drawing.Point(0, 0);
+			this._stackTabControl.Name = "_stackTabControl";
+			this._stackTabControl.ProminentLeaf = null;
+			this._stackTabControl.ResizeBarColor = System.Drawing.SystemColors.Control;
+			this._stackTabControl.Size = new System.Drawing.Size(222, 258);
+			this._stackTabControl.TabIndex = 0;
+			this._stackTabControl.PageChanged += new Crownwood.DotNetMagic.Controls.TabbedGroups.PageChangeHandler(this._stackTabControl_PageChanged);
+			// 
+			// StackTabComponentContainerControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._stackTabControl);
+			this.Name = "StackTabComponentContainerControl";
+			this.Size = new System.Drawing.Size(222, 258);
+			((System.ComponentModel.ISupportInitialize)(this._stackTabControl)).EndInit();
+			this.ResumeLayout(false);
 
         }
 

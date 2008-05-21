@@ -141,7 +141,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _titleBar
 			// 
-			this._titleBar.ArrowButton = Crownwood.DotNetMagic.Controls.ArrowButton.DownArrow;
 			this._titleBar.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
 			this._titleBar.ImageAlignment = Crownwood.DotNetMagic.Controls.ImageAlignment.Far;
@@ -150,9 +149,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._titleBar.Name = "_titleBar";
 			this._titleBar.Size = new System.Drawing.Size(368, 24);
+			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
 			this._titleBar.TabIndex = 0;
 			this._titleBar.Text = "titleBar1";
-			this._titleBar.ButtonClick += new System.EventHandler(this.OnArrowClick);
+			this._titleBar.ButtonClick += new System.EventHandler(this.OnTitleClick);
 			// 
 			// _panel
 			// 
@@ -192,7 +192,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		#endregion
 
 		// Fire constructor provided event user clicks titlebar arrow
-		private void OnArrowClick(object sender, EventArgs e)
+		private void OnTitleClick(object sender, EventArgs e)
 		{
 			if (_titleClick != null)
 				_titleClick(sender, e);
