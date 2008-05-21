@@ -50,7 +50,7 @@
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Patient ID">
             <ItemTemplate>
-                <asp:Label runat="server" ID="PatientID" Text='<%# Eval("Study.PatientID") %>' />
+                <asp:Label runat="server" ID="PatientID" Text='<%# Eval("Study.PatientId") %>' />
             </ItemTemplate>
         </asp:TemplateField>
        

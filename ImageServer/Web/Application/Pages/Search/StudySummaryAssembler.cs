@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 {
@@ -49,22 +50,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
         /// <remark>
         /// 
         /// </remark>
-        static public StudySummary CreateStudySummary(Model.Study study)
+        static public StudySummary CreateStudySummary(Study study)
         {
             StudySummary summary = new StudySummary();
+			StudyController controller = new StudyController();
 
-            summary.GUID = study.GetKey();
+            summary.Key = study.GetKey();
             summary.AccessionNumber = study.AccessionNumber;
             summary.NumberOfRelatedInstances = study.NumberOfStudyRelatedInstances;
             summary.NumberOfRelatedSeries = study.NumberOfStudyRelatedSeries;
-            summary.PatientID = study.PatientId;
+            summary.PatientId = study.PatientId;
             summary.PatientsName = study.PatientsName;
-
             summary.StudyDate = study.StudyDate;
-
             summary.StudyDescription = study.StudyDescription;
-
-
+        	summary.StudyStatusEnum = study.StudyStatusEnum;
+        	summary.ModalitiesInStudy = controller.GetModalitiesInStudy(study);
             return summary;
         }
 

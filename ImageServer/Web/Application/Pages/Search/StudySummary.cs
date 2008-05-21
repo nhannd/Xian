@@ -43,29 +43,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
     {
         #region Private members
         private ServerEntityKey _ref;
-        private string _patientID;
+        private string _patientId;
         private string _patientName;
         private string _studyDate;
         private string _accessionNumber;
         private string _studyDescription;
         private int _numberOfRelatedSeries;
         private int _numberOfRelatedInstances;
+    	private StudyStatusEnum _studyStatusEnum;
+    	private string _modalitiesInStudy;
 
         #endregion Private members
 
         
         #region Public Properties
 
-        public ServerEntityKey GUID
+        public ServerEntityKey Key
         {
             get { return _ref; }
             set { _ref = value; }
         }
 
-        public string PatientID
+        public string PatientId
         {
-            get { return _patientID; }
-            set { _patientID = value; }
+            get { return _patientId; }
+            set { _patientId = value; }
         }
 
         public string PatientsName
@@ -104,6 +106,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
             set { _numberOfRelatedInstances = value; }
         }
 
-        #endregion Public Properties
+    	public StudyStatusEnum StudyStatusEnum
+    	{
+    		get { return _studyStatusEnum; }
+    		set { _studyStatusEnum = value; }
+    	}
+
+    	public string ModalitiesInStudy
+    	{
+			get { return _modalitiesInStudy; }
+			set { _modalitiesInStudy = value; }    		
+    	}
+    	#endregion Public Properties
     }
 }

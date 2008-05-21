@@ -468,7 +468,7 @@ namespace ClearCanvas.Dicom.Network
                             {
                                 TransferSyntax transferSyntax = TransferSyntax.GetTransferSyntax(sx);
                                 if (transferSyntax == null)
-                                    transferSyntax = new TransferSyntax("Private Syntax", sx, true, false, true, false);
+                                    transferSyntax = new TransferSyntax("Private Syntax", sx, true, false, true, false, false, false);
                                 _assoc.AddTransferSyntax(id, transferSyntax);
                             }
                             il -= (ushort)(4 + pl);

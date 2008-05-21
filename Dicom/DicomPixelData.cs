@@ -705,7 +705,7 @@ namespace ClearCanvas.Dicom
             if (dataset.Contains(DicomTags.LossyImageCompressionMethod) || LossyImageCompressionMethod.Length > 0)
                 dataset[DicomTags.LossyImageCompressionMethod].SetString(0, LossyImageCompressionMethod);
             if (dataset.Contains(DicomTags.DerivationDescription) || DerivationDescription.Length > 0)
-                dataset[DicomTags.DerivationDescription].SetString(0, DerivationDescription);
+				dataset[DicomTags.DerivationDescription].SetStringValue(DerivationDescription);
 
             dataset.SaveDicomFields(this);
             dataset[DicomTags.PixelData] = _sq;

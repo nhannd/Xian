@@ -359,9 +359,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                             string newPath = basePath + "." + extension;
                             if (!File.Exists(newPath))
                             {
-                                sop.Extension = extension;
-                                File.Move(path, newPath);
-                                break;
+								if (File.Exists(path))
+								{
+									sop.Extension = extension;
+									File.Move(path, newPath);
+								}
+                            	break;
                             }
                         }
 
@@ -488,15 +491,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Console.WriteLine("WorkQueue Item is being processed...");
 #endif
             bool successful = false;
+        	bool batchProcessed = true;
             _statistics.TotalProcessTime.Add(
-                    delegate()
-                    {
+                    delegate
+                    	{
                             //Load the specific UIDs that need to be processed.
                             LoadUids(item);
 
                             if (WorkQueueUidList.Count == 0)
                             {
                                 successful = true;
+                            	batchProcessed = false;
                             }
                             else
                             {
@@ -528,13 +533,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 				}
 				if (failNow)
 				{
-					Platform.Log(LogLevel.Error, "Failing queue entry, all entries are duplicates.");
-					FailQueueItem(item);
+					Platform.Log(LogLevel.Error,"Failing queue entry, all entries are duplicates.");
+					PostProcessingFailure(item, true);
 					return;
 				}
 			}
-
-            PostProcessing(item, WorkQueueUidList.Count, !successful);
+			if (successful)
+				PostProcessing(item, batchProcessed, false);
+			else
+				PostProcessingFailure(item, false);
         }
 
 

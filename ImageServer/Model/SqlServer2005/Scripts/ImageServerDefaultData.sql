@@ -658,6 +658,14 @@ VALUES(newid(),100,'Online','Online','Study is online')
 GO
 
 INSERT INTO [ImageServer].[dbo].[StudyStatusEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+VALUES(newid(),101,'OnlineLossless','Online (Lossless)','Study is online and lossless compressed')
+GO
+
+INSERT INTO [ImageServer].[dbo].[StudyStatusEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+VALUES(newid(),102,'OnlineLossy','Online (Lossy)','Study is online and lossy compressed')
+GO
+
+INSERT INTO [ImageServer].[dbo].[StudyStatusEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
 VALUES(newid(),200,'Pending','Pending','Pending')
 GO
 

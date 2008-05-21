@@ -135,7 +135,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             }
             finally
             {
-                PostProcessing(item, 0, !successful);
+				if (successful)
+					PostProcessing(item,false,true); // Complete
+				else
+					PostProcessingFailure(item, false);
             }
         }
 
@@ -191,65 +194,5 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         #endregion
 
-        #region Protected Methods
-
-        protected override void PostProcessing(Model.WorkQueue item, int batchSize, bool failed)
-        {
-            using (
-                IUpdateContext updateContext =
-                    PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IUpdateWorkQueue broker = updateContext.GetBroker<IUpdateWorkQueue>();
-                WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
-                parms.WorkQueueKey = item.GetKey();
-                parms.StudyStorageKey = item.StudyStorageKey;
-                parms.ProcessorID = item.ProcessorID;
-
-                WorkQueueSettings settings = WorkQueueSettings.Default;
-
-                if (!failed)
-                {
-                    // We update the study in one shot. If it succeeds, we're done
-                    // It doesn't make sense to put back into Pending like we do for other type of work queue items
-                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Completed");
-                    parms.FailureCount = item.FailureCount;
-                    parms.ScheduledTime = item.ScheduledTime;
-                    parms.ExpirationTime = item.ExpirationTime; // Keep the same
-                }
-                else
-                {
-                    parms.FailureCount = item.FailureCount + 1;
-                    if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
-                    {
-                        Platform.Log(LogLevel.Error,
-                                     "Failing EditStudy WorkQueue entry ({0}), reached max retry count of {1}",
-                                     item.GetKey(), item.FailureCount + 1);
-                        parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
-                        parms.ScheduledTime = Platform.Time;
-                        parms.ExpirationTime = Platform.Time; // expire now
-                    }
-                    else
-                    {
-                        Platform.Log(LogLevel.Error,
-                                     "Resetting EditStudy WorkQueue entry ({0}) to Pending, current retry count {1}",
-                                     item.GetKey(), item.FailureCount + 1);
-                        parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
-                        parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
-                        parms.ExpirationTime =
-                            Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount)*
-                                                     settings.WorkQueueFailureDelayMinutes);
-                    }
-                }
-
-                if (false == broker.Execute(parms))
-                {
-                    Platform.Log(LogLevel.Error, "Unable to update EditStudy WorkQueue GUID: {0}",
-                                 item.GetKey().ToString());
-                }
-                else
-                    updateContext.Commit();
-            }
-        }
-        #endregion Protected Methods
     }
 }

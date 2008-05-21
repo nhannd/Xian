@@ -76,22 +76,25 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
             IDeviceEntityBroker selectDevice = updateContext.GetBroker<IDeviceEntityBroker>();
 
             Device dev = CollectionUtils.FirstElement<Device>(selectDevice.Find(deviceSelectCriteria));
-            if (dev == null)
-                throw new ApplicationException(
-                    String.Format("Device '{0}' not in database for autoroute request!", _deviceAe));
-
-            if (!dev.AllowAutoRoute)
+			if (dev == null)
+			{
+				Platform.Log(LogLevel.Warn,
+				             "Device '{0}' on partition {1} not in database for autoroute request!  Ignoring request.", _deviceAe,
+				             _context.ServerPartition.AeTitle);
+				return;
+			}
+        	if (!dev.AllowAutoRoute)
             {
                 Platform.Log(LogLevel.Warn,
                              "Auto-route attempted to device {0} on partition {1} with autoroute support disabled.  Ignoring request.",
-                             dev.AeTitle, ServerPartition.Load(_context.ServerPartitionKey).AeTitle);
+                             dev.AeTitle, _context.ServerPartition.AeTitle);
                 return;
             }
 
             WorkQueueAutoRouteInsertParameters parms = new WorkQueueAutoRouteInsertParameters();
 
-            parms.ScheduledTime = Platform.Time.AddSeconds(60);
-            parms.ExpirationTime = Platform.Time.AddMinutes(5);
+            parms.ScheduledTime = Platform.Time.AddSeconds(30);
+            parms.ExpirationTime = Platform.Time.AddMinutes(4);
             parms.StudyStorageKey = _context.StudyLocationKey;
             parms.ServerPartitionKey = _context.ServerPartitionKey;
             parms.DeviceKey = dev.GetKey();

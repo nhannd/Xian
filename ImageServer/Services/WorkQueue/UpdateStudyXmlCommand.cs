@@ -70,9 +70,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             // Setup the insert parameters
         	if (false == _stream.RemoveFile(_file))
         	{
-        		Platform.Log(LogLevel.Error,"Error when removing SOP from XML Study Descriptor for file: {0}",_file.Filename);
-				throw new ApplicationException("Error when removing SOP from XML Study Descriptor for file: " + _file.MediaStorageSopInstanceUid);
-        	}
+        		Platform.Log(LogLevel.Warn,"SOP was unexpectedly not in XML Study Descriptor for file: {0}",_file.Filename);
+			}
             if (false == _stream.AddFile(_file))
             {
                 Platform.Log(LogLevel.Error,"Unexpected error adding SOP to XML Study Descriptor for file {0}",_file.Filename);

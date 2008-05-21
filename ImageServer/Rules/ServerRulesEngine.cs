@@ -220,12 +220,28 @@ namespace ClearCanvas.ImageServer.Rules
 
             foreach (RuleTypeCollection typeCollection in _typeList.Values)
             {
-                typeCollection.Execute(context);
+                typeCollection.Execute(context, false);
             }
 
             _stats.ExecutionTime.End();
         }
 
+		/// <summary>
+		/// Execute the rules against the context for the rules.
+		/// </summary>
+		/// <param name="context">A class containing the context for applying the rules.</param>
+		/// <param name="stopOnFirst">Stop on first valid rule of type.</param>
+		public void Execute(ServerActionContext context, bool stopOnFirst)
+		{
+			_stats.ExecutionTime.Start();
+
+			foreach (RuleTypeCollection typeCollection in _typeList.Values)
+			{
+				typeCollection.Execute(context, stopOnFirst);
+			}
+
+			_stats.ExecutionTime.End();
+		}
         #endregion
     }
 }

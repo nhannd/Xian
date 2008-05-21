@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             if (WorkQueueUidList.Count == 0 
                 && item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.GetEnum("AutoRoute")))
             {
-                PostProcessing(item, 0, false);
+                PostProcessing(item, false, false);
                 return;
             }
 
@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 item.FailureDescription = String.Format("Unknown auto-route destination \"{0}\"", item.DeviceKey);
                 Platform.Log(LogLevel.Error,item.FailureDescription);
 
-                PostProcessing(item, WorkQueueUidList.Count, true);
+                PostProcessingFailure(item, true); // Fatal Error
                 return ;
             }
 
@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 Platform.Log(LogLevel.Error,
                              item.FailureDescription);
 
-                PostProcessing(item, WorkQueueUidList.Count, true);
+                PostProcessingFailure(item, true); // Fatal error
                 return;
             }
 
@@ -182,9 +182,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         	// Reset the WorkQueue entry status
             if (WorkQueueUidList.Count > 0 || scu.Status == ScuOperationStatus.Failed)
-                PostProcessing(item,WorkQueueUidList.Count, true); // failures occurred
-            else
-                PostProcessing(item, WorkQueueUidList.Count, false); // no failures
+                PostProcessingFailure(item, false); // failures occurred
+            else if (item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.GetEnum("AutoRoute")))
+                PostProcessing(item, true, false); // no failures
+			else 
+				PostProcessing(item, true, true); // no failures, complete
         }
         #endregion
     }

@@ -17,7 +17,7 @@
                             OnDataBound="WorkQueueListView_DataBound"  Height="100%"
                             OnSelectedIndexChanged="WorkQueueListView_SelectedIndexChanged">
                             <Columns>
-                                <asp:BoundField DataField="PatientID" HeaderText="Patient ID">
+                                <asp:BoundField DataField="PatientId" HeaderText="Patient ID">
                                     <HeaderStyle Wrap="false" HorizontalAlign="Left" />
                                     <ItemStyle Wrap="false" />
                                 </asp:BoundField>

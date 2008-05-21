@@ -91,6 +91,14 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <returns></returns>
         bool Update(ServerEntityKey entityKey, TUpdateColumns parameters);
 
+		/// <summary>
+		/// Updates the entity specified by the <paramref name="criteria"/> with values updated specified in <paramref="parameters"/>.
+		/// </summary>
+		/// <param name="criteria">The criteria for the WHERE clause of the update.</param>
+		/// <param name="parameters">The <see cref="EntityUpdateColumns"/> specifying the columns to be updated.</param>
+		/// <returns></returns>
+		bool Update(TSelectCriteria criteria, TUpdateColumns parameters);
+
         /// <summary>
         /// Inserts a new entity with field values indicated in <paramref name="parameters"/>.
         /// </summary>

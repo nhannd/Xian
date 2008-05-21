@@ -502,6 +502,40 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
             return String.Format("UPDATE [{0}] SET {1} WHERE {2}", entityName, setClause, whereClause);
         }
+		/// <summary>
+		/// Proves a SQL statement based on the supplied input criteria.
+		/// </summary>
+		/// <param name="entityName">The entity that is being selected from.</param>
+		/// <param name="command">The SqlCommand to use.</param>
+		/// <param name="criteria">The criteria for the update</param>
+		/// <param name="parameters">The columns to update.</param>
+		/// <returns>The SQL string.</returns>
+		private static string GetUpdateSql(string entityName, SqlCommand command, TSelectCriteria criteria,
+										   EntityUpdateColumns parameters)
+		{
+			StringBuilder sb = new StringBuilder();
+			// SET clause
+			String setClause = GetUpdateSetClause(command, parameters);
+
+			// WHERE clause
+			// Generate an array of the WHERE clauses to be used.
+			String[] where = GetWhereSearchCriteria(entityName, criteria, command);
+
+			// Add the where clauses on.
+			bool first = true;
+			foreach (String clause in where)
+			{
+				if (first)
+				{
+					first = false;
+					sb.AppendFormat(" WHERE {0}", clause);
+				}
+				else
+					sb.AppendFormat(" AND {0}", clause);
+			}
+
+			return String.Format("UPDATE [{0}] SET {1} {2}", entityName, setClause, sb);
+		}
 
         /// <summary>
         /// Generates a SQL statement based on the input.
@@ -633,11 +667,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception when retrieving enumerated value: {0}",
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when loading entity: {0}",
                              _entityName);
 
                 throw new PersistenceException(
-                    String.Format("Unexpected problem when retrieving enumerated value: {0}: {1}", _entityName,
+                    String.Format("Unexpected problem when loading entity: {0}: {1}", _entityName,
                                   e.Message), e);
             }
             finally
@@ -808,9 +842,50 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             }
         }
 
-        public bool Update(ServerEntityKey key, TUpdateColumns parameters)
+		public bool Update(ServerEntityKey key, TUpdateColumns parameters)
+		{
+			Platform.CheckForNullReference(key, "key");
+			Platform.CheckForNullReference(parameters, "parameters");
+
+			SqlCommand command = null;
+			try
+			{
+				command = new SqlCommand();
+				command.Connection = Context.Connection;
+				command.CommandType = CommandType.Text;
+				UpdateContext update = Context as UpdateContext;
+
+				if (update != null)
+					command.Transaction = update.Transaction;
+
+				command.CommandText = GetUpdateSql(_entityName, command, key, parameters);
+
+				int rows = command.ExecuteNonQuery();
+
+				return rows > 0;
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unexpected exception with update: {0}",
+							 command != null ? command.CommandText : "");
+
+				throw new PersistenceException(
+					String.Format("Unexpected problem with update statment on table {0}: {1}", _entityName, e.Message),
+					e);
+			}
+			finally
+			{
+				// Cleanup the reader/command, or else we won't be able to do anything with the
+				// connection the next time here.
+
+				if (command != null)
+					command.Dispose();
+			}
+		}
+
+		public bool Update(TSelectCriteria criteria, TUpdateColumns parameters)
         {
-            Platform.CheckForNullReference(key, "key");
+			Platform.CheckForNullReference(criteria, "criteria");
             Platform.CheckForNullReference(parameters, "parameters");
 
             SqlCommand command = null;
@@ -824,7 +899,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 if (update != null)
                     command.Transaction = update.Transaction;
 
-                command.CommandText = GetUpdateSql(_entityName, command, key, parameters);
+                command.CommandText = GetUpdateSql(_entityName, command, criteria, parameters);
 
                 int rows = command.ExecuteNonQuery();
 

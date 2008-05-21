@@ -17,7 +17,7 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Search.Move.StudyGridVie
                             <ccUI:PersonNameLabel ID="PatientName" runat="server" PersonName='<%# Eval("PatientsName") %>' PersonNameType="Dicom"></ccUI:PersonNameLabel>
                         </itemtemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="PatientID" HeaderText="Patient ID"></asp:BoundField>
+                    <asp:BoundField DataField="PatientId" HeaderText="Patient ID"></asp:BoundField>
                     <asp:BoundField DataField="AccessionNumber" HeaderText="Accession #"></asp:BoundField>
                     <asp:TemplateField HeaderText="Study Date">
                         <itemtemplate>

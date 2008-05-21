@@ -54,6 +54,10 @@ namespace ClearCanvas.ImageServer.Common
 
 		protected override void OnExecute()
 		{
+			// Check if its already in the right syntax.
+			if (_file.TransferSyntax.Equals(_syntax))
+				return;
+
 			// Check for decompression first
 			if (_file.TransferSyntax.Encapsulated)
 				_file.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);

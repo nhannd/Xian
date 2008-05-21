@@ -67,7 +67,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
-                                 true // Deflated?
+                                 true, // Deflated?
+                                 false, // lossy?
+                                 true // lossless?
                                  );
 
         /// <summary>String representing
@@ -86,7 +88,9 @@ namespace ClearCanvas.Dicom
                                  false, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -105,7 +109,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -124,7 +130,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  false, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -143,7 +151,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -162,7 +172,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 true // lossless?
                                  );
 
         /// <summary>String representing
@@ -181,7 +193,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -200,7 +214,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 true // lossless?
                                  );
 
         /// <summary>String representing
@@ -219,7 +235,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -238,7 +256,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -257,7 +277,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -276,7 +298,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -295,7 +319,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -314,7 +340,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -333,7 +361,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -352,7 +382,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -371,7 +403,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -390,7 +424,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 true // lossless?
                                  );
 
         /// <summary>String representing
@@ -409,7 +445,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 true // lossless?
                                  );
 
         /// <summary>String representing
@@ -428,7 +466,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 true // lossless?
                                  );
 
         /// <summary>String representing
@@ -447,7 +487,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 true // lossless?
                                  );
 
         /// <summary>String representing
@@ -466,7 +508,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 true // lossless?
                                  );
 
         /// <summary>String representing
@@ -485,7 +529,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -504,7 +550,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -523,7 +571,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -542,7 +592,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -561,7 +613,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 true // lossless?
                                  );
 
         /// <summary>String representing
@@ -580,7 +634,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -599,7 +655,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -618,7 +676,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
-                                 true // Deflated?
+                                 true, // Deflated?
+                                 false, // lossy?
+                                 true // lossless?
                                  );
 
         /// <summary>String representing
@@ -637,7 +697,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 true, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -656,7 +718,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 false // lossless?
                                  );
 
         /// <summary>String representing
@@ -675,7 +739,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 true // lossless?
                                  );
 
         /// <summary>String representing
@@ -694,7 +760,9 @@ namespace ClearCanvas.Dicom
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
-                                 false // Deflated?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 false // lossless?
                                  );
 
         // Internal members
@@ -703,20 +771,24 @@ namespace ClearCanvas.Dicom
         private readonly bool _encapsulated;
         private readonly bool _explicitVr;
         private readonly bool _deflate;
+        private readonly bool _lossless;
+        private readonly bool _lossy;
         private readonly String _name;
         private readonly String _uid;
 
         ///<summary>
         /// Constructor for transfer syntax objects
         ///</summary>
-        public TransferSyntax(String name, String uid, bool bLittleEndian, bool bEncapsulated, bool bExplicitVr, bool bDeflate)
+        public TransferSyntax(String name, String uid, bool bLittleEndian, bool bEncapsulated, bool bExplicitVr, bool bDeflate, bool bLossy, bool bLossless)
         {
-            this._uid = uid;
-            this._name = name;
-            this._littleEndian = bLittleEndian;
-            this._encapsulated = bEncapsulated;
-            this._explicitVr = bExplicitVr;
-            this._deflate = bDeflate;
+            _uid = uid;
+            _name = name;
+            _littleEndian = bLittleEndian;
+            _encapsulated = bEncapsulated;
+            _explicitVr = bExplicitVr;
+            _deflate = bDeflate;
+            _lossy = bLossy;
+            _lossless = bLossless;
         }
 
         ///<summary>Override to the ToString() method, returns the name of the transfer syntax.</summary>
@@ -768,6 +840,18 @@ namespace ClearCanvas.Dicom
         public bool Encapsulated
         {
             get { return _encapsulated; }
+        }
+
+        ///<summary>Property representing if the transfer syntax is a lossy compression syntax.</summary>
+        public bool LossyCompressed
+        {
+            get { return _lossy; }
+        }
+
+        ///<summary>Property representing if the transfer syntax is a lossless compression syntax.</summary>
+        public bool LosslessCompressed
+        {
+            get { return _lossless; }
         }
 
         ///<summary>Property representing if the transfer syntax is encoded as explicit Value Representation.</summary>

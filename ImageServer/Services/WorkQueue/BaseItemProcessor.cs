@@ -36,6 +36,7 @@ using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -244,132 +245,208 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         }
 
         /// <summary>
-        /// Set a status of <see cref="WorkQueue"/> item after batch processing has been completed.
+        /// Updates the status of a study to a new status
         /// </summary>
-        /// <remarks>
-        /// <para>
-        /// This routine will set the status of the <paramref name="item"/> to one of the followings
-        /// <list type="bullet">
-        /// <item>Failed: if the current process failed and number of retries has been reached.</item>
-        /// <item>Pending: if the current batch has been processed successfully</item>
-        /// <item>Idle : if current batch size = 0.</item>
-        /// <item>Completed: if batch size =0 (idle) and the item has expired.</item>
-        /// </list>
-        /// </para>
-        /// </remarks>
-        /// <param name="item">The <see cref="WorkQueue"/> item to set.</param>
-        /// <param name="batchSize">Number of workqueue uids associated with the workqueue item (process batch size).</param>
-        /// <param name="failed">Indicates if the current batch was not processed successfully.</param>
-        protected virtual void PostProcessing(Model.WorkQueue item, int batchSize, bool failed)
+		protected virtual void UpdateStudyStatus(StudyStorageLocation theStudyStorage, StudyStatusEnum theStatus)
         {
-            DBUpdateTime.Add(
-                delegate
-                    {
-                        using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-                        {
-                            IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-                            WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
-                            parms.WorkQueueKey = item.GetKey();
-                            parms.StudyStorageKey = item.StudyStorageKey;
-                            parms.ProcessorID = item.ProcessorID;
+        	DBUpdateTime.Add(
+        		delegate
+        			{
+        				using (
+        					IUpdateContext updateContext =
+        						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+        				{
+        					IStudyEntityBroker broker = updateContext.GetBroker<IStudyEntityBroker>();
 
-                            WorkQueueSettings settings = WorkQueueSettings.Default;
+							StudySelectCriteria criteria = new StudySelectCriteria();
+							criteria.ServerPartitionKey.EqualTo(theStudyStorage.ServerPartitionKey);
+							criteria.StudyInstanceUid.EqualTo(theStudyStorage.StudyInstanceUid);
 
-                            if (failed)
-                            {
-                                if (item.FailureDescription != null)
-                                    parms.FailureDescription = item.FailureDescription;
+							StudyUpdateColumns updateColumns = new StudyUpdateColumns();
+        					updateColumns.StudyStatusEnum = theStatus;
 
-                                parms.FailureCount = item.FailureCount + 1;
-                                if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
-                                {
-                                    Platform.Log(LogLevel.Error,
-                                                 "Failing StudyProcess WorkQueue entry ({0}), reached max retry count of {1}",
-                                                 item.GetKey(), item.FailureCount + 1);
-                                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
-                                    parms.ScheduledTime = Platform.Time;
-                                    parms.ExpirationTime = Platform.Time; // expire now
-                                }
-                                else
-                                {
-                                    Platform.Log(LogLevel.Error,
-                                                 "Resetting StudyProcess WorkQueue entry ({0}) to Pending, current retry count {1}",
-                                                 item.GetKey(), item.FailureCount + 1);
-                                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
-                                    parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
-                                    parms.ExpirationTime =
-                                        Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
-                                                                 settings.WorkQueueFailureDelayMinutes);
-                                }
-                            }
-                            else
-                            {
-                                DateTime scheduledTime;
-
-                                if (item.FailureDescription != null)
-                                    parms.FailureDescription = item.FailureDescription;
-
-                                if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("Low"))
-                                {
-                                    scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayLowPrioritySeconds);
-                                }
-                                else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("High"))
-                                {
-                                    scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayHighPrioritySeconds);
-                                }
-                                else
-                                {
-                                    scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayMedPrioritySeconds);
-                                }
-
-
-                                if (scheduledTime > item.ExpirationTime)
-                                    scheduledTime = item.ExpirationTime;
-
-
-                                if (batchSize == 0 && item.ExpirationTime < Platform.Time)
-                                {
-                                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Completed");
-                                    parms.FailureCount = item.FailureCount;
-                                    parms.ScheduledTime = scheduledTime;
-                                    parms.ExpirationTime = item.ExpirationTime; // Keep the same
-                                }
-                                else
-                                {
-                                    // If the batch size is 0, switch to idle state.
-                                    if (batchSize == 0)
-                                    {
-                                        parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Idle");
-                                        parms.ScheduledTime = scheduledTime;
-                                        parms.ExpirationTime = item.ExpirationTime; // keep the same
-                                        parms.FailureCount = item.FailureCount;
-                                    }
-                                    else
-                                    {
-                                        parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
-
-                                        parms.ExpirationTime = scheduledTime.AddSeconds(settings.WorkQueueExpireDelaySeconds);
-                                        parms.ScheduledTime = scheduledTime;
-                                        parms.FailureCount = item.FailureCount;
-                                    }
-                                }
-                            }
-
-
-                            if (false == update.Execute(parms))
-                            {
-                                Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID: {0}",
-                                             item.GetKey().ToString());
-                            }
-                            else
-                                updateContext.Commit();
-                        }
-                    }
-                );
-            
+        					if (!broker.Update(criteria, updateColumns))
+        						Platform.Log(LogLevel.Error, "Unable to update Study row: Study {0}, Server Entity {1}", theStudyStorage.StudyInstanceUid, theStudyStorage.ServerPartitionKey);
+        					else
+        						updateContext.Commit();
+        				}
+        			}
+        		);
         }
 
-        /// <summary>
+		/// <summary>
+		/// Set a status of <see cref="WorkQueue"/> item after batch processing has been completed.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This routine will set the status of the <paramref name="item"/> to one of the followings
+		/// <list type="bullet">
+		/// <item>Failed: if the current process failed and number of retries has been reached.</item>
+		/// <item>Pending: if the current batch has been processed successfully</item>
+		/// <item>Idle : if current batch size = 0.</item>
+		/// <item>Completed: if batch size =0 (idle) and the item has expired.</item>
+		/// </list>
+		/// </para>
+		/// </remarks>
+		/// <param name="item">The <see cref="WorkQueue"/> item to set.</param>
+		/// <param name="complete">Indicates if complete.</param>
+		/// <param name="processedBatch">Processed a batch request of uids</param>
+		protected virtual void PostProcessing(Model.WorkQueue item, bool processedBatch, bool complete)
+		{
+			DBUpdateTime.Add(
+				delegate
+				{
+					using (
+						IUpdateContext updateContext =
+							PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+					{
+						IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
+						WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+						parms.WorkQueueKey = item.GetKey();
+						parms.StudyStorageKey = item.StudyStorageKey;
+						parms.ProcessorID = item.ProcessorID;
+
+						WorkQueueSettings settings = WorkQueueSettings.Default;
+
+
+						DateTime scheduledTime;
+
+						if (item.FailureDescription != null)
+							parms.FailureDescription = item.FailureDescription;
+
+						if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("Low"))
+						{
+							scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayLowPrioritySeconds);
+						}
+						else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("High"))
+						{
+							scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayHighPrioritySeconds);
+						}
+						else
+						{
+							scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayMedPrioritySeconds);
+						}
+
+
+						if (scheduledTime > item.ExpirationTime)
+							scheduledTime = item.ExpirationTime;
+
+						if (complete || !processedBatch && item.ExpirationTime < Platform.Time)
+						{
+							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Completed");
+							parms.FailureCount = item.FailureCount;
+							parms.ScheduledTime = scheduledTime;
+							parms.ExpirationTime = item.ExpirationTime; // Keep the same
+						}
+						// If the batch size is 0, switch to idle state.
+						else if (!processedBatch)
+						{
+							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Idle");
+							parms.ScheduledTime = scheduledTime;
+							parms.ExpirationTime = item.ExpirationTime; // keep the same
+							parms.FailureCount = item.FailureCount;
+						}
+						else
+						{
+							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+
+							parms.ExpirationTime = scheduledTime.AddSeconds(settings.WorkQueueExpireDelaySeconds);
+							parms.ScheduledTime = scheduledTime;
+							parms.FailureCount = item.FailureCount;
+						}
+
+
+						if (false == update.Execute(parms))
+						{
+							Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID: {0}",
+										 item.GetKey().ToString());
+						}
+						else
+							updateContext.Commit();
+					}
+				}
+				);
+		}
+
+    	/// <summary>
+		/// Set a status of <see cref="WorkQueue"/> item after batch processing has been completed.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This routine will set the status of the <paramref name="item"/> to one of the following
+		/// <list type="bullet">
+		/// <item>Failed: if the current process failed and number of retries has been reached or a fatal error.</item>
+		/// <item>Pending: if the number of retries has not been reached</item>
+		/// </list>
+		/// </para>
+		/// </remarks>
+		/// <param name="item">The <see cref="WorkQueue"/> item to set.</param>
+		/// <param name="fatal">The failure is unrecoverable</param>
+		protected virtual void PostProcessingFailure(Model.WorkQueue item, bool fatal)
+		{
+			DBUpdateTime.Add(
+				delegate
+					{
+						using (
+							IUpdateContext updateContext =
+								PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+						{
+							IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
+							WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+							parms.WorkQueueKey = item.GetKey();
+							parms.StudyStorageKey = item.StudyStorageKey;
+							parms.ProcessorID = item.ProcessorID;
+
+							WorkQueueSettings settings = WorkQueueSettings.Default;
+
+							if (item.FailureDescription != null)
+								parms.FailureDescription = item.FailureDescription;
+
+							parms.FailureCount = item.FailureCount + 1;
+							if (fatal)
+							{
+								Platform.Log(LogLevel.Error,
+											 "Failing StudyProcess WorkQueue entry ({0}), fatal error",
+											 item.GetKey());
+								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
+								parms.ScheduledTime = Platform.Time;
+								parms.ExpirationTime = Platform.Time; // expire now								
+							}
+							else if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
+							{
+								Platform.Log(LogLevel.Error,
+								             "Failing StudyProcess WorkQueue entry ({0}), reached max retry count of {1}",
+								             item.GetKey(), item.FailureCount + 1);
+								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
+								parms.ScheduledTime = Platform.Time;
+								parms.ExpirationTime = Platform.Time; // expire now
+							}
+							else
+							{
+								Platform.Log(LogLevel.Error,
+								             "Resetting StudyProcess WorkQueue entry ({0}) to Pending, current retry count {1}",
+								             item.GetKey(), item.FailureCount + 1);
+								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+								parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
+								parms.ExpirationTime =
+									Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount)*
+									                         settings.WorkQueueFailureDelayMinutes);
+							}
+
+
+							if (false == update.Execute(parms))
+							{
+								Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID: {0}",
+								             item.GetKey().ToString());
+							}
+							else
+								updateContext.Commit();
+						}
+					}
+				);
+		}
+
+    	/// <summary>
         /// Delete an entry in the <see cref="WorkQueueUid"/> table.
         /// </summary>
         /// <param name="sop">The <see cref="WorkQueueUid"/> entry to delete.</param>
@@ -421,50 +498,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                          updateContext.Commit();
                      }
                 }));
-
-            
-        }
-
-        /// <summary>
-        /// Simple routine for failing a work queue item.
-        /// </summary>
-        /// <param name="item">The item to fail.</param>
-        protected void FailQueueItem(Model.WorkQueue item)
-        {
-            DBUpdateTime.Add(
-                TimeSpanStatisticsHelper.Measure(
-                    delegate
-                        {
-							using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-							{
-								IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-								WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
-								parms.ProcessorID = ServiceTools.ProcessorId;
-
-								parms.WorkQueueKey = item.GetKey();
-								parms.StudyStorageKey = item.StudyStorageKey;
-								parms.FailureCount = item.FailureCount + 1;
-								if (item.FailureDescription != null)
-									parms.FailureDescription = item.FailureDescription;
-
-								Platform.Log(LogLevel.Error,
-								             "Failing {0} WorkQueue entry ({1})",
-								             item.WorkQueueTypeEnum.Description,
-								             item.GetKey());
-								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
-								parms.ScheduledTime = Platform.Time;
-								parms.ExpirationTime = Platform.Time.AddDays(1);
-
-								if (false == update.Execute(parms))
-								{
-									Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}",
-									             item.WorkQueueTypeEnum.Name,
-									             item.GetKey().ToString());
-								}
-
-								updateContext.Commit();
-							}
-                        }));
 
             
         }

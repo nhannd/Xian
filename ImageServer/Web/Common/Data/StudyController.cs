@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -162,6 +161,47 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return false;
             
         }
+
+		/// <summary>
+		/// Returns a value indicating whether the specified study has been scheduled for delete.
+		/// </summary>
+		/// <param name="study"></param>
+		/// <returns></returns>
+		public string GetModalitiesInStudy(Study study)
+		{
+			Platform.CheckForNullReference(study, "Study");
+			SeriesSearchAdaptor seriesAdaptor = new SeriesSearchAdaptor();
+			SeriesSelectCriteria criteria = new SeriesSelectCriteria();
+			
+			criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+			criteria.StudyKey.EqualTo(study.GetKey());
+
+			IList<Series> seriesList = seriesAdaptor.Get(criteria);
+
+			List<string> modalities = new List<string>();
+			
+			foreach (Series series in seriesList)
+			{
+				bool found = false;
+				foreach (string modality in modalities)
+					if (modality.Equals(series.Modality))
+					{
+						found = true;
+						break;
+					}
+				if (!found)
+					modalities.Add(series.Modality);
+			}
+
+			string modalitiesInStudy = "";
+			foreach (string modality in modalities)
+				if (modalitiesInStudy.Length == 0)
+					modalitiesInStudy = modality;
+				else
+					modalitiesInStudy += "\\" + modality;
+
+			return modalitiesInStudy;
+		}
         #endregion
     }
 }

@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				context.CommandProcessor = processor;
 
 				// Run the rules engine against the object.
-				CompressionRulesEngine.Execute(context);
+				CompressionRulesEngine.Execute(context, true);
 
 				if (processor.CommandCount == 1)
 				{

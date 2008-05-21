@@ -467,6 +467,7 @@ EXEC dbo.sp_executesql @statement = N'
 -- Description:	Procedure for updating WorkQueue entries
 -- History
 --	Oct 29, 2007: Add @ProcessorID
+--  May 14, 2008, Changed order so StudyLocks are released after updates
 -- =============================================
 CREATE PROCEDURE [dbo].[UpdateWorkQueue] 
 	-- Add the parameters for the stored procedure here
@@ -506,17 +507,14 @@ BEGIN
 	if @WorkQueueStatusEnum = @CompletedStatusEnum 
 	BEGIN
 		-- Completed
+		DELETE FROM WorkQueue where GUID = @WorkQueueGUID
+		
 		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
 		WHERE GUID = @StudyStorageGUID AND Lock = 1
-
-		DELETE FROM WorkQueue where GUID = @WorkQueueGUID
 	END
 	ELSE if  @WorkQueueStatusEnum = @FailedStatusEnum
 	BEGIN
 		-- Failed
-		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
-		WHERE GUID = @StudyStorageGUID AND Lock = 1
-
 		IF @FailureDescription is NULL
 		BEGIN
 			UPDATE WorkQueue
@@ -534,12 +532,13 @@ BEGIN
 				FailureDescription = @FailureDescription
 			WHERE GUID = @WorkQueueGUID
 		END
+		
+		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
+		WHERE GUID = @StudyStorageGUID AND Lock = 1
 	END
 	ELSE if @WorkQueueStatusEnum = @PendingStatusEnum
 	BEGIN
 		-- Pending
-		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
-		WHERE GUID = @StudyStorageGUID AND Lock = 1
 		IF @FailureDescription is NULL
 		BEGIN
 			UPDATE WorkQueue
@@ -554,20 +553,25 @@ BEGIN
 				FailureCount = @FailureCount, ProcessorID = @ProcessorID, FailureDescription = @FailureDescription
 			WHERE GUID = @WorkQueueGUID
 		END
+		
+		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
+		WHERE GUID = @StudyStorageGUID AND Lock = 1
 	END
 	ELSE
 	BEGIN
 		-- Idle
+		UPDATE WorkQueue
+		SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
+			FailureCount = @FailureCount, ProcessorID = @ProcessorID
+		WHERE GUID = @WorkQueueGUID
+		
 		if @WorkQueueStatusEnum = @IdleStatusEnum
 		BEGIN
 			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
 			WHERE GUID = @StudyStorageGUID AND Lock = 1
 		END
 
-		UPDATE WorkQueue
-		SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
-			FailureCount = @FailureCount, ProcessorID = @ProcessorID
-		WHERE GUID = @WorkQueueGUID
+
 	END
 
 	COMMIT TRANSACTION
@@ -619,6 +623,7 @@ BEGIN
 	SELECT @WorkQueueGUID = GUID from WorkQueue 
 		where StudyStorageGUID = @StudyStorageGUID
 		AND WorkQueueTypeEnum = @AutoRouteTypeEnum
+		AND DeviceGUID = @DeviceGUID
 	if @@ROWCOUNT = 0
 	BEGIN
 		set @WorkQueueGUID = NEWID();
@@ -629,8 +634,9 @@ BEGIN
 	ELSE
 	BEGIN
 		UPDATE WorkQueue 
-			set ExpirationTime = @ExpirationTime
-			where GUID = @WorkQueueGUID
+			set ExpirationTime = @ExpirationTime,
+			ScheduledTime = @ScheduledTime
+		WHERE GUID = @WorkQueueGUID
 	END
 
 	INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid)
@@ -1359,7 +1365,7 @@ BEGIN
 	DELETE FROM StudyStorage
 	WHERE GUID = @StudyStorageGUID
 
-	UPDATE dbo.ServerPartition SET StudyCount=(SELECT COUNT(GUID) FROM dbo.Study WHERE ServerPartitionGUID=@ServerPartitionGUID)
+	UPDATE dbo.ServerPartition SET StudyCount=StudyCount-1
 	WHERE GUID=@ServerPartitionGUID
 
 	COMMIT TRANSACTION
@@ -1655,6 +1661,10 @@ BEGIN
 				@PatientsSex, @StudyDate, @StudyTime, @AccessionNumber, @StudyId,
 				@StudyDescription, @ReferringPhysiciansName, 0, 1, @StudyStatusEnum,@SpecificCharacterSet)
 
+		UPDATE dbo.ServerPartition SET StudyCount=StudyCount+1
+		WHERE GUID=@ServerPartitionGUID
+	
+
 		UPDATE Patient 
 		SET NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies + 1
 		WHERE GUID = @PatientGUID
@@ -1711,9 +1721,7 @@ BEGIN
 		WHERE GUID = @SeriesGUID
 	END
 
-	UPDATE dbo.ServerPartition SET StudyCount=(SELECT COUNT(GUID) FROM dbo.Study WHERE ServerPartitionGUID=@ServerPartitionGUID)
-	WHERE GUID=@ServerPartitionGUID
-
+	
 	COMMIT TRANSACTION
 
 	-- Return the resultant keys

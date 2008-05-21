@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegLosslessAction
 
 		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
 		{
-			return new JpegExtendedActionItem();
+			return new JpegLosslessActionItem();
 		}
 
 		public XmlSchemaElement GetSchema()

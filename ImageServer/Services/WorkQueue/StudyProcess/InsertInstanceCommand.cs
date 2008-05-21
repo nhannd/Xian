@@ -75,7 +75,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             InstanceInsertParameters parms = new InstanceInsertParameters();
             _file.LoadDicomFields(parms);
             parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
-            parms.StudyStatusEnum = StudyStatusEnum.GetEnum("Online");
+
+        	TransferSyntax syntax = _file.TransferSyntax;
+			if (syntax.LossyCompressed)
+				parms.StudyStatusEnum = StudyStatusEnum.GetEnum("OnlineLossy");
+			else if (syntax.LosslessCompressed)
+				parms.StudyStatusEnum = StudyStatusEnum.GetEnum("OnlineLossless");
+			else
+				parms.StudyStatusEnum = StudyStatusEnum.GetEnum("Online");
 
             // Get the Insert Instance broker and do the insert
             IInsertInstance insert = updateContext.GetBroker<IInsertInstance>();
@@ -86,7 +93,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 parms.SpecificCharacterSet = cs;
             }
 
-            _insertKey = CollectionUtils.FirstElement<InstanceKeys>(insert.Execute(parms));
+            _insertKey = CollectionUtils.FirstElement(insert.Execute(parms));
 
             // If the Request Attributes Sequence is in the dataset, do an insert.
             if (_file.DataSet.Contains(DicomTags.RequestAttributesSequence))

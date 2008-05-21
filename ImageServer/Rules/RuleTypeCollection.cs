@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageServer.Rules
                 _ruleList.Add(rule);
         }
 
-        public void Execute(ServerActionContext context)
+        public void Execute(ServerActionContext context, bool stopOnFirst)
         {
             bool doDefault = true;
             try
@@ -113,8 +113,13 @@ namespace ClearCanvas.ImageServer.Rules
 
                     theRule.Execute(context, false, out ruleApplied, out ruleSuccess);
 
-                    if (ruleApplied && ruleSuccess)
-                        doDefault = false;
+					if (ruleApplied && ruleSuccess)
+					{
+						if (stopOnFirst)
+							return;
+
+						doDefault = false;
+					}
                 }
 
                 if (doDefault && DefaultRule != null)

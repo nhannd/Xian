@@ -29,6 +29,7 @@
 
 #endregion
 
+using ClearCanvas.DicomServices.Codec;
 using ClearCanvas.ImageServer.Services.WorkQueue;
 
 namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
@@ -75,6 +76,9 @@ namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
 
         public void Start()
         {
+			//Load Codecs
+			DicomCodecHelper.RegisterCodecExtensions();
+           
             if (_theProcessor == null)
             {
                 _theProcessor = new WorkQueueProcessor("WorkQueue Processor", ImageServerServicesShredSettings.Default.WorkQueueThreadCount); // 5 threads for processor

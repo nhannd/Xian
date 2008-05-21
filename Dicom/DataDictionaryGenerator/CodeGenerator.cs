@@ -311,8 +311,10 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         /// <param name="encapsulated"></param>
         /// <param name="explicitVR"></param>
         /// <param name="deflated"></param>
+        /// <param name="lossy"></param>
+        /// <param name="lossless"></param>
         public void GetTransferSyntaxDetails(String uid, ref String littleEndian, ref String encapsulated,
-            ref String explicitVR, ref String deflated)
+            ref String explicitVR, ref String deflated, ref string lossy, ref string lossless)
         {
             XmlNode syntaxNode = _transferSyntaxDoc.FirstChild;
 
@@ -332,7 +334,9 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                         encapsulated = syntaxNode.Attributes["encapsulated"].Value;
                         explicitVR = syntaxNode.Attributes["explicitVR"].Value;
                         deflated = syntaxNode.Attributes["deflated"].Value;
-                        return;
+						lossy = syntaxNode.Attributes["lossy"].Value;
+						lossless = syntaxNode.Attributes["lossless"].Value;
+						return;
                     }
                 }
                 syntaxNode = syntaxNode.NextSibling;
@@ -381,8 +385,10 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                 String encapsulated = "";
                 String explicitVR = "";
                 String deflated = "";
+            	String lossless = "";
+            	string lossy = "";
 
-                GetTransferSyntaxDetails(tSyntax.uid, ref littleEndian, ref encapsulated, ref explicitVR, ref deflated);
+                GetTransferSyntaxDetails(tSyntax.uid, ref littleEndian, ref encapsulated, ref explicitVR, ref deflated, ref lossy, ref lossless);
 
                 writer.WriteLine("        /// <summary>TransferSyntax object representing");
                 writer.WriteLine("        /// <para>" + tSyntax.name + "</para>");
@@ -394,8 +400,10 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                 writer.WriteLine("                                 " + littleEndian + ", // Little Endian?");
                 writer.WriteLine("                                 " + encapsulated + ", // Encapsulated?");
                 writer.WriteLine("                                 " + explicitVR + ", // Explicit VR?");
-                writer.WriteLine("                                 " + deflated + " // Deflated?");
-                writer.WriteLine("                                 );");
+                writer.WriteLine("                                 " + deflated + ", // Deflated?");
+				writer.WriteLine("                                 " + lossy + ", // lossy?");
+				writer.WriteLine("                                 " + lossless + " // lossless?");
+				writer.WriteLine("                                 );");
                 writer.WriteLine("");
             }
 
@@ -405,21 +413,25 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             writer.WriteLine("        private readonly bool _encapsulated;");
             writer.WriteLine("        private readonly bool _explicitVr;");
             writer.WriteLine("        private readonly bool _deflate;");
-            writer.WriteLine("        private readonly String _name;");
+			writer.WriteLine("        private readonly bool _lossless;");
+			writer.WriteLine("        private readonly bool _lossy;");
+			writer.WriteLine("        private readonly String _name;");
             writer.WriteLine("        private readonly String _uid;");
             writer.WriteLine("");
             writer.WriteLine("        ///<summary>");
             writer.WriteLine("        /// Constructor for transfer syntax objects");
             writer.WriteLine("        ///</summary>");
-            writer.WriteLine("        public TransferSyntax(String name, String uid, bool bLittleEndian, bool bEncapsulated, bool bExplicitVr, bool bDeflate)");
+            writer.WriteLine("        public TransferSyntax(String name, String uid, bool bLittleEndian, bool bEncapsulated, bool bExplicitVr, bool bDeflate, bool bLossy, bool bLossless)");
             writer.WriteLine("        {");
-            writer.WriteLine("            this._uid = uid;");
-            writer.WriteLine("            this._name = name;");
-            writer.WriteLine("            this._littleEndian = bLittleEndian;");
-            writer.WriteLine("            this._encapsulated = bEncapsulated;");
-            writer.WriteLine("            this._explicitVr = bExplicitVr;");
-            writer.WriteLine("            this._deflate = bDeflate;");
-            writer.WriteLine("        }");
+            writer.WriteLine("            _uid = uid;");
+            writer.WriteLine("            _name = name;");
+            writer.WriteLine("            _littleEndian = bLittleEndian;");
+            writer.WriteLine("            _encapsulated = bEncapsulated;");
+            writer.WriteLine("            _explicitVr = bExplicitVr;");
+            writer.WriteLine("            _deflate = bDeflate;");
+			writer.WriteLine("            _lossy = bLossy;");
+			writer.WriteLine("            _lossless = bLossless;");
+			writer.WriteLine("        }");
             writer.WriteLine("");
             writer.WriteLine("        ///<summary>Override to the ToString() method, returns the name of the transfer syntax.</summary>");
             writer.WriteLine("        public override String ToString()");
@@ -472,7 +484,19 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             writer.WriteLine("            get { return _encapsulated; }");
             writer.WriteLine("        }");
             writer.WriteLine("");
-            writer.WriteLine("        ///<summary>Property representing if the transfer syntax is encoded as explicit Value Representation.</summary>");
+			writer.WriteLine("        ///<summary>Property representing if the transfer syntax is a lossy compression syntax.</summary>");
+			writer.WriteLine("        public bool LossyCompressed");
+			writer.WriteLine("        {");
+			writer.WriteLine("            get { return _lossy; }");
+			writer.WriteLine("        }");
+			writer.WriteLine("");
+			writer.WriteLine("        ///<summary>Property representing if the transfer syntax is a lossless compression syntax.</summary>");
+			writer.WriteLine("        public bool LosslessCompressed");
+			writer.WriteLine("        {");
+			writer.WriteLine("            get { return _lossless; }");
+			writer.WriteLine("        }");
+			writer.WriteLine("");
+			writer.WriteLine("        ///<summary>Property representing if the transfer syntax is encoded as explicit Value Representation.</summary>");
             writer.WriteLine("        public bool ExplicitVr");
             writer.WriteLine("        {");
             writer.WriteLine("            get { return _explicitVr; }");

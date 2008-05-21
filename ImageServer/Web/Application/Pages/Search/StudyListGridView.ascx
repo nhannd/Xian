@@ -17,18 +17,25 @@
                             <ccUI:PersonNameLabel ID="PatientName" runat="server" PersonName='<%# Eval("PatientsName") %>' PersonNameType="Dicom"></ccUI:PersonNameLabel>
                         </itemtemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="PatientID" HeaderText="Patient ID" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
+                    <asp:BoundField DataField="PatientId" HeaderText="Patient ID" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
                     <asp:BoundField DataField="AccessionNumber" HeaderText="Accession #" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                     </asp:BoundField>
-                    <asp:TemplateField HeaderText="Study Date" HeaderSTyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+                    <asp:TemplateField HeaderText="Study Date" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <itemtemplate>
                             <ccUI:DALabel ID="StudyDate" runat="server" Value='<%# Eval("StudyDate") %>'></ccUI:DALabel>
                         </itemtemplate>
                     </asp:TemplateField>
                     <asp:BoundField DataField="StudyDescription" HeaderText="Description" HeaderStyle-HorizontalAlign="Left">
                     </asp:BoundField>
-                    <asp:BoundField DataField="NumberOfRelatedSeries" HeaderText="Series" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"></asp:BoundField>
-                    <asp:BoundField DataField="NumberOfRelatedInstances" HeaderText="Instances" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"></asp:BoundField>
+                    <asp:BoundField DataField="NumberOfRelatedSeries" HeaderText="Series" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
+                    <asp:BoundField DataField="NumberOfRelatedInstances" HeaderText="Instances" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
+                    <asp:BoundField DataField="ModalitiesInStudy" HeaderText="Modality" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
+                    <asp:TemplateField HeaderText="Status" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+                        <ItemTemplate>
+                            <asp:Label ID="Status" runat="server" Text='<%# Eval("StudyStatusEnum.Description") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+
                 </Columns>
                 <EmptyDataTemplate>
                     <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
@@ -41,6 +48,8 @@
                             <asp:TableHeaderCell HorizontalAlign="Left">Description</asp:TableHeaderCell>
                             <asp:TableHeaderCell HorizontalAlign="Center">Series</asp:TableHeaderCell>
                             <asp:TableHeaderCell HorizontalAlign="Center">Instances</asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center">Modality</asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center">Status</asp:TableHeaderCell>
                         </asp:TableHeaderRow>
                     </asp:Table>
                 </EmptyDataTemplate>

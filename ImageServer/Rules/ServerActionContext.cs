@@ -32,6 +32,7 @@
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules
 {
@@ -45,12 +46,15 @@ namespace ClearCanvas.ImageServer.Rules
     /// </remarks>
     /// <seealso cref="ServerRulesEngine"/>
     public class ServerActionContext
-    {
-        private readonly ServerEntityKey _filesystemKey;
+	{
+		#region Private Members
         private readonly DicomMessageBase _msg;
         private readonly ServerEntityKey _serverPartitionKey;
         private readonly ServerEntityKey _studyLocationKey;
-        private ServerCommandProcessor _commandProcessor;
+        private readonly ServerEntityKey _filesystemKey;
+    	private readonly ServerPartition _partition;
+    	private ServerCommandProcessor _commandProcessor;
+        #endregion
 
         #region Constructors
 
@@ -61,6 +65,7 @@ namespace ClearCanvas.ImageServer.Rules
             _serverPartitionKey = serverPartitionKey;
             _studyLocationKey = studyLocationKey;
             _filesystemKey = filesystemKey;
+        	_partition = ServerPartition.Load(serverPartitionKey);
         }
 
         #endregion
@@ -92,7 +97,10 @@ namespace ClearCanvas.ImageServer.Rules
         {
             get { return _studyLocationKey; }
         }
-
+    	public ServerPartition ServerPartition
+    	{
+			get { return _partition; }
+    	}
         #endregion
     }
 }

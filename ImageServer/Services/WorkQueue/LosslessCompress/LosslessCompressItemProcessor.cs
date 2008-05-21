@@ -51,18 +51,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.LosslessCompress
 			if (WorkQueueUidList.Count == 0)
 			{
 				// No UIDs associated with the WorkQueue item.  Set the status back to idle
-				PostProcessing(item, 0, false);
-				//CheckEmptyStudy(item);
+				PostProcessing(item, false, false);
 				return;
 			}
 
 			Platform.Log(LogLevel.Info, "Lossless compressing study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Load(item.ServerPartitionKey).AeTitle);
 
 			if (!ProcessUidList(item))
-				PostProcessing(item, WorkQueueUidList.Count, true);
+				PostProcessingFailure(item, false);
 			else
-				PostProcessing(item, WorkQueueUidList.Count, false);
-
+			{
+				UpdateStudyStatus(StorageLocation, StudyStatusEnum.GetEnum("OnlineLossless"));
+				PostProcessing(item, true, false);  // batch processed, not complete
+			}
 		}
 	}
 }
