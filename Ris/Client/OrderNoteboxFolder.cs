@@ -24,6 +24,8 @@ namespace ClearCanvas.Ris.Client
 			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
 
 			_noteboxClassName = noteboxClassName;
+
+			this.RefreshTime = OrderNoteboxFolderSettings.Default.RefreshTime;
 		}
 
 		public IconSet ClosedIconSet

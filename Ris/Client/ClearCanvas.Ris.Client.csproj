@@ -68,6 +68,12 @@
     <Compile Include="OrderAdditionalInfoComponent.cs" />
     <Compile Include="OrderDetailViewComponent.cs" />
     <Compile Include="OrderNoteboxFolder.cs" />
+    <Compile Include="OrderNoteboxFolderSettings.cs" />
+    <Compile Include="OrderNoteboxFolderSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>OrderNoteboxFolderSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="OrderNoteboxFolderSystemBase.cs" />
     <Compile Include="OrderNoteboxTable.cs" />
     <Compile Include="OrderNoteCategory.cs" />
@@ -269,6 +275,10 @@
     <None Include="HomePageSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>HomePageSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="OrderNoteboxFolderSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>OrderNoteboxFolderSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="OrderNoteConversationComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -212,7 +212,9 @@ namespace ClearCanvas.Ris.Client
 
                     IFolder selectedFolder = ((IFolder)_selectedFolderExplorer.SelectedFolder.Item);
                     _folderContentComponent.SelectedFolder = selectedFolder;
-					_folderContentComponent.SelectedFolder.Refresh();
+
+					if(_folderContentComponent.SelectedFolder != null)
+						_folderContentComponent.SelectedFolder.Refresh();
                 }
             }
         }
