@@ -40,6 +40,10 @@
     color: Black;
 }
 
+/*==========================================
+ * Grid Pager
+ *==========================================*/
+
 .GlobalGridPagerLabel
 {
     font-family: Sans-Serif;
@@ -149,26 +153,3 @@
     margin: 0px 0px 0px 0px;
 }
 
-/*************************************************************************************************
-	Gridview Pager panel background
-*************************************************************************************************/
-
-
-/* Grid pager control panel container */
-.GridPagerPanelContainer
-{
-}
-
-/*grid pager panel content */
-.GridPagerPanelContent
-{
-    font-family: Sans-Serif;
-    font-weight: bold;
-    font-size: 12px;
-    border-top: solid 1px #999999;
-}
-
-.GridPagerNavigation
-{
-    margin: 2px 5px 0px 0px;
-}

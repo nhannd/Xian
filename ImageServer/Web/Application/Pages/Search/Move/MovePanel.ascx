@@ -27,14 +27,14 @@
     </table>
   </tr>
 
-  <tr><td><img src="~/images/blank.gif" height="5px" /></td></tr>
+  <tr><td><img src="~/images/blank.gif" height="3px" /></td></tr>
 
   <tr>
   <td class="SeriesDetailsContent">
      <table width="100%" cellpadding="2" cellspacing="0" style="background-color: #B8D9EE">
         <tr>
             <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px;">Destination Devices</td>
-            <td align="right" style="vertical-align: bottom"><asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchLabel" /><asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" /> <asp:button runat="server" ID="SearchButton" Text="Search" CssClass="ButtonStyle" />
+            <td align="right" style="vertical-align: bottom"><asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchLabel" /><asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" /> <asp:Button runat="server" ID="SearchButton" Text="Search" CssClass="ButtonStyle" />
         </tr>
 
         <tr><td colspan="2">
