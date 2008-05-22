@@ -7,7 +7,7 @@
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
                     <ccUI:GridView ID="GridView1" runat="server" 
-                        AutoGenerateColumns="False" CssClass="SeriesGridView" 
+                        AutoGenerateColumns="False" CssClass="GlobalGridView" 
                         CellPadding="4" CaptionAlign="Top" Width="100%" 
                         OnPageIndexChanged="GridView1_PageIndexChanged" 
                         OnPageIndexChanging="GridView1_PageIndexChanging" SelectionMode="Multiple"
@@ -49,10 +49,11 @@
                             </asp:Table>
                         </EmptyDataTemplate>
                         
-                        <RowStyle CssClass="SeriesGridViewRow"/>
-                        <HeaderStyle CssClass="SeriesGridViewHeader"/>
-                        <AlternatingRowStyle CssClass="SeriesGridViewAlternatingRow" />
-                        <SelectedRowStyle  CssClass="SeriesGridSelectedRow" />
+                        <RowStyle CssClass="GlobalGridViewRow"/>
+                        <HeaderStyle CssClass="GlobalGridViewHeader"/>
+                        <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
+                        <SelectedRowStyle  CssClass="GlobalGridViewSelectedRow" />
                     </ccUI:GridView>
+                    
     </ContentTemplate>
 </asp:UpdatePanel>

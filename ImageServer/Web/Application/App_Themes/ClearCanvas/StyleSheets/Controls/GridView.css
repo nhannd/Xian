@@ -4,6 +4,7 @@
     font-size: 12px;
     background-color: White;
     padding: 1px 1px 1px 1px;
+    border: solid 1px #3d98d1; 
 }
 
 .GlobalGridViewHeader

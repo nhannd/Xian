@@ -36,6 +36,7 @@ using System.Web.UI;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Common;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails
@@ -101,11 +102,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails
 
         protected override void  OnPreRender(EventArgs e)
         {
-            if (_series==null)
+            if (_series == null)
             {
                 Response.Write("<Br>NO  SUCH SERIES FOUND<Br>");
 
                 SeriesDetailsPanel1.Visible = false;
+            }
+            else
+            {
+                Page.Title = String.Format("{0}:{1} (Series: {2})", NameFormatter.Format(_study.PatientsName) , _study.PatientId, _series.SeriesNumber);
             }
  	        
             base.OnPreRender(e);

@@ -2,7 +2,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SeriesDetailsView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails.SeriesDetailsView" %>
 
 <asp:DetailsView ID="DetailsView1" runat="server" AutoGenerateRows="False" CellPadding="4" 
-    GridLines="Horizontal" Width="100%" CssClass="SeriesDetailsGridView" OnDataBound="DetailsView1_DataBound">
+    GridLines="Horizontal" Width="100%" CssClass="GlobalGridView" OnDataBound="DetailsView1_DataBound">
     <Fields>
         <asp:BoundField DataField="SeriesInstanceUid" HeaderText="Series Instance UID: ">
             <HeaderStyle CssClass="SeriesDetailsGridViewHeader" Wrap="false" />
@@ -32,7 +32,6 @@
         
         
     </Fields>
-    <RowStyle CssClass="SeriesDetailsGridViewRow"/>
-
+    <RowStyle CssClass="GlobalGridViewRow"/>
 </asp:DetailsView>
 

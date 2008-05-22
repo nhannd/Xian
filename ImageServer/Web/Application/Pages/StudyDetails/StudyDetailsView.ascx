@@ -1,7 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StudyDetailsView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.StudyDetailsView" %>
 
 <asp:DetailsView ID="DetailsView1" runat="server" AutoGenerateRows="False" GridLines="Horizontal" CellPadding="4" 
-     CssClass="StudyDetailsView" Width="100%">
+     CssClass="GlobalGridView" Width="100%">
     <Fields>
         <asp:BoundField DataField="StudyDescription" HeaderText="Study Description: ">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
@@ -42,7 +42,7 @@
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
         </asp:BoundField>
     </Fields>
-    <RowStyle CssClass="StudyDetailsViewRow"/>
-    <AlternatingRowStyle CssClass="StudyDetailsViewAlternatingRow" />
+    <RowStyle CssClass="GlobalGridViewRow"/>
+    <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
     
 </asp:DetailsView>

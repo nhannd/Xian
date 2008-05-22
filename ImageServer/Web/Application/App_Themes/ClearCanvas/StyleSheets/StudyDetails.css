@@ -41,15 +41,6 @@
     background-color: #eeeeee;
 }
 
-.SeriesTitle
-{
-    color: #205F87; 
-    font-family: Sans-serif; 
-    font-weight: bold; 
-    font-size: 20px;
-    padding-left: 5px;
-}
-
 .StudyDetailsView
 {
     font-family: Sans-Serif;
@@ -57,19 +48,6 @@
     background-color: White;
     padding: 1px 1px 1px 1px;
 }
-
-.StudyDetailsViewRow
-{
-}
-
-.StudyDetailsViewRow td
-{
-    border-bottom: solid 2px #eeeeee;
-    border-top: solid 2px #eeeeee;
-    border-left: none 1px white;
-    border-right: none 1px white;
-}
-
 
 .StudyDetailsViewHeader
 {
@@ -83,15 +61,6 @@
 .StudyDetailsViewHeader td
 {
     border: solid 1px #cccccc;
-}
-
-.StudyDetailsViewAlternatingRow
-{
-    
-}
-
-.StudyDetailsViewAlternatingRow td
-{
 }
 
 /*****************************************************************************************

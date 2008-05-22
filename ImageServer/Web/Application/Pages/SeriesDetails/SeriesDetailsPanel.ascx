@@ -21,7 +21,7 @@
   <tr>
   <td class="StudySummaryContent">
       <table width="100%" cellpadding="2" cellspacing="0" style="background-color: #B8D9EE">
-        <tr><td class="SeriesTitle">Study Summary</td></tr>
+        <tr><td class="MainContentSubTitle">Study Summary</td></tr>
         <tr><td>
         <localAsp:StudySummaryPanel ID="StudySummary" runat="server" />
         </td></tr>
@@ -31,7 +31,7 @@
   <tr>
   <td class="SeriesDetailsContent">
     <table width="100%" cellpadding="2" cellspacing="0" style="background-color: #B8D9EE">
-        <tr><td class="SeriesTitle">Series Summary</td></tr>
+        <tr><td class="MainContentSubTitle">Series Summary</td></tr>
         <tr><td>
         <localAsp:SeriesDetailsView ID="SeriesDetails" runat="server" />
         </td></tr>
