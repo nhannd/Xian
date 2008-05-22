@@ -279,62 +279,23 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     }
 
     [FolderPath("Search")]
-    public class SearchFolder : ReportingWorkflowFolder
+    public class SearchFolder : SearchResultsFolder<ReportingWorklistItem>
     {
-        private SearchData _searchData;
-
         public SearchFolder(ReportingWorkflowFolderSystemBase folderSystem)
-            : base(folderSystem, null)
+			: base(folderSystem, new ReportingWorklistTable())
         {
-            this.OpenIconSet = new IconSet(IconScheme.Colour, "SearchFolderOpenSmall.png", "SearchFolderOpenMedium.png", "SearchFolderOpenLarge.png");
-            this.ClosedIconSet = new IconSet(IconScheme.Colour, "SearchFolderClosedSmall.png", "SearchFolderClosedMedium.png", "SearchFolderClosedLarge.png");
-            this.IconSet = this.ClosedIconSet;
-            this.RefreshTime = 0;
         }
 
-        public SearchData SearchData
-        {
-            get { return _searchData; }
-            set
-            {
-                _searchData = value;
-                this.Refresh();
-            }
-        }
+		protected override TextQueryResponse<ReportingWorklistItem> DoQuery(TextQueryRequest request)
+		{
+			TextQueryResponse<ReportingWorklistItem> response = null;
+			Platform.GetService<IReportingWorkflowService>(
+				delegate(IReportingWorkflowService service)
+				{
+					response = service.Search(request);
+				});
+			return response;
+		}
 
-        protected override bool CanQuery()
-        {
-            if (this.SearchData != null)
-                return true;
-
-            return false;
-        }
-
-        protected override QueryItemsResult QueryItems()
-        {
-            List<ReportingWorklistItem> worklistItems = null;
-            Platform.GetService<IReportingWorkflowService>(
-                delegate(IReportingWorkflowService service)
-                {
-                    SearchRequest request = new SearchRequest();
-                    request.TextQuery = this.SearchData.TextSearch;
-                    request.ShowActivOnly = this.SearchData.ShowActiveOnly;
-                    request.SpecificityThreshold = this.SearchCriteriaSpecificityThreshold;
-                    TextQueryResponse<ReportingWorklistItem> response = service.Search(request);
-                    if (response.TooManyMatches)
-                        throw new WeakSearchCriteriaException();
-                    worklistItems = response.Matches;
-                });
-
-            if (worklistItems == null)
-                worklistItems = new List<ReportingWorklistItem>();
-
-            return new QueryItemsResult(worklistItems, worklistItems.Count);
-        }
-
-        public override void RefreshCount()
-        {
-            // do nothing
-        }
     }
 }

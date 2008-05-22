@@ -211,62 +211,22 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [FolderPath("Search")]
-    public class TechnologistSearchFolder : TechnologistWorkflowFolder
+    public class TechnologistSearchFolder : SearchResultsFolder<ModalityWorklistItem>
     {
-        private SearchData _searchData;
-
         public TechnologistSearchFolder(TechnologistWorkflowFolderSystemBase folderSystem)
-            : base(folderSystem, null)
+			: base(folderSystem, new ModalityWorklistTable())
         {
-            this.OpenIconSet = new IconSet(IconScheme.Colour, "SearchFolderOpenSmall.png", "SearchFolderOpenMedium.png", "SearchFolderOpenLarge.png");
-            this.ClosedIconSet = new IconSet(IconScheme.Colour, "SearchFolderClosedSmall.png", "SearchFolderClosedMedium.png", "SearchFolderClosedLarge.png");
-            this.IconSet = this.ClosedIconSet;
-            this.RefreshTime = 0;
         }
 
-        public SearchData SearchData
-        {
-            get { return _searchData; }
-            set
-            {
-                _searchData = value;
-                this.Refresh();
-            }
-        }
-
-        protected override bool CanQuery()
-        {
-            if (this.SearchData != null)
-                return true;
-
-            return false;
-        }
-
-        protected override QueryItemsResult QueryItems()
-        {
-            List<ModalityWorklistItem> worklistItems = null;
-            Platform.GetService<IModalityWorkflowService>(
-                delegate(IModalityWorkflowService service)
-                {
-                    SearchRequest request = new SearchRequest();
-                    request.TextQuery = this.SearchData.TextSearch;
-                    request.ShowActiveOnly = this.SearchData.ShowActiveOnly;
-                    request.SpecificityThreshold = this.SearchCriteriaSpecificityThreshold;
-                    TextQueryResponse<ModalityWorklistItem> response = service.Search(request);
-                    if (response.TooManyMatches)
-                        throw new WeakSearchCriteriaException();
-                    worklistItems = response.Matches;
-                });
-
-            if (worklistItems == null)
-                worklistItems = new List<ModalityWorklistItem>();
-
-            return new QueryItemsResult(worklistItems, worklistItems.Count);
-        }
-
-        public override void RefreshCount()
-        {
-            // do nothing
-        }
+		protected override TextQueryResponse<ModalityWorklistItem> DoQuery(TextQueryRequest request)
+		{
+			TextQueryResponse<ModalityWorklistItem> response = null;
+			Platform.GetService<IModalityWorkflowService>(
+				delegate(IModalityWorkflowService service)
+				{
+					response = service.Search(request);
+				});
+			return response;
+		}
     }
 }

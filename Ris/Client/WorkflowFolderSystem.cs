@@ -251,21 +251,22 @@ namespace ClearCanvas.Ris.Client
             EventsHelper.Fire(_selectedItemDoubleClicked, this, EventArgs.Empty);
         }
 
-        protected void AddFolder(WorkflowFolder<TItem> folder)
+        protected void AddFolder(IFolder folder)
         {
             _workflowFolders.Add(folder);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            foreach (WorkflowFolder<TItem> folder in _workflowFolders)
-            {
-                folder.Dispose();
-            }
-
             if (disposing)
             {
-                if (_itemTools != null) _itemTools.Dispose();
+				foreach (IFolder folder in _workflowFolders)
+				{
+					if (folder is IDisposable)
+						((IDisposable)folder).Dispose();
+				}
+
+				if (_itemTools != null) _itemTools.Dispose();
                 if (_folderTools != null) _folderTools.Dispose();
             }
         }

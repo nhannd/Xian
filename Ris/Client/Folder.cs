@@ -83,14 +83,17 @@ namespace ClearCanvas.Ris.Client
 
 		private ActionModelNode _menuModel;
 
-		protected IconSet _iconSet;
-		protected IResourceResolver _resourceResolver;
+		private IResourceResolver _resourceResolver;
 		private bool _isOpen;
 
-		protected readonly IList<IFolder> _subfolders;
-		protected Path _folderPath;
-		protected bool _startExpanded;
-		protected bool _isStatic = true;
+		private readonly IList<IFolder> _subfolders;
+		private Path _folderPath;
+		private readonly bool _startExpanded;
+		private bool _isStatic = true;
+
+		private static readonly IconSet _closedIconSet = new IconSet(IconScheme.Colour, "FolderClosedSmall.png", "FolderClosedMedium.png", "FolderClosedMedium.png");
+		private static readonly IconSet _openIconSet = new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenMedium.png");
+		private IconSet _iconSet;
 
 		/// <summary>
 		/// Constructor
@@ -100,21 +103,36 @@ namespace ClearCanvas.Ris.Client
 			// establish default resource resolver on this assembly (not the assembly of the derived class)
 			_resourceResolver = new ResourceResolver(typeof(Folder).Assembly);
 
+			// initialize icon set to "closed"
+			_iconSet = _closedIconSet;
+
 			_subfolders = new List<IFolder>();
 
 			// Initialize folder Path
-			FolderPathAttribute attrib = (FolderPathAttribute)CollectionUtils.SelectFirst(
-				this.GetType().GetCustomAttributes(false),
-				delegate(object o)
-				{
-					return o is FolderPathAttribute;
-				});
-
+			FolderPathAttribute attrib = AttributeUtils.GetAttribute<FolderPathAttribute>(this.GetType());
 			if (attrib != null)
 			{
 				_folderPath = new Path(attrib.Path, _resourceResolver);
 				_startExpanded = attrib.StartExpanded;
 			}
+		}
+
+		/// <summary>
+		/// Constructor.  Values passed to this constructor will override any <see cref="FolderPathAttribute"/> declaration.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="startExpanded"></param>
+		public Folder(string path, bool startExpanded)
+		{
+			// establish default resource resolver on this assembly (not the assembly of the derived class)
+			_resourceResolver = new ResourceResolver(typeof(Folder).Assembly);
+
+			// initialize icon set to "closed"
+			_iconSet = _closedIconSet;
+
+			_subfolders = new List<IFolder>();
+			_folderPath = new Path(path, _resourceResolver);
+			_startExpanded = startExpanded;
 		}
 
 
@@ -129,14 +147,25 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Gets the text that should be displayed for the folder
+		/// Gets the text that should be displayed for the folder.
 		/// </summary>
-		public abstract string Text { get; }
+		/// <remarks>
+		/// The default implementation of this property returns the <see cref="Name"/> of the folder,
+		/// followed by the <see cref="TotalItemCount"/>, if <see cref="IsPopulated"/> returns true.
+		/// </remarks>
+		public virtual string Text
+		{
+			get
+			{
+				return this.IsPopulated ?
+					string.Format("{0} ({1})", this.Name, this.TotalItemCount) : this.Name;
+			}
+		}
 
 		/// <summary>
-		/// Gets the folder name
+		/// Gets the folder name, which is the last part of the <see cref="FolderPath"/> value.
 		/// </summary>
-		public virtual string Name
+		public string Name
 		{
 			get { return _folderPath != null ? _folderPath.LastSegment.LocalizedText : string.Empty; }
 		}
@@ -144,7 +173,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Allows the folder to notify that it's text has changed
 		/// </summary>
-		public virtual event EventHandler TextChanged
+		public event EventHandler TextChanged
 		{
 			add { _textChanged += value; }
 			remove { _textChanged -= value; }
@@ -166,6 +195,8 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public virtual void OpenFolder()
 		{
+			this.IconSet = OpenIconSet;
+
 			_isOpen = true;
 			Refresh();
 		}
@@ -175,11 +206,13 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public virtual void CloseFolder()
 		{
+			this.IconSet = ClosedIconSet;
+
 			_isOpen = false;
 		}
 
 		/// <summary>
-		/// Indicates if the folder should be initially expanded
+		/// Indicates if the folder should be initially expanded.
 		/// </summary>
 		public virtual bool StartExpanded
 		{
@@ -187,7 +220,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Gets the iconset that should be displayed for the folder
+		/// Gets the iconset that should be displayed for the folder.
 		/// </summary>
 		public IconSet IconSet
 		{
@@ -200,25 +233,25 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Allows the folder to nofity that it's icon has changed
+		/// Allows the folder to nofity that its icon has changed.
 		/// </summary>
-		public virtual event EventHandler IconChanged
+		public event EventHandler IconChanged
 		{
 			add { _iconChanged += value; }
 			remove { _iconChanged -= value; }
 		}
 
 		/// <summary>
-		/// Gets the resource resolver that is used to resolve the Icon
+		/// Gets the resource resolver associated with this folder.
 		/// </summary>
 		public IResourceResolver ResourceResolver
 		{
 			get { return _resourceResolver; }
-			set { _resourceResolver = value; }
+			protected set { _resourceResolver = value; }
 		}
 
 		/// <summary>
-		/// Gets the tooltip that should be displayed for the folder
+		/// Gets the tooltip that should be displayed for the folder.
 		/// </summary>
 		public virtual string Tooltip
 		{
@@ -226,7 +259,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Allows the folder to notify that it's tooltip has changed
+		/// Allows the folder to notify that its tooltip has changed.
 		/// </summary>
 		public event EventHandler TooltipChanged
 		{
@@ -235,7 +268,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Occurs when refresh is about to begin
+		/// Occurs when refresh is about to begin.
 		/// </summary>
 		public event EventHandler RefreshBegin
 		{
@@ -244,7 +277,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Occurs when refresh is about to finish
+		/// Occurs when refresh is about to finish.
 		/// </summary>
 		public event EventHandler RefreshFinish
 		{
@@ -320,6 +353,11 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
+		/// Gets a value indicating whether this is populated.
+		/// </summary>
+		protected abstract bool IsPopulated { get; }
+
+		/// <summary>
 		/// Occurs when the value of the <see cref="IFolder.TotalItemCount"/> property changes.
 		/// </summary>
 		public event EventHandler TotalItemCountChanged
@@ -388,6 +426,32 @@ namespace ClearCanvas.Ris.Client
 		{
 			get { return _isStatic; }
 			set { _isStatic = value; }
+		}
+
+		#endregion
+
+		#region Overridable members
+
+		/// <summary>
+		/// Gets the closed-state <see cref="IconSet"/>.
+		/// </summary>
+		/// <remarks>
+		/// Override this property to provide a custom closed-state icon.
+		/// </remarks>
+		protected virtual IconSet ClosedIconSet
+		{
+			get { return _closedIconSet; }
+		}
+
+		/// <summary>
+		/// Gets the open-state <see cref="IconSet"/>.
+		/// </summary>
+		/// <remarks>
+		/// Override this property to provide a custom closed-state icon.
+		/// </remarks>
+		protected virtual IconSet OpenIconSet
+		{
+			get { return _openIconSet; }
 		}
 
 		#endregion

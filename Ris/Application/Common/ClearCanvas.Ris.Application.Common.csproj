@@ -379,7 +379,6 @@
     <Compile Include="Jsml\JsmlBlob.cs" />
     <Compile Include="ModalityWorkflow\ReplaceOrderRequest.cs" />
     <Compile Include="ModalityWorkflow\ReplaceOrderResponse.cs" />
-    <Compile Include="ModalityWorkflow\SearchRequest.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\CompleteOrderDocumentationRequest.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\CompleteOrderDocumentationResponse.cs" />
     <Compile Include="ModalityWorkflow\DiscontinueModalityPerformedProcedureStepRequest.cs" />
@@ -425,7 +424,6 @@
     <Compile Include="RegistrationWorkflow\LoadSearchPatientFormDataResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ReplaceOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ReplaceOrderResponse.cs" />
-    <Compile Include="RegistrationWorkflow\SearchRequest.cs" />
     <Compile Include="ReportingWorkflow\GetRadiologistListRequest.cs" />
     <Compile Include="ReportingWorkflow\GetRadiologistListResponse.cs" />
     <Compile Include="ReportingWorkflow\ListWorklistsRequest.cs" />
@@ -554,7 +552,6 @@
     <Compile Include="ReportingWorkflow\ReviseResidentReportResponse.cs" />
     <Compile Include="ReportingWorkflow\SaveReportRequest.cs" />
     <Compile Include="ReportingWorkflow\SaveReportResponse.cs" />
-    <Compile Include="ReportingWorkflow\SearchRequest.cs" />
     <Compile Include="ReportingWorkflow\StartVerificationResponse.cs" />
     <Compile Include="ReportingWorkflow\StartInterpretationResponse.cs" />
     <Compile Include="ReportingWorkflow\GetOperationEnablementRequest.cs" />

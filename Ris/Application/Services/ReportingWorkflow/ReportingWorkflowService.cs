@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         #region IReportingWorkflowService Members
 
         [ReadOperation]
-        public TextQueryResponse<ReportingWorklistItem> Search(SearchRequest request)
+		public TextQueryResponse<ReportingWorklistItem> Search(TextQueryRequest request)
         {
             ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
             IReportingWorklistItemBroker broker = PersistenceContext.GetBroker<IReportingWorklistItemBroker>();

@@ -96,6 +96,7 @@
     <Compile Include="OrderNoteConversationTool.cs" />
     <Compile Include="PreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="RefreshTool.cs" />
+    <Compile Include="SearchResultsFolder.cs" />
     <Compile Include="SearchTool.cs" />
     <Compile Include="SessionManagerTool.cs" />
     <Compile Include="StaffGroupEditorComponent.cs" />

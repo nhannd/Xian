@@ -57,10 +57,10 @@ namespace ClearCanvas.Ris.Client
             get { return _itemsTable.Items; }
         }
 
-        public override string Text
-        {
-            get { return string.Format("{0} ({1})", _folderName, this.Items.Count); }
-        }
+		protected override bool IsPopulated
+		{
+			get { return true; }
+		}
 
         public override ITable ItemsTable
         {

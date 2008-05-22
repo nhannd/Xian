@@ -41,23 +41,22 @@ namespace ClearCanvas.Ris.Client
         private readonly IconSet _closedIconSet;
 
         public ContainerFolder(string path, bool startExpanded)
+			:base(path, startExpanded)
         {
             _openIconSet = new IconSet(IconScheme.Colour, "ContainerFolderOpenSmall.png", "ContainerFolderOpenMedium.png", "ContainerFolderOpenMedium.png");
             _closedIconSet = new IconSet(IconScheme.Colour, "ContainerFolderClosedSmall.png", "ContainerFolderClosedMedium.png", "ContainerFolderClosedMedium.png");
-            _iconSet = _closedIconSet;
-            _resourceResolver = new ResourceResolver(typeof(ContainerFolder).Assembly);
-
-            if (!string.IsNullOrEmpty(path))
-                _folderPath = new Path(path, _resourceResolver);
-
-            _startExpanded = startExpanded;
         }
 
         #region Folder overrides
 
+		protected override bool IsPopulated
+		{
+			get { return true; }
+		}
+
         public override string Text
         {
-            get { return _folderPath.LastSegment.LocalizedText; }
+            get { return this.FolderPath.LastSegment.LocalizedText; }
         }
 
         public override void Refresh()
@@ -81,26 +80,26 @@ namespace ClearCanvas.Ris.Client
         public override DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)
         {
             // All subfolders are of the same type, so just let the first subfolder determine if it can handle the drop if subfolder exist
-            if (_subfolders.Count == 0)
+            if (this.Subfolders.Count == 0)
             {
                 return DragDropKind.None;
             }
             else
             {
-                return _subfolders[0].CanAcceptDrop(items, kind);
+                return this.Subfolders[0].CanAcceptDrop(items, kind);
             }
         }
 
         public override DragDropKind AcceptDrop(object[] items, DragDropKind kind)
         {
             // All subfolders are of the same type, so just let the first subfolder handle the drop if subfolder exist
-            if (_subfolders.Count == 0)
+			if (this.Subfolders.Count == 0)
             {
                 return DragDropKind.None;
             }
             else
             {
-                return _subfolders[0].AcceptDrop(items, kind);
+				return this.Subfolders[0].AcceptDrop(items, kind);
             }
         }
 
@@ -119,6 +118,16 @@ namespace ClearCanvas.Ris.Client
 
             base.CloseFolder();
         }
+
+		protected override IconSet OpenIconSet
+		{
+			get { return new IconSet(IconScheme.Colour, "ContainerFolderOpenSmall.png", "ContainerFolderOpenMedium.png", "ContainerFolderOpenMedium.png"); }
+		}
+
+		protected override IconSet ClosedIconSet
+		{
+			get { return new IconSet(IconScheme.Colour, "ContainerFolderClosedSmall.png", "ContainerFolderClosedMedium.png", "ContainerFolderClosedMedium.png"); }
+		}
 
 
         #endregion

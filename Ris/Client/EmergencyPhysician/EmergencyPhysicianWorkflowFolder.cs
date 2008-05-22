@@ -11,9 +11,6 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 	public abstract class EmergencyPhysicianWorkflowFolder : WorkflowFolder<RegistrationWorklistItem>
 	{
 		private readonly RegistrationWorkflowFolderSystemBase _folderSystem;
-		private IconSet _closedIconSet;
-		private IconSet _openIconSet;
-
 		private readonly EntityRef _worklistRef;
 
 		public EmergencyPhysicianWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
@@ -21,9 +18,6 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 		{
 			_folderSystem = folderSystem;
 
-			_closedIconSet = new IconSet(IconScheme.Colour, "FolderClosedSmall.png", "FolderClosedMedium.png", "FolderClosedMedium.png");
-			_openIconSet = new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenMedium.png");
-			this.IconSet = _closedIconSet;
 			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
 
 			_worklistRef = worklistRef;
@@ -32,34 +26,6 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 		public EmergencyPhysicianWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName)
 			: this(folderSystem, folderName, null, null)
 		{
-		}
-
-		public IconSet ClosedIconSet
-		{
-			get { return _closedIconSet; }
-			set { _closedIconSet = value; }
-		}
-
-		public IconSet OpenIconSet
-		{
-			get { return _openIconSet; }
-			set { _openIconSet = value; }
-		}
-
-		public override void OpenFolder()
-		{
-			if (_openIconSet != null)
-				this.IconSet = _openIconSet;
-
-			base.OpenFolder();
-		}
-
-		public override void CloseFolder()
-		{
-			if (_closedIconSet != null)
-				this.IconSet = _closedIconSet;
-
-			base.CloseFolder();
 		}
 
 		protected override bool CanQuery()

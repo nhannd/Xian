@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="SearchRequest"/></param>
         /// <returns></returns>
         [OperationContract]
-        TextQueryResponse<ReportingWorklistItem> Search(SearchRequest request);
+        TextQueryResponse<ReportingWorklistItem> Search(TextQueryRequest request);
 
         /// <summary>
         /// Get a list of all reporting worklists

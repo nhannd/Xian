@@ -104,9 +104,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 		}
 
 		private readonly ReportingWorkflowFolderSystemBase _folderSystem;
-		private IconSet _closedIconSet;
-		private IconSet _openIconSet;
-
 		private readonly EntityRef _worklistRef;
 
 		public ReportingWorkflowFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
@@ -114,9 +111,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 		{
 			_folderSystem = folderSystem;
 
-			_closedIconSet = new IconSet(IconScheme.Colour, "FolderClosedSmall.png", "FolderClosedMedium.png", "FolderClosedMedium.png");
-			_openIconSet = new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenMedium.png");
-			this.IconSet = _closedIconSet;
 			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
 			if (dropHandlerExtensionPoint != null)
 			{
@@ -144,34 +138,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 		public EntityRef WorklistRef
 		{
 			get { return _worklistRef; }
-		}
-
-		public IconSet ClosedIconSet
-		{
-			get { return _closedIconSet; }
-			set { _closedIconSet = value; }
-		}
-
-		public IconSet OpenIconSet
-		{
-			get { return _openIconSet; }
-			set { _openIconSet = value; }
-		}
-
-		public override void OpenFolder()
-		{
-			if (_openIconSet != null)
-				this.IconSet = _openIconSet;
-
-			base.OpenFolder();
-		}
-
-		public override void CloseFolder()
-		{
-			if (_closedIconSet != null)
-				this.IconSet = _closedIconSet;
-
-			base.CloseFolder();
 		}
 
 		protected override bool CanQuery()

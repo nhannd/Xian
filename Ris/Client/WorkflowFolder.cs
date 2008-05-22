@@ -121,10 +121,10 @@ namespace ClearCanvas.Ris.Client
                     SetTotalItemCount(_itemsTable.Items.Count);
                 };
 
-            Platform.CheckForNullReference(_folderPath, "FolderPath attribute");
-
+			//TODO: this isn't good practice - updating base-class properties in the constructor
+			//should define a new base constructor overload instead
             if (!string.IsNullOrEmpty(folderName))
-                _folderPath = new Path(string.Concat(_folderPath.ToString(), "/", folderName), _resourceResolver);
+				this.FolderPath = new Path(string.Concat(this.FolderPath.ToString(), "/", folderName), this.ResourceResolver);
 
             // Initialize worklist type
             FolderForWorklistClassAttribute attrib = (FolderForWorklistClassAttribute) CollectionUtils.SelectFirst(
@@ -153,14 +153,6 @@ namespace ClearCanvas.Ris.Client
             get { return _worklistClassName; }
         }
 
-        public override string Text
-        {
-            get
-            {
-                return _isPopulated || _itemCount >= 0 ?
-                    string.Format("{0} ({1})", this.Name, _itemCount) : this.Name;
-            }
-        }
 
         public override string Tooltip
         {
@@ -182,6 +174,11 @@ namespace ClearCanvas.Ris.Client
         {
             get { return _itemCount; }
         }
+
+		protected override bool IsPopulated
+		{
+			get { return _isPopulated; }
+		}
 
         public WorkflowFolderSystem<TItem> WorkflowFolderSystem
         {
@@ -401,11 +398,6 @@ namespace ClearCanvas.Ris.Client
         {
             _dropHandlerExtensionPoint = dropHandlerExtensionPoint;
             _dropContext = dropContext;
-        }
-
-        protected int SearchCriteriaSpecificityThreshold
-        {
-            get { return HomePageSettings.Default.SearchCriteriaSpecificityThreshold; }
         }
 
         protected abstract bool CanQuery();

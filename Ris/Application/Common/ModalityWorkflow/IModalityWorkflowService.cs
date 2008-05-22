@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        TextQueryResponse<ModalityWorklistItem> Search(SearchRequest request);
+		TextQueryResponse<ModalityWorklistItem> Search(TextQueryRequest request);
 
         /// <summary>
         /// Obtain the list of worklists for the current user.
