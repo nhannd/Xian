@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             TableColumn<ModalityWorklistItem, string> patientClassColumn = 
                 new TableColumn<ModalityWorklistItem, string>(SR.ColumnPatientClass,
-                delegate(ModalityWorklistItem item) { return item.PatientClass.Value; }, 0.5f);
+                delegate(ModalityWorklistItem item) { return item.PatientClass == null ? null : item.PatientClass.Value; }, 0.5f);
 
             TableColumn<ModalityWorklistItem, string> descriptionRow = 
                 new TableColumn<ModalityWorklistItem, string>(SR.ColumnDescription,

@@ -28,6 +28,14 @@ namespace ClearCanvas.Ris.Client
 			get { return this.SummaryItem.OrderRef; }
 		}
 
+		public override bool Enabled
+		{
+			get
+			{
+				return base.Enabled && this.SummaryItem.OrderRef != null;
+			}
+		}
+
 		protected override string TitleContextDescription
 		{
 			get

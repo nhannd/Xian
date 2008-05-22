@@ -21,21 +21,6 @@ namespace ClearCanvas.Ris.Client
 		where TSummaryItem : DataContractBase
 		where TToolContext : IWorkflowItemToolContext<TSummaryItem>
 	{
-		private bool _enabled;
-		private event EventHandler _enabledChanged;
-
-		public override void Initialize()
-		{
-			base.Initialize();
-			_enabled = false;   // disable by default
-
-			((IWorkflowItemToolContext<TSummaryItem>)this.ContextBase).SelectionChanged += delegate
-			{
-				this.Enabled = (((IWorkflowItemToolContext<TSummaryItem>)this.ContextBase).SelectedItems != null
-				&& ((IWorkflowItemToolContext<TSummaryItem>)this.ContextBase).SelectedItems.Count == 1);
-			};
-		}
-
 		/// <summary>
 		/// A title for the <see cref="OrderNoteConversationComponent"/> from the derived class' <see cref="TSummaryItem"/>
 		/// </summary>
@@ -63,23 +48,19 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public bool Enabled
+		public virtual bool Enabled
 		{
-			get { return _enabled; }
-			set
+			get
 			{
-				if (_enabled != value)
-				{
-					_enabled = value;
-					EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
-				}
+				ICollection<TSummaryItem> items = ((IWorkflowItemToolContext<TSummaryItem>) this.ContextBase).SelectedItems;
+				return items != null && items.Count == 1;
 			}
 		}
 
 		public event EventHandler EnabledChanged
 		{
-			add { _enabledChanged += value; }
-			remove { _enabledChanged -= value; }
+			add { ((IWorkflowItemToolContext<TSummaryItem>)this.ContextBase).SelectionChanged += value; }
+			remove { ((IWorkflowItemToolContext<TSummaryItem>)this.ContextBase).SelectionChanged -= value; }
 		}
 
 		/// <summary>

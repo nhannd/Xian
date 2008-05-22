@@ -52,7 +52,8 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get
             {
-                return this.Context.SelectedItems.Count == 1;
+            	return this.Context.SelectedItems.Count == 1
+            	       && CollectionUtils.FirstElement(this.Context.SelectedItems).OrderRef != null;
             }
         }
 
@@ -68,7 +69,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 ModalityWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
 
-                if (item != null)
+                if (item != null && item.OrderRef != null)
                 {
                     Workspace workspace = DocumentManager.Get<TechnologistDocumentationDocument>(item.OrderRef);
                     if (workspace == null)

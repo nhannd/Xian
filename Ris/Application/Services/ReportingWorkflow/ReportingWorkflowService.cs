@@ -541,6 +541,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         private bool CanExecuteOperation(Operations.ReportingOperation op, WorklistItemKey itemKey)
         {
+			// if there is no proc step ref, operation is not available
+			if(itemKey.ProcedureStepRef == null)
+				return false;
+
             ProcedureStep step = PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
 
             // for now, all of these operations assume they are operating on a ReportingProcedureStep

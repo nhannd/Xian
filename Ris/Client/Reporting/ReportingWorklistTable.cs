@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             TableColumn<ReportingWorklistItem, string> patientClassColumn =
                 new TableColumn<ReportingWorklistItem, string>(SR.ColumnPatientClass,
-                delegate(ReportingWorklistItem item) { return item.PatientClass.Value; }, 0.5f);
+				delegate(ReportingWorklistItem item) { return item.PatientClass == null ? null : item.PatientClass.Value; }, 0.5f);
 
             TableColumn<ReportingWorklistItem, string> descriptionRow =
                 new TableColumn<ReportingWorklistItem, string>(SR.ColumnDescription,
