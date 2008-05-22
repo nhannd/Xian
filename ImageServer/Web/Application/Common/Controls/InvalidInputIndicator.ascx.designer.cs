@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
     public partial class InvalidInputIndicator {
         
         /// <summary>
-        /// Panel control.
+        /// ContainerPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.

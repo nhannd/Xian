@@ -573,6 +573,7 @@
     <Content Include="App_Themes\ClearCanvas\images\Header\LocationBackground.png" />
     <Content Include="App_Themes\ClearCanvas\images\Header\MenuEdge.png" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\GridView.css" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\InvalidInputIndicator.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Global.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Header.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Filter.css" />

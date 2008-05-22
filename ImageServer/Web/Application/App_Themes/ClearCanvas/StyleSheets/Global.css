@@ -194,22 +194,6 @@ Global.css - Defines the global styles for the entire web application relating
 	
 }
 
-/*****************************************************************************************
-	Invalid input indicator styles
-*****************************************************************************************/
-.CSSInvalidInputIndicatorContainer
-{
-}
-
-.CSSInvalidIndicatorTooltipPanel
-{
-	background-color: #ffffcc;
-}
-
-.CSSInvalidIndicatorTooltip
-{
-}
-
 /*************************************************************************************************
 	Popup Dialog
 *************************************************************************************************/
@@ -241,29 +225,6 @@ Global.css - Defines the global styles for the entire web application relating
 	
 }
 
-/*****************************************************************************************
-	Invalid input indicator styles
-*****************************************************************************************/
-.CSSInvalidInputIndicatorContainer
-{
-}
-
-.CSSInvalidIndicatorTooltipPanel
-{
-	border-right: #990000 1px solid;
-	border-top: #990000 1px solid;
-	border-left: #990000 1px solid;
-	border-bottom: #990000 1px solid;
-}
-
-.CSSInvalidIndicatorTooltip
-{
-}
-
-
-
-
-
 
 /*************************************************************************************************
 	Popup dialog font
@@ -292,24 +253,6 @@ Global.css - Defines the global styles for the entire web application relating
 	text-transform: capitalize;
 	color:White;
 }
-
-/*****************************************************************************************
-	Invalid input indicator styles
-*****************************************************************************************/
-.CSSInvalidInputIndicatorContainer
-{
-}
-
-.CSSInvalidIndicatorTooltipPanel
-{
-	color: #ff6600;
-	
-}
-
-.CSSInvalidIndicatorTooltip
-{
-}
-
 
 /*************************************************************************************************
 	Popup dialog
@@ -343,34 +286,6 @@ Global.css - Defines the global styles for the entire web application relating
 	
 }
 
-/*****************************************************************************************
-	Invalid input indicator styles
-*****************************************************************************************/
-.CSSInvalidInputIndicatorContainer
-{
-}
-
-.CSSInvalidIndicatorTooltipPanel
-{
-	position: relative;
-	padding-right: 10px;
-	padding-left: 10px;
-	padding-bottom: 5px;
-	padding-top: 5px;
-	
-}
-
-.CSSInvalidIndicatorTooltip
-{
-}
-
-
-
-
-.InvalidInputHilight
-{
-	background-color:Yellow;
-}
 
 
 /*************************************************************************************************
@@ -402,23 +317,4 @@ Global.css - Defines the global styles for the entire web application relating
 {
 	border-bottom: gray 1px ridge;
 	
-}
-
-/*****************************************************************************************
-	Invalid input indicator styles
-*****************************************************************************************/
-.CSSInvalidInputIndicatorContainer
-{
-}
-
-.CSSInvalidIndicatorTooltipPanel
-{
-	border-right: #990000 1px solid;
-	border-top: #990000 1px solid;
-	border-left: #990000 1px solid;
-	border-bottom: #990000 1px solid;
-}
-
-.CSSInvalidIndicatorTooltip
-{
 }
