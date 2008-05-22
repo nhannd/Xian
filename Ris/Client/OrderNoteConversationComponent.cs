@@ -204,7 +204,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Private Fields
 
-		private readonly EntityRef _orderRef;
+		private EntityRef _orderRef;
 
 		private readonly List<string> _orderNoteCategories;
 		private readonly OrderNoteConversationTable _notes;
@@ -266,6 +266,8 @@ namespace ClearCanvas.Ris.Client
 
 					GetConversationRequest request = new GetConversationRequest(_orderRef, _orderNoteCategories, false);
 					GetConversationResponse response = service.GetConversation(request);
+
+					_orderRef = response.OrderRef;
 
 					List<Checkable<OrderNoteDetail>> checkableOrderNoteDetails =
 						CollectionUtils.Map<OrderNoteDetail, Checkable<OrderNoteDetail>>(

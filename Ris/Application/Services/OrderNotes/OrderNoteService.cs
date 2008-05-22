@@ -136,14 +136,16 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
 
             OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
 			if (request.CountOnly)
-				return new GetConversationResponse(null, notes.Count);
+				return new GetConversationResponse(order.GetRef(), null, notes.Count);
 			else 
 				return new GetConversationResponse(
-                CollectionUtils.Map<OrderNote, OrderNoteDetail>(notes,
-                    delegate (OrderNote n)
-                    {
-						return noteAssembler.CreateOrderNoteDetail(n, CurrentUserStaff, PersistenceContext);
-                    }), notes.Count);
+					order.GetRef(),
+					CollectionUtils.Map<OrderNote, OrderNoteDetail>(notes,
+						delegate (OrderNote n)
+						{
+							return noteAssembler.CreateOrderNoteDetail(n, CurrentUserStaff, PersistenceContext);
+						}), 
+					notes.Count);
         }
 
 		[ReadOperation]
