@@ -139,12 +139,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             DeviceGridPanel.DataBind();
         }
 
-        protected void FilterButton_Click(object sender, ImageClickEventArgs e)
+        protected void SearchButton_Click(object sender, EventArgs e)
         {
             LoadDevices();
         }
 
-        protected void SendButton_Click(object sender, ImageClickEventArgs e)
+        protected void MoveButton_Click(object sender, EventArgs e)
         {
             if (DeviceGridPanel.SelectedDevice != null)
             {
