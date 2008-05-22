@@ -790,6 +790,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} [{1} item(s)].
+        /// </summary>
+        internal static string FormatOrderNoteboxFolderSystemTitle {
+            get {
+                return ResourceManager.GetString("FormatOrderNoteboxFolderSystemTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  - {0} {1} - {2}.
         /// </summary>
         internal static string FormatTitleContextDescriptionOrderNoteConversation {

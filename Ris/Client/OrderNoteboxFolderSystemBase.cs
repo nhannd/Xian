@@ -126,6 +126,7 @@ namespace ClearCanvas.Ris.Client
 
 		private IDictionary<string, bool> _workflowEnablement;
 		private readonly IconSet _unacknowledgedNotesIconSet;
+		private readonly string _baseTitle;
 
 		#endregion
 
@@ -143,6 +144,7 @@ namespace ClearCanvas.Ris.Client
 			_folderTools = new ToolSet(folderToolExtensionPoint, new OrderNoteboxFolderToolContext(this));
 
 			_unacknowledgedNotesIconSet = new IconSet("NoteUnread.png");
+			_baseTitle = title;
 		}
 
 		public bool GetOperationEnablement(string operationName)
@@ -174,6 +176,7 @@ namespace ClearCanvas.Ris.Client
 		protected void OnPrimaryFolderCountChanged(object sender, System.EventArgs e)
 		{
 			IFolder folder = (IFolder)sender;
+			this.Title = string.Format(SR.FormatOrderNoteboxFolderSystemTitle, _baseTitle, folder.TotalItemCount);
 			this.TitleIcon = folder.TotalItemCount > 0 ? _unacknowledgedNotesIconSet : null;
 		}
 	}

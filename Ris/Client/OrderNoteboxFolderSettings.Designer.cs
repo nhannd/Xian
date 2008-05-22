@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Client {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Folder refresh time (milliseconds)")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("30000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("120000")]
         public int RefreshTime {
             get {
                 return ((int)(this["RefreshTime"]));
