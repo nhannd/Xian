@@ -75,7 +75,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._stackTabControl.ResizeBarColor = System.Drawing.SystemColors.Control;
 			this._stackTabControl.Size = new System.Drawing.Size(222, 258);
 			this._stackTabControl.TabIndex = 0;
-			this._stackTabControl.PageChanged += new Crownwood.DotNetMagic.Controls.TabbedGroups.PageChangeHandler(this._stackTabControl_PageChanged);
 			// 
 			// StackTabComponentContainerControl
 			// 

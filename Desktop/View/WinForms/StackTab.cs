@@ -143,9 +143,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _titleBar
 			// 
+			this._titleBar.ArrowButton = Crownwood.DotNetMagic.Controls.ArrowButton.DownArrow;
 			this._titleBar.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
-			this._titleBar.ImageAlignment = Crownwood.DotNetMagic.Controls.ImageAlignment.Far;
 			this._titleBar.Location = new System.Drawing.Point(0, 0);
 			this._titleBar.Margin = new System.Windows.Forms.Padding(0);
 			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;

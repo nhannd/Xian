@@ -54,7 +54,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             _component = component;
 
             CreateStackTabs();
-        }
+
+			_stackTabControl.PageChanged += OnControlPageChanged;
+			_component.CurrentPageChanged += OnComponentCurrentPageChanged;
+		}
+
+		#region Properties
 
 		[DefaultValue(VisualStyle.Office2007Blue)]
     	public VisualStyle ActiveStyle
@@ -70,7 +75,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { _inactiveStyle = value; }
 		}
 
-        #region Event Handlers
+		#endregion
+
+		#region Event Handlers
 
 		/// <summary>
 		/// Event Handler when user click on one of the title bar when StackStyle is ShowMultiple
@@ -78,24 +85,28 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void OnShowMultipleTitleClick(object sender, EventArgs e)
         {
             // Remember which title bar sent message
-            Crownwood.DotNetMagic.Controls.TitleBar tbClick = sender as Crownwood.DotNetMagic.Controls.TitleBar;
-            List<Crownwood.DotNetMagic.Controls.TabGroupLeaf> openedTabGroup = new List<Crownwood.DotNetMagic.Controls.TabGroupLeaf>();
-            Crownwood.DotNetMagic.Controls.TabGroupLeaf selectedTabGroup = null;
-            Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl = _stackTabControl.FirstLeaf();
+            TitleBar tbClick = sender as TitleBar;
+            List<TabGroupLeaf> openedTabGroup = new List<TabGroupLeaf>();
+            TabGroupLeaf selectedTabGroup = null;
+
+			TabGroupLeaf tgl = _stackTabControl.FirstLeaf();
             while (tgl != null)
             {
                 // Extract the StackTabTitleBar instance from page
-                Crownwood.DotNetMagic.Controls.TitleBar tb = (tgl.TabPages[0].Control as StackTab).TitleBar;
+				TitleBar tb = GetTitleBar(tgl);
 
                 // Is the source of the click?
-                if (tb == tbClick)
+                if (tb != null && tb == tbClick)
                 {
                     selectedTabGroup = tgl;
-                    tb.Active = true;
+					_stackTabControl.ActiveLeaf = tgl;
+					tb.Active = true;
 
                     // Add to openedTabGroup because we want to open this
                     if (tgl.Space == 0)
                         openedTabGroup.Add(tgl);
+					else
+                    	CloseTabGroup(tgl);
                 }
                 else
                 {
@@ -104,16 +115,13 @@ namespace ClearCanvas.Desktop.View.WinForms
                         openedTabGroup.Add(tgl);
                 }
 
-                // reset all TabGroups to close
-                CloseTabGroup(tgl);
-
                 tgl = _stackTabControl.NextLeaf(tgl);
             }
 
             // Open each TabGroup with evenly distributed space
             Decimal tabGroupSpace = openedTabGroup.Count == 0 ? 100 : (decimal)100 / openedTabGroup.Count;
             Decimal spaceRemained = 100;
-            foreach (Crownwood.DotNetMagic.Controls.TabGroupLeaf leaf in openedTabGroup)
+            foreach (TabGroupLeaf leaf in openedTabGroup)
             {
                 OpenTabGroup(leaf, tabGroupSpace);
                 spaceRemained -= tabGroupSpace;
@@ -139,26 +147,30 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private void OnShowOnlyOneTitleClick(object sender, EventArgs e)
         {
             // Remember which title bar sent message
-            Crownwood.DotNetMagic.Controls.TitleBar tbClick = sender as Crownwood.DotNetMagic.Controls.TitleBar;
-            Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl = _stackTabControl.FirstLeaf();
+            TitleBar tbClick = sender as TitleBar;
+            TabGroupLeaf tgl = _stackTabControl.FirstLeaf();
             while (tgl != null)
             {
                 // Extract the StackTabTitleBar instance from page
-                Crownwood.DotNetMagic.Controls.TitleBar tb = (tgl.TabPages[0].Control as StackTab).TitleBar;
+				TitleBar tb = GetTitleBar(tgl);
 
                 // Is the source of the click?
-                if (tb == tbClick)
+                if (tb != null)
                 {
-                    // open the tab
-                    tb.Active = true;
-                    OpenTabGroup(tgl, 100);
-                }
-                else
-                {
-                    // close the tab
-                    tb.Active = false;
-                    CloseTabGroup(tgl);
-                }
+					if (tb == tbClick)
+					{
+						// open the tab
+						_stackTabControl.ActiveLeaf = tgl;
+						tb.Active = true;
+						OpenTabGroup(tgl, 100);
+					}
+					else
+					{
+						// close the tab
+						tb.Active = false;
+						CloseTabGroup(tgl);
+					}
+				}
 
                 // Move on to the next tab group
                 tgl = _stackTabControl.NextLeaf(tgl);
@@ -171,22 +183,49 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <summary>
 		/// Event Handler when user click on one of the tab page 
 		/// </summary>
-		private void _stackTabControl_PageChanged(TabbedGroups tg, Crownwood.DotNetMagic.Controls.TabPage tp)
+		private void OnControlPageChanged(TabbedGroups tg, Crownwood.DotNetMagic.Controls.TabPage selectedPage)
 		{
-			TabGroupLeaf tgl = tg.FirstLeaf();
-			while (tgl != null)
+			if (selectedPage != null)
 			{
-				// Extract the StackTabTitleBar instance from page
-				TitleBar tb = (tgl.TabPages[0].Control as StackTab).TitleBar;
-				tb.Style = _inactiveStyle;
+				TabGroupLeaf tgl = tg.FirstLeaf();
+				while (tgl != null)
+				{
+					// Extract the StackTabTitleBar instance from page
+					TitleBar tb = GetTitleBar(tgl);
+					tb.Style = _inactiveStyle;
 
-				tgl = tg.NextLeaf(tgl);
+					tgl = tg.NextLeaf(tgl);
+				}
+
+				TitleBar selectedTabPageTitle = GetTitleBar(selectedPage);
+				selectedTabPageTitle.Style = _activeStyle;
+
+				StackTabPage tabPage = selectedPage.Tag as StackTabPage;
+				_component.CurrentPage = tabPage;
 			}
-
-			TitleBar selectedTabPageTitle = (tp.Control as StackTab).TitleBar;
-			selectedTabPageTitle.Style = _activeStyle;
 		}
-		
+
+		private void OnComponentCurrentPageChanged(object sender, EventArgs e)
+		{
+			if (_component.CurrentPage != null)
+			{
+				TabGroupLeaf tgl = _stackTabControl.FirstLeaf();
+				while (tgl != null)
+				{
+					Crownwood.DotNetMagic.Controls.TabPage tabPageUI = tgl.TabPages[0];
+					StackTabPage page = tabPageUI.Tag as StackTabPage;
+
+					if (_component.CurrentPage == page)
+					{
+						_stackTabControl.ActiveLeaf = tgl;
+						break;
+					}
+
+					tgl = _stackTabControl.NextLeaf(tgl);
+				}
+			}
+		}
+
 		#endregion
 
         #region Private Helpers
@@ -199,7 +238,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				StackTab stackTab = CreateStackTab(page, _component.StackStyle);
 
-				Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl = _stackTabControl.RootSequence.AddNewLeaf();
+				TabGroupLeaf tgl = _stackTabControl.RootSequence.AddNewLeaf();
 				tgl.MinimumSize = stackTab.MinimumRequestedSize;
 
 				// Prevent user from resizing
@@ -217,7 +256,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// Open up only the first tab group and close all others
 			for (int i = 0; i < _stackTabControl.RootSequence.Count; i++)
 			{
-				Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl = _stackTabControl.RootSequence[i] as Crownwood.DotNetMagic.Controls.TabGroupLeaf;
+				TabGroupLeaf tgl = _stackTabControl.RootSequence[i] as TabGroupLeaf;
 
 				if (_component.StackStyle == StackStyle.ShowMultiple && _component.OpenAllTabsInitially)
 				{
@@ -241,74 +280,77 @@ namespace ClearCanvas.Desktop.View.WinForms
             StackTab stackTab;
 			
 			if (stackStyle == StackStyle.ShowMultiple)
-				stackTab = new StackTab(page, Crownwood.DotNetMagic.Controls.ArrowButton.None, OnShowMultipleTitleClick);
+				stackTab = new StackTab(page, ArrowButton.DownArrow, OnShowMultipleTitleClick);
 			else
-				stackTab = new StackTab(page, Crownwood.DotNetMagic.Controls.ArrowButton.None, OnShowOnlyOneTitleClick);
+				stackTab = new StackTab(page, ArrowButton.None, OnShowOnlyOneTitleClick);
 
-            // Customize titlebar colours
-            //stackTab.TitleBar.BackColor = Color.SlateBlue;
-            //stackTab.TitleBar.ForeColor = Color.SteelBlue;
-            //stackTab.TitleBar.InactiveBackColor = ControlPaint.Light(Color.SlateBlue);
-            //stackTab.TitleBar.InactiveForeColor = ControlPaint.LightLight(Color.SlateBlue);
-            //stackTab.TitleBar.GradientActiveColor = Color.DarkSlateBlue;
-            //stackTab.TitleBar.GradientInactiveColor = ControlPaint.Light(Color.DarkSlateBlue);
-            //stackTab.TitleBar.MouseOverColor = Color.SkyBlue;
-
-			stackTab.TitleBar.ActAsButton = Crownwood.DotNetMagic.Controls.ActAsButton.WholeControl;
+			stackTab.TitleBar.ActAsButton = ActAsButton.WholeControl;
 
 			return stackTab;
         }
 
-        private void OpenTabGroup(Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl, decimal space)
+        private void OpenTabGroup(TabGroupLeaf tgl, decimal space)
         {
             Crownwood.DotNetMagic.Controls.TabPage tabPageUI = tgl.TabPages[0];
 			StackTabPage page = tabPageUI.Tag as StackTabPage;
             StackTab stackTab = tabPageUI.Control as StackTab;
 
-            if (page.Component.IsStarted == false)
+            if (page != null && page.Component.IsStarted == false)
                 page.Component.Start();
 
-            if (stackTab.ApplicationComponentControl == null)
+			if (stackTab != null && stackTab.ApplicationComponentControl == null)
             {
                 stackTab.ApplicationComponentControl = (Control)_component.GetPageView(page).GuiElement;
                 stackTab.ApplicationComponentControl.Dock = DockStyle.Fill;
             }
 
-			ToggleArrow(stackTab.TitleBar);
+			SetArrowToOpenState(GetTitleBar(tgl));
 
 			_component.CurrentPage = page;
             tabPageUI.Select();
             tgl.Space = space;
         }
 
-        private void CloseTabGroup(Crownwood.DotNetMagic.Controls.TabGroupLeaf tgl)
+        private static void CloseTabGroup(TabGroupLeaf tgl)
         {
-            StackTab stackTab = tgl.TabPages[0].Control as StackTab;
-
-			ToggleArrow(stackTab.TitleBar);
-
-            tgl.Space = 0;
+			SetArrowToCloseState(GetTitleBar(tgl));
+			tgl.Space = 0;
         }
 
-		private void ToggleArrow(TitleBar titleBar)
+		private static void SetArrowToOpenState(TitleBar titleBar)
 		{
 			switch (titleBar.ArrowButton)
 			{
+				case ArrowButton.UpArrow:
 				case ArrowButton.DownArrow:
 					titleBar.ArrowButton = ArrowButton.UpArrow;
 					break;
-				case ArrowButton.UpArrow:
-					titleBar.ArrowButton = ArrowButton.DownArrow;
-					break;
 				case ArrowButton.LeftArrow:
-					titleBar.ArrowButton = ArrowButton.RightArrow;
-					break;
 				case ArrowButton.RightArrow:
 					titleBar.ArrowButton = ArrowButton.LeftArrow;
 					break;
 				case ArrowButton.Pinned:
+				case ArrowButton.Unpinned:
 					titleBar.ArrowButton = ArrowButton.Unpinned;
 					break;
+				default:
+					break;
+			}
+		}
+
+		private static void SetArrowToCloseState(TitleBar titleBar)
+		{
+			switch (titleBar.ArrowButton)
+			{
+				case ArrowButton.DownArrow:
+				case ArrowButton.UpArrow:
+					titleBar.ArrowButton = ArrowButton.DownArrow;
+					break;
+				case ArrowButton.LeftArrow:
+				case ArrowButton.RightArrow:
+					titleBar.ArrowButton = ArrowButton.RightArrow;
+					break;
+				case ArrowButton.Pinned:
 				case ArrowButton.Unpinned:
 					titleBar.ArrowButton = ArrowButton.Pinned;
 					break;
@@ -317,6 +359,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
+		private static TitleBar GetTitleBar(TabGroupLeaf leaf)
+		{
+			return GetTitleBar(leaf.TabPages[0]);
+		}
+
+		private static TitleBar GetTitleBar(Crownwood.DotNetMagic.Controls.TabPage page)
+		{
+			return (page.Control as StackTab).TitleBar;
+		}
+
         #endregion
-    }
+	}
 }
