@@ -102,6 +102,7 @@ namespace ClearCanvas.Ris.Client
 
                     // notify view
                     EventsHelper.Fire(_tableChanged, this, EventArgs.Empty);
+					EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
 
                     NotifyPropertyChanged("StatusMessage");
                 }
