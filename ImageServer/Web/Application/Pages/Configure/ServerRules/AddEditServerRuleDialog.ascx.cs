@@ -204,20 +204,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			                                                 ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"),
 			                                                 extensions) +
 			                    @"else "
-			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("LosslessCompressStudy"),
+			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("StudyCompress"),
 			                                                 ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"),
-			                                                 extensions) +
-			                    @"else "
-			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("LossyCompressStudy"),
-			                                                 ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"),
-			                                                 extensions) +
-			                    @"else "
-			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("LosslessCompressParameters"),
-			                                                 ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"),
-			                                                 extensions) +
-			                    @"else "
-			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("LossyCompressParameters"),
-			                                                 ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"),
 			                                                 extensions) +
 			                    @"}
 
@@ -395,32 +383,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 					                                    	ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Enum.
 					                                    		ToString()));
 				}
-				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("LosslessCompressStudy").Enum)
+				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("StudyCompress").Enum)
 				{
 					RuleApplyTimeDropDownList.Items.Add(new ListItem(
 					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Description,
 					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
-					                                    		ToString()));
-				}
-				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("LossyCompressStudy").Enum)
-				{
-					RuleApplyTimeDropDownList.Items.Add(new ListItem(
-					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Description,
-					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
-					                                    		ToString()));
-				}
-				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("LosslessCompressParameters").Enum)
-				{
-					RuleApplyTimeDropDownList.Items.Add(new ListItem(
-					                                    	ServerRuleApplyTimeEnum.GetEnum("CompressingStudy").Description,
-					                                    	ServerRuleApplyTimeEnum.GetEnum("CompressingStudy").Enum.
-					                                    		ToString()));
-				}
-				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("LossyCompressParameters").Enum)
-				{
-					RuleApplyTimeDropDownList.Items.Add(new ListItem(
-					                                    	ServerRuleApplyTimeEnum.GetEnum("CompressingStudy").Description,
-					                                    	ServerRuleApplyTimeEnum.GetEnum("CompressingStudy").Enum.
 					                                    		ToString()));
 				}
 				if (RuleApplyTimeDropDownList.Items.FindByValue(_rule.ServerRuleApplyTimeEnum.Enum.ToString())!= null)
@@ -471,25 +438,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 				                               	ServerRuleTypeEnum.GetEnum("StudyDelete").Description,
 				                               	ServerRuleTypeEnum.GetEnum("StudyDelete").Enum.ToString()));
 				RuleTypeDropDownList.Items.Add(new ListItem(
-				                               	ServerRuleTypeEnum.GetEnum("LosslessCompressStudy").Description,
-				                               	ServerRuleTypeEnum.GetEnum("LosslessCompressStudy").Enum.ToString()));
-				RuleTypeDropDownList.Items.Add(new ListItem(
-				                               	ServerRuleTypeEnum.GetEnum("LossyCompressStudy").Description,
-				                               	ServerRuleTypeEnum.GetEnum("LossyCompressStudy").Enum.ToString()));
-				RuleTypeDropDownList.Items.Add(new ListItem(
-				                               	ServerRuleTypeEnum.GetEnum("LosslessCompressParameters").Description,
-				                               	ServerRuleTypeEnum.GetEnum("LosslessCompressParameters").Enum.ToString()));
-				RuleTypeDropDownList.Items.Add(new ListItem(
-				                               	ServerRuleTypeEnum.GetEnum("LossyCompressParameters").Description,
-				                               	ServerRuleTypeEnum.GetEnum("LossyCompressParameters").Enum.ToString()));
-
+				                               	ServerRuleTypeEnum.GetEnum("StudyCompress").Description,
+												ServerRuleTypeEnum.GetEnum("StudyCompress").Enum.ToString()));
 
 				RuleApplyTimeDropDownList.Items.Add(new ListItem(
 				                                    	ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Description,
 				                                    	ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Enum.ToString()));
-				RuleApplyTimeDropDownList.Items.Add(new ListItem(
-				                                    	ServerRuleApplyTimeEnum.GetEnum("CompressingStudy").Description,
-				                                    	ServerRuleApplyTimeEnum.GetEnum("CompressingStudy").Enum.ToString()));
 				
 				SampleRuleDropDownList.Items.Clear();
 				SampleRuleDropDownList.Items.Add(new ListItem("", ""));

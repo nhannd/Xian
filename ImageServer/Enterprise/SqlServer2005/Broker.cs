@@ -33,7 +33,9 @@ using System;
 using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
+using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Xml;
 using ClearCanvas.Enterprise.Core;
 
@@ -53,10 +55,10 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
         public void SetContext(IPersistenceContext context)
         {
-            this._context = (PersistenceContext)context;
+            _context = (PersistenceContext)context;
         }
 
-        protected void SetParameters(SqlCommand command, ProcedureParameters parms)
+        protected static void SetParameters(SqlCommand command, ProcedureParameters parms)
         {
             foreach (SearchCriteria parm in parms.SubCriteria.Values)
             {
@@ -110,13 +112,38 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                     command.Parameters.AddWithValue(sqlParmName, parm2.Value);
                 }
-                else
-                    throw new PersistenceException("Unknown procedure parameter type: " + parm.GetType().ToString(), null);
+				else if (parm is ProcedureParameter<XmlDocument>)
+				{
+					ProcedureParameter<XmlDocument> parm2 = (ProcedureParameter<XmlDocument>)parm;
+					if (parm2.Value == null)
+						command.Parameters.AddWithValue(sqlParmName, null);
+					else
+					{
+						MemoryStream sw = new MemoryStream();
+
+						XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
+						xmlWriterSettings.Encoding = Encoding.UTF8;
+						xmlWriterSettings.ConformanceLevel = ConformanceLevel.Fragment;
+						xmlWriterSettings.Indent = true;
+						xmlWriterSettings.NewLineOnAttributes = false;
+						xmlWriterSettings.IndentChars = "";
+
+						XmlWriter xmlWriter = XmlWriter.Create(sw, xmlWriterSettings);
+						parm2.Value.DocumentElement.WriteTo(xmlWriter);
+						xmlWriter.Close();
+
+						SqlXml xml = new SqlXml(sw);
+
+						command.Parameters.AddWithValue(sqlParmName, xml);
+					}
+				}
+				else
+                    throw new PersistenceException("Unknown procedure parameter type: " + parm.GetType(), null);
 
             }
 
         }
-        protected void PopulateEntity(SqlDataReader reader, ServerEntity entity, Type entityType)
+        protected static void PopulateEntity(SqlDataReader reader, ServerEntity entity, Type entityType)
         {
             PropertyDescriptorCollection props = TypeDescriptor.GetProperties(entity);
 

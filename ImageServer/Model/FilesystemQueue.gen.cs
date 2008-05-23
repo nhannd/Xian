@@ -50,6 +50,7 @@ namespace ClearCanvas.ImageServer.Model
         #region Private Members
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _filesystemKey;
         private FilesystemQueueTypeEnum _filesystemQueueTypeEnum;
+        private System.Xml.XmlDocument _queueXml;
         private System.DateTime _scheduledTime;
         private System.String _seriesInstanceUid;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey;
@@ -65,6 +66,11 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _filesystemQueueTypeEnum; }
         set { _filesystemQueueTypeEnum = value; }
+        }
+        public System.Xml.XmlDocument QueueXml
+        {
+        get { return _queueXml; }
+        set { _queueXml = value; }
         }
         public System.DateTime ScheduledTime
         {

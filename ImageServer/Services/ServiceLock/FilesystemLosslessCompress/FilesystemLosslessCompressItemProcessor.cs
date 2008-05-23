@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 					IInsertWorkQueueCompressStudy workQueueInsert = update.GetBroker<IInsertWorkQueueCompressStudy>();
 
 					WorkQueueCompressStudyInsertParameters insertParms = new WorkQueueCompressStudyInsertParameters();
-					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.GetEnum("LosslessCompress");
+					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.GetEnum("CompressStudy");
 					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.GetEnum("LosslessCompress");
 					insertParms.StudyStorageKey = location.GetKey();
 					insertParms.ServerPartitionKey = location.ServerPartitionKey;
@@ -86,6 +86,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 					insertParms.ScheduledTime = expirationTime;
 					insertParms.ExpirationTime = expirationTime;
 					insertParms.DeleteFilesystemQueue = true;
+					insertParms.Data = queueItem.QueueXml;
 
 					try
 					{
@@ -99,7 +100,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 					}
 					catch (Exception e)
 					{
-						Platform.Log(LogLevel.Error, e, "Unexpected problem inserting 'LossyCompress' record into WorkQueue for Study {0}", location.StudyInstanceUid);
+						Platform.Log(LogLevel.Error, e, "Unexpected problem inserting 'CompressStudy' record into WorkQueue for Study {0}", location.StudyInstanceUid);
 						// throw; -- would cause abort of inserts, go ahead and try everything
 					}
 				}

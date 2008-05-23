@@ -29,25 +29,47 @@
 
 #endregion
 
+using System;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Codec.Jpeg;
 using ClearCanvas.DicomServices.Codec;
+using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg
 {
+	/// <summary>
+	/// JPEG Extended Proces 2/4 Codec Factory
+	/// </summary>
     [ExtensionOf(typeof(DicomCodecFactoryExtensionPoint))]
-    public class JpegExtendedProcess24Factory : DicomJpegProcess24CodecFactory
+	public class JpegExtendedProcess24Factory : DicomJpegProcess24CodecFactory, IImageServerXmlCodecParameters
     {
         public override DicomCodecParameters GetCodecParameters(DicomAttributeCollection dataSet)
         {
-            DicomJpegParameters parms = new DicomJpegParameters();
+            DicomJpegParameters codecParms = new DicomJpegParameters();
 
-            parms.Quality = 70;
+            codecParms.Quality = 70;
 
-            return parms;
+            return codecParms;
         }
+
+    	public DicomCodecParameters GetCodecParameters(XmlDocument parms)
+    	{
+			DicomJpegParameters codecParms = new DicomJpegParameters();
+
+			XmlElement element = parms.DocumentElement;
+
+			string qualityString = element.Attributes["quality"].Value;
+			int quality;
+			if (false == int.TryParse(qualityString, out quality))
+				throw new ApplicationException("Invalid quality specified for JPEG Extended: " + qualityString);
+
+			codecParms.Quality = quality;
+
+			return codecParms;
+    	}
     }
 
 }

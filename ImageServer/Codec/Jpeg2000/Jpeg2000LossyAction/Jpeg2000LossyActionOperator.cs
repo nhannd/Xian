@@ -29,33 +29,78 @@
 
 #endregion
 
+using System;
 using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LossyAction
 {
 	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-	public class Jpeg2000LossyActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+	public class Jpeg2000LossyActionOperator : ActionOperatorCompilerBase, IXmlActionCompilerOperator<ServerActionContext>
 	{
-		public string OperatorTag
-		{
-			get { return "jpeg-2000-lossy"; }
-		}
+		public Jpeg2000LossyActionOperator()
+            : base("jpeg-2000-lossy")
+        {
+        }
 
 		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
 		{
-			return new Jpeg2000LossyActionItem();
+			if (xmlNode.Attributes["time"] == null)
+				throw new XmlActionCompilerException(
+					"Unexpected missing time attribute for jpeg-2000-lossy scheduling action");
+			if (xmlNode.Attributes["unit"] == null)
+				throw new XmlActionCompilerException(
+					"Unexpected missing unit attribute for jpeg-2000-lossy scheduling action");
+
+			float ratio;
+			if (false == float.TryParse(xmlNode.Attributes["ratio"].Value, out ratio))
+				throw new XmlActionCompilerException("Unable to parse ratio value for jpeg-2000-lossy scheduling rule");
+
+			int time;
+			if (false == int.TryParse(xmlNode.Attributes["time"].Value, out time))
+				throw new XmlActionCompilerException("Unable to parse time value for jpeg-2000-lossy scheduling rule");
+
+			string xmlUnit = xmlNode.Attributes["unit"].Value;
+
+			// this will throw exception if the unit is not defined
+			TimeUnit unit = (TimeUnit)Enum.Parse(typeof(TimeUnit), xmlUnit, true);
+
+			string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
+
+
+			if (!String.IsNullOrEmpty(refValue))
+			{
+				if (xmlNode["expressionLanguage"] != null)
+				{
+					string language = xmlNode["expressionLanguage"].Value;
+					Expression scheduledTime = CreateExpression(refValue, language);
+					return new Jpeg2000LossyActionItem(time, unit, scheduledTime, ratio);
+				}
+				else
+				{
+					Expression scheduledTime = CreateExpression(refValue);
+					return new Jpeg2000LossyActionItem(time, unit, scheduledTime, ratio);
+				}
+			}
+			else
+			{
+				return new Jpeg2000LossyActionItem(time, unit, ratio);
+			}
+
 		}
 		public XmlSchemaElement GetSchema()
 		{
-			XmlSchemaComplexType type = new XmlSchemaComplexType();			
+			XmlSchemaElement element = GetTimeSchema(OperatorTag);
 
-			XmlSchemaElement element = new XmlSchemaElement();
-			element.Name = "jpeg-2000-lossy";
-			element.SchemaType = type;
+			XmlSchemaAttribute attrib = new XmlSchemaAttribute();
+			attrib.Name = "ratio";
+			attrib.Use = XmlSchemaUse.Required;
+			attrib.SchemaTypeName = new XmlQualifiedName("float", "http://www.w3.org/2001/XMLSchema");
+			(element.SchemaType as XmlSchemaComplexType).Attributes.Add(attrib);
 
 			return element;
 		}

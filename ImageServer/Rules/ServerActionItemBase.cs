@@ -131,7 +131,16 @@ namespace ClearCanvas.ImageServer.Rules
             return time;
         }
 
-        /// <summary>
+		/// <summary>
+		/// For compression, get the preferred scheduled time based on minimum delay.
+		/// </summary>
+		/// <returns></returns>
+		protected static DateTime GetPreferredScheduledTime()
+		{
+			return Platform.Time.AddMinutes(RuleSettings.Default.MIN_COMPRESSION_DELAY_MINUTES);
+		}
+
+    	/// <summary>
         /// Evaluates an expression in the specified context.
         /// </summary>
         /// <param name="expression">The expression to be evaluated</param>

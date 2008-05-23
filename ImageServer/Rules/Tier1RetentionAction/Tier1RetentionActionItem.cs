@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
                          scheduledTime);
             context.CommandProcessor.AddCommand(
                 new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
-                                                 scheduledTime));
+                                                 scheduledTime, null));
 
 
             return true;

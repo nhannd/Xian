@@ -37,8 +37,8 @@ namespace Jpeg2000 {
 	public ref class DicomJpeg2000Parameters : public DicomCodecParameters {
 	private:
 		bool _irreversible;
-		int _rate;
-		array<int>^ _rates;
+		float _rate;
+		array<float>^ _rates;
 		bool _isVerbose;
 		bool _enableMct;
 		bool _updatePmi;
@@ -46,21 +46,15 @@ namespace Jpeg2000 {
 	public:
 		DicomJpeg2000Parameters() {
 			_irreversible = true;
-			_rate = 20;
+			_rate = 10;
 			_isVerbose = false;
 			_enableMct = true;
 			_updatePmi = true;
 
-			_rates = gcnew array<int>(9);
-			_rates[0] = 1280;
-			_rates[1] = 640;
-			_rates[2] = 320;
-			_rates[3] = 160;
-			_rates[4] = 80;
-			_rates[5] = 40;
-			_rates[6] = 20;
-			_rates[7] = 10;
-			_rates[8] = 5;
+			_rates = gcnew array<float>(3);
+			_rates[0] = 80;
+			_rates[1] = 40;
+			_rates[2] = 20;
 		}
 
 		property bool Irreversible {
@@ -68,14 +62,14 @@ namespace Jpeg2000 {
 			void set(bool value) { _irreversible = value; }
 		}
 
-		property int Rate {
-			int get() { return _rate; }
-			void set(int value) { _rate = value; }
+		property float Rate {
+			float get() { return _rate; }
+			void set(float value) { _rate = value; }
 		}
 
-		property array<int>^ RateLevels {
-			array<int>^ get() { return _rates; }
-			void set(array<int>^ value) { _rates = value; }
+		property array<float>^ RateLevels {
+			array<float>^ get() { return _rates; }
+			void set(array<float>^ value) { _rates = value; }
 		}
 
 		property bool IsVerbose {

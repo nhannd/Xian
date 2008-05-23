@@ -1247,7 +1247,8 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: November 14, 2007
--- Description:	
+-- Modified date: May 21, 2008
+-- Description:	Insert into FilesystemQueue
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertFilesystemQueue] 
 	-- Add the parameters for the stored procedure here
@@ -1255,7 +1256,8 @@ CREATE PROCEDURE [dbo].[InsertFilesystemQueue]
 	@StudyStorageGUID uniqueidentifier,
 	@FilesystemGUID uniqueidentifier,
 	@ScheduledTime datetime,
-	@SeriesInstanceUid varchar(64) = null
+	@SeriesInstanceUid varchar(64) = null,
+	@QueueXml xml = null
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -1282,9 +1284,9 @@ BEGIN
 	BEGIN
 	-- Insert statements	
 		INSERT INTO [ImageServer].[dbo].[FilesystemQueue]
-			   ([GUID],[FilesystemQueueTypeEnum],[StudyStorageGUID],[FilesystemGUID],[ScheduledTime],[SeriesInstanceUid])
+			   ([GUID],[FilesystemQueueTypeEnum],[StudyStorageGUID],[FilesystemGUID],[ScheduledTime],[SeriesInstanceUid],[QueueXml])
 		 VALUES
-			   (newid(), @FilesystemQueueTypeEnum, @StudyStorageGUID, @FilesystemGUID, @ScheduledTime, @SeriesInstanceUid)		
+			   (newid(), @FilesystemQueueTypeEnum, @StudyStorageGUID, @FilesystemGUID, @ScheduledTime, @SeriesInstanceUid, @QueueXml)		
 	END
 END
 ' 
@@ -1987,7 +1989,8 @@ CREATE PROCEDURE [dbo].[InsertWorkQueueCompressStudy]
 	@ServerPartitionGUID uniqueidentifier,
 	@ExpirationTime datetime,
 	@ScheduledTime datetime,
-	@DeleteFilesystemQueue bit 
+	@DeleteFilesystemQueue bit,
+	@Data xml 
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -2009,8 +2012,8 @@ BEGIN
 	BEGIN
 		set @WorkQueueGUID = NEWID();
 
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime)
-			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @WorkQueueTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
+		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime, Data)
+			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @WorkQueueTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime, @Data)
 		IF @DeleteFilesystemQueue = 1
 		BEGIN
 			DELETE FROM FilesystemQueue

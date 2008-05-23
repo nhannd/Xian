@@ -39,12 +39,12 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LossyAction
     public class Jpeg2000LossySamples : SampleRuleBase
     {
         public Jpeg2000LossySamples()
-            : base("Jpeg2000LossyParameters",
-                   "JPEG 2000 Lossy Sample Parameters",
-                   ServerRuleTypeEnum.GetEnum("LossyCompressParameters"),
-                   "Sample_JPEG2000Lossy.xml")
+            : base("Jpeg2000Lossy",
+                   "JPEG 2000 Lossy Sample Rule",
+				   ServerRuleTypeEnum.GetEnum("StudyCompress"),
+                   "SampleJpeg2000Lossy.xml")
         {
-            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"));
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
         }
     }
 }

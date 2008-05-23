@@ -29,33 +29,81 @@
 
 #endregion
 
+using System;
+using System.Xml;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Codec;
-using ClearCanvas.Dicom.Codec.Jpeg;
-using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegBaselineAction
 {
+	/// <summary>
+	/// JPEG Baseline action for <see cref="ServerRulesEngine"/>.
+	/// </summary>
     public class JpegBaselineActionItem : ServerActionItemBase
 	{
-        public JpegBaselineActionItem()
-            :base("JPEG baseline compression action")
+		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("LossyCompress");
+        private readonly Expression _exprScheduledTime;
+		private readonly int _offsetTime;
+		private readonly TimeUnit _units;
+		private readonly int _quality;
+
+		public JpegBaselineActionItem(int time, TimeUnit unit, int quality)
+			: this(time, unit, null, quality)
+		{
+		}
+
+		public JpegBaselineActionItem(int time, TimeUnit unit, Expression exprScheduledTime, int quality)
+			: base("JPEG Baseline compression action")
         {
-          
+            _offsetTime = time;
+            _units = unit;
+            _exprScheduledTime = exprScheduledTime;
+			_quality = quality;
         }
 
 		protected override bool OnExecute(ServerActionContext context)
 		{
-			IDicomCodecFactory factory = new JpegBaselineFactory();
-			IDicomCodec codec = factory.GetDicomCodec();
-			DicomJpegParameters parms = factory.GetCodecParameters(context.Message.DataSet) as DicomJpegParameters;
+			DateTime scheduledTime = Platform.Time;
 
-			context.CommandProcessor.AddCommand(new DicomCompressCommand(
-										context.Message, TransferSyntax.JpegBaselineProcess1, codec, parms, true));
+			if (_exprScheduledTime != null)
+			{
+				scheduledTime = Evaluate(_exprScheduledTime, context, scheduledTime);
+			}
 
+			scheduledTime = CalculateOffsetTime(scheduledTime, _offsetTime, _units);
+			DateTime preferredScheduledTime = GetPreferredScheduledTime();
+
+			if (scheduledTime < preferredScheduledTime)
+			{
+				Platform.Log(LogLevel.Warn,
+							 "Jpeg Baseline Compression Scheduling: calculated scheduled compression time is {0}. ==> preferred time is {1}",
+							 scheduledTime, preferredScheduledTime);
+				scheduledTime = preferredScheduledTime;
+			}
+
+			XmlDocument doc = new XmlDocument();
+
+			XmlElement element = doc.CreateElement("compress");
+			doc.AppendChild(element);
+			XmlAttribute syntaxAttribute = doc.CreateAttribute("syntax");
+			syntaxAttribute.Value = TransferSyntax.JpegBaselineProcess1Uid;
+			element.Attributes.Append(syntaxAttribute);
+
+			syntaxAttribute = doc.CreateAttribute("quality");
+			syntaxAttribute.Value = _quality.ToString();
+			element.Attributes.Append(syntaxAttribute);
+
+			Platform.Log(LogLevel.Debug,
+			             "Jpeg Baseline Compression Scheduling: This study {0} on partition {1} will be compressed on {2}",
+			             context.Message.DataSet[DicomTags.StudyInstanceUid], context.ServerPartition.AeTitle, scheduledTime);
+
+			context.CommandProcessor.AddCommand(
+				new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
+												 scheduledTime, doc));
 			return true;
 		}
-
 	}
 }

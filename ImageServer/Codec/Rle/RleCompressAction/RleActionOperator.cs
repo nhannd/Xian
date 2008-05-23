@@ -29,34 +29,68 @@
 
 #endregion
 
+using System;
 using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Rle.RleCompressAction
 {
 	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-	public class RleActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+	public class RleActionOperator : ActionOperatorCompilerBase, IXmlActionCompilerOperator<ServerActionContext>
 	{
-		public string OperatorTag
-		{
-			get { return "rle"; }
-		}
+		public RleActionOperator()
+            : base("rle")
+        {
+        }
 
 		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
 		{
-			return new RleActionItem();
+			if (xmlNode.Attributes["time"] == null)
+				throw new XmlActionCompilerException(
+					"Unexpected missing time attribute for rle compress scheduling action");
+			if (xmlNode.Attributes["unit"] == null)
+				throw new XmlActionCompilerException(
+					"Unexpected missing unit attribute for rle compress scheduling action");
+
+			int time;
+			if (false == int.TryParse(xmlNode.Attributes["time"].Value, out time))
+				throw new XmlActionCompilerException("Unable to parse time value for rle compress scheduling rule");
+
+			string xmlUnit = xmlNode.Attributes["unit"].Value;
+
+			// this will throw exception if the unit is not defined
+			TimeUnit unit = (TimeUnit)Enum.Parse(typeof(TimeUnit), xmlUnit, true);
+
+			string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
+
+
+			if (!String.IsNullOrEmpty(refValue))
+			{
+				if (xmlNode["expressionLanguage"] != null)
+				{
+					string language = xmlNode["expressionLanguage"].Value;
+					Expression scheduledTime = CreateExpression(refValue, language);
+					return new RleActionItem(time, unit, scheduledTime);
+				}
+				else
+				{
+					Expression scheduledTime = CreateExpression(refValue);
+					return new RleActionItem(time, unit, scheduledTime);
+				}
+			}
+			else
+			{
+				return new RleActionItem(time, unit);
+			}	
 		}
 
 		public XmlSchemaElement GetSchema()
 		{
-			XmlSchemaComplexType type = new XmlSchemaComplexType();			
-
-			XmlSchemaElement element = new XmlSchemaElement();
-			element.Name = "rle";
-			element.SchemaType = type;
+			XmlSchemaElement element = GetTimeSchema(OperatorTag);
 
 			return element;
 		}

@@ -29,34 +29,77 @@
 
 #endregion
 
+using System;
 using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegBaselineAction
 {
 	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-	public class JpegBaselineActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+	public class JpegBaselineActionOperator : ActionOperatorCompilerBase, IXmlActionCompilerOperator<ServerActionContext>
 	{
-		public string OperatorTag
-		{
-			get { return "jpeg-baseline"; }
-		}
+		public JpegBaselineActionOperator()
+			: base("jpeg-baseline")
+        {
+        }
 
 		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
 		{
-			return new JpegBaselineActionItem();
+			if (xmlNode.Attributes["time"] == null)
+				throw new XmlActionCompilerException(
+					"Unexpected missing time attribute for jpeg-baseline scheduling action");
+			if (xmlNode.Attributes["unit"] == null)
+				throw new XmlActionCompilerException(
+					"Unexpected missing unit attribute for jpeg-baseline scheduling action");
+
+			int quality;
+			if (false == int.TryParse(xmlNode.Attributes["quality"].Value, out quality))
+				throw new XmlActionCompilerException("Unable to parse quality value for jpeg-baseline scheduling rule");
+
+			int time;
+			if (false == int.TryParse(xmlNode.Attributes["time"].Value, out time))
+				throw new XmlActionCompilerException("Unable to parse time value for jpeg-baseline scheduling rule");
+
+			string xmlUnit = xmlNode.Attributes["unit"].Value;
+
+			// this will throw exception if the unit is not defined
+			TimeUnit unit = (TimeUnit)Enum.Parse(typeof(TimeUnit), xmlUnit, true);
+
+			string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
+
+			if (!String.IsNullOrEmpty(refValue))
+			{
+				if (xmlNode["expressionLanguage"] != null)
+				{
+					string language = xmlNode["expressionLanguage"].Value;
+					Expression scheduledTime = CreateExpression(refValue, language);
+					return new JpegBaselineActionItem(time, unit, scheduledTime, quality);
+				}
+				else
+				{
+					Expression scheduledTime = CreateExpression(refValue);
+					return new JpegBaselineActionItem(time, unit, scheduledTime, quality);
+				}
+			}
+			else
+			{
+				return new JpegBaselineActionItem(time, unit, quality);
+			}
 		}
 
 		public XmlSchemaElement GetSchema()
 		{
-			XmlSchemaComplexType type = new XmlSchemaComplexType();			
+			XmlSchemaElement element = GetTimeSchema(OperatorTag);
 
-			XmlSchemaElement element = new XmlSchemaElement();
-			element.Name = "jpeg-baseline";
-			element.SchemaType = type;
+			XmlSchemaAttribute attrib = new XmlSchemaAttribute();
+			attrib.Name = "quality";
+			attrib.Use = XmlSchemaUse.Required;
+			attrib.SchemaTypeName = new XmlQualifiedName("unsignedByte", "http://www.w3.org/2001/XMLSchema");
+			(element.SchemaType as XmlSchemaComplexType).Attributes.Add(attrib);
 
 			return element;
 		}

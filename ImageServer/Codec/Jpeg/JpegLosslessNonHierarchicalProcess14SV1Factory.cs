@@ -29,25 +29,40 @@
 
 #endregion
 
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Codec.Jpeg;
 using ClearCanvas.DicomServices.Codec;
+using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg
 {
+	/// <summary>
+	/// JPEG Lossless Codec factgory.
+	/// </summary>
     [ExtensionOf(typeof(DicomCodecFactoryExtensionPoint))]
-    public class JpegLosslessNonHierarchicalProcess14SV1Factory : DicomJpegLossless14SV1CodecFactory
+	public class JpegLosslessNonHierarchicalProcess14SV1Factory : DicomJpegLossless14SV1CodecFactory, IImageServerXmlCodecParameters
     {
         public override DicomCodecParameters GetCodecParameters(DicomAttributeCollection dataSet)
         {
-            DicomJpegParameters parms = new DicomJpegParameters();
+            DicomJpegParameters codecParms = new DicomJpegParameters();
 
-            parms.Quality = 1;
-            parms.ConvertColorspaceToRGB = false;
+            codecParms.Quality = 1;
+            codecParms.ConvertColorspaceToRGB = false;
 
-            return parms;
+            return codecParms;
         }
+
+    	public DicomCodecParameters GetCodecParameters(XmlDocument parms)
+    	{
+			DicomJpegParameters codecParms = new DicomJpegParameters();
+
+			codecParms.Quality = 1;
+			codecParms.ConvertColorspaceToRGB = false;
+
+			return codecParms;
+    	}
     }
 }

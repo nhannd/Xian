@@ -682,6 +682,7 @@ CREATE TABLE [dbo].[FilesystemQueue](
 	[FilesystemGUID] [uniqueidentifier] NOT NULL,
 	[ScheduledTime] [datetime] NOT NULL,
 	[SeriesInstanceUid] [varchar](64) NULL,
+	[QueueXml] [xml] NULL,
  CONSTRAINT [PK_FilesystemQueue] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC

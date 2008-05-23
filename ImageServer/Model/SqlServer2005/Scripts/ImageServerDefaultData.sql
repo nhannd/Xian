@@ -44,13 +44,7 @@ GO
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),107,'LosslessCompress','Lossless Compress Study','Lossless compress a study.')
-GO
-
-INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
-           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
-     VALUES
-           (newid(),108,'LossyCompress','Lossy Compress Study','Lossy compress a study.')
+           (newid(),107,'CompressStudy','Compress Study','Compress a study.')
 GO
 
 
@@ -134,25 +128,7 @@ GO
 INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),104,'LosslessCompressStudy','Lossless Compress Study','A rule to specify when a study should be lossless compressed')
-GO
-
-INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
-           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
-     VALUES
-           (newid(),105,'LossyCompressStudy','Lossy Compress Study','A rule to specify when a study should be lossy compressed')
-GO
-
-INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
-           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
-     VALUES
-           (newid(),106,'LosslessCompressParameters','Lossless Compression Parameters','A rule to specify lossless compression parameters (including compression type)')
-GO
-
-INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
-           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
-     VALUES
-           (newid(),107,'LossyCompressParameters','Lossy Compression Parameters','A rule to specify lossy compressoin parameters (including compression type)')
+           (newid(),104,'StudyCompress','Study Compress','A rule to specify when a study should be compressed')
 GO
 
 
@@ -199,12 +175,6 @@ INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),103,'StudyProcessed','Study Processed','Apply rule when a Study is initially processed')
-GO
-
-INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
-           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
-     VALUES
-           (newid(),104,'CompressingStudy','Compressing Study','Apply rule when a Study is being compressed')
 GO
 
 

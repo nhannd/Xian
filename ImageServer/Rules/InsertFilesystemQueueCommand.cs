@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -40,21 +41,26 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Rules
 {
+	/// <summary>
+	/// Command for inserting a FilesystemQueue record into the persistent store.
+	/// </summary>
     public class InsertFilesystemQueueCommand : ServerDatabaseCommand
     {
         private readonly ServerEntityKey _filesystemKey;
         private readonly FilesystemQueueTypeEnum _queueType;
         private readonly DateTime _scheduledTime;
         private readonly ServerEntityKey _studyStorageKey;
+    	private readonly XmlDocument _queueXml;
 
         public InsertFilesystemQueueCommand(FilesystemQueueTypeEnum queueType, ServerEntityKey filesystemKey,
-                                            ServerEntityKey studyStorageKey, DateTime scheduledTime)
+                                            ServerEntityKey studyStorageKey, DateTime scheduledTime, XmlDocument queueXml)
             : base("Insert FilesystemQueue Record of type " + queueType.Description, true)
         {
             _queueType = queueType;
             _filesystemKey = filesystemKey;
             _studyStorageKey = studyStorageKey;
             _scheduledTime = scheduledTime;
+        	_queueXml = queueXml;
         }
 
         protected override void OnExecute(IUpdateContext updateContext)
@@ -65,6 +71,9 @@ namespace ClearCanvas.ImageServer.Rules
             parms.ScheduledTime = _scheduledTime;
             parms.StudyStorageKey = _studyStorageKey;
             parms.FilesystemKey = _filesystemKey;
+
+			if (_queueXml != null)
+				parms.QueueXml = _queueXml;
 
             IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
 

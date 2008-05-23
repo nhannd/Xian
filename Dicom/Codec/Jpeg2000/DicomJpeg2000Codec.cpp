@@ -135,12 +135,12 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 			for (; r < jparams->RateLevels->Length; r++) {
 				if (jparams->RateLevels[r] > jparams->Rate) {
 					eparams.tcp_numlayers++;
-					eparams.tcp_rates[r] = (float)jparams->RateLevels[r];
+					eparams.tcp_rates[r] = jparams->RateLevels[r];
 				} else
 					break;
 			}
 			eparams.tcp_numlayers++;
-			eparams.tcp_rates[r] = (float)jparams->Rate;
+			eparams.tcp_rates[r] = jparams->Rate;
 		} else {
 			eparams.tcp_rates[0] = 0;
 			eparams.tcp_numlayers = 1;
@@ -251,7 +251,7 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 				
 				double oldSize = oldPixelData->UncompressedFrameSize;
 				double newSize = newPixelData->GetCompressedFrameSize(0);
-				newPixelData->LossyImageCompressionRatio = oldSize / newSize;
+				newPixelData->LossyImageCompressionRatio = (float) (oldSize / newSize);
 			}
 		}
 		finally {

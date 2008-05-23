@@ -29,16 +29,22 @@
 
 #endregion
 
+using System;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Codec.Jpeg2000;
 using ClearCanvas.DicomServices.Codec;
+using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg2000
 {
+	/// <summary>
+	/// JPEG 2000 lossy codec factory
+	/// </summary>
     [ExtensionOf(typeof(DicomCodecFactoryExtensionPoint))]
-    public class Jpeg2000LossyFactory : DicomJpeg2000LossyCodecFactory
+	public class Jpeg2000LossyFactory : DicomJpeg2000LossyCodecFactory, IImageServerXmlCodecParameters
     {
         public override DicomCodecParameters GetCodecParameters(DicomAttributeCollection dataSet)
         {
@@ -46,8 +52,27 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg2000
 
             parms.Irreversible = true;
             parms.UpdatePhotometricInterpretation = true;
-            parms.Rate = 5; //1 == Lossless
+            parms.Rate = 5.0f; //1 == Lossless
             return parms;
         }
+
+    	public DicomCodecParameters GetCodecParameters(XmlDocument parms)
+    	{
+			DicomJpeg2000Parameters codecParms = new DicomJpeg2000Parameters();
+
+			codecParms.Irreversible = true;
+			codecParms.UpdatePhotometricInterpretation = true;
+
+			XmlElement element = parms.DocumentElement;
+
+			string ratioString = element.Attributes["ratio"].Value;
+			float ratio;
+			if (false == float.TryParse(ratioString, out ratio))
+				throw new ApplicationException("Invalid quality specified for JPEG 2000 Lossy: " + ratioString);
+
+			codecParms.Rate = ratio;
+
+			return codecParms;
+    	}
     }
 }

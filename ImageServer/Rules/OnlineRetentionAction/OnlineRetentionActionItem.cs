@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
             Platform.Log(LogLevel.Debug, "Online Retention: This study will be purged on {0}", scheduledTime);
             context.CommandProcessor.AddCommand(
                 new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
-                                                 scheduledTime));
+                                                 scheduledTime, null));
 
 
             return true;

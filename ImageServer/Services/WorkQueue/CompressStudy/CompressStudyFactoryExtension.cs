@@ -31,25 +31,26 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.LosslessCompress
+namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 {
 	/// <summary>
-	/// Plugin for processing 'LosslessCompress' WorkQueue items.
+	/// Plugin for processing 'CompressStudy' WorkQueue items.
 	/// </summary>
 	[ExtensionOf(typeof(WorkQueueFactoryExtensionPoint))]
-	public class LosslessCompressFactoryExtension : IWorkQueueProcessorFactory
+	public class CompressStudyFactoryExtension : IWorkQueueProcessorFactory
 	{
 		#region IWorkQueueProcessorFactory Members
 
 		public WorkQueueTypeEnum GetWorkQueueType()
 		{
-			return WorkQueueTypeEnum.GetEnum("LosslessCompress");
+			return WorkQueueTypeEnum.GetEnum("CompressStudy");
 		}
 
 		public IWorkQueueItemProcessor GetItemProcessor()
 		{
-			return new LosslessCompressItemProcessor();
+			return new CompressStudyItemProcessor();
 		}
 
 		#endregion

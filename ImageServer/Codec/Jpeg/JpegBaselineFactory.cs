@@ -29,25 +29,48 @@
 
 #endregion
 
+using System;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Codec.Jpeg;
 using ClearCanvas.DicomServices.Codec;
+using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg
 {
+	/// <summary>
+	/// JPEG Baseline factory.
+	/// </summary>
     [ExtensionOf(typeof(DicomCodecFactoryExtensionPoint))]
-    public class JpegBaselineFactory : DicomJpegProcess1CodecFactory
+	public class JpegBaselineFactory : DicomJpegProcess1CodecFactory, IImageServerXmlCodecParameters
     {
         public override DicomCodecParameters GetCodecParameters(DicomAttributeCollection dataSet)
         {
-            DicomJpegParameters parms = new DicomJpegParameters();
+            DicomJpegParameters codecParms = new DicomJpegParameters();
 
-            parms.Quality = 70;
-            parms.ConvertColorspaceToRGB = true;
+            codecParms.Quality = 70;
+            codecParms.ConvertColorspaceToRGB = true;
 
-            return parms;
+            return codecParms;
         }
+
+    	public DicomCodecParameters GetCodecParameters(XmlDocument parms)
+    	{
+			DicomJpegParameters codecParms = new DicomJpegParameters();
+
+			XmlElement element = parms.DocumentElement;
+
+			string qualityString = element.Attributes["quality"].Value;
+    		int quality;
+			if (false == int.TryParse(qualityString, out quality))
+				throw new ApplicationException("Invalid quality specified for JPEG Baseline: " + qualityString);
+
+    		codecParms.Quality = quality;
+			codecParms.ConvertColorspaceToRGB = true;
+
+			return codecParms;
+    	}
     }
 }

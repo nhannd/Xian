@@ -29,33 +29,79 @@
 
 #endregion
 
+using System;
+using System.Xml;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Codec;
-using ClearCanvas.Dicom.Codec.Jpeg;
-using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegExtendedAction
 {
+	/// <summary>
+	/// JPEG Extended 2/4 action for <see cref="ServerRulesEngine"/>.
+	/// </summary>
 	public class JpegExtendedActionItem : ServerActionItemBase
 	{
-        public JpegExtendedActionItem()
-            :base("JPEG extended compression action")
-        {
-          
-        }
+		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("LossyCompress");
+		private readonly Expression _exprScheduledTime;
+		private readonly int _offsetTime;
+		private readonly TimeUnit _units;
+		private readonly int _quality;
 
+		public JpegExtendedActionItem(int time, TimeUnit unit, int quality)
+			: this(time, unit, null, quality)
+		{
+		}
+
+		public JpegExtendedActionItem(int time, TimeUnit unit, Expression exprScheduledTime, int quality)
+			: base("JPEG Extended compression action")
+        {
+            _offsetTime = time;
+            _units = unit;
+            _exprScheduledTime = exprScheduledTime;
+			_quality = quality;
+        }
+  
 		protected override bool OnExecute(ServerActionContext context)
 		{
-			IDicomCodecFactory factory = new JpegExtendedProcess24Factory();
-			IDicomCodec codec = factory.GetDicomCodec();
-			DicomJpegParameters parms = factory.GetCodecParameters(context.Message.DataSet) as DicomJpegParameters;
+			DateTime scheduledTime = Platform.Time;
 
+			if (_exprScheduledTime != null)
+			{
+				scheduledTime = Evaluate(_exprScheduledTime, context, scheduledTime);
+			}
+
+			scheduledTime = CalculateOffsetTime(scheduledTime, _offsetTime, _units);
+			DateTime preferredScheduledTime = GetPreferredScheduledTime();
+
+			if (scheduledTime < preferredScheduledTime)
+			{
+				Platform.Log(LogLevel.Warn,
+							 "Jpeg Extended Compression Scheduling: calculated scheduled compression time is {0}. ==> preferred time is {1}",
+							 scheduledTime, preferredScheduledTime);
+				scheduledTime = preferredScheduledTime;
+			}
+
+			XmlDocument doc = new XmlDocument();
+
+			XmlElement element = doc.CreateElement("compress");
+			doc.AppendChild(element);
+			XmlAttribute syntaxAttribute = doc.CreateAttribute("syntax");
+			syntaxAttribute.Value = TransferSyntax.JpegExtendedProcess24Uid;
+			element.Attributes.Append(syntaxAttribute);
+
+			syntaxAttribute = doc.CreateAttribute("quality");
+			syntaxAttribute.Value = _quality.ToString();
+			element.Attributes.Append(syntaxAttribute);
+
+			Platform.Log(LogLevel.Debug, "Jpeg Extended Compression Scheduling: This study will be compressed on {0}", scheduledTime);
 			context.CommandProcessor.AddCommand(
-				new DicomCompressCommand(context.Message, TransferSyntax.JpegExtendedProcess24, codec, parms, true));
+				new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
+												 scheduledTime, doc));
 
 			return true;
 		}
-
 	}
 }

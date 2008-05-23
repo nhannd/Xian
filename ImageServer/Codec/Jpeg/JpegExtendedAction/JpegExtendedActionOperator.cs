@@ -29,34 +29,78 @@
 
 #endregion
 
+using System;
 using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegExtendedAction
 {
 	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-	public class JpegExtendedActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+	public class JpegExtendedActionOperator : ActionOperatorCompilerBase, IXmlActionCompilerOperator<ServerActionContext>
 	{
-		public string OperatorTag
-		{
-			get { return "jpeg-extended"; }
-		}
+		public JpegExtendedActionOperator()
+            : base("jpeg-extended")
+        {
+        }
 
 		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
 		{
-			return new JpegExtendedActionItem();
+			if (xmlNode.Attributes["time"] == null)
+				throw new XmlActionCompilerException(
+					"Unexpected missing time attribute for jpeg-extended scheduling action");
+			if (xmlNode.Attributes["unit"] == null)
+				throw new XmlActionCompilerException(
+					"Unexpected missing unit attribute for jpeg-extended scheduling action");
+
+			int quality;
+			if (false == int.TryParse(xmlNode.Attributes["quality"].Value, out quality))
+				throw new XmlActionCompilerException("Unable to parse quality value for jpeg-extended scheduling rule");
+
+			int time;
+			if (false == int.TryParse(xmlNode.Attributes["time"].Value, out time))
+				throw new XmlActionCompilerException("Unable to parse time value for jpeg-extended scheduling rule");
+
+			string xmlUnit = xmlNode.Attributes["unit"].Value;
+
+			// this will throw exception if the unit is not defined
+			TimeUnit unit = (TimeUnit)Enum.Parse(typeof(TimeUnit), xmlUnit, true);
+
+			string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
+
+
+			if (!String.IsNullOrEmpty(refValue))
+			{
+				if (xmlNode["expressionLanguage"] != null)
+				{
+					string language = xmlNode["expressionLanguage"].Value;
+					Expression scheduledTime = CreateExpression(refValue, language);
+					return new JpegExtendedActionItem(time, unit, scheduledTime, quality);
+				}
+				else
+				{
+					Expression scheduledTime = CreateExpression(refValue);
+					return new JpegExtendedActionItem(time, unit, scheduledTime, quality);
+				}
+			}
+			else
+			{
+				return new JpegExtendedActionItem(time, unit, quality);
+			}
 		}
 
 		public XmlSchemaElement GetSchema()
 		{
-			XmlSchemaComplexType type = new XmlSchemaComplexType();			
+			XmlSchemaElement element = GetTimeSchema(OperatorTag);
 
-			XmlSchemaElement element = new XmlSchemaElement();
-			element.Name = "jpeg-extended";
-			element.SchemaType = type;
+			XmlSchemaAttribute attrib = new XmlSchemaAttribute();
+			attrib.Name = "quality";
+			attrib.Use = XmlSchemaUse.Required;
+			attrib.SchemaTypeName = new XmlQualifiedName("unsignedByte", "http://www.w3.org/2001/XMLSchema");
+			(element.SchemaType as XmlSchemaComplexType).Attributes.Add(attrib);
 
 			return element;
 		}

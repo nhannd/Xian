@@ -1,3 +1,5 @@
+using System.Xml;
+using System.Xml.Schema;
 using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.ImageServer.Rules
@@ -63,6 +65,80 @@ namespace ClearCanvas.ImageServer.Rules
             return _defaultExpressionFactory.CreateExpression(text);
         }
 
+		protected static XmlSchemaElement GetTimeSchema(string elementName)
+		{
+			XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType();
+
+			XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
+			restriction.BaseTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+
+			XmlSchemaEnumerationFacet enumeration = new XmlSchemaEnumerationFacet();
+			enumeration.Value = "minutes";
+			restriction.Facets.Add(enumeration);
+
+			enumeration = new XmlSchemaEnumerationFacet();
+			enumeration.Value = "hours";
+			restriction.Facets.Add(enumeration);
+
+			enumeration = new XmlSchemaEnumerationFacet();
+			enumeration.Value = "weeks";
+			restriction.Facets.Add(enumeration);
+
+			enumeration = new XmlSchemaEnumerationFacet();
+			enumeration.Value = "days";
+			restriction.Facets.Add(enumeration);
+
+			enumeration = new XmlSchemaEnumerationFacet();
+			enumeration.Value = "months";
+			restriction.Facets.Add(enumeration);
+
+			enumeration = new XmlSchemaEnumerationFacet();
+			enumeration.Value = "years";
+			restriction.Facets.Add(enumeration);
+
+			simpleType.Content = restriction;
+
+
+			XmlSchemaSimpleType languageType = new XmlSchemaSimpleType();
+			XmlSchemaSimpleTypeRestriction languageEnum = new XmlSchemaSimpleTypeRestriction();
+			languageEnum.BaseTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+			enumeration = new XmlSchemaEnumerationFacet();
+			enumeration.Value = "dicom";
+			languageEnum.Facets.Add(enumeration);
+			languageType.Content = languageEnum;
+
+			XmlSchemaComplexType type = new XmlSchemaComplexType();
+
+			XmlSchemaAttribute attrib = new XmlSchemaAttribute();
+			attrib.Name = "time";
+			attrib.Use = XmlSchemaUse.Required;
+			attrib.SchemaTypeName = new XmlQualifiedName("double", "http://www.w3.org/2001/XMLSchema");
+			type.Attributes.Add(attrib);
+
+			attrib = new XmlSchemaAttribute();
+			attrib.Name = "unit";
+			attrib.Use = XmlSchemaUse.Required;
+			attrib.SchemaType = simpleType;
+			type.Attributes.Add(attrib);
+
+			attrib = new XmlSchemaAttribute();
+			attrib.Name = "refValue";
+			attrib.Use = XmlSchemaUse.Optional;
+			attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+			type.Attributes.Add(attrib);
+
+			attrib = new XmlSchemaAttribute();
+			attrib.Name = "expressionLanguage";
+			attrib.Use = XmlSchemaUse.Optional;
+			attrib.SchemaType = languageType;
+			type.Attributes.Add(attrib);
+
+			XmlSchemaElement element = new XmlSchemaElement();
+			element.Name = elementName;
+			element.SchemaType = type;
+
+			return element;
+		}
         #endregion
     }
 }

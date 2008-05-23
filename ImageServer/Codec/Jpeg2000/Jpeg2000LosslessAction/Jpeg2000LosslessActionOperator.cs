@@ -29,34 +29,67 @@
 
 #endregion
 
+using System;
 using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
-using ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LosslessAction;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LosslessAction
 {
 	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-	public class Jpeg2000LosslessActionOperator : IXmlActionCompilerOperator<ServerActionContext>
+	public class Jpeg2000LosslessActionOperator : ActionOperatorCompilerBase, IXmlActionCompilerOperator<ServerActionContext>
 	{
-		public string OperatorTag
-		{
-			get { return "jpeg-2000-lossless"; }
-		}
+		public Jpeg2000LosslessActionOperator()
+			: base("jpeg-2000-lossless")
+        {
+        }
 
 		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
 		{
-			return new Jpeg2000LosslessActionItem();
+			if (xmlNode.Attributes["time"] == null)
+				throw new XmlActionCompilerException(
+					"Unexpected missing time attribute for jpeg-2000-lossless scheduling action");
+			if (xmlNode.Attributes["unit"] == null)
+				throw new XmlActionCompilerException(
+					"Unexpected missing unit attribute for jpeg-2000-lossless scheduling action");
+
+			int time;
+			if (false == int.TryParse(xmlNode.Attributes["time"].Value, out time))
+				throw new XmlActionCompilerException("Unable to parse time value for jpeg-2000-lossless scheduling rule");
+
+			string xmlUnit = xmlNode.Attributes["unit"].Value;
+
+			// this will throw exception if the unit is not defined
+			TimeUnit unit = (TimeUnit)Enum.Parse(typeof(TimeUnit), xmlUnit, true);
+
+			string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
+
+
+			if (!String.IsNullOrEmpty(refValue))
+			{
+				if (xmlNode["expressionLanguage"] != null)
+				{
+					string language = xmlNode["expressionLanguage"].Value;
+					Expression scheduledTime = CreateExpression(refValue, language);
+					return new Jpeg2000LosslessActionItem(time, unit, scheduledTime);
+				}
+				else
+				{
+					Expression scheduledTime = CreateExpression(refValue);
+					return new Jpeg2000LosslessActionItem(time, unit, scheduledTime);
+				}
+			}
+			else
+			{
+				return new Jpeg2000LosslessActionItem(time, unit);
+			}
 		}
 		public XmlSchemaElement GetSchema()
 		{
-			XmlSchemaComplexType type = new XmlSchemaComplexType();			
-
-			XmlSchemaElement element = new XmlSchemaElement();
-			element.Name = "jpeg-2000-lossless";
-			element.SchemaType = type;
+			XmlSchemaElement element = GetTimeSchema(OperatorTag);
 
 			return element;
 		}

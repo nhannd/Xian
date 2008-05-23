@@ -29,30 +29,78 @@
 
 #endregion
 
+using System;
+using System.Xml;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Codec;
-using ClearCanvas.Dicom.Codec.Jpeg2000;
-using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LossyAction
 {
+	/// <summary>
+	/// JPEG 2000 Lossy action item for <see cref="ServerRulesEngine"/>
+	/// </summary>
 	public class Jpeg2000LossyActionItem : ServerActionItemBase
 	{
-        public Jpeg2000LossyActionItem()
-            :base("JPEG 2000 Lossy compression action")
+		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("LossyCompress");
+		private readonly Expression _exprScheduledTime;
+		private readonly int _offsetTime;
+		private readonly TimeUnit _units;
+		private readonly float _ratio;
+
+		public Jpeg2000LossyActionItem(int time, TimeUnit unit, float ratio)
+			: this(time, unit, null, ratio)
+		{
+		}
+
+		public Jpeg2000LossyActionItem(int time, TimeUnit unit, Expression exprScheduledTime, float ratio)
+			: base("JPEG 2000 Lossy compression action")
         {
-          
+            _offsetTime = time;
+            _units = unit;
+            _exprScheduledTime = exprScheduledTime;
+			_ratio = ratio;
         }
+      
 
 		protected override bool OnExecute(ServerActionContext context)
 		{
-			IDicomCodecFactory factory = new Jpeg2000LossyFactory();
-			IDicomCodec codec = factory.GetDicomCodec();
-			DicomJpeg2000Parameters parms = factory.GetCodecParameters(context.Message.DataSet) as DicomJpeg2000Parameters;
+			DateTime scheduledTime = Platform.Time;
 
-			context.CommandProcessor.AddCommand(new DicomCompressCommand(
-			                                    	context.Message, TransferSyntax.Jpeg2000ImageCompression, codec, parms, true));
+			if (_exprScheduledTime != null)
+			{
+				scheduledTime = Evaluate(_exprScheduledTime, context, scheduledTime);
+			}
+
+			scheduledTime = CalculateOffsetTime(scheduledTime, _offsetTime, _units);
+			DateTime preferredScheduledTime = GetPreferredScheduledTime();
+
+			if (scheduledTime < preferredScheduledTime)
+			{
+				Platform.Log(LogLevel.Warn,
+							 "Jpeg 2000 Lossy compression Scheduling: calculated scheduled compression time is {0}. ==> preferred time is {1}",
+							 scheduledTime, preferredScheduledTime);
+				scheduledTime = preferredScheduledTime;
+			}
+
+			XmlDocument doc = new XmlDocument();
+
+			XmlElement element = doc.CreateElement("compress");
+			doc.AppendChild(element);
+			XmlAttribute syntaxAttribute = doc.CreateAttribute("syntax");
+			syntaxAttribute.Value = TransferSyntax.Jpeg2000ImageCompressionUid;
+			element.Attributes.Append(syntaxAttribute);
+
+			syntaxAttribute = doc.CreateAttribute("ratio");
+			syntaxAttribute.Value = _ratio.ToString();
+			element.Attributes.Append(syntaxAttribute);
+
+			Platform.Log(LogLevel.Debug, "Jpeg 2000 Lossy Compression Scheduling: This study will be compressed on {0}", scheduledTime);
+			context.CommandProcessor.AddCommand(
+				new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
+												 scheduledTime, doc));
 
 			return true;
 		}

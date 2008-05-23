@@ -39,12 +39,12 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegLosslessAction
     public class JpegLosslessSamples : SampleRuleBase
     {
         public JpegLosslessSamples()
-            : base("JpegLosslessParameters",
-                   "JPEG Lossless Sample Parameters",
-                   ServerRuleTypeEnum.GetEnum("LosslessCompressParameters"),
-                   "Sample_JPEGLossless.xml")
+            : base("JpegLossless",
+                   "JPEG Lossless Sample Rule",
+				   ServerRuleTypeEnum.GetEnum("StudyCompress"),
+                   "SampleJpegLossless.xml")
         {
-            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"));
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
         }
     }
 }

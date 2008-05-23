@@ -49,6 +49,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["FilesystemQueueTypeEnum"] = new EntityUpdateColumn<FilesystemQueueTypeEnum>("FilesystemQueueTypeEnum", value); }
         }
+        public System.Xml.XmlDocument QueueXml
+        {
+            set { SubParameters["QueueXml"] = new EntityUpdateColumn<System.Xml.XmlDocument>("QueueXml", value); }
+        }
         public System.DateTime ScheduledTime
         {
             set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<System.DateTime>("ScheduledTime", value); }

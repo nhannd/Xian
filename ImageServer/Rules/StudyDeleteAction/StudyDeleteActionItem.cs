@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
             Platform.Log(LogLevel.Debug, "Study Delete: This study will be deleted on {0}", scheduledTime);
             context.CommandProcessor.AddCommand(
                 new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
-                                                 scheduledTime));
+                                                 scheduledTime, null));
 
 
             return true;

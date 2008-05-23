@@ -35,16 +35,13 @@
   <ItemGroup>
     <Compile Include="AutoRoute\AutoRouteFactoryExtension.cs" />
     <Compile Include="AutoRoute\AutoRouteItemProcessor.cs" />
-    <Compile Include="BaseCompressItemProcessor.cs" />
     <Compile Include="BaseItemProcessor.cs" />
     <Compile Include="CleanupStudy\CleanupStudyFactoryExtension.cs" />
     <Compile Include="CleanupStudy\CleanupStudyItemProcessor.cs" />
     <Compile Include="DeleteStudy\DeleteStudyFactoryExtension.cs" />
     <Compile Include="DeleteStudy\DeleteStudyItemProcessor.cs" />
-    <Compile Include="LosslessCompress\LosslessCompressFactoryExtension.cs" />
-    <Compile Include="LosslessCompress\LosslessCompressItemProcessor.cs" />
-    <Compile Include="LossyCompress\LossyCompressFactoryExtension.cs" />
-    <Compile Include="LossyCompress\LossyCompressItemProcessor.cs" />
+    <Compile Include="CompressStudy\CompressStudyFactoryExtension.cs" />
+    <Compile Include="CompressStudy\CompressStudyItemProcessor.cs" />
     <Compile Include="UpdateStudyXmlCommand.cs" />
     <Compile Include="WebEditStudy\EditStudyCommand.cs" />
     <Compile Include="WebEditStudy\EditStudyContext.cs" />

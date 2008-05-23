@@ -32,26 +32,19 @@
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.LossyCompress
+namespace ClearCanvas.ImageServer.Rules.CompressSamples
 {
-	/// <summary>
-	/// Plugin for processing 'LossyCompress' WorkQueue items.
-	/// </summary>
-	[ExtensionOf(typeof (WorkQueueFactoryExtensionPoint))]
-	public class LossyCompressFactoryExtension : IWorkQueueProcessorFactory
+	[ExtensionOf(typeof (SampleRuleExtensionPoint))]
+	public class LosslessCompressExemptSample : SampleRuleBase
 	{
-		#region IWorkQueueProcessorFactory Members
-
-		public WorkQueueTypeEnum GetWorkQueueType()
+		public LosslessCompressExemptSample()
+			: base("CompressExempt",
+			       "Compress Exempt Rule",
+				   ServerRuleTypeEnum.GetEnum("StudyCompress"),
+			       "SampleCompressExempt.xml")
 		{
-			return WorkQueueTypeEnum.GetEnum("LossyCompress");
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
 		}
-
-		public IWorkQueueItemProcessor GetItemProcessor()
-		{
-			return new LossyCompressItemProcessor();
-		}
-
-		#endregion
 	}
+
 }

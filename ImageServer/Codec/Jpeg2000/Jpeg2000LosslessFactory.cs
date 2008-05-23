@@ -29,25 +29,40 @@
 
 #endregion
 
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Codec.Jpeg2000;
 using ClearCanvas.DicomServices.Codec;
+using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg2000
 {
+	/// <summary>
+	/// JPEG 2000 Lossless codec factory.
+	/// </summary>
     [ExtensionOf(typeof(DicomCodecFactoryExtensionPoint))]
-    public class Jpeg2000LosslessFactory : DicomJpeg2000LosslessCodecFactory
+	public class Jpeg2000LosslessFactory : DicomJpeg2000LosslessCodecFactory, IImageServerXmlCodecParameters
     {
         public override DicomCodecParameters GetCodecParameters(DicomAttributeCollection dataSet)
         {
-            DicomJpeg2000Parameters parms = new DicomJpeg2000Parameters();
+            DicomJpeg2000Parameters codecParms = new DicomJpeg2000Parameters();
 
-            parms.Irreversible = false;
-            parms.UpdatePhotometricInterpretation = true;
-            parms.Rate = 1; //1 == Lossless
-            return parms;
+            codecParms.Irreversible = false;
+            codecParms.UpdatePhotometricInterpretation = true;
+            codecParms.Rate = 1; //1 == Lossless
+            return codecParms;
         }
+
+    	public DicomCodecParameters GetCodecParameters(XmlDocument parms)
+    	{
+			DicomJpeg2000Parameters codecParms = new DicomJpeg2000Parameters();
+
+			codecParms.Irreversible = false;
+			codecParms.UpdatePhotometricInterpretation = true;
+			codecParms.Rate = 1; //1 == Lossless
+			return codecParms;
+    	}
     }
 }

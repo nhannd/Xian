@@ -86,13 +86,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="JpegBaselineAction\Sample_JPEGBaseLine.xml" />
+    <EmbeddedResource Include="JpegBaselineAction\SampleJpegBaseline.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="JpegExtendedAction\Sample_JPEGExtended.xml" />
+    <EmbeddedResource Include="JpegExtendedAction\SampleJpegExtended.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="JpegLosslessAction\Sample_JPEGLossless.xml" />
+    <EmbeddedResource Include="JpegLosslessAction\SampleJpegLossless.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="JpegBaselineAction\SampleJpegBaselineStudyDate.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -63,6 +63,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<FilesystemQueueTypeEnum>)SubCriteria["FilesystemQueueTypeEnum"];
             } 
         }
+        public ISearchCondition<System.Xml.XmlDocument> QueueXml
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("QueueXml"))
+              {
+                 SubCriteria["QueueXml"] = new SearchCondition<System.Xml.XmlDocument>("QueueXml");
+              }
+              return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["QueueXml"];
+            } 
+        }
         public ISearchCondition<System.DateTime> ScheduledTime
         {
             get

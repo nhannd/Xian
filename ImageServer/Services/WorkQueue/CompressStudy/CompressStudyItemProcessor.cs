@@ -31,26 +31,21 @@
 
 using System;
 using System.IO;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Codec;
+using ClearCanvas.DicomServices.Codec;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue
+namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 {
-	public abstract class BaseCompressItemProcessor : BaseItemProcessor
+	public class CompressStudyItemProcessor : BaseItemProcessor
 	{
-		private ServerRulesEngine _compressionRulesEngine;
-
-		protected ServerRulesEngine CompressionRulesEngine
-		{
-			get { return _compressionRulesEngine; }
-			set { _compressionRulesEngine = value; }
-		}
-
-		private bool ProcessWorkQueueUid(Model.WorkQueue item, WorkQueueUid sop, StudyXml studyXml)
+		private bool ProcessWorkQueueUid(Model.WorkQueue item, WorkQueueUid sop, StudyXml studyXml, IDicomCodecFactory theCodecFactory)
 		{
 			Platform.CheckForNullReference(item, "item");
 			Platform.CheckForNullReference(sop, "sop");
@@ -66,7 +61,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 			try
 			{
-				ProcessFile(item, sop, path, studyXml);
+				ProcessFile(item, sop, path, studyXml, theCodecFactory);
 
 				// Delete it out of the queue
 				DeleteWorkQueueUid(sop);
@@ -93,7 +88,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		/// </summary>
 		/// <param name="item">The <see cref="WorkQueue"/> item.</param>
 		/// <returns>A value indicating whether the uid list has been successfully processed</returns>
-		protected bool ProcessUidList(Model.WorkQueue item)
+		/// <param name="theCodecFactory">The factor for doing the compression</param>
+		protected bool ProcessUidList(Model.WorkQueue item, IDicomCodecFactory theCodecFactory)
 		{
 			StudyXml studyXml;
 
@@ -106,7 +102,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				if (sop.Failed)
 					continue;
 
-				if (ProcessWorkQueueUid(item, sop, studyXml))
+				if (ProcessWorkQueueUid(item, sop, studyXml, theCodecFactory))
 					successfulProcessCount++;
 			}
 
@@ -115,10 +111,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 		}
 
-		protected void ProcessFile(Model.WorkQueue item, WorkQueueUid sop, string path, StudyXml studyXml)
+		protected void ProcessFile(Model.WorkQueue item, WorkQueueUid sop, string path, StudyXml studyXml, IDicomCodecFactory theCodecFactory)
 		{
 			DicomFile file;
-		
+
 			// Use the command processor for rollback capabilities.
 			ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue Compress DICOM File");
 
@@ -129,7 +125,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 				// Get the Patients Name for processing purposes.
 				String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
-		
+
 				// Update the StudyStream object
 				UpdateStudyXmlCommand insertStudyXmlCommand = new UpdateStudyXmlCommand(file, studyXml, StorageLocation);
 				processor.AddCommand(insertStudyXmlCommand);
@@ -140,11 +136,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				context.CommandProcessor = processor;
 
 				// Run the rules engine against the object.
-				CompressionRulesEngine.Execute(context, true);
+				//CompressionRulesEngine.Execute(context, true);
+				IDicomCodec codec = theCodecFactory.GetDicomCodec();
+				IImageServerXmlCodecParameters codecParmFactory = theCodecFactory as IImageServerXmlCodecParameters;
+
+				DicomCodecParameters parms = codecParmFactory.GetCodecParameters(item.Data);
+
+				context.CommandProcessor.AddCommand(
+					new DicomCompressCommand(context.Message, theCodecFactory.CodecTransferSyntax, codec, parms, true));
+
 
 				if (processor.CommandCount == 1)
 				{
-					Platform.Log(LogLevel.Info,"No compression defined for object.");
+					Platform.Log(LogLevel.Info, "No compression defined for object.");
 					return;
 				}
 
@@ -176,7 +180,56 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							 processor.Description);
 				processor.Rollback();
 				throw new ApplicationException("Unexpected exception when compressing file.", e);
-			}	
+			}
+		}
+		protected override void ProcessItem(Model.WorkQueue item)
+		{
+
+			LoadUids(item);
+			LoadStorageLocation(item);
+
+			if (WorkQueueUidList.Count == 0)
+			{
+				// No UIDs associated with the WorkQueue item.  Set the status back to idle
+				PostProcessing(item, false, false);
+				return;
+			}
+			XmlElement element = item.Data.DocumentElement;
+
+			string syntax = element.Attributes["syntax"].Value;
+
+			TransferSyntax compressSyntax = TransferSyntax.GetTransferSyntax(syntax);
+
+			Platform.Log(LogLevel.Info, "Compressing study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Load(item.ServerPartitionKey).AeTitle);
+
+			IDicomCodecFactory[] codecs = DicomCodecHelper.GetCodecs();
+			IDicomCodecFactory theCodecFactory = null;
+			foreach (IDicomCodecFactory codec in codecs)
+				if (codec.CodecTransferSyntax.Equals(compressSyntax))
+				{
+					theCodecFactory = codec;
+					break;
+				}
+
+			if (theCodecFactory == null)
+			{
+				item.FailureDescription = String.Format("Unable to find codec for compression: {0}", compressSyntax.Name);
+				Platform.Log(LogLevel.Error, "Error with work queue item {0}: {1}", item.GetKey(), item.FailureDescription);
+				base.PostProcessingFailure(item, true);
+				return;
+			}
+
+			if (!ProcessUidList(item, theCodecFactory))
+				PostProcessingFailure(item, false);
+			else
+			{
+				if (compressSyntax.LossyCompressed)
+					UpdateStudyStatus(StorageLocation, StudyStatusEnum.GetEnum("OnlineLossy"));
+				else
+					UpdateStudyStatus(StorageLocation, StudyStatusEnum.GetEnum("OnlineLossless"));
+
+				PostProcessing(item, true, false);  // batch processed, not complete
+			}
 		}
 	}
 }

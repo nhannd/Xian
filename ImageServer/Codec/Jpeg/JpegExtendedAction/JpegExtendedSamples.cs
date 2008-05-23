@@ -39,12 +39,12 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegExtendedAction
     public class JpegExtendedSamples : SampleRuleBase
     {
         public JpegExtendedSamples()
-            : base("JpegExtendedParameters",
-                   "JPEG Extended Parameters",
-                   ServerRuleTypeEnum.GetEnum("LossyCompressParameters"),
-                   "Sample_JPEGExtended.xml")
+            : base("JpegExtendedSample",
+                   "JPEG Extended Simple Sample",
+				   ServerRuleTypeEnum.GetEnum("StudyCompress"),
+                   "SampleJpegExtended.xml")
         {
-            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"));
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
         }
     }
 }

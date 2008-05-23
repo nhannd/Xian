@@ -29,21 +29,17 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Model;
+using System.Xml;
+using ClearCanvas.Dicom.Codec;
 
-namespace ClearCanvas.ImageServer.Rules.LossyCompressAction
+namespace ClearCanvas.ImageServer.Common
 {
-    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
-    public class LossyCompressExemptSample : SampleRuleBase
-    {
-        public LossyCompressExemptSample()
-            : base("LossyCompressExempt",
-                   "Lossy Compress Exempt Rule",
-                   ServerRuleTypeEnum.GetEnum("LossyCompressStudy"),
-                   "Sample_LossyWithExempt.xml")
-        {
-            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
-        }
-    }
+	/// <summary>
+	/// Interface for setting codec parametes.  May make this part of the DICOM library
+	/// in the future.
+	/// </summary>
+	public interface IImageServerXmlCodecParameters
+	{
+		DicomCodecParameters GetCodecParameters(XmlDocument parms);
+	}
 }

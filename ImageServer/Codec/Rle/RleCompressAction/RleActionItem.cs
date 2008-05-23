@@ -29,32 +29,73 @@
 
 #endregion
 
+using System;
+using System.Xml;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Codec;
-using ClearCanvas.Dicom.Codec.Rle;
-using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Rle.RleCompressAction
 {
+	/// <summary>
+	/// RLE compression action item for <see cref="ServerRulesEngine"/>
+	/// </summary>
 	public class RleActionItem : ServerActionItemBase
 	{
-        public RleActionItem()
-            :base("RLE compression action")
+		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("LosslessCompress");
+		private readonly Expression _exprScheduledTime;
+		private readonly int _offsetTime;
+		private readonly TimeUnit _units;
+
+		public RleActionItem(int time, TimeUnit unit)
+			: this(time, unit, null)
+		{
+		}
+
+		public RleActionItem(int time, TimeUnit unit, Expression exprScheduledTime)
+			: base("RLE compression action")
         {
-          
+            _offsetTime = time;
+            _units = unit;
+            _exprScheduledTime = exprScheduledTime;
         }
 
 		protected override bool OnExecute(ServerActionContext context)
 		{
-			IDicomCodecFactory factory = new RleFactory();
-			IDicomCodec codec = factory.GetDicomCodec();
-			DicomRleCodecParameters parms = factory.GetCodecParameters(context.Message.DataSet) as DicomRleCodecParameters;
+			DateTime scheduledTime = Platform.Time;
 
-			context.CommandProcessor.AddCommand(new DicomCompressCommand(
-													context.Message, TransferSyntax.RleLossless, codec, parms, false));	
+			if (_exprScheduledTime != null)
+			{
+				scheduledTime = Evaluate(_exprScheduledTime, context, scheduledTime);
+			}
+
+			scheduledTime = CalculateOffsetTime(scheduledTime, _offsetTime, _units);
+			DateTime preferredScheduledTime = GetPreferredScheduledTime();
+
+			if (scheduledTime < preferredScheduledTime)
+			{
+				Platform.Log(LogLevel.Warn,
+							 "RLE Compression Scheduling: calculated scheduled compression time is {0}. ==> preferred time is {1}",
+							 scheduledTime, preferredScheduledTime);
+				scheduledTime = preferredScheduledTime;
+			}
+
+			XmlDocument doc = new XmlDocument();
+
+			XmlElement element = doc.CreateElement("compress");
+			doc.AppendChild(element);
+			XmlAttribute syntaxAttribute = doc.CreateAttribute("syntax");
+			syntaxAttribute.Value = TransferSyntax.RleLosslessUid;
+			element.Attributes.Append(syntaxAttribute);
+
+			Platform.Log(LogLevel.Debug, "RLE Compression Scheduling: This study will be compressed on {0}", scheduledTime);
+			context.CommandProcessor.AddCommand(
+				new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
+												 scheduledTime, doc));
+
 			return true;
 		}
-
 	}
 }

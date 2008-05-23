@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Xml;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
@@ -73,6 +74,10 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 		public bool DeleteFilesystemQueue
 		{
 			set { SubCriteria["DeleteFilesystemQueue"] = new ProcedureParameter<bool>("DeleteFilesystemQueue", value); }
+		}
+		public XmlDocument Data
+		{
+			set { SubCriteria["Data"] = new ProcedureParameter<XmlDocument>("Data", value); }
 		}
     }
 }

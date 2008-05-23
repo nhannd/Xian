@@ -40,12 +40,7 @@
     <Compile Include="AutoRouteAction\InsertAutoRouteCommand.cs" />
     <Compile Include="InsertFilesystemQueueCommand.cs" />
     <Compile Include="ISampleRule.cs" />
-    <Compile Include="LosslessCompressAction\LosslessCompressActionItem.cs" />
-    <Compile Include="LosslessCompressAction\LosslessCompressActionOperator.cs" />
-    <Compile Include="LosslessCompressAction\LosslessCompressSamples.cs" />
-    <Compile Include="LossyCompressAction\LossyCompressActionItem.cs" />
-    <Compile Include="LossyCompressAction\LossyCompressActionOperator.cs" />
-    <Compile Include="LossyCompressAction\LossyCompressSamples.cs" />
+    <Compile Include="CompressSamples\CompressSamples.cs" />
     <Compile Include="NoOp\NoOpActionItem.cs" />
     <Compile Include="NoOp\NoOpActionOperator.cs" />
     <Compile Include="OnlineRetentionAction\OnlineRetentionActionItem.cs" />
@@ -111,9 +106,7 @@
     <EmbeddedResource Include="AutoRouteAction\Sample_AutoRouteSimple.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="LosslessCompressAction\Sample_SimpleLossless.xml" />
-    <EmbeddedResource Include="LosslessCompressAction\Sample_LosslessWithExempt.xml" />
-    <EmbeddedResource Include="LossyCompressAction\Sample_LossyWithExempt.xml" />
+    <EmbeddedResource Include="CompressSamples\SampleCompressExempt.xml" />
     <EmbeddedResource Include="StudyDeleteAction\Sample_StudyDeleteAgeBased.xml" />
     <EmbeddedResource Include="StudyDeleteAction\Sample_StudyDeleteTagBased.xml" />
   </ItemGroup>
@@ -123,12 +116,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>RuleSettings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="LosslessCompressAction\Sample_SimpleLossless2.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="LosslessCompressAction\Sample_SimpleLossless3.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

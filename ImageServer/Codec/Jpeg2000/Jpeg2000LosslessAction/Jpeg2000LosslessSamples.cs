@@ -39,12 +39,25 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LosslessAction
     public class Jpeg2000LosslessSamples : SampleRuleBase
     {
         public Jpeg2000LosslessSamples()
-            : base("Jpeg2000LosslessParameters",
-                   "JPEG 2000 Lossless Sample Parameters",
-                   ServerRuleTypeEnum.GetEnum("LosslessCompressParameters"),
-                   "Sample_JPEG2000Lossless.xml")
+            : base("Jpeg2000Lossless",
+                   "JPEG 2000 Lossless Sample Rule",
+				   ServerRuleTypeEnum.GetEnum("StudyCompress"),
+                   "SampleJpeg2000Lossless.xml")
         {
-            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("CompressingStudy"));
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
         }
     }
+
+	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
+	public class Jpeg2000ComboSample : SampleRuleBase
+	{
+		public Jpeg2000ComboSample()
+			: base("Jpeg2000Combo",
+				   "JPEG 2000 Lossless and Lossy Sample Rule",
+				   ServerRuleTypeEnum.GetEnum("StudyCompress"),
+				   "SampleJpeg2000Combo.xml")
+		{
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+		}
+	}
 }

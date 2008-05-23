@@ -29,16 +29,21 @@
 
 #endregion
 
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Codec.Rle;
 using ClearCanvas.DicomServices.Codec;
+using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.Codec.Rle
 {
+	/// <summary>
+	/// RLE Compression codec factory.
+	/// </summary>
     [ExtensionOf(typeof(DicomCodecFactoryExtensionPoint))]
-    public class RleFactory : DicomRleCodecFactory
+	public class RleFactory : DicomRleCodecFactory, IImageServerXmlCodecParameters
     {
         public override DicomCodecParameters GetCodecParameters(DicomAttributeCollection dataSet)
         {
@@ -46,5 +51,12 @@ namespace ClearCanvas.ImageServer.Codec.Rle
 
             return parms;
         }
+
+    	public DicomCodecParameters GetCodecParameters(XmlDocument parms)
+    	{
+			DicomRleCodecParameters codecParms = new DicomRleCodecParameters();
+
+			return codecParms;
+    	}
     }
 }
