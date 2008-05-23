@@ -61,33 +61,34 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._folderTreeView = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
-            this.SuspendLayout();
-            // 
-            // _folderTreeView
-            // 
-            this._folderTreeView.AllowDrop = true;
-            this._folderTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._folderTreeView.IconColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this._folderTreeView.IconSize = new System.Drawing.Size(24, 24);
-            this._folderTreeView.Location = new System.Drawing.Point(0, 0);
-            this._folderTreeView.Margin = new System.Windows.Forms.Padding(2);
-            this._folderTreeView.Name = "_folderTreeView";
-            this._folderTreeView.ShowLines = false;
-            this._folderTreeView.ShowRootLines = false;
-            this._folderTreeView.Size = new System.Drawing.Size(183, 500);
-            this._folderTreeView.TabIndex = 1;
-            this._folderTreeView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-            // 
-            // FolderExplorerComponentControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._folderTreeView);
-            this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "FolderExplorerComponentControl";
-            this.Size = new System.Drawing.Size(183, 500);
-            this.ResumeLayout(false);
+			this._folderTreeView = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
+			this.SuspendLayout();
+			// 
+			// _folderTreeView
+			// 
+			this._folderTreeView.AllowDrop = true;
+			this._folderTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._folderTreeView.IconColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+			this._folderTreeView.IconSize = new System.Drawing.Size(24, 24);
+			this._folderTreeView.Location = new System.Drawing.Point(0, 0);
+			this._folderTreeView.Margin = new System.Windows.Forms.Padding(2);
+			this._folderTreeView.Name = "_folderTreeView";
+			this._folderTreeView.ShowLines = false;
+			this._folderTreeView.ShowRootLines = false;
+			this._folderTreeView.ShowToolbar = false;
+			this._folderTreeView.Size = new System.Drawing.Size(183, 500);
+			this._folderTreeView.TabIndex = 1;
+			this._folderTreeView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
+			// 
+			// FolderExplorerComponentControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._folderTreeView);
+			this.Margin = new System.Windows.Forms.Padding(2);
+			this.Name = "FolderExplorerComponentControl";
+			this.Size = new System.Drawing.Size(183, 500);
+			this.ResumeLayout(false);
 
         }
 

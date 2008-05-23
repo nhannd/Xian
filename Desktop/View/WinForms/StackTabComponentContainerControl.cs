@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Controls;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -46,12 +47,24 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private VisualStyle _activeStyle = VisualStyle.Office2007Blue;
 		private VisualStyle _inactiveStyle = VisualStyle.Office2007Black;
 
+		private ActionModelNode _toolbarModel;
+		private ActionModelNode _menuModel;
+
+		private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
+		private ToolStripItemAlignment _toolStripItemAlignment = ToolStripItemAlignment.Right;
+		private TextImageRelation _textImageRelation = TextImageRelation.ImageBeforeText;
+
+		private bool _isLoaded = false;
+
 		private readonly StackTabComponentContainer _component;
 
 		public StackTabComponentContainerControl(StackTabComponentContainer component)
 		{
 			InitializeComponent();
 			_component = component;
+
+			_menuModel = _component.ContextMenuModel;
+			_toolbarModel = _component.ToolbarModel;
 
 			CreateStackTabs();
 
@@ -75,9 +88,85 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { _inactiveStyle = value; }
 		}
 
+		[DefaultValue(ToolStripItemDisplayStyle.ImageAndText)]
+		public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
+		{
+			get { return _toolStripItemDisplayStyle; }
+			set { _toolStripItemDisplayStyle = value; }
+		}
+
+		[DefaultValue(true)]
+		public bool ShowToolbar
+		{
+			get { return _toolStrip.Visible; }
+			set { _toolStrip.Visible = value; }
+		}
+
+		[DefaultValue(false)]
+		public bool StatusBarVisible
+		{
+			get { return _statusStrip.Visible; }
+			set { _statusStrip.Visible = value; }
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public ActionModelNode ToolbarModel
+		{
+			get { return _toolbarModel; }
+			set
+			{
+				_toolbarModel = value;
+
+				// Defer initialization of ToolStrip until after Load() has been called
+				// so that parameters from application settings are initialized properly
+				if (_isLoaded) 
+					InitializeToolStrip();
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public ActionModelNode MenuModel
+		{
+			get { return _menuModel; }
+			set
+			{
+				_menuModel = value;
+				ToolStripBuilder.Clear(_contextMenu.Items);
+				if (_menuModel != null)
+				{
+					ToolStripBuilder.BuildMenu(_contextMenu.Items, _menuModel.ChildNodes);
+				}
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public string StatusText
+		{
+			get { return _statusLabel.Text; }
+			set { _statusLabel.Text = value; }
+		}
+
 		#endregion
 
 		#region Event Handlers
+
+		private void StackTabComponentContainerControl_Load(object sender, EventArgs e)
+		{
+			if (this.DesignMode == false)
+			{
+				_toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
+				_textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
+			}
+			else
+			{
+				_toolStripItemAlignment = ToolStripItemAlignment.Left;
+				_textImageRelation = TextImageRelation.ImageBeforeText;
+			}
+
+			InitializeToolStrip();
+			_isLoaded = true;
+
+		}
 
 		private void OnTabButtonClick(object sender, EventArgs e)
 		{
@@ -416,5 +505,31 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
+		protected ToolStrip ToolStrip
+		{
+			get { return _toolStrip; }
+		}
+
+		protected new ContextMenuStrip ContextMenuStrip
+		{
+			get { return _contextMenu; }
+		}
+
+		private void InitializeToolStrip()
+		{
+			ToolStripBuilder.Clear(_toolStrip.Items);
+			if (_toolbarModel != null)
+			{
+				if (_toolStripItemAlignment == ToolStripItemAlignment.Right)
+				{
+					_toolbarModel.ChildNodes.Reverse();
+				}
+
+				ToolStripBuilder.BuildToolbar(
+					_toolStrip.Items,
+					_toolbarModel.ChildNodes,
+					new ToolStripBuilder.ToolStripBuilderStyle(_toolStripItemDisplayStyle, _toolStripItemAlignment, _textImageRelation));
+			}
+		}
 	}
 }

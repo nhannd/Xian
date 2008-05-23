@@ -197,7 +197,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public ActionModelNode ItemsToolbarModel
+		public ActionModelRoot ItemsToolbarModel
         {
             get
             {

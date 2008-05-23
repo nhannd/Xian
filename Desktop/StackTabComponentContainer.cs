@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
 {
@@ -73,6 +74,9 @@ namespace ClearCanvas.Desktop
         private readonly StackStyle _stackStyle;
 		private readonly bool _openAllTabsInitially;
 
+    	private ActionModelRoot _menuModel;
+    	private ActionModelRoot _toolBarModel;
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -93,9 +97,28 @@ namespace ClearCanvas.Desktop
 		/// <summary>
 		/// Gets the settings for opening all tabs initially.  This is applicable to StackStyle.ShowMultiple only
 		/// </summary>
-    	public bool OpenAllTabsInitially
-    	{
+		public bool OpenAllTabsInitially
+		{
 			get { return _openAllTabsInitially; }
-    	}
-    }
+		}
+
+		/// <summary>
+		/// Gets the action model for the context menu
+		/// </summary>
+		public ActionModelRoot ContextMenuModel
+		{
+			get { return _menuModel; }
+			set { _menuModel = value; }
+		}
+
+		/// <summary>
+		/// Gets the action model for the tool bar
+		/// </summary>
+		public ActionModelRoot ToolbarModel
+		{
+			get { return _toolBarModel; }
+			set { _toolBarModel = value; }
+		}
+
+	}
 }

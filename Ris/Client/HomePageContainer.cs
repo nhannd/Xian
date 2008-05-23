@@ -35,6 +35,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -42,6 +44,22 @@ namespace ClearCanvas.Ris.Client
     {
         void SetUrl(string url);
     }
+
+	[ExtensionPoint]
+	public class HomePageToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
+
+	public interface IHomePageToolContext : IToolContext
+	{
+		IEnumerable FolderSystems { get; }
+		IFolderSystem SelectedFolderSystem { get; }
+
+		IEnumerable Folders { get; }
+		IFolder SelectedFolder { get; }
+
+		IDesktopWindow DesktopWindow { get; }
+	}
 
     public class HomePageContainer : SplitComponentContainer, ISearchDataHandler
     {
@@ -84,9 +102,52 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-        #region Search related
+		#region IHomePageToolContext implementation
 
-        private ISearchDataHandler _searchDataHandler;
+		class HomePageToolContext : ToolContext, IHomePageToolContext
+		{
+			private readonly HomePageContainer _component;
+
+			public HomePageToolContext(HomePageContainer component)
+			{
+				_component = component;
+			}
+
+			#region IHomePageToolContext Members
+
+			public IEnumerable FolderSystems
+			{
+				get { return _component._folderExplorerComponents.Values; }
+			}
+
+			public IFolderSystem SelectedFolderSystem
+			{
+				get { return _component.SelectedFolderExplorer.FolderSystem; }
+			}
+
+			public IEnumerable Folders
+			{
+				get { return _component.SelectedFolderExplorer.FolderSystem.Folders; }
+			}
+
+			public IFolder SelectedFolder
+			{
+				get { return (IFolder)_component.SelectedFolderExplorer.SelectedFolder.Item; }
+			}
+
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _component.Host.DesktopWindow; }
+			}
+
+			#endregion
+		}
+
+		#endregion
+
+		#region Search related
+
+		private ISearchDataHandler _searchDataHandler;
 
         public void RegisterSearchDataHandler(ISearchDataHandler handler)
         {
@@ -110,7 +171,8 @@ namespace ClearCanvas.Ris.Client
         private readonly StackTabComponentContainer _stackContainers;
 
         private FolderExplorerComponent _selectedFolderExplorer;
-        private readonly ToolSet _tools;
+        private readonly ToolSet _folderExplorers;
+    	private readonly ToolSet _homePageTools;
 
         public HomePageContainer(IExtensionPoint folderExplorerExtensionPoint, IPreviewComponent preview)
             : base(Desktop.SplitOrientation.Vertical)
@@ -119,16 +181,19 @@ namespace ClearCanvas.Ris.Client
             _folderContentComponent = new FolderContentsComponent();
             _previewComponent = preview;
 
-            _tools = new ToolSet(folderExplorerExtensionPoint, new FolderExplorerToolContext(this));
+            _folderExplorers = new ToolSet(folderExplorerExtensionPoint, new FolderExplorerToolContext(this));
+			_homePageTools = new ToolSet(new HomePageToolExtensionPoint(), new HomePageToolContext(this));
 
             // Construct the explorer component and place each into a stack tab
             _stackContainers = new StackTabComponentContainer(
 				HomePageSettings.Default.ShowMultipleFolderSystems ? StackStyle.ShowMultiple : StackStyle.ShowOneOnly,
 				HomePageSettings.Default.OpenAllFolderSystemsInitially);
 
+        	_stackContainers.ContextMenuModel = this.HomePageContextMenuModel;
+        	_stackContainers.ToolbarModel = this.HomePageToolbarModel;
             _stackContainers.CurrentPageChanged += OnSelectedFolderSystemChanged;
 
-            List<IFolderSystem> folderSystems = CollectionUtils.Map<ITool, IFolderSystem, List<IFolderSystem>>(_tools.Tools,
+            List<IFolderSystem> folderSystems = CollectionUtils.Map<ITool, IFolderSystem, List<IFolderSystem>>(_folderExplorers.Tools,
                 delegate(ITool tool)
                 {
                     FolderExplorerToolBase folderExplorerTool = (FolderExplorerToolBase) tool;
@@ -257,5 +322,21 @@ namespace ClearCanvas.Ris.Client
         {
             get { return _folderContentComponent; }
         }
-    }
+
+		public ActionModelRoot HomePageContextMenuModel
+		{
+			get
+			{
+				return ActionModelRoot.CreateModel(this.GetType().FullName, "homepage-contextmenu", _homePageTools.Actions);
+			}
+		}
+
+		public ActionModelRoot HomePageToolbarModel
+		{
+			get
+			{
+				return ActionModelRoot.CreateModel(this.GetType().FullName, "homepage-toolbar", _homePageTools.Actions);
+			}
+		}
+	}
 }
