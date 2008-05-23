@@ -1625,5 +1625,14 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
                 return ResourceManager.GetString("ValueDirectionalMarkersRight", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LOSSY.
+        /// </summary>
+        internal static string ValueLossy {
+            get {
+                return ResourceManager.GetString("ValueLossy", resourceCulture);
+            }
+        }
     }
 }

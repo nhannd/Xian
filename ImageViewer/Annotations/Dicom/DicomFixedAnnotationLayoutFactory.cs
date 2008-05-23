@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 	/// it simply serves as an example of how a hard-coded overlay can still be used 
 	/// in the new model.
 	/// </summary>
-	internal sealed class DicomFixedAnnotationLayoutProvider : AnnotationLayoutProvider
+	internal sealed class DicomFixedAnnotationLayoutFactory
 	{
 		private string[] _AssignmentsTopLeft = 
 		{
@@ -88,44 +88,37 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			"Dicom.PatientStudy.AdditionalPatientsHistory"
 		};
 
-		private const string _layoutIdentifier = "Dicom.General";
-
-		public DicomFixedAnnotationLayoutProvider()
+		public AnnotationLayout Create()
 		{
-		}
-
-		private StoredAnnotationLayout GetLayout()
-		{
-			StoredAnnotationLayout layout = new StoredAnnotationLayout(_layoutIdentifier);
+			AnnotationLayout layout = new AnnotationLayout();
 
 			int numberOfBoxesPerQuadrant = 15;
 			float boxheight = 1 / 32.0F;
 
 			float x = 0F, y = 0F, dx = 0.5F, dy = boxheight;
 
-			StoredAnnotationBoxGroup group = new StoredAnnotationBoxGroup("TopLeftQuadrant");
-			layout.AnnotationBoxGroups.Add(group);
-			group.DefaultBoxSettings.Bold = true;
-			group.DefaultBoxSettings.Font = "Century Gothic";
+			AnnotationBox newBox;
+			AnnotationBox defaultBoxSettings = new AnnotationBox();
+			defaultBoxSettings.Bold = true;
+			defaultBoxSettings.Font = "Century Gothic";
 			//TL
 			for (int i = 0; i < numberOfBoxesPerQuadrant; ++i)
 			{
 				dx = (i > 0) ? 0.5F : 0.4F; //make room for directional markers.
 
 				RectangleF normalizedRectangle = new RectangleF(x, y, dx, dy);
-				AnnotationBox newBox = group.GetNewBox();
+				newBox = defaultBoxSettings.Clone();
 				newBox.NormalizedRectangle = normalizedRectangle;
-				newBox.AnnotationItem = this.GetAnnotationItem(_AssignmentsTopLeft[i]);
+				newBox.AnnotationItem = AnnotationLayoutFactory.GetAnnotationItem(_AssignmentsTopLeft[i]);
 
-				group.AnnotationBoxes.Add(newBox);
+				layout.AnnotationBoxes.Add(newBox);
 				y += boxheight;
 			}
 
-			group = new StoredAnnotationBoxGroup("TopRightQuadrant");
-			layout.AnnotationBoxGroups.Add(group);
-			group.DefaultBoxSettings.Color = "OrangeRed";
-			group.DefaultBoxSettings.Font = "Century Gothic";
-			group.DefaultBoxSettings.Justification = AnnotationBox.JustificationBehaviour.Right;
+			defaultBoxSettings = new AnnotationBox();
+			defaultBoxSettings.Color = "OrangeRed";
+			defaultBoxSettings.Font = "Century Gothic";
+			defaultBoxSettings.Justification = AnnotationBox.JustificationBehaviour.Right;
 			y = 0.0F;
 			//TR
 			for (int i = 0; i < numberOfBoxesPerQuadrant; ++i)
@@ -134,18 +127,17 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 				dx = (i > 0) ? 0.5F : 0.4F; //make room for directional markers.
 
 				RectangleF normalizedRectangle = new RectangleF(x, y, dx, dy);
-				AnnotationBox newBox = group.GetNewBox();
+				newBox = defaultBoxSettings.Clone();
 				newBox.NormalizedRectangle = normalizedRectangle;
-				newBox.AnnotationItem = this.GetAnnotationItem(_AssignmentsTopRight[i]);
+				newBox.AnnotationItem = AnnotationLayoutFactory.GetAnnotationItem(_AssignmentsTopRight[i]);
 
-				group.AnnotationBoxes.Add(newBox);
+				layout.AnnotationBoxes.Add(newBox);
 				y += boxheight;
 			}
 
-			group = new StoredAnnotationBoxGroup("BottomLeftQuadrant");
-			layout.AnnotationBoxGroups.Add(group);
-			group.DefaultBoxSettings.Color = "Cyan";
-			group.DefaultBoxSettings.Font = "Century Gothic";
+			defaultBoxSettings = new AnnotationBox();
+			defaultBoxSettings.Color = "Cyan";
+			defaultBoxSettings.Font = "Century Gothic";
 			x = 0F;
 			y = 1.0F - boxheight;
 			//BL
@@ -154,9 +146,9 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 				dx = (i < (numberOfBoxesPerQuadrant - 1)) ? 0.5F : 0.4F; //make room for directional markers.
 
 				RectangleF normalizedRectangle = new RectangleF(x, y, dx, dy);
-				AnnotationBox newBox = group.GetNewBox();
+				newBox = defaultBoxSettings.Clone();
 				newBox.NormalizedRectangle = normalizedRectangle;
-				newBox.AnnotationItem = this.GetAnnotationItem(_AssignmentsBottomLeft[i]);
+				newBox.AnnotationItem = AnnotationLayoutFactory.GetAnnotationItem(_AssignmentsBottomLeft[i]);
 
 				if (i < numberOfBoxesPerQuadrant - 4 && !String.IsNullOrEmpty(_AssignmentsBottomLeft[i]))
 				{
@@ -164,16 +156,15 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 					newBox.ConfigurationOptions.ShowLabel = true;
 				}
 
-				group.AnnotationBoxes.Add(newBox);
+				layout.AnnotationBoxes.Add(newBox);
 				y -= boxheight;
 			}
 
-			group = new StoredAnnotationBoxGroup("BottomRightQuadrant");
-			layout.AnnotationBoxGroups.Add(group);
-			group.DefaultBoxSettings.Color = "Yellow";
-			group.DefaultBoxSettings.Font = "Century Gothic";
-			//group.DefaultBoxSettings.NumberOfLines = 2;
-			group.DefaultBoxSettings.Justification = AnnotationBox.JustificationBehaviour.Right;
+			defaultBoxSettings = new AnnotationBox();
+			defaultBoxSettings.Color = "Yellow";
+			defaultBoxSettings.Font = "Century Gothic";
+			defaultBoxSettings.NumberOfLines = 2;
+			defaultBoxSettings.Justification = AnnotationBox.JustificationBehaviour.Right;
 
 			y = 1.0F - boxheight;
 			//BR
@@ -183,47 +174,47 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 				dx = (i < (numberOfBoxesPerQuadrant - 1)) ? 0.5F : 0.4F; //make room for directional markers.
 
 				RectangleF normalizedRectangle = new RectangleF(x, y, dx, dy);
-				AnnotationBox newBox = group.GetNewBox();
+				newBox = defaultBoxSettings.Clone();
 				newBox.NormalizedRectangle = normalizedRectangle;
-				newBox.AnnotationItem = this.GetAnnotationItem(_AssignmentsBottomRight[i]);
+				newBox.AnnotationItem = AnnotationLayoutFactory.GetAnnotationItem(_AssignmentsBottomRight[i]);
 				if (!String.IsNullOrEmpty(_AssignmentsBottomRight[i]))
 					newBox.NumberOfLines = 2;
 
-				group.AnnotationBoxes.Add(newBox);
+				layout.AnnotationBoxes.Add(newBox);
 				y -= boxheight;
 			}
 
-			group = new StoredAnnotationBoxGroup("DirectionalMarkers");
-			layout.AnnotationBoxGroups.Add(group);
-			group.DefaultBoxSettings.Color = "White";
-			group.DefaultBoxSettings.Bold = true;
-			group.DefaultBoxSettings.Font = "Century Gothic";
-			group.DefaultBoxSettings.NumberOfLines = 1;
+			defaultBoxSettings = new AnnotationBox();
+			defaultBoxSettings.Color = "White";
+			defaultBoxSettings.Bold = true;
+			defaultBoxSettings.Font = "Century Gothic";
+			defaultBoxSettings.NumberOfLines = 1;
 
-			CreateDirectionalMarkerBox(0.00F, (1F - boxheight) / 2F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Left, "Presentation.DirectionalMarkers.Left", group);
-			CreateDirectionalMarkerBox(0.90F, (1F - boxheight) / 2F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Right, "Presentation.DirectionalMarkers.Right", group);
-			CreateDirectionalMarkerBox(0.45F, 0F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Center, "Presentation.DirectionalMarkers.Top", group);
-			CreateDirectionalMarkerBox(0.45F, 1F - boxheight, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Center, "Presentation.DirectionalMarkers.Bottom", group);
+			newBox = defaultBoxSettings.Clone();
+			CreateDirectionalMarkerBox(0.00F, (1F - boxheight) / 2F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Left, "Presentation.DirectionalMarkers.Left", newBox);
+			layout.AnnotationBoxes.Add(newBox);
+
+			newBox = defaultBoxSettings.Clone();
+			CreateDirectionalMarkerBox(0.90F, (1F - boxheight) / 2F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Right, "Presentation.DirectionalMarkers.Right", newBox);
+			layout.AnnotationBoxes.Add(newBox);
+
+			newBox = defaultBoxSettings.Clone();
+			CreateDirectionalMarkerBox(0.45F, 0F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Center, "Presentation.DirectionalMarkers.Top", newBox);
+			layout.AnnotationBoxes.Add(newBox);
+
+			newBox = defaultBoxSettings.Clone();
+			CreateDirectionalMarkerBox(0.45F, 1F - boxheight, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Center, "Presentation.DirectionalMarkers.Bottom", newBox);
+			layout.AnnotationBoxes.Add(newBox);
 
 			return layout;
 		}
 
-		private void CreateDirectionalMarkerBox(float x, float y, float dx, float dy, AnnotationBox.JustificationBehaviour justification, string identifier, StoredAnnotationBoxGroup group)
+		private static void CreateDirectionalMarkerBox(float x, float y, float dx, float dy, AnnotationBox.JustificationBehaviour justification, string identifier, AnnotationBox newBox)
 		{
 			RectangleF normalizedRectangle = new RectangleF(x, y, dx, dy);
-			AnnotationBox newBox = group.GetNewBox();
 			newBox.NormalizedRectangle = normalizedRectangle;
-			newBox.AnnotationItem = this.GetAnnotationItem(identifier);
+			newBox.AnnotationItem = AnnotationLayoutFactory.GetAnnotationItem(identifier);
 			newBox.Justification = justification;
-			group.AnnotationBoxes.Add(newBox);
-		}
-
-		public override IAnnotationLayout  AnnotationLayout
-		{
-			get
-			{
-				return this.GetLayout();
-			}
 		}
 	}
 }

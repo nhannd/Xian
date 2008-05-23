@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Annotations;
@@ -85,7 +84,7 @@ namespace ClearCanvas.ImageViewer
 		private ImageGraphic _imageGraphic;
 		[CloneIgnore]
 		private CompositeGraphic _overlayGraphics;
-		private IAnnotationLayoutProvider _annotationLayoutProvider;
+		private IAnnotationLayout _annotationLayout;
 
 		#endregion
 
@@ -186,23 +185,15 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				if (AnnotationLayoutProvider == null)
-					return ClearCanvas.ImageViewer.Annotations.AnnotationLayout.Empty;
-
-				return AnnotationLayoutProvider.AnnotationLayout ?? ClearCanvas.ImageViewer.Annotations.AnnotationLayout.Empty;
+				if (_annotationLayout == null)
+					_annotationLayout = CreateAnnotationLayout();
+				
+				return _annotationLayout;
 			}
+			protected set { _annotationLayout = value; }
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Gets the associated <see cref="IAnnotationLayoutProvider"/> for this image.
-		/// </summary>
-		protected IAnnotationLayoutProvider AnnotationLayoutProvider
-		{
-			get { return _annotationLayoutProvider; }			
-			set { _annotationLayoutProvider = value; }
-		}
 
 		/// <summary>
 		/// Gets an <see cref="IRenderer"/>.
@@ -284,6 +275,15 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Creates an empty <see cref="AnnotationLayout"/> unless overridden.
+		/// </summary>
+		protected virtual IAnnotationLayout CreateAnnotationLayout()
+		{
+			//return an empty layout.
+			return new AnnotationLayout();
+		}
 
 		private static void CheckRendererInitializationError()
 		{

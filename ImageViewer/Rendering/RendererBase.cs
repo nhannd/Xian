@@ -205,9 +205,12 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			foreach (AnnotationBox annotationBox in layout.AnnotationBoxes)
 			{
-				string annotationText = annotationBox.GetAnnotationText(presentationImage);
-				if (!String.IsNullOrEmpty(annotationText))
-					DrawAnnotationBox(annotationText, annotationBox);
+				if (annotationBox.Visible)
+				{
+					string annotationText = annotationBox.GetAnnotationText(presentationImage);
+					if (!String.IsNullOrEmpty(annotationText))
+						DrawAnnotationBox(annotationText, annotationBox);
+				}
 			}
 
 			clock.Stop();

@@ -29,79 +29,70 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	internal class SharedAnnotationLayoutProxy : AnnotationLayout
-	{
-		private readonly IAnnotationLayout _realLayout;
-
-		public SharedAnnotationLayoutProxy(IAnnotationLayout realLayout)
-		{
-			_realLayout = realLayout;
-		}
-
-		public override IEnumerable<AnnotationBox> AnnotationBoxes
-		{
-			get { return _realLayout.AnnotationBoxes; }
-		}
-	}
-
-	internal class EmptyAnnotationLayout : AnnotationLayout
-	{
-		public EmptyAnnotationLayout()
-		{
-		}
-
-		public override IEnumerable<AnnotationBox> AnnotationBoxes
-		{
-			get { yield break; }
-		}
-	}
-
 	/// <summary>
-	/// Abstract base class for <see cref="IAnnotationLayout"/>.
+	/// Base class for <see cref="IAnnotationLayout"/>s.
 	/// </summary>
-	public abstract class AnnotationLayout : IAnnotationLayout
+	[Cloneable(true)]
+	public class AnnotationLayout : IAnnotationLayout
 	{
-		private static readonly IAnnotationLayout _empty = new EmptyAnnotationLayout();
+		private readonly AnnotationBoxList _annotationBoxes;
 		private bool _visible;
-
+		
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		protected AnnotationLayout()
+		public AnnotationLayout()
 		{
+			_annotationBoxes = new AnnotationBoxList();
 			_visible = true;
 		}
 
-		/// <summary>
-		/// Gets an empty <see cref="IAnnotationLayout"/>.
-		/// </summary>
-		public static IAnnotationLayout Empty
+		[CloneInitialize]
+		private void Initialize(AnnotationLayout source, ICloningContext context)
 		{
-			get { return _empty; }	
+			context.CloneFields(source, this);
+		}
+
+		/// <summary>
+		/// Gets the <see cref="AnnotationBox"/>es that define the layout.
+		/// </summary>
+		public AnnotationBoxList AnnotationBoxes
+		{
+			get { return _annotationBoxes; }
 		}
 
 		#region IAnnotationLayout Members
 
 		/// <summary>
-		/// Gets the entire set of <see cref="AnnotationBox"/>es.
+		/// Gets the <see cref="AnnotationBox"/>es that define the layout.
 		/// </summary>
-		public abstract IEnumerable<AnnotationBox> AnnotationBoxes { get; }
+		IEnumerable<AnnotationBox> IAnnotationLayout.AnnotationBoxes
+		{
+			get { return _annotationBoxes; }
+		}
 
 		/// <summary>
-		/// Gets or sets whether the <see cref="AnnotationLayout"/> is visible.
+		/// Gets or sets whether the <see cref="IAnnotationLayout"/> is visible.
 		/// </summary>
-		public bool Visible
+		public bool Visible 
 		{
 			get { return _visible; }
 			set { _visible = value; }
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Creates a deep clone of this <see cref="AnnotationLayout"/>.
+		/// </summary>
+		public AnnotationLayout Clone()
+		{
+			return CloneBuilder.Clone(this) as AnnotationLayout;
+		}
 	}
 }

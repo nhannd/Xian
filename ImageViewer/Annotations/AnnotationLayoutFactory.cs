@@ -29,40 +29,55 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	internal abstract class AnnotationLayoutProvider : IAnnotationLayoutProvider
+	internal static class AnnotationLayoutFactory 
 	{
-		protected AnnotationLayoutProvider()
-		{ 
-		}
+		private static readonly List<IAnnotationItemProvider> _providers;
 
-		protected virtual IEnumerable<IAnnotationItemProvider> Providers
+		static AnnotationLayoutFactory()
 		{
-			get { return AnnotationItemProviderManager.Instance.Providers; }
+			_providers = new List<IAnnotationItemProvider>();
+
+			try
+			{
+				foreach (object extension in new AnnotationItemProviderExtensionPoint().CreateExtensions())
+					_providers.Add((IAnnotationItemProvider) extension);
+			}
+			catch(NotSupportedException e)
+			{
+				Platform.Log(LogLevel.Info, e);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+			}
 		}
 
-		protected virtual IEnumerable<IAnnotationItem> AvailableAnnotationItems
+		public static IEnumerable<IAnnotationItem> AvailableAnnotationItems
 		{
 			get
 			{
-				foreach (IAnnotationItemProvider provider in this.Providers)
+				foreach (IAnnotationItemProvider provider in _providers)
 				{
 					foreach (IAnnotationItem item in provider.GetAnnotationItems())
 						yield return item;
 				}
 			}
 		}
-
-		protected IAnnotationItem GetAnnotationItem(string identifier)
+		
+		public static IAnnotationItem GetAnnotationItem(string annotationItemIdentifier)
 		{
-			foreach (IAnnotationItemProvider provider in this.Providers)
+			foreach (IAnnotationItemProvider provider in _providers)
 			{
 				foreach (IAnnotationItem item in provider.GetAnnotationItems())
 				{
-					if (identifier == item.GetIdentifier())
+					if (item.GetIdentifier() == annotationItemIdentifier)
 						return item;
 				}
 			}
@@ -70,10 +85,33 @@ namespace ClearCanvas.ImageViewer.Annotations
 			return null;
 		}
 
-		#region IAnnotationLayoutProvider Members
+		public static IAnnotationLayout CreateLayout(string storedLayoutId)
+		{
+			try
+			{
+				StoredAnnotationLayout storedLayout = AnnotationLayoutStore.Instance.GetLayout(storedLayoutId, AvailableAnnotationItems);
+				if (storedLayout != null)
+					return storedLayout;
+				
+				//just return an empty layout.
+				return new AnnotationLayout();
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
 
-		public abstract IAnnotationLayout AnnotationLayout { get; } 
+				AnnotationLayout layout = new AnnotationLayout();
+				IAnnotationItem item = new BasicTextAnnotationItem("errorbox", "errorbox", SR.LabelError, SR.MessageErrorLoadingAnnotationLayout);
+				AnnotationBox box = new AnnotationBox(new RectangleF(0.5F,0.90F, 0.5F, 0.10F), item);
+				box.Bold = true;
+				box.Color = "Red";
+				box.Justification = AnnotationBox.JustificationBehaviour.Right;
+				box.NumberOfLines = 5;
+				box.VerticalAlignment = AnnotationBox.VerticalAlignmentBehaviour.Bottom;
 
-		#endregion
+				layout.AnnotationBoxes.Add(box);
+				return layout;
+			}
+		}
 	}
 }

@@ -29,6 +29,7 @@
 
 #endregion
 
+using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Annotations
 {
 	/// <summary>
@@ -36,10 +37,18 @@ namespace ClearCanvas.ImageViewer.Annotations
 	/// in an <see cref="AnnotationBox"/>.
 	/// </summary>
 	/// <seealso cref="IAnnotationItem"/>
+	[Cloneable(true)]
 	public sealed class AnnotationItemConfigurationOptions
 	{
 		private bool _showLabel = false;
 		private bool _showLabelIfValueEmpty = false;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public AnnotationItemConfigurationOptions()
+		{
+		}
 
 		/// <summary>
 		/// Gets or sets whether or not to show the label (<see cref="IAnnotationItem.GetLabel"/>).
@@ -61,16 +70,11 @@ namespace ClearCanvas.ImageViewer.Annotations
 		}
 
 		/// <summary>
-		/// Clones the <see cref="AnnotationItemConfigurationOptions"/>.
+		/// Creates a deep clone of this object.
 		/// </summary>
 		public AnnotationItemConfigurationOptions Clone()
 		{
-			AnnotationItemConfigurationOptions newItem = new AnnotationItemConfigurationOptions();
-
-			newItem.ShowLabel = this.ShowLabel;
-			newItem.ShowLabelIfValueEmpty = this.ShowLabelIfValueEmpty;
-
-			return newItem;
+			return CloneBuilder.Clone(this) as AnnotationItemConfigurationOptions;
 		}
 	}
 }

@@ -31,6 +31,7 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -69,7 +70,6 @@ namespace ClearCanvas.ImageViewer
 
 			_frame = frame;
 			_imageSop = frame.ParentImageSop;
-			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 		}
 
 		/// <summary>
@@ -79,8 +79,6 @@ namespace ClearCanvas.ImageViewer
 			: base(source, context)
 		{
 			context.CloneFields(source, this);
-			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
-			this.AnnotationLayoutProvider.AnnotationLayout.Visible = source.AnnotationLayoutProvider.AnnotationLayout.Visible;
 		}
 
 		/// <summary>
@@ -118,6 +116,15 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Creates the <see cref="IAnnotationLayout"/> for this image.
+		/// </summary>
+		/// <returns></returns>
+		protected override IAnnotationLayout CreateAnnotationLayout()
+		{
+			return DicomAnnotationLayoutFactory.CreateLayout(this);
+		}
 
 		/// <summary>
 		/// Returns the Instance Number as a string.

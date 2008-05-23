@@ -29,19 +29,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Annotations;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
@@ -87,7 +80,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			if (e.PresentationImage is IAnnotationLayoutProvider)
 			{
-				((IAnnotationLayoutProvider) e.PresentationImage).AnnotationLayout.Visible = _visible;
+				foreach (AnnotationBox box in ((IAnnotationLayoutProvider)e.PresentationImage).AnnotationLayout.AnnotationBoxes)
+					box.Visible = _visible;
 			}
 		}
 	}

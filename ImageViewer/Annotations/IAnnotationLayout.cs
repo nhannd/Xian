@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 	public interface IAnnotationLayout
 	{
 		/// <summary>
-		/// Gets the entire set of <see cref="AnnotationBox"/>es.
+		/// Gets the <see cref="AnnotationBox"/>es that define the layout.
 		/// </summary>
 		IEnumerable<AnnotationBox> AnnotationBoxes { get; }
 

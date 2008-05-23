@@ -639,4 +639,7 @@
   <data name="ValueDirectionalMarkersRight" xml:space="preserve">
     <value>R</value>
   </data>
+  <data name="ValueLossy" xml:space="preserve">
+    <value>LOSSY</value>
+  </data>
 </root>

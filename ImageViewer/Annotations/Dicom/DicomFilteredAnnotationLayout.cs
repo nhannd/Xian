@@ -36,9 +36,9 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
 	internal sealed class DicomFilteredAnnotationLayout
 	{
-		private string _identifier;
-		private string _matchingLayoutIdentifier;
-		private List<KeyValuePair<string, string>> _filters;
+		private readonly string _identifier;
+		private readonly string _matchingLayoutIdentifier;
+		private readonly List<KeyValuePair<string, string>> _filters;
 
 		public DicomFilteredAnnotationLayout(string identifier, string matchingLayoutIdentifier)
 		{

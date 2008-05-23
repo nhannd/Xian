@@ -89,10 +89,12 @@
             <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralImage.LossyImageCompression" >
+              <box-settings bold="true" color="Yellow" fit-width="true" always-visible="true" />
+            </annotation-box>
           </annotation-boxes>
         </annotation-box-group>
       </annotation-box-groups>
@@ -190,10 +192,12 @@
             <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralImage.LossyImageCompression" >
+              <box-settings bold="true" color="Yellow" fit-width="true" always-visible="true" />
+            </annotation-box>
           </annotation-boxes>
         </annotation-box-group>
       </annotation-box-groups>
@@ -291,10 +295,12 @@
             <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralImage.LossyImageCompression" >
+              <box-settings bold="true" color="Yellow" fit-width="true" always-visible="true" />
+            </annotation-box>
           </annotation-boxes>
         </annotation-box-group>
       </annotation-box-groups>
@@ -392,10 +398,12 @@
             <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralImage.LossyImageCompression" >
+              <box-settings bold="true" color="Yellow" fit-width="true" always-visible="true" />
+            </annotation-box>
           </annotation-boxes>
         </annotation-box-group>
       </annotation-box-groups>
@@ -502,10 +510,12 @@
             <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralImage.LossyImageCompression" >
+              <box-settings bold="true" color="Yellow" fit-width="true" always-visible="true" />
+            </annotation-box>
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="DirectionalMarkers">
@@ -638,11 +648,13 @@
             <annotation-box normalized-rectangle="0.500000\0.800000\1.000000\0.825000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.MRImage.MagneticFieldStrength" />
-            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="Dicom.MRImage.MagneticFieldStrength" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralImage.LossyImageCompression" >
+              <box-settings bold="true" color="Yellow" fit-width="true" always-visible="true" />
+            </annotation-box>
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="DirectionalMarkers">
@@ -752,10 +764,12 @@
             <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralImage.LossyImageCompression" >
+              <box-settings bold="true" color="Yellow" fit-width="true" always-visible="true" />
+            </annotation-box>
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="DirectionalMarkers">
@@ -869,10 +883,12 @@
             <annotation-box normalized-rectangle="0.500000\0.825000\1.000000\0.850000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.850000\1.000000\0.875000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.875000\1.000000\0.900000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="" />
-            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
-            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
-            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.500000\0.900000\1.000000\0.925000" annotation-item-id="Dicom.GeneralEquipment.StationName" />
+            <annotation-box normalized-rectangle="0.500000\0.925000\1.000000\0.950000" annotation-item-id="Dicom.GeneralEquipment.ManufacturersModelName" />
+            <annotation-box normalized-rectangle="0.500000\0.950000\1.000000\0.975000" annotation-item-id="Dicom.GeneralEquipment.InstitutionName" />
+            <annotation-box normalized-rectangle="0.600000\0.975000\1.000000\1.000000" annotation-item-id="Dicom.GeneralImage.LossyImageCompression" >
+              <box-settings bold="true" color="Yellow" fit-width="true" always-visible="true" />
+            </annotation-box>
           </annotation-boxes>
         </annotation-box-group>
       </annotation-box-groups>

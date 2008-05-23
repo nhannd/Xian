@@ -29,59 +29,16 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.Annotations
+namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
-	internal sealed class AnnotationItemProviderManager
+	internal static class DicomAnnotationLayoutFactory
 	{
-		private static readonly AnnotationItemProviderManager _instance = new AnnotationItemProviderManager();
-
-		private readonly List<IAnnotationItemProvider> _providers;
-
-		private AnnotationItemProviderManager()
+		public static IAnnotationLayout CreateLayout(IImageSopProvider dicomImage)
 		{
-			_providers = new List<IAnnotationItemProvider>();
-
-			try
-			{
-				foreach (object extension in new AnnotationItemProviderExtensionPoint().CreateExtensions())
-					_providers.Add((IAnnotationItemProvider) extension);
-			}
-			catch(NotSupportedException e)
-			{
-				Platform.Log(LogLevel.Info, e);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Warn, e);
-			}
-		}
-
-		public static AnnotationItemProviderManager Instance
-		{
-			get { return _instance; }
-		}
-
-		public IEnumerable<IAnnotationItemProvider> Providers
-		{
-			get { return _providers; }
-		}
-
-		public IAnnotationItem GetAnnotationItem(string annotationItemIdentifier)
-		{
-			foreach (IAnnotationItemProvider provider in this.Providers)
-			{
-				foreach (IAnnotationItem item in provider.GetAnnotationItems())
-				{
-					if (item.GetIdentifier() == annotationItemIdentifier)
-						return item;
-				}
-			}
-
-			return null;
+			string layoutId = DicomFilteredAnnotationLayoutStore.Instance.GetMatchingStoredLayoutId(dicomImage);
+			return AnnotationLayoutFactory.CreateLayout(layoutId);
 		}
 	}
 }

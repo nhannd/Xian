@@ -195,8 +195,23 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 					(
 						"Dicom.GeneralImage.LossyImageCompression",
 						resolver,
-						delegate(Frame frame) { return frame.LossyImageCompression; },
-						DicomDataFormatHelper.BooleanFormatter
+						delegate(Frame frame)
+							{
+								bool lossy = false;
+								if (!String.IsNullOrEmpty(frame.LossyImageCompression))
+								{
+									int lossyValue;
+									if (Int32.TryParse(frame.LossyImageCompression, out lossyValue) && lossyValue != 0)
+										lossy = true;
+								}
+								else if (frame.LossyImageCompressionRatio != null && frame.LossyImageCompressionRatio.Length > 0)
+								{
+									lossy = true;
+								}
+
+								return lossy ? SR.ValueLossy : "";
+							},
+						DicomDataFormatHelper.RawStringFormat
 					)
 				);
 

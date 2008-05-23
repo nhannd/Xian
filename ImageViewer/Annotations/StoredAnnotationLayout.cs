@@ -31,19 +31,29 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	internal sealed class StoredAnnotationLayout : AnnotationLayout
+	[Cloneable]
+	internal sealed class StoredAnnotationLayout : IAnnotationLayout
 	{
-		private string _identifier;
-		private List<StoredAnnotationBoxGroup> _annotationBoxGroups;
+		private readonly string _identifier;
+		[CloneIgnore]
+		private readonly List<StoredAnnotationBoxGroup> _annotationBoxGroups = new List<StoredAnnotationBoxGroup>();
+		private bool _visible = true;
 
 		public StoredAnnotationLayout(string identifier)
 		{
 			Platform.CheckForEmptyString(identifier, "identifier");
 			_identifier = identifier;
-			_annotationBoxGroups = new List<StoredAnnotationBoxGroup>();
+		}
+
+		private StoredAnnotationLayout(StoredAnnotationLayout source, ICloningContext context)
+		{
+			context.CloneFields(source, this);
+			foreach (StoredAnnotationBoxGroup group in source.AnnotationBoxGroups)
+				_annotationBoxGroups.Add(group.Clone());
 		}
 
 		public string Identifier
@@ -51,22 +61,14 @@ namespace ClearCanvas.ImageViewer.Annotations
 			get { return _identifier; }
 		}
 
-		public StoredAnnotationBoxGroup this [string groupId]
-		{
-			get
-			{
-				return _annotationBoxGroups.Find(delegate(StoredAnnotationBoxGroup group){ return group.Identifier == groupId; });
-			}
-		}
-
 		public IList<StoredAnnotationBoxGroup> AnnotationBoxGroups
 		{
 			get { return _annotationBoxGroups; }
 		}
 
-		#region IAnnotationLayout
+		#region IAnnotationLayout Members
 
-		public override IEnumerable<AnnotationBox> AnnotationBoxes
+		public IEnumerable<AnnotationBox> AnnotationBoxes
 		{
 			get
 			{
@@ -78,6 +80,17 @@ namespace ClearCanvas.ImageViewer.Annotations
 			}
 		}
 
+		public bool Visible
+		{
+			get { return _visible; }
+			set { _visible = value; }
+		}
+
 		#endregion
+
+		public StoredAnnotationLayout Clone()
+		{
+			return CloneBuilder.Clone(this) as StoredAnnotationLayout;
+		}
 	}
 }

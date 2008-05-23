@@ -33,6 +33,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
@@ -41,6 +42,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 	/// </summary>
 	/// <seealso cref="AnnotationItemConfigurationOptions"/>
 	/// <seealso cref="IAnnotationItem"/>
+	[Cloneable(true)]
 	public sealed class AnnotationBox
 	{
 		/// <summary>
@@ -103,6 +105,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 		#region Private Fields
 
+		[CloneCopyReference]
 		private IAnnotationItem _annotationItem;
 		private AnnotationItemConfigurationOptions _annotationItemConfigurationOptions;
 
@@ -119,10 +122,13 @@ namespace ClearCanvas.ImageViewer.Annotations
 		private bool _bold = false;
 		private bool _italics = false;
 		private bool _fitWidth = false;
+		private bool _alwaysVisible = false;
 
 		private TruncationBehaviour _truncation = TruncationBehaviour.Ellipsis;
 		private JustificationBehaviour _justification = JustificationBehaviour.Left;
 		private VerticalAlignmentBehaviour _verticalAlignment = VerticalAlignmentBehaviour.Center;
+
+		private bool _visible = true;
 
 		#endregion
 
@@ -322,6 +328,15 @@ namespace ClearCanvas.ImageViewer.Annotations
 		}
 
 		/// <summary>
+		/// Gets or sets whether or not the item can be made invisible.
+		/// </summary>
+		public bool AlwaysVisible
+		{
+			get { return _alwaysVisible; }
+			set { _alwaysVisible = value; }
+		}
+
+		/// <summary>
 		/// Gets or sets the <see cref="TruncationBehaviour"/>.
 		/// </summary>
 		/// <remarks>
@@ -358,25 +373,26 @@ namespace ClearCanvas.ImageViewer.Annotations
 		}
 
 		/// <summary>
-		/// Clones the <see cref="AnnotationBox"/>.
+		/// Gets or sets whether or not the item is visible.
+		/// </summary>
+		public bool Visible
+		{
+			get { return _visible; }
+			set
+			{
+				if (_alwaysVisible)
+					value = true;
+
+				_visible = value;
+			}
+		}
+
+		/// <summary>
+		/// Creates a deep clone of this object.
 		/// </summary>
 		public AnnotationBox Clone()
 		{
-			AnnotationBox newBox = new AnnotationBox(this.NormalizedRectangle, this.AnnotationItem);
-			if (this.ConfigurationOptions != null)
-				newBox.ConfigurationOptions = this.ConfigurationOptions.Clone();
-
-			newBox.Font = this.Font;
-			newBox.Color = this.Color;
-			newBox.Italics = this.Italics;
-			newBox.Bold = this.Bold;
-			newBox.NumberOfLines = this.NumberOfLines;
-			newBox.Truncation = this.Truncation;
-			newBox.Justification = this.Justification;
-			newBox.VerticalAlignment = this.VerticalAlignment;
-			newBox.FitWidth = this.FitWidth;
-
-			return newBox;
+			return CloneBuilder.Clone(this) as AnnotationBox;
 		}
 	}
 }

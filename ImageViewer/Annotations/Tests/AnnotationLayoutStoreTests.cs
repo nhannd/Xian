@@ -158,9 +158,9 @@ namespace ClearCanvas.ImageViewer.Annotations.Tests
 			StoredAnnotationLayout layout = new StoredAnnotationLayout(identifier);
 			layout.AnnotationBoxGroups.Add(new StoredAnnotationBoxGroup("group1"));
 			layout.AnnotationBoxGroups[0].AnnotationBoxes.Add(
-				new AnnotationBox(new RectangleF(0.0F, 0.0F, 0.5F, 0.1F), AnnotationItemProviderManager.Instance.GetAnnotationItem("Dicom.GeneralStudy.StudyDescription")));
+				new AnnotationBox(new RectangleF(0.0F, 0.0F, 0.5F, 0.1F), AnnotationLayoutFactory.GetAnnotationItem("Dicom.GeneralStudy.StudyDescription")));
 			layout.AnnotationBoxGroups[0].AnnotationBoxes.Add(
-				new AnnotationBox(new RectangleF(0.0F, 0.1F, 0.5F, 0.2F), AnnotationItemProviderManager.Instance.GetAnnotationItem("Dicom.GeneralStudy.StudyDescription")));
+				new AnnotationBox(new RectangleF(0.0F, 0.1F, 0.5F, 0.2F), AnnotationLayoutFactory.GetAnnotationItem("Dicom.GeneralStudy.StudyDescription")));
 
 			return layout;
 		}

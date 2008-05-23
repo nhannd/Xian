@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 						_layoutsInMemory[layout.Identifier] = layout;
 					}
 
-					layouts.Add(layout);
+					layouts.Add(layout.Clone());
 				}
 
 				return layouts;
@@ -144,21 +144,26 @@ namespace ClearCanvas.ImageViewer.Annotations
 			if (String.IsNullOrEmpty(identifier))
 				return null;
 
+			StoredAnnotationLayout layout;
 			lock (_syncLock)
 			{
 				if (_layoutsInMemory.ContainsKey(identifier))
-					return _layoutsInMemory[identifier];
+				{
+					layout = _layoutsInMemory[identifier];
+				}
+				else
+				{
+					Initialize(false);
+					string xPath = String.Format("annotation-configuration/annotation-layouts/annotation-layout[@id='{0}']", identifier);
+					XmlElement layoutNode = _document.SelectSingleNode(xPath) as XmlElement;
+					if (layoutNode == null)
+						return null;
 
-				Initialize(false);
+					layout = new StoredAnnotationLayoutDeserializer(availableAnnotationItems).DeserializeLayout(layoutNode);
+					_layoutsInMemory[layout.Identifier] = layout;
+				}
 
-				string xPath = String.Format("annotation-configuration/annotation-layouts/annotation-layout[@id='{0}']", identifier);
-				XmlElement layoutNode = (XmlElement) _document.SelectSingleNode(xPath);
-				if (layoutNode == null)
-					return null;
-
-				StoredAnnotationLayout layout = new StoredAnnotationLayoutDeserializer(availableAnnotationItems).DeserializeLayout(layoutNode);
-				_layoutsInMemory[layout.Identifier] = layout;
-				return layout;
+				return layout.Clone();
 			}
 		}
 
@@ -313,7 +318,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 					XmlElement boxSettingsNode = (XmlElement)annotationBoxNode.SelectSingleNode("box-settings");
 
-					AnnotationBox newBox = group.GetNewBox();
+					AnnotationBox newBox = group.DefaultBoxSettings.Clone();
 					newBox.NormalizedRectangle = normalizedRectangle;
 
 					if (boxSettingsNode != null)
@@ -344,6 +349,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 				string justification = boxSettingsNode.GetAttribute("justification");
 				string verticalAlignment = boxSettingsNode.GetAttribute("vertical-alignment");
 				string fitWidth = boxSettingsNode.GetAttribute("fit-width");
+				string alwaysVisible = boxSettingsNode.GetAttribute("always-visible");
 
 				if (!String.IsNullOrEmpty(font))
 					boxSettings.Font = font;
@@ -364,6 +370,9 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 				if (!String.IsNullOrEmpty(fitWidth))
 					boxSettings.FitWidth = (String.Compare("true", fitWidth) == 0);
+
+				if (!String.IsNullOrEmpty(alwaysVisible))
+					boxSettings.AlwaysVisible = (String.Compare("true", alwaysVisible, true) == 0);
 
 				if (!String.IsNullOrEmpty(truncation))
 				{
