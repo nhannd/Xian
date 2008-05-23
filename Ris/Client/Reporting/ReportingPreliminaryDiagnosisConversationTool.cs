@@ -8,15 +8,4 @@ namespace ClearCanvas.Ris.Client.Reporting
 	public class ReportingMainWorkflowConversationTool : PreliminaryDiagnosisConversationTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
 	{
 	}
-
-	[ExtensionOf(typeof(ReportingOrderNoteboxItemToolExtensionPoint))]
-	public class ReportingOrderNoteboxConversationTool : OrderNoteConversationTool
-	{
-		protected override void OnOpenCompleted()
-		{
-			this.Context.FolderSystem.InvalidateFolder(typeof(InboxFolder));
-			this.Context.FolderSystem.InvalidateFolder(typeof(SentItemsFolder));
-			base.OnOpenCompleted();
-		}
-	}
 }

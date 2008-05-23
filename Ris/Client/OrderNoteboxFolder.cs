@@ -7,10 +7,10 @@ namespace ClearCanvas.Ris.Client
 {
 	public abstract class OrderNoteboxFolder : WorkflowFolder<OrderNoteboxItemSummary>
 	{
-		private readonly OrderNoteboxFolderSystemBase _folderSystem;
+		private readonly OrderNoteboxFolderSystem _folderSystem;
 		private readonly string _noteboxClassName;
 
-		public OrderNoteboxFolder(OrderNoteboxFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, string noteboxClassName)
+		public OrderNoteboxFolder(OrderNoteboxFolderSystem folderSystem, string folderDisplayName, string folderDescription, string noteboxClassName)
 			: base(folderSystem, folderDisplayName, folderDescription, new OrderNoteboxTable())
 		{
 			_folderSystem = folderSystem;

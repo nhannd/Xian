@@ -39,7 +39,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditReportTool.cs" />
-    <Compile Include="Folders\ReportingOrderNoteboxFolders.cs" />
     <Compile Include="LinkedInterpretationComponent.cs" />
     <Compile Include="PreliminaryDiagnosis.cs" />
     <Compile Include="ReportingPreliminaryDiagnosisConversationTool.cs" />
@@ -57,8 +56,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ReportingSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ReportingOrderNoteboxFolderSystem.cs" />
-    <Compile Include="ReportingOrderNoteboxFolderSystemTool.cs" />
     <Compile Include="ReportingProtocolWorkflowFolderSystem.cs" />
     <Compile Include="ReportingProtocolWorkflowFolderSystemTool.cs" />
     <Compile Include="ReportingMainWorkflowFolderSystem.cs" />

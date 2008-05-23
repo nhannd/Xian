@@ -41,12 +41,9 @@
     <Compile Include="EmergencyPhysicianHomeTool.cs" />
     <Compile Include="EmergencyPhysicianMainWorkflowFolderSystem.cs" />
     <Compile Include="EmergencyPhysicianMainWorkflowFolderSystemTool.cs" />
-    <Compile Include="EmergencyPhysicianOrderNoteboxFolderSystem.cs" />
-    <Compile Include="EmergencyPhysicianOrderNoteboxFolderSystemTool.cs" />
     <Compile Include="EmergencyPhysicianWorkflowFolder.cs" />
     <Compile Include="EmergencyPhysicianWorkflowItemTools.cs" />
     <Compile Include="Folders\EmergencyPhysicianWorkflowFolders.cs" />
-    <Compile Include="Folders\OrderNoteboxFolders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EmergencyPhysicianWorkflowFolderTools.cs" />
     <Compile Include="SR.Designer.cs">

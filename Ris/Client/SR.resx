@@ -507,6 +507,9 @@
   <data name="TitleNotes" xml:space="preserve">
     <value>Notes</value>
   </data>
+  <data name="TitleOrderNoteboxFolderSystem" xml:space="preserve">
+    <value>Order Notes</value>
+  </data>
   <data name="TitleOrders" xml:space="preserve">
     <value>Orders</value>
   </data>

@@ -50,6 +50,7 @@
     <Compile Include="CannedTextEditorComponent.cs" />
     <Compile Include="CannedTextTable.cs" />
     <Compile Include="CoreServiceProvider.cs" />
+    <Compile Include="OrderNoteboxFolderSystemTool.cs" />
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointSummaryComponent.cs" />
@@ -69,13 +70,14 @@
     <Compile Include="OrderAdditionalInfoComponent.cs" />
     <Compile Include="OrderDetailViewComponent.cs" />
     <Compile Include="OrderNoteboxFolder.cs" />
+    <Compile Include="OrderNoteboxFolders.cs" />
     <Compile Include="OrderNoteboxFolderSettings.cs" />
     <Compile Include="OrderNoteboxFolderSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>OrderNoteboxFolderSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="OrderNoteboxFolderSystemBase.cs" />
+    <Compile Include="OrderNoteboxFolderSystem.cs" />
     <Compile Include="OrderNoteboxTable.cs" />
     <Compile Include="OrderNoteCategory.cs" />
     <Compile Include="OrderNoteConversationComponentSettings.cs" />

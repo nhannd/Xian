@@ -115,14 +115,15 @@ namespace ClearCanvas.Ris.Client
 	}
 
 	/// <summary>
-	/// Base class for tools which open an <see cref="OrderNoteConversationComponent"/> from an <see cref="IOrderNoteboxItemToolContext"/>
+	/// Tool which opens an <see cref="OrderNoteConversationComponent"/> from an <see cref="IOrderNoteboxItemToolContext"/>
 	/// </summary>
 	[MenuAction("pd", "folderexplorer-items-contextmenu/Open Conversation", "Open")]
 	[ButtonAction("pd", "folderexplorer-items-toolbar/Open Conversation", "Open")]
 	[Tooltip("pd", "Review/reply to the selected note.")]
 	[EnabledStateObserver("pd", "Enabled", "EnabledChanged")]
 	[IconSet("pd", IconScheme.Colour, "Icons.OrderNoteConversationToolSmall.png", "Icons.OrderNoteConversationToolSmall.png", "Icons.OrderNoteConversationToolSmall.png")]
-	public abstract class OrderNoteConversationTool : OrderNoteConversationToolBase<OrderNoteboxItemSummary, IOrderNoteboxItemToolContext>
+	[ExtensionOf(typeof(OrderNoteboxItemToolExtensionPoint))]
+	public class OrderNoteConversationTool : OrderNoteConversationToolBase<OrderNoteboxItemSummary, IOrderNoteboxItemToolContext>
 	{
 		protected override EntityRef OrderRef
 		{
@@ -143,6 +144,13 @@ namespace ClearCanvas.Ris.Client
 		protected override IEnumerable<string> OrderNoteCategories
 		{
 			get { return new string[] { this.SummaryItem.Category }; }
+		}
+
+		protected override void OnOpenCompleted()
+		{
+			this.Context.FolderSystem.InvalidateFolder(typeof(InboxFolder));
+			this.Context.FolderSystem.InvalidateFolder(typeof(SentItemsFolder));
+			base.OnOpenCompleted();
 		}
 	}
 }

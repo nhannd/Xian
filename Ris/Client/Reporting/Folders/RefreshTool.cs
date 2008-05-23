@@ -38,9 +38,4 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
 	public class ReportingWorkflowRefreshTool : RefreshTool<IReportingWorkflowFolderToolContext>
 	{
 	}
-
-	[ExtensionOf(typeof(ReportingOrderNoteboxFolderToolExtensionPoint))]
-	public class ReportingOrderNoteboxRefreshTool : RefreshTool<IOrderNoteboxFolderToolContext>
-	{
-	}
 }

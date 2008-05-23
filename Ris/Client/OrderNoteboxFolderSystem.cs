@@ -9,29 +9,50 @@ using ClearCanvas.Ris.Application.Common.OrderNotes;
 
 namespace ClearCanvas.Ris.Client
 {
-	public interface  IOrderNoteboxItemToolContext : IWorkflowItemToolContext<OrderNoteboxItemSummary>
+	[ExtensionPoint]
+	public class OrderNoteboxFolderExtensionPoint : ExtensionPoint<IFolder>
 	{
-		OrderNoteboxFolderSystemBase FolderSystem { get; }
+	}
+
+	[ExtensionPoint]
+	public class OrderNoteboxItemToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
+
+	[ExtensionPoint]
+	public class OrderNoteboxFolderToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
+
+	public interface IOrderNoteboxItemToolContext : IWorkflowItemToolContext<OrderNoteboxItemSummary>
+	{
+		OrderNoteboxFolderSystem FolderSystem { get; }
 	}
 
 	public interface IOrderNoteboxFolderToolContext : IWorkflowFolderToolContext
 	{
 	}
 
-	public abstract class OrderNoteboxFolderSystemBase : WorkflowFolderSystem<OrderNoteboxItemSummary>
+	[ExtensionOf(typeof(OrderNoteboxFolderToolExtensionPoint))]
+	public class EmergencyPhysicianOrderNoteboxRefreshTool : RefreshTool<IOrderNoteboxFolderToolContext>
+	{
+	}
+
+
+	public class OrderNoteboxFolderSystem : WorkflowFolderSystem<OrderNoteboxItemSummary>
 	{
 		class OrderNoteboxItemToolContext : ToolContext, IOrderNoteboxItemToolContext
 		{
-			private readonly OrderNoteboxFolderSystemBase _owner;
+			private readonly OrderNoteboxFolderSystem _owner;
 
-			public OrderNoteboxItemToolContext(OrderNoteboxFolderSystemBase _owner)
+			public OrderNoteboxItemToolContext(OrderNoteboxFolderSystem _owner)
 			{
 				this._owner = _owner;
 			}
 
 			#region IOrderNoteboxItemToolContext Members
 
-			public OrderNoteboxFolderSystemBase FolderSystem
+			public OrderNoteboxFolderSystem FolderSystem
 			{
 				get { return _owner; }
 			}
@@ -89,9 +110,9 @@ namespace ClearCanvas.Ris.Client
 
 		class OrderNoteboxFolderToolContext : ToolContext, IOrderNoteboxFolderToolContext
 		{
-			private readonly OrderNoteboxFolderSystemBase _owner;
+			private readonly OrderNoteboxFolderSystem _owner;
 
-			public OrderNoteboxFolderToolContext(OrderNoteboxFolderSystemBase owner)
+			public OrderNoteboxFolderToolContext(OrderNoteboxFolderSystem owner)
 			{
 				this._owner = owner;
 			}
@@ -130,21 +151,22 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-		public OrderNoteboxFolderSystemBase(
-			string title,
-			IFolderExplorerToolContext folderExplorer, 
-			ExtensionPoint<IFolder> folderExtensionPoint,
-			ExtensionPoint<ITool> itemToolExtensionPoint,
-			ExtensionPoint<ITool> folderToolExtensionPoint)
-			: base(title, folderExplorer, folderExtensionPoint)
+		public OrderNoteboxFolderSystem(IFolderExplorerToolContext folderExplorer)
+			: base(SR.TitleOrderNoteboxFolderSystem, folderExplorer, new OrderNoteboxFolderExtensionPoint())
 		{
 			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
 
-			_itemTools = new ToolSet(itemToolExtensionPoint, new OrderNoteboxItemToolContext(this));
-			_folderTools = new ToolSet(folderToolExtensionPoint, new OrderNoteboxFolderToolContext(this));
+			_itemTools = new ToolSet(new OrderNoteboxItemToolExtensionPoint(), new OrderNoteboxItemToolContext(this));
+			_folderTools = new ToolSet(new OrderNoteboxFolderToolExtensionPoint(), new OrderNoteboxFolderToolContext(this));
 
 			_unacknowledgedNotesIconSet = new IconSet("NoteUnread.png");
-			_baseTitle = title;
+			_baseTitle = SR.TitleOrderNoteboxFolderSystem;
+
+			InboxFolder inboxFolder = new InboxFolder(this);
+			inboxFolder.TotalItemCountChanged += OnPrimaryFolderCountChanged;
+
+			this.AddFolder(inboxFolder);
+			this.AddFolder(new SentItemsFolder(this));
 		}
 
 		public bool GetOperationEnablement(string operationName)
@@ -158,6 +180,11 @@ namespace ClearCanvas.Ris.Client
 				Platform.Log(LogLevel.Error, string.Format(SR.ExceptionOperationEnablementUnknown, operationName));
 				return false;
 			}
+		}
+
+		public override string PreviewUrl
+		{
+			get { return WebResourcesSettings.Default.EmergencyPhysicianOrderNoteboxFolderSystemUrl; }
 		}
 
 		public override void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
