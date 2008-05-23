@@ -462,6 +462,9 @@
   <data name="TitlePerformedProcedureComponent" xml:space="preserve">
     <value>Performed Procedure Component</value>
   </data>
+  <data name="TitlePerformingFolderSystem" xml:space="preserve">
+    <value>Performing</value>
+  </data>
   <data name="TitlePhoneNumbers" xml:space="preserve">
     <value>Phone Numbers</value>
   </data>
@@ -488,9 +491,6 @@
   </data>
   <data name="TitleStopMpps" xml:space="preserve">
     <value>Stop</value>
-  </data>
-  <data name="TitleTechnologistFolderSystem" xml:space="preserve">
-    <value>Technologist</value>
   </data>
   <data name="TitleTechnologistHome" xml:space="preserve">
     <value>Technologist Home</value>

@@ -16,7 +16,7 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 	[Tooltip("launch", "Emergency Home")]
 	// TODO: change icons
 	[IconSet("launch", IconScheme.Colour, "Icons.EmergencyPhysicianHomeToolSmall.png", "Icons.EmergencyPhysicianHomeToolMedium.png", "Icons.EmergencyPhysicianHomeToolLarge.png")]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	//[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class EmergencyPhysicianHomeTool : WorklistPreviewHomeTool<EmergencyPhysicianHomeFolderSystemToolExtensionPoint>
 	{
 		public override string Title

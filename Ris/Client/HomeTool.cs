@@ -1,6 +1,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Common;
@@ -11,7 +12,7 @@ namespace ClearCanvas.Ris.Client
 	/// A tool for launching a home page.  A home page consists of a set of folder systems and a preview component.
 	/// </summary>
 	/// <remarks>
-	/// Subclasses of this class should specify a <see cref="MenuAction"/> attribute with the Launch method as the clickHandler
+	/// Subclasses of this class should specify a <see cref="MenuActionAttribute"/> attribute with the Launch method as the clickHandler
 	/// </remarks>
 	/// <typeparam name="TFolderSystemToolExtensionPoint">Specifies the extension point used to create the set of folder systems</typeparam>
 	public abstract class HomeTool<TFolderSystemToolExtensionPoint> : Tool<IDesktopToolContext> 

@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 	//[ButtonAction("launch", "global-toolbars/Go/Radiologist Home", "Launch")]
 	[Tooltip("launch", "Radiologist Home")]
 	[IconSet("launch", IconScheme.Colour, "Icons.RadiologistHomeToolSmall.png", "Icons.RadiologistHomeToolMedium.png", "Icons.RadiologistHomeToolLarge.png")]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	//[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class RadiologistHomeTool : WorklistPreviewHomeTool<ReportingHomeFolderSystemToolExtensionPoint>
 	{
 		public override string Title

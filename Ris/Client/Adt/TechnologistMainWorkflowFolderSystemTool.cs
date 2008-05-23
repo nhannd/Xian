@@ -29,13 +29,16 @@
 
 #endregion
 
+using System.Security.Permissions;
 using ClearCanvas.Common;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
 	[ExtensionOf(typeof(GlobalHomeFolderSystemToolExtensionPoint))]
 	[ExtensionOf(typeof(TechnologistHomeFolderSystemToolExtensionPoint))]
-    class TechnologistMainWorkflowFolderSystemTool : FolderExplorerToolBase
+	[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.FolderSystems.Performing)]
+	class TechnologistMainWorkflowFolderSystemTool : FolderExplorerToolBase
     {
         public override void Initialize()
         {

@@ -30,11 +30,14 @@
 #endregion
 
 using ClearCanvas.Common;
+using System.Security.Permissions;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
 	[ExtensionOf(typeof(GlobalHomeFolderSystemToolExtensionPoint))]
 	[ExtensionOf(typeof(RegistrationHomeFolderSystemToolExtensionPoint))]
+	[PrincipalPermission(SecurityAction.Demand, Role=AuthorityTokens.FolderSystems.Booking)]
     public class RegistrationBookingWorkflowFolderSystemTool : FolderExplorerToolBase
     {
         public override void Initialize()

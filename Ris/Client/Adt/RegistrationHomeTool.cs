@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Adt
 	//[ButtonAction("launch", "global-toolbars/Go/Registration Home", "Launch")]
 	[Tooltip("launch", "Registration Home")]
 	[IconSet("launch", IconScheme.Colour, "Icons.RegistrationHomeToolSmall.png", "Icons.RegistrationHomeToolMedium.png", "Icons.RegistrationHomeToolLarge.png")]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	//[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class RegistrationHomeTool : WorklistPreviewHomeTool<RegistrationHomeFolderSystemToolExtensionPoint>
 	{
 		public override string Title

@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Client
 	}
 
 	[ExtensionOf(typeof(OrderNoteboxFolderToolExtensionPoint))]
-	public class EmergencyPhysicianOrderNoteboxRefreshTool : RefreshTool<IOrderNoteboxFolderToolContext>
+	public class OrderNoteboxRefreshTool : RefreshTool<IOrderNoteboxFolderToolContext>
 	{
 	}
 

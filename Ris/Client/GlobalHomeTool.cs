@@ -2,6 +2,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -10,16 +11,23 @@ namespace ClearCanvas.Ris.Client
 	{
 	}
 
-	[MenuAction("launch", "global-menus/Go/Global Home", "Launch")]
-	//[ButtonAction("launch", "global-toolbars/Go/Global Home", "Launch")]
-	[Tooltip("launch", "Global Home")]
+	[MenuAction("launch", "global-menus/Go/Home", "Launch")]
+	[Tooltip("launch", "Go to home page")]
 	[IconSet("launch", IconScheme.Colour, "Icons.GlobalHomeToolSmall.png", "Icons.GlobalHomeToolMedium.png", "Icons.GlobalHomeToolLarge.png")]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class GlobalHomeTool : WorklistPreviewHomeTool<GlobalHomeFolderSystemToolExtensionPoint>
 	{
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			// automatically launch home page on startup
+			Launch();
+		}
+
 		public override string Title
 		{
-			get { return "Global Home"; }
+			get { return "Home"; }
 		}
 	}
 }

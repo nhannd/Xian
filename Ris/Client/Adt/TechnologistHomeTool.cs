@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Adt
 	//[ButtonAction("launch", "global-toolbars/Go/Technologist Home", "Launch")]
 	[Tooltip("launch", "Technologist Home")]
 	[IconSet("launch", IconScheme.Colour, "Icons.TechnologistHomeToolSmall.png", "Icons.TechnologistHomeToolMedium.png", "Icons.TechnologistHomeToolLarge.png")]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	//[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class TechnologistHomeTool : WorklistPreviewHomeTool<TechnologistHomeFolderSystemToolExtensionPoint>
 	{
 		public override string Title
