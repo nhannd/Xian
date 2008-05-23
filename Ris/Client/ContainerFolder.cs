@@ -35,21 +35,19 @@ using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class ContainerFolder : Folder //, IDisposable
+	/// <summary>
+	/// A folder that acts strictly as a parent for other folders, and does not itself contain any items.
+	/// </summary>
+    public class ContainerFolder : Folder
     {
-        private readonly IconSet _openIconSet;
-        private readonly IconSet _closedIconSet;
-
         public ContainerFolder(string path, bool startExpanded)
 			:base(path, startExpanded)
         {
-            _openIconSet = new IconSet(IconScheme.Colour, "ContainerFolderOpenSmall.png", "ContainerFolderOpenMedium.png", "ContainerFolderOpenMedium.png");
-            _closedIconSet = new IconSet(IconScheme.Colour, "ContainerFolderClosedSmall.png", "ContainerFolderClosedMedium.png", "ContainerFolderClosedMedium.png");
         }
 
         #region Folder overrides
 
-		protected override bool IsPopulated
+		protected override bool IsItemCountKnown
 		{
 			get { return true; }
 		}
@@ -79,44 +77,14 @@ namespace ClearCanvas.Ris.Client
 
         public override DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)
         {
-            // All subfolders are of the same type, so just let the first subfolder determine if it can handle the drop if subfolder exist
-            if (this.Subfolders.Count == 0)
-            {
-                return DragDropKind.None;
-            }
-            else
-            {
-                return this.Subfolders[0].CanAcceptDrop(items, kind);
-            }
+			// can't drop items into a container folder, since it contains only other folders
+	        return DragDropKind.None;
         }
 
         public override DragDropKind AcceptDrop(object[] items, DragDropKind kind)
         {
-            // All subfolders are of the same type, so just let the first subfolder handle the drop if subfolder exist
-			if (this.Subfolders.Count == 0)
-            {
-                return DragDropKind.None;
-            }
-            else
-            {
-				return this.Subfolders[0].AcceptDrop(items, kind);
-            }
-        }
-
-        public override void OpenFolder()
-        {
-            if (_openIconSet != null)
-                this.IconSet = _openIconSet;
-
-            base.OpenFolder();
-        }
-
-        public override void CloseFolder()
-        {
-            if (_closedIconSet != null)
-                this.IconSet = _closedIconSet;
-
-            base.CloseFolder();
+			// can't drop items into a container folder, since it contains only other folders
+			return DragDropKind.None;
         }
 
 		protected override IconSet OpenIconSet
@@ -129,18 +97,6 @@ namespace ClearCanvas.Ris.Client
 			get { return new IconSet(IconScheme.Colour, "ContainerFolderClosedSmall.png", "ContainerFolderClosedMedium.png", "ContainerFolderClosedMedium.png"); }
 		}
 
-
-        #endregion
-
-
-        #region IDisposable Members
-
-        //TODO
-
-        //public void Dispose()
-        //{
-        //    throw new Exception("The method or operation is not implemented.");
-        //}
 
         #endregion
     }

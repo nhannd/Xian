@@ -175,9 +175,9 @@ namespace ClearCanvas.Ris.Client
             get { return _itemCount; }
         }
 
-		protected override bool IsPopulated
+		protected override bool IsItemCountKnown
 		{
-			get { return _isPopulated; }
+			get { return _isPopulated || _itemCount > -1; }
 		}
 
         public WorkflowFolderSystem<TItem> WorkflowFolderSystem

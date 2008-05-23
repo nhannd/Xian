@@ -14,9 +14,6 @@ namespace ClearCanvas.Ris.Client
 			: base(folderSystem, folderDisplayName, folderDescription, new OrderNoteboxTable())
 		{
 			_folderSystem = folderSystem;
-
-			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
-
 			_noteboxClassName = noteboxClassName;
 
 			this.RefreshTime = OrderNoteboxFolderSettings.Default.RefreshTime;

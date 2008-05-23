@@ -70,6 +70,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			this.AddFolder(new Folders.CompletedProtocolFolder(this));
 			this.AddFolder(new Folders.SuspendedProtocolFolder(this));
 			this.AddFolder(new Folders.RejectedProtocolFolder(this));
+			this.AddFolder(new Folders.ProtocollingSearchFolder(this));
 		}
 
 		public override string PreviewUrl

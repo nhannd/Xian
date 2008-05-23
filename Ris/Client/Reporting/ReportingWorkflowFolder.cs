@@ -111,7 +111,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 		{
 			_folderSystem = folderSystem;
 
-			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
 			if (dropHandlerExtensionPoint != null)
 			{
 				this.InitDragDropHandling(dropHandlerExtensionPoint, new DropContext(this));

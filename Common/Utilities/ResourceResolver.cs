@@ -106,7 +106,32 @@ namespace ClearCanvas.Common.Utilities
             _fallbackResovler = fallback;
         }
 
-        /// <summary>
+		/// <summary>
+		/// Constructs a resource resolver that will find resources in the assembly containing the specified type,
+		/// and optionally those assemblies containing its base types.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="walkInheritanceChain">If true, assemblies containing base types of the specified type will also be included.</param>
+		public ResourceResolver(Type type, bool walkInheritanceChain)
+			: this(GetAssembliesForType(type, walkInheritanceChain))
+		{
+
+		}
+
+		/// <summary>
+		/// Constructs a resource resolver that will find resources in the assembly containing the specified type,
+		/// and optionally those assemblies containing its base types.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="walkInheritanceChain">If true, assemblies containing base types of the specified type will also be included.</param>
+		/// <param name="fallback"></param>
+		public ResourceResolver(Type type, bool walkInheritanceChain, IResourceResolver fallback)
+			: this(GetAssembliesForType(type, walkInheritanceChain), fallback)
+		{
+
+		}
+		
+		/// <summary>
         /// Attempts to localize the specified unqualified string resource key
         /// by searching the set of assemblies associated with this <see cref="ResourceResolver"/> in order.
         /// </summary>
@@ -312,5 +337,22 @@ namespace ClearCanvas.Common.Utilities
             }
             return stringResources.ToArray();
         }
+
+		/// <summary>
+		/// Returns the set of assemblies containing the specified type and all of its base types.
+		/// </summary>
+		private static Assembly[] GetAssembliesForType(Type type, bool walkInheritanceChain)
+		{
+			List<Assembly> assemblies = new List<Assembly>();
+			while (type != typeof(object))
+			{
+				assemblies.Add(type.Assembly);
+				if(!walkInheritanceChain)
+					break;
+				type = type.BaseType;
+			}
+			return CollectionUtils.Unique(assemblies).ToArray();
+		}
+
    }
 }

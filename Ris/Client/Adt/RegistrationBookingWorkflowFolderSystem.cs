@@ -69,6 +69,7 @@ namespace ClearCanvas.Ris.Client.Adt
 				this.AddFolder(new Folders.RejectedProtocolFolder(this));
 				this.AddFolder(new Folders.PendingProtocolFolder(this));
 				this.AddFolder(new Folders.ToBeScheduledFolder(this));
+				this.AddFolder(new Folders.BookingSearchFolder(this));
 			}
 		}
 

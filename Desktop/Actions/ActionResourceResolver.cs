@@ -50,24 +50,8 @@ namespace ClearCanvas.Desktop.Actions
 		/// </remarks>
 		/// <param name="actionTarget">The action target for which resources will be resolved.</param>
 		public ActionResourceResolver(object actionTarget)
-			: base(BaseTypeAssemblies(actionTarget.GetType()))
+			: base(actionTarget.GetType(), true)
 		{
-		}
-
-		/// <summary>
-		/// Determines the assemblies containing the specified type and all of its base types.
-		/// </summary>
-		/// <param name="actionTargetType"></param>
-		/// <returns>An array of <see cref="Assembly"/>.  Excludes "System".</returns>
-		public static Assembly[] BaseTypeAssemblies(Type actionTargetType)
-		{
-			List<Assembly> assemblies = new List<Assembly>();
-			while (actionTargetType != typeof(object))
-			{
-				assemblies.Add(actionTargetType.Assembly);
-				actionTargetType = actionTargetType.BaseType;
-			}
-			return CollectionUtils.Unique(assemblies).ToArray();
 		}
 	}
 }

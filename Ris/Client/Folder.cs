@@ -85,6 +85,7 @@ namespace ClearCanvas.Ris.Client
 
 		private IResourceResolver _resourceResolver;
 		private bool _isOpen;
+		private bool _refreshOnOpen = true;
 
 		private readonly IList<IFolder> _subfolders;
 		private Path _folderPath;
@@ -102,10 +103,6 @@ namespace ClearCanvas.Ris.Client
 		{
 			// establish default resource resolver on this assembly (not the assembly of the derived class)
 			_resourceResolver = new ResourceResolver(typeof(Folder).Assembly);
-
-			// initialize icon set to "closed"
-			_iconSet = _closedIconSet;
-
 			_subfolders = new List<IFolder>();
 
 			// Initialize folder Path
@@ -126,15 +123,19 @@ namespace ClearCanvas.Ris.Client
 		{
 			// establish default resource resolver on this assembly (not the assembly of the derived class)
 			_resourceResolver = new ResourceResolver(typeof(Folder).Assembly);
-
-			// initialize icon set to "closed"
-			_iconSet = _closedIconSet;
-
 			_subfolders = new List<IFolder>();
 			_folderPath = new Path(path, _resourceResolver);
 			_startExpanded = startExpanded;
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether the folder will automatically refresh when <see cref="OpenFolder"/> is called.
+		/// </summary>
+		public bool RefreshOnOpen
+		{
+			get { return _refreshOnOpen; }
+			set { _refreshOnOpen = value; }
+		}
 
 		#region IFolder Members
 
@@ -151,13 +152,13 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		/// <remarks>
 		/// The default implementation of this property returns the <see cref="Name"/> of the folder,
-		/// followed by the <see cref="TotalItemCount"/>, if <see cref="IsPopulated"/> returns true.
+		/// followed by the <see cref="TotalItemCount"/>, if <see cref="IsItemCountKnown"/> returns true.
 		/// </remarks>
 		public virtual string Text
 		{
 			get
 			{
-				return this.IsPopulated ?
+				return this.IsItemCountKnown ?
 					string.Format("{0} ({1})", this.Name, this.TotalItemCount) : this.Name;
 			}
 		}
@@ -198,7 +199,9 @@ namespace ClearCanvas.Ris.Client
 			this.IconSet = OpenIconSet;
 
 			_isOpen = true;
-			Refresh();
+			
+			if(_refreshOnOpen)
+				Refresh();
 		}
 
 		/// <summary>
@@ -224,7 +227,14 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public IconSet IconSet
 		{
-			get { return _iconSet; }
+			get
+			{
+				// if the icon set was not yet initialized, initialize it now to the default
+				if (_iconSet == null)
+					_iconSet = _isOpen ? this.OpenIconSet : this.ClosedIconSet;
+
+				return _iconSet;
+			}
 			protected set
 			{
 				_iconSet = value;
@@ -353,9 +363,9 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether this is populated.
+		/// Gets a value indicating whether the count of items in the folder is currently known.
 		/// </summary>
-		protected abstract bool IsPopulated { get; }
+		protected abstract bool IsItemCountKnown { get; }
 
 		/// <summary>
 		/// Occurs when the value of the <see cref="IFolder.TotalItemCount"/> property changes.

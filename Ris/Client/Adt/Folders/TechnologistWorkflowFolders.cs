@@ -210,7 +210,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
-    [FolderPath("Search")]
+	[FolderPath("Search Results")]
     public class TechnologistSearchFolder : SearchResultsFolder<ModalityWorklistItem>
     {
         public TechnologistSearchFolder(TechnologistWorkflowFolderSystemBase folderSystem)

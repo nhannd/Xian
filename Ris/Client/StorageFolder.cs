@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client
             get { return _itemsTable.Items; }
         }
 
-		protected override bool IsPopulated
+		protected override bool IsItemCountKnown
 		{
 			get { return true; }
 		}

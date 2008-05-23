@@ -17,9 +17,6 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 			: base(folderSystem, folderName, folderDescription, new RegistrationWorklistTable())
 		{
 			_folderSystem = folderSystem;
-
-			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
-
 			_worklistRef = worklistRef;
 		}
 

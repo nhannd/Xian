@@ -33,6 +33,9 @@ namespace ClearCanvas.Ris.Client
 		{
 			_folderSystem = folderSystem;
 			_itemsTable = itemsTable;
+
+			// no need to refresh this folder every time it is opened
+			this.RefreshOnOpen = false;
 		}
 
 		/// <summary>
@@ -51,7 +54,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Folder overrides
 
-		protected override bool IsPopulated
+		protected override bool IsItemCountKnown
 		{
 			get { return _isPopulated; }
 		}

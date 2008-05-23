@@ -259,7 +259,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
-    [FolderPath("Search")]
+	[FolderPath("Search Results")]
     public class RegistrationSearchFolder : SearchResultsFolder<RegistrationWorklistItem>
     {
         public RegistrationSearchFolder(RegistrationWorkflowFolderSystemBase folderSystem)
@@ -278,4 +278,25 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 			return response;
 		}
     }
+
+	[FolderPath("Search Results")]
+	public class BookingSearchFolder : SearchResultsFolder<RegistrationWorklistItem>
+	{
+		public BookingSearchFolder(RegistrationWorkflowFolderSystemBase folderSystem)
+			: base(folderSystem, new RegistrationWorklistTable())
+		{
+		}
+
+		protected override TextQueryResponse<RegistrationWorklistItem> DoQuery(TextQueryRequest request)
+		{
+			TextQueryResponse<RegistrationWorklistItem> response = new TextQueryResponse<RegistrationWorklistItem>(false, new List<RegistrationWorklistItem>());
+			//Platform.GetService<IReportingWorkflowService>(
+			//    delegate(IReportingWorkflowService service)
+			//    {
+			//        response = service.Search(request);
+			//    });
+			return response;
+		}
+
+	}
 }

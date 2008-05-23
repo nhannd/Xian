@@ -7,7 +7,7 @@
     <folder id="UndocumentedTechnologistWorkflowFolder" path="Undocumented" />
     <folder id="CancelledTechnologistWorkflowFolder" path="Cancelled" />
     <folder id="CompletedTechnologistWorkflowFolder" path="Completed" />
-    <folder id="TechnologistSearchFolder" path="Search" />
+    <folder id="TechnologistSearchFolder" path="Search Results" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Adt.RegistrationMainWorkflowFolderSystem">
     <folder id="ScheduledFolder" path="Scheduled" />
@@ -15,7 +15,7 @@
     <folder id="InProgressFolder" path="In Progress" />
     <folder id="CompletedFolder" path="Completed" />
     <folder id="CancelledFolder" path="Cancelled" />
-    <folder id="RegistrationSearchFolder" path="Search" />
+    <folder id="RegistrationSearchFolder" path="Search Results" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Adt.RegistrationBookingWorkflowFolderSystem">
     <folder id="CompletedProtocolFolder" path="Completed Protocol" />
@@ -23,6 +23,7 @@
     <folder id="RejectedProtocolFolder" path="Rejected Protocol" />
     <folder id="PendingProtocolFolder" path="Pending Protocol" />
     <folder id="ToBeScheduledFolder" path="To Be Scheduled" />
+    <folder id="BookingSearchFolder" path="Search Results" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Reporting.ReportingMainWorkflowFolderSystem">
     <folder id="ToBeReportedFolder" path="To be Reported" />
@@ -32,7 +33,7 @@
     <folder id="ToBeVerifiedFolder" path="To be Verified" />
     <folder id="ReviewResidentReportFolder" path="Review Resident Report" />
     <folder id="VerifiedFolder" path="Verified" />
-    <folder id="SearchFolder" path="Search" />
+    <folder id="ReportingSearchFolder" path="Search Results" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Reporting.ReportingProtocolWorkflowFolderSystem">
     <folder id="ToBeProtocolledFolder" path="To be Protocolled" />
@@ -40,6 +41,7 @@
     <folder id="CompletedProtocolFolder" path="Completed" />
     <folder id="SuspendedProtocolFolder" path="Suspended" />
     <folder id="RejectedProtocolFolder" path="Rejected" />
+    <folder id="ProtocollingSearchFolder" path="Search Results" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Fax.IncomingFaxWorkflowFolderSystem">
     <folder id="IncomingPendingFolder" path="Pending" />
