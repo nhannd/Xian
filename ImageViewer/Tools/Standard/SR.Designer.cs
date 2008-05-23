@@ -900,6 +900,60 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Acquisition Time.
+        /// </summary>
+        internal static string SortByAcquisitionTimeDescription {
+            get {
+                return ResourceManager.GetString("SortByAcquisitionTimeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image Number.
+        /// </summary>
+        internal static string SortByImageNumberDescription {
+            get {
+                return ResourceManager.GetString("SortByImageNumberDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Acquisition Time (Reverse).
+        /// </summary>
+        internal static string SortByReverseAcquisitionTimeDescription {
+            get {
+                return ResourceManager.GetString("SortByReverseAcquisitionTimeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image Number (Reverse).
+        /// </summary>
+        internal static string SortByReverseImageNumberDescription {
+            get {
+                return ResourceManager.GetString("SortByReverseImageNumberDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slice Location (Reverse).
+        /// </summary>
+        internal static string SortByReverseSliceLocationDescription {
+            get {
+                return ResourceManager.GetString("SortByReverseSliceLocationDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slice Location.
+        /// </summary>
+        internal static string SortBySliceLocationDescription {
+            get {
+                return ResourceManager.GetString("SortBySliceLocationDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Preset.
         /// </summary>
         internal static string TitleAddPreset {

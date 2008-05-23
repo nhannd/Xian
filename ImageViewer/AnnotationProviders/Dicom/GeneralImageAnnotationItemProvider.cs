@@ -37,6 +37,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 {
@@ -71,7 +72,17 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						"Dicom.GeneralImage.AcquisitionTime",
 						resolver,
 						delegate(Frame frame) { return frame.AcquisitionTime; },
-						DicomDataFormatHelper.TimeFormat
+						delegate (string input)
+							{
+								if (String.IsNullOrEmpty(input))
+									return String.Empty;
+
+								DateTime time;
+								if (!TimeParser.Parse(input, out time))
+									return input;
+
+								return time.ToString("HH:mm:ss.FFFFFF");
+							}
 					)
 				);
 
@@ -83,7 +94,19 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						"Dicom.GeneralImage.AcquisitionDateTime",
 						resolver,
 						delegate(Frame frame) { return frame.AcquisitionDateTime; },
-						DicomDataFormatHelper.DateTimeFormat
+						delegate(string input)
+							{
+								if (String.IsNullOrEmpty(input))
+									return String.Empty;
+
+								DateTime dateTime;
+								if (!DateTimeParser.Parse(input, out dateTime))
+									return input;
+
+								return String.Format("{0} {1}", 
+									dateTime.Date.ToString(Format.DateFormat),
+									dateTime.ToString("HH:mm:ss.FFFFFF"));
+							}
 					)
 				);
 

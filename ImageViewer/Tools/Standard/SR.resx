@@ -521,4 +521,22 @@ Please ensure that the name/keystroke combination is unique.</value>
   <data name="TooltipShowHideTextOverlay" xml:space="preserve">
     <value>Show/Hide Text Overlay</value>
   </data>
+  <data name="SortByAcquisitionTimeDescription" xml:space="preserve">
+    <value>Acquisition Time</value>
+  </data>
+  <data name="SortByImageNumberDescription" xml:space="preserve">
+    <value>Image Number</value>
+  </data>
+  <data name="SortByReverseAcquisitionTimeDescription" xml:space="preserve">
+    <value>Acquisition Time (Reverse)</value>
+  </data>
+  <data name="SortByReverseImageNumberDescription" xml:space="preserve">
+    <value>Image Number (Reverse)</value>
+  </data>
+  <data name="SortByReverseSliceLocationDescription" xml:space="preserve">
+    <value>Slice Location (Reverse)</value>
+  </data>
+  <data name="SortBySliceLocationDescription" xml:space="preserve">
+    <value>Slice Location</value>
+  </data>
 </root>

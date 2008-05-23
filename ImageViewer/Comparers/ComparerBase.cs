@@ -29,10 +29,13 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+
 namespace ClearCanvas.ImageViewer.Comparers
 {
 	/// <summary>
-	/// Base class for comparers that are used for sorting of collections.
+	/// Base class for comparers that are used for sorting collections.
 	/// </summary>
 	public abstract class ComparerBase
 	{
@@ -49,7 +52,6 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <summary>
 		/// Initializes a new instance of <see cref="ComparerBase"/>.
 		/// </summary>
-		/// <param name="reverse"></param>
 		protected ComparerBase(bool reverse)
 		{
 			this.Reverse = reverse;
@@ -91,6 +93,84 @@ namespace ClearCanvas.ImageViewer.Comparers
 		{
 			get { return _returnValue; }
 			private set { _returnValue = value; }
+		}
+
+		/// <summary>
+		/// Performs a comparison of the 2 input values strictly based on whether or
+		/// not either or both of the inputs are null.
+		/// </summary>
+		/// <returns>
+		/// Returns zero in 2 cases:
+		///  - when both inputs are null
+		///  - when both inputs are non-null
+		/// Otherwise, +-<see cref="ReturnValue"/> is returned.
+		/// </returns>
+		protected int NullCompare<T>(T x, T y, out bool bothNull) where T : class
+		{
+			bothNull = false;
+
+			if (x == null)
+			{
+				if (y == null)
+					bothNull = true;
+				else
+					return (-this.ReturnValue); // x > y (because we want x at the end for non-reverse sorting)
+			}
+			else
+			{
+				if (y == null)
+					return this.ReturnValue; // x < y (because we want y at the end for non-reverse sorting)
+			}
+
+			return 0; //both are either null or non-null
+		}
+
+		/// <summary>
+		/// Compares two sets of values, where the position of the items
+		/// in <paramref name="x"/> corresponds with the position of the items
+		/// in <paramref name="y"/>.
+		/// </summary>
+		/// <remarks>
+		/// Item pairs are compared in order until the first non-equal pair
+		/// is found, at which point comparison stops and a result is returned.
+		/// The number of items in <paramref name="x"/> and <paramref name="y"/> <b>must</b>
+		/// always yield the same number of entries, or an <see cref="ArgumentException"/> may be thrown.
+		/// </remarks>
+		/// <returns>Zero when <b>all</b> entry pairs are equal, otherwise +-<see cref="ReturnValue"/>.</returns>
+		protected int Compare(IEnumerable<IComparable> x, IEnumerable<IComparable> y)
+		{
+			IEnumerator<IComparable> enumeratorX = x.GetEnumerator();
+			IEnumerator<IComparable> enumeratorY = y.GetEnumerator();
+
+			while (true)
+			{
+				bool xExists = enumeratorX.MoveNext();
+				bool yExists = enumeratorY.MoveNext();
+
+				if (!xExists && !yExists)
+					break;
+				else if (xExists != yExists)
+					throw new ArgumentException("The input arguments must have the same number of entries.");
+
+				IComparable xValue = enumeratorX.Current;
+				IComparable yValue = enumeratorY.Current;
+
+				bool bothNull;
+				int compare = NullCompare(xValue, yValue, out bothNull);
+				if (compare != 0)
+					return compare;
+
+				if (!bothNull)
+				{
+					compare = xValue.CompareTo(yValue);
+					if (compare < 0)
+						return ReturnValue;
+					else if (compare > 0)
+						return -ReturnValue;
+				}
+			}
+
+			return 0;
 		}
 	}
 }

@@ -38,6 +38,11 @@ namespace ClearCanvas.Dicom.DataStore
 	{
 		#region Private Fields
 
+		private int _acquisitionNumber;
+    	private string _acquisitionDateRaw;
+		private string _acquisitionTimeRaw;
+		private string _acquisitionDateTimeRaw;
+
 		private int _bitsAllocated;
     	private int _bitsStored;
     	private int _highBit;
@@ -67,6 +72,30 @@ namespace ClearCanvas.Dicom.DataStore
 		}
 
 		#region NHibernate Persistent Properties
+
+		public virtual int AcquisitionNumber
+		{
+			get { return _acquisitionNumber; }
+			set { SetValueTypeMember(ref _acquisitionNumber, value); }
+		}
+
+		public virtual string AcquisitionDateRaw
+		{
+			get { return _acquisitionDateRaw; }
+			set { SetClassMember(ref _acquisitionDateRaw, value); }
+		}
+
+		public virtual string AcquisitionTimeRaw
+		{
+			get { return _acquisitionTimeRaw; }
+			set { SetClassMember(ref _acquisitionTimeRaw, value); }
+		}
+
+		public virtual string AcquisitionDateTimeRaw
+		{
+			get { return _acquisitionDateTimeRaw; }
+			set { SetClassMember(ref _acquisitionDateTimeRaw, value); }
+		}
 
 		public virtual int BitsAllocated
     	{
@@ -205,7 +234,19 @@ namespace ClearCanvas.Dicom.DataStore
 		{
 			base.Update(metaInfo, sopInstanceDataset);
 
-			DicomAttribute attribute = sopInstanceDataset[DicomTags.BitsAllocated];
+			DicomAttribute attribute = sopInstanceDataset[DicomTags.AcquisitionNumber];
+			AcquisitionNumber = attribute.GetInt32(0, 0);
+
+			attribute = sopInstanceDataset[DicomTags.AcquisitionDate];
+			AcquisitionDateRaw = attribute.ToString();
+
+			attribute = sopInstanceDataset[DicomTags.AcquisitionTime];
+			AcquisitionTimeRaw = attribute.ToString();
+
+			attribute = sopInstanceDataset[DicomTags.AcquisitionDatetime];
+			AcquisitionDateTimeRaw = attribute.ToString();
+
+			attribute = sopInstanceDataset[DicomTags.BitsAllocated];
 			BitsAllocated = attribute.GetUInt16(0, 0);
 
 			attribute = sopInstanceDataset[DicomTags.BitsStored];

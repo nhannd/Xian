@@ -96,11 +96,6 @@ namespace ClearCanvas.Dicom.DataStore
 			return new DataStoreWriter(SessionManager.Get());
         }
 		
-		internal static IDicomDictionary GetIDicomDictionary()
-		{
-			return GetIDicomDictionary(DicomDictionary.DefaultDictionaryName);
-		}
-
 		internal static IDicomDictionary GetIDicomDictionary(string dictionaryName)
 		{
 			lock (_syncLock)

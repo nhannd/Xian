@@ -16,6 +16,10 @@
     <many-to-one name="Series" class="ClearCanvas.Dicom.DataStore.Series, ClearCanvas.Dicom.DataStore" column="SeriesOid_" not-null="true" fetch="select"/>
     <joined-subclass name="ImageSopInstance" table="ImageSopInstance_" lazy="false" >
       <key column="Oid_" />
+      <property name="AcquisitionNumber" column="AcquisitionNumber_" type="Int32" />
+      <property name="AcquisitionDateRaw" column="AcquisitionDateRaw_" type="string" length="26" />
+      <property name="AcquisitionTimeRaw" column="AcquisitionTimeRaw_" type="string" length="16" />
+      <property name="AcquisitionDateTimeRaw" column="AcquisitionDateTimeRaw_" type="string" length="26" />
       <property name="SliceThickness" column="SliceThickness_" type="Double" />
       <property name="SpacingBetweenSlices" column="SpacingBetweenSlices_" type="Double" />
       <property name="NumberOfFrames" column="NumberOfFrames_" type="Int32" />

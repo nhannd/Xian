@@ -167,7 +167,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="SortMenuItem.cs" />
     <Compile Include="StackTool.cs" />
+    <Compile Include="SortMenuItemFactory.cs" />
     <Compile Include="TextOverlayTool.cs" />
     <Compile Include="WindowLevelTool.cs" />
     <Compile Include="ZoomFixedTool.cs" />

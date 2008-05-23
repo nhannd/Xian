@@ -241,25 +241,25 @@
     <value>Acquisition Date</value>
   </data>
   <data name="Dicom_GeneralImage_AcquisitionDate_Label" xml:space="preserve">
-    <value>Acq. Date</value>
+    <value>Acq</value>
   </data>
   <data name="Dicom_GeneralImage_AcquisitionDateTime_DisplayName" xml:space="preserve">
     <value>Acquisition Date / Time</value>
   </data>
   <data name="Dicom_GeneralImage_AcquisitionDateTime_Label" xml:space="preserve">
-    <value>Acq.</value>
+    <value>Acq</value>
   </data>
   <data name="Dicom_GeneralImage_AcquisitionNumber_DisplayName" xml:space="preserve">
     <value>Acquisition Number</value>
   </data>
   <data name="Dicom_GeneralImage_AcquisitionNumber_Label" xml:space="preserve">
-    <value>Acq.</value>
+    <value>Acq</value>
   </data>
   <data name="Dicom_GeneralImage_AcquisitionTime_DisplayName" xml:space="preserve">
     <value>Acquisition Time</value>
   </data>
   <data name="Dicom_GeneralImage_AcquisitionTime_Label" xml:space="preserve">
-    <value>Acq. Time</value>
+    <value>Acq</value>
   </data>
   <data name="Dicom_GeneralImage_ContentDate_DisplayName" xml:space="preserve">
     <value>Content Date</value>

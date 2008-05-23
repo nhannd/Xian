@@ -30,13 +30,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {
 	/// <summary>
-	/// Base class for comparers that compare some aspect of
-	/// <see cref="ImageSop"/>.
+	/// Base class for comparing <see cref="Frame"/>s.
 	/// </summary>
 	public abstract class DicomFrameComparer : PresentationImageComparer
 	{
@@ -55,64 +55,42 @@ namespace ClearCanvas.ImageViewer.Comparers
 		{
 		}
 
+		private static IEnumerable<IComparable> GetCompareValues(IImageSopProvider provider)
+		{
+			yield return provider.ImageSop.StudyInstanceUID;
+			yield return provider.ImageSop.SeriesInstanceUID;
+		}
+
 		#region IComparer<IPresentationImage> Members
 
 		/// <summary>
 		/// Compares two <see cref="IPresentationImage"/>s.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
 		public override int Compare(IPresentationImage x, IPresentationImage y)
 		{
-			IImageSopProvider image1 = x as IImageSopProvider;
-			IImageSopProvider image2 = y as IImageSopProvider;
+			if (x == y)
+				return 0; //same reference object
 
-			//just push non-DICOM images down to one end of the list.
-			if (image1 == null)
-			{
-				if (image2 == null)
-					return 0; // x == y
-				else
-					return (-this.ReturnValue); // x > y (because we want it at the end for non-reverse sorting)
-			}
-			else
-			{
-				if (image2 == null)
-					return this.ReturnValue; // x < y (because we want it at the end for non-reverse sorting)
-			}
+			IImageSopProvider xProvider = x as IImageSopProvider;
+			IImageSopProvider yProvider = y as IImageSopProvider;
 
-			int studyUIDCompare = String.Compare(image1.ImageSop.StudyInstanceUID, image2.ImageSop.StudyInstanceUID);
-			
-			if (studyUIDCompare < 0)
-			{
-				return this.ReturnValue; // x < y
-			}
-			else if (studyUIDCompare == 0)
-			{
-				int seriesUIDCompare = String.Compare(image1.ImageSop.SeriesInstanceUID, image2.ImageSop.SeriesInstanceUID);
+			bool bothNull;
+			int compare = NullCompare(xProvider, yProvider, out bothNull);
+			if (compare != 0 || bothNull)
+				return compare; //when bothNull is true, this is zero.
 
-				if (seriesUIDCompare < 0)
-				{
-					return this.ReturnValue; // x < y
-				}
-				else if (seriesUIDCompare == 0)
-				{
-					return Compare(image1.Frame, image2.Frame);
-				}
-			}
+			compare = Compare(GetCompareValues(xProvider), GetCompareValues(yProvider));
+			if (compare == 0 && xProvider.Frame != yProvider.Frame)
+				compare = Compare(xProvider.Frame, yProvider.Frame);
 
-			return (-this.ReturnValue); // x > y
+			return compare;
 		}
 
 		#endregion
 
 		/// <summary>
-		/// Compares two <see cref="ImageSop"/>s.
+		/// Compares two <see cref="Frame"/>s.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
 		protected abstract int Compare(Frame x, Frame y);
 	}
 }

@@ -58,6 +58,38 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			}
 		}
 
+		public override int AcquisitionNumber
+		{
+			get
+			{
+				return _dataStoreImageSopInstance.AcquisitionNumber;
+			}
+		}
+
+		public override string AcquisitionDate
+		{
+			get
+			{
+				return _dataStoreImageSopInstance.AcquisitionDateRaw ?? "";
+			}
+		}
+
+		public override string AcquisitionTime
+		{
+			get
+			{
+				return _dataStoreImageSopInstance.AcquisitionTimeRaw ?? "";
+			}
+		}
+
+		public override string AcquisitionDateTime
+		{
+			get
+			{
+				return _dataStoreImageSopInstance.AcquisitionDateTimeRaw ?? "";
+			}
+		}
+
 		public override PixelSpacing PixelSpacing
 		{
 			get

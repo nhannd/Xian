@@ -42,7 +42,6 @@ namespace ClearCanvas.Dicom.DataStore
 	{
 		private class DicomDictionary : IDicomDictionary
 		{
-			public static readonly string DefaultDictionaryName = "default-unicode";
 			public static readonly string DefaultQueryDictionaryName = "study-query-unicode";
 			public static readonly string DefaultResultsDictionaryName = "study-query-results-unicode";
 

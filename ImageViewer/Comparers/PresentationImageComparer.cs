@@ -34,8 +34,7 @@ using System.Collections.Generic;
 namespace ClearCanvas.ImageViewer.Comparers
 {
 	/// <summary>
-	/// Base class for comparers that compare some aspect of
-	/// <see cref="IPresentationImage"/>
+	/// Base class for comparing <see cref="IPresentationImage"/>s.
 	/// </summary>
 	public abstract class PresentationImageComparer : ComparerBase, IComparer<IPresentationImage>
 	{
@@ -49,7 +48,6 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <summary>
 		/// Initializes a new instance of <see cref="PresentationImageComparer"/>.
 		/// </summary>
-		/// <param name="reverse"></param>
 		protected PresentationImageComparer(bool reverse)
 			: base(reverse)
 		{
@@ -60,9 +58,6 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <summary>
 		/// Compares two <see cref="IPresentationImage"/>s.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
 		public abstract int Compare(IPresentationImage x, IPresentationImage y);
 
 		#endregion

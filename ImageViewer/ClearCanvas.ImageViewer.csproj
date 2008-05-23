@@ -116,6 +116,8 @@
     <Compile Include="Annotations\IAnnotationResourceResolver.cs" />
     <Compile Include="BaseTools\GraphicTool.cs" />
     <Compile Include="CloningExceptions.cs" />
+    <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
+    <Compile Include="Comparers\SliceLocationComparer.cs" />
     <Compile Include="DisplaySetChangingEventArgs.cs" />
     <Compile Include="Graphics\ArcPrimitive.cs" />
     <Compile Include="Graphics\BoundableGraphic.cs" />

@@ -30,20 +30,19 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Diagnostics;
+using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuStack", "Select", Flags = ClickActionFlags.CheckAction)]
 	[MenuAction("activate", "imageviewer-contextmenu/MenuStack", "Select", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarStack", "Select", Flags = ClickActionFlags.CheckAction)]
+	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarStack", "Select", "SortMenuModel", Flags = ClickActionFlags.CheckAction)]
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardStack/Activate", "Select", KeyStroke = XKeys.S)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
@@ -59,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[KeyboardAction("jumptoend", "imageviewer-keyboard/ToolsStandardStack/JumpToEnd", "JumpToEnd", KeyStroke = XKeys.End)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class StackTool : MouseImageViewerTool
+	public partial class StackTool : MouseImageViewerTool
 	{
 		private UndoableCommand _command;
 		private int _initialPresentationImageIndex;
@@ -71,15 +70,64 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.CursorToken = new CursorToken("Icons.StackToolSmall.png", this.GetType().Assembly);
 		}
 
+		public override event EventHandler TooltipChanged
+		{
+			add { base.TooltipChanged += value; }
+			remove { base.TooltipChanged -= value; }
+		}
+
 		public override string Tooltip
 		{
 			get { return base.Tooltip; }
 		}
 
-		public override event EventHandler TooltipChanged
+		public ActionModelNode SortMenuModel
 		{
-			add { base.TooltipChanged += value; }
-			remove { base.TooltipChanged -= value; }
+			get
+			{
+				SimpleActionModel actionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+
+				List<ISortMenuItem> items = new List<ISortMenuItem>();
+
+				SortMenuItemFactoryExtensionPoint xp = new SortMenuItemFactoryExtensionPoint();
+				foreach (ISortMenuItemFactory factory in xp.CreateExtensions())
+					items.AddRange(factory.Create());
+
+				items.Sort(delegate(ISortMenuItem x, ISortMenuItem y)
+								{
+									return x.Description.CompareTo(y.Description);
+								});
+
+				foreach (ISortMenuItem item in items)
+				{
+					// whenever you use foreach with an anonymouse delegate, you have to copy the reference
+					// to a new variable, otherwise each anonymous delegate ends up referencing the same (last) object.
+					ISortMenuItem itemVar = item;
+					actionModel.AddAction(itemVar.Name, itemVar.Description, null, itemVar.Description, delegate { Sort(itemVar); });
+				}
+
+				return actionModel;
+			}
+		}
+
+		private void Sort(ISortMenuItem sortMenuItem)
+		{
+			if (this.ImageViewer.SelectedImageBox == null || this.ImageViewer.SelectedImageBox.DisplaySet == null)
+				return;
+
+			IImageBox imageBox = ImageViewer.SelectedImageBox;
+			IDisplaySet displaySet = imageBox.DisplaySet;
+
+			//try to keep the top-left image the same.
+			IPresentationImage topLeftImage = imageBox.TopLeftPresentationImage;
+
+			displaySet.PresentationImages.Sort(sortMenuItem.Comparer);
+
+			// There is no undo support for sorting, since the selected image remains unchanged
+			// and the user can simply change the sort order back to what it was previously.
+			imageBox.TopLeftPresentationImage = topLeftImage;
+
+			imageBox.Draw();
 		}
 
 		private void CaptureBeginState(IImageBox imageBox)

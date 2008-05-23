@@ -29,6 +29,8 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers
@@ -53,33 +55,20 @@ namespace ClearCanvas.ImageViewer.Comparers
 		{
 		}
 
+		private static IEnumerable<IComparable> GetCompareValues(Frame frame)
+		{
+			yield return frame.ParentImageSop.InstanceNumber;
+			yield return frame.FrameNumber;
+			//as a last resort.
+			yield return frame.AcquisitionNumber;
+		}
+
 		/// <summary>
-		/// Compares two <see cref="ImageSop"/>s based on instance number.
+		/// Compares two <see cref="Frame"/>s based on instance number and frame number.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
 		protected override int Compare(Frame x, Frame y)
 		{
-			int imageNumber1 = x.ParentImageSop.InstanceNumber;
-			int imageNumber2 = y.ParentImageSop.InstanceNumber;
-
-			if (imageNumber1 < imageNumber2)
-				return this.ReturnValue; // x < y
-			else if (imageNumber1 > imageNumber2)
-				return (-this.ReturnValue); // x > y
-			else
-			{
-				int frameNumber1 = x.FrameNumber;
-				int frameNumber2 = y.FrameNumber;
-
-				if (frameNumber1 < frameNumber2)
-					return this.ReturnValue;
-				else if (frameNumber1 > frameNumber2)
-					return (-this.ReturnValue);
-				else
-					return 0; // x == y
-			}
+			return Compare(GetCompareValues(x), GetCompareValues(y));
 		}
 	}
 }
