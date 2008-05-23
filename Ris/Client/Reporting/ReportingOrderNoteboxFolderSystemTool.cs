@@ -2,6 +2,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
+	[ExtensionOf(typeof(GlobalHomeFolderSystemToolExtensionPoint))]
 	[ExtensionOf(typeof(ReportingHomeFolderSystemToolExtensionPoint))]
 	public class ReportingOrderNoteboxFolderSystemTool : FolderExplorerToolBase
 	{

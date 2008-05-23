@@ -43,7 +43,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 	{        
         // Private field
         private Control _applicationComponentControl;
-        private readonly EventHandler _titleClick;
+        private EventHandler _buttonClicked;
+		private EventHandler _titleClicked;
+		private EventHandler _titleDoubleClicked;
 
 		// Designer generated
         private TitleBar _titleBar;
@@ -64,12 +66,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		// New constructor
-        public StackTab(StackTabPage page, ArrowButton arrow, EventHandler titleClick)
+		public StackTab(StackTabPage page, DockStyle docStyle)
 		{
             // This call is required by the Windows.Forms Form Designer.
             InitializeComponent();
 
         	_page = page;
+			_titleBar.Dock = docStyle;
 
             // Set initial values
 			_titleBar.PreText = _page.PreText;
@@ -78,40 +81,48 @@ namespace ClearCanvas.Desktop.View.WinForms
 			if (_page.IconSet != null)
 				_titleBar.Image = IconFactory.CreateIcon(_page.IconSet.SmallIcon, _page.ResourceResolver);
 
-			_titleBar.ArrowButton = arrow;
-
-			_page.TextChanged += _page_TextChanged;
-			_page.IconChanged += _page_IconChanged;
-
-			// Remember callback event handler
-			_titleClick = titleClick;
-
-			if ((arrow == ArrowButton.UpArrow) ||
-				(arrow == ArrowButton.DownArrow) || 
-				(arrow == ArrowButton.None))
-				_titleBar.Dock = DockStyle.Top;
-			
-			if (arrow == ArrowButton.RightArrow)
-				_titleBar.Dock = DockStyle.Right;
-
-			if (arrow == ArrowButton.LeftArrow)
-				_titleBar.Dock = DockStyle.Left;
+			_page.TextChanged += OnPageTextChanged;
+			_page.IconChanged += OnPageIconChanged;
 		}
 
-		private void _page_TextChanged(object sender, EventArgs e)
+		#region Event Handlers
+
+		private void OnPageTextChanged(object sender, EventArgs e)
 		{
 			_titleBar.PreText = _page.PreText;
 			_titleBar.Text = _page.Text;
 			_titleBar.PostText = _page.PostText;
 		}
 
-		private void _page_IconChanged(object sender, EventArgs e)
+		private void OnPageIconChanged(object sender, EventArgs e)
 		{
 			if (_page.IconSet != null)
 				_titleBar.Image = IconFactory.CreateIcon(_page.IconSet.SmallIcon, _page.ResourceResolver);
 			else
 				_titleBar.Image = null;
 		}
+
+		private void OnButtonClick(object sender, EventArgs e)
+		{
+			if (_buttonClicked != null)
+				_buttonClicked(sender, e);
+		}
+
+		private void OnTitleClicked(object sender, EventArgs e)
+		{
+			if (_titleClicked != null)
+				_titleClicked(sender, e);
+		}
+
+		private void OnTitleDoubleClick(object sender, EventArgs e)
+		{
+			if (_titleDoubleClicked != null)
+				_titleDoubleClicked(sender, e);
+		}
+
+		#endregion
+
+		#region UserControl overrides
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -127,6 +138,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 			base.Dispose( disposing );
 		}
+
+		#endregion
 
 		#region Component Designer generated code
 		/// <summary> 
@@ -146,6 +159,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._titleBar.ArrowButton = Crownwood.DotNetMagic.Controls.ArrowButton.DownArrow;
 			this._titleBar.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
+			this._titleBar.ImageAlignment = Crownwood.DotNetMagic.Controls.ImageAlignment.Far;
 			this._titleBar.Location = new System.Drawing.Point(0, 0);
 			this._titleBar.Margin = new System.Windows.Forms.Padding(0);
 			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
@@ -154,7 +168,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
 			this._titleBar.TabIndex = 0;
 			this._titleBar.Text = "titleBar1";
-			this._titleBar.ButtonClick += new System.EventHandler(this.OnTitleClick);
+			this._titleBar.Click += new System.EventHandler(this.OnTitleClicked);
+			this._titleBar.ButtonClick += new System.EventHandler(this.OnButtonClick);
+			this._titleBar.DoubleClick += new System.EventHandler(this.OnTitleDoubleClick);
 			// 
 			// _panel
 			// 
@@ -193,20 +209,31 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 		#endregion
 
-		// Fire constructor provided event user clicks titlebar arrow
-		private void OnTitleClick(object sender, EventArgs e)
-		{
-			if (_titleClick != null)
-				_titleClick(sender, e);
-		}
-		
 		// Allow direct access to the titlebar
 		public TitleBar TitleBar
 		{
 			get { return _titleBar; }
 		}
 
-        public Control ApplicationComponentControl
+		public event EventHandler ButtonClicked
+		{
+			add { _buttonClicked += value; }
+			remove { _buttonClicked -= value; }
+		}
+
+		public event EventHandler TitleClicked
+		{
+			add { _titleClicked += value; }
+			remove { _titleClicked -= value; }
+		}
+
+		public event EventHandler TitleDoubleClicked
+		{
+			add { _titleDoubleClicked += value; }
+			remove { _titleDoubleClicked -= value; }
+		}
+
+		public Control ApplicationComponentControl
         {
             get { return _applicationComponentControl; }
             set

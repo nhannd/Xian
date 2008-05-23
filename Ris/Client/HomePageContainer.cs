@@ -122,7 +122,10 @@ namespace ClearCanvas.Ris.Client
             _tools = new ToolSet(folderExplorerExtensionPoint, new FolderExplorerToolContext(this));
 
             // Construct the explorer component and place each into a stack tab
-            _stackContainers = new StackTabComponentContainer(StackStyle.ShowMultiple, true);
+            _stackContainers = new StackTabComponentContainer(
+				HomePageSettings.Default.ShowMultipleFolderSystems ? StackStyle.ShowMultiple : StackStyle.ShowOneOnly,
+				HomePageSettings.Default.OpenAllFolderSystemsInitially);
+
             _stackContainers.CurrentPageChanged += OnSelectedFolderSystemChanged;
 
             List<IFolderSystem> folderSystems = CollectionUtils.Map<ITool, IFolderSystem, List<IFolderSystem>>(_tools.Tools,
@@ -219,24 +222,36 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        void OnSelectedFolderSystemChanged(object sender, EventArgs e)
+        private void OnSelectedFolderSystemChanged(object sender, EventArgs e)
         {
-            this.SelectedFolderExplorer = (FolderExplorerComponent)_stackContainers.CurrentPage.Component;
-        }
+			ChangeFolderExplorer(
+				this.SelectedFolderExplorer,
+				(FolderExplorerComponent)_stackContainers.CurrentPage.Component);
+		}
 
-        void OnSelectedFolderChanged(object sender, EventArgs e)
+        private void OnSelectedFolderChanged(object sender, EventArgs e)
         {
-        	FolderExplorerComponent previousFolderExplorerSelection = this.SelectedFolderExplorer;
-			FolderExplorerComponent newFolderExplorerSelection = (FolderExplorerComponent)sender;
+			ChangeFolderExplorer(
+				this.SelectedFolderExplorer,
+				(FolderExplorerComponent)sender);
+		}
+
+		private void ChangeFolderExplorer(FolderExplorerComponent prevComponent, FolderExplorerComponent newComponent)
+		{
 			IFolder previousFolderSelection = _folderContentComponent.SelectedFolder;
+			if (newComponent != prevComponent)
+				this.SelectedFolderExplorer = newComponent;
 
-			if (newFolderExplorerSelection != previousFolderExplorerSelection)
-				this.SelectedFolderExplorer = newFolderExplorerSelection;
+			IFolder newSelectedFolder = ((IFolder)_selectedFolderExplorer.SelectedFolder.Item);
+			if (newSelectedFolder == null)
+				newSelectedFolder = (IFolder) _selectedFolderExplorer.FolderTree.Items[0];
 
-			IFolder newSelectedFolder = ((IFolder) _selectedFolderExplorer.SelectedFolder.Item);
 			if (newSelectedFolder != previousFolderSelection)
-	            _folderContentComponent.SelectedFolder = newSelectedFolder;
-        }
+			{
+				_folderContentComponent.SelectedFolder = newSelectedFolder;
+				_selectedFolderExplorer.SelectedFolder = new Selection(newSelectedFolder);
+			}
+		}
 
         public FolderContentsComponent ContentsComponent
         {

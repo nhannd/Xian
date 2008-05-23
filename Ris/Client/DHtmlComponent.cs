@@ -391,7 +391,7 @@ namespace ClearCanvas.Ris.Client
 
         public void SetUrl(string url)
         {
-            this.HtmlPageUrl = url == null ? null : new Uri(url);
+            this.HtmlPageUrl = string.IsNullOrEmpty(url) ? null : new Uri(url);
         }
 
 

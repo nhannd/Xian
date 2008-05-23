@@ -3,6 +3,7 @@ using ClearCanvas.Ris.Client.EmergencyPhysician;
 
 namespace ClearCanvas.Ris.Client.EmergencyPhysician
 {
+	[ExtensionOf(typeof(GlobalHomeFolderSystemToolExtensionPoint))]
 	[ExtensionOf(typeof(EmergencyPhysicianHomeFolderSystemToolExtensionPoint))]
 	public class EmergencyPhysicianOrderNoteboxFolderSystemTool : FolderExplorerToolBase
 	{

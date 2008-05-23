@@ -35,5 +35,23 @@ namespace ClearCanvas.Ris.Client {
                 return ((int)(this["SearchCriteriaSpecificityThreshold"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowMultipleFolderSystems {
+            get {
+                return ((bool)(this["ShowMultipleFolderSystems"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OpenAllFolderSystemsInitially {
+            get {
+                return ((bool)(this["OpenAllFolderSystemsInitially"]));
+            }
+        }
     }
 }

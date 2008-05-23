@@ -56,6 +56,7 @@
     <Compile Include="Formatting\AccessionFormat.cs" />
     <Compile Include="Formatting\ExternalPractitionerContactPointFormat.cs" />
     <Compile Include="Formatting\StringMask.cs" />
+    <Compile Include="GlobalHomeTool.cs" />
     <Compile Include="HomePageSettings.cs" />
     <Compile Include="HomePageSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -425,6 +426,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\OrderNoteConversationToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\GlobalHomeToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\GlobalHomeToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\GlobalHomeToolMedium.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
