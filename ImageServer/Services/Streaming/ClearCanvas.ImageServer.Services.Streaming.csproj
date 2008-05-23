@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HeaderRetrieval\HeaderLoader.cs" />
+    <Compile Include="HeaderRetrieval\HeaderRetrievalContext.cs" />
     <Compile Include="HeaderRetrieval\HeaderRetrievalParameters.cs" />
     <Compile Include="HeaderRetrieval\HeaderRetrievalService.cs" />
     <Compile Include="HeaderRetrieval\HeaderLoaderStatistics.cs" />
@@ -65,6 +66,10 @@
     <ProjectReference Include="..\..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\ClearCanvas.ImageServer.Common.csproj">
+      <Project>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</Project>
+      <Name>ClearCanvas.ImageServer.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Enterprise\ClearCanvas.ImageServer.Enterprise.csproj">
       <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>

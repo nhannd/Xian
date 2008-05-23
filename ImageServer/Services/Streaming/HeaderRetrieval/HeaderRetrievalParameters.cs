@@ -40,13 +40,14 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
     public class HeaderRetrievalParameters
     {
         #region Private members
-        private string _studyInstanceUID;
+
         private string _serverAETitle;
+        private string _studyInstanceUID;
 
         #endregion Private members
 
         #region Public Properties
-        
+
         [DataMember(IsRequired = true)]
         public string StudyInstanceUID
         {

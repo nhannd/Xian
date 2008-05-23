@@ -30,80 +30,113 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
+
 namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
 {
     [ServiceContract]
     public interface IHeaderRetrievalService
     {
         [OperationContract]
+        [FaultContract(typeof (String))]
         Stream GetStudyHeader(string callingAETitle, HeaderRetrievalParameters parameters);
-        
     }
 
 
-    [ServiceBehavior(IncludeExceptionDetailInFaults = false,InstanceContextMode=InstanceContextMode.PerSession)]
+    [ServiceBehavior(IncludeExceptionDetailInFaults = true, AutomaticSessionShutdown=true,InstanceContextMode=InstanceContextMode.PerCall)]
     public class HeaderRetrievalService : IHeaderRetrievalService
     {
+        private string _callerID;
+        private Guid _id = Guid.NewGuid();
+
+        #region Protected Properties
+
+        /// <summary>
+        /// Gets the unique ID of the service instance
+        /// </summary>
+        public string ID
+        {
+            get { return _id.ToString(); }
+        }
+
+        public string CallerID
+        {
+            get { return _callerID; }
+            set { _callerID = value; }
+        }
+
+        #endregion
+
         #region IHeaderRetrievalService Members
 
         public Stream GetStudyHeader(string callingAETitle, HeaderRetrievalParameters parameters)
         {
-            
+            HeaderRetrievalStatistics stats = new HeaderRetrievalStatistics();
+            stats.ProcessTime.Start();
+
+            HeaderLoader loader = null;
+
             try
             {
                 Platform.CheckForEmptyString(callingAETitle, "callingAETitle");
                 Platform.CheckForNullReference(parameters, "parameters");
                 Platform.CheckForEmptyString(parameters.ServerAETitle, "parameters.ServerAETitle");
                 Platform.CheckForEmptyString(parameters.StudyInstanceUID, "parameters.StudyInstanceUID");
-            }
-            catch(ArgumentException e)
-            {
-                Platform.Log(LogLevel.Error, "GetStudyHeader: Error in request call:" + e.Message);
-                throw;
-            }
 
-            HeaderRetrievalStatistics stats = new HeaderRetrievalStatistics();
-            stats.ProcessTime.Start();
+                Platform.Log(LogLevel.Debug, "Received request from {0} for {1} ", callingAETitle,
+                             parameters.StudyInstanceUID);
 
-            
-            HeaderLoader loader = new HeaderLoader();
-                
-            try
-            {
+                HeaderRetrievalContext context = new HeaderRetrievalContext();
+                context.ServiceInstanceID = ID;
+                context.CallerAE = callingAETitle;
+                context.Parameters = parameters;
+
                 // TODO: perform permission check on callingAETitle
-                
-                Stream stream = loader.Load(parameters.ServerAETitle, parameters.StudyInstanceUID);
-                
 
-                return stream;
+                loader = new HeaderLoader(context);
+                if (loader.StudyExists)
+                {
+                    Stream stream = loader.Load();
+                    Debug.Assert(stream != null);
+
+                    return stream;
+                }
+                else
+                {
+                    throw new FaultException(
+                        String.Format("Study {0} does not exist on partition {1}", parameters.StudyInstanceUID,
+                                      parameters.ServerAETitle));
+                }
             }
-            catch(Exception e)
+            catch (ArgumentException e)
             {
-                Platform.Log(LogLevel.Info, "{0}: {1}", e, e.StackTrace);
-                
-                throw;
+                throw new FaultException(e.Message);
+            }
+            catch (Exception e)
+            {
+                if (! (e is FaultException))
+                    Platform.Log(LogLevel.Error, e, "Unable to process study header request from {0}", callingAETitle);
+
+                throw new FaultException(e.Message);
             }
             finally
             {
                 stats.ProcessTime.End();
 
-                if (Settings.Default.LogStatistics)
+                if (loader != null && Settings.Default.LogStatistics)
                 {
                     stats.AddField("StudyInstanceUid", parameters.StudyInstanceUID);
 
                     stats.AddSubStats(loader.Statistics);
-                    StatisticsLogger.Log(LogLevel.Info, stats);    
+                    StatisticsLogger.Log(LogLevel.Info, stats);
                 }
-                
             }
         }
 
         #endregion
     }
 }
-

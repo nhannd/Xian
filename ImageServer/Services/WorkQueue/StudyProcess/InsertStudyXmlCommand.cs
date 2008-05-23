@@ -101,10 +101,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     if (File.Exists(streamFile))
                         File.Delete(streamFile);
 
+                   
                     using (Stream fileStream = new FileStream(streamFile, FileMode.CreateNew))
                     {
                         StudyXmlIo.Write(doc, fileStream);
                     }
+
+                    // Update the gz header file
+                    string gzStreamFile = streamFile + ".gz";
+                    using (Stream gzFileStream = FileStreamOpener.OpenForSoleUpdate(gzStreamFile, FileMode.OpenOrCreate))
+                    {
+                        StudyXmlIo.WriteGzip(doc, gzFileStream);
+                        
+                    } 
+
                     return;
                 }
                 catch (IOException)
@@ -117,6 +127,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                     throw;
                 }
+
         }
     }
 }

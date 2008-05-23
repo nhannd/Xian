@@ -43,11 +43,17 @@ namespace ClearCanvas.Server.ShredHost
     {
 		private enum HostBindingType
 		{
-			WSHttp = 0,
+            BasicHttp,
+			WSHttp,
 			WSDualHttp,
 			NetTcp,
 			NamedPipes
 		}
+
+        static public ServiceEndpointDescription StartBasicHttpHost<TServiceType, TServiceInterfaceType>(string name, string description, int port)
+        {
+            return StartHost<TServiceType, TServiceInterfaceType>(name, description, HostBindingType.BasicHttp, port, 0);
+        }
 
 		static public ServiceEndpointDescription StartHttpHost<TServiceType, TServiceInterfaceType>(string name, string description, int port)
 		{ 
@@ -158,7 +164,7 @@ namespace ClearCanvas.Server.ShredHost
 					binding = new WSDualHttpBinding();
 				}
 			}
-			else
+            else if (bindingType == HostBindingType.WSHttp)
 			{
 				string configurationName = String.Format("{0}_{1}", typeof(WSHttpBinding).Name, serviceConfigurationName);
 				try
@@ -171,6 +177,19 @@ namespace ClearCanvas.Server.ShredHost
 					binding = new WSHttpBinding();
 				}
 			}
+            else
+            {
+                string configurationName = String.Format("{0}_{1}", typeof(BasicHttpBinding).Name, serviceConfigurationName);
+                try
+                {
+                    binding = new BasicHttpBinding(configurationName);
+                }
+                catch
+                {
+                    Platform.Log(LogLevel.Info, "unable to load binding configuration {0}; using default binding configuration", configurationName);
+                    binding = new WSHttpBinding();
+                }
+            }
 
 			return binding;
 		}

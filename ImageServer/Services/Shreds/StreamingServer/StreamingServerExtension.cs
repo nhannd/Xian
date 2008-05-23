@@ -63,16 +63,24 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer
 
         public override void Start()
         {
-            Platform.Log(LogLevel.Info, "{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
+            Platform.Log(LogLevel.Debug, "{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
             try
             {
-                if (StreamingServer.Default.BindingType == "http")
+                if (StreamingServer.Default.BindingType == "wshttp")
                 {
+                    Platform.Log(LogLevel.Info, "Starting {0} using WS Http binding", GetDisplayName());
                     StartHttpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval",
+                                                                                   SR.HeaderRetrievalStreamingServiceDescription);
+                }
+                else if (StreamingServer.Default.BindingType == "http")
+                {
+                    Platform.Log(LogLevel.Info, "Starting {0} using basic Http binding", GetDisplayName()); 
+                    StartBasicHttpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval",
                                                                                    SR.HeaderRetrievalStreamingServiceDescription);
                 }
                 else
                 {
+                    Platform.Log(LogLevel.Info, "Starting {0} using NET TCP binding", GetDisplayName()); 
                     StartNetTcpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval",
                                                                                      SR.HeaderRetrievalStreamingServiceDescription);
                 }

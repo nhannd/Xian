@@ -33,20 +33,20 @@ using ClearCanvas.Common.Statistics;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
 {
-    internal class HeaderLoaderStatistics:StatisticsSet
+    internal class HeaderLoaderStatistics : StatisticsSet
     {
         #region Constructors
+
         public HeaderLoaderStatistics()
             : base("HeaderLoading")
         {
             AddField(new ByteCountStatistics("HeaderSize"));
             AddField(new TimeSpanStatistics("FindStudyFolder"));
-            AddField(new TimeSpanStatistics("CompressHeader")); 
+            AddField(new TimeSpanStatistics("CompressHeader"));
             AddField(new TimeSpanStatistics("LoadHeaderStream"));
         }
 
         #endregion Constructors
-
 
         #region Public Properties
 
@@ -59,19 +59,21 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
         public TimeSpanStatistics FindStudyFolder
         {
             get { return this["FindStudyFolder"] as TimeSpanStatistics; }
+            set { this["FindStudyFolder"] = value; }
         }
 
         public TimeSpanStatistics LoadHeaderStream
         {
             get { return this["LoadHeaderStream"] as TimeSpanStatistics; }
+            set { this["LoadHeaderStream"] = value; }
         }
 
         public TimeSpanStatistics CompressHeader
         {
             get { return this["CompressHeader"] as TimeSpanStatistics; }
+            set { this["CompressHeader"] = value; }
         }
 
         #endregion Public Properties
-
     }
 }

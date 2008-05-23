@@ -50,6 +50,7 @@
     <Compile Include="ServerDatabaseCommand.cs" />
     <Compile Include="ServerFilesystemInfo.cs" />
     <Compile Include="ServiceTools.cs" />
+    <Compile Include="FileStreamOpener.cs" />
     <Compile Include="Utilities\FilesystemInfo.cs" />
     <Compile Include="Utilities\FilesystemUtils.cs" />
   </ItemGroup>

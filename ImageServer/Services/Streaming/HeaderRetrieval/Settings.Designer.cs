@@ -8,46 +8,46 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval {
-    
-    
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
+using System.CodeDom.Compiler;
+using System.Configuration;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+
+namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
+{
+    [CompilerGenerated()]
+    [GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
+    internal sealed partial class Settings : ApplicationSettingsBase
+    {
+        private static Settings defaultInstance = ((Settings) (Synchronized(new Settings())));
+
+        public static Settings Default
+        {
+            get { return defaultInstance; }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool LogStatistics {
-            get {
-                return ((bool)(this["LogStatistics"]));
-            }
+
+        [ApplicationScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("False")]
+        public bool LogStatistics
+        {
+            get { return ((bool) (this["LogStatistics"])); }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("65536")]
-        public uint ReadBufferSize {
-            get {
-                return ((uint)(this["ReadBufferSize"]));
-            }
+
+        [ApplicationScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("65536")]
+        public uint ReadBufferSize
+        {
+            get { return ((uint) (this["ReadBufferSize"])); }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("wshttp")]
-        public string Binding {
-            get {
-                return ((string)(this["Binding"]));
-            }
+
+        [ApplicationScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("wshttp")]
+        public string Binding
+        {
+            get { return ((string) (this["Binding"])); }
         }
     }
 }

@@ -32,11 +32,15 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
 {
@@ -45,77 +49,34 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
     /// </summary>
     internal class HeaderLoader
     {
-        #region Private Members
-
-        private Settings _settings = Settings.Default;
+        private static readonly FilesystemMonitor _monitor = new FilesystemMonitor();
+        private readonly HeaderRetrievalContext _context;
+        private readonly HeaderLoaderStatistics _statistics = new HeaderLoaderStatistics();
         private Stream _compressedHeaderStream = null;
         private string _partitionAE;
         private string _studyInstanceUid;
-        private string _studyHeaderFilePath;
-        private string _compressedStudyHeaderFilePath;
-        private string _studyContainerFolder;
-        private HeaderLoaderStatistics _statistics = new HeaderLoaderStatistics();
+        private StudyStorageLocation _studyLocation;
 
-        #endregion Private Members
+        #region Constructor
+
+        static HeaderLoader()
+        {
+            _monitor.Load();
+        }
+
+
+        public HeaderLoader(HeaderRetrievalContext context)
+        {
+            _context = context;
+
+            _studyInstanceUid = context.Parameters.StudyInstanceUID;
+            _partitionAE = context.Parameters.ServerAETitle;
+            StudyLocation = GetStudyStorageLocation(StudyInstanceUid, PartitionAE);
+        }
+
+        #endregion
 
         #region Protected Properties
-
-        protected string StudyHeaderFilePath
-        {
-            get
-            {
-                if (String.IsNullOrEmpty(_studyHeaderFilePath))
-                {
-                    _studyHeaderFilePath = String.Format("{0}/{1}.xml", StudyContainerFolder, StudyInstanceUid);
-                }
-
-                return _studyHeaderFilePath;
-
-            }
-            set
-            {
-                _studyHeaderFilePath = value;
-            }
-
-        }
-
-        protected string CompressedStudyHeaderFilePath
-        {
-            get
-            {
-                if (String.IsNullOrEmpty(_studyContainerFolder))
-                {
-                    _compressedStudyHeaderFilePath = String.Format("{0}/{1}.xml.gz", StudyContainerFolder, StudyInstanceUid);
-                }
-
-                return _compressedStudyHeaderFilePath;
-
-            }
-            set
-            {
-                _studyHeaderFilePath = value;
-            }
-
-        }
-
-        protected string StudyContainerFolder
-        {
-            get
-            {
-                if (String.IsNullOrEmpty(_studyContainerFolder))
-                {
-                    _studyContainerFolder = ResolveStudyContainerFolder(PartitionAE, StudyInstanceUid);
-                }
-
-                return _studyContainerFolder;
-
-            }
-            set
-            {
-                _studyContainerFolder = value;
-            }
-
-        }
 
         protected string PartitionAE
         {
@@ -133,131 +94,38 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
 
         #region Private methods
 
-
-        private void LoadCompressedHeaderStream()
+        public static StudyStorageLocation GetStudyStorageLocation(String studyInstanceUid, String partitionAE)
         {
-            _statistics.LoadHeaderStream.Start();
-            FileInfo fi = new FileInfo(CompressedStudyHeaderFilePath);
-            _compressedHeaderStream = new FileStream(CompressedStudyHeaderFilePath, FileMode.Open);
-            _statistics.LoadHeaderStream.End();
-            _statistics.Size = (ulong) fi.Length;
-
-        }
-
-        private string ResolveStudyContainerFolder(string partitionAETitle, string studyInstanceUid)
-        {
-            _statistics.FindStudyFolder.Start();
-
+            StudyStorageLocation location = null;
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
             using (IReadContext ctx = store.OpenReadContext())
             {
                 IServerPartitionEntityBroker partitionBroker = ctx.GetBroker<IServerPartitionEntityBroker>();
                 ServerPartitionSelectCriteria partitionCriteria = new ServerPartitionSelectCriteria();
-                partitionCriteria.AeTitle.EqualTo(partitionAETitle);
+                partitionCriteria.AeTitle.EqualTo(partitionAE);
                 IList<ServerPartition> partitions = partitionBroker.Find(partitionCriteria);
 
                 if (partitions != null && partitions.Count > 0)
                 {
                     ServerPartition partition = partitions[0];
 
-                    IStudyStorageEntityBroker broker = ctx.GetBroker<IStudyStorageEntityBroker>();
-                    StudyStorageSelectCriteria storageCriteria = new StudyStorageSelectCriteria();
-                    storageCriteria.StudyInstanceUid.EqualTo(studyInstanceUid);
-                    storageCriteria.ServerPartitionKey.EqualTo(partition.GetKey());
-                    IList<StudyStorage> storages = broker.Find(storageCriteria);
+                    IQueryStudyStorageLocation locQuery = ctx.GetBroker<IQueryStudyStorageLocation>();
+                    StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
+                    locParms.StudyInstanceUid = studyInstanceUid;
+                    locParms.ServerPartitionKey = partition.GetKey();
+                    IList<StudyStorageLocation> studyLocationList = locQuery.Execute(locParms);
 
-                    if (storages != null && storages.Count > 0)
+                    if (studyLocationList != null && studyLocationList.Count > 0)
                     {
-                        StudyStorage storage = storages[0];
-
-                        IStorageFilesystemEntityBroker storageFilesystemBroker =
-                            ctx.GetBroker<IStorageFilesystemEntityBroker>();
-                        StorageFilesystemSelectCriteria storageFilesystemCriteria = new StorageFilesystemSelectCriteria();
-                        storageFilesystemCriteria.StudyStorageKey.EqualTo(storage.GetKey());
-
-                        IList<StorageFilesystem> storageFS = storageFilesystemBroker.Find(storageFilesystemCriteria);
-
-                        if (storageFS != null && storageFS.Count > 0)
-                        {
-                            IFilesystemEntityBroker filesystemBroker = ctx.GetBroker<IFilesystemEntityBroker>();
-                            Filesystem fs = filesystemBroker.Load(storageFS[0].FilesystemKey);
-                            string folder =
-                                String.Format("{0}/{1}/{2}/{3}", fs.FilesystemPath, partition.PartitionFolder, storageFS[0].StudyFolder,
-                                              studyInstanceUid);
-
-                            _statistics.FindStudyFolder.End();
-
-                            return folder;
-                        }
-
-
+                        location = studyLocationList[0];
                     }
                 }
-
-
-
             }
 
-            return null;
+            return location;
         }
 
-        private void GenerateCompressedHeader()
-        {
-            Platform.Log(LogLevel.Info, "GenerateCompressedHeader: compressing header file...");
-
-            _statistics.CompressHeader.Start();
-            string tempFilePath = StudyHeaderFilePath + ".tmp";
-
-            if (File.Exists(tempFilePath))
-            {
-                // either another service instance/thread is using this file to generate the compressed header or
-                // the server crashed previously.
-                try
-                {
-                    // try to delete it. 
-                    File.Delete(tempFilePath);
-                }
-                catch (Exception e)
-                {
-                    // we can't delete the temp file, that mean it is being used for compression by another thread.
-                    Platform.Log(LogLevel.Info, "GenerateCompressedHeader: Unable to create temp header file : "  + e.Message);
-
-                    // this thread should fail
-                    return;
-                }
-            }
-
-
-            File.Copy(StudyHeaderFilePath, tempFilePath);
-
-            FileStream tempFileStream = new FileStream(tempFilePath, FileMode.Open);
-
-            FileStream compressedHeaderStream = new FileStream(CompressedStudyHeaderFilePath, FileMode.OpenOrCreate);
-
-            GZipStream zipStream = new GZipStream(compressedHeaderStream, CompressionMode.Compress, true);
-
-            byte[] buffer = new byte[_settings.ReadBufferSize];
-            int size;
-            do
-            {
-                size = tempFileStream.Read(buffer, 0, buffer.Length);
-                if (size > 0)
-                {
-                    zipStream.Write(buffer, 0, size);
-                }
-            } while (size > 0);
-
-            zipStream.Close();
-            tempFileStream.Close();
-            File.Delete(tempFilePath);
-            compressedHeaderStream.Close();
-
-
-            _statistics.CompressHeader.End();
-
-            Platform.Log(LogLevel.Info, "GenerateCompressedHeader: compressed header file created");
-        }
-
+       
         #endregion
 
         #region Public Properties
@@ -272,6 +140,57 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
             get { return _compressedHeaderStream; }
         }
 
+        public bool StudyExists
+        {
+            get { return StudyLocation != null; }
+        }
+
+        public StudyStorageLocation StudyLocation
+        {
+            get { return _studyLocation; }
+            set { _studyLocation = value; }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void OpenCompressedHeader()
+        {
+            Platform.CheckForNullReference(StudyLocation, "StudyLocation");
+
+            if (!IsFileSystemReadable(StudyLocation.FilesystemKey))
+            {
+                Platform.Log(LogLevel.Warn, "Study {0} on partition {1} resided on a non-readable filesystem",
+                             StudyInstanceUid, PartitionAE);
+            }
+
+            String studyPath = StudyLocation.GetStudyPath();
+            if (!Directory.Exists(studyPath))
+            {
+                // the study exist in the database but not on the filesystem.
+
+                // TODO: If the study is migrated to another tier and the study folder is removed, 
+                // we may want to do something here instead of throwing exception.
+                throw new ApplicationException(String.Format("Study Folder {0} doesn't exist", studyPath));
+            }
+
+            String compressedHeaderFile = Path.Combine(studyPath, StudyInstanceUid + ".xml.gz");
+
+            Platform.Log(LogLevel.Debug, "Study Header Path={0}", compressedHeaderFile);
+            _compressedHeaderStream = FileStreamOpener.OpenForRead(compressedHeaderFile, FileMode.Open, 30000 /* try for 30 seconds */);
+
+            //Thread.Sleep(100000);
+        }
+
+        #endregion
+
+        #region Private Static Methods
+        private static bool IsFileSystemReadable(ServerEntityKey fskey)
+        {
+            ServerFilesystemInfo fsInfo = _monitor.GetFilesystemInfo(fskey);
+            return fsInfo.Readable;
+        }
         #endregion
 
         #region Public Methods
@@ -279,41 +198,27 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
         /// <summary>
         /// Loads the compressed header stream for the study with the specified study instance uid
         /// </summary>
-        /// <param name="partitionAETitle">The server partition where the study is located</param>
-        /// <param name="studyInstanceUid">The study instance uid</param>
-        /// <returns></returns>
+        /// <returns>
+        /// The compressed study header stream or null if the study doesn't exist.
+        /// </returns>
         /// <remarks>
-        /// The compressed header is created on the fly if it doesn't exist.
         /// </remarks>
-        public Stream Load(string partitionAETitle, string studyInstanceUid)
+        public Stream Load()
         {
-            PartitionAE = partitionAETitle;
-            StudyInstanceUid = studyInstanceUid;
+            PartitionAE = _context.Parameters.ServerAETitle;
+            StudyInstanceUid = _context.Parameters.StudyInstanceUID;
 
-            if (!File.Exists(CompressedStudyHeaderFilePath))
+            if (StudyExists)
             {
-                GenerateCompressedHeader();
+                OpenCompressedHeader();
+                return CompressedHeaderStream;
             }
             else
             {
-                DateTime t1 = File.GetLastWriteTimeUtc(StudyHeaderFilePath);
-                DateTime t2 = File.GetLastWriteTimeUtc(CompressedStudyHeaderFilePath);
-
-                if (t1 > t2)
-                {
-                    // The compressed header file is out of date
-                    GenerateCompressedHeader();
-                }
-
+                return null;
             }
-            LoadCompressedHeaderStream();
-            return CompressedHeaderStream;
-
         }
 
-
         #endregion Public Methods
-
-        
     }
 }

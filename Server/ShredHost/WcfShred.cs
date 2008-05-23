@@ -68,6 +68,22 @@ namespace ClearCanvas.Server.ShredHost
             return sed;
         }
 
+        public ServiceEndpointDescription StartBasicHttpHost<TServiceType, TServiceInterfaceType>(string name, string description)
+        {
+            Platform.Log(LogLevel.Info, "Starting WCF Shred {0}...", name);
+
+            if (_serviceEndpointDescriptions.ContainsKey(name))
+                throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
+
+            ServiceEndpointDescription sed =
+                WcfHelper.StartBasicHttpHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort);
+            _serviceEndpointDescriptions[name] = sed;
+
+            Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.BaseAddresses[0]);
+
+            return sed;
+        }
+
         public ServiceEndpointDescription StartHttpDualHost<TServiceType, TServiceInterfaceType>(string name,
                                                                                                  string description)
         {
