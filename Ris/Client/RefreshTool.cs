@@ -14,7 +14,8 @@ namespace ClearCanvas.Ris.Client
 	{
 		public void Refresh()
 		{
-			this.Context.SelectedFolder.Refresh();
+			if (this.Context.SelectedFolder != null)
+				this.Context.SelectedFolder.Refresh();
 		}
 	}
 
@@ -27,7 +28,8 @@ namespace ClearCanvas.Ris.Client
 	{
 		public void Refresh()
 		{
-			this.Context.SelectedFolder.Refresh();
+			if (this.Context.SelectedFolder != null)
+				this.Context.SelectedFolder.Refresh();
 		}
 	}
 }
