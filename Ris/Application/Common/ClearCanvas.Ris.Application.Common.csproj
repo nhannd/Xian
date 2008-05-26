@@ -91,6 +91,7 @@
     <Compile Include="ProtocollingWorkflow\GetProtocolFormDataResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\TimeShiftOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\TimeShiftOrderResponse.cs" />
+    <Compile Include="Remoting\IEchoService.cs" />
     <Compile Include="RisServiceProviderAttribute.cs" />
     <Compile Include="StaffGroupDetail.cs" />
     <Compile Include="StaffGroupSummary.cs" />

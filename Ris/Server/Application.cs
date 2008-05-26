@@ -42,6 +42,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Services;
+using System.Runtime.Remoting;
 
 namespace ClearCanvas.Ris.Server
 {
@@ -73,9 +74,11 @@ namespace ClearCanvas.Ris.Server
             // kick NHibernate, rather than waiting for it to load on demand
             PersistentStoreRegistry.GetDefaultStore();
 
-            Console.WriteLine("PRESS ANY KEY TO EXIT");
+			// configure the alternate remoting channel
+			RemotingConfiguration.Configure("ClearCanvas.Ris.Server.Executable.exe.config", false);
 
-            Console.Read();
+			Console.WriteLine("PRESS ANY KEY TO EXIT");
+			Console.Read();
 
             Platform.Log(LogLevel.Info, "Stopping WCF services...");
             foreach (ServiceHost host in _serviceHosts)

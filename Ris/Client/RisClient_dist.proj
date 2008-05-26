@@ -32,6 +32,7 @@
   <ItemGroup>
     <ExecutableFiles Include="$(TrunkDirectory)\Oto\Executable\bin\$(Configuration)\ClearCanvas.Oto.Executable.exe" />
     <ExecutableFiles Include="$(TrunkDirectory)\Oto\Executable\bin\$(Configuration)\ClearCanvas.Oto.Executable.exe.config" />
+    <ExecutableFiles Include="$(TrunkDirectory)\Ris\RemotingClient\bin\$(Configuration)\RemotingClient.dll.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,21 +46,22 @@
     <OtoScripts Include="$(SolutionDir)\Oto\scripts\*.js" />
   </ItemGroup>
 
-	<ItemGroup>
-		<ClientModuleFiles Include="$(SolutionDir)\bin\$(Configuration)\ClearCanvas.Ris.Client.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.View.WinForms.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\Admin\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\Admin\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\Adt\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\Adt\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\Reporting\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\Uhn\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\Uhn\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.View.WinForms.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\Fax\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\Fax\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.View.WinForms.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\Oto\bin\$(Configuration)\ClearCanvas.Ris.Client.Oto.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\EmergencyPhysician\bin\$(Configuration)\ClearCanvas.Ris.Client.EmergencyPhysician.dll" />
+  <ItemGroup>
+    <ClientModuleFiles Include="$(SolutionDir)\bin\$(Configuration)\ClearCanvas.Ris.Client.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.View.WinForms.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\Admin\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\Admin\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\Adt\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\Adt\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\Reporting\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\Uhn\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\Uhn\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.View.WinForms.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\Fax\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\Fax\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.View.WinForms.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\Oto\bin\$(Configuration)\ClearCanvas.Ris.Client.Oto.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\EmergencyPhysician\bin\$(Configuration)\ClearCanvas.Ris.Client.EmergencyPhysician.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\..\RemotingClient\bin\$(Configuration)\RemotingClient.dll" />
   </ItemGroup>
 
   <ItemGroup>
