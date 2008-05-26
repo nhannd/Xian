@@ -96,7 +96,9 @@ namespace ClearCanvas.Common
                 catch (Exception e)
                 {
                     // instantiation failed
-                    Platform.Log(LogLevel.Error, e);
+					// this should not be considered an exceptional circumstance
+					// instantiation may fail by design in some cases (e.g extension is designed only to run on a particular platform)
+					Platform.Log(LogLevel.Debug, e);
                 }
             }
 
