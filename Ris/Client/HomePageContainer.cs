@@ -29,314 +29,87 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
-using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
-    public interface IPreviewComponent : IApplicationComponent
-    {
-        void SetUrl(string url);
-    }
-
-	[ExtensionPoint]
-	public class HomePageToolExtensionPoint : ExtensionPoint<ITool>
+	public interface IPreviewComponent : IApplicationComponent
 	{
+		void SetUrl(string url);
 	}
 
-	public interface IHomePageToolContext : IToolContext
+	public class HomePageContainer : SplitComponentContainer, ISearchDataHandler
 	{
-		IEnumerable FolderSystems { get; }
-		IFolderSystem SelectedFolderSystem { get; }
+		#region ISearchDataHandler implementation
 
-		IEnumerable Folders { get; }
-		IFolder SelectedFolder { get; }
-
-		IDesktopWindow DesktopWindow { get; }
-	}
-
-    public class HomePageContainer : SplitComponentContainer, ISearchDataHandler
-    {
-        #region IFolderExplorerToolContext implementation
-
-        class FolderExplorerToolContext : ToolContext, IFolderExplorerToolContext
-        {
-            private readonly HomePageContainer _component;
-
-            public FolderExplorerToolContext(HomePageContainer component)
-            {
-                _component = component;
-            }
-
-            #region IFolderExplorerToolContext Members
-
-            public IDesktopWindow DesktopWindow
-            {
-                get { return _component.Host.DesktopWindow; }
-            }
-
-            public IFolder SelectedFolder
-            {
-                get { return (IFolder) _component.SelectedFolderExplorer.SelectedFolder.Item; }
-                set { _component.SelectedFolderExplorer.SelectedFolder = new Selection(value); }
-            }
-
-            public ISelection SelectedItems
-            {
-                get { return _component._folderContentComponent.SelectedItems; }
-            }
-
-            public void RegisterSearchDataHandler(ISearchDataHandler handler)
-            {
-                _component.RegisterSearchDataHandler(handler);
-            }
-
-            #endregion
-        }
-
-        #endregion
-
-		#region IHomePageToolContext implementation
-
-		class HomePageToolContext : ToolContext, IHomePageToolContext
+		public SearchData SearchData
 		{
-			private readonly HomePageContainer _component;
-
-			public HomePageToolContext(HomePageContainer component)
-			{
-				_component = component;
-			}
-
-			#region IHomePageToolContext Members
-
-			public IEnumerable FolderSystems
-			{
-				get { return _component._folderExplorerComponents.Values; }
-			}
-
-			public IFolderSystem SelectedFolderSystem
-			{
-				get { return _component.SelectedFolderExplorer.FolderSystem; }
-			}
-
-			public IEnumerable Folders
-			{
-				get { return _component.SelectedFolderExplorer.FolderSystem.Folders; }
-			}
-
-			public IFolder SelectedFolder
-			{
-				get { return (IFolder)_component.SelectedFolderExplorer.SelectedFolder.Item; }
-			}
-
-			public IDesktopWindow DesktopWindow
-			{
-				get { return _component.Host.DesktopWindow; }
-			}
-
-			#endregion
+			set { _folderSystemGroup.SearchData = value; }
 		}
 
 		#endregion
 
-		#region Search related
+		private readonly FolderExplorerGroupComponent _folderSystemGroup;
+		private readonly FolderContentsComponent _folderContentComponent;
+		private readonly IPreviewComponent _previewComponent;
 
-		private ISearchDataHandler _searchDataHandler;
-
-        public void RegisterSearchDataHandler(ISearchDataHandler handler)
-        {
-            _searchDataHandler = handler;
-        }
-
-        public SearchData SearchData
-        {
-            set
-            {
-                if (_searchDataHandler != null)
-                    _searchDataHandler.SearchData = value;
-            }
-        }
-
-        #endregion
-
-        private readonly Dictionary<IFolderSystem, FolderExplorerComponent> _folderExplorerComponents;
-        private readonly FolderContentsComponent _folderContentComponent;
-        private readonly IPreviewComponent _previewComponent;
-        private readonly StackTabComponentContainer _stackContainers;
-
-        private FolderExplorerComponent _selectedFolderExplorer;
-        private readonly ToolSet _folderExplorers;
-    	private readonly ToolSet _homePageTools;
-
-        public HomePageContainer(IExtensionPoint folderExplorerExtensionPoint, IPreviewComponent preview)
-            : base(Desktop.SplitOrientation.Vertical)
-        {
-            _folderExplorerComponents = new Dictionary<IFolderSystem, FolderExplorerComponent>();
-            _folderContentComponent = new FolderContentsComponent();
-            _previewComponent = preview;
-
-            _folderExplorers = new ToolSet(folderExplorerExtensionPoint, new FolderExplorerToolContext(this));
-			_homePageTools = new ToolSet(new HomePageToolExtensionPoint(), new HomePageToolContext(this));
-
-            // Construct the explorer component and place each into a stack tab
-            _stackContainers = new StackTabComponentContainer(
-				HomePageSettings.Default.ShowMultipleFolderSystems ? StackStyle.ShowMultiple : StackStyle.ShowOneOnly,
-				HomePageSettings.Default.OpenAllFolderSystemsInitially);
-
-        	_stackContainers.ContextMenuModel = this.HomePageContextMenuModel;
-        	_stackContainers.ToolbarModel = this.HomePageToolbarModel;
-            _stackContainers.CurrentPageChanged += OnSelectedFolderSystemChanged;
-
-            List<IFolderSystem> folderSystems = CollectionUtils.Map<ITool, IFolderSystem, List<IFolderSystem>>(_folderExplorers.Tools,
-                delegate(ITool tool)
-                {
-                    FolderExplorerToolBase folderExplorerTool = (FolderExplorerToolBase) tool;
-                    return folderExplorerTool.FolderSystem;
-                });
-
-            // Order the Folder Systems
-            folderSystems = FolderExplorerComponentSettings.Default.OrderFolderSystems(folderSystems);
-
-            CollectionUtils.ForEach(folderSystems,
-                delegate(IFolderSystem folderSystem)
-                    {
-                        FolderExplorerComponent component = new FolderExplorerComponent(folderSystem);
-                        component.SelectedFolderChanged += OnSelectedFolderChanged;
-                        // TODO: what does this suppress??
-                        //component.SuppressSelectionChanged += _folderContentComponent.OnSuppressSelectionChanged;
-
-                        _folderExplorerComponents.Add(folderSystem, component);
-
-                    	StackTabPage thisPage = new StackTabPage(
-                    		folderSystem.Title,
-                    		component,
-                    		string.Empty,
-                    		folderSystem.Title,
-                    		string.Empty,
-                    		folderSystem.TitleIcon,
-							folderSystem.ResourceResolver);
-
-                        _stackContainers.Pages.Add(thisPage);
-
-                    	folderSystem.TextChanged += delegate { thisPage.SetTitle(string.Empty, folderSystem.Title, string.Empty); };
-						folderSystem.IconChanged += delegate { thisPage.IconSet = folderSystem.TitleIcon; };
-					});
-
-            // Construct the home page
-            SplitComponentContainer contentAndPreview = new SplitComponentContainer(
-                new SplitPane("Folder Contents", _folderContentComponent, 0.4f),
-                new SplitPane("Content Preview", _previewComponent, 0.6f),
-                SplitOrientation.Vertical);
-
-            this.Pane1 = new SplitPane("Folders", _stackContainers, 0.2f);
-            this.Pane2 = new SplitPane("Contents", contentAndPreview, 0.8f);
-        }
-
-        public override void Start()
-        {
-            base.Start();
-
-            CollectionUtils.ForEach(_folderExplorerComponents.Keys,
-                delegate(IFolderSystem folderSystem)
-                    {
-                        DocumentManager.RegisterFolderSystem(folderSystem);
-                    });
-        }
-
-        public override void Stop()
-        {
-            CollectionUtils.ForEach(_folderExplorerComponents.Keys,
-                delegate(IFolderSystem folderSystem)
-                {
-                    DocumentManager.UnregisterFolderSystem(folderSystem);
-                });
-
-            base.Stop();
-        }
-
-        public FolderExplorerComponent SelectedFolderExplorer
-        {
-            get { return _selectedFolderExplorer; }
-            set
-            {
-                _selectedFolderExplorer = value;
-
-                if (_selectedFolderExplorer == null)
-                {
-                    _folderContentComponent.FolderSystem = null;
-                    _previewComponent.SetUrl(null);
-                    _folderContentComponent.SelectedFolder = null;
-                }
-                else
-                {
-                    _folderContentComponent.FolderSystem = _selectedFolderExplorer.FolderSystem;
-                    _previewComponent.SetUrl(_selectedFolderExplorer.FolderSystem.PreviewUrl);
-
-                    IFolder selectedFolder = ((IFolder)_selectedFolderExplorer.SelectedFolder.Item);
-                    _folderContentComponent.SelectedFolder = selectedFolder;
-
-					if(_folderContentComponent.SelectedFolder != null)
-						_folderContentComponent.SelectedFolder.Refresh();
-                }
-            }
-        }
-
-        private void OnSelectedFolderSystemChanged(object sender, EventArgs e)
-        {
-			ChangeFolderExplorer(
-				this.SelectedFolderExplorer,
-				(FolderExplorerComponent)_stackContainers.CurrentPage.Component);
-		}
-
-        private void OnSelectedFolderChanged(object sender, EventArgs e)
-        {
-			ChangeFolderExplorer(
-				this.SelectedFolderExplorer,
-				(FolderExplorerComponent)sender);
-		}
-
-		private void ChangeFolderExplorer(FolderExplorerComponent prevComponent, FolderExplorerComponent newComponent)
+		public HomePageContainer(IExtensionPoint folderExplorerExtensionPoint, IPreviewComponent preview)
+			: base(Desktop.SplitOrientation.Vertical)
 		{
-			IFolder previousFolderSelection = _folderContentComponent.SelectedFolder;
-			if (newComponent != prevComponent)
-				this.SelectedFolderExplorer = newComponent;
+			_folderContentComponent = new FolderContentsComponent();
+			_previewComponent = preview;
+			_folderSystemGroup = new FolderExplorerGroupComponent(folderExplorerExtensionPoint, _folderContentComponent);
+			_folderSystemGroup.SelectedFolderSystemChanged += OnSelectedFolderSystemChanged;
+			_folderSystemGroup.SelectedFolderChanged += OnSelectedFolderChanged;
 
-			IFolder newSelectedFolder = ((IFolder)_selectedFolderExplorer.SelectedFolder.Item);
-			if (newSelectedFolder == null)
-				newSelectedFolder = (IFolder) _selectedFolderExplorer.FolderTree.Items[0];
+			// Construct the home page
+			SplitComponentContainer contentAndPreview = new SplitComponentContainer(
+				new SplitPane("Folder Contents", _folderContentComponent, 0.4f),
+				new SplitPane("Content Preview", _previewComponent, 0.6f),
+				SplitOrientation.Vertical);
 
-			if (newSelectedFolder != previousFolderSelection)
+			this.Pane1 = new SplitPane("Folders", _folderSystemGroup, 0.2f);
+			this.Pane2 = new SplitPane("Contents", contentAndPreview, 0.8f);
+		}
+
+		public FolderContentsComponent ContentsComponent
+		{
+			get { return _folderContentComponent; }
+		}
+
+		public IPreviewComponent PreviewComponent
+		{
+			get { return _previewComponent; }
+		}
+
+		private void OnSelectedFolderSystemChanged(object sender, System.EventArgs e)
+		{
+			if (_folderSystemGroup.SelectedFolderSystem == null)
 			{
-				_folderContentComponent.SelectedFolder = newSelectedFolder;
-				_selectedFolderExplorer.SelectedFolder = new Selection(newSelectedFolder);
+				_folderContentComponent.FolderSystem = null;
+				_previewComponent.SetUrl(null);
+				_folderContentComponent.SelectedFolder = null;
+			}
+			else
+			{
+				_folderContentComponent.FolderSystem = _folderSystemGroup.SelectedFolderSystem;
+				_previewComponent.SetUrl(_folderSystemGroup.SelectedFolderSystem.PreviewUrl);
+
+				_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolder;
+
+				if (_folderContentComponent.SelectedFolder != null)
+					_folderContentComponent.SelectedFolder.Refresh();
 			}
 		}
 
-        public FolderContentsComponent ContentsComponent
-        {
-            get { return _folderContentComponent; }
-        }
-
-		public ActionModelRoot HomePageContextMenuModel
+		private void OnSelectedFolderChanged(object sender, System.EventArgs e)
 		{
-			get
-			{
-				return ActionModelRoot.CreateModel(this.GetType().FullName, "homepage-contextmenu", _homePageTools.Actions);
-			}
+			_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolder;
+
+			if (_folderContentComponent.SelectedFolder != null)
+				_folderContentComponent.SelectedFolder.Refresh();
 		}
 
-		public ActionModelRoot HomePageToolbarModel
-		{
-			get
-			{
-				return ActionModelRoot.CreateModel(this.GetType().FullName, "homepage-toolbar", _homePageTools.Actions);
-			}
-		}
 	}
 }

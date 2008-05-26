@@ -44,7 +44,6 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 			}
 
 			this.AddFolder(_searchFolder = new RegistrationSearchFolder(this));
-			folderExplorer.RegisterSearchDataHandler(this);
 		}
 
 		public override string PreviewUrl

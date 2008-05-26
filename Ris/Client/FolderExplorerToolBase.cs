@@ -39,7 +39,6 @@ namespace ClearCanvas.Ris.Client
         IDesktopWindow DesktopWindow { get; }
         IFolder SelectedFolder { get; set; }
         ISelection SelectedItems { get; }
-        void RegisterSearchDataHandler(ISearchDataHandler handler);
     }
 
     public class FolderExplorerToolBase : Tool<IFolderExplorerToolContext>

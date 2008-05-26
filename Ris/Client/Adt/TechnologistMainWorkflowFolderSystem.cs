@@ -75,7 +75,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
 			}
 			this.AddFolder(_searchFolder = new Folders.TechnologistSearchFolder(this));
-			folderExplorer.RegisterSearchDataHandler(this);
 		}
 
 		public override string PreviewUrl

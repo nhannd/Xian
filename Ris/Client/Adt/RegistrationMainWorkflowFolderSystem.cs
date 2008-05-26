@@ -73,7 +73,6 @@ namespace ClearCanvas.Ris.Client.Adt
 				this.AddFolder(new Folders.CancelledFolder(this));
 			}
 			this.AddFolder(_searchFolder = new Folders.RegistrationSearchFolder(this));
-			folderExplorer.RegisterSearchDataHandler(this);
 		}
 
 		public override string PreviewUrl
