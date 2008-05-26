@@ -44,8 +44,13 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
 	[SettingsGroupDescription("Stores the action model settings for each user")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
-	internal sealed partial class ActionModelSettings
+	internal sealed partial class ActionModelSettings : IDisposable
     {
+		private XmlDocument _actionModelXmlDoc;
+
+		private bool _temporary;
+
+
 		private ActionModelSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
@@ -68,6 +73,10 @@ namespace ClearCanvas.Desktop.Actions
         /// <returns>An <see cref="ActionModelNode"/> representing the root of the action model.</returns>
         public ActionModelRoot BuildAndSynchronize(string namespaze, string site, IActionSet actions)
         {
+			// do one time initialization
+			if(_actionModelXmlDoc == null)
+				Initialize();
+
 			string actionModelID = string.Format("{0}:{1}", namespaze, site);
 
 			IDictionary<string, IAction> actionMap = BuildActionMap(actions);
@@ -83,6 +92,30 @@ namespace ClearCanvas.Desktop.Actions
 		#region Private Methods
 		
 		#region Utility Methods
+
+		private void Initialize()
+		{
+			if(_actionModelXmlDoc == null)
+			{
+				try
+				{
+					// load the document from the store
+					_actionModelXmlDoc = this.ActionModelsXml;
+				}
+				catch (Exception e)
+				{
+					// if this fails to load for some reason, don't treat it as a serious error
+					// instead, just create a temporary XML document so the application can run
+					Platform.Log(LogLevel.Error, e);
+					_actionModelXmlDoc = new XmlDocument();
+					_actionModelXmlDoc.LoadXml("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<action-models />");
+
+					// set 'temporary' flag to true, so we don't try and save this model to the store
+					_temporary = true;
+				}
+			}
+		}
+
 
 		/// <summary>
 		/// Builds a map of action IDs to actions.
@@ -109,7 +142,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// <returns>An "action-model" element</returns>
 		private XmlElement CreateXmlActionModel(string id)
 		{
-			XmlElement xmlActionModel = this.ActionModelsXml.CreateElement("action-model");
+			XmlElement xmlActionModel = _actionModelXmlDoc.CreateElement("action-model");
 			xmlActionModel.SetAttribute("id", id);
 			return xmlActionModel;
 		}
@@ -121,7 +154,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// <returns>an "action" element</returns>
 		private XmlElement CreateXmlAction(IAction action)
 		{
-            XmlElement xmlAction = this.ActionModelsXml.CreateElement("action");
+			XmlElement xmlAction = _actionModelXmlDoc.CreateElement("action");
 
 			xmlAction.SetAttribute("id", action.ActionID);
 			xmlAction.SetAttribute("path", action.Path.ToString());
@@ -191,8 +224,6 @@ namespace ClearCanvas.Desktop.Actions
 			{
 				if (!modelExists)
 					this.GetActionModelsNode().AppendChild(xmlActionModel);
-
-				this.Save();
 			}
 			
 			XmlElement xmlActionModelClone = (XmlElement)xmlActionModel.CloneNode(true);
@@ -319,7 +350,35 @@ namespace ClearCanvas.Desktop.Actions
 
 		private XmlElement GetActionModelsNode()
 		{
-            return (XmlElement)this.ActionModelsXml.GetElementsByTagName("action-models")[0];
+			return (XmlElement)_actionModelXmlDoc.GetElementsByTagName("action-models")[0];
+		}
+
+		#endregion
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			// if this was not a 'temporary' model, save it
+			if(_actionModelXmlDoc != null && !_temporary)
+			{
+				try
+				{
+					this.ActionModelsXml = _actionModelXmlDoc;
+					this.Save();
+				}
+				catch (Exception e)
+				{
+					// don't treat this as a serious error
+					// not much we can do but log it
+					Platform.Log(LogLevel.Error, e);
+				}
+
+				_actionModelXmlDoc = null;
+			}
+
+			// unregister from the registry
+			ApplicationSettingsRegistry.Instance.UnregisterInstance(this);
 		}
 
 		#endregion

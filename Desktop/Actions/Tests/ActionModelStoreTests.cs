@@ -99,7 +99,6 @@ namespace ClearCanvas.Desktop.Actions.Tests
 			}
 
 			ActionModelSettings.Default.ActionModelsXml = document;
-			ActionModelSettings.Default.Save();
 		}
 
 		private void VerifyXmlDocument()

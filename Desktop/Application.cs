@@ -35,6 +35,7 @@ using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
 {
@@ -518,6 +519,10 @@ namespace ClearCanvas.Desktop
             // send quitting event
             QuittingEventArgs args = new QuittingEventArgs();
             OnQuitting(args);
+
+			// ensure the action model is disposed - this will cause it to be written out to the store
+			ActionModelSettings.Default.Dispose();
+
 
             try
             {

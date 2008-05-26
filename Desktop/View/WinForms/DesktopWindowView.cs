@@ -590,7 +590,17 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         public override void Open()
         {
-            LoadWindowSettings();
+			try
+			{
+				LoadWindowSettings();
+			}
+			catch (Exception e)
+			{
+				// if the window settings can't be loaded for any reason,
+				// just log it and move on
+				Platform.Log(LogLevel.Error, e);
+			}
+
             _form.Show();
         }
 
