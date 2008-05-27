@@ -42,6 +42,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 	public partial class OrderNoteConversationComponentControl : ApplicationComponentUserControl
 	{
 		private readonly OrderNoteConversationComponent _component;
+		private readonly CannedTextSupport _cannedTextSupport;
 
 		/// <summary>
 		/// Constructor.
@@ -57,6 +58,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_notes.DataBindings.Add("Selection", _component, "SelectedNote", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_replyBody.DataBindings.Add("Text", _component, "Body", true, DataSourceUpdateMode.OnPropertyChanged);
+			_cannedTextSupport = new CannedTextSupport(_replyBody, _component.CannedTextLookupHandler);
 
 			_onBehalf.DataSource = _component.OnBehalfOfGroupChoices;
 			_onBehalf.DataBindings.Add("Value", _component, "OnBehalfOf", true, DataSourceUpdateMode.OnPropertyChanged);

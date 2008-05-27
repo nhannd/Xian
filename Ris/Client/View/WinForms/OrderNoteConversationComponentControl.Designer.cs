@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._notes = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._replyGroupBox = new System.Windows.Forms.GroupBox();
 			this._replyTableLayout = new System.Windows.Forms.TableLayoutPanel();
-			this._replyBody = new System.Windows.Forms.TextBox();
+			this._replyBody = new System.Windows.Forms.RichTextBox();
 			this._onBehalf = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._recipientsTableLayout = new System.Windows.Forms.TableLayoutPanel();
 			this._recipients = new ClearCanvas.Desktop.View.WinForms.TableView();
@@ -200,12 +200,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _replyBody
 			// 
+			this._replyBody.AutoWordSelection = true;
+			this._replyBody.DetectUrls = false;
 			this._replyBody.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._replyBody.Location = new System.Drawing.Point(3, 48);
-			this._replyBody.Multiline = true;
 			this._replyBody.Name = "_replyBody";
 			this._replyBody.Size = new System.Drawing.Size(513, 216);
 			this._replyBody.TabIndex = 0;
+			this._replyBody.Text = "";
 			// 
 			// _onBehalf
 			// 
@@ -353,7 +355,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.TableView _recipients;
 		private System.Windows.Forms.GroupBox _notesGroupBox;
 		private System.Windows.Forms.GroupBox _replyGroupBox;
-		private System.Windows.Forms.TextBox _replyBody;
+		private System.Windows.Forms.RichTextBox _replyBody;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _onBehalf;
     }
 }

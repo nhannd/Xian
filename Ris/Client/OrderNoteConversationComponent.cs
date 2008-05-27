@@ -223,6 +223,8 @@ namespace ClearCanvas.Ris.Client
 		private ILookupHandler _staffGroupLookupHandler;
 		private StaffGroupSummary _selectedStaffGroup = null;
 
+		private ICannedTextLookupHandler _cannedTextLookupHandler;
+
 		#endregion
 
 		#region Constructors
@@ -255,6 +257,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			_staffLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow);
 			_staffGroupLookupHandler = new StaffGroupLookupHandler(this.Host.DesktopWindow);
+			_cannedTextLookupHandler = new CannedTextLookupHandler(this.Host.DesktopWindow);
 
 			Platform.GetService<IOrderNoteService>(
 				delegate(IOrderNoteService service)
@@ -334,6 +337,11 @@ namespace ClearCanvas.Ris.Client
 			{
 				_body = value;
 			}
+		}
+
+		public ICannedTextLookupHandler CannedTextLookupHandler
+		{
+			get { return _cannedTextLookupHandler; }
 		}
 
 		public IList<string> OnBehalfOfGroupChoices
