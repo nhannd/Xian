@@ -89,6 +89,13 @@
     <Compile Include="DropListPickerField.designer.cs">
       <DependentUpon>DropListPickerField.cs</DependentUpon>
     </Compile>
+    <Compile Include="PopupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PopupForm.designer.cs">
+      <DependentUpon>PopupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PopupWindowHelper.cs" />
     <Compile Include="SuggestComboField.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -462,6 +469,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DropListPickerField.resx">
       <DependentUpon>DropListPickerField.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PopupForm.resx">
+      <DependentUpon>PopupForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SuggestComboField.resx">

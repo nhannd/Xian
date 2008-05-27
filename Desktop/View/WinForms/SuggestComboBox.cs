@@ -65,7 +65,10 @@ namespace ClearCanvas.Desktop.View.WinForms
                 _suggestionProvider = value;
 
                 if (_suggestionProvider != null)
+                {
                     _suggestionProvider.SuggestionsProvided += ItemsProvidedEventHandler;
+                    _suggestionProvider.SetQuery(this.Text);
+                }
             }
         }
 
@@ -78,18 +81,23 @@ namespace ClearCanvas.Desktop.View.WinForms
             get { return this.SelectedItem; }
             set
             {
-                // in order to set the value, the Items collection must contain the value
-                // but if the value is null, can just use an empty list
-                // (also need to check for DBNull, for some stupid reason)
-                ArrayList items = new ArrayList();
-                if(value != null && value != System.DBNull.Value)
+                if(!Equals(this.SelectedItem, value))
                 {
-                    items.Add(value);
+                    // in order to set the value, the Items collection must contain the value
+                    // but if the value is null, can just use an empty list
+                    // (also need to check for DBNull, for some stupid reason)
+                    ArrayList items = new ArrayList();
+                    if(value != null && value != System.DBNull.Value)
+                    {
+                        items.Add(value);
+                    }
+                    //this.DataSource = items;
+                    UpdateListItems(items);
+                    this.SelectedItem = value;
+
+                    OnValueChanged(EventArgs.Empty);
                 }
-                //this.DataSource = items;
-                UpdateListItems(items);
-                this.SelectedItem = value;
-                EventsHelper.Fire(_valueChanged, this, EventArgs.Empty);
+
             }
         }
 
@@ -105,6 +113,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #endregion
 
+
+        protected virtual void OnValueChanged(EventArgs args)
+        {
+            EventsHelper.Fire(_valueChanged, this, EventArgs.Empty);
+        }
+
         #region Overrides and Helpers
 
         protected override void OnCreateControl()
@@ -118,7 +132,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             // there are 2 ways that the value can change
             // either the selection change is comitted, or the control loses focus
-            EventsHelper.Fire(_valueChanged, this, EventArgs.Empty);
+            OnValueChanged(EventArgs.Empty);
 
             base.OnSelectionChangeCommitted(e);
         }
@@ -152,34 +166,44 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             // there are 2 ways that the value can change
             // either the selection change is comitted, or the control loses focus
-            EventsHelper.Fire(_valueChanged, this, EventArgs.Empty);
+            OnValueChanged(EventArgs.Empty);
 
             base.OnLeave(e);
         }
 
-        // When an user deletes some text, the suggestions may no longer be valid.  
-        // We may want to handle the suggestions differently in the future
 
-        //protected override void OnKeyDown(KeyEventArgs e)
-        //{
-        //    switch (e.KeyCode)
-        //    {
-        //        case Keys.Delete:
-        //        case Keys.Back:
-        //            _textDeleted = true;
-        //            break;
-        //        default:
-        //            _textDeleted = false;
-        //            break;
-        //    }
-        //    base.OnKeyDown(e);
-        //}
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                // When an user deletes some text, the suggestions may no longer be valid.  
+                // We may want to handle the suggestions differently in the future
+                //case Keys.Delete:
+                //case Keys.Back:
+                //    _textDeleted = true;
+                //    break;
+                default:
+                    break;
+            }
+            base.OnKeyDown(e);
+        }
 
         protected override void OnTextUpdate(EventArgs e)
         {
             base.OnTextUpdate(e);
 
             _suggestionProvider.SetQuery(this.Text);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // setting this to null will also unsubscribe from the last subscribed-to provider
+                this.SuggestionProvider = null;
+            }
+
+            base.Dispose(disposing);
         }
 
         private void ItemsProvidedEventHandler(object sender, SuggestionsProvidedEventArgs e)
