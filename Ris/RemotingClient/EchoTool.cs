@@ -114,7 +114,7 @@ namespace RemotingClient
 		{
 			try
 			{
-				_echoService = (IEchoService)Activator.GetObject(typeof(IEchoService), "tcp://localhost:8080/echo.rem");
+				_echoService = (IEchoService)Activator.GetObject(typeof(IEchoService), RemotingSettings.Default.RemoteHostUrl);
 
 				this.Context.DesktopWindow.ShowMessageBox(_echoService.Echo("If you see this, remoting is working."),
 														  MessageBoxActions.Ok);

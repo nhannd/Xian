@@ -70,6 +70,7 @@
 
   <ItemGroup>
     <AppConfigSourceFiles Include="$(SolutionDir)\app.config" />
+    <AppConfigSourceFiles Include="$(TrunkDirectory)\Ris\RemotingClient\app.config" />
     <AppConfigSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
   </ItemGroup>
 
