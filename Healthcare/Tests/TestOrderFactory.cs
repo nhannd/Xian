@@ -56,7 +56,7 @@ namespace ClearCanvas.Healthcare.Tests
 
             Order order =  Order.NewOrder(new OrderCreationArgs(
 				Platform.Time,
-				TestStaffFactory.CreateStaff(StaffType.SCLR),
+				TestStaffFactory.CreateStaff(new StaffTypeEnum("SCLR", null, null)),
 				null,
                 accession,
                 patient,

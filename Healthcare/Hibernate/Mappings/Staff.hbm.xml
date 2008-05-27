@@ -19,7 +19,7 @@
     <property name="Title" column="Title_" type="String" length="100"/>
     <property name="LicenseNumber" column="LicenseNumber_" type="String" length="100"/>
     <property name="BillingNumber" column="BillingNumber_" type="String" length="100"/>
-    <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.StaffTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+    <many-to-one name="Type" class="StaffTypeEnum" column="Type_"/>
 
     <!-- This property associates the staff with a User identity - may be null if the Staff is not associated with a user. -->
     <property name="UserName" column="UserName_" type="String" not-null="false"/>

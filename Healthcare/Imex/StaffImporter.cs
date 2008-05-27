@@ -79,9 +79,9 @@ namespace ClearCanvas.Healthcare.Imex
 
                 string userName = fields[0];
 
-                StaffType staffType = TryParseEnum(fields[1], StaffType.X);
-                string staffId = fields[2];
+            	StaffTypeEnum staffType = context.GetBroker<IEnumBroker>().Find<StaffTypeEnum>(fields[1]);
 
+                string staffId = fields[2];
                 string staffFamilyName = fields[3];
                 string staffGivenName = fields[4];
                 string staffMiddlename = fields[5];

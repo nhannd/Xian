@@ -100,7 +100,7 @@ namespace ClearCanvas.Healthcare.Imex
 		protected override void Import(StaffData data, IUpdateContext context)
 		{
 			Staff staff = GetStaff(data.Id, context);
-			staff.Type = (StaffType)Enum.Parse(typeof(StaffType), data.StaffType);
+			staff.Type = context.GetBroker<IEnumBroker>().Find<StaffTypeEnum>(data.StaffType);
 			staff.Title = data.Title;
 			staff.Name.FamilyName = data.FamilyName;
 			staff.Name.GivenName = data.GivenName;
@@ -171,7 +171,6 @@ namespace ClearCanvas.Healthcare.Imex
 
 				// need to populate required fields before we can lock (use dummy values)
 				staff.Id = id;
-				staff.Type = StaffType.X;
 				staff.Name.FamilyName = "";
 				staff.Name.GivenName = "";
 				staff.Sex = Sex.U;

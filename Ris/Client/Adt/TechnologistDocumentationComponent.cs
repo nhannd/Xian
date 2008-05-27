@@ -203,7 +203,7 @@ namespace ClearCanvas.Ris.Client.Adt
             InitializeDocumentationTabPages();
 
             // allow assignment to radiologists and residents
-            _radiologistLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, new string[] {"PRAD", "PRAR"});
+            _radiologistLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow);
 
             base.Start();
         }

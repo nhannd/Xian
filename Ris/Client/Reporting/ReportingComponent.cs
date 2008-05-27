@@ -304,7 +304,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			_orderAdditionalInfoHost = new ChildComponentHost(this.Host, _orderAdditionalInfoComponent);
 			_orderAdditionalInfoHost.StartComponent();
 
-			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, new string[] { "PRAD" });
+			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow);
 
 			Platform.GetService<IReportingWorkflowService>(
 				delegate(IReportingWorkflowService service)
@@ -333,8 +333,11 @@ namespace ClearCanvas.Ris.Client.Reporting
 						// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
 						if (!String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID))
 						{
-							GetRadiologistListResponse getRadListresponse = service.GetRadiologistList(new GetRadiologistListRequest(SupervisorSettings.Default.SupervisorID));
-							_supervisor = CollectionUtils.FirstElement(getRadListresponse.Radiologists);
+							object supervisor;
+							if(_supervisorLookupHandler.Resolve(SupervisorSettings.Default.SupervisorID, false, out supervisor))
+							{
+								_supervisor = (StaffSummary) supervisor;
+							}
 						}
 					}
 				});

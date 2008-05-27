@@ -196,11 +196,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 		/// <param name="criteria"></param>
 		private void ApplyStaffTypesFilter(IEnumerable<string> staffTypesFilter, IEnumerable<StaffSearchCriteria> criteria)
 		{
+			IEnumBroker broker = PersistenceContext.GetBroker<IEnumBroker>();
 			if (staffTypesFilter != null)
 			{
 				// parse strings into StaffType 
-				List<StaffType> typeFilters = CollectionUtils.Map<string, StaffType>(staffTypesFilter,
-					   delegate(string t) { return (StaffType)Enum.Parse(typeof(StaffType), t); });
+				List<StaffTypeEnum> typeFilters = CollectionUtils.Map<string, StaffTypeEnum>(staffTypesFilter,
+					   delegate(string t) { return broker.Find<StaffTypeEnum>(t); });
 
 				if (typeFilters.Count > 0)
 				{

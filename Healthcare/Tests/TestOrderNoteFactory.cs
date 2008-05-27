@@ -50,7 +50,7 @@ namespace ClearCanvas.Healthcare.Tests
 			//return new OrderNote(Platform.Time, TestStaffFactory.CreateStaff(StaffType.STEC), comment);
 			OrderNote note = new OrderNote();
 			note.CreationTime = Platform.Time;
-			note.Author = TestStaffFactory.CreateStaff(StaffType.STEC);
+			note.Author = TestStaffFactory.CreateStaff(new StaffTypeEnum("STEC", null, null));
 			note.Body = comment;
 			return note;
 		}

@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Application.Services
 				return null;
 
 			return new StaffSummary(staff.GetRef(), staff.Id,
-				EnumUtils.GetEnumValueInfo(staff.Type, context),
+				EnumUtils.GetEnumValueInfo(staff.Type),
 				new PersonNameAssembler().CreatePersonNameDetail(staff.Name));
 		}
 
@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 			return new StaffDetail(
 				staff.Id,
-				EnumUtils.GetEnumValueInfo(staff.Type, context),
+				EnumUtils.GetEnumValueInfo(staff.Type),
 				assembler.CreatePersonNameDetail(staff.Name),
 				EnumUtils.GetEnumValueInfo(staff.Sex, context),
 				staff.Title,
@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Application.Services
 			AddressAssembler addressAssembler = new AddressAssembler();
 
 			staff.Id = detail.StaffId;
-			staff.Type = EnumUtils.GetEnumValue<StaffType>(detail.StaffType);
+			staff.Type = EnumUtils.GetEnumValue<StaffTypeEnum>(detail.StaffType, context);
 			assembler.UpdatePersonName(detail.Name, staff.Name);
 			staff.Sex = EnumUtils.GetEnumValue<Sex>(detail.Sex);
 			staff.Title = detail.Title;

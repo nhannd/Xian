@@ -190,7 +190,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="StaffType.cs" />
     <Compile Include="Tests\TestMimeDocumentFactory.cs" />
     <Compile Include="Tests\TestOrderAttachmentFactory.cs" />
     <Compile Include="Tests\TestDiagnosticServiceFactory.cs" />
@@ -335,6 +334,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ProtocolUrgencyEnum.enum.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="StaffTypeEnum.enum.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

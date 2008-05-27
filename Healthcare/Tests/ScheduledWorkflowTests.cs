@@ -73,7 +73,7 @@ namespace ClearCanvas.Healthcare.Tests
             ExternalPractitioner orderingPrac = TestExternalPractitionerFactory.CreatePractitioner();
             Facility facility = TestFacilityFactory.CreateFacility();
 
-            Order order = Order.NewOrder(new OrderCreationArgs(Platform.Time, TestStaffFactory.CreateStaff(StaffType.SCLR), null,
+            Order order = Order.NewOrder(new OrderCreationArgs(Platform.Time, TestStaffFactory.CreateStaff(new StaffTypeEnum("SCLR", null, null)), null,
                 accession, patient, visit, ds, reasonForStudy, OrderPriority.R, facility, facility,
                 scheduleTime, orderingPrac, new List<ResultRecipient>()));
 
@@ -213,7 +213,7 @@ namespace ClearCanvas.Healthcare.Tests
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
             CheckStatus(OrderStatus.SC, order);
 
-            order.Cancel(new OrderCancelInfo(_defaultCancelReason, TestStaffFactory.CreateStaff(StaffType.SCLR), "", null));
+			order.Cancel(new OrderCancelInfo(_defaultCancelReason, TestStaffFactory.CreateStaff(new StaffTypeEnum("SCLR", null, null)), "", null));
 
             CheckStatus(OrderStatus.CA, order);
             Assert.IsNull(order.StartTime);
@@ -243,7 +243,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 			Order replacement = TestOrderFactory.CreateOrder(2, 2, true);
 
-			order.Cancel(new OrderCancelInfo(_defaultCancelReason, TestStaffFactory.CreateStaff(StaffType.SCLR), "", replacement));
+			order.Cancel(new OrderCancelInfo(_defaultCancelReason, TestStaffFactory.CreateStaff(new StaffTypeEnum("SCLR", null, null)), "", replacement));
 
 			CheckStatus(OrderStatus.RP, order);
 			Assert.IsNull(order.StartTime);
@@ -272,11 +272,11 @@ namespace ClearCanvas.Healthcare.Tests
             // put the order in progress
             Procedure rp = CollectionUtils.FirstElement(order.Procedures);
             ProcedureStep step = CollectionUtils.FirstElement(rp.ProcedureSteps);
-            step.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
+			step.Start(TestStaffFactory.CreateStaff(new StaffTypeEnum("STEC", null, null)));
 
             try
             {
-				order.Cancel(new OrderCancelInfo(_defaultCancelReason, TestStaffFactory.CreateStaff(StaffType.SCLR), "", null));
+				order.Cancel(new OrderCancelInfo(_defaultCancelReason, TestStaffFactory.CreateStaff(new StaffTypeEnum("SCLR", null, null)), "", null));
 
                 Assert.Fail("expected exception when trying to cancel non-scheduled order");
             }
@@ -302,9 +302,9 @@ namespace ClearCanvas.Healthcare.Tests
             Procedure rp2 = reqProcs[1];
 
             // start rp 1
-            rp1.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(StaffType.STEC));
+			rp1.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(new StaffTypeEnum("SCLR", null, null)));
 
-			order.Discontinue(new OrderCancelInfo(_defaultCancelReason, TestStaffFactory.CreateStaff(StaffType.STEC), "", null));
+			order.Discontinue(new OrderCancelInfo(_defaultCancelReason, TestStaffFactory.CreateStaff(new StaffTypeEnum("SCLR", null, null)), "", null));
 
             // rp 2 is canceled
             CheckStatus(ProcedureStatus.CA, rp2);
@@ -338,7 +338,7 @@ namespace ClearCanvas.Healthcare.Tests
             Procedure rp2 = reqProcs[1];
 
             // start and discontinue rp1
-            rp1.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(StaffType.STEC));
+			rp1.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(new StaffTypeEnum("STEC", null, null)));
             rp1.Discontinue();
             Assert.IsNotNull(rp1.StartTime);
             Assert.IsNotNull(rp1.EndTime);
@@ -386,7 +386,7 @@ namespace ClearCanvas.Healthcare.Tests
             // put the order in progress
             Procedure rp = CollectionUtils.FirstElement(order.Procedures);
             ProcedureStep step = CollectionUtils.FirstElement(rp.ProcedureSteps);
-            step.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
+			step.Start(TestStaffFactory.CreateStaff(new StaffTypeEnum("STEC", null, null)));
 
             // procedure is in progress
             CheckStatus(ProcedureStatus.IP, rp);
@@ -416,12 +416,12 @@ namespace ClearCanvas.Healthcare.Tests
             rp2.Cancel();
 
             // complete rp1 and publish it
-            rp1.ModalityProcedureSteps[0].Complete(TestStaffFactory.CreateStaff(StaffType.STEC));
+			rp1.ModalityProcedureSteps[0].Complete(TestStaffFactory.CreateStaff(new StaffTypeEnum("STEC", null, null)));
 
             PublicationStep pub1 = new PublicationStep();
             rp1.AddProcedureStep(pub1);
-            
-            pub1.Complete(TestStaffFactory.CreateStaff(StaffType.PRAD));
+
+			pub1.Complete(TestStaffFactory.CreateStaff(new StaffTypeEnum("PRAD", null, null)));
 
             CheckStatus(ProcedureStatus.CA, rp2);
             Assert.IsNull(rp2.StartTime);
@@ -475,7 +475,7 @@ namespace ClearCanvas.Healthcare.Tests
                 Order order = TestOrderFactory.CreateOrder(1, 1, true);
 
                 Procedure rp = CollectionUtils.FirstElement(order.Procedures);
-                rp.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(StaffType.STEC));
+				rp.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(new StaffTypeEnum("STEC", null, null)));
 
                 CheckStatus(ProcedureStatus.IP, rp);
 
@@ -506,8 +506,8 @@ namespace ClearCanvas.Healthcare.Tests
             Procedure rp1 = reqProcs[0];
 
             // put one mps in progress and the other completed, leaving the third scheduled
-            rp1.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(StaffType.STEC));
-            rp1.ModalityProcedureSteps[1].Complete(TestStaffFactory.CreateStaff(StaffType.STEC));
+			rp1.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(new StaffTypeEnum("STEC", null, null)));
+			rp1.ModalityProcedureSteps[1].Complete(TestStaffFactory.CreateStaff(new StaffTypeEnum("STEC", null, null)));
 
             // discontinue rp1
             rp1.Discontinue();
@@ -543,7 +543,7 @@ namespace ClearCanvas.Healthcare.Tests
             ModalityProcedureStep mps1 = rp1.ModalityProcedureSteps[0];
             CheckStatus(ActivityStatus.SC, mps1);
 
-            mps1.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
+			mps1.Start(TestStaffFactory.CreateStaff(new StaffTypeEnum("STEC", null, null)));
 
             CheckStatus(ActivityStatus.IP, mps1);
             Assert.IsNotNull(mps1.StartTime);
@@ -568,7 +568,7 @@ namespace ClearCanvas.Healthcare.Tests
             ModalityProcedureStep mps1 = rp1.ModalityProcedureSteps[0];
             CheckStatus(ActivityStatus.SC, mps1);
 
-            mps1.Complete(TestStaffFactory.CreateStaff(StaffType.STEC));
+			mps1.Complete(TestStaffFactory.CreateStaff(new StaffTypeEnum("STEC", null, null)));
 
             CheckStatus(ActivityStatus.CM, mps1);
             Assert.IsNotNull(mps1.StartTime);
@@ -595,7 +595,7 @@ namespace ClearCanvas.Healthcare.Tests
             ModalityProcedureStep mps1 = rp1.ModalityProcedureSteps[0];
             CheckStatus(ActivityStatus.SC, mps1);
 
-            mps1.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
+			mps1.Start(TestStaffFactory.CreateStaff(new StaffTypeEnum("STEC", null, null)));
 
             CheckStatus(ActivityStatus.IP, mps1);
 

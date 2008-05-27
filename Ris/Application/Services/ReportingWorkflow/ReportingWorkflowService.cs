@@ -394,27 +394,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [ReadOperation]
-        public GetRadiologistListResponse GetRadiologistList(GetRadiologistListRequest request)
-        {
-            StaffAssembler assembler = new StaffAssembler();
-
-            StaffSearchCriteria criteria = new StaffSearchCriteria();
-            criteria.Type.EqualTo(StaffType.PRAD);
-
-            if (String.IsNullOrEmpty(request.SupervisorID) == false)
-                criteria.Id.EqualTo(request.SupervisorID);
-
-            IList<Staff> listRadiologists = PersistenceContext.GetBroker<IStaffBroker>().Find(criteria);
-
-            return new GetRadiologistListResponse(
-                CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(listRadiologists,
-                delegate(Staff staff)
-                    {
-                        return assembler.CreateStaffSummary(staff, this.PersistenceContext);
-                    }));
-        }
-
-        [ReadOperation]
         public GetLinkableInterpretationsResponse GetLinkableInterpretations(GetLinkableInterpretationsRequest request)
         {
             Platform.CheckForNullReference(request, "request");
