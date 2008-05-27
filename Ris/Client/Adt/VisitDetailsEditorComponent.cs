@@ -64,7 +64,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private readonly List<EnumValueInfo> _admissionTypeChoices;
         private readonly List<EnumValueInfo> _ambulatoryStatusChoices;
         private readonly List<EnumValueInfo> _visitStatusChoices;
-        private List<FacilitySummary> _facilityChoices;
+		private readonly List<FacilitySummary> _facilityChoices;
+		private readonly List<LocationSummary> _locationChoices;
 
         /// <summary>
         /// Constructor
@@ -75,7 +76,9 @@ namespace ClearCanvas.Ris.Client.Adt
                 List<EnumValueInfo> patientTypeChoices,
                 List<EnumValueInfo> admissionTypeChoices,
                 List<EnumValueInfo> ambulatoryStatusChoices,
-                List<EnumValueInfo> visitStatusChoices)
+                List<EnumValueInfo> visitStatusChoices,
+				List<FacilitySummary> facilityChoices,
+				List<LocationSummary> locationChoices)
         {
             _visitNumberAssigningAuthorityChoices = visitNumberAssigningAuthorityChoices;
             _patientClassChoices = patientClassChoices;
@@ -83,6 +86,8 @@ namespace ClearCanvas.Ris.Client.Adt
             _admissionTypeChoices = admissionTypeChoices;
             _ambulatoryStatusChoices = ambulatoryStatusChoices;
             _visitStatusChoices = visitStatusChoices;
+        	_facilityChoices = facilityChoices;
+        	_locationChoices = locationChoices;
         }
 
         public VisitDetail Visit
@@ -93,24 +98,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            Platform.GetService<IFacilityAdminService>(
-                delegate(IFacilityAdminService service)
-                {
-                    ///TODO: expose facility in the UI
-                    ListAllFacilitiesResponse listResponse = service.ListAllFacilities(new ListAllFacilitiesRequest());
-                    _facilityChoices = listResponse.Facilities;
-
-                    if (listResponse.Facilities.Count == 0)
-                    {
-                        GetFacilityEditFormDataResponse formResponse = service.GetFacilityEditFormData(new GetFacilityEditFormDataRequest());
-                        EnumValueInfo randomInformationAuthority = RandomUtils.ChooseRandom(formResponse.InformationAuthorityChoices);
-
-                        AddFacilityResponse addResponse = service.AddFacility(new AddFacilityRequest(new FacilityDetail("", "Test Facility", randomInformationAuthority)));
-                        _visit.Facility = addResponse.Facility;
-                        _facilityChoices.Add(addResponse.Facility);
-                    }
-                });
-
             if (_visit.VisitNumber == null)
             {
                 _visit.VisitNumber = new CompositeIdentifierDetail();
@@ -125,7 +112,7 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Stop();
         }
 
-        #region DataBinding Properties
+        #region Presentation Model
 
         public string VisitNumber
         {
@@ -137,7 +124,6 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        #region AssigningAuthority
         public EnumValueInfo VisitNumberAssigningAuthority
         {
             get { return _visit.VisitNumber.AssigningAuthority; }
@@ -152,8 +138,6 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get { return this._visitNumberAssigningAuthorityChoices; }
         }
-
-        #endregion
 
         public DateTime? AdmitDateTime
         {
@@ -205,92 +189,125 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        #region PatientClass
-        public string PatientClass
+        public EnumValueInfo PatientClass
         {
-            get { return _visit.PatientClass.Value; }
+            get { return _visit.PatientClass; }
             set
             {
-                _visit.PatientClass = EnumValueUtils.MapDisplayValue(_patientClassChoices, value);
-                this.Modified = true;
-            }
+				if (!Equals(value, _visit.PatientClass))
+				{
+					_visit.PatientClass = value;
+					this.Modified = true;
+				}
+			}
         }
 
-        public List<string> PatientClassChoices
+        public IList PatientClassChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_patientClassChoices); }
+            get { return _patientClassChoices; }
         }
-        #endregion
 
-        #region PatientType
-        public string PatientType
+		public EnumValueInfo PatientType
         {
-            get { return _visit.PatientType.Value; }
+            get { return _visit.PatientType; }
             set
             {
-                _visit.PatientType = EnumValueUtils.MapDisplayValue(_patientTypeChoices, value);
-                this.Modified = true;
-            }
+				if (!Equals(value, _visit.PatientType))
+				{
+					_visit.PatientType = value;
+					this.Modified = true;
+				}
+			}
         }
 
-        public List<string> PatientTypeChoices
+        public IList PatientTypeChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_patientTypeChoices); }
+            get { return _patientTypeChoices; }
         }
-        #endregion
 
-        #region AdmissionType
-        public string AdmissionType
+		public EnumValueInfo AdmissionType
         {
-            get { return _visit.AdmissionType.Value; }
+            get { return _visit.AdmissionType; }
             set
             {
-                _visit.AdmissionType = EnumValueUtils.MapDisplayValue(_admissionTypeChoices, value);
-                this.Modified = true;
-            }
+				if (!Equals(value, _visit.AdmissionType))
+				{
+					_visit.AdmissionType = value;
+					this.Modified = true;
+				}
+			}
         }
 
-        public List<string> AdmissionTypeChoices
+        public IList AdmissionTypeChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_admissionTypeChoices); }
+            get { return _admissionTypeChoices; }
         }
-        #endregion
 
-        #region AmbulatoryStatus
-        //public string AmbulatoryStatus
-        //{
-        //    get { return _visit.AmbulatoryStatus == null ? "" : _visit.AmbulatoryStatus.Value; }
-        //    set
-        //    {
-        //        _visit.AmbulatoryStatus = (value == "") ? null :
-        //            CollectionUtils.SelectFirst<EnumValueInfo>(_ambulatoryStatusChoices,
-        //            delegate(EnumValueInfo e) { return e.Value == Value; });
-        //        this.Modified = true;
-        //    }
-        //}
-
-        //public List<string> AmbulatoryStatusChoices
-        //{
-        //    get { return this._ambulatoryStatusChoices; }
-        //}
-        #endregion
-
-        #region VisitStatus
-        public String VisitStatus
+		public EnumValueInfo VisitStatus
         {
-            get { return _visit.Status.Value; }
+            get { return _visit.Status; }
             set
             {
-                _visit.Status = EnumValueUtils.MapDisplayValue(_visitStatusChoices, value);
-                this.Modified = true;
-            }
+				if (!Equals(value, _visit.Status))
+				{
+					_visit.Status = value;
+					this.Modified = true;
+				}
+			}
         }
 
-        public List<string> VisitStatusChoices
+		public IList VisitStatusChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_visitStatusChoices); }
+            get { return _visitStatusChoices; }
         }
-        #endregion
+
+    	public IList FacilityChoices
+    	{
+			get { return _facilityChoices; }
+    	}
+
+    	public FacilitySummary Facility
+    	{
+			get { return _visit.Facility; }
+			set
+			{
+				if(!Equals(value, _visit.Facility))
+				{
+					_visit.Facility = value;
+					this.Modified = true;
+				}
+			}
+    	}
+
+		public string FormatFacility(object item)
+		{
+			FacilitySummary f = (FacilitySummary) item;
+			return f.Name;
+		}
+
+		public IList CurrentLocationChoices
+		{
+			get { return _locationChoices; }
+		}
+
+		public LocationSummary CurrentLocation
+		{
+			get { return _visit.CurrentLocation; }
+			set
+			{
+				if (!Equals(value, _visit.CurrentLocation))
+				{
+					_visit.CurrentLocation = value;
+					this.Modified = true;
+				}
+			}
+		}
+
+		public string FormatCurrentLocation(object item)
+		{
+			LocationSummary l = (LocationSummary) item;
+			return l.Name;
+		}
 
         #endregion
     }

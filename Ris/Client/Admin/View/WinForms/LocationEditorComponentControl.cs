@@ -58,9 +58,18 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             InitializeComponent();
             _component = component;
 
+			_id.DataBindings.Add("Value", _component, "Id", true, DataSourceUpdateMode.OnPropertyChanged);
+			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
+			_description.DataBindings.Add("Value", _component, "Description", true, DataSourceUpdateMode.OnPropertyChanged);
+
             _facility.DataSource = _component.FacilityChoices;
             _facility.DataBindings.Add("Value", _component, "Facility", true, DataSourceUpdateMode.OnPropertyChanged);
-            _building.DataBindings.Add("Value", _component, "Building", true, DataSourceUpdateMode.OnPropertyChanged);
+			_facility.Format += delegate(object sender, ListControlConvertEventArgs e)
+								{
+									e.Value = _component.FormatFacility(e.ListItem);
+								};
+
+			_building.DataBindings.Add("Value", _component, "Building", true, DataSourceUpdateMode.OnPropertyChanged);
             _floor.DataBindings.Add("Value", _component, "Floor", true, DataSourceUpdateMode.OnPropertyChanged);
             _pointOfCare.DataBindings.Add("Value", _component, "PointOfCare", true, DataSourceUpdateMode.OnPropertyChanged);
             _room.DataBindings.Add("Value", _component, "Room", true, DataSourceUpdateMode.OnPropertyChanged);

@@ -42,16 +42,16 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="WorklistSubscriptionEditorComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="WorklistSelectorEditorComponent"/>
     /// </summary>
-    public partial class WorklistSubscriptionEditorComponentControl : ApplicationComponentUserControl
+    public partial class WorklistSelectorEditorComponentControl : ApplicationComponentUserControl
     {
-        private WorklistSubscriptionEditorComponent _component;
+        private WorklistSelectorEditorComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public WorklistSubscriptionEditorComponentControl(WorklistSubscriptionEditorComponent component)
+        public WorklistSelectorEditorComponentControl(WorklistSelectorEditorComponent component)
             :base(component)
         {
             InitializeComponent();

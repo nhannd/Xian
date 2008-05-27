@@ -50,6 +50,7 @@ namespace ClearCanvas.Healthcare.Tests
                 new PatientTypeEnum("X", "Whatever", null),
                 new AdmissionTypeEnum("A", "Who cares", null),
                 TestFacilityFactory.CreateFacility(),
+				TestLocationFactory.CreateLocation(),
                 null,
                 null,
                 false,

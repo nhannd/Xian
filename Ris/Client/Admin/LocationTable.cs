@@ -39,7 +39,15 @@ namespace ClearCanvas.Ris.Client.Admin
     {
         public LocationTable()
         {
-            this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnFacility,
+			this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnID,
+				delegate(LocationSummary loc) { return loc.Id; },
+				1.0f));
+
+			this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnName,
+				delegate(LocationSummary loc) { return loc.Name; },
+				1.0f));
+
+			this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnFacility,
                 delegate(LocationSummary loc) { return loc.Facility.Name; },
                 0.5f));
 
@@ -63,13 +71,6 @@ namespace ClearCanvas.Ris.Client.Admin
                 delegate(LocationSummary loc) { return loc.Bed; },
                 0.2f));
 
-            this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnActive,
-                delegate(LocationSummary loc) { return loc.Active.ToString(); },
-                0.2f));
-
-            this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnInactiveDate,
-                delegate(LocationSummary loc) { return Format.Date(loc.InactiveDate); },
-                0.5f));
         }
     }
 }

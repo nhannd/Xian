@@ -700,6 +700,24 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Patient Locations.
+        /// </summary>
+        internal static string NodePatientLocations {
+            get {
+                return ResourceManager.GetString("NodePatientLocations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Procedure Type Groups.
+        /// </summary>
+        internal static string NodeProcedureTypeGroups {
+            get {
+                return ResourceManager.GetString("NodeProcedureTypeGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Time Window.
         /// </summary>
         internal static string NodeTimeWindow {

@@ -166,6 +166,14 @@ namespace ClearCanvas.Healthcare
     {
     }
 
+	/// <summary>
+	/// Defines a filter that limits worklist items to those visits where the patient location falls into a specified
+	/// set of <see cref="Location"/> values.
+	/// </summary>
+	public class WorklistPatientLocationFilter : WorklistMultiValuedFilter<Location>
+	{
+	}
+
     /// <summary>
     /// Defines a filter that limits worklist items to those orders that fall into a specified
     /// set of <see cref="OrderPriorityEnum"/> values.

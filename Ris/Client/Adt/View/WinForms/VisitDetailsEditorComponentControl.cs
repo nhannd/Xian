@@ -42,7 +42,7 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="VisitEditorDetailsComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="VisitDetailsEditorComponent"/>
     /// </summary>
     public partial class VisitDetailsEditorComponentControl : CustomUserControl
     {
@@ -80,7 +80,21 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _visitStatus.DataSource = _component.VisitStatusChoices;
             _visitStatus.DataBindings.Add("Value", _component, "VisitStatus", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            //_ambulatoryStatus.DataSource = _component.AmbulatoryStatusChoices;
+			_facility.DataSource = _component.FacilityChoices;
+			_facility.DataBindings.Add("Value", _component, "Facility", true, DataSourceUpdateMode.OnPropertyChanged);
+        	_facility.Format += delegate(object sender, ListControlConvertEventArgs e)
+        	                    {
+        	                    	e.Value = _component.FormatFacility(e.ListItem);
+        	                    };
+
+			_currentLocation.DataSource = _component.CurrentLocationChoices;
+			_currentLocation.DataBindings.Add("Value", _component, "CurrentLocation", true, DataSourceUpdateMode.OnPropertyChanged);
+			_currentLocation.Format += delegate(object sender, ListControlConvertEventArgs e)
+								{
+									e.Value = _component.FormatCurrentLocation(e.ListItem);
+								};
+
+			//_ambulatoryStatus.DataSource = _component.AmbulatoryStatusChoices;
             //_ambulatoryStatus.DataBindings.Add("Value", _component, "AmbulatoryStatus", true, DataSourceUpdateMode.OnPropertyChanged);
         }
     }

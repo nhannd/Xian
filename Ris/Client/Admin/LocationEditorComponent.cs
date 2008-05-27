@@ -131,32 +131,56 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #region Presentation Model
 
-        public List<string> FacilityChoices
-        {
-            get 
-            {
-                List<string> facilityStrings = new List<string>();
-                facilityStrings.Add("");
-                facilityStrings.AddRange(
-                    CollectionUtils.Map<FacilitySummary, string>(
-                        _facilityChoices, delegate(FacilitySummary f) { return f.Name; }));
+		public string Id
+		{
+			get { return _locationDetail.Id; }
+			set
+			{
+				_locationDetail.Id = value;
+				this.Modified = true;
+			}
+		}
 
-                return facilityStrings;
-            }
+		public string Name
+		{
+			get { return _locationDetail.Name; }
+			set
+			{
+				_locationDetail.Name = value;
+				this.Modified = true;
+			}
+		}
+
+		public string Description
+		{
+			get { return _locationDetail.Description; }
+			set
+			{
+				_locationDetail.Description = value;
+				this.Modified = true;
+			}
+		}
+
+		public IList FacilityChoices
+        {
+            get { return _facilityChoices; }
         }
 
-        public string Facility
+        public FacilitySummary Facility
         {
-            get { return _locationDetail.Facility == null ? "" : _locationDetail.Facility.Name; }
+            get { return _locationDetail.Facility; }
             set
             {
-                _locationDetail.Facility = (value == "") ? null : 
-                    CollectionUtils.SelectFirst<FacilitySummary>(_facilityChoices,
-                        delegate(FacilitySummary f) { return f.Name == value; });
-
+            	_locationDetail.Facility = value;
                 this.Modified = true;
             }
         }
+
+		public string FormatFacility(object item)
+		{
+			FacilitySummary f = (FacilitySummary) item;
+			return f.Name;
+		}
 
         public string Building
         {
@@ -180,7 +204,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public string PointOfCare
         {
-            get { return (_locationDetail.PointOfCare == null ? "" : _locationDetail.PointOfCare); }
+            get { return _locationDetail.PointOfCare; }
             set 
             { 
                 _locationDetail.PointOfCare = value;

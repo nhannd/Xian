@@ -78,7 +78,10 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public FacilitySummary Facility;
 
-        [DataMember]
+		[DataMember]
+		public LocationSummary CurrentLocation;
+
+		[DataMember]
         public string DischargeDisposition;
 
         [DataMember]

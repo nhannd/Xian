@@ -38,6 +38,9 @@ namespace ClearCanvas.Ris.Application.Common
     public class LocationDetail : DataContractBase
     {
         public LocationDetail(
+			string id,
+			string name,
+			string description,
             FacilitySummary facility,
             string building,
             string floor,
@@ -45,6 +48,9 @@ namespace ClearCanvas.Ris.Application.Common
             string room,
             string bed)
         {
+        	this.Id = id;
+        	this.Name = name;
+        	this.Description = description;
             this.Facility = facility;
             this.Building = building;
             this.Floor = floor;
@@ -57,7 +63,16 @@ namespace ClearCanvas.Ris.Application.Common
         {
         }
 
-        [DataMember]
+		[DataMember]
+		public string Id;
+
+		[DataMember]
+		public string Name;
+
+		[DataMember]
+		public string Description;
+
+		[DataMember]
         public FacilitySummary Facility;
 
         [DataMember]

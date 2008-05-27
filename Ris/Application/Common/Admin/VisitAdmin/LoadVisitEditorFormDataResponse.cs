@@ -66,5 +66,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
 
         [DataMember]
         public List<FacilitySummary> FacilityChoices;
-    }
+
+		[DataMember]
+		public List<LocationSummary> CurrentLocationChoices;
+	}
 }

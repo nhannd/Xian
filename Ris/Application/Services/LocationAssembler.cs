@@ -42,20 +42,23 @@ namespace ClearCanvas.Ris.Application.Services
             FacilitySummary facility = new FacilityAssembler().CreateFacilitySummary(location.Facility);
             return new LocationSummary(
                 location.GetRef(),
+				location.Id,
+				location.Name,
                 facility,
                 location.Building,
                 location.Floor,
                 location.PointOfCare,
                 location.Room,
-                location.Bed,
-                location.Active,
-                location.InactiveDate);
+                location.Bed);
         }
 
         public LocationDetail CreateLocationDetail(Location location)
         {
             FacilitySummary facility = new FacilityAssembler().CreateFacilitySummary(location.Facility);
             return new LocationDetail(
+				location.Id,
+				location.Name,
+				location.Description,
                 facility,
                 location.Building,
                 location.Floor,
@@ -66,6 +69,10 @@ namespace ClearCanvas.Ris.Application.Services
 
         public void UpdateLocation(LocationDetail detail, Location location, IPersistenceContext context)
         {
+        	location.Name = detail.Name;
+			location.Id = detail.Id;
+			location.Description = detail.Description;
+
             location.Facility = context.Load<Facility>(detail.Facility.FacilityRef, EntityLoadFlags.Proxy);
             location.Building = detail.Building;
             location.Floor = detail.Floor;

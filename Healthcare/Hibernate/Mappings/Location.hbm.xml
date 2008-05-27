@@ -7,14 +7,15 @@
     </id>
     <version name="Version" column="Version_"/>
 
-    <many-to-one name="Facility" class="Facility" column="FacilityOID_" not-null="true" fetch="join"/>
+    <property name="Id" column="Id_" type="String" length="30" not-null="true" unique="true"/>
+    <property name="Name" column="Name_" type="String" not-null="true" unique="true"/>
+    <property name="Description" column="Description_" type="String" length="2000"/>
+
+    <many-to-one name="Facility" class="Facility" column="FacilityOID_" not-null="true"/>
     <property name="Building" column="Building_" type="String" length="100" not-null="false"/>
     <property name="Floor" column="Floor_" type="String" length="100" not-null="false"/>
     <property name="PointOfCare" column="PointOfCare_" type="String" length="100" not-null="false"/>
     <property name="Room" column="Room_" type="String" length="100" not-null="false"/>
     <property name="Bed" column="Bed_" type="String" length="100" not-null="false"/>
-
-    <property name="Active" column="Active_" type="Boolean" not-null="true"/>
-    <property name="InactiveDate" column="InactiveDate_" type="DateTime" not-null="false"/>
   </class>
 </hibernate-mapping>

@@ -36,27 +36,27 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class LocationSummary : DataContractBase
+	public class LocationSummary : DataContractBase, IEquatable<LocationSummary>
     {
         public LocationSummary(EntityRef locationRef,
+			string id,
+			string name,
             FacilitySummary facility,
             string building,
             string floor,
             string pointOfCare,
             string room,
-            string bed,
-            bool active,
-            DateTime? inactiveDate)
+            string bed)
         {
             this.LocationRef = locationRef;
+        	this.Id = id;
+        	this.Name = name;
             this.Facility = facility;
             this.Building = building;
             this.Floor = floor;
             this.PointOfCare = pointOfCare;
             this.Room = room;
             this.Bed = bed;
-            this.Active = active;
-            this.InactiveDate = inactiveDate;
         }
 
         public LocationSummary()
@@ -66,7 +66,13 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public EntityRef LocationRef;
 
-        [DataMember]
+		[DataMember]
+		public string Id;
+
+		[DataMember]
+		public string Name;
+
+		[DataMember]
         public FacilitySummary Facility;
 
         [DataMember]
@@ -84,11 +90,21 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public string Bed;
 
-        [DataMember]
-        public bool Active;
+		public bool Equals(LocationSummary other)
+		{
+			if (other == null) return false;
+			return Equals(LocationRef, other.LocationRef);
+		}
 
-        [DataMember]
-        public DateTime? InactiveDate;
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(this, obj)) return true;
+			return Equals(obj as LocationSummary);
+		}
 
-    }
+		public override int GetHashCode()
+		{
+			return LocationRef.GetHashCode();
+		}
+	}
 }

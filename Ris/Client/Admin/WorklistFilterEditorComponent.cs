@@ -73,15 +73,6 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        class ProcedureTypeGroupSummaryTable : Table<ProcedureTypeGroupSummary>
-        {
-            public ProcedureTypeGroupSummaryTable()
-            {
-                this.Columns.Add(new TableColumn<ProcedureTypeGroupSummary, string>(SR.ColumnName,
-                    delegate(ProcedureTypeGroupSummary summary) { return summary.Name; }));
-            }
-        }
-
         private static readonly object _nullFilterItem = new DummyItem(SR.DummyItemNone);
         private static readonly object _workingFacilityItem = new DummyItem(SR.DummyItemWorkingFacility);
         private static readonly object _portableItem = new DummyItem(SR.DummyItemPortable);
@@ -89,9 +80,6 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private static readonly object[] _portableChoices = new object[] { _portableItem, _nonPortableItem };
 
-        private List<ProcedureTypeGroupSummary> _procedureTypeGroupChoices;
-        private ProcedureTypeGroupSummaryTable _availableProcedureTypeGroups;
-        private ProcedureTypeGroupSummaryTable _selectedProcedureTypeGroups;
         private readonly ArrayList _facilityChoices;
         private ArrayList _selectedFacilities;
 
@@ -111,14 +99,6 @@ namespace ClearCanvas.Ris.Client.Admin
             List<EnumValueInfo> patientClassChoices)
         {
             _worklistDetail = detail;
-
-            _procedureTypeGroupChoices = procedureTypeGroupChoices;
-            _availableProcedureTypeGroups = new ProcedureTypeGroupSummaryTable();
-            _availableProcedureTypeGroups.Items.AddRange(Subtract(_worklistDetail.ProcedureTypeGroups, _procedureTypeGroupChoices,
-                     delegate(ProcedureTypeGroupSummary item) { return item.ProcedureTypeGroupRef; }));
-            _selectedProcedureTypeGroups = new ProcedureTypeGroupSummaryTable();
-            _selectedProcedureTypeGroups.Items.AddRange(_worklistDetail.ProcedureTypeGroups);
-
 
             _facilityChoices = new ArrayList();
             _facilityChoices.Add(_workingFacilityItem);
@@ -153,36 +133,11 @@ namespace ClearCanvas.Ris.Client.Admin
             base.Stop();
         }
 
-        public List<ProcedureTypeGroupSummary> ProcedureTypeGroupChoices
-        {
-            get { return _procedureTypeGroupChoices; }
-            set
-            {
-                _procedureTypeGroupChoices = value;
-
-                _availableProcedureTypeGroups.Items.Clear();
-                _availableProcedureTypeGroups.Items.AddRange(_procedureTypeGroupChoices);
-
-                // clear selected, since may contain groups that are no longer valid choices
-                _selectedProcedureTypeGroups.Items.Clear();
-            }
-        }
-
         #region Presentation Model
 
         public string ProcedureTypeGroupClassName
         {
             get { return _worklistDetail.WorklistClass.ProcedureTypeGroupClassDisplayName; }
-        }
-
-        public ITable AvailableProcedureTypeGroups
-        {
-            get { return _availableProcedureTypeGroups; }
-        }
-
-        public ITable SelectedProcedureTypeGroups
-        {
-            get { return _selectedProcedureTypeGroups; }
         }
 
         public object NullFilterItem
@@ -285,9 +240,6 @@ namespace ClearCanvas.Ris.Client.Admin
 
         internal void SaveData()
         {
-            _worklistDetail.ProcedureTypeGroups.Clear();
-            _worklistDetail.ProcedureTypeGroups.AddRange(_selectedProcedureTypeGroups.Items);
-
             _worklistDetail.Facilities = new List<FacilitySummary>();
             _worklistDetail.Facilities.AddRange(
                 new TypeSafeListWrapper<FacilitySummary>(
@@ -298,16 +250,5 @@ namespace ClearCanvas.Ris.Client.Admin
             _worklistDetail.Portabilities = CollectionUtils.Map<object, bool>(_selectedPortabilities,
                 delegate(object item) { return item == _portableItem ? true : false; });
         }
-
-        private static List<T> Subtract<T>(IEnumerable<T> some, IEnumerable<T> all, Converter<T, EntityRef> identityProvider)
-        {
-            return CollectionUtils.Reject(all,
-                        delegate(T x)
-                        {
-                            return CollectionUtils.Contains(some,
-                                delegate(T y) { return identityProvider(x).Equals(identityProvider(y), true); });
-                        });
-        }
-
     }
 }

@@ -76,7 +76,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
                     return facilityAssembler.CreateFacilitySummary(f);
                 });
 
-            return response;
+			LocationAssembler locationAssembler = new LocationAssembler();
+			response.CurrentLocationChoices = CollectionUtils.Map<Location, LocationSummary>(
+				PersistenceContext.GetBroker<ILocationBroker>().FindAll(),
+				delegate(Location f)
+				{
+					return locationAssembler.CreateLocationSummary(f);
+				});
+
+			return response;
         }
 
         [ReadOperation]

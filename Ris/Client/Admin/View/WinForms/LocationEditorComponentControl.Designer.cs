@@ -59,182 +59,191 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this._cancelButton = new System.Windows.Forms.Button();
-            this._acceptButton = new System.Windows.Forms.Button();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this._facility = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-            this._building = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._floor = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._pointOfCare = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._room = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._bed = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.flowLayoutPanel2.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(470, 134);
-            this.tableLayoutPanel1.TabIndex = 0;
-            // 
-            // flowLayoutPanel2
-            // 
-            this.flowLayoutPanel2.AutoSize = true;
-            this.flowLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanel2.Controls.Add(this._cancelButton);
-            this.flowLayoutPanel2.Controls.Add(this._acceptButton);
-            this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 99);
-            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(464, 32);
-            this.flowLayoutPanel2.TabIndex = 2;
-            // 
-            // _cancelButton
-            // 
-            this._cancelButton.Location = new System.Drawing.Point(386, 3);
-            this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(75, 23);
-            this._cancelButton.TabIndex = 1;
-            this._cancelButton.Text = "Cancel";
-            this._cancelButton.UseVisualStyleBackColor = true;
-            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
-            // 
-            // _acceptButton
-            // 
-            this._acceptButton.Location = new System.Drawing.Point(305, 3);
-            this._acceptButton.Name = "_acceptButton";
-            this._acceptButton.Size = new System.Drawing.Size(75, 23);
-            this._acceptButton.TabIndex = 0;
-            this._acceptButton.Text = "Accept";
-            this._acceptButton.UseVisualStyleBackColor = true;
-            this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.AutoSize = true;
-            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanel1.Controls.Add(this._facility);
-            this.flowLayoutPanel1.Controls.Add(this._building);
-            this.flowLayoutPanel1.Controls.Add(this._floor);
-            this.flowLayoutPanel1.Controls.Add(this._pointOfCare);
-            this.flowLayoutPanel1.Controls.Add(this._room);
-            this.flowLayoutPanel1.Controls.Add(this._bed);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(464, 90);
-            this.flowLayoutPanel1.TabIndex = 0;
-            // 
-            // _facility
-            // 
-            this._facility.DataSource = null;
-            this._facility.DisplayMember = "";
-            this._facility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._facility.LabelText = "Facility";
-            this._facility.Location = new System.Drawing.Point(2, 2);
-            this._facility.Margin = new System.Windows.Forms.Padding(2);
-            this._facility.Name = "_facility";
-            this._facility.Size = new System.Drawing.Size(150, 41);
-            this._facility.TabIndex = 0;
-            this._facility.Value = null;
-            // 
-            // _building
-            // 
-            this._building.LabelText = "Building";
-            this._building.Location = new System.Drawing.Point(156, 2);
-            this._building.Margin = new System.Windows.Forms.Padding(2);
-            this._building.Mask = "";
-            this._building.Name = "_building";
-            this._building.Size = new System.Drawing.Size(150, 41);
-            this._building.TabIndex = 1;
-            this._building.Value = null;
-            // 
-            // _floor
-            // 
-            this._floor.LabelText = "Floor";
-            this._floor.Location = new System.Drawing.Point(310, 2);
-            this._floor.Margin = new System.Windows.Forms.Padding(2);
-            this._floor.Mask = "";
-            this._floor.Name = "_floor";
-            this._floor.Size = new System.Drawing.Size(150, 41);
-            this._floor.TabIndex = 2;
-            this._floor.Value = null;
-            // 
-            // _pointOfCare
-            // 
-            this._pointOfCare.LabelText = "Point Of Care";
-            this._pointOfCare.Location = new System.Drawing.Point(2, 47);
-            this._pointOfCare.Margin = new System.Windows.Forms.Padding(2);
-            this._pointOfCare.Mask = "";
-            this._pointOfCare.Name = "_pointOfCare";
-            this._pointOfCare.Size = new System.Drawing.Size(150, 41);
-            this._pointOfCare.TabIndex = 3;
-            this._pointOfCare.Value = null;
-            // 
-            // _room
-            // 
-            this._room.LabelText = "Room";
-            this._room.Location = new System.Drawing.Point(156, 47);
-            this._room.Margin = new System.Windows.Forms.Padding(2);
-            this._room.Mask = "";
-            this._room.Name = "_room";
-            this._room.Size = new System.Drawing.Size(150, 41);
-            this._room.TabIndex = 4;
-            this._room.Value = null;
-            // 
-            // _bed
-            // 
-            this._bed.LabelText = "Bed";
-            this._bed.Location = new System.Drawing.Point(310, 47);
-            this._bed.Margin = new System.Windows.Forms.Padding(2);
-            this._bed.Mask = "";
-            this._bed.Name = "_bed";
-            this._bed.Size = new System.Drawing.Size(150, 41);
-            this._bed.TabIndex = 5;
-            this._bed.Value = null;
-            // 
-            // LocationEditorComponentControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "LocationEditorComponentControl";
-            this.Size = new System.Drawing.Size(470, 134);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
-            this.flowLayoutPanel2.ResumeLayout(false);
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.ResumeLayout(false);
+			this._cancelButton = new System.Windows.Forms.Button();
+			this._acceptButton = new System.Windows.Forms.Button();
+			this._facility = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._building = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._floor = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._pointOfCare = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._room = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._bed = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._id = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._description = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this.SuspendLayout();
+			// 
+			// _cancelButton
+			// 
+			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._cancelButton.Location = new System.Drawing.Point(392, 191);
+			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
+			this._cancelButton.TabIndex = 1;
+			this._cancelButton.Text = "Cancel";
+			this._cancelButton.UseVisualStyleBackColor = true;
+			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+			// 
+			// _acceptButton
+			// 
+			this._acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._acceptButton.Location = new System.Drawing.Point(311, 191);
+			this._acceptButton.Name = "_acceptButton";
+			this._acceptButton.Size = new System.Drawing.Size(75, 23);
+			this._acceptButton.TabIndex = 0;
+			this._acceptButton.Text = "Accept";
+			this._acceptButton.UseVisualStyleBackColor = true;
+			this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
+			// 
+			// _facility
+			// 
+			this._facility.DataSource = null;
+			this._facility.DisplayMember = "";
+			this._facility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._facility.LabelText = "Facility";
+			this._facility.Location = new System.Drawing.Point(9, 98);
+			this._facility.Margin = new System.Windows.Forms.Padding(2);
+			this._facility.Name = "_facility";
+			this._facility.Size = new System.Drawing.Size(150, 41);
+			this._facility.TabIndex = 0;
+			this._facility.Value = null;
+			// 
+			// _building
+			// 
+			this._building.LabelText = "Building";
+			this._building.Location = new System.Drawing.Point(163, 98);
+			this._building.Margin = new System.Windows.Forms.Padding(2);
+			this._building.Mask = "";
+			this._building.Name = "_building";
+			this._building.PasswordChar = '\0';
+			this._building.Size = new System.Drawing.Size(229, 41);
+			this._building.TabIndex = 1;
+			this._building.ToolTip = null;
+			this._building.Value = null;
+			// 
+			// _floor
+			// 
+			this._floor.LabelText = "Floor";
+			this._floor.Location = new System.Drawing.Point(396, 98);
+			this._floor.Margin = new System.Windows.Forms.Padding(2);
+			this._floor.Mask = "";
+			this._floor.Name = "_floor";
+			this._floor.PasswordChar = '\0';
+			this._floor.Size = new System.Drawing.Size(71, 41);
+			this._floor.TabIndex = 2;
+			this._floor.ToolTip = null;
+			this._floor.Value = null;
+			// 
+			// _pointOfCare
+			// 
+			this._pointOfCare.LabelText = "Point Of Care";
+			this._pointOfCare.Location = new System.Drawing.Point(9, 143);
+			this._pointOfCare.Margin = new System.Windows.Forms.Padding(2);
+			this._pointOfCare.Mask = "";
+			this._pointOfCare.Name = "_pointOfCare";
+			this._pointOfCare.PasswordChar = '\0';
+			this._pointOfCare.Size = new System.Drawing.Size(150, 41);
+			this._pointOfCare.TabIndex = 3;
+			this._pointOfCare.ToolTip = null;
+			this._pointOfCare.Value = null;
+			// 
+			// _room
+			// 
+			this._room.LabelText = "Room";
+			this._room.Location = new System.Drawing.Point(163, 143);
+			this._room.Margin = new System.Windows.Forms.Padding(2);
+			this._room.Mask = "";
+			this._room.Name = "_room";
+			this._room.PasswordChar = '\0';
+			this._room.Size = new System.Drawing.Size(229, 41);
+			this._room.TabIndex = 4;
+			this._room.ToolTip = null;
+			this._room.Value = null;
+			// 
+			// _bed
+			// 
+			this._bed.LabelText = "Bed";
+			this._bed.Location = new System.Drawing.Point(396, 143);
+			this._bed.Margin = new System.Windows.Forms.Padding(2);
+			this._bed.Mask = "";
+			this._bed.Name = "_bed";
+			this._bed.PasswordChar = '\0';
+			this._bed.Size = new System.Drawing.Size(71, 41);
+			this._bed.TabIndex = 5;
+			this._bed.ToolTip = null;
+			this._bed.Value = null;
+			// 
+			// _id
+			// 
+			this._id.LabelText = "ID";
+			this._id.Location = new System.Drawing.Point(9, 7);
+			this._id.Margin = new System.Windows.Forms.Padding(2);
+			this._id.Mask = "";
+			this._id.Name = "_id";
+			this._id.PasswordChar = '\0';
+			this._id.Size = new System.Drawing.Size(150, 41);
+			this._id.TabIndex = 6;
+			this._id.ToolTip = null;
+			this._id.Value = null;
+			// 
+			// _name
+			// 
+			this._name.LabelText = "Name";
+			this._name.Location = new System.Drawing.Point(163, 7);
+			this._name.Margin = new System.Windows.Forms.Padding(2);
+			this._name.Mask = "";
+			this._name.Name = "_name";
+			this._name.PasswordChar = '\0';
+			this._name.Size = new System.Drawing.Size(304, 41);
+			this._name.TabIndex = 7;
+			this._name.ToolTip = null;
+			this._name.Value = null;
+			// 
+			// _description
+			// 
+			this._description.LabelText = "Description";
+			this._description.Location = new System.Drawing.Point(9, 52);
+			this._description.Margin = new System.Windows.Forms.Padding(2);
+			this._description.Mask = "";
+			this._description.Name = "_description";
+			this._description.PasswordChar = '\0';
+			this._description.Size = new System.Drawing.Size(458, 41);
+			this._description.TabIndex = 8;
+			this._description.ToolTip = null;
+			this._description.Value = null;
+			// 
+			// LocationEditorComponentControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._description);
+			this.Controls.Add(this._name);
+			this.Controls.Add(this._id);
+			this.Controls.Add(this._floor);
+			this.Controls.Add(this._building);
+			this.Controls.Add(this._facility);
+			this.Controls.Add(this._cancelButton);
+			this.Controls.Add(this._acceptButton);
+			this.Controls.Add(this._bed);
+			this.Controls.Add(this._room);
+			this.Controls.Add(this._pointOfCare);
+			this.Name = "LocationEditorComponentControl";
+			this.Size = new System.Drawing.Size(470, 217);
+			this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _facility;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _facility;
         private ClearCanvas.Desktop.View.WinForms.TextField _building;
         private ClearCanvas.Desktop.View.WinForms.TextField _floor;
         private ClearCanvas.Desktop.View.WinForms.TextField _pointOfCare;
         private ClearCanvas.Desktop.View.WinForms.TextField _room;
-        private ClearCanvas.Desktop.View.WinForms.TextField _bed;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+		private ClearCanvas.Desktop.View.WinForms.TextField _bed;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _acceptButton;
+		private ClearCanvas.Desktop.View.WinForms.TextField _id;
+		private ClearCanvas.Desktop.View.WinForms.TextField _name;
+		private ClearCanvas.Desktop.View.WinForms.TextField _description;
     }
 }

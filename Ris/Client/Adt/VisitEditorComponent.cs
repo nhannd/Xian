@@ -47,8 +47,6 @@ namespace ClearCanvas.Ris.Client.Adt
         private VisitSummary _addedVisit;
 
         private VisitDetailsEditorComponent _visitEditor;
-        private VisitPractitionersSummaryComponent _visitPractionersSummary;
-        private VisitLocationsSummaryComponent _visitLocationsSummary;
 
         private readonly bool _isNew;
 
@@ -82,17 +80,22 @@ namespace ClearCanvas.Ris.Client.Adt
                             response.PatientTypeChoices,
                             response.AdmissionTypeChoices,
                             response.AmbulatoryStatusChoices,
-                            response.VisitStatusChoices)));
+                            response.VisitStatusChoices,
+							response.FacilityChoices,
+							response.CurrentLocationChoices)));
 
-                    this.Pages.Add(new NavigatorPage("Visit/Practitioners", 
-                        _visitPractionersSummary = new VisitPractitionersSummaryComponent(
-                            response.VisitPractitionerRoleChoices
-                        )));
+					// JR (may 2008): these pages are not currently needed, and they are not complete, so
+					// better just to remove them for now
 
-                    this.Pages.Add(new NavigatorPage("Visit/Location", 
-                        _visitLocationsSummary = new VisitLocationsSummaryComponent(
-                            response.VisitLocationRoleChoices
-                        )));
+					//this.Pages.Add(new NavigatorPage("Visit/Practitioners", 
+					//    _visitPractionersSummary = new VisitPractitionersSummaryComponent(
+					//        response.VisitPractitionerRoleChoices
+					//    )));
+
+					//this.Pages.Add(new NavigatorPage("Visit/Location", 
+					//    _visitLocationsSummary = new VisitLocationsSummaryComponent(
+					//        response.VisitLocationRoleChoices
+					//    )));
 
                     if (_isNew)
                     {
@@ -117,8 +120,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 });
 
             _visitEditor.Visit = _visit;
-            _visitPractionersSummary.Visit = _visit;
-            _visitLocationsSummary.Visit = _visit;
+			//_visitPractionersSummary.Visit = _visit;
+			//_visitLocationsSummary.Visit = _visit;
 
             base.Start();
         }

@@ -78,6 +78,7 @@ namespace ClearCanvas.Ris.Application.Services
             detail.DischargeDisposition = visit.DischargeDisposition;
 
             detail.Facility = new FacilityAssembler().CreateFacilitySummary(visit.Facility);
+			detail.CurrentLocation = visit.CurrentLocation == null ? null : new LocationAssembler().CreateLocationSummary(visit.CurrentLocation);
             
             detail.Locations = new List<VisitLocationDetail>();
             foreach (VisitLocation vl in visit.Locations)
@@ -125,14 +126,10 @@ namespace ClearCanvas.Ris.Application.Services
             visit.DischargeTime = detail.DischargeTime;
             visit.DischargeDisposition = detail.DischargeDisposition;
 
-            if (detail.Facility != null)
-            {
-                visit.Facility = context.Load<Facility>(detail.Facility.FacilityRef, EntityLoadFlags.Proxy);
-            }
-            else
-            {
-                throw new RequestValidationException("Visit requires a facility");
-            }
+			visit.Facility = detail.Facility == null ? null :
+				context.Load<Facility>(detail.Facility.FacilityRef, EntityLoadFlags.Proxy);
+			visit.CurrentLocation = detail.CurrentLocation == null ? null :
+				context.Load<Location>(detail.CurrentLocation.LocationRef, EntityLoadFlags.Proxy);
 
             visit.Locations.Clear();
             foreach (VisitLocationDetail vlDetail in detail.Locations)

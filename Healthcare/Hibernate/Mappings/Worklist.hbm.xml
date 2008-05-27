@@ -43,7 +43,15 @@
         <many-to-many column="PatientClassOID_" class="PatientClassEnum" fetch="join"/>
       </set>
     </component>
-    
+
+    <component name="PatientLocationFilter" class="WorklistPatientLocationFilter">
+      <property name="IsEnabled" type="Boolean" column="PatientLocationFilterIsEnabled_"/>
+      <set name="Values" table="WorklistPatientLocation_" lazy="true">
+        <key column="WorklistOID_"/>
+        <many-to-many column="PatientLocationOID_" class="Location" fetch="join"/>
+      </set>
+    </component>
+
     <component name="OrderPriorityFilter" class="WorklistOrderPriorityFilter">
       <property name="IsEnabled" type="Boolean" column="OrderPriorityFilterIsEnabled_"/>
       <set name="Values" table="WorklistOrderPriority_" lazy="true">

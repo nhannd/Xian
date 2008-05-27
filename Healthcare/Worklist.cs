@@ -180,6 +180,7 @@ namespace ClearCanvas.Healthcare
         private WorklistProcedureTypeGroupFilter _procedureTypeGroupFilter;
         private WorklistFacilityFilter _facilityFilter;
         private WorklistPatientClassFilter _patientClassFilter;
+    	private WorklistPatientLocationFilter _patientLocationFilter;
         private WorklistOrderPriorityFilter _orderPriorityFilter;
         private WorklistPortableFilter _portableFilter;
         private WorklistTimeFilter _timeFilter;
@@ -198,6 +199,7 @@ namespace ClearCanvas.Healthcare
             _procedureTypeGroupFilter = new WorklistProcedureTypeGroupFilter();
             _facilityFilter = new WorklistFacilityFilter();
             _patientClassFilter = new WorklistPatientClassFilter();
+			_patientLocationFilter = new WorklistPatientLocationFilter();
             _orderPriorityFilter = new WorklistOrderPriorityFilter();
             _portableFilter = new WorklistPortableFilter();
             _timeFilter = new WorklistTimeFilter();
@@ -303,6 +305,17 @@ namespace ClearCanvas.Healthcare
             get { return _patientClassFilter; }
             set { _patientClassFilter = value; }
         }
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistPatientLocationFilter"/>.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public WorklistPatientLocationFilter PatientLocationFilter
+		{
+			get { return _patientLocationFilter; }
+			set { _patientLocationFilter = value; }
+		}
 
         /// <summary>
         /// Gets or sets the <see cref="WorklistOrderPriorityFilter"/>.

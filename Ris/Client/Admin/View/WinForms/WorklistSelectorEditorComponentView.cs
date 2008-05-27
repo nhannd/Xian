@@ -40,20 +40,20 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="WorklistSubscriptionEditorComponent"/>
+    /// Provides a Windows Forms view onto <see cref="WorklistSelectorEditorComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(WorklistSubscriptionEditorComponentViewExtensionPoint))]
-    public class WorklistSubscriptionEditorComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(WorklistSelectorEditorComponentViewExtensionPoint))]
+    public class WorklistSelectorEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        private WorklistSubscriptionEditorComponent _component;
-        private WorklistSubscriptionEditorComponentControl _control;
+        private WorklistSelectorEditorComponent _component;
+        private WorklistSelectorEditorComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (WorklistSubscriptionEditorComponent)component;
+            _component = (WorklistSelectorEditorComponent)component;
         }
 
         #endregion
@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new WorklistSubscriptionEditorComponentControl(_component);
+                    _control = new WorklistSelectorEditorComponentControl(_component);
                 }
                 return _control;
             }

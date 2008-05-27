@@ -58,11 +58,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
             _component = component;
 
-            _procedureTypeGroupsSelector.AvailableItemsTable = _component.AvailableProcedureTypeGroups;
-            _procedureTypeGroupsSelector.SelectedItemsTable = _component.SelectedProcedureTypeGroups;
-            _procedureTypeGroupsSelector.ItemAdded += OnItemsAddedOrRemoved;
-            _procedureTypeGroupsSelector.ItemRemoved += OnItemsAddedOrRemoved;
-
             _facilities.NullItem = _component.NullFilterItem;
             _facilities.Format += delegate(object sender, ListControlConvertEventArgs args) { args.Value = _component.FormatFacility(args.ListItem); };
             _facilities.DataBindings.Add("Items", _component, "FacilityChoices", true, DataSourceUpdateMode.Never);
@@ -83,14 +78,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _portable.DataBindings.Add("Items", _component, "PortableChoices", true, DataSourceUpdateMode.Never);
             _portable.DataBindings.Add("CheckedItems", _component, "SelectedPortabilities", true,
                                          DataSourceUpdateMode.OnPropertyChanged);
-
-            _procedureTypeGroupLabel.DataBindings.Add("Text", _component, "ProcedureTypeGroupClassName", true,
-                                                      DataSourceUpdateMode.Never);
-        }
-
-        private void OnItemsAddedOrRemoved(object sender, EventArgs args)
-        {
-            _component.ItemsAddedOrRemoved();
         }
     }
 }

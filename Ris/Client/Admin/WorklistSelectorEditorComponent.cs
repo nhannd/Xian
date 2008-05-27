@@ -42,14 +42,14 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Client.Admin
 {
     /// <summary>
-    /// Extension point for views onto <see cref="WorklistSubscriptionEditorComponent{TSummary, TTable}"/>
+    /// Extension point for views onto <see cref="WorklistSelectorEditorComponent"/>
     /// </summary>
     [ExtensionPoint]
-    public class WorklistSubscriptionEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    public class WorklistSelectorEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
-    public abstract class WorklistSubscriptionEditorComponent : ApplicationComponent
+    public abstract class WorklistSelectorEditorComponent : ApplicationComponent
     {
         public abstract ITable AvailableItemsTable { get; }
         public abstract ITable SelectedItemsTable { get; }
@@ -61,10 +61,10 @@ namespace ClearCanvas.Ris.Client.Admin
     }
 
     /// <summary>
-    /// WorklistSubscriptionEditorComponent class
+    /// WorklistSelectorEditorComponent class
     /// </summary>
-    [AssociateView(typeof(WorklistSubscriptionEditorComponentViewExtensionPoint))]
-    public class WorklistSubscriptionEditorComponent<TSummary, TTable> : WorklistSubscriptionEditorComponent
+    [AssociateView(typeof(WorklistSelectorEditorComponentViewExtensionPoint))]
+    public class WorklistSelectorEditorComponent<TSummary, TTable> : WorklistSelectorEditorComponent
         where TSummary : DataContractBase
         where TTable : Table<TSummary>, new()
     {
@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client.Admin
         /// <summary>
         /// Constructor
         /// </summary>
-        public WorklistSubscriptionEditorComponent(IEnumerable<TSummary> allItems, IEnumerable<TSummary> selectedItems, Converter<TSummary, EntityRef> identityProvider)
+        public WorklistSelectorEditorComponent(IEnumerable<TSummary> allItems, IEnumerable<TSummary> selectedItems, Converter<TSummary, EntityRef> identityProvider)
         {
             _available = new TTable();
             _selected = new TTable();
@@ -83,7 +83,33 @@ namespace ClearCanvas.Ris.Client.Admin
             _available.Items.AddRange(Subtract(selectedItems, allItems, identityProvider));
         }
 
-        public IList<TSummary> SelectedItems
+		/// <summary>
+		/// Gets or sets the list of all possible items.
+		/// </summary>
+		public List<TSummary> AllItems
+		{
+			get
+			{
+				List<TSummary> list = new List<TSummary>(_available.Items);
+				list.AddRange(_selected.Items);
+				return list;
+			}
+			set
+			{
+				_available.Items.Clear();
+				
+				if(value != null)
+					_available.Items.AddRange(value);
+
+				// clear selected, since may contain groups that are no longer valid choices
+				_selected.Items.Clear();
+			}
+		}
+
+		/// <summary>
+		/// Gets the list of selected items.
+		/// </summary>
+		public IList<TSummary> SelectedItems
         {
             get { return _selected.Items; }
         }

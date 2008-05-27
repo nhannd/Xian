@@ -133,6 +133,7 @@
     <Compile Include="TechnologistWorklists.cs" />
     <Compile Include="Tests\ReportTests.cs" />
     <Compile Include="Tests\TestExtensionFactory.cs" />
+    <Compile Include="Tests\TestLocationFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />
     <Compile Include="Tests\WorklistTimePointTests.cs" />
     <Compile Include="Workflow\Reporting\ReportingWorkflowSettings.cs" />
