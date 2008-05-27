@@ -70,8 +70,16 @@ namespace RemotingClient
 		{
 			base.Initialize();
 
-			RemotingConfiguration.Configure("RemotingClient.dll.config", true);
-			//RemotingConfiguration.Configure(null, true);
+			try
+			{
+				RemotingConfiguration.Configure("RemotingClient.dll.config", true);
+				//RemotingConfiguration.Configure(null, true);
+
+			}
+			catch (Exception e)
+			{
+				this.Context.DesktopWindow.ShowMessageBox(e.ToString(), MessageBoxActions.Ok);
+			}
 		}
 
 		/// <summary>
