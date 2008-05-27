@@ -115,6 +115,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     if (newSelection.Item == null)
                     {
                         _treeCtrl.SelectedNode = null;
+						EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
                     }
                     else
                     {
@@ -122,6 +123,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     }
 
                     // we don't need to fire SelectionChanged here, because setting _treeCtrl.SelectedNode will do that for us indirectly
+					// except when _treeCtrl.SelectedNode is set to null
                 }
             }
         }
@@ -387,6 +389,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             Point pt = _treeCtrl.PointToClient(TreeView.MousePosition);
             BindingTreeNode node = (BindingTreeNode)_treeCtrl.GetNodeAt(pt.X, pt.Y);
             _treeCtrl.SelectedNode = node;
+			if (node == null)
+				EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
         }
 
         private void _contextMenu_Opened(object sender, EventArgs e)

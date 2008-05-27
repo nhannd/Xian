@@ -68,21 +68,24 @@ namespace ClearCanvas.Ris.Client
             get { return _folderSystem; }
             set
             {
-                if (_folderSystem != null)
-                {
-                    this.SelectedItemsChanged -= _folderSystem.SelectedItemsChangedEventHandler;
-                    this.SelectedItemDoubleClicked -= _folderSystem.SelectedItemDoubleClickedEventHandler;
-                }
+				if (_folderSystem != value)
+				{
+					if (_folderSystem != null)
+					{
+						this.SelectedItemsChanged -= _folderSystem.SelectedItemsChangedEventHandler;
+						this.SelectedItemDoubleClicked -= _folderSystem.SelectedItemDoubleClickedEventHandler;
+					}
 
-                _folderSystem = value;
+					_folderSystem = value;
 
-                if (_folderSystem != null)
-                {
-                    this.SelectedItemsChanged += _folderSystem.SelectedItemsChangedEventHandler;
-                    this.SelectedItemDoubleClicked += _folderSystem.SelectedItemDoubleClickedEventHandler;
-                }
+					if (_folderSystem != null)
+					{
+						this.SelectedItemsChanged += _folderSystem.SelectedItemsChangedEventHandler;
+						this.SelectedItemDoubleClicked += _folderSystem.SelectedItemDoubleClickedEventHandler;
+					}
 
-                EventsHelper.Fire(_folderSystemChanged, this, EventArgs.Empty);
+					EventsHelper.Fire(_folderSystemChanged, this, EventArgs.Empty);
+				}
             }
         }
 

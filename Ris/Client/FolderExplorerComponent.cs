@@ -227,16 +227,16 @@ namespace ClearCanvas.Ris.Client
                     _selectedFolder.CloseFolder();
                 }
 
-                _selectedFolder = folder;
-                if (_selectedFolder != null)
+				if (folder != null)
                 {
-                    _selectedFolder.RefreshBegin += OnSelectedFolderRefreshBegin;
-                    _selectedFolder.RefreshFinish += OnSelectedFolderRefreshFinish;
-                    _selectedFolder.OpenFolder();
+					folder.RefreshBegin += OnSelectedFolderRefreshBegin;
+					folder.RefreshFinish += OnSelectedFolderRefreshFinish;
+					folder.OpenFolder();
                 }
-            }
 
-			EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
+				_selectedFolder = folder;
+				EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
+			}
 		}
 
         void OnSelectedFolderRefreshBegin(object sender, EventArgs e)

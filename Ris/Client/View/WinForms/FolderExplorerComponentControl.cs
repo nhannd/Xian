@@ -56,14 +56,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _folderTreeView.MenuModel = _component.FoldersContextMenuModel;
             _folderTreeView.ToolbarModel = _component.FoldersToolbarModel;
 
-			_folderTreeView.NodeMouseClicked += _folderTreeView_NodeMouseClicked;
             _component.SelectedFolderChanged += _component_SelectedFolderChanged;
         }
-
-		private void _folderTreeView_NodeMouseClicked(object sender, EventArgs e)
-		{
-			_component.SelectedFolder = _folderTreeView.Selection;
-		}
 
         private void _component_SelectedFolderChanged(object sender, EventArgs e)
         {

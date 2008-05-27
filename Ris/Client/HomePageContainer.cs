@@ -60,7 +60,6 @@ namespace ClearCanvas.Ris.Client
 			_folderContentComponent = new FolderContentsComponent();
 			_previewComponent = preview;
 			_folderSystemGroup = new FolderExplorerGroupComponent(folderExplorerExtensionPoint, _folderContentComponent);
-			_folderSystemGroup.SelectedFolderSystemChanged += OnSelectedFolderSystemChanged;
 			_folderSystemGroup.SelectedFolderChanged += OnSelectedFolderChanged;
 
 			// Construct the home page
@@ -83,28 +82,11 @@ namespace ClearCanvas.Ris.Client
 			get { return _previewComponent; }
 		}
 
-		private void OnSelectedFolderSystemChanged(object sender, System.EventArgs e)
-		{
-			if (_folderSystemGroup.SelectedFolderSystem == null)
-			{
-				_folderContentComponent.FolderSystem = null;
-				_previewComponent.SetUrl(null);
-				_folderContentComponent.SelectedFolder = null;
-			}
-			else
-			{
-				_folderContentComponent.FolderSystem = _folderSystemGroup.SelectedFolderSystem;
-				_previewComponent.SetUrl(_folderSystemGroup.SelectedFolderSystem.PreviewUrl);
-
-				_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolder;
-
-				if (_folderContentComponent.SelectedFolder != null)
-					_folderContentComponent.SelectedFolder.Refresh();
-			}
-		}
-
 		private void OnSelectedFolderChanged(object sender, System.EventArgs e)
 		{
+			_folderContentComponent.FolderSystem = _folderSystemGroup.SelectedFolderSystem;
+			_previewComponent.SetUrl(_folderSystemGroup.SelectedFolderSystem.PreviewUrl);
+
 			_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolder;
 
 			if (_folderContentComponent.SelectedFolder != null)

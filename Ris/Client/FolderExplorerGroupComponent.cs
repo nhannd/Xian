@@ -31,6 +31,9 @@ namespace ClearCanvas.Ris.Client
 		IEnumerable Folders { get; }
 		IFolder SelectedFolder { get; }
 
+		event EventHandler SelectedFolderSystemChanged;
+		event EventHandler SelectedFolderChanged;
+
 		IDesktopWindow DesktopWindow { get; }
 	}
 
@@ -85,6 +88,18 @@ namespace ClearCanvas.Ris.Client
 			public IDesktopWindow DesktopWindow
 			{
 				get { return _component.Host.DesktopWindow; }
+			}
+
+			public event EventHandler SelectedFolderSystemChanged
+			{
+				add { _component.SelectedFolderSystemChanged += value; }
+				remove { _component.SelectedFolderSystemChanged -= value; }
+			}
+
+			public event EventHandler SelectedFolderChanged
+			{
+				add { _component.SelectedFolderChanged += value; }
+				remove { _component.SelectedFolderChanged -= value; }
 			}
 
 			#endregion
@@ -267,14 +282,7 @@ namespace ClearCanvas.Ris.Client
 				if (_selectedFolderExplorer != value)
 				{
 					_selectedFolderExplorer = value;
-
 					EventsHelper.Fire(_selectedFolderSystemChanged, this, EventArgs.Empty);
-
-					IFolder newSelectedFolder = (IFolder)_selectedFolderExplorer.SelectedFolder.Item;
-					if (newSelectedFolder == null)
-						newSelectedFolder = (IFolder)CollectionUtils.FirstElement(_selectedFolderExplorer.FolderTree.Items);
-
-					this.SelectedFolder = newSelectedFolder;
 				}
 			}
 		}
@@ -291,11 +299,10 @@ namespace ClearCanvas.Ris.Client
 			{
 				if (_selectedFolder != value)
 				{
-					_selectedFolder = value;
-
 					if (_selectedFolderExplorer != null)
 						_selectedFolderExplorer.SelectedFolder = new Selection(value);
 
+					_selectedFolder = value;
 					EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
 				}
 			}
@@ -325,9 +332,6 @@ namespace ClearCanvas.Ris.Client
 			FolderExplorerComponent selectedFolderExplorer = (FolderExplorerComponent)sender;
 
 			IFolder newSelectedFolder = (IFolder)selectedFolderExplorer.SelectedFolder.Item;
-			if (newSelectedFolder == null)
-				newSelectedFolder = (IFolder)CollectionUtils.FirstElement(_selectedFolderExplorer.FolderTree.Items);
-
 			this.SelectedFolder = newSelectedFolder;
 		}
 

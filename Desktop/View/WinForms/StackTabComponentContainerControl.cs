@@ -402,17 +402,20 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void HighlightLeaf(TabGroupLeaf tgl, bool highlight)
 		{
-			TitleBar titleBar = GetTitleBarForPage(tgl.TabPages[0]);
+			Crownwood.DotNetMagic.Controls.TabPage tabPageUI = tgl.TabPages[0];
+			StackTab stackTab = (StackTab) tabPageUI.Control;
+			
 			if (highlight)
 			{
-				titleBar.Style = _activeStyle;
+				stackTab.TitleBar.Style = _activeStyle;
 				_stackTabControl.ActiveLeaf = tgl;
-				tgl.TabPages[0].Select();
-				tgl.TabPages[0].Focus();
+
+				stackTab.Select();
+				stackTab.Focus();
 			}
 			else
 			{
-				titleBar.Style = _inactiveStyle;
+				stackTab.TitleBar.Style = _inactiveStyle;
 			}
 		}
 	}
