@@ -22,7 +22,7 @@ namespace ClearCanvas.Ris.Client
 			base.Initialize();
 
 			// automatically launch home page on startup
-			//Launch();
+			Launch();
 		}
 
 		public override string Title
