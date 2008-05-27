@@ -40,5 +40,19 @@ namespace ClearCanvas.Ris.Client.Reporting {
                 return ((bool)(this["EnableTranscriptionWorkflow"]));
             }
         }
+        
+        /// <summary>
+        /// A comma separated list of staff type codes, used to filter the Supervisor lookup field
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("A comma separated list of staff type codes, used to filter the Supervisor lookup " +
+            "field")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("PRAD")]
+        public string SupervisorLookupStaffTypeFilters {
+            get {
+                return ((string)(this["SupervisorLookupStaffTypeFilters"]));
+            }
+        }
     }
 }

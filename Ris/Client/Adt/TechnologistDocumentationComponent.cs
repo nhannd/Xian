@@ -202,8 +202,12 @@ namespace ClearCanvas.Ris.Client.Adt
             InitializeProcedurePlanSummary();
             InitializeDocumentationTabPages();
 
-            // allow assignment to radiologists and residents
-            _radiologistLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow);
+            // create staff lookup handler, using filters provided by application configuration
+        	string filters = TechnologistDocumentationComponentSettings.Default.RadiologistLookupStaffTypeFilters;
+			string[] staffTypes = string.IsNullOrEmpty(filters) ? new string[] { } :
+				CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
+ 
+            _radiologistLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
 
             base.Start();
         }

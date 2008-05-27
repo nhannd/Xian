@@ -304,7 +304,11 @@ namespace ClearCanvas.Ris.Client.Reporting
 			_orderAdditionalInfoHost = new ChildComponentHost(this.Host, _orderAdditionalInfoComponent);
 			_orderAdditionalInfoHost.StartComponent();
 
-			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow);
+			// create supervisor lookup handler, using filters supplied in application settings
+			string filters = ReportingSettings.Default.SupervisorLookupStaffTypeFilters;
+			string[] staffTypes = string.IsNullOrEmpty(filters) ? new string[] { } :
+				CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
+			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
 
 			Platform.GetService<IReportingWorkflowService>(
 				delegate(IReportingWorkflowService service)
