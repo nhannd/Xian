@@ -125,6 +125,12 @@
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Thumbnails\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Thumbnails.View.WinForms.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Utilities\DicomEditor\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Utilities\DicomEditor\View\WinForms\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.View.WinForms.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Codec\Jpeg\bin\$(Configuration)\ClearCanvas.ImageViewer.Codec.Jpeg.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Codec\Jpeg2000\bin\$(Configuration)\ClearCanvas.ImageViewer.Codec.Jpeg2000.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Codec\Rle\bin\$(Configuration)\ClearCanvas.ImageViewer.Codec.Rle.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg2000.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Rle.dll" />
   </ItemGroup>
   
   <ItemGroup Condition="$(ShredHostBuild)">
