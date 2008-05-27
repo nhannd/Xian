@@ -129,6 +129,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.DateTime>)SubCriteria["ScheduledTime"];
             } 
         }
+        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerInformationKey
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ServerInformationKey"))
+              {
+                 SubCriteria["ServerInformationKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerInformationKey");
+              }
+              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerInformationKey"];
+            } 
+        }
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerPartitionKey
         {
             get

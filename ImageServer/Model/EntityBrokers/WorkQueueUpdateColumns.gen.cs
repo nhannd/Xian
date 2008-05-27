@@ -72,6 +72,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<System.DateTime>("ScheduledTime", value); }
         }
+        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerInformationKey
+        {
+            set { SubParameters["ServerInformationKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerInformationKey", value); }
+        }
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
         {
             set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }

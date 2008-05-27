@@ -72,7 +72,7 @@
             </ItemTemplate>
         </asp:TemplateField>
         
-        <asp:BoundField HeaderText="Processor ID" DataField="ProcessorID" />
+        <asp:BoundField HeaderText="Processing Server" DataField="ServerDescription" />
         
         
         <asp:TemplateField HeaderText="Patient Name">

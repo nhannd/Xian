@@ -47,7 +47,7 @@
                                     <HeaderStyle Wrap="false" HorizontalAlign="Center" />
                                     <ItemStyle Wrap="false" HorizontalAlign="Center" />
                                     <ItemTemplate>
-                                        <asp:Label ID="Status" runat="server" Text='<%# Eval("Priority.Description") %>'></asp:Label>
+                                        <asp:Label ID="Priority" runat="server" Text='<%# Eval("Priority.Description") %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Status">
@@ -55,6 +55,13 @@
                                     <ItemStyle Wrap="false" HorizontalAlign="Center" />
                                     <ItemTemplate>
                                         <asp:Label ID="Status" runat="server" Text='<%# Eval("Status.Description") %>'></asp:Label>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                                <asp:TemplateField HeaderText="Processing Server">
+                                    <HeaderStyle Wrap="false" HorizontalAlign="Center" />
+                                    <ItemStyle Wrap="false" HorizontalAlign="Center" />
+                                    <ItemTemplate>
+                                        <asp:Label ID="ServerInfoLabel" runat="server"></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Notes">
@@ -75,6 +82,7 @@
                                         <asp:TableHeaderCell>Schedule</asp:TableHeaderCell>
                                         <asp:TableHeaderCell>Priority</asp:TableHeaderCell>
                                         <asp:TableHeaderCell>Status</asp:TableHeaderCell>
+                                        <asp:TableHeaderCell>Processing Server</asp:TableHeaderCell>
                                         <asp:TableHeaderCell>Notes</asp:TableHeaderCell>
                                     </asp:TableHeaderRow>
                                 </asp:Table>

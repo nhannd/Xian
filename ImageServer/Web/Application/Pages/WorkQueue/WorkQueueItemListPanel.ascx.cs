@@ -32,8 +32,12 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using System.Xml;
+using System.Xml.Serialization;
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 {
@@ -305,8 +309,35 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                         Page.ClientScript.GetPostBackEventReference(WorkQueueListView, "Select$" + e.Row.RowIndex);
                     row.Style["cursor"] = "hand";
 
+                    Model.WorkQueue item = WorkQueueItems[GetRowItemKey(row.RowIndex)];
+                    row.Attributes["uid"] = item.GetKey().ToString();
 
-                    row.Attributes["uid"] = GetRowItemKey(row.RowIndex).Key.ToString();
+                    Label serverLabel = e.Row.FindControl("ServerInfoLabel") as Label;
+                    if (serverLabel != null && item.ServerInformationKey!=null)
+                    {
+                        ServerInformation server = ServerInformation.Load(item.ServerInformationKey);
+                        serverLabel.Text = server.ServerName;
+                        if (server.ExtInformation!=null)
+                        {
+                            XmlSerializer serializer = new XmlSerializer(typeof (ServerAddress));
+                            try
+                            {
+                                ServerAddress address = (ServerAddress) serializer.Deserialize(new XmlNodeReader(server.ExtInformation.FirstChild));   
+                                
+                                for(int i=0; i<address.IPAddresses.Count; i++)
+                                {
+                                    serverLabel.ToolTip += String.Format("IP {0} : {1}\r\n", i+1, address.IPAddresses[i]);
+                                }
+                                
+                            }
+                            catch(Exception)
+                            {
+                                // ignore it
+                            }
+                        }
+                        
+                        
+                    }
                 }
             }
             

@@ -38,6 +38,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
@@ -225,6 +226,24 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
         }
 
+        /// <summary>
+        /// Mark the work queue item to indicate it's being processed by this server
+        /// </summary>
+        /// <param name="item"></param>
+        private void MarkItem(Model.WorkQueue item)
+        {
+            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IWorkQueueEntityBroker broker = ctx.GetBroker<IWorkQueueEntityBroker>();
+
+                WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
+                columns.ProcessorID = ServiceTools.ProcessorId;
+                columns.ServerInformationKey = ServiceTools.localServerInformation.GetKey();
+
+                broker.Update(item.GetKey(), columns);
+                ctx.Commit();
+            }
+        }
 
         /// <summary>
         /// The processing thread.
@@ -261,7 +280,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
                             WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
                             parms.ProcessorID = ServiceTools.ProcessorId;
-
+                            
                             list = select.Execute(parms);
 
                             if (list.Count > 0)
@@ -298,12 +317,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                 continue;
                             }
 
+                            
                             // Enqueue the actual processing of the item to the 
                             // thread pool.  
                             _threadPool.Enqueue(delegate
                                                     {
                                                         try
                                                         {
+                                                            MarkItem(queueItem);
+                                                            
                                                             processor.Process(queueItem);
                                                         }
                                                         catch (Exception e)

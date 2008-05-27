@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         private WorkQueuePriorityEnum _priority;
         private string _failureDescription;
 
-        private string _processorID;
+        private string _serverDescription;
         private int _numSeriesPending;
         private int _numInstancesPending;
 
@@ -98,10 +98,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             set { _study = value; }
         }
 
-        public string ProcessorID
+        public string ServerDescription
         {
-            get { return _processorID; }
-            set { _processorID = value; }
+            get { return _serverDescription; }
+            set { _serverDescription = value; }
         }
 
 

@@ -55,6 +55,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.DateTime _insertTime;
         private System.String _processorID;
         private System.DateTime _scheduledTime;
+        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverInformationKey;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey;
         private WorkQueuePriorityEnum _workQueuePriorityEnum;
@@ -102,6 +103,11 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _scheduledTime; }
         set { _scheduledTime = value; }
+        }
+        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerInformationKey
+        {
+        get { return _serverInformationKey; }
+        set { _serverInformationKey = value; }
         }
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
         {

@@ -75,6 +75,7 @@
     <Compile Include="EntityBrokers\IPatientEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IRequestAttributesEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ISeriesEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IServerInformationEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IServerPartitionEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IServerRuleApplyTimeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IServerRuleEntityBroker.gen.cs" />
@@ -100,6 +101,8 @@
     <Compile Include="EntityBrokers\RequestAttributesUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\SeriesSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\SeriesUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\ServerInformationSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\ServerInformationUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\ServerPartitionSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\ServerPartitionUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\ServerRuleSelectCriteria.gen.cs" />
@@ -136,6 +139,7 @@
     <Compile Include="Patient.gen.cs" />
     <Compile Include="RequestAttributes.gen.cs" />
     <Compile Include="Series.gen.cs" />
+    <Compile Include="ServerInformation.gen.cs" />
     <Compile Include="ServerPartition.gen.cs" />
     <Compile Include="ServerRule.gen.cs" />
     <Compile Include="ServerRuleApplyTimeEnum.gen.cs" />
