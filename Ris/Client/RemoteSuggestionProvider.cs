@@ -39,7 +39,7 @@ using System.Diagnostics;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class RemoteSuggestionProvider<TItem> : SuggestionProviderBase<TItem>
+    public class RemoteSuggestionProvider<TItem> : ISuggestionProvider
     {
         #region State classes (state pattern implementation)
 
@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client
                 _owner = owner;
             }
 
-            public abstract void GetShortList(string text);
+            public abstract void OnQueryTextUpdate(string text);
             public abstract void OnRequestCompleted(bool success, TItem[] results);
         }
 
@@ -62,23 +62,22 @@ namespace ClearCanvas.Ris.Client
             {
             }
 
-            public override void GetShortList(string text)
+            public override void OnQueryTextUpdate(string text)
             {
-                //if(_owner.IsRefinementOfLastRequestText(text))
-                //{
-                //    _owner.PostItemsMatching(text);
-                //}
-                //else
-                //{
+                if(_owner.IsRefinementOfLastRequestText(text))
+                {
+                    _owner.PostItemsMatching(text);
+                }
+                else
+                {
                     // not a refinement of the previous query (or there was no previous query)
                     // try to begin a new request
-                    _owner._shortList = null;   // clear the shortlist
                     if (_owner.BeginRequest(text))
                     {
                         // modify state
                         _owner._state = new RequestPendingState(_owner, text);
                     }
-                //}
+                }
             }
 
             public override void OnRequestCompleted(bool success, TItem[] results)
@@ -111,7 +110,7 @@ namespace ClearCanvas.Ris.Client
                 }
             }
 
-            public override void GetShortList(string text)
+            public override void OnQueryTextUpdate(string text)
             {
                 // do nothing while a request is pending
             }
@@ -131,7 +130,7 @@ namespace ClearCanvas.Ris.Client
                     // then consider the request successful and post the matching items
                     if(_owner.IsRefinementOfLastRequestText(_owner._currentQueryText))
                     {
-                        _owner.UpdateSuggestions();
+                        _owner.PostItemsMatching(_owner._currentQueryText);
                         _owner._state = new AsyncDefaultState(_owner);
                     }
                     else
@@ -161,9 +160,11 @@ namespace ClearCanvas.Ris.Client
 
 
         public delegate bool RemoteQueryDelegate<T>(string query, out T[] results);
+        public delegate string FormatDelegate<T>(T obj);
 
+        private EventHandler<SuggestionsProvidedEventArgs> _itemsProvided;
         private readonly RemoteQueryDelegate<TItem> _remoteQueryCallback;
-        private readonly Converter<TItem, string> _formatHandler;
+        private readonly FormatDelegate<TItem> _formatHandler;
 
         private List<TItem> _shortList;
         private string _currentQueryText;
@@ -171,30 +172,29 @@ namespace ClearCanvas.Ris.Client
         private BackgroundTask _requestTask;
         private State _state;
 
-        public RemoteSuggestionProvider(RemoteQueryDelegate<TItem> remoteQueryCallback, Converter<TItem, string> formatHandler)
+        public RemoteSuggestionProvider(RemoteQueryDelegate<TItem> remoteQueryCallback, FormatDelegate<TItem> formatHandler)
         {
             _remoteQueryCallback = remoteQueryCallback;
             _formatHandler = formatHandler;
             _state = new AsyncDefaultState(this);
         }
 
-        protected override List<TItem> GetShortList(string query)
+        #region ISuggestionProvider Members
+
+        public event EventHandler<SuggestionsProvidedEventArgs> SuggestionsProvided
         {
-            _state.GetShortList(query);
+            add { _itemsProvided += value; }
+            remove { _itemsProvided -= value; }
+        }
+
+        public void SetQuery(string query)
+        {
+            _state.OnQueryTextUpdate(query);
+
             _currentQueryText = query;
-            return _shortList;
         }
 
-        protected override bool IsQueryRefinement(string query, string previousQuery)
-        {
-            // don't care about the previousQuery, but rather, the last query that generated an initial shortlist
-            return IsRefinementOfLastRequestText(query);
-        }
-
-        protected override string FormatItem(TItem item)
-        {
-            return _formatHandler(item);
-        }
+        #endregion
 
         private bool BeginRequest(string text)
         {
@@ -247,6 +247,30 @@ namespace ClearCanvas.Ris.Client
         private bool IsRefinementOfLastRequestText(string text)
         {
             return !string.IsNullOrEmpty(_lastSuccessfulRequestQueryText) && text.StartsWith(_lastSuccessfulRequestQueryText);
+        }
+
+        private void PostItemsMatching(string text)
+        {
+            List<TItem> items = RefineShortList(text);
+            SuggestionsProvidedEventArgs args = new SuggestionsProvidedEventArgs(items);
+            EventsHelper.Fire(_itemsProvided, this, args);
+        }
+
+        private List<TItem> RefineShortList(string text)
+        {
+            // return only items that contain the query text
+            // TODO: this could be made more sophisticated if necessary
+            return _shortList.FindAll(
+                delegate(TItem item)
+                {
+                    string itemText = FormatItem(item);
+                    return itemText.StartsWith(text, StringComparison.CurrentCultureIgnoreCase);
+                });
+        }
+
+        private string FormatItem(object item)
+        {
+            return _formatHandler((TItem)item);
         }
     }
 }
