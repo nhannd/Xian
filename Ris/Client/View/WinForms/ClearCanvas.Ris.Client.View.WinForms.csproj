@@ -77,6 +77,13 @@
       <DependentUpon>BiographyOverviewComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="BiographyOverviewComponentView.cs" />
+    <Compile Include="CannedTextSupport.cs" />
+    <Compile Include="CannedTextInplaceLookupControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CannedTextInplaceLookupControl.Designer.cs">
+      <DependentUpon>CannedTextInplaceLookupControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="CannedTextSummaryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -381,6 +388,10 @@
     <EmbeddedResource Include="CannedTextEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CannedTextEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CannedTextInplaceLookupControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CannedTextInplaceLookupControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CannedTextSummaryComponentControl.resx">
       <SubType>Designer</SubType>
