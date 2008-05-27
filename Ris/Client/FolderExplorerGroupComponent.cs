@@ -253,6 +253,12 @@ namespace ClearCanvas.Ris.Client
 			remove { _selectedFolderChanged -= value; }
 		}
 
+		public event EventHandler SearchEnabledChanged
+		{
+			add { this.SelectedFolderSystemChanged += value; }
+			remove { this.SelectedFolderSystemChanged -= value; }
+		}
+
 		public FolderExplorerComponent SelectedFolderExplorer
 		{
 			get { return _selectedFolderExplorer; }
@@ -295,6 +301,16 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public bool SearchEnabled
+		{
+			get { return this.SelectedFolderSystem is ISearchDataHandler; }
+		}
+
+		public string SearchMessage
+		{
+			get { return SR.MessageSearchMessage; }
+		}
+
 		#endregion
 
 		#region Event Handlers
@@ -319,7 +335,7 @@ namespace ClearCanvas.Ris.Client
 
 		public void Search(SearchData searchData)
 		{
-			if (this.SelectedFolderSystem is ISearchDataHandler)
+			if (this.SearchEnabled)
 				((ISearchDataHandler)this.SelectedFolderSystem).SearchData = searchData;
 		}
 

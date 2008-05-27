@@ -38,6 +38,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			Control stackTabGroups = (Control)_component.StackTabComponentContainerHost.ComponentView.GuiElement;
 			stackTabGroups.Dock = DockStyle.Fill;
 			_groupPanel.Controls.Add(stackTabGroups);
+
+			this.DataBindings.Add("SearchTextBoxEnabled", _component, "SearchEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			this.DataBindings.Add("SearchTextBoxMessage", _component, "SearchMessage", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		#region Properties
@@ -72,6 +75,20 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			}
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool SearchTextBoxEnabled
+		{
+			get { return _searchTextBox.Enabled; }
+			set { _searchTextBox.Enabled = value; }
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public string SearchTextBoxMessage
+		{
+			get { return _searchTextBox.ToolTipText; }
+			set { _searchTextBox.ToolTipText = value; }
+		}
+
 		#endregion
 
 		#region Event Handlers
@@ -95,7 +112,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 		private void _searchTextBox_TextChanged(object sender, EventArgs e)
 		{
-			_searchButton.Enabled = !string.IsNullOrEmpty(_searchTextBox.Text);
+			_searchButton.Enabled = _searchTextBox.Enabled && !string.IsNullOrEmpty(_searchTextBox.Text);
+		}
+
+		private void _searchTextBox_EnabledChanged(object sender, EventArgs e)
+		{
+			_searchButton.Enabled = _searchTextBox.Enabled && !string.IsNullOrEmpty(_searchTextBox.Text);
 		}
 
 		#endregion

@@ -970,6 +970,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter search criteria.
+        /// </summary>
+        internal static string MessageSearchMessage {
+            get {
+                return ResourceManager.GetString("MessageSearchMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The request timed out. See log for details..
         /// </summary>
         internal static string MessageTimeout {

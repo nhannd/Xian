@@ -420,6 +420,9 @@
   <data name="MessageResultsNotFound" xml:space="preserve">
     <value>No results were found using the specified criteria.</value>
   </data>
+  <data name="MessageSearchMessage" xml:space="preserve">
+    <value>Enter search criteria</value>
+  </data>
   <data name="MessageTimeout" xml:space="preserve">
     <value>The request timed out. See log for details.</value>
   </data>
