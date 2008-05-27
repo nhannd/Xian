@@ -11,6 +11,7 @@ namespace ClearCanvas.Ris.Server.Remoting
 
 		public string Echo(string text)
 		{
+			Console.WriteLine("Echo: " + text);
 			return text;
 		}
 
