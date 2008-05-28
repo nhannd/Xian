@@ -42,6 +42,10 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using System.Threading;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 using System.Security.Permissions;
+using GetOperationEnablementResponse=
+	ClearCanvas.Ris.Application.Common.ProtocollingWorkflow.GetOperationEnablementResponse;
+using GetOperationEnablementRequest=
+	ClearCanvas.Ris.Application.Common.ProtocollingWorkflow.GetOperationEnablementRequest;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -114,6 +118,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 		private ProtocolCodeDetail _selectedProtocolCodesSelection;
 
 		private bool _acceptEnabled;
+		private bool _submitForApprovalEnabled;
 		private bool _rejectEnabled;
 		private bool _suspendEnabled;
 		private bool _saveEnabled;
@@ -132,6 +137,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 		private event EventHandler _protocolSaved;
 		private event EventHandler _protocolSkipped;
 		private event EventHandler _protocolCancelled;
+		private event EventHandler _protocolSubmittedForApproval;
 
 		#endregion
 
@@ -410,6 +416,56 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		#endregion
 
+		#region Submit For Approval
+
+		[PrincipalPermission(SecurityAction.Demand, Role=AuthorityTokens.Workflow.Protocol.SubmitForApproval)]
+		public void SubmitForApproval()
+		{
+			// don't allow accept if there are validation errors
+			if (HasValidationErrors)
+			{
+				ShowValidation(true);
+				return;
+			}
+
+			try
+			{
+				Platform.GetService<IProtocollingWorkflowService>(
+					delegate(IProtocollingWorkflowService service)
+					{
+						SaveProtocols(service);
+						service.SubmitProtocolForApproval(new SubmitProtocolForApprovalRequest(_orderRef));
+					});
+
+				EventsHelper.Fire(_protocolSubmittedForApproval, this, EventArgs.Empty);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		public bool SubmitForApprovalVisible
+		{
+			get
+			{
+				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.SubmitForApproval);
+			}
+		}
+
+		public bool SubmitForApprovalEnabled
+		{
+			get { return _submitForApprovalEnabled; }
+		}
+
+		public event EventHandler ProtocolSubmittedForApproval
+		{
+			add { _protocolSubmittedForApproval += value; }
+			remove { _protocolSubmittedForApproval -= value; }
+		}
+
+		#endregion
+
 		#region Reject
 
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
@@ -638,12 +694,14 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		private void InitializeActionEnablement(IProtocollingWorkflowService service)
 		{
-			GetProtocolOperationEnablementResponse response = service.GetProtocolOperationEnablement(new GetProtocolOperationEnablementRequest(_worklistItem.ProcedureStepRef));
+			GetOperationEnablementResponse response = 
+				service.GetOperationEnablement(new GetOperationEnablementRequest(_worklistItem.OrderRef, _worklistItem.ProcedureStepRef));
 
-			_acceptEnabled = response.AcceptEnabled;
-			_suspendEnabled = response.SuspendEnabled;
-			_rejectEnabled = response.RejectEnabled;
-			_saveEnabled = response.SaveEnabled;
+			_acceptEnabled = response.OperationEnablementDictionary["AcceptOrderProtocol"];
+			_suspendEnabled = response.OperationEnablementDictionary["SuspendOrderProtocol"];
+			_rejectEnabled = response.OperationEnablementDictionary["RejectOrderProtocol"];
+			_submitForApprovalEnabled = response.OperationEnablementDictionary["SubmitProtocolForApproval"];
+			_saveEnabled = response.OperationEnablementDictionary["SaveProtocol"];
 		}
 
 		private void SelectedProtocolCodesChanged(object sender, ItemChangedEventArgs e)
@@ -718,7 +776,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			// Use the default if one exists for this procedure.
 			// Otherwise, get a suggested initial group and set the default to the suggested value
 			_defaultProtocolGroupName = _defaultProtocolGroupProvider[item.ProcedureDetail.Type.Name]
-									?? (_defaultProtocolGroupProvider[item.ProcedureDetail.Type.Name] = GetSuggestedDefault(item.ProcedureDetail.Type.Name));
+									?? (_defaultProtocolGroupProvider[item.ProcedureDetail.Type.Name] = GetSuggestedDefault());
 
 			if (string.IsNullOrEmpty(_defaultProtocolGroupName) == false)
 			{
@@ -732,7 +790,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			return defaultProtocolGroup;
 		}
 
-		private string GetSuggestedDefault(string procedureName)
+		private string GetSuggestedDefault()
 		{
 			if (CollectionUtils.Contains(
 				_protocolGroupChoices,

@@ -141,6 +141,12 @@ namespace ClearCanvas.Ris.Application.Common
 		[WorklistClassName]
 		public const string ReportingRejectedProtocolWorklist = "ReportingRejectedProtocolWorklist";
 
+		[WorklistClassName]
+		public const string ReportingToBeApprovedProtocolWorklist = "ReportingToBeApprovedProtocolWorklist";
+
+		[WorklistClassName]
+		public const string ReportingAwaitingApprovalProtocolWorklist = "ReportingAwaitingApprovalProtocolWorklist";
+
 		#endregion
 
 		#region Emergency Worklist Class Names

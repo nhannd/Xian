@@ -100,6 +100,11 @@ namespace ClearCanvas.Healthcare {
             get { return this.State == ActivityStatus.IP; }
         }
 
+    	public virtual bool CanApprove
+    	{
+			get { return (this.State == ActivityStatus.SC || this.State == ActivityStatus.IP) && this.Protocol.Status == ProtocolStatus.AA; }
+    	}
+
         public bool CanEdit(Staff staff)
         {
             return this.State == ActivityStatus.IP && this.PerformingStaff == staff;

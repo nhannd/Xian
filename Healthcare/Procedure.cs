@@ -241,8 +241,13 @@ namespace ClearCanvas.Healthcare {
             // discontinue all procedure steps (they should all be in the SC status)
             foreach (ProcedureStep ps in _procedureSteps)
             {
-                ps.Discontinue();
-            }
+				// except PreSteps, which may already be in a terminal state, so ignore them if that's the case.
+				// Bug: #1525
+				if (ps.IsPreStep && ps.IsTerminated)
+					continue;
+				
+				ps.Discontinue();
+			}
 
             // need to update the end-time again, after discontinuing procedure steps
             UpdateEndTime();

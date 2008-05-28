@@ -30,12 +30,11 @@
 #endregion
 
 using System.Collections.Generic;
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Application.Common;
 using System.Threading;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Reporting.Folders
@@ -198,7 +197,28 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderForWorklistClass(WorklistClassNames.ReportingDraftProtocolWorklist)]
+	[ExtensionOf(typeof(ReportingProtocolWorkflowFolderExtensionPoint))]
+	[FolderForWorklistClass(WorklistClassNames.ReportingToBeApprovedProtocolWorklist)]
+	[FolderPath("To be Approved", true)]
+	public class ToBeApprovedFolder : ReportingWorkflowFolder
+	{
+		public ToBeApprovedFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+			: base(folderSystem, folderDisplayName, folderDescription, worklistRef)
+		{
+		}
+
+		public ToBeApprovedFolder(ReportingWorkflowFolderSystemBase folderSystem)
+			: this(folderSystem, null, null, null)
+		{
+		}
+
+		public ToBeApprovedFolder()
+			: this(null)
+		{
+		}
+	}
+
+	[FolderForWorklistClass(WorklistClassNames.ReportingDraftProtocolWorklist)]
     [FolderPath("Draft")]
     public class DraftProtocolFolder : ReportingWorkflowFolder
     {
@@ -238,7 +258,27 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderForWorklistClass(WorklistClassNames.ReportingSuspendedProtocolWorklist)]
+	[FolderForWorklistClass(WorklistClassNames.ReportingAwaitingApprovalProtocolWorklist)]
+	[FolderPath("Awaiting Approval")]
+	public class AwaitingApprovalProtocolFolder : ReportingWorkflowFolder
+	{
+		public AwaitingApprovalProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+			: base(folderSystem, folderDisplayName, folderDescription, worklistRef)
+		{
+		}
+
+		public AwaitingApprovalProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem)
+			: this(folderSystem, null, null, null)
+		{
+		}
+
+		public AwaitingApprovalProtocolFolder()
+			: this(null)
+		{
+		}
+	}
+
+	[FolderForWorklistClass(WorklistClassNames.ReportingSuspendedProtocolWorklist)]
     [FolderPath("Suspended")]
     public class SuspendedProtocolFolder : ReportingWorkflowFolder
     {

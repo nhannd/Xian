@@ -87,8 +87,12 @@
     <Compile Include="OrderNoteSummary.cs" />
     <Compile Include="OrderNotes\QueryNoteboxRequest.cs" />
     <Compile Include="OrderNotes\QueryNoteboxResponse.cs" />
+    <Compile Include="ProtocollingWorkflow\GetOperationEnablementRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\GetOperationEnablementResponse.cs" />
     <Compile Include="ProtocollingWorkflow\GetProtocolFormDataRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetProtocolFormDataResponse.cs" />
+    <Compile Include="ProtocollingWorkflow\SubmitProtocolForApprovalRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\SubmitProtocolForApprovalResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\TimeShiftOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\TimeShiftOrderResponse.cs" />
     <Compile Include="Remoting\IEchoService.cs" />
@@ -294,12 +298,8 @@
     <Compile Include="ProtocolGroupSummary.cs" />
     <Compile Include="ProtocollingWorkflow\CancelProtocolAndOrderRequest.cs" />
     <Compile Include="ProtocollingWorkflow\CancelProtocolAndOrderResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\GetClericalProtocolOperationEnablementRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\GetClericalProtocolOperationEnablementResponse.cs" />
     <Compile Include="ProtocollingWorkflow\GetProcedurePlanForProtocollingWorklistItemRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetProcedurePlanForProtocollingWorklistItemResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\GetProtocolOperationEnablementRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\GetProtocolOperationEnablementResponse.cs" />
     <Compile Include="ProtocollingWorkflow\GetProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetProtocolResponse.cs" />
     <Compile Include="ProtocollingWorkflow\GetSuspendRejectReasonChoicesRequest.cs" />

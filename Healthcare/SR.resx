@@ -321,6 +321,18 @@
   <data name="Report" xml:space="preserve">
     <value>Report</value>
   </data>
+  <data name="ReportingAwaitingApprovalProtocolWorklist" xml:space="preserve">
+    <value>Awaiting Approval</value>
+  </data>
+  <data name="ReportingAwaitingApprovalProtocolWorklistDescription" xml:space="preserve">
+    <value>Lists procedures for which the user has submitted a protocol for approval.</value>
+  </data>
+  <data name="ReportingToBeApprovedProtocolWorklist" xml:space="preserve">
+    <value>To be Approved</value>
+  </data>
+  <data name="ReportingToBeApprovedProtocolWorklistDescription" xml:space="preserve">
+    <value>Lists procedures with a protocol that needs to be approved.</value>
+  </data>
   <data name="ReportingToBeProtocolledWorklist" xml:space="preserve">
     <value>To be Protocolled</value>
   </data>

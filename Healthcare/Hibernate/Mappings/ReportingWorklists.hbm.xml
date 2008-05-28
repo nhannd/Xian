@@ -7,4 +7,5 @@
   <!-- concrete classes -->
   <subclass name="ReportingToBeReportedWorklist" extends="ReportingWorklist" discriminator-value="REPORTING_TOBEREPORTED"/>
   <subclass name="ReportingToBeProtocolledWorklist" extends="ReportingWorklist" discriminator-value="REPORTING_TOBEPROTOCOLLED"/>
+  <subclass name="ReportingToBeApprovedProtocolWorklist" extends="ReportingWorklist" discriminator-value="REPORTING_TOBEAPPROVEDPROTOCOL"/>
 </hibernate-mapping>

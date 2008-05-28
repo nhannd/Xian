@@ -49,6 +49,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._procedurePlanSummary = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._urgency = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this._btnSubmitForApproval = new System.Windows.Forms.Button();
 			this._tableLayouOuter.SuspendLayout();
 			this.flowLayoutPanel2.SuspendLayout();
 			this.flowLayoutPanel3.SuspendLayout();
@@ -83,15 +84,16 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.flowLayoutPanel2.AutoSize = true;
 			this.flowLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.flowLayoutPanel2.Controls.Add(this._btnAccept);
+			this.flowLayoutPanel2.Controls.Add(this._btnSubmitForApproval);
 			this.flowLayoutPanel2.Controls.Add(this._btnReject);
 			this.flowLayoutPanel2.Controls.Add(this._btnSuspend);
 			this.flowLayoutPanel2.Controls.Add(this._btnSave);
 			this.flowLayoutPanel2.Controls.Add(this._btnSkip);
 			this.flowLayoutPanel2.Controls.Add(this._protocolNextItem);
 			this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 640);
+			this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 634);
 			this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-			this.flowLayoutPanel2.Size = new System.Drawing.Size(434, 52);
+			this.flowLayoutPanel2.Size = new System.Drawing.Size(434, 58);
 			this.flowLayoutPanel2.TabIndex = 0;
 			// 
 			// _btnAccept
@@ -106,7 +108,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			// 
 			// _btnReject
 			// 
-			this._btnReject.Location = new System.Drawing.Point(84, 3);
+			this._btnReject.Location = new System.Drawing.Point(199, 3);
 			this._btnReject.Name = "_btnReject";
 			this._btnReject.Size = new System.Drawing.Size(75, 23);
 			this._btnReject.TabIndex = 1;
@@ -116,7 +118,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			// 
 			// _btnSuspend
 			// 
-			this._btnSuspend.Location = new System.Drawing.Point(165, 3);
+			this._btnSuspend.Location = new System.Drawing.Point(280, 3);
 			this._btnSuspend.Name = "_btnSuspend";
 			this._btnSuspend.Size = new System.Drawing.Size(75, 23);
 			this._btnSuspend.TabIndex = 2;
@@ -126,7 +128,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			// 
 			// _btnSave
 			// 
-			this._btnSave.Location = new System.Drawing.Point(246, 3);
+			this._btnSave.Location = new System.Drawing.Point(3, 32);
 			this._btnSave.Name = "_btnSave";
 			this._btnSave.Size = new System.Drawing.Size(75, 23);
 			this._btnSave.TabIndex = 3;
@@ -136,7 +138,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			// 
 			// _btnSkip
 			// 
-			this._btnSkip.Location = new System.Drawing.Point(327, 3);
+			this._btnSkip.Location = new System.Drawing.Point(84, 32);
 			this._btnSkip.Name = "_btnSkip";
 			this._btnSkip.Size = new System.Drawing.Size(75, 23);
 			this._btnSkip.TabIndex = 5;
@@ -148,9 +150,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			// 
 			this._protocolNextItem.AutoSize = true;
 			this._protocolNextItem.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._protocolNextItem.Location = new System.Drawing.Point(3, 32);
+			this._protocolNextItem.Location = new System.Drawing.Point(165, 32);
 			this._protocolNextItem.Name = "_protocolNextItem";
-			this._protocolNextItem.Size = new System.Drawing.Size(119, 17);
+			this._protocolNextItem.Size = new System.Drawing.Size(119, 23);
 			this._protocolNextItem.TabIndex = 4;
 			this._protocolNextItem.Text = "Protocol Next Order";
 			this._protocolNextItem.UseVisualStyleBackColor = true;
@@ -161,9 +163,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.flowLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.flowLayoutPanel3.Controls.Add(this._btnClose);
 			this.flowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flowLayoutPanel3.Location = new System.Drawing.Point(443, 640);
+			this.flowLayoutPanel3.Location = new System.Drawing.Point(443, 634);
 			this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-			this.flowLayoutPanel3.Size = new System.Drawing.Size(81, 52);
+			this.flowLayoutPanel3.Size = new System.Drawing.Size(81, 58);
 			this.flowLayoutPanel3.TabIndex = 2;
 			// 
 			// _btnClose
@@ -192,7 +194,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._tableLayoutInner.Size = new System.Drawing.Size(527, 637);
+			this._tableLayoutInner.Size = new System.Drawing.Size(527, 631);
 			this._tableLayoutInner.TabIndex = 3;
 			// 
 			// groupBox1
@@ -204,7 +206,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.groupBox1.Location = new System.Drawing.Point(0, 145);
 			this.groupBox1.Margin = new System.Windows.Forms.Padding(0);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(527, 492);
+			this.groupBox1.Size = new System.Drawing.Size(527, 486);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Codes";
@@ -225,7 +227,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.tableLayoutPanel3.RowCount = 2;
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel3.Size = new System.Drawing.Size(521, 473);
+			this.tableLayoutPanel3.Size = new System.Drawing.Size(521, 467);
 			this.tableLayoutPanel3.TabIndex = 0;
 			// 
 			// _protocolCodesSelector
@@ -241,7 +243,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._protocolCodesSelector.SelectedItemsTable = null;
 			this._protocolCodesSelector.ShowColumnHeading = false;
 			this._protocolCodesSelector.ShowToolbars = false;
-			this._protocolCodesSelector.Size = new System.Drawing.Size(498, 422);
+			this._protocolCodesSelector.Size = new System.Drawing.Size(498, 416);
 			this._protocolCodesSelector.TabIndex = 0;
 			// 
 			// _protocolGroup
@@ -317,6 +319,17 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._urgency.TabIndex = 1;
 			this._urgency.Value = null;
 			// 
+			// _btnSubmitForApproval
+			// 
+			this._btnSubmitForApproval.AutoSize = true;
+			this._btnSubmitForApproval.Location = new System.Drawing.Point(84, 3);
+			this._btnSubmitForApproval.Name = "_btnSubmitForApproval";
+			this._btnSubmitForApproval.Size = new System.Drawing.Size(109, 23);
+			this._btnSubmitForApproval.TabIndex = 6;
+			this._btnSubmitForApproval.Text = "Submit for Approval";
+			this._btnSubmitForApproval.UseVisualStyleBackColor = true;
+			this._btnSubmitForApproval.Click += new System.EventHandler(this._btnSubmitForApproval_Click);
+			// 
 			// ProtocolEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -364,5 +377,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 		private System.Windows.Forms.ToolTip toolTip1;
 		private System.Windows.Forms.Button _btnSetDefault;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _urgency;
+		private System.Windows.Forms.Button _btnSubmitForApproval;
     }
 }

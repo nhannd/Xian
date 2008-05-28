@@ -10,6 +10,7 @@
     <many-to-one name="Procedure" class="Procedure" column="ProcedureOID_" not-null="true" unique="true"/>
 
     <many-to-one name="Author" class="Staff" column="AuthorOID_"/>
+    <many-to-one name="Supervisor" class="Staff" column="SupervisorOID_"/>
     <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ProtocolStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
     <many-to-one name="Urgency" class="ProtocolUrgencyEnum" column="Urgency_" />
     <many-to-one name="SuspendRejectReason" class="ProtocolSuspendRejectReasonEnum" column="SuspendRejectReason_"/>

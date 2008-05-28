@@ -77,6 +77,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			_btnAccept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_btnAccept.DataBindings.Add("Visible", _component, "AcceptVisible", true, DataSourceUpdateMode.OnPropertyChanged);
 
+			_btnSubmitForApproval.DataBindings.Add("Enabled", _component, "SubmitForApprovalEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnSubmitForApproval.DataBindings.Add("Visible", _component, "SubmitForApprovalVisible", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_btnReject.DataBindings.Add("Enabled", _component, "RejectEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_btnSuspend.DataBindings.Add("Enabled", _component, "SuspendEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -153,6 +156,14 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			using (new CursorManager(this, Cursors.WaitCursor))
 			{
 				_component.SetDefaultProtocolGroup();
+			}
+		}
+
+		private void _btnSubmitForApproval_Click(object sender, EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.SubmitForApproval();
 			}
 		}
 	}

@@ -148,6 +148,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			_protocolEditorComponent.ProtocolSaved += OnProtocolSaved;
 			_protocolEditorComponent.ProtocolSkipped += OnProtocolSkipped;
 			_protocolEditorComponent.ProtocolCancelled += OnProtocolCancelled;
+			_protocolEditorComponent.ProtocolSubmittedForApproval += OnProtcolSubmittedForApproval;
 
 			_protocolEditorComponentHost = new ChildComponentHost(this.Host, _protocolEditorComponent);
 			_protocolEditorComponentHost.StartComponent();
@@ -217,6 +218,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 		#region ProtocolEditorComponent event handlers
 
 		private void OnProtocolAccepted(object sender, EventArgs e)
+		{
+			DocumentManager.InvalidateFolder(typeof(Folders.CompletedProtocolFolder));
+			OnProtocolEndedHelper();
+		}
+
+		private void OnProtcolSubmittedForApproval(object sender, EventArgs e)
 		{
 			DocumentManager.InvalidateFolder(typeof(Folders.CompletedProtocolFolder));
 			OnProtocolEndedHelper();

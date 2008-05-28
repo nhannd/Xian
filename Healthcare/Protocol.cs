@@ -31,45 +31,50 @@
 
 namespace ClearCanvas.Healthcare
 {
-    /// <summary>
-    /// Protocol entity
-    /// </summary>
-    public partial class Protocol : ClearCanvas.Enterprise.Core.Entity
-    {
-        public Protocol(Procedure procedure)
-        {
-            _procedure = procedure;
-        }
+	/// <summary>
+	/// Protocol entity
+	/// </summary>
+	public partial class Protocol : ClearCanvas.Enterprise.Core.Entity
+	{
+		public Protocol(Procedure procedure)
+		{
+			_procedure = procedure;
+		}
 
-        /// <summary>
+		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.
 		/// </summary>
 		private void CustomInitialize()
 		{
 		}
-		
-        public virtual void Accept()
-        {
-            _status = ProtocolStatus.PR;
-        }
 
-        public virtual void Reject(ProtocolSuspendRejectReasonEnum reason)
-        {
-            _status = ProtocolStatus.RJ;
-            _suspendRejectReason = reason;
-        }
+		public virtual void Accept()
+		{
+			_status = ProtocolStatus.PR;
+		}
 
-        public virtual void Suspend(ProtocolSuspendRejectReasonEnum reason)
-        {
-            _status = ProtocolStatus.SU;
-            _suspendRejectReason = reason;
-        }
+		public virtual void Reject(ProtocolSuspendRejectReasonEnum reason)
+		{
+			_status = ProtocolStatus.RJ;
+			_suspendRejectReason = reason;
+		}
 
-        public virtual void Resolve()
-        {
-            _status = ProtocolStatus.PN;
-        }
+		public virtual void Suspend(ProtocolSuspendRejectReasonEnum reason)
+		{
+			_status = ProtocolStatus.SU;
+			_suspendRejectReason = reason;
+		}
+
+		public virtual void Resolve()
+		{
+			_status = ProtocolStatus.PN;
+		}
+
+		public virtual void SubmitForApproval()
+		{
+			_status = ProtocolStatus.AA;
+		}
 
 		/// <summary>
 		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
@@ -78,7 +83,7 @@ namespace ClearCanvas.Healthcare
 		/// The method is not intended for production use, but is provided for the purpose
 		/// of generating back-dated data for demos and load-testing.
 		/// </remarks>
-		/// <param name="days"></param>
+		/// <param name="minutes"></param>
 		protected internal virtual void TimeShift(int minutes)
 		{
 			// no times to shift

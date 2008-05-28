@@ -38,6 +38,10 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common;
+using GetOperationEnablementRequest=
+	ClearCanvas.Ris.Application.Common.ProtocollingWorkflow.GetOperationEnablementRequest;
+using GetOperationEnablementResponse=
+	ClearCanvas.Ris.Application.Common.ProtocollingWorkflow.GetOperationEnablementResponse;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -95,10 +99,10 @@ namespace ClearCanvas.Ris.Client.Adt
                         Platform.GetService<IProtocollingWorkflowService>(
                             delegate(IProtocollingWorkflowService service)
                             {
-                                GetClericalProtocolOperationEnablementResponse response =
-                                service.GetClericalProtocolOperationEnablement(new GetClericalProtocolOperationEnablementRequest(item.OrderRef));
+                                GetOperationEnablementResponse response =
+                                service.GetOperationEnablement(new GetOperationEnablementRequest(item.OrderRef, null));
 
-                                enabled = response.CanResolveByResubmit;
+								enabled = response.OperationEnablementDictionary["ResubmitProtocol"];
                             });
                     }
                     catch (Exception e)
@@ -172,11 +176,11 @@ namespace ClearCanvas.Ris.Client.Adt
                         Platform.GetService<IProtocollingWorkflowService>(
                             delegate(IProtocollingWorkflowService service)
                             {
-                                GetClericalProtocolOperationEnablementResponse response =
-                                service.GetClericalProtocolOperationEnablement(new GetClericalProtocolOperationEnablementRequest(item.OrderRef));
+								GetOperationEnablementResponse response =
+								service.GetOperationEnablement(new GetOperationEnablementRequest(item.OrderRef, null));
 
-                                enabled = response.CanResolveByCancel;
-                            });
+								enabled = response.OperationEnablementDictionary["CancelProtocolAndOrder"];
+							});
                     }
                     catch (Exception e)
                     {

@@ -65,9 +65,14 @@ namespace ClearCanvas.Ris.Client.Reporting
 			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
 			{
 				this.AddFolder(new Folders.ToBeProtocolledFolder(this));
+				this.AddFolder(new Folders.ToBeApprovedFolder(this));
 			}
 			this.AddFolder(new Folders.DraftProtocolFolder(this));
 			this.AddFolder(new Folders.CompletedProtocolFolder(this));
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.SubmitForApproval))
+			{
+				this.AddFolder(new Folders.AwaitingApprovalProtocolFolder(this));
+			}
 			this.AddFolder(new Folders.SuspendedProtocolFolder(this));
 			this.AddFolder(new Folders.RejectedProtocolFolder(this));
 			this.AddFolder(new Folders.ProtocollingSearchFolder(this));

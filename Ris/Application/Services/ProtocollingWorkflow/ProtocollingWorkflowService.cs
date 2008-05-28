@@ -29,17 +29,19 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
+using System.Security.Permissions;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.Workflow.Protocolling;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
-using ClearCanvas.Workflow;
-using System.Security.Permissions;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 {
@@ -47,6 +49,36 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
 	public class ProtocollingWorkflowService : WorkflowServiceBase, IProtocollingWorkflowService
 	{
+		/// <summary>
+		/// Provides a context for determining if protocol operations are enabled.
+		/// </summary>
+		public class ProtocolOperationEnablementContext
+		{
+			private readonly EntityRef _procedureStepRef;
+			private readonly EntityRef _orderRef;
+
+			/// <summary>
+			/// Constructor.  One of the entity refs should be non-null.
+			/// </summary>
+			/// <param name="orderRef"></param>
+			/// <param name="procedureStepRef"></param>
+			public ProtocolOperationEnablementContext(EntityRef orderRef, EntityRef procedureStepRef)
+			{
+				this._orderRef = orderRef;
+				this._procedureStepRef = procedureStepRef;
+			}
+
+			public EntityRef OrderRef
+			{
+				get { return _orderRef; }
+			}
+
+			public EntityRef ProcedureStepRef
+			{
+				get { return _procedureStepRef; }
+			}
+		}
+
 		#region IProtocollingWorkflowService Members
 
 		[ReadOperation]
@@ -119,44 +151,10 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[ReadOperation]
-		public GetProtocolOperationEnablementResponse GetProtocolOperationEnablement(GetProtocolOperationEnablementRequest request)
+		public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
 		{
-			ProcedureStep ps = this.PersistenceContext.Load<ProcedureStep>(request.ProtocolAssignementStepRef);
-			GetProtocolOperationEnablementResponse response = new GetProtocolOperationEnablementResponse();
-
-			if (ps.Is<ProtocolAssignmentStep>())
-			{
-				ProtocolAssignmentStep protocolAssignementStep = ps.As<ProtocolAssignmentStep>();
-				response.AcceptEnabled = protocolAssignementStep.CanAccept;
-				response.RejectEnabled = protocolAssignementStep.CanReject;
-				response.SuspendEnabled = protocolAssignementStep.CanSuspend;
-				response.SaveEnabled = protocolAssignementStep.CanSave;
-			}
-
-			return response;
-		}
-
-		[ReadOperation]
-		public GetClericalProtocolOperationEnablementResponse GetClericalProtocolOperationEnablement(GetClericalProtocolOperationEnablementRequest request)
-		{
-			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-			Procedure rp = CollectionUtils.FirstElement<Procedure>(order.Procedures);
-			ProtocolResolutionStep resolutionStep = ScheduledProcedureStep<ProtocolResolutionStep>(rp);
-
-			GetClericalProtocolOperationEnablementResponse response = new GetClericalProtocolOperationEnablementResponse();
-
-			if (resolutionStep != null)
-			{
-				response.CanResolveByCancel = resolutionStep.ShouldCancel;
-				response.CanResolveByResubmit = resolutionStep.ShouldResubmit;
-			}
-			else
-			{
-				response.CanResolveByCancel = false;
-				response.CanResolveByResubmit = false;
-			}
-
-			return response;
+			return new GetOperationEnablementResponse(
+				GetOperationEnablement(new ProtocolOperationEnablementContext(request.OrderRef, request.ProcedureStepRef)));
 		}
 
 		[ReadOperation]
@@ -167,164 +165,89 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
-		public AddOrderProtocolStepsResponse AddOrderProtocolSteps(AddOrderProtocolStepsRequest request)
-		{
-			Order o = this.PersistenceContext.Load<Order>(request.ProcedureRef);
-
-			foreach (Procedure rp in o.Procedures)
-			{
-				if (InprogressProcedureStep<ProtocolAssignmentStep>(rp) != null)
-					throw new RequestValidationException("Protocol step already exists for one or more procedures.");
-
-				Protocol protocol = new Protocol(rp);
-				ProtocolAssignmentStep assignmentStep = new ProtocolAssignmentStep(protocol);
-				rp.AddProcedureStep(assignmentStep);
-
-				assignmentStep.Schedule(DateTime.Now);
-
-				this.PersistenceContext.Lock(protocol, DirtyState.New);
-				this.PersistenceContext.Lock(assignmentStep, DirtyState.New);
-			}
-
-			this.PersistenceContext.SynchState();
-
-			return new AddOrderProtocolStepsResponse();
-		}
-
-		[UpdateOperation]
+		[OperationEnablement("CanStartOrderProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role=AuthorityTokens.Workflow.Protocol.Create)]
 		public StartOrderProtocolResponse StartOrderProtocol(StartOrderProtocolRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-			bool protocolClaimed = false;
-
-			foreach (Procedure rp in order.Procedures)
-			{
-				ProtocolAssignmentStep assignmentStep = ScheduledProcedureStep<ProtocolAssignmentStep>(rp);
-
-				if (assignmentStep != null)
-				{
-					// Scheduled assignment step exists (i.e. Protocol has not been claimed), so claim it
-					assignmentStep.Start(this.CurrentUserStaff);
-					assignmentStep.Protocol.Author = this.CurrentUserStaff;
-					protocolClaimed = true;
-				}
-				else
-				{
-					// No scheduled assignment step, so possibly already claimed
-					assignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
-
-					// In-progress assignment step started by someone else
-					if (assignmentStep != null && assignmentStep.PerformingStaff != this.CurrentUserStaff)
-					{
-						// So not available to this user to start
-						throw new RequestValidationException(SR.ExceptionNoProtocolAssignmentStep);
-					}
-
-					// otherwise, it's been claimed by this user, so do nothing
-				}
-			}
+			bool protocolClaimed;
+			bool canPerformerAcceptProtocols = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Accept);
+			
+			ProtocollingOperations.StartProtocolOperation op = new ProtocollingOperations.StartProtocolOperation();
+			op.Execute(order, this.CurrentUserStaff, canPerformerAcceptProtocols, out protocolClaimed);
+			
+			this.PersistenceContext.SynchState();
 
 			return new StartOrderProtocolResponse(protocolClaimed);
 		}
 
 		[UpdateOperation]
+		[OperationEnablement("CanDiscardOrderProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public DiscardOrderProtocolResponse DiscardOrderProtocol(DiscardOrderProtocolRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-			foreach (Procedure rp in order.Procedures)
-			{
-				// Discontinue claimed/in-progress protocol step
-				ProtocolAssignmentStep existingAssignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
+			ProtocollingOperations.DiscardProtocolOperation op = new ProtocollingOperations.DiscardProtocolOperation();
+			op.Execute(order);
 
-				if (existingAssignmentStep != null)
-				{
-					existingAssignmentStep.Discontinue();
-					existingAssignmentStep.Protocol.Author = null;
-
-					// Replace with new step scheduled step
-					ProtocolAssignmentStep replacementAssignmentStep = new ProtocolAssignmentStep(existingAssignmentStep.Protocol);
-					rp.AddProcedureStep(replacementAssignmentStep);
-
-					replacementAssignmentStep.Schedule(DateTime.Now);
-
-					this.PersistenceContext.Lock(replacementAssignmentStep, DirtyState.New);
-				}
-			}
+			this.PersistenceContext.SynchState();
 
 			return new DiscardOrderProtocolResponse();
 		}
 
 		[UpdateOperation]
+		[OperationEnablement("CanAcceptOrderProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Accept)]
 		public AcceptOrderProtocolResponse AcceptOrderProtocol(AcceptOrderProtocolRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-			foreach (Procedure rp in order.Procedures)
-			{
-				ProtocolAssignmentStep assignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
+			ProtocollingOperations.AcceptProtocolOperation op = new ProtocollingOperations.AcceptProtocolOperation();
+			op.Execute(order);
 
-				if (assignmentStep != null)
-				{
-					assignmentStep.Complete();
-					assignmentStep.Protocol.Accept();
-				}
-			}
+			this.PersistenceContext.SynchState();
 
 			return new AcceptOrderProtocolResponse();
 		}
 
 		[UpdateOperation]
+		[OperationEnablement("CanRejectOrderProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public RejectOrderProtocolResponse RejectOrderProtocol(RejectOrderProtocolRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+			ProtocolSuspendRejectReasonEnum reason =
+				EnumUtils.GetEnumValue<ProtocolSuspendRejectReasonEnum>(request.RejectReason, this.PersistenceContext);
 
-			foreach (Procedure rp in order.Procedures)
-			{
-				ProtocolAssignmentStep assignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
+			ProtocollingOperations.RejectProtocolOperation op = new ProtocollingOperations.RejectProtocolOperation();
+			op.Execute(order, reason);
 
-				if (assignmentStep != null)
-				{
-					assignmentStep.Discontinue();
-					assignmentStep.Protocol.Reject(EnumUtils.GetEnumValue<ProtocolSuspendRejectReasonEnum>(request.RejectReason, this.PersistenceContext));
-
-					ProtocolResolutionStep resolutionStep = new ProtocolResolutionStep(assignmentStep.Protocol);
-					rp.AddProcedureStep(resolutionStep);
-				}
-			}
+			this.PersistenceContext.SynchState();
 
 			return new RejectOrderProtocolResponse();
 		}
 
 		[UpdateOperation]
+		[OperationEnablement("CanSuspendOrderProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public SuspendOrderProtocolResponse SuspendOrderProtocol(SuspendOrderProtocolRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+			ProtocolSuspendRejectReasonEnum reason =
+				EnumUtils.GetEnumValue<ProtocolSuspendRejectReasonEnum>(request.SuspendReason, this.PersistenceContext);
 
-			foreach (Procedure rp in order.Procedures)
-			{
-				ProtocolAssignmentStep assignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
+			ProtocollingOperations.SuspendProtocolOperation op = new ProtocollingOperations.SuspendProtocolOperation();
+			op.Execute(order, reason);
 
-				if (assignmentStep != null)
-				{
-					assignmentStep.Discontinue();
-					assignmentStep.Protocol.Suspend(EnumUtils.GetEnumValue<ProtocolSuspendRejectReasonEnum>(request.SuspendReason, this.PersistenceContext));
-
-					ProtocolResolutionStep resolutionStep = new ProtocolResolutionStep(assignmentStep.Protocol);
-					rp.AddProcedureStep(resolutionStep);
-				}
-			}
+			this.PersistenceContext.SynchState();
 
 			return new SuspendOrderProtocolResponse();
 		}
 
 		[UpdateOperation]
+		[OperationEnablement("CanSaveProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public SaveProtocolResponse SaveProtocol(SaveProtocolRequest request)
 		{
@@ -337,84 +260,143 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
+		[OperationEnablement("CanResubmitProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Resolve)]
 		public ResubmitProtocolResponse ResubmitProtocol(ResubmitProtocolRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-			foreach (Procedure rp in order.Procedures)
-			{
-				ProtocolResolutionStep resolutionStep = ScheduledProcedureStep<ProtocolResolutionStep>(rp);
+			ProtocollingOperations.ResolveProtocolOperation op = new ProtocollingOperations.ResolveProtocolOperation();
+			op.Execute(order, this.CurrentUserStaff);
 
-				if (resolutionStep != null)
-				{
-					resolutionStep.Complete(this.CurrentUserStaff);
-					resolutionStep.Protocol.Resolve();
-					ProtocolAssignmentStep assignmentStep = new ProtocolAssignmentStep(resolutionStep.Protocol);
-					rp.AddProcedureStep(assignmentStep);
-				}
-			}
+			this.PersistenceContext.SynchState();
 
 			return new ResubmitProtocolResponse();
 		}
 
 		[UpdateOperation]
+		[OperationEnablement("CanCancelOrderAndProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Resolve)]
 		public CancelProtocolAndOrderResponse CancelProtocolAndOrder(CancelProtocolAndOrderRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-
-			foreach (Procedure rp in order.Procedures)
-			{
-				ProtocolResolutionStep resolutionStep = ScheduledProcedureStep<ProtocolResolutionStep>(rp);
-
-				if (resolutionStep != null)
-				{
-					resolutionStep.Complete(this.CurrentUserStaff);
-				}
-			}
-
 			EnumValueInfo reasonInfo =
 				CollectionUtils.FirstElement<EnumValueInfo>(EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(this.PersistenceContext));
 			OrderCancelReasonEnum reason = reasonInfo == null ? null : EnumUtils.GetEnumValue<OrderCancelReasonEnum>(reasonInfo, this.PersistenceContext);
-			order.Cancel(new OrderCancelInfo(reason, this.CurrentUserStaff));
 
+			ProtocollingOperations.ResolveAsCancelledProtocolOperation op = new ProtocollingOperations.ResolveAsCancelledProtocolOperation();
+			op.Execute(order, this.CurrentUserStaff, reason);
+
+			this.PersistenceContext.SynchState();
+			
 			return new CancelProtocolAndOrderResponse();
 		}
 
 		[UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Accept)]
-		public ApproveResidentProtocolResponse ApproveResidentProtocol(ApproveResidentProtocolRequest request)
+		[OperationEnablement("CanSubmitProtocolForApproval")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.SubmitForApproval)]
+		public SubmitProtocolForApprovalResponse SubmitProtocolForApproval(SubmitProtocolForApprovalRequest request)
 		{
-			Protocol protocol = this.PersistenceContext.Load<Protocol>(request.ProtocolRef);
+			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-			protocol.Accept();
+			ProtocollingOperations.SubmitForApprovalOperation op = new ProtocollingOperations.SubmitForApprovalOperation();
+			op.Execute(order);
 
 			this.PersistenceContext.SynchState();
 
-			ProtocolAssembler assembler = new ProtocolAssembler();
-			return new ApproveResidentProtocolResponse(assembler.CreateProtocolDetail(protocol, this.PersistenceContext));
+			return new SubmitProtocolForApprovalResponse();
 		}
 
 		#endregion
 
-		private T InprogressProcedureStep<T>(Procedure rp) where T : ProcedureStep
+		#region OperationEnablement methods
+
+		public bool CanStartOrderProtocol(ProtocolOperationEnablementContext enablementContext)
 		{
-			return CurrentProcedureStep<T>(rp, ActivityStatus.IP);
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create))
+				return false;
+			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.StartProtocolOperation(), enablementContext.ProcedureStepRef);
 		}
 
-		private T ScheduledProcedureStep<T>(Procedure rp) where T : ProcedureStep
+		public bool CanDiscardOrderProtocol(ProtocolOperationEnablementContext enablementContext)
 		{
-			return CurrentProcedureStep<T>(rp, ActivityStatus.SC);
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create))
+				return false;
+			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.DiscardProtocolOperation(), enablementContext.ProcedureStepRef);
 		}
 
-		private T CurrentProcedureStep<T>(Procedure rp, ActivityStatus status) where T : ProcedureStep
+		public bool CanAcceptOrderProtocol(ProtocolOperationEnablementContext enablementContext)
 		{
-			ProcedureStep uncastProcedureStep = CollectionUtils.SelectFirst<ProcedureStep>(
-				rp.ProcedureSteps,
-				delegate(ProcedureStep ps) { return ps.Is<T>() && ps.State == status; });
-
-			return uncastProcedureStep != null ? uncastProcedureStep.Downcast<T>() : null;
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Accept))
+				return false;
+			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.AcceptProtocolOperation(), enablementContext.ProcedureStepRef);
 		}
+
+		public bool CanRejectOrderProtocol(ProtocolOperationEnablementContext enablementContext)
+		{
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create))
+				return false;
+			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.RejectProtocolOperation(), enablementContext.ProcedureStepRef);
+		}
+
+		public bool CanSuspendOrderProtocol(ProtocolOperationEnablementContext enablementContext)
+		{
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create))
+				return false;
+			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.SuspendProtocolOperation(), enablementContext.ProcedureStepRef);
+		}
+
+		public bool CanSaveProtocol(ProtocolOperationEnablementContext enablementContext)
+		{
+			return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create);
+		}
+
+		public bool CanResubmitProtocol(ProtocolOperationEnablementContext enablementContext)
+		{
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Resolve))
+				return false;
+			return CanExecuteOperation(new ProtocollingOperations.ResolveProtocolOperation(), enablementContext.OrderRef);
+		}
+
+		public bool CanCancelOrderAndProtocol(ProtocolOperationEnablementContext enablementContext)
+		{
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Resolve))
+				return false;
+			return CanExecuteOperation(new ProtocollingOperations.ResolveAsCancelledProtocolOperation(), enablementContext.OrderRef);
+		}
+
+		public bool CanSubmitProtocolForApproval(ProtocolOperationEnablementContext enablementContext)
+		{
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.SubmitForApproval))
+				return false;
+			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.SubmitForApprovalOperation(), enablementContext.ProcedureStepRef);
+		}
+
+		private bool CanExecuteOperation<T>(ProtocollingOperations.ProtocollingOperation op, EntityRef procedureStepRef)
+			where T : ProtocolProcedureStep
+		{
+			// if there is no proc step ref, operation is not available
+			if (procedureStepRef == null)
+				return false;
+
+			ProcedureStep step = PersistenceContext.Load<ProcedureStep>(procedureStepRef);
+
+			if (!step.Is<T>())
+				return false;
+
+			return op.CanExecute(step.As<T>(), this.CurrentUserStaff);
+		}
+
+		private bool CanExecuteOperation(ProtocollingOperations.ProtocollingOperation op, EntityRef orderRef)
+		{
+			if (orderRef == null)
+				return false;
+
+			Order order = this.PersistenceContext.Load<Order>(orderRef);
+
+			return op.CanExecute(order, this.CurrentUserStaff);
+		}
+
+		#endregion
 	}
 }
