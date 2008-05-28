@@ -112,7 +112,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OnControlPageChanged(TabbedGroups tg, Crownwood.DotNetMagic.Controls.TabPage selectedPage)
 		{
-			ChangeComponentPageFromLeaf(tg.LeafForPage(selectedPage));
+			if (selectedPage != null)
+				ChangeComponentPageFromLeaf(tg.LeafForPage(selectedPage));
 		}
 
 		private void OnComponentCurrentPageChanged(object sender, EventArgs e)
@@ -197,8 +198,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OpenLeaf(TabGroupLeaf tgl, decimal space)
 		{
-			// Only open the leaf visually, it does not set a leaf active
+			if (tgl == null)
+				return;
 
+			// Only open the leaf visually, it does not set a leaf active
 			Crownwood.DotNetMagic.Controls.TabPage tabPageUI = tgl.TabPages[0];
 			StackTabPage page = (StackTabPage) tabPageUI.Tag;
 			StackTab stackTab = (StackTab) tabPageUI.Control;
@@ -219,6 +222,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void CloseLeaf(TabGroupLeaf tgl)
 		{
+			if (tgl == null)
+				return;
+
 			SetArrowState(GetTitleBarForPage(tgl.TabPages[0]), false);
 			tgl.Space = 0;
 			HighlightLeaf(tgl, false);
@@ -242,6 +248,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void ExpandCollapseLeaf(TabGroupLeaf selectedLeaf)
 		{
+			if (selectedLeaf == null)
+				return;
+
 			if (_component.StackStyle == StackStyle.ShowMultiple)
 			{
 				// Remember which title bar sent message
@@ -307,9 +316,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_stackTabControl.RootSequence.Reposition();
 		}
 
-		private static bool IsLeafExpanded(TabGroupBase tg)
+		private static bool IsLeafExpanded(TabGroupLeaf tgl)
 		{
-			return tg.Space > 0;
+			return tgl.Space > 0;
 		}
 
 		private static void SetArrowState(TitleBar titleBar, bool open)
