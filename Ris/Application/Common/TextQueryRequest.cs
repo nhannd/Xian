@@ -40,7 +40,26 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class TextQueryRequest : PagedDataContractBase
     {
-        /// <summary>
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public TextQueryRequest()
+		{
+				
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="textQuery"></param>
+		/// <param name="specificityThreshold"></param>
+    	public TextQueryRequest(string textQuery, int specificityThreshold)
+    	{
+    		TextQuery = textQuery;
+    		SpecificityThreshold = specificityThreshold;
+    	}
+
+    	/// <summary>
         /// The query text.
         /// </summary>
         [DataMember]

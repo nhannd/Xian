@@ -55,29 +55,17 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         #region IReportingWorkflowService Members
 
         [ReadOperation]
-		public TextQueryResponse<ReportingWorklistItem> Search(TextQueryRequest request)
+		public TextQueryResponse<ReportingWorklistItem> SearchWorklists(WorklistTextQueryRequest request)
         {
             ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
             IReportingWorklistItemBroker broker = PersistenceContext.GetBroker<IReportingWorklistItemBroker>();
 
-            WorklistTextQueryHelper<WorklistItem, ReportingWorklistItem> helper =
-                new WorklistTextQueryHelper<WorklistItem, ReportingWorklistItem>(
-                    delegate(WorklistItem item)
-                    {
-                        return assembler.CreateReportingWorklistItem(item, PersistenceContext);
-                    },
-                    delegate(WorklistItemSearchCriteria[] criteria, int threshold)
-                    {
-                    	int count;
-                        return broker.EstimateSearchResultsCount(criteria, threshold, out count);
-                    },
-                    delegate(WorklistItemSearchCriteria[] criteria, SearchResultPage page)
-                    {
-                        return broker.GetSearchResults(criteria);
-                    });
-
-            return helper.Query(request);
-        }
+			return SearchHelper<WorklistItem, ReportingWorklistItem>(request, broker,
+						 delegate(WorklistItem item)
+						 {
+							 return assembler.CreateWorklistItemSummary(item, PersistenceContext);
+						 });
+		}
 
         [ReadOperation]
         public ListWorklistsResponse ListWorklists(ListWorklistsRequest request)
@@ -94,7 +82,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return QueryWorklistHelper<WorklistItem, ReportingWorklistItem>(request,
                 delegate(WorklistItem item)
                 {
-                    return assembler.CreateReportingWorklistItem(item, this.PersistenceContext);
+                    return assembler.CreateWorklistItemSummary(item, this.PersistenceContext);
                 });
         }
 
@@ -425,7 +413,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 CollectionUtils.Map<WorklistItem, ReportingWorklistItem>(worklistItems,
                 delegate (WorklistItem item)
                     {
-                        return assembler.CreateReportingWorklistItem(item, PersistenceContext);
+                        return assembler.CreateWorklistItemSummary(item, PersistenceContext);
                     }));
         }
 

@@ -35,16 +35,8 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [RisServiceProvider]
     [ServiceContract]
-    public interface IModalityWorkflowService : IWorklistService<ModalityWorklistItem>
+	public interface IModalityWorkflowService : IWorklistService<ModalityWorklistItem>
     {
-        /// <summary>
-        /// Search for worklist items based on specified criteria.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
-		TextQueryResponse<ModalityWorklistItem> Search(TextQueryRequest request);
-
         /// <summary>
         /// Obtain the list of worklists for the current user.
         /// </summary>

@@ -65,7 +65,7 @@ namespace ClearCanvas.Healthcare {
         public static Type GetSubClass(string subclassName, IPersistenceContext context)
         {
             return CollectionUtils.SelectFirst(ListSubClasses(context),
-                delegate(Type t) { return t.FullName.Contains(subclassName); });
+				delegate(Type t) { return t.FullName.EndsWith(subclassName); });
         }
 	
 		/// <summary>

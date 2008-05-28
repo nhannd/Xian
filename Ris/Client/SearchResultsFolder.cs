@@ -127,27 +127,23 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Called to execute the search query.
 		/// </summary>
-		/// <param name="request"></param>
+		/// <param name="query"></param>
 		/// <returns></returns>
-		protected abstract TextQueryResponse<TItem> DoQuery(TextQueryRequest request);
+		protected abstract TextQueryResponse<TItem> DoQuery(string query, int specificityThreshold);
 
 		#endregion
 
 		#region Helpers
 
-		protected int SearchCriteriaSpecificityThreshold
+		protected static int SearchCriteriaSpecificityThreshold
 		{
 			get { return HomePageSettings.Default.SearchCriteriaSpecificityThreshold; }
 		}
 
 		private IList<TItem> QueryHelper()
 		{
-			List<TItem> worklistItems = null;
-			TextQueryRequest request = new TextQueryRequest();
-			request.TextQuery = this.SearchData.TextSearch;
-			request.SpecificityThreshold = this.SearchCriteriaSpecificityThreshold;
-
-			TextQueryResponse<TItem> response = DoQuery(request);
+			List<TItem> worklistItems;
+			TextQueryResponse<TItem> response = DoQuery(this.SearchData.TextSearch, SearchCriteriaSpecificityThreshold);
 			if (response.TooManyMatches)
 				throw new WeakSearchCriteriaException();
 			worklistItems = response.Matches;

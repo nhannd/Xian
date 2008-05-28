@@ -267,13 +267,13 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-		protected override TextQueryResponse<RegistrationWorklistItem> DoQuery(TextQueryRequest request)
+		protected override TextQueryResponse<RegistrationWorklistItem> DoQuery(string query, int specificityThreshold)
 		{
 			TextQueryResponse<RegistrationWorklistItem> response = null;
 			Platform.GetService<IRegistrationWorkflowService>(
 				delegate(IRegistrationWorkflowService service)
 				{
-					response = service.Search(request);
+					response = service.SearchWorklists(new WorklistTextQueryRequest(query, specificityThreshold, null));
 				});
 			return response;
 		}
@@ -287,14 +287,16 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 		{
 		}
 
-		protected override TextQueryResponse<RegistrationWorklistItem> DoQuery(TextQueryRequest request)
+		protected override TextQueryResponse<RegistrationWorklistItem> DoQuery(string query, int specificityThreshold)
 		{
-			TextQueryResponse<RegistrationWorklistItem> response = new TextQueryResponse<RegistrationWorklistItem>(false, new List<RegistrationWorklistItem>());
-			//Platform.GetService<IReportingWorkflowService>(
-			//    delegate(IReportingWorkflowService service)
-			//    {
-			//        response = service.Search(request);
-			//    });
+			TextQueryResponse<RegistrationWorklistItem> response = null;
+			Platform.GetService<IRegistrationWorkflowService>(
+				delegate(IRegistrationWorkflowService service)
+				{
+					//TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
+					//it is the only way to get things working right now
+					response = service.SearchWorklists(new WorklistTextQueryRequest(query, specificityThreshold, "ProtocolResolutionStep"));
+				});
 			return response;
 		}
 

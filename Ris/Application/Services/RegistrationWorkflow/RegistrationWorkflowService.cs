@@ -55,29 +55,17 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         #region IRegistrationWorkflowService Members
 
         [ReadOperation]
-        public TextQueryResponse<RegistrationWorklistItem> Search(TextQueryRequest request)
+        public TextQueryResponse<RegistrationWorklistItem> SearchWorklists(WorklistTextQueryRequest request)
         {
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
             IRegistrationWorklistItemBroker broker = PersistenceContext.GetBroker<IRegistrationWorklistItemBroker>();
 
-            WorklistTextQueryHelper<WorklistItem, RegistrationWorklistItem> helper = 
-                new WorklistTextQueryHelper<WorklistItem, RegistrationWorklistItem>(
-                    delegate(WorklistItem item)
-                    {
-                        return assembler.CreateRegistrationWorklistItem(item, PersistenceContext);
-                    },
-                    delegate (WorklistItemSearchCriteria[] criteria, int threshold)
-                    {
-                    	int count;
-						return broker.EstimateSearchResultsCount(criteria, threshold, out count);
-                    },
-                    delegate(WorklistItemSearchCriteria[] criteria, SearchResultPage page)
-                    {
-                        return broker.GetSearchResults(criteria);
-                    });
-
-            return helper.Query(request);
-        }
+			return SearchHelper<WorklistItem, RegistrationWorklistItem>(request, broker,
+						 delegate(WorklistItem item)
+						 {
+							 return assembler.CreateWorklistItemSummary(item, PersistenceContext);
+						 });
+		}
 
         [ReadOperation]
         public TextQueryResponse<PatientProfileSummary> ProfileTextQuery(TextQueryRequest request)
@@ -107,7 +95,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return QueryWorklistHelper<WorklistItem, RegistrationWorklistItem>(request,
                 delegate(WorklistItem item)
                 {
-                    return assembler.CreateRegistrationWorklistItem(item, this.PersistenceContext);
+                    return assembler.CreateWorklistItemSummary(item, this.PersistenceContext);
                 });
         }
 

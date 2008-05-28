@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
     public class ModalityWorkflowAssembler
     {
-        public ModalityWorklistItem CreateModalityWorklistItem(WorklistItem domainItem, IPersistenceContext context)
+        public ModalityWorklistItem CreateWorklistItemSummary(WorklistItem domainItem, IPersistenceContext context)
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
             return new ModalityWorklistItem(

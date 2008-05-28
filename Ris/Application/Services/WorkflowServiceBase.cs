@@ -125,6 +125,42 @@ namespace ClearCanvas.Ris.Application.Services
                 request.QueryItems ? CollectionUtils.Map(results, mapCallback) : null, count);
         }
 
+		/// <summary>
+		/// Helper method that implements the logic for performing text searches on worklists.
+		/// </summary>
+		/// <typeparam name="TItem"></typeparam>
+		/// <typeparam name="TSummary"></typeparam>
+		/// <param name="request"></param>
+		/// <param name="broker"></param>
+		/// <param name="mapCallback"></param>
+		/// <returns></returns>
+		protected TextQueryResponse<TSummary> SearchHelper<TItem, TSummary>(
+			WorklistTextQueryRequest request,
+			IWorklistItemBroker<TItem> broker,
+			Converter<TItem, TSummary> mapCallback)
+			where TSummary : DataContractBase
+			where TItem : WorklistItemBase
+		{
+			Type procedureStepClass = request.ProcedureStepClassName == null ? null
+				: ProcedureStep.GetSubClass(request.ProcedureStepClassName, PersistenceContext);
+
+			WorklistTextQueryHelper<TItem, TSummary> helper =
+				new WorklistTextQueryHelper<TItem, TSummary>(mapCallback,
+					delegate(WorklistItemSearchCriteria[] criteria, int threshold)
+					{
+						int count;
+						return broker.EstimateSearchResultsCount(criteria, threshold, out count);
+					},
+					delegate(WorklistItemSearchCriteria[] criteria, SearchResultPage page)
+					{
+						return broker.GetSearchResults(criteria);
+					},
+					procedureStepClass);
+
+			return helper.Query(request);
+		}
+
+
         protected List<WorklistSummary> ListWorklistsHelper(List<string> worklistTokens)
         {
             WorklistAssembler assembler = new WorklistAssembler();

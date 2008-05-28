@@ -36,16 +36,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [RisServiceProvider]
     [ServiceContract]
-    public interface IReportingWorkflowService : IWorklistService<ReportingWorklistItem>
+	public interface IReportingWorkflowService : IWorklistService<ReportingWorklistItem>
     {
-        /// <summary>
-        /// Search for active or past reporting step for a patient or order
-        /// </summary>
-        /// <param name="request"><see cref="SearchRequest"/></param>
-        /// <returns></returns>
-        [OperationContract]
-        TextQueryResponse<ReportingWorklistItem> Search(TextQueryRequest request);
-
         /// <summary>
         /// Get a list of all reporting worklists
         /// </summary>

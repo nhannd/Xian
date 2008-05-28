@@ -143,21 +143,19 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
 		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where)
 		{
-			// ensure criteria are filtering on correct type of step, and display the correct time field
+			// need to set the correct time field
 			// ProcedureStartTime seems like a reasonable choice for rad homepage search,
 			// as it gives a general sense of when the procedure occured in time, regardless of the procedure step
 			CollectionUtils.ForEach(where,
 				delegate(WorklistItemSearchCriteria sc)
 				{
-					sc.ProcedureStepClass = typeof(ReportingProcedureStep);
 					sc.TimeField = WorklistTimeField.ProcedureStartTime;
 				});
 
 			HqlProjectionQuery query = CreateBaseItemQuery(where);
 
-			// Active Set of RPS union with completed publication steps
-			query.Conditions.Add(new HqlCondition("(ps.State in (?, ?) or (ps.class = PublicationStep and ps.State = ?))",
-				ActivityStatus.SC, ActivityStatus.IP, ActivityStatus.CM));
+			// active steps only
+			query.Conditions.Add(new HqlCondition("(ps.State in (?, ?))", ActivityStatus.SC, ActivityStatus.IP));
 
 			AddConditions(query, where, true, false);
 

@@ -52,13 +52,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
 		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where)
 		{
-			// ensure criteria are filtering on correct type of step, and display the correct time field
+			// need to set the correct time field
 			// ProcedureScheduledStartTime seems like a reasonable choice for tech homepage search,
 			// as it gives a general sense of when the procedure occurs in time, regardless of the procedure step
 			CollectionUtils.ForEach(where,
 				delegate(WorklistItemSearchCriteria sc)
 				{
-					sc.ProcedureStepClass = typeof(ModalityProcedureStep);
 					sc.TimeField = WorklistTimeField.ProcedureScheduledStartTime;
 				});
 

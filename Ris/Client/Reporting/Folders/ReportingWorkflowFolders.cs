@@ -326,13 +326,15 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         {
         }
 
-		protected override TextQueryResponse<ReportingWorklistItem> DoQuery(TextQueryRequest request)
+		protected override TextQueryResponse<ReportingWorklistItem> DoQuery(string query, int specificityThreshold)
 		{
 			TextQueryResponse<ReportingWorklistItem> response = null;
 			Platform.GetService<IReportingWorkflowService>(
 				delegate(IReportingWorkflowService service)
 				{
-					response = service.Search(request);
+					//TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
+					//it is the only way to get things working right now
+					response = service.SearchWorklists(new WorklistTextQueryRequest(query, specificityThreshold, "ReportingProcedureStep"));
 				});
 			return response;
 		}
@@ -347,14 +349,16 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
 		{
 		}
 
-		protected override TextQueryResponse<ReportingWorklistItem> DoQuery(TextQueryRequest request)
+		protected override TextQueryResponse<ReportingWorklistItem> DoQuery(string query, int specificityThreshold)
 		{
-			TextQueryResponse<ReportingWorklistItem> response = new TextQueryResponse<ReportingWorklistItem>(false, new List<ReportingWorklistItem>());
-			//Platform.GetService<IReportingWorkflowService>(
-			//    delegate(IReportingWorkflowService service)
-			//    {
-			//        response = service.Search(request);
-			//    });
+			TextQueryResponse<ReportingWorklistItem> response = null;
+			Platform.GetService<IReportingWorkflowService>(
+				delegate(IReportingWorkflowService service)
+				{
+					//TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
+					//it is the only way to get things working right now
+					response = service.SearchWorklists(new WorklistTextQueryRequest(query, specificityThreshold, "ProtocolAssignmentStep"));
+				});
 			return response;
 		}
 

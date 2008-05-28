@@ -89,13 +89,11 @@ namespace ClearCanvas.Ris.Application.Services
         where TSearchCriteria : SearchCriteria
         where TSummary : DataContractBase
     {
-        public delegate TSearchCriteria[] BuildCriteriaDelegate(string query);
-        public delegate TSummary AssembleSummaryDelegate(TDomainItem domainItem);
         public delegate bool TestCriteriaSpecificityDelegate(TSearchCriteria[] where, int threshold);
         public delegate IList<TDomainItem> DoQueryDelegate(TSearchCriteria[] where, SearchResultPage page);
 
-        private readonly BuildCriteriaDelegate _buildCriteriaCallback;
-        private readonly AssembleSummaryDelegate _summaryAssembler;
+		private readonly Converter<string, TSearchCriteria[]> _buildCriteriaCallback;
+		private readonly Converter<TDomainItem, TSummary> _summaryAssembler;
         private readonly DoQueryDelegate _queryCallback;
 		private readonly TestCriteriaSpecificityDelegate _specificityCallback;
 
@@ -114,8 +112,11 @@ namespace ClearCanvas.Ris.Application.Services
         /// <param name="summaryAssembler"></param>
         /// <param name="countCallback"></param>
         /// <param name="queryCallback"></param>
-        public TextQueryHelper(BuildCriteriaDelegate criteriaBuilder, AssembleSummaryDelegate summaryAssembler,
-			TestCriteriaSpecificityDelegate countCallback, DoQueryDelegate queryCallback)
+        public TextQueryHelper(
+			Converter<string, TSearchCriteria[]> criteriaBuilder,
+			Converter<TDomainItem, TSummary> summaryAssembler,
+			TestCriteriaSpecificityDelegate countCallback,
+			DoQueryDelegate queryCallback)
         {
             _buildCriteriaCallback = criteriaBuilder;
             _summaryAssembler = summaryAssembler;

@@ -39,7 +39,16 @@ namespace ClearCanvas.Healthcare
         private Type _procedureStepClass;
         private WorklistTimeField _timeField;
 
-        public PatientProfileSearchCriteria PatientProfile
+		public WorklistItemSearchCriteria()
+		{
+		}
+
+    	public WorklistItemSearchCriteria(Type procedureStepClass)
+    	{
+    		_procedureStepClass = procedureStepClass;
+    	}
+
+    	public PatientProfileSearchCriteria PatientProfile
         {
             get
             {

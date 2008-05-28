@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
     public class RegistrationWorkflowAssembler
     {
-        public RegistrationWorklistItem CreateRegistrationWorklistItem(WorklistItem domainItem, IPersistenceContext context)
+        public RegistrationWorklistItem CreateWorklistItemSummary(WorklistItem domainItem, IPersistenceContext context)
         {
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             HealthcardAssembler healthcardAssembler = new HealthcardAssembler();

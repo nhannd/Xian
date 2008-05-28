@@ -51,33 +51,21 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
     public class ModalityWorkflowService : WorkflowServiceBase, IModalityWorkflowService
     {
         /// <summary>
-        /// Search for worklist items based on specified criteria.
+        /// SearchWorklists for worklist items based on specified criteria.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [ReadOperation]
-		public TextQueryResponse<ModalityWorklistItem> Search(TextQueryRequest request)
+		public TextQueryResponse<ModalityWorklistItem> SearchWorklists(WorklistTextQueryRequest request)
         {
             ModalityWorkflowAssembler assembler = new ModalityWorkflowAssembler();
             IModalityWorklistItemBroker broker = PersistenceContext.GetBroker<IModalityWorklistItemBroker>();
 
-            WorklistTextQueryHelper<WorklistItem, ModalityWorklistItem> helper =
-                new WorklistTextQueryHelper<WorklistItem, ModalityWorklistItem>(
-                    delegate(WorklistItem item)
-                    {
-                        return assembler.CreateModalityWorklistItem(item, PersistenceContext);
-                    },
-                    delegate(WorklistItemSearchCriteria[] criteria, int threshold)
-                    {
-                    	int count;
-                        return broker.EstimateSearchResultsCount(criteria, threshold, out count);
-                    },
-                    delegate(WorklistItemSearchCriteria[] criteria, SearchResultPage page)
-                    {
-                        return broker.GetSearchResults(criteria);
-                    });
-
-            return helper.Query(request);
+			return SearchHelper<WorklistItem, ModalityWorklistItem>(request, broker,
+        	             delegate(WorklistItem item)
+        	             {
+        	             	return assembler.CreateWorklistItemSummary(item, PersistenceContext);
+        	             });
         }
 
         /// <summary>
@@ -104,7 +92,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             return QueryWorklistHelper<WorklistItem, ModalityWorklistItem>(request,
                 delegate (WorklistItem item)
                 {
-                    return assembler.CreateModalityWorklistItem(item, this.PersistenceContext);
+                    return assembler.CreateWorklistItemSummary(item, this.PersistenceContext);
                 });
         }
 

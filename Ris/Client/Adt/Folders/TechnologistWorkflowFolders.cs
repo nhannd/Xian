@@ -218,13 +218,15 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-		protected override TextQueryResponse<ModalityWorklistItem> DoQuery(TextQueryRequest request)
+		protected override TextQueryResponse<ModalityWorklistItem> DoQuery(string query, int specificityThreshold)
 		{
 			TextQueryResponse<ModalityWorklistItem> response = null;
 			Platform.GetService<IModalityWorkflowService>(
 				delegate(IModalityWorkflowService service)
 				{
-					response = service.Search(request);
+					//TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
+					//it is the only way to get things working right now
+					response = service.SearchWorklists(new WorklistTextQueryRequest(query, specificityThreshold, "ModalityProcedureStep"));
 				});
 			return response;
 		}

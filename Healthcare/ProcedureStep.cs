@@ -32,6 +32,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
 using ClearCanvas.Common;
 
@@ -42,7 +44,31 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     public abstract class ProcedureStep : Activity
     {
-        private Procedure procedure;
+		/// <summary>
+		/// Returns all concrete subclasses of this class.
+		/// </summary>
+		/// <param name="includeAbstract"></param>
+		/// <param name="context"></param>
+		/// <returns></returns>
+		public static IList<Type> ListSubClasses(bool includeAbstract, IPersistenceContext context)
+		{
+			return CollectionUtils.Select(context.GetBroker<IMetadataBroker>().ListEntityClasses(),
+				delegate(Type t) { return (includeAbstract || !t.IsAbstract) && t.IsSubclassOf(typeof(ProcedureStep)); });
+		}
+
+		/// <summary>
+		/// Gets the subclass matching the specified name, which need not be fully qualified.
+		/// </summary>
+		/// <param name="subclassName"></param>
+		/// <param name="context"></param>
+		/// <returns></returns>
+		public static Type GetSubClass(string subclassName, IPersistenceContext context)
+		{
+			return CollectionUtils.SelectFirst(ListSubClasses(true, context),
+				delegate(Type t) { return t.FullName.EndsWith(subclassName); });
+		}
+
+		private Procedure procedure;
 
         /// <summary>
         /// No-args constructor required by NHibernate.

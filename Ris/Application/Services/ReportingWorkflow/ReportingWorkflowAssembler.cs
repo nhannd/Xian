@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
     public class ReportingWorkflowAssembler
     {
-        public ReportingWorklistItem CreateReportingWorklistItem(WorklistItem domainItem, IPersistenceContext context)
+        public ReportingWorklistItem CreateWorklistItemSummary(WorklistItem domainItem, IPersistenceContext context)
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
             return new ReportingWorklistItem(

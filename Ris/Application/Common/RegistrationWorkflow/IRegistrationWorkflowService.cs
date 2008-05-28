@@ -40,15 +40,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     /// </summary>
     [RisServiceProvider]
     [ServiceContract]
-    public interface IRegistrationWorkflowService : IWorklistService<RegistrationWorklistItem>
+	public interface IRegistrationWorkflowService : IWorklistService<RegistrationWorklistItem>
     {
-        /// <summary>
-        /// Search for registration worklist item
-        /// </summary>
-        /// <param name="request"><see cref="SearchRequest"/></param>
-        /// <returns></returns>
-        [OperationContract]
-		TextQueryResponse<RegistrationWorklistItem> Search(TextQueryRequest request);
 
         /// <summary>
         /// Returns a list of patient profiles based on a textual query.

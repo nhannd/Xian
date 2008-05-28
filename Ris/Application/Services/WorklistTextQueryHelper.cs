@@ -34,6 +34,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Workflow;
+using System;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -42,19 +43,39 @@ namespace ClearCanvas.Ris.Application.Services
         where TDomainItem : WorklistItemBase
         where TSummary : DataContractBase
     {
-        /// <summary>
-        /// Public constructor allows direct use of this class without the need to create a subclass.
-        /// </summary>
-        /// <param name="summaryAssembler"></param>
+    	private readonly Type _procedureStepClass;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="summaryAssembler"></param>
 		/// <param name="specificityCallback"></param>
-        /// <param name="queryCallback"></param>
+		/// <param name="queryCallback"></param>
         public WorklistTextQueryHelper(
-            AssembleSummaryDelegate summaryAssembler,
+			Converter<TDomainItem, TSummary> summaryAssembler,
 			TestCriteriaSpecificityDelegate specificityCallback, 
             DoQueryDelegate queryCallback)
             : base(null, summaryAssembler, specificityCallback, queryCallback)
         {
         }
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="summaryAssembler"></param>
+		/// <param name="specificityCallback"></param>
+		/// <param name="queryCallback"></param>
+		/// <param name="procedureStepClass"></param>
+		public WorklistTextQueryHelper(
+			Converter<TDomainItem, TSummary> summaryAssembler,
+			TestCriteriaSpecificityDelegate specificityCallback,
+			DoQueryDelegate queryCallback,
+			Type procedureStepClass)
+			: base(null, summaryAssembler, specificityCallback, queryCallback)
+		{
+			_procedureStepClass = procedureStepClass;
+		}
+
 
         protected override WorklistItemSearchCriteria[] BuildCriteria(string query)
         {
@@ -66,7 +87,7 @@ namespace ClearCanvas.Ris.Application.Services
             criteria.AddRange(CollectionUtils.Map<PersonName, WorklistItemSearchCriteria>(names,
                 delegate(PersonName n)
                 {
-                    WorklistItemSearchCriteria sc = new WorklistItemSearchCriteria();
+                    WorklistItemSearchCriteria sc = new WorklistItemSearchCriteria(_procedureStepClass);
                     sc.PatientProfile.Name.FamilyName.StartsWith(n.FamilyName);
                     if (n.GivenName != null)
                         sc.PatientProfile.Name.GivenName.StartsWith(n.GivenName);
@@ -78,7 +99,7 @@ namespace ClearCanvas.Ris.Application.Services
             criteria.AddRange(CollectionUtils.Map<string, WorklistItemSearchCriteria>(ids,
                 delegate(string word)
                 {
-                    WorklistItemSearchCriteria c = new WorklistItemSearchCriteria();
+					WorklistItemSearchCriteria c = new WorklistItemSearchCriteria(_procedureStepClass);
                     c.PatientProfile.Mrn.Id.StartsWith(word);
                     return c;
                 }));
@@ -87,7 +108,7 @@ namespace ClearCanvas.Ris.Application.Services
             criteria.AddRange(CollectionUtils.Map<string, WorklistItemSearchCriteria>(ids,
                 delegate(string word)
                 {
-                    WorklistItemSearchCriteria c = new WorklistItemSearchCriteria();
+					WorklistItemSearchCriteria c = new WorklistItemSearchCriteria(_procedureStepClass);
                     c.PatientProfile.Healthcard.Id.StartsWith(word);
                     return c;
                 }));
@@ -96,7 +117,7 @@ namespace ClearCanvas.Ris.Application.Services
             criteria.AddRange(CollectionUtils.Map<string, WorklistItemSearchCriteria>(ids,
                 delegate(string word)
                 {
-                    WorklistItemSearchCriteria c = new WorklistItemSearchCriteria();
+					WorklistItemSearchCriteria c = new WorklistItemSearchCriteria(_procedureStepClass);
                     c.Order.AccessionNumber.StartsWith(word);
                     return c;
                 }));
