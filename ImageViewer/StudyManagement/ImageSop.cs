@@ -84,13 +84,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				lock (_syncLock)
+				if (_frames == null)
 				{
-					if (_frames == null)
+					lock (_syncLock)
 					{
-						_frames = new FrameCollection();
-						for (int i = 1; i <= this.NumberOfFrames; i++)
-							this.Frames.Add(CreateFrame(i));
+						if (_frames == null)
+						{
+							_frames = new FrameCollection();
+							for (int i = 1; i <= this.NumberOfFrames; i++)
+								this.Frames.Add(CreateFrame(i));
+						}
 					}
 				}
 

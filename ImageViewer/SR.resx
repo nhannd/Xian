@@ -162,29 +162,14 @@
   <data name="ExceptionAdditionalMouseToolAssignmentsMustBeModified" xml:space="preserve">
     <value>Additional mouse tool assignments must be modified ({0}).</value>
   </data>
-  <data name="ExceptionColorMapCannotHaveMaximumOutputValue" xml:space="preserve">
-    <value>A Color Map cannot have a maximum output value.</value>
-  </data>
-  <data name="ExceptionColorMapCannotHaveMinimumOutputValue" xml:space="preserve">
-    <value>A Color Map cannot have a minimum output value.</value>
-  </data>
-  <data name="ExceptionColorMapDataCannotBeAltered" xml:space="preserve">
-    <value>The Color Map data cannot be altered.</value>
-  </data>
   <data name="ExceptionFormatAnnotationItemHasNoDisplayName" xml:space="preserve">
     <value>AnnotationItem has no display name: {0}.</value>
-  </data>
-  <data name="ExceptionFormatNoColorMapFactoryExistWithName" xml:space="preserve">
-    <value>No Color Map factory extension exists with the name {0}.</value>
   </data>
   <data name="ExceptionImageBufferWin32NotSupported" xml:space="preserve">
     <value>ImageBufferWin32 is not supported on non-Win32 platforms.</value>
   </data>
   <data name="ExceptionImageIsNotGrayscale" xml:space="preserve">
     <value>Image is not grayscale.</value>
-  </data>
-  <data name="ExceptionImagesShouldNotBeRenderedFromMultipleThreads" xml:space="preserve">
-    <value>Images should not be rendered from multiple threads.</value>
   </data>
   <data name="ExceptionIncorrectPixelDataSize" xml:space="preserve">
     <value>Invalid pixel data (expected size: {0} bytes, actual size: {1} bytes).</value>

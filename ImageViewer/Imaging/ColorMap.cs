@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -45,34 +44,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <seealso cref="IColorMap"/>
 	public abstract class ColorMap : GeneratedDataLut, IColorMap
 	{
-		#region Protected Constructor
-
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
 		protected ColorMap()
 		{
 		}
-
-		#endregion
-
-		#region Protected Methods
-		#region Overrides
-
-		/// <summary>
-		/// Should be called by implementors when the Lut has changed.
-		/// </summary>
-		protected sealed override void OnLutChanged()
-		{
-			base.OnLutChanged();
-		}
-
-		#endregion
-		#endregion
-
-		#region Public Members
-		#region Properties
-		#region Overrides
 
 		/// <summary>
 		/// Not applicable.
@@ -82,11 +59,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				throw new MemberAccessException(SR.ExceptionColorMapCannotHaveMinimumOutputValue);
+				throw new MemberAccessException("A color map cannot have a minimum output value.");
 			}
 			protected set
 			{
-				throw new MemberAccessException(SR.ExceptionColorMapCannotHaveMinimumOutputValue);
+				throw new MemberAccessException("A color map cannot have a minimum output value.");
 			}
 		}
 
@@ -98,111 +75,27 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				throw new MemberAccessException(SR.ExceptionColorMapCannotHaveMaximumOutputValue);
+				throw new MemberAccessException("A color map cannot have a maximum output value.");
 			}
 			protected set
 			{
-				throw new MemberAccessException(SR.ExceptionColorMapCannotHaveMaximumOutputValue);
+				throw new MemberAccessException("A color map cannot have a maximum output value.");
 			}
 		}
-
-		/// <summary>
-		/// Gets the element at the specified index.
-		/// </summary>
-		/// <returns>A 32-bit ARGB value.</returns>
-		public sealed override int this[int index]
-		{
-			get
-			{
-				return base[index];
-			}
-			protected  set
-			{
-				base[index] = value;
-			}
-		}
-
-		#endregion
-
-		#region IColorMap Members
-
-		/// <summary>
-		/// Gets the map's data.
-		/// </summary>
-		/// <remarks>
-		/// This property should be considered readonly and is only 
-		/// provided for fast (unsafe) iteration over the array.
-		/// </remarks>
-		public new int[] Data
-		{
-			get
-			{
-				if (!Created)
-					Create();
-
-				return base.Data;
-			}
-		}
-
-		#endregion
-		#endregion
-
-		#region Methods
-		#region Overrides
 
 		/// <summary>
 		/// Gets a string key that identifies this particular LUT's characteristics, so that 
 		/// an image's <see cref="IComposedLut"/> can be more efficiently determined.
 		/// </summary>
 		/// <remarks>
-		/// This method is not to be confused with <b>equality</b>, since some Luts can be
-		/// dependent upon the actual image to which it belongs.  The method should simply 
-		/// be used to determine if a lut in the <see cref="ComposedLutPool"/> is the same 
-		/// as an existing one.
+		/// You should not have to override this method.
 		/// </remarks>
-		public sealed override string GetKey()
+		public override string GetKey()
 		{
 			return String.Format("{0}_{1}_{2}",
 				this.MinInputValue,
 				this.MaxInputValue,
 				this.GetType().ToString());
 		}
-
-		/// <summary>
-		/// Returns null.
-		/// </summary>
-		public sealed override object CreateMemento()
-		{
-			return base.CreateMemento();
-		}
-
-		/// <summary>
-		/// Not applicable; does nothing.
-		/// </summary>
-		public sealed override void SetMemento(object memento)
-		{
-			base.SetMemento(memento);
-		}
-		
-		#endregion
-
-		#region IEquatable<IColorMap> Members
-
-		///<summary>
-		///Indicates whether this <see cref="IColorMap"/> is equal to another <see cref="IColorMap"/>.
-		///</summary>
-		public bool Equals(IColorMap other)
-		{
-			if (other == null)
-				return false;
-
-			return this.MinInputValue == other.MinInputValue && 
-				this.MaxInputValue == other.MaxInputValue &&
-				this.GetType() == other.GetType();
-		}
-
-		#endregion
-		#endregion
-		#endregion
 	}
 }

@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// although it could also be a purely calculated Lut.  See the comments for <see cref="IModalityLut"/>
 	/// for more information.
 	/// </remarks>
-	internal sealed class ModalityLutLinear : GeneratedDataLut, IModalityLut, IEquatable<ModalityLutLinear>
+	internal sealed class ModalityLutLinear : GeneratedDataLut, IModalityLut
 	{
 		#region Private Fields
 
@@ -117,8 +117,33 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 		#endregion
 
-		#region Methods
 		#region Overrides
+
+		public override int MinInputValue
+		{
+			get { return base.MinInputValue; }
+			set { }
+		}
+
+		public override int MaxInputValue
+		{
+			get { return base.MaxInputValue; }
+			set { }
+		}
+
+		public override int MinOutputValue
+		{
+			get { return base.MinOutputValue; }
+			protected set { }
+		}
+
+		public override int MaxOutputValue
+		{
+			get { return base.MaxOutputValue; }
+			protected set { }
+		}
+
+		#region Methods
 
 		protected override void Create()
 		{
@@ -162,38 +187,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			base.MinOutputValue = (int)Math.Min(minMax1, minMax2);
 			base.MaxOutputValue = (int)Math.Max(minMax1, minMax2);
-		}
-
-		#endregion
-
-		#region IEquatable<IModalityLut> Members
-
-		public bool Equals(IModalityLut other)
-		{
-			if (other == null)
-				return false;
-
-			if (this == other)
-				return true;
-
-			if (other is ModalityLutLinear)
-				return this.Equals(other as ModalityLutLinear);
-
-			return false;
-		}
-
-		#endregion
-
-		#region IEquatable<ModalityLutLinear> Members
-
-		public bool Equals(ModalityLutLinear other)
-		{
-			if (other == null)
-				return false;
-
-			return
-				this.BitsStored == other.BitsStored && this.IsSigned == other.IsSigned && this.RescaleSlope == other.RescaleSlope &&
-				this.RescaleIntercept == other.RescaleIntercept;
 		}
 
 		#endregion

@@ -41,24 +41,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// This corresponds to the Dicom concept of a <b>Palette Color Lut Transformation</b> 
 	/// for grayscale images, but has been named <b>IColorMap</b> for simplicity.</para>
 	/// <para>
-	/// Color Maps are often the same for many images, so they are stored internally
+	/// Color Maps are often the same for many images, so they are cached internally
 	/// by the framework.
 	/// </para>
-	/// <para>
-	/// Color Maps must implement <see cref="IEquatable{T}"/> so that a new Color Map can 
-	/// be compared with those already stored and discarded if an equivalent one already exists.
-	/// </para>
 	/// </remarks>
-	/// <seealso cref="IComposableLut"/>
-	public interface IColorMap : IComposableLut, IEquatable<IColorMap>
+	/// <seealso cref="IDataLut"/>
+	public interface IColorMap : IDataLut
 	{
-		/// <summary>
-		/// Gets the map's data.
-		/// </summary>
-		/// <remarks>
-		/// This property should be considered readonly and is only 
-		/// provided for fast (unsafe) iteration over the array.
-		/// </remarks>
-		int[] Data { get; }
 	}
 }

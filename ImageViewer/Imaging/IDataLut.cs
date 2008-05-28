@@ -38,8 +38,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 	public interface IDataLut : IComposableLut
 	{
 		/// <summary>
-		/// Gets the length of the data lut.
+		/// Gets the lut data.
 		/// </summary>
-		uint Length { get; }
+		int[] Data { get; }
 	}
 }

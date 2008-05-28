@@ -30,7 +30,6 @@
 #endregion
 
 using System.Drawing;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {

@@ -83,7 +83,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.AreEqual(colorMap.Data[4095], colorMap[2047]);
 			color = Color.FromArgb(colorMap.Data[4095]);
 			Assert.IsTrue(255 == color.R && color.R == color.G && color.G == color.B);
-
 		}
 	}
 }

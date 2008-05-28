@@ -29,19 +29,47 @@
 
 #endregion
 
+#if	UNIT_TESTS
+#pragma warning disable 1591,0419,1574,1587
 
-namespace ClearCanvas.ImageViewer.Imaging
+using NUnit.Framework;
+
+namespace ClearCanvas.ImageViewer.Imaging.Tests
 {
-	/// <summary>
-	/// An <see cref="IDataLut"/> that is purely generated.
-	/// </summary>
-	/// <seealso cref="IDataLut"/>
-	public interface IGeneratedDataLut : IDataLut
+
+	[TestFixture]
+	public class MiscellaneousLutTests
 	{
-		/// <summary>
-		/// Called by the framework to release any data held by the lut; the Lut should be capable
-		/// of recreating the data when it is needed.
-		/// </summary>
-		void Clear();
+		public MiscellaneousLutTests()
+		{
+		}
+
+		[Test]
+		public void TestSimpleLut()
+		{
+			int bitsStored = 8;
+			bool isSigned = false;
+			double rescaleSlope = 0.5;
+			double rescaleIntercept = 10;
+
+			ModalityLutLinear modalityLUT = new ModalityLutLinear(
+				bitsStored,
+				isSigned,
+				rescaleSlope,
+				rescaleIntercept);
+
+			SimpleDataLut simpleLut = 
+				new SimpleDataLut(modalityLUT.MinInputValue, modalityLUT.Data, modalityLUT.MinOutputValue, modalityLUT.MaxOutputValue, modalityLUT.GetKey(), modalityLUT.GetDescription()); 
+
+			Assert.AreEqual(modalityLUT.MinInputValue, simpleLut.MinInputValue);
+			Assert.AreEqual(modalityLUT.MaxInputValue, simpleLut.MaxInputValue);
+			Assert.AreEqual(modalityLUT.MinOutputValue, simpleLut.MinOutputValue);
+			Assert.AreEqual(modalityLUT.MaxOutputValue, simpleLut.MaxOutputValue);
+			Assert.AreEqual(modalityLUT.GetKey(), simpleLut.GetKey());
+			Assert.AreEqual(modalityLUT.GetDescription(), simpleLut.GetDescription());
+			Assert.AreEqual(modalityLUT.Length, simpleLut.Length);
+		}
 	}
 }
+
+#endif

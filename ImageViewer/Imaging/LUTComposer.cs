@@ -85,14 +85,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region Private Members
 		#region Methods
 
-		private unsafe void Compose()
+		private unsafe void Compose(int[] data)
 		{
 
 #if DEBUG
 			CodeClock counter = new CodeClock();
 			counter.Start();
 #endif
-			fixed (int* composedLutData = _composedLut)
+			fixed (int* composedLutData = data)
 			{
 				int* pLutData = composedLutData;
 				int min = MinInputValue;
@@ -233,12 +233,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 					_key = GetKey();
 
-					bool composeRequired;
-					_composedLut = this.LutPool.Retrieve(_key, Length, out composeRequired);
-
-					if (composeRequired)
-						Compose();
-
+					_composedLut = this.LutPool.Retrieve(_key, Length, Compose);
 					_recalculate = false;
 				}
 

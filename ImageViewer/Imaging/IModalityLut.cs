@@ -41,13 +41,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// Modality Luts are often the same for many images, so they are stored internally
 	/// by the framework and used by the <see cref="LutComposer"/> when creating an image's <see cref="IComposedLut"/>.
 	/// </para>
-	/// <para>
-	/// Modality Luts must implement <see cref="IEquatable{T}"/> so that a new Modality Lut can 
-	/// be compared with those already stored and discarded if an equivalent one already exists.
-	/// </para>
 	/// </remarks>
 	/// <seealso cref="IComposableLut"/>
-	public interface IModalityLut : IComposableLut, IEquatable<IModalityLut>
+	public interface IModalityLut : IComposableLut
 	{
 	}
 }

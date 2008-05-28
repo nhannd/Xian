@@ -31,11 +31,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	internal delegate void ComposeLutDelegate(int[] lut);
+
 	internal sealed class ComposedLutPool : IDisposable
 	{
 		#region Private Fields
@@ -72,15 +73,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		public int[] Retrieve(string key, int lutSize, out bool composeRequired)
+		public int[] Retrieve(string key, int lutSize, ComposeLutDelegate composeLutDelegate)
 		{
-			composeRequired = false;
+			Platform.CheckForNullReference(composeLutDelegate, "composeLutDelegate");
+
 			lock (_syncLock)
 			{
 				if (!LutCache.ContainsKey(key))
 				{
-					composeRequired = true;
 					LutCache[key] = new ReferenceCountedObjectWrapper<int[]>(RetrieveFromPool(lutSize));
+
+					//Compose right away, so the operation is synchronized.
+					composeLutDelegate(LutCache[key].Item);
 				}
 
 				LutCache[key].IncrementReferenceCount();
@@ -126,18 +130,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private int[] RetrieveFromPool(int lutSize)
 		{
-			lock (_syncLock)
+			// no lock since the calling method itself is synchronized.
+
+			// Find a LUT in the pool that's the same size as what's
+			// being requested
+			foreach (int[] lut in this.Pool)
 			{
-				// Find a LUT in the pool that's the same size as what's
-				// being requested
-				foreach (int[] lut in this.Pool)
+				// If we've found one, take it out of the pool and return it
+				if (lut.Length == lutSize)
 				{
-					// If we've found one, take it out of the pool and return it
-					if (lut.Length == lutSize)
-					{
-						this.Pool.Remove(lut);
-						return lut;
-					}
+					this.Pool.Remove(lut);
+					return lut;
 				}
 			}
 

@@ -38,10 +38,47 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	internal sealed class LutFactory : IDisposable
 	{
+		#region Cached Color Map
+
+		private class CachedColorMap : SimpleDataLut, IColorMap
+		{
+			public CachedColorMap(IColorMap source)
+				: base(source.MinInputValue, source.Data, 0, 0, source.GetKey(), source.GetDescription())
+			{
+			}
+
+			public override int MinOutputValue{
+				get { throw new MemberAccessException("A color map cannot have a minimum output value."); }
+				protected set { throw new MemberAccessException("A color map cannot have a minimum output value."); }
+			}
+
+			public override int MaxOutputValue
+			{
+				get { throw new MemberAccessException("A color map cannot have a maximum output value."); }
+				protected set { throw new MemberAccessException("A color map cannot have a maximum output value."); }
+			}
+		}
+		
+		#endregion
+
+		#region Cached Modality Lut
+
+		private class CachedModalityLutLinear : SimpleDataLut, IModalityLut
+		{
+			public CachedModalityLutLinear(ModalityLutLinear source)
+				: base(	source.MinInputValue, source.Data, 
+						source.MinOutputValue, source.MaxOutputValue, 
+						source.GetKey(), source.GetDescription())
+			{
+			}
+		}
+
+		#endregion
+
 		#region ColorMap Proxy Class
 
 		[Cloneable(true)]
-		private class ColorMapProxy : ComposableLut, IColorMap, IEquatable<ColorMapProxy>
+		private class ColorMapProxy : ComposableLut, IColorMap
 		{
 			private readonly string _factoryName;
 			private int _minInputValue;
@@ -50,6 +87,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			[CloneIgnore]
 			private IColorMap _realLut;
 
+			//For cloning.
 			private ColorMapProxy()
 			{
 			}
@@ -111,14 +149,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			public override int MinOutputValue
 			{
-				get { throw new MemberAccessException(SR.ExceptionColorMapCannotHaveMinimumOutputValue); }
-				protected set { throw new MemberAccessException(SR.ExceptionColorMapCannotHaveMinimumOutputValue); }
+				get { throw new MemberAccessException("A color map cannot have a minimum output value."); }
+				protected set { throw new MemberAccessException("A color map cannot have a minimum output value."); }
 			}
 
 			public override int MaxOutputValue
 			{
-				get { throw new MemberAccessException(SR.ExceptionColorMapCannotHaveMaximumOutputValue); }
-				protected set { throw new MemberAccessException(SR.ExceptionColorMapCannotHaveMaximumOutputValue); }
+				get { throw new MemberAccessException("A color map cannot have a maximum output value."); }
+				protected set { throw new MemberAccessException("A color map cannot have a maximum output value."); }
 			}
 
 			public override int this[int index]
@@ -129,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				}
 				protected set
 				{
-					throw new MemberAccessException(SR.ExceptionColorMapDataCannotBeAltered);
+					throw new MemberAccessException("The color map data cannot be altered.");
 				}
 			}
 
@@ -144,7 +182,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				return this.RealLut.GetDescription();
 			}
 
-			#region IColorMap Members
+			#region IDataLut Members
 
 			public int[] Data
 			{
@@ -163,48 +201,68 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 
 			#endregion
+		}
 
-			public override int GetHashCode()
+		#endregion
+
+		#region Modality Lut Proxy
+
+		[Cloneable(true)]
+		private class ModalityLutProxy : ComposableLut, IModalityLut
+		{
+			[CloneCopyReference]
+			private readonly IModalityLut _realLut;
+
+			public ModalityLutProxy(IModalityLut realLut)
 			{
-				return base.GetHashCode();
-			}
-			
-			public override bool Equals(object obj)
-			{
-				if (this == obj)
-					return true;
-				
-				if (obj is IColorMap)
-					return this.Equals((IColorMap) obj);
-
-				return false;
-			}
-			#region IEquatable<IColorMap> Members
-
-			public bool Equals(IColorMap other)
-			{
-				if (other == null)
-					return false;
-
-				if (other is ColorMapProxy)
-					return this.Equals((ColorMapProxy)other);
-
-				return false;
+				_realLut = realLut;
 			}
 
-			#endregion
-
-			#region IEquatable<ColorMapProxy> Members
-
-			public bool Equals(ColorMapProxy other)
+			//for cloning.
+			private ModalityLutProxy()
 			{
-				if (other == null)
-					return false;
-
-				return _factoryName == other._factoryName;
 			}
 
-			#endregion
+			public override int MinInputValue
+			{
+				get { return _realLut.MinInputValue; }
+				set { }
+			}
+
+			public override int MaxInputValue
+			{
+				get { return _realLut.MaxInputValue; }
+				set { }
+			}
+
+			public override int MinOutputValue
+			{
+				get { return _realLut.MinOutputValue; }
+				protected set { }
+			}
+
+			public override int MaxOutputValue
+			{
+				get { return _realLut.MaxOutputValue; }
+				protected set { }
+			}
+
+			public override int this[int index]
+			{
+				get { return _realLut[index]; }
+				protected set { throw new MemberAccessException("The modality lut data cannot be altered."); }
+			}
+
+			public override string GetKey()
+			{
+
+				return _realLut.GetKey();
+			}
+
+			public override string GetDescription()
+			{
+				return _realLut.GetDescription();
+			}
 		}
 
 		#endregion
@@ -214,7 +272,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private static readonly object _syncLock = new object();
 		private static readonly LutFactory _instance = new LutFactory();
 
-		private readonly List<ModalityLutLinear> _modalityLUTs = new List<ModalityLutLinear>();
+		private readonly List<IModalityLut> _modalityLUTs = new List<IModalityLut>();
 		private readonly List<IColorMapFactory> _colorMapFactories = CreateColorMapFactories();
 		private readonly List<IColorMap> _colorMaps = new List<IColorMap>();
 		
@@ -245,7 +303,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Private Properties
 
-		private List<ModalityLutLinear> ModalityLuts
+		private List<IModalityLut> ModalityLuts
 		{
 			get { return _modalityLUTs; }
 		}
@@ -283,19 +341,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Internal Methods
 
-		internal ModalityLutLinear GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
+		internal IModalityLut GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
 		{
 			ModalityLutLinear modalityLut = new ModalityLutLinear(bitsStored, isSigned, rescaleSlope, rescaleIntercept);
 
 			lock (_syncLock)
 			{
-				ModalityLutLinear existingLut =
-					this.ModalityLuts.Find(delegate(ModalityLutLinear lut) { return lut.Equals(modalityLut); });
+				IModalityLut existingLut =
+					this.ModalityLuts.Find(delegate(IModalityLut lut) { return lut.GetKey() == modalityLut.GetKey(); });
 
+				// cache the lut (and generate it's data right away) for thread-safety
 				if (existingLut == null)
-					this.ModalityLuts.Add(existingLut = modalityLut);
+					this.ModalityLuts.Add(existingLut = new CachedModalityLutLinear(modalityLut));
 
-				return existingLut;
+				return new ModalityLutProxy(existingLut);
 			}
 		}
 
@@ -307,7 +366,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		internal IColorMap GetColorMap(string name)
 		{
 			if (this.ColorMapFactories.Find(delegate(IColorMapFactory factory) { return factory.Name == name; }) == null)
-				throw new ArgumentException(String.Format(SR.ExceptionFormatNoColorMapFactoryExistWithName, name));
+				throw new ArgumentException(String.Format("No Color Map factory extension exists with the name {0}.", name));
 
 			return new ColorMapProxy(name);
 		}
@@ -327,10 +386,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			lock (_syncLock)
 			{
-				IColorMap existingLut = this.ColorMaps.Find(delegate(IColorMap lut) { return lut.Equals(colorMap); });
+				IColorMap existingLut = this.ColorMaps.Find(delegate(IColorMap lut) { return lut.GetKey() == colorMap.GetKey(); });
 
+				// cache the lut (and generate it's data right away) for thread-safety
 				if (existingLut == null)
-					this.ColorMaps.Add(existingLut = colorMap);
+					this.ColorMaps.Add(existingLut = new CachedColorMap(colorMap));
 
 				return existingLut;
 			}

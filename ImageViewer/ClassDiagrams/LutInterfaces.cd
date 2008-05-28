@@ -9,17 +9,17 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.Imaging.IColorMap" Collapsed="true">
-    <Position X="1.5" Y="3.5" Width="1.5" />
+    <Position X="1.5" Y="5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Imaging\IColorMap.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.Imaging.IComposableLut" Collapsed="true">
     <Position X="5" Y="2" Width="1.5" />
     <TypeIdentifier>
       <FileName>Imaging\IComposableLut.cs</FileName>
-      <HashCode>IEAAAAAAAAAAAAAAIAAAAAQAAAAAAAAAAAQAAAAAAAA=</HashCode>
+      <HashCode>IEAAAAAAAAAAAAAAIAAAAAQAAAAAAAAAAAQAAAAAABA=</HashCode>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.Imaging.IComposedLut" Collapsed="true">
@@ -33,7 +33,7 @@
     <Position X="3.75" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Imaging\IDataLut.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.Imaging.IGeneratedDataLut" Collapsed="true">

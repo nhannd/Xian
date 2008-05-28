@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			context.CloneFields(source, this);
 
-			if (source.LutComposer.LutCollection.Count > 0) //modality lut is constant right now.
+			if (source.LutComposer.LutCollection.Count > 0) //modality lut is constant; no need to clone.
 				this.InitializeNecessaryLuts(Luts.Modality);
 
 			if (source.LutComposer.LutCollection.Count > 1) //clone the voi lut.
