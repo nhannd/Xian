@@ -176,7 +176,7 @@ namespace ClearCanvas.Ris.Application.Common
 				public const string Resolve = "Workflow/Protocol/Resolve";
 
 				[AuthorityToken(Description = "Allow submission of procedure Protocols to another party.")]
-				public const string SubmitForApproval = "Workflow/Protocol/SubmitForApproval";
+				public const string SubmitForApproval = "Workflow/Protocol/Submit For Approval";
 			}
 
 			public static class Patient
