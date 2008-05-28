@@ -143,7 +143,14 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 					if (existingAssignmentStep != null)
 					{
 						existingAssignmentStep.Discontinue();
-						existingAssignmentStep.Protocol.Author = null;
+						if (existingAssignmentStep.Protocol.Status == ProtocolStatus.AA)
+						{
+							existingAssignmentStep.Protocol.Supervisor = null;
+						}
+						else
+						{
+							existingAssignmentStep.Protocol.Author = null;
+						}
 
 						// Replace with new step scheduled step
 						ProtocolAssignmentStep replacementAssignmentStep = new ProtocolAssignmentStep(existingAssignmentStep.Protocol);

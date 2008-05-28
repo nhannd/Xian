@@ -225,7 +225,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		private void OnProtcolSubmittedForApproval(object sender, EventArgs e)
 		{
-			DocumentManager.InvalidateFolder(typeof(Folders.CompletedProtocolFolder));
+			DocumentManager.InvalidateFolder(typeof(Folders.AwaitingApprovalProtocolFolder));
 			OnProtocolEndedHelper();
 		}
 
@@ -246,6 +246,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			if (_componentMode == ProtocollingComponentMode.Assign)
 			{
 				DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+				DocumentManager.InvalidateFolder(typeof(Folders.ToBeApprovedFolder));
 			}
 			else if (_componentMode == ProtocollingComponentMode.Edit)
 			{

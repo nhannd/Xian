@@ -32,6 +32,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._tableLayouOuter = new System.Windows.Forms.TableLayoutPanel();
 			this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
 			this._btnAccept = new System.Windows.Forms.Button();
+			this._btnSubmitForApproval = new System.Windows.Forms.Button();
 			this._btnReject = new System.Windows.Forms.Button();
 			this._btnSuspend = new System.Windows.Forms.Button();
 			this._btnSave = new System.Windows.Forms.Button();
@@ -49,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._procedurePlanSummary = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._urgency = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this._btnSubmitForApproval = new System.Windows.Forms.Button();
+			this._author = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._tableLayouOuter.SuspendLayout();
 			this.flowLayoutPanel2.SuspendLayout();
 			this.flowLayoutPanel3.SuspendLayout();
@@ -105,6 +106,17 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._btnAccept.Text = "Accept";
 			this._btnAccept.UseVisualStyleBackColor = true;
 			this._btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
+			// 
+			// _btnSubmitForApproval
+			// 
+			this._btnSubmitForApproval.AutoSize = true;
+			this._btnSubmitForApproval.Location = new System.Drawing.Point(84, 3);
+			this._btnSubmitForApproval.Name = "_btnSubmitForApproval";
+			this._btnSubmitForApproval.Size = new System.Drawing.Size(109, 23);
+			this._btnSubmitForApproval.TabIndex = 6;
+			this._btnSubmitForApproval.Text = "Submit for Approval";
+			this._btnSubmitForApproval.UseVisualStyleBackColor = true;
+			this._btnSubmitForApproval.Click += new System.EventHandler(this._btnSubmitForApproval_Click);
 			// 
 			// _btnReject
 			// 
@@ -186,14 +198,16 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._tableLayoutInner.Controls.Add(this.groupBox1, 0, 2);
 			this._tableLayoutInner.Controls.Add(this._grpProcedures, 0, 0);
 			this._tableLayoutInner.Controls.Add(this._urgency, 0, 1);
+			this._tableLayoutInner.Controls.Add(this._author, 0, 3);
 			this._tableLayoutInner.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tableLayoutInner.Location = new System.Drawing.Point(0, 0);
 			this._tableLayoutInner.Margin = new System.Windows.Forms.Padding(0);
 			this._tableLayoutInner.Name = "_tableLayoutInner";
-			this._tableLayoutInner.RowCount = 3;
+			this._tableLayoutInner.RowCount = 4;
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutInner.Size = new System.Drawing.Size(527, 631);
 			this._tableLayoutInner.TabIndex = 3;
 			// 
@@ -206,7 +220,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.groupBox1.Location = new System.Drawing.Point(0, 145);
 			this.groupBox1.Margin = new System.Windows.Forms.Padding(0);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(527, 486);
+			this.groupBox1.Size = new System.Drawing.Size(527, 442);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Codes";
@@ -227,7 +241,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.tableLayoutPanel3.RowCount = 2;
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel3.Size = new System.Drawing.Size(521, 467);
+			this.tableLayoutPanel3.Size = new System.Drawing.Size(521, 423);
 			this.tableLayoutPanel3.TabIndex = 0;
 			// 
 			// _protocolCodesSelector
@@ -243,7 +257,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._protocolCodesSelector.SelectedItemsTable = null;
 			this._protocolCodesSelector.ShowColumnHeading = false;
 			this._protocolCodesSelector.ShowToolbars = false;
-			this._protocolCodesSelector.Size = new System.Drawing.Size(498, 416);
+			this._protocolCodesSelector.Size = new System.Drawing.Size(498, 372);
 			this._protocolCodesSelector.TabIndex = 0;
 			// 
 			// _protocolGroup
@@ -319,16 +333,22 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._urgency.TabIndex = 1;
 			this._urgency.Value = null;
 			// 
-			// _btnSubmitForApproval
+			// _author
 			// 
-			this._btnSubmitForApproval.AutoSize = true;
-			this._btnSubmitForApproval.Location = new System.Drawing.Point(84, 3);
-			this._btnSubmitForApproval.Name = "_btnSubmitForApproval";
-			this._btnSubmitForApproval.Size = new System.Drawing.Size(109, 23);
-			this._btnSubmitForApproval.TabIndex = 6;
-			this._btnSubmitForApproval.Text = "Submit for Approval";
-			this._btnSubmitForApproval.UseVisualStyleBackColor = true;
-			this._btnSubmitForApproval.Click += new System.EventHandler(this._btnSubmitForApproval_Click);
+			this._author.AutoSize = true;
+			this._author.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._author.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._author.LabelText = "Author";
+			this._author.Location = new System.Drawing.Point(2, 589);
+			this._author.Margin = new System.Windows.Forms.Padding(2);
+			this._author.Mask = "";
+			this._author.Name = "_author";
+			this._author.PasswordChar = '\0';
+			this._author.ReadOnly = true;
+			this._author.Size = new System.Drawing.Size(523, 40);
+			this._author.TabIndex = 2;
+			this._author.ToolTip = null;
+			this._author.Value = null;
 			// 
 			// ProtocolEditorComponentControl
 			// 
@@ -378,5 +398,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 		private System.Windows.Forms.Button _btnSetDefault;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _urgency;
 		private System.Windows.Forms.Button _btnSubmitForApproval;
+		private ClearCanvas.Desktop.View.WinForms.TextField _author;
     }
 }

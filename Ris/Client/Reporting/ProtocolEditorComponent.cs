@@ -40,6 +40,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using System.Threading;
+using ClearCanvas.Ris.Client.Formatting;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 using System.Security.Permissions;
 using GetOperationEnablementResponse=
@@ -225,6 +226,19 @@ namespace ClearCanvas.Ris.Client.Reporting
 		#endregion
 
 		#region Presentation Model
+
+		public string Author
+		{
+			get
+			{
+				return PersonNameFormat.Format(_selectedProcodurePlanSummaryTableItem.ProtocolDetail.Author.Name);
+			}
+		}
+
+		public bool ShowAuthor
+		{
+			get { return true; }
+		}
 
 		public string Urgency
 		{

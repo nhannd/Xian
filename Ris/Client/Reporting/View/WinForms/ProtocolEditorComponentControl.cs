@@ -55,6 +55,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			_urgency.DataSource = _component.UrgencyChoices;
 			_urgency.DataBindings.Add("Value", _component, "Urgency", true, DataSourceUpdateMode.OnPropertyChanged);
 
+			_author.DataBindings.Add("Value", _component, "Author", true, DataSourceUpdateMode.OnPropertyChanged);
+			_author.DataBindings.Add("Visible", _component, "ShowAuthor", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_protocolGroup.DataSource = _component.ProtocolGroupChoices;
 			_protocolGroup.DataBindings.Add("Value", _component, "ProtocolGroup", true, DataSourceUpdateMode.OnPropertyChanged);
 			_btnSetDefault.DataBindings.Add("Enabled", _component, "SetDefaultProtocolGroupEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
