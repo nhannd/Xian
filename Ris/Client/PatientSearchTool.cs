@@ -37,7 +37,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client
 {
 	[MenuAction("launch", "global-menus/Patient/Search Patient", "Launch")]
 	//[ButtonAction("launch", "global-toolbars/Patient/Search Patient", "Launch")]

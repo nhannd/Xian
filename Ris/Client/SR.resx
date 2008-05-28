@@ -534,6 +534,9 @@
   <data name="TitleSearch" xml:space="preserve">
     <value>Search</value>
   </data>
+  <data name="TitleSearchPatients" xml:space="preserve">
+    <value>Search Patients</value>
+  </data>
   <data name="TitleStaff" xml:space="preserve">
     <value>Staff</value>
   </data>

@@ -483,9 +483,6 @@
   <data name="TitleResults" xml:space="preserve">
     <value>Results</value>
   </data>
-  <data name="TitleSearchPatients" xml:space="preserve">
-    <value>Search Patients</value>
-  </data>
   <data name="TitleStartMps" xml:space="preserve">
     <value>Start</value>
   </data>

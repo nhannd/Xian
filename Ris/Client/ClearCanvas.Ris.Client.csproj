@@ -99,6 +99,7 @@
     <Compile Include="PatientProfileEditorComponent.cs" />
     <Compile Include="OrderNoteConversationComponent.cs" />
     <Compile Include="OrderNoteConversationTool.cs" />
+    <Compile Include="PatientSearchTool.cs" />
     <Compile Include="PreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="RefreshTool.cs" />
     <Compile Include="SearchResultsFolder.cs" />

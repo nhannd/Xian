@@ -1312,6 +1312,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search Patients.
+        /// </summary>
+        internal static string TitleSearchPatients {
+            get {
+                return ResourceManager.GetString("TitleSearchPatients", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Staff.
         /// </summary>
         internal static string TitleStaff {
