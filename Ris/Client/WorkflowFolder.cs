@@ -349,8 +349,15 @@ namespace ClearCanvas.Ris.Client
             if (_dropHandlerExtensionPoint == null)
                 return DragDropKind.None;
 
-            // cast items to type safe collection
-            ICollection<TItem> dropItems = CollectionUtils.Map<object, TItem>(items, delegate(object item) { return (TItem)item; });
+            // cast items to type safe collection, cannot accept drop if items contains a different item type 
+        	ICollection<TItem> dropItems = new List<TItem>();
+			foreach (object item in items)
+			{
+				if (item is TItem)
+					dropItems.Add((TItem)item);
+				else
+					return DragDropKind.None;
+			}
 
             // check for a handler that can accept
             _currentDropHandler = CollectionUtils.SelectFirst<IDropHandler<TItem>>(_dropHandlerExtensionPoint.CreateExtensions(),
