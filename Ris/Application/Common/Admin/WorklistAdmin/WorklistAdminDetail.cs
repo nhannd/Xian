@@ -72,7 +72,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
             this.ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>();
             this.Facilities = new List<FacilitySummary>();
             this.PatientClasses = new List<EnumValueInfo>();
-            this.OrderPriorities = new List<EnumValueInfo>();
+			this.PatientLocations = new List<LocationSummary>();
+			this.OrderPriorities = new List<EnumValueInfo>();
             this.Portabilities = new List<bool>();
 
             this.StaffSubscribers = new List<StaffSummary>();
@@ -107,8 +108,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         [DataMember]
         public List<FacilitySummary> Facilities;
 
-        [DataMember]
-        public bool FilterByWorkingFacility;
+		[DataMember]
+		public bool FilterByWorkingFacility;
 
         [DataMember]
         public List<EnumValueInfo> OrderPriorities;
@@ -116,7 +117,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         [DataMember]
         public List<EnumValueInfo> PatientClasses;
 
-        [DataMember]
+		[DataMember]
+		public List<LocationSummary> PatientLocations;
+
+		[DataMember]
         public List<bool> Portabilities;
 
         [DataMember]

@@ -50,12 +50,21 @@ namespace ClearCanvas.Ris.Client.Admin
     /// </summary>
     public class WorklistEditorComponent : NavigatorComponentContainer
     {
-		class ProcedureTypeGroupSummaryTable : Table<ProcedureTypeGroupSummary>
+		class ProcedureTypeGroupTable : Table<ProcedureTypeGroupSummary>
 		{
-			public ProcedureTypeGroupSummaryTable()
+			public ProcedureTypeGroupTable()
 			{
 				this.Columns.Add(new TableColumn<ProcedureTypeGroupSummary, string>(SR.ColumnName,
 					delegate(ProcedureTypeGroupSummary summary) { return summary.Name; }));
+			}
+		}
+
+		class LocationTable : Table<LocationSummary>
+		{
+			public LocationTable()
+			{
+				this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnName,
+					delegate(LocationSummary summary) { return summary.Name; }));
 			}
 		}
 
@@ -96,7 +105,8 @@ namespace ClearCanvas.Ris.Client.Admin
         private WorklistMultiDetailEditorComponent _multiDetailComponent;
         private WorklistFilterEditorComponent _filterComponent;
         private WorklistTimeWindowEditorComponent _timeWindowComponent;
-		private WorklistSelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupSummaryTable> _procedureTypeGroupFilterComponent;
+		private WorklistSelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable> _procedureTypeGroupFilterComponent;
+		private WorklistSelectorEditorComponent<LocationSummary, LocationTable> _locationFilterComponent;
 		private WorklistSelectorEditorComponent<StaffSummary, StaffTable> _staffSubscribersComponent;
         private WorklistSelectorEditorComponent<StaffGroupSummary, StaffGroupTable> _groupSubscribersComponent;
 
@@ -161,8 +171,11 @@ namespace ClearCanvas.Ris.Client.Admin
                         procedureTypeGroups, formDataResponse.FacilityChoices, formDataResponse.OrderPriorityChoices,
                         formDataResponse.PatientClassChoices);
 
-					_procedureTypeGroupFilterComponent = new WorklistSelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupSummaryTable>(
+					_procedureTypeGroupFilterComponent = new WorklistSelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable>(
 						procedureTypeGroups, _worklistDetail.ProcedureTypeGroups, delegate(ProcedureTypeGroupSummary s) { return s.ProcedureTypeGroupRef; });
+
+					_locationFilterComponent = new WorklistSelectorEditorComponent<LocationSummary, LocationTable>(
+						formDataResponse.PatientLocationChoices, _worklistDetail.PatientLocations, delegate(LocationSummary s) { return s.LocationRef; });
 
                     _timeWindowComponent = new WorklistTimeWindowEditorComponent(_worklistDetail);
 
@@ -175,6 +188,7 @@ namespace ClearCanvas.Ris.Client.Admin
             this.Pages.Add(new NavigatorPage("NodeWorklist", _mode == Mode.Add ? (IApplicationComponent)_multiDetailComponent : (IApplicationComponent)_detailComponent));
             this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters", _filterComponent));
 			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeProcedureTypeGroups", _procedureTypeGroupFilterComponent));
+			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodePatientLocations", _locationFilterComponent));
             
             // add the time filter page, if the class supports it (or if the class is not known, in the case of an add)
             if (_worklistDetail.WorklistClass == null || _worklistDetail.WorklistClass.SupportsTimeWindow)
@@ -219,6 +233,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			if (_procedureTypeGroupFilterComponent.IsStarted)
 				_worklistDetail.ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>(_procedureTypeGroupFilterComponent.SelectedItems);
+
+			if (_locationFilterComponent.IsStarted)
+				_worklistDetail.PatientLocations = new List<LocationSummary>(_locationFilterComponent.SelectedItems);
 
 			if (_groupSubscribersComponent.IsStarted)
                 _worklistDetail.GroupSubscribers = new List<StaffGroupSummary>(_groupSubscribersComponent.SelectedItems);

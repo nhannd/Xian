@@ -88,6 +88,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     delegate(PatientClassEnum p) { return EnumUtils.GetEnumValueInfo(p); });
             }
 
+			if (worklist.PatientLocationFilter.IsEnabled)
+			{
+				LocationAssembler locationAssembler = new LocationAssembler();
+				detail.PatientLocations = CollectionUtils.Map<Location, LocationSummary>(
+					worklist.PatientLocationFilter.Values,
+					delegate(Location l) { return locationAssembler.CreateLocationSummary(l); });
+			}
+
             if (worklist.OrderPriorityFilter.IsEnabled)
             {
                 detail.OrderPriorities = CollectionUtils.Map<OrderPriorityEnum, EnumValueInfo>(
@@ -178,6 +186,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     delegate(EnumValueInfo value) { return EnumUtils.GetEnumValue<PatientClassEnum>(value, context); }));
             }
             worklist.PatientClassFilter.IsEnabled = worklist.PatientClassFilter.Values.Count > 0;
+
+			// patient locations
+			worklist.PatientLocationFilter.Values.Clear();
+			if (detail.PatientLocations != null)
+			{
+				worklist.PatientLocationFilter.Values.AddAll(CollectionUtils.Map<LocationSummary, Location>(
+					detail.PatientLocations,
+					delegate(LocationSummary f) { return context.Load<Location>(f.LocationRef, EntityLoadFlags.Proxy); }));
+			}
+        	worklist.PatientLocationFilter.IsEnabled = worklist.PatientLocationFilter.Values.Count > 0;
+
 
             // order priorities
             worklist.OrderPriorityFilter.Values.Clear();

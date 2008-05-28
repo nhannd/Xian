@@ -175,7 +175,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     return facilityAssembler.CreateFacilitySummary(f);
                 });
 
-            response.OrderPriorityChoices = EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext);
+			LocationAssembler locationAssembler = new LocationAssembler();
+			response.PatientLocationChoices = CollectionUtils.Map<Location, LocationSummary>(
+				this.PersistenceContext.GetBroker<ILocationBroker>().FindAll(),
+				delegate(Location l)
+				{
+					return locationAssembler.CreateLocationSummary(l);
+				});
+
+			response.OrderPriorityChoices = EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext);
             response.PatientClassChoices = EnumUtils.GetEnumValueList<PatientClassEnum>(PersistenceContext);
 
             return response;
