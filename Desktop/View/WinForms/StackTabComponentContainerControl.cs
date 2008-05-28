@@ -394,7 +394,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 				TabGroupLeaf previousLeaf = GetLeafForStackPage(_component.CurrentPage);
 				HighlightLeaf(previousLeaf, false);
 
-				_component.CurrentPage = page;
+				if (_component.CurrentPage != page)
+					_component.CurrentPage = page;
 			}
 
 			HighlightLeaf(tgl, true);

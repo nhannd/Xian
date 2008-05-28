@@ -61,11 +61,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private void _component_SelectedFolderChanged(object sender, EventArgs e)
         {
-            _folderTreeView.Selection = _component.SelectedFolder;
+			if (_folderTreeView.Selection != _component.SelectedFolder)
+			{
+				_folderTreeView.Selection = _component.SelectedFolder;
 
-            // Update action model based on the folder selected
-            _folderTreeView.MenuModel = _component.FoldersContextMenuModel;
-            _folderTreeView.ToolbarModel = _component.FoldersToolbarModel;
+				// Update action model based on the folder selected
+				_folderTreeView.MenuModel = _component.FoldersContextMenuModel;
+				_folderTreeView.ToolbarModel = _component.FoldersToolbarModel;
+			}
         }
     }
 }

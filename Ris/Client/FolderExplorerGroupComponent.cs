@@ -163,7 +163,6 @@ namespace ClearCanvas.Ris.Client
 			_stackTabComponent = new StackTabComponentContainer(
 				HomePageSettings.Default.ShowMultipleFolderSystems ? StackStyle.ShowMultiple : StackStyle.ShowOneOnly,
 				HomePageSettings.Default.OpenAllFolderSystemsInitially);
-			_stackTabComponent.CurrentPageChanged += OnCurrentPageChanged;
 
 			_folderExplorerComponents = new Dictionary<IFolderSystem, FolderExplorerComponent>();
 
@@ -184,8 +183,6 @@ namespace ClearCanvas.Ris.Client
 				delegate(IFolderSystem folderSystem)
 				{
 					FolderExplorerComponent component = new FolderExplorerComponent(folderSystem);
-					component.SelectedFolderChanged += OnSelectedFolderChanged;
-
 					_folderExplorerComponents.Add(folderSystem, component);
 
 					StackTabPage thisPage = new StackTabPage(
@@ -211,26 +208,31 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			base.Start();
+			// Subscribe to page changed event before starting component, so that when component start the event will fire
+			// for the initial page that open
+			_stackTabComponent.CurrentPageChanged += OnCurrentPageChanged;
+			_stackTabComponentContainerHost = new ChildComponentHost(this.Host, _stackTabComponent);
+			_stackTabComponentContainerHost.StartComponent();
 
 			CollectionUtils.ForEach(_folderExplorerComponents.Keys,
 				delegate(IFolderSystem folderSystem)
 				{
 					DocumentManager.RegisterFolderSystem(folderSystem);
+					_folderExplorerComponents[folderSystem].SelectedFolderChanged += OnSelectedFolderChanged;
 				});
 
-			_stackTabComponentContainerHost = new ChildComponentHost(this.Host, _stackTabComponent);
-			_stackTabComponentContainerHost.StartComponent();
-
+			base.Start();
 		}
 
 		public override void Stop()
 		{
+			_stackTabComponent.CurrentPageChanged -= OnCurrentPageChanged;
 			_stackTabComponentContainerHost.StopComponent();
 
 			CollectionUtils.ForEach(_folderExplorerComponents.Keys,
 				delegate(IFolderSystem folderSystem)
 				{
+					_folderExplorerComponents[folderSystem].SelectedFolderChanged -= OnSelectedFolderChanged;
 					DocumentManager.UnregisterFolderSystem(folderSystem);
 				});
 
@@ -281,6 +283,9 @@ namespace ClearCanvas.Ris.Client
 			{
 				if (_selectedFolderExplorer != value)
 				{
+					// Must set the previous folder explorer folder selection to null before changing folder exploer
+					this.SelectedFolder = null;
+
 					_selectedFolderExplorer = value;
 					EventsHelper.Fire(_selectedFolderSystemChanged, this, EventArgs.Empty);
 				}
@@ -294,7 +299,7 @@ namespace ClearCanvas.Ris.Client
 
 		public IFolder SelectedFolder
 		{
-			get  { return _selectedFolder; }
+			get { return _selectedFolder; }
 			set
 			{
 				if (_selectedFolder != value)

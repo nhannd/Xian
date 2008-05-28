@@ -70,6 +70,11 @@ namespace ClearCanvas.Ris.Client
             {
 				if (_folderSystem != value)
 				{
+					// Must set the items and folders to null before chaning folder system, 
+					// otherwise the tools that monitors folder and items selected will get out-of-sync with the folder system
+					this.SelectedItems = Selection.Empty;
+					this.SelectedFolder = null;
+
 					if (_folderSystem != null)
 					{
 						this.SelectedItemsChanged -= _folderSystem.SelectedItemsChangedEventHandler;
