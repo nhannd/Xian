@@ -33,6 +33,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			_folderSystem = folderSystem;
 			_itemsTable = itemsTable;
+			_itemsTable.Items.ItemsChanged += delegate
+				{
+					NotifyTotalItemCountChanged();
+					NotifyTextChanged();
+				};
 
 			// no need to refresh this folder every time it is opened
 			this.RefreshOnOpen = false;
