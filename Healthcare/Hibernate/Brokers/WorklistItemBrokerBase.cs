@@ -40,6 +40,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -114,8 +115,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         protected static readonly HqlJoin JoinPatient = new HqlJoin("o.Patient", "p");
         protected static readonly HqlJoin JoinPatientProfile = new HqlJoin("p.Profiles", "pp");
 
+		protected static readonly HqlCondition ConditionActiveProcedureStep = new HqlCondition("(ps.State in (?, ?))", ActivityStatus.SC, ActivityStatus.IP);
 
-        private static readonly HqlSelect[] DefaultCountProjection
+        protected static readonly HqlSelect[] DefaultCountProjection
             = {
                   new HqlSelect("count(*)"),
               };
@@ -259,10 +261,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
 			// search for worklist items, delegating the task of designing the query to the subclass
 			HqlProjectionQuery worklistItemQuery = BuildWorklistItemSearchQuery(where);
-			List<TItem> worklistItems = DoQuery(worklistItemQuery);
+    		List<TItem> worklistItems = worklistItemQuery != null ? DoQuery(worklistItemQuery) : new List<TItem>();
 			results.AddRange(worklistItems);
 
-			// search for procedures, and add any procedures for which there is no worklist item
+    		// search for procedures, and add any procedures for which there is no worklist item
 			HqlProjectionQuery procedureQuery = BuildProcedureSearchQuery(where, false);
 			List<TItem> procedures = DoQuery(procedureQuery);
 			foreach (TItem procedure in procedures)
@@ -510,7 +512,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// </summary>
 		/// <remarks>
 		/// The implementor must return a query that will find active worklist items - that is, worklist items
-		/// that are in a non-terminal state.
+		/// that are in a non-terminal state - or null to indicate that no worklist item query needs to be executed.
 		/// </remarks>
 		/// <param name="where"></param>
 		/// <returns></returns>

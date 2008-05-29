@@ -49,12 +49,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     {
         #region HQL Constants
 
-        private static readonly HqlSelect[] WorklistItemCount
-            = {
-                  new HqlSelect("count(distinct o)"),
-              };
-
-
         private static readonly HqlJoin[] WorklistItemJoins
             = {
                   JoinOrder,
@@ -65,28 +59,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
               };
 
         private static readonly HqlFrom WorklistItemFrom = new HqlFrom("Procedure", "rp", WorklistItemJoins);
-
-        private static readonly HqlSelect[] PatientItemProjection
-           = {
-                  SelectPatient,
-                  SelectPatientProfile,
-                  SelectMrn,
-                  SelectPatientName,
-                  SelectHealthcard,
-                  SelectDateOfBirth,
-                  SelectSex
-              };
-
-        private static readonly HqlSelect[] PatientCountProjection
-            = {
-                  new HqlSelect("count(p)"),
-              };
-
-        private static readonly HqlFrom PatientFrom = new HqlFrom("Patient", "p", 
-            new HqlJoin[]
-                {
-                    JoinPatientProfile
-                });
 
         #endregion
 
@@ -105,9 +77,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
             WorklistTimeField timeField = CollectionUtils.FirstElement(criteria).TimeField;
-            HqlProjectionQuery query = new HqlProjectionQuery(GetFromClause(procedureStepClass), GetWorklistItemProjection(timeField));
-            query.SelectDistinct = true;
-            return query;
+            return new HqlProjectionQuery(GetFromClause(procedureStepClass), GetWorklistItemProjection(timeField));
         }
 
         /// <summary>
@@ -122,12 +92,20 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         protected override HqlProjectionQuery CreateBaseCountQuery(WorklistItemSearchCriteria[] criteria)
         {
             Type procedureStepClass = CollectionUtils.FirstElement(criteria).ProcedureStepClass;
-            return new HqlProjectionQuery(GetFromClause(procedureStepClass), WorklistItemCount);
+            return new HqlProjectionQuery(GetFromClause(procedureStepClass), DefaultCountProjection);
         }
 
 		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where)
 		{
-			// ensure criteria are filtering on correct type of step, and display the correct time field
+			Type procedureStepClass = CollectionUtils.FirstElement(where).ProcedureStepClass;
+
+			// if the search is coming from the Registration folder system, the ps class will be null,
+			// in which case there is no point doing a search for worklist items, because the patient/order search performed
+			// by the base class will cover it
+			if(procedureStepClass == null)
+				return null;
+
+			// need to display the correct time field
 			// ProcedureScheduledStartTime seems like a reasonable choice for registration homepage search,
 			// as it gives a general sense of when the procedure occurs in time
 			CollectionUtils.ForEach(where,
@@ -136,13 +114,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 					sc.TimeField = WorklistTimeField.ProcedureScheduledStartTime;
 				});
 
-			//TODO: why don't we use GetBaseItemQuery here?
-			HqlProjectionQuery query = new HqlProjectionQuery(WorklistItemFrom, GetWorklistItemProjection(WorklistTimeField.ProcedureScheduledStartTime));
-			query.Conditions.Add(new HqlCondition("(o.Status in (?, ?))", OrderStatus.SC, OrderStatus.IP));
+			HqlProjectionQuery query = CreateBaseItemQuery(where);
+			query.Conditions.Add(ConditionActiveProcedureStep);
 			AddConditions(query, where, true, false);
 
-			//TODO: get rid of this - just temporary to null out this query
-			query.Page = new SearchResultPage(0, 0);
 			return query;
 		}
 
@@ -171,6 +146,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
             return new HqlSelect[]
                 {
+                      SelectProcedure,
                       SelectOrder,
                       SelectPatient,
                       SelectPatientProfile,

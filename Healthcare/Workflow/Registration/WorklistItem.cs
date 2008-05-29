@@ -59,16 +59,17 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         }
     }
 
-    public class WorklistItem : WorklistItemBase, IEquatable<WorklistItem>
+    public class WorklistItem : WorklistItemBase
     {
         private readonly HealthcardNumber _healthcardNumber;
         private readonly DateTime? _dateOfBirth;
         private readonly Sex _sex;
 
         /// <summary>
-        /// Constructor for a worklist item with patient and order information.
+        /// Constructor for a worklist item.
         /// </summary>
         public WorklistItem(
+			Procedure procedure,
             Order order,
             Patient patient,
             PatientProfile profile,
@@ -84,7 +85,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             Sex sex)
             : base(
                 null,
-                null,
+                procedure,
                 order,
                 patient,
                 profile,
@@ -187,37 +188,5 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         }
 
         #endregion
-
-        /// <summary>
-        /// Overridden to be based on order rather than procedure step.
-        /// </summary>
-        /// <param name="worklistItem"></param>
-        /// <returns></returns>
-        public bool Equals(WorklistItem worklistItem)
-        {
-            if (worklistItem == null) return false;
-
-            // include PatientRef in the comparison in case OrderRef is null
-            return Equals(this.PatientRef, worklistItem.PatientRef) && Equals(this.OrderRef, worklistItem.OrderRef);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(this, obj)) return true;
-            return Equals(obj as WorklistItem);
-        }
-
-        /// <summary>
-        /// Overridden to be based on Order or Patient, rather than procedure step.
-        /// </summary>
-        /// <returns></returns>
-        public override int GetHashCode()
-        {
-            if (this.OrderRef != null)
-                return this.OrderRef.GetHashCode();
-            if (this.PatientRef != null)
-                return this.PatientRef.GetHashCode();
-            return 0;
-        }
     }
 }

@@ -54,11 +54,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		private static readonly HqlJoin JoinReportPart = new HqlJoin("ps.ReportPart", "rpp", HqlJoinMode.Left);
 		private static readonly HqlJoin JoinReport = new HqlJoin("rpp.Report", "r", HqlJoinMode.Left);
 
-		private static readonly string OnlyMostRecentProtocolAssignmentStepIfRejectedHql = 
-			"((pr.Status not in ('RJ')) or (ps.EndTime = (select max(ps2.EndTime) from ProcedureStep ps2 where ps.Protocol = ps2.Protocol)))";
+		private static readonly HqlCondition ConditionMostRecentProtocolAssignmentStepIfRejected = new HqlCondition(
+			"((pr.Status not in (?)) or (ps.EndTime = (select max(ps2.EndTime) from ProcedureStep ps2 where ps.Protocol = ps2.Protocol)))", ProtocolStatus.RJ);
 
-		private static readonly string OnlyMostRecentPublicationStepHql =
-			"(ps.Scheduling.StartTime = (select max(ps2.Scheduling.StartTime) from ProcedureStep ps2 where ps.ReportPart.Report = ps2.ReportPart.Report))";
+		private static readonly HqlCondition ConditionMostRecentPublicationStep = new HqlCondition(
+			"(ps.Scheduling.StartTime = (select max(ps2.Scheduling.StartTime) from ProcedureStep ps2 where ps.ReportPart.Report = ps2.ReportPart.Report))");
 
 		#endregion
 
@@ -155,7 +155,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			HqlProjectionQuery query = CreateBaseItemQuery(where);
 
 			// active steps only
-			query.Conditions.Add(new HqlCondition("(ps.State in (?, ?))", ActivityStatus.SC, ActivityStatus.IP));
+			query.Conditions.Add(ConditionActiveProcedureStep);
 
 			AddConditions(query, where, true, false);
 
@@ -177,7 +177,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				from.Joins.Add(JoinProtocol);
 
 				// when querying for Rejected protocols, only show the most recent ProtocolAssignmentStep, as there may be many of them
-				query.Conditions.Add(new HqlCondition(OnlyMostRecentProtocolAssignmentStepIfRejectedHql));
+				query.Conditions.Add(ConditionMostRecentProtocolAssignmentStepIfRejected);
 			}
 			else if (stepClass == typeof(ProtocolResolutionStep))
 			{
@@ -190,7 +190,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				from.Joins.Add(JoinReport);
 
 				if(stepClass == typeof(PublicationStep))
-					query.Conditions.Add(new HqlCondition(OnlyMostRecentPublicationStepHql));
+					query.Conditions.Add(ConditionMostRecentPublicationStep);
 
 				if (!isCountQuery)
 					query.Selects.Add(SelectReport);

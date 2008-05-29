@@ -36,7 +36,7 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare
 {
-    public class WorklistItemBase : IEquatable<WorklistItemBase>
+    public class WorklistItemBase
     {
         private readonly EntityRef _procedureStepRef;
         private readonly EntityRef _procedureRef;
@@ -55,11 +55,6 @@ namespace ClearCanvas.Healthcare
         private readonly string _procedureStepName;
         private readonly DateTime? _time;
 
-
-        protected WorklistItemBase()
-        {
-            //TODO get rid of this constructor
-        }
 
         public WorklistItemBase(
             ProcedureStep procedureStep,
@@ -163,32 +158,5 @@ namespace ClearCanvas.Healthcare
         {
             get { return _time; }
         }
-
-        #region object overrides
-
-        /// <summary>
-        /// By default, equality is based on procedure step.
-        /// </summary>
-        /// <param name="worklistItemBase"></param>
-        /// <returns></returns>
-        public bool Equals(WorklistItemBase worklistItemBase)
-        {
-            if (worklistItemBase == null) return false;
-            return Equals(_procedureStepRef, worklistItemBase._procedureStepRef);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(this, obj)) return true;
-            return Equals(obj as WorklistItemBase);
-        }
-
-        public override int GetHashCode()
-        {
-            return _procedureStepRef.GetHashCode();
-        }
-
-        #endregion
-
     }
 }

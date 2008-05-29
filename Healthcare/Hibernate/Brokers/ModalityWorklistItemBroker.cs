@@ -62,7 +62,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				});
 
 			HqlProjectionQuery query = CreateBaseItemQuery(where);
-			query.Conditions.Add(new HqlCondition("ps.State in (?, ?)", ActivityStatus.SC, ActivityStatus.IP));
+			query.Conditions.Add(ConditionActiveProcedureStep);
 
 			AddConditions(query, where, true, false);
 
