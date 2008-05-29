@@ -24,39 +24,37 @@
 		try
 		{
 			var context = Ris.getHealthcareContext();
-			if (context)
+			if (context == null)
 			{
-				// construct request object
-				var request = {
-					GetOrderDetailRequest:
-					{ 
-						OrderRef: context.OrderRef,
-						IncludeProcedures: true,
-						IncludeNotes: true
-					},
-					GetReportDetailRequest: { ReportRef: context.ReportRef }
-				};
+				Field.setValue($("myForm"), "");
+				return;
+			}
 
-				var service = Ris.getPatientDataService();
-				var data = service.getData(request);
+			// construct request object
+			var request = {
+				GetOrderDetailRequest:
+				{ 
+					OrderRef: context.OrderRef,
+					IncludeProcedures: true,
+					IncludeNotes: true
+				},
+				GetReportDetailRequest: { ReportRef: context.ReportRef }
+			};
 
-				var report = data.GetReportDetailResponse.Report;
-				createReportPreview($("preview"), report);
+			var service = Ris.getPatientDataService();
+			var data = service.getData(request);
 
-				var orderDetail = data.GetOrderDetailResponse.Order;
-				if(orderDetail.Notes.length)
-				{
-					createOrderNotesTable($("orderNotesTable"));
-					orderNotesTable.bindItems(orderDetail.Notes);
-				}
-				else
-					Field.show($("notesSection"), false);
+			var report = data.GetReportDetailResponse.Report;
+			createReportPreview($("preview"), report);
 
+			var orderDetail = data.GetOrderDetailResponse.Order;
+			if(orderDetail.Notes.length)
+			{
+				createOrderNotesTable($("orderNotesTable"));
+				orderNotesTable.bindItems(orderDetail.Notes);
 			}
 			else
-			{
-				Field.show($("myForm"), false);
-			}
+				Field.show($("notesSection"), false);
 		}
 		catch(e)
 		{
