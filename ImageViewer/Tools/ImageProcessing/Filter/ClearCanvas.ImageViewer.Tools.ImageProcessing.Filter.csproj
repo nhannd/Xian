@@ -195,6 +195,10 @@
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\VtkItkAdapters\ClearCanvas.ImageViewer.VtkItkAdapters.csproj">
+      <Project>{9C04C2BC-BB87-4286-A2A6-49523B677060}</Project>
+      <Name>ClearCanvas.ImageViewer.VtkItkAdapters</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\FilterToolLarge.png" />
