@@ -25,7 +25,7 @@
     <map name="ExtendedProperties" lazy="true" table="ExternalPractitionerExtendedProperties_">
       <key column="ExternalPractitionerOID_"/>
       <index column="Name_" type="String"/>
-      <element column="Value_" type="String" length="4000"/>
+      <element column="Value_" type="StringClob" length="65000"/>
     </map>
   </class>
 </hibernate-mapping>
