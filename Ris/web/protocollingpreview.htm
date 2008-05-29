@@ -33,7 +33,7 @@
                                 PatientProfileRef: worklistItem.PatientProfileRef,
                                 IncludeAlerts: true
                              },
-                        GetOrderDetailRequest:
+                        GetOrderDetailRequest: worklistItem.OrderRef == null ? null : 
                              { 
                                 OrderRef: worklistItem.OrderRef,
                                 IncludeAlerts: true,
@@ -67,7 +67,8 @@
 
                     // update alerts
 		            var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
-		            alertNotifications = alertNotifications.concat(data.GetOrderDetailResponse.OrderAlerts);
+					if(data.GetOrderDetailResponse)
+						alertNotifications = alertNotifications.concat(data.GetOrderDetailResponse.OrderAlerts);
 		            if (alertNotifications)
 		            {
                         var alertHtml = "";
@@ -75,6 +76,12 @@
                         $("alerts").innerHTML = alertHtml;
 		            }
 		            
+					if(!data.GetOrderDetailResponse)
+					{
+                        Field.show($("orderDetailsSection"), false);
+						return;
+					}
+					
 	                var orderDetail = data.GetOrderDetailResponse.Order;
 	                
 	                // update Imaging Consultation Overview
@@ -146,51 +153,53 @@
 				</tr>
 			</table>
 		    
-            <table width="100%" border="0">
-                <tr>
-                    <td class="sectionheading" colspan="4">Imaging Consultation Overview</td>
-                </tr>
-                <tr>
-                    <td width="120" class="propertyname">Accession Number</td>
-                    <td width="200"><div id="AccessionNumber"/></td>
-                    <td width="120" class="propertyname">Priority</td>
-                    <td width="200"><div id="OrderPriority"/></td>
-                </tr>
-                <tr>
-                    <td width="120" class="propertyname">Ordering Physician</td>
-                    <td width="200"><div id="OrderingPhysician"/></td>
-                    <td width="120" class="propertyname">Ordering Facility</td>
-                    <td width="200"><div id="OrderingFacility"/></td>
-                </tr>
-                <tr>
-                    <td width="120" class="propertyname">Diagnostic Service</td>
-                    <td width="200"><div id="DiagnosticService"/></td>
-                    <td width="120" class="propertyname">Procedure</td>
-                    <td width="200"><div id="procedure"/></td>
-                </tr>
-                <tr>
-                    <td width="120" class="propertyname">Procedure Start Time</td>
-                    <td width="200"><div id="ProcedureStartTime"/></td>
-                    <td width="120" class="propertyname">Procedure End Time</td>
-                    <td width="200"><div id="ProcedureEndTime"/></td>
-                </tr>
-            </table>
-	        <table border="0" id="orderNotesTable">
-	            <tr><td class="sectionheading" colspan="6">Order Notes</td></tr>
-	            <tr class="tableheading">
-		            <td>Comment</td>
-		            <td>Time</td>
-		            <td>Author</td>
-	            </tr>
-	        </table>
-	        <table border="0" id="proceduresTable">
-	            <tr><td class="sectionheading" colspan="6">Ordered Procedures</td></tr>
-	            <tr class="tableheading">
-		            <td>Procedure</td>
-		            <td>Protocol</td>
-					<td>Code</td>
-	            </tr>
-	        </table>
+			<div id="orderDetailsSection">
+	            <table width="100%" border="0">
+	                <tr>
+	                    <td class="sectionheading" colspan="4">Imaging Consultation Overview</td>
+	                </tr>
+	                <tr>
+	                    <td width="120" class="propertyname">Accession Number</td>
+	                    <td width="200"><div id="AccessionNumber"/></td>
+	                    <td width="120" class="propertyname">Priority</td>
+	                    <td width="200"><div id="OrderPriority"/></td>
+	                </tr>
+	                <tr>
+	                    <td width="120" class="propertyname">Ordering Physician</td>
+	                    <td width="200"><div id="OrderingPhysician"/></td>
+	                    <td width="120" class="propertyname">Ordering Facility</td>
+	                    <td width="200"><div id="OrderingFacility"/></td>
+	                </tr>
+	                <tr>
+	                    <td width="120" class="propertyname">Diagnostic Service</td>
+	                    <td width="200"><div id="DiagnosticService"/></td>
+	                    <td width="120" class="propertyname">Procedure</td>
+	                    <td width="200"><div id="procedure"/></td>
+	                </tr>
+	                <tr>
+	                    <td width="120" class="propertyname">Procedure Start Time</td>
+	                    <td width="200"><div id="ProcedureStartTime"/></td>
+	                    <td width="120" class="propertyname">Procedure End Time</td>
+	                    <td width="200"><div id="ProcedureEndTime"/></td>
+	                </tr>
+	            </table>
+		        <table border="0" id="orderNotesTable">
+		            <tr><td class="sectionheading" colspan="6">Order Notes</td></tr>
+		            <tr class="tableheading">
+			            <td>Comment</td>
+			            <td>Time</td>
+			            <td>Author</td>
+		            </tr>
+		        </table>
+		        <table border="0" id="proceduresTable">
+		            <tr><td class="sectionheading" colspan="6">Ordered Procedures</td></tr>
+		            <tr class="tableheading">
+			            <td>Procedure</td>
+			            <td>Protocol</td>
+						<td>Code</td>
+		            </tr>
+		        </table>
+			</div>
 		</form>
 	</body>
 </html>

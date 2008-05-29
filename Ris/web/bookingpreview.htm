@@ -38,7 +38,7 @@
 						},
                         
                         // need the order detail only for order alerts, and only if OrderRef is not null
-                        GetOrderDetailRequest: 
+                        GetOrderDetailRequest: worklistItem.OrderRef == null ? null : 
 						{ 
 							OrderRef: worklistItem.OrderRef, 
 							IncludeAlerts: true,
@@ -78,17 +78,6 @@
 							Field.show($("HomeAddressRow"), false);
 		            }
 
-					var orderDetail = data.GetOrderDetailResponse.Order;
-					if(orderDetail.Notes.length)
-						createOrderNotesTable($("orderNotesTable"), orderDetail.Notes);
-					else
-						Field.show($("orderNotesTable"), false);
-
-						if (orderDetail.Procedures.length)
-						createProceduresTable($("proceduresTable"), orderDetail.Procedures);
-					else
-						Field.show($("proceduresTable"), false);
-
                     // update alerts
 		            var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
 		            if(data.GetOrderDetailResponse)
@@ -99,6 +88,25 @@
 	                    alertNotifications.each(function(item) { alertHtml += getAlertHtml(item, patientName); });
                         $("alerts").innerHTML = alertHtml;
 		            }
+					
+					if(data.GetOrderDetailResponse)
+					{
+						var orderDetail = data.GetOrderDetailResponse.Order;
+						if(orderDetail.Notes.length)
+							createOrderNotesTable($("orderNotesTable"), orderDetail.Notes);
+						else
+							Field.show($("orderNotesTable"), false);
+
+						if (orderDetail.Procedures.length)
+							createProceduresTable($("proceduresTable"), orderDetail.Procedures);
+						else
+							Field.show($("proceduresTable"), false);
+					}
+					else
+					{
+							Field.show($("orderDetailsSection"), false);
+					}
+
 		            
                     // update active and past RIC tables
    		            var patientOrderData = data.ListOrdersResponse.Orders;
@@ -223,23 +231,25 @@
 				</tr>
 			</table>
     		
-			<table border="0" id="orderNotesTable">
-				<tr><td class="sectionheading" colspan="6">Order Notes</td></tr>
-				<tr class="tableheading">
-					<td>Comment</td>
-					<td>Time</td>
-					<td>Author</td>
-				</tr>
-			</table>
+			<div id="orderDetailsSection">
+				<table border="0" id="orderNotesTable">
+					<tr><td class="sectionheading" colspan="6">Order Notes</td></tr>
+					<tr class="tableheading">
+						<td>Comment</td>
+						<td>Time</td>
+						<td>Author</td>
+					</tr>
+				</table>
 
-			<table border="0" id="proceduresTable">
-				<tr><td class="sectionheading" colspan="6">Ordered Procedures</td></tr>
-				<tr class="tableheading">
-					<td>Procedure</td>
-					<td>Protocol</td>
-					<td>Code</td>
-				</tr>
-			</table>
+				<table border="0" id="proceduresTable">
+					<tr><td class="sectionheading" colspan="6">Ordered Procedures</td></tr>
+					<tr class="tableheading">
+						<td>Procedure</td>
+						<td>Protocol</td>
+						<td>Code</td>
+					</tr>
+				</table>
+			</div>
 
 	        <table border="0" id="activeProceduresTable">
 		    <tr><td class="sectionheading" colspan="6">Active Requests for Imaging Consultation</td></tr>
