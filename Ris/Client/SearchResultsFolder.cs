@@ -167,8 +167,6 @@ namespace ClearCanvas.Ris.Client
 				_itemsTable.Sort();
 
 				NotifyRefreshFinish();
-				NotifyTotalItemCountChanged();
-				NotifyTextChanged();
 			}
 			else
 			{
