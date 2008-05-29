@@ -1,0 +1,74 @@
+.SearchPanelContainer
+{
+    margin: 5px 0px 5px 5px;
+}
+
+.SearchPanelContent
+{
+    background: #8FC3E4;
+    border: solid 1px #A0D4F5;
+    padding: 4px 4px 4px 4px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.SearchTextBoxLabel
+{
+    font-family: Sans-Serif;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 3px;
+	margin-right: 3px;
+	color: #ffffff;
+}
+
+.SearchLabelDark
+{
+    font-family: Sans-Serif; 
+    font-size: 14px; 
+    font-weight: bold; 
+    margin-right: 5px; 
+    color: #205F87;
+}
+
+.SearchTextBox
+{
+    font-family: Sans-Serif;
+    font-size: 11px;
+    font-weight: normal;
+    padding-left: 2px;
+    width: 100px;
+	margin-left: 3px;
+	margin-right: 3px;
+	border: solid 1px #618FAD;
+}
+
+.SearchCheckBox
+{
+	margin-left:10px;
+	margin-right:10px;
+}
+
+.SearchDropDownList
+{
+	margin-left: 3px;
+	margin-right: 3px;
+	font-family: Sans-Serif;
+	font-size: 11px;
+	border: solid 1px #618FAD;
+}
+
+.SearchButtonPanel
+{
+	margin-left:5px;
+	margin-right: 2px;
+	vertical-align: bottom;
+	padding: 0px;
+}
+
+.SmallLink
+{
+    color: #D13D4D;
+    font-size: 12px;
+    text-decoration: none;
+}

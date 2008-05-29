@@ -4,9 +4,9 @@
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
     Width="100%">
     <asp:TableRow VerticalAlign="top">
-        <asp:TableCell CssClass="CSSGridViewPanelContent" VerticalAlign="top">
+        <asp:TableCell VerticalAlign="top">
         
-            <asp:GridView ID="GridView" runat="server" AutoGenerateColumns="False" CssClass="CSSGridView"
+            <asp:GridView ID="GridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
                 Width="100%" OnRowDataBound="GridView_RowDataBound" OnDataBound="GridView_DataBound"
                 OnSelectedIndexChanged="GridView_SelectedIndexChanged"
                 OnPageIndexChanging="GridView1_PageIndexChanging" PageSize="20" AllowSorting="True"
@@ -56,7 +56,7 @@
                 </Columns>
                 <EmptyDataTemplate>
                     <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                        CssClass="CSSGridHeader">
+                        CssClass="GlobalGridViewHeader">
                         <asp:TableHeaderRow>
                             <asp:TableHeaderCell>
                             Name
@@ -79,9 +79,9 @@
                         </asp:TableHeaderRow>
                     </asp:Table>
                 </EmptyDataTemplate>
-                <RowStyle CssClass="CSSGridRowStyle" />
-                <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
-                <HeaderStyle CssClass="CSSGridHeader" />
+                <RowStyle CssClass="GlobalGridViewRow" />
+                <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
+                <HeaderStyle CssClass="GlobalGridViewHeader" />
                 <PagerTemplate>
                 </PagerTemplate>
             </asp:GridView>

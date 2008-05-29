@@ -59,21 +59,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
         [ClientPropertyName("DeleteButtonClientID")]
         public string DeleteButtonClientID
         {
-            get { return this.DeleteToolbarButton.ClientID; }
+            get { return this.DeleteStudyButton.ClientID; }
         }
 
         [ExtenderControlProperty]
         [ClientPropertyName("OpenButtonClientID")]
         public string OpenButtonClientID
         {
-            get { return this.OpenStudyToolbarButton.ClientID; }
+            get { return this.ViewStudyDetailsButton.ClientID; }
         }
 
         [ExtenderControlProperty]
         [ClientPropertyName("SendButtonClientID")]
         public string SendButtonClientID
         {
-            get { return this.SendToolbarButton.ClientID; }
+            get { return this.MoveStudyButton.ClientID; }
         }
 
         [ExtenderControlProperty]
@@ -196,10 +196,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
             ClearStudyDateButton.OnClientClick = "document.getElementById('" + StudyDate.ClientID + "').value=''; return false;";
             
             // setup child controls
-            GridPager.ItemName = "Study";
-            GridPager.PuralItemName = "Studies";
-            GridPager.Target = StudyListGridView.StudyListGrid;
-            GridPager.GetRecordCountMethod = delegate
+            GridPagerBottom.ItemCountVisible = false;
+            GridPagerBottom.PageCountVisible = true;
+            GridPagerBottom.Target = StudyListGridView.StudyListGrid;
+
+            GridPagerTop.ItemCountVisible = true;
+            GridPagerTop.PageCountVisible = false;
+            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerStudySingleItem;
+            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerStudyMultipleItems;
+            GridPagerTop.Target = StudyListGridView.StudyListGrid;
+            GridPagerTop.GetRecordCountMethod = delegate
                               {
                                   return StudyListGridView.Studies== null ? 0:StudyListGridView.Studies.Count;
                               };
@@ -253,12 +259,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
             
         }
         
-        protected void FilterButton_Click(object sender, ImageClickEventArgs e)
+        protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             StudyListGridView.StudyListGrid.ClearSelections();
         }
 
-        protected void OnDeleteToolbarButtonClick(object sender, ImageClickEventArgs e)
+        protected void OnDeleteToolbarButtonClick(object sender, EventArgs e)
         {
             IList<Study> studies = StudyListGridView.SelectedStudies;
 
@@ -287,24 +293,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
             IList<Study> studies = StudyListGridView.SelectedStudies;
             if (studies != null)
             {
-                OpenStudyToolbarButton.Enabled = true;
-                
-                DeleteToolbarButton.Enabled = true;
-                SendToolbarButton.Enabled = true;
+                ViewStudyDetailsButton.Enabled = true;
+                DeleteStudyButton.Enabled = true;
+                MoveStudyButton.Enabled = true;
                 foreach (Study study in studies)
                 {
                     if (_controller.IsScheduledForDelete(study))
                     {
-                        DeleteToolbarButton.Enabled = false;
+                        DeleteStudyButton.Enabled = false;
                         break;
                     }
                 }
             }
             else
             {
-                OpenStudyToolbarButton.Enabled = false;
-                DeleteToolbarButton.Enabled = false;
-                SendToolbarButton.Enabled = false;
+                ViewStudyDetailsButton.Enabled = false;
+                MoveStudyButton.Enabled = false;
+                DeleteStudyButton.Enabled = false;
             }
         }
 

@@ -47,60 +47,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
         protected global::System.Web.UI.WebControls.Table Table;
         
         /// <summary>
-        /// Panel2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel2;
-        
-        /// <summary>
-        /// Panel4 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel4;
-        
-        /// <summary>
-        /// AddToolbarButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton AddToolbarButton;
-        
-        /// <summary>
-        /// EditToolbarButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton EditToolbarButton;
-        
-        /// <summary>
-        /// DeleteToolbarButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteToolbarButton;
-        
-        /// <summary>
-        /// FilterPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel FilterPanel;
-        
-        /// <summary>
         /// Panel6 control.
         /// </summary>
         /// <remarks>
@@ -191,31 +137,76 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
         protected global::System.Web.UI.WebControls.Panel FilterButtonContainer;
         
         /// <summary>
-        /// FilterToolbarButton control.
+        /// SearchToolbarButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton FilterToolbarButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton SearchToolbarButton;
         
         /// <summary>
-        /// Panel7 control.
+        /// ToolBarUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel7;
+        protected global::System.Web.UI.UpdatePanel ToolBarUpdatePanel;
         
         /// <summary>
-        /// Panel8 control.
+        /// ToolbarButtons control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel8;
+        protected global::System.Web.UI.WebControls.Panel ToolbarButtons;
+        
+        /// <summary>
+        /// AddDeviceButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button AddDeviceButton;
+        
+        /// <summary>
+        /// EditDeviceButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button EditDeviceButton;
+        
+        /// <summary>
+        /// DeleteDeviceButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button DeleteDeviceButton;
+        
+        /// <summary>
+        /// Panel2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel2;
+        
+        /// <summary>
+        /// GridPagerTop control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPagerTop;
         
         /// <summary>
         /// DeviceGridViewControl1 control.
@@ -227,13 +218,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices.DeviceGridView DeviceGridViewControl1;
         
         /// <summary>
-        /// GridPager1 control.
+        /// GridPagerBottom control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPager1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPagerBottom;
         
         /// <summary>
         /// ConfirmDialog1 control.

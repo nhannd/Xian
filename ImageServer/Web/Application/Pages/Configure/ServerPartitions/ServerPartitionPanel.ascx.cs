@@ -110,9 +110,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            GridPager.Target = ServerPartitionGridPanel.TheGrid;
-            GridPager.ItemName = "Partition";
-            GridPager.PuralItemName = "Partitions";
+            GridPagerTop.Target = ServerPartitionGridPanel.TheGrid;
+            GridPagerTop.ItemName = "Partition";
+            GridPagerTop.PuralItemName = "Partitions";
+            GridPagerTop.PageCountVisible = false;
+            GridPagerTop.ItemCountVisible = true;
+
+            GridPagerBottom.PageCountVisible = true;
+            GridPagerBottom.ItemCountVisible = false;
+            GridPagerBottom.Target = ServerPartitionGridPanel.TheGrid;
 
             StatusFilter.Items.Add(new ListItem("--- ALL ---"));
             StatusFilter.Items.Add(new ListItem("Enabled"));
@@ -123,7 +129,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
 
         protected void SetupEventHandlers()
         {
-            GridPager.GetRecordCountMethod = delegate { return Partitions.Count; };
+            GridPagerTop.GetRecordCountMethod = delegate { return Partitions.Count; };
         }
 
         public override void DataBind()
@@ -175,17 +181,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                 _theController.GetPartitions(criteria);
         }
 
-        protected void FilterButton_Click(object sender, ImageClickEventArgs e)
+        protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
 
         }
 
-        protected void AddButton_Click(object sender, ImageClickEventArgs e)
+        protected void AddPartitionButton_Click(object sender, EventArgs e)
         {
             EnclosingPage.AddPartition();
         }
 
-        protected void EditButton_Click(object sender, ImageClickEventArgs e)
+        protected void EditPartitionButton_Click(object sender, EventArgs e)
         {
             ServerPartition selectedPartition =
                 ServerPartitionGridPanel.SelectedPartition;
@@ -196,7 +202,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
             }
         }
 
-        protected void DeleteButton_Click(object sender, ImageClickEventArgs e)
+        protected void DeletePartitionButton_Click(object sender, EventArgs e)
         {
             ServerPartition selectedPartition =
                 ServerPartitionGridPanel.SelectedPartition;
@@ -225,8 +231,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
             ServerPartitionGridPanel.UpdateUI();
 
             ServerPartition partition = ServerPartitionGridPanel.SelectedPartition;
-            EditToolbarButton.Enabled = partition != null;
-            DeleteToolbarButton.Enabled = (partition != null && _theController.CanDelete(partition));
+            EditPartitionButton.Enabled = partition != null;
+            DeletePartitionButton.Enabled = (partition != null && _theController.CanDelete(partition));
 
             UpdatePanel1.Update();
         }

@@ -133,6 +133,13 @@
     <Compile Include="Common\Pages\MainContentSection.Master.designer.cs">
       <DependentUpon>MainContentSection.Master</DependentUpon>
     </Compile>
+    <Compile Include="Common\Pages\SearchContentSection.Master.cs">
+      <DependentUpon>SearchContentSection.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Common\Pages\SearchContentSection.Master.designer.cs">
+      <DependentUpon>SearchContentSection.Master</DependentUpon>
+    </Compile>
     <Compile Include="GlobalMasterPage.master.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -561,9 +568,13 @@
     <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG-left.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG-right.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Dialog\DialogTitleBarBG.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\GridView\GridViewHeaderBackground.png" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\GridView\GridViewPagerTopBackground.png" />
+    <Content Include="App_Themes\ClearCanvas\images\Controls\GridView\GridViewSelectedBackground.png" />
     <Content Include="App_Themes\ClearCanvas\images\Header\ClearCanvasLogo.png" />
     <Content Include="App_Themes\ClearCanvas\images\Header\LocationEdge.png" />
     <Content Include="App_Themes\ClearCanvas\images\Header\StaticMenuHoverBackground.png" />
+    <Content Include="App_Themes\ClearCanvas\images\Icons\SearchButton.png" />
     <Content Include="App_Themes\ClearCanvas\images\MainContent\MainContentBottom.png" />
     <Content Include="App_Themes\ClearCanvas\images\MainContent\MainContentBottomLeftCorner.png" />
     <Content Include="App_Themes\ClearCanvas\images\MainContent\MainContentBottomRightCorner.png" />
@@ -572,18 +583,19 @@
     <Content Include="App_Themes\ClearCanvas\images\Header\MenuBackground.png" />
     <Content Include="App_Themes\ClearCanvas\images\Header\LocationBackground.png" />
     <Content Include="App_Themes\ClearCanvas\images\Header\MenuEdge.png" />
+    <Content Include="App_Themes\ClearCanvas\images\MainContent\SearchPanelBackground.png" />
+    <Content Include="App_Themes\ClearCanvas\images\MainContent\ToolbarButtonPanelBackground.png" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\GridView.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\InvalidInputIndicator.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Global.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Header.css" />
-    <Content Include="App_Themes\ClearCanvas\StyleSheets\Filter.css" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheets\Search.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\SeriesDetails.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\StudyDetails.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Toolbar.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Accordian.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\Calendar.css" />
     <Content Include="App_Themes\ClearCanvas\StyleSheets\Controls\Dialog.css" />
-    <Content Include="App_Themes\ClearCanvas\images\Controls\GridView\gridheaderbackground.png" />
     <Content Include="App_Themes\ClearCanvas\images\icon_warning.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-active-left.gif" />
     <Content Include="App_Themes\ClearCanvas\images\Controls\Tabs\tab-active-right.gif" />
@@ -683,6 +695,7 @@
     <Content Include="GlobalMasterPage.master" />
     <Content Include="App_Themes\ClearCanvas\Global.skin" />
     <Content Include="Common\Pages\MainContentSection.Master" />
+    <Content Include="Common\Pages\SearchContentSection.Master" />
     <None Include="Pages\WorkQueue\WorkQueueSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>

@@ -58,8 +58,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
 
 
             // setup child controls
-            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerSingleItem;
-            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerMultipleItems;
+            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerDeviceSingleItem;
+            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerDeviceMultipleItems;
             GridPagerTop.Target = DeviceGridPanel.TheGrid;
             GridPagerTop.PageCountVisible = false;
             GridPagerTop.ItemCountVisible = true;

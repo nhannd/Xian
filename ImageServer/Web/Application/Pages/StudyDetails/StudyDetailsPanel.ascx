@@ -32,8 +32,8 @@
             </tr>
             <tr>
                 <td colspan="2" class="SeriesContent">
-                    <table width="100%" cellpadding="2" cellspacing="0" style="background-color: #B8D9EE">
-                        <tr><td class="MainContentSubTitle">Series</td><td class="ButtonPanel"><asp:Button ID="ViewSeriesButton" runat="server" Text="View Details" CssClass="ButtonStyle" width="85px"/></td></tr>
+                    <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
+                        <tr><td class="MainContentSubTitle" >Series</td><td class="ButtonPanel"><asp:Button ID="ViewSeriesButton" runat="server" Text="View Details" CssClass="ButtonStyle" width="85px"/></td></tr>
                         <tr><td colspan="2"><localAsp:SeriesGridView ID="SeriesGridView" runat="server" /></td></tr>
                     </table>
                 </td>

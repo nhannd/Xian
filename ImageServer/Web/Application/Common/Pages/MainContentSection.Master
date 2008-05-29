@@ -15,7 +15,7 @@
             <b></b></b><b class="roundedCorners3"></b><b class="roundedCorners4"></b><b class="roundedCorners5">
             </b></b>
         <div class="roundedCornersfg">          
-            <asp:ContentPlaceHolder runat="server" ID="MainContent" />   
+            <asp:ContentPlaceHolder runat="server" ID="MainContentSection" />   
         </div>
         <b class="roundedCorners"><b class="roundedCorners5"></b><b class="roundedCorners4">
         </b><b class="roundedCorners3"></b><b class="roundedCorners2"><b></b></b><b class="roundedCorners1">

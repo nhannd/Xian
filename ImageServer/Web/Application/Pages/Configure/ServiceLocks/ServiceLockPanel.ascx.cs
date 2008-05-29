@@ -77,9 +77,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
 
             EditServiceLockDialog.ServiceLockUpdated += AddEditServiceLockDialog_ServiceLockUpdated; 
             // setup child controls
-            GridPager.ItemName = "Service";
-            GridPager.PuralItemName = "Services";
-            GridPager.Target = ServiceLockGridViewControl.TheGrid;
+            GridPagerTop.ItemName = "Service";
+            GridPagerTop.PuralItemName = "Services";
+            GridPagerTop.Target = ServiceLockGridViewControl.TheGrid;
+            GridPagerTop.PageCountVisible = false;
+            GridPagerTop.ItemCountVisible = true;
+
+            GridPagerBottom.PageCountVisible = true;
+            GridPagerBottom.ItemCountVisible = false;
+            GridPagerBottom.Target = ServiceLockGridViewControl.TheGrid;
+
 
             StatusFilter.Items.Add(new ListItem("--- ALL ---"));
             StatusFilter.Items.Add(new ListItem("Enabled"));
@@ -87,7 +94,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
 
             ConfirmEditDialog.Confirmed += ConfirmEditDialog_Confirmed;
 
-            GridPager.GetRecordCountMethod = delegate {
+            GridPagerTop.GetRecordCountMethod = delegate {
                                                            return
                                                                ServiceLockGridViewControl.ServiceLocks != null
                                                                    ? ServiceLockGridViewControl.ServiceLocks.Count
@@ -110,14 +117,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
             ServiceLockGridViewControl.Refresh();
         }
 
-        protected void FilterButton_Click(object sender, ImageClickEventArgs e)
+        protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             LoadServiceLocks();
 
         }
 
 
-        protected void EditButton_Click(object sender, ImageClickEventArgs e)
+        protected void EditServerScheduleButton_Click(object sender, EventArgs e)
         {
             ServiceLock service = ServiceLockGridViewControl.SelectedServiceLock;
             if (service != null)
@@ -249,7 +256,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
         {
 
             ServiceLock service = ServiceLockGridViewControl.SelectedServiceLock;
-            EditToolbarButton.Enabled = service != null;
+            EditServiceScheduleButton.Enabled = service != null;
 
             ToolbarUpdatePanel.Update();
         }

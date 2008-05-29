@@ -7,7 +7,7 @@
     <asp:TableRow VerticalAlign="top">
         <asp:TableCell CssClass="CSSGridViewPanelContent" VerticalAlign="top">
         
-            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="CSSGridView"
+            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
                 Width="100%" OnRowDataBound="GridView1_RowDataBound" OnDataBound="GridView1_DataBound"
                 OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
                 EmptyDataText="" OnPageIndexChanging="GridView1_PageIndexChanging" CellPadding="0"
@@ -54,7 +54,7 @@
                 </Columns>
                 <EmptyDataTemplate>
                     <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                        CssClass="CSSGridHeader">
+                        CssClass="GlobalGridViewHeader">
                         <asp:TableHeaderRow>
                             <asp:TableHeaderCell>
                             AE Title
@@ -80,9 +80,9 @@
                         </asp:TableHeaderRow>
                     </asp:Table>
                 </EmptyDataTemplate>
-                <RowStyle CssClass="CSSGridRowStyle" />
-                <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
-                <HeaderStyle CssClass="CSSGridHeader" />
+                <RowStyle CssClass="GlobalGridViewRow" />
+                <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
+                <HeaderStyle CssClass="GlobalGridViewHeader" />
                 <PagerTemplate>
                 </PagerTemplate>
             </asp:GridView>

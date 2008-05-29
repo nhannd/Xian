@@ -61,20 +61,29 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Devices Found.
+        /// </summary>
+        internal static string GridPagerDeviceMultipleItems {
+            get {
+                return ResourceManager.GetString("GridPagerDeviceMultipleItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Device Found.
+        /// </summary>
+        internal static string GridPagerDeviceSingleItem {
+            get {
+                return ResourceManager.GetString("GridPagerDeviceSingleItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  | .
         /// </summary>
         internal static string GridPagerLineSpacer {
             get {
                 return ResourceManager.GetString("GridPagerLineSpacer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Devices Found.
-        /// </summary>
-        internal static string GridPagerMultipleItems {
-            get {
-                return ResourceManager.GetString("GridPagerMultipleItems", resourceCulture);
             }
         }
         
@@ -97,11 +106,20 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Device Found.
+        ///   Looks up a localized string similar to Studies Found.
         /// </summary>
-        internal static string GridPagerSingleItem {
+        internal static string GridPagerStudyMultipleItems {
             get {
-                return ResourceManager.GetString("GridPagerSingleItem", resourceCulture);
+                return ResourceManager.GetString("GridPagerStudyMultipleItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Found.
+        /// </summary>
+        internal static string GridPagerStudySingleItem {
+            get {
+                return ResourceManager.GetString("GridPagerStudySingleItem", resourceCulture);
             }
         }
         

@@ -8,7 +8,7 @@
     <table width="100%"><tr><td align="right" style="padding-top: 17px;"><asp:LinkButton ID="LinkButton1" runat="server" Text="Close" Font-Size="18px" Font-Bold="true" ForeColor="white" Font-Underline="false" OnClientClick="javascript: window.close(); return false;" /></td></tr></table>
 </asp:Content>
 
-<asp:Content ContentPlaceHolderID="MainContent" runat="server">
+<asp:Content ContentPlaceHolderID="MainContentSection" runat="server">
             <asp:UpdatePanel runat="server" ID="updatepanel" UpdateMode="Conditional">
                 <ContentTemplate>
                     <localAsp:StudyDetailsPanel ID="StudyDetailsPanel" runat="server" />

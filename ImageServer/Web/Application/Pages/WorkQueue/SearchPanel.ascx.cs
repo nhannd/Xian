@@ -104,13 +104,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             ClearScheduleDateButton.OnClientClick = "document.getElementById('" + ScheduleDate.ClientID + "').value=''; return false;";
 
             // setup child controls
-            GridPager1.ItemName = "Work Item";
-            GridPager1.PuralItemName = "Work Items";
-            GridPager1.Target = workQueueItemListPanel.WorkQueueItemListControl;
-            GridPager1.GetRecordCountMethod = delegate
+            GridPagerTop.PageCountVisible = false;
+            GridPagerTop.ItemCountVisible = true;
+            GridPagerTop.ItemName = "Work Item";
+            GridPagerTop.PuralItemName = "Work Items";
+            GridPagerTop.Target = workQueueItemListPanel.WorkQueueItemListControl;
+            GridPagerTop.GetRecordCountMethod = delegate
                                                   {
                                                       return workQueueItemListPanel.WorkQueueItems == null ? 0 : workQueueItemListPanel.WorkQueueItems.Count;
                                                   };
+
+            GridPagerBottom.PageCountVisible = true;
+            GridPagerBottom.ItemCountVisible = false;
+            GridPagerBottom.Target = workQueueItemListPanel.WorkQueueItemListControl;
             
         }
 
@@ -119,7 +125,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void FilterButton_Click(object sender, ImageClickEventArgs e)
+        protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             workQueueItemListPanel.PageIndex = 0;
             DataBind();
@@ -279,10 +285,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
         {
             Model.WorkQueue selectedItem = workQueueItemListPanel.SelectedWorkQueueItem;
 
-            ViewToolbarButton1.Enabled = selectedItem != null;
-            RescheduleToolbarButton.Enabled = selectedItem != null && WorkQueueController.CanReschedule(selectedItem);
-            DeleteButton.Enabled = selectedItem != null && WorkQueueController.CanDelete(selectedItem);
-            ResetButton.Enabled = selectedItem != null && WorkQueueController.CanReset(selectedItem);
+            ViewItemDetailsButton.Enabled = selectedItem != null;
+            RescheduleItemButton.Enabled = selectedItem != null && WorkQueueController.CanReschedule(selectedItem);
+            DeleteItemButton.Enabled = selectedItem != null && WorkQueueController.CanDelete(selectedItem);
+            ResetItemButton.Enabled = selectedItem != null && WorkQueueController.CanReset(selectedItem);
         }
 
 

@@ -4,9 +4,9 @@
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
     Width="100%">
     <asp:TableRow VerticalAlign="top">
-        <asp:TableCell CssClass="CSSGridViewPanelContent" VerticalAlign="top">
+        <asp:TableCell VerticalAlign="top">
             <ccUI:GridView ID="StudyListControl" runat="server" AutoGenerateColumns="False"
-                CssClass="CSSGridView" Width="100%" OnRowDataBound="StudyListControl_RowDataBound"
+                CssClass="GlobalGridView" Width="100%" OnRowDataBound="StudyListControl_RowDataBound"
                 OnDataBound="StudyListControl_DataBound" EmptyDataText="" CellPadding="0" OnSelectedIndexChanged="StudyListControl_SelectedIndexChanged"
                 OnSelectedIndexChanging="StudyListControl_SelectedIndexChanging" OnPageIndexChanging="StudyListControl_PageIndexChanging"
                 SelectionMode="Multiple" PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
@@ -39,7 +39,7 @@
                 </Columns>
                 <EmptyDataTemplate>
                     <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                        CssClass="CSSGridHeader">
+                        CssClass="GlobalGridViewHeader">
                         <asp:TableHeaderRow>
                             <asp:TableHeaderCell HorizontalAlign="Left">Patient Name</asp:TableHeaderCell>
                             <asp:TableHeaderCell HorizontalAlign="Left">Patient ID</asp:TableHeaderCell>
@@ -53,10 +53,10 @@
                         </asp:TableHeaderRow>
                     </asp:Table>
                 </EmptyDataTemplate>
-                <RowStyle CssClass="CSSGridRowStyle" />
-                <AlternatingRowStyle CssClass="CSSGridAlternatingRowStyle" />
-                <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
-                <HeaderStyle CssClass="CSSGridHeader" />
+                <RowStyle CssClass="GlobalGridViewRow" />
+                <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
+                <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
+                <HeaderStyle CssClass="GlobalGridViewHeader" />
                 <PagerTemplate>
                 </PagerTemplate>
             </ccUI:GridView>

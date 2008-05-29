@@ -149,11 +149,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             ServerRuleGridViewControl.ServerRulePanel = this;
 
             // setup child controls
-            GridPager.ItemName = "Rule";
-            GridPager.PuralItemName = "Rules";
-            GridPager.Target = ServerRuleGridViewControl.TheGrid;
+            GridPagerTop.ItemName = "Rule";
+            GridPagerTop.PuralItemName = "Rules";
+            GridPagerTop.Target = ServerRuleGridViewControl.TheGrid;
+            GridPagerTop.PageCountVisible = false;
+            GridPagerTop.ItemCountVisible = true;
 
-            GridPager.GetRecordCountMethod = delegate { return ServerRuleGridViewControl.ServerRules==null? 0:ServerRuleGridViewControl.ServerRules.Count; };
+            GridPagerTop.GetRecordCountMethod = delegate { return ServerRuleGridViewControl.ServerRules==null? 0:ServerRuleGridViewControl.ServerRules.Count; };
+
+            GridPagerBottom.PageCountVisible = true;
+            GridPagerBottom.ItemCountVisible = false;
+            GridPagerBottom.Target = ServerRuleGridViewControl.TheGrid;
 
             int prevSelectIndex = RuleApplyTimeDropDownList.SelectedIndex;
             RuleApplyTimeDropDownList.Items.Clear();
@@ -200,32 +206,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             {
                 // no rule being selected
 
-                EditToolbarButton.Enabled = false;
+                EditServerRuleButton.Enabled = false;
 
-                DeleteToolbarButton.Enabled = false;
+                DeleteServerRuleButton.Enabled = false;
             }
             else
             {
-                EditToolbarButton.Enabled = true;
+                EditServerRuleButton.Enabled = true;
 
-                DeleteToolbarButton.Enabled = !rule.DefaultRule;
+                DeleteServerRuleButton.Enabled = !rule.DefaultRule;
             }
 
             base.OnPreRender(e);
         }
 
-        protected void AddButton_Click(object sender, ImageClickEventArgs e)
+        protected void AddServerRuleButton_Click(object sender, ImageClickEventArgs e)
         {
             EnclosingPage.OnAddRule(null, ServerPartition);
         }
 
-        protected void EditButton_Click(object sender, ImageClickEventArgs e)
+        protected void EditServerRuleButton_Click(object sender, ImageClickEventArgs e)
         {
             if (ServerRuleGridViewControl.SelectedRule != null)
                 EnclosingPage.OnEditRule(ServerRuleGridViewControl.SelectedRule, ServerPartition);
         }
 
-        protected void DeleteButton_Click(object sender, ImageClickEventArgs e)
+        protected void DeleteServerRuleButton_Click(object sender, ImageClickEventArgs e)
         {
             if (ServerRuleGridViewControl.SelectedRule != null)
                 EnclosingPage.OnDeleteRule(ServerRuleGridViewControl.SelectedRule, ServerPartition);
@@ -241,7 +247,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             LoadRules();
         }
 
-        protected void FilterButton_Click(object sender, ImageClickEventArgs e)
+        protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             DataBind();
         }

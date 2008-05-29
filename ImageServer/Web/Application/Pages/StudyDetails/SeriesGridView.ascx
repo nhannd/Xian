@@ -8,7 +8,7 @@
     <ContentTemplate>
                     <ccUI:GridView ID="GridView1" runat="server" 
                         AutoGenerateColumns="False" CssClass="GlobalGridView" 
-                        CellPadding="4" CaptionAlign="Top" Width="100%" 
+                        CellPadding="0" CaptionAlign="Top" Width="100%" 
                         OnPageIndexChanged="GridView1_PageIndexChanged" 
                         OnPageIndexChanging="GridView1_PageIndexChanging" SelectionMode="Multiple"
                         GridLines="Horizontal" BackColor="White">

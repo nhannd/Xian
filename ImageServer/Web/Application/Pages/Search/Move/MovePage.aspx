@@ -5,11 +5,5 @@
 <%@ Register Src="MovePanel.ascx" TagName="MovePanel" TagPrefix="localAsp" %>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-    <asp:Panel runat="server" ID="PageContent">
-        <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
-            <ContentTemplate>
-                    <localAsp:MovePanel ID="Move" runat="server"/>
-            </ContentTemplate>
-        </asp:UpdatePanel>
-    </asp:Panel> 
+    <localAsp:MovePanel ID="Move" runat="server"/>
 </asp:Content>

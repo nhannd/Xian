@@ -17,7 +17,7 @@
     <table width="100%" cellpadding="2" cellspacing="0" style="background-color: #B8D9EE;">
         <tr>
             <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px;">Studies</td>
-            <td class="ButtonPanel"><asp:Button runat="server" ID="MoveButton" Text="Move" CssClass="ButtonStyle" OnClick="MoveButton_Click" /><asp:Button runat="server" ID="CancelButton" Text="Cancel" CssClass="ButtonStyle" OnClientClick="history.back();" /></td>
+            <td class="ButtonPanel"><asp:Button runat="server" ID="MoveButton" Text="Move" CssClass="ButtonStyle" OnClick="MoveButton_Click" /><asp:Button runat="server" ID="CancelButton" Text="Done" CssClass="ButtonStyle" OnClientClick="history.back();" /></td>
         </tr>
         <tr><td colspan="2">
             <asp:Panel ID="Panel1" runat="server" style="border: solid 1px #3d98d1;">
@@ -34,7 +34,7 @@
      <table width="100%" cellpadding="2" cellspacing="0" style="background-color: #B8D9EE">
         <tr>
             <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px;">Destination Devices</td>
-            <td align="right" style="vertical-align: bottom"><asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchLabel" /><asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" /> <asp:Button runat="server" ID="SearchButton" Text="Search" CssClass="ButtonStyle" OnClick="SearchButton_Click" />
+            <td align="right" style="vertical-align: bottom"><asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchLabelDark" /><asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" /> <asp:Button runat="server" ID="SearchButton" Text="Search" CssClass="ButtonStyle" OnClick="SearchButton_Click" />
         </tr>
 
         <tr><td colspan="2">

@@ -5,8 +5,8 @@
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
     Width="100%">
     <asp:TableRow VerticalAlign="top">
-        <asp:TableCell CssClass="CSSGridViewPanelContent" VerticalAlign="top">
-            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="CSSGridView"
+        <asp:TableCell VerticalAlign="top">
+            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
                 Width="100%" OnRowDataBound="GridView1_RowDataBound" OnDataBound="GridView1_DataBound"
                 OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
                 OnPageIndexChanging="GridView1_PageIndexChanging" EmptyDataText="No filesystems found (Please check the filters!)"
@@ -58,7 +58,7 @@
                 </Columns>
                 <EmptyDataTemplate>
                     <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                        CssClass="CSSGridHeader">
+                        CssClass="GlobalGridViewHeader">
                         <asp:TableHeaderRow>
                             <asp:TableHeaderCell>
                             Description
@@ -81,9 +81,9 @@
                         </asp:TableHeaderRow>
                     </asp:Table>
                 </EmptyDataTemplate>
-                <RowStyle CssClass="CSSGridRowStyle" />
-                <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
-                <HeaderStyle CssClass="CSSGridHeader" />
+                <RowStyle CssClass="GlobalGridViewRow" />
+                <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
+                <HeaderStyle CssClass="GlobalGridViewHeader" />
             </asp:GridView>
         </asp:TableCell>
     </asp:TableRow>

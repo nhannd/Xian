@@ -1,0 +1,52 @@
+<%@ Master Language="C#" AutoEventWireup="true" MasterPageFile="MainContentSection.master" CodeBehind="SearchContentSection.master.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Common.Pages.SearchContentSection" %>
+
+<asp:Content ID="SearchContent" runat="server" ContentPlaceHolderID="MainContentSection">
+
+<asp:ContentPlaceHolder runat="server" ID="PartitionTabsPlaceHolder">
+    <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+            <ccAsp:serverpartitiontabs id="ServerPartitionTabs" runat="server" visible="true" />
+        </ContentTemplate>
+    </asp:UpdatePanel>
+</asp:ContentPlaceHolder>
+
+<asp:Table ID="Table" runat="server"  
+                CellPadding="1"
+                BorderWidth="0px" Width="100%">
+                <asp:TableRow>
+                    <asp:TableCell HorizontalAlign="right" VerticalAlign="Bottom" >
+                    
+                       <table cellpadding="0" cellspacing="0"  width="100%">
+                            <tr>
+                                <td align="right">
+                                   <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton">
+                                        <asp:ContentPlaceHolder runat="server" ID="SearchPanelContentPlaceHolder" />
+                                     </asp:Panel>
+                                </td>
+                            </tr>
+                        </table>
+                    </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
+                    <asp:TableCell>
+                        <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
+                            <tr><td >
+                            <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
+                                <ContentTemplate>
+                                    <asp:ContentPlaceHolder runat="server" ID="ToolbarButtonsPlaceHolder" />
+                             </ContentTemplate>
+                          </asp:UpdatePanel>                  
+                        </td></tr>
+                        <tr><td>
+
+                         <asp:Panel ID="Panel2" runat="server" style="border: solid 1px #3d98d1; ">
+                            <asp:ContentPlaceHolder runat="serveR" ID="SearchResultsPlaceHolder" />
+                        </asp:Panel>
+                        </td>
+                        </tr>
+                        </table>
+                    </asp:TableCell>
+                </asp:TableRow>
+            </asp:Table>
+
+</asp:Content>

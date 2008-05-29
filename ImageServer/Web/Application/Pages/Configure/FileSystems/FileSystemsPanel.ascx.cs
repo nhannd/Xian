@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
         /// </summary>
         protected void SetUpEventHandlers()
         {
-            GridPager1.GetRecordCountMethod = delegate { return FileSystemsGridView1.FileSystems.Count; };
+            GridPagerTop.GetRecordCountMethod = delegate { return FileSystemsGridView1.FileSystems.Count; };
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -110,9 +110,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
 
             // setup child controls
-            GridPager1.ItemName = "FileSystem";
-            GridPager1.PuralItemName = "FileSystems";
-            GridPager1.Target = FileSystemsGridView1.TheGrid;
+            GridPagerTop.ItemName = "FileSystem";
+            GridPagerTop.PuralItemName = "FileSystems";
+            GridPagerTop.Target = FileSystemsGridView1.TheGrid;
+            GridPagerTop.PageCountVisible = false;
+            GridPagerTop.ItemCountVisible = true;
+
+            GridPagerBottom.PageCountVisible = true;
+            GridPagerBottom.ItemCountVisible = false;
+            GridPagerBottom.Target = FileSystemsGridView1.TheGrid;
 
             Tiers = _theController.GetFileSystemTiers();
 
@@ -187,11 +193,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             if (dev == null)
             {
                 // no FileSystem being selected
-                EditToolbarButton.Enabled = false;
+                EditFileSystemButton.Enabled = false;
             }
             else
             {
-                EditToolbarButton.Enabled = true;
+                EditFileSystemButton.Enabled = true;
             }
 
             // UpdatePanel UpdateMode must be set to "conditional"
@@ -199,18 +205,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             UpdatePanel.Update();
         }
 
-        protected void FilterButton_Click(object sender, ImageClickEventArgs e)
+        protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             //UpdateUI();
         }
 
 
-        protected void AddButton_Click(object sender, ImageClickEventArgs e)
+        protected void AddFileSystemButton_Click(object sender, EventArgs e)
         {
             EnclosingPage.OnAddFileSystem();
         }
 
-        protected void EditButton_Click(object sender, ImageClickEventArgs e)
+        protected void EditFileSystemButton_Click(object sender, EventArgs e)
         {
             // Call the edit filesystem delegate 
             Filesystem fs = FileSystemsGridView1.SelectedFileSystem;

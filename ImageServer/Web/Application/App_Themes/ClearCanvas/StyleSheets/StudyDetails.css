@@ -13,7 +13,7 @@
 
 .StudyDetailsContent
 {
-    padding: 0px 3px 0px 3px;
+    padding: 0px 2px 0px 2px;
 }
 
 .SeriesContent
@@ -61,65 +61,4 @@
 .StudyDetailsViewHeader td
 {
     border: solid 1px #cccccc;
-}
-
-/*****************************************************************************************
-	Series gridview styles
-*****************************************************************************************/
-
-.SeriesGridView
-{
-    border: solid 1px #3d98d1;
-    font-size: 16px;
-}
-
-.SeriesGridViewHeader
-{
-	background-color: #eeeeee;
-	text-align: left;
-	color: #205F87;
-}
-
-/* gridview control selected row */
-.SeriesGridViewRow
-{
-    
-}
-
-/* gridview control cell */
-.SeriesGridViewRow td
-{
-    border-bottom: solid 2px #eeeeee;
-    border-top: solid 2px #eeeeee;
-}
-
-/* gridview control cell */
-.SeriesGridViewAlternatingRow
-{
-
-}
-
-/* gridview control cell */
-.SeriesGridViewAlternatingRow td
-{
-
-}
-
-/* gridview control selected row */
-.SeriesGridSelectedRow
-{
-    background-color: #dddddd;
-    border-bottom: solid 2px #dddddd;
-    border-top: solid 2px #dddddd;
-    color: Black;
-}
-
-
-/* gridview cell of the selected row */
-.SeriesGridSelectedRow td
-{
-    background-color: #dddddd;
-    border-bottom: solid 2px #dddddd;
-    border-top: solid 2px #dddddd;
-    color: Black;
 }

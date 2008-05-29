@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
         /// </summary>
         protected void SetUpEventHandlers()
         {
-            GridPager1.GetRecordCountMethod = delegate { return DeviceGridViewControl1.Devices.Count; };
+            GridPagerTop.GetRecordCountMethod = delegate { return DeviceGridViewControl1.Devices.Count; };
         }
 
         protected void Clear()
@@ -100,9 +100,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
 
 
             // setup child controls
-            GridPager1.ItemName = "Device";
-            GridPager1.PuralItemName = "Devices";
-            GridPager1.Target = DeviceGridViewControl1.TheGrid;
+            GridPagerTop.PageCountVisible = false;
+            GridPagerTop.ItemCountVisible = true;
+            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerDeviceSingleItem;
+            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerDeviceMultipleItems;
+            GridPagerTop.Target = DeviceGridViewControl1.TheGrid;
+
+            GridPagerBottom.PageCountVisible = true;
+            GridPagerBottom.ItemCountVisible = false;
+            GridPagerBottom.Target = DeviceGridViewControl1.TheGrid;
+
+            
 
             StatusFilter.Items.Add(new ListItem("--- ALL ---"));
             StatusFilter.Items.Add(new ListItem("Enabled"));
@@ -216,13 +224,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             if (dev == null)
             {
                 // no device being selected
-                EditToolbarButton.Enabled = false;
-                DeleteToolbarButton.Enabled = false;
+                EditDeviceButton.Enabled = false;
+                DeleteDeviceButton.Enabled = false;
             }
             else
             {
-                EditToolbarButton.Enabled = true;
-                DeleteToolbarButton.Enabled = true;
+                EditDeviceButton.Enabled = true;
+                DeleteDeviceButton.Enabled = true;
             }
 
             // UpdatePanel UpdateMode must be set to "conditional"
@@ -230,18 +238,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             UpdatePanel.Update();
         }
 
-        protected void FilterButton_Click(object sender, ImageClickEventArgs e)
+        protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             LoadDevices();
 
         }
 
-        protected void AddButton_Click(object sender, ImageClickEventArgs e)
+        protected void AddDeviceButton_Click(object sender, EventArgs e)
         {
             EnclosingPage.OnAddDevice(_theController, ServerPartition);
         }
 
-        protected void EditButton_Click(object sender, ImageClickEventArgs e)
+        protected void EditDeviceButton_Click(object sender, EventArgs e)
         {
             Device dev = DeviceGridViewControl1.SelectedDevice;
             if (dev != null)
@@ -250,7 +258,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             }
         }
 
-        protected void DeleteButton_Click(object sender, ImageClickEventArgs e)
+        protected void DeleteDeviceButton_Click(object sender, EventArgs e)
         {
             Device dev = DeviceGridViewControl1.SelectedDevice;
             if (dev != null)

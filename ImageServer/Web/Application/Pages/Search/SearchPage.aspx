@@ -2,8 +2,6 @@
     EnableEventValidation="false" Codebehind="SearchPage.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Search.SearchPage"
     Title="Search" %>
 
-<asp:Content ID="LocationName" ContentPlaceHolderID="LocationNamePlaceHolder" runat="server">Search</asp:Content>
-
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
     <asp:Panel runat="server" ID="PageContent">
         <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">

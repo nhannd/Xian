@@ -5,10 +5,8 @@
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
     Width="100%">
     <asp:TableRow VerticalAlign="top">
-        <asp:TableCell CssClass="CSSGridViewPanelContent" VerticalAlign="top">
-        
-        
-            <asp:GridView ID="PartitionGridView" runat="server" AutoGenerateColumns="False" CssClass="CSSGridView"
+        <asp:TableCell VerticalAlign="top">   
+            <asp:GridView ID="PartitionGridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
                 Width="100%" OnRowDataBound="PartitionGridView_RowDataBound" AllowSorting="True"
                 PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
                 BorderWidth="0px" HorizontalAlign="left">
@@ -52,7 +50,7 @@
                 </Columns>
                 <EmptyDataTemplate>
                     <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                        CssClass="CSSGridHeader">
+                        CssClass="GlobalGridViewHeader">
                         <asp:TableHeaderRow>
                             <asp:TableHeaderCell>
                             AE Title
@@ -81,9 +79,9 @@
                         </asp:TableHeaderRow>
                     </asp:Table>
                 </EmptyDataTemplate>
-                <RowStyle CssClass="CSSGridRowStyle" />
-                <HeaderStyle CssClass="CSSGridHeader" />
-                <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
+                <RowStyle CssClass="GlobalGridViewRow" />
+                <HeaderStyle CssClass="GlobalGridViewHeader" />
+                <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
             </asp:GridView>
         </asp:TableCell>
     </asp:TableRow>

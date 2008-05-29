@@ -29,15 +29,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search {
         protected global::System.Web.UI.UpdatePanel UpdatePanel;
         
         /// <summary>
-        /// PagePanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PagePanel;
-        
-        /// <summary>
         /// Table control.
         /// </summary>
         /// <remarks>
@@ -45,69 +36,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Table Table;
-        
-        /// <summary>
-        /// ToolBarUpdatePanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel ToolBarUpdatePanel;
-        
-        /// <summary>
-        /// Panel1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
-        
-        /// <summary>
-        /// Panel4 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel4;
-        
-        /// <summary>
-        /// OpenStudyToolbarButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OpenStudyToolbarButton;
-        
-        /// <summary>
-        /// SendToolbarButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton SendToolbarButton;
-        
-        /// <summary>
-        /// DeleteToolbarButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteToolbarButton;
-        
-        /// <summary>
-        /// FilterPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel FilterPanel;
         
         /// <summary>
         /// Panel6 control.
@@ -188,7 +116,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton ClearStudyDateButton;
+        protected global::System.Web.UI.WebControls.LinkButton ClearStudyDateButton;
         
         /// <summary>
         /// StudyDate control.
@@ -218,13 +146,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search {
         protected global::System.Web.UI.WebControls.TextBox StudyDescription;
         
         /// <summary>
-        /// FilterButton control.
+        /// SearchButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton FilterButton;
+        protected global::System.Web.UI.WebControls.ImageButton SearchButton;
         
         /// <summary>
         /// StudyDateCalendarExtender control.
@@ -236,6 +164,51 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search {
         protected global::AjaxControlToolkit.CalendarExtender StudyDateCalendarExtender;
         
         /// <summary>
+        /// ToolBarUpdatePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel ToolBarUpdatePanel;
+        
+        /// <summary>
+        /// ToolbarButtons control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel ToolbarButtons;
+        
+        /// <summary>
+        /// ViewStudyDetailsButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button ViewStudyDetailsButton;
+        
+        /// <summary>
+        /// MoveStudyButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button MoveStudyButton;
+        
+        /// <summary>
+        /// DeleteStudyButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button DeleteStudyButton;
+        
+        /// <summary>
         /// Panel2 control.
         /// </summary>
         /// <remarks>
@@ -243,6 +216,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel Panel2;
+        
+        /// <summary>
+        /// GridPagerTop control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPagerTop;
         
         /// <summary>
         /// StudyListGridView control.
@@ -254,13 +236,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search {
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.Search.StudyListGridView StudyListGridView;
         
         /// <summary>
-        /// GridPager control.
+        /// GridPagerBottom control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPager;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPagerBottom;
         
         /// <summary>
         /// ConfirmationDialog control.

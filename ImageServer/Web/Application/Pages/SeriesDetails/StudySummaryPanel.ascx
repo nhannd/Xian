@@ -3,7 +3,7 @@
 <table width="100%" class="StudySummary" cellpadding="0" cellspacing="0">
     <tr>
         <td class="StudySummaryRow">
-            <table width="100%" cellpadding="2" cellspacing="0" border="0">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                     <td class="StudySummaryHeader">
                         <asp:Label ID="Label1" runat="server" Text="Accession #: " Style="white-space: nowrap"></asp:Label></td>
@@ -15,7 +15,7 @@
     </tr>
     <tr>
         <td class="StudySummaryRow">
-            <table width="100%" cellpadding="2" cellspacing="0" border="0">
+            <table width="100%" cellpadding=02" cellspacing="0" border="0">
                 <tr>
                     <td class="StudySummaryHeader">
                         <asp:Label ID="Label2" runat="server" Text="Description: " Style="white-space: nowrap"></asp:Label></td>
@@ -27,7 +27,7 @@
     </tr>
     <tr>
         <td class="StudySummaryRow">
-            <table width="100%" cellpadding="2" cellspacing="0" border="0">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                     <td class="StudySummaryHeader">
                         <asp:Label ID="Label3" runat="server" Text="Date: " Style="white-space: nowrap"></asp:Label></td>
@@ -39,7 +39,7 @@
     </tr>
     <tr>
         <td>
-            <table width="100%" cellpadding="2" cellspacing="0" border="0">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                     <td class="StudySummaryHeader">
                         <asp:Label ID="Label4" runat="server" Text="Referring Physician: " Style="white-space: nowrap"></asp:Label></td>

@@ -65,15 +65,16 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
         /// called whenever the page is reloaded or partially reloaded
         _OnLoad : function()
         {
+            debugger;
             // hook up the events... It is necessary to do this every time 
             // because NEW instances of the button and the study list components
             // may have been created as the result of the post-back
-            var openButton = $find(this._OpenButtonClientID);
-            openButton.add_onClientClick( this._OnOpenButtonClickedHandler );   
+            var openButton = $get(this._OpenButtonClientID);
+            openButton.onClientClick = this._OnOpenButtonClickedHandler;   
 
-            var sendButton = $find(this._SendButtonClientID);
-            sendButton.add_onClientClick( this._OnSendButtonClickedHandler );   
-                 
+            var sendButton = $get(this._SendButtonClientID);
+            sendButton = this._OnSendButtonClickedHandler;   
+                             
             var studylist = $find(this._StudyListClientID);
             studylist.add_onClientRowClick(this._OnStudyListRowClickedHandler);
             studylist.add_onClientRowDblClick(this._OnStudyListRowDblClickedHandler);
@@ -204,6 +205,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
                         if (this._studyIsDeleted(rows[i])) 
                         {
                             this._enableDeleteButton(false);
+                            this._enableSendStudyButton(false);
                             return;
                         }
                     }
@@ -229,20 +231,20 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
         
         _enableDeleteButton : function(en)
         {
-            var deleteButton = $find(this._DeleteButtonClientID);
-            deleteButton.set_enable(en);
+            var deleteButton = $get(this._DeleteButtonClientID);
+            deleteButton.disabled = !en;
         },
         
         _enableOpenStudyButton : function(en)
         {
-            var openButton = $find(this._OpenButtonClientID);
-            openButton.set_enable(en);
+            var openButton = $get(this._OpenButtonClientID);
+            openButton.disabled =  !en;
         },
         
         _enableSendStudyButton : function(en)
         {
-            var sendButton = $find(this._SendButtonClientID);
-            sendButton.set_enable(en);
+            var sendButton = $get(this._SendButtonClientID);
+            sendButton.disabled = !en;
         },
         
 
@@ -266,7 +268,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
 
         set_DeleteButtonClientID : function(value) {
             this._DeleteButtonClientID = value;
-            this.raisePropertyChanged('DeleteButtonClientID');
+            this.raisePropertyChanged('DeleteStudyButtonClientID');
         },
         
         get_SendButtonClientID : function() {
@@ -275,7 +277,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
 
         set_SendButtonClientID : function(value) {
             this._SendButtonClientID = value;
-            this.raisePropertyChanged('SendButtonClientID');
+            this.raisePropertyChanged('MoveStudyButtonClientID');
         },
         
         get_OpenButtonClientID : function() {
@@ -284,7 +286,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
 
         set_OpenButtonClientID : function(value) {
             this._OpenButtonClientID = value;
-            this.raisePropertyChanged('OpenButtonClientID');
+            this.raisePropertyChanged('ViewStudyDetailsButtonClientID');
         },
         
         get_StudyListClientID : function() {

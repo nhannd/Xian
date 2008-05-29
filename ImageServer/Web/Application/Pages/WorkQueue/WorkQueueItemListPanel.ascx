@@ -8,8 +8,8 @@
     
     <asp:Table runat="server" ID="ListContainerTable" Height="100%" CellPadding="0" CellSpacing="0" Width="100%" >
         <asp:TableRow VerticalAlign="top">
-            <asp:TableCell ID="ListContainerCell" CssClass="CSSGridViewPanelContent" VerticalAlign="top">
-                <asp:GridView ID="WorkQueueListView" runat="server" CssClass="CSSGridView" AutoGenerateColumns="false"
+            <asp:TableCell ID="ListContainerCell" CssClass="GlobalGridViewPanelContent" VerticalAlign="top">
+                <asp:GridView ID="WorkQueueListView" runat="server" CssClass="GlobalGridView" AutoGenerateColumns="false"
                             PageSize="10" CellSpacing="0" CellPadding="0" AllowPaging="true" PagerSettings-Visible="false"
                             CaptionAlign="Top" BorderWidth="0px" Width="100%" 
                             OnRowDataBound="WorkQueueListView_RowDataBound" 
@@ -74,7 +74,7 @@
                             </Columns>
                             <EmptyDataTemplate>
                                 <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                                    CssClass="CSSGridHeader">
+                                    CssClass="GlobalGridViewHeader">
                                     <asp:TableHeaderRow>
                                         <asp:TableHeaderCell>Patient ID</asp:TableHeaderCell>
                                         <asp:TableHeaderCell>Patient Name</asp:TableHeaderCell>
@@ -87,10 +87,10 @@
                                     </asp:TableHeaderRow>
                                 </asp:Table>
                             </EmptyDataTemplate>
-                            <RowStyle CssClass="CSSGridRowStyle" />
-                            <AlternatingRowStyle CssClass="CSSGridAlternatingRowStyle" />
-                            <SelectedRowStyle CssClass="CSSGridSelectedRowStyle" />
-                            <HeaderStyle CssClass="CSSGridHeader" />
+                            <RowStyle CssClass="GlobalGridViewRow" />
+                            <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
+                            <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
+                            <HeaderStyle CssClass="GlobalGridViewHeader" />
                         </asp:GridView>
             </asp:TableCell>
         </asp:TableRow>
