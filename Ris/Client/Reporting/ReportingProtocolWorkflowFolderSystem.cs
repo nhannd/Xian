@@ -52,8 +52,10 @@ namespace ClearCanvas.Ris.Client.Reporting
 	{
 	}
 
-	public class ReportingProtocolWorkflowFolderSystem : ReportingWorkflowFolderSystemBase
+	public class ReportingProtocolWorkflowFolderSystem : ReportingWorkflowFolderSystemBase, ISearchDataHandler
 	{
+		private readonly Folders.ProtocollingSearchFolder _searchFolder;
+
 		public ReportingProtocolWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
 			: base(SR.TitleProtocollingFolderSystem, folderExplorer,
 			new ReportingProtocolWorkflowFolderExtensionPoint(),
@@ -75,7 +77,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			}
 			this.AddFolder(new Folders.SuspendedProtocolFolder(this));
 			this.AddFolder(new Folders.RejectedProtocolFolder(this));
-			this.AddFolder(new Folders.ProtocollingSearchFolder(this));
+			this.AddFolder(_searchFolder = new Folders.ProtocollingSearchFolder(this));
 		}
 
 		public override string PreviewUrl
@@ -93,5 +95,18 @@ namespace ClearCanvas.Ris.Client.Reporting
 			if (protocollingTool != null && protocollingTool.Enabled)
 				protocollingTool.Apply();
 		}
+
+		#region ISearchDataHandler Members
+
+		public SearchData SearchData
+		{
+			set
+			{
+				_searchFolder.SearchData = value;
+				SelectedFolder = _searchFolder;
+			}
+		}
+
+		#endregion
 	}
 }

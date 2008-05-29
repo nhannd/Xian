@@ -90,15 +90,6 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return WebResourcesSettings.Default.RadiologistFolderSystemUrl; }
         }
 
-        public SearchData SearchData
-        {
-            set
-            {
-                _searchFolder.SearchData = value;
-                SelectedFolder = _searchFolder;
-            }
-        }
-
         public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
         {
             base.SelectedItemDoubleClickedEventHandler(sender, e);
@@ -109,5 +100,18 @@ namespace ClearCanvas.Ris.Client.Reporting
             if (editTool != null && editTool.Enabled)
                 editTool.Apply();
         }
-    }
+
+		#region ISearchDataHandler Members
+
+		public SearchData SearchData
+		{
+			set
+			{
+				_searchFolder.SearchData = value;
+				SelectedFolder = _searchFolder;
+			}
+		}
+
+		#endregion
+	}
 }

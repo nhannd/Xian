@@ -51,15 +51,6 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 			get { return WebResourcesSettings.Default.EmergencyPhysicianFolderSystemUrl; }
 		}
 
-		public SearchData SearchData
-		{
-			set
-			{
-				_searchFolder.SearchData = value;
-				SelectedFolder = _searchFolder;
-			}
-		}
-
 		public override void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
 		{
 			base.SelectedItemDoubleClickedEventHandler(sender, e);
@@ -73,5 +64,17 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 				notesTool.Open();
 		}
 
+		#region ISearchDataHandler Members
+
+		public SearchData SearchData
+		{
+			set
+			{
+				_searchFolder.SearchData = value;
+				SelectedFolder = _searchFolder;
+			}
+		}
+
+		#endregion
 	}
 }

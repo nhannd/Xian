@@ -72,7 +72,6 @@ namespace ClearCanvas.Ris.Client.Adt
 				this.AddFolder(new Folders.UndocumentedTechnologistWorkflowFolder(this));
 				this.AddFolder(new Folders.CancelledTechnologistWorkflowFolder(this));
 				this.AddFolder(new Folders.CompletedTechnologistWorkflowFolder(this));
-
 			}
 			this.AddFolder(_searchFolder = new Folders.TechnologistSearchFolder(this));
 		}
@@ -80,15 +79,6 @@ namespace ClearCanvas.Ris.Client.Adt
 		public override string PreviewUrl
 		{
 			get { return WebResourcesSettings.Default.TechnologistFolderSystemUrl; }
-		}
-
-		public SearchData SearchData
-		{
-			set
-			{
-				_searchFolder.SearchData = value;
-				SelectedFolder = _searchFolder;
-			}
 		}
 
 		public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
@@ -101,5 +91,18 @@ namespace ClearCanvas.Ris.Client.Adt
 			if (documentationTool != null && documentationTool.Enabled)
 				documentationTool.Apply();
 		}
+
+		#region ISearchDataHandler Members
+
+		public SearchData SearchData
+		{
+			set
+			{
+				_searchFolder.SearchData = value;
+				SelectedFolder = _searchFolder;
+			}
+		}
+
+		#endregion
 	}
 }

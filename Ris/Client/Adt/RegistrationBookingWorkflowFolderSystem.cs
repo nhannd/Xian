@@ -52,8 +52,10 @@ namespace ClearCanvas.Ris.Client.Adt
 	{
 	}
 
-	public class RegistrationBookingWorkflowFolderSystem : RegistrationWorkflowFolderSystemBase
+	public class RegistrationBookingWorkflowFolderSystem : RegistrationWorkflowFolderSystemBase, ISearchDataHandler
 	{
+		private readonly Folders.BookingSearchFolder _searchFolder;
+
 		public RegistrationBookingWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
 			: base(SR.TitleBookingFolderSystem, folderExplorer,
 			new RegistrationBookingWorkflowFolderExtensionPoint(),
@@ -69,8 +71,8 @@ namespace ClearCanvas.Ris.Client.Adt
 				this.AddFolder(new Folders.RejectedProtocolFolder(this));
 				this.AddFolder(new Folders.PendingProtocolFolder(this));
 				this.AddFolder(new Folders.ToBeScheduledFolder(this));
-				this.AddFolder(new Folders.BookingSearchFolder(this));
 			}
+			this.AddFolder(_searchFolder = new Folders.BookingSearchFolder(this));
 		}
 
 		public override string PreviewUrl
@@ -88,5 +90,18 @@ namespace ClearCanvas.Ris.Client.Adt
 			if (biographyTool != null && biographyTool.Enabled)
 				biographyTool.View();
 		}
+
+		#region ISearchDataHandler Members
+
+		public SearchData SearchData
+		{
+			set
+			{
+				_searchFolder.SearchData = value;
+				SelectedFolder = _searchFolder;
+			}
+		}
+
+		#endregion
 	}
 }

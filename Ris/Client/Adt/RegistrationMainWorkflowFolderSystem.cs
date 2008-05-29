@@ -80,15 +80,6 @@ namespace ClearCanvas.Ris.Client.Adt
 			get { return WebResourcesSettings.Default.RegistrationFolderSystemUrl; }
 		}
 
-		public SearchData SearchData
-		{
-			set
-			{
-				_searchFolder.SearchData = value;
-				SelectedFolder = _searchFolder;
-			}
-		}
-
 		public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
 		{
 			base.SelectedItemDoubleClickedEventHandler(sender, e);
@@ -99,5 +90,18 @@ namespace ClearCanvas.Ris.Client.Adt
 			if (biographyTool != null && biographyTool.Enabled)
 				biographyTool.View();
 		}
+
+		#region ISearchDataHandler Members
+
+		public SearchData SearchData
+		{
+			set
+			{
+				_searchFolder.SearchData = value;
+				SelectedFolder = _searchFolder;
+			}
+		}
+
+		#endregion
 	}
 }
