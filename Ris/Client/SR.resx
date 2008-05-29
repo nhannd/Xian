@@ -423,6 +423,12 @@
   <data name="MessageSearchMessage" xml:space="preserve">
     <value>Enter search criteria</value>
   </data>
+  <data name="MessageShowAllItems" xml:space="preserve">
+    <value>Showing all {0} item(s).</value>
+  </data>
+  <data name="MessageShowPartialItems" xml:space="preserve">
+    <value>Showing {0} of {1} item(s).</value>
+  </data>
   <data name="MessageTimeout" xml:space="preserve">
     <value>The request timed out. See log for details.</value>
   </data>

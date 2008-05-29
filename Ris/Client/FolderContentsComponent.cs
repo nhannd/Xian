@@ -146,9 +146,9 @@ namespace ClearCanvas.Ris.Client
                     return "";
 
                 if (_selectedFolder.TotalItemCount == _selectedFolder.ItemsTable.Items.Count)
-                    return string.Format("Showing all {0} item(s).", _selectedFolder.TotalItemCount);
+                    return string.Format(SR.MessageShowAllItems, _selectedFolder.TotalItemCount);
                 else 
-                    return string.Format("Showing {0} of {1} item(s).",
+                    return string.Format(SR.MessageShowPartialItems,
                                      _selectedFolder.ItemsTable.Items.Count, _selectedFolder.TotalItemCount);
             }
         }

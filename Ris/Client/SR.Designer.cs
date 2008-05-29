@@ -979,6 +979,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Showing all {0} item(s)..
+        /// </summary>
+        internal static string MessageShowAllItems {
+            get {
+                return ResourceManager.GetString("MessageShowAllItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Showing {0} of {1} item(s)..
+        /// </summary>
+        internal static string MessageShowPartialItems {
+            get {
+                return ResourceManager.GetString("MessageShowPartialItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The request timed out. See log for details..
         /// </summary>
         internal static string MessageTimeout {
