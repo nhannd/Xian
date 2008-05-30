@@ -284,6 +284,7 @@ function createReportPreview(element, report)
 	if (element == null || report == null || report.Parts == null || report.Parts.length == 0)
 		return "";
 
+	var statusMap = {X: 'Cancelled', D: 'Draft', P: 'Preliminary', F: 'Final'};
 	var formattedReport = "";
 
 	if (report.Parts.length > 1)
@@ -291,28 +292,19 @@ function createReportPreview(element, report)
 		for (var i = report.Parts.length-1; i > 0; i--)
 		{
 			var addendumPart = report.Parts[i];
+			var addendumStatus = addendumPart.Status.Code;
 			var addendumContent = addendumPart && addendumPart.ExtendedProperties && addendumPart.ExtendedProperties.ReportContent ? addendumPart.ExtendedProperties.ReportContent : "";
 			
 			if (addendumContent)
 			{
-				 var isAddendumDraft = new Boolean(addendumPart.Status.Code == 'P');
-				 var isCancelled = new Boolean(addendumPart.Status.Code == 'X');
+				formattedReport += "<b>Addendum " + i + " (" + statusMap[addendumStatus] + "): </b><br>";
+				formattedReport += addendumContent;
+				formattedReport += formatReportPerformer(addendumPart);
 
-			if (isAddendumDraft == true)
-				formattedReport += "<font color='red'><b>Addendum " + i + " (Draft): </b><br>";
-			else if (isCancelled == true)
-				formattedReport += "<b>Addendum " + i + " (cancelled): </b><br>";
-			else
-				formattedReport += "<b>Addendum " + i + ": </b><br>";
+				if (['D', 'P'].indexOf(addendumStatus) > -1)
+					formattedReport = "<font color='red'>" + formattedReport + "</font>";
 
-				 formattedReport += addendumContent;
-		
-			formattedReport += formatReportPerformer(addendumPart);
-
-			if (isAddendumDraft == true)
-				formattedReport += "</font>";
-
-			formattedReport += "<br><br>";
+				formattedReport += "<br><br>";
 			}
 		}
 
@@ -345,12 +337,11 @@ function createReportPreview(element, report)
 			mainReportText = "None";
 	}
 
-	var isDraft = new Boolean(report.Parts[0].Status.Code == 'P');
+	var statusCode = report.Parts[0].Status.Code;
 
-	formattedReport += isDraft == true ? "<font color='red'>" : ""; 
 	formattedReport += "<h3>";
 	formattedReport += "Main Report";
-	formattedReport += isDraft == true ? " (Draft)" : "";
+	formattedReport += " (" + statusMap[statusCode] + ")";
 	formattedReport += "</h3>";
 	formattedReport += "<div id=\"structuredReport\" style=\"{margin-bottom:1em;}\"></div>";
 	if(mainReportText)
@@ -360,7 +351,8 @@ function createReportPreview(element, report)
 
 	formattedReport += formatReportPerformer(report.Parts[0]);
 
-	formattedReport += isDraft == true ? "</font>" : ""; 
+	if(['D', 'P'].indexOf(statusCode) > -1)
+		formattedReport = "<font color='red'>" + formattedReport + "</font>";
 	element.innerHTML = formattedReport;
 	 
 	 // UHN report may contain a StructuredReport section
