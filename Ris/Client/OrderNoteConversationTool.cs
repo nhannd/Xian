@@ -107,7 +107,6 @@ namespace ClearCanvas.Ris.Client
 						category = OrderNoteCategory.FromKey(categoryKey);
 						return memo + (category != null ? category.DisplayValue : "");
 					}));
-			sb.Append(" Conversation");
 			sb.Append(this.TitleContextDescription);
 
 			return sb.ToString();

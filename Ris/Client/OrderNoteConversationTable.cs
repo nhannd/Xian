@@ -33,6 +33,7 @@ namespace ClearCanvas.Ris.Client
 						item.IsChecked = value;
 						EventsHelper.Fire(_checkedItemsChanged, this, EventArgs.Empty);
 					}
+					this.Items.NotifyItemUpdated(item);
 				},
 				0.4f));
 
