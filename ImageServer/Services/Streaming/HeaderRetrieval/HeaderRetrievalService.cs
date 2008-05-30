@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
     }
 
 
-    [ServiceBehavior(IncludeExceptionDetailInFaults = true, AutomaticSessionShutdown=true,InstanceContextMode=InstanceContextMode.PerCall)]
+    [ServiceBehavior(IncludeExceptionDetailInFaults = true, InstanceContextMode=InstanceContextMode.PerCall)]
     public class HeaderRetrievalService : IHeaderRetrievalService
     {
         private string _callerID;
@@ -84,11 +84,11 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
             {
                 Platform.CheckForEmptyString(callingAETitle, "callingAETitle");
                 Platform.CheckForNullReference(parameters, "parameters");
+                Platform.CheckForEmptyString(parameters.ReferenceID, "parameters.ReferenceID");
                 Platform.CheckForEmptyString(parameters.ServerAETitle, "parameters.ServerAETitle");
                 Platform.CheckForEmptyString(parameters.StudyInstanceUID, "parameters.StudyInstanceUID");
 
-                Platform.Log(LogLevel.Debug, "Received request from {0} for {1} ", callingAETitle,
-                             parameters.StudyInstanceUID);
+                Platform.Log(LogLevel.Info, "Received request Ref # {0}", parameters.ReferenceID);
 
                 HeaderRetrievalContext context = new HeaderRetrievalContext();
                 context.ServiceInstanceID = ID;
@@ -102,14 +102,12 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
                 {
                     Stream stream = loader.Load();
                     Debug.Assert(stream != null);
-
                     return stream;
                 }
                 else
                 {
                     throw new FaultException(
-                        String.Format("Study {0} does not exist on partition {1}", parameters.StudyInstanceUID,
-                                      parameters.ServerAETitle));
+                        String.Format("Study {0} does not exist on partition {1}", parameters.StudyInstanceUID, parameters.ServerAETitle));
                 }
             }
             catch (ArgumentException e)

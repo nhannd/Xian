@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
 
         private string _serverAETitle;
         private string _studyInstanceUID;
-
+        private string _referenceID;        
         #endregion Private members
 
         #region Public Properties
@@ -60,6 +60,13 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
         {
             get { return _serverAETitle; }
             set { _serverAETitle = value; }
+        }
+
+        [DataMember(IsRequired = true)]
+        public string ReferenceID
+        {
+            get { return _referenceID; }
+            set { _referenceID = value; }
         }
 
         #endregion Public Properties

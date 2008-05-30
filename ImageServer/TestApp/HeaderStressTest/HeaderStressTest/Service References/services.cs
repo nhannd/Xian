@@ -25,6 +25,8 @@ namespace HeaderStressTest.services
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
+        private string ReferenceIDField;
+        
         private string ServerAETitleField;
         
         private string StudyInstanceUIDField;
@@ -38,6 +40,19 @@ namespace HeaderStressTest.services
             set
             {
                 this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string ReferenceID
+        {
+            get
+            {
+                return this.ReferenceIDField;
+            }
+            set
+            {
+                this.ReferenceIDField = value;
             }
         }
         
@@ -68,71 +83,13 @@ namespace HeaderStressTest.services
         }
     }
     
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="StudyNotFoundFault", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageServer.Services.Streamin" +
-        "g.HeaderRetrieval")]
-    [System.SerializableAttribute()]
-    public partial class StudyNotFoundFault : object, System.Runtime.Serialization.IExtensibleDataObject
-    {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ServerPartitionField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string StudyInstanceUidField;
-        
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData
-        {
-            get
-            {
-                return this.extensionDataField;
-            }
-            set
-            {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ServerPartition
-        {
-            get
-            {
-                return this.ServerPartitionField;
-            }
-            set
-            {
-                this.ServerPartitionField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string StudyInstanceUid
-        {
-            get
-            {
-                return this.StudyInstanceUidField;
-            }
-            set
-            {
-                this.StudyInstanceUidField = value;
-            }
-        }
-    }
-    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="HeaderStressTest.services.IHeaderRetrievalService")]
     public interface IHeaderRetrievalService
     {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IHeaderRetrievalService/GetStudyHeader", ReplyAction="http://tempuri.org/IHeaderRetrievalService/GetStudyHeaderResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(HeaderStressTest.services.StudyNotFoundFault), Action="http://tempuri.org/IHeaderRetrievalService/GetStudyHeaderStudyNotFoundFaultFault", Name="StudyNotFoundFault", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageServer.Services.Streamin" +
-            "g.HeaderRetrieval")]
-        [System.ServiceModel.FaultContractAttribute(typeof(System.ArgumentException), Action="http://tempuri.org/IHeaderRetrievalService/GetStudyHeaderArgumentExceptionFault", Name="ArgumentException", Namespace="http://schemas.datacontract.org/2004/07/System")]
+        [System.ServiceModel.FaultContractAttribute(typeof(string), Action="http://tempuri.org/IHeaderRetrievalService/GetStudyHeaderStringFault", Name="string", Namespace="http://schemas.microsoft.com/2003/10/Serialization/")]
         System.IO.Stream GetStudyHeader(string callingAETitle, HeaderStressTest.services.HeaderRetrievalParameters parameters);
     }
     

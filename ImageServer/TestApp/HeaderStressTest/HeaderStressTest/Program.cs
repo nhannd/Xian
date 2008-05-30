@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
@@ -131,6 +132,7 @@ namespace HeaderStressTest
                         services.HeaderRetrievalParameters param = new services.HeaderRetrievalParameters();
                         param.ServerAETitle = RemoteAE;
                         param.StudyInstanceUID = study.StudyUid;
+                        param.ReferenceID = Guid.NewGuid().ToString();
                         TimeSpanStatistics ts = new TimeSpanStatistics();
                         ts.Start();
                         Stream input = client.GetStudyHeader(LocalAE, param);
@@ -142,21 +144,43 @@ namespace HeaderStressTest
                                 Directory.CreateDirectory(outputdir);
 
                             string temp = Path.Combine(outputdir, study.StudyUid + ".xml");
+                            Console.WriteLine("Reading");
                             using (FileStream output = new FileStream(temp, FileMode.OpenOrCreate))
                             {
-                                StudyXml xml = new StudyXml();
-                                XmlDocument doc = new XmlDocument();
-                                StudyXmlIo.ReadGzip(doc, input);
-                                StudyXmlIo.Write(doc, output);
+                                GZipStream gzStream = new GZipStream(input, CompressionMode.Decompress);
+
+                                byte[] buffer = new byte[32*1024*1024];
+                                int size = gzStream.Read(buffer, 0, buffer.Length);
+                                int count = 0;
+                                while(size>0)
+                                {
+                                    output.Write(buffer, 0, size);
+                                    count += size;
+                                    Console.Write("\r{0} KB", count/1024);
+                                    size = gzStream.Read(buffer, 0, buffer.Length); 
+                                }
+                                
+                                output.Close();
                             }
+
+                            using (FileStream output = new FileStream(temp, FileMode.Open))
+                            {
+                                XmlDocument doc = new XmlDocument();
+                                Console.WriteLine("Reading into xml");
+                                StudyXmlIo.Read(doc, output);
+                                Console.WriteLine("Done");
+                            }
+                                
+
                         }
                         else
                         {
                             Console.WriteLine("{2} - {1,-16} {0,-64}... NOT FOUND", study.StudyUid, LocalAE, System.Diagnostics.Stopwatch.GetTimestamp()); 
-                       
+                        
                         }
 
                         ts.End();
+                        input.Close();
 
                         //File.Delete(temp);
                         Console.WriteLine("{3} - {2,-16} {0,-64}... OK {1}", study.StudyUid, ts.FormattedValue, LocalAE, System.Diagnostics.Stopwatch.GetTimestamp());

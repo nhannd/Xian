@@ -9,7 +9,7 @@
 	<EndPoints>
 		<EndPoint
 			Address="http://localhost:50221/HeaderRetrieval/HeaderRetrieval"
-			BindingConfiguration="WSHttpBinding_IHeaderRetrievalService"
+			BindingConfiguration="BasicHttpBinding_IHeaderRetrievalService"
 			Contract="HeaderStressTest.services.IHeaderRetrievalService"
 			>
 		</EndPoint>
