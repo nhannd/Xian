@@ -89,7 +89,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
-            return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.ProcedureStepRef)));
+            return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.ProcedureStepRef, request.ProcedureRef)));
         }
 
         [UpdateOperation]
@@ -252,14 +252,13 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [OperationEnablement("CanCreateAddendum")]
         public CreateAddendumResponse CreateAddendum(CreateAddendumRequest request)
         {
-            PublicationStep publication = PersistenceContext.Load<PublicationStep>(request.PublicationStepRef, EntityLoadFlags.CheckVersion);
+			Procedure procedure = PersistenceContext.Load<Procedure>(request.ProcedureRef);
 
             Operations.CreateAddendum op = new Operations.CreateAddendum();
-            InterpretationStep interpretation = op.Execute(publication, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+			InterpretationStep interpretation = op.Execute(procedure, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
             PersistenceContext.SynchState();
             CreateAddendumResponse response = new CreateAddendumResponse();
-            response.PublicationStepRef = publication.GetRef();
             response.InterpretationStepRef = interpretation.GetRef();
             return response;
         }
@@ -486,7 +485,13 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanCreateAddendum(WorklistItemKey itemKey)
         {
-            return CanExecuteOperation(new Operations.CreateAddendum(), itemKey);
+			// special case: procedure step not known, but procedure is
+			if(itemKey.ProcedureRef != null)
+			{
+				Procedure procedure = PersistenceContext.Load<Procedure>(itemKey.ProcedureRef);
+				return (new Operations.CreateAddendum()).CanExecute(procedure, CurrentUserStaff);
+			}
+        	return false;
         }
 
         public bool CanReviseUnpublishedReport(WorklistItemKey itemKey)

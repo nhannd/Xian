@@ -38,16 +38,23 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
     public class WorklistItemKey
     {
         private readonly EntityRef _procedureStepRef;
+		private readonly EntityRef _procedureRef;
 
-        public WorklistItemKey(EntityRef procedureStepRef)
+        public WorklistItemKey(EntityRef procedureStepRef, EntityRef procedureRef)
         {
             _procedureStepRef = procedureStepRef;
+        	_procedureRef = procedureRef;
         }
 
         public EntityRef ProcedureStepRef
         {
             get { return _procedureStepRef; }
         }
+
+    	public EntityRef ProcedureRef
+    	{
+			get { return _procedureRef; }
+    	}
     }
 
     public class WorklistItem : WorklistItemBase

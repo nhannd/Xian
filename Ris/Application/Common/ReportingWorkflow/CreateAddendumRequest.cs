@@ -37,12 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class CreateAddendumRequest : DataContractBase
     {
-        public CreateAddendumRequest(EntityRef publicationStepRef)
+        public CreateAddendumRequest(EntityRef procedureRef)
         {
-            this.PublicationStepRef = publicationStepRef;
+            this.ProcedureRef = procedureRef;
         }
 
         [DataMember]
-        public EntityRef PublicationStepRef;
+        public EntityRef ProcedureRef;
     }
 }

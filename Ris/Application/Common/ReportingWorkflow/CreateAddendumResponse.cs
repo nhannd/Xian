@@ -38,9 +38,6 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     public class CreateAddendumResponse : DataContractBase
     {
         [DataMember]
-        public EntityRef PublicationStepRef;
-
-        [DataMember]
         public EntityRef InterpretationStepRef;
     }
 }

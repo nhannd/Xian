@@ -354,28 +354,43 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class CreateAddendum : ReportingOperation
 		{
-			public InterpretationStep Execute(PublicationStep step, Staff currentUserStaff, IWorkflow workflow)
+			public InterpretationStep Execute(Procedure procedure, Staff currentUserStaff, IWorkflow workflow)
 			{
-				InterpretationStep interpretation = new InterpretationStep(step.Procedure);
+				// the procedure passed in may be any one of the procedures that this report covers
+				// ideally, the new interpretation step should be created on the procedure that the
+				// publication step was linked to (and only one of the reported procedures should have a publication step)
+				procedure = CollectionUtils.SelectFirst(procedure.ActiveReport.Procedures,
+					delegate(Procedure p)
+					{
+						return CollectionUtils.Contains(p.ReportingProcedureSteps,
+							delegate(ReportingProcedureStep ps) { return ps.Is<PublicationStep>() && ps.State == ActivityStatus.CM; });
+					});
+
+				InterpretationStep interpretation = new InterpretationStep(procedure);
 				interpretation.Assign(currentUserStaff);
 				interpretation.Start(currentUserStaff);
-				interpretation.ReportPart = step.ReportPart.Report.AddAddendum();
+				interpretation.ReportPart = procedure.ActiveReport.AddAddendum();
 				workflow.AddActivity(interpretation);
 				return interpretation;
 			}
 
-			public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+			public bool CanExecute(Procedure procedure, Staff currentUserStaff)
 			{
-				// can only create an addendum if all outstanding reporting steps for the procedure are complete
-				if (!CollectionUtils.TrueForAll(step.Procedure.ReportingProcedureSteps,
+				// can only create an addendum if all reporting steps for the procedure are terminated
+				if (!CollectionUtils.TrueForAll(procedure.ReportingProcedureSteps,
 					delegate(ReportingProcedureStep ps) { return ps.IsTerminated; }))
 					return false;
 
 				// cannot add a new addendum while there is still an active report/addendum
-				if (step.ReportPart.Report.ActivePart != null)
+				if (procedure.ActiveReport != null && procedure.ActiveReport.ActivePart != null)
 					return false;
 
 				return true;
+			}
+
+			public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+			{
+				return CanExecute(step.Procedure, currentUserStaff);
 			}
 		}
 

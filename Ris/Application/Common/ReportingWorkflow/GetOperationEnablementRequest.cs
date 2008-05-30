@@ -45,16 +45,22 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         {
         }
 
-        public GetOperationEnablementRequest(EntityRef procedureStepRef, string stepType)
+        public GetOperationEnablementRequest(EntityRef procedureStepRef, EntityRef procedureRef)
         {
             this.ProcedureStepRef = procedureStepRef;
-            this.StepType = stepType;
+        	this.ProcedureRef = procedureRef;
         }
 
+		/// <summary>
+		/// Reference to the procedure step.  May be null if the procedure step is not known.
+		/// </summary>
         [DataMember]
         public EntityRef ProcedureStepRef;
 
-        [DataMember]
-        public String StepType;
-    }
+		/// <summary>
+		/// Reference to the procedure, may be used in cases where the <see cref="ProcedureStepRef"/> is not specified.
+		/// </summary>
+		[DataMember]
+		public EntityRef ProcedureRef;
+	}
 }

@@ -261,7 +261,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
-                        CreateAddendumResponse response = service.CreateAddendum(new CreateAddendumRequest(item.ProcedureStepRef));
+                        CreateAddendumResponse response = service.CreateAddendum(new CreateAddendumRequest(item.ProcedureRef));
                         item.ProcedureStepRef = response.InterpretationStepRef;
                     });
 
