@@ -74,13 +74,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ImageViewerAppConfigCreatorSourceFiles Include="$(SolutionDir)..\Desktop\Executable\app.config" />
-    <ImageViewerAppConfigCreatorSourceFiles Include="$(SolutionDir)..\ImageViewer\ImageViewer_dist.config" />
+    <ImageViewerAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Desktop\Executable\app.config" />
+    <ImageViewerAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageViewer\ImageViewer_dist.config" />
   </ItemGroup>
 
   <ItemGroup>
-    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)..\Server\ShredHostService\app.config" />
-    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)..\ImageViewer\ImageViewer_Shreds_dist.config" />
+    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Server\ShredHostService\app.config" />
+    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageViewer\ImageViewer_Shreds_dist.config" />
   </ItemGroup>
 
   <ItemGroup>
