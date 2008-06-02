@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton SearchToolbarButton;
+        protected global::System.Web.UI.WebControls.ImageButton SearchToolbarButton;
         
         /// <summary>
         /// ToolBarUpdatePanel control.
@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button AddPartitionButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton AddPartitionButton;
         
         /// <summary>
         /// EditPartitionButton control.
@@ -170,7 +170,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button EditPartitionButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton EditPartitionButton;
         
         /// <summary>
         /// DeletePartitionButton control.
@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button DeletePartitionButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeletePartitionButton;
         
         /// <summary>
         /// Panel2 control.

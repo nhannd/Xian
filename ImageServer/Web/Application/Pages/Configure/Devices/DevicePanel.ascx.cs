@@ -244,12 +244,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
 
         }
 
-        protected void AddDeviceButton_Click(object sender, EventArgs e)
+        protected void AddDeviceButton_Click(object sender, ImageClickEventArgs e)
         {
             EnclosingPage.OnAddDevice(_theController, ServerPartition);
         }
 
-        protected void EditDeviceButton_Click(object sender, EventArgs e)
+        protected void EditDeviceButton_Click(object sender, ImageClickEventArgs e)
         {
             Device dev = DeviceGridViewControl1.SelectedDevice;
             if (dev != null)
@@ -258,7 +258,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             }
         }
 
-        protected void DeleteDeviceButton_Click(object sender, EventArgs e)
+        protected void DeleteDeviceButton_Click(object sender, ImageClickEventArgs e)
         {
             Device dev = DeviceGridViewControl1.SelectedDevice;
             if (dev != null)

@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton SearchToolbarButton;
+        protected global::System.Web.UI.WebControls.ImageButton SearchToolbarButton;
         
         /// <summary>
         /// ToolbarUpdatePanel control.
@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button AddServerRuleButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton AddServerRuleButton;
         
         /// <summary>
         /// EditServerRuleButton control.
@@ -170,7 +170,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button EditServerRuleButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton EditServerRuleButton;
         
         /// <summary>
         /// DeleteServerRuleButton control.
@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button DeleteServerRuleButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteServerRuleButton;
         
         /// <summary>
         /// Panel1 control.

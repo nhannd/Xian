@@ -52,7 +52,7 @@
                                                 <asp:TextBox ID="StudyDescription" runat="server"  CssClass="SearchTextBox" ToolTip="Search the list by Study Description" />
                                             </td>                                            
                                             <td align="right" valign="bottom">
-                                                <asp:Panel runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png" OnClick="SearchButton_Click" /></asp:Panel>
+                                                <asp:Panel runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
                                             </td>
                                         </tr>
                                     </table>
@@ -72,7 +72,11 @@
                             <tr><td >
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
-                                    <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons"><asp:Button runat="server" ID="ViewStudyDetailsButton" Text="View Details" Width="85px" CssClass="ButtonStyle" /><asp:Button ID="MoveStudyButton" runat="server" Text="Move" CssClass="ButtonStyle" width="85px" /><asp:Button ID="DeleteStudyButton" runat="server" Text="Delete" CssClass="ButtonStyle" width="85px"/></asp:Panel>
+                                    <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
+                                        <ccUI:ToolbarButton ID="ViewStudyDetailsButton" runat="server" SkinID="ViewDetailsButton" />
+                                        <ccUI:ToolbarButton ID="MoveStudyButton" runat="server" SkinID="MoveButton" />
+                                        <ccUI:ToolbarButton ID="DeleteStudyButton" runat="server" SkinID="DeleteButton" />
+                                    </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  
                         </td></tr>

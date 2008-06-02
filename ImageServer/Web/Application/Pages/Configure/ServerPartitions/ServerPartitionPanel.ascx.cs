@@ -186,12 +186,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
 
         }
 
-        protected void AddPartitionButton_Click(object sender, EventArgs e)
+        protected void AddPartitionButton_Click(object sender, ImageClickEventArgs e)
         {
             EnclosingPage.AddPartition();
         }
 
-        protected void EditPartitionButton_Click(object sender, EventArgs e)
+        protected void EditPartitionButton_Click(object sender, ImageClickEventArgs e)
         {
             ServerPartition selectedPartition =
                 ServerPartitionGridPanel.SelectedPartition;
@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
             }
         }
 
-        protected void DeletePartitionButton_Click(object sender, EventArgs e)
+        protected void DeletePartitionButton_Click(object sender, ImageClickEventArgs e)
         {
             ServerPartition selectedPartition =
                 ServerPartitionGridPanel.SelectedPartition;

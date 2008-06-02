@@ -57,7 +57,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             var viewSeriesBtn = $get(this._ViewSeriesButtonClientID);
             if (viewSeriesBtn!=null)
             {
-                viewSeriesBtn.onClientClick = null;
+                viewSeriesBtn.remove_onClientClick(this._OnViewSeriesButtonClickedHandler);
             }
             
             Sys.Application.remove_load(this._OnLoadHandler);
@@ -80,10 +80,10 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                 // serieslist.add_onClientRowDblClick(this._OnSeriesListDoubleClickedHandler);
             }
             
-            var viewSeriesBtn = $get(this._ViewSeriesButtonClientID);
+            var viewSeriesBtn = $find(this._ViewSeriesButtonClientID);
             if (viewSeriesBtn!=null)
             {
-                viewSeriesBtn.onClientClick = this._OnViewSeriesButtonClicked();
+                viewSeriesBtn.add_onClientClick(this._OnViewSeriesButtonClickedHandler);
             }
         },
         
@@ -94,9 +94,9 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             if (serieslist!=null)
             {
                 var rows = serieslist.getSelectedRowElements();
-                var viewSeriesBtn = $get(this._ViewSeriesButtonClientID);
+                var viewSeriesBtn = $find(this._ViewSeriesButtonClientID);
                 if (viewSeriesBtn!=null) {
-                    viewSeriesBtn.disabled = rows.length>0 ? false : true;
+                    viewSeriesBtn.set_enable(rows.length>0);
                 }
             }
         },

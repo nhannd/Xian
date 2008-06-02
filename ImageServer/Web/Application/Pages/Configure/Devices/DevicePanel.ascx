@@ -38,12 +38,7 @@
                                                 </asp:DropDownList></td>
                                             <td align="right" valign="bottom">
                                                 <asp:Panel ID="FilterButtonContainer" runat="server" CssClass="SearchButtonContainer">                                                        
-                                                    <ccUI:ToolbarButton
-                                                        ID="SearchToolbarButton" runat="server" 
-                                                        EnabledImageURL="~/images/icons/QueryEnabled.png" 
-                                                        DisabledImageURL="~/images/icons/QueryDisabled.png"
-                                                        OnClick="SearchButton_Click" Tooltip="Search for devices"
-                                                        />
+                                                    <asp:ImageButton ID="SearchToolbarButton" runat="server" SkinID="SearchButton" OnClick="SearchButton_Click" Tooltip="Search for devices" />
                                                 </asp:Panel>
                                             </td>
                                         </tr>
@@ -57,7 +52,11 @@
                             <tr><td >
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
-                                    <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons"><asp:Button runat="server" ID="AddDeviceButton" Text="Add" Width="85px" CssClass="ButtonStyle" /><asp:Button ID="EditDeviceButton" runat="server" Text="Edit" CssClass="ButtonStyle" width="85px" /><asp:Button ID="DeleteDeviceButton" runat="server" Text="Delete" CssClass="ButtonStyle" width="85px"/></asp:Panel>
+                                    <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
+                                        <ccUI:ToolbarButton ID="AddDeviceButton" runat="server" SkinID="AddButton" />
+                                        <ccUI:ToolbarButton ID="EditDeviceButton" runat="server" SkinID="EditButton" />
+                                        <ccUI:ToolbarButton ID="DeleteDeviceButton" runat="server" SkinID="DeleteButton" />
+                                    </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  
                         </td></tr>

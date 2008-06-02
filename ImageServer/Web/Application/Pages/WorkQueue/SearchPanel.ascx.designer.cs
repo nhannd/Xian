@@ -182,6 +182,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         protected global::System.Web.UI.WebControls.DropDownList PriorityDropDownList;
         
         /// <summary>
+        /// Panel1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel1;
+        
+        /// <summary>
         /// SearchButton control.
         /// </summary>
         /// <remarks>
@@ -224,7 +233,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button ViewItemDetailsButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton ViewItemDetailsButton;
         
         /// <summary>
         /// RescheduleItemButton control.
@@ -233,7 +242,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button RescheduleItemButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton RescheduleItemButton;
         
         /// <summary>
         /// ResetItemButton control.
@@ -242,7 +251,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button ResetItemButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton ResetItemButton;
         
         /// <summary>
         /// DeleteItemButton control.
@@ -251,7 +260,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button DeleteItemButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteItemButton;
         
         /// <summary>
         /// Panel2 control.

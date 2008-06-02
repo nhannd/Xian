@@ -30,12 +30,7 @@
                                                 </asp:DropDownList></td>
                                             <td align="left" valign="bottom">
                                                 <asp:Panel ID="SearchButtonContainer" runat="server" CssClass="SearchButtonContainer">                                                        
-                                                    <ccUI:ToolbarButton
-                                                        ID="SearchToolbarButton" runat="server" 
-                                                        EnabledImageURL="~/images/icons/QueryEnabled.png" 
-                                                        DisabledImageURL="~/images/icons/QueryDisabled.png"
-                                                        OnClick="SearchButton_Click" Tooltip="Search Service Schedules"
-                                                        />
+                                                    <asp:ImageButton ID="SearchToolbarButton" runat="server" SkinID="SearchButton" OnClick="SearchButton_Click" Tooltip="Search for Scheduled Services" />
                                                 </asp:Panel>
                                             </td>
                                         </tr>
@@ -49,7 +44,10 @@
                             <tr><td >
                             <asp:UpdatePanel ID="ToolbarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
-                                    <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons"><asp:Button runat="server" ID="EditServiceScheduleButton" Text="Edit" CssClass="ButtonStyle" /></asp:Panel>
+                                    <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
+                                        <ccUI:ToolbarButton ID="AddServiceLockButton" runat="server" SkinID="AddButton" />
+                                        <ccUI:ToolbarButton ID="EditServiceLockButton" runat="server" SkinID="EditButton" />
+                                    </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  
                         </td></tr>

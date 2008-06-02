@@ -40,12 +40,7 @@
                                             </td>
                                             <td align="right" valign="bottom">
                                                 <asp:Panel ID="SearchButtonContainer" runat="server" CssClass="SearchButtonContainer">
-                                                    <ccUI:ToolbarButton
-                                                        ID="SearchToolbarButton" runat="server" 
-                                                        EnabledImageURL="~/images/icons/QueryEnabled.png" 
-                                                        DisabledImageURL="~/images/icons/QueryDisabled.png"
-                                                        OnClick="SearchButton_Click" Tooltip="Search"
-                                                        />
+                                                   <asp:ImageButton ID="SearchToolbarButton" runat="server" SkinID="SearchButton" OnClick="SearchButton_Click" Tooltip="Search for Server Rules" />
                                                 </asp:Panel>
                                             </td>
                                         </tr>
@@ -60,7 +55,11 @@
                             <tr><td >
                             <asp:UpdatePanel ID="ToolbarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
-                                    <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons"><asp:Button runat="server" ID="AddServerRuleButton" Text="Add" CssClass="ButtonStyle" /><asp:Button runat="server" ID="EditServerRuleButton" Text="Edit" CssClass="ButtonStyle" /><asp:Button runat="server" ID="DeleteServerRuleButton" Text="Delete" CssClass="ButtonStyle" /></asp:Panel>
+                                    <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
+                                        <ccUI:ToolbarButton ID="AddServerRuleButton" runat="server" SkinID="AddButton" />
+                                        <ccUI:ToolbarButton ID="EditServerRuleButton" runat="server" SkinID="EditButton" />
+                                        <ccUI:ToolbarButton ID="DeleteServerRuleButton" runat="server" SkinID="DeleteButton" />
+                                    </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  
                         </td></tr>

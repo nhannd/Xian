@@ -8,8 +8,8 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Search.Move.DeviceGridVi
         
             <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
                 Width="100%" OnRowDataBound="GridView1_RowDataBound" OnDataBound="GridView1_DataBound"
-                OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnD OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
-                EmptyDataText="" OnPageIndexChanging="GridView1_PageIndexChanging" CellPadding="4"
+                OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
+                EmptyDataText="" OnPageIndexChanging="GridView1_PageIndexChanging" CellPadding="0"
                 PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px" BackColor="White" Height="100%">
                 <Columns>
                     <asp:BoundField DataField="AETitle" HeaderText="AE Title" ></asp:BoundField>

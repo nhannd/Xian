@@ -28,12 +28,7 @@
                                                 </asp:DropDownList></td>
                                             <td align="right" valign="bottom">
                                                 <asp:Panel ID="SearchButtonContainer" runat="server" CssClass="SearchButtonContainer">
-                                                    <ccUI:ToolbarButton
-                                                        ID="SearchToolbarButton" runat="server" 
-                                                        EnabledImageURL="~/images/icons/QueryEnabled.png" 
-                                                        DisabledImageURL="~/images/icons/QueryDisabled.png"
-                                                        OnClick="SearchButton_Click" Tooltip="Search for FileSystems"
-                                                        />
+                                                   <asp:ImageButton ID="SearchToolbarButton" runat="server" SkinID="SearchButton" OnClick="SearchButton_Click" Tooltip="Search for File Systems" />
                                                  </asp:Panel>
                                             </td>
                                 
@@ -48,7 +43,10 @@
                             <tr><td >
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
-                                    <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons"><asp:Button runat="server" ID="AddFileSystemButton" Text="Add" Width="85px" CssClass="ButtonStyle" /><asp:Button ID="EditFileSystemButton" runat="server" Text="Edit" CssClass="ButtonStyle" width="85px" /></asp:Panel>
+                                    <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
+                                        <ccUI:ToolbarButton ID="AddFileSystemButton" runat="server" SkinID="AddButton" />
+                                        <ccUI:ToolbarButton ID="EditFileSystemButton" runat="server" SkinID="EditButton" />
+                                    </asp:Panel>
                                 </ContentTemplate>
                             </asp:UpdatePanel>                  
                         </td></tr>

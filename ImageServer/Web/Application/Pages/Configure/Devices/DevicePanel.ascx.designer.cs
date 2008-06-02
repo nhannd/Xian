@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton SearchToolbarButton;
+        protected global::System.Web.UI.WebControls.ImageButton SearchToolbarButton;
         
         /// <summary>
         /// ToolBarUpdatePanel control.
@@ -170,7 +170,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button AddDeviceButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton AddDeviceButton;
         
         /// <summary>
         /// EditDeviceButton control.
@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button EditDeviceButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton EditDeviceButton;
         
         /// <summary>
         /// DeleteDeviceButton control.
@@ -188,7 +188,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button DeleteDeviceButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteDeviceButton;
         
         /// <summary>
         /// Panel2 control.

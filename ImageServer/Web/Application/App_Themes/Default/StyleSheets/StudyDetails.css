@@ -38,7 +38,7 @@
 
 .PatientSummaryTable
 {
-    background-color: #eeeeee;
+    background: #eeeeee url(../images/MainContent/PatientSummaryBackground.png) repeat-x;
 }
 
 .StudyDetailsView

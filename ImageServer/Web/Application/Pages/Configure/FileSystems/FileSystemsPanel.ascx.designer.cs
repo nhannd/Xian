@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton SearchToolbarButton;
+        protected global::System.Web.UI.WebControls.ImageButton SearchToolbarButton;
         
         /// <summary>
         /// ToolBarUpdatePanel control.
@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button AddFileSystemButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton AddFileSystemButton;
         
         /// <summary>
         /// EditFileSystemButton control.
@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button EditFileSystemButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton EditFileSystemButton;
         
         /// <summary>
         /// Panel2 control.

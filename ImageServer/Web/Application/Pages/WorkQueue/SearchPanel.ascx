@@ -71,7 +71,12 @@
                             <tr><td >
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
-                                    <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons"><asp:Button runat="server" ID="ViewItemDetailsButton" Text="View Details" Width="85px" CssClass="ButtonStyle" /><asp:Button ID="RescheduleItemButton" runat="server" Text="Reschedule" CssClass="ButtonStyle" width="85px" /><asp:Button ID="ResetItemButton" runat="server" Text="Reset" CssClass="ButtonStyle" width="85px"/><asp:Button ID="DeleteItemButton" runat="server" Text="Delete" CssClass="ButtonStyle" width="85px"/></asp:Panel>
+                                    <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
+                                        <ccUI:ToolbarButton ID="ViewItemDetailsButton" runat="server" SkinID="ViewDetailsButton" />
+                                        <ccUI:ToolbarButton ID="RescheduleItemButton" runat="server" SkinID="RescheduleButton" />
+                                        <ccUI:ToolbarButton ID="ResetItemButton" runat="server" SkinID="ResetButton" />
+                                        <ccUI:ToolbarButton ID="DeleteItemButton" runat="server" SkinID="DeleteButton" />
+                                    </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  
                         </td></tr>

@@ -35,16 +35,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button MoveButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton MoveButton;
         
         /// <summary>
-        /// CancelButton control.
+        /// DoneButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button CancelButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DoneButton;
         
         /// <summary>
         /// Panel1 control.
@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button SearchButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton SearchButton;
         
         /// <summary>
         /// GridPagerTop control.

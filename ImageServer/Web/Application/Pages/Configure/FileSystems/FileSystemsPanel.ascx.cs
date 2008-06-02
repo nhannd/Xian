@@ -211,12 +211,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
         }
 
 
-        protected void AddFileSystemButton_Click(object sender, EventArgs e)
+        protected void AddFileSystemButton_Click(object sender, ImageClickEventArgs e)
         {
             EnclosingPage.OnAddFileSystem();
         }
 
-        protected void EditFileSystemButton_Click(object sender, EventArgs e)
+        protected void EditFileSystemButton_Click(object sender, ImageClickEventArgs e)
         {
             // Call the edit filesystem delegate 
             Filesystem fs = FileSystemsGridView1.SelectedFileSystem;

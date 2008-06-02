@@ -1,0 +1,37 @@
+<%@ Register assembly="ClearCanvas.ImageServer.Web.Common" namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" tagPrefix="ccUI" %>
+
+
+<asp:Image runat="server" SkinID="Spacer" ImageUrl="~/images/blank.gif" />
+
+<%-- Header and Menu Images --%>
+
+<asp:ImageButton runat="server" SkinID="Logo" ImageUrl="images/Header/ClearCanvasLogo.png" Height="62" Width="185" />
+<asp:Image runat="server" SkinID="MenuEdge" ImageUrl="images/Header/MenuEdge.png" />
+<asp:Image runat="server" SkinID="LocationEdge" ImageUrl="images/Header/LocationEdge.png" />
+<asp:Image runat="server" SkinID="MainContentBottomLeftCorner" ImageUrl="images/MainContent/MainContentBottomLeftCorner.png" Height="14" Width="14"/>
+<asp:Image runat="server" SkinID="MainContentBottomRightCorner" ImageUrl="images/MainContent/MainContentBottomRightCorner.png" Height="14" Width="14" /> 
+
+<asp:Menu runat="server" SkinID="MainMenu" CssClass="MainMenuContent" Orientation="Horizontal"
+          StaticSubMenuIndent="1" DynamicVerticalOffset="0" StaticEnableDefaultPopOutImage="false">
+    <DynamicMenuStyle CssClass="DynamicMenu" />
+    <DynamicHoverStyle CssClass="DynamicHover" />
+    <DynamicMenuItemStyle CssClass="DynamicMenuItem" />
+    <DynamicSelectedStyle CssClass="DynamicSelected" />
+    <StaticHoverStyle CssClass="StaticHover" />
+    <StaticMenuItemStyle CssClass="StaticMenuItem" />
+    <StaticMenuStyle CssClass="StaticMenu" />
+    <StaticSelectedStyle CssClass="StaticSelected" />
+</asp:Menu>
+
+<%-- Buttons --%>
+
+<asp:ImageButton runat="server" SkinID="SearchButton" ImageUrl="images/Buttons/Search.png" />
+<ccUI:ToolbarButton runat="server" SkinID="ViewDetailsButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/ViewDetailsEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/ViewDetailsDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="MoveButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/MoveEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/MoveDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="DeleteButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/DeleteEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/DeleteDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="EditButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/EditEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/EditDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="ResetButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/ResetEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/ResetDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="RescheduleButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/RescheduleEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/RescheduleDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="AddButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/AddEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/AddDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="DoneButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/DoneEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/DoneDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="SearchButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/SearchEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/SearchDisabled.png" />

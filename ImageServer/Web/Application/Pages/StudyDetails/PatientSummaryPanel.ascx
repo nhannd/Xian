@@ -1,7 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="PatientSummaryPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.PatientSummaryPanel" %>
 
-    <table width="100%" class="PatientSummaryTable">
+    <table width="100%">
         <tr>
             <td colspan="4">
                 <ccUI:PersonNameLabel ID="personName" runat="server" PersonNameType="Dicom" CssClass="PatientName" /></td>

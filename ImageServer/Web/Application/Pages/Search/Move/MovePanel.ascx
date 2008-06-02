@@ -14,10 +14,15 @@
   
   <tr>
   <td class="SeriesDetailsContent">
-    <table width="100%" cellpadding="2" cellspacing="0" style="background-color: #B8D9EE;">
+    <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
         <tr>
             <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px;">Studies</td>
-            <td class="ButtonPanel"><asp:Button runat="server" ID="MoveButton" Text="Move" CssClass="ButtonStyle" OnClick="MoveButton_Click" /><asp:Button runat="server" ID="CancelButton" Text="Done" CssClass="ButtonStyle" OnClientClick="history.back();" /></td>
+            <td align="right" valign="bottom">
+                <asp:Panel CssClass="ToolbarButtons" style="padding-right: 1px;" runat="server">
+                    <ccUI:ToolbarButton runat="server" SkinID="MoveButton" ID="MoveButton" onClick="MoveButton_Click" />
+                    <ccUI:ToolbarButton runat="server" SkinID="DoneButton" ID="DoneButton" onClientClick="window.location = '../SearchPage.aspx';" />
+                </asp:Panel>
+            </td>
         </tr>
         <tr><td colspan="2">
             <asp:Panel ID="Panel1" runat="server" style="border: solid 1px #3d98d1;">
@@ -31,15 +36,16 @@
 
   <tr>
   <td class="SeriesDetailsContent">
-     <table width="100%" cellpadding="2" cellspacing="0" style="background-color: #B8D9EE">
-        <tr>
-            <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px;">Destination Devices</td>
-            <td align="right" style="vertical-align: bottom"><asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchLabelDark" /><asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" /> <asp:Button runat="server" ID="SearchButton" Text="Search" CssClass="ButtonStyle" OnClick="SearchButton_Click" />
+     <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
+        <tr >
+            <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px; width: 100%">Destination Devices</td>
+            <td align="right" nowrap="nowrap"><asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchLabelDark" /><asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" /></td>
+            <td align="right" nowrap="nowrap"><ccUI:ToolbarButton runat="server" ID="SearchButton" SkinID="SearchButton" onClick="SearchButton_Click" /></td>
         </tr>
 
-        <tr><td colspan="2">
-            <asp:Panel runat="server" style="border: solid 1px #3d98d1; ">
-            <table width="100%" style="background-color: #E1EFF8;" cellpadding="0">
+        <tr><td colspan="3">
+            <asp:Panel runat="server" style="border: solid 1px #3d98d1;">
+            <table width="100%" style="background-color: #E1EFF8;" cellpadding="0" cellspacing="0">
                 <tr><td style="border-bottom: solid 1px #3d98d1;"><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>
                 <tr><td style="background-color: White;"><localAsp:DeviceGridView ID="DeviceGridPanel" runat="server" Height="500px" /></td></tr>
                 <tr><td style="border-top: solid 1px #3d98d1;"><ccAsp:GridPager ID="GridPagerBottom" runat="server" /></td></tr>

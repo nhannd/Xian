@@ -4,6 +4,6 @@
 
 <%@ Register Src="MovePanel.ascx" TagName="MovePanel" TagPrefix="localAsp" %>
 
-<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContentSection" runat="server">
     <localAsp:MovePanel ID="Move" runat="server"/>
 </asp:Content>

@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button EditStudyButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton EditStudyButton;
         
         /// <summary>
         /// DeleteStudyButton control.
@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button DeleteStudyButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteStudyButton;
         
         /// <summary>
         /// MessagePanel control.
@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button ViewSeriesButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton ViewSeriesButton;
         
         /// <summary>
         /// SeriesGridView control.
