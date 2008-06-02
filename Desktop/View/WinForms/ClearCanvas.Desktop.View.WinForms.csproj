@@ -96,6 +96,12 @@
       <DependentUpon>PopupForm.cs</DependentUpon>
     </Compile>
     <Compile Include="PopupWindowHelper.cs" />
+    <Compile Include="RichTextField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RichTextField.Designer.cs">
+      <DependentUpon>RichTextField.cs</DependentUpon>
+    </Compile>
     <Compile Include="SuggestComboField.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -474,6 +480,10 @@
     <EmbeddedResource Include="PopupForm.resx">
       <DependentUpon>PopupForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RichTextField.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>RichTextField.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SuggestComboField.resx">
       <DependentUpon>SuggestComboField.cs</DependentUpon>

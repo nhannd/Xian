@@ -1069,6 +1069,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Protocol.
+        /// </summary>
+        internal static string OrderNoteCategoryProtocol {
+            get {
+                return ResourceManager.GetString("OrderNoteCategoryProtocol", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Home.
         /// </summary>
         internal static string PhoneNumberHome {

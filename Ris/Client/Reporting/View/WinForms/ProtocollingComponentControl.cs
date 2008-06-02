@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
@@ -74,6 +75,21 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 
 			_statusText.DataBindings.Add("Text", _component, "StatusText", true, DataSourceUpdateMode.OnPropertyChanged);
 			_statusText.DataBindings.Add("Visible", _component, "ShowStatusText", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_protocolNextItem.DataBindings.Add("Checked", _component, "ProtocolNextItem", true, DataSourceUpdateMode.OnPropertyChanged);
+			_protocolNextItem.DataBindings.Add("Enabled", _component, "ProtocolNextItemEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_btnAccept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnAccept.DataBindings.Add("Visible", _component, "AcceptVisible", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_btnSubmitForApproval.DataBindings.Add("Enabled", _component, "SubmitForApprovalEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnSubmitForApproval.DataBindings.Add("Visible", _component, "SubmitForApprovalVisible", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_btnReject.DataBindings.Add("Enabled", _component, "RejectEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnSuspend.DataBindings.Add("Enabled", _component, "SuspendEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnSkip.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_component.PropertyChanged += _component_PropertyChanged;
 		}
 
@@ -82,6 +98,62 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			if (e.PropertyName == "StatusText")
 			{
 				_statusText.Refresh();
+			}
+		}
+
+		private void _btnAccept_Click(object sender, EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.Accept();
+			}
+		}
+
+		private void _btnSubmitForApproval_Click(object sender, EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.SubmitForApproval();
+			}
+		}
+
+		private void _btnReject_Click(object sender, EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.Reject();
+			}
+		}
+
+		private void _btnSuspend_Click(object sender, EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.Suspend();
+			}
+		}
+
+		private void _btnSave_Click(object sender, EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.Save();
+			}
+		}
+
+		private void _btnClose_Click(object sender, EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.Close();
+			}
+		}
+
+		private void _btnSkip_Click(object sender, EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.Skip();
 			}
 		}
 	}

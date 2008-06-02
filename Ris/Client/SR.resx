@@ -453,6 +453,9 @@
   <data name="OrderNoteCategoryPrelimDiagnosis" xml:space="preserve">
     <value>Prelim. Diagnosis</value>
   </data>
+  <data name="OrderNoteCategoryProtocol" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
   <data name="PhoneNumberHome" xml:space="preserve">
     <value>Home</value>
   </data>

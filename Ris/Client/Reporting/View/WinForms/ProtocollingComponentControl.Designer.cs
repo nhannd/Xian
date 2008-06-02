@@ -30,7 +30,18 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         {
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+			this._tableLayouOuter = new System.Windows.Forms.TableLayoutPanel();
 			this._protocolEditorPanel = new System.Windows.Forms.Panel();
+			this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+			this._btnAccept = new System.Windows.Forms.Button();
+			this._btnSubmitForApproval = new System.Windows.Forms.Button();
+			this._btnReject = new System.Windows.Forms.Button();
+			this._btnSuspend = new System.Windows.Forms.Button();
+			this._btnSave = new System.Windows.Forms.Button();
+			this._btnSkip = new System.Windows.Forms.Button();
+			this._protocolNextItem = new System.Windows.Forms.CheckBox();
+			this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
+			this._btnClose = new System.Windows.Forms.Button();
 			this._additionalDetailsPanel = new System.Windows.Forms.Panel();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 			this._orderNotesGroupBox = new System.Windows.Forms.GroupBox();
@@ -44,6 +55,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
+			this._tableLayouOuter.SuspendLayout();
+			this.flowLayoutPanel2.SuspendLayout();
+			this.flowLayoutPanel3.SuspendLayout();
 			this._additionalDetailsPanel.SuspendLayout();
 			this.splitContainer2.Panel1.SuspendLayout();
 			this.splitContainer2.Panel2.SuspendLayout();
@@ -77,7 +91,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			// 
 			// splitContainer1.Panel1
 			// 
-			this.splitContainer1.Panel1.Controls.Add(this._protocolEditorPanel);
+			this.splitContainer1.Panel1.Controls.Add(this._tableLayouOuter);
 			// 
 			// splitContainer1.Panel2
 			// 
@@ -86,16 +100,147 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.splitContainer1.SplitterDistance = 562;
 			this.splitContainer1.TabIndex = 0;
 			// 
+			// _tableLayouOuter
+			// 
+			this._tableLayouOuter.AutoSize = true;
+			this._tableLayouOuter.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._tableLayouOuter.ColumnCount = 2;
+			this._tableLayouOuter.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableLayouOuter.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._tableLayouOuter.Controls.Add(this._protocolEditorPanel, 0, 0);
+			this._tableLayouOuter.Controls.Add(this.flowLayoutPanel2, 0, 1);
+			this._tableLayouOuter.Controls.Add(this.flowLayoutPanel3, 1, 1);
+			this._tableLayouOuter.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._tableLayouOuter.Location = new System.Drawing.Point(0, 0);
+			this._tableLayouOuter.Margin = new System.Windows.Forms.Padding(0);
+			this._tableLayouOuter.Name = "_tableLayouOuter";
+			this._tableLayouOuter.RowCount = 2;
+			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayouOuter.Size = new System.Drawing.Size(562, 613);
+			this._tableLayouOuter.TabIndex = 1;
+			// 
 			// _protocolEditorPanel
 			// 
 			this._protocolEditorPanel.AutoSize = true;
 			this._protocolEditorPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._tableLayouOuter.SetColumnSpan(this._protocolEditorPanel, 2);
 			this._protocolEditorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._protocolEditorPanel.Location = new System.Drawing.Point(0, 0);
 			this._protocolEditorPanel.Margin = new System.Windows.Forms.Padding(0);
 			this._protocolEditorPanel.Name = "_protocolEditorPanel";
-			this._protocolEditorPanel.Size = new System.Drawing.Size(562, 613);
+			this._protocolEditorPanel.Size = new System.Drawing.Size(562, 549);
 			this._protocolEditorPanel.TabIndex = 0;
+			// 
+			// flowLayoutPanel2
+			// 
+			this.flowLayoutPanel2.AutoSize = true;
+			this.flowLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.flowLayoutPanel2.Controls.Add(this._btnAccept);
+			this.flowLayoutPanel2.Controls.Add(this._btnSubmitForApproval);
+			this.flowLayoutPanel2.Controls.Add(this._btnReject);
+			this.flowLayoutPanel2.Controls.Add(this._btnSuspend);
+			this.flowLayoutPanel2.Controls.Add(this._btnSave);
+			this.flowLayoutPanel2.Controls.Add(this._btnSkip);
+			this.flowLayoutPanel2.Controls.Add(this._protocolNextItem);
+			this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 552);
+			this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+			this.flowLayoutPanel2.Size = new System.Drawing.Size(469, 58);
+			this.flowLayoutPanel2.TabIndex = 0;
+			// 
+			// _btnAccept
+			// 
+			this._btnAccept.Location = new System.Drawing.Point(3, 3);
+			this._btnAccept.Name = "_btnAccept";
+			this._btnAccept.Size = new System.Drawing.Size(75, 23);
+			this._btnAccept.TabIndex = 0;
+			this._btnAccept.Text = "Accept";
+			this._btnAccept.UseVisualStyleBackColor = true;
+			this._btnAccept.Click += new System.EventHandler(this._btnAccept_Click);
+			// 
+			// _btnSubmitForApproval
+			// 
+			this._btnSubmitForApproval.AutoSize = true;
+			this._btnSubmitForApproval.Location = new System.Drawing.Point(84, 3);
+			this._btnSubmitForApproval.Name = "_btnSubmitForApproval";
+			this._btnSubmitForApproval.Size = new System.Drawing.Size(109, 23);
+			this._btnSubmitForApproval.TabIndex = 6;
+			this._btnSubmitForApproval.Text = "Submit for Approval";
+			this._btnSubmitForApproval.UseVisualStyleBackColor = true;
+			this._btnSubmitForApproval.Click += new System.EventHandler(this._btnSubmitForApproval_Click);
+			// 
+			// _btnReject
+			// 
+			this._btnReject.Location = new System.Drawing.Point(199, 3);
+			this._btnReject.Name = "_btnReject";
+			this._btnReject.Size = new System.Drawing.Size(75, 23);
+			this._btnReject.TabIndex = 1;
+			this._btnReject.Text = "Reject";
+			this._btnReject.UseVisualStyleBackColor = true;
+			this._btnReject.Click += new System.EventHandler(this._btnReject_Click);
+			// 
+			// _btnSuspend
+			// 
+			this._btnSuspend.Location = new System.Drawing.Point(280, 3);
+			this._btnSuspend.Name = "_btnSuspend";
+			this._btnSuspend.Size = new System.Drawing.Size(75, 23);
+			this._btnSuspend.TabIndex = 2;
+			this._btnSuspend.Text = "Suspend";
+			this._btnSuspend.UseVisualStyleBackColor = true;
+			this._btnSuspend.Click += new System.EventHandler(this._btnSuspend_Click);
+			// 
+			// _btnSave
+			// 
+			this._btnSave.Location = new System.Drawing.Point(361, 3);
+			this._btnSave.Name = "_btnSave";
+			this._btnSave.Size = new System.Drawing.Size(75, 23);
+			this._btnSave.TabIndex = 3;
+			this._btnSave.Text = "Save";
+			this._btnSave.UseVisualStyleBackColor = true;
+			this._btnSave.Click += new System.EventHandler(this._btnSave_Click);
+			// 
+			// _btnSkip
+			// 
+			this._btnSkip.Location = new System.Drawing.Point(3, 32);
+			this._btnSkip.Name = "_btnSkip";
+			this._btnSkip.Size = new System.Drawing.Size(75, 23);
+			this._btnSkip.TabIndex = 5;
+			this._btnSkip.Text = "Skip";
+			this._btnSkip.UseVisualStyleBackColor = true;
+			this._btnSkip.Click += new System.EventHandler(this._btnSkip_Click);
+			// 
+			// _protocolNextItem
+			// 
+			this._protocolNextItem.AutoSize = true;
+			this._protocolNextItem.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._protocolNextItem.Location = new System.Drawing.Point(84, 32);
+			this._protocolNextItem.Name = "_protocolNextItem";
+			this._protocolNextItem.Size = new System.Drawing.Size(119, 23);
+			this._protocolNextItem.TabIndex = 4;
+			this._protocolNextItem.Text = "Protocol Next Order";
+			this._protocolNextItem.UseVisualStyleBackColor = true;
+			// 
+			// flowLayoutPanel3
+			// 
+			this.flowLayoutPanel3.AutoSize = true;
+			this.flowLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.flowLayoutPanel3.Controls.Add(this._btnClose);
+			this.flowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.flowLayoutPanel3.Location = new System.Drawing.Point(478, 552);
+			this.flowLayoutPanel3.Name = "flowLayoutPanel3";
+			this.flowLayoutPanel3.Size = new System.Drawing.Size(81, 58);
+			this.flowLayoutPanel3.TabIndex = 2;
+			// 
+			// _btnClose
+			// 
+			this._btnClose.Location = new System.Drawing.Point(3, 3);
+			this._btnClose.Name = "_btnClose";
+			this._btnClose.Size = new System.Drawing.Size(75, 23);
+			this._btnClose.TabIndex = 1;
+			this._btnClose.Text = "Close";
+			this._btnClose.UseVisualStyleBackColor = true;
+			this._btnClose.Click += new System.EventHandler(this._btnClose_Click);
 			// 
 			// _additionalDetailsPanel
 			// 
@@ -171,7 +316,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._priorReportsTabPage.Location = new System.Drawing.Point(4, 22);
 			this._priorReportsTabPage.Name = "_priorReportsTabPage";
 			this._priorReportsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this._priorReportsTabPage.Size = new System.Drawing.Size(548, 399);
+			this._priorReportsTabPage.Size = new System.Drawing.Size(548, 383);
 			this._priorReportsTabPage.TabIndex = 0;
 			this._priorReportsTabPage.Text = "Prior Reports";
 			this._priorReportsTabPage.UseVisualStyleBackColor = true;
@@ -215,6 +360,11 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			this.splitContainer1.Panel2.PerformLayout();
 			this.splitContainer1.ResumeLayout(false);
+			this._tableLayouOuter.ResumeLayout(false);
+			this._tableLayouOuter.PerformLayout();
+			this.flowLayoutPanel2.ResumeLayout(false);
+			this.flowLayoutPanel2.PerformLayout();
+			this.flowLayoutPanel3.ResumeLayout(false);
 			this._additionalDetailsPanel.ResumeLayout(false);
 			this.splitContainer2.Panel1.ResumeLayout(false);
 			this.splitContainer2.Panel2.ResumeLayout(false);
@@ -239,5 +389,16 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private System.Windows.Forms.GroupBox _orderNotesGroupBox;
         private System.Windows.Forms.Panel _orderNotesPanel;
 		private System.Windows.Forms.Label _statusText;
+		private System.Windows.Forms.TableLayoutPanel _tableLayouOuter;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+		private System.Windows.Forms.Button _btnAccept;
+		private System.Windows.Forms.Button _btnSubmitForApproval;
+		private System.Windows.Forms.Button _btnReject;
+		private System.Windows.Forms.Button _btnSuspend;
+		private System.Windows.Forms.Button _btnSave;
+		private System.Windows.Forms.Button _btnSkip;
+		private System.Windows.Forms.CheckBox _protocolNextItem;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
+		private System.Windows.Forms.Button _btnClose;
     }
 }

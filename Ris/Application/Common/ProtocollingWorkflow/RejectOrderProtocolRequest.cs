@@ -34,19 +34,23 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
-    [DataContract]
-    public class RejectOrderProtocolRequest : DataContractBase
-    {
-        public RejectOrderProtocolRequest(EntityRef orderRef, EnumValueInfo rejectReason)
-        {
-            OrderRef = orderRef;
-            RejectReason = rejectReason;
-        }
+	[DataContract]
+	public class RejectOrderProtocolRequest : DataContractBase
+	{
+		public RejectOrderProtocolRequest(EntityRef orderRef, EnumValueInfo rejectReason, OrderNoteDetail additionalCommentsNote)
+		{
+			this.OrderRef = orderRef;
+			this.RejectReason = rejectReason;
+			this.AdditionalCommentsNote = additionalCommentsNote;
+		}
 
-        [DataMember]
-        public EntityRef OrderRef;
+		[DataMember]
+		public EntityRef OrderRef;
 
-        [DataMember]
-        public EnumValueInfo RejectReason;
-    }
+		[DataMember]
+		public EnumValueInfo RejectReason;
+
+		[DataMember]
+		public OrderNoteDetail AdditionalCommentsNote;
+	}
 }

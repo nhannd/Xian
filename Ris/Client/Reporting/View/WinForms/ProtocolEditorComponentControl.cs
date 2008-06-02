@@ -65,28 +65,14 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 
 			_procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
 			_procedurePlanSummary.DataBindings.Add("Selection", _component, "SelectedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
-			_component.SelectionChanged += RefreshTables;
-
-			_protocolNextItem.DataBindings.Add("Checked", _component, "ProtocolNextItem", true, DataSourceUpdateMode.OnPropertyChanged);
-			_protocolNextItem.DataBindings.Add("Enabled", _component, "ProtocolNextItemEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_component.SelectedProcedureChanged += RefreshTables;
 
 			_protocolCodesSelector.ShowToolbars = false;
 			_protocolCodesSelector.ShowColumnHeading = false;
 			_protocolCodesSelector.AvailableItemsTable = _component.AvailableProtocolCodesTable;
 			_protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
 			_protocolCodesSelector.DataBindings.Add("SelectedItemsTableSelection", _component, "SelectedProtocolCodesSelection", true, DataSourceUpdateMode.OnPropertyChanged);
-			_protocolCodesSelector.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_btnAccept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-			_btnAccept.DataBindings.Add("Visible", _component, "AcceptVisible", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_btnSubmitForApproval.DataBindings.Add("Enabled", _component, "SubmitForApprovalEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-			_btnSubmitForApproval.DataBindings.Add("Visible", _component, "SubmitForApprovalVisible", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_btnReject.DataBindings.Add("Enabled", _component, "RejectEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-			_btnSuspend.DataBindings.Add("Enabled", _component, "SuspendEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-			_btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-			_btnSkip.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			//_protocolCodesSelector.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		void _component_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -106,53 +92,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			_protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
 		}
 
-		private void btnAccept_Click(object sender, System.EventArgs e)
-		{
-			using (new CursorManager(this, Cursors.WaitCursor))
-			{
-				_component.Accept();
-			}
-		}
-
-		private void btnReject_Click(object sender, System.EventArgs e)
-		{
-			using (new CursorManager(this, Cursors.WaitCursor))
-			{
-				_component.Reject();
-			}
-		}
-
-		private void btnSuspend_Click(object sender, System.EventArgs e)
-		{
-			using (new CursorManager(this, Cursors.WaitCursor))
-			{
-				_component.Suspend();
-			}
-		}
-
-		private void btnSave_Click(object sender, System.EventArgs e)
-		{
-			using (new CursorManager(this, Cursors.WaitCursor))
-			{
-				_component.Save();
-			}
-		}
-
-		private void btnClose_Click(object sender, System.EventArgs e)
-		{
-			using (new CursorManager(this, Cursors.WaitCursor))
-			{
-				_component.Close();
-			}
-		}
-
-		private void btnSkip_Click(object sender, EventArgs e)
-		{
-			using (new CursorManager(this, Cursors.WaitCursor))
-			{
-				_component.Skip();
-			}
-		}
 
 		private void _btnSetDefault_Click(object sender, EventArgs e)
 		{
@@ -162,12 +101,5 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			}
 		}
 
-		private void _btnSubmitForApproval_Click(object sender, EventArgs e)
-		{
-			using (new CursorManager(this, Cursors.WaitCursor))
-			{
-				_component.SubmitForApproval();
-			}
-		}
 	}
 }

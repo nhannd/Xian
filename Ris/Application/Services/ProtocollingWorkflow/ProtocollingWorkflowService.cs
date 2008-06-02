@@ -179,7 +179,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			
 			this.PersistenceContext.SynchState();
 
-			return new StartOrderProtocolResponse(protocolClaimed);
+			return new StartOrderProtocolResponse(order.GetRef(), protocolClaimed);
 		}
 
 		[UpdateOperation]
@@ -224,6 +224,8 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			ProtocollingOperations.RejectProtocolOperation op = new ProtocollingOperations.RejectProtocolOperation();
 			op.Execute(order, reason);
 
+			AddAdditionalCommentsNote(request.AdditionalCommentsNote, order);
+
 			this.PersistenceContext.SynchState();
 
 			return new RejectOrderProtocolResponse();
@@ -240,6 +242,8 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 			ProtocollingOperations.SuspendProtocolOperation op = new ProtocollingOperations.SuspendProtocolOperation();
 			op.Execute(order, reason);
+
+			AddAdditionalCommentsNote(request.AdditionalCommentsNote, order);
 
 			this.PersistenceContext.SynchState();
 
@@ -398,5 +402,14 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		#endregion
+
+		private void AddAdditionalCommentsNote(OrderNoteDetail detail, Order order)
+		{
+			if(detail != null)
+			{
+				OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
+				OrderNote note = noteAssembler.CreateOrderNote(detail, order, this.CurrentUserStaff, true, this.PersistenceContext);
+			}
+		}
 	}
 }
