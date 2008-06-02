@@ -97,6 +97,30 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
+		/// <summary>
+		/// Constructor that allows specifying which of Add, Edit, and Delete actions should appear.
+		/// </summary>
+		/// <param name="add"></param>
+		/// <param name="edit"></param>
+		/// <param name="delete"></param>
+		/// <param name="fallBackResolver"></param>
+		public CrudActionModel(bool add, bool edit, bool delete, IResourceResolver fallBackResolver)
+			: base(new ResourceResolver(typeof(CrudActionModel).Assembly, fallBackResolver))
+		{
+			if (add)
+			{
+				this.AddAction(AddKey, SR.TitleAdd, IconAddResource);
+			}
+			if (edit)
+			{
+				this.AddAction(EditKey, SR.TitleEdit, IconEditResource);
+			}
+			if (delete)
+			{
+				this.AddAction(DeleteKey, SR.TitleDelete, IconDeleteResource);
+			}
+		}
+
         /// <summary>
         /// Gets the Add action.
         /// </summary>

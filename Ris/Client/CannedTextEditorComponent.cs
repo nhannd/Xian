@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -46,8 +47,8 @@ namespace ClearCanvas.Ris.Client
 		private CannedTextDetail _cannedTextDetail;
 		private CannedTextSummary _cannedTextSummary;
 
-		private readonly StaffSummary _currentStaff;
-		private readonly IList _staffGroupChoices;
+		private StaffSummary _currentStaff;
+		private List<StaffGroupSummary> _staffGroupChoices;
 
 		private readonly bool _isDuplicate;
 		private readonly bool _isNew;
@@ -57,23 +58,18 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor for creating a new canned text.
 		/// </summary>
-		public CannedTextEditorComponent(StaffSummary currentStaff, IList staffGroupChoices)
+		public CannedTextEditorComponent()
 		{
 			_isNew = true;
-			_currentStaff = currentStaff;
-			_staffGroupChoices = staffGroupChoices;
-
-			_canChangeType = HasGroupAdminAuthority && _staffGroupChoices.Count > 0;
+			_canChangeType = HasGroupAdminAuthority;
 		}
 
 		/// <summary>
 		/// Constructor for editing an existing canned text.
 		/// </summary>
-		public CannedTextEditorComponent(StaffSummary currentStaff, IList staffGroupChoices, EntityRef cannedTextRef)
+		public CannedTextEditorComponent(EntityRef cannedTextRef)
 		{
 			_isNew = false;
-			_currentStaff = currentStaff;
-			_staffGroupChoices = staffGroupChoices;
 			_cannedTextRef = cannedTextRef;
 
 			_canChangeType = false;
@@ -82,52 +78,56 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor for duplicating an existing canned text.
 		/// </summary>
-		public CannedTextEditorComponent(StaffSummary currentStaff, IList staffGroupChoices, EntityRef cannedTextRef, bool duplicate)
+		public CannedTextEditorComponent(EntityRef cannedTextRef, bool duplicate)
 		{
 			_isNew = true;
-			_currentStaff = currentStaff;
-			_staffGroupChoices = staffGroupChoices;
 			_cannedTextRef = cannedTextRef;
 
-			_canChangeType = HasGroupAdminAuthority && _staffGroupChoices.Count > 0;
+			_canChangeType = HasGroupAdminAuthority;
 			_isDuplicate = duplicate;
 		}
 
 
 		public override void Start()
 		{
-			if (_isNew && _isDuplicate == false)
-			{
-				_cannedTextDetail = new CannedTextDetail();
-
-				// new canned text
-				_isEditingPersonal = true;
-				_cannedTextDetail.Staff = _currentStaff;
-			}
-			else
-			{
-				Platform.GetService<ICannedTextService>(
-					delegate(ICannedTextService service)
+			Platform.GetService<ICannedTextService>(
+				delegate(ICannedTextService service)
 					{
-						LoadCannedTextForEditResponse response = service.LoadCannedTextForEdit(new LoadCannedTextForEditRequest(_cannedTextRef));
-						_cannedTextDetail = response.CannedTextDetail;
-					});
+						GetCannedTextEditFormDataResponse formDataResponse =
+							service.GetCannedTextEditFormData(new GetCannedTextEditFormDataRequest());
+						_staffGroupChoices = formDataResponse.StaffGroups;
+						_currentStaff = formDataResponse.CurrentStaff;
 
-				_isEditingPersonal = _cannedTextDetail.IsPersonal;
 
-				// Duplicating an item, so the new canned text starts with fields pre-populated.  Set modified to true
-				if (_isDuplicate)
-					this.Modified = true;
-			}
+						if (_isNew && _isDuplicate == false)
+						{
+							_cannedTextDetail = new CannedTextDetail();
+
+							// new canned text
+							_isEditingPersonal = true;
+							_cannedTextDetail.Staff = _currentStaff;
+						}
+						else
+						{
+							LoadCannedTextForEditResponse response = service.LoadCannedTextForEdit(new LoadCannedTextForEditRequest(_cannedTextRef));
+							_cannedTextDetail = response.CannedTextDetail;
+
+							_isEditingPersonal = _cannedTextDetail.IsPersonal;
+
+							// Duplicating an item, so the new canned text starts with fields pre-populated.  Set modified to true
+							if (_isDuplicate)
+								this.Modified = true;
+						}
+					}); 
 
 			// The selected staff groups should only contain entries in the selected group choices
 			if (_cannedTextDetail.StaffGroup == null)
 			{
-				_cannedTextDetail.StaffGroup = CollectionUtils.FirstElement<StaffGroupSummary>(_staffGroupChoices);
+				_cannedTextDetail.StaffGroup = CollectionUtils.FirstElement(_staffGroupChoices);
 			}
 			else
 			{
-				_cannedTextDetail.StaffGroup = CollectionUtils.SelectFirst<StaffGroupSummary>(_staffGroupChoices,
+				_cannedTextDetail.StaffGroup = CollectionUtils.SelectFirst(_staffGroupChoices,
 					delegate(StaffGroupSummary choice)
 					{
 						return _cannedTextDetail.StaffGroup.StaffGroupRef.Equals(choice.StaffGroupRef, true);
@@ -159,7 +159,7 @@ namespace ClearCanvas.Ris.Client
 
 		public bool CanChangeType
 		{
-			get { return _canChangeType; }
+			get { return _canChangeType &&  _staffGroupChoices.Count > 0; }
 		}
 
 		public bool IsEditingPersonal

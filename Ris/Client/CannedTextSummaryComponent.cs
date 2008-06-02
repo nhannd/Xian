@@ -8,9 +8,6 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.CannedTextService;
-using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -62,39 +59,10 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(CannedTextSummaryComponentViewExtensionPoint))]
 	public class CannedTextSummaryComponent : SummaryComponentBase<CannedTextSummary, CannedTextTable>
 	{
-		private StaffSummary _currentStaffSummary;
-		private StaffDetail _currentStaffDetail;
 		private EventHandler _copyCannedTextRequested;
 
 		private Action _duplicateCannedTextAction;
 		private Action _copyCannedTextAction;
-
-		public override void Start()
-		{
-			Platform.GetService<IStaffAdminService>(
-				delegate(IStaffAdminService service)
-				{
-					ListStaffResponse listResponse = service.ListStaff(new ListStaffRequest(
-						LoginSession.Current.FullName.FamilyName,
-						LoginSession.Current.FullName.GivenName,
-						null));
-
-					if (listResponse.Staffs.Count == 1)
-					{
-						_currentStaffSummary = listResponse.Staffs[0];
-					}
-					else
-					{
-						_currentStaffSummary = CollectionUtils.SelectFirst(listResponse.Staffs,
-							delegate(StaffSummary s) { return IsStaffCurrentUser(s); });
-					}
-
-					LoadStaffForEditResponse response = service.LoadStaffForEdit(new LoadStaffForEditRequest(_currentStaffSummary.StaffRef));
-					_currentStaffDetail = response.StaffDetail;
-				});
-
-			base.Start();
-		}
 
 		#region Presentation Model
 
@@ -155,10 +123,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				CannedTextSummary item = (CannedTextSummary) this.SummarySelection.Item;
 				IList<CannedTextSummary> addedItems = new List<CannedTextSummary>();
-				CannedTextEditorComponent editor = new CannedTextEditorComponent(_currentStaffSummary, 
-					_currentStaffDetail.Groups, 
-					item.CannedTextRef,
-					true);
+				CannedTextEditorComponent editor = new CannedTextEditorComponent(item.CannedTextRef, true);
 
 				ApplicationComponentExitCode exitCode = LaunchAsDialog(
 					this.Host.DesktopWindow, editor, SR.TitleDuplicateCannedText);
@@ -205,10 +170,15 @@ namespace ClearCanvas.Ris.Client
 
 			_duplicateCannedTextAction = model.AddAction("duplicateCannedText", SR.TitleDuplicate, "Icons.DuplicateToolSmall.png",
 				SR.TitleDuplicate, DuplicateAdd);
-			_duplicateCannedTextAction.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Group);
 
 			_copyCannedTextAction = model.AddAction("copyCannedText", SR.TitleCopy, "Icons.CopyToolSmall.png",
 				SR.TitleCopy, CopyCannedText);
+
+			model.Edit.Enabled = false;
+			model.Delete.Enabled = false;
+			_duplicateCannedTextAction.Enabled = false;
+			_copyCannedTextAction.Enabled = false;
+
 		}
 
 		/// <summary>
@@ -237,7 +207,7 @@ namespace ClearCanvas.Ris.Client
 		protected override bool AddItems(out IList<CannedTextSummary> addedItems)
 		{
 			addedItems = new List<CannedTextSummary>();
-			CannedTextEditorComponent editor = new CannedTextEditorComponent(_currentStaffSummary, _currentStaffDetail.Groups);
+			CannedTextEditorComponent editor = new CannedTextEditorComponent();
 			ApplicationComponentExitCode exitCode = LaunchAsDialog(
 				this.Host.DesktopWindow, editor, SR.TitleAddCannedText);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
@@ -259,7 +229,7 @@ namespace ClearCanvas.Ris.Client
 			editedItems = new List<CannedTextSummary>();
 			CannedTextSummary item = CollectionUtils.FirstElement(items);
 
-			CannedTextEditorComponent editor = new CannedTextEditorComponent(_currentStaffSummary, _currentStaffDetail.Groups, item.CannedTextRef);
+			CannedTextEditorComponent editor = new CannedTextEditorComponent(item.CannedTextRef);
 			ApplicationComponentExitCode exitCode = LaunchAsDialog(
 				this.Host.DesktopWindow, editor, SR.TitleUpdateCannedText);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
@@ -338,11 +308,6 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
-
-		private static bool IsStaffCurrentUser(StaffSummary staff)
-		{
-			return string.Equals(PersonNameFormat.Format(staff.Name), PersonNameFormat.Format(LoginSession.Current.FullName));
-		}
 
 		private static bool HasPersonalAdminAuthority
 		{

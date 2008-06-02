@@ -45,6 +45,21 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 		}
 
 		[ReadOperation]
+		public GetCannedTextEditFormDataResponse GetCannedTextEditFormData(GetCannedTextEditFormDataRequest request)
+		{
+			StaffAssembler staffAssembler = new StaffAssembler();
+			StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
+
+			return new GetCannedTextEditFormDataResponse(
+				staffAssembler.CreateStaffSummary(this.CurrentUserStaff, this.PersistenceContext),
+				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(this.CurrentUserStaff.Groups,
+					delegate(StaffGroup group)
+						{
+							return groupAssembler.CreateSummary(group);
+						}));
+		}
+
+		[ReadOperation]
 		public LoadCannedTextForEditResponse LoadCannedTextForEdit(LoadCannedTextForEditRequest request)
 		{
 			CannedText cannedText = this.PersistenceContext.Load<CannedText>(request.CannedTextRef);
