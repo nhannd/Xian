@@ -40,6 +40,7 @@ using System.Web.UI.WebControls;
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 {
     [ToolboxData("<{0}:ToolbarButton runat=server></{0}:ToolbarButton>")]
+    [Themeable(true)]
     public class ToolbarButton : ImageButton, IScriptControl
     {
         #region Public Properties
