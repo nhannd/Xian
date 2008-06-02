@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
@@ -19,14 +20,37 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 		public ListCannedTextResponse ListCannedText(ListCannedTextRequest request)
 		{
 			CannedTextAssembler assembler = new CannedTextAssembler();
-			List<CannedTextSummary> staffCannedText = CollectionUtils.Map<CannedText, CannedTextSummary>(
-				PersistenceContext.GetBroker<ICannedTextBroker>().FindCannedTextForStaff(this.CurrentUserStaff),
+			List<CannedTextSearchCriteria> criterias = new List<CannedTextSearchCriteria>();
+
+			CannedTextSearchCriteria personalCannedTextCriteria = new CannedTextSearchCriteria();
+			personalCannedTextCriteria.Staff.EqualTo(this.CurrentUserStaff);
+			criterias.Add(personalCannedTextCriteria);
+
+			if (this.CurrentUserStaff.Groups != null && this.CurrentUserStaff.Groups.Count > 0)
+			{
+				CannedTextSearchCriteria groupCannedTextCriteria = new CannedTextSearchCriteria();
+				groupCannedTextCriteria.StaffGroup.In(this.CurrentUserStaff.Groups);
+				criterias.Add(groupCannedTextCriteria);
+			}
+
+			IList<CannedText> results = PersistenceContext.GetBroker<ICannedTextBroker>().Find(criterias.ToArray(), request.Page);
+
+			List<CannedTextSummary> staffCannedText = CollectionUtils.Map<CannedText, CannedTextSummary>(results,
 				delegate(CannedText cannedText)
 					{
 						return assembler.GetCannedTextSummary(cannedText, this.PersistenceContext);
 					});
 
 			return new ListCannedTextResponse(staffCannedText);
+		}
+
+		[ReadOperation]
+		public LoadCannedTextForEditResponse LoadCannedTextForEdit(LoadCannedTextForEditRequest request)
+		{
+			CannedText cannedText = this.PersistenceContext.Load<CannedText>(request.CannedTextRef);
+
+			CannedTextAssembler assembler = new CannedTextAssembler();
+			return new LoadCannedTextForEditResponse(assembler.GetCannedTextDetail(cannedText, this.PersistenceContext));
 		}
 
 		[UpdateOperation]
@@ -38,7 +62,7 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 			}
 
 			CannedTextAssembler assembler = new CannedTextAssembler();
-			CannedText cannedText = assembler.CreateCannedTextForStaff(request.Detail, this.CurrentUserStaff, this.PersistenceContext);
+			CannedText cannedText = assembler.CreateCannedText(request.Detail, this.PersistenceContext);
 
 			PersistenceContext.Lock(cannedText, DirtyState.New);
 			PersistenceContext.SynchState();
@@ -60,8 +84,12 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 		[UpdateOperation]
 		public DeleteCannedTextResponse DeleteCannedText(DeleteCannedTextRequest request)
 		{
-			CannedText worklist = this.PersistenceContext.Load<CannedText>(request.CannedTextRef, EntityLoadFlags.Proxy);
-			PersistenceContext.GetBroker<ICannedTextBroker>().Delete(worklist);
+			CollectionUtils.ForEach(request.CannedTextRefs,
+				delegate(EntityRef canntedTextRef)
+					{
+						CannedText cannedText = this.PersistenceContext.Load<CannedText>(canntedTextRef, EntityLoadFlags.Proxy);
+						PersistenceContext.GetBroker<ICannedTextBroker>().Delete(cannedText);
+					});
 
 			return new DeleteCannedTextResponse();
 		}

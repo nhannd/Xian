@@ -286,6 +286,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Groups.
+        /// </summary>
+        internal static string ColumnGroups {
+            get {
+                return ResourceManager.GetString("ColumnGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Healthcard #.
         /// </summary>
         internal static string ColumnHealthcardNumber {
@@ -435,6 +444,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string ColumnPeer {
             get {
                 return ResourceManager.GetString("ColumnPeer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Personal.
+        /// </summary>
+        internal static string ColumnPersonal {
+            get {
+                return ResourceManager.GetString("ColumnPersonal", resourceCulture);
             }
         }
         
@@ -664,6 +682,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        internal static string DummyItemNone {
+            get {
+                return ResourceManager.GetString("DummyItemNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to delete temporary files.
         /// </summary>
         internal static string ExceptioinFailedToDeleteTemporaryFiles {
@@ -723,6 +750,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string ExceptionOperationEnablementUnknown {
             get {
                 return ResourceManager.GetString("ExceptionOperationEnablementUnknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to save Canned Text.
+        /// </summary>
+        internal static string ExceptionSaveCannedText {
+            get {
+                return ResourceManager.GetString("ExceptionSaveCannedText", resourceCulture);
             }
         }
         
@@ -1209,6 +1245,24 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleDocuments {
             get {
                 return ResourceManager.GetString("TitleDocuments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate.
+        /// </summary>
+        internal static string TitleDuplicate {
+            get {
+                return ResourceManager.GetString("TitleDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate Canned Text.
+        /// </summary>
+        internal static string TitleDuplicateCannedText {
+            get {
+                return ResourceManager.GetString("TitleDuplicateCannedText", resourceCulture);
             }
         }
         

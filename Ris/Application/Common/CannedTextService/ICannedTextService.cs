@@ -15,6 +15,14 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
 		ListCannedTextResponse ListCannedText(ListCannedTextRequest request);
 
 		/// <summary>
+		/// Load details for a specified canned text
+		/// </summary>
+		/// <param name="request"><see cref="LoadCannedTextForEditRequest"/></param>
+		/// <returns><see cref="LoadCannedTextForEditResponse"/></returns>
+		[OperationContract]
+		LoadCannedTextForEditResponse LoadCannedTextForEdit(LoadCannedTextForEditRequest request);
+
+		/// <summary>
 		/// Adds a new canned text
 		/// </summary>
 		/// <param name="request"><see cref="AddCannedTextRequest"/></param>

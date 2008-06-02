@@ -70,6 +70,8 @@
     <Compile Include="CannedTextService\ICannedTextService.cs" />
     <Compile Include="CannedTextService\ListCannedTextRequest.cs" />
     <Compile Include="CannedTextService\ListCannedTextResponse.cs" />
+    <Compile Include="CannedTextService\LoadCannedTextForEditRequest.cs" />
+    <Compile Include="CannedTextService\LoadCannedTextForEditResponse.cs" />
     <Compile Include="CannedTextService\UpdateCannedTextRequest.cs" />
     <Compile Include="CannedTextService\UpdateCannedTextResponse.cs" />
     <Compile Include="CannedTextService\CannedTextSummary.cs" />

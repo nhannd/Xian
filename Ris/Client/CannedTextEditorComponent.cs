@@ -1,8 +1,13 @@
 using System;
+using System.Collections;
+using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.CannedTextService;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -20,17 +25,154 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(CannedTextEditorComponentViewExtensionPoint))]
 	public class CannedTextEditorComponent : ApplicationComponent
 	{
-		private readonly CannedTextDetail _cannedTextDetail;
+		class DummyItem
+		{
+			private readonly string _displayString;
+
+			public DummyItem(string displayString)
+			{
+				_displayString = displayString;
+			}
+
+			public override string ToString()
+			{
+				return _displayString;
+			}
+		}
+
+		private static readonly object _nullFilterItem = new DummyItem(SR.DummyItemNone);
+
+		private readonly EntityRef _cannedTextRef;
+		private CannedTextDetail _cannedTextDetail;
+		private CannedTextSummary _cannedTextSummary;
+
+		private readonly StaffSummary _currentStaff;
+		private readonly IList _staffGroupChoices;
+
+		private readonly bool _isDuplicate;
+		private readonly bool _isNew;
+		private readonly bool _canChangeType;
+		private bool _isEditingPersonal;
 
 		/// <summary>
-		/// Constructor
+		/// Constructor for creating a new canned text.
 		/// </summary>
-		public CannedTextEditorComponent(CannedTextDetail detail)
+		public CannedTextEditorComponent(StaffSummary currentStaff, IList staffGroupChoices)
 		{
-			_cannedTextDetail = detail;
+			_isNew = true;
+			_currentStaff = currentStaff;
+			_staffGroupChoices = staffGroupChoices;
+
+			_canChangeType = HasGroupAdminAuthority && _staffGroupChoices.Count > 0;
+		}
+
+		/// <summary>
+		/// Constructor for editing an existing canned text.
+		/// </summary>
+		public CannedTextEditorComponent(StaffSummary currentStaff, IList staffGroupChoices, EntityRef cannedTextRef)
+		{
+			_isNew = false;
+			_currentStaff = currentStaff;
+			_staffGroupChoices = staffGroupChoices;
+			_cannedTextRef = cannedTextRef;
+
+			_canChangeType = false;
+		}
+
+		/// <summary>
+		/// Constructor for duplicating an existing canned text.
+		/// </summary>
+		public CannedTextEditorComponent(StaffSummary currentStaff, IList staffGroupChoices, EntityRef cannedTextRef, bool duplicate)
+		{
+			_isNew = true;
+			_currentStaff = currentStaff;
+			_staffGroupChoices = staffGroupChoices;
+			_cannedTextRef = cannedTextRef;
+
+			_canChangeType = HasGroupAdminAuthority && _staffGroupChoices.Count > 0;
+			_isDuplicate = duplicate;
+		}
+
+
+		public override void Start()
+		{
+			if (_isNew && _isDuplicate == false)
+			{
+				_cannedTextDetail = new CannedTextDetail();
+
+				// new canned text
+				_isEditingPersonal = true;
+				_cannedTextDetail.Staff = _currentStaff;
+			}
+			else
+			{
+				Platform.GetService<ICannedTextService>(
+					delegate(ICannedTextService service)
+					{
+						LoadCannedTextForEditResponse response = service.LoadCannedTextForEdit(new LoadCannedTextForEditRequest(_cannedTextRef));
+						_cannedTextDetail = response.CannedTextDetail;
+					});
+
+				_isEditingPersonal = _cannedTextDetail.IsPersonal;
+
+				// Duplicating an item, so the new canned text starts with fields pre-populated.  Set modified to true
+				if (_isDuplicate)
+					this.Modified = true;
+			}
+
+			// The selected staff groups should only contain entries in the selected group choices
+			if (_cannedTextDetail.StaffGroup == null)
+			{
+				_cannedTextDetail.StaffGroup = CollectionUtils.FirstElement<StaffGroupSummary>(_staffGroupChoices);
+			}
+			else
+			{
+				_cannedTextDetail.StaffGroup = CollectionUtils.SelectFirst<StaffGroupSummary>(_staffGroupChoices,
+					delegate(StaffGroupSummary choice)
+					{
+						return _cannedTextDetail.StaffGroup.StaffGroupRef.Equals(choice.StaffGroupRef, true);
+					});
+			}
+
+			base.Start();
+		}
+
+		/// <summary>
+		/// Returns the Canned Text summary for use by the caller of this component
+		/// </summary>
+		public CannedTextSummary UpdatedCannedTextSummary
+		{
+			get { return _cannedTextSummary; }
 		}
 
 		#region Presentation Model
+
+		public bool IsNew
+		{
+			get { return _isNew; }
+		}
+
+		public bool IsDuplicate
+		{
+			get { return _isDuplicate; }
+		}
+
+		public bool CanChangeType
+		{
+			get { return _canChangeType; }
+		}
+
+		public bool IsEditingPersonal
+		{
+			get { return _isEditingPersonal; }
+			set { _isEditingPersonal = value; }
+		}
+
+		public bool IsEditingGroup
+		{
+			get { return !_isEditingPersonal; }
+			set { _isEditingPersonal = !value; }
+		}
 
 		public bool AcceptEnabled
 		{
@@ -41,6 +183,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			add { this.ModifiedChanged += value; }
 			remove { this.ModifiedChanged -= value; }
+		}
+
+		public object NullFilterItem
+		{
+			get { return _nullFilterItem; }
 		}
 
 		[ValidateNotNull]
@@ -75,6 +222,21 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public StaffGroupSummary StaffGroup
+		{
+			get { return _cannedTextDetail.StaffGroup; }
+			set
+			{
+				_cannedTextDetail.StaffGroup = value;
+				this.Modified = true;
+			}
+		}
+
+		public IList StaffGroupChoices
+		{
+			get { return _staffGroupChoices; }
+		}
+
 		public void Accept()
 		{
 			if (this.HasValidationErrors)
@@ -83,8 +245,41 @@ namespace ClearCanvas.Ris.Client
 				return;
 			}
 
-			this.ExitCode = ApplicationComponentExitCode.Accepted;
-			Host.Exit();
+			try
+			{
+				if (this.IsEditingPersonal)
+					_cannedTextDetail.StaffGroup = null;
+				else
+					_cannedTextDetail.Staff = null;
+
+				Platform.GetService<ICannedTextService>(
+					delegate(ICannedTextService service)
+					{
+						if (_isNew)
+						{
+							AddCannedTextResponse response = service.AddCannedText(new AddCannedTextRequest(_cannedTextDetail));
+							_cannedTextSummary = response.CannedTextSummary;
+						}
+						else
+						{
+							UpdateCannedTextResponse response = service.UpdateCannedText(new UpdateCannedTextRequest(_cannedTextRef, _cannedTextDetail));
+							_cannedTextSummary = response.CannedTextSummary;
+						}
+					});
+
+				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e,
+					SR.ExceptionSaveCannedText,
+					this.Host.DesktopWindow,
+					delegate
+					{
+						this.ExitCode = ApplicationComponentExitCode.Error;
+						this.Host.Exit();
+					});
+			}
 		}
 
 		public void Cancel()
@@ -94,5 +289,21 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
+
+		public string FormatStaffGroup(object item)
+		{
+			if (item is StaffGroupSummary)
+			{
+				StaffGroupSummary staffGroup = (StaffGroupSummary)item;
+				return staffGroup.Name;
+			}
+			else
+				return item.ToString(); // place-holder items
+		}
+
+		private static bool HasGroupAdminAuthority
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Group); }
+		}
 	}
 }

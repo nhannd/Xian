@@ -1,17 +1,18 @@
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Common.CannedTextService
 {
 	[DataContract]
 	public class DeleteCannedTextRequest : DataContractBase
 	{
-		public DeleteCannedTextRequest(EntityRef cannedTextRef)
+		public DeleteCannedTextRequest(List<EntityRef> cannedTextRefs)
         {
-			this.CannedTextRef = cannedTextRef;
+			this.CannedTextRefs = cannedTextRefs;
         }
 
         [DataMember]
-        public EntityRef CannedTextRef;
+        public List<EntityRef> CannedTextRefs;
 	}
 }

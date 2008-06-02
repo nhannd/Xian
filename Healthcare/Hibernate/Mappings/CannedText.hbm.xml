@@ -10,14 +10,8 @@
 	<property name="Path" column="Path_" type="String" length ="1024"/>
 	<property name="Text" column="Text_" type="StringClob" length ="65000" not-null="true" />
 
-	<set name="StaffSubscribers" lazy="true" table="CannedTextStaffSubscriber_">
-	  <key column="CannedTextOID_"/>
-	  <many-to-many column="StaffOID_" class="Staff" fetch="join"/>
-	</set>
-	<set name="GroupSubscribers" lazy="true" table="CannedTextGroupSubscriber_">
-	  <key column="CannedTextOID_"/>
-	  <many-to-many column="StaffGroupOID_" class="StaffGroup" fetch="join"/>
-	</set>
+	<many-to-one name="Staff" class="Staff" column="StaffOID_" fetch="join"/>
+	<many-to-one name="StaffGroup" class="StaffGroup" column="StaffGroupOID_" fetch="join"/>
 
   </class>
 </hibernate-mapping>

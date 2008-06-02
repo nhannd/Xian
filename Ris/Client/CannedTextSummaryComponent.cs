@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.CannedTextService;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -56,74 +60,87 @@ namespace ClearCanvas.Ris.Client
 	/// CannedTextSummaryComponent class
 	/// </summary>
 	[AssociateView(typeof(CannedTextSummaryComponentViewExtensionPoint))]
-	public class CannedTextSummaryComponent : ApplicationComponent
+	public class CannedTextSummaryComponent : SummaryComponentBase<CannedTextSummary, CannedTextTable>
 	{
-		private CannedTextTable _cannedTextTable;
-		private SimpleActionModel _cannedTextActionHandler;
-		private CannedTextSummary _selectedCannedText;
-
-		private static readonly object _addKey = new object();
-		private static readonly object _editKey = new object();
-		private static readonly object _deleteKey = new object();
-		private static readonly object _copyKey = new object();
-
+		private StaffSummary _currentStaffSummary;
+		private StaffDetail _currentStaffDetail;
 		private EventHandler _copyCannedTextRequested;
+
+		private Action _duplicateCannedTextAction;
+		private Action _copyCannedTextAction;
 
 		public override void Start()
 		{
-			_cannedTextTable = new CannedTextTable();
-			_cannedTextActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-			_cannedTextActionHandler.AddAction(_addKey, SR.TitleAdd, "Icons.AddToolSmall.png", AddCannedText);
-			_cannedTextActionHandler.AddAction(_editKey, SR.TitleEdit, "Icons.EditToolSmall.png", EditCannedText);
-			_cannedTextActionHandler.AddAction(_deleteKey, SR.TitleDelete, "Icons.DeleteToolSmall.png", DeleteCannedText);
-			_cannedTextActionHandler.AddAction(_copyKey, SR.TitleCopy, "Icons.CopyToolSmall.png", CopyCannedText);
+			Platform.GetService<IStaffAdminService>(
+				delegate(IStaffAdminService service)
+				{
+					ListStaffResponse listResponse = service.ListStaff(new ListStaffRequest(
+						LoginSession.Current.FullName.FamilyName,
+						LoginSession.Current.FullName.GivenName,
+						null));
 
-			_cannedTextActionHandler[_editKey].Enabled = false;
-			_cannedTextActionHandler[_deleteKey].Enabled = false;
-
-
-			List<CannedTextSummary> cannedTexts = new List<CannedTextSummary>();
-			Platform.GetService<ICannedTextService>(
-				delegate(ICannedTextService service)
+					if (listResponse.Staffs.Count == 1)
 					{
-						ListCannedTextResponse response = service.ListCannedText(new ListCannedTextRequest());
-						cannedTexts = response.CannedTexts;
-					});
+						_currentStaffSummary = listResponse.Staffs[0];
+					}
+					else
+					{
+						_currentStaffSummary = CollectionUtils.SelectFirst(listResponse.Staffs,
+							delegate(StaffSummary s) { return IsStaffCurrentUser(s); });
+					}
 
-			_cannedTextTable.Items.Clear();
-			_cannedTextTable.Items.AddRange(cannedTexts);
+					LoadStaffForEditResponse response = service.LoadStaffForEdit(new LoadStaffForEditRequest(_currentStaffSummary.StaffRef));
+					_currentStaffDetail = response.StaffDetail;
+				});
 
 			base.Start();
 		}
 
 		#region Presentation Model
 
-		public ITable CannedTextTable
+		public string Group
 		{
-			get { return _cannedTextTable; }
-		}
-
-		public ActionModelNode CannedTextActionModel
-		{
-			get { return _cannedTextActionHandler; }
-		}
-
-		public ISelection SelectedCannedText
-		{
-			get { return new Selection(_selectedCannedText); }
-			set
+			get
 			{
-				if (value != _selectedCannedText)
-				{
-					_selectedCannedText = (CannedTextSummary)value.Item;
-					CannedTextSelectionChanged();
-				}
+				if (this.SelectedItems.Count != 1)
+					return string.Empty;
+
+				CannedTextSummary item = this.SelectedItems[0];
+				return item.IsPersonal ? SR.ColumnPersonal : item.StaffGroup.Name;
 			}
 		}
 
-		public string Text
+		public string Name
 		{
-			get { return _selectedCannedText == null ? null : _selectedCannedText.Text; }
+			get
+			{
+				if (this.SelectedItems.Count != 1)
+					return string.Empty;
+
+				return this.SelectedItems[0].Name;
+			}
+		}
+
+		public string Category
+		{
+			get
+			{
+				if (this.SelectedItems.Count != 1)
+					return string.Empty;
+
+				return this.SelectedItems[0].Path;
+			}
+		}
+
+		public string Preview
+		{
+			get
+			{
+				if (this.SelectedItems.Count != 1)
+					return string.Empty;
+
+				return this.SelectedItems[0].Text;
+			}
 		}
 
 		public event EventHandler CopyCannedTextRequested
@@ -131,103 +148,210 @@ namespace ClearCanvas.Ris.Client
 			add { _copyCannedTextRequested += value; }
 			remove { _copyCannedTextRequested -= value; }
 		}
+
+		public void DuplicateAdd()
+		{
+			try
+			{
+				CannedTextSummary item = (CannedTextSummary) this.SummarySelection.Item;
+				IList<CannedTextSummary> addedItems = new List<CannedTextSummary>();
+				CannedTextEditorComponent editor = new CannedTextEditorComponent(_currentStaffSummary, 
+					_currentStaffDetail.Groups, 
+					item.CannedTextRef,
+					true);
+
+				ApplicationComponentExitCode exitCode = LaunchAsDialog(
+					this.Host.DesktopWindow, editor, SR.TitleDuplicateCannedText);
+				if (exitCode == ApplicationComponentExitCode.Accepted)
+				{
+					addedItems.Add(editor.UpdatedCannedTextSummary);
+					this.Table.Items.AddRange(addedItems);
+					this.SummarySelection = new Selection(addedItems);
+				}
+			}
+			catch (Exception e)
+			{
+				// failed to launch editor
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
 		public void CopyCannedText()
 		{
 			EventsHelper.Fire(_copyCannedTextRequested, this, EventArgs.Empty);
 		}
 
-		public void AddCannedText()
+		#endregion
+
+		#region Overrides
+
+		/// <summary>
+		/// Gets a value indicating whether this component supports deletion.  The default is false.
+		/// Override this method to support deletion.
+		/// </summary>
+		protected override bool SupportsDelete
 		{
-			try
-			{
-				CannedTextDetail detail = new CannedTextDetail();
-
-				CannedTextEditorComponent editor = new CannedTextEditorComponent(detail);
-				ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddCannedText);
-
-				if (exitCode == ApplicationComponentExitCode.Accepted)
-				{
-					CannedTextSummary updatedSummary = null;
-
-					Platform.GetService<ICannedTextService>(
-						delegate(ICannedTextService service)
-						{
-							AddCannedTextRequest request = new AddCannedTextRequest(detail);
-							AddCannedTextResponse response = service.AddCannedText(request);
-							updatedSummary = response.CannedTextSummary;
-						});
-
-					_cannedTextTable.Items.Add(updatedSummary);
-				}
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
+			get { return true; }
 		}
 
-		public void EditCannedText()
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
 		{
-			try
-			{
-				if (_selectedCannedText == null)
-					return;
+			base.InitializeActionModel(model);
 
-				CannedTextDetail detail = new CannedTextDetail(_selectedCannedText.Name, _selectedCannedText.Path, _selectedCannedText.Text);
+			_duplicateCannedTextAction = model.AddAction("duplicateCannedText", SR.TitleDuplicate, "Icons.DuplicateToolSmall.png",
+				SR.TitleDuplicate, DuplicateAdd);
+			_duplicateCannedTextAction.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Group);
 
-				CannedTextEditorComponent editor = new CannedTextEditorComponent(detail);
-				ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateCannedText);
-
-				if (exitCode == ApplicationComponentExitCode.Accepted)
-				{
-					CannedTextSummary updatedSummary = null;
-
-					Platform.GetService<ICannedTextService>(
-						delegate(ICannedTextService service)
-						{
-							UpdateCannedTextRequest request = new UpdateCannedTextRequest(_selectedCannedText.CannedTextRef, detail);
-							UpdateCannedTextResponse response = service.UpdateCannedText(request);
-							updatedSummary = response.CannedTextSummary;
-						});
-
-					_cannedTextTable.Items.Replace(
-						delegate(CannedTextSummary c) { return c.CannedTextRef.Equals(updatedSummary.CannedTextRef, true); },
-						updatedSummary);
-				}
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
+			_copyCannedTextAction = model.AddAction("copyCannedText", SR.TitleCopy, "Icons.CopyToolSmall.png",
+				SR.TitleCopy, CopyCannedText);
 		}
 
-		public void DeleteCannedText()
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<CannedTextSummary> ListItems(int firstItem, int maxItems)
 		{
-			try 
-			{
-				if (_selectedCannedText == null)
-					return;
+			ListCannedTextResponse listResponse = null;
+			Platform.GetService<ICannedTextService>(
+				delegate(ICannedTextService service)
+				{
+					listResponse = service.ListCannedText(new ListCannedTextRequest(new SearchResultPage(firstItem, maxItems)));
+				});
 
-				Platform.GetService<ICannedTextService>(
-					delegate(ICannedTextService service)
-						{
-							DeleteCannedTextRequest request = new DeleteCannedTextRequest(_selectedCannedText.CannedTextRef);
-							service.DeleteCannedText(request);
-						});
+			return listResponse.CannedTexts;
+		}
 
-				_cannedTextTable.Items.Remove(_selectedCannedText);
-			}
-			catch (Exception e)
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<CannedTextSummary> addedItems)
+		{
+			addedItems = new List<CannedTextSummary>();
+			CannedTextEditorComponent editor = new CannedTextEditorComponent(_currentStaffSummary, _currentStaffDetail.Groups);
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleAddCannedText);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+				addedItems.Add(editor.UpdatedCannedTextSummary);
+				return true;
 			}
+			return false;
+		}
+
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<CannedTextSummary> items, out IList<CannedTextSummary> editedItems)
+		{
+			editedItems = new List<CannedTextSummary>();
+			CannedTextSummary item = CollectionUtils.FirstElement(items);
+
+			CannedTextEditorComponent editor = new CannedTextEditorComponent(_currentStaffSummary, _currentStaffDetail.Groups, item.CannedTextRef);
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleUpdateCannedText);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(editor.UpdatedCannedTextSummary);
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<CannedTextSummary> items)
+		{
+			List<EntityRef> cannedTextRefs = CollectionUtils.Map<CannedTextSummary, EntityRef>(items,
+				delegate(CannedTextSummary c) { return c.CannedTextRef; });
+
+			Platform.GetService<ICannedTextService>(
+				delegate(ICannedTextService service)
+					{
+						DeleteCannedTextRequest request = new DeleteCannedTextRequest(cannedTextRefs);
+						service.DeleteCannedText(request);
+					});
+
+			return true;
+		}
+
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(CannedTextSummary x, CannedTextSummary y)
+		{
+			return x.CannedTextRef.Equals(y.CannedTextRef, true);
+		}
+
+		/// <summary>
+		/// Called when the user changes the selected items in the table.
+		/// </summary>
+		protected override void OnSelectedItemsChanged()
+		{
+			base.OnSelectedItemsChanged();
+
+			if (this.SelectedItems.Count == 1)
+			{
+				CannedTextSummary selectedItem = this.SelectedItems[0];
+
+				_duplicateCannedTextAction.Enabled = true;
+				_copyCannedTextAction.Enabled = true;
+
+				if (selectedItem.IsPersonal)
+				{
+					this.ActionModel.Add.Enabled = 
+						this.ActionModel.Edit.Enabled = 
+						this.ActionModel.Delete.Enabled = HasPersonalAdminAuthority;
+				}
+				else
+				{
+					this.ActionModel.Add.Enabled = 
+						this.ActionModel.Add.Enabled = 
+						this.ActionModel.Add.Enabled = HasGroupAdminAuthority;
+				}
+			}
+			else
+			{
+				_duplicateCannedTextAction.Enabled = false;
+				_copyCannedTextAction.Enabled = false;
+			}
+
+			NotifyAllPropertiesChanged();
 		}
 
 		#endregion
 
-		private void CannedTextSelectionChanged()
+		private static bool IsStaffCurrentUser(StaffSummary staff)
 		{
-			_cannedTextActionHandler[_editKey].Enabled = _cannedTextActionHandler[_deleteKey].Enabled = _selectedCannedText != null;
+			return string.Equals(PersonNameFormat.Format(staff.Name), PersonNameFormat.Format(LoginSession.Current.FullName));
+		}
+
+		private static bool HasPersonalAdminAuthority
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Personal); }
+		}
+
+		private static bool HasGroupAdminAuthority
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Group); }
 		}
 	}
 }

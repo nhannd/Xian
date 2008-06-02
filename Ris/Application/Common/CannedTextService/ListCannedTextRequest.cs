@@ -4,8 +4,15 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.CannedTextService
 {
 	[DataContract]
-	public class ListCannedTextRequest : DataContractBase
+	public class ListCannedTextRequest : PagedDataContractBase
 	{
-		// nothing
+		public ListCannedTextRequest()
+		{
+		}
+
+		public ListCannedTextRequest(SearchResultPage page)
+			:base(page)
+		{
+		}
 	}
 }

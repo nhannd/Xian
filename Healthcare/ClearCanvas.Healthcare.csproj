@@ -68,7 +68,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Alerts\ReconciliationAlert.cs" />
-    <Compile Include="Brokers\ICannedTextBroker.cs" />
     <Compile Include="Brokers\IPreviewBroker.cs" />
     <Compile Include="Brokers\IPriorReportBroker.cs" />
     <Compile Include="Brokers\IProcedureTypeGroupBroker.cs" />

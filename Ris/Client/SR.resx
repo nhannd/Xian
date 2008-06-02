@@ -192,6 +192,9 @@
   <data name="ColumnGivenName" xml:space="preserve">
     <value>Given Name</value>
   </data>
+  <data name="ColumnGroups" xml:space="preserve">
+    <value>Groups</value>
+  </data>
   <data name="ColumnHealthcardNumber" xml:space="preserve">
     <value>Healthcard #</value>
   </data>
@@ -242,6 +245,9 @@
   </data>
   <data name="ColumnPeer" xml:space="preserve">
     <value>Peer</value>
+  </data>
+  <data name="ColumnPersonal" xml:space="preserve">
+    <value>Personal</value>
   </data>
   <data name="ColumnPostTime" xml:space="preserve">
     <value>Time</value>
@@ -318,6 +324,9 @@
   <data name="ColumnWorkPhone" xml:space="preserve">
     <value>Work Phone</value>
   </data>
+  <data name="DummyItemNone" xml:space="preserve">
+    <value>None</value>
+  </data>
   <data name="ExceptioinFailedToDeleteTemporaryFiles" xml:space="preserve">
     <value>Failed to delete temporary files</value>
   </data>
@@ -338,6 +347,9 @@
   </data>
   <data name="ExceptionOperationEnablementUnknown" xml:space="preserve">
     <value>Cannot determine enablement for operation: {0}</value>
+  </data>
+  <data name="ExceptionSaveCannedText" xml:space="preserve">
+    <value>Unable to save Canned Text</value>
   </data>
   <data name="ExceptionSaveExternalPractitioner" xml:space="preserve">
     <value>Unable to save practitioner</value>
@@ -500,6 +512,12 @@
   </data>
   <data name="TitleDocuments" xml:space="preserve">
     <value>Documents</value>
+  </data>
+  <data name="TitleDuplicate" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
+  <data name="TitleDuplicateCannedText" xml:space="preserve">
+    <value>Duplicate Canned Text</value>
   </data>
   <data name="TitleEdit" xml:space="preserve">
     <value>Edit</value>

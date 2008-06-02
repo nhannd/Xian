@@ -21,6 +21,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
             _component = component;
 
+			_typeGroupBox.Visible = _component.CanChangeType;
+			if (_component.CanChangeType == false && _component.IsEditingPersonal)
+				_groups.Visible = false;
+
+			_radioPersonal.DataBindings.Add("Checked", _component, "IsEditingPersonal", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_groups.DataSource = _component.StaffGroupChoices;
+			_groups.Format += delegate(object sender, ListControlConvertEventArgs args) { args.Value = _component.FormatStaffGroup(args.ListItem); };
+			_groups.DataBindings.Add("Value", _component, "StaffGroup", true, DataSourceUpdateMode.OnPropertyChanged);
+			_groups.DataBindings.Add("Enabled", _component, "IsEditingGroup", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
 			_path.DataBindings.Add("Value", _component, "Path", true, DataSourceUpdateMode.OnPropertyChanged);
 			_text.DataBindings.Add("Value", _component, "Text", true, DataSourceUpdateMode.OnPropertyChanged);
