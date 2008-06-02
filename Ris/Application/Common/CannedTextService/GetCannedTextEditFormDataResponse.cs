@@ -10,7 +10,7 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
 		public GetCannedTextEditFormDataResponse(StaffSummary staff, List<StaffGroupSummary> staffGroups)
 		{
 			this.CurrentStaff = staff;
-			this.StaffGroups = StaffGroups;
+			this.StaffGroups = staffGroups;
 		}
 
 		[DataMember]
