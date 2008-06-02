@@ -60,7 +60,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 		private string _studyDescription;
 		private DateTime? _dateOfBirth;
 		private DateTime? _studyDate;
-		private bool _preserveSeriesDescriptions;
+		private bool _preserveSeriesData;
 
 		internal AnonymizeStudyComponent(StudyItem studyItem)
 		{
@@ -122,15 +122,15 @@ namespace ClearCanvas.Utilities.DicomEditor
 			}
 		}
 
-		public bool PreserveSeriesDescriptions
+		public bool PreserveSeriesData
 		{
-			get { return _preserveSeriesDescriptions; }
+			get { return _preserveSeriesData; }
 			set
 			{
-				if (_preserveSeriesDescriptions == value)
+				if (_preserveSeriesData == value)
 					return;
 
-				_preserveSeriesDescriptions = value;
+				_preserveSeriesData = value;
 				NotifyPropertyChanged("PreserveSeriesDescriptions");
 			}
 		}
@@ -169,7 +169,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 			_studyDate = Platform.Time;
 			_accessionNumber = "A12345";
 			_studyDescription = _studyItem.StudyDescription;
-			_preserveSeriesDescriptions = true;
+			_preserveSeriesData = true;
 
 			_dateOfBirth = DateParser.Parse(_studyItem.PatientsBirthDate);
 			if (_dateOfBirth != null)

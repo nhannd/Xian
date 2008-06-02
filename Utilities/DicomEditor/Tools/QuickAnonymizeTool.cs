@@ -131,8 +131,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
         {
             IDicomEditorDumpManagement dump = this.Context.DumpManagement;
 
-            dump.RemoveAllPrivateTags(applyToAll);
-            dump.NullType2Tags(applyToAll);
+			dump.Anonymize(applyToAll);
         }
     }
 }

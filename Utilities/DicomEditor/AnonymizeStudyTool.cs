@@ -30,13 +30,18 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
+using ClearCanvas.DicomServices.Anonymization;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.ImageViewer.StudyManagement;
+using Path=System.IO.Path;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
@@ -47,13 +52,45 @@ namespace ClearCanvas.Utilities.DicomEditor
 	[IconSet("activate", IconScheme.Colour, "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png")]
 
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
-	public class AnonymizeStudyTool : StudyBrowserTool, IAnonymizationCallback
+	public class AnonymizeStudyTool : StudyBrowserTool
 	{
 		private volatile AnonymizeStudyComponent _component;
-		private volatile IBackgroundTaskContext _taskContext;
-
+		private string _tempPath;
+		private static object _localStudyLoader = null;
+		
 		public AnonymizeStudyTool()
 		{
+		}
+
+		private static IStudyLoader LocalStudyLoader
+		{
+			get
+			{
+				if (_localStudyLoader == null)
+				{
+					try
+					{
+						StudyLoaderExtensionPoint xp = new StudyLoaderExtensionPoint();
+						foreach (IStudyLoader loader in xp.CreateExtensions())
+						{
+							if (loader.Name == "DICOM_LOCAL")
+							{
+								_localStudyLoader = loader;
+								break;
+							}
+						}
+					}
+					catch (NotSupportedException)
+					{
+						Platform.Log(LogLevel.Info, "Anonymization tool disabled; no local study loader exists.");
+					}
+
+					if (_localStudyLoader == null)
+						_localStudyLoader = new object(); //there is no loader.
+				}
+
+				return _localStudyLoader as IStudyLoader;
+			}
 		}
 
 		public void AnonymizeStudy()
@@ -71,11 +108,12 @@ namespace ClearCanvas.Utilities.DicomEditor
 				catch(Exception e)
 				{
 					Platform.Log(LogLevel.Error, e);
-					this.Context.DesktopWindow.ShowMessageBox(SR.MessageFormatStudyMustBeDeletedManually, MessageBoxActions.Ok);
+					string message = String.Format(SR.MessageFormatStudyMustBeDeletedManually, _tempPath);
+					this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
 				}
 				finally
 				{
-					_taskContext = null;
+					_tempPath = null;
 
 					if (task != null)
 						task.Dispose();
@@ -85,18 +123,83 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 		private void Anonymize(IBackgroundTaskContext context)
 		{
-			_taskContext = context;
+			try
+			{
+				_tempPath = String.Format(".\\temp\\{0}", Path.GetRandomFileName());
+				Directory.CreateDirectory(_tempPath);
+				_tempPath = Path.GetFullPath(_tempPath);
 
-			AnonymizationHelper.AnonymizeLocalStudy(
-				(string)context.UserState,
-				_component.PatientId,
-				_component.PatientsName,
-				_component.DateOfBirth,
-				_component.AccessionNumber,
-				_component.StudyDescription,
-				_component.StudyDate,
-				true, 
-				_component.PreserveSeriesDescriptions, this);
+				context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageAnonymizingStudy));
+
+				int numberOfSops = LocalStudyLoader.Start(this.Context.SelectedStudy.StudyInstanceUID);
+				if (numberOfSops <= 0)
+					return;
+
+				StudyData studyData = new StudyData();
+				studyData.PatientId = _component.PatientId;
+				studyData.PatientsNameRaw = _component.PatientsName;
+				studyData.PatientsBirthDate = _component.DateOfBirth;
+				studyData.AccessionNumber = _component.AccessionNumber;
+				studyData.StudyDescription = _component.StudyDescription;
+				studyData.StudyDate = _component.StudyDate;
+
+				DicomAnonymizer anonymizer = new DicomAnonymizer();
+				anonymizer.StudyDataPrototype = studyData;
+
+				if (_component.PreserveSeriesData)
+				{
+					//The default anonymizer removes the series data, so we just clone the original.
+					anonymizer.AnonymizeSeriesDataDelegate = 
+						delegate(SeriesData original) { return original.Clone(); };
+				}
+
+				string patientsSex = null;
+
+				for (int i = 0; i < numberOfSops; ++i)
+				{
+					Sop sop = LocalStudyLoader.LoadNextImage();
+					//preserve the patient sex.
+					if (patientsSex == null)
+						anonymizer.StudyDataPrototype.PatientsSex = patientsSex = sop.PatientsSex ?? "";
+
+					DicomFile file = (DicomFile)sop.NativeDicomObject;
+
+					anonymizer.Anonymize(file);
+
+					file.Save(String.Format("{0}\\{1}.dcm", _tempPath, i));
+
+					int progressPercent = (int)Math.Floor((i + 1) / (float)numberOfSops * 100);
+					string progressMessage = String.Format(SR.MessageAnonymizingStudy, _tempPath);
+					context.ReportProgress(new BackgroundTaskProgress(progressPercent, progressMessage));
+				}
+
+				//trigger an import of the anonymized files.
+				LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
+				client.Open();
+				try
+				{
+					FileImportRequest request = new FileImportRequest();
+					request.BadFileBehaviour = BadFileBehaviour.Move;
+					request.FileImportBehaviour = FileImportBehaviour.Move;
+					List<string> filePaths = new List<string>();
+					filePaths.Add(_tempPath);
+					request.FilePaths = filePaths;
+					request.Recursive = true;
+					client.Import(request);
+					client.Close();
+				}
+				catch
+				{
+					client.Abort();
+					throw;
+				}
+
+				context.Complete();
+			}
+			catch(Exception e)
+			{
+				context.Error(e);
+			}
 		}
 
 		private void UpdateEnabled()
@@ -107,7 +210,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 				return;
 			}
 
-			this.Enabled = AnonymizationHelper.CanAnonymizeStudy() && 
+			this.Enabled = LocalStudyLoader != null && 
 							LocalDataStoreActivityMonitor.Instance.IsConnected && 
 							this.Context.SelectedStudies.Count == 1 && 
 							this.Context.SelectedServerGroup.IsLocalDatastore;
@@ -122,22 +225,5 @@ namespace ClearCanvas.Utilities.DicomEditor
 		{
 			UpdateEnabled();
 		}
-
-		#region IAnonymizationCallback Members
-
-		void IAnonymizationCallback.BeforeAnonymize(DicomAttributeCollection dataSet)
-		{
-		}
-
-		void IAnonymizationCallback.BeforeSave(DicomAttributeCollection dataSet)
-		{
-		}
-
-		void IAnonymizationCallback.ReportProgress(int percent, string message)
-		{
-			_taskContext.ReportProgress(new BackgroundTaskProgress(percent, message));		
-		}
-
-		#endregion
 	}
 }

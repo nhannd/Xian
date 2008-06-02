@@ -67,7 +67,7 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 			this._accessionNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._patientId = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._studyDescription = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._preserveSeriesDescription = new System.Windows.Forms.CheckBox();
+			this._preserveSeriesData = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// _okButton
@@ -170,19 +170,19 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 			// 
 			// _preserveSeriesDescription
 			// 
-			this._preserveSeriesDescription.AutoSize = true;
-			this._preserveSeriesDescription.Location = new System.Drawing.Point(26, 288);
-			this._preserveSeriesDescription.Name = "_preserveSeriesDescription";
-			this._preserveSeriesDescription.Size = new System.Drawing.Size(161, 17);
-			this._preserveSeriesDescription.TabIndex = 8;
-			this._preserveSeriesDescription.Text = "Preserve Series Descriptions";
-			this._preserveSeriesDescription.UseVisualStyleBackColor = true;
+			this._preserveSeriesData.AutoSize = true;
+			this._preserveSeriesData.Location = new System.Drawing.Point(26, 288);
+			this._preserveSeriesData.Name = "_preserveSeriesDescription";
+			this._preserveSeriesData.Size = new System.Drawing.Size(161, 17);
+			this._preserveSeriesData.TabIndex = 8;
+			this._preserveSeriesData.Text = "Preserve Series Data";
+			this._preserveSeriesData.UseVisualStyleBackColor = true;
 			// 
 			// AnonymizeStudyComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._preserveSeriesDescription);
+			this.Controls.Add(this._preserveSeriesData);
 			this.Controls.Add(this._studyDescription);
 			this.Controls.Add(this._patientId);
 			this.Controls.Add(this._accessionNumber);
@@ -208,6 +208,6 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.TextField _accessionNumber;
 		private ClearCanvas.Desktop.View.WinForms.TextField _patientId;
 		private ClearCanvas.Desktop.View.WinForms.TextField _studyDescription;
-		private System.Windows.Forms.CheckBox _preserveSeriesDescription;
+		private System.Windows.Forms.CheckBox _preserveSeriesData;
     }
 }

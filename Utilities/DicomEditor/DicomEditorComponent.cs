@@ -38,6 +38,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.DicomServices.Anonymization;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
@@ -56,10 +57,8 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         void RevertEdits(bool revertAll);
 
-        void RemoveAllPrivateTags(bool applyToAll);
+    	void Anonymize(bool applyToAll);
 
-		void NullType2Tags(bool applyToAll);
-        
 		void SaveAll();
 
         bool TagExists(uint tag);
@@ -211,35 +210,20 @@ namespace ClearCanvas.Utilities.DicomEditor
             }
         }
 
-        public void RemoveAllPrivateTags(bool applyToAll)
+        public void Anonymize(bool applyToAll)
         {
             if (applyToAll == false)
             {
-            	AnonymizationHelper.RemoveAllPrivateTags(_loadedFiles[_position].DataSet);
+				_anonymizer.Anonymize(_loadedFiles[_position]);
             }
             else
             {
                 for (int i = 0; i < _loadedFiles.Count; i++)
                 {
-					AnonymizationHelper.RemoveAllPrivateTags(_loadedFiles[i].DataSet);
+					_anonymizer.Anonymize(_loadedFiles[i]);
                 }
             }
         }
-
-		public void NullType2Tags(bool applyToAll)
-		{
-			if (applyToAll == false)
-			{
-				AnonymizationHelper.NullType2Tags(_loadedFiles[_position].DataSet);
-			}
-			else
-			{
-				for (int i = 0; i < _loadedFiles.Count; i++)
-				{
-					AnonymizationHelper.NullType2Tags(_loadedFiles[i].DataSet);
-				}
-			}
-		}
 
     	public void SaveAll()
         {
@@ -348,6 +332,9 @@ namespace ClearCanvas.Utilities.DicomEditor
             _loadedFiles = new List<DicomFile>();
             _position = 0;
             _dirtyFlags = new List<bool>();
+
+			_anonymizer = new DicomAnonymizer();
+        	_anonymizer.Strict = false;
         }
 
         public ActionModelRoot ToolbarModel
@@ -476,7 +463,10 @@ namespace ClearCanvas.Utilities.DicomEditor
         }
 
         #region Private Members
-        private string _title;
+
+    	private DicomAnonymizer _anonymizer;
+
+		private string _title;
         
         private Table<DicomEditorTag> _dicomTagData;
        

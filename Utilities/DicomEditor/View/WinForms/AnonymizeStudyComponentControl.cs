@@ -60,7 +60,7 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 			_studyDescription.DataBindings.Add("Value", _component, "StudyDescription", true, DataSourceUpdateMode.OnPropertyChanged);
 			_studyDate.DataBindings.Add("Value", _component, "StudyDate", true, DataSourceUpdateMode.OnPropertyChanged);
 			_dateOfBirth.DataBindings.Add("Value", _component, "DateOfBirth", true, DataSourceUpdateMode.OnPropertyChanged);
-			_preserveSeriesDescription.DataBindings.Add("Checked", _component, "PreserveSeriesDescriptions", true, DataSourceUpdateMode.OnPropertyChanged);
+			_preserveSeriesData.DataBindings.Add("Checked", _component, "PreserveSeriesData", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		private void OnOkButtonClicked(object sender, System.EventArgs e)
