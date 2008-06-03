@@ -95,7 +95,6 @@ namespace ClearCanvas.Ris.Client
 
         private CrudActionModel _actionModel;
         private PagingController<TSummary> _pagingController;
-    	private IResourceResolver _fallbackResolver;
 
     	private readonly bool _dialogMode;
 
@@ -109,12 +108,6 @@ namespace ClearCanvas.Ris.Client
 			_dialogMode = dialogMode;
 		}
 
-		public SummaryComponentBase(bool dialogMode, IResourceResolver fallbackResolver)
-		{
-			_dialogMode = dialogMode;
-			_fallbackResolver = fallbackResolver;
-		}
-
         #region ApplicationComponent overrides
 
         public override void Start()
@@ -125,7 +118,7 @@ namespace ClearCanvas.Ris.Client
             _selectedItems = new List<TSummary>();
 
             _actionModel = new CrudActionModel(true, true, this.SupportsDelete,
-				new ResourceResolver(typeof(SummaryComponentBase).Assembly, _fallbackResolver));
+				new ResourceResolver(this.GetType(), true));
 
             _actionModel.Add.SetClickHandler(AddItems);
             _actionModel.Edit.SetClickHandler(EditSelectedItems);
