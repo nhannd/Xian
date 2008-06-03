@@ -117,10 +117,12 @@ namespace ClearCanvas.Ris.Client
 
             _selectedItems = new List<TSummary>();
 
-            _actionModel = new CrudActionModel(true, true, this.SupportsDelete,
+            _actionModel = new CrudActionModel(true, this.SupportsEdit, this.SupportsDelete,
 				new ResourceResolver(this.GetType(), true));
 
             _actionModel.Add.SetClickHandler(AddItems);
+
+			if (SupportsEdit)
             _actionModel.Edit.SetClickHandler(EditSelectedItems);
 
             if(SupportsDelete)
@@ -313,7 +315,7 @@ namespace ClearCanvas.Ris.Client
         protected abstract bool AddItems(out IList<TSummary> addedItems);
 
         /// <summary>
-        /// Called to handle the "edit" action.
+        /// Called to handle the "edit" action, if supported
         /// </summary>
         /// <param name="items">A list of items to edit.</param>
         /// <param name="editedItems">The list of items that were edited.</param>
@@ -360,11 +362,21 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         protected virtual void OnSelectedItemsChanged()
         {
-            _actionModel.Edit.Enabled = _selectedItems.Count == 1;
+			if (SupportsEdit)
+				_actionModel.Edit.Enabled = _selectedItems.Count == 1;
 
             if(SupportsDelete)
                 _actionModel.Delete.Enabled = _selectedItems.Count > 0;
         }
+
+		/// <summary>
+		/// Gets a value indicating whether this component supports edit.  The default is true.
+		/// Override this method to support edit.
+		/// </summary>
+		protected virtual bool SupportsEdit
+		{
+			get { return true; }
+		}
 
         /// <summary>
         /// Gets a value indicating whether this component supports deletion.  The default is false.

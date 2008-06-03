@@ -47,7 +47,7 @@ using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client
 {
-    [MenuAction("launch", "global-menus/Admin/ExternalPractitioner", "Launch")]
+    [MenuAction("launch", "global-menus/Admin/ExternalPractitioner/Show Summary", "Launch")]
     [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ExternalPractitionerSummaryTool : Tool<IDesktopToolContext>

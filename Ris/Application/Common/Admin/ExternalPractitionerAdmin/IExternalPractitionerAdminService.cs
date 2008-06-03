@@ -83,5 +83,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
         /// </summary>
         [OperationContract]
         LoadExternalPractitionerEditorFormDataResponse LoadExternalPractitionerEditorFormData(LoadExternalPractitionerEditorFormDataRequest request);
-    }
+
+		/// <summary>
+		/// Merge duplicate external practitioners.
+		/// </summary>
+		[OperationContract]
+		MergeDuplicatePractitionerResponse MergeDuplicatePractitioner(MergeDuplicatePractitionerRequest request);
+	}
 }

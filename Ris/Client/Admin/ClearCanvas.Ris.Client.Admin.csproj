@@ -48,6 +48,7 @@
     <Compile Include="AuthorityGroupTable.cs" />
     <Compile Include="EnumerationEditorComponent.cs" />
     <Compile Include="EnumerationSummaryComponent.cs" />
+    <Compile Include="ExternalPractitionerMergeComponent.cs" />
     <Compile Include="NoteCategoryTable.cs" />
     <Compile Include="FacilitySummaryComponent.cs" />
     <Compile Include="FacilityEditorComponent.cs" />

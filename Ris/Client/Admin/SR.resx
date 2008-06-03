@@ -237,6 +237,9 @@
   <data name="ExceptionEnumValueUpdate" xml:space="preserve">
     <value>Unable to update value</value>
   </data>
+  <data name="ExceptionFailedToMergeDuplicatePractitioners" xml:space="preserve">
+    <value>Failed to merge duplicate practitioners.</value>
+  </data>
   <data name="ExceptionSaveAuthorityGroup" xml:space="preserve">
     <value>Unable to save Authority Group</value>
   </data>
@@ -342,6 +345,9 @@
   <data name="NodeWorklist" xml:space="preserve">
     <value>Worklist</value>
   </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
   <data name="TitleAddAuthorityGroup" xml:space="preserve">
     <value>Add Authority Group</value>
   </data>
@@ -419,6 +425,9 @@
   </data>
   <data name="TitleLocations" xml:space="preserve">
     <value>Locations</value>
+  </data>
+  <data name="TitleMergeExternalPractitioner" xml:space="preserve">
+    <value>Merge External Practitioner</value>
   </data>
   <data name="TitleModalities" xml:space="preserve">
     <value>Modalities</value>

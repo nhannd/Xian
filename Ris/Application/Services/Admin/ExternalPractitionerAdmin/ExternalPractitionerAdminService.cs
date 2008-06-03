@@ -174,6 +174,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
             return helper.Query(request);
         }
 
+		[UpdateOperation]
+		public MergeDuplicatePractitionerResponse MergeDuplicatePractitioner(MergeDuplicatePractitionerRequest request)
+		{
+			return new MergeDuplicatePractitionerResponse();
+		}
+
         #endregion
 
     }

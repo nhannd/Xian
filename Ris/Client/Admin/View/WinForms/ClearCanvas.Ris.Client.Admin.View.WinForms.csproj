@@ -61,6 +61,13 @@
       <DependentUpon>EnumerationSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="EnumerationSummaryComponentView.cs" />
+    <Compile Include="ExternalPractitionerMergeComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExternalPractitionerMergeComponentControl.Designer.cs">
+      <DependentUpon>ExternalPractitionerMergeComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExternalPractitionerMergeComponentView.cs" />
     <Compile Include="FacilityEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -217,6 +224,10 @@
     <EmbeddedResource Include="EnumerationSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>EnumerationSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExternalPractitionerMergeComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ExternalPractitionerMergeComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FacilityEditorComponentControl.resx">
       <SubType>Designer</SubType>
