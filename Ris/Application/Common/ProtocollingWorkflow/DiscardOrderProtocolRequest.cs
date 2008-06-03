@@ -29,20 +29,22 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
-    [DataContract]
-    public class DiscardOrderProtocolRequest : DataContractBase
-    {
-        public DiscardOrderProtocolRequest(EntityRef orderRef)
-        {
-            OrderRef = orderRef;
-        }
+	[DataContract]
+	public class DiscardOrderProtocolRequest : UpdateOrderProtocolRequest
+	{
+		public DiscardOrderProtocolRequest(EntityRef orderRef, List<OrderNoteDetail> orderNotes, bool shouldUnclaim)
+			: base(orderRef, null, orderNotes)
+		{
+			this.ShouldUnclaim = shouldUnclaim;
+		}
 
-        [DataMember]
-        public EntityRef OrderRef;
-    }
+		[DataMember]
+		public bool ShouldUnclaim;
+	}
 }

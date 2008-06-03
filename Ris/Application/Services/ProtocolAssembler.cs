@@ -45,6 +45,7 @@ namespace ClearCanvas.Ris.Application.Services
 		{
 			ProtocolDetail detail = new ProtocolDetail();
 
+			detail.ProtocolRef = protocol.GetRef();
 			detail.Author = protocol.Author != null ? new StaffAssembler().CreateStaffSummary(protocol.Author, context) : null;
 			detail.Status = EnumUtils.GetEnumValueInfo(protocol.Status, context);
 			detail.Urgency = EnumUtils.GetEnumValueInfo(protocol.Urgency);

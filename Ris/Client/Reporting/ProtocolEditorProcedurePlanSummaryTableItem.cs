@@ -29,46 +29,33 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    public class ProtocolEditorProcedurePlanSummaryTableItem
-    {
-        private readonly ProcedureDetail _rpDetail;
-        private readonly ProtocolDetail _protocolDetail;
-        private readonly EntityRef _protocolRef;
+	public class ProtocolEditorProcedurePlanSummaryTableItem
+	{
+		private readonly ProcedureDetail _rpDetail;
+		private readonly ProtocolDetail _protocolDetail;
 
+		public ProtocolEditorProcedurePlanSummaryTableItem(ProcedureDetail _rpDetail, ProtocolDetail _protocolDetail)
+		{
+			this._rpDetail = _rpDetail;
+			this._protocolDetail = _protocolDetail;
+		}
 
-        public ProtocolEditorProcedurePlanSummaryTableItem(ProcedureDetail _rpDetail, EntityRef _protocolRef, ProtocolDetail _protocolDetail)
-        {
-            this._rpDetail = _rpDetail;
-            this._protocolDetail = _protocolDetail;
-            this._protocolRef = _protocolRef;
-        }
+		#region Public Properties
 
-        #region Public Properties
+		public ProcedureDetail ProcedureDetail
+		{
+			get { return _rpDetail; }
+		}
 
-        public ProcedureDetail ProcedureDetail
-        {
-            get { return _rpDetail; }
-        }
+		public ProtocolDetail ProtocolDetail
+		{
+			get { return _protocolDetail; }
+		}
 
-        public EntityRef ProtocolRef
-        {
-            get { return _protocolRef; }
-        }
-        //public ProtocolProcedureStepDetail ProtocolStepDetail
-        //{
-        //    get { return _protocolStepDetail; }
-        //}
-
-        public ProtocolDetail ProtocolDetail
-        {
-            get { return _protocolDetail; }
-        }
-
-        #endregion
-    }
+		#endregion
+	}
 }

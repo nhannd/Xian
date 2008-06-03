@@ -93,6 +93,7 @@
     <Compile Include="OrderNoteSummary.cs" />
     <Compile Include="OrderNotes\QueryNoteboxRequest.cs" />
     <Compile Include="OrderNotes\QueryNoteboxResponse.cs" />
+    <Compile Include="ProtocollingWorkflow\UpdateOrderProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetOperationEnablementRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetOperationEnablementResponse.cs" />
     <Compile Include="ProtocollingWorkflow\GetProtocolFormDataRequest.cs" />

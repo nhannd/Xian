@@ -47,9 +47,6 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 		GetProtocolGroupDetailResponse GetProtocolGroupDetail(GetProtocolGroupDetailRequest request);
 
 		[OperationContract]
-		GetProtocolResponse GetProtocol(GetProtocolRequest request);
-
-		[OperationContract]
 		GetProcedureProtocolResponse GetProcedureProtocol(GetProcedureProtocolRequest request);
 
 		[OperationContract]
@@ -89,7 +86,12 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 		[OperationContract]
 		[FaultContract(typeof(RequestValidationException))]
 		[FaultContract(typeof(ConcurrentModificationException))]
-		SaveProtocolResponse SaveProtocol(SaveProtocolRequest request);
+		SubmitProtocolForApprovalResponse SubmitProtocolForApproval(SubmitProtocolForApprovalRequest request);
+
+		[OperationContract]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		SaveProtocolResponse SaveOrderProtocol(SaveProtocolRequest request);
 
 		[OperationContract]
 		[FaultContract(typeof(RequestValidationException))]
@@ -100,10 +102,5 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 		[FaultContract(typeof(RequestValidationException))]
 		[FaultContract(typeof(ConcurrentModificationException))]
 		CancelProtocolAndOrderResponse CancelProtocolAndOrder(CancelProtocolAndOrderRequest request);
-
-		[OperationContract]
-		[FaultContract(typeof(RequestValidationException))]
-		[FaultContract(typeof(ConcurrentModificationException))]
-		SubmitProtocolForApprovalResponse SubmitProtocolForApproval(SubmitProtocolForApprovalRequest request);
 	}
 }

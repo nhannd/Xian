@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -37,10 +38,11 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 	[DataContract]
 	public class StartOrderProtocolResponse : DataContractBase
 	{
-		public StartOrderProtocolResponse(EntityRef orderRef, bool protocolClaimed)
+		public StartOrderProtocolResponse(EntityRef orderRef, bool protocolClaimed, List<OrderNoteDetail> protocolNotes)
 		{
 			this.OrderRef = orderRef;
 			this.ProtocolClaimed = protocolClaimed;
+			this.ProtocolNotes = protocolNotes;
 		}
 
 		[DataMember]
@@ -48,5 +50,8 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 
 		[DataMember]
 		public bool ProtocolClaimed;
+
+		[DataMember]
+		public List<OrderNoteDetail> ProtocolNotes;
 	}
 }

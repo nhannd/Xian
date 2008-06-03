@@ -34,15 +34,23 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
-    [DataContract]
-    public class StartOrderProtocolRequest : DataContractBase
-    {
-        public StartOrderProtocolRequest(EntityRef orderRef)
-        {
-            OrderRef = orderRef;
-        }
+	[DataContract]
+	public class StartOrderProtocolRequest : DataContractBase
+	{
+		public StartOrderProtocolRequest(EntityRef orderRef, bool shouldClaim, string noteCategory)
+		{
+			this.OrderRef = orderRef;
+			this.ShouldClaim = shouldClaim;
+			this.NoteCategory = noteCategory;
+		}
 
-        [DataMember]
-        public EntityRef OrderRef;
-    }
+		[DataMember]
+		public EntityRef OrderRef;
+
+		[DataMember]
+		public bool ShouldClaim;
+
+		[DataMember]
+		public string NoteCategory;
+	}
 }

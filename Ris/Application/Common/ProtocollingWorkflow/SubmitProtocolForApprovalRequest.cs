@@ -1,17 +1,15 @@
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
 	[DataContract]
-	public class SubmitProtocolForApprovalRequest : DataContractBase
+	public class SubmitProtocolForApprovalRequest : UpdateOrderProtocolRequest
 	{
-		public SubmitProtocolForApprovalRequest(EntityRef orderRef)
+		public SubmitProtocolForApprovalRequest(EntityRef orderRef, List<ProtocolDetail> protocols, List<OrderNoteDetail> orderNotes)
+			: base(orderRef, protocols, orderNotes)
 		{
-			this.OrderRef = orderRef;
 		}
-
-		[DataMember]
-		public EntityRef OrderRef;
 	}
 }

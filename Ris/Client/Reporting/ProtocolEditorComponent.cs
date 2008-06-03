@@ -106,6 +106,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 		private readonly ProtocolCodeTable _availableProtocolCodes;
 		private readonly ProtocolCodeTable _selectedProtocolCodes;
 		private ProtocolCodeDetail _selectedProtocolCodesSelection;
+		private bool _canEdit;
 
 		#endregion
 
@@ -176,10 +177,10 @@ namespace ClearCanvas.Ris.Client.Reporting
 					GetProcedureProtocolRequest protocolRequest = new GetProcedureProtocolRequest(rp.ProcedureRef);
 					GetProcedureProtocolResponse protocolResponse = service.GetProcedureProtocol(protocolRequest);
 
-					if (protocolResponse.ProtocolRef != null)
+					if (protocolResponse.ProtocolDetail != null)
 					{
 						_procedurePlanSummaryTable.Items.Add(
-							new ProtocolEditorProcedurePlanSummaryTableItem(rp, protocolResponse.ProtocolRef, protocolResponse.ProtocolDetail));
+							new ProtocolEditorProcedurePlanSummaryTableItem(rp, protocolResponse.ProtocolDetail));
 					}
 				}
 				_procedurePlanSummaryTable.Sort();
@@ -304,6 +305,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 		{
 			add { _selectedProcedurePlanSummaryTableItemChanged += value; }
 			remove { _selectedProcedurePlanSummaryTableItemChanged -= value; }
+		}
+
+		public bool CanEdit
+		{
+			get { return _canEdit; }
+			internal set { _canEdit = value; }
 		}
 
 

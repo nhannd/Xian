@@ -29,23 +29,26 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
 	[DataContract]
-	public class RejectOrderProtocolRequest : DataContractBase
+	public class RejectOrderProtocolRequest : UpdateOrderProtocolRequest
 	{
-		public RejectOrderProtocolRequest(EntityRef orderRef, EnumValueInfo rejectReason, OrderNoteDetail additionalCommentsNote)
+		public RejectOrderProtocolRequest(
+			EntityRef orderRef, 
+			List<ProtocolDetail> protocols, 
+			List<OrderNoteDetail> orderNotes, 
+			EnumValueInfo rejectReason, 
+			OrderNoteDetail additionalCommentsNote)
+			: base(orderRef, protocols, orderNotes)
 		{
-			this.OrderRef = orderRef;
 			this.RejectReason = rejectReason;
 			this.AdditionalCommentsNote = additionalCommentsNote;
 		}
-
-		[DataMember]
-		public EntityRef OrderRef;
 
 		[DataMember]
 		public EnumValueInfo RejectReason;

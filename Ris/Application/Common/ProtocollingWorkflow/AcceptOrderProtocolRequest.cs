@@ -29,20 +29,18 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
-    [DataContract]
-    public class AcceptOrderProtocolRequest : DataContractBase
-    {
-        public AcceptOrderProtocolRequest(EntityRef orderRef)
-        {
-            OrderRef = orderRef;
-        }
-
-        [DataMember]
-        public EntityRef OrderRef;
-    }
+	[DataContract]
+	public class AcceptOrderProtocolRequest : UpdateOrderProtocolRequest
+	{
+		public AcceptOrderProtocolRequest(EntityRef orderRef, List<ProtocolDetail> protocols, List<OrderNoteDetail> orderNotes)
+			: base(orderRef, protocols, orderNotes)
+		{
+		}
+	}
 }

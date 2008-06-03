@@ -44,6 +44,9 @@ namespace ClearCanvas.Ris.Application.Common
 		}
 
 		[DataMember]
+		public EntityRef ProtocolRef;
+
+		[DataMember]
 		public StaffSummary Author;
 
 		[DataMember]
