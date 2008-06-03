@@ -8,6 +8,9 @@ using System.Drawing;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
+	/// <summary>
+	/// Adds canned-text in-place lookup support to a rich text box.
+	/// </summary>
     public class CannedTextSupport : IDisposable
     {
         private RichTextBox _textEditor;
@@ -22,7 +25,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             Initialize();
         }
-
 
         #region IDisposable Members
 
@@ -42,7 +44,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
             if (e.Control && e.KeyCode == Keys.OemPeriod)
             {
-                Point pt = _textEditor.GetPositionFromCharIndex(_textEditor.Text.Length);
+                Point pt = _textEditor.GetPositionFromCharIndex(_textEditor.SelectionStart);
 
                 _lookup = new CannedTextInplaceLookupControl(_lookupHandler);
                 _lookup.Cancelled += new EventHandler(_lookup_Cancelled);

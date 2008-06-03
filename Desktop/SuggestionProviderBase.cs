@@ -1,18 +1,115 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Abstract base class for implementations of <see cref="ISuggestionProvider"/> that provides some of the boilerplate
+    /// Abstract base class for implementations of <see cref="ISuggestionProvider"/> that provides most of the boilerplate
     /// functionality.
     /// </summary>
+    /// <remarks>
+    /// <para>
+	/// This class implements a two-phase algorithm for providing a list of suggestions in response to a query string.  In the first phase,
+	/// the query string is used to obtain a "shortlist" of suggestions.  Once the shortlist has been obtained, the second phase is entered,
+	/// where subsequent refinements of the query string are used to refine the shortlist.  Clearing the query
+	/// string, or modifying it such that it is no longer a refinement of the query that generated the initial shortlist, causes
+	/// a transition back to the first phase, where the query is used to obtain a new shortlist.
+	/// </para>
+	/// <para>
+	/// It is the responsibility of the subclass to obtain the shortlist by implementing the <see cref="GetShortList"/> method.  This method
+	/// is always invoked on a background thread, in order to avoid locking up the user-interface.  Therefore, the subclass need not worry
+	/// about the duration of execution of this method (within reason).  The method may return null in the event that the specified query string
+	/// is too broad to return a shortlist.  In this case, the method will be called repeatedly, with each change to the query string, until
+	/// it returns a non-null value.
+	/// </para>
+	/// <para>
+	/// The subclass may choose to implement the refinement logic as well, by overriding <see cref="RefineShortList"/>.  However,
+	/// this is typically not necessary as several standard refinement strategies are provided.  These are <see cref="RefinementStrategies.StartsWith"/>,
+	/// which refines the list to include only those items that start with the query string, and
+	/// <see cref="RefinementStrategies.MatchAllTerms"/>, which refines the list to include only those items that contain all terms specified
+	/// in the query string, regardless of the order of those terms.  This is the default strategy used, in not explicitly specified.
+	/// </para>
+    /// </remarks>
     /// <typeparam name="TItem"></typeparam>
     public abstract class SuggestionProviderBase<TItem> : ISuggestionProvider
     {
+		#region Refinement Strategies
+
+		/// <summary>
+		/// Defines an interface to an object that is responsible for refining a shortlist according to a query string.
+		/// </summary>
+		public interface IRefinementStrategy
+		{
+			/// <summary>
+			/// Refines the specified shortlist to obtain an even shorter list, based on the specified query.
+			/// </summary>
+			/// <param name="shortList"></param>
+			/// <param name="query"></param>
+			/// <param name="formatter"></param>
+			/// <returns></returns>
+			IList<TItem> Refine(IList<TItem> shortList, string query, Converter<TItem, string> formatter);
+		}
+
+		/// <summary>
+		/// Defines a set of predefined refinement strategies.
+		/// </summary>
+		public static class RefinementStrategies
+		{
+			/// <summary>
+			/// A refinement strategy that will return only items that start with the query string.
+			/// </summary>
+			public static readonly IRefinementStrategy StartsWith = new StartsWithStrategy();
+
+			/// <summary>
+			/// A refinement strategy that will return items containing all of the terms in the query string,
+			/// regardless of the order in which the terms occur.
+			/// </summary>
+			public static readonly IRefinementStrategy MatchAllTerms = new MatchAllTermsStrategy();
+
+
+			class StartsWithStrategy : IRefinementStrategy
+			{
+				public IList<TItem> Refine(IList<TItem> shortList, string query, Converter<TItem, string> formatter)
+				{
+					// refine the short-list
+					return CollectionUtils.Select(shortList,
+						delegate(TItem item)
+						{
+							string itemString = formatter(item);
+							return itemString.StartsWith(query, StringComparison.CurrentCultureIgnoreCase);
+						});
+				}
+			}
+
+			class MatchAllTermsStrategy : IRefinementStrategy
+			{
+				private static readonly Regex _termDefinition = new Regex(@"\b([^\s]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+				public IList<TItem> Refine(IList<TItem> shortList, string query, Converter<TItem, string> formatter)
+				{
+					// break query up into keywords
+					List<string> keywords =
+						CollectionUtils.Map<Match, string>(_termDefinition.Matches(query), delegate(Match m) { return m.Value; });
+
+					// refine the short-list
+					return CollectionUtils.Select(shortList,
+						delegate(TItem item)
+						{
+							// for an item to be included, the formatted string must contain *all* keywords
+							string itemString = formatter(item);
+							return CollectionUtils.TrueForAll(keywords,
+								delegate(string kw) { return Regex.Match(itemString, @"\b" + kw, RegexOptions.IgnoreCase).Success; });
+						});
+				}
+			}
+		}
+
+		#endregion
+
 		#region State classes (state pattern implementation)
 
 		/// <summary>
@@ -182,15 +279,26 @@ namespace ClearCanvas.Desktop
 
 		#endregion
 
-    	private State _state;
+		private readonly IRefinementStrategy _refinementStrategy;
+		private State _state;
 		private event EventHandler<SuggestionsProvidedEventArgs> _suggestionsProvided;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-        protected SuggestionProviderBase()
+		protected SuggestionProviderBase()
+			:this(RefinementStrategies.MatchAllTerms)
+		{
+
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		protected SuggestionProviderBase(IRefinementStrategy refinementStrategy)
         {
 			_state = new CleanState(this);
+			_refinementStrategy = refinementStrategy;
         }
 
 		#region ISuggestionProvider Members
@@ -253,18 +361,13 @@ namespace ClearCanvas.Desktop
         /// <returns></returns>
         /// <remarks>
         /// This method is called to refine the short-list obtained by the initial call(s) to <see cref="GetShortList"/>.
-        /// The default implementation returns all items in the specified shortList that start with the specified query string.
-        /// Override this method to change this behaviour.
+        /// The default implementation invokes the refinement strategy that was specified in the constructor.
+        /// Override this method to implement custom refinement logic.
         /// </remarks>
         protected virtual IList<TItem> RefineShortList(IList<TItem> shortList, string query)
         {
             // refine the short-list
-            return CollectionUtils.Select(shortList,
-                delegate(TItem item)
-                {
-                    string itemString = FormatItem(item);
-                    return itemString.StartsWith(query, StringComparison.CurrentCultureIgnoreCase);
-                });
+        	return _refinementStrategy.Refine(shortList, query, FormatItem);
         }
 
         /// <summary>

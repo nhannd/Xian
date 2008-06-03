@@ -92,7 +92,7 @@ namespace ClearCanvas.Ris.Client
 
             protected override string FormatItem(CannedText item)
             {
-                return string.Format("{0} ({1})", item.Name, item.Path);
+				return CannedTextLookupHandler.FormatItem(item);
             }
         }
 
@@ -108,15 +108,14 @@ namespace ClearCanvas.Ris.Client
 
         private static string FormatItem(CannedText ct)
         {
-            return ct.Name;
-        }
+			return string.Format("{0} ({1})", ct.Name, ct.Path);
+		}
 
 
         #region ILookupHandler Members
 
         bool ILookupHandler.Resolve(string query, bool interactive, out object result)
         {
-            _desktopWindow.ShowMessageBox("TODO", MessageBoxActions.Ok);
             result = null;
             return false;
         }

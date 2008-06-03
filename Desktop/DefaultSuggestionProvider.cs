@@ -44,13 +44,26 @@ namespace ClearCanvas.Desktop
         private readonly Converter<TItem, string> _formatHandler;
 		private readonly Converter<string, IList<TItem>> _shortlistProvider;
 
-	
+
 		/// <summary>
 		/// Constructor that accepts the full list of possible items.
 		/// </summary>
 		/// <param name="sourceList">The source list of objects.</param>
 		/// <param name="formatHandler">A delegate that returns a formatted text string for the input object.</param>
 		public DefaultSuggestionProvider(IList<TItem> sourceList, Converter<TItem, string> formatHandler)
+		{
+			_shortlistProvider = delegate(string q) { return string.IsNullOrEmpty(q) ? null : sourceList; };
+			_formatHandler = formatHandler;
+		}
+
+		/// <summary>
+		/// Constructor that accepts the full list of possible items.
+		/// </summary>
+		/// <param name="sourceList">The source list of objects.</param>
+		/// <param name="formatHandler">A delegate that returns a formatted text string for the input object.</param>
+		/// <param name="refinementStrategy">An object that specifies how the shortlist is refined in response to user input.</param>
+		public DefaultSuggestionProvider(IList<TItem> sourceList, Converter<TItem, string> formatHandler, IRefinementStrategy refinementStrategy)
+			:base(refinementStrategy)
         {
 			_shortlistProvider = delegate(string q) { return string.IsNullOrEmpty(q) ? null : sourceList; };
             _formatHandler = formatHandler;
@@ -62,6 +75,19 @@ namespace ClearCanvas.Desktop
 		/// <param name="shortlistProvider">A delegate that obtains the shortlist for a specified query, or null to indicate that it should be called again.</param>
 		/// <param name="formatHandler">A delegate that returns a formatted text string for the input object.</param>
 		public DefaultSuggestionProvider(Converter<string, IList<TItem>> shortlistProvider, Converter<TItem, string> formatHandler)
+		{
+			_shortlistProvider = shortlistProvider;
+			_formatHandler = formatHandler;
+		}
+
+		/// <summary>
+		/// Constructor that accepts a delegate for providing a shortlist on demand.
+		/// </summary>
+		/// <param name="shortlistProvider">A delegate that obtains the shortlist for a specified query, or null to indicate that it should be called again.</param>
+		/// <param name="formatHandler">A delegate that returns a formatted text string for the input object.</param>
+		/// <param name="refinementStrategy">An object that specifies how the shortlist is refined in response to user input.</param>
+		public DefaultSuggestionProvider(Converter<string, IList<TItem>> shortlistProvider, Converter<TItem, string> formatHandler, IRefinementStrategy refinementStrategy)
+			:base(refinementStrategy)
 		{
 			_shortlistProvider = shortlistProvider;
 			_formatHandler = formatHandler;
