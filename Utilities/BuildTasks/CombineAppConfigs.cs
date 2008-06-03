@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Xml;
 using Microsoft.Build.Utilities;
 using System.Text;
@@ -106,7 +107,7 @@ namespace ClearCanvas.Utilities.BuildTasks
 
 			for (int i = 0; i < SourceFiles.Length; ++i)
 			{
-				string path = SourceFiles[i];
+				string path = Path.GetFullPath(SourceFiles[i]);
 				XmlDocument document = new XmlDocument();
 				document.Load(path);
 
