@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 else
                 {
 
-                    if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress"))
+                    if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
                     {
                         ConfirmationDialog.Message = App_GlobalResources.SR.WorkQueueBeingProcessed_CannotDelete;
                         ConfirmationDialog.MessageType =

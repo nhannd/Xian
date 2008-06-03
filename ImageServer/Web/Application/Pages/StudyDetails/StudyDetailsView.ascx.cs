@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
             get { return _width; }
             set { _width = value;
 
-                DetailsView1.Width = value;
+                StudyDetailView.Width = value;
             }
         }
 
@@ -77,8 +77,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            DetailsView1.DataSource = Studies;
-            DetailsView1.DataBind();
+            StudyDetailView.DataSource = Studies;
+            StudyDetailView.DataBind();
         }
 
 
@@ -86,13 +86,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
         {
             base.OnPreRender(e);
 
-            Study study = (DetailsView1.DataItem) as Study;
+            Study study = (StudyDetailView.DataItem) as Study;
             if (study != null)
             {
                 
 
             }
 
+        }
+
+
+        protected void StudyDetailView_DataBound(object sender, EventArgs e)
+        {
+            Study study = (StudyDetailView.DataItem) as Study;
+            if (study != null)
+            {
+                Label statusLabel = StudyDetailView.FindControl("Status") as Label;
+                if (statusLabel != null)
+                {
+                    statusLabel.Text = StudyStatusEnumHelper.GetDescription(study.StudyStatusEnum);
+                }
+
+            }
         }
 
         #endregion Protected Methods

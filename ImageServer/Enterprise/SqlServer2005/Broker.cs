@@ -98,17 +98,23 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                     command.Parameters.AddWithValue(sqlParmName, parm2.Value);
                 }
-                else if (parm is ProcedureParameter<ServerEnum>)
-                {
-                    ProcedureParameter<ServerEnum> parm2 = (ProcedureParameter<ServerEnum>)parm;
-                    if (parm2.Value == null)
-                        command.Parameters.AddWithValue(sqlParmName, null);
-                    else
-                        command.Parameters.AddWithValue(sqlParmName, parm2.Value.Enum);
-                }
+                //else if (parm is ProcedureParameter<ServerEnum>)
+                //{
+                //    ProcedureParameter<ServerEnum> parm2 = (ProcedureParameter<ServerEnum>)parm;
+                //    if (parm2.Value == null)
+                //        command.Parameters.AddWithValue(sqlParmName, null);
+                //    else
+                //        command.Parameters.AddWithValue(sqlParmName, parm2.Value.Enum);
+                //}
                 else if (parm is ProcedureParameter<Decimal>)
                 {
                     ProcedureParameter<Decimal> parm2 = (ProcedureParameter<Decimal>)parm;
+
+                    command.Parameters.AddWithValue(sqlParmName, parm2.Value);
+                }
+                else if (parm is ProcedureParameter<Enum>)
+                {
+                    ProcedureParameter<Enum> parm2 = (ProcedureParameter<Enum>)parm;
 
                     command.Parameters.AddWithValue(sqlParmName, parm2.Value);
                 }
@@ -188,6 +194,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     prop.SetValue(entity, reader.GetDateTime(i));
                 else if (prop.PropertyType == typeof(bool))
                     prop.SetValue(entity, reader.GetBoolean(i));
+                else if (prop.PropertyType.IsEnum)
+                {
+                    object val = Enum.Parse(prop.PropertyType, reader.GetInt16(i).ToString());
+                    prop.SetValue(entity, val);
+                }
                 else if (prop.PropertyType == typeof(XmlDocument))
                 {
                     SqlXml xml = reader.GetSqlXml(i);
@@ -200,14 +211,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     Guid uid = reader.GetGuid(i);
                     prop.SetValue(entity, new ServerEntityKey(columnName.Replace("Key", ""), uid));
                 }
-                else if (typeof(ServerEnum).IsAssignableFrom(prop.PropertyType))
-                {
-                    short enumVal = reader.GetInt16(i);
-                    ConstructorInfo construct = prop.PropertyType.GetConstructor(new Type[0]);
-                    ServerEnum val = (ServerEnum)construct.Invoke(null);
-                    val.SetEnum(enumVal);
-                    prop.SetValue(entity, val);
-                }
+                //else if (typeof(ServerEnum).IsAssignableFrom(prop.PropertyType))
+                //{
+                //    short enumVal = reader.GetInt16(i);
+                //    ConstructorInfo construct = prop.PropertyType.GetConstructor(new Type[0]);
+                //    ServerEnum val = (ServerEnum)construct.Invoke(null);
+                //    val.SetEnum(enumVal);
+                //    prop.SetValue(entity, val);
+                //}
                 else
                     throw new EntityNotFoundException("Unsupported property type: " + prop.PropertyType, null);
             }

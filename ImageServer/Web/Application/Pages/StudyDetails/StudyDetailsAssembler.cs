@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
             details.NumberOfStudyRelatedSeries = study.NumberOfStudyRelatedSeries;
             details.ReferringPhysicianName = study.ReferringPhysiciansName;
 
-            details.Status = study.StudyStatusEnum.Description;
+            details.Status = study.StudyStatusEnum.ToString();
             details.StudyDate = study.StudyDate;
             details.StudyDescription = study.StudyDescription;
             details.StudyId = study.StudyId;

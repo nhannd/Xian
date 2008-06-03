@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
         public ServiceLockTypeEnum GetServiceLockType()
         {
-            return ServiceLockTypeEnum.GetEnum("FilesystemDelete");
+            return ServiceLockTypeEnum.FilesystemDelete;
         }
 
         public IServiceLockItemProcessor GetItemProcessor()

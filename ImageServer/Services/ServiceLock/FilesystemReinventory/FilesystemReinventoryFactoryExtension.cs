@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
         public ServiceLockTypeEnum GetServiceLockType()
         {
-            return ServiceLockTypeEnum.GetEnum("FilesystemReinventory");
+            return ServiceLockTypeEnum.FilesystemReinventory;
         }
 
         public IServiceLockItemProcessor GetItemProcessor()

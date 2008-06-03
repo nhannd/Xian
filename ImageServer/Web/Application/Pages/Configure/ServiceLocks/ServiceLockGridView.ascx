@@ -16,12 +16,12 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Type">
                         <ItemTemplate>
-                           <asp:Label ID="Type" runat="server" Text='<%# Eval("ServiceLockTypeEnum.Description") %>'></asp:Label>
+                           <asp:Label ID="Type" runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Description">
                         <ItemTemplate>
-                           <asp:Label ID="Description" runat="server" Text='<%# Eval("ServiceLockTypeEnum.LongDescription") %>'></asp:Label>
+                           <asp:Label ID="Description" runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Enabled">

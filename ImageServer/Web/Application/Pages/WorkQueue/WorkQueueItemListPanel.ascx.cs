@@ -312,32 +312,62 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                     Model.WorkQueue item = WorkQueueItems[GetRowItemKey(row.RowIndex)];
                     row.Attributes["uid"] = item.GetKey().ToString();
 
-                    Label serverLabel = e.Row.FindControl("ServerInfoLabel") as Label;
-                    if (serverLabel != null && item.ServerInformationKey!=null)
+                    CustomizeColumns(e.Row);
+                }
+            }
+            
+        }
+
+        private void CustomizeColumns(GridViewRow row)
+        {
+            WorkQueueSummary item = row.DataItem as WorkQueueSummary;
+
+            if (item!=null)
+            {
+                if (item.ProcessingServer!=null)
+                {
+                    Label serverLabel = row.FindControl("ServerInfoLabel") as Label;
+                    if (serverLabel != null)
                     {
-                        ServerInformation server = ServerInformation.Load(item.ServerInformationKey);
-                        serverLabel.Text = server.ServerName;
-                        if (server.ExtInformation!=null)
+                        serverLabel.Text = item.ProcessingServer.ServerName;
+                        if (item.ProcessingServer.ExtInformation != null)
                         {
-                            XmlSerializer serializer = new XmlSerializer(typeof (ServerAddress));
+                            XmlSerializer serializer = new XmlSerializer(typeof(ServerAddress));
                             try
                             {
-                                ServerAddress address = (ServerAddress) serializer.Deserialize(new XmlNodeReader(server.ExtInformation.FirstChild));   
-                                
-                                for(int i=0; i<address.IPAddresses.Count; i++)
+                                ServerAddress address = (ServerAddress)serializer.Deserialize(new XmlNodeReader(item.ProcessingServer.ExtInformation.FirstChild));
+
+                                for (int i = 0; i < address.IPAddresses.Count; i++)
                                 {
-                                    serverLabel.ToolTip += String.Format("IP {0} : {1}\r\n", i+1, address.IPAddresses[i]);
+                                    serverLabel.ToolTip += String.Format("IP {0} : {1}\r\n", i + 1, address.IPAddresses[i]);
                                 }
-                                
+
                             }
-                            catch(Exception)
+                            catch (Exception)
                             {
                                 // ignore it
                             }
                         }
-                        
-                        
                     }
+                }
+               
+
+                Label typeLabel = row.FindControl("Type") as Label;
+                if (typeLabel != null)
+                {
+                    typeLabel.Text = WorkQueueTypeEnumHelper.GetDescription(item.Type);
+                }
+
+                Label priorityLabel = row.FindControl("Priority") as Label;
+                if (priorityLabel != null)
+                {
+                    priorityLabel.Text = WorkQueuePriorityEnumHelper.GetDescription(item.Priority);
+                }
+
+                Label statusLabel = row.FindControl("Status") as Label;
+                if (statusLabel != null)
+                {
+                    statusLabel.Text = WorkQueueStatusEnumHelper.GetDescription(item.Status);
                 }
             }
             

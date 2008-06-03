@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegExtendedAction
 	/// </summary>
 	public class JpegExtendedActionItem : ServerActionItemBase
 	{
-		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("LossyCompress");
+		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.LossyCompress;
 		private readonly Expression _exprScheduledTime;
 		private readonly int _offsetTime;
 		private readonly TimeUnit _units;

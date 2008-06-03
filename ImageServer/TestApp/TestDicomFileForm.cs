@@ -65,9 +65,8 @@ namespace ClearCanvas.ImageServer.TestApp
 
                 monitor.Load();
 
-                WorkQueueTypeEnum t = new WorkQueueTypeEnum();
-                t.SetEnum(200);
-
+                WorkQueueTypeEnum t = WorkQueueTypeEnum.CompressStudy;
+                
                 using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
                 {
                     IInsertStudyStorage insert = read.GetBroker<IInsertStudyStorage>();

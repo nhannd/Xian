@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
         public WorkQueueStatusEnum WorkQueueStatusEnum
         {
-            set { this.SubCriteria["WorkQueueStatusEnum"] = new ProcedureParameter<ServerEnum>("WorkQueueStatusEnum", value); }
+            set { this.SubCriteria["WorkQueueStatusEnum"] = new ProcedureParameter<Enum>("WorkQueueStatusEnum", value); }
         }
 
         public DateTime ExpirationTime 

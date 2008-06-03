@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                     {
                         Platform.Log(LogLevel.Info, "Cleanup: Reset ServiceLock Item : {0} --> Type={1} Scheduled={2}",
                                      queueItem.GetKey().Key,
-                                     queueItem.ServiceLockTypeEnum.Description,
+                                     queueItem.ServiceLockTypeEnum,
                                      queueItem.ScheduledTime);
                     }
                 }
@@ -230,7 +230,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                         {
                             Platform.Log(LogLevel.Error,
                                          "No extensions loaded for ServiceLockTypeEnum item type: {0}.  Failing item.",
-                                         queueItem.ServiceLockTypeEnum.Description);
+                                         queueItem.ServiceLockTypeEnum);
 
                             //Just fail the ServiceLock item, not much else we can do
                             ResetServiceLock(queueItem);
@@ -261,7 +261,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                                                     {
                                                         Platform.Log(LogLevel.Error, e,
                                                                      "Unexpected exception when processing ServiceLock item of type {0}.  Failing Queue item. (GUID: {1})",
-                                                                     queueItem.ServiceLockTypeEnum.Description,
+                                                                     queueItem.ServiceLockTypeEnum,
                                                                      queueItem.GetKey());
 
                                                         ResetServiceLock(queueItem);

@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 
         public AgeBasedDeleteSample()
         {
-            _applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
+            _applyTime.Add(ServerRuleApplyTimeEnum.SopProcessed);
         }
 
         #region ISampleRule Members
@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 
         public ServerRuleTypeEnum Type
         {
-            get { return ServerRuleTypeEnum.GetEnum("StudyDelete"); }
+            get { return ServerRuleTypeEnum.StudyDelete; }
         }
 
         public IList<ServerRuleApplyTimeEnum> ApplyTimeList
@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 
         public MultiTagDeleteSample()
         {
-            _applyTime.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
+            _applyTime.Add(ServerRuleApplyTimeEnum.SopProcessed);
         }
 
         #region ISampleRule Members
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 
         public ServerRuleTypeEnum Type
         {
-            get { return ServerRuleTypeEnum.GetEnum("StudyDelete"); }
+            get { return ServerRuleTypeEnum.StudyDelete; }
         }
 
         public IList<ServerRuleApplyTimeEnum> ApplyTimeList

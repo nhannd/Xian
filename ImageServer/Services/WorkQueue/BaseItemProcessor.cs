@@ -188,15 +188,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
             WorkQueueSettings settings = WorkQueueSettings.Default;
 
-            if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("Low"))
+            if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.Low)
             {
                 maxSize = settings.LowPriorityMaxBatchSize;
             }
-            else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("Medium"))
+            else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.Medium)
             {
                 maxSize = settings.MedPriorityMaxBatchSize;
             }
-            else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("High"))
+            else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.High)
             {
                 maxSize = settings.HighPriorityMaxBatchSize;
             }
@@ -312,11 +312,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						if (item.FailureDescription != null)
 							parms.FailureDescription = item.FailureDescription;
 
-						if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("Low"))
+						if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.Low)
 						{
 							scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayLowPrioritySeconds);
 						}
-						else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.GetEnum("High"))
+						else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.High)
 						{
 							scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayHighPrioritySeconds);
 						}
@@ -331,7 +331,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 						if (complete || !processedBatch && item.ExpirationTime < Platform.Time)
 						{
-							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Completed");
+							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Completed;
 							parms.FailureCount = item.FailureCount;
 							parms.ScheduledTime = scheduledTime;
 							parms.ExpirationTime = item.ExpirationTime; // Keep the same
@@ -339,14 +339,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						// If the batch size is 0, switch to idle state.
 						else if (!processedBatch)
 						{
-							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Idle");
+							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Idle;
 							parms.ScheduledTime = scheduledTime;
 							parms.ExpirationTime = item.ExpirationTime; // keep the same
 							parms.FailureCount = item.FailureCount;
 						}
 						else
 						{
-							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
 
 							parms.ExpirationTime = scheduledTime.AddSeconds(settings.WorkQueueExpireDelaySeconds);
 							parms.ScheduledTime = scheduledTime;
@@ -357,7 +357,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						if (false == update.Execute(parms))
 						{
 							Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}",
-										 item.WorkQueueTypeEnum.Description, item.GetKey().ToString());
+										 item.WorkQueueTypeEnum, item.GetKey().ToString());
 						}
 						else
 							updateContext.Commit();
@@ -405,8 +405,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							{
 								Platform.Log(LogLevel.Error,
 											 "Failing {0} WorkQueue entry ({1}), fatal error",
-											 item.WorkQueueTypeEnum.Description, item.GetKey());
-								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
+											 item.WorkQueueTypeEnum, item.GetKey());
+								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
 								parms.ScheduledTime = Platform.Time;
 								parms.ExpirationTime = Platform.Time; // expire now								
 							}
@@ -414,8 +414,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							{
 								Platform.Log(LogLevel.Error,
 								             "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
-											 item.WorkQueueTypeEnum.Description, item.GetKey(), item.FailureCount + 1);
-								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
+											 item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
+								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
 								parms.ScheduledTime = Platform.Time;
 								parms.ExpirationTime = Platform.Time; // expire now
 							}
@@ -423,8 +423,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							{
 								Platform.Log(LogLevel.Error,
 								             "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
-								             item.WorkQueueTypeEnum.Description, item.GetKey(), item.FailureCount + 1);
-								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+								             item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
+								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
 								parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
 								parms.ExpirationTime =
 									Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount)*
@@ -435,7 +435,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							if (false == update.Execute(parms))
 							{
 								Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}",
-											 item.WorkQueueTypeEnum.Description, item.GetKey().ToString());
+											 item.WorkQueueTypeEnum, item.GetKey().ToString());
 							}
 							else
 								updateContext.Commit();

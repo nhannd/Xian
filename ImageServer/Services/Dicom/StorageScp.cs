@@ -173,7 +173,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                 if (File.Exists(path))
                 {
-                    if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.GetEnum("SendSuccess")))
+                    if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.SendSuccess))
                     {
                         returnStatus = DicomStatuses.Success;
 
@@ -184,20 +184,20 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                         return true;
                     }
-                    else if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.GetEnum("RejectDuplicates")))
+                    else if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.RejectDuplicates))
                     {
                         returnStatus = DicomStatuses.DuplicateSOPInstance;
                         Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, rejecting {0}", sopInstanceUid);
                         throw new ApplicationException("Duplicate SOP Instance received.");
                     }
-                    else if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.GetEnum("AcceptLatest")))
+                    else if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.AcceptLatest))
                     {
                         Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, replacing previous file {0}", sopInstanceUid);
                         dupPath = path + "_dup_old";
                         processor.AddCommand(new RenameFileCommand(path, dupPath));
                         dupImage = true;
                     }
-                    else if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.GetEnum("CompareDuplicates")))
+                    else if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.CompareDuplicates))
                     {
                         Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, processing {0}", sopInstanceUid);
                         for (int i = 1; i < 999; i++)

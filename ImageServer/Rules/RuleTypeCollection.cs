@@ -131,13 +131,13 @@ namespace ClearCanvas.ImageServer.Rules
 
                     if (!ruleSuccess)
                     {
-                        Platform.Log(LogLevel.Error, "Unable to apply default rule of type {0}", Type.Description);
+                        Platform.Log(LogLevel.Error, "Unable to apply default rule of type {0}", Type);
                     }
                 }
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception when applying rule of type: {0}", Type.Description);
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when applying rule of type: {0}", Type);
             }
         }
 

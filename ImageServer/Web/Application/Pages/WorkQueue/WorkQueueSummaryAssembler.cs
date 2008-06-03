@@ -30,11 +30,9 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
@@ -60,7 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             summary.Type = item.WorkQueueTypeEnum;
             summary.Status = item.WorkQueueStatusEnum;
             summary.Priority = item.WorkQueuePriorityEnum;
-
+            summary.ProcessingServer = item.ServerInformationKey==null? null:ServerInformation.Load(item.ServerInformationKey);
 
             // Fetch the patient info:
             StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
@@ -82,14 +80,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                 summary.PatientName = studyList[0].PatientsName;
             }
 
-            if (item.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("AutoRoute"))
+            if (item.WorkQueueTypeEnum == WorkQueueTypeEnum.AutoRoute)
             {
                 DeviceDataAdapter deviceAdaptor = new DeviceDataAdapter();
                 Device dest = deviceAdaptor.Get(item.DeviceKey);
 
                 summary.Notes = String.Format("Destination AE : {0}", dest.AeTitle);
             }
-            else if (item.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("WebMoveStudy"))
+            else if (item.WorkQueueTypeEnum == WorkQueueTypeEnum.WebMoveStudy)
             {
                 DeviceDataAdapter deviceAdaptor = new DeviceDataAdapter();
                 Device dest = deviceAdaptor.Get(item.DeviceKey);

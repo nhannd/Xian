@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Codec.Rle.RleCompressAction
 	/// </summary>
 	public class RleActionItem : ServerActionItemBase
 	{
-		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("LosslessCompress");
+		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.LosslessCompress;
 		private readonly Expression _exprScheduledTime;
 		private readonly int _offsetTime;
 		private readonly TimeUnit _units;

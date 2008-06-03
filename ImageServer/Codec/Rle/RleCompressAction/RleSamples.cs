@@ -41,10 +41,10 @@ namespace ClearCanvas.ImageServer.Codec.Rle.RleCompressAction
         public RleSamples()
             : base("RleParameters",
                    "RLE Sample Parameters",
-				   ServerRuleTypeEnum.GetEnum("StudyCompress"),
+				   ServerRuleTypeEnum.StudyCompress,
                    "Sample_RLE.xml")
         {
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
         }
     }
 }

@@ -183,9 +183,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
 
             // update the dropdown list
             DuplicateSopDropDownList.Items.Clear();
-            foreach (DuplicateSopPolicyEnum policyEnum in DuplicateSopPolicyEnum.GetAll())
+            foreach (DuplicateSopPolicyEnum policyEnum in DuplicateSopPolicyEnumHelper.GetAll())
             {
-                DuplicateSopDropDownList.Items.Add(new ListItem(policyEnum.Description, policyEnum.Enum.ToString()));
+                DuplicateSopDropDownList.Items.Add(new ListItem(DuplicateSopPolicyEnumHelper.GetDescription(policyEnum), policyEnum.ToString()));
             }
 
             if (Partition == null)
@@ -218,7 +218,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
 
                 DefaultRemotePortTextBox.Enabled = Partition.AutoInsertDevice;
 
-                DuplicateSopDropDownList.SelectedValue = Partition.DuplicateSopPolicyEnum.Enum.ToString();
+                DuplicateSopDropDownList.SelectedValue = Partition.DuplicateSopPolicyEnum.ToString();
 
             }
         }
@@ -249,7 +249,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
             if (Int32.TryParse(DefaultRemotePortTextBox.Text, out port))
                 Partition.DefaultRemotePort = port;
 
-            Partition.DuplicateSopPolicyEnum = DuplicateSopPolicyEnum.GetAll()[DuplicateSopDropDownList.SelectedIndex];
+            Partition.DuplicateSopPolicyEnum = DuplicateSopPolicyEnumHelper.GetAll()[DuplicateSopDropDownList.SelectedIndex];
         }
 
         #endregion Private Methods

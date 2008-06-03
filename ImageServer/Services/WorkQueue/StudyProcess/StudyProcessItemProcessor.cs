@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             if (_studyProcessedRulesEngine == null)
             {
-                _studyProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"), item.ServerPartitionKey);
+                _studyProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyProcessed, item.ServerPartitionKey);
                 _studyProcessedRulesEngine.Load();
             }
             else
@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             if (_seriesProcessedRulesEngine == null)
             {
-                _seriesProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SeriesProcessed"), item.ServerPartitionKey);
+                _seriesProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SeriesProcessed, item.ServerPartitionKey);
                 _seriesProcessedRulesEngine.Load();
             }
             else
@@ -475,7 +475,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(item, "item");
 
             _statistics = new StudyProcessStatistics();
-            _statistics.Description = String.Format("{0}[GUID={1}]", item.WorkQueueTypeEnum.Description, item.GetKey().Key);
+            _statistics.Description = String.Format("{0}[GUID={1}]", item.WorkQueueTypeEnum, item.GetKey().Key);
         }
         
         protected override void ProcessItem(Model.WorkQueue item)
@@ -506,7 +506,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                             else
                             {
                                 // Load the rules engine
-                                _sopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"), item.ServerPartitionKey);
+                                _sopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, item.ServerPartitionKey);
                                 _sopProcessedRulesEngine.Load();
                                 _statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
             

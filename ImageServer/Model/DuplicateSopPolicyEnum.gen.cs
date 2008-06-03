@@ -36,28 +36,65 @@ namespace ClearCanvas.ImageServer.Model
     using System;
     using System.Collections.Generic;
     using ClearCanvas.ImageServer.Enterprise;
-    using ClearCanvas.ImageServer.Model.EntityBrokers;
+    using System.Reflection;
 
-[Serializable]
-public partial class DuplicateSopPolicyEnum : ServerEnum
-{
-    #region Constructors
-    public DuplicateSopPolicyEnum():base("DuplicateSopPolicyEnum")
-    {}
-    #endregion
-    #region Public Members
-    public override void SetEnum(short val)
-    {
-        ServerEnumHelper<DuplicateSopPolicyEnum, IDuplicateSopPolicyEnumBroker>.SetEnum(this, val);
-    }
-    static public IList<DuplicateSopPolicyEnum> GetAll()
-    {
-        return ServerEnumHelper<DuplicateSopPolicyEnum, IDuplicateSopPolicyEnumBroker>.GetAll();
-    }
-    static public DuplicateSopPolicyEnum GetEnum(string lookup)
-    {
-        return ServerEnumHelper<DuplicateSopPolicyEnum, IDuplicateSopPolicyEnumBroker>.GetEnum(lookup);
-    }
-    #endregion
-}
+  public enum DuplicateSopPolicyEnum
+  {
+      [EnumValueDescriptionAttribute("Send Success", "Send a DICOM C-STORE-RSP success status when receiving a duplicate, but ignore the file.")]
+      SendSuccess = 100,
+
+      [EnumValueDescriptionAttribute("Reject Duplicates", "Send a DICOM C-STORE-RSP reject status when receiving a duplicate.")]
+      RejectDuplicates = 101,
+
+      [EnumValueDescriptionAttribute("Accept Latest", "Keep the latest object received.")]
+      AcceptLatest = 102,
+
+      [EnumValueDescriptionAttribute("Compare Duplicates", "Process duplicate objects received and compare them to originals flagging any differences as a failure.")]
+      CompareDuplicates = 103
+  }
+
+  public static class DuplicateSopPolicyEnumHelper
+  {
+      public static IList<DuplicateSopPolicyEnum> GetAll()
+      {
+          List<DuplicateSopPolicyEnum> values = new List<DuplicateSopPolicyEnum>();
+          Array array = Enum.GetValues(typeof (DuplicateSopPolicyEnum));
+          
+          foreach(DuplicateSopPolicyEnum value in array)
+          {
+              values.Add(value);
+          }
+          return values;
+      }
+      public static DuplicateSopPolicyEnum Get(string lookup)
+      {
+          return (DuplicateSopPolicyEnum) Enum.Parse(typeof (DuplicateSopPolicyEnum), lookup);
+      }
+      public static bool IsDefined(string lookup)
+      {
+          return Enum.IsDefined(typeof (DuplicateSopPolicyEnum), lookup);
+      }
+      public static string GetDescription(DuplicateSopPolicyEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).Description;
+          }
+          else
+              return null;
+      }
+      public static string GetLongDescription(DuplicateSopPolicyEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;
+          }
+          else
+              return null;
+      }
+  }
 }

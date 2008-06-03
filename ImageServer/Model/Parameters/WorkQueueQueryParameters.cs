@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
@@ -41,7 +42,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
         public WorkQueueTypeEnum WorkQueueTypeEnum
         {
-            set { this.SubCriteria["WorkQueueTypeEnum"] = new ProcedureParameter<ServerEnum>("WorkQueueTypeEnum", value); }
+            set { this.SubCriteria["WorkQueueTypeEnum"] = new ProcedureParameter<Enum>("WorkQueueTypeEnum", value); }
         }
 
         public string ProcessorID

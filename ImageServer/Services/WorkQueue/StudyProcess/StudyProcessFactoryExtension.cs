@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         public WorkQueueTypeEnum GetWorkQueueType()
         {
-            return WorkQueueTypeEnum.GetEnum("StudyProcess");
+            return WorkQueueTypeEnum.StudyProcess;
         }
 
         public IWorkQueueItemProcessor GetItemProcessor()

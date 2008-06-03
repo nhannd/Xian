@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
         public virtual WorkQueueTypeEnum GetWorkQueueType()
         {
-            return WorkQueueTypeEnum.GetEnum("DeleteStudy");
+            return WorkQueueTypeEnum.DeleteStudy;
         }
 
         public virtual IWorkQueueItemProcessor GetItemProcessor()

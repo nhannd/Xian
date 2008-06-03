@@ -36,28 +36,77 @@ namespace ClearCanvas.ImageServer.Model
     using System;
     using System.Collections.Generic;
     using ClearCanvas.ImageServer.Enterprise;
-    using ClearCanvas.ImageServer.Model.EntityBrokers;
+    using System.Reflection;
 
-[Serializable]
-public partial class WorkQueueTypeEnum : ServerEnum
-{
-    #region Constructors
-    public WorkQueueTypeEnum():base("WorkQueueTypeEnum")
-    {}
-    #endregion
-    #region Public Members
-    public override void SetEnum(short val)
-    {
-        ServerEnumHelper<WorkQueueTypeEnum, IWorkQueueTypeEnumBroker>.SetEnum(this, val);
-    }
-    static public IList<WorkQueueTypeEnum> GetAll()
-    {
-        return ServerEnumHelper<WorkQueueTypeEnum, IWorkQueueTypeEnumBroker>.GetAll();
-    }
-    static public WorkQueueTypeEnum GetEnum(string lookup)
-    {
-        return ServerEnumHelper<WorkQueueTypeEnum, IWorkQueueTypeEnumBroker>.GetEnum(lookup);
-    }
-    #endregion
-}
+  public enum WorkQueueTypeEnum
+  {
+      [EnumValueDescriptionAttribute("Process Study", "Processing of a new incoming study.")]
+      StudyProcess = 100,
+
+      [EnumValueDescriptionAttribute("Auto Route", "DICOM Auto-route request.")]
+      AutoRoute = 101,
+
+      [EnumValueDescriptionAttribute("Delete Study", "Automatic deletion of a Study.")]
+      DeleteStudy = 102,
+
+      [EnumValueDescriptionAttribute("Web Delete Study", "Manual study delete via the Web UI.")]
+      WebDeleteStudy = 103,
+
+      [EnumValueDescriptionAttribute("Web Move Study", "Manual DICOM move of a study via the Web UI.")]
+      WebMoveStudy = 104,
+
+      [EnumValueDescriptionAttribute("Web Edit Study", "Manual study edit via the Web UI.")]
+      WebEditStudy = 105,
+
+      [EnumValueDescriptionAttribute("Cleanup Study", "Cleanup all unprocessed or failed instances within a study.")]
+      CleanupStudy = 106,
+
+      [EnumValueDescriptionAttribute("Compress Study", "Compress a study.")]
+      CompressStudy = 107
+  }
+
+  public static class WorkQueueTypeEnumHelper
+  {
+      public static IList<WorkQueueTypeEnum> GetAll()
+      {
+          List<WorkQueueTypeEnum> values = new List<WorkQueueTypeEnum>();
+          Array array = Enum.GetValues(typeof (WorkQueueTypeEnum));
+          
+          foreach(WorkQueueTypeEnum value in array)
+          {
+              values.Add(value);
+          }
+          return values;
+      }
+      public static WorkQueueTypeEnum Get(string lookup)
+      {
+          return (WorkQueueTypeEnum) Enum.Parse(typeof (WorkQueueTypeEnum), lookup);
+      }
+      public static bool IsDefined(string lookup)
+      {
+          return Enum.IsDefined(typeof (WorkQueueTypeEnum), lookup);
+      }
+      public static string GetDescription(WorkQueueTypeEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).Description;
+          }
+          else
+              return null;
+      }
+      public static string GetLongDescription(WorkQueueTypeEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;
+          }
+          else
+              return null;
+      }
+  }
 }

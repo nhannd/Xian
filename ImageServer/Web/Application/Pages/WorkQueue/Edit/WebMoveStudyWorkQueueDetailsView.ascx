@@ -2,13 +2,13 @@
 
 <ccAsp:SectionPanel ID="WebMoveStudyInfoSectionPanel" runat="server" HeadingText="Study Move (Web)" HeadingCSS="CSSDefaultSectionHeading">
 <SectionContentTemplate>
-<asp:DetailsView ID="WebMoveStudyDetailsView" runat="server" AutoGenerateRows="False" CellPadding="4" 
+<asp:DetailsView ID="WebMoveStudyDetailsView" runat="server" AutoGenerateRows="False" CellPadding="4"  OnDataBound="WebMoveStudyDetailsView_DataBound"
     GridLines="Horizontal" CssClass="CSSStudyDetailsView" Width="100%">
     <Fields>
         <asp:TemplateField HeaderText="Type">
             <HeaderStyle Wrap="False" />
             <ItemTemplate>
-                <asp:Label ID="Type" runat="server"  Text='<%# Eval("Type.Description") %>' ></asp:Label>
+                <asp:Label ID="Type" runat="server" ></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         
@@ -40,7 +40,7 @@
 
 <ccAsp:SectionPanel ID="GeneralInfoSectionPanel" runat="server" HeadingText="General Information" HeadingCSS="CSSDefaultSectionHeading">
 <SectionContentTemplate>
-<asp:DetailsView ID="DetailsView1" runat="server" AutoGenerateRows="False" CellPadding="4" 
+<asp:DetailsView ID="GeneralInfoDetailsView" runat="server" AutoGenerateRows="False" CellPadding="4"  OnDataBound="GeneralInfoDetailsView_DataBound"
     GridLines="Horizontal" CssClass="CSSStudyDetailsView" Width="100%">
     <Fields>
     
@@ -61,14 +61,14 @@
         <asp:TemplateField HeaderText="Status">
             <HeaderStyle Wrap="False" />
             <ItemTemplate>
-                <asp:Label ID="Status" runat="server"  Text='<%# Eval("Status.Description") %>' ></asp:Label>
+                <asp:Label ID="Status" runat="server"></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         
         <asp:TemplateField HeaderText="Priority">
             <HeaderStyle Wrap="False" />
             <ItemTemplate>
-                <asp:Label ID="Priority" runat="server"  Text='<%# Eval("Priority.Description") %>' ></asp:Label>
+                <asp:Label ID="Priority" runat="server"></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         

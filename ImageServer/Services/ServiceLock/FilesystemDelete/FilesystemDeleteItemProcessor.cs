@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         private void DoStudyDelete(Model.ServiceLock item)
         {
             DateTime deleteTime = Platform.Time;
-            FilesystemQueueTypeEnum type = FilesystemQueueTypeEnum.GetEnum("DeleteStudy");
+            FilesystemQueueTypeEnum type = FilesystemQueueTypeEnum.DeleteStudy;
 
             while (_bytesToRemove > 0)
             {
@@ -132,10 +132,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
             WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
 
-            criteria.WorkQueueTypeEnum.EqualTo(WorkQueueTypeEnum.GetEnum("DeleteStudy"));
+            criteria.WorkQueueTypeEnum.EqualTo(WorkQueueTypeEnum.DeleteStudy);
             // Do Pending status, in case there's a Failure status entry, we don't want to 
             // block on that.
-            criteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.GetEnum("Pending"));
+            criteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.Pending);
 
             StorageFilesystemSelectCriteria storageCriteria = new StorageFilesystemSelectCriteria();
 

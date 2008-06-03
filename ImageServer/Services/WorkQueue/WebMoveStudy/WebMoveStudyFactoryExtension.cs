@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
 
         public virtual WorkQueueTypeEnum GetWorkQueueType()
         {
-            return WorkQueueTypeEnum.GetEnum("WebMoveStudy");
+            return WorkQueueTypeEnum.WebMoveStudy;
         }
 
         public virtual IWorkQueueItemProcessor GetItemProcessor()

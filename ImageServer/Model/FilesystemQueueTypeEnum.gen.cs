@@ -36,28 +36,68 @@ namespace ClearCanvas.ImageServer.Model
     using System;
     using System.Collections.Generic;
     using ClearCanvas.ImageServer.Enterprise;
-    using ClearCanvas.ImageServer.Model.EntityBrokers;
+    using System.Reflection;
 
-[Serializable]
-public partial class FilesystemQueueTypeEnum : ServerEnum
-{
-    #region Constructors
-    public FilesystemQueueTypeEnum():base("FilesystemQueueTypeEnum")
-    {}
-    #endregion
-    #region Public Members
-    public override void SetEnum(short val)
-    {
-        ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnumBroker>.SetEnum(this, val);
-    }
-    static public IList<FilesystemQueueTypeEnum> GetAll()
-    {
-        return ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnumBroker>.GetAll();
-    }
-    static public FilesystemQueueTypeEnum GetEnum(string lookup)
-    {
-        return ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnumBroker>.GetEnum(lookup);
-    }
-    #endregion
-}
+  public enum FilesystemQueueTypeEnum
+  {
+      [EnumValueDescriptionAttribute("Delete Study", "Delete a Study")]
+      DeleteStudy = 100,
+
+      [EnumValueDescriptionAttribute("Purge Study", "Purge an Online Study")]
+      PurgeStudy = 101,
+
+      [EnumValueDescriptionAttribute("Tier Migrate", "Migrate a Study to a Lower Tier")]
+      TierMigrate = 102,
+
+      [EnumValueDescriptionAttribute("Lossless Compress", "Lossless Compress a Study")]
+      LosslessCompress = 103,
+
+      [EnumValueDescriptionAttribute("Lossy Compress", "Lossy Compress a Study")]
+      LossyCompress = 104
+  }
+
+  public static class FilesystemQueueTypeEnumHelper
+  {
+      public static IList<FilesystemQueueTypeEnum> GetAll()
+      {
+          List<FilesystemQueueTypeEnum> values = new List<FilesystemQueueTypeEnum>();
+          Array array = Enum.GetValues(typeof (FilesystemQueueTypeEnum));
+          
+          foreach(FilesystemQueueTypeEnum value in array)
+          {
+              values.Add(value);
+          }
+          return values;
+      }
+      public static FilesystemQueueTypeEnum Get(string lookup)
+      {
+          return (FilesystemQueueTypeEnum) Enum.Parse(typeof (FilesystemQueueTypeEnum), lookup);
+      }
+      public static bool IsDefined(string lookup)
+      {
+          return Enum.IsDefined(typeof (FilesystemQueueTypeEnum), lookup);
+      }
+      public static string GetDescription(FilesystemQueueTypeEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).Description;
+          }
+          else
+              return null;
+      }
+      public static string GetLongDescription(FilesystemQueueTypeEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;
+          }
+          else
+              return null;
+      }
+  }
 }

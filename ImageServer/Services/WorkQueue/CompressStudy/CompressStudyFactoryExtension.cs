@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
 		public WorkQueueTypeEnum GetWorkQueueType()
 		{
-			return WorkQueueTypeEnum.GetEnum("CompressStudy");
+			return WorkQueueTypeEnum.CompressStudy;
 		}
 
 		public IWorkQueueItemProcessor GetItemProcessor()

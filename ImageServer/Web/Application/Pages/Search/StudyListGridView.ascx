@@ -32,7 +32,7 @@
                     <asp:BoundField DataField="ModalitiesInStudy" HeaderText="Modality" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
                     <asp:TemplateField HeaderText="Status" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
-                            <asp:Label ID="Status" runat="server" Text='<%# Eval("StudyStatusEnum.Description") %>'></asp:Label>
+                            <asp:Label ID="Status" runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
 

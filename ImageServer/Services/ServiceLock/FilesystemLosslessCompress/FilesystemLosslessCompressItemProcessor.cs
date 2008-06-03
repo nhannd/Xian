@@ -78,8 +78,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 					IInsertWorkQueueCompressStudy workQueueInsert = update.GetBroker<IInsertWorkQueueCompressStudy>();
 
 					WorkQueueCompressStudyInsertParameters insertParms = new WorkQueueCompressStudyInsertParameters();
-					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.GetEnum("CompressStudy");
-					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.GetEnum("LosslessCompress");
+					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.CompressStudy;
+					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LosslessCompress;
 					insertParms.StudyStorageKey = location.GetKey();
 					insertParms.ServerPartitionKey = location.ServerPartitionKey;
 					DateTime expirationTime = scheduledTime;
@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 			try
 			{
 				DateTime deleteTime = Platform.Time;
-				FilesystemQueueTypeEnum type = FilesystemQueueTypeEnum.GetEnum("LosslessCompress");
+				FilesystemQueueTypeEnum type = FilesystemQueueTypeEnum.LosslessCompress;
 
 				IList<FilesystemQueue> list = GetFilesystemQueueCandidates(item, deleteTime, type);
 

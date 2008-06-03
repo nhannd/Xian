@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         {
             StudyDetails details = new StudyDetails();
             details.StudyInstanceUID = study.StudyInstanceUid;
-            details.Status = study.StudyStatusEnum.Description;
+            details.Status = study.StudyStatusEnum.ToString();
             details.PatientName = study.PatientsName;
             details.AccessionNumber = study.AccessionNumber;
             details.PatientID = study.PatientId;

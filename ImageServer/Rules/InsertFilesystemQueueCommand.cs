@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.Rules
 
         public InsertFilesystemQueueCommand(FilesystemQueueTypeEnum queueType, ServerEntityKey filesystemKey,
                                             ServerEntityKey studyStorageKey, DateTime scheduledTime, XmlDocument queueXml)
-            : base("Insert FilesystemQueue Record of type " + queueType.Description, true)
+            : base("Insert FilesystemQueue Record of type " + queueType, true)
         {
             _queueType = queueType;
             _filesystemKey = filesystemKey;

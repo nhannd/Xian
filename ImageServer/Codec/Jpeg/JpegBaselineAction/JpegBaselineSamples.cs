@@ -41,10 +41,10 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegBaselineAction
         public JpegBaselineSamples()
             : base("JpegBaseline",
                    "JPEG Baseline Time Rule",
-                   ServerRuleTypeEnum.GetEnum("StudyCompress"),
+                   ServerRuleTypeEnum.StudyCompress,
                    "SampleJpegBaseline.xml")
         {
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
         }
     }
 
@@ -54,10 +54,10 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegBaselineAction
 		public JpegBaselineSampleStudyDate()
 			: base("JpegBaselineStudyDate",
 				   "JPEG Baseline, Study Date Time",
-				   ServerRuleTypeEnum.GetEnum("StudyCompress"),
+				   ServerRuleTypeEnum.StudyCompress,
 				   "SampleJpegBaselineStudyDate.xml")
 		{
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
 		}
 	}
 }

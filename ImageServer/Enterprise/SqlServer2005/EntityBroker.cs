@@ -131,11 +131,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     values[i] = key.Key;
                 else
                 {
-                    ServerEnum e = sc.Values[i] as ServerEnum;
-                    if (e != null)
-                        values[i] = e.Enum;
-                    else
-                        values[i] = sc.Values[i];
+                    values[i] = sc.Values[i];
                 }
             }
 
@@ -390,14 +386,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 else
                     sqlColumnName = String.Format("{0}GUID", parm.FieldName);
             }
-            else if (parm is EntityUpdateColumn<ServerEnum>)
-            {
-                if (parm.FieldName.EndsWith("Enum"))
-                    sqlColumnName = String.Format("{0}", parm.FieldName);
+            //else if (parm is EntityUpdateColumn<ServerEnum>)
+            //{
+            //    if (parm.FieldName.EndsWith("Enum"))
+            //        sqlColumnName = String.Format("{0}", parm.FieldName);
 
-                else
-                    sqlColumnName = String.Format("{0}Enum", parm.FieldName);
-            }
+            //    else
+            //        sqlColumnName = String.Format("{0}Enum", parm.FieldName);
+            //}
             else
             {
                 sqlColumnName = String.Format("{0}", parm.FieldName);
@@ -440,12 +436,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                     command.Parameters.AddWithValue("@" + sqlParmName, sw.ToString());
                 }
-                else if (parm is EntityUpdateColumn<ServerEnum>)
-                {
-                    EntityUpdateColumn<ServerEnum> p = parm as EntityUpdateColumn<ServerEnum>;
-                    ServerEnum v = p.Value;
-                    command.Parameters.AddWithValue("@" + sqlParmName, v.Enum);
-                }
+                //else if (parm is EntityUpdateColumn<ServerEnum>)
+                //{
+                //    EntityUpdateColumn<ServerEnum> p = parm as EntityUpdateColumn<ServerEnum>;
+                //    ServerEnum v = p.Value;
+                //    command.Parameters.AddWithValue("@" + sqlParmName, v.Enum);
+                //}
                 else if (parm is EntityUpdateColumn<ServerEntity>)
                 {
                     EntityUpdateColumn<ServerEntity> p = parm as EntityUpdateColumn<ServerEntity>;
@@ -460,13 +456,13 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 }
                 else
                 {
-                    if (parm.Value is ServerEnum)
-                    {
-                        ServerEnum v = (ServerEnum)parm.Value;
-                        command.Parameters.AddWithValue("@" + sqlParmName, v.Enum);
-                    }
-                    else
-                        command.Parameters.AddWithValue("@" + sqlParmName, parm.Value);
+                    //if (parm.Value is ServerEnum)
+                    //{
+                    //    ServerEnum v = (ServerEnum)parm.Value;
+                    //    command.Parameters.AddWithValue("@" + sqlParmName, v.Enum);
+                    //}
+                    //else
+                    command.Parameters.AddWithValue("@" + sqlParmName, parm.Value);
                 }
 
                 text = String.Format("[{0}]=@{0}", sqlParmName);
@@ -564,13 +560,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 String sqlParmName = GetDbColumnName(parm);
                 intoText.AppendFormat(", {0}", sqlParmName);
 
-                if (parm.Value is ServerEnum)
-                {
-                    ServerEnum v = (ServerEnum) parm.Value;
-                    valuesText.AppendFormat(", @{0}", sqlParmName);
-                    command.Parameters.AddWithValue("@" + sqlParmName, v.Enum);
-                }
-                else if (parm is EntityUpdateColumn<ServerEntity>)
+                //if (parm.Value is ServerEnum)
+                //{
+                //    ServerEnum v = (ServerEnum) parm.Value;
+                //    valuesText.AppendFormat(", @{0}", sqlParmName);
+                //    command.Parameters.AddWithValue("@" + sqlParmName, v.Enum);
+                //}
+                //else 
+                if (parm is EntityUpdateColumn<ServerEntity>)
                 {
                     ServerEntity v = (ServerEntity) parm.Value;
                     valuesText.AppendFormat(", @{0}", sqlParmName);

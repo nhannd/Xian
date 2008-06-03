@@ -99,11 +99,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             return
                 // it's pending
-                item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("Pending")
+                item.WorkQueueStatusEnum == WorkQueueStatusEnum.Pending
                 // it's idle
-                || item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("Idle")
+                || item.WorkQueueStatusEnum == WorkQueueStatusEnum.Idle
                 /* somebody claimed it but hasn't updated it for quite a while */
-                || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress") &&
+                || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress &&
                     !String.IsNullOrEmpty(item.ProcessorID) &&
                     item.ScheduledTime < Platform.Time.Subtract(TimeSpan.FromHours(12)));
         }
@@ -120,11 +120,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             return
                 /* failed item */
-                item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("Failed")
+                item.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed
                 /* nobody claimed it */
-                || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress") && String.IsNullOrEmpty(item.ProcessorID))
+                || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress && String.IsNullOrEmpty(item.ProcessorID))
                 /* somebody claimed it but hasn't updated it for quite a while */
-                || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress") &&
+                || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress &&
                     !String.IsNullOrEmpty(item.ProcessorID) &&
                     item.ScheduledTime < Platform.Time.Subtract(TimeSpan.FromHours(12)));
 
@@ -142,31 +142,31 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             return
                 /* failed item */
-                item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("Failed")
+                item.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed
                 /* completed item */
-                || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("Completed"))
+                || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.Completed)
                 /* nobody claimed it */
                 ||
-                (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress") &&
+                (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress &&
                  String.IsNullOrEmpty(item.ProcessorID))
                 /* somebody claimed it but hasn't updated it for quite a while */
                 ||
-                (item.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress") &&
+                (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress &&
                  !String.IsNullOrEmpty(item.ProcessorID) &&
                  item.ScheduledTime < Platform.Time.Subtract(TimeSpan.FromHours(12)))
                 // allow deletes of some pending entries
                 ||
-                (item.WorkQueueStatusEnum != WorkQueueStatusEnum.GetEnum("In Progress") &&
-                 item.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("WebMoveStudy"))
+                (item.WorkQueueStatusEnum != WorkQueueStatusEnum.InProgress &&
+                 item.WorkQueueTypeEnum == WorkQueueTypeEnum.WebMoveStudy)
                 ||
-                (item.WorkQueueStatusEnum != WorkQueueStatusEnum.GetEnum("In Progress") &&
-                 item.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("WebEditStudy"))
+                (item.WorkQueueStatusEnum != WorkQueueStatusEnum.InProgress &&
+                 item.WorkQueueTypeEnum == WorkQueueTypeEnum.WebEditStudy)
                 ||
-                (item.WorkQueueStatusEnum != WorkQueueStatusEnum.GetEnum("In Progress") &&
-                 item.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("AutoRoute"))
+                (item.WorkQueueStatusEnum != WorkQueueStatusEnum.InProgress &&
+                 item.WorkQueueTypeEnum == WorkQueueTypeEnum.AutoRoute)
                 ||
-                (item.WorkQueueStatusEnum != WorkQueueStatusEnum.GetEnum("In Progress") &&
-                 item.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("WebDeleteStudy"));
+                (item.WorkQueueStatusEnum != WorkQueueStatusEnum.InProgress &&
+                 item.WorkQueueTypeEnum == WorkQueueTypeEnum.WebDeleteStudy);
         }
 
 
@@ -308,7 +308,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             
             WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-            columns.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+            columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
             columns.ProcessorID = "";
             columns.FailureCount = 0;
             columns.ScheduledTime = newScheduledTime;

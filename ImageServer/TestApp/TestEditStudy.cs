@@ -65,9 +65,9 @@ namespace ClearCanvas.ImageServer.TestApp
                     columns.ExpirationTime = DateTime.Now.AddHours(1);
                     columns.ScheduledTime = DateTime.Now;
                     columns.InsertTime = DateTime.Now;
-                    columns.WorkQueuePriorityEnum = Model.WorkQueuePriorityEnum.GetEnum("Medium");
-                    columns.WorkQueueStatusEnum = Model.WorkQueueStatusEnum.GetEnum("Pending");
-                    columns.WorkQueueTypeEnum = Model.WorkQueueTypeEnum.GetEnum("WebEditStudy");
+                    columns.WorkQueuePriorityEnum = Model.WorkQueuePriorityEnum.Medium;
+                    columns.WorkQueueStatusEnum = Model.WorkQueueStatusEnum.Pending;
+                    columns.WorkQueueTypeEnum = Model.WorkQueueTypeEnum.WebEditStudy;
 
                     XmlDocument doc = new XmlDocument();
                     doc.Load(new StringReader(textBox1.Text));

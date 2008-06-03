@@ -32,7 +32,6 @@
 using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
@@ -227,10 +226,34 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
                         Page.ClientScript.GetPostBackEventReference(GridView, "Select$" + e.Row.RowIndex);
                     e.Row.Style["cursor"] = "hand";
 
+                    CustomizeTypeColumn(e.Row);
+                    CustomizeDescriptionColumn(e.Row);
                     CustomizeEnabledColumn(e.Row);
                     CustomizeLockColumn(e.Row);
                     CustomizeFilesystemColumn(e.Row);
                 }
+            }
+        }
+
+        protected void CustomizeTypeColumn(GridViewRow row)
+        {
+            Label typeLabel = row.FindControl("Type") as Label;
+
+            ServiceLock item = row.DataItem as ServiceLock;
+            if (typeLabel != null && item!=null)
+            {
+                typeLabel.Text = ServiceLockTypeEnumHelper.GetDescription(item.ServiceLockTypeEnum);
+            }
+        }
+
+        protected void CustomizeDescriptionColumn(GridViewRow row)
+        {
+            Label descLabel = row.FindControl("Description") as Label;
+
+            ServiceLock item = row.DataItem as ServiceLock;
+            if (descLabel != null && item != null)
+            {
+                descLabel.Text = ServiceLockTypeEnumHelper.GetLongDescription(item.ServiceLockTypeEnum);
             }
         }
 

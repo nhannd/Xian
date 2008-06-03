@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 
         #region Events
         /// <summary>
-        /// Defines the handler for <seealso cref="StudyListControl.OnStudySelectionChanged"/> event.
+        /// Defines the handler for <seealso cref="OnStudySelectionChanged"/> event.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="selectedStudies"></param>
@@ -255,7 +255,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 
         protected void StudyListControl_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            
+            StudySummary studySummary = e.Row.DataItem as StudySummary;
+            if (studySummary!=null)
+            {
+                Label statusLabel = e.Row.FindControl("Status") as Label;
+                if (statusLabel!=null)
+                {
+                    statusLabel.Text = StudyStatusEnumHelper.GetDescription(studySummary.StudyStatusEnum);
+                }
+            }
         }
 
         protected override void OnPreRender(EventArgs e)

@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 
 		public ServiceLockTypeEnum GetServiceLockType()
 		{
-			return ServiceLockTypeEnum.GetEnum("FilesystemLosslessCompress");
+			return ServiceLockTypeEnum.FilesystemLosslessCompress;
 		}
 
 		public IServiceLockItemProcessor GetItemProcessor()

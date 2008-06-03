@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Text;
 using System.Xml;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Enterprise;
@@ -295,34 +296,125 @@ namespace CodeGenerator
             writer.WriteLine("    using System;");
             writer.WriteLine("    using System.Collections.Generic;");
             writer.WriteLine("    using ClearCanvas.ImageServer.Enterprise;");
-            writer.WriteLine("    using ClearCanvas.ImageServer.Model.EntityBrokers;");
+            writer.WriteLine("    using System.Reflection;");
             writer.WriteLine("");
 
-            writer.WriteLine("[Serializable]");
-            writer.WriteLine("public partial class {0} : ServerEnum", table.TableName);
-            writer.WriteLine("{");
-            writer.WriteLine("    #region Constructors");
-            writer.WriteLine("    public {0}():base(\"{0}\")", table.TableName);
-            writer.WriteLine("    {}");
-            writer.WriteLine("    #endregion");
-            writer.WriteLine("    #region Public Members");
-            writer.WriteLine("    public override void SetEnum(short val)");
-            writer.WriteLine("    {");
-            writer.WriteLine("        ServerEnumHelper<{0}, I{0}Broker>.SetEnum(this, val);", table.TableName);
-            writer.WriteLine("    }");
+            //writer.WriteLine("[Serializable]");
+            //writer.WriteLine("public partial class {0} : ServerEnum", table.TableName);
+            //writer.WriteLine("{");
+            //writer.WriteLine("    #region Constructors");
+            //writer.WriteLine("    public {0}():base(\"{0}\")", table.TableName);
+            //writer.WriteLine("    {}");
+            //writer.WriteLine("    #endregion");
+            //writer.WriteLine("    #region Public Members");
+            //writer.WriteLine("    public override void SetEnum(short val)");
+            //writer.WriteLine("    {");
+            //writer.WriteLine("        ServerEnumHelper<{0}, I{0}Broker>.SetEnum(this, val);", table.TableName);
+            //writer.WriteLine("    }");
 
-            writer.WriteLine("    static public IList<{0}> GetAll()",table.TableName);
-            writer.WriteLine("    {");
-            writer.WriteLine("        return ServerEnumHelper<{0}, I{0}Broker>.GetAll();", table.TableName);
-            writer.WriteLine("    }");
+            //writer.WriteLine("    static public IList<{0}> GetAll()",table.TableName);
+            //writer.WriteLine("    {");
+            //writer.WriteLine("        return ServerEnumHelper<{0}, I{0}Broker>.GetAll();", table.TableName);
+            //writer.WriteLine("    }");
 
-            writer.WriteLine("    static public {0} GetEnum(string lookup)",table.TableName);
-            writer.WriteLine("    {");
-            writer.WriteLine("        return ServerEnumHelper<{0}, I{0}Broker>.GetEnum(lookup);", table.TableName);
-            writer.WriteLine("    }");
-            writer.WriteLine("    #endregion");
+            //writer.WriteLine("    static public {0} GetEnum(string lookup)",table.TableName);
+            //writer.WriteLine("    {");
+            //writer.WriteLine("        return ServerEnumHelper<{0}, I{0}Broker>.GetEnum(lookup);", table.TableName);
+            //writer.WriteLine("    }");
+            //writer.WriteLine("    #endregion");
 
-            writer.WriteLine("}");
+            //writer.WriteLine("}");
+
+
+            writer.WriteLine("  public enum {0}", table.TableName);
+            writer.WriteLine("  {");
+
+            using (SqlConnection connection = new SqlConnection())
+            {
+                ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings["ImageServerConnectString"];
+                connection.ConnectionString = settings.ConnectionString;
+                connection.Open();
+
+                StringBuilder cmd = new StringBuilder();
+                cmd.AppendFormat("SELECT * FROM {0}", table.TableName);
+                SqlCommand cmdSelect = new SqlCommand(cmd.ToString(), connection);
+
+                SqlDataReader myReader = cmdSelect.ExecuteReader();
+                int fieldCount = 0;
+                while(myReader.Read())
+                {
+                    fieldCount++;
+                    Guid guid = (Guid) myReader["GUID"];
+                    string enumValue = myReader["Enum"].ToString();
+                    string lookup = myReader["Lookup"].ToString().Replace(" ", "");
+                    string description = myReader["Description"].ToString();
+                    string longDescription = myReader["LongDescription"].ToString();
+
+                    if (fieldCount>1)
+                    {
+                        writer.WriteLine(",\n");
+                    }
+
+                    writer.WriteLine("      [EnumValueDescriptionAttribute(\"{0}\", \"{1}\")]", description, longDescription);
+                    writer.Write("      {0} = {1}", lookup, enumValue);
+                }
+
+                writer.WriteLine("");
+            }
+            writer.WriteLine("  }\n");
+            
+            writer.WriteLine("  public static class {0}Helper", table.TableName);
+            writer.WriteLine("  {");
+            writer.WriteLine("      public static IList<{0}> GetAll()", table.TableName);
+            writer.WriteLine("      {");
+            writer.WriteLine("          List<{0}> values = new List<{0}>();", table.TableName);
+            writer.WriteLine("          Array array = Enum.GetValues(typeof ({0}));", table.TableName);
+            writer.WriteLine("          ");
+            writer.WriteLine("          foreach({0} value in array)", table.TableName);
+            writer.WriteLine("          {");
+            writer.WriteLine("              values.Add(value);");
+            writer.WriteLine("          }");
+            writer.WriteLine("          return values;");
+            writer.WriteLine("      }");
+
+            writer.WriteLine("      public static {0} Get(string lookup)", table.TableName);
+            writer.WriteLine("      {");
+            writer.WriteLine("          return ({0}) Enum.Parse(typeof ({0}), lookup);", table.TableName);
+            writer.WriteLine("      }");
+
+            writer.WriteLine("      public static bool IsDefined(string lookup)", table.TableName);
+            writer.WriteLine("      {");
+            writer.WriteLine("          return Enum.IsDefined(typeof ({0}), lookup);", table.TableName);
+            writer.WriteLine("      }");
+
+
+            writer.WriteLine("      public static string GetDescription({0} value)", table.TableName);
+            writer.WriteLine("      {");
+            writer.WriteLine("          FieldInfo enumField = value.GetType().GetField(value.ToString());");
+            writer.WriteLine("          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);");
+            writer.WriteLine("          if (attributes!=null && attributes.Length>0)");
+            writer.WriteLine("          {");
+            writer.WriteLine("              return ((EnumValueDescriptionAttribute)attributes[0]).Description;");
+            writer.WriteLine("          }");
+            writer.WriteLine("          else");
+            writer.WriteLine("              return null;");
+            writer.WriteLine("      }");
+
+
+            writer.WriteLine("      public static string GetLongDescription({0} value)", table.TableName);
+            writer.WriteLine("      {");
+            writer.WriteLine("          FieldInfo enumField = value.GetType().GetField(value.ToString());");
+            writer.WriteLine("          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);");
+            writer.WriteLine("          if (attributes!=null && attributes.Length>0)");
+            writer.WriteLine("          {");
+            writer.WriteLine("              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;");
+            writer.WriteLine("          }");
+            writer.WriteLine("          else");
+            writer.WriteLine("              return null;");
+            writer.WriteLine("      }");
+     
+
+            writer.WriteLine("  }");
 
             WriteFooter(writer);
 

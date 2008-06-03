@@ -203,7 +203,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
             foreach (ServerPartition partition in partitions)
             {
                 ServerRulesEngine engine =
-                    new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"), partition.GetKey());
+                    new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyProcessed, partition.GetKey());
                 _engines.Add(partition, engine);
 
                 engine.Load();

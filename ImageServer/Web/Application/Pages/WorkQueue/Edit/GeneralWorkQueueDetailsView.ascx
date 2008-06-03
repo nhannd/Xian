@@ -3,12 +3,12 @@
 <ccAsp:SectionPanel ID="GeneralInfoSectionPanel" runat="server" HeadingText="General Information" HeadingCSS="CSSDefaultSectionHeading">
 <SectionContentTemplate>
     <asp:DetailsView ID="GeneralInfoDetailsView" runat="server" AutoGenerateRows="False" CellPadding="4" 
-    GridLines="Horizontal" CssClass="CSSStudyDetailsView" Width="100%">
+    GridLines="Horizontal" CssClass="CSSStudyDetailsView" Width="100%" OnDataBound="OnDataBound">
     <Fields>
         <asp:TemplateField HeaderText="Type">
             <HeaderStyle Wrap="False" />
             <ItemTemplate>
-                <asp:Label ID="Type" runat="server"  Text='<%# Eval("Type.Description") %>' ></asp:Label>
+                <asp:Label ID="Type" runat="server"></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         
@@ -29,14 +29,14 @@
         <asp:TemplateField HeaderText="Status">
             <HeaderStyle Wrap="False" />
             <ItemTemplate>
-                <asp:Label ID="Status" runat="server"  Text='<%# Eval("Status.Description") %>' ></asp:Label>
+                <asp:Label ID="Status" runat="server" ></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         
         <asp:TemplateField HeaderText="Priority">
             <HeaderStyle Wrap="False" />
             <ItemTemplate>
-                <asp:Label ID="Priority" runat="server"  Text='<%# Eval("Priority.Description") %>' ></asp:Label>
+                <asp:Label ID="Priority" runat="server" ></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         

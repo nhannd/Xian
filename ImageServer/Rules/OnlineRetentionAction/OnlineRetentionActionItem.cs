@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
 {
     public class OnlineRetentionActionItem : ServerActionItemBase
     {
-        private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("PurgeStudy");
+        private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.PurgeStudy;
         private readonly Expression _exprScheduledTime;
 
         private readonly int _offsetTime;

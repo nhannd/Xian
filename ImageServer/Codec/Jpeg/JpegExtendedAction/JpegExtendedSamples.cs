@@ -41,10 +41,10 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegExtendedAction
         public JpegExtendedSamples()
             : base("JpegExtendedSample",
                    "JPEG Extended Simple Sample",
-				   ServerRuleTypeEnum.GetEnum("StudyCompress"),
+				   ServerRuleTypeEnum.StudyCompress,
                    "SampleJpegExtended.xml")
         {
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
         }
     }
 }

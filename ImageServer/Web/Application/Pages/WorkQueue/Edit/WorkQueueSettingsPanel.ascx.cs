@@ -32,14 +32,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         {
             get
             {
-                return WorkQueuePriorityEnum.GetEnum(PriorityDropDownList.SelectedValue);
+                return WorkQueuePriorityEnumHelper.Get(PriorityDropDownList.SelectedValue);
             }
             set
             {
-                if (value != null)
-                    PriorityDropDownList.SelectedValue = value.Lookup;
-                else
-                    PriorityDropDownList.SelectedIndex = -1;
+                PriorityDropDownList.SelectedValue = value.ToString();
             }
         }
 
@@ -130,10 +127,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             CalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
 
             PriorityDropDownList.Items.Clear();
-            IList<WorkQueuePriorityEnum> priorities = WorkQueuePriorityEnum.GetAll();
+            IList<WorkQueuePriorityEnum> priorities = WorkQueuePriorityEnumHelper.GetAll();
             foreach (WorkQueuePriorityEnum priority in priorities)
             {
-                PriorityDropDownList.Items.Add(new ListItem(priority.Description, priority.Lookup));
+                PriorityDropDownList.Items.Add(new ListItem(priority.ToString(), priority.ToString()));
             }
 
         }

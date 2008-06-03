@@ -78,11 +78,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         	TransferSyntax syntax = _file.TransferSyntax;
 			if (syntax.LossyCompressed)
-				parms.StudyStatusEnum = StudyStatusEnum.GetEnum("OnlineLossy");
+				parms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
 			else if (syntax.LosslessCompressed)
-				parms.StudyStatusEnum = StudyStatusEnum.GetEnum("OnlineLossless");
+				parms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
 			else
-				parms.StudyStatusEnum = StudyStatusEnum.GetEnum("Online");
+				parms.StudyStatusEnum = StudyStatusEnum.Online;
 
             // Get the Insert Instance broker and do the insert
             IInsertInstance insert = updateContext.GetBroker<IInsertInstance>();

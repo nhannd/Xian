@@ -222,8 +222,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
                 // only rebind the data if the dialog has been closed
                 if (ModalDialog.State == ClearCanvas.ImageServer.Web.Application.Common.ModalDialog.ShowState.Hide)
                 {
-                    Type.Text = service.ServiceLockTypeEnum.Description;
-                    Description.Text = service.ServiceLockTypeEnum.LongDescription;
+                    Type.Text = ServiceLockTypeEnumHelper.GetDescription(service.ServiceLockTypeEnum);
+                    Description.Text = ServiceLockTypeEnumHelper.GetLongDescription(service.ServiceLockTypeEnum);
                     Enabled.Checked = service.Enabled;
 
                     if (service.FilesystemKey != null)

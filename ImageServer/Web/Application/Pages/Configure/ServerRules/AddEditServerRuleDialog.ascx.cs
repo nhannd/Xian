@@ -153,9 +153,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
                     myEle.text = '{2}';
                     applyTimeList.add(myEle) ;
 
-                }}", typeEnum.Enum,
-			                     applyTimeEnum.Enum,
-			                     applyTimeEnum.Description, sampleList);
+                }}", typeEnum, applyTimeEnum,ServerRuleApplyTimeEnumHelper.GetDescription(applyTimeEnum), sampleList);
 		}
 
 		protected override void OnInit(EventArgs e)
@@ -193,19 +191,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
                 for (var q=sampleList.options.length; q>=0; q--) sampleList.options[q]=null;
                 for (var q=applyTimeList.options.length; q>=0; q--) applyTimeList.options[q]=null;
 				" + 
-			                    GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("AutoRoute"),
-			                                               ServerRuleApplyTimeEnum.GetEnum("SopProcessed"),extensions) +
+			                    GetJavascriptForSampleRule(ServerRuleTypeEnum.AutoRoute,
+			                                               ServerRuleApplyTimeEnum.SopProcessed,extensions) +
 			                    @"else "
-			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("StudyDelete"),
-			                                                 ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"),
+			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.StudyDelete,
+			                                                 ServerRuleApplyTimeEnum.StudyProcessed,
 			                                                 extensions) +
 			                    @"else "
-			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("Tier1Retention"),
-			                                                 ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"),
+			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.Tier1Retention,
+			                                                 ServerRuleApplyTimeEnum.StudyProcessed,
 			                                                 extensions) +
 			                    @"else "
-			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.GetEnum("StudyCompress"),
-			                                                 ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"),
+			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.StudyCompress,
+			                                                 ServerRuleApplyTimeEnum.StudyProcessed,
 			                                                 extensions) +
 			                    @"}
 
@@ -303,11 +301,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 
 			_rule.RuleName = RuleNameTextBox.Text;
 
-			_rule.ServerRuleTypeEnum = new ServerRuleTypeEnum();
-			_rule.ServerRuleTypeEnum.SetEnum(short.Parse(RuleTypeDropDownList.SelectedItem.Value));
+			_rule.ServerRuleTypeEnum = ServerRuleTypeEnumHelper.Get(RuleTypeDropDownList.SelectedItem.Value);
 
-			_rule.ServerRuleApplyTimeEnum = new ServerRuleApplyTimeEnum();
-			_rule.ServerRuleApplyTimeEnum.SetEnum(short.Parse(RuleApplyTimeDropDownList.SelectedItem.Value));
+			_rule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnumHelper.Get(RuleApplyTimeDropDownList.SelectedItem.Value);
 
 			_rule.Enabled = EnabledCheckBox.Checked;
 			_rule.DefaultRule = DefaultCheckBox.Checked;
@@ -349,50 +345,45 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 
 				// Fill in the drop down menus
 				RuleTypeDropDownList.Items.Add(new ListItem(
-				                               	_rule.ServerRuleTypeEnum.Description,
-				                               	_rule.ServerRuleTypeEnum.Enum.ToString()));
+                                                ServerRuleTypeEnumHelper.GetDescription(_rule.ServerRuleTypeEnum),
+                                                _rule.ServerRuleTypeEnum.ToString()));
 
-				if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("StudyDelete").Enum)
-				{
-					RuleApplyTimeDropDownList.Items.Add(new ListItem(
-					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").
-					                                    		Description,
-					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
-					                                    		ToString()));
-				}
-				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("Tier1Retention").Enum)
-				{
-					RuleApplyTimeDropDownList.Items.Add(new ListItem(
-					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").
-					                                    		Description,
-					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
-					                                    		ToString()));
-				}
-                else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("OnlineRetention").Enum)
+                switch(_rule.ServerRuleTypeEnum)
                 {
-                    RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                            ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").
-                                                                Description,
-                                                            ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
-                                                                ToString()));
+                    case ServerRuleTypeEnum.StudyDelete:
+					            RuleApplyTimeDropDownList.Items.Add(new ListItem(
+                                                            ServerRuleApplyTimeEnumHelper.GetDescription(ServerRuleApplyTimeEnum.StudyProcessed),
+					                                    	ServerRuleApplyTimeEnum.StudyProcessed.ToString()));
+                                break;
+
+                    case ServerRuleTypeEnum.Tier1Retention:
+					            RuleApplyTimeDropDownList.Items.Add(new ListItem(
+                                                            ServerRuleApplyTimeEnumHelper.GetDescription(ServerRuleApplyTimeEnum.StudyProcessed),
+					                                    	ServerRuleApplyTimeEnum.StudyProcessed.ToString()));
+                                break;
+
+                    case ServerRuleTypeEnum.OnlineRetention:
+					            RuleApplyTimeDropDownList.Items.Add(new ListItem(
+                                                            ServerRuleApplyTimeEnumHelper.GetDescription(ServerRuleApplyTimeEnum.StudyProcessed),
+					                                    	ServerRuleApplyTimeEnum.StudyProcessed.ToString()));
+                                break;
+                    case ServerRuleTypeEnum.AutoRoute:
+					            RuleApplyTimeDropDownList.Items.Add(new ListItem(
+                                                            ServerRuleApplyTimeEnumHelper.GetDescription(ServerRuleApplyTimeEnum.StudyProcessed),
+					                                    	ServerRuleApplyTimeEnum.StudyProcessed.ToString()));
+                                break;
+
+                    case ServerRuleTypeEnum.StudyCompress:
+					            RuleApplyTimeDropDownList.Items.Add(new ListItem(
+                                                            ServerRuleApplyTimeEnumHelper.GetDescription(ServerRuleApplyTimeEnum.StudyProcessed),
+					                                    	ServerRuleApplyTimeEnum.StudyProcessed.ToString()));
+                                break;
                 }
-				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("AutoRoute").Enum)
-				{
-					RuleApplyTimeDropDownList.Items.Add(new ListItem(
-					                                    	ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Description,
-					                                    	ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Enum.
-					                                    		ToString()));
-				}
-				else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("StudyCompress").Enum)
-				{
-					RuleApplyTimeDropDownList.Items.Add(new ListItem(
-					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Description,
-					                                    	ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
-					                                    		ToString()));
-				}
-				if (RuleApplyTimeDropDownList.Items.FindByValue(_rule.ServerRuleApplyTimeEnum.Enum.ToString())!= null)
-					RuleApplyTimeDropDownList.SelectedValue = _rule.ServerRuleApplyTimeEnum.Enum.ToString();
-				RuleTypeDropDownList.SelectedValue = _rule.ServerRuleTypeEnum.Enum.ToString();
+				
+				if (RuleApplyTimeDropDownList.Items.FindByValue(_rule.ServerRuleApplyTimeEnum.ToString())!= null)
+					RuleApplyTimeDropDownList.SelectedValue = _rule.ServerRuleApplyTimeEnum.ToString();
+                
+                RuleTypeDropDownList.SelectedValue = _rule.ServerRuleTypeEnum.ToString();
 
 
 				// Fill in the Rule XML
@@ -432,18 +423,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 
 				// Do the drop down lists
 				RuleTypeDropDownList.Items.Add(new ListItem(
-				                               	ServerRuleTypeEnum.GetEnum("AutoRoute").Description,
-				                               	ServerRuleTypeEnum.GetEnum("AutoRoute").Enum.ToString()));
+                                                ServerRuleTypeEnumHelper.GetDescription(ServerRuleTypeEnum.AutoRoute),
+				                               	ServerRuleTypeEnum.AutoRoute.ToString()));
 				RuleTypeDropDownList.Items.Add(new ListItem(
-				                               	ServerRuleTypeEnum.GetEnum("StudyDelete").Description,
-				                               	ServerRuleTypeEnum.GetEnum("StudyDelete").Enum.ToString()));
+                                                ServerRuleTypeEnumHelper.GetDescription(ServerRuleTypeEnum.StudyDelete),
+				                               	ServerRuleTypeEnum.StudyDelete.ToString()));
 				RuleTypeDropDownList.Items.Add(new ListItem(
-				                               	ServerRuleTypeEnum.GetEnum("StudyCompress").Description,
-												ServerRuleTypeEnum.GetEnum("StudyCompress").Enum.ToString()));
+                                                ServerRuleTypeEnumHelper.GetDescription(ServerRuleTypeEnum.StudyCompress),
+												ServerRuleTypeEnum.StudyCompress.ToString()));
 
 				RuleApplyTimeDropDownList.Items.Add(new ListItem(
-				                                    	ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Description,
-				                                    	ServerRuleApplyTimeEnum.GetEnum("SopProcessed").Enum.ToString()));
+                                                        ServerRuleApplyTimeEnumHelper.GetDescription(ServerRuleApplyTimeEnum.SopProcessed),
+				                                    	ServerRuleApplyTimeEnum.SopProcessed.ToString()));
 				
 				SampleRuleDropDownList.Items.Clear();
 				SampleRuleDropDownList.Items.Add(new ListItem("", ""));

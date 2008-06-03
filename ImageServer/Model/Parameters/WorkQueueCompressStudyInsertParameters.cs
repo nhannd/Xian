@@ -43,12 +43,12 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
 		public WorkQueueTypeEnum WorkQueueTypeEnum
 		{
-			set { SubCriteria["WorkQueueTypeEnum"] = new ProcedureParameter<ServerEnum>("WorkQueueTypeEnum", value); }
+            set { SubCriteria["WorkQueueTypeEnum"] = new ProcedureParameter<Enum>("WorkQueueTypeEnum", value); }
 		}
 
 		public FilesystemQueueTypeEnum FilesystemQueueTypeEnum
 		{
-			set { SubCriteria["FilesystemQueueTypeEnum"] = new ProcedureParameter<ServerEnum>("FilesystemQueueTypeEnum", value); }
+            set { SubCriteria["FilesystemQueueTypeEnum"] = new ProcedureParameter<Enum>("FilesystemQueueTypeEnum", value); }
 		}
 
 		public ServerEntityKey ServerPartitionKey

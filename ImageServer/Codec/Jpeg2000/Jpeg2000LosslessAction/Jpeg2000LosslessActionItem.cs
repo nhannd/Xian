@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LosslessAction
 	/// </summary>
 	public class Jpeg2000LosslessActionItem : ServerActionItemBase
 	{
-		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("LosslessCompress");
+		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.LosslessCompress;
 		private readonly Expression _exprScheduledTime;
 		private readonly int _offsetTime;
 		private readonly TimeUnit _units;

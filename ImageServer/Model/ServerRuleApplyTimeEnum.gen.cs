@@ -36,28 +36,65 @@ namespace ClearCanvas.ImageServer.Model
     using System;
     using System.Collections.Generic;
     using ClearCanvas.ImageServer.Enterprise;
-    using ClearCanvas.ImageServer.Model.EntityBrokers;
+    using System.Reflection;
 
-[Serializable]
-public partial class ServerRuleApplyTimeEnum : ServerEnum
-{
-    #region Constructors
-    public ServerRuleApplyTimeEnum():base("ServerRuleApplyTimeEnum")
-    {}
-    #endregion
-    #region Public Members
-    public override void SetEnum(short val)
-    {
-        ServerEnumHelper<ServerRuleApplyTimeEnum, IServerRuleApplyTimeEnumBroker>.SetEnum(this, val);
-    }
-    static public IList<ServerRuleApplyTimeEnum> GetAll()
-    {
-        return ServerEnumHelper<ServerRuleApplyTimeEnum, IServerRuleApplyTimeEnumBroker>.GetAll();
-    }
-    static public ServerRuleApplyTimeEnum GetEnum(string lookup)
-    {
-        return ServerEnumHelper<ServerRuleApplyTimeEnum, IServerRuleApplyTimeEnumBroker>.GetEnum(lookup);
-    }
-    #endregion
-}
+  public enum ServerRuleApplyTimeEnum
+  {
+      [EnumValueDescriptionAttribute("SOP Received", "Apply rule when a SOP Instance has been received")]
+      SopReceived = 100,
+
+      [EnumValueDescriptionAttribute("SOP Processed", "Apply rule when a SOP Instance has been processed")]
+      SopProcessed = 101,
+
+      [EnumValueDescriptionAttribute("Series Processed", "Apply rule when a Series is initially processed")]
+      SeriesProcessed = 102,
+
+      [EnumValueDescriptionAttribute("Study Processed", "Apply rule when a Study is initially processed")]
+      StudyProcessed = 103
+  }
+
+  public static class ServerRuleApplyTimeEnumHelper
+  {
+      public static IList<ServerRuleApplyTimeEnum> GetAll()
+      {
+          List<ServerRuleApplyTimeEnum> values = new List<ServerRuleApplyTimeEnum>();
+          Array array = Enum.GetValues(typeof (ServerRuleApplyTimeEnum));
+          
+          foreach(ServerRuleApplyTimeEnum value in array)
+          {
+              values.Add(value);
+          }
+          return values;
+      }
+      public static ServerRuleApplyTimeEnum Get(string lookup)
+      {
+          return (ServerRuleApplyTimeEnum) Enum.Parse(typeof (ServerRuleApplyTimeEnum), lookup);
+      }
+      public static bool IsDefined(string lookup)
+      {
+          return Enum.IsDefined(typeof (ServerRuleApplyTimeEnum), lookup);
+      }
+      public static string GetDescription(ServerRuleApplyTimeEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).Description;
+          }
+          else
+              return null;
+      }
+      public static string GetLongDescription(ServerRuleApplyTimeEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;
+          }
+          else
+              return null;
+      }
+  }
 }

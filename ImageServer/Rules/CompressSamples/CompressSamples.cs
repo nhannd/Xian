@@ -40,10 +40,10 @@ namespace ClearCanvas.ImageServer.Rules.CompressSamples
 		public LosslessCompressExemptSample()
 			: base("CompressExempt",
 			       "Compress Exempt Rule",
-				   ServerRuleTypeEnum.GetEnum("StudyCompress"),
+				   ServerRuleTypeEnum.StudyCompress,
 			       "SampleCompressExempt.xml")
 		{
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+		    ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
 		}
 	}
 

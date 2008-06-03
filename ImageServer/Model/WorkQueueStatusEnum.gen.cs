@@ -36,28 +36,68 @@ namespace ClearCanvas.ImageServer.Model
     using System;
     using System.Collections.Generic;
     using ClearCanvas.ImageServer.Enterprise;
-    using ClearCanvas.ImageServer.Model.EntityBrokers;
+    using System.Reflection;
 
-[Serializable]
-public partial class WorkQueueStatusEnum : ServerEnum
-{
-    #region Constructors
-    public WorkQueueStatusEnum():base("WorkQueueStatusEnum")
-    {}
-    #endregion
-    #region Public Members
-    public override void SetEnum(short val)
-    {
-        ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnumBroker>.SetEnum(this, val);
-    }
-    static public IList<WorkQueueStatusEnum> GetAll()
-    {
-        return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnumBroker>.GetAll();
-    }
-    static public WorkQueueStatusEnum GetEnum(string lookup)
-    {
-        return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnumBroker>.GetEnum(lookup);
-    }
-    #endregion
-}
+  public enum WorkQueueStatusEnum
+  {
+      [EnumValueDescriptionAttribute("Idle", "Waiting to expire or for more images")]
+      Idle = 100,
+
+      [EnumValueDescriptionAttribute("Pending", "Pending")]
+      Pending = 200,
+
+      [EnumValueDescriptionAttribute("In Progress", "In Progress")]
+      InProgress = 201,
+
+      [EnumValueDescriptionAttribute("Completed", "The Queue entry is completed.")]
+      Completed = 202,
+
+      [EnumValueDescriptionAttribute("Failed", "The Queue entry has failed.")]
+      Failed = 203
+  }
+
+  public static class WorkQueueStatusEnumHelper
+  {
+      public static IList<WorkQueueStatusEnum> GetAll()
+      {
+          List<WorkQueueStatusEnum> values = new List<WorkQueueStatusEnum>();
+          Array array = Enum.GetValues(typeof (WorkQueueStatusEnum));
+          
+          foreach(WorkQueueStatusEnum value in array)
+          {
+              values.Add(value);
+          }
+          return values;
+      }
+      public static WorkQueueStatusEnum Get(string lookup)
+      {
+          return (WorkQueueStatusEnum) Enum.Parse(typeof (WorkQueueStatusEnum), lookup);
+      }
+      public static bool IsDefined(string lookup)
+      {
+          return Enum.IsDefined(typeof (WorkQueueStatusEnum), lookup);
+      }
+      public static string GetDescription(WorkQueueStatusEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).Description;
+          }
+          else
+              return null;
+      }
+      public static string GetLongDescription(WorkQueueStatusEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;
+          }
+          else
+              return null;
+      }
+  }
 }

@@ -214,7 +214,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             TiersDropDownList.Items.Clear();
             foreach (FilesystemTierEnum tier in _tiers)
             {
-                TiersDropDownList.Items.Add(new ListItem(tier.Description, tier.Enum.ToString()));
+                TiersDropDownList.Items.Add(new ListItem(FilesystemTierEnumHelper.GetDescription(tier), tier.ToString()));
             }
 
             if (FileSystem == null)
@@ -238,7 +238,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
                 WriteCheckBox.Checked = FileSystem.Enabled && (FileSystem.WriteOnly || (FileSystem.ReadOnly == false));
                 LowWatermarkTextBox.Text = FileSystem.LowWatermark.ToString();
                 HighWatermarkTextBox.Text = FileSystem.HighWatermark.ToString();
-                TiersDropDownList.SelectedValue = FileSystem.FilesystemTierEnum.Enum.ToString();
+                TiersDropDownList.SelectedValue = FileSystem.FilesystemTierEnum.ToString();
             }
         }
 

@@ -11,9 +11,21 @@ namespace CodeGenerator
 {
     public partial class MainForm : Form
     {
+        private String _basePath;
+
         public MainForm()
         {
             InitializeComponent();
+
+            _basePath = Path.GetDirectoryName(Application.ExecutablePath);
+            DirectoryInfo dir = new DirectoryInfo(_basePath);
+            dir = dir.Parent.Parent.Parent.Parent;
+            _basePath = dir.FullName;
+
+            textBoxModelFolder.Text = _basePath;
+            textBoxEntityInterfaceFolder.Text = Path.Combine(_basePath, "EntityBrokers");
+            textBoxEntityImplementationFolder.Text = Path.Combine(Path.Combine(_basePath, "SqlServer2005"), "EntityBrokers");
+
         }
 
         private void buttonGenerateCode_Click(object sender, EventArgs e)

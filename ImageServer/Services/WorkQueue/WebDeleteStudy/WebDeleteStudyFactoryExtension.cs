@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 
         public override WorkQueueTypeEnum GetWorkQueueType()
         {
-            return WorkQueueTypeEnum.GetEnum("WebDeleteStudy");
+            return WorkQueueTypeEnum.WebDeleteStudy;
         }
 
         public override IWorkQueueItemProcessor GetItemProcessor()

@@ -224,9 +224,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 			else
 			{
 				if (compressSyntax.LossyCompressed)
-					UpdateStudyStatus(StorageLocation, StudyStatusEnum.GetEnum("OnlineLossy"));
+					UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossy);
 				else
-					UpdateStudyStatus(StorageLocation, StudyStatusEnum.GetEnum("OnlineLossless"));
+					UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossless);
 
 				PostProcessing(item, true, false);  // batch processed, not complete
 			}

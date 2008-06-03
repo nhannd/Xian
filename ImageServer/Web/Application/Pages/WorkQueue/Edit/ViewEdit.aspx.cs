@@ -184,14 +184,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
             if (WorkQueueItemDetailsPanel.WorkQueue != null)
             {
-                if (WorkQueueItemDetailsPanel.WorkQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("Failed"))
+                if (WorkQueueItemDetailsPanel.WorkQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed)
                 {
                     InformationDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_ItemHasFailed;
                     InformationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
                     return;
                 }
-                else if (WorkQueueItemDetailsPanel.WorkQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress"))
+                else if (WorkQueueItemDetailsPanel.WorkQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
                 {
                     InformationDialog.Message = App_GlobalResources.SR.WorkQueueBeingProcessed;
                     InformationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.ERROR;

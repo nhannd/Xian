@@ -40,10 +40,10 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
         public MultiTagAutoRoute()
             : base("MultiTagAutoRoute",
                    "Multi-Tag AutoRoute",
-                   ServerRuleTypeEnum.GetEnum("AutoRoute"),
+                   ServerRuleTypeEnum.AutoRoute,
                    "Sample_AutoRouteMultiTag.xml")
         {
-            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
+            ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopProcessed);
         }
     }
 
@@ -53,10 +53,10 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
         public SimpleAutoRouteSample()
             : base("SimpleAutoRoute",
                    "Simple AutoRoute",
-                   ServerRuleTypeEnum.GetEnum("AutoRoute"),
+                   ServerRuleTypeEnum.AutoRoute,
                    "Sample_AutoRouteSimple.xml")
         {
-            ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
+            ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopProcessed);
         }
     }
 }

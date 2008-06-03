@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
         private WorkQueueStatusEnum _status;
         private WorkQueuePriorityEnum _priority;
         private DateTime _scheduledDateTime;
+        private ServerInformation _processingServer;
         private string _notes;
 
         #endregion Private members
@@ -109,6 +110,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
         {
             get { return _notes; }
             set { _notes = value; }
+        }
+
+        public ServerInformation ProcessingServer
+        {
+            get { return _processingServer; }
+            set { _processingServer = value; }
         }
 
         #endregion Public Properties

@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
 {
     public class Tier1RetentionActionItem : ServerActionItemBase
     {
-        private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("TierMigrate");
+        private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.TierMigrate;
         private readonly Expression _exprScheduledTime;
         private readonly int _offsetTime;
         private readonly TimeUnit _units;

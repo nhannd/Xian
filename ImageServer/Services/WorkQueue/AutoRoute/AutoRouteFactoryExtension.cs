@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         public WorkQueueTypeEnum GetWorkQueueType()
         {
-            return WorkQueueTypeEnum.GetEnum("AutoRoute");
+            return WorkQueueTypeEnum.AutoRoute;
         }
 
         public IWorkQueueItemProcessor GetItemProcessor()

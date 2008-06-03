@@ -67,8 +67,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
             WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-            columns.WorkQueueTypeEnum = WorkQueueTypeEnum.GetEnum("WebDeleteStudy");
-            columns.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+            columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
+            columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
             columns.ServerPartitionKey = study.ServerPartitionKey;
 
             StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
@@ -96,8 +96,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
             WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-            columns.WorkQueueTypeEnum = WorkQueueTypeEnum.GetEnum("WebMoveStudy");
-            columns.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+            columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
+            columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
             columns.ServerPartitionKey = study.ServerPartitionKey;
 
             StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
@@ -139,18 +139,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             {
                 WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
                 WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-                workQueueCriteria.WorkQueueTypeEnum.EqualTo(WorkQueueTypeEnum.GetEnum("WebDeleteStudy"));
+                workQueueCriteria.WorkQueueTypeEnum.EqualTo(WorkQueueTypeEnum.WebDeleteStudy);
                 workQueueCriteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
                 workQueueCriteria.StudyStorageKey.EqualTo(storage.GetKey());
 
-                workQueueCriteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.GetEnum("Pending"));
+                workQueueCriteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.Pending);
 
                 IList<WorkQueue> list = adaptor.Get(workQueueCriteria);
                 if (list != null && list.Count > 0)
                     return true;
                 else
                 {
-                    workQueueCriteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.GetEnum("Idle")); // not likely but who knows
+                    workQueueCriteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.Idle); // not likely but who knows
                     list = adaptor.Get(workQueueCriteria);
                     if (list != null && list.Count > 0)
                         return true;

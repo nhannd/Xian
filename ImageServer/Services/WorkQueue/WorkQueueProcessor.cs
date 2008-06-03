@@ -143,8 +143,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     Platform.Log(LogLevel.Error,
                                  "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
-                                 item.WorkQueueTypeEnum.Description, item.GetKey(), item.FailureCount + 1);
-                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
+                                 item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
+                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
                     parms.ScheduledTime = Platform.Time;
                     parms.ExpirationTime = Platform.Time.AddDays(1);
                 }
@@ -152,8 +152,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     Platform.Log(LogLevel.Error,
                                  "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
-                                 item.WorkQueueTypeEnum.Description, item.GetKey(), item.FailureCount + 1);
-                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+                                 item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
+                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
                     parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
                     parms.ExpirationTime =
                         Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
@@ -162,7 +162,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
                 if (false == update.Execute(parms))
                 {
-                    Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum.Name,
+                    Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum,
                                  item.GetKey().ToString());
                 }
                 else
@@ -177,8 +177,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             WorkQueueSettings settings = WorkQueueSettings.Default;
 
-            WorkQueueStatusEnum pending = WorkQueueStatusEnum.GetEnum("Pending");
-            WorkQueueStatusEnum failed = WorkQueueStatusEnum.GetEnum("Failed");
+            WorkQueueStatusEnum pending = WorkQueueStatusEnum.Pending;
+            WorkQueueStatusEnum failed = WorkQueueStatusEnum.Failed;
 
             using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -206,7 +206,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         if (queueItem.WorkQueueStatusEnum.Equals(pending))
                             Platform.Log(LogLevel.Info, "Cleanup: Reset Queue Item : {0} --> Status={1} Scheduled={2} ExpirationTime={3}",
                                             queueItem.GetKey().Key,
-                                            queueItem.WorkQueueStatusEnum.Description, 
+                                            queueItem.WorkQueueStatusEnum, 
                                             queueItem.ScheduledTime, 
                                             queueItem.ExpirationTime);
                     }
@@ -296,10 +296,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             {
                                 Platform.Log(LogLevel.Error,
                                              "No extensions loaded for WorkQueue item type: {0}.  Failing item.",
-                                             queueItem.WorkQueueTypeEnum.Description);
+                                             queueItem.WorkQueueTypeEnum);
 
                                 //Just fail the WorkQueue item, not much else we can do
-                                FailQueueItem(queueItem, "No plugin to handle Workqueue type: " + queueItem.WorkQueueTypeEnum.Description );
+                                FailQueueItem(queueItem, "No plugin to handle Workqueue type: " + queueItem.WorkQueueTypeEnum );
                                 continue;
                             }
 
@@ -332,7 +332,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                                         {
                                                             Platform.Log(LogLevel.Error, e,
                                                                          "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
-                                                                         queueItem.WorkQueueTypeEnum.Description,
+                                                                         queueItem.WorkQueueTypeEnum,
                                                                          queueItem.GetKey());
 															if (e.InnerException != null)
 																FailQueueItem(queueItem, e.InnerException.Message);

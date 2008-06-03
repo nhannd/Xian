@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
         public FilesystemQueueTypeEnum FilesystemQueueTypeEnum
         {
-            set { this.SubCriteria["FilesystemQueueTypeEnum"] = new ProcedureParameter<ServerEnum>("FilesystemQueueTypeEnum", value); }
+            set { this.SubCriteria["FilesystemQueueTypeEnum"] = new ProcedureParameter<Enum>("FilesystemQueueTypeEnum", value); }
         }
     }
 }

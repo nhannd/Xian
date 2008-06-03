@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 {
     public class StudyDeleteActionItem : ServerActionItemBase
     {
-        private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.GetEnum("DeleteStudy");
+        private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.DeleteStudy;
         private readonly Expression _exprScheduledTime;
         private readonly int _offsetTime;
         private readonly TimeUnit _units;

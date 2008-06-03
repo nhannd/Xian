@@ -41,10 +41,10 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LosslessAction
         public Jpeg2000LosslessSamples()
             : base("Jpeg2000Lossless",
                    "JPEG 2000 Lossless Sample Rule",
-				   ServerRuleTypeEnum.GetEnum("StudyCompress"),
+				   ServerRuleTypeEnum.StudyCompress,
                    "SampleJpeg2000Lossless.xml")
         {
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
         }
     }
 
@@ -54,10 +54,10 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LosslessAction
 		public Jpeg2000ComboSample()
 			: base("Jpeg2000Combo",
 				   "JPEG 2000 Lossless and Lossy Sample Rule",
-				   ServerRuleTypeEnum.GetEnum("StudyCompress"),
+				   ServerRuleTypeEnum.StudyCompress,
 				   "SampleJpeg2000Combo.xml")
 		{
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
 		}
 	}
 }

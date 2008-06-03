@@ -84,7 +84,6 @@ namespace CodeGenerator
             this.textBoxModelFolder.Name = "textBoxModelFolder";
             this.textBoxModelFolder.Size = new System.Drawing.Size(353, 20);
             this.textBoxModelFolder.TabIndex = 3;
-            this.textBoxModelFolder.Text = "c:\\Projects\\ClearCanvas\\ImageServer\\Model";
             // 
             // buttonBrowse
             // 

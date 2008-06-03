@@ -36,28 +36,68 @@ namespace ClearCanvas.ImageServer.Model
     using System;
     using System.Collections.Generic;
     using ClearCanvas.ImageServer.Enterprise;
-    using ClearCanvas.ImageServer.Model.EntityBrokers;
+    using System.Reflection;
 
-[Serializable]
-public partial class ServiceLockTypeEnum : ServerEnum
-{
-    #region Constructors
-    public ServiceLockTypeEnum():base("ServiceLockTypeEnum")
-    {}
-    #endregion
-    #region Public Members
-    public override void SetEnum(short val)
-    {
-        ServerEnumHelper<ServiceLockTypeEnum, IServiceLockTypeEnumBroker>.SetEnum(this, val);
-    }
-    static public IList<ServiceLockTypeEnum> GetAll()
-    {
-        return ServerEnumHelper<ServiceLockTypeEnum, IServiceLockTypeEnumBroker>.GetAll();
-    }
-    static public ServiceLockTypeEnum GetEnum(string lookup)
-    {
-        return ServerEnumHelper<ServiceLockTypeEnum, IServiceLockTypeEnumBroker>.GetEnum(lookup);
-    }
-    #endregion
-}
+  public enum ServiceLockTypeEnum
+  {
+      [EnumValueDescriptionAttribute("Filesystem Delete", "Purge Data from a Filesystem")]
+      FilesystemDelete = 100,
+
+      [EnumValueDescriptionAttribute("Filesystem Reinventory", "Re-inventory Data within a Filesystem")]
+      FilesystemReinventory = 101,
+
+      [EnumValueDescriptionAttribute("Filesystem Reprocess Studies", "Reapply Study Processing rules within a Filesystem")]
+      FilesystemStudyProcess = 102,
+
+      [EnumValueDescriptionAttribute("Filesystem Lossless Compress", "Lossless compress studies within a Filesystem")]
+      FilesystemLosslessCompress = 103,
+
+      [EnumValueDescriptionAttribute("Filesystem Lossy Compress", "Lossy compress studies within a Filesystem")]
+      FilesystemLossyCompress = 104
+  }
+
+  public static class ServiceLockTypeEnumHelper
+  {
+      public static IList<ServiceLockTypeEnum> GetAll()
+      {
+          List<ServiceLockTypeEnum> values = new List<ServiceLockTypeEnum>();
+          Array array = Enum.GetValues(typeof (ServiceLockTypeEnum));
+          
+          foreach(ServiceLockTypeEnum value in array)
+          {
+              values.Add(value);
+          }
+          return values;
+      }
+      public static ServiceLockTypeEnum Get(string lookup)
+      {
+          return (ServiceLockTypeEnum) Enum.Parse(typeof (ServiceLockTypeEnum), lookup);
+      }
+      public static bool IsDefined(string lookup)
+      {
+          return Enum.IsDefined(typeof (ServiceLockTypeEnum), lookup);
+      }
+      public static string GetDescription(ServiceLockTypeEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).Description;
+          }
+          else
+              return null;
+      }
+      public static string GetLongDescription(ServiceLockTypeEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;
+          }
+          else
+              return null;
+      }
+  }
 }

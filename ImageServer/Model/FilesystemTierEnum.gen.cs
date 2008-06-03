@@ -36,28 +36,62 @@ namespace ClearCanvas.ImageServer.Model
     using System;
     using System.Collections.Generic;
     using ClearCanvas.ImageServer.Enterprise;
-    using ClearCanvas.ImageServer.Model.EntityBrokers;
+    using System.Reflection;
 
-[Serializable]
-public partial class FilesystemTierEnum : ServerEnum
-{
-    #region Constructors
-    public FilesystemTierEnum():base("FilesystemTierEnum")
-    {}
-    #endregion
-    #region Public Members
-    public override void SetEnum(short val)
-    {
-        ServerEnumHelper<FilesystemTierEnum, IFilesystemTierEnumBroker>.SetEnum(this, val);
-    }
-    static public IList<FilesystemTierEnum> GetAll()
-    {
-        return ServerEnumHelper<FilesystemTierEnum, IFilesystemTierEnumBroker>.GetAll();
-    }
-    static public FilesystemTierEnum GetEnum(string lookup)
-    {
-        return ServerEnumHelper<FilesystemTierEnum, IFilesystemTierEnumBroker>.GetEnum(lookup);
-    }
-    #endregion
-}
+  public enum FilesystemTierEnum
+  {
+      [EnumValueDescriptionAttribute("Tier 1", "Filesystem Tier 1")]
+      Tier1 = 101,
+
+      [EnumValueDescriptionAttribute("Tier 2", "Filesystem Tier 2")]
+      Tier2 = 102,
+
+      [EnumValueDescriptionAttribute("Tier 3", "Filesystem Tier 3")]
+      Tier3 = 103
+  }
+
+  public static class FilesystemTierEnumHelper
+  {
+      public static IList<FilesystemTierEnum> GetAll()
+      {
+          List<FilesystemTierEnum> values = new List<FilesystemTierEnum>();
+          Array array = Enum.GetValues(typeof (FilesystemTierEnum));
+          
+          foreach(FilesystemTierEnum value in array)
+          {
+              values.Add(value);
+          }
+          return values;
+      }
+      public static FilesystemTierEnum Get(string lookup)
+      {
+          return (FilesystemTierEnum) Enum.Parse(typeof (FilesystemTierEnum), lookup);
+      }
+      public static bool IsDefined(string lookup)
+      {
+          return Enum.IsDefined(typeof (FilesystemTierEnum), lookup);
+      }
+      public static string GetDescription(FilesystemTierEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).Description;
+          }
+          else
+              return null;
+      }
+      public static string GetLongDescription(FilesystemTierEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;
+          }
+          else
+              return null;
+      }
+  }
 }

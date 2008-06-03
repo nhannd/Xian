@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 {
@@ -62,6 +63,41 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         #endregion Public Properties
 
         #region Protected Methods
+
+        protected void GeneralInfoDetailsView_DataBound(object sender, EventArgs e)
+        {
+            WorkQueueDetails item = GeneralInfoDetailsView.DataItem as WorkQueueDetails;
+            if (item != null)
+            {
+                Label statusLabel = GeneralInfoDetailsView.FindControl("Status") as Label;
+                if (statusLabel != null)
+                {
+                    statusLabel.Text = WorkQueueStatusEnumHelper.GetDescription(item.Status);
+                }
+
+                Label priorityLabel = GeneralInfoDetailsView.FindControl("Priority") as Label;
+                if (priorityLabel != null)
+                {
+                    priorityLabel.Text = WorkQueuePriorityEnumHelper.GetDescription(item.Priority);
+                }
+            }
+
+
+        }
+
+        protected void AutoRouteDetailsView_DataBound(object sender, EventArgs e)
+        {
+            WorkQueueDetails item = AutoRouteDetailsView.DataItem as WorkQueueDetails;
+            if (item != null)
+            {
+                Label typeLabel = AutoRouteDetailsView.FindControl("Type") as Label;
+                if (typeLabel != null)
+                {
+                    typeLabel.Text = WorkQueueTypeEnumHelper.GetDescription(item.Type);
+                }
+
+            }
+        }
         #endregion Protected Methods
 
         #region Public Methods

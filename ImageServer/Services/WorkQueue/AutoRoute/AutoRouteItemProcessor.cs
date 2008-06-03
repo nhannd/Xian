@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             // Intercept entries that don't have any UIDs associated with them, and just
             // set them back to pending if its an AutoRoute request.
             if (WorkQueueUidList.Count == 0 
-                && item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.GetEnum("AutoRoute")))
+                && item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute))
             {
                 PostProcessing(item, false, false);
                 return;
@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         	// Reset the WorkQueue entry status
             if (WorkQueueUidList.Count > 0 || scu.Status == ScuOperationStatus.Failed)
                 PostProcessingFailure(item, false); // failures occurred
-            else if (item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.GetEnum("AutoRoute")))
+            else if (item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute))
                 PostProcessing(item, true, false); // no failures
 			else 
 				PostProcessing(item, true, true); // no failures, complete

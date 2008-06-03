@@ -54,11 +54,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         /// <returns></returns>
         static public WorkQueueDetails CreateWorkQueueDetail(Model.WorkQueue workqueue)
         {
-            if (workqueue.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("AutoRoute"))
+            if (workqueue.WorkQueueTypeEnum == WorkQueueTypeEnum.AutoRoute)
             {
                 return CreateAutoRouteWorkQueueItemDetails(workqueue);
             }
-            else if (workqueue.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("WebMoveStudy"))
+            else if (workqueue.WorkQueueTypeEnum == WorkQueueTypeEnum.WebMoveStudy)
             {
                 return CreateWebMoveStudyWorkQueueItemDetails(workqueue);
             }

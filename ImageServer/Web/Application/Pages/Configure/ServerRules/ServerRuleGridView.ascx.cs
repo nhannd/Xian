@@ -167,10 +167,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 		{
 			ServerRule fs = e.Row.DataItem as ServerRule;
 			Label lbl = e.Row.FindControl("ServerRuleApplyTimeEnum") as Label; // The label is added in the template
-			lbl.Text = fs.ServerRuleApplyTimeEnum.Description;
+			lbl.Text = ServerRuleApplyTimeEnumHelper.GetDescription( fs.ServerRuleApplyTimeEnum);
 
 			lbl = e.Row.FindControl("ServerRuleTypeEnum") as Label; // The label is added in the template
-			lbl.Text = fs.ServerRuleTypeEnum.Description;
+			lbl.Text = ServerRuleTypeEnumHelper.GetDescription( fs.ServerRuleTypeEnum );
 
       
 			Image img = ((Image)e.Row.FindControl("EnabledImage"));

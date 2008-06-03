@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 
         public ServiceLockTypeEnum GetServiceLockType()
         {
-            return ServiceLockTypeEnum.GetEnum("FilesystemStudyProcess");
+            return ServiceLockTypeEnum.FilesystemStudyProcess;
         }
 
         public IServiceLockItemProcessor GetItemProcessor()

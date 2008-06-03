@@ -36,28 +36,65 @@ namespace ClearCanvas.ImageServer.Model
     using System;
     using System.Collections.Generic;
     using ClearCanvas.ImageServer.Enterprise;
-    using ClearCanvas.ImageServer.Model.EntityBrokers;
+    using System.Reflection;
 
-[Serializable]
-public partial class StudyStatusEnum : ServerEnum
-{
-    #region Constructors
-    public StudyStatusEnum():base("StudyStatusEnum")
-    {}
-    #endregion
-    #region Public Members
-    public override void SetEnum(short val)
-    {
-        ServerEnumHelper<StudyStatusEnum, IStudyStatusEnumBroker>.SetEnum(this, val);
-    }
-    static public IList<StudyStatusEnum> GetAll()
-    {
-        return ServerEnumHelper<StudyStatusEnum, IStudyStatusEnumBroker>.GetAll();
-    }
-    static public StudyStatusEnum GetEnum(string lookup)
-    {
-        return ServerEnumHelper<StudyStatusEnum, IStudyStatusEnumBroker>.GetEnum(lookup);
-    }
-    #endregion
-}
+  public enum StudyStatusEnum
+  {
+      [EnumValueDescriptionAttribute("Online", "Study is online")]
+      Online = 100,
+
+      [EnumValueDescriptionAttribute("Online (Lossless)", "Study is online and lossless compressed")]
+      OnlineLossless = 101,
+
+      [EnumValueDescriptionAttribute("Online (Lossy)", "Study is online and lossy compressed")]
+      OnlineLossy = 102,
+
+      [EnumValueDescriptionAttribute("Pending", "Pending")]
+      Pending = 200
+  }
+
+  public static class StudyStatusEnumHelper
+  {
+      public static IList<StudyStatusEnum> GetAll()
+      {
+          List<StudyStatusEnum> values = new List<StudyStatusEnum>();
+          Array array = Enum.GetValues(typeof (StudyStatusEnum));
+          
+          foreach(StudyStatusEnum value in array)
+          {
+              values.Add(value);
+          }
+          return values;
+      }
+      public static StudyStatusEnum Get(string lookup)
+      {
+          return (StudyStatusEnum) Enum.Parse(typeof (StudyStatusEnum), lookup);
+      }
+      public static bool IsDefined(string lookup)
+      {
+          return Enum.IsDefined(typeof (StudyStatusEnum), lookup);
+      }
+      public static string GetDescription(StudyStatusEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).Description;
+          }
+          else
+              return null;
+      }
+      public static string GetLongDescription(StudyStatusEnum value)
+      {
+          FieldInfo enumField = value.GetType().GetField(value.ToString());
+          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
+          if (attributes!=null && attributes.Length>0)
+          {
+              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;
+          }
+          else
+              return null;
+      }
+  }
 }

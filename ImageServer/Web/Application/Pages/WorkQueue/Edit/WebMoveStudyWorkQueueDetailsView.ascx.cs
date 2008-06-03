@@ -29,8 +29,10 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 {
@@ -55,7 +57,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             {
                 base.Width = value;
                 WebMoveStudyDetailsView.Width = value;
-                DetailsView1.Width = value;
+                GeneralInfoDetailsView.Width = value;
             }
         }
 		
@@ -63,6 +65,45 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         #endregion Public Properties
 
         #region Protected Methods
+
+        protected void GeneralInfoDetailsView_DataBound(object sender, EventArgs e)
+        {
+            WorkQueueDetails item = GeneralInfoDetailsView.DataItem as WorkQueueDetails;
+            if (item != null)
+            {
+                Label typeLabel = GeneralInfoDetailsView.FindControl("Type") as Label;
+                if (typeLabel != null)
+                {
+                    typeLabel.Text = WorkQueueTypeEnumHelper.GetDescription(item.Type);
+                }
+
+                Label statusLabel = GeneralInfoDetailsView.FindControl("Status") as Label;
+                if (statusLabel != null)
+                {
+                    statusLabel.Text = WorkQueueStatusEnumHelper.GetDescription(item.Status);
+                }
+
+                Label priorityLabel = GeneralInfoDetailsView.FindControl("Priority") as Label;
+                if (priorityLabel != null)
+                {
+                    priorityLabel.Text = WorkQueuePriorityEnumHelper.GetDescription(item.Priority);
+                }
+            }
+        }
+
+        protected void WebMoveStudyDetailsView_DataBound(object sender, EventArgs e)
+        {
+            WorkQueueDetails item = WebMoveStudyDetailsView.DataItem as WorkQueueDetails;
+            if (item != null)
+            {
+                Label typeLabel = WebMoveStudyDetailsView.FindControl("Type") as Label;
+                if (typeLabel != null)
+                {
+                    typeLabel.Text = WorkQueueTypeEnumHelper.GetDescription(item.Type);
+                }
+
+            }
+        }
         #endregion Protected Methods
 
         #region Public Methods
@@ -76,12 +117,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 detailsList.Add(WorkQueueDetailsAssembler.CreateWorkQueueDetail(WorkQueue));
                 WebMoveStudyDetailsView.DataSource = detailsList;
 
-                DetailsView1.DataSource = detailsList;
+                GeneralInfoDetailsView.DataSource = detailsList;
             }
             else
             {
                 WebMoveStudyDetailsView.DataSource = null;
-                DetailsView1.DataSource = null;
+                GeneralInfoDetailsView.DataSource = null;
             }
 
             base.DataBind();

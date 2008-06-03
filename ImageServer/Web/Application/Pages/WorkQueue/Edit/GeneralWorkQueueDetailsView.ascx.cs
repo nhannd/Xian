@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 {
@@ -84,6 +85,34 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
 
             base.DataBind();
+        }
+
+
+        protected void OnDataBound(object sender, EventArgs e)
+        {
+            WorkQueueDetails item = GeneralInfoDetailsView.DataItem as WorkQueueDetails;
+            if (item!=null)
+            {
+                Label typeLabel = GeneralInfoDetailsView.FindControl("Type") as Label;
+                if (typeLabel != null)
+                {
+                    typeLabel.Text = WorkQueueTypeEnumHelper.GetDescription(item.Type);
+                }
+
+                Label statusLabel = GeneralInfoDetailsView.FindControl("Status") as Label;
+                if (statusLabel != null)
+                {
+                    statusLabel.Text = WorkQueueStatusEnumHelper.GetDescription(item.Status);
+                }
+
+                Label priorityLabel = GeneralInfoDetailsView.FindControl("Priority") as Label;
+                if (priorityLabel != null)
+                {
+                    priorityLabel.Text = WorkQueuePriorityEnumHelper.GetDescription(item.Priority);
+                }
+            }
+
+            
         }
 
 

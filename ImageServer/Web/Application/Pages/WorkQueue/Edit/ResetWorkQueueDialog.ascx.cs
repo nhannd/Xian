@@ -187,7 +187,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             if (_workQueue!=null)
             {
 
-                if (_workQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.GetEnum("In Progress"))
+                if (_workQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
                 {
                     if (!String.IsNullOrEmpty(_workQueue.ProcessorID)) // somebody has claimed it
                     {

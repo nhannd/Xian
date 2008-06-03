@@ -182,13 +182,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         {
             if (_detailsView==null && WorkQueue != null)
             {
-                if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("AutoRoute"))
+                if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.AutoRoute)
                 {
                     _detailsView = LoadControl("AutoRouteWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
                     WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
                     
                 }
-                else if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.GetEnum("WebMoveStudy"))
+                else if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.WebMoveStudy)
                 {
                     _detailsView = LoadControl("WebMoveStudyWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
                     WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
