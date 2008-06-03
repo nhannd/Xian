@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
         {
             base.OnInit(e);
             IList<ServiceLockTypeEnum> types = ServiceLockTypeEnum.GetAll();
-            TypeDropDownList.Items.Add(new ListItem("-- All --")); 
+            TypeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.All)); 
             foreach (ServiceLockTypeEnum t in types)
             {
                 TypeDropDownList.Items.Add(new ListItem(t.Description, t.Lookup));
@@ -77,8 +77,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
 
             EditServiceLockDialog.ServiceLockUpdated += AddEditServiceLockDialog_ServiceLockUpdated; 
             // setup child controls
-            GridPagerTop.ItemName = "Service";
-            GridPagerTop.PuralItemName = "Services";
+            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerServiceSingleItem;
+            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerServiceMultipleItems;
             GridPagerTop.Target = ServiceLockGridViewControl.TheGrid;
             GridPagerTop.PageCountVisible = false;
             GridPagerTop.ItemCountVisible = true;
@@ -88,9 +88,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
             GridPagerBottom.Target = ServiceLockGridViewControl.TheGrid;
 
 
-            StatusFilter.Items.Add(new ListItem("--- ALL ---"));
-            StatusFilter.Items.Add(new ListItem("Enabled"));
-            StatusFilter.Items.Add(new ListItem("Disabled"));
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled));
 
             ConfirmEditDialog.Confirmed += ConfirmEditDialog_Confirmed;
 

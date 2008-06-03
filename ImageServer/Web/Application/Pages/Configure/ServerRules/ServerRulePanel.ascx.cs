@@ -149,8 +149,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             ServerRuleGridViewControl.ServerRulePanel = this;
 
             // setup child controls
-            GridPagerTop.ItemName = "Rule";
-            GridPagerTop.PuralItemName = "Rules";
+            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerServerRulesSingleItem;
+            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerServerRulesMultipleItems;
             GridPagerTop.Target = ServerRuleGridViewControl.TheGrid;
             GridPagerTop.PageCountVisible = false;
             GridPagerTop.ItemCountVisible = true;
@@ -163,7 +163,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 
             int prevSelectIndex = RuleApplyTimeDropDownList.SelectedIndex;
             RuleApplyTimeDropDownList.Items.Clear();
-            RuleApplyTimeDropDownList.Items.Add(new ListItem("All"));
+            RuleApplyTimeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.All));
             foreach (ServerRuleApplyTimeEnum applyTimeEnum in ServerRuleApplyTimeEnum.GetAll())
             {
                 RuleApplyTimeDropDownList.Items.Add(
@@ -174,7 +174,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 
             prevSelectIndex = RuleTypeDropDownList.SelectedIndex;
             RuleTypeDropDownList.Items.Clear();
-            RuleTypeDropDownList.Items.Add(new ListItem("All"));
+            RuleTypeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.All));
             foreach (ServerRuleTypeEnum typeEnum in ServerRuleTypeEnum.GetAll())
             {
                 RuleTypeDropDownList.Items.Add(new ListItem(typeEnum.Description, typeEnum.Enum.ToString()));
@@ -190,13 +190,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
         {
             base.OnInit(e);
 
-            StatusFilter.Items.Add(new ListItem("--- ALL ---"));
-            StatusFilter.Items.Add(new ListItem("Enabled"));
-            StatusFilter.Items.Add(new ListItem("Disabled"));
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled));
 
-            DefaultFilter.Items.Add(new ListItem("--- ALL ---"));
-            DefaultFilter.Items.Add(new ListItem("Default"));
-            DefaultFilter.Items.Add(new ListItem("Not Default"));
+            DefaultFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
+            DefaultFilter.Items.Add(new ListItem(App_GlobalResources.SR.Default));
+            DefaultFilter.Items.Add(new ListItem(App_GlobalResources.SR.NotDefault));
         }
 
         protected override void OnPreRender(EventArgs e)

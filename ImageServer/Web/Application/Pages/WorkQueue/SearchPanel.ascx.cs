@@ -106,8 +106,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             // setup child controls
             GridPagerTop.PageCountVisible = false;
             GridPagerTop.ItemCountVisible = true;
-            GridPagerTop.ItemName = "Work Item";
-            GridPagerTop.PuralItemName = "Work Items";
+            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerWorkQueueSingleItem;
+            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerWorkQueueMultipleItems;
             GridPagerTop.Target = workQueueItemListPanel.WorkQueueItemListControl;
             GridPagerTop.GetRecordCountMethod = delegate
                                                   {
@@ -157,14 +157,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             
             int prevSelectedIndex = TypeDropDownList.SelectedIndex;
             TypeDropDownList.Items.Clear();
-            TypeDropDownList.Items.Add(new ListItem("-- Any --", ""));
+            TypeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, ""));
             foreach (WorkQueueTypeEnum t in workQueueTypes)
                 TypeDropDownList.Items.Add(new ListItem(t.Description, t.Lookup));
             TypeDropDownList.SelectedIndex = prevSelectedIndex;
 
             prevSelectedIndex = StatusDropDownList.SelectedIndex;
             StatusDropDownList.Items.Clear();
-            StatusDropDownList.Items.Add(new ListItem("-- Any --", ""));
+            StatusDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, ""));
             foreach (WorkQueueStatusEnum s in workQueueStatuses)
                 StatusDropDownList.Items.Add(new ListItem(s.Description, s.Lookup));
             StatusDropDownList.SelectedIndex = prevSelectedIndex;
@@ -172,7 +172,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
             prevSelectedIndex = PriorityDropDownList.SelectedIndex;
             PriorityDropDownList.Items.Clear();
-            PriorityDropDownList.Items.Add(new ListItem("-- Any --", ""));
+            PriorityDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, ""));
             foreach (WorkQueuePriorityEnum p in workQueuePriorities)
                 PriorityDropDownList.Items.Add(new ListItem(p.Description, p.Lookup));
             PriorityDropDownList.SelectedIndex = prevSelectedIndex;
@@ -220,7 +220,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             
         }
 
-        protected void ViewButton_Click(object sender, ImageClickEventArgs e)
+        protected void ViewItemButton_Click(object sender, ImageClickEventArgs e)
         {
             Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
             if (item != null)
@@ -230,7 +230,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
         }
 
 
-        protected void Reset_Click(object sender, EventArgs arg)
+        protected void ResetItemButton_Click(object sender, EventArgs arg)
         {
 
             Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
@@ -241,7 +241,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
         }
 
-        protected void Delete_Click(object sender, EventArgs arg)
+        protected void DeleteItemButton_Click(object sender, EventArgs arg)
         {
 
             Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
@@ -253,7 +253,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
         }
 
 
-        protected void RescheduleButton_Click(object sender, ImageClickEventArgs e)
+        protected void RescheduleItemButton_Click(object sender, ImageClickEventArgs e)
         {
             
             Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;

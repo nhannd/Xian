@@ -78,3 +78,13 @@
     color: #D13D4D; 
     vertical-align: middle;
 }
+
+.GlobalGridPagerLinkDisabled
+{
+    font-family: Sans-Serif;
+    font-size: 12px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #B8D8EE; 
+    vertical-align: middle;
+}

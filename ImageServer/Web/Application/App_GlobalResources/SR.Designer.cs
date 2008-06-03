@@ -61,6 +61,60 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        internal static string All {
+            get {
+                return ResourceManager.GetString("All", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Any.
+        /// </summary>
+        internal static string Any {
+            get {
+                return ResourceManager.GetString("Any", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default.
+        /// </summary>
+        internal static string Default {
+            get {
+                return ResourceManager.GetString("Default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DHCP.
+        /// </summary>
+        internal static string DHCP {
+            get {
+                return ResourceManager.GetString("DHCP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabled.
+        /// </summary>
+        internal static string Disabled {
+            get {
+                return ResourceManager.GetString("Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabled.
+        /// </summary>
+        internal static string Enabled {
+            get {
+                return ResourceManager.GetString("Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Devices Found.
         /// </summary>
         internal static string GridPagerDeviceMultipleItems {
@@ -97,11 +151,65 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Partitions Found.
+        /// </summary>
+        internal static string GridPagerPartitionMultipleItems {
+            get {
+                return ResourceManager.GetString("GridPagerPartitionMultipleItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Partition Found.
+        /// </summary>
+        internal static string GridPagerPartitionSingleItem {
+            get {
+                return ResourceManager.GetString("GridPagerPartitionSingleItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt; previous.
         /// </summary>
         internal static string GridPagerPrevious {
             get {
                 return ResourceManager.GetString("GridPagerPrevious", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rules Found.
+        /// </summary>
+        internal static string GridPagerServerRulesMultipleItems {
+            get {
+                return ResourceManager.GetString("GridPagerServerRulesMultipleItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rule Found.
+        /// </summary>
+        internal static string GridPagerServerRulesSingleItem {
+            get {
+                return ResourceManager.GetString("GridPagerServerRulesSingleItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Services Found.
+        /// </summary>
+        internal static string GridPagerServiceMultipleItems {
+            get {
+                return ResourceManager.GetString("GridPagerServiceMultipleItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Service Found.
+        /// </summary>
+        internal static string GridPagerServiceSingleItem {
+            get {
+                return ResourceManager.GetString("GridPagerServiceSingleItem", resourceCulture);
             }
         }
         
@@ -124,11 +232,47 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Work Items Found.
+        /// </summary>
+        internal static string GridPagerWorkQueueMultipleItems {
+            get {
+                return ResourceManager.GetString("GridPagerWorkQueueMultipleItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Work Item Found.
+        /// </summary>
+        internal static string GridPagerWorkQueueSingleItem {
+            get {
+                return ResourceManager.GetString("GridPagerWorkQueueSingleItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete the following studies?.
         /// </summary>
         internal static string MultipleStudyDelete {
             get {
                 return ResourceManager.GetString("MultipleStudyDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No DHCP.
+        /// </summary>
+        internal static string NoDHCP {
+            get {
+                return ResourceManager.GetString("NoDHCP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not Default.
+        /// </summary>
+        internal static string NotDefault {
+            get {
+                return ResourceManager.GetString("NotDefault", resourceCulture);
             }
         }
         

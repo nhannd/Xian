@@ -117,6 +117,24 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="DHCP" xml:space="preserve">
+    <value>DHCP</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
   <data name="GridPagerDeviceMultipleItems" xml:space="preserve">
     <value>Devices Found</value>
   </data>
@@ -129,8 +147,26 @@
   <data name="GridPagerNext" xml:space="preserve">
     <value>next &gt;</value>
   </data>
+  <data name="GridPagerPartitionMultipleItems" xml:space="preserve">
+    <value>Partitions Found</value>
+  </data>
+  <data name="GridPagerPartitionSingleItem" xml:space="preserve">
+    <value>Partition Found</value>
+  </data>
   <data name="GridPagerPrevious" xml:space="preserve">
     <value>&lt; previous</value>
+  </data>
+  <data name="GridPagerServerRulesMultipleItems" xml:space="preserve">
+    <value>Rules Found</value>
+  </data>
+  <data name="GridPagerServerRulesSingleItem" xml:space="preserve">
+    <value>Rule Found</value>
+  </data>
+  <data name="GridPagerServiceMultipleItems" xml:space="preserve">
+    <value>Services Found</value>
+  </data>
+  <data name="GridPagerServiceSingleItem" xml:space="preserve">
+    <value>Service Found</value>
   </data>
   <data name="GridPagerStudyMultipleItems" xml:space="preserve">
     <value>Studies Found</value>
@@ -138,8 +174,20 @@
   <data name="GridPagerStudySingleItem" xml:space="preserve">
     <value>Study Found</value>
   </data>
+  <data name="GridPagerWorkQueueMultipleItems" xml:space="preserve">
+    <value>Work Items Found</value>
+  </data>
+  <data name="GridPagerWorkQueueSingleItem" xml:space="preserve">
+    <value>Work Item Found</value>
+  </data>
   <data name="MultipleStudyDelete" xml:space="preserve">
     <value>Are you sure you want to delete the following studies?</value>
+  </data>
+  <data name="NoDHCP" xml:space="preserve">
+    <value>No DHCP</value>
+  </data>
+  <data name="NotDefault" xml:space="preserve">
+    <value>Not Default</value>
   </data>
   <data name="SelectedWorkQueueNoLongerOnTheList" xml:space="preserve">
     <value>The item you selected is no longer on the list. It could have been modified by the system or another person. Please refresh the list.</value>

@@ -178,32 +178,36 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
                 if (_target.PageIndex > 0)
                 {
-                    PrevPageButton.Visible = true;
+                    PrevPageButton.Enabled = true;
+                    PrevPageButton.CssClass = "GlobalGridPagerLink";
                 }
                 else
                 {
-                    PrevPageButton.Visible = false;
+                    PrevPageButton.Enabled = false;
+                    PrevPageButton.CssClass = "GlobalGridPagerLinkDisabled";
                 }
 
 
                 if (_target.PageIndex < _target.PageCount - 1)
                 {
-                    NextPageButton.Visible = true;
+                    NextPageButton.Enabled = true;
+                    NextPageButton.CssClass = "GlobalGridPagerLink";
                 }
                 else
                 {
-                    NextPageButton.Visible = false;
+                    NextPageButton.Enabled = false;
+                    NextPageButton.CssClass = "GlobalGridPagerLinkDisabled";
                 }
 
                 NextPageButton.Text = App_GlobalResources.SR.GridPagerNext;
                 PrevPageButton.Text = App_GlobalResources.SR.GridPagerPrevious;
-                if (PrevPageButton.Visible && NextPageButton.Visible)
+                if (PrevPageButton.Enabled || NextPageButton.Enabled)
                 {
-                    LineSpacerLabel.Visible = true;
+                    LineSpacerLabel.CssClass = "GlobalGridPagerLinkDisabled";
                 }
                 else
                 {
-                    LineSpacerLabel.Visible = false;
+                    LineSpacerLabel.CssClass = "GlobalGridPagerLinkDisabled";
                 }
             }
         }

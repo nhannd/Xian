@@ -111,8 +111,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         {
             base.OnInit(e);
             GridPagerTop.Target = ServerPartitionGridPanel.TheGrid;
-            GridPagerTop.ItemName = "Partition";
-            GridPagerTop.PuralItemName = "Partitions";
+            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerPartitionSingleItem;
+            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerPartitionMultipleItems;
             GridPagerTop.PageCountVisible = false;
             GridPagerTop.ItemCountVisible = true;
 
@@ -120,9 +120,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
             GridPagerBottom.ItemCountVisible = false;
             GridPagerBottom.Target = ServerPartitionGridPanel.TheGrid;
 
-            StatusFilter.Items.Add(new ListItem("--- ALL ---"));
-            StatusFilter.Items.Add(new ListItem("Enabled"));
-            StatusFilter.Items.Add(new ListItem("Disabled"));
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled));
 
             SetupEventHandlers();
         }

@@ -112,13 +112,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
 
             
 
-            StatusFilter.Items.Add(new ListItem("--- ALL ---"));
-            StatusFilter.Items.Add(new ListItem("Enabled"));
-            StatusFilter.Items.Add(new ListItem("Disabled"));
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled));
 
-            DHCPFilter.Items.Add(new ListItem("--- ALL ---"));
-            DHCPFilter.Items.Add(new ListItem("DHCP"));
-            DHCPFilter.Items.Add(new ListItem("No DHCP"));
+            DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
+            DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.DHCP));
+            DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.NoDHCP));
 
             // setup event handler for child controls
             SetUpEventHandlers();
