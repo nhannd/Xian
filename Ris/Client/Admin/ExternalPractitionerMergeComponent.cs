@@ -13,6 +13,7 @@ namespace ClearCanvas.Ris.Client.Admin
 {
 	[MenuAction("launch", "global-menus/Admin/ExternalPractitioner/Merge Duplicates", "Launch")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner)]
+	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Merge)]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class ExternalPractitionerMergeTool : Tool<IDesktopToolContext>
 	{
