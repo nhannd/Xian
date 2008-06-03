@@ -93,12 +93,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            _procedureTypeSuggestionProvider = new DefaultSuggestionProvider<ProcedureTypeSummary>(
-                _procedureTypeChoices, FormatProcedureType,
-                delegate(ProcedureTypeSummary x, ProcedureTypeSummary y)
-                    {
-                        return x.Name.CompareTo(y.Name);
-                    });
+			_procedureTypeChoices.Sort(
+					delegate(ProcedureTypeSummary x, ProcedureTypeSummary y)
+					{
+						return x.Name.CompareTo(y.Name);
+					});
+
+        	_procedureTypeSuggestionProvider =
+        		new DefaultSuggestionProvider<ProcedureTypeSummary>(_procedureTypeChoices, FormatProcedureType);
 
             _selectedProcedureType = _requisition.ProcedureType;
             _scheduledTime = _requisition.ScheduledTime;

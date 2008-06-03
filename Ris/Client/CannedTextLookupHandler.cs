@@ -45,57 +45,30 @@ namespace ClearCanvas.Ris.Client
     {
         class CannedTextSuggestionProvider : SuggestionProviderBase<CannedText>
         {
-            private List<CannedText> _cannedTexts;
-
             public CannedTextSuggestionProvider()
             {
             }
 
-            public void Initialize()
+            protected override IList<CannedText> GetShortList(string query)
             {
-                BackgroundTask loaderTask = new BackgroundTask(
-                    delegate(IBackgroundTaskContext context)
-                    {
-                        List<CannedText> cannedTexts = new List<CannedText>();
-                        Platform.GetService<ICannedTextService>(
-                            delegate(ICannedTextService service)
-                            {
-                                ListCannedTextResponse response = service.ListCannedText(new ListCannedTextRequest());
-                                cannedTexts = CollectionUtils.Map<CannedTextSummary, CannedText>(response.CannedTexts,
-                                    delegate(CannedTextSummary s) { return new CannedText(s.Name, s.Path, s.Text); });
-                            });
+				List<CannedText> cannedTexts = new List<CannedText>();
+				Platform.GetService<ICannedTextService>(
+					delegate(ICannedTextService service)
+					{
+						ListCannedTextResponse response = service.ListCannedText(new ListCannedTextRequest());
+						cannedTexts = CollectionUtils.Map<CannedTextSummary, CannedText>(response.CannedTexts,
+							delegate(CannedTextSummary s) { return new CannedText(s.Name, s.Path, s.Text); });
+					});
 
-                        // sort results in the way that they will be formatted for the suggest box
-                        cannedTexts.Sort(
-                            delegate(CannedText x, CannedText y)
-                            {
-                                return CannedTextLookupHandler.FormatItem(x).CompareTo(CannedTextLookupHandler.FormatItem(y));
-                            });
-                        context.Complete(cannedTexts);
-                    },
-                    false);
+				// sort results in the way that they will be formatted for the suggest box
+				cannedTexts.Sort(
+					delegate(CannedText x, CannedText y)
+					{
+						return CannedTextLookupHandler.FormatItem(x).CompareTo(CannedTextLookupHandler.FormatItem(y));
+					});
 
-                loaderTask.Terminated += 
-                    delegate(object sender, BackgroundTaskTerminatedEventArgs e)
-                    {
-                        if (e.Reason == BackgroundTaskTerminatedReason.Completed)
-                        {
-                            _cannedTexts = (List<CannedText>)e.Result;
-
-                            // force an update, to initially populate the suggest box
-                            UpdateSuggestions();
-                        }
-                    };
-
-                loaderTask.Run();
-            }
-
-            protected override List<CannedText> GetShortList(string query)
-            {
-                // just return the full list of canned texts
-                // note that this may be null if the async init is not complete, but that's ok
-                return _cannedTexts;
-            }
+            	return cannedTexts;
+			}
 
             protected override string FormatItem(CannedText item)
             {
@@ -105,7 +78,7 @@ namespace ClearCanvas.Ris.Client
 
 
         private CannedTextSuggestionProvider _suggestionProvider;
-        private IDesktopWindow _desktopWindow;
+        private readonly IDesktopWindow _desktopWindow;
 
 
         public CannedTextLookupHandler(IDesktopWindow desktopWindow)
@@ -137,12 +110,9 @@ namespace ClearCanvas.Ris.Client
         {
             get
             {
-                // defer construction of suggestion provider until it is actually needed,
-                // so we don't load the canned texts unnecessarily
                 if (_suggestionProvider == null)
                 {
                     _suggestionProvider = new CannedTextSuggestionProvider();
-                    _suggestionProvider.Initialize();
                 }
                 return _suggestionProvider;
             }

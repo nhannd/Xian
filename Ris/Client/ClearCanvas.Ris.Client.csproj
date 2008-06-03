@@ -160,7 +160,6 @@
     </Compile>
     <Compile Include="RisDesktopWindow.cs" />
     <Compile Include="SearchComponent.cs" />
-    <Compile Include="RemoteSuggestionProvider.cs" />
     <Compile Include="TempFileManager.cs" />
     <Compile Include="WebServicesSettings.cs" />
     <Compile Include="WebServicesSettings.Designer.cs">

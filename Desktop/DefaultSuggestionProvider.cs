@@ -38,59 +38,47 @@ namespace ClearCanvas.Desktop
 	/// A default implementation of <see cref="ISuggestionProvider"/>, dynamically providing suggested
 	/// text based on user input.
 	/// </summary>
-    /// <remarks>
-    /// This class assumes the full list of possible suggestions is available in memory.
-    /// </remarks>
 	/// <typeparam name="TItem">The type of object for which suggestions should be made.</typeparam>
     public class DefaultSuggestionProvider<TItem> : SuggestionProviderBase<TItem>
     {
-        private IList<TItem> _sourceList;
-        private Converter<TItem, string> _formatHandler;
-        private Comparison<TItem> _sortComparison;
+        private readonly Converter<TItem, string> _formatHandler;
+		private readonly Converter<string, IList<TItem>> _shortlistProvider;
 
+	
 		/// <summary>
-		/// Constructor.
+		/// Constructor that accepts the full list of possible items.
 		/// </summary>
 		/// <param name="sourceList">The source list of objects.</param>
 		/// <param name="formatHandler">A delegate that returns a formatted text string for the input object.</param>
-        public DefaultSuggestionProvider(IList<TItem> sourceList, Converter<TItem, string> formatHandler)
-            :this(sourceList, formatHandler, null)
+		public DefaultSuggestionProvider(IList<TItem> sourceList, Converter<TItem, string> formatHandler)
         {
-            
-        }
-		
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="sourceList">The source list of objects.</param>
-		/// <param name="formatHandler">A delegate that returns a formatted text string for the input object.</param>
-		/// <param name="sortComparison">A <see cref="Comparison{T}"/> object used to sort the list of suggestions.</param>
-		public DefaultSuggestionProvider(IList<TItem> sourceList, Converter<TItem, string> formatHandler, Comparison<TItem> sortComparison)
-        {
-            _sourceList = sourceList;
+			_shortlistProvider = delegate(string q) { return string.IsNullOrEmpty(q) ? null : sourceList; };
             _formatHandler = formatHandler;
-            _sortComparison = sortComparison;
         }
 
-        protected override List<TItem> GetShortList(string query)
+		/// <summary>
+		/// Constructor that accepts a delegate for providing a shortlist on demand.
+		/// </summary>
+		/// <param name="shortlistProvider">A delegate that obtains the shortlist for a specified query, or null to indicate that it should be called again.</param>
+		/// <param name="formatHandler">A delegate that returns a formatted text string for the input object.</param>
+		public DefaultSuggestionProvider(Converter<string, IList<TItem>> shortlistProvider, Converter<TItem, string> formatHandler)
+		{
+			_shortlistProvider = shortlistProvider;
+			_formatHandler = formatHandler;
+		}
+
+		/// <summary>
+		/// Called to obtain the initial source list for the specified query.  May return null if no items are available.
+		/// </summary>
+		protected override IList<TItem> GetShortList(string query)
         {
-            if (string.IsNullOrEmpty(query))
-            {
-                return null;
-            }
-            else
-            {
-                // go back to original source
-                List<TItem> sourceList = new List<TItem>(_sourceList);
-                if (_sortComparison != null)
-                    sourceList.Sort(_sortComparison);
-                else
-                    sourceList.Sort();
-                return sourceList;
-            }
+			return _shortlistProvider(query);
         }
 
-        protected override string FormatItem(TItem item)
+		/// <summary>
+		/// Called to format the specified item for display in the suggestion list.
+		/// </summary>
+		protected override string FormatItem(TItem item)
         {
             return _formatHandler(item);
         }
