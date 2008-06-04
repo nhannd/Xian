@@ -727,6 +727,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to merge duplicate contact points..
+        /// </summary>
+        internal static string ExceptionFailedToMergeDuplicateContactPoints {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToMergeDuplicateContactPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to merge duplicate practitioners..
+        /// </summary>
+        internal static string ExceptionFailedToMergeDuplicatePractitioners {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToMergeDuplicatePractitioners", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occured while attempting to save changes to this item.
         /// </summary>
         internal static string ExceptionFailedToSave {
@@ -997,6 +1015,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You cannot merge two identical items..
+        /// </summary>
+        internal static string MessageMergeIdenticalItems {
+            get {
+                return ResourceManager.GetString("MessageMergeIdenticalItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No results were found using the specified criteria..
         /// </summary>
         internal static string MessageResultsNotFound {
@@ -1213,6 +1240,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Contact Points.
+        /// </summary>
+        internal static string TitleContactPoints {
+            get {
+                return ResourceManager.GetString("TitleContactPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy.
         /// </summary>
         internal static string TitleCopy {
@@ -1299,6 +1335,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleExternalPractitioner {
             get {
                 return ResourceManager.GetString("TitleExternalPractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge.
+        /// </summary>
+        internal static string TitleMerge {
+            get {
+                return ResourceManager.GetString("TitleMerge", resourceCulture);
             }
         }
         

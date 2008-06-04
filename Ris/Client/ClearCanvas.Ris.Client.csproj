@@ -51,6 +51,10 @@
     <Compile Include="CannedTextEditorComponent.cs" />
     <Compile Include="CannedTextTable.cs" />
     <Compile Include="CoreServiceProvider.cs" />
+    <Compile Include="ExternalPractitionerContactPointLookupHandler.cs" />
+    <Compile Include="ExternalPractitionerContactPointMergeComponent.cs" />
+    <Compile Include="ExternalPractitionerMergeComponent.cs" />
+    <Compile Include="MergeComponentBase.cs" />
     <Compile Include="FolderExplorerGroupComponent.cs" />
     <Compile Include="OrderNoteboxFolderSystemTool.cs" />
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponent.cs" />
@@ -442,6 +446,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\DuplicateToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\MergeToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

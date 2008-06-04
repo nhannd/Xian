@@ -42,6 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressDetail.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\ContactPointTextQueryRequest.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\LoadMergeDuplicateContactPointFormDataRequest.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\LoadMergeDuplicateContactPointFormDataResponse.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\LoadMergeDuplicatePractitionerFormDataRequest.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\LoadMergeDuplicatePractitionerFormDataResponse.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\MergeDuplicateContactPointRequest.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\MergeDuplicateContactPointResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\MergeDuplicatePractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\MergeDuplicatePractitionerResponse.cs" />
     <Compile Include="Admin\StaffGroupAdmin\AddStaffGroupRequest.cs" />

@@ -121,7 +121,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
-				CannedTextSummary item = (CannedTextSummary) this.SummarySelection.Item;
+				CannedTextSummary item = CollectionUtils.FirstElement(this.SelectedItems);
 				IList<CannedTextSummary> addedItems = new List<CannedTextSummary>();
 				CannedTextEditorComponent editor = new CannedTextEditorComponent(item.CannedTextRef, true);
 

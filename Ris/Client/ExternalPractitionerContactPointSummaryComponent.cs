@@ -31,14 +31,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -56,10 +55,12 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(ExternalPractitionerContactPointSummaryComponentViewExtensionPoint))]
     public class ExternalPractitionerContactPointSummaryComponent : ApplicationComponent
     {
+    	private readonly EntityRef _practitionerRef;
         private ExternalPractitionerContactPointDetail _selectedContactPoint;
         private readonly Table<ExternalPractitionerContactPointDetail> _contactPoints;
 
         private readonly CrudActionModel _actionModel;
+		private readonly Action _mergeContactPointAction;
 
         private readonly bool _dialogMode;
 
@@ -71,9 +72,14 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Constructor for editing. Set the <see cref="Subject"/> property before starting.
         /// </summary>
-        public ExternalPractitionerContactPointSummaryComponent(IList<EnumValueInfo> addressTypeChoices, IList<EnumValueInfo> phoneTypeChoices, IList<EnumValueInfo> resultCommunicationModeChoices)
+        public ExternalPractitionerContactPointSummaryComponent(
+			EntityRef practitionerRef,
+			IList<EnumValueInfo> addressTypeChoices, 
+			IList<EnumValueInfo> phoneTypeChoices, 
+			IList<EnumValueInfo> resultCommunicationModeChoices)
             :this(false)
         {
+			_practitionerRef = practitionerRef;
             _addressTypeChoices = addressTypeChoices;
             _phoneTypeChoices = phoneTypeChoices;
             _resultCommunicationModeChoices = resultCommunicationModeChoices;
@@ -82,9 +88,10 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Constructor for read-only selection. Set the <see cref="Subject"/> property before starting.
         /// </summary>
-        public ExternalPractitionerContactPointSummaryComponent()
+		public ExternalPractitionerContactPointSummaryComponent(EntityRef practitionerRef)
             :this(true)
         {
+			_practitionerRef = practitionerRef;
             _addressTypeChoices = new List<EnumValueInfo>();
             _phoneTypeChoices = new List<EnumValueInfo>();
             _resultCommunicationModeChoices = new List<EnumValueInfo>();
@@ -115,26 +122,18 @@ namespace ClearCanvas.Ris.Client
                 1.0f));
 
             // TODO implement delete action, which should de-activate the contact point (can't delete it)
-            _actionModel = new CrudActionModel(true, true, false);
+            _actionModel = new CrudActionModel(true, true, false, new ResourceResolver(this.GetType(), true));
             _actionModel.Add.SetClickHandler(AddContactPoint);
             _actionModel.Edit.SetClickHandler(UpdateSelectedContactPoint);
-        }
+
+			_mergeContactPointAction = _actionModel.AddAction("mergeContactPoint", SR.TitleMerge, "Icons.MergeToolSmall.png",
+				SR.TitleMerge, MergeSelectedContactPoint);
+			_mergeContactPointAction.Enabled = false;
+		}
 
         public IItemCollection<ExternalPractitionerContactPointDetail> Subject
         {
             get { return _contactPoints.Items; }
-        }
-
-
-        public override void Start()
-        {
-
-            base.Start();
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
         }
 
         #region Presentation Model
@@ -163,7 +162,7 @@ namespace ClearCanvas.Ris.Client
                 if(item != _selectedContactPoint)
                 {
                     _selectedContactPoint = (ExternalPractitionerContactPointDetail)value.Item;
-                    PractitionerSelectionChanged();
+                    ContactPointSelectionChanged();
                 }
             }
         }
@@ -175,7 +174,7 @@ namespace ClearCanvas.Ris.Client
                 ExternalPractitionerContactPointDetail contactPoint = new ExternalPractitionerContactPointDetail();
                 contactPoint.PreferredResultCommunicationMode = _resultCommunicationModeChoices.Count > 0 ? _resultCommunicationModeChoices[0] : null;
                 ExternalPractitionerContactPointEditorComponent editor = new ExternalPractitionerContactPointEditorComponent(contactPoint, _addressTypeChoices, _phoneTypeChoices, _resultCommunicationModeChoices);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(
                     this.Host.DesktopWindow, editor, "Add Contact Point");
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
@@ -206,7 +205,7 @@ namespace ClearCanvas.Ris.Client
                 // clone item in case the modal edit dialog is cancelled
                 ExternalPractitionerContactPointDetail contactPoint = (ExternalPractitionerContactPointDetail)_selectedContactPoint.Clone();
                 ExternalPractitionerContactPointEditorComponent editor = new ExternalPractitionerContactPointEditorComponent(contactPoint, _addressTypeChoices, _phoneTypeChoices, _resultCommunicationModeChoices);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(
                     this.Host.DesktopWindow, editor, string.Format("Edit Contact Point '{0}'", contactPoint.Name));
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
@@ -230,6 +229,40 @@ namespace ClearCanvas.Ris.Client
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
+
+		public void MergeSelectedContactPoint()
+		{
+			try
+			{
+				// can occur if user double clicks while holding control
+				if (_selectedContactPoint == null) return;
+
+				ExternalPractitionerContactPointSummary tempSummary = new ExternalPractitionerContactPointSummary(
+					_selectedContactPoint.ContactPointRef,
+					_selectedContactPoint.Name,
+					_selectedContactPoint.Description,
+					_selectedContactPoint.IsDefaultContactPoint);
+
+				ExternalPractitionerContactPointMergeComponent mergeComponent = new ExternalPractitionerContactPointMergeComponent(_practitionerRef, tempSummary);
+				ApplicationComponentExitCode exitCode = LaunchAsDialog(
+					this.Host.DesktopWindow, mergeComponent, SR.TitleMerge);
+				if (exitCode == ApplicationComponentExitCode.Accepted)
+				{
+					ExternalPractitionerContactPointDetail detail = CollectionUtils.SelectFirst(_contactPoints.Items,
+						delegate(ExternalPractitionerContactPointDetail xpcp)
+							{
+								return xpcp.ContactPointRef.Equals(mergeComponent.SelectedDuplicateSummary.ContactPointRef, true);
+							});
+
+					_contactPoints.Items.Remove(detail);
+				}
+			}
+			catch (Exception e)
+			{
+				// failed to launch editor
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
 
         public void DoubleClickSelectedContactPoint()
         {
@@ -259,10 +292,10 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-        private void PractitionerSelectionChanged()
+		private void ContactPointSelectionChanged()
         {
-            _actionModel.Edit.Enabled = (_selectedContactPoint != null);
-            _actionModel.Delete.Enabled = (_selectedContactPoint != null);
+            _actionModel.Edit.Enabled = 
+				_mergeContactPointAction.Enabled = (_selectedContactPoint != null);
         }
 
         private void MakeDefaultContactPoint(ExternalPractitionerContactPointDetail cp)

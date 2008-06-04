@@ -339,6 +339,12 @@
   <data name="ExceptionFailedToDisplayDocument" xml:space="preserve">
     <value>Failed to display document</value>
   </data>
+  <data name="ExceptionFailedToMergeDuplicateContactPoints" xml:space="preserve">
+    <value>Failed to merge duplicate contact points.</value>
+  </data>
+  <data name="ExceptionFailedToMergeDuplicatePractitioners" xml:space="preserve">
+    <value>Failed to merge duplicate practitioners.</value>
+  </data>
   <data name="ExceptionFailedToSave" xml:space="preserve">
     <value>An error occured while attempting to save changes to this item</value>
   </data>
@@ -429,6 +435,9 @@
   <data name="MessageLoginTimeout" xml:space="preserve">
     <value>Timed-out while attempting to login</value>
   </data>
+  <data name="MessageMergeIdenticalItems" xml:space="preserve">
+    <value>You cannot merge two identical items.</value>
+  </data>
   <data name="MessageResultsNotFound" xml:space="preserve">
     <value>No results were found using the specified criteria.</value>
   </data>
@@ -501,6 +510,9 @@
   <data name="TitleContactPersons" xml:space="preserve">
     <value>Contact Persons</value>
   </data>
+  <data name="TitleContactPoints" xml:space="preserve">
+    <value>Contact Points</value>
+  </data>
   <data name="TitleCopy" xml:space="preserve">
     <value>Copy</value>
   </data>
@@ -530,6 +542,9 @@
   </data>
   <data name="TitleExternalPractitioner" xml:space="preserve">
     <value>External Practitioner</value>
+  </data>
+  <data name="TitleMerge" xml:space="preserve">
+    <value>Merge</value>
   </data>
   <data name="TitleNext" xml:space="preserve">
     <value>Next Page</value>

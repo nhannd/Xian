@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -10,20 +9,18 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="duplicate">The duplicate practitioners to remove.</param>
 		/// <param name="original">The original record to keep.</param>
-		/// <param name="duplicates">All the duplicate practitioners, including the original</param>
-		public MergeDuplicatePractitionerRequest(
-			ExternalPractitionerSummary original,
-			List<ExternalPractitionerSummary> duplicates)
+		public MergeDuplicatePractitionerRequest(ExternalPractitionerSummary duplicate, ExternalPractitionerSummary original)
 		{
+			this.Duplicate = duplicate;
 			this.Original = original;
-			this.Duplicates = duplicates;
 		}
 
 		[DataMember]
-		public ExternalPractitionerSummary Original;
+		public ExternalPractitionerSummary Duplicate;
 
 		[DataMember]
-		public List<ExternalPractitionerSummary> Duplicates;
+		public ExternalPractitionerSummary Original;
 	}
 }

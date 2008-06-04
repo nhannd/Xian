@@ -421,15 +421,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to merge duplicate practitioners..
-        /// </summary>
-        internal static string ExceptionFailedToMergeDuplicatePractitioners {
-            get {
-                return ResourceManager.GetString("ExceptionFailedToMergeDuplicatePractitioners", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unable to save Authority Group.
         /// </summary>
         internal static string ExceptionSaveAuthorityGroup {
@@ -984,15 +975,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleLocations {
             get {
                 return ResourceManager.GetString("TitleLocations", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Merge External Practitioner.
-        /// </summary>
-        internal static string TitleMergeExternalPractitioner {
-            get {
-                return ResourceManager.GetString("TitleMergeExternalPractitioner", resourceCulture);
             }
         }
         

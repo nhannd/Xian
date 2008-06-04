@@ -123,7 +123,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
         }
 
         [ReadOperation]
-        public TextQueryResponse<ExternalPractitionerSummary> TextQuery(TextQueryRequest request)
+		public TextQueryResponse<ExternalPractitionerSummary> TextQuery(TextQueryRequest request)
         {
             IExternalPractitionerBroker broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
             ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
@@ -174,6 +174,60 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
             return helper.Query(request);
         }
 
+		[ReadOperation]
+		public TextQueryResponse<ExternalPractitionerContactPointSummary> ContactPointTextQuery(ContactPointTextQueryRequest request)
+		{
+			IExternalPractitionerBroker xpBroker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
+			ExternalPractitioner practitioner = xpBroker.Load(request.PractitionerRef, EntityLoadFlags.Proxy);
+
+			IExternalPractitionerContactPointBroker broker = PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
+			ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
+
+			TextQueryHelper<ExternalPractitionerContactPoint, ExternalPractitionerContactPointSearchCriteria, ExternalPractitionerContactPointSummary> helper
+				= new TextQueryHelper<ExternalPractitionerContactPoint, ExternalPractitionerContactPointSearchCriteria, ExternalPractitionerContactPointSummary>(
+					delegate(string rawQuery)
+					{
+						List<ExternalPractitionerContactPointSearchCriteria> criteria = new List<ExternalPractitionerContactPointSearchCriteria>();
+
+						// build criteria against names
+						IList<string> terms = TextQueryHelper.ParseTerms(rawQuery);
+						criteria.AddRange(CollectionUtils.Map<string, ExternalPractitionerContactPointSearchCriteria>(terms,
+							delegate(string term)
+							{
+								ExternalPractitionerContactPointSearchCriteria sc = new ExternalPractitionerContactPointSearchCriteria();
+								sc.Name.StartsWith(term);
+								sc.Practitioner.EqualTo(practitioner);
+								return sc;
+							}));
+
+						// build criteria against descriptions
+						criteria.AddRange(CollectionUtils.Map<string, ExternalPractitionerContactPointSearchCriteria>(terms,
+									 delegate(string term)
+									 {
+										 ExternalPractitionerContactPointSearchCriteria sc = new ExternalPractitionerContactPointSearchCriteria();
+										 sc.Description.StartsWith(term);
+										 sc.Practitioner.EqualTo(practitioner);
+										 return sc;
+									 }));
+
+						return criteria.ToArray();
+					},
+					delegate(ExternalPractitionerContactPoint cp)
+					{
+						return assembler.CreateExternalPractitionerContactPointSummary(cp);
+					},
+					delegate(ExternalPractitionerContactPointSearchCriteria[] criteria, int threshold)
+					{
+						return broker.Count(criteria) <= threshold;
+					},
+					delegate(ExternalPractitionerContactPointSearchCriteria[] criteria, SearchResultPage page)
+					{
+						return broker.Find(criteria, page);
+					});
+
+			return helper.Query(request.TextQueryRequest);
+		}
+
 		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ExternalPractitioner)]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.ExternalPractitioner.Merge)]
@@ -182,7 +236,27 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			return new MergeDuplicatePractitionerResponse();
 		}
 
-        #endregion
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ExternalPractitioner)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.ExternalPractitioner.Merge)]
+		public MergeDuplicateContactPointResponse MergeDuplicateContactPoint(MergeDuplicateContactPointRequest request)
+		{
+			return new MergeDuplicateContactPointResponse();
+		}
+
+		[ReadOperation]
+		public LoadMergeDuplicatePractitionerFormDataResponse LoadMergeDuplicatePractitionerFormData(LoadMergeDuplicatePractitionerFormDataRequest request)
+		{
+			return new LoadMergeDuplicatePractitionerFormDataResponse(null, null);
+		}
+
+		[ReadOperation]
+		public LoadMergeDuplicateContactPointFormDataResponse LoadMergeDuplicateContactPointFormData(LoadMergeDuplicateContactPointFormDataRequest request)
+		{
+			return new LoadMergeDuplicateContactPointFormDataResponse(null);
+		}
+
+		#endregion
 
     }
 }

@@ -113,7 +113,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly bool _isNew;
 
 		private ExternalPractitionerDetailsEditorComponent _detailsEditor;
-		private ExternalPractitionerContactPointSummaryComponent _contactPointSummary;
+		private ExternalPractitionerContactPointSummaryComponent _contactPointSummaryComponent;
 
 		private List<IExternalPractitionerEditorPage> _extensionPages;
 
@@ -145,19 +145,12 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
+			LoadExternalPractitionerEditorFormDataResponse formDataResponse = null;
+
 			Platform.GetService<IExternalPractitionerAdminService>(
 				delegate(IExternalPractitionerAdminService service)
 				{
-					LoadExternalPractitionerEditorFormDataResponse formDataResponse = service.LoadExternalPractitionerEditorFormData(new LoadExternalPractitionerEditorFormDataRequest());
-
-					_contactPointSummary = new ExternalPractitionerContactPointSummaryComponent(
-						formDataResponse.AddressTypeChoices, formDataResponse.PhoneTypeChoices, formDataResponse.ResultCommunicationModeChoices);
-
-					string rootPath = SR.TitleExternalPractitioner;
-					this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new ExternalPractitionerDetailsEditorComponent(_isNew)));
-					this.Pages.Add(new NavigatorPage(rootPath + "/Contact Points", _contactPointSummary));
-
-					this.ValidationStrategy = new AllComponentsValidationStrategy();
+					formDataResponse = service.LoadExternalPractitionerEditorFormData(new LoadExternalPractitionerEditorFormDataRequest());
 
 					if (_isNew)
 					{
@@ -169,13 +162,22 @@ namespace ClearCanvas.Ris.Client
 						_practitionerRef = response.PractitionerRef;
 						_practitionerDetail = response.PractitionerDetail;
 					}
-
-					_detailsEditor.ExternalPractitionerDetail = _practitionerDetail;
-					_practitionerDetail.ContactPoints.ForEach(delegate(ExternalPractitionerContactPointDetail p)
-															  {
-																  _contactPointSummary.Subject.Add(p);
-															  });
 				});
+
+			_contactPointSummaryComponent = new ExternalPractitionerContactPointSummaryComponent(_practitionerRef,
+				formDataResponse.AddressTypeChoices, formDataResponse.PhoneTypeChoices, formDataResponse.ResultCommunicationModeChoices);
+
+			string rootPath = SR.TitleExternalPractitioner;
+			this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new ExternalPractitionerDetailsEditorComponent(_isNew)));
+			this.Pages.Add(new NavigatorPage(rootPath + "/" + SR.TitleContactPoints, _contactPointSummaryComponent));
+
+			this.ValidationStrategy = new AllComponentsValidationStrategy();
+
+			_detailsEditor.ExternalPractitionerDetail = _practitionerDetail;
+			_practitionerDetail.ContactPoints.ForEach(delegate(ExternalPractitionerContactPointDetail p)
+													  {
+														  _contactPointSummaryComponent.Subject.Add(p);
+													  });
 
 			// instantiate all extension pages
 			_extensionPages = new List<IExternalPractitionerEditorPage>();
@@ -194,11 +196,6 @@ namespace ClearCanvas.Ris.Client
 			base.Start();
 		}
 
-		public override void Stop()
-		{
-			base.Stop();
-		}
-
 		public override void Accept()
 		{
 			if (this.HasValidationErrors)
@@ -210,7 +207,7 @@ namespace ClearCanvas.Ris.Client
 			try
 			{
 				_practitionerDetail.ContactPoints.Clear();
-				foreach (ExternalPractitionerContactPointDetail detail in _contactPointSummary.Subject)
+				foreach (ExternalPractitionerContactPointDetail detail in _contactPointSummaryComponent.Subject)
 				{
 					_practitionerDetail.ContactPoints.Add(detail);
 				}
@@ -240,7 +237,7 @@ namespace ClearCanvas.Ris.Client
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, SR.ExceptionSaveExternalPractitioner, this.Host.DesktopWindow,
-					delegate()
+					delegate
 					{
 						this.ExitCode = ApplicationComponentExitCode.Error;
 						this.Host.Exit();

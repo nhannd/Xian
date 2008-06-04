@@ -34,6 +34,7 @@ using System.Collections.Generic;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
@@ -41,13 +42,11 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
-using ClearCanvas.Ris.Client.Formatting;
-using ClearCanvas.Common.Specifications;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client
 {
-    [MenuAction("launch", "global-menus/Admin/ExternalPractitioner/Show Summary", "Launch")]
+    [MenuAction("launch", "global-menus/Admin/ExternalPractitioner", "Launch")]
     [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ExternalPractitionerSummaryTool : Tool<IDesktopToolContext>
@@ -118,6 +117,7 @@ namespace ClearCanvas.Ris.Client
         private string _firstName;
         private string _lastName;
 
+		private Action _mergePractitionerAction;
 
         /// <summary>
         /// Constructor
@@ -149,13 +149,21 @@ namespace ClearCanvas.Ris.Client
         public string FirstName
         {
             get { return _firstName; }
-            set { _firstName = value; }
+            set 
+			{ 
+				_firstName = value;
+				NotifyPropertyChanged("FirstName");
+			}
         }
 
         public string LastName
         {
             get { return _lastName; }
-            set { _lastName = value; }
+            set 
+			{ 
+				_lastName = value;
+				NotifyPropertyChanged("LastName");
+			}
         }
 
         public void Search()
@@ -170,6 +178,13 @@ namespace ClearCanvas.Ris.Client
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
+
+		public void Clear()
+		{
+			this.FirstName = null;
+			this.LastName = null;
+			Search();
+		}
 
         #endregion
 
@@ -186,6 +201,10 @@ namespace ClearCanvas.Ris.Client
 				OrPermissions(AuthorityTokens.Admin.Data.ExternalPractitioner, AuthorityTokens.Workflow.ExternalPractitioner.Create));
 			model.Edit.SetPermissibility(
 				OrPermissions(AuthorityTokens.Admin.Data.ExternalPractitioner, AuthorityTokens.Workflow.ExternalPractitioner.Update));
+
+			_mergePractitionerAction = model.AddAction("mergePractitioner", SR.TitleMerge, "Icons.MergeToolSmall.png",
+				SR.TitleMerge, Merge);
+			_mergePractitionerAction.Enabled = false;
 		}
 
 		/// <summary>
@@ -216,7 +235,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			addedItems = new List<ExternalPractitionerSummary>();
 			ExternalPractitionerEditorComponent editor = new ExternalPractitionerEditorComponent();
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(
 				this.Host.DesktopWindow, editor, SR.TitleAddExternalPractitioner);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
@@ -238,7 +257,7 @@ namespace ClearCanvas.Ris.Client
 			ExternalPractitionerSummary item = CollectionUtils.FirstElement(items);
 
 			ExternalPractitionerEditorComponent editor = new ExternalPractitionerEditorComponent(item.PractitionerRef);
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(
 				this.Host.DesktopWindow, editor, SR.TitleUpdateExternalPractitioner);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
@@ -269,6 +288,16 @@ namespace ClearCanvas.Ris.Client
 			return x.PractitionerRef.Equals(y.PractitionerRef, true);
 		}
 
+		/// <summary>
+		/// Called when the user changes the selected items in the table.
+		/// </summary>
+		protected override void OnSelectedItemsChanged()
+		{
+			base.OnSelectedItemsChanged();
+
+			_mergePractitionerAction.Enabled = this.SelectedItems.Count == 1;
+		}
+
 		private void DoSearch()
         {
             _listRequest.FirstName = _firstName;
@@ -278,12 +307,24 @@ namespace ClearCanvas.Ris.Client
 			this.Table.Items.AddRange(this.PagingController.GetFirst());
         }
 
-		private ISpecification OrPermissions(string token1, string token2)
+		private static ISpecification OrPermissions(string token1, string token2)
 		{
 			OrSpecification or = new OrSpecification();
 			or.Add(new PrincipalPermissionSpecification(token1));
 			or.Add(new PrincipalPermissionSpecification(token2));
 			return or;
+		}
+
+		private void Merge()
+		{
+			ExternalPractitionerSummary selectedItem = CollectionUtils.FirstElement(this.SelectedItems);
+			ExternalPractitionerMergeComponent mergeComponent = new ExternalPractitionerMergeComponent(selectedItem);
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(
+				this.Host.DesktopWindow, mergeComponent, SR.TitleMerge);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				this.Table.Items.Remove(mergeComponent.SelectedDuplicate);
+			}
 		}
     }
 }

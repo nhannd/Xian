@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
@@ -49,7 +46,15 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        TextQueryResponse<ExternalPractitionerSummary> TextQuery(TextQueryRequest request);
+		TextQueryResponse<ExternalPractitionerSummary> TextQuery(TextQueryRequest request);
+
+		/// <summary>
+		/// Returns a list of practitioners contact point based on a textual query.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		TextQueryResponse<ExternalPractitionerContactPointSummary> ContactPointTextQuery(ContactPointTextQueryRequest request);
 
         /// <summary>
         /// Summary list of all practitioners
@@ -89,5 +94,23 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		/// </summary>
 		[OperationContract]
 		MergeDuplicatePractitionerResponse MergeDuplicatePractitioner(MergeDuplicatePractitionerRequest request);
+
+		/// <summary>
+		/// Merge duplicate external practitioners contact points.
+		/// </summary>
+		[OperationContract]
+		MergeDuplicateContactPointResponse MergeDuplicateContactPoint(MergeDuplicateContactPointRequest request);
+
+		/// <summary>
+		/// Loads all form data needed to merge two practitioners.
+		/// </summary>
+		[OperationContract]
+		LoadMergeDuplicatePractitionerFormDataResponse LoadMergeDuplicatePractitionerFormData(LoadMergeDuplicatePractitionerFormDataRequest request);
+
+		/// <summary>
+		/// Loads all form data needed to merge two contact points.
+		/// </summary>
+		[OperationContract]
+		LoadMergeDuplicateContactPointFormDataResponse LoadMergeDuplicateContactPointFormData(LoadMergeDuplicateContactPointFormDataRequest request);
 	}
 }

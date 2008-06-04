@@ -133,6 +133,13 @@
       <DependentUpon>ExternalPractitionerContactPointSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ExternalPractitionerContactPointSummaryComponentView.cs" />
+    <Compile Include="MergeComponentBaseControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MergeComponentBaseControl.Designer.cs">
+      <DependentUpon>MergeComponentBaseControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MergeComponentBaseView.cs" />
     <Compile Include="FolderContentsComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -416,6 +423,10 @@
     <EmbeddedResource Include="ExternalPractitionerContactPointSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ExternalPractitionerContactPointSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MergeComponentBaseControl.resx">
+      <DependentUpon>MergeComponentBaseControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FolderContentsComponentControl.resx">
       <DependentUpon>FolderContentsComponentControl.cs</DependentUpon>

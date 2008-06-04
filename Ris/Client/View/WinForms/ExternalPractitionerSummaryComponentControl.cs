@@ -88,7 +88,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             }
         }
 
-        private void _okButton_Click(object sender, EventArgs e)
+		private void _clearButton_Click(object sender, EventArgs e)
+		{
+			_component.Clear();
+		}
+
+		private void _okButton_Click(object sender, EventArgs e)
         {
             _component.Accept();        
         }
