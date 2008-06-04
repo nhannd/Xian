@@ -96,19 +96,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 Label typeLabel = GeneralInfoDetailsView.FindControl("Type") as Label;
                 if (typeLabel != null)
                 {
-                    typeLabel.Text = WorkQueueTypeEnumHelper.GetDescription(item.Type);
+                    typeLabel.Text = item.Type.Description;
                 }
 
                 Label statusLabel = GeneralInfoDetailsView.FindControl("Status") as Label;
                 if (statusLabel != null)
                 {
-                    statusLabel.Text = WorkQueueStatusEnumHelper.GetDescription(item.Status);
+                    statusLabel.Text = item.Status.Description;
                 }
 
                 Label priorityLabel = GeneralInfoDetailsView.FindControl("Priority") as Label;
                 if (priorityLabel != null)
                 {
-                    priorityLabel.Text = WorkQueuePriorityEnumHelper.GetDescription(item.Priority);
+                    priorityLabel.Text = item.Priority.Description;
                 }
             }
 

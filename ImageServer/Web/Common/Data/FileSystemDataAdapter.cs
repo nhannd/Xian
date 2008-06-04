@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public IList<FilesystemTierEnum> GetFileSystemTiers()
         {
-            return FilesystemTierEnumHelper.GetAll();
+            return FilesystemTierEnum.GetAll();
         }
 
         #endregion Public methods

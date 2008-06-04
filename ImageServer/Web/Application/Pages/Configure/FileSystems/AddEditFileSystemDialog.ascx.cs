@@ -214,7 +214,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             TiersDropDownList.Items.Clear();
             foreach (FilesystemTierEnum tier in _tiers)
             {
-                TiersDropDownList.Items.Add(new ListItem(FilesystemTierEnumHelper.GetDescription(tier), tier.ToString()));
+                TiersDropDownList.Items.Add(new ListItem(tier.Description, tier.Lookup));
             }
 
             if (FileSystem == null)

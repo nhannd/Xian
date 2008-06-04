@@ -68,11 +68,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            IList<ServiceLockTypeEnum> types = ServiceLockTypeEnumHelper.GetAll();
+            IList<ServiceLockTypeEnum> types = ServiceLockTypeEnum.GetAll();
             TypeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.All)); 
             foreach (ServiceLockTypeEnum t in types)
             {
-                TypeDropDownList.Items.Add(new ListItem(ServiceLockTypeEnumHelper.GetDescription(t), t.ToString()));
+                TypeDropDownList.Items.Add(new ListItem(t.Description, t.Lookup));
             }
 
             EditServiceLockDialog.ServiceLockUpdated += AddEditServiceLockDialog_ServiceLockUpdated; 
@@ -218,9 +218,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
 
             ServiceLockConfigurationController controller = new ServiceLockConfigurationController();
 
-            if (ServiceLockTypeEnumHelper.IsDefined(TypeDropDownList.SelectedValue))
+            if (TypeDropDownList.SelectedValue != App_GlobalResources.SR.All)
             {
-                criteria.ServiceLockTypeEnum.EqualTo(ServiceLockTypeEnumHelper.Get(TypeDropDownList.SelectedValue));
+                criteria.ServiceLockTypeEnum.EqualTo(ServiceLockTypeEnum.GetEnum(TypeDropDownList.SelectedValue));
             }
             
             if (StatusFilter.SelectedIndex != 0)

@@ -242,7 +242,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
             ServiceLock item = row.DataItem as ServiceLock;
             if (typeLabel != null && item!=null)
             {
-                typeLabel.Text = ServiceLockTypeEnumHelper.GetDescription(item.ServiceLockTypeEnum);
+                typeLabel.Text = item.ServiceLockTypeEnum.Description;
             }
         }
 
@@ -253,7 +253,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
             ServiceLock item = row.DataItem as ServiceLock;
             if (descLabel != null && item != null)
             {
-                descLabel.Text = ServiceLockTypeEnumHelper.GetLongDescription(item.ServiceLockTypeEnum);
+                descLabel.Text = item.ServiceLockTypeEnum.LongDescription;
             }
         }
 

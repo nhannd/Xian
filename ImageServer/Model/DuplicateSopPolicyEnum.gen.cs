@@ -35,66 +35,69 @@ namespace ClearCanvas.ImageServer.Model
 {
     using System;
     using System.Collections.Generic;
+    using ClearCanvas.ImageServer.Model.EntityBrokers;
     using ClearCanvas.ImageServer.Enterprise;
     using System.Reflection;
 
-  public enum DuplicateSopPolicyEnum
-  {
-      [EnumValueDescriptionAttribute("Send Success", "Send a DICOM C-STORE-RSP success status when receiving a duplicate, but ignore the file.")]
-      SendSuccess = 100,
+[Serializable]
+public partial class DuplicateSopPolicyEnum : ServerEnum
+{
+      #region Private Static Members
+      private static readonly DuplicateSopPolicyEnum _SendSuccess = GetEnum("SendSuccess");
+      private static readonly DuplicateSopPolicyEnum _RejectDuplicates = GetEnum("RejectDuplicates");
+      private static readonly DuplicateSopPolicyEnum _AcceptLatest = GetEnum("AcceptLatest");
+      private static readonly DuplicateSopPolicyEnum _CompareDuplicates = GetEnum("CompareDuplicates");
+      #endregion
 
-      [EnumValueDescriptionAttribute("Reject Duplicates", "Send a DICOM C-STORE-RSP reject status when receiving a duplicate.")]
-      RejectDuplicates = 101,
+      #region Public Static Properties
+      /// <summary>
+      /// Send a DICOM C-STORE-RSP success status when receiving a duplicate, but ignore the file.
+      /// </summary>
+      public static DuplicateSopPolicyEnum SendSuccess
+      {
+          get { return _SendSuccess; }
+      }
+      /// <summary>
+      /// Send a DICOM C-STORE-RSP reject status when receiving a duplicate.
+      /// </summary>
+      public static DuplicateSopPolicyEnum RejectDuplicates
+      {
+          get { return _RejectDuplicates; }
+      }
+      /// <summary>
+      /// Keep the latest object received.
+      /// </summary>
+      public static DuplicateSopPolicyEnum AcceptLatest
+      {
+          get { return _AcceptLatest; }
+      }
+      /// <summary>
+      /// Process duplicate objects received and compare them to originals flagging any differences as a failure.
+      /// </summary>
+      public static DuplicateSopPolicyEnum CompareDuplicates
+      {
+          get { return _CompareDuplicates; }
+      }
 
-      [EnumValueDescriptionAttribute("Accept Latest", "Keep the latest object received.")]
-      AcceptLatest = 102,
+      #endregion
 
-      [EnumValueDescriptionAttribute("Compare Duplicates", "Process duplicate objects received and compare them to originals flagging any differences as a failure.")]
-      CompareDuplicates = 103
-  }
-
-  public static class DuplicateSopPolicyEnumHelper
-  {
-      public static IList<DuplicateSopPolicyEnum> GetAll()
+      #region Constructors
+      public DuplicateSopPolicyEnum():base("DuplicateSopPolicyEnum")
+      {}
+      #endregion
+      #region Public Members
+      public override void SetEnum(short val)
       {
-          List<DuplicateSopPolicyEnum> values = new List<DuplicateSopPolicyEnum>();
-          Array array = Enum.GetValues(typeof (DuplicateSopPolicyEnum));
-          
-          foreach(DuplicateSopPolicyEnum value in array)
-          {
-              values.Add(value);
-          }
-          return values;
+          ServerEnumHelper<DuplicateSopPolicyEnum, IDuplicateSopPolicyEnumBroker>.SetEnum(this, val);
       }
-      public static DuplicateSopPolicyEnum Get(string lookup)
+      static public IList<DuplicateSopPolicyEnum> GetAll()
       {
-          return (DuplicateSopPolicyEnum) Enum.Parse(typeof (DuplicateSopPolicyEnum), lookup);
+          return ServerEnumHelper<DuplicateSopPolicyEnum, IDuplicateSopPolicyEnumBroker>.GetAll();
       }
-      public static bool IsDefined(string lookup)
+      static public DuplicateSopPolicyEnum GetEnum(string lookup)
       {
-          return Enum.IsDefined(typeof (DuplicateSopPolicyEnum), lookup);
+          return ServerEnumHelper<DuplicateSopPolicyEnum, IDuplicateSopPolicyEnumBroker>.GetEnum(lookup);
       }
-      public static string GetDescription(DuplicateSopPolicyEnum value)
-      {
-          FieldInfo enumField = value.GetType().GetField(value.ToString());
-          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
-          if (attributes!=null && attributes.Length>0)
-          {
-              return ((EnumValueDescriptionAttribute)attributes[0]).Description;
-          }
-          else
-              return null;
-      }
-      public static string GetLongDescription(DuplicateSopPolicyEnum value)
-      {
-          FieldInfo enumField = value.GetType().GetField(value.ToString());
-          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
-          if (attributes!=null && attributes.Length>0)
-          {
-              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;
-          }
-          else
-              return null;
-      }
-  }
+      #endregion
+}
 }

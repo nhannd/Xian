@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Enterprise;
 
@@ -49,7 +48,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
         public StudyStatusEnum StudyStatusEnum
         {
-            set { this.SubCriteria["StudyStatusEnum"] = new ProcedureParameter<Enum>("StudyStatusEnum", value); }
+            set { this.SubCriteria["StudyStatusEnum"] = new ProcedureParameter<ServerEnum>("StudyStatusEnum", value); }
         }
 
         [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]

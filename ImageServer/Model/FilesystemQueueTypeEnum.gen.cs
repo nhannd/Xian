@@ -35,69 +35,77 @@ namespace ClearCanvas.ImageServer.Model
 {
     using System;
     using System.Collections.Generic;
+    using ClearCanvas.ImageServer.Model.EntityBrokers;
     using ClearCanvas.ImageServer.Enterprise;
     using System.Reflection;
 
-  public enum FilesystemQueueTypeEnum
-  {
-      [EnumValueDescriptionAttribute("Delete Study", "Delete a Study")]
-      DeleteStudy = 100,
+[Serializable]
+public partial class FilesystemQueueTypeEnum : ServerEnum
+{
+      #region Private Static Members
+      private static readonly FilesystemQueueTypeEnum _DeleteStudy = GetEnum("DeleteStudy");
+      private static readonly FilesystemQueueTypeEnum _PurgeStudy = GetEnum("PurgeStudy");
+      private static readonly FilesystemQueueTypeEnum _TierMigrate = GetEnum("TierMigrate");
+      private static readonly FilesystemQueueTypeEnum _LosslessCompress = GetEnum("LosslessCompress");
+      private static readonly FilesystemQueueTypeEnum _LossyCompress = GetEnum("LossyCompress");
+      #endregion
 
-      [EnumValueDescriptionAttribute("Purge Study", "Purge an Online Study")]
-      PurgeStudy = 101,
+      #region Public Static Properties
+      /// <summary>
+      /// Delete a Study
+      /// </summary>
+      public static FilesystemQueueTypeEnum DeleteStudy
+      {
+          get { return _DeleteStudy; }
+      }
+      /// <summary>
+      /// Purge an Online Study
+      /// </summary>
+      public static FilesystemQueueTypeEnum PurgeStudy
+      {
+          get { return _PurgeStudy; }
+      }
+      /// <summary>
+      /// Migrate a Study to a Lower Tier
+      /// </summary>
+      public static FilesystemQueueTypeEnum TierMigrate
+      {
+          get { return _TierMigrate; }
+      }
+      /// <summary>
+      /// Lossless Compress a Study
+      /// </summary>
+      public static FilesystemQueueTypeEnum LosslessCompress
+      {
+          get { return _LosslessCompress; }
+      }
+      /// <summary>
+      /// Lossy Compress a Study
+      /// </summary>
+      public static FilesystemQueueTypeEnum LossyCompress
+      {
+          get { return _LossyCompress; }
+      }
 
-      [EnumValueDescriptionAttribute("Tier Migrate", "Migrate a Study to a Lower Tier")]
-      TierMigrate = 102,
+      #endregion
 
-      [EnumValueDescriptionAttribute("Lossless Compress", "Lossless Compress a Study")]
-      LosslessCompress = 103,
-
-      [EnumValueDescriptionAttribute("Lossy Compress", "Lossy Compress a Study")]
-      LossyCompress = 104
-  }
-
-  public static class FilesystemQueueTypeEnumHelper
-  {
-      public static IList<FilesystemQueueTypeEnum> GetAll()
+      #region Constructors
+      public FilesystemQueueTypeEnum():base("FilesystemQueueTypeEnum")
+      {}
+      #endregion
+      #region Public Members
+      public override void SetEnum(short val)
       {
-          List<FilesystemQueueTypeEnum> values = new List<FilesystemQueueTypeEnum>();
-          Array array = Enum.GetValues(typeof (FilesystemQueueTypeEnum));
-          
-          foreach(FilesystemQueueTypeEnum value in array)
-          {
-              values.Add(value);
-          }
-          return values;
+          ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnumBroker>.SetEnum(this, val);
       }
-      public static FilesystemQueueTypeEnum Get(string lookup)
+      static public IList<FilesystemQueueTypeEnum> GetAll()
       {
-          return (FilesystemQueueTypeEnum) Enum.Parse(typeof (FilesystemQueueTypeEnum), lookup);
+          return ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnumBroker>.GetAll();
       }
-      public static bool IsDefined(string lookup)
+      static public FilesystemQueueTypeEnum GetEnum(string lookup)
       {
-          return Enum.IsDefined(typeof (FilesystemQueueTypeEnum), lookup);
+          return ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnumBroker>.GetEnum(lookup);
       }
-      public static string GetDescription(FilesystemQueueTypeEnum value)
-      {
-          FieldInfo enumField = value.GetType().GetField(value.ToString());
-          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
-          if (attributes!=null && attributes.Length>0)
-          {
-              return ((EnumValueDescriptionAttribute)attributes[0]).Description;
-          }
-          else
-              return null;
-      }
-      public static string GetLongDescription(FilesystemQueueTypeEnum value)
-      {
-          FieldInfo enumField = value.GetType().GetField(value.ToString());
-          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
-          if (attributes!=null && attributes.Length>0)
-          {
-              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;
-          }
-          else
-              return null;
-      }
-  }
+      #endregion
+}
 }

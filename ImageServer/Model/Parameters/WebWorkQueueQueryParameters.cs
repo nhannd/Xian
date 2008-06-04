@@ -66,19 +66,19 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime?>("ScheduledTime", value); }
         }
 
-        public WorkQueueTypeEnum? Type
+        public WorkQueueTypeEnum Type
         {
-            set { SubCriteria["Type"] = new ProcedureParameter<Enum>("Type", value); }
+            set { SubCriteria["Type"] = new ProcedureParameter<ServerEnum>("Type", value); }
         }
 
-        public WorkQueueStatusEnum? Status
+        public WorkQueueStatusEnum Status
         {
-            set { SubCriteria["Status"] = new ProcedureParameter<Enum>("Status", value); }
+            set { SubCriteria["Status"] = new ProcedureParameter<ServerEnum>("Status", value); }
         }
 
-        public WorkQueuePriorityEnum? Priority
+        public WorkQueuePriorityEnum Priority
         {
-            set { SubCriteria["Priority"] = new ProcedureParameter<Enum>("Priority", value); }
+            set { SubCriteria["Priority"] = new ProcedureParameter<ServerEnum>("Priority", value); }
         }
     }
 }

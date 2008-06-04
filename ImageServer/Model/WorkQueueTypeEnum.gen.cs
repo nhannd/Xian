@@ -35,78 +35,101 @@ namespace ClearCanvas.ImageServer.Model
 {
     using System;
     using System.Collections.Generic;
+    using ClearCanvas.ImageServer.Model.EntityBrokers;
     using ClearCanvas.ImageServer.Enterprise;
     using System.Reflection;
 
-  public enum WorkQueueTypeEnum
-  {
-      [EnumValueDescriptionAttribute("Process Study", "Processing of a new incoming study.")]
-      StudyProcess = 100,
+[Serializable]
+public partial class WorkQueueTypeEnum : ServerEnum
+{
+      #region Private Static Members
+      private static readonly WorkQueueTypeEnum _StudyProcess = GetEnum("StudyProcess");
+      private static readonly WorkQueueTypeEnum _AutoRoute = GetEnum("AutoRoute");
+      private static readonly WorkQueueTypeEnum _DeleteStudy = GetEnum("DeleteStudy");
+      private static readonly WorkQueueTypeEnum _WebDeleteStudy = GetEnum("WebDeleteStudy");
+      private static readonly WorkQueueTypeEnum _WebMoveStudy = GetEnum("WebMoveStudy");
+      private static readonly WorkQueueTypeEnum _WebEditStudy = GetEnum("WebEditStudy");
+      private static readonly WorkQueueTypeEnum _CleanupStudy = GetEnum("CleanupStudy");
+      private static readonly WorkQueueTypeEnum _CompressStudy = GetEnum("CompressStudy");
+      #endregion
 
-      [EnumValueDescriptionAttribute("Auto Route", "DICOM Auto-route request.")]
-      AutoRoute = 101,
-
-      [EnumValueDescriptionAttribute("Delete Study", "Automatic deletion of a Study.")]
-      DeleteStudy = 102,
-
-      [EnumValueDescriptionAttribute("Web Delete Study", "Manual study delete via the Web UI.")]
-      WebDeleteStudy = 103,
-
-      [EnumValueDescriptionAttribute("Web Move Study", "Manual DICOM move of a study via the Web UI.")]
-      WebMoveStudy = 104,
-
-      [EnumValueDescriptionAttribute("Web Edit Study", "Manual study edit via the Web UI.")]
-      WebEditStudy = 105,
-
-      [EnumValueDescriptionAttribute("Cleanup Study", "Cleanup all unprocessed or failed instances within a study.")]
-      CleanupStudy = 106,
-
-      [EnumValueDescriptionAttribute("Compress Study", "Compress a study.")]
-      CompressStudy = 107
-  }
-
-  public static class WorkQueueTypeEnumHelper
-  {
-      public static IList<WorkQueueTypeEnum> GetAll()
+      #region Public Static Properties
+      /// <summary>
+      /// Processing of a new incoming study.
+      /// </summary>
+      public static WorkQueueTypeEnum StudyProcess
       {
-          List<WorkQueueTypeEnum> values = new List<WorkQueueTypeEnum>();
-          Array array = Enum.GetValues(typeof (WorkQueueTypeEnum));
-          
-          foreach(WorkQueueTypeEnum value in array)
-          {
-              values.Add(value);
-          }
-          return values;
+          get { return _StudyProcess; }
       }
-      public static WorkQueueTypeEnum Get(string lookup)
+      /// <summary>
+      /// DICOM Auto-route request.
+      /// </summary>
+      public static WorkQueueTypeEnum AutoRoute
       {
-          return (WorkQueueTypeEnum) Enum.Parse(typeof (WorkQueueTypeEnum), lookup);
+          get { return _AutoRoute; }
       }
-      public static bool IsDefined(string lookup)
+      /// <summary>
+      /// Automatic deletion of a Study.
+      /// </summary>
+      public static WorkQueueTypeEnum DeleteStudy
       {
-          return Enum.IsDefined(typeof (WorkQueueTypeEnum), lookup);
+          get { return _DeleteStudy; }
       }
-      public static string GetDescription(WorkQueueTypeEnum value)
+      /// <summary>
+      /// Manual study delete via the Web UI.
+      /// </summary>
+      public static WorkQueueTypeEnum WebDeleteStudy
       {
-          FieldInfo enumField = value.GetType().GetField(value.ToString());
-          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
-          if (attributes!=null && attributes.Length>0)
-          {
-              return ((EnumValueDescriptionAttribute)attributes[0]).Description;
-          }
-          else
-              return null;
+          get { return _WebDeleteStudy; }
       }
-      public static string GetLongDescription(WorkQueueTypeEnum value)
+      /// <summary>
+      /// Manual DICOM move of a study via the Web UI.
+      /// </summary>
+      public static WorkQueueTypeEnum WebMoveStudy
       {
-          FieldInfo enumField = value.GetType().GetField(value.ToString());
-          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
-          if (attributes!=null && attributes.Length>0)
-          {
-              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;
-          }
-          else
-              return null;
+          get { return _WebMoveStudy; }
       }
-  }
+      /// <summary>
+      /// Manual study edit via the Web UI.
+      /// </summary>
+      public static WorkQueueTypeEnum WebEditStudy
+      {
+          get { return _WebEditStudy; }
+      }
+      /// <summary>
+      /// Cleanup all unprocessed or failed instances within a study.
+      /// </summary>
+      public static WorkQueueTypeEnum CleanupStudy
+      {
+          get { return _CleanupStudy; }
+      }
+      /// <summary>
+      /// Compress a study.
+      /// </summary>
+      public static WorkQueueTypeEnum CompressStudy
+      {
+          get { return _CompressStudy; }
+      }
+
+      #endregion
+
+      #region Constructors
+      public WorkQueueTypeEnum():base("WorkQueueTypeEnum")
+      {}
+      #endregion
+      #region Public Members
+      public override void SetEnum(short val)
+      {
+          ServerEnumHelper<WorkQueueTypeEnum, IWorkQueueTypeEnumBroker>.SetEnum(this, val);
+      }
+      static public IList<WorkQueueTypeEnum> GetAll()
+      {
+          return ServerEnumHelper<WorkQueueTypeEnum, IWorkQueueTypeEnumBroker>.GetAll();
+      }
+      static public WorkQueueTypeEnum GetEnum(string lookup)
+      {
+          return ServerEnumHelper<WorkQueueTypeEnum, IWorkQueueTypeEnumBroker>.GetEnum(lookup);
+      }
+      #endregion
+}
 }

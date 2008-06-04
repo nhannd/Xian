@@ -153,22 +153,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             //
             
             // re-populate the drop down lists and restore their states
-            IList<WorkQueueTypeEnum> workQueueTypes = WorkQueueTypeEnumHelper.GetAll();
-            IList<WorkQueueStatusEnum> workQueueStatuses = WorkQueueStatusEnumHelper.GetAll();
-            IList<WorkQueuePriorityEnum> workQueuePriorities = WorkQueuePriorityEnumHelper.GetAll();
+            IList<WorkQueueTypeEnum> workQueueTypes = WorkQueueTypeEnum.GetAll();
+            IList<WorkQueueStatusEnum> workQueueStatuses = WorkQueueStatusEnum.GetAll();
+            IList<WorkQueuePriorityEnum> workQueuePriorities = WorkQueuePriorityEnum.GetAll();
             
             int prevSelectedIndex = TypeDropDownList.SelectedIndex;
             TypeDropDownList.Items.Clear();
             TypeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, ""));
             foreach (WorkQueueTypeEnum t in workQueueTypes)
-                TypeDropDownList.Items.Add(new ListItem( WorkQueueTypeEnumHelper.GetDescription(t), t.ToString()));
+                TypeDropDownList.Items.Add(new ListItem( t.Description, t.Lookup));
             TypeDropDownList.SelectedIndex = prevSelectedIndex;
 
             prevSelectedIndex = StatusDropDownList.SelectedIndex;
             StatusDropDownList.Items.Clear();
             StatusDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, ""));
             foreach (WorkQueueStatusEnum s in workQueueStatuses)
-                StatusDropDownList.Items.Add(new ListItem(WorkQueueStatusEnumHelper.GetDescription(s), s.ToString()));
+                StatusDropDownList.Items.Add(new ListItem(s.Description, s.Lookup));
             StatusDropDownList.SelectedIndex = prevSelectedIndex;
 
 
@@ -176,7 +176,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             PriorityDropDownList.Items.Clear();
             PriorityDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, ""));
             foreach (WorkQueuePriorityEnum p in workQueuePriorities)
-                PriorityDropDownList.Items.Add(new ListItem(WorkQueuePriorityEnumHelper.GetDescription(p), p.ToString()));
+                PriorityDropDownList.Items.Add(new ListItem(p.Description, p.Lookup));
             PriorityDropDownList.SelectedIndex = prevSelectedIndex;
 
             
@@ -202,13 +202,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                 parameters.StudyDescription = StudyDescription.Text;
 
                 if (TypeDropDownList.SelectedValue != "")
-                    parameters.Type = WorkQueueTypeEnumHelper.Get(TypeDropDownList.SelectedValue);
+                    parameters.Type = WorkQueueTypeEnum.GetEnum(TypeDropDownList.SelectedValue);
 
                 if (StatusDropDownList.SelectedValue != "")
-                parameters.Status = WorkQueueStatusEnumHelper.Get(StatusDropDownList.SelectedValue);
+                    parameters.Status = WorkQueueStatusEnum.GetEnum(StatusDropDownList.SelectedValue);
 
                 if (PriorityDropDownList.SelectedValue!="")
-                    parameters.Priority = WorkQueuePriorityEnumHelper.Get(PriorityDropDownList.SelectedValue);
+                    parameters.Priority = WorkQueuePriorityEnum.GetEnum(PriorityDropDownList.SelectedValue);
 
                 IList<Model.WorkQueue> list = _searchController.FindWorkQueue(parameters);
 

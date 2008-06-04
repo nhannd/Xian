@@ -98,52 +98,46 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                     command.Parameters.AddWithValue(sqlParmName, parm2.Value);
                 }
-                //else if (parm is ProcedureParameter<ServerEnum>)
-                //{
-                //    ProcedureParameter<ServerEnum> parm2 = (ProcedureParameter<ServerEnum>)parm;
-                //    if (parm2.Value == null)
-                //        command.Parameters.AddWithValue(sqlParmName, null);
-                //    else
-                //        command.Parameters.AddWithValue(sqlParmName, parm2.Value.Enum);
-                //}
+                else if (parm is ProcedureParameter<ServerEnum>)
+                {
+                    ProcedureParameter<ServerEnum> parm2 = (ProcedureParameter<ServerEnum>)parm;
+                    if (parm2.Value == null)
+                        command.Parameters.AddWithValue(sqlParmName, null);
+                    else
+                        command.Parameters.AddWithValue(sqlParmName, parm2.Value.Enum);
+                }
                 else if (parm is ProcedureParameter<Decimal>)
                 {
                     ProcedureParameter<Decimal> parm2 = (ProcedureParameter<Decimal>)parm;
 
                     command.Parameters.AddWithValue(sqlParmName, parm2.Value);
                 }
-                else if (parm is ProcedureParameter<Enum>)
+                else if (parm is ProcedureParameter<XmlDocument>)
                 {
-                    ProcedureParameter<Enum> parm2 = (ProcedureParameter<Enum>)parm;
+                    ProcedureParameter<XmlDocument> parm2 = (ProcedureParameter<XmlDocument>)parm;
+                    if (parm2.Value == null)
+                        command.Parameters.AddWithValue(sqlParmName, null);
+                    else
+                    {
+                        MemoryStream sw = new MemoryStream();
 
-                    command.Parameters.AddWithValue(sqlParmName, parm2.Value);
+                        XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
+                        xmlWriterSettings.Encoding = Encoding.UTF8;
+                        xmlWriterSettings.ConformanceLevel = ConformanceLevel.Fragment;
+                        xmlWriterSettings.Indent = true;
+                        xmlWriterSettings.NewLineOnAttributes = false;
+                        xmlWriterSettings.IndentChars = "";
+
+                        XmlWriter xmlWriter = XmlWriter.Create(sw, xmlWriterSettings);
+                        parm2.Value.DocumentElement.WriteTo(xmlWriter);
+                        xmlWriter.Close();
+
+                        SqlXml xml = new SqlXml(sw);
+
+                        command.Parameters.AddWithValue(sqlParmName, xml);
+                    }
                 }
-				else if (parm is ProcedureParameter<XmlDocument>)
-				{
-					ProcedureParameter<XmlDocument> parm2 = (ProcedureParameter<XmlDocument>)parm;
-					if (parm2.Value == null)
-						command.Parameters.AddWithValue(sqlParmName, null);
-					else
-					{
-						MemoryStream sw = new MemoryStream();
-
-						XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
-						xmlWriterSettings.Encoding = Encoding.UTF8;
-						xmlWriterSettings.ConformanceLevel = ConformanceLevel.Fragment;
-						xmlWriterSettings.Indent = true;
-						xmlWriterSettings.NewLineOnAttributes = false;
-						xmlWriterSettings.IndentChars = "";
-
-						XmlWriter xmlWriter = XmlWriter.Create(sw, xmlWriterSettings);
-						parm2.Value.DocumentElement.WriteTo(xmlWriter);
-						xmlWriter.Close();
-
-						SqlXml xml = new SqlXml(sw);
-
-						command.Parameters.AddWithValue(sqlParmName, xml);
-					}
-				}
-				else
+                else
                     throw new PersistenceException("Unknown procedure parameter type: " + parm.GetType(), null);
 
             }
@@ -159,7 +153,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 if (columnName.Equals("GUID"))
                 {
                     Guid uid = reader.GetGuid(i);
-                    entity.SetKey( new ServerEntityKey(entity.Name,uid) );
+                    entity.SetKey(new ServerEntityKey(entity.Name, uid));
                     continue;
                 }
 
@@ -174,7 +168,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                 if (reader.IsDBNull(i))
                 {
-                    prop.SetValue(entity,null);
+                    prop.SetValue(entity, null);
                     continue;
                 }
 
@@ -194,31 +188,26 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     prop.SetValue(entity, reader.GetDateTime(i));
                 else if (prop.PropertyType == typeof(bool))
                     prop.SetValue(entity, reader.GetBoolean(i));
-                else if (prop.PropertyType.IsEnum)
-                {
-                    object val = Enum.Parse(prop.PropertyType, reader.GetInt16(i).ToString());
-                    prop.SetValue(entity, val);
-                }
                 else if (prop.PropertyType == typeof(XmlDocument))
                 {
                     SqlXml xml = reader.GetSqlXml(i);
                     XmlDocument xmlDoc = new XmlDocument();
                     xmlDoc.LoadXml(xml.Value);
-                    prop.SetValue(entity,xmlDoc);
+                    prop.SetValue(entity, xmlDoc);
                 }
                 else if (prop.PropertyType == typeof(ServerEntityKey))
                 {
                     Guid uid = reader.GetGuid(i);
                     prop.SetValue(entity, new ServerEntityKey(columnName.Replace("Key", ""), uid));
                 }
-                //else if (typeof(ServerEnum).IsAssignableFrom(prop.PropertyType))
-                //{
-                //    short enumVal = reader.GetInt16(i);
-                //    ConstructorInfo construct = prop.PropertyType.GetConstructor(new Type[0]);
-                //    ServerEnum val = (ServerEnum)construct.Invoke(null);
-                //    val.SetEnum(enumVal);
-                //    prop.SetValue(entity, val);
-                //}
+                else if (typeof(ServerEnum).IsAssignableFrom(prop.PropertyType))
+                {
+                    short enumVal = reader.GetInt16(i);
+                    ConstructorInfo construct = prop.PropertyType.GetConstructor(new Type[0]);
+                    ServerEnum val = (ServerEnum)construct.Invoke(null);
+                    val.SetEnum(enumVal);
+                    prop.SetValue(entity, val);
+                }
                 else
                     throw new EntityNotFoundException("Unsupported property type: " + prop.PropertyType, null);
             }

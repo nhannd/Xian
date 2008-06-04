@@ -29,38 +29,22 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.ImageServer.Model.Parameters
+namespace ClearCanvas.ImageServer.Enterprise
 {
-    public class FilesystemQueueQueryParameters : ProcedureParameters
+    /// <summary>
+    /// Interface for retrieving enumerated values from the database.
+    /// </summary>
+    /// <typeparam name="TOutput"></typeparam>
+    public interface IEnumBroker<TOutput> : IPersistenceBroker
+        where TOutput : ServerEnum, new()
     {
-        public FilesystemQueueQueryParameters()
-            : base("QueryFilesystemQueue")
-        {
-        }
-
-        public ServerEntityKey FilesystemKey
-        {
-            set { SubCriteria["FilesystemKey"] = new ProcedureParameter<ServerEntityKey>("FilesystemKey", value); }
-        }
-        
-        public DateTime ScheduledTime
-        {
-            set { SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
-        }
-
-        public int Results
-        {
-            set { SubCriteria["Results"] = new ProcedureParameter<int>("Results", value); }
-        }
-
-        public FilesystemQueueTypeEnum FilesystemQueueTypeEnum
-        {
-            set { this.SubCriteria["FilesystemQueueTypeEnum"] = new ProcedureParameter<ServerEnum>("FilesystemQueueTypeEnum", value); }
-        }
+        /// <summary>
+        /// Retrieves all enums.
+        /// </summary>
+        /// <returns></returns>
+        IList<TOutput> Execute();
     }
 }

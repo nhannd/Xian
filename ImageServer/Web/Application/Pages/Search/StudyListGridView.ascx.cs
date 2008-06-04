@@ -261,7 +261,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
                 Label statusLabel = e.Row.FindControl("Status") as Label;
                 if (statusLabel!=null)
                 {
-                    statusLabel.Text = StudyStatusEnumHelper.GetDescription(studySummary.StudyStatusEnum);
+                    statusLabel.Text = studySummary.StudyStatusEnum.Description;
                 }
             }
         }

@@ -183,9 +183,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
 
             // update the dropdown list
             DuplicateSopDropDownList.Items.Clear();
-            foreach (DuplicateSopPolicyEnum policyEnum in DuplicateSopPolicyEnumHelper.GetAll())
+            foreach (DuplicateSopPolicyEnum policyEnum in DuplicateSopPolicyEnum.GetAll())
             {
-                DuplicateSopDropDownList.Items.Add(new ListItem(DuplicateSopPolicyEnumHelper.GetDescription(policyEnum), policyEnum.ToString()));
+                DuplicateSopDropDownList.Items.Add(new ListItem(policyEnum.Description, policyEnum.Lookup));
             }
 
             if (Partition == null)
@@ -249,7 +249,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
             if (Int32.TryParse(DefaultRemotePortTextBox.Text, out port))
                 Partition.DefaultRemotePort = port;
 
-            Partition.DuplicateSopPolicyEnum = DuplicateSopPolicyEnumHelper.GetAll()[DuplicateSopDropDownList.SelectedIndex];
+            Partition.DuplicateSopPolicyEnum = DuplicateSopPolicyEnum.GetAll()[DuplicateSopDropDownList.SelectedIndex];
         }
 
         #endregion Private Methods

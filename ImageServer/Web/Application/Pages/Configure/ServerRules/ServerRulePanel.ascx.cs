@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             {
                 if (!RuleApplyTimeDropDownList.Text.Equals("All"))
                 {
-                    ServerRuleApplyTimeEnum en = ServerRuleApplyTimeEnumHelper.Get(RuleApplyTimeDropDownList.SelectedItem.Value);
+                    ServerRuleApplyTimeEnum en = ServerRuleApplyTimeEnum.GetEnum(RuleApplyTimeDropDownList.SelectedItem.Value);
                     criteria.ServerRuleApplyTimeEnum.EqualTo(en);
                 }
             }
@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             {
                 if (!RuleTypeDropDownList.Text.Equals("All"))
                 {
-                    ServerRuleTypeEnum en = ServerRuleTypeEnumHelper.Get(RuleTypeDropDownList.SelectedItem.Value);
+                    ServerRuleTypeEnum en = ServerRuleTypeEnum.GetEnum(RuleTypeDropDownList.SelectedItem.Value);
                     criteria.ServerRuleTypeEnum.EqualTo(en);
                 }
             }
@@ -162,10 +162,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             int prevSelectIndex = RuleApplyTimeDropDownList.SelectedIndex;
             RuleApplyTimeDropDownList.Items.Clear();
             RuleApplyTimeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.All));
-            foreach (ServerRuleApplyTimeEnum applyTimeEnum in ServerRuleApplyTimeEnumHelper.GetAll())
+            foreach (ServerRuleApplyTimeEnum applyTimeEnum in ServerRuleApplyTimeEnum.GetAll())
             {
                 RuleApplyTimeDropDownList.Items.Add(
-                    new ListItem(ServerRuleApplyTimeEnumHelper.GetDescription(applyTimeEnum), applyTimeEnum.ToString()));
+                    new ListItem(applyTimeEnum.Description, applyTimeEnum.Lookup));
             }
             RuleApplyTimeDropDownList.SelectedIndex = prevSelectIndex;
 
@@ -173,9 +173,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             prevSelectIndex = RuleTypeDropDownList.SelectedIndex;
             RuleTypeDropDownList.Items.Clear();
             RuleTypeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.All));
-            foreach (ServerRuleTypeEnum typeEnum in ServerRuleTypeEnumHelper.GetAll())
+            foreach (ServerRuleTypeEnum typeEnum in ServerRuleTypeEnum.GetAll())
             {
-                RuleTypeDropDownList.Items.Add(new ListItem(ServerRuleTypeEnumHelper.GetDescription(typeEnum), typeEnum.ToString()));
+                RuleTypeDropDownList.Items.Add(new ListItem(typeEnum.Description, typeEnum.Lookup));
             }
             RuleTypeDropDownList.SelectedIndex = prevSelectIndex;
 

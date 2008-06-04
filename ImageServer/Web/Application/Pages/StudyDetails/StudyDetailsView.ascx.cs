@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
                 Label statusLabel = StudyDetailView.FindControl("Status") as Label;
                 if (statusLabel != null)
                 {
-                    statusLabel.Text = StudyStatusEnumHelper.GetDescription(study.StudyStatusEnum);
+                    statusLabel.Text = study.StudyStatusEnum.Description;
                 }
 
             }

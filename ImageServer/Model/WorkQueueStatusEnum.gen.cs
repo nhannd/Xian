@@ -35,69 +35,77 @@ namespace ClearCanvas.ImageServer.Model
 {
     using System;
     using System.Collections.Generic;
+    using ClearCanvas.ImageServer.Model.EntityBrokers;
     using ClearCanvas.ImageServer.Enterprise;
     using System.Reflection;
 
-  public enum WorkQueueStatusEnum
-  {
-      [EnumValueDescriptionAttribute("Idle", "Waiting to expire or for more images")]
-      Idle = 100,
+[Serializable]
+public partial class WorkQueueStatusEnum : ServerEnum
+{
+      #region Private Static Members
+      private static readonly WorkQueueStatusEnum _Idle = GetEnum("Idle");
+      private static readonly WorkQueueStatusEnum _Pending = GetEnum("Pending");
+      private static readonly WorkQueueStatusEnum _InProgress = GetEnum("In Progress");
+      private static readonly WorkQueueStatusEnum _Completed = GetEnum("Completed");
+      private static readonly WorkQueueStatusEnum _Failed = GetEnum("Failed");
+      #endregion
 
-      [EnumValueDescriptionAttribute("Pending", "Pending")]
-      Pending = 200,
+      #region Public Static Properties
+      /// <summary>
+      /// Waiting to expire or for more images
+      /// </summary>
+      public static WorkQueueStatusEnum Idle
+      {
+          get { return _Idle; }
+      }
+      /// <summary>
+      /// Pending
+      /// </summary>
+      public static WorkQueueStatusEnum Pending
+      {
+          get { return _Pending; }
+      }
+      /// <summary>
+      /// In Progress
+      /// </summary>
+      public static WorkQueueStatusEnum InProgress
+      {
+          get { return _InProgress; }
+      }
+      /// <summary>
+      /// The Queue entry is completed.
+      /// </summary>
+      public static WorkQueueStatusEnum Completed
+      {
+          get { return _Completed; }
+      }
+      /// <summary>
+      /// The Queue entry has failed.
+      /// </summary>
+      public static WorkQueueStatusEnum Failed
+      {
+          get { return _Failed; }
+      }
 
-      [EnumValueDescriptionAttribute("In Progress", "In Progress")]
-      InProgress = 201,
+      #endregion
 
-      [EnumValueDescriptionAttribute("Completed", "The Queue entry is completed.")]
-      Completed = 202,
-
-      [EnumValueDescriptionAttribute("Failed", "The Queue entry has failed.")]
-      Failed = 203
-  }
-
-  public static class WorkQueueStatusEnumHelper
-  {
-      public static IList<WorkQueueStatusEnum> GetAll()
+      #region Constructors
+      public WorkQueueStatusEnum():base("WorkQueueStatusEnum")
+      {}
+      #endregion
+      #region Public Members
+      public override void SetEnum(short val)
       {
-          List<WorkQueueStatusEnum> values = new List<WorkQueueStatusEnum>();
-          Array array = Enum.GetValues(typeof (WorkQueueStatusEnum));
-          
-          foreach(WorkQueueStatusEnum value in array)
-          {
-              values.Add(value);
-          }
-          return values;
+          ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnumBroker>.SetEnum(this, val);
       }
-      public static WorkQueueStatusEnum Get(string lookup)
+      static public IList<WorkQueueStatusEnum> GetAll()
       {
-          return (WorkQueueStatusEnum) Enum.Parse(typeof (WorkQueueStatusEnum), lookup);
+          return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnumBroker>.GetAll();
       }
-      public static bool IsDefined(string lookup)
+      static public WorkQueueStatusEnum GetEnum(string lookup)
       {
-          return Enum.IsDefined(typeof (WorkQueueStatusEnum), lookup);
+          return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnumBroker>.GetEnum(lookup);
       }
-      public static string GetDescription(WorkQueueStatusEnum value)
-      {
-          FieldInfo enumField = value.GetType().GetField(value.ToString());
-          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
-          if (attributes!=null && attributes.Length>0)
-          {
-              return ((EnumValueDescriptionAttribute)attributes[0]).Description;
-          }
-          else
-              return null;
-      }
-      public static string GetLongDescription(WorkQueueStatusEnum value)
-      {
-          FieldInfo enumField = value.GetType().GetField(value.ToString());
-          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
-          if (attributes!=null && attributes.Length>0)
-          {
-              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;
-          }
-          else
-              return null;
-      }
-  }
+      #endregion
+}
 }

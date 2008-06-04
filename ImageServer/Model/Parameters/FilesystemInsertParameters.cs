@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
         public FilesystemTierEnum TypeEnum
         {
-            set { SubCriteria["FilesystemTierEnum"] = new ProcedureParameter<Enum>("FilesystemTierEnum", value); }
+            set { SubCriteria["FilesystemTierEnum"] = new ProcedureParameter<ServerEnum>("FilesystemTierEnum", value); }
         }
 
         public String FilesystemPath

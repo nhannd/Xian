@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         }
         public DuplicateSopPolicyEnum DuplicateSopPolicyEnum
         {
-            set { SubCriteria["DuplicateSopPolicyEnum"] = new ProcedureParameter<Enum>("DuplicateSopPolicyEnum", value); }
+            set { SubCriteria["DuplicateSopPolicyEnum"] = new ProcedureParameter<ServerEnum>("DuplicateSopPolicyEnum", value); }
         }
         public int DefaultRemotePort
         {

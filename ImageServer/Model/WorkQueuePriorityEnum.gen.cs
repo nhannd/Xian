@@ -35,63 +35,61 @@ namespace ClearCanvas.ImageServer.Model
 {
     using System;
     using System.Collections.Generic;
+    using ClearCanvas.ImageServer.Model.EntityBrokers;
     using ClearCanvas.ImageServer.Enterprise;
     using System.Reflection;
 
-  public enum WorkQueuePriorityEnum
-  {
-      [EnumValueDescriptionAttribute("Low", "Low priority")]
-      Low = 100,
+[Serializable]
+public partial class WorkQueuePriorityEnum : ServerEnum
+{
+      #region Private Static Members
+      private static readonly WorkQueuePriorityEnum _Low = GetEnum("Low");
+      private static readonly WorkQueuePriorityEnum _Medium = GetEnum("Medium");
+      private static readonly WorkQueuePriorityEnum _High = GetEnum("High");
+      #endregion
 
-      [EnumValueDescriptionAttribute("Medium", "Medium priority")]
-      Medium = 200,
+      #region Public Static Properties
+      /// <summary>
+      /// Low priority
+      /// </summary>
+      public static WorkQueuePriorityEnum Low
+      {
+          get { return _Low; }
+      }
+      /// <summary>
+      /// Medium priority
+      /// </summary>
+      public static WorkQueuePriorityEnum Medium
+      {
+          get { return _Medium; }
+      }
+      /// <summary>
+      /// High priority
+      /// </summary>
+      public static WorkQueuePriorityEnum High
+      {
+          get { return _High; }
+      }
 
-      [EnumValueDescriptionAttribute("High", "High priority")]
-      High = 300
-  }
+      #endregion
 
-  public static class WorkQueuePriorityEnumHelper
-  {
-      public static IList<WorkQueuePriorityEnum> GetAll()
+      #region Constructors
+      public WorkQueuePriorityEnum():base("WorkQueuePriorityEnum")
+      {}
+      #endregion
+      #region Public Members
+      public override void SetEnum(short val)
       {
-          List<WorkQueuePriorityEnum> values = new List<WorkQueuePriorityEnum>();
-          Array array = Enum.GetValues(typeof (WorkQueuePriorityEnum));
-          
-          foreach(WorkQueuePriorityEnum value in array)
-          {
-              values.Add(value);
-          }
-          return values;
+          ServerEnumHelper<WorkQueuePriorityEnum, IWorkQueuePriorityEnumBroker>.SetEnum(this, val);
       }
-      public static WorkQueuePriorityEnum Get(string lookup)
+      static public IList<WorkQueuePriorityEnum> GetAll()
       {
-          return (WorkQueuePriorityEnum) Enum.Parse(typeof (WorkQueuePriorityEnum), lookup);
+          return ServerEnumHelper<WorkQueuePriorityEnum, IWorkQueuePriorityEnumBroker>.GetAll();
       }
-      public static bool IsDefined(string lookup)
+      static public WorkQueuePriorityEnum GetEnum(string lookup)
       {
-          return Enum.IsDefined(typeof (WorkQueuePriorityEnum), lookup);
+          return ServerEnumHelper<WorkQueuePriorityEnum, IWorkQueuePriorityEnumBroker>.GetEnum(lookup);
       }
-      public static string GetDescription(WorkQueuePriorityEnum value)
-      {
-          FieldInfo enumField = value.GetType().GetField(value.ToString());
-          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
-          if (attributes!=null && attributes.Length>0)
-          {
-              return ((EnumValueDescriptionAttribute)attributes[0]).Description;
-          }
-          else
-              return null;
-      }
-      public static string GetLongDescription(WorkQueuePriorityEnum value)
-      {
-          FieldInfo enumField = value.GetType().GetField(value.ToString());
-          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
-          if (attributes!=null && attributes.Length>0)
-          {
-              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;
-          }
-          else
-              return null;
-      }
-  }
+      #endregion
+}
 }

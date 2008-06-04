@@ -35,69 +35,77 @@ namespace ClearCanvas.ImageServer.Model
 {
     using System;
     using System.Collections.Generic;
+    using ClearCanvas.ImageServer.Model.EntityBrokers;
     using ClearCanvas.ImageServer.Enterprise;
     using System.Reflection;
 
-  public enum ServerRuleTypeEnum
-  {
-      [EnumValueDescriptionAttribute("Auto Routing", "A DICOM auto-routing rule")]
-      AutoRoute = 100,
+[Serializable]
+public partial class ServerRuleTypeEnum : ServerEnum
+{
+      #region Private Static Members
+      private static readonly ServerRuleTypeEnum _AutoRoute = GetEnum("AutoRoute");
+      private static readonly ServerRuleTypeEnum _StudyDelete = GetEnum("StudyDelete");
+      private static readonly ServerRuleTypeEnum _Tier1Retention = GetEnum("Tier1Retention");
+      private static readonly ServerRuleTypeEnum _OnlineRetention = GetEnum("OnlineRetention");
+      private static readonly ServerRuleTypeEnum _StudyCompress = GetEnum("StudyCompress");
+      #endregion
 
-      [EnumValueDescriptionAttribute("Study Delete", "A rule to specify when to delete a study")]
-      StudyDelete = 101,
+      #region Public Static Properties
+      /// <summary>
+      /// A DICOM auto-routing rule
+      /// </summary>
+      public static ServerRuleTypeEnum AutoRoute
+      {
+          get { return _AutoRoute; }
+      }
+      /// <summary>
+      /// A rule to specify when to delete a study
+      /// </summary>
+      public static ServerRuleTypeEnum StudyDelete
+      {
+          get { return _StudyDelete; }
+      }
+      /// <summary>
+      /// A rule to specify how long a study will be retained on Tier1
+      /// </summary>
+      public static ServerRuleTypeEnum Tier1Retention
+      {
+          get { return _Tier1Retention; }
+      }
+      /// <summary>
+      /// A rule to specify how long a study will be retained online
+      /// </summary>
+      public static ServerRuleTypeEnum OnlineRetention
+      {
+          get { return _OnlineRetention; }
+      }
+      /// <summary>
+      /// A rule to specify when a study should be compressed
+      /// </summary>
+      public static ServerRuleTypeEnum StudyCompress
+      {
+          get { return _StudyCompress; }
+      }
 
-      [EnumValueDescriptionAttribute("Tier1 Retention", "A rule to specify how long a study will be retained on Tier1")]
-      Tier1Retention = 102,
+      #endregion
 
-      [EnumValueDescriptionAttribute("Online Retention", "A rule to specify how long a study will be retained online")]
-      OnlineRetention = 103,
-
-      [EnumValueDescriptionAttribute("Study Compress", "A rule to specify when a study should be compressed")]
-      StudyCompress = 104
-  }
-
-  public static class ServerRuleTypeEnumHelper
-  {
-      public static IList<ServerRuleTypeEnum> GetAll()
+      #region Constructors
+      public ServerRuleTypeEnum():base("ServerRuleTypeEnum")
+      {}
+      #endregion
+      #region Public Members
+      public override void SetEnum(short val)
       {
-          List<ServerRuleTypeEnum> values = new List<ServerRuleTypeEnum>();
-          Array array = Enum.GetValues(typeof (ServerRuleTypeEnum));
-          
-          foreach(ServerRuleTypeEnum value in array)
-          {
-              values.Add(value);
-          }
-          return values;
+          ServerEnumHelper<ServerRuleTypeEnum, IServerRuleTypeEnumBroker>.SetEnum(this, val);
       }
-      public static ServerRuleTypeEnum Get(string lookup)
+      static public IList<ServerRuleTypeEnum> GetAll()
       {
-          return (ServerRuleTypeEnum) Enum.Parse(typeof (ServerRuleTypeEnum), lookup);
+          return ServerEnumHelper<ServerRuleTypeEnum, IServerRuleTypeEnumBroker>.GetAll();
       }
-      public static bool IsDefined(string lookup)
+      static public ServerRuleTypeEnum GetEnum(string lookup)
       {
-          return Enum.IsDefined(typeof (ServerRuleTypeEnum), lookup);
+          return ServerEnumHelper<ServerRuleTypeEnum, IServerRuleTypeEnumBroker>.GetEnum(lookup);
       }
-      public static string GetDescription(ServerRuleTypeEnum value)
-      {
-          FieldInfo enumField = value.GetType().GetField(value.ToString());
-          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
-          if (attributes!=null && attributes.Length>0)
-          {
-              return ((EnumValueDescriptionAttribute)attributes[0]).Description;
-          }
-          else
-              return null;
-      }
-      public static string GetLongDescription(ServerRuleTypeEnum value)
-      {
-          FieldInfo enumField = value.GetType().GetField(value.ToString());
-          object[] attributes = enumField.GetCustomAttributes(typeof (EnumValueDescriptionAttribute), false);
-          if (attributes!=null && attributes.Length>0)
-          {
-              return ((EnumValueDescriptionAttribute)attributes[0]).LongDescription;
-          }
-          else
-              return null;
-      }
-  }
+      #endregion
+}
 }

@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="Broker.cs" />
     <Compile Include="EntityBroker.cs" />
+    <Compile Include="EnumBroker.cs" />
     <Compile Include="PersistentStore.cs" />
     <Compile Include="PersistenceContext.cs" />
     <Compile Include="ProcedureQueryBroker.cs" />

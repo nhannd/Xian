@@ -33,8 +33,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EmumAttribute.cs" />
     <Compile Include="IEntityBroker.cs" />
+    <Compile Include="IEnumBroker.cs" />
     <Compile Include="IProcedureQueryBroker.cs" />
     <Compile Include="IProcedureUpdateBroker.cs" />
     <Compile Include="EntitySelectCriteria.cs" />
@@ -43,6 +43,8 @@
     <Compile Include="ProcedureParameter.cs" />
     <Compile Include="ProcedureParameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerEnum.cs" />
+    <Compile Include="ServerEnumHelper.cs" />
     <Compile Include="EntityColumn.cs" />
     <Compile Include="EntityColumnBase.cs" />
     <Compile Include="EntityUpdateColumns.cs" />

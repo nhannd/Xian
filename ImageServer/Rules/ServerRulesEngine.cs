@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageServer.Rules
     public class ServerRulesEngine
     {
         private readonly ServerRuleApplyTimeEnum _applyTime;
-        private readonly ServerRuleTypeEnum? _ruleType;
+        private readonly ServerRuleTypeEnum _ruleType = null;
         private readonly ServerEntityKey _serverPartitionKey;
         private readonly RuleEngineStatistics _stats;
 
@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageServer.Rules
             _applyTime = applyTime;
             _serverPartitionKey = serverPartitionKey;
 
-            _stats = new RuleEngineStatistics(applyTime.ToString(), applyTime.ToString());
+            _stats = new RuleEngineStatistics(applyTime.Lookup, applyTime.LongDescription);
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageServer.Rules
             _serverPartitionKey = serverPartitionKey;
             _ruleType = type;
 
-            _stats = new RuleEngineStatistics(applyTime.ToString(), applyTime.ToString());
+            _stats = new RuleEngineStatistics(applyTime.Lookup, applyTime.LongDescription);
         }
 
         #endregion
@@ -160,7 +160,7 @@ namespace ClearCanvas.ImageServer.Rules
                 criteria.ServerRuleApplyTimeEnum.EqualTo(_applyTime);
                 criteria.ServerPartitionKey.EqualTo(_serverPartitionKey);
                 if (_ruleType != null)
-                    criteria.ServerRuleTypeEnum.EqualTo(_ruleType.Value);
+                    criteria.ServerRuleTypeEnum.EqualTo(_ruleType);
 
                 IList<ServerRule> list = broker.Find(criteria);
 
@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageServer.Rules
                     {
                         Rule theRule = new Rule();
                         theRule.Name = serverRule.RuleName;
-                        theRule.Description = serverRule.ServerRuleApplyTimeEnum.ToString();
+                        theRule.Description = serverRule.ServerRuleApplyTimeEnum.Description;
 
                         XmlNode ruleNode =
                             CollectionUtils.SelectFirst<XmlNode>(serverRule.RuleXml.ChildNodes,

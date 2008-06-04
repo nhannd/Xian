@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
         public ServiceLockTypeEnum ServiceLockTypeEnum
         {
-            set { this.SubCriteria["ServiceLockTypeEnum"] = new ProcedureParameter<Enum>("ServiceLockTypeEnum", value); }
+            set { this.SubCriteria["ServiceLockTypeEnum"] = new ProcedureParameter<ServerEnum>("ServiceLockTypeEnum", value); }
         }
 
         public string ProcessorId
