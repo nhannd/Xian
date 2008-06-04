@@ -9,7 +9,7 @@
     <ContentTemplate>
             <table width="100%" cellpadding="0" cellspacing="0">
             <tr>
-                <td class="MainContentTitle">Study Details</td><td class="ButtonPanel" style="padding-right: 5px; vertical-align: bottom">
+                <td class="MainContentTitle">Study Details</td><td class="MainContentTitleButtonPanel">
                     <ccUI:ToolbarButton runat="server" ID="EditStudyButton" SkinID="EditButton" />
                     <ccUI:ToolbarButton runat="server" ID="DeleteStudyButton" SkinID="DeleteButton" OnClick="DeleteStudyButton_Click" />
                 </td>

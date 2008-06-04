@@ -14,7 +14,7 @@
         <div class="roundedCornersfg">          
 
             <asp:Table ID="Table" runat="server"  
-                CellPadding="1"
+                CellPadding="0"
                 BorderWidth="0px" Width="100%">
                 <asp:TableRow>
                     <asp:TableCell HorizontalAlign="right" VerticalAlign="Bottom" >
