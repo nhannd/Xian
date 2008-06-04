@@ -295,7 +295,9 @@ namespace ClearCanvas.Ris.Client
 		{
 			base.OnSelectedItemsChanged();
 
-			_mergePractitionerAction.Enabled = this.SelectedItems.Count == 1;
+			_mergePractitionerAction.Enabled =
+				(this.SelectedItems.Count == 1 ||
+				 this.SelectedItems.Count == 2);
 		}
 
 		private void DoSearch()
@@ -317,8 +319,10 @@ namespace ClearCanvas.Ris.Client
 
 		private void Merge()
 		{
-			ExternalPractitionerSummary selectedItem = CollectionUtils.FirstElement(this.SelectedItems);
-			ExternalPractitionerMergeComponent mergeComponent = new ExternalPractitionerMergeComponent(selectedItem);
+			ExternalPractitionerSummary firstSelectedItem = this.SelectedItems.Count > 0 ? this.SelectedItems[0] : null;
+			ExternalPractitionerSummary secondSelectedItem = this.SelectedItems.Count > 1 ? this.SelectedItems[1] : null;
+
+			ExternalPractitionerMergeComponent mergeComponent = new ExternalPractitionerMergeComponent(firstSelectedItem, secondSelectedItem);
 			ApplicationComponentExitCode exitCode = LaunchAsDialog(
 				this.Host.DesktopWindow, mergeComponent, SR.TitleMerge);
 			if (exitCode == ApplicationComponentExitCode.Accepted)

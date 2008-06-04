@@ -32,15 +32,46 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
+	public class ExternalPractitionerContactPointTable : Table<ExternalPractitionerContactPointDetail>
+	{
+		public ExternalPractitionerContactPointTable()
+		{
+			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Name",
+				delegate(ExternalPractitionerContactPointDetail cp) { return cp.Name; },
+				1.0f));
+
+			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Description",
+				delegate(ExternalPractitionerContactPointDetail cp) { return cp.Description; },
+				1.0f));
+
+			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>("Default",
+				delegate(ExternalPractitionerContactPointDetail cp) { return cp.IsDefaultContactPoint; },
+				delegate(ExternalPractitionerContactPointDetail cp, bool value)
+				{
+					MakeDefaultContactPoint(cp);
+				},
+				1.0f));
+		}
+
+		public void MakeDefaultContactPoint(ExternalPractitionerContactPointDetail cp)
+		{
+			foreach (ExternalPractitionerContactPointDetail item in this.Items)
+			{
+				item.IsDefaultContactPoint = (item == cp);
+				this.Items.NotifyItemUpdated(item);
+			}
+		}
+	}
+
     /// <summary>
     /// Extension point for views onto <see cref="ExternalPractitionerContactPointSummaryComponent"/>
     /// </summary>
@@ -53,21 +84,14 @@ namespace ClearCanvas.Ris.Client
     /// ExternalPractitionerContactPointSummaryComponent class
     /// </summary>
     [AssociateView(typeof(ExternalPractitionerContactPointSummaryComponentViewExtensionPoint))]
-    public class ExternalPractitionerContactPointSummaryComponent : ApplicationComponent
+	public class ExternalPractitionerContactPointSummaryComponent : SummaryComponentBase<ExternalPractitionerContactPointDetail, ExternalPractitionerContactPointTable>
     {
     	private readonly EntityRef _practitionerRef;
-        private ExternalPractitionerContactPointDetail _selectedContactPoint;
-        private readonly Table<ExternalPractitionerContactPointDetail> _contactPoints;
-
-        private readonly CrudActionModel _actionModel;
-		private readonly Action _mergeContactPointAction;
-
-        private readonly bool _dialogMode;
+		private Action _mergeContactPointAction;
 
         private readonly IList<EnumValueInfo> _addressTypeChoices;
         private readonly IList<EnumValueInfo> _phoneTypeChoices;
         private readonly IList<EnumValueInfo> _resultCommunicationModeChoices;
-
 
         /// <summary>
         /// Constructor for editing. Set the <see cref="Subject"/> property before starting.
@@ -77,7 +101,7 @@ namespace ClearCanvas.Ris.Client
 			IList<EnumValueInfo> addressTypeChoices, 
 			IList<EnumValueInfo> phoneTypeChoices, 
 			IList<EnumValueInfo> resultCommunicationModeChoices)
-            :this(false)
+            :base(false)
         {
 			_practitionerRef = practitionerRef;
             _addressTypeChoices = addressTypeChoices;
@@ -89,7 +113,7 @@ namespace ClearCanvas.Ris.Client
         /// Constructor for read-only selection. Set the <see cref="Subject"/> property before starting.
         /// </summary>
 		public ExternalPractitionerContactPointSummaryComponent(EntityRef practitionerRef)
-            :this(true)
+            :base(true)
         {
 			_practitionerRef = practitionerRef;
             _addressTypeChoices = new List<EnumValueInfo>();
@@ -97,164 +121,171 @@ namespace ClearCanvas.Ris.Client
             _resultCommunicationModeChoices = new List<EnumValueInfo>();
         }
 
-        /// <summary>
-        /// Private constructor
-        /// </summary>
-        /// <param name="dialogMode">Indicates whether the component will be shown in a dialog box or not</param>
-        private ExternalPractitionerContactPointSummaryComponent(bool dialogMode)
+        public IItemCollection<ExternalPractitionerContactPointDetail> Subject
         {
-            _dialogMode = dialogMode;
-            _contactPoints = new Table<ExternalPractitionerContactPointDetail>();
-            _contactPoints.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Name",
-               delegate(ExternalPractitionerContactPointDetail cp) { return cp.Name; },
-               1.0f));
+            get { return this.Table.Items; }
+        }
 
-            _contactPoints.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Description",
-                delegate(ExternalPractitionerContactPointDetail cp) { return cp.Description; },
-                1.0f));
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-            _contactPoints.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>("Default",
-                delegate(ExternalPractitionerContactPointDetail cp) { return cp.IsDefaultContactPoint; },
-                delegate(ExternalPractitionerContactPointDetail cp, bool value)
-                {
-                    MakeDefaultContactPoint(cp);
-                },
-                1.0f));
-
-            // TODO implement delete action, which should de-activate the contact point (can't delete it)
-            _actionModel = new CrudActionModel(true, true, false, new ResourceResolver(this.GetType(), true));
-            _actionModel.Add.SetClickHandler(AddContactPoint);
-            _actionModel.Edit.SetClickHandler(UpdateSelectedContactPoint);
-
-			_mergeContactPointAction = _actionModel.AddAction("mergeContactPoint", SR.TitleMerge, "Icons.MergeToolSmall.png",
+			_mergeContactPointAction = model.AddAction("mergeContactPoint", SR.TitleMerge, "Icons.MergeToolSmall.png",
 				SR.TitleMerge, MergeSelectedContactPoint);
 			_mergeContactPointAction.Enabled = false;
 		}
 
-        public IItemCollection<ExternalPractitionerContactPointDetail> Subject
-        {
-            get { return _contactPoints.Items; }
-        }
+		protected override bool SupportsPaging
+		{
+			get { return false; }
+		}
 
-        #region Presentation Model
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<ExternalPractitionerContactPointDetail> ListItems(int firstItem, int maxItems)
+		{
+			throw new NotImplementedException();
+		}
 
-        public bool ShowAcceptCancelButtons
-        {
-            get { return _dialogMode; }
-        }
+		protected override IList<ExternalPractitionerContactPointDetail> ListAllItems()
+		{
+			// don't have to do anything, because the table is populcated by parent object
+			return new List<ExternalPractitionerContactPointDetail>();
+		}
 
-        public ITable ContactPoints
-        {
-            get { return _contactPoints; }
-        }
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<ExternalPractitionerContactPointDetail> addedItems)
+		{
+			addedItems = new List<ExternalPractitionerContactPointDetail>();
 
-        public ActionModelNode ContactPointActionModel
-        {
-            get { return _actionModel; }
-        }
+			ExternalPractitionerContactPointDetail contactPoint = new ExternalPractitionerContactPointDetail();
+			contactPoint.PreferredResultCommunicationMode = _resultCommunicationModeChoices.Count > 0 ? _resultCommunicationModeChoices[0] : null;
 
-        public ISelection SelectedContactPoint
-        {
-            get { return _selectedContactPoint == null ? Selection.Empty : new Selection(_selectedContactPoint); }
-            set
-            {
-                ExternalPractitionerContactPointDetail item = (ExternalPractitionerContactPointDetail) value.Item;
-                if(item != _selectedContactPoint)
-                {
-                    _selectedContactPoint = (ExternalPractitionerContactPointDetail)value.Item;
-                    ContactPointSelectionChanged();
-                }
-            }
-        }
+			ExternalPractitionerContactPointEditorComponent editor = new ExternalPractitionerContactPointEditorComponent(
+				contactPoint, 
+				_addressTypeChoices, 
+				_phoneTypeChoices, 
+				_resultCommunicationModeChoices);
 
-        public void AddContactPoint()
-        {
-            try
-            {
-                ExternalPractitionerContactPointDetail contactPoint = new ExternalPractitionerContactPointDetail();
-                contactPoint.PreferredResultCommunicationMode = _resultCommunicationModeChoices.Count > 0 ? _resultCommunicationModeChoices[0] : null;
-                ExternalPractitionerContactPointEditorComponent editor = new ExternalPractitionerContactPointEditorComponent(contactPoint, _addressTypeChoices, _phoneTypeChoices, _resultCommunicationModeChoices);
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, "Add Contact Point");
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _contactPoints.Items.Add(contactPoint);
-                    _selectedContactPoint = contactPoint;
-                    NotifyPropertyChanged("SelectedContactPoint");
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleAddContactPoint);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(contactPoint);
 
-                    // if item was made default, then make sure no other items are also set as default
-                    if(contactPoint.IsDefaultContactPoint)
-                        MakeDefaultContactPoint(contactPoint);
-                    this.Modified = true;
-                }
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+				// if item was made default, then make sure no other items are also set as default
+				if (contactPoint.IsDefaultContactPoint)
+					this.Table.MakeDefaultContactPoint(contactPoint);
 
-        public void UpdateSelectedContactPoint()
-        {
-            try
-            {
-                // can occur if user double clicks while holding control
-                if (_selectedContactPoint == null) return;
+				return true;
+			}
+			return false;
+		}
 
-                // clone item in case the modal edit dialog is cancelled
-                ExternalPractitionerContactPointDetail contactPoint = (ExternalPractitionerContactPointDetail)_selectedContactPoint.Clone();
-                ExternalPractitionerContactPointEditorComponent editor = new ExternalPractitionerContactPointEditorComponent(contactPoint, _addressTypeChoices, _phoneTypeChoices, _resultCommunicationModeChoices);
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, string.Format("Edit Contact Point '{0}'", contactPoint.Name));
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    // replace row with updated item
-                    int i =_contactPoints.Items.FindIndex(
-                        delegate(ExternalPractitionerContactPointDetail cp) { return cp == _selectedContactPoint; });
-                    _contactPoints.Items[i] = contactPoint;
-                    _selectedContactPoint = contactPoint;
-                    NotifyPropertyChanged("SelectedContactPoint");
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<ExternalPractitionerContactPointDetail> items, out IList<ExternalPractitionerContactPointDetail> editedItems)
+		{
+			editedItems = new List<ExternalPractitionerContactPointDetail>();
+			ExternalPractitionerContactPointDetail item = CollectionUtils.FirstElement(items);
 
-                    // if item was made default, then make sure no other items are also set as default
-                    if (contactPoint.IsDefaultContactPoint)
-                        MakeDefaultContactPoint(contactPoint);
+			ExternalPractitionerContactPointDetail contactPoint = (ExternalPractitionerContactPointDetail)item.Clone();
 
-                    this.Modified = true;
-                }
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+			ExternalPractitionerContactPointEditorComponent editor = new ExternalPractitionerContactPointEditorComponent(
+				contactPoint, 
+				_addressTypeChoices, 
+				_phoneTypeChoices, 
+				_resultCommunicationModeChoices);
+
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(
+				this.Host.DesktopWindow, 
+				editor, 
+				string.Format(SR.TitleUpdateContactPoint, contactPoint.Name));
+
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(contactPoint);
+				// if item was made default, then make sure no other items are also set as default
+				if (contactPoint.IsDefaultContactPoint)
+					this.Table.MakeDefaultContactPoint(contactPoint);
+
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<ExternalPractitionerContactPointDetail> items)
+		{
+			// TODO implement delete action, which should de-activate the contact point (can't delete it)
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(ExternalPractitionerContactPointDetail x, ExternalPractitionerContactPointDetail y)
+		{
+			return x.ContactPointRef.Equals(y.ContactPointRef, true);
+		}
+
+		/// <summary>
+		/// Called when the user changes the selected items in the table.
+		/// </summary>
+		protected override void OnSelectedItemsChanged()
+		{
+			base.OnSelectedItemsChanged();
+
+			_mergeContactPointAction.Enabled =
+				(this.SelectedItems.Count == 1 ||
+				 this.SelectedItems.Count == 2);
+		}
 
 		public void MergeSelectedContactPoint()
 		{
 			try
 			{
-				// can occur if user double clicks while holding control
-				if (_selectedContactPoint == null) return;
+				ExternalPractitionerContactPointDetail firstSelectedItem = this.SelectedItems.Count > 0 ? this.SelectedItems[0] : null;
+				ExternalPractitionerContactPointDetail secondSelectedItem = this.SelectedItems.Count > 1 ? this.SelectedItems[1] : null;
 
-				ExternalPractitionerContactPointSummary tempSummary = new ExternalPractitionerContactPointSummary(
-					_selectedContactPoint.ContactPointRef,
-					_selectedContactPoint.Name,
-					_selectedContactPoint.Description,
-					_selectedContactPoint.IsDefaultContactPoint);
+				ExternalPractitionerContactPointMergeComponent mergeComponent = new ExternalPractitionerContactPointMergeComponent(
+					_practitionerRef,
+					this.Table.Items,
+					firstSelectedItem,
+					secondSelectedItem);
 
-				ExternalPractitionerContactPointMergeComponent mergeComponent = new ExternalPractitionerContactPointMergeComponent(_practitionerRef, tempSummary);
 				ApplicationComponentExitCode exitCode = LaunchAsDialog(
-					this.Host.DesktopWindow, mergeComponent, SR.TitleMerge);
+					this.Host.DesktopWindow, 
+					mergeComponent, 
+					SR.TitleMerge);
+
 				if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
-					ExternalPractitionerContactPointDetail detail = CollectionUtils.SelectFirst(_contactPoints.Items,
-						delegate(ExternalPractitionerContactPointDetail xpcp)
-							{
-								return xpcp.ContactPointRef.Equals(mergeComponent.SelectedDuplicateSummary.ContactPointRef, true);
-							});
-
-					_contactPoints.Items.Remove(detail);
+					this.Table.Items.Remove(mergeComponent.SelectedDuplicate);
 				}
 			}
 			catch (Exception e)
@@ -263,49 +294,5 @@ namespace ClearCanvas.Ris.Client
 				ExceptionHandler.Report(e, this.Host.DesktopWindow);
 			}
 		}
-
-        public void DoubleClickSelectedContactPoint()
-        {
-            // double-click behaviour is different depending on whether we're running as a dialog box or not
-            if (_dialogMode)
-                Accept();
-            else
-                UpdateSelectedContactPoint();
-        }
-
-        public bool AcceptEnabled
-        {
-            get { return _selectedContactPoint != null; }
-        }
-
-        public void Accept()
-        {
-            this.ExitCode = ApplicationComponentExitCode.Accepted;
-            this.Host.Exit();
-        }
-
-        public void Cancel()
-        {
-            this.ExitCode = ApplicationComponentExitCode.None;
-            this.Host.Exit();
-        }
-
-        #endregion
-
-		private void ContactPointSelectionChanged()
-        {
-            _actionModel.Edit.Enabled = 
-				_mergeContactPointAction.Enabled = (_selectedContactPoint != null);
-        }
-
-        private void MakeDefaultContactPoint(ExternalPractitionerContactPointDetail cp)
-        {
-            foreach (ExternalPractitionerContactPointDetail item in _contactPoints.Items)
-            {
-                item.IsDefaultContactPoint = (item == cp);
-                _contactPoints.Items.NotifyItemUpdated(item);
-            }
-        }
-
-    }
+	}
 }

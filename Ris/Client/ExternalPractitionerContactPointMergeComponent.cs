@@ -8,47 +8,53 @@ using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 
 namespace ClearCanvas.Ris.Client
 {
-	public class ExternalPractitionerContactPointMergeComponent : MergeComponentBase<ExternalPractitionerContactPointSummary>
+	public class ExternalPractitionerContactPointMergeComponent : MergeComponentBase<ExternalPractitionerContactPointDetail>
 	{
 		private readonly EntityRef _practitionerRef;
+		private readonly IList<ExternalPractitionerContactPointDetail> _contactPoints;
 
 		private ILookupHandler _duplicateLookupHandler;
 		private ILookupHandler _originalLookupHandler;
 
-		public ExternalPractitionerContactPointMergeComponent(EntityRef practitionerRef)
-			: this(practitionerRef, null)
+		public ExternalPractitionerContactPointMergeComponent(
+			EntityRef practitionerRef,
+			IList<ExternalPractitionerContactPointDetail> contactPoints)
+			: this(practitionerRef, contactPoints, null, null)
 		{
 		}
 
 		public ExternalPractitionerContactPointMergeComponent(
 			EntityRef practitionerRef,
-			ExternalPractitionerContactPointSummary duplicate)
-			: base(duplicate)
+			IList<ExternalPractitionerContactPointDetail> contactPoints,
+			ExternalPractitionerContactPointDetail duplicate,
+			ExternalPractitionerContactPointDetail original)
+			: base(duplicate, original)
 		{
 			_practitionerRef = practitionerRef;
+			_contactPoints = contactPoints;
 		}
 
 		public override void Start()
 		{
-			_duplicateLookupHandler = new ExternalPractitionerContactPointLookupHandler(_practitionerRef, this.Host.DesktopWindow);
-			_originalLookupHandler = new ExternalPractitionerContactPointLookupHandler(_practitionerRef, this.Host.DesktopWindow);
+			_duplicateLookupHandler = new ExternalPractitionerContactPointLookupHandler(_practitionerRef, _contactPoints, this.Host.DesktopWindow);
+			_originalLookupHandler = new ExternalPractitionerContactPointLookupHandler(_practitionerRef, _contactPoints, this.Host.DesktopWindow);
 
 			base.Start();
 		}
 
-		protected override bool IsSameItem(ExternalPractitionerContactPointSummary x, ExternalPractitionerContactPointSummary y)
+		protected override bool IsSameItem(ExternalPractitionerContactPointDetail x, ExternalPractitionerContactPointDetail y)
 		{
 			return x == null || y == null ? false : x.ContactPointRef.Equals(y.ContactPointRef, true);
 		}
 
-		protected override string GenerateReport(ExternalPractitionerContactPointSummary duplicate)
+		protected override string GenerateReport(ExternalPractitionerContactPointDetail duplicate, ExternalPractitionerContactPointDetail original)
 		{
 			List<OrderSummary> affectedOrders = null;
 
 			Platform.GetService<IExternalPractitionerAdminService>(
 				delegate(IExternalPractitionerAdminService service)
 				{
-					LoadMergeDuplicateContactPointFormDataRequest request = new LoadMergeDuplicateContactPointFormDataRequest(duplicate);
+					LoadMergeDuplicateContactPointFormDataRequest request = new LoadMergeDuplicateContactPointFormDataRequest(GetSummaryFromDetail(duplicate));
 					LoadMergeDuplicateContactPointFormDataResponse response = service.LoadMergeDuplicateContactPointFormData(request);
 					affectedOrders = response.AffectedOrders;
 				});
@@ -81,8 +87,8 @@ namespace ClearCanvas.Ris.Client
 					delegate(IExternalPractitionerAdminService service)
 					{
 						MergeDuplicateContactPointRequest request = new MergeDuplicateContactPointRequest(
-							this.SelectedDuplicateSummary,
-							this.SelectedOriginalSummary);
+							GetSummaryFromDetail(this.SelectedDuplicateSummary),
+							GetSummaryFromDetail(this.SelectedOriginalSummary));
 
 						service.MergeDuplicateContactPoint(request);
 					});
@@ -95,6 +101,15 @@ namespace ClearCanvas.Ris.Client
 			{
 				ExceptionHandler.Report(e, SR.ExceptionFailedToMergeDuplicateContactPoints, this.Host.DesktopWindow);
 			}
+		}
+
+		public ExternalPractitionerContactPointSummary GetSummaryFromDetail(ExternalPractitionerContactPointDetail detail)
+		{
+			return new ExternalPractitionerContactPointSummary(
+				detail.ContactPointRef,
+				detail.Name,
+				detail.Description,
+				detail.IsDefaultContactPoint);
 		}
 	}
 }

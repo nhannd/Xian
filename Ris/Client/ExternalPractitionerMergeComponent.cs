@@ -4,6 +4,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
+using System.Text;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -13,12 +14,12 @@ namespace ClearCanvas.Ris.Client
 		private ILookupHandler _originalLookupHandler;
 
 		public ExternalPractitionerMergeComponent()
-			: this(null)
+			: this(null, null)
 		{
 		}
 
-		public ExternalPractitionerMergeComponent(ExternalPractitionerSummary duplicate)
-			: base(duplicate)
+		public ExternalPractitionerMergeComponent(ExternalPractitionerSummary duplicate, ExternalPractitionerSummary original)
+			: base(duplicate, original)
 		{
 		}
 
@@ -35,7 +36,7 @@ namespace ClearCanvas.Ris.Client
 			return x == null || y == null ? false : x.PractitionerRef.Equals(y.PractitionerRef, true);
 		}
 
-		protected override string GenerateReport(ExternalPractitionerSummary duplicate)
+		protected override string GenerateReport(ExternalPractitionerSummary duplicate, ExternalPractitionerSummary original)
 		{
 			List<OrderSummary> affectedOrders = null;
 			List<VisitSummary> affectedVisits = null;
@@ -49,8 +50,16 @@ namespace ClearCanvas.Ris.Client
 					affectedVisits = response.AffectedVisits;
 				});
 
-			// TODO: format reports
-			return "TODO format reports";
+			StringBuilder reportBuilder = new StringBuilder();
+			reportBuilder.AppendFormat("Replacing {0} with {1}", duplicate.Name, original.Name);
+			reportBuilder.AppendLine();
+			reportBuilder.AppendLine("Affected Orders");
+			reportBuilder.AppendLine();
+			reportBuilder.AppendLine("Affected Visits");
+			reportBuilder.AppendLine();
+			reportBuilder.AppendLine("TODO format reports");
+
+			return reportBuilder.ToString();
 		}
 
 		public override ILookupHandler DuplicateLookupHandler

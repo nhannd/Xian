@@ -48,14 +48,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
         [OperationContract]
 		TextQueryResponse<ExternalPractitionerSummary> TextQuery(TextQueryRequest request);
 
-		/// <summary>
-		/// Returns a list of practitioners contact point based on a textual query.
-		/// </summary>
-		/// <param name="request"></param>
-		/// <returns></returns>
-		[OperationContract]
-		TextQueryResponse<ExternalPractitionerContactPointSummary> ContactPointTextQuery(ContactPointTextQueryRequest request);
-
         /// <summary>
         /// Summary list of all practitioners
         /// </summary>

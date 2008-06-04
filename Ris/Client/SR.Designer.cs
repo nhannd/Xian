@@ -1168,6 +1168,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Contact Point.
+        /// </summary>
+        internal static string TitleAddContactPoint {
+            get {
+                return ResourceManager.GetString("TitleAddContactPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Email Address....
         /// </summary>
         internal static string TitleAddEmailAddress {
@@ -1479,6 +1488,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleUpdateContactPerson {
             get {
                 return ResourceManager.GetString("TitleUpdateContactPerson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Contact Point &apos;{0}&apos;.
+        /// </summary>
+        internal static string TitleUpdateContactPoint {
+            get {
+                return ResourceManager.GetString("TitleUpdateContactPoint", resourceCulture);
             }
         }
         

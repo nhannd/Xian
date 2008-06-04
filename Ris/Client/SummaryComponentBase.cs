@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -91,7 +90,7 @@ namespace ClearCanvas.Ris.Client
         where TTable : Table<TSummary>, new()
     {
         private IList<TSummary> _selectedItems;
-        private TTable _summaryTable;
+        private readonly TTable _summaryTable;
 
         private CrudActionModel _actionModel;
         private PagingController<TSummary> _pagingController;
@@ -100,22 +99,22 @@ namespace ClearCanvas.Ris.Client
 
 
 		public SummaryComponentBase()
+			: this(false)
 		{
 		}
 
 		public SummaryComponentBase(bool dialogMode)
 		{
 			_dialogMode = dialogMode;
+			_summaryTable = new TTable();
+			_selectedItems = new List<TSummary>();
 		}
 
         #region ApplicationComponent overrides
 
         public override void Start()
         {
-            _summaryTable = new TTable();
             InitializeTable(_summaryTable);
-
-            _selectedItems = new List<TSummary>();
 
             _actionModel = new CrudActionModel(true, this.SupportsEdit, this.SupportsDelete,
 				new ResourceResolver(this.GetType(), true));
@@ -130,16 +129,23 @@ namespace ClearCanvas.Ris.Client
 
 			InitializeActionModel(_actionModel);
 
-			_pagingController = new PagingController<TSummary>(
-                delegate(int firstRow, int maxRows)
-                {
-                    return ListItems(firstRow, maxRows);
-                }
-            );
+			if (SupportsPaging)
+			{
+				_pagingController = new PagingController<TSummary>(
+					delegate(int firstRow, int maxRows)
+					{
+						return ListItems(firstRow, maxRows);
+					}
+				);
 
-            _actionModel.Merge(new PagingActionModel<TSummary>(_pagingController, _summaryTable, Host.DesktopWindow));
+				_actionModel.Merge(new PagingActionModel<TSummary>(_pagingController, _summaryTable, Host.DesktopWindow));
 
-            _summaryTable.Items.AddRange(_pagingController.GetFirst());
+				_summaryTable.Items.AddRange(_pagingController.GetFirst());
+			}
+			else
+			{
+				_summaryTable.Items.AddRange(ListAllItems());
+			}
 
             base.Start();
         }
@@ -307,6 +313,15 @@ namespace ClearCanvas.Ris.Client
         /// <returns></returns>
         protected abstract IList<TSummary> ListItems(int firstItem, int maxItems);
 
+		/// <summary>
+		/// Gets the list of all items to show in the table.
+		/// </summary>
+		/// <returns></returns>
+		protected virtual IList<TSummary> ListAllItems()
+		{
+			throw new NotImplementedException();
+		}
+
         /// <summary>
         /// Called to handle the "add" action.
         /// </summary>
@@ -371,7 +386,7 @@ namespace ClearCanvas.Ris.Client
 
 		/// <summary>
 		/// Gets a value indicating whether this component supports edit.  The default is true.
-		/// Override this method to support edit.
+		/// Override this method to change support for edit.
 		/// </summary>
 		protected virtual bool SupportsEdit
 		{
@@ -380,12 +395,22 @@ namespace ClearCanvas.Ris.Client
 
         /// <summary>
         /// Gets a value indicating whether this component supports deletion.  The default is false.
-        /// Override this method to support deletion.
+        /// Override this method to change support for deletion.
         /// </summary>
         protected virtual bool SupportsDelete
         {
             get { return false; }
         }
+
+		/// <summary>
+		/// Gets a value indicating whether this component supports paging.  The default is true.
+		/// Override this method to change support for paging.
+		/// Also override ListAllItems if paging is not supported
+		/// </summary>
+		protected virtual bool SupportsPaging
+    	{
+			get { return true; }
+    	}
 
         #endregion 
         

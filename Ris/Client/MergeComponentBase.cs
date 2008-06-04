@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client
 		public abstract object SelectedOriginal { get; set;}
 
 		/// <summary>
-		/// Gets the report is the merge is to take place.
+		/// Gets the report if the merge is to take place.
 		/// </summary>
 		public abstract string MergeReport { get; set; }
 
@@ -72,13 +72,14 @@ namespace ClearCanvas.Ris.Client
 		private string _mergeReport;
 
 		public MergeComponentBase()
-			: this(null)
+			: this(null, null)
 		{
 		}
 
-		public MergeComponentBase(TSummary duplicate)
+		public MergeComponentBase(TSummary duplicate, TSummary original)
 		{
 			_selectedDuplicate = duplicate;
+			_selectedOriginal = original;
 
 			this.Validation.Add(new ValidationRule("SelectedOriginal",
 				delegate
@@ -90,7 +91,8 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			this.MergeReport = GenerateReport(_selectedDuplicate);
+			ShowReport();
+
 			base.Start();
 		}
 
@@ -105,11 +107,12 @@ namespace ClearCanvas.Ris.Client
 		protected abstract bool IsSameItem(TSummary x, TSummary y);
 
 		/// <summary>
-		/// Generate a report for removing the duplicate item.
+		/// Generate a report for the merge.
 		/// </summary>
 		/// <param name="duplicate"></param>
+		/// <param name="original"></param>
 		/// <returns></returns>
-		protected abstract string GenerateReport(TSummary duplicate);
+		protected abstract string GenerateReport(TSummary duplicate, TSummary original);
 
 		#endregion
 
@@ -131,7 +134,7 @@ namespace ClearCanvas.Ris.Client
 					_selectedDuplicate = (TSummary) value;
 					NotifyPropertyChanged("SelectedDuplicate");
 
-					this.MergeReport = _selectedDuplicate == null ? string.Empty : GenerateReport(_selectedDuplicate);
+					ShowReport();
 				}
 			}
 		}
@@ -151,6 +154,8 @@ namespace ClearCanvas.Ris.Client
 				{
 					_selectedOriginal = (TSummary) value;
 					NotifyPropertyChanged("SelectedOriginal");
+
+					ShowReport();
 				}
 			}
 		}
@@ -185,5 +190,12 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
+
+		private void ShowReport()
+		{
+			this.MergeReport = _selectedDuplicate == null || _selectedOriginal == null 
+				? string.Empty
+				: GenerateReport(_selectedDuplicate, _selectedOriginal);
+		}
 	}
 }

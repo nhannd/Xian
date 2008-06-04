@@ -1,36 +1,66 @@
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class ExternalPractitionerContactPointLookupHandler : LookupHandler<TextQueryRequest, ExternalPractitionerContactPointSummary>
-    {
-    	private readonly EntityRef _practitionerRef;
-        private readonly DesktopWindow _desktopWindow;
+	public class ExternalPractitionerContactPointLookupHandler : ILookupHandler
+	{
+		class ContactPointSuggestionProvider : SuggestionProviderBase<ExternalPractitionerContactPointDetail>
+		{
+			private readonly List<ExternalPractitionerContactPointDetail> _contactPoints = new List<ExternalPractitionerContactPointDetail>();
 
-		public ExternalPractitionerContactPointLookupHandler(EntityRef practitionerRef, DesktopWindow desktopWindow)
-        {
+			public ContactPointSuggestionProvider(IEnumerable<ExternalPractitionerContactPointDetail> contactPoints)
+			{
+				_contactPoints = new List<ExternalPractitionerContactPointDetail>(contactPoints);
+
+				// sort results in the way that they will be formatted for the suggest box
+				_contactPoints.Sort(
+					delegate(ExternalPractitionerContactPointDetail x, ExternalPractitionerContactPointDetail y)
+					{
+						return ExternalPractitionerContactPointLookupHandler.FormatItem(x).CompareTo(ExternalPractitionerContactPointLookupHandler.FormatItem(y));
+					});
+			}
+
+			protected override IList<ExternalPractitionerContactPointDetail> GetShortList(string query)
+			{
+				return _contactPoints;
+			}
+
+			protected override string FormatItem(ExternalPractitionerContactPointDetail item)
+			{
+				return ExternalPractitionerContactPointLookupHandler.FormatItem(item);
+			}
+		}
+
+		private readonly EntityRef _practitionerRef;
+		private readonly IList<ExternalPractitionerContactPointDetail> _contactPoints;
+		private readonly IDesktopWindow _desktopWindow;
+		private ContactPointSuggestionProvider _suggestionProvider;
+
+		public ExternalPractitionerContactPointLookupHandler(
+			EntityRef practitionerRef,
+			IList<ExternalPractitionerContactPointDetail> contactPoints,
+			IDesktopWindow desktopWindow)
+		{
 			_practitionerRef = practitionerRef;
-            _desktopWindow = desktopWindow;
-        }
+			_contactPoints = contactPoints;
+			_desktopWindow = desktopWindow;
+		}
 
-		protected override TextQueryResponse<ExternalPractitionerContactPointSummary> DoQuery(TextQueryRequest request)
-        {
-			TextQueryResponse<ExternalPractitionerContactPointSummary> response = null;
-            Platform.GetService<IExternalPractitionerAdminService>(
-                delegate(IExternalPractitionerAdminService service)
-                {
-                    response = service.ContactPointTextQuery(new ContactPointTextQueryRequest(_practitionerRef, request));
-                });
-            return response;
-        }
+		private static string FormatItem(ExternalPractitionerContactPointDetail cp)
+		{
+			return string.Format("{0} ({1})", cp.Name, cp.Description);
+		}
 
-		public override bool ResolveNameInteractive(string query, out ExternalPractitionerContactPointSummary result)
-        {
-            result = null;
+		#region ILookupHandler Members
+
+		bool ILookupHandler.Resolve(string query, bool interactive, out object result)
+		{
+			result = null;
 
 			ExternalPractitionerDetail practitionerDetail = null;
 			Platform.GetService<IExternalPractitionerAdminService>(
@@ -46,22 +76,36 @@ namespace ClearCanvas.Ris.Client
 													  {
 														  component.Subject.Add(p);
 													  });
-			
+
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
 				_desktopWindow, component, SR.TitleContactPoints);
 
-            if (exitCode == ApplicationComponentExitCode.Accepted)
-            {
-				ExternalPractitionerContactPointDetail detail = (ExternalPractitionerContactPointDetail) component.SelectedContactPoint.Item;
-				result = new ExternalPractitionerContactPointSummary(detail.ContactPointRef, detail.Name, detail.Description, detail.IsDefaultContactPoint);
-            }
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				result = component.SummarySelection.Item;
+			}
 
-            return (result != null);
-        }
+			return (result != null);
+		
+		}
 
-		public override string FormatItem(ExternalPractitionerContactPointSummary item)
-        {
-            return string.Format("{0}, {1}", item.Name, item.Description);
-        }
-    }
+		string ILookupHandler.FormatItem(object item)
+		{
+			return FormatItem((ExternalPractitionerContactPointDetail)item);
+		}
+
+		ISuggestionProvider ILookupHandler.SuggestionProvider
+		{
+			get
+			{
+				if (_suggestionProvider == null)
+				{
+					_suggestionProvider = new ContactPointSuggestionProvider(_contactPoints);
+				}
+				return _suggestionProvider;
+			}
+		}
+
+		#endregion
+	}
 }
