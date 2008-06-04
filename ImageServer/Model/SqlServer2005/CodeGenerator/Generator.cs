@@ -271,7 +271,7 @@ namespace CodeGenerator
             WriterHeader(writer, this.EntityImplementationNamespace);
 
             writer.WriteLine("    using ClearCanvas.Common;");
-            writer.WriteLine("    using ClearCanvas.ImageServer.Model.EntityBrokers;");
+			writer.WriteLine("    using {0};", EntityInterfaceNamespace);
             writer.WriteLine("    using ClearCanvas.ImageServer.Enterprise.SqlServer2005;");
             writer.WriteLine("");
 
@@ -295,7 +295,7 @@ namespace CodeGenerator
 
             writer.WriteLine("    using System;");
             writer.WriteLine("    using System.Collections.Generic;");
-            writer.WriteLine("    using ClearCanvas.ImageServer.Model.EntityBrokers;");
+            writer.WriteLine("    using {0};",EntityInterfaceNamespace);
             writer.WriteLine("    using ClearCanvas.ImageServer.Enterprise;");
             writer.WriteLine("    using System.Reflection;");
             writer.WriteLine("");
@@ -399,7 +399,7 @@ namespace CodeGenerator
             WriterHeader(writer, EntityInterfaceNamespace);
 
             writer.WriteLine("    using ClearCanvas.ImageServer.Enterprise;");
-            writer.WriteLine("    using ClearCanvas.ImageServer.Model.EntityBrokers;");
+			writer.WriteLine("    using {0};", EntityInterfaceNamespace);
             writer.WriteLine("");
 
             writer.WriteLine("public interface I{0}EntityBroker : IEntityBroker<{0}, {0}SelectCriteria, {0}UpdateColumns>", table.TableName);
@@ -421,7 +421,7 @@ namespace CodeGenerator
 
             writer.WriteLine("    using ClearCanvas.Common;");
             writer.WriteLine("    using ClearCanvas.ImageServer.Enterprise;");
-            writer.WriteLine("    using ClearCanvas.ImageServer.Model.EntityBrokers;");
+			writer.WriteLine("    using {0};", EntityInterfaceNamespace);
             writer.WriteLine("    using ClearCanvas.ImageServer.Enterprise.SqlServer2005;");
             writer.WriteLine("");
 
@@ -462,7 +462,7 @@ namespace CodeGenerator
                 writer.WriteLine("    using ClearCanvas.Dicom;");
             writer.WriteLine("    using ClearCanvas.Enterprise.Core;");
             writer.WriteLine("    using ClearCanvas.ImageServer.Enterprise;");
-            writer.WriteLine("    using ClearCanvas.ImageServer.Model.EntityBrokers;");
+			writer.WriteLine("    using {0};", EntityInterfaceNamespace);
             writer.WriteLine("");
 
             writer.WriteLine("    [Serializable]");
