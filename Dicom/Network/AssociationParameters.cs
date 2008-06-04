@@ -737,16 +737,28 @@ namespace ClearCanvas.Dicom.Network
             sb.AppendLine(); 
             foreach (DicomPresContext pctx in _presContexts.Values)
             {
-				sb.AppendFormat("	Presentation Context {0} [{1}]", pctx.ID, pctx.GetResultDescription());
-                sb.AppendLine();
-				sb.AppendFormat("		Abstract: {0}", pctx.AbstractSyntax.Name);
-                sb.AppendLine();
-				foreach (TransferSyntax ts in pctx.GetTransfers()) {
-					sb.AppendFormat("		Transfer: {0}", (ts.DicomUid.Type == UidType.Unknown) ?
-						ts.DicomUid.UID : ts.DicomUid.Description);
-                    sb.AppendLine();
+				if (pctx.Result == DicomPresContextResult.Accept)
+				{
+					TransferSyntax ts = pctx.GetTransfers()[0];
+					sb.AppendFormat("	Presentation Context {0} [{1}] Abstract: {2}	Transfer: {3}", pctx.ID, pctx.GetResultDescription(),
+									pctx.AbstractSyntax.Name, ts.Name);
+					sb.AppendLine();
 				}
-			}
+				else
+				{
+					sb.AppendFormat("	Presentation Context {0} [{1}] Abstract: {2}", pctx.ID, pctx.GetResultDescription(),
+					                pctx.AbstractSyntax.Name);
+					sb.AppendLine();
+					foreach (TransferSyntax ts in pctx.GetTransfers())
+					{
+						sb.AppendFormat("		Transfer: {0}", (ts.DicomUid.Type == UidType.Unknown)
+						                                   	?
+						                                   		ts.DicomUid.UID
+						                                   	: ts.DicomUid.Description);
+						sb.AppendLine();
+					}
+				}
+            }
 			return sb.ToString();
 		}
     }

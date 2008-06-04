@@ -622,7 +622,10 @@ namespace ClearCanvas.Dicom.Network
             _assoc = associate;
             AAssociateRQ pdu = new AAssociateRQ(_assoc);
 
+        	_state = DicomAssociationState.Sta5_AwaitingAAssociationACOrReject;
+
             EnqueuePDU(pdu.Write());
+
         }
 
         /// <summary>
@@ -1094,6 +1097,16 @@ namespace ClearCanvas.Dicom.Network
                             if (NetworkClosed != null)
                                 NetworkClosed("ARTIM timeout when waiting for AAssociate Request PDU");
                         }
+						else if (_state == DicomAssociationState.Sta5_AwaitingAAssociationACOrReject)
+						{
+							DicomLogger.LogError(
+								"ARTIM timeout when waiting for AAssociate AC or RJ PDU, closing connection.");
+							_state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
+							CloseNetwork(); // TODO
+
+							if (NetworkClosed != null)
+								NetworkClosed("ARTIM timeout when waiting for AAssociate AC or RJ PDU");							
+						}
                         else if (_state == DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
                         {
                             DicomLogger.LogError(
