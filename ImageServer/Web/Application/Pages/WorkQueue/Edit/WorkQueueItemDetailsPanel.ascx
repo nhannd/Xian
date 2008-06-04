@@ -4,23 +4,19 @@
 <asp:Panel ID="Panel1" runat="server">
     <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="conditional">
         <ContentTemplate>
-            <asp:Panel runat="server" ID="WorkQueueDetailsPanelContainer">
-                <ccAsp:SectionPanel ID="WorkQueueDetailSectionPanel" runat="server" HeadingText="Work Queue Item Details"
-                    HeadingCSS="CSSWorkQueueDetailSectionHeading" Width="100%" CssClass="CSSSection">
-                    <SectionContentTemplate>
-                        <asp:Panel ID="Panel6" runat="server" CssClass="CSSToolbarPanelContainer">
-                            <asp:Panel ID="Panel7" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
-                                <asp:Panel ID="Panel8" runat="server" CssClass="CSSToolbarContent">
+            <table width="100%" cellpadding="0" cellspacing="0">
+                <tr><td class="MainContentTitle"><asp:Label ID="WorkQueueItemTitle" runat="server" Text="Work Queue Item Details"></asp:Label></td></tr>
+                <tr><td style="padding-left: 3px; padding-right: 3px;">
+                        <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
+                            <tr><td>
                                     <ccUI:ToolbarButton ID="RescheduleToolbarButton" runat="server" SkinID="RescheduleButton" OnClick="Reschedule_Click"/>
                                     <ccUI:ToolbarButton ID="ResetButton" runat="server" SkinID="ResetButton" OnClick="Reset_Click"/>
                                     <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="DeleteButton" OnClick="Delete_Click"/>
-                                </asp:Panel>
-                            </asp:Panel>
-                        </asp:Panel>
-                        <asp:PlaceHolder ID="WorkQueueDetailsViewPlaceHolder" runat="server"></asp:PlaceHolder>
-                    </SectionContentTemplate>
-                </ccAsp:SectionPanel>
-            </asp:Panel>
+                            </td></tr>
+                            <tr><td><asp:PlaceHolder ID="WorkQueueDetailsViewPlaceHolder" runat="server"></asp:PlaceHolder></td></tr>
+                       </table>
+                  </td></tr>
+              </table>
         </ContentTemplate>
     </asp:UpdatePanel>
     <asp:Timer ID="RefreshTimer" runat="server" Interval="10000" OnTick="RefreshTimer_Tick">

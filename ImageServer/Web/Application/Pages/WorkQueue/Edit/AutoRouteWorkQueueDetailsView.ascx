@@ -6,34 +6,27 @@
     GridLines="Horizontal" CssClass="CSSStudyDetailsView" Width="100%">
     <Fields>
         <asp:TemplateField HeaderText="Type">
-            <HeaderStyle Wrap="False" />
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
             <ItemTemplate>
                 <asp:Label ID="Type" runat="server" ></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         
         <asp:TemplateField HeaderText="Destination">
-            <HeaderStyle Wrap="False" />
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
             <ItemTemplate>
                 <asp:Label ID="Destination" runat="server" Text='<%# Eval("DestinationAE") %>' ></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>  
         <asp:TemplateField HeaderText="Study Instance UID">
-            <HeaderStyle Wrap="False" />
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
             <ItemTemplate>
                 <asp:Label ID="StudyInstanceUid" runat="server" Text='<%# Eval("StudyInstanceUid") %>' ></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>      
     </Fields>
-    <RowStyle CssClass="CSSStudyDetailsViewRowStyle"/>
-    <FooterStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
-    <CommandRowStyle BackColor="#E2DED6" Font-Bold="True" />
-    <FieldHeaderStyle BackColor="#E9ECF1"  />
-    <PagerStyle BackColor="#284775" ForeColor="White" HorizontalAlign="Center" />
-    <HeaderStyle CssClass="CSSStudyDetailsViewHeaderStyle" Wrap="False" />
-    <EditRowStyle BackColor="#999999" />
-    <AlternatingRowStyle CssClass="CSSStudyDetailsViewAlternatingRowStyle" />
-    <FieldHeaderStyle Width="30%" />
+    <RowStyle CssClass="GlobalGridViewRow"/>
+    <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
 </asp:DetailsView>
 </SectionContentTemplate>
 </ccAsp:SectionPanel>
@@ -45,61 +38,55 @@
     <Fields>
     
         <asp:TemplateField HeaderText="Scheduled Date/Time">
-            <HeaderStyle Wrap="False" />
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
             <ItemTemplate>
                 <ccUI:DateTimeLabel ID="ScheduledDateTime" runat="server"  Value='<%# Eval("ScheduledDateTime") %>' ></ccUI:DateTimeLabel>
             </ItemTemplate>
         </asp:TemplateField>
         
         <asp:TemplateField HeaderText="Expiration Date/Time">
-            <HeaderStyle Wrap="False" />
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
             <ItemTemplate>
                 <ccUI:DateTimeLabel ID="ExpirationTime" runat="server"  Value='<%# Eval("ExpirationTime") %>' ></ccUI:DateTimeLabel>
             </ItemTemplate>
         </asp:TemplateField>
         
         <asp:TemplateField HeaderText="Status">
-            <HeaderStyle Wrap="False" />
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
             <ItemTemplate>
                 <asp:Label ID="Status" runat="server"></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         
         <asp:TemplateField HeaderText="Priority">
-            <HeaderStyle Wrap="False" />
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
             <ItemTemplate>
                 <asp:Label ID="Priority" runat="server"></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         
-        <asp:BoundField HeaderText="Processing Server" DataField="ServerDescription" />
-        
-        
+        <asp:BoundField HeaderText="Processing Server" HeaderStyle-CssClass="StudyDetailsViewHeader" DataField="ServerDescription" />
+                
         <asp:TemplateField HeaderText="Patient Name">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />        
             <ItemTemplate>
                 <ccUI:PersonNameLabel ID="ReferringPhysiciansName" runat="server" PersonName='<%# Eval("Study.PatientName") %>' PersonNameType="Dicom"></ccUI:PersonNameLabel>
             </ItemTemplate>
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Patient ID">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />        
             <ItemTemplate>
                 <asp:Label runat="server" ID="PatientID" Text='<%# Eval("Study.PatientId") %>' />
             </ItemTemplate>
         </asp:TemplateField>
        
-        <asp:BoundField HeaderText="Failure Count" DataField="FailureCount" />
-        <asp:BoundField HeaderText="Failure Description" DataField="FailureDescription" />
-        <asp:BoundField HeaderText="Number of Instances Pending" DataField="NumInstancesPending" />
-        <asp:BoundField HeaderText="Number of Series Pending" DataField="NumSeriesPending" />
+        <asp:BoundField HeaderText="Failure Count" HeaderStyle-CssClass="StudyDetailsViewHeader" DataField="FailureCount" />
+        <asp:BoundField HeaderText="Failure Description" HeaderStyle-CssClass="StudyDetailsViewHeader" DataField="FailureDescription" />
+        <asp:BoundField HeaderText="Number of Instances Pending" HeaderStyle-CssClass="StudyDetailsViewHeader" DataField="NumInstancesPending" />
+        <asp:BoundField HeaderText="Number of Series Pending" HeaderStyle-CssClass="StudyDetailsViewHeader" DataField="NumSeriesPending" />
     </Fields>
-    <RowStyle CssClass="CSSStudyDetailsViewRowStyle"/>
-    <FooterStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
-    <CommandRowStyle BackColor="#E2DED6" Font-Bold="True" />
-    <FieldHeaderStyle BackColor="#E9ECF1"  />
-    <PagerStyle BackColor="#284775" ForeColor="White" HorizontalAlign="Center" />
-    <HeaderStyle CssClass="CSSStudyDetailsViewHeaderStyle" Wrap="False" />
-    <EditRowStyle BackColor="#999999" />
-    <AlternatingRowStyle CssClass="CSSStudyDetailsViewAlternatingRowStyle" />
-    <FieldHeaderStyle Width="30%" />
+    <RowStyle CssClass="GlobalGridViewRow"/>
+    <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
 </asp:DetailsView>
 </SectionContentTemplate>
 </ccAsp:SectionPanel>

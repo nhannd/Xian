@@ -56,7 +56,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             get { return base.Width; }
             set { 
                 base.Width = value;
-                GeneralInfoDetailsView.Width = value;
                 AutoRouteDetailsView.Width = value;
             }
         }

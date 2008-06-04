@@ -278,6 +278,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                     RefreshTimer.Interval = GetRefreshInterval();
                 }
             }
+
             base.OnPreRender(e);
         }
 

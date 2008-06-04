@@ -35,7 +35,7 @@
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="Schedule" CssClass="SearchTextBoxLabel" />
-                                                <asp:ImageButton ID="ClearScheduleDateButton" runat="server" ImageUrl="~/images/icons/ClearDate.png" AlternateText="Clear Date" /><br />
+                                                <asp:LinkButton ID="ClearScheduleDateButton" runat="server" Text="[clear]" CssClass="SmallLink"/><br />
                                                 <asp:TextBox ID="ScheduleDate" runat="server" ReadOnly="true" CssClass="SearchTextBox" BackColor="White" ToolTip="Search the list by Schedule Date [dd/mm/yyyy]" />
                                             </td>
                                             <td align="left" valign="bottom">

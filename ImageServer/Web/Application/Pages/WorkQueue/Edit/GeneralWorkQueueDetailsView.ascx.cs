@@ -67,6 +67,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         #endregion Public Properties
 
         #region Protected Methods
+
         #endregion Protected Methods
 
         #region Public Methods

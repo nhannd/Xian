@@ -136,14 +136,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 }
             }
 
-
             UpdateToolBarButtons();
 
             base.OnPreRender(e);
         }
-
         
-
         protected void UpdateToolBarButtons()
         {
             RescheduleToolbarButton.Enabled = WorkQueue != null && WorkQueueController.CanReschedule(WorkQueue);
