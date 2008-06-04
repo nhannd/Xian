@@ -153,7 +153,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
                     myEle.text = '{2}';
                     applyTimeList.add(myEle) ;
 
-                }}", typeEnum, applyTimeEnum, applyTimeEnum.Description, sampleList);
+                }}", typeEnum.Lookup, applyTimeEnum, applyTimeEnum.Description, sampleList);
 		}
 
 		protected override void OnInit(EventArgs e)

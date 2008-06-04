@@ -238,7 +238,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
                 WriteCheckBox.Checked = FileSystem.Enabled && (FileSystem.WriteOnly || (FileSystem.ReadOnly == false));
                 LowWatermarkTextBox.Text = FileSystem.LowWatermark.ToString();
                 HighWatermarkTextBox.Text = FileSystem.HighWatermark.ToString();
-                TiersDropDownList.SelectedValue = FileSystem.FilesystemTierEnum.ToString();
+                TiersDropDownList.SelectedValue = FileSystem.FilesystemTierEnum.Lookup;
             }
         }
 
