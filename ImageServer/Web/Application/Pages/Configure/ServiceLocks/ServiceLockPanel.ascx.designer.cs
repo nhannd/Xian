@@ -119,22 +119,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
         protected global::System.Web.UI.WebControls.Panel ToolbarButtons;
         
         /// <summary>
-        /// AddServiceLockButton control.
+        /// EditServiceScheduleButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton AddServiceLockButton;
-        
-        /// <summary>
-        /// EditServiceLockButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton EditServiceLockButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton EditServiceScheduleButton;
         
         /// <summary>
         /// Panel2 control.

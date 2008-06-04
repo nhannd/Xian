@@ -44,8 +44,8 @@
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <ccUI:ToolbarButton ID="AddFileSystemButton" runat="server" SkinID="AddButton" />
-                                        <ccUI:ToolbarButton ID="EditFileSystemButton" runat="server" SkinID="EditButton" />
+                                        <ccUI:ToolbarButton ID="AddFileSystemButton" runat="server" SkinID="AddButton" OnClick="AddFileSystemButton_Click"/>
+                                        <ccUI:ToolbarButton ID="EditFileSystemButton" runat="server" SkinID="EditButton" OnClick="EditFileSystemButton_Click"/>
                                     </asp:Panel>
                                 </ContentTemplate>
                             </asp:UpdatePanel>                  

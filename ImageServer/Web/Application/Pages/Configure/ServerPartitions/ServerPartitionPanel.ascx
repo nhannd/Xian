@@ -52,9 +52,9 @@
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <ccUI:ToolbarButton ID="AddPartitionButton" runat="server" SkinID="AddButton" />
-                                        <ccUI:ToolbarButton ID="EditPartitionButton" runat="server" SkinID="EditButton" />
-                                        <ccUI:ToolbarButton ID="DeletePartitionButton" runat="server" SkinID="DeleteButton" />
+                                        <ccUI:ToolbarButton ID="AddPartitionButton" runat="server" SkinID="AddButton" OnClick="AddPartitionButton_Click" />
+                                        <ccUI:ToolbarButton ID="EditPartitionButton" runat="server" SkinID="EditButton" OnClick="AddPartitionButton_Click" />
+                                        <ccUI:ToolbarButton ID="DeletePartitionButton" runat="server" SkinID="DeleteButton" OnClick="AddPartitionButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

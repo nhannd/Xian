@@ -53,9 +53,9 @@
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <ccUI:ToolbarButton ID="AddDeviceButton" runat="server" SkinID="AddButton" />
-                                        <ccUI:ToolbarButton ID="EditDeviceButton" runat="server" SkinID="EditButton" />
-                                        <ccUI:ToolbarButton ID="DeleteDeviceButton" runat="server" SkinID="DeleteButton" />
+                                        <ccUI:ToolbarButton ID="AddDeviceButton" runat="server" SkinID="AddButton" onClick="AddDeviceButton_Click"/>
+                                        <ccUI:ToolbarButton ID="EditDeviceButton" runat="server" SkinID="EditButton" onClick="EditDeviceButton_Click" />
+                                        <ccUI:ToolbarButton ID="DeleteDeviceButton" runat="server" SkinID="DeleteButton" onClick="DeleteDeviceButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

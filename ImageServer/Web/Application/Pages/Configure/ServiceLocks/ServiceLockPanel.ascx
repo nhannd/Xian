@@ -45,8 +45,7 @@
                             <asp:UpdatePanel ID="ToolbarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <ccUI:ToolbarButton ID="AddServiceLockButton" runat="server" SkinID="AddButton" />
-                                        <ccUI:ToolbarButton ID="EditServiceLockButton" runat="server" SkinID="EditButton" />
+                                        <ccUI:ToolbarButton ID="EditServiceScheduleButton" runat="server" SkinID="EditButton" OnClick="EditServiceScheduleButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

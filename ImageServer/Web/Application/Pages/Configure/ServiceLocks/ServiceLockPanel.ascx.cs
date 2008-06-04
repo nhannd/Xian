@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
         }
 
 
-        protected void EditServerScheduleButton_Click(object sender, ImageClickEventArgs e)
+        protected void EditServiceScheduleButton_Click(object sender, ImageClickEventArgs e)
         {
             ServiceLock service = ServiceLockGridViewControl.SelectedServiceLock;
             if (service != null)
@@ -256,7 +256,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
         {
 
             ServiceLock service = ServiceLockGridViewControl.SelectedServiceLock;
-            EditServiceLockButton.Enabled = service != null;
+            EditServiceScheduleButton.Enabled = service != null;
 
             ToolbarUpdatePanel.Update();
         }

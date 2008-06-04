@@ -43,7 +43,7 @@
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label5" runat="server" Text="Study Date" CssClass="SearchTextBoxLabel" EnableViewState="false"/>
-                                                <asp:LinkButton ID="ClearStudyDateButton" runat="server" Text="[x]" CssClass="SmallLink"/><br />
+                                                <asp:LinkButton ID="ClearStudyDateButton" runat="server" Text="[clear]" CssClass="SmallLink"/><br />
                                                 <asp:TextBox ID="StudyDate" runat="server" CssClass="SearchTextBox" ReadOnly="true" style="background-color: #fefefe" ToolTip="Search the list by Study Date [dd/mm/yyyy]" />
                                             </td>
                                             <td align="left" valign="bottom">
