@@ -46,12 +46,6 @@ namespace ClearCanvas.Ris.Client
     {
         class CannedTextSuggestionProvider : SuggestionProviderBase<CannedText>
         {
-			private static readonly Regex _termDefinition = new Regex(@"\b([^\s]+)", RegexOptions.Compiled|RegexOptions.IgnoreCase);
-
-			public CannedTextSuggestionProvider()
-            {
-            }
-
             protected override IList<CannedText> GetShortList(string query)
             {
 				List<CannedText> cannedTexts = new List<CannedText>();
@@ -71,23 +65,6 @@ namespace ClearCanvas.Ris.Client
 					});
 
             	return cannedTexts;
-			}
-
-			protected override IList<CannedText> RefineShortList(IList<CannedText> shortList, string query)
-			{
-				// break query up into keywords
-				List<string> keywords =
-					CollectionUtils.Map<Match, string>(_termDefinition.Matches(query), delegate(Match m) { return m.Value; });
-
-				// refine the short-list
-				return CollectionUtils.Select(shortList,
-					delegate(CannedText item)
-					{
-						// for an item to be included, the formatted string must contain *all* keywords
-						string itemString = FormatItem(item);
-						return CollectionUtils.TrueForAll(keywords, 
-							delegate(string kw) { return Regex.Match(itemString, @"\b" + kw, RegexOptions.IgnoreCase).Success; });
-					});
 			}
 
             protected override string FormatItem(CannedText item)
