@@ -175,6 +175,20 @@ namespace ClearCanvas.Dicom
         {
             throw new DicomException(SR.InvalidType);
         }
+
+        /// <summary>
+        /// Sets the date time with support for nullable datetime, calls the virtual <see cref="SetDateTime"/>.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <param name="value">The value.</param>
+        public virtual void SetDateTime(int index, DateTime? value)
+        {
+            if (value.HasValue)
+                SetDateTime(index, value.Value);
+            else
+                SetNullValue();
+        }
+
         public virtual void SetUid(int index, DicomUid value)
         {
             throw new DicomException(SR.InvalidType);
@@ -561,6 +575,22 @@ namespace ClearCanvas.Dicom
                 return defaultVal;
             }
         }
+
+        /// <summary>
+        /// Retrieve a datetime value.
+        /// If the value cannot be converted into a <see cref="DateTime"/> object, <i>null</i> will be returned.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        public DateTime? GetDateTime(int i)
+        {
+            DateTime dateTime = GetDateTime(i, DateTime.MinValue);
+            if (dateTime == DateTime.MinValue)
+                return null;
+            else
+                return dateTime;
+        }
+
         /// <summary>
         /// Retrieve an UID value. 
         /// 
@@ -659,6 +689,17 @@ namespace ClearCanvas.Dicom
             get { return _tag; }
         }
 
+        public string DicomTagDescription
+        {
+            get
+            {
+                DicomTag dicomTag = DicomTagDictionary.GetDicomTag(_tag);
+                if (dicomTag != null)
+                    return dicomTag.Name;
+                else
+                    return String.Empty;
+            }
+        }
         /// <summary>
         /// The length in bytes if the attribute was placed in a DICOM stream.
         /// </summary>
@@ -776,7 +817,7 @@ namespace ClearCanvas.Dicom
                     sb.Append(value.PadRight(ValueWidth, ' '));
                 }
             }
-            sb.AppendFormat(" # {0,4} {2} {1}", StreamLength, Tag.VM, Tag.Name);
+            sb.AppendFormat(" # {0,4} {2} {1}", StreamLength, Tag.VM, Tag.Name.Replace("&apos;", "'"));
 
             if (Flags.IsSet(options, DicomDumpOptions.Restrict80CharactersPerLine))
             {

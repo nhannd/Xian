@@ -153,5 +153,204 @@ namespace ClearCanvas.Dicom
             }
             
         }
+
+        /// <summary>
+        /// Parses Dicom Date/Time tags.  The <paramref name="dicomDateTime"/> would be a DateTime tag value - such as AcquisitionDatetime,
+        /// the <paramref name="dicomDate"/> would be just a Date tag value - such as AcquisitionDate; and <paramref name="dicomTime"/> would
+        /// be just the Time tag value - such as AcquisitionTime.  So, this method will parse the <paramref name="dicomDateTime"/> if it is not empty,
+        /// otherwise it will parse the <paramref name="dicomDate"/> and <paramref name="dicomTimee/> together.
+        /// </summary>
+        /// <param name="dicomDateTime">The dicom date time.</param>
+        /// <param name="dicomDate">The dicom date.</param>
+        /// <param name="dicomTime">The dicom time.</param>
+        /// <param name="dateTime">The date time.</param>
+        /// <returns></returns>
+        public static bool ParseDateAndTime(string dicomDateTime, string dicomDate, string dicomTime, out DateTime outDateTime)
+        {
+            outDateTime = DateTime.MinValue; // set default value
+            try
+            {
+                string dateTimeConcat = null;
+
+                string dateValue = dicomDate == null ? String.Empty : dicomDate.Trim();
+                string timeValue = dicomTime == null ? String.Empty : dicomTime.Trim();
+                if (timeValue == "000000") timeValue = String.Empty; // might as well be blank
+
+                string dateTimeValue = dicomDateTime == null ? String.Empty : dicomDateTime.Trim();
+
+                if (dateTimeValue == String.Empty && dateValue == String.Empty && timeValue == String.Empty)
+                    return false;
+
+                // First try to do dateValue and timeValue separately - if both are there then set 
+                // dateTimeConcat, and then parse dateTimeConcat the same as if dateTimeValue was set
+                if (dateTimeValue == String.Empty)
+                {
+                    // use separate date and time values
+                    // first get rid of .'s in date value, if any
+                    dateValue = dateValue.Replace(".", "");
+
+                    // see if only the date or time was sent in - if so, then good, parse it immediately, else set dateTimeConcat and parse it later 
+                    if (dateValue == String.Empty)
+                    {
+                        if (timeValue.IndexOf(".") == -1)
+                            outDateTime = DateTime.ParseExact(timeValue, "HHmmss", CultureInfo.CurrentCulture);
+                        else
+                            outDateTime = DateTime.ParseExact(timeValue, "HHmmss.ffffff", CultureInfo.CurrentCulture);
+                    }
+                    else if (timeValue == String.Empty)
+                    {
+                        outDateTime = DateTime.ParseExact(dateValue, "yyyyMMdd", CultureInfo.CurrentCulture);
+                    }
+                    else
+                    {
+                        dateTimeConcat = dateValue + timeValue;
+                    }
+                }
+                else
+                {
+                    // dateTimeValue was set, set dateTimeConcat and parse it later
+                    dateTimeConcat = dateTimeValue;
+                }
+
+                if (dateTimeConcat != null)
+                {
+                    string[] date_formats = new string[15];
+                    date_formats[0] = "yyyyMMdd";
+                    date_formats[1] = "yyyy.MM.dd";
+                    date_formats[2] = "yyyy";
+                    date_formats[3] = "yyyyMM";
+                    date_formats[4] = "yyyy.MM";
+                    date_formats[5] = "yyyyMMddHHmmss";
+                    date_formats[6] = "yyyyMMddHHmmss.f";
+                    date_formats[6] = "yyyyMMddHHmmss.ff";
+                    date_formats[7] = "yyyyMMddHHmmss.ffffff";
+                    date_formats[8] = "yyyyMMddHHmmss.ffffffzzz";
+                    date_formats[9] = "yyyyMMddHHmmss.fff";
+                    date_formats[10] = "MM/dd/yyyy HH:mm:ss tt";
+                    date_formats[11] = "MM/dd/yyyy HH:mm:ss t";
+                    date_formats[12] = "MM/dd/yyyy HH:mm:ss";
+                    date_formats[13] = "MM/dd/yyyy";
+                    outDateTime = DateTime.ParseExact(dateTimeConcat, date_formats, CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault);
+
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// Parses Dicom Date/Time tags.  The <paramref name="dicomDateTime"/> would be a DateTime tag value - such as AcquisitionDatetime,
+        /// the <paramref name="dicomDate"/> would be just a Date tag value - such as AcquisitionDate; and <paramref name="dicomTime"/> would
+        /// be just the Time tag value - such as AcquisitionTime.  So, this method will parse the <paramref name="dicomDateTime"/> if it is not empty,
+        /// otherwise it will parse the <paramref name="dicomDate"/> and <paramref name="dicomTimee/> together.
+        /// <param name="dicomDateTime">The dicom date time.</param>
+        /// <param name="dicomDate">The dicom date.</param>
+        /// <param name="dicomTime">The dicom time.</param>
+        /// <returns></returns>
+        public static DateTime? ParseDateAndTime(string dicomDateTime, string dicomDate, string dicomTime)
+        {
+            DateTime dateTime;
+            if (!ParseDateAndTime(dicomDateTime, dicomDate, dicomTime, out dateTime))
+                return null;
+
+            return dateTime;
+        }
+
+        /// <summary>
+        /// Parses the date and time.  Gets the values for each tag from the attribute colllection. The <paramref name="dicomDateTime"/> would be a DateTime tag value - such as AcquisitionDatetime,
+        /// the <paramref name="dicomDate"/> would be just a Date tag value - such as AcquisitionDate; and <paramref name="dicomTime"/> would
+        /// be just the Time tag value - such as AcquisitionTime.  So, this method will parse the <paramref name="dicomDateTime"/> if it is not empty,
+        /// otherwise it will parse the <paramref name="dicomDate"/> and <paramref name="dicomTimee/> together.
+        /// </summary>
+        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
+        /// <param name="dicomDateTimeTag">The dicom date time tag.</param>
+        /// <param name="dicomDateTag">The dicom date tag.</param>
+        /// <param name="dicomTimeTag">The dicom time tag.</param>
+        /// <returns></returns>
+        public static DateTime? ParseDateAndTime(DicomAttributeCollection dicomAttributeCollection, uint dicomDateTimeTag, uint dicomDateTag, uint dicomTimeTag)
+        {
+            if (dicomAttributeCollection == null)
+            	throw new ArgumentNullException("dicomAttributeCollection");
+
+            string dicomDateTime = dicomDateTimeTag == 0 ? String.Empty : dicomAttributeCollection[dicomDateTimeTag].GetString(0, String.Empty);
+            string dicomDate = dicomDateTag == 0 ? String.Empty : dicomAttributeCollection[dicomDateTag].GetString(0, String.Empty);
+            string dicomTime = dicomTimeTag == 0 ? String.Empty : dicomAttributeCollection[dicomTimeTag].GetString(0, String.Empty);
+
+            return ParseDateAndTime(dicomDateTime, dicomDate, dicomTime);
+        }
+
+        /// <summary>
+        /// Sets the specified date time attribute values based on the specified <paramref name="value">Date Time value</paramref>.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="dateAttribute">The date attribute.</param>
+        /// <param name="timeAttribute">The time attribute.</param>
+        public static void SetDateTimeAttributeValues(DateTime? value, DicomAttribute dateAttribute, DicomAttribute timeAttribute)
+        {
+            if (value.HasValue)
+            {
+                dateAttribute.SetDateTime(0, value.Value);
+                timeAttribute.SetDateTime(0, value.Value);
+            }
+            else
+            {
+                dateAttribute.SetNullValue();
+                timeAttribute.SetNullValue();
+            }
+        }
+
+        /// <summary>
+        /// Sets the date time attribute values for the specified dicom attributes.
+        /// Will first attempt to write to the <paramref name="dateTimeAttribute"/> if it is not null, otherwise
+        /// it will write the values to the separate date and time attributes.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="dateTimeAttribute">The date time attribute.</param>
+        /// <param name="dateAttribute">The date attribute.</param>
+        /// <param name="timeAttribute">The time attribute.</param>
+        public static void SetDateTimeAttributeValues(DateTime? value, DicomAttribute dateTimeAttribute, DicomAttribute dateAttribute, DicomAttribute timeAttribute)
+        {
+            if (dateTimeAttribute != null)
+            {
+                if (value.HasValue)
+                    dateTimeAttribute.SetDateTime(0, value.Value);
+                else
+                    dateTimeAttribute.SetNullValue();
+            }
+            else
+            {
+                SetDateTimeAttributeValues(value, dateAttribute, timeAttribute);
+            }
+        }
+
+        /// <summary>
+        /// Sets the date time attribute values for the specified attributes in the specified <paramref name="dicomAttributeCollection"/>.
+        /// Will first attempt to write to the <paramref name="dicomDateTimeTag"/> if it is non zero, otherwise
+        /// it will write the values to the separate date and time tags.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
+        /// <param name="dicomDateTimeTag">The dicom date time tag.</param>
+        /// <param name="dicomDateTag">The dicom date tag.</param>
+        /// <param name="dicomTimeTag">The dicom time tag.</param>
+        public static void SetDateTimeAttributeValues(DateTime? value, DicomAttributeCollection dicomAttributeCollection, uint dicomDateTimeTag, uint dicomDateTag, uint dicomTimeTag)
+        {
+            if (dicomAttributeCollection == null)
+            	throw new ArgumentNullException("dicomAttributeCollection");
+
+            DicomAttribute dateTimeAttribute = dicomAttributeCollection.Contains(dicomDateTimeTag) ? dicomAttributeCollection[dicomDateTimeTag] : null;
+            if (dateTimeAttribute != null)
+            {
+                SetDateTimeAttributeValues(value, dateTimeAttribute, null, null);
+            }
+            else
+            {
+                SetDateTimeAttributeValues(value, dicomAttributeCollection[dicomDateTag], dicomAttributeCollection[dicomTimeTag]);
+            }
+        }
+
 	}
 }

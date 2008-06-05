@@ -354,7 +354,7 @@ namespace ClearCanvas.Dicom.IO
             if (_specificCharacterSet != null)
             {
                 _data = DicomImplementation.CharacterParser.Encode(val, _specificCharacterSet);
-                if ((_data.Length & 1) == 1)
+                if (_data != null && (_data.Length & 1) == 1)
                 {
                     byte[] rawBytes = new byte[_data.Length + 1];
                     rawBytes[_data.Length] = pad;

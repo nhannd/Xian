@@ -63,7 +63,9 @@ namespace ClearCanvas.Dicom
     /// </summary>
     public class DicomAttributeSQ : DicomAttribute
     {
-        DicomSequenceItem[] _values = null;
+        #region Private Variables
+        private DicomSequenceItem[] _values = null;
+        #endregion
 
         #region Constructors
 
@@ -97,6 +99,25 @@ namespace ClearCanvas.Dicom
 
         #endregion
 
+        #region Public Properties
+        /// <summary>
+        /// Gets the <see cref="ClearCanvas.Dicom.DicomSequenceItem"/> at the specified index if it exists, otherwise returns null.
+        /// </summary>
+        /// <value></value>
+        public DicomSequenceItem this[int index]
+        {
+            get
+            {
+                if (_values != null)
+                {
+                    if (_values.Length > index)
+                        return _values[index];
+                }
+                return null;
+            }
+        }
+        #endregion
+
         #region Public Methods
 
         public void ClearSequenceItems()
@@ -104,26 +125,31 @@ namespace ClearCanvas.Dicom
             _values = null;
         }
 
+        /// <summary>
+        /// Method for adding a <see cref="DicomSequenceItem"/> to an attributes value.
+        /// </summary>
+        /// <param name="item">The <see cref="DicomSequenceItem"/> to add to the attribute.</param>
+        /// <remarks>
+        /// This method is value for <see cref="DicomAttributeSQ"/> attributes only.
+        /// </remarks>
         public override void AddSequenceItem(DicomSequenceItem item)
         {
             if (_values == null)
             {
                 _values = new DicomSequenceItem[1];
                 _values[0] = item;
-                if (item.SpecificCharacterSet == null)
-                    item.SpecificCharacterSet = this.ParentCollection.SpecificCharacterSet;
-                return;
             }
+            else
+            {
+                DicomSequenceItem[] oldValues = _values;
 
-            DicomSequenceItem[] oldValues = _values;
-
-            _values = new DicomSequenceItem[oldValues.Length + 1];
-            oldValues.CopyTo(_values, 0);
-            _values[oldValues.Length] = item;
+                _values = new DicomSequenceItem[oldValues.Length + 1];
+                oldValues.CopyTo(_values, 0);
+                _values[oldValues.Length] = item;
+            }
 
             if (item.SpecificCharacterSet == null)
                 item.SpecificCharacterSet = this.ParentCollection.SpecificCharacterSet;
-
             base.Count = _values.Length;
             base.StreamLength = (uint)base.Count;
         }
@@ -203,7 +229,13 @@ namespace ClearCanvas.Dicom
             get { return _values; }
             set
             {
-                if (value is DicomSequenceItem[])
+                if (value is DicomSequenceItem)
+                {
+                    _values = new DicomSequenceItem[1];
+                    _values[0] = value as DicomSequenceItem;
+                    base.Count = 1;
+                }
+                else if (value is DicomSequenceItem[])
                 {
                     _values = (DicomSequenceItem[])value;
                     base.Count = _values.Length;
@@ -270,11 +302,18 @@ namespace ClearCanvas.Dicom
         {
             sb.Append(prefix);
             sb.AppendFormat("({0:x4},{1:x4}) {2} ", Tag.Group, Tag.Element, Tag.VR.Name);
-            foreach (DicomSequenceItem item in _values)
+            if (_values == null)
             {
-                sb.AppendLine().Append(prefix).Append(" Item:").AppendLine();
-                item.Dump(sb, prefix + "  > ", options);
-                sb.Length = sb.Length - 1;
+                sb.AppendLine();
+            }
+            else
+            {
+                foreach (DicomSequenceItem item in _values)
+                {
+                    sb.AppendLine().Append(prefix).Append(" Item:").AppendLine();
+                    item.Dump(sb, prefix + "  > ", options);
+                    sb.Length = sb.Length - 1;
+                }
             }
         }
         #endregion

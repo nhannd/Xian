@@ -625,10 +625,10 @@ namespace ClearCanvas.Dicom.Network
 		}
 
 		/// <summary>
-		/// Finds the Presentation Context with the specified Abstract Syntax.
+		/// Finds the Presentation Context with the specified Abstract Syntax, or 0 if it can't find it.
 		/// </summary>
 		/// <param name="abstractSyntax">Abstract Syntax</param>
-		/// <returns>Presentation Context ID</returns>
+		/// <returns>Presentation Context ID, or 0 if it can't find it.</returns>
 		public byte FindAbstractSyntax(SopClass abstractSyntax) {
 			foreach (DicomPresContext ctx in _presContexts.Values) {
 				if (ctx.AbstractSyntax.Uid == abstractSyntax.Uid)
@@ -636,6 +636,23 @@ namespace ClearCanvas.Dicom.Network
 			}
 			return 0;
 		}
+
+        /// <summary>
+        /// Finds the Presentation Context with the specified Abstract Syntax.  If it can't find it, throws an <see cref="DicomException"/>.
+        /// It is useful to throw an exception for for a Scu, so we don't have to keep checking for a valid pcid.
+        /// </summary>
+        /// <param name="abstractSyntax">Abstract Syntax</param>
+        /// <returns>Presentation Context ID</returns>
+        /// <exception cref="DicomException"/>
+        public byte FindAbstractSyntaxOrThrowException(SopClass abstractSyntax)
+        {
+            foreach (DicomPresContext ctx in _presContexts.Values)
+            {
+                if (ctx.AbstractSyntax.Uid == abstractSyntax.Uid)
+                    return ctx.ID;
+            }
+            throw new DicomException("Cannot find abstract syntax in presentation context: " + abstractSyntax.ToString());
+        }
 
 		/// <summary>
 		/// Finds the Presentation Context with the specified Abstract Syntax and Transfer Syntax.

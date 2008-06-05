@@ -2256,7 +2256,8 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetUid(int i, out DicomUid value)
         {
-            if (i < 0 || i >= Count)
+
+            if (i < 0 || i >= Count || _values.Length == 0)
             {
                 value = null;
                 return false;

@@ -172,6 +172,9 @@ namespace ClearCanvas.Dicom
         public static byte[] GetIsomorphicBytes(string rawBytesEncodedAsString)
         {
             // add a null terminator, otherwise we're going to have problems in the unamanged world
+            if (rawBytesEncodedAsString == null)
+                return null;
+            else
             return Encoding.GetEncoding(IsomorphicCodePage).GetBytes(rawBytesEncodedAsString);
         }
 

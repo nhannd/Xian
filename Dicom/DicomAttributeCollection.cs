@@ -175,6 +175,15 @@ namespace ClearCanvas.Dicom
         {
             get { return _endTag; }
         }
+
+        /// <summary>
+        /// Gets the dump string (useful for seeing the dump output in the debugger's local variables window).
+        /// </summary>
+        /// <value>The dump string.</value>
+        public string DumpString
+        {
+            get { return Dump(String.Empty, DicomDumpOptions.None); }
+        }
         #endregion
 
         #region Public Methods
