@@ -39,6 +39,8 @@
     <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\ScintillaNet.dll" />
     <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer32.dll" />
     <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer64.dll" />
+    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Dymo\Interop.Dymo.dll" />
+    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Dymo\Interop.StdType.dll" />
   </ItemGroup>
 
   <ItemGroup>
