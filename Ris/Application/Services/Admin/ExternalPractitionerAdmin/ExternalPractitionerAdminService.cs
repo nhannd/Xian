@@ -179,7 +179,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.ExternalPractitioner.Merge)]
 		public MergeDuplicatePractitionerResponse MergeDuplicatePractitioner(MergeDuplicatePractitionerRequest request)
 		{
-			return new MergeDuplicatePractitionerResponse();
+			IExternalPractitionerBroker broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
+			ExternalPractitioner duplicate = broker.Load(request.Duplicate.PractitionerRef, EntityLoadFlags.Proxy);
+			ExternalPractitioner original = broker.Load(request.Original.PractitionerRef, EntityLoadFlags.Proxy);
+			broker.MergePractitioners(duplicate, original);
+
+			ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
+			return new MergeDuplicatePractitionerResponse(assembler.CreateExternalPractitionerSummary(original, this.PersistenceContext));
 		}
 
 		[UpdateOperation]
@@ -187,22 +193,58 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.ExternalPractitioner.Merge)]
 		public MergeDuplicateContactPointResponse MergeDuplicateContactPoint(MergeDuplicateContactPointRequest request)
 		{
-			return new MergeDuplicateContactPointResponse();
+			IExternalPractitionerContactPointBroker broker = PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
+			ExternalPractitionerContactPoint duplicate = broker.Load(request.Duplicate.ContactPointRef, EntityLoadFlags.Proxy);
+			ExternalPractitionerContactPoint original = broker.Load(request.Original.ContactPointRef, EntityLoadFlags.Proxy);
+			broker.MergeContactPoints(duplicate, original);
+
+			ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
+			return new MergeDuplicateContactPointResponse(assembler.CreateExternalPractitionerContactPointSummary(original));
 		}
 
 		[ReadOperation]
 		public LoadMergeDuplicatePractitionerFormDataResponse LoadMergeDuplicatePractitionerFormData(LoadMergeDuplicatePractitionerFormDataRequest request)
 		{
-			return new LoadMergeDuplicatePractitionerFormDataResponse(null, null);
+			IExternalPractitionerBroker broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
+			ExternalPractitioner practitioner = broker.Load(request.Practitioner.PractitionerRef, EntityLoadFlags.Proxy);
+
+			OrderAssembler orderAssembler = new OrderAssembler();
+			List<OrderSummary> affectedOrders = CollectionUtils.Map<Order, OrderSummary>(
+				broker.GetRelatedOrders(practitioner),
+				delegate(Order o)
+					{
+						return orderAssembler.CreateOrderSummary(o, this.PersistenceContext);
+					});
+
+			VisitAssembler visitAssembler = new VisitAssembler();
+			List<VisitSummary> affectedVisits = CollectionUtils.Map<Visit, VisitSummary>(
+				broker.GetRelatedVisits(practitioner),
+				delegate(Visit v)
+					{
+						return visitAssembler.CreateVisitSummary(v, this.PersistenceContext);
+					});
+
+			return new LoadMergeDuplicatePractitionerFormDataResponse(affectedOrders, affectedVisits);
 		}
 
 		[ReadOperation]
 		public LoadMergeDuplicateContactPointFormDataResponse LoadMergeDuplicateContactPointFormData(LoadMergeDuplicateContactPointFormDataRequest request)
 		{
-			return new LoadMergeDuplicateContactPointFormDataResponse(null);
+			IExternalPractitionerContactPointBroker broker = PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
+			ExternalPractitionerContactPoint contactPoint = broker.Load(request.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy);
+
+			OrderAssembler orderAssembler = new OrderAssembler();
+			List<OrderSummary> affectedOrders = CollectionUtils.Map<Order, OrderSummary>(
+				broker.GetRelatedOrders(contactPoint),
+				delegate(Order o)
+				{
+					return orderAssembler.CreateOrderSummary(o, this.PersistenceContext);
+				});
+
+			return new LoadMergeDuplicateContactPointFormDataResponse(affectedOrders);
 		}
 
 		#endregion
 
-    }
+	}
 }

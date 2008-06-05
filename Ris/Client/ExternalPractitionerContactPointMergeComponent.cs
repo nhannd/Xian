@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
@@ -59,8 +61,24 @@ namespace ClearCanvas.Ris.Client
 					affectedOrders = response.AffectedOrders;
 				});
 
-			// TODO: format reports
-			return "TODO format reports";
+			StringBuilder reportBuilder = new StringBuilder();
+			reportBuilder.AppendFormat("Replace {0} ({1})", duplicate.Name, duplicate.Description);
+			reportBuilder.AppendLine();
+			reportBuilder.AppendFormat("with {0} ({1})", original.Name, original.Description);
+			reportBuilder.AppendLine();
+
+			reportBuilder.AppendLine();
+			if (affectedOrders.Count == 0)
+			{
+				reportBuilder.AppendLine("No affected orders");
+			}
+			else
+			{
+				reportBuilder.AppendLine("Affected Orders accession number");
+				CollectionUtils.ForEach(affectedOrders, delegate(OrderSummary o) { reportBuilder.AppendLine(o.AccessionNumber); });
+			}
+
+			return reportBuilder.ToString();
 		}
 
 		public override ILookupHandler DuplicateLookupHandler

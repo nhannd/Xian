@@ -1,10 +1,12 @@
 using System;
+using System.Text;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
-using System.Text;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -51,13 +53,32 @@ namespace ClearCanvas.Ris.Client
 				});
 
 			StringBuilder reportBuilder = new StringBuilder();
-			reportBuilder.AppendFormat("Replacing {0} with {1}", duplicate.Name, original.Name);
+			reportBuilder.AppendFormat("Replace {0}", PersonNameFormat.Format(duplicate.Name));
 			reportBuilder.AppendLine();
-			reportBuilder.AppendLine("Affected Orders");
+			reportBuilder.AppendFormat("with {0}", PersonNameFormat.Format(original.Name));
 			reportBuilder.AppendLine();
-			reportBuilder.AppendLine("Affected Visits");
+
 			reportBuilder.AppendLine();
-			reportBuilder.AppendLine("TODO format reports");
+			if (affectedOrders.Count == 0)
+			{
+				reportBuilder.AppendLine("No affected orders");
+			}
+			else
+			{
+				reportBuilder.AppendLine("Affected Orders accession number");
+				CollectionUtils.ForEach(affectedOrders, delegate(OrderSummary o) { reportBuilder.AppendLine(o.AccessionNumber); });
+			}
+
+			reportBuilder.AppendLine();
+			if (affectedVisits.Count == 0)
+			{
+				reportBuilder.AppendLine("No affected visits");
+			}
+			else
+			{
+				reportBuilder.AppendLine("Affected Visit Id");
+				CollectionUtils.ForEach(affectedVisits, delegate(VisitSummary v) { reportBuilder.AppendLine(MrnFormat.Format(v.VisitNumber)); });
+			}
 
 			return reportBuilder.ToString();
 		}

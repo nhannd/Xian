@@ -120,6 +120,12 @@
   <data name="ErrorFailedReadNextSequenceNumber" xml:space="preserve">
     <value>Unable to read next number in sequence</value>
   </data>
+  <data name="ErrorFailedToDeleteRow" xml:space="preserve">
+    <value>Unable to delete row</value>
+  </data>
+  <data name="ErrorFailedToReplaceValue" xml:space="preserve">
+    <value>Unable to replace value</value>
+  </data>
   <data name="ErrorFailedUpdateNextSequenceNumber" xml:space="preserve">
     <value>Unable to update next number in sequence</value>
   </data>
