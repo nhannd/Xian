@@ -11,6 +11,7 @@
     <CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
     <JscriptDirectory>$(ProjectDir)\..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
     <OtoScriptDirectory>$(DistributionDirectory)\oto\scripts</OtoScriptDirectory>
+		<TemplateDirectory>$(DistributionDirectory)\templates</TemplateDirectory>
   </PropertyGroup>
 	
 	<ItemGroup>
@@ -46,6 +47,10 @@
   <ItemGroup>
     <OtoScripts Include="$(TrunkDirectory)\Oto\scripts\*.js" />
     <OtoScripts Include="$(SolutionDir)\Oto\scripts\*.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<Templates Include="$(SolutionDir)\Uhn\bin\$(Configuration)\label.lwt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -97,6 +102,7 @@
 		<Copy SourceFiles="@(JscriptFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
     <Copy SourceFiles="@(OtoScripts)" DestinationFolder="$(OtoScriptDirectory)" ContinueOnError="true" />
     <Copy SourceFiles="@(ExecutableFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
+    <Copy SourceFiles="@(Templates)" DestinationFolder="$(TemplateDirectory)" ContinueOnError="true" />
   </Target>
 	
 </Project>
