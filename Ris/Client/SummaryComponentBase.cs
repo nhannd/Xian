@@ -96,6 +96,7 @@ namespace ClearCanvas.Ris.Client
         private PagingController<TSummary> _pagingController;
 
     	private readonly bool _dialogMode;
+    	private bool _supportModified;
 
 
 		public SummaryComponentBase()
@@ -203,7 +204,8 @@ namespace ClearCanvas.Ris.Client
                 {
                     _summaryTable.Items.AddRange(addedItems);
                     this.SummarySelection = new Selection(addedItems);
-					this.Modified = true;
+					if (_supportModified)
+						this.Modified = true;
                 }
             }
             catch (Exception e)
@@ -233,8 +235,9 @@ namespace ClearCanvas.Ris.Client
                     }
 
                     this.SummarySelection = new Selection(editedItems);
-					this.Modified = true;
-                }
+					if (_supportModified)
+						this.Modified = true;
+				}
             }
             catch (Exception e)
             {
@@ -262,7 +265,8 @@ namespace ClearCanvas.Ris.Client
 
                         // clear selection
                         this.SummarySelection = Selection.Empty;
-						this.Modified = true;
+						if (_supportModified)
+							this.Modified = true;
 					}
                 }
 
@@ -448,5 +452,16 @@ namespace ClearCanvas.Ris.Client
         {
             get { return _selectedItems; }
         }
-    }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this component will set this.Modified to true
+		/// when the summary list changed.  This property is public because it is different per instance, not per class.
+		/// </summary>
+		public virtual bool SupportModified
+		{
+			get { return _supportModified; }
+			set { _supportModified = value; }
+		}
+
+	}
 }
