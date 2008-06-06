@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Globalization;
 
 namespace ClearCanvas.Dicom
@@ -84,6 +82,16 @@ namespace ClearCanvas.Dicom
                 dicomDate = dicomDate.Trim();
 
 			return DateTime.TryParseExact(dicomDate, _dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
+		}
+
+		/// <summary>
+		/// Convert a DateTime object into a DA string
+		/// </summary>
+		/// <param name="datetime"></param>
+		/// <returns>The DICOM formatted string</returns>
+		public static string ToDicomString(DateTime datetime)
+		{
+			return datetime.ToString(DicomDateFormat, CultureInfo.InvariantCulture);
 		}
  	}
 }

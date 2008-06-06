@@ -175,9 +175,18 @@ namespace ClearCanvas.Dicom
                     foreach (string subVal in valueArray)
                     {
                         string trimmedVal = subVal.Trim();
-                        if (trimmedVal.Length > Tag.VR.MaximumLength)
-                            throw new DicomDataException(
-                                String.Format("Invalid value length ({0}) for tag {1} of VR {2} of max size {3}", subVal, Tag, Tag.VR, Tag.VR.MaximumLength));
+						if (trimmedVal.Length > Tag.VR.MaximumLength)
+						{
+							// Handle case of DICOM range matching queries
+							if ((Tag.VR.Equals(DicomVr.DAvr)
+								|| Tag.VR.Equals(DicomVr.TMvr)
+								|| Tag.VR.Equals(DicomVr.DTvr))
+								&& trimmedVal.Contains("-"))
+								return;
+								
+							throw new DicomDataException(
+								String.Format("Invalid value length ({0}) for tag {1} of VR {2} of max size {3}", subVal, Tag, Tag.VR, Tag.VR.MaximumLength));
+						}
                     }
                 }
             }
