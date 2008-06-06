@@ -4,6 +4,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {

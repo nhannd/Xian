@@ -182,10 +182,46 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			IExternalPractitionerBroker broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
 			ExternalPractitioner duplicate = broker.Load(request.Duplicate.PractitionerRef, EntityLoadFlags.Proxy);
 			ExternalPractitioner original = broker.Load(request.Original.PractitionerRef, EntityLoadFlags.Proxy);
-			broker.MergePractitioners(duplicate, original);
+
+			// Change reference of ordering practitioner to the new practitioner
+			CollectionUtils.ForEach(broker.GetRelatedOrders(duplicate), 
+				delegate(Order o) { o.OrderingPractitioner = original; });
+
+			// Change reference of contact points to the new practitioner
+			CollectionUtils.ForEach(duplicate.ContactPoints,
+				delegate(ExternalPractitionerContactPoint cp)
+					{
+						cp.IsDefaultContactPoint = false;
+						cp.Practitioner = original;
+					});
+			original.ContactPoints.AddAll(duplicate.ContactPoints);
+
+			// Change reference of visit practitioner to the new practitioner
+			CollectionUtils.ForEach(broker.GetRelatedVisits(duplicate),
+				delegate(Visit v)
+					{
+						CollectionUtils.ForEach(v.Practitioners,
+							delegate(VisitPractitioner vp)
+								{
+									if (vp.Practitioner == duplicate)
+										vp.Practitioner = original;
+								});
+					});
 
 			ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
 			return new MergeDuplicatePractitionerResponse(assembler.CreateExternalPractitionerSummary(original, this.PersistenceContext));
+		}
+
+		/// <summary>
+		/// Delete duplicate external practitioners.
+		/// </summary>
+		[UpdateOperation]
+		public DeletePractitionerResponse DeletePractitioner(DeletePractitionerRequest request)
+		{
+			IExternalPractitionerBroker broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
+			ExternalPractitioner practitioner = broker.Load(request.Practitioner.PractitionerRef, EntityLoadFlags.Proxy);
+			broker.Delete(practitioner);
+			return new DeletePractitionerResponse();
 		}
 
 		[UpdateOperation]
@@ -196,8 +232,35 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			IExternalPractitionerContactPointBroker broker = PersistenceContext.GetBroker<IExternalPractitionerContactPointBroker>();
 			ExternalPractitionerContactPoint duplicate = broker.Load(request.Duplicate.ContactPointRef, EntityLoadFlags.Proxy);
 			ExternalPractitionerContactPoint original = broker.Load(request.Original.ContactPointRef, EntityLoadFlags.Proxy);
-			broker.MergeContactPoints(duplicate, original);
 
+			// Change reference of result recipient to the new contact point
+			CollectionUtils.ForEach(broker.GetRelatedOrders(duplicate),
+				delegate(Order o)
+					{
+						CollectionUtils.ForEach(o.ResultRecipients,
+							delegate(ResultRecipient rr)
+								{
+									if (rr.PractitionerContactPoint == duplicate)
+										rr.PractitionerContactPoint = original;
+								});
+					});
+
+			// copy all addresses/emails/telephones to the new contact point
+			CollectionUtils.ForEach(duplicate.Addresses, 
+				delegate(Address a) { original.Addresses.Add((Address)a.Clone());});
+
+			CollectionUtils.ForEach(duplicate.EmailAddresses,
+				delegate(EmailAddress e) { original.EmailAddresses.Add((EmailAddress)e.Clone()); });
+
+			CollectionUtils.ForEach(duplicate.TelephoneNumbers,
+				delegate(TelephoneNumber p) { original.TelephoneNumbers.Add((TelephoneNumber)p.Clone()); });
+
+			PersistenceContext.SynchState();
+
+			// remove the duplicate contact point
+			ExternalPractitioner practitioner = original.Practitioner;
+			practitioner.ContactPoints.Remove(duplicate);
+			
 			ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
 			return new MergeDuplicateContactPointResponse(assembler.CreateExternalPractitionerContactPointSummary(original));
 		}

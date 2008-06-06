@@ -88,6 +88,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		MergeDuplicatePractitionerResponse MergeDuplicatePractitioner(MergeDuplicatePractitionerRequest request);
 
 		/// <summary>
+		/// Delete duplicate external practitioners.
+		/// </summary>
+		[OperationContract]
+		DeletePractitionerResponse DeletePractitioner(DeletePractitionerRequest request);
+
+		/// <summary>
 		/// Merge duplicate external practitioners contact points.
 		/// </summary>
 		[OperationContract]
