@@ -57,38 +57,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             {
                 base.Width = value;
                 WebMoveStudyDetailsView.Width = value;
-                GeneralInfoDetailsView.Width = value;
             }
         }
-		
 
         #endregion Public Properties
 
         #region Protected Methods
 
-        protected void GeneralInfoDetailsView_DataBound(object sender, EventArgs e)
+        protected override void OnInit(EventArgs e)
         {
-            WorkQueueDetails item = GeneralInfoDetailsView.DataItem as WorkQueueDetails;
-            if (item != null)
-            {
-                Label typeLabel = GeneralInfoDetailsView.FindControl("Type") as Label;
-                if (typeLabel != null)
-                {
-                    typeLabel.Text = item.Type.Description;
-                }
-
-                Label statusLabel = GeneralInfoDetailsView.FindControl("Status") as Label;
-                if (statusLabel != null)
-                {
-                    statusLabel.Text = item.Status.Description;
-                }
-
-                Label priorityLabel = GeneralInfoDetailsView.FindControl("Priority") as Label;
-                if (priorityLabel != null)
-                {
-                    priorityLabel.Text = item.Priority.Description;
-                }
-            }
+            this.WorkQueueItemTitle = "Move Study Details";
         }
 
         protected void WebMoveStudyDetailsView_DataBound(object sender, EventArgs e)
@@ -100,6 +78,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 if (typeLabel != null)
                 {
                     typeLabel.Text = item.Type.Description;
+                }
+                Label statusLabel = WebMoveStudyDetailsView.FindControl("Status") as Label;
+                if (statusLabel != null)
+                {
+                    statusLabel.Text = item.Status.Description;
+                }
+
+                Label priorityLabel = WebMoveStudyDetailsView.FindControl("Priority") as Label;
+                if (priorityLabel != null)
+                {
+                    priorityLabel.Text = item.Priority.Description;
                 }
 
             }
@@ -116,13 +105,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 List<WorkQueueDetails> detailsList = new List<WorkQueueDetails>();
                 detailsList.Add(WorkQueueDetailsAssembler.CreateWorkQueueDetail(WorkQueue));
                 WebMoveStudyDetailsView.DataSource = detailsList;
-
-                GeneralInfoDetailsView.DataSource = detailsList;
             }
             else
             {
                 WebMoveStudyDetailsView.DataSource = null;
-                GeneralInfoDetailsView.DataSource = null;
             }
 
             base.DataBind();
