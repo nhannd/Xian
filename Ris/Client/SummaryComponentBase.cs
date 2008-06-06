@@ -203,6 +203,7 @@ namespace ClearCanvas.Ris.Client
                 {
                     _summaryTable.Items.AddRange(addedItems);
                     this.SummarySelection = new Selection(addedItems);
+					this.Modified = true;
                 }
             }
             catch (Exception e)
@@ -232,6 +233,7 @@ namespace ClearCanvas.Ris.Client
                     }
 
                     this.SummarySelection = new Selection(editedItems);
+					this.Modified = true;
                 }
             }
             catch (Exception e)
@@ -260,7 +262,8 @@ namespace ClearCanvas.Ris.Client
 
                         // clear selection
                         this.SummarySelection = Selection.Empty;
-                    }
+						this.Modified = true;
+					}
                 }
 
             }

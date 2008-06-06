@@ -43,6 +43,8 @@ namespace ClearCanvas.Ris.Client
 {
 	public class ExternalPractitionerContactPointTable : Table<ExternalPractitionerContactPointDetail>
 	{
+		private event EventHandler _defaultContactPointChanged;
+
 		public ExternalPractitionerContactPointTable()
 		{
 			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Name",
@@ -62,6 +64,12 @@ namespace ClearCanvas.Ris.Client
 				1.0f));
 		}
 
+		public event EventHandler DefaultContactPointChanged
+		{
+			add { _defaultContactPointChanged += value; }
+			remove { _defaultContactPointChanged -= value; }
+		}
+
 		public void MakeDefaultContactPoint(ExternalPractitionerContactPointDetail cp)
 		{
 			foreach (ExternalPractitionerContactPointDetail item in this.Items)
@@ -69,6 +77,8 @@ namespace ClearCanvas.Ris.Client
 				item.IsDefaultContactPoint = (item == cp);
 				this.Items.NotifyItemUpdated(item);
 			}
+
+			EventsHelper.Fire(_defaultContactPointChanged, this, EventArgs.Empty);
 		}
 	}
 
@@ -121,6 +131,13 @@ namespace ClearCanvas.Ris.Client
             _resultCommunicationModeChoices = new List<EnumValueInfo>();
         }
 
+		public override void Start()
+		{
+			ExternalPractitionerContactPointTable thisTable = (ExternalPractitionerContactPointTable) this.SummaryTable;
+			thisTable.DefaultContactPointChanged += delegate { this.Modified = true; };
+
+			base.Start();
+		}
         public IItemCollection<ExternalPractitionerContactPointDetail> Subject
         {
             get { return this.Table.Items; }
@@ -286,6 +303,7 @@ namespace ClearCanvas.Ris.Client
 				if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
 					this.Table.Items.Remove(mergeComponent.SelectedDuplicate);
+					this.Modified = true;
 				}
 			}
 			catch (Exception e)
