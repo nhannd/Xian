@@ -853,6 +853,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             foreach (DicomAttribute attrib in message.DataSet)
             {
+				if (attrib.Tag.TagValue == DicomTags.QueryRetrieveLevel)
+					continue;
+
                 tagList.Add(attrib.Tag.TagValue);
                 if (!attrib.IsNull)
                     matchingTagList.Add(attrib.Tag.TagValue);
