@@ -64,11 +64,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
         #region Protected Methods
 
-        protected override void OnInit(EventArgs e)
-        {
-            this.WorkQueueItemTitle = "Move Study Details";
-        }
-
         protected void WebMoveStudyDetailsView_DataBound(object sender, EventArgs e)
         {
             WorkQueueDetails item = WebMoveStudyDetailsView.DataItem as WorkQueueDetails;
