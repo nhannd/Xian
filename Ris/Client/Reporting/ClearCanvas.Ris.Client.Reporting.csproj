@@ -80,8 +80,6 @@
     <Compile Include="ReportingMainWorkflowFolderSystemTool.cs" />
     <Compile Include="ReportingWorkflowFolder.cs" />
     <Compile Include="ReportingWorklistTable.cs" />
-    <Compile Include="ReportPrintingComponent.cs" />
-    <Compile Include="ReportPrintingTool.cs" />
     <Compile Include="ReviseReportTool.cs" />
     <Compile Include="SearchTool.cs" />
     <Compile Include="SR.Designer.cs">
@@ -202,15 +200,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\DoubleExclamation.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\ReportPrintingToolLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\ReportPrintingToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\ReportPrintingToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
