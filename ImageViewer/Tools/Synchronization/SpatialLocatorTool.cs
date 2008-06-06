@@ -31,16 +31,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
-using ClearCanvas.ImageViewer.StudyManagement;
-using System.Drawing;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
@@ -55,147 +51,193 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	[MouseToolButton(XMouseButtons.Right, false)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class SpatialLocatorTool : MouseImageViewerTool
-    {
-		private SynchronizationToolCoordinator _coordinator;
-		private SopInfoCache _cache;
+    public partial class SpatialLocatorTool : MouseImageViewerTool
+	{
+		#region Private Fields
 
+		private SynchronizationToolCoordinator _coordinator;
+
+		private DicomImagePlane _referencePlane;
+		private readonly List<SpatialLocatorReferencePoint> _referencePoints;
 		private bool _inUse;
+
+		#endregion
 
 		public SpatialLocatorTool()
 			: base(SR.PrefixSpatialLocatorTool)
 		{
 			_inUse = false;
-			this.CursorToken = new CursorToken("SpatialLocatorCursor.png", this.GetType().Assembly);
-        }
+			_referencePoints = new List<SpatialLocatorReferencePoint>();
 
-        public override void Initialize()
+			this.CursorToken = new CursorToken("SpatialLocatorCursor.png", this.GetType().Assembly);
+		}
+
+		#region Tool Overrides
+
+		public override void Initialize()
         {
             base.Initialize();
 			
 			_coordinator = SynchronizationToolCoordinator.Get(base.ImageViewer);
         	_coordinator.SpatialLocatorTool = this;
-
-        	_cache = SopInfoCache.Get();
         }
 
 		protected override void Dispose(bool disposing)
 		{
 			_coordinator.Release();
-			_cache.Release();
 
 			base.Dispose(disposing);
 		}
 
-		private SpatialLocatorGraphic ShowSpatialLocatorGraphic(IPresentationImage image)
+		#endregion
+
+		#region Private Methods
+
+		private void GetPlaneClosestToReferenceImagePoint(PointF referenceImagePoint,
+							IEnumerable<DicomImagePlane> targetImagePlanes,
+							out DicomImagePlane closestTargetImagePlane,
+							out PointF closestTargetImagePoint)
 		{
-			return _coordinator.ShowSpatialLocatorGraphic(image);
-		}
+			closestTargetImagePlane = null;
+			closestTargetImagePoint = PointF.Empty;
 
-		private bool HideSpatialLocatorGraphic(IPresentationImage image)
-		{
-			return _coordinator.HideSpatialLocatorGraphic(image);
-		}
+			float distanceToClosestImagePlane = float.MaxValue;
 
-		private bool CalculateReferencePoint(IImageBox imageBox, Vector3D referencePositionPatient)
-		{
-			Frame referenceFrame = base.SelectedImageSopProvider.Frame;
+			Vector3D referencePositionPatient = _referencePlane.ConvertToPatient(referenceImagePoint);
 
-			int closestIndex = -1;
-			float closestDistanceMillimetres = float.MaxValue;
-			PointF closestPointImage = PointF.Empty;
-
-			for (int i = imageBox.DisplaySet.PresentationImages.Count - 1; i >= 0; --i)
+			foreach (DicomImagePlane targetImagePlane in targetImagePlanes)
 			{
-				IPresentationImage image = imageBox.DisplaySet.PresentationImages[i];
-				if (image is IImageSopProvider)
+				float halfThickness = Math.Abs(targetImagePlane.Thickness / 2);
+				float halfSpacing = Math.Abs(targetImagePlane.Spacing / 2);
+				float toleranceDistanceToImagePlane = Math.Max(halfThickness, halfSpacing);
+
+				if (_referencePlane.IsInSameFrameOfReference(targetImagePlane))
 				{
-					Frame frame = ((IImageSopProvider)image).Frame;
-
-					if (referenceFrame.ParentImageSop.StudyInstanceUID == frame.ParentImageSop.StudyInstanceUID && 
-						referenceFrame.FrameOfReferenceUid == frame.FrameOfReferenceUid)
+					if (toleranceDistanceToImagePlane > 0)
 					{
-						ImageInfo info = _cache.GetImageInformation(frame);
-						if (info != null)
+						Vector3D positionTargetImagePlane = targetImagePlane.ConvertToImagePlane(referencePositionPatient);
+						float distanceToTargetImagePlane = Math.Abs(positionTargetImagePlane.Z);
+
+						if (distanceToTargetImagePlane <= toleranceDistanceToImagePlane && distanceToTargetImagePlane < distanceToClosestImagePlane)
 						{
-							float halfSliceThickness = Math.Abs((float)frame.SliceThickness/2);
-							float halfSpacingBetweenSlices = Math.Abs((float)frame.SpacingBetweenSlices/2);
-							float tolerance = Math.Max(halfSliceThickness, halfSpacingBetweenSlices);
-
-							if (tolerance > 0)
-							{
-								Vector3D positionImagePlane = frame.ImagePlaneHelper.ConvertToImagePlane(referencePositionPatient);
-								float zDistanceMillimetres = Math.Abs(positionImagePlane.Z);
-
-								if (zDistanceMillimetres <= tolerance && zDistanceMillimetres < closestDistanceMillimetres)
-								{
-									closestIndex = i;
-									closestDistanceMillimetres = zDistanceMillimetres;
-									//The coordinates need to be converted to pixel coordinates because right now they are in mm.
-									closestPointImage = (PointF) frame.ImagePlaneHelper.ConvertToImage(new PointF(positionImagePlane.X, positionImagePlane.Y));
-								}
-							}
+							distanceToClosestImagePlane = distanceToTargetImagePlane;
+							//The coordinates need to be converted to pixel coordinates because right now they are in mm.
+							closestTargetImagePoint = targetImagePlane.ConvertToImage(new PointF(positionTargetImagePlane.X, positionTargetImagePlane.Y));
+							closestTargetImagePlane = targetImagePlane;
 						}
 					}
 				}
 			}
-
-			if (closestIndex >= 0)
-			{
-				imageBox.TopLeftPresentationImageIndex = closestIndex;
-				SpatialLocatorGraphic graphic = ShowSpatialLocatorGraphic(imageBox.TopLeftPresentationImage);
-				if (graphic != null)
-				{
-					graphic.CoordinateSystem = CoordinateSystem.Source;
-					graphic.Anchor = closestPointImage;
-					graphic.ResetCoordinateSystem();
-					return true;
-				}
-			}
-
-			return HideSpatialLocatorGraphic(imageBox.TopLeftPresentationImage);
 		}
 
-		private IEnumerable<IImageBox> CalculateReferencePoints(Vector3D referencePositionPatient)
+		private SpatialLocatorReferencePoint GetReferencePoint(IImageBox imageBox)
+		{
+			SpatialLocatorReferencePoint referencePoint = _referencePoints.Find(
+				delegate(SpatialLocatorReferencePoint test)
+					{
+						return test.ImageBox == imageBox;
+					});
+
+			if (referencePoint == null)
+			{
+				referencePoint = new SpatialLocatorReferencePoint(imageBox, this);
+				_referencePoints.Add(referencePoint);
+			}
+
+			return referencePoint;
+		}
+
+		private IEnumerable<DicomImagePlane> GetTargetImagePlanes(IImageBox imageBox)
+		{
+			for (int i = imageBox.DisplaySet.PresentationImages.Count - 1; i >= 0; --i)
+			{
+				DicomImagePlane targetImagePlane = DicomImagePlane.FromImage(imageBox.DisplaySet.PresentationImages[i]);
+				if (targetImagePlane != null && _referencePlane.IsInSameFrameOfReference(targetImagePlane))
+					yield return targetImagePlane;
+			}
+		}
+
+		private IEnumerable<IImageBox> GetTargetImageBoxes()
 		{
 			foreach (IImageBox imageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes)
 			{
-				if (imageBox != this.SelectedPresentationImage.ParentDisplaySet.ImageBox)
-				{
-					if (imageBox.DisplaySet != null && CalculateReferencePoint(imageBox, referencePositionPatient))
-						yield return imageBox;
-				}
+				if (imageBox.DisplaySet != null && !IsReferenceImageBox(imageBox))
+					yield return imageBox;
 			}
 		}
-		
-		private bool CalculateReferencePoints(Point destinationPoint)
+
+		private bool IsReferenceImageBox(IImageBox imageBox)
 		{
-			if (base.SelectedImageSopProvider == null || base.SelectedSpatialTransformProvider == null ||
-				!(base.SelectedSpatialTransformProvider.SpatialTransform is SpatialTransform))
-				return false;
+			return imageBox == _referencePlane.SourceImage.ParentDisplaySet.ImageBox;
+		}
 
-			Frame referenceFrame = base.SelectedImageSopProvider.Frame;
-			if (String.IsNullOrEmpty(referenceFrame.FrameOfReferenceUid) || String.IsNullOrEmpty(referenceFrame.ParentImageSop.StudyInstanceUID))
-				return false;
+		private void UpdateReferencePoint(SpatialLocatorReferencePoint referencePoint, PointF referenceImagePoint)
+		{
+			DicomImagePlane closestTargetPlane;
+			PointF closestTargetImagePoint;
+			GetPlaneClosestToReferenceImagePoint(referenceImagePoint, GetTargetImagePlanes(referencePoint.ImageBox),
+												out closestTargetPlane, out closestTargetImagePoint);
 
-			PointF sourcePoint = ((SpatialTransform)base.SelectedSpatialTransformProvider.SpatialTransform).ConvertToSource(destinationPoint);
-			Vector3D referencePositionPatient = referenceFrame.ImagePlaneHelper.ConvertToPatient(sourcePoint);
-			if (referencePositionPatient == null)
-				return false;
+			if (closestTargetPlane == null)
+			{
+				referencePoint.Image = null;
+			}
+			else 
+			{
+				referencePoint.Image = closestTargetPlane.SourceImage;
+				referencePoint.ImagePoint = closestTargetImagePoint;
+			}
+		}
 
-			_coordinator.OnSpatialLocatorPointsCalculated(CalculateReferencePoints(referencePositionPatient));
-			return true;
+		private void UpdateAllReferencePoints(Point destinationPoint)
+		{
+			PointF referenceImagePoint = _referencePlane.SourceImageTransform.ConvertToSource(destinationPoint);
+
+			foreach (IImageBox imageBox in GetTargetImageBoxes())
+				UpdateReferencePoint(GetReferencePoint(imageBox), referenceImagePoint);
+
+			_coordinator.OnSpatialLocatorReferencePointsUpdated();
+		}
+
+		#endregion
+
+		#region Mouse Handler Methods
+
+		private bool Start()
+		{
+			_referencePlane = DicomImagePlane.FromImage(base.SelectedPresentationImage);
+			return _referencePlane != null;
+		}
+
+		private void Stop()
+		{
+			_referencePlane = null;
+			_inUse = false;
+
+			foreach (SpatialLocatorReferencePoint referencePoint in _referencePoints)
+				referencePoint.Image = null;
+
+			_coordinator.OnSpatialLocatorStopped();
+
+			foreach (SpatialLocatorReferencePoint referencePoint in _referencePoints)
+				referencePoint.Dispose();
+
+			_referencePoints.Clear();
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
-			return (_inUse = CalculateReferencePoints(mouseInformation.Location));
+			_inUse = Start();
+			if (_inUse)
+				UpdateAllReferencePoints(mouseInformation.Location);
+
+			return _inUse;
 		}
 
 		public override bool Track(IMouseInformation mouseInformation)
 		{
 			if (_inUse)
-				CalculateReferencePoints(mouseInformation.Location);
+				UpdateAllReferencePoints(mouseInformation.Location);
 
 			return _inUse;
         }
@@ -208,8 +250,22 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		public override void Cancel()
 		{
-			_coordinator.OnSpatialLocatorStopped();
-			_inUse = false;
+			Stop();
 		}
+
+		#endregion
+
+		#region Internal Methods (for mediator)
+
+		internal IEnumerable<IImageBox> GetImageBoxesToRedraw()
+		{
+			foreach (SpatialLocatorReferencePoint referencePoint in _referencePoints)
+			{
+				if (referencePoint.Dirty)
+					yield return referencePoint.ImageBox;
+			}
+		}
+
+		#endregion
 	}
 }

@@ -34,8 +34,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SpatialLocatorGraphic.cs" />
-    <Compile Include="SopInfoCache.cs" />
+    <Compile Include="FrameOfReferenceCalibrator.cs" />
+    <Compile Include="SpatialLocatorReferencePoint.cs" />
+    <Compile Include="CrosshairGraphic.cs" />
+    <Compile Include="DicomImagePlane.cs" />
     <Compile Include="SpatialLocatorTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceLineGraphic.cs" />

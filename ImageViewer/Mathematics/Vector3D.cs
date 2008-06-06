@@ -49,9 +49,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		private readonly float _z;
 
 		/// <summary>
-		/// Represents the empty (zero) vector.
+		/// Represents the Zero vector.
 		/// </summary>
-		public static readonly Vector3D Empty = new Vector3D(0F, 0F, 0F);
+		public static readonly Vector3D Null = new Vector3D(0F, 0F, 0F);
 
 		/// <summary>
 		/// Constructor.
@@ -156,7 +156,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			Vector3D linePoint2, 
 			bool isLineSegment)
 		{
-			if (Vector3D.AreEqual(planeNormal, Vector3D.Empty))
+			if (Vector3D.AreEqual(planeNormal, Vector3D.Null))
 				return null;
 
 			Vector3D line = linePoint2 - linePoint1;

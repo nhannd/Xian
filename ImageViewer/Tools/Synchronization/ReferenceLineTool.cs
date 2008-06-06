@@ -38,7 +38,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
@@ -52,15 +51,15 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ReferenceLineTool : ImageViewerTool
 	{
-		#region ReferenceLineInfo class
+		#region ReferenceLine class
 
-		private class ReferenceLineInfo
+		private class ReferenceLine
 		{
 			public readonly PointF StartPoint;
 			public readonly PointF EndPoint;
 			public readonly string Label;
 
-			public ReferenceLineInfo(PointF startPoint, PointF endPoint, string label)
+			public ReferenceLine(PointF startPoint, PointF endPoint, string label)
 			{
 				this.StartPoint = startPoint;
 				this.EndPoint = endPoint;
@@ -70,21 +69,48 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		#endregion
 
-		private ImageInfo _currentReferenceImageInfo;
-		private IPresentationImage _currentReferenceImage;
+		#region Private Fields
+
+		private DicomImagePlane _currentReferenceImagePlane;
 		
 		private bool _active;
 		private event EventHandler _activeChanged;
 
 		private SynchronizationToolCoordinator _coordinator;
-		private SopInfoCache _cache;
 
-		private static readonly float _oneDegreeInRadians = (float)(1 * Math.PI / 180);
+		private static readonly float _oneDegreeInRadians = (float)(Math.PI / 180);
+
+		#endregion
 
 		public ReferenceLineTool()
 		{
 			_active = false;
 		}
+
+		#region Tool Overrides
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			_coordinator = SynchronizationToolCoordinator.Get(base.ImageViewer);
+			_coordinator.ReferenceLineTool = this;
+
+			base.ImageViewer.EventBroker.ImageDrawing += OnImageDrawing;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			base.ImageViewer.EventBroker.ImageDrawing -= OnImageDrawing;
+
+			_coordinator.Release();
+
+			base.Dispose(disposing);
+		}
+
+		#endregion
+
+		#region Action Properties, Events, Methods
 
 		public bool Active
 		{
@@ -105,291 +131,213 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			remove { _activeChanged -= value; }
 		}
 
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			base.ImageViewer.EventBroker.ImageDrawing += OnImageDrawing;
-
-			_cache = SopInfoCache.Get();
-			
-			_coordinator = SynchronizationToolCoordinator.Get(base.ImageViewer);
-			_coordinator.ReferenceLineTool = this;
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			base.ImageViewer.EventBroker.ImageDrawing -= OnImageDrawing;
-
-			_cache.Release();
-			_coordinator.Release();
-
-			base.Dispose(disposing);
-		}
-
-		private void OnImageDrawing(object sender, ImageDrawingEventArgs e)
-		{
-			RefreshImage(e.PresentationImage);
-		}
-
 		public void Toggle()
 		{
 			Active = !Active;
-			_coordinator.OnReferenceLinesRefreshed(GetRefreshedImages());
+			RefreshAllReferenceLines();
+			_coordinator.OnRefreshedReferenceLines();
 		}
 
-		private ReferenceLineCompositeGraphic GetReferenceLineCompositeGraphic(IPresentationImage image)
+		#endregion
+
+		private IPresentationImage CurrentReferenceImage
 		{
-			return _coordinator.GetReferenceLineCompositeGraphic(image);
-		}
-
-		private void SetCurrentReferenceImage()
-		{
-			if (_currentReferenceImage == this.SelectedPresentationImage)
-				return;
-
-			_currentReferenceImage = this.SelectedPresentationImage;
-
-			bool valid = false;
-			if (_currentReferenceImage != null && _currentReferenceImage is IImageSopProvider)
+			get
 			{
-				Frame currentReferenceFrame = ((IImageSopProvider) _currentReferenceImage).Frame;
-				if (!String.IsNullOrEmpty(currentReferenceFrame.FrameOfReferenceUid) && 
-					!String.IsNullOrEmpty(currentReferenceFrame.ParentImageSop.StudyInstanceUID))
+				if (_currentReferenceImagePlane != null)
+					return _currentReferenceImagePlane.SourceImage;
+				
+				return null;
+			}
+		}
+
+		#region Private Methods
+
+		private void OnImageDrawing(object sender, ImageDrawingEventArgs e)
+		{
+			//make the reference lines on any image invisible when the tool is not active.
+			if (!Active)
+				RefreshReferenceLines(e.PresentationImage);
+		}
+
+		private IEnumerable<IPresentationImage> GetAllVisibleImages()
+		{
+			foreach (IImageBox imageBox in this.Context.Viewer.PhysicalWorkspace.ImageBoxes)
+			{
+				foreach (ITile tile in imageBox.Tiles)
 				{
-					_currentReferenceImageInfo = _cache.GetImageInformation(((IImageSopProvider)_currentReferenceImage).Frame);
-					if (_currentReferenceImageInfo != null)
-						valid = true;
+					if (tile.PresentationImage != null)
+						yield return tile.PresentationImage;
 				}
 			}
-
-			if (!valid)
-			{
-				// effectively, there is no reference image.
-				_currentReferenceImage = null;
-				_currentReferenceImageInfo = null;
-			}
 		}
 
-		private static List<Vector3D> GetPlaneIntersectionPoints(ImageInfo referenceImageInfo, ImageInfo targetImageInfo)
+		private IEnumerable<DicomImagePlane> GetPlanesParallelToReferencePlane()
 		{
-			List<Vector3D> intersectionPoints = new List<Vector3D>();
-			Vector3D[,] lineSegments = new Vector3D[,]
+			foreach (IPresentationImage image in CurrentReferenceImage.ParentDisplaySet.PresentationImages)
+			{
+				DicomImagePlane plane = DicomImagePlane.FromImage(image);
+				if (plane != null)
 				{
-					// Bounding line segments of the reference image.
-					{ referenceImageInfo.PositionPatientTopLeft, referenceImageInfo.PositionPatientTopRight },
-					{ referenceImageInfo.PositionPatientTopLeft, referenceImageInfo.PositionPatientBottomLeft },
-					{ referenceImageInfo.PositionPatientBottomLeft, referenceImageInfo.PositionPatientBottomRight },
-					{ referenceImageInfo.PositionPatientTopRight, referenceImageInfo.PositionPatientBottomRight }
-				};
-
-			for (int i = 0; i < 4; ++i)
-			{
-				// Intersect the bounding line segments of the reference image with the plane of the target image.
-				Vector3D intersection = Vector3D.GetLinePlaneIntersection(targetImageInfo.Normal,
-																		targetImageInfo.PositionPatientCenterOfImage, 
-																		lineSegments[i, 0], lineSegments[i, 1], true);
-
-				if (intersection != null)
-					intersectionPoints.Add(intersection);
+					if (_currentReferenceImagePlane.IsInSameFrameOfReference(plane) &&
+						_currentReferenceImagePlane.IsParallelTo(plane, _oneDegreeInRadians))
+					{
+						yield return plane;
+					}
+				}
 			}
-
-			return intersectionPoints;
 		}
 
-		private ReferenceLineInfo GetReferenceLineInfo(Frame referenceFrame, Frame targetFrame)
+		private static ReferenceLine GetReferenceLine(DicomImagePlane referenceImagePlane, DicomImagePlane targetImagePlane)
 		{
-			ImageInfo referenceImageInfo = _cache.GetImageInformation(referenceFrame);
-			ImageInfo targetImageInfo = _cache.GetImageInformation(targetFrame);
-
-			List<Vector3D> intersectionPoints = GetPlaneIntersectionPoints(referenceImageInfo, targetImageInfo);
-			// most of the time there will be exactly 2 (or zero) points of intersection, however it is possible for
-			// the plane to intersect the exact corners of the reference image, in which case there would be 4 points of intersection.
-			if (intersectionPoints.Count < 2)
+			Vector3D intersectionPatient1, intersectionPatient2;
+			if (!referenceImagePlane.GetIntersectionPoints(targetImagePlane, out intersectionPatient1, out intersectionPatient2))
 				return null;
 
-			Vector3D positionImagePlane1 = targetFrame.ImagePlaneHelper.ConvertToImagePlane(intersectionPoints[0]);
-			Vector3D positionImagePlane2 = targetFrame.ImagePlaneHelper.ConvertToImagePlane(intersectionPoints[1]);
+			Vector3D intersectionImagePlane1 = targetImagePlane.ConvertToImagePlane(intersectionPatient1);
+			Vector3D intersectionImagePlane2 = targetImagePlane.ConvertToImagePlane(intersectionPatient2);
 
 			//The coordinates need to be converted to pixel coordinates because right now they are in mm.
-			PointF imagePoint1 = (PointF)targetFrame.ImagePlaneHelper.ConvertToImage(new PointF(positionImagePlane1.X, positionImagePlane1.Y));
-			PointF imagePoint2 = (PointF)targetFrame.ImagePlaneHelper.ConvertToImage(new PointF(positionImagePlane2.X, positionImagePlane2.Y));
-			string label = referenceFrame.ParentImageSop.InstanceNumber.ToString();
+			PointF intersectionImage1 = targetImagePlane.ConvertToImage(new PointF(intersectionImagePlane1.X, intersectionImagePlane1.Y));
+			PointF intersectionImage2 = targetImagePlane.ConvertToImage(new PointF(intersectionImagePlane2.X, intersectionImagePlane2.Y));
+			string label = referenceImagePlane.InstanceNumber.ToString();
 
-			return new ReferenceLineInfo(imagePoint1, imagePoint2, label);
+			return new ReferenceLine(intersectionImage1, intersectionImage2, label);
 		}
 
-		private void GetFirstAndLastReferenceLineInfo(IPresentationImage targetImage, 
-						out ReferenceLineInfo firstReferenceLineInfo,
-						out ReferenceLineInfo lastReferenceLineInfo)
+		private void GetFirstAndLastReferenceLines(DicomImagePlane targetImagePlane, out ReferenceLine firstReferenceLine, out ReferenceLine lastReferenceLine)
 		{
-			Frame currentReferenceFrame = ((IImageSopProvider)_currentReferenceImage).Frame;
-			Frame targetFrame = ((IImageSopProvider)targetImage).Frame;
-
-			firstReferenceLineInfo = null;
-			lastReferenceLineInfo = null;
+			firstReferenceLine = lastReferenceLine = null;
 
 			float firstReferenceImageZComponent = float.MaxValue;
 			float lastReferenceImageZComponent = float.MinValue;
 
 			// 1. Find all images in the same plane as the current reference image.
-			foreach (IPresentationImage image in _currentReferenceImage.ParentDisplaySet.PresentationImages)
+			foreach (DicomImagePlane parallelPlane in GetPlanesParallelToReferencePlane())
 			{
-				if (image is IImageSopProvider)
+				// 2. Use the Image Position (in the coordinate system of the Image Plane without moving the origin!) 
+				//    to determine the first and last reference line.  By transforming the Image Position (Patient) to 
+				//    the coordinate system of the image plane, we can then simply take the 2 images with
+				//    the smallest and largest z-components, respectively, as the 'first' and 'last' reference images.
+
+				// < keeps the first image as close to the beginning of the display set as possible.
+				if (parallelPlane.PositionImagePlaneTopLeft.Z < firstReferenceImageZComponent)
 				{
-					Frame frame = ((IImageSopProvider)image).Frame;
-
-					if (frame.FrameOfReferenceUid == currentReferenceFrame.FrameOfReferenceUid &&
-						frame.ParentImageSop.StudyInstanceUID == currentReferenceFrame.ParentImageSop.StudyInstanceUID)
+					ReferenceLine referenceLine = GetReferenceLine(parallelPlane, targetImagePlane);
+					if (referenceLine != null)
 					{
-						ImageInfo info = _cache.GetImageInformation(frame);
-						if (info != null)
-						{
-							// 2. Is the image within 1 degree of being in the same plane as the current reference image?
+						firstReferenceImageZComponent = parallelPlane.PositionImagePlaneTopLeft.Z;
+						firstReferenceLine = referenceLine;
+					}
+				}
 
-							float angle = SopInfoCache.ComputeAngleBetweenNormals(info, _currentReferenceImageInfo);
-							if (angle <= _oneDegreeInRadians || (Math.PI - angle) <= _oneDegreeInRadians)
-							{
-								// 3. Use the Image Position (in the coordinate system of the Image Plane without moving the origin!) 
-								//    to determine the first and last reference line.  By transforming the Image Position (Patient) to 
-								//    the coordinate system of the image plane, we can then simply take the 2 images with
-								//    the smallest and largest z-components, respectively, as the 'first' and 'last' reference images.
-								float imageZComponent = info.PositionImagePlaneTopLeft.Z;
-
-								// < keeps the first image as close to the beginning of the display set as possible.
-								if (imageZComponent < firstReferenceImageZComponent)
-								{
-									ReferenceLineInfo referenceLineInfo = GetReferenceLineInfo(frame, targetFrame);
-									if (referenceLineInfo != null)
-									{
-										firstReferenceLineInfo = referenceLineInfo;
-										firstReferenceImageZComponent = imageZComponent;
-									}
-								}
-
-								// >= keeps the last image as close to the end of the display set as possible.
-								if (imageZComponent >= lastReferenceImageZComponent)
-								{
-									ReferenceLineInfo referenceLineInfo = GetReferenceLineInfo(frame, targetFrame);
-									if (referenceLineInfo != null)
-									{
-										lastReferenceLineInfo = referenceLineInfo;
-										lastReferenceImageZComponent = imageZComponent;
-									}
-								}
-							}
-						}
+				// >= keeps the last image as close to the end of the display set as possible.
+				if (parallelPlane.PositionImagePlaneTopLeft.Z >= lastReferenceImageZComponent)
+				{
+					ReferenceLine referenceLine = GetReferenceLine(parallelPlane, targetImagePlane);
+					if (referenceLine != null)
+					{
+						lastReferenceImageZComponent = parallelPlane.PositionImagePlaneTopLeft.Z;
+						lastReferenceLine = referenceLine;
 					}
 				}
 			}
 		}
 
-		private ReferenceLineInfo GetCurrentReferenceLineInfo(IPresentationImage targetImage)
+		private IEnumerable<ReferenceLine> GetAllReferenceLines(DicomImagePlane targetImagePlane)
 		{
-			Frame currentReferenceFrame = ((IImageSopProvider) _currentReferenceImage).Frame;
-			Frame targetFrame = ((IImageSopProvider) targetImage).Frame;
+			ReferenceLine firstReferenceLine;
+			ReferenceLine lastReferenceLine;
+			GetFirstAndLastReferenceLines(targetImagePlane, out firstReferenceLine, out lastReferenceLine);
 
-			return GetReferenceLineInfo(currentReferenceFrame, targetFrame);
+			if (firstReferenceLine != null)
+				yield return firstReferenceLine;
+
+			if (lastReferenceLine != null)
+				yield return lastReferenceLine;
+
+			//return 'current' last, so it draws on top of the others.
+			ReferenceLine currentReferenceLine = GetReferenceLine(_currentReferenceImagePlane, targetImagePlane);
+			if (currentReferenceLine != null)
+				yield return currentReferenceLine;
 		}
 
-		private IEnumerable<ReferenceLineInfo> GetAllReferenceLineInfo(IPresentationImage targetImage)
+		private void RefreshReferenceLines(IPresentationImage targetImage)
 		{
-			//Don't bother calculating for invalid images.
-			if (_currentReferenceImage != null && targetImage != null && targetImage is IImageSopProvider &&
-			    _currentReferenceImage.ParentDisplaySet.ImageBox != targetImage.ParentDisplaySet.ImageBox)
-			{
-				Frame currentReferenceFrame = ((IImageSopProvider) _currentReferenceImage).Frame;
-				Frame targetFrame = ((IImageSopProvider) targetImage).Frame;
+			DicomImagePlane targetImagePlane = DicomImagePlane.FromImage(targetImage);
+			if (targetImagePlane == null)
+				return;
 
-				if (targetFrame.FrameOfReferenceUid == currentReferenceFrame.FrameOfReferenceUid &&
-				    targetFrame.ParentImageSop.StudyInstanceUID == currentReferenceFrame.ParentImageSop.StudyInstanceUID)
-				{
-					ImageInfo targetInfo = _cache.GetImageInformation(targetFrame);
-					if (targetInfo != null)
-					{
-						ReferenceLineInfo firstReferenceLineInfo, lastReferenceLineInfo;
-						GetFirstAndLastReferenceLineInfo(targetImage, out firstReferenceLineInfo, out lastReferenceLineInfo);
-
-						if (firstReferenceLineInfo != null && lastReferenceLineInfo != null)
-						{
-							yield return firstReferenceLineInfo;
-							yield return lastReferenceLineInfo;
-						}
-
-						ReferenceLineInfo currentReferenceLineInfo = GetCurrentReferenceLineInfo(targetImage);
-						if (currentReferenceLineInfo != null)
-							yield return currentReferenceLineInfo;
-					}
-				}
-			}
-		}
-
-		private bool RefreshImage(IPresentationImage targetImage)
-		{
-			ReferenceLineCompositeGraphic referenceLineCompositeGraphic = GetReferenceLineCompositeGraphic(targetImage);
+			ReferenceLineCompositeGraphic referenceLineCompositeGraphic = _coordinator.GetReferenceLineCompositeGraphic(targetImage);
 			if (referenceLineCompositeGraphic == null)
-				return false;
+				return;
 
-			bool needsRedraw = false;
+			bool showReferenceLines = this.Active && _currentReferenceImagePlane != null && 
+				_currentReferenceImagePlane.IsInSameFrameOfReference(targetImagePlane);
 
-			if (!Active)
+			if (!showReferenceLines)
 			{
-				if (referenceLineCompositeGraphic.Visible)
-				{
-					referenceLineCompositeGraphic.Visible = false;
-					needsRedraw = true;
-				}
-			}
-			else 
-			{
-				if (!referenceLineCompositeGraphic.Visible)
-				{
-					referenceLineCompositeGraphic.Visible = true;
-					needsRedraw = true;
-				}
-
-				// if the reference lines already correspond to the current reference image, don't compute them again.
-				if (referenceLineCompositeGraphic.Tag != _currentReferenceImageInfo)
-				{
-					needsRedraw = true;
-					referenceLineCompositeGraphic.Tag = _currentReferenceImageInfo;
-
-					int i = 0;
-					foreach (ReferenceLineInfo info in GetAllReferenceLineInfo(targetImage))
-					{
-						ReferenceLineGraphic referenceLineGraphic = referenceLineCompositeGraphic[i++];
-						referenceLineGraphic.Point1 = info.StartPoint;
-						referenceLineGraphic.Point2 = info.EndPoint;
-						referenceLineGraphic.Text = info.Label;
-						referenceLineGraphic.Visible = true;
-					}
-
-					// make any that aren't valid invisible.
-					for (int j = i; j < referenceLineCompositeGraphic.Graphics.Count; ++j)
-					{
-						if (referenceLineCompositeGraphic[j].Visible)
-							referenceLineCompositeGraphic[j].Visible = false;
-					}
-				}
+				referenceLineCompositeGraphic.HideAllReferenceLines();
+				return;
 			}
 
-			return needsRedraw;
+			int i = 0;
+			foreach (ReferenceLine referenceLine in GetAllReferenceLines(targetImagePlane))
+			{
+				ReferenceLineGraphic referenceLineGraphic = referenceLineCompositeGraphic[i++];
+				referenceLineGraphic.Point1 = referenceLine.StartPoint;
+				referenceLineGraphic.Point2 = referenceLine.EndPoint;
+				referenceLineGraphic.Text = referenceLine.Label;
+				referenceLineGraphic.Visible = true;
+			}
+
+			// make any that aren't valid invisible.
+			for (int j = i; j < referenceLineCompositeGraphic.Graphics.Count; ++j)
+				referenceLineCompositeGraphic[j].Visible = false;
 		}
 
-		public IEnumerable<IPresentationImage> GetRefreshedImages()
+		private void SetCurrentReferencePlane()
 		{
-			SetCurrentReferenceImage();
+			if (CurrentReferenceImage == this.SelectedPresentationImage)
+				return;
 
-			foreach (IImageBox imageBox in this.Context.Viewer.PhysicalWorkspace.ImageBoxes)
+			_currentReferenceImagePlane = DicomImagePlane.FromImage(this.SelectedPresentationImage);
+			if (_currentReferenceImagePlane == null)
+				return;
+
+			ReferenceLineCompositeGraphic referenceLineCompositeGraphic =
+				_coordinator.GetReferenceLineCompositeGraphic(CurrentReferenceImage);
+
+			//Hide the current image's reference lines
+			if (referenceLineCompositeGraphic != null)
+				referenceLineCompositeGraphic.HideAllReferenceLines();
+		}
+
+		#endregion
+
+		#region Internal Methods (for mediator)
+
+		internal void RefreshAllReferenceLines()
+		{
+			SetCurrentReferencePlane();
+
+			foreach (IPresentationImage targetImage in GetAllVisibleImages())
 			{
-				foreach (ITile tile in imageBox.Tiles)
-				{
-					IPresentationImage targetImage = tile.PresentationImage;
-
-					if (targetImage != null && RefreshImage(targetImage))
-						yield return targetImage;
-				}
+				if (targetImage != CurrentReferenceImage)
+					RefreshReferenceLines(targetImage);
 			}
 		}
+
+		internal IEnumerable<IPresentationImage> GetImagesToRedraw()
+		{
+			foreach (IPresentationImage image in GetAllVisibleImages())
+			{
+				ReferenceLineCompositeGraphic graphic = _coordinator.GetReferenceLineCompositeGraphic(image);
+				if (graphic != null && graphic.Dirty)
+					yield return image;
+			}
+		}
+
+		#endregion
 	}
 }

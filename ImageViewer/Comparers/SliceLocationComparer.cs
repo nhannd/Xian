@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Comparers
 				Vector3D positionPatient = frame.ImagePlaneHelper.ConvertToPatient(new PointF((frame.Columns - 1) / 2F, (frame.Rows - 1) / 2F));
 				if (positionPatient != null)
 				{
-					Vector3D positionImagePlane = frame.ImagePlaneHelper.ConvertToImagePlane(positionPatient, Vector3D.Empty);
+					Vector3D positionImagePlane = frame.ImagePlaneHelper.ConvertToImagePlane(positionPatient, Vector3D.Null);
 
 					//return only the z-component of the image plane position (where the origin remains at the patient origin).
 					zImagePlane = Math.Round(positionImagePlane.Z, 3, MidpointRounding.AwayFromZero);

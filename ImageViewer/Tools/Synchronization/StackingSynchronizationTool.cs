@@ -37,7 +37,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
@@ -57,46 +56,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	[GroupHint("linkStudies", "Tools.Image.Manipulation.Stacking.LinkStudies")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class StackingSynchronizationTool : ImageViewerTool
+	public partial class StackingSynchronizationTool : ImageViewerTool
 	{
-		#region OffsetKey
-
-		private class OffsetKey
-		{
-			public OffsetKey(string studyInstanceUid, string frameOfReferenceUid, Vector3D normal)
-			{
-				FrameOfReferenceUid = frameOfReferenceUid;
-				StudyInstanceUid = studyInstanceUid;
-				Normal = normal;
-			}
-
-			public readonly string FrameOfReferenceUid;
-			public readonly string StudyInstanceUid;
-			public readonly Vector3D Normal;
-
-			public override bool Equals(object obj)
-			{
-				if (obj == this)
-					return true;
-
-				if (obj is OffsetKey)
-				{
-					OffsetKey other = (OffsetKey) obj;
-					return other.FrameOfReferenceUid == FrameOfReferenceUid && other.StudyInstanceUid == StudyInstanceUid && other.Normal.Equals(Normal);
-				}
-
-				return false;
-			}
-
-
-			public override int  GetHashCode()
-			{
-				return 3*FrameOfReferenceUid.GetHashCode() + 5*StudyInstanceUid.GetHashCode() + 7*Normal.GetHashCode();
-			}
-		}
-
-		#endregion
-
 		#region Private Fields
 
 		private bool _synchronizeActive;
@@ -113,13 +74,13 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		
 		private SynchronizationToolCoordinator _coordinator;
 
-		private SopInfoCache _cache;
-		private readonly Dictionary<OffsetKey, Dictionary<OffsetKey, Vector3D>> _offsets;
-
 		private static readonly float _fiveDegreesInRadians = (float)(5 * Math.PI / 180);
 
+		private FrameOfReferenceCalibrator _frameOfReferenceCalibrator;
 		private bool _deferSynchronizeUntilDisplaySetChanged;
 
+		private readonly List<IImageBox> _imageBoxesToDraw = new List<IImageBox>();
+		
 		#endregion
 
 		public StackingSynchronizationTool()
@@ -133,8 +94,37 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			_linkStudiesIconSet = new IconSet(IconScheme.Colour, "Icons.LinkStudiesToolSmall.png", "Icons.LinkStudiesToolMedium.png", "Icons.LinkStudiesToolLarge.png");
 			_unlinkStudiesIconSet = new IconSet(IconScheme.Colour, "Icons.UnlinkStudiesToolSmall.png", "Icons.UnlinkStudiesToolMedium.png", "Icons.UnlinkStudiesToolLarge.png");
 
-			_offsets = new Dictionary<OffsetKey, Dictionary<OffsetKey, Vector3D>>();
+			ResetFrameOfReferenceCalibrations();
 		}
+
+		#region Tool Overrides
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			base.ImageViewer.EventBroker.DisplaySetChanging += OnDisplaySetChanging;
+			base.ImageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
+			base.ImageViewer.PhysicalWorkspace.LayoutCompleted += OnLayoutCompleted;
+
+			_coordinator = SynchronizationToolCoordinator.Get(base.ImageViewer);
+			_coordinator.StackingSynchronizationTool = this;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			base.ImageViewer.EventBroker.DisplaySetChanging -= OnDisplaySetChanging;
+			base.ImageViewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
+			base.ImageViewer.PhysicalWorkspace.LayoutCompleted -= OnLayoutCompleted;
+
+			_coordinator.Release();
+
+			base.Dispose(disposing);
+		}
+
+		#endregion
+
+		#region Action Methods, Properties, Events
 
 		public bool SynchronizeActive
 		{
@@ -170,7 +160,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 				if (!value)
 				{
-					_offsets.Clear();
+					ResetFrameOfReferenceCalibrations();
 					StudiesLinked = true;
 				}
 
@@ -231,55 +221,39 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			}
 		}
 
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			base.ImageViewer.EventBroker.DisplaySetChanging += OnDisplaySetChanging;
-			base.ImageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
-			base.ImageViewer.PhysicalWorkspace.LayoutCompleted += OnLayoutCompleted;
-
-			_cache = SopInfoCache.Get();
-
-			_coordinator = SynchronizationToolCoordinator.Get(base.ImageViewer);
-			_coordinator.StackingSynchronizationTool = this;
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			base.ImageViewer.EventBroker.DisplaySetChanging -= OnDisplaySetChanging;
-			base.ImageViewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
-			base.ImageViewer.PhysicalWorkspace.LayoutCompleted -= OnLayoutCompleted;
-
-			_cache.Release();
-			_coordinator.Release();
-
-			base.Dispose(disposing);
-		}
-
 		private void ToggleSynchronize()
 		{
 			SynchronizeActive = !SynchronizeActive;
-
 			if (SynchronizeActive)
-				_coordinator.OnSynchronizedImages(SynchronizeAll());
+			{
+				SynchronizeAllImageBoxes();
+				_coordinator.OnSynchronizedImageBoxes();
+			}
 		}
 
 		private void ToggleLinkStudies()
 		{
 			StudiesLinked = !StudiesLinked;
-
 			if (StudiesLinked)
 			{
-				RecalculateOffsetForVisibleDisplaySets();
-				_coordinator.OnSynchronizedImages(SynchronizeAll());
+				CalibrateFrameOfReferenceForVisibleImageBoxes();
+				SynchronizeAllImageBoxes(); 
+				_coordinator.OnSynchronizedImageBoxes();
 			}
 		}
+
+		#endregion
+
+		#region Event Handlers
 
 		private void OnLayoutCompleted(object sender, EventArgs e)
 		{
 			//this is the best we can do in this situation.
-			_coordinator.OnSynchronizedImages(SynchronizeAll());
+			if (SynchronizeActive)
+			{
+				SynchronizeAllImageBoxes();
+				_coordinator.OnSynchronizedImageBoxes();
+			}
 		}
 
 		private void OnDisplaySetChanging(object sender, DisplaySetChangingEventArgs e)
@@ -291,229 +265,147 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		{
 			_deferSynchronizeUntilDisplaySetChanged = false;
 
-			_coordinator.OnSynchronizedImages(SynchronizeNewDisplaySet(e.NewDisplaySet));
+			SynchronizeNewDisplaySet(e.NewDisplaySet);
+			_coordinator.OnSynchronizedImageBoxes();
 		}
 
-		private void RecalculateOffsetForVisibleDisplaySets()
+		#endregion
+
+		#region Private Methods
+
+		private static IEnumerable<DicomImagePlane> GetAllImagePlanes(IImageBox imageBox)
+		{
+			if (imageBox.DisplaySet != null)
+			{
+				for (int index = imageBox.DisplaySet.PresentationImages.Count - 1; index >= 0; --index)
+				{
+					DicomImagePlane targetPlane = DicomImagePlane.FromImage(imageBox.DisplaySet.PresentationImages[index]);
+					if (targetPlane != null)
+						yield return targetPlane;
+				}
+			}
+		}
+
+		private void ResetFrameOfReferenceCalibrations()
+		{
+			_frameOfReferenceCalibrator = new FrameOfReferenceCalibrator(_fiveDegreesInRadians);
+		}
+
+		private void CalibrateFrameOfReferenceForVisibleImageBoxes()
 		{
 			foreach (IImageBox referenceImageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes)
 			{
-				OffsetKey referenceOffsetKey = null;
-				Dictionary<OffsetKey, Vector3D> referenceOffsetDictionary = null;
-				List<OffsetKey> foundRelatedKeys = new List<OffsetKey>();
-
-				foreach (IImageBox imageBox in GetImageBoxesToSynchronize(referenceImageBox))
+				DicomImagePlane referencePlane = DicomImagePlane.FromImage(referenceImageBox.TopLeftPresentationImage);
+				if (referencePlane != null)
 				{
-					if (imageBox.TopLeftPresentationImage is IImageSopProvider)
+					foreach (IImageBox imageBox in GetTargetImageBoxes(referenceImageBox))
 					{
-						Frame frame = ((IImageSopProvider) imageBox.TopLeftPresentationImage).Frame;
-
-						if (!String.IsNullOrEmpty(frame.FrameOfReferenceUid) && !String.IsNullOrEmpty(frame.ParentImageSop.StudyInstanceUID))
-						{
-							Frame referenceFrame = ((IImageSopProvider) referenceImageBox.TopLeftPresentationImage).Frame;
-
-							if (frame.FrameOfReferenceUid != referenceFrame.FrameOfReferenceUid && frame.ParentImageSop.StudyInstanceUID != referenceFrame.ParentImageSop.StudyInstanceUID)
-							{
-								ImageInfo referenceImageInfo = _cache.GetImageInformation(referenceFrame);
-								ImageInfo info = _cache.GetImageInformation(frame);
-
-								if (info != null && NormalsWithinLimits(referenceImageInfo, info))
-								{
-									OffsetKey key = new OffsetKey(frame.ParentImageSop.StudyInstanceUID, frame.FrameOfReferenceUid, info.Normal);
-
-									if (referenceOffsetKey == null)
-									{
-										referenceOffsetKey = new OffsetKey(referenceFrame.ParentImageSop.StudyInstanceUID, referenceFrame.FrameOfReferenceUid, referenceImageInfo.Normal);
-										if (_offsets.ContainsKey(referenceOffsetKey))
-										{
-											referenceOffsetDictionary = _offsets[referenceOffsetKey];
-										}
-										else
-										{
-											referenceOffsetDictionary = new Dictionary<OffsetKey, Vector3D>();
-											_offsets[referenceOffsetKey] = referenceOffsetDictionary;
-										}
-									}
-
-									//as each new key is found, clear it from the dictionary so it can be recalculated
-									//based on the currently visible display sets.
-									if (!foundRelatedKeys.Contains(key))
-									{
-										foundRelatedKeys.Add(key);
-										referenceOffsetDictionary.Remove(key);
-									}
-
-									Vector3D currentOffset = null;
-									if (referenceOffsetDictionary.ContainsKey(key))
-										currentOffset = referenceOffsetDictionary[key];
-
-									Vector3D offset = info.PositionPatientCenterOfImage - referenceImageInfo.PositionPatientCenterOfImage;
-									if (currentOffset == null || offset.Magnitude < currentOffset.Magnitude)
-										referenceOffsetDictionary[key] = offset;
-								}
-							}
-						}
+						DicomImagePlane targetPlane = DicomImagePlane.FromImage(imageBox.TopLeftPresentationImage);
+						if (targetPlane != null)
+							_frameOfReferenceCalibrator.Calibrate(referencePlane, targetPlane);
 					}
 				}
 			}
 		}
 
-		private Vector3D GetOffset(Frame referenceFrame, ImageInfo referenceImageInfo, Frame frame, ImageInfo info)
+		private DicomImagePlane GetClosestParallelImagePlane(DicomImagePlane referenceImagePlane, IEnumerable<DicomImagePlane> targetImagePlanes)
 		{
-			OffsetKey referenceOffsetKey = new OffsetKey(referenceFrame.ParentImageSop.StudyInstanceUID, referenceFrame.FrameOfReferenceUid, referenceImageInfo.Normal);
-			if (_offsets.ContainsKey(referenceOffsetKey))
+			DicomImagePlane closestImagePlane = null;
+			float distanceToClosestImagePlane = float.MaxValue;
+
+			foreach (DicomImagePlane targetImagePlane in targetImagePlanes)
 			{
-				OffsetKey key = new OffsetKey(frame.ParentImageSop.StudyInstanceUID, frame.FrameOfReferenceUid, info.Normal);
-				if (!key.Equals(referenceOffsetKey))
+				if (targetImagePlane.IsParallelTo(referenceImagePlane, _fiveDegreesInRadians))
 				{
-					Vector3D offset = GetOffset(referenceOffsetKey, key, new List<OffsetKey>());
-					if (offset != null)
-						return offset;
-				}
-			}
-
-			return Vector3D.Empty;
-		}
-
-		private Vector3D GetOffset(OffsetKey referenceOffsetKey, OffsetKey key, List<OffsetKey> eliminated)
-		{
-			if (referenceOffsetKey.Equals(key))
-				return null;
-
-			// This 'reference key' has now been checked against 'key', so whether it 
-			// has a direct dependency or not, it should not be considered again,
-			// otherwise, we could end up in infinite recursion.
-			eliminated.Add(referenceOffsetKey);
-
-			if (_offsets[referenceOffsetKey].ContainsKey(key))
-			{
-				return _offsets[referenceOffsetKey][key];
-			}
-			else
-			{
-				Vector3D relativeOffset = null;
-
-				foreach (OffsetKey relatedKey in _offsets[referenceOffsetKey].Keys)
-				{
-					if (eliminated.Contains(relatedKey))
-						continue;
-					
-					Vector3D offset = GetOffset(relatedKey, key, eliminated);
-					if (offset != null)
-					{
-						//again, find the smallest of all possible offsets.
-						offset += _offsets[referenceOffsetKey][relatedKey];
-						if (relativeOffset == null || offset.Magnitude < relativeOffset.Magnitude)
-							relativeOffset = offset;
-					}
-				}
-
-				if (relativeOffset != null)
-					return relativeOffset;
-			}
-
-			return null;
-		}
-
-		private static bool NormalsWithinLimits(ImageInfo referenceImageInfo, ImageInfo compareImageInfo)
-		{
-			float angle = SopInfoCache.ComputeAngleBetweenNormals(compareImageInfo, referenceImageInfo);
-			return (angle <= _fiveDegreesInRadians || (Math.PI - angle) <= _fiveDegreesInRadians);
-		}
-
-		private int CalculateClosestSlice(IImageBox referenceImageBox, IImageBox imageBox)
-		{
-			Frame referenceFrame = ((IImageSopProvider) referenceImageBox.TopLeftPresentationImage).Frame;
-
-			ImageInfo referenceImageInfo = _cache.GetImageInformation(referenceFrame);
-			if (referenceImageInfo == null)
-				return -1;
-
-			float closestDistance = float.MaxValue;
-			int closestIndex = -1;
-
-			//find the closest one, closest to the top of the stack (beginning of display set).
-			for (int index = imageBox.DisplaySet.PresentationImages.Count - 1; index >= 0 ; --index)
-			{
-				IImageSopProvider provider = imageBox.DisplaySet.PresentationImages[index] as IImageSopProvider;
-				if (provider != null)
-				{
-					Frame frame = provider.Frame;
-
-					bool sameFrameOfReference = frame.FrameOfReferenceUid == referenceFrame.FrameOfReferenceUid &&
-					                             frame.ParentImageSop.StudyInstanceUID == referenceFrame.ParentImageSop.StudyInstanceUID;
-
-					// When 'studies linked' is false, we only synchronize within the same frame of reference.
+					bool sameFrameOfReference = referenceImagePlane.IsInSameFrameOfReference(targetImagePlane);
 					if (this.StudiesLinked || sameFrameOfReference)
 					{
-						ImageInfo info = _cache.GetImageInformation(frame);
-						if (info != null && NormalsWithinLimits(referenceImageInfo, info))
+						Vector3D calibratedOffset = _frameOfReferenceCalibrator.GetOffset(referenceImagePlane, targetImagePlane) ?? Vector3D.Null;
+
+						Vector3D distanceToImagePlane = referenceImagePlane.PositionPatientCenterOfImage + calibratedOffset - targetImagePlane.PositionPatientCenterOfImage;
+
+						float absoluteDistanceToImagePlane = Math.Abs(distanceToImagePlane.Magnitude);
+
+						if (absoluteDistanceToImagePlane < distanceToClosestImagePlane)
 						{
-							//Don't bother getting an offset for something in the same frame of reference.
-							Vector3D offset = sameFrameOfReference ? Vector3D.Empty : GetOffset(referenceFrame, referenceImageInfo, frame, info);
-
-							Vector3D difference = referenceImageInfo.PositionPatientCenterOfImage + offset - info.PositionPatientCenterOfImage;
-							float distance = difference.Magnitude;
-
-							if (Math.Abs(distance) <= closestDistance)
-							{
-								closestDistance = distance;
-								closestIndex = index;
-							}
+							distanceToClosestImagePlane = absoluteDistanceToImagePlane;
+							closestImagePlane = targetImagePlane;
 						}
 					}
 				}
 			}
 
-			return closestIndex;
+			return closestImagePlane;
 		}
 
-		private IEnumerable<IImageBox> GetImageBoxesToSynchronize(IImageBox referenceImageBox)
+		private IEnumerable<IImageBox> GetTargetImageBoxes(IImageBox referenceImageBox)
 		{
-			IImageSopProvider provider = referenceImageBox.TopLeftPresentationImage as IImageSopProvider;
-			if (provider == null || String.IsNullOrEmpty(provider.Frame.FrameOfReferenceUid) || String.IsNullOrEmpty(provider.ImageSop.StudyInstanceUID))
-				yield break;
+			foreach (IImageBox imageBox in this.Context.Viewer.PhysicalWorkspace.ImageBoxes)
+			{
+				if (imageBox != referenceImageBox && imageBox.DisplaySet != null && imageBox.DisplaySet.PresentationImages.Count > 1)
+					yield return imageBox;
+			}
+		}
+
+		private void SynchronizeImageBox(IImageBox referenceImageBox, IImageBox targetImageBox)
+		{
+			if (referenceImageBox.TopLeftPresentationImage == null)
+				return;
+
+			if (targetImageBox.TopLeftPresentationImage == null)
+				return;
+
+			DicomImagePlane referenceImagePlane = DicomImagePlane.FromImage(referenceImageBox.TopLeftPresentationImage);
+			if (referenceImagePlane == null)
+				return;
+
+			IEnumerable<DicomImagePlane> targetImagePlanes = GetAllImagePlanes(targetImageBox);
+			DicomImagePlane targetImagePlane = GetClosestParallelImagePlane(referenceImagePlane, targetImagePlanes);
+			if (targetImagePlane == null)
+				return;
+
+			int lastIndex = targetImageBox.TopLeftPresentationImageIndex;
+			targetImageBox.TopLeftPresentationImage = targetImagePlane.SourceImage;
+
+			if (lastIndex != targetImageBox.TopLeftPresentationImageIndex)
+			{
+				if (!_imageBoxesToDraw.Contains(targetImageBox))
+					_imageBoxesToDraw.Add(targetImageBox);
+			}
+		}
+
+		private void SynchronizeAllImageBoxes()
+		{
+			if (!SynchronizeActive)
+				return;
+
+			IImageBox selectedImageBox = this.Context.Viewer.SelectedImageBox;
 
 			foreach (IImageBox imageBox in this.Context.Viewer.PhysicalWorkspace.ImageBoxes)
 			{
-				if (referenceImageBox != imageBox && imageBox != null && imageBox.DisplaySet != null && imageBox.DisplaySet.PresentationImages.Count > 1)
-					yield return imageBox;
-			}
-		}
-
-		private IEnumerable<IImageBox> SynchronizeWithImage(IImageBox referenceImageBox)
-		{
-			return SynchronizeWithImage(referenceImageBox, null);
-		}
-
-		private bool SynchronizeImageBoxes(IImageBox referenceImageBox, IImageBox imageBox)
-		{
-			int index = CalculateClosestSlice(referenceImageBox, imageBox);
-			if (index >= 0 && index != imageBox.TopLeftPresentationImageIndex)
-			{
-				imageBox.TopLeftPresentationImageIndex = index;
-				return true;
+				if (imageBox != selectedImageBox)
+				{
+					//Synchronize everything with everything else, but never with the selected (do it last).
+					foreach (IImageBox targetImageBox in GetTargetImageBoxes(imageBox))
+					{
+						if (targetImageBox != selectedImageBox)
+							SynchronizeImageBox(imageBox, targetImageBox);
+					}
+				}
 			}
 
-			return false;
+			if (selectedImageBox == null)
+				return;
+
+			//Synchronize with the selected.
+			foreach (IImageBox targetImageBox in GetTargetImageBoxes(selectedImageBox))
+				SynchronizeImageBox(selectedImageBox, targetImageBox);
 		}
 
-		private IEnumerable<IImageBox> SynchronizeWithImage(IImageBox referenceImageBox, IImageBox ignoreImageBox)
-		{
-			foreach (IImageBox imageBox in GetImageBoxesToSynchronize(referenceImageBox))
-			{
-				if (imageBox == ignoreImageBox)
-					continue;
-
-				if (SynchronizeImageBoxes(referenceImageBox, imageBox))
-					yield return imageBox;
-			}
-		}
-
-		private IEnumerable<IImageBox> SynchronizeNewDisplaySet(IDisplaySet newDisplaySet)
+		private void SynchronizeNewDisplaySet(IDisplaySet newDisplaySet)
 		{
 			if (!SynchronizeActive || newDisplaySet == null)
-				yield break;
+				return;
 
 			IImageBox changedImageBox = newDisplaySet.ImageBox;
 			IImageBox selectedImageBox = this.Context.Viewer.SelectedImageBox;
@@ -523,59 +415,45 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				// if there is no selected image box or the new one is selected, try
 				// to sync it up with the other ones.
 
-				bool synced = false;
 				// Do a reverse synchronization; sync the newly selected one with all the others.
-				foreach (IImageBox imageBox in GetImageBoxesToSynchronize(changedImageBox))
+				foreach (IImageBox imageBox in GetTargetImageBoxes(changedImageBox))
 				{
-						if (SynchronizeImageBoxes(imageBox, changedImageBox))
-							synced = true;
+					if (imageBox != selectedImageBox)
+						SynchronizeImageBox(imageBox, changedImageBox);
 				}
-
-				if (synced)
-					yield return changedImageBox;
 			}
 			else
 			{
-				if (SynchronizeImageBoxes(selectedImageBox, changedImageBox))
-					yield return changedImageBox;
+				SynchronizeImageBox(selectedImageBox, changedImageBox);
 			}
 		}
 
-		private IEnumerable<IImageBox> SynchronizeAll()
-		{
-			if (!SynchronizeActive)
-				yield break;
+		#endregion
 
-			IImageBox selectedImageBox = this.Context.Viewer.SelectedImageBox;
+		#region Internal Methods (for mediator)
 
-			foreach (IImageBox imageBox in this.Context.Viewer.PhysicalWorkspace.ImageBoxes)
-			{
-				if (imageBox != selectedImageBox)
-				{
-					//Synchronize everything with everything else, but never with the selected (do it last).
-					foreach (IImageBox affectedImageBox in SynchronizeWithImage(imageBox, selectedImageBox))
-						yield return affectedImageBox;
-				}
-			}
-
-			if (selectedImageBox == null)
-				yield break;
-
-			//Synchronize with the selected.
-			foreach (IImageBox affectedImageBox in SynchronizeWithImage(selectedImageBox))
-				yield return affectedImageBox;
-		}
-
-		public IEnumerable<IImageBox> SynchronizeWithSelectedImage()
+		internal void SynchronizeImageBoxes()
 		{
 			if (!SynchronizeActive || _deferSynchronizeUntilDisplaySetChanged)
-				yield break;
+				return;
 
-			if (this.Context.Viewer.SelectedImageBox == null)
-				yield break;
+			IImageBox selectedImageBox = this.Context.Viewer.SelectedImageBox;
+			if (selectedImageBox == null)
+				return;
 
-			foreach (IImageBox imageBox in SynchronizeWithImage(this.Context.Viewer.SelectedImageBox))
-				yield return imageBox;
+			foreach (IImageBox targetImageBox in GetTargetImageBoxes(selectedImageBox))
+				SynchronizeImageBox(selectedImageBox, targetImageBox);
 		}
+
+		internal IEnumerable<IImageBox> GetImageBoxesToDraw()
+		{
+			foreach (IImageBox imageBox in _imageBoxesToDraw)
+				yield return imageBox;
+
+			// once we've given the list to the mediator, clear it.
+			_imageBoxesToDraw.Clear();
+		}
+
+		#endregion
 	}
 }
