@@ -19,31 +19,18 @@ namespace ClearCanvas.Healthcare {
         #region Constructors
 
         /// <summary>
-        /// Constructor for creating a new note.
-        /// </summary>
-        /// <param name="category"></param>
-        /// <param name="author"></param>
-        /// <param name="body"></param>
-        public Note(string category, Staff author, string body)
-            : this(category, author, null, body, new NoteRecipient[] { })
-        {
-        }
-
-        /// <summary>
         /// Constructor for creating a new note with recipients.
         /// </summary>
         /// <param name="category"></param>
         /// <param name="author"></param>
         /// <param name="onBehalfOf"></param>
         /// <param name="body"></param>
-        /// <param name="recipients"></param>
-        public Note(string category, Staff author, StaffGroup onBehalfOf, string body, IEnumerable<NoteRecipient> recipients)
+        public Note(string category, Staff author, StaffGroup onBehalfOf, string body)
         {
             _category = category;
             _author = author;
         	_onBehalfOfGroup = onBehalfOf;
             _body = body;
-            _recipients = new List<NoteRecipient>(recipients);
             _postings = new HashedSet<NotePosting>();
 
             _creationTime = Platform.Time;
@@ -66,12 +53,22 @@ namespace ClearCanvas.Healthcare {
         #region Public Methods
 
         /// <summary>
-        /// Posts the note.
+        /// Posts the note with no recipients.
         /// </summary>
         public virtual void Post()
         {
-            Post(Platform.Time);
+            Post(Platform.Time, new Staff[]{}, new StaffGroup[]{});
         }
+
+		/// <summary>
+		/// Posts the note to the specified recipients.
+		/// </summary>
+		/// <param name="staffRecipients"></param>
+		/// <param name="groupRecipients"></param>
+		public virtual void Post(IEnumerable<Staff> staffRecipients, IEnumerable<StaffGroup> groupRecipients)
+		{
+			Post(Platform.Time, staffRecipients, groupRecipients);
+		}
 
 		/// <summary>
 		/// Gets a value indicating whether this note can (should) be acknowledged by the specified staff.
@@ -142,14 +139,21 @@ namespace ClearCanvas.Healthcare {
         /// Posts the note with the specified post-time.
         /// </summary>
         /// <param name="postTime"></param>
-        private void Post(DateTime postTime)
+        /// <param name="staffRecipients"></param>
+        /// <param name="groupRecipients"></param>
+        private void Post(DateTime postTime, IEnumerable<Staff> staffRecipients, IEnumerable<StaffGroup> groupRecipients)
         {
             // create postings for any recipients
-            foreach (NoteRecipient recipient in _recipients)
+			foreach (Staff recipient in staffRecipients)
             {
-                NotePosting posting = new NotePosting(this, recipient, false, null);
+            	NotePosting posting = new StaffNotePosting(this, false, null, recipient);
                 _postings.Add(posting);
             }
+			foreach (StaffGroup recipient in groupRecipients)
+			{
+				NotePosting posting = new GroupNotePosting(this, false, null, recipient);
+				_postings.Add(posting);
+			}
 
             // give subclass a chance to do some processing
             BeforePost();
@@ -160,13 +164,7 @@ namespace ClearCanvas.Healthcare {
 
 		private List<NotePosting> GetAcknowledgeablePostings(Staff staff)
 		{
-			return CollectionUtils.Select(_postings,
-					  delegate(NotePosting a)
-					  {
-						  return !a.IsAcknowledged 
-							  && ((a.Recipient.IsStaffRecipient && Equals(a.Recipient.Staff, staff)) 
-									|| (a.Recipient.IsGroupRecipient && a.Recipient.Group.Members.Contains(staff)));
-					  });
+			return CollectionUtils.Select(_postings, delegate(NotePosting posting) { return posting.CanAcknowledge(staff); });
 		}
 	
 		/// <summary>

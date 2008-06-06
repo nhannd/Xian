@@ -4,18 +4,20 @@
 		<id name="OID" column="OID_" type="Guid">
 			<generator class="guid.comb"/>
 		</id>
-		<version name="Version" column="Version_"/>
+    <discriminator column="Discriminator_" type ="String"/>
+    <version name="Version" column="Version_"/>
 
     <many-to-one name="Note" class="Note" column="NoteOID_" not-null="true"/>
-    <component name="Recipient" class="NoteRecipient">
-      <many-to-one name="Staff" column="RecipientStaffOID_" class="Staff" fetch="join" not-null="false"/>
-      <many-to-one name="Group" column="RecipientGroupOID_" class="StaffGroup" fetch="join" not-null="false"/>
-    </component>
     <property name="IsAcknowledged" column="IsAcknowledged_" type="Boolean" not-null="true"/>
 		<component name="AcknowledgedBy" class="NoteAcknowledgement">
 			<many-to-one name="Staff" class="Staff" column="AcknowledgedByStaffOID_" not-null="false"/>
 			<property name="Time" column="AcknowledgedByTime_" type="DateTime" not-null="false"/>
 		</component>
-
-	</class>
+    <subclass name="StaffNotePosting" extends="NotePosting" discriminator-value="STAFF">
+      <many-to-one name="Recipient" column="RecipientStaffOID_" class="Staff" fetch="join" not-null="false"/>
+    </subclass>
+    <subclass name="GroupNotePosting" extends="NotePosting" discriminator-value="GROUP">
+      <many-to-one name="Recipient" column="RecipientGroupOID_" class="StaffGroup" fetch="join" not-null="false"/>
+    </subclass>
+  </class>
 </hibernate-mapping>

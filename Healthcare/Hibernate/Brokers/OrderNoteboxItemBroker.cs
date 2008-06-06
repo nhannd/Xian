@@ -15,8 +15,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     {
         #region Hql Constants
 
-        protected static readonly HqlSelect SelectNote = new HqlSelect("n");
-        protected static readonly HqlSelect SelectNotePostingAcknowledged = new HqlSelect("np.IsAcknowledged");
+		protected static readonly HqlSelect SelectNote = new HqlSelect("n");
+		protected static readonly HqlSelect SelectNotePostingAcknowledged = new HqlSelect("np.IsAcknowledged");
         protected static readonly HqlSelect SelectNoteFullyAcknowledged = new HqlSelect("n.IsFullyAcknowledged");
         protected static readonly HqlSelect SelectOrder = new HqlSelect("o");
         protected static readonly HqlSelect SelectPatient = new HqlSelect("p");
@@ -34,7 +34,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         private static readonly HqlSelect[] InboxItemProjection
             = {
-                SelectNote,
+				SelectNote,
                 SelectOrder,
                 SelectPatient,
                 SelectPatientProfile,
@@ -43,7 +43,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         private static readonly HqlSelect[] SentItemProjection
             = {
-                SelectNote,
+				SelectNote,
                 SelectOrder,
                 SelectPatient,
                 SelectPatientProfile,
@@ -52,7 +52,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         private static readonly HqlSelect[] CountProjection
             = {
-                  new HqlSelect("count(distinct n)")    // count distinct n (in case note sent to staff and staffgroup containing same staff)
+                  new HqlSelect("count(*)")
               };
 
         private static readonly HqlJoin[] InboxJoins
@@ -126,7 +126,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 query.Selects.AddRange(itemProjection);
 
                 // need this in case note was sent to staff and staffgroup containing same staff
-                query.SelectDistinct = true;
+                //query.SelectDistinct = true;
 
                 // add paging if not a count query
                 query.Page = nqc.Page;
@@ -149,9 +149,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 HqlAnd and = new HqlAnd();
                 and.Conditions.Add(new HqlCondition("np.IsAcknowledged = ?", criteria.IsAcknowledged));
                 if(criteria.SentToMe)
-                    and.Conditions.Add(new HqlCondition("np.Recipient.Staff = ?", nqc.Staff));
+					and.Conditions.Add(new HqlCondition("np = (select np1 from StaffNotePosting np1 where np1 = np and np1.Recipient = ?)", nqc.Staff));
                 if(criteria.SentToGroupIncludingMe)
-                    and.Conditions.Add(new HqlCondition("np.Recipient.Group in (select elements(s.Groups) from Staff s where s = ?)", nqc.Staff));
+					and.Conditions.Add(new HqlCondition("np = (select np1 from GroupNotePosting np1 where np1 = np and np1.Recipient in (select elements(s.Groups) from Staff s where s = ?))", nqc.Staff));
                 
                 or.Conditions.Add(and);
             }

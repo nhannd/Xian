@@ -14,6 +14,15 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class NotePosting : ClearCanvas.Enterprise.Core.Entity
 	{
+		/// <summary>
+		/// Gets a value indicating whether this posting can be acknowledged by the specified staff.
+		/// </summary>
+		/// <param name="acknowledger"></param>
+		/// <returns></returns>
+		protected virtual internal bool CanAcknowledge(Staff acknowledger)
+		{
+			throw new NotImplementedException();
+		}
 
         /// <summary>
         /// Marks this posting as being acknowledged.

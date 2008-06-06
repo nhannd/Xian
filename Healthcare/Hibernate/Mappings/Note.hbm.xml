@@ -16,17 +16,6 @@
     <property name="PostTime" column="PostTime_" type="DateTime" not-null="false"/>
     <property name="IsFullyAcknowledged" column="IsFullyAcknowledged_" type="Boolean" not-null="true" access="nosetter.camelcase-underscore"/>
 
-    <idbag name="Recipients" table="NoteRecipient_" lazy="true">
-			<collection-id column="OID_" type="Guid">
-				<generator class="guid.comb"/>
-			</collection-id>
-			<key column="NoteOID_"/>
-			<composite-element class="NoteRecipient">
-				<many-to-one name="Staff" column="StaffOID_" class="Staff" fetch="join" not-null="false"/>
-				<many-to-one name="Group" column="GroupOID_" class="StaffGroup" fetch="join" not-null="false"/>
-			</composite-element>
-		</idbag>
-    
     <set name="Postings" lazy="true" cascade="all-delete-orphan" fetch="subselect">
       <key column="NoteOID_"/>
       <one-to-many class="NotePosting"/>

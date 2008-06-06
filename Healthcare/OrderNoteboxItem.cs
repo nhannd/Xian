@@ -1,12 +1,12 @@
 using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
+using System.Collections;
 
 namespace ClearCanvas.Healthcare
 {
 	public class OrderNoteboxItem
 	{
-		private readonly EntityRef _orderNoteRef;
 		private readonly EntityRef _orderRef;
 		private readonly EntityRef _patientRef;
 		private readonly EntityRef _patientProfileRef;
@@ -21,7 +21,8 @@ namespace ClearCanvas.Healthcare
 		private readonly Staff _author;
 		private readonly StaffGroup _onBehalfOfGroup;
 		private readonly bool _isAcknowledged;
-		private NoteRecipient[] _recipients;
+		private readonly IList _recipients;
+
 
 		/// <summary>
 		/// Constructor.
@@ -31,9 +32,9 @@ namespace ClearCanvas.Healthcare
 		/// <param name="patient"></param>
 		/// <param name="patientProfile"></param>
 		/// <param name="isAcknowledged"></param>
-		public OrderNoteboxItem(OrderNote note, Order order, Patient patient, PatientProfile patientProfile, bool isAcknowledged)
+		public OrderNoteboxItem(Note note, Order order,
+			Patient patient, PatientProfile patientProfile, bool isAcknowledged)
 		{
-			_orderNoteRef = note.GetRef();
 			_orderRef = order.GetRef();
 			_patientRef = patient.GetRef();
 			_patientProfileRef = patientProfile.GetRef();
@@ -48,13 +49,12 @@ namespace ClearCanvas.Healthcare
 			_onBehalfOfGroup = note.OnBehalfOfGroup;
 			_isAcknowledged = isAcknowledged;
 
-			_recipients = note.IsPosted ? CollectionUtils.Map<NotePosting, NoteRecipient>(note.Postings,
-				delegate(NotePosting nr) { return nr.Recipient; }).ToArray() : new NoteRecipient[] { };
-		}
-
-		public EntityRef OrderNoteRef
-		{
-			get { return _orderNoteRef; }
+			_recipients = CollectionUtils.Map<NotePosting, object>(note.Postings,
+				delegate(NotePosting posting)
+				{
+					 return posting is StaffNotePosting ? (object)((StaffNotePosting)posting).Recipient :
+						 (object)((GroupNotePosting)posting).Recipient;
+				});
 		}
 
 		public EntityRef OrderRef
@@ -122,7 +122,7 @@ namespace ClearCanvas.Healthcare
 			get { return _isAcknowledged; }
 		}
 
-		public NoteRecipient[] Recipients
+		public IList Recipients
 		{
 			get { return _recipients; }
 		}

@@ -27,20 +27,15 @@ namespace ClearCanvas.Healthcare
     /// Defines the order-note "Inbox".
     /// </summary>
     [ExtensionOf(typeof(NoteboxExtensionPoint))]
-    public class OrderNoteInbox : OrderNotebox
+    public class OrderNotePersonalInbox : OrderNotebox
     {
         public override NoteboxItemSearchCriteria[] GetInvariantCriteria(INoteboxQueryContext wqc)
         {
-            NoteboxItemSearchCriteria where1 = new NoteboxItemSearchCriteria();
-            where1.IsAcknowledged = false;
-            where1.SentToGroupIncludingMe = true;
+            NoteboxItemSearchCriteria where = new NoteboxItemSearchCriteria();
+            where.IsAcknowledged = false;
+            where.SentToMe = true;
 
-            NoteboxItemSearchCriteria where2 = new NoteboxItemSearchCriteria();
-            where2.IsAcknowledged = false;
-            where2.SentToMe = true;
-
-
-            return new NoteboxItemSearchCriteria[]{ where1, where2 };
+            return new NoteboxItemSearchCriteria[]{ where };
         }
 
         public override IList GetItems(INoteboxQueryContext nqc)
@@ -53,6 +48,32 @@ namespace ClearCanvas.Healthcare
             return GetBroker(nqc).CountInboxItems(this, nqc);
         }
     }
+
+	/// <summary>
+	/// Defines the order-note "Inbox".
+	/// </summary>
+	[ExtensionOf(typeof(NoteboxExtensionPoint))]
+	public class OrderNoteGroupInbox : OrderNotebox
+	{
+		public override NoteboxItemSearchCriteria[] GetInvariantCriteria(INoteboxQueryContext wqc)
+		{
+			NoteboxItemSearchCriteria where = new NoteboxItemSearchCriteria();
+			where.IsAcknowledged = false;
+			where.SentToGroupIncludingMe = true;
+
+			return new NoteboxItemSearchCriteria[] { where };
+		}
+
+		public override IList GetItems(INoteboxQueryContext nqc)
+		{
+			return GetBroker(nqc).GetInboxItems(this, nqc);
+		}
+
+		public override int GetItemCount(INoteboxQueryContext nqc)
+		{
+			return GetBroker(nqc).CountInboxItems(this, nqc);
+		}
+	}
 
     /// <summary>
     /// Defines the order-note "Sent Items" box.

@@ -11,7 +11,6 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="orderNoteRef"></param>
 		/// <param name="orderRef"></param>
 		/// <param name="patientRef"></param>
 		/// <param name="patientProfileRef"></param>
@@ -26,14 +25,13 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 		/// <param name="isAcknowledged"></param>
 		/// <param name="staffRecipients"></param>
 		/// <param name="groupRecipients"></param>
-		public OrderNoteboxItemSummary(EntityRef orderNoteRef, EntityRef orderRef, EntityRef patientRef, EntityRef patientProfileRef,
+		public OrderNoteboxItemSummary(EntityRef orderRef, EntityRef patientRef, EntityRef patientProfileRef,
 			CompositeIdentifierDetail mrn, PersonNameDetail patientName, DateTime? dateOfBirth, string accessionNumber,
 			string diagnosticServiceName, string category, DateTime? postTime, StaffSummary author, StaffGroupSummary onBehalfOfGroup,
 			bool isAcknowledged,
 			List<StaffSummary> staffRecipients,
 			List<StaffGroupSummary> groupRecipients)
 		{
-			OrderNoteRef = orderNoteRef;
 			OrderRef = orderRef;
 			PatientRef = patientRef;
 			PatientProfileRef = patientProfileRef;
@@ -50,12 +48,6 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 			StaffRecipients = staffRecipients;
 			GroupRecipients = groupRecipients;
 		}
-
-		/// <summary>
-		/// Gets a reference to the order note.
-		/// </summary>
-		[DataMember]
-		public EntityRef OrderNoteRef;
 
 		/// <summary>
 		/// Gets a reference to the order.

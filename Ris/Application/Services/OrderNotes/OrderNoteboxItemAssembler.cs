@@ -20,16 +20,15 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
 			List<StaffSummary> staffRecipients = new List<StaffSummary>();
 			List<StaffGroupSummary> groupRecipients = new List<StaffGroupSummary>();
 
-			foreach (NoteRecipient recipient in item.Recipients)
+			foreach (object recipient in item.Recipients)
 			{
-				if (recipient.Staff != null)
-					staffRecipients.Add(staffAssembler.CreateStaffSummary(recipient.Staff, context));
-				if (recipient.Group != null)
-					groupRecipients.Add(groupAssembler.CreateSummary(recipient.Group));
+				if (recipient is Staff)
+					staffRecipients.Add(staffAssembler.CreateStaffSummary((Staff)recipient, context));
+				if (recipient is StaffGroup)
+					groupRecipients.Add(groupAssembler.CreateSummary((StaffGroup)recipient));
 			}
 
 			return new OrderNoteboxItemSummary(
-				item.OrderNoteRef,
 				item.OrderRef,
 				item.PatientRef,
 				item.PatientProfileRef,

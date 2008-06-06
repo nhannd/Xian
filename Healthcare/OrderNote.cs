@@ -53,9 +53,8 @@ namespace ClearCanvas.Healthcare {
         /// <param name="author"></param>
         /// <param name="onBehalfOf"></param>
         /// <param name="body"></param>
-        /// <param name="recipients"></param>
-        public OrderNote(Order order, string category, Staff author, StaffGroup onBehalfOf, string body, IEnumerable<NoteRecipient> recipients)
-            :base(category, author, onBehalfOf, body, recipients)
+        public OrderNote(Order order, string category, Staff author, StaffGroup onBehalfOf, string body)
+            :base(category, author, onBehalfOf, body)
         {
             _order = order;
             _order.Notes.Add(this);
@@ -73,17 +72,8 @@ namespace ClearCanvas.Healthcare {
             bool unAckedNotes = CollectionUtils.Contains(_order.Notes,
                 delegate(OrderNote note)
                 {
-                    // ignore notes that haven't been posted and notes in other categories
-                    if(!note.IsPosted || note.Category != this.Category)
-                        return false;
-
-                    return CollectionUtils.Contains(note.Postings,
-                        delegate(NotePosting posting)
-                        {
-                            return !posting.IsAcknowledged &&
-                                   (Equals(posting.Recipient.Staff, this.Author) ||
-                                    (posting.Recipient.Group != null && posting.Recipient.Group.Members.Contains(this.Author)));
-                        });
+					// ignore this note, and notes in other categories
+					return !Equals(this, note) && note.Category == this.Category && this.CanAcknowledge(this.Author);
                 });
 
             if(unAckedNotes)

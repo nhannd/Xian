@@ -162,10 +162,11 @@ namespace ClearCanvas.Ris.Client
 			_unacknowledgedNotesIconSet = new IconSet("NoteUnread.png");
 			_baseTitle = SR.TitleOrderNoteboxFolderSystem;
 
-			InboxFolder inboxFolder = new InboxFolder(this);
+			PersonalInboxFolder inboxFolder = new PersonalInboxFolder(this);
 			inboxFolder.TotalItemCountChanged += OnPrimaryFolderCountChanged;
 
 			this.AddFolder(inboxFolder);
+			this.AddFolder(new GroupInboxFolder(this));
 			this.AddFolder(new SentItemsFolder(this));
 		}
 

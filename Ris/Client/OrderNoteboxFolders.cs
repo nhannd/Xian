@@ -4,19 +4,39 @@ namespace ClearCanvas.Ris.Client
 {
 	[ExtensionOf(typeof(OrderNoteboxFolderExtensionPoint))]
 	[FolderPath("Posted to me")]
-	internal class InboxFolder : OrderNoteboxFolder
+	internal class PersonalInboxFolder : OrderNoteboxFolder
 	{
-		private InboxFolder(OrderNoteboxFolderSystem folderSystem, string folderDisplayName, string folderDescription)
-			: base(folderSystem, folderDisplayName, folderDescription, "OrderNoteInbox")
+		private PersonalInboxFolder(OrderNoteboxFolderSystem folderSystem, string folderDisplayName, string folderDescription)
+			: base(folderSystem, folderDisplayName, folderDescription, "OrderNotePersonalInbox")
 		{
 		}
 
-		public InboxFolder(OrderNoteboxFolderSystem orderNoteboxFolderSystem)
+		public PersonalInboxFolder(OrderNoteboxFolderSystem orderNoteboxFolderSystem)
 			: this(orderNoteboxFolderSystem, null, null)
 		{
 		}
 
-		public InboxFolder()
+		public PersonalInboxFolder()
+			: this(null)
+		{
+		}
+	}
+
+	[ExtensionOf(typeof(OrderNoteboxFolderExtensionPoint))]
+	[FolderPath("Posted to my groups")]
+	internal class GroupInboxFolder : OrderNoteboxFolder
+	{
+		private GroupInboxFolder(OrderNoteboxFolderSystem folderSystem, string folderDisplayName, string folderDescription)
+			: base(folderSystem, folderDisplayName, folderDescription, "OrderNoteGroupInbox")
+		{
+		}
+
+		public GroupInboxFolder(OrderNoteboxFolderSystem orderNoteboxFolderSystem)
+			: this(orderNoteboxFolderSystem, null, null)
+		{
+		}
+
+		public GroupInboxFolder()
 			: this(null)
 		{
 		}

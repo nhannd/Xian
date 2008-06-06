@@ -114,32 +114,21 @@ namespace ClearCanvas.Ris.Application.Services
             {
                 foreach (NotePosting posting in orderNote.Postings)
                 {
-                    if(posting.Recipient.IsGroupRecipient)
+                    if(posting is GroupNotePosting)
                     {
                         groupRecipients.Add(
-                            CreateGroupRecipientDetail(posting.Recipient.Group,
+                            CreateGroupRecipientDetail(((GroupNotePosting)posting).Recipient,
                                                        posting.IsAcknowledged,
                                                        posting.AcknowledgedBy, context));
                     }
                     else
                     {
                         staffRecipients.Add(
-                            CreateStaffRecipientDetail(posting.Recipient.Staff,
+							CreateStaffRecipientDetail(((StaffNotePosting)posting).Recipient,
                                                        posting.IsAcknowledged,
                                                        posting.AcknowledgedBy, context));
                     }
                 }
-            }
-            else
-            {
-                // the note has not been posted, so use the Recipients collection
-                foreach (NoteRecipient recipient in orderNote.Recipients)
-                {
-                    if(recipient.Group != null)
-                        groupRecipients.Add(CreateGroupRecipientDetail(recipient.Group, false, null, context));
-                    else
-                        staffRecipients.Add(CreateStaffRecipientDetail(recipient.Staff, false, null, context));
-                }    
             }
 
             StaffAssembler staffAssembler = new StaffAssembler();
@@ -189,29 +178,30 @@ namespace ClearCanvas.Ris.Application.Services
         /// <returns></returns>
         public OrderNote CreateOrderNote(OrderNoteDetail detail, Order order, Staff author, bool post, IPersistenceContext context)
         {
-            List<NoteRecipient> recipients = new List<NoteRecipient>();
-            recipients.AddRange(
-                CollectionUtils.Map<OrderNoteDetail.StaffRecipientDetail, NoteRecipient>(detail.StaffRecipients ?? new List<OrderNoteDetail.StaffRecipientDetail>(),
+			List<Staff> staffRecipients = new List<Staff>();
+            staffRecipients.AddRange(
+				CollectionUtils.Map<OrderNoteDetail.StaffRecipientDetail, Staff>(detail.StaffRecipients ?? new List<OrderNoteDetail.StaffRecipientDetail>(),
                     delegate(OrderNoteDetail.StaffRecipientDetail item)
                     {
-                        return new NoteRecipient(context.Load<Staff>(item.Staff.StaffRef, EntityLoadFlags.Proxy));
+                        return context.Load<Staff>(item.Staff.StaffRef, EntityLoadFlags.Proxy);
                     }));
 
-            recipients.AddRange(
-                CollectionUtils.Map<OrderNoteDetail.GroupRecipientDetail, NoteRecipient>(detail.GroupRecipients ?? new List<OrderNoteDetail.GroupRecipientDetail>(),
+			List<StaffGroup> groupRecipients = new List<StaffGroup>();
+			groupRecipients.AddRange(
+				CollectionUtils.Map<OrderNoteDetail.GroupRecipientDetail, StaffGroup>(detail.GroupRecipients ?? new List<OrderNoteDetail.GroupRecipientDetail>(),
                     delegate(OrderNoteDetail.GroupRecipientDetail item)
                     {
-                        return new NoteRecipient(context.Load<StaffGroup>(item.Group.StaffGroupRef, EntityLoadFlags.Proxy));
+                        return context.Load<StaffGroup>(item.Group.StaffGroupRef, EntityLoadFlags.Proxy);
                     }));
 
 			StaffGroup onBehalfOf = detail.OnBehalfOfGroup == null ? null :
 				context.Load<StaffGroup>(detail.OnBehalfOfGroup.StaffGroupRef, EntityLoadFlags.Proxy);
 
 
-            OrderNote note = new OrderNote(order, detail.Category, author, onBehalfOf, detail.NoteBody, recipients);
+            OrderNote note = new OrderNote(order, detail.Category, author, onBehalfOf, detail.NoteBody);
 
             if(post)
-                note.Post();
+                note.Post(staffRecipients, groupRecipients);
 
             return note;
         }

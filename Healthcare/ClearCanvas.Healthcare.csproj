@@ -82,6 +82,7 @@
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
     <Compile Include="CannedText.cs" />
     <Compile Include="EmergencyWorklists.cs" />
+    <Compile Include="GroupNotePosting.cs" />
     <Compile Include="Imex\PatientNoteCategoryImex.cs" />
     <Compile Include="NoteboxFactory.cs" />
     <Compile Include="Imex\ExternalPractitionerImex.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="ResultRecipient.cs" />
     <Compile Include="StaffGroup.cs" />
     <Compile Include="Imex\StaffGroupImex.cs" />
+    <Compile Include="StaffNotePosting.cs" />
     <Compile Include="TechnologistWorklists.cs" />
     <Compile Include="Tests\ReportTests.cs" />
     <Compile Include="Tests\TestExtensionFactory.cs" />
