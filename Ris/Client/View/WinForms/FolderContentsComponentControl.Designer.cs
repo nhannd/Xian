@@ -61,33 +61,32 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._folderContentsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this.SuspendLayout();
-            // 
-            // _folderContentsTableView
-            // 
-            this._folderContentsTableView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._folderContentsTableView.Location = new System.Drawing.Point(0, 0);
-            this._folderContentsTableView.MultiSelect = false;
-            this._folderContentsTableView.Name = "_folderContentsTableView";
-            this._folderContentsTableView.ReadOnly = false;
-            this._folderContentsTableView.Size = new System.Drawing.Size(358, 500);
-            this._folderContentsTableView.SortButtonVisible = true;
-            this._folderContentsTableView.StatusBarVisible = true;
-            this._folderContentsTableView.TabIndex = 0;
-            this._folderContentsTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-            this._folderContentsTableView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._folderContentsTableView_ItemDrag);
-            this._folderContentsTableView.ItemDoubleClicked += new System.EventHandler(this._folderContentsTableView_ItemDoubleClicked);
-            // 
-            // FolderContentsComponentControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._folderContentsTableView);
-            this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "FolderContentsComponentControl";
-            this.Size = new System.Drawing.Size(358, 500);
-            this.ResumeLayout(false);
+			this._folderContentsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this.SuspendLayout();
+			// 
+			// _folderContentsTableView
+			// 
+			this._folderContentsTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._folderContentsTableView.Location = new System.Drawing.Point(0, 0);
+			this._folderContentsTableView.Name = "_folderContentsTableView";
+			this._folderContentsTableView.ReadOnly = false;
+			this._folderContentsTableView.Size = new System.Drawing.Size(358, 500);
+			this._folderContentsTableView.SortButtonVisible = true;
+			this._folderContentsTableView.StatusBarVisible = true;
+			this._folderContentsTableView.TabIndex = 0;
+			this._folderContentsTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
+			this._folderContentsTableView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._folderContentsTableView_ItemDrag);
+			this._folderContentsTableView.ItemDoubleClicked += new System.EventHandler(this._folderContentsTableView_ItemDoubleClicked);
+			// 
+			// FolderContentsComponentControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._folderContentsTableView);
+			this.Margin = new System.Windows.Forms.Padding(2);
+			this.Name = "FolderContentsComponentControl";
+			this.Size = new System.Drawing.Size(358, 500);
+			this.ResumeLayout(false);
 
         }
 

@@ -85,6 +85,13 @@
       <DependentUpon>ReportingComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ReportingComponentView.cs" />
+    <Compile Include="ReportPrintingComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ReportPrintingComponentControl.Designer.cs">
+      <DependentUpon>ReportPrintingComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReportPrintingComponentView.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +148,10 @@
     <EmbeddedResource Include="ReportingComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ReportingComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportPrintingComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ReportPrintingComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

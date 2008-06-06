@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(FolderContentsComponentViewExtensionPoint))]
     public class FolderContentsComponent : ApplicationComponent
     {
-        private bool _multiSelect;
+        private bool _multiSelect = true;
         private ISelection _selectedItems = Selection.Empty;
 
         private event EventHandler _tableChanged;

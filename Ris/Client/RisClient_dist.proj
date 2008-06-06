@@ -11,7 +11,6 @@
     <CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
     <JscriptDirectory>$(ProjectDir)\..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
     <OtoScriptDirectory>$(DistributionDirectory)\oto\scripts</OtoScriptDirectory>
-		<TemplateDirectory>$(DistributionDirectory)\templates</TemplateDirectory>
   </PropertyGroup>
 	
 	<ItemGroup>
@@ -47,10 +46,6 @@
   <ItemGroup>
     <OtoScripts Include="$(TrunkDirectory)\Oto\scripts\*.js" />
     <OtoScripts Include="$(SolutionDir)\Oto\scripts\*.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-	<Templates Include="$(SolutionDir)\Uhn\bin\$(Configuration)\label.lwt" />
   </ItemGroup>
 
   <ItemGroup>
