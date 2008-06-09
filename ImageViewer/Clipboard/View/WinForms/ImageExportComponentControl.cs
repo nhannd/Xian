@@ -56,12 +56,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
         	base.CancelButton = _buttonCancel;
         	base.AcceptButton = _buttonOk;
 
-			_imageExporters.DataSource = _component.ImageExporters;
+			_imageExporters.DataSource = _component.ExporterInfoList;
         	_imageExporters.DisplayMember = "Description";
-        	_imageExporters.DataBindings.Add("Value", _component, "SelectedImageExporter", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_path.DataBindings.Add("Value", _component, "ExportFilePath", true, DataSourceUpdateMode.OnPropertyChanged);
-			_path.DataBindings.Add("LabelText", _component, "ExportFilePathLabel", true, DataSourceUpdateMode.OnPropertyChanged);
+			_imageExporters.DataBindings.Add("Value", _component, "SelectedExporterInfo", true, DataSourceUpdateMode.OnPropertyChanged);
 			
 			_checkOptionWysiwyg.DataBindings.Add("Checked", _component, "OptionWysiwyg", true, DataSourceUpdateMode.OnPropertyChanged);
 			_checkOptionCompleteImage.DataBindings.Add("Checked", _component, "OptionCompleteImage", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -72,9 +69,6 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 
 			_buttonConfigure.DataBindings.Add("Visible", _component, "ConfigureVisible", true, DataSourceUpdateMode.OnPropertyChanged);
 			_buttonConfigure.DataBindings.Add("Enabled", _component, "ConfigureEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_buttonOk.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-			_path.DataBindings.Add("Enabled", _component, "ExportFilePathEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		private void OnConfigureExporter(object sender, EventArgs e)
@@ -82,28 +76,29 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			_component.Configure();
 		}
 
-		private void OnBrowse(object sender, EventArgs e)
+		private void OnOk(object sender, EventArgs e)
 		{
 			if (_component.NumberOfImagesToExport > 1)
 			{
 				FolderBrowserDialog dialog = new FolderBrowserDialog();
 				if (DialogResult.OK == dialog.ShowDialog())
 					_component.ExportFilePath = dialog.SelectedPath;
+				else
+					return;
 			}
 			else
 			{
 				SaveFileDialog dialog = new SaveFileDialog();
-				dialog.Filter = _component.SelectedImageExporter.FileExtensionFilter;
-				dialog.DefaultExt = _component.SelectedImageExporter.DefaultExtension;
+				dialog.Filter = _component.SelectedExporterInfo.FileExtensionFilter;
+				dialog.DefaultExt = _component.SelectedExporterInfo.DefaultExtension;
 				dialog.AddExtension = true;
 
 				if (DialogResult.OK == dialog.ShowDialog())
 					_component.ExportFilePath = dialog.FileName;
+				else
+					return;
 			}
-		}
 
-		private void OnOk(object sender, EventArgs e)
-		{
 			_component.Accept();
 		}
 

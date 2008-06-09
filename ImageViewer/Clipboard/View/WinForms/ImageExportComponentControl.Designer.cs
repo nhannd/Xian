@@ -60,16 +60,14 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
         private void InitializeComponent()
         {
 			this._imageExporters = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-			this._path = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._buttonBrowse = new System.Windows.Forms.Button();
 			this._buttonConfigure = new System.Windows.Forms.Button();
 			this._buttonOk = new System.Windows.Forms.Button();
 			this._buttonCancel = new System.Windows.Forms.Button();
 			this._groupOptions = new System.Windows.Forms.GroupBox();
-			this._checkOptionCompleteImage = new System.Windows.Forms.RadioButton();
-			this._checkOptionWysiwyg = new System.Windows.Forms.RadioButton();
 			this._scale = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			this.scaleLabel = new System.Windows.Forms.Label();
+			this._checkOptionCompleteImage = new System.Windows.Forms.RadioButton();
+			this._checkOptionWysiwyg = new System.Windows.Forms.RadioButton();
 			this._groupOptions.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._scale)).BeginInit();
 			this.SuspendLayout();
@@ -80,39 +78,16 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._imageExporters.DisplayMember = "";
 			this._imageExporters.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._imageExporters.LabelText = "Export As";
-			this._imageExporters.Location = new System.Drawing.Point(10, 74);
+			this._imageExporters.Location = new System.Drawing.Point(11, 11);
 			this._imageExporters.Margin = new System.Windows.Forms.Padding(2);
 			this._imageExporters.Name = "_imageExporters";
 			this._imageExporters.Size = new System.Drawing.Size(315, 41);
 			this._imageExporters.TabIndex = 2;
 			this._imageExporters.Value = null;
 			// 
-			// _path
-			// 
-			this._path.LabelText = "Path";
-			this._path.Location = new System.Drawing.Point(10, 15);
-			this._path.Margin = new System.Windows.Forms.Padding(2);
-			this._path.Mask = "";
-			this._path.Name = "_path";
-			this._path.PasswordChar = '\0';
-			this._path.Size = new System.Drawing.Size(315, 41);
-			this._path.TabIndex = 0;
-			this._path.ToolTip = null;
-			this._path.Value = null;
-			// 
-			// _buttonBrowse
-			// 
-			this._buttonBrowse.Location = new System.Drawing.Point(330, 31);
-			this._buttonBrowse.Name = "_buttonBrowse";
-			this._buttonBrowse.Size = new System.Drawing.Size(70, 23);
-			this._buttonBrowse.TabIndex = 1;
-			this._buttonBrowse.Text = "Browse";
-			this._buttonBrowse.UseVisualStyleBackColor = true;
-			this._buttonBrowse.Click += new System.EventHandler(this.OnBrowse);
-			// 
 			// _buttonConfigure
 			// 
-			this._buttonConfigure.Location = new System.Drawing.Point(330, 91);
+			this._buttonConfigure.Location = new System.Drawing.Point(256, 55);
 			this._buttonConfigure.Name = "_buttonConfigure";
 			this._buttonConfigure.Size = new System.Drawing.Size(70, 23);
 			this._buttonConfigure.TabIndex = 3;
@@ -122,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			// 
 			// _buttonOk
 			// 
-			this._buttonOk.Location = new System.Drawing.Point(254, 226);
+			this._buttonOk.Location = new System.Drawing.Point(180, 163);
 			this._buttonOk.Name = "_buttonOk";
 			this._buttonOk.Size = new System.Drawing.Size(70, 23);
 			this._buttonOk.TabIndex = 5;
@@ -132,7 +107,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			// 
 			// _buttonCancel
 			// 
-			this._buttonCancel.Location = new System.Drawing.Point(330, 226);
+			this._buttonCancel.Location = new System.Drawing.Point(256, 163);
 			this._buttonCancel.Name = "_buttonCancel";
 			this._buttonCancel.Size = new System.Drawing.Size(70, 23);
 			this._buttonCancel.TabIndex = 6;
@@ -146,32 +121,12 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._groupOptions.Controls.Add(this.scaleLabel);
 			this._groupOptions.Controls.Add(this._checkOptionCompleteImage);
 			this._groupOptions.Controls.Add(this._checkOptionWysiwyg);
-			this._groupOptions.Location = new System.Drawing.Point(10, 133);
+			this._groupOptions.Location = new System.Drawing.Point(11, 82);
 			this._groupOptions.Name = "_groupOptions";
 			this._groupOptions.Size = new System.Drawing.Size(315, 72);
 			this._groupOptions.TabIndex = 4;
 			this._groupOptions.TabStop = false;
 			this._groupOptions.Text = "Options";
-			// 
-			// _checkOptionCompleteImage
-			// 
-			this._checkOptionCompleteImage.AutoSize = true;
-			this._checkOptionCompleteImage.Location = new System.Drawing.Point(101, 35);
-			this._checkOptionCompleteImage.Name = "_checkOptionCompleteImage";
-			this._checkOptionCompleteImage.Size = new System.Drawing.Size(101, 17);
-			this._checkOptionCompleteImage.TabIndex = 1;
-			this._checkOptionCompleteImage.Text = "Complete Image";
-			this._checkOptionCompleteImage.UseVisualStyleBackColor = true;
-			// 
-			// _checkOptionWysiwyg
-			// 
-			this._checkOptionWysiwyg.AutoSize = true;
-			this._checkOptionWysiwyg.Location = new System.Drawing.Point(16, 35);
-			this._checkOptionWysiwyg.Name = "_checkOptionWysiwyg";
-			this._checkOptionWysiwyg.Size = new System.Drawing.Size(67, 17);
-			this._checkOptionWysiwyg.TabIndex = 0;
-			this._checkOptionWysiwyg.Text = "Wysiwyg";
-			this._checkOptionWysiwyg.UseVisualStyleBackColor = true;
 			// 
 			// _scale
 			// 
@@ -181,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
             0,
             0,
             65536});
-			this._scale.Location = new System.Drawing.Point(222, 34);
+			this._scale.Location = new System.Drawing.Point(224, 34);
 			this._scale.Maximum = new decimal(new int[] {
             20,
             0,
@@ -204,11 +159,31 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			// scaleLabel
 			// 
 			this.scaleLabel.AutoSize = true;
-			this.scaleLabel.Location = new System.Drawing.Point(219, 18);
+			this.scaleLabel.Location = new System.Drawing.Point(221, 18);
 			this.scaleLabel.Name = "scaleLabel";
 			this.scaleLabel.Size = new System.Drawing.Size(34, 13);
 			this.scaleLabel.TabIndex = 2;
 			this.scaleLabel.Text = "Scale";
+			// 
+			// _checkOptionCompleteImage
+			// 
+			this._checkOptionCompleteImage.AutoSize = true;
+			this._checkOptionCompleteImage.Location = new System.Drawing.Point(103, 35);
+			this._checkOptionCompleteImage.Name = "_checkOptionCompleteImage";
+			this._checkOptionCompleteImage.Size = new System.Drawing.Size(101, 17);
+			this._checkOptionCompleteImage.TabIndex = 1;
+			this._checkOptionCompleteImage.Text = "Complete Image";
+			this._checkOptionCompleteImage.UseVisualStyleBackColor = true;
+			// 
+			// _checkOptionWysiwyg
+			// 
+			this._checkOptionWysiwyg.AutoSize = true;
+			this._checkOptionWysiwyg.Location = new System.Drawing.Point(18, 35);
+			this._checkOptionWysiwyg.Name = "_checkOptionWysiwyg";
+			this._checkOptionWysiwyg.Size = new System.Drawing.Size(67, 17);
+			this._checkOptionWysiwyg.TabIndex = 0;
+			this._checkOptionWysiwyg.Text = "Wysiwyg";
+			this._checkOptionWysiwyg.UseVisualStyleBackColor = true;
 			// 
 			// ImageExportComponentControl
 			// 
@@ -218,11 +193,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this.Controls.Add(this._buttonCancel);
 			this.Controls.Add(this._buttonOk);
 			this.Controls.Add(this._buttonConfigure);
-			this.Controls.Add(this._buttonBrowse);
-			this.Controls.Add(this._path);
 			this.Controls.Add(this._imageExporters);
 			this.Name = "ImageExportComponentControl";
-			this.Size = new System.Drawing.Size(414, 268);
+			this.Size = new System.Drawing.Size(337, 197);
 			this._groupOptions.ResumeLayout(false);
 			this._groupOptions.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._scale)).EndInit();
@@ -233,8 +206,6 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
         #endregion
 
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _imageExporters;
-		private ClearCanvas.Desktop.View.WinForms.TextField _path;
-		private System.Windows.Forms.Button _buttonBrowse;
 		private System.Windows.Forms.Button _buttonConfigure;
 		private System.Windows.Forms.Button _buttonOk;
 		private System.Windows.Forms.Button _buttonCancel;

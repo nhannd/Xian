@@ -63,6 +63,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ImageExportSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ImageExport\MultipleImageExporter.cs" />
     <Compile Include="ImageExport\MultipleImageExportFileNamingStrategy.cs" />
     <Compile Include="ImageExport\IImageExporter.cs" />
     <Compile Include="ImageExport\ImageExportComponent.cs" />

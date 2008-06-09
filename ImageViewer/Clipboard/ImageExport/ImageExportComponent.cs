@@ -35,7 +35,6 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Validation;
 using Path=System.IO.Path;
 
 #pragma warning disable 0419,1574,1587,1591
@@ -49,154 +48,128 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 	#region ImageExporterInfo class
 
+	/// <summary>
+	/// Adapter used by the view to present data about an exporter.
+	/// </summary>
 	public class ImageExporterInfo
 	{
-		private readonly IImageExporter _imageExporter;
+		private readonly IImageExporter _sourceImageExporter;
 
-		internal ImageExporterInfo(IImageExporter imageExporter)
+		internal ImageExporterInfo(IImageExporter sourceImageExporter)
 		{
-			_imageExporter = imageExporter;
+			_sourceImageExporter = sourceImageExporter;
 		}
 
-		internal IImageExporter ImageExporter
+		internal IImageExporter SourceImageExporter
 		{
-			get { return _imageExporter; }
+			get { return _sourceImageExporter; }
 		}
+
+		#region Public Properties
 
 		public string Description
 		{
-			get { return _imageExporter.Description; }
+			get { return _sourceImageExporter.Description; }
 		}
 
 		public string FileExtensionFilter
 		{
 			get
 			{
-				string filterPortion = StringUtilities.Combine(_imageExporter.FileExtensions, ";",
+				string filterPortion = StringUtilities.Combine(_sourceImageExporter.FileExtensions, ";",
 													delegate(string extension)
 													{
 														return String.Format("*.{0}", extension);
 													});
 
-				return String.Format("{0}|{1}", _imageExporter.Description, filterPortion);
+				return String.Format("{0}|{1}", _sourceImageExporter.Description, filterPortion);
 			}
 		}
 
 		public string DefaultExtension
 		{
-			get { return _imageExporter.FileExtensions[0]; }
+			get { return _sourceImageExporter.FileExtensions[0]; }
 		}
 
 		public bool IsConfigurable
 		{
-			get { return _imageExporter is IConfigurableImageExporter; }
+			get { return _sourceImageExporter is IConfigurableImageExporter; }
 		}
+
+		#endregion
 	}
 
 	#endregion
 
 	[AssociateView(typeof(ImageExportComponentViewExtensionPoint))]
-	public class ImageExportComponent : ApplicationComponent
+	public partial class ImageExportComponent : ApplicationComponent
 	{
-		private static IShelf _progressComponentShelf;
+		//can only have one of these running at a time
+		private static MultipleImageExporter _multipleImageExporter;
 
-		private List<ImageExporterInfo> _imageExporters;
+		private List<ImageExporterInfo> _exporterInfoList;
+		private volatile ImageExporterInfo _selectedExporterInfo;
 
-		private volatile ImageExporterInfo _selectedImageExporter;
-		private readonly List<IClipboardItem> _itemsToExport;
-		private readonly int _numberOfImagesToExport;
+		private volatile List<IClipboardItem> _itemsToExport;
+		private volatile int _numberOfImagesToExport;
 		private volatile string _exportFilePath;
 		private volatile ExportOption _exportOption;
 		private volatile float _scale = 1;
-		private volatile Exception _error;
 
-		private ImageExportComponent(List<IClipboardItem> itemsToExport, int numberOfImagesToExport)
+		private ImageExportComponent()
 		{
-			_itemsToExport = itemsToExport;
-			_numberOfImagesToExport = numberOfImagesToExport;
 		}
 
 		#region Component
 
-		private IImageExporter SelectedExporter
+		private List<IClipboardItem> ItemsToExport
+		{
+			get { return _itemsToExport; }
+			set { _itemsToExport = value; }
+		}
+
+		private IImageExporter SelectedImageExporter
 		{
 			get
 			{
-				if (_selectedImageExporter == null)
+				if (_selectedExporterInfo == null)
 					return null;
 
-				return _selectedImageExporter.ImageExporter;
+				return _selectedExporterInfo.SourceImageExporter;
 			}
 		}
 
-		[ValidationMethodFor("ExportFilePath")]
-		private ValidationResult ValidatePath()
+		private ExportOption ExportOption
 		{
-			bool valid = true;
-			string message = null;
-
-			if (NumberOfImagesToExport == 1)
-			{
-				string correctedFilename = GetCorrectedExportFilePath();
-				string directory = Path.GetDirectoryName(ExportFilePath);
-
-				if (!String.IsNullOrEmpty(directory) && Directory.Exists(directory))
-				{
-					string fileName = Path.GetFileName(correctedFilename);
-					if (String.IsNullOrEmpty(fileName))
-					{
-						valid = false;
-						message = SR.MessageInvalidFilePath;
-					}
-				}
-				else
-				{
-					valid = false;
-					message = SR.MessageInvalidFilePath;
-				}
-			}
-			else
-			{
-				valid = (!String.IsNullOrEmpty(ExportFilePath) && Directory.Exists(ExportFilePath));
-
-				if (!valid)
-				{
-					message = SR.MessageDirectoryDoesNotExist;
-				}
-			}
-
-			if (valid)
-				return new ValidationResult(true, "");
-			else
-				return new ValidationResult(false, message);
+			get { return _exportOption; }
 		}
 
 		public override void Start()
 		{
-			LoadExporters();
-			SetDefaults();
+			InitializeExporterInfoList();
+			InitializeOptions();
 
 			base.Start();
 		}
 		
 		#region Presentation Model
 
-		public ICollection<ImageExporterInfo> ImageExporters
+		public ICollection<ImageExporterInfo> ExporterInfoList
 		{
-			get { return _imageExporters; }
+			get { return _exporterInfoList; }
 		}
 
-		public ImageExporterInfo SelectedImageExporter
+		public ImageExporterInfo SelectedExporterInfo
 		{
-			get { return _selectedImageExporter; }
+			get { return _selectedExporterInfo; }
 			set
 			{
-				if (!_imageExporters.Contains(value))
+				if (!_exporterInfoList.Contains(value))
 					throw new ArgumentException("The specified image exporter does not exist.");
 
-				_selectedImageExporter = value;
+				_selectedExporterInfo = value;
 
-				NotifyPropertyChanged("SelectedImageExporter");
+				NotifyPropertyChanged("SelectedExporterInfo");
 				NotifyPropertyChanged("ConfigureEnabled");
 			}
 		}
@@ -204,29 +177,13 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		public int NumberOfImagesToExport
 		{
 			get { return _numberOfImagesToExport; }
-		}
-
-		public bool ExportFilePathEnabled
-		{
-			get { return false; }	
-		}
-
-		public string ExportFilePathLabel
-		{
-			get { return _numberOfImagesToExport > 1 ? SR.LabelExportPath : SR.LabelExportFile; }
+			private set { _numberOfImagesToExport = value; }
 		}
 
 		public string ExportFilePath
 		{
 			get { return _exportFilePath; }
-			set
-			{
-				_exportFilePath = value;
-
-				Modified = true;
-				NotifyPropertyChanged("ExportFilePath");
-				NotifyPropertyChanged("AcceptEnabled");
-			}
+			set { _exportFilePath = GetCorrectedExportFilePath(value); }
 		}
 
 		public bool OptionWysiwyg
@@ -278,19 +235,14 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
-		public bool AcceptEnabled
-		{
-			get { return Modified; }
-		}
-
 		public bool ConfigureEnabled
 		{
 			get
 			{
-				if (_selectedImageExporter == null)
+				if (_selectedExporterInfo == null)
 					return false;
 
-				return _selectedImageExporter.IsConfigurable;
+				return _selectedExporterInfo.IsConfigurable;
 			}
 		}
 
@@ -298,7 +250,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		{
 			get
 			{
-				return CollectionUtils.Contains(_imageExporters,
+				return CollectionUtils.Contains(_exporterInfoList,
 				                                delegate(ImageExporterInfo info)
 				                                	{
 				                                		return info.IsConfigurable;
@@ -308,8 +260,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		public void Configure()
 		{
-			IConfigurableImageExporter exporter = SelectedExporter as IConfigurableImageExporter;
-
+			IConfigurableImageExporter exporter = SelectedImageExporter as IConfigurableImageExporter;
 			if (exporter == null)
 				return;
 
@@ -337,9 +288,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 			else
 			{
-				UpdateDefaults();
-				_exportFilePath = GetCorrectedExportFilePath();
-
+				SaveOptions();
 				ExitCode = ApplicationComponentExitCode.Accepted;
 				Host.Exit();
 			}
@@ -352,84 +301,98 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		}
 
 		#endregion
-		
-		private void LoadExporters()
+
+		private ImageExporterInfo GetExporterInfo(string identifier)
 		{
-			_imageExporters = CollectionUtils.Map<object, ImageExporterInfo>
-			(
-				new ImageExporterExtensionPoint().CreateExtensions(),
-				delegate(object extension)
-				{
-					return new ImageExporterInfo((IImageExporter)extension);
-				}
-			);
-
-			_imageExporters.AddRange(GetDefaultExporters());
-
-			SortExporters();
+			return CollectionUtils.SelectFirst(_exporterInfoList,
+		                                    delegate(ImageExporterInfo info)
+		                                    	{
+													return info.SourceImageExporter.Identifier == identifier;
+		                                    	});
 		}
 
-		private IEnumerable<ImageExporterInfo> GetDefaultExporters()
+		private void InitializeExporterInfoList()
 		{
-			List<IImageExporter> defaultExporters = StandardImageExporterFactory.CreateStandardExporters();
-			foreach (IImageExporter defaultExporter in defaultExporters)
-			{
-				if (!CollectionUtils.Contains(_imageExporters,
-					delegate(ImageExporterInfo info)
+			_exporterInfoList = CollectionUtils.Map<object, ImageExporterInfo>(
+					new ImageExporterExtensionPoint().CreateExtensions(),
+					delegate(object exporterExtension)
 					{
-						return info.ImageExporter.Identifier == defaultExporter.Identifier;
-					}))
-				{
-					yield return new ImageExporterInfo(defaultExporter);
-				}
+						return new ImageExporterInfo((IImageExporter)exporterExtension);
+					});
+
+			List<IImageExporter> standardExporters = StandardImageExporterFactory.CreateStandardExporters();
+			foreach (IImageExporter standardExporter in standardExporters)
+			{
+				if (GetExporterInfo(standardExporter.Identifier) == null)
+					_exporterInfoList.Add(new ImageExporterInfo(standardExporter));
 			}
+
+			SortExporterInfoList();
 		}
 
-		private void SortExporters()
+		private void SortExporterInfoList()
 		{
-			_imageExporters.Sort(delegate(ImageExporterInfo x, ImageExporterInfo y)
+			_exporterInfoList.Sort(delegate(ImageExporterInfo x, ImageExporterInfo y)
 						{
 							return String.Compare(x.Description, y.Description);
 						});
 		}
 
-		private string GetCorrectedExportFilePath()
+		private string GetCorrectedExportFilePath(string exportFilePath)
 		{
-			if (_numberOfImagesToExport > 1)
-				return _exportFilePath;
+			if (NumberOfImagesToExport == 1)
+			{
+				exportFilePath = FileUtilities.CorrectFileNameExtension(exportFilePath, SelectedImageExporter.FileExtensions);
+				string directory = Path.GetDirectoryName(exportFilePath);
 
-			return FileUtilities.CorrectFileNameExtension(_exportFilePath, SelectedExporter.FileExtensions);
+				if (!String.IsNullOrEmpty(directory) && Directory.Exists(directory))
+				{
+					string fileName = Path.GetFileName(exportFilePath);
+					if (String.IsNullOrEmpty(fileName))
+					{
+						throw new FileNotFoundException("The specified file path is invalid: " + exportFilePath);
+					}
+				}
+				else
+				{
+					throw new FileNotFoundException("The specified file path is invalid: " + exportFilePath ?? "");
+				}
+			}
+			else
+			{
+				if (!String.IsNullOrEmpty(exportFilePath) && !Directory.Exists(exportFilePath))
+					throw new FileNotFoundException("The specified directory does not exist: " + exportFilePath ?? "");
+			}
+
+			return exportFilePath;
 		}
 
-		private void SetDefaults()
+		private void InitializeOptions()
 		{
 			_exportOption = (ExportOption)ImageExportSettings.Default.SelectedImageExportOption;
 
-			_selectedImageExporter = CollectionUtils.SelectFirst(_imageExporters,
-											delegate(ImageExporterInfo info)
-											{
-												return info.ImageExporter.Identifier ==
-													ImageExportSettings.Default.SelectedImageExporterId;
-											});
-
-			if (_selectedImageExporter == null)
-				_selectedImageExporter = _imageExporters[0];
+			_selectedExporterInfo = GetExporterInfo(ImageExportSettings.Default.SelectedImageExporterId);
+			if (_selectedExporterInfo == null)
+				_selectedExporterInfo = _exporterInfoList[0];
 		}
 
-		private void UpdateDefaults()
+		private void SaveOptions()
 		{
-			ImageExportSettings.Default.SelectedImageExportOption = (int)_exportOption;
-			ImageExportSettings.Default.SelectedImageExporterId = SelectedExporter.Identifier;
+			ImageExportSettings.Default.SelectedImageExportOption = (int)ExportOption;
+			ImageExportSettings.Default.SelectedImageExporterId = SelectedImageExporter.Identifier;
 			ImageExportSettings.Default.Save();
 		}
 
 		#endregion
 
+		#region Launch Dialog
+
 		internal static void Launch(IDesktopWindow desktopWindow, List<IClipboardItem> clipboardItems)
 		{
+			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
 			Platform.CheckForNullReference(clipboardItems, "clipboardItems");
 
-			if (_progressComponentShelf != null)
+			if (_multipleImageExporter != null)
 			{
 				desktopWindow.ShowMessageBox(SR.MessageImageExportStillRunning, MessageBoxActions.Ok);
 				return;
@@ -442,188 +405,18 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			if (numberOfImagesToExport == 1)
 				title = SR.TitleExportSingleImage;
 
-			ImageExportComponent component = new ImageExportComponent(clipboardItems, numberOfImagesToExport);
-			if (ApplicationComponentExitCode.Accepted !=
-				ApplicationComponent.LaunchAsDialog(desktopWindow, component, title))
-			{
+			//initialize the component.
+			ImageExportComponent component = new ImageExportComponent();
+			component.ItemsToExport = clipboardItems;
+			component.NumberOfImagesToExport = numberOfImagesToExport;
+
+			if (ApplicationComponentExitCode.Accepted != LaunchAsDialog(desktopWindow, component, title))
 				return;
-			}
 
 			component.Export();
 		}
 
-		#region Export
-
-		private void Export()
-		{
-			if (SelectedExporter == null)
-				throw new InvalidOperationException("No exporter was chosen; unable to export any images.");
-
-			if (NumberOfImagesToExport == 1)
-			{
-				if (!Directory.Exists(Path.GetDirectoryName(ExportFilePath ?? "")))
-					throw new FileNotFoundException("The specified export directory does not exist.");
-
-				ClipboardItem clipboardItem = (ClipboardItem) _itemsToExport[0];
-
-				ExportImageParams exportParams = new ExportImageParams();
-				exportParams.ExportOption = _exportOption;
-				exportParams.DisplayRectangle = clipboardItem.DisplayRectangle;
-				exportParams.Scale = Scale;
-				SelectedExporter.Export((IPresentationImage)clipboardItem.Item, ExportFilePath, exportParams);
-			}
-			else
-			{
-				if (!Directory.Exists(ExportFilePath ?? ""))
-					throw new FileNotFoundException("The specified export directory does not exist.");
-
-
-				if (NumberOfImagesToExport <= 5)
-				{
-					BlockingOperation.Run(delegate { ExportMultipleImages(null); });
-					Cleanup(false);
-				}
-				else
-				{
-					_itemsToExport.ForEach(delegate(IClipboardItem item) { item.Lock(); });
-
-					BackgroundTask task = new BackgroundTask(ExportMultipleImages, true);
-
-					ProgressDialogComponent progressComponent = 
-						new ProgressDialogComponent(task, true, ProgressBarStyle.Blocks);
-					_progressComponentShelf = ApplicationComponent.LaunchAsShelf(
-						this.Host.DesktopWindow,
-						progressComponent, 
-						SR.TitleExportingImages, "ExportingImages",
-						ShelfDisplayHint.DockFloat);
-
-					_progressComponentShelf.Closed +=
-						delegate
-							{
-								Cleanup(true);
-								task.Dispose();
-							};
-				}
-			}
-		}
-
-		#region Shared Sync/Async Export method
-
-		private void ExportMultipleImages(IBackgroundTaskContext context)
-		{
-			int progress = 0;
-			List<IPresentationImage> imagesToDispose = new List<IPresentationImage>();
-
-			try
-			{
-				MultipleImageExportFileNamingStrategy fileNamingStrategy = 
-					new MultipleImageExportFileNamingStrategy(ExportFilePath);
-
-				string fileExtension = SelectedExporter.FileExtensions[0];
-				ReportProgress(context, SR.MessageExportingImages, progress);
-
-				foreach (ClipboardItem clipboardItem in _itemsToExport)
-				{
-					if (context != null && context.CancelRequested)
-						break;
-
-					ExportImageParams exportParams = new ExportImageParams();
-					exportParams.ExportOption = _exportOption;
-					exportParams.DisplayRectangle = clipboardItem.DisplayRectangle;
-					exportParams.Scale = Scale;
-					if (clipboardItem.Item is IPresentationImage)
-					{
-						IPresentationImage image = (IPresentationImage) clipboardItem.Item;
-						if (context != null)
-						{
-							// A graphic should belong to (and be disposed on) a single thread 
-							// and should not be rendered on multiple threads, so we clone it.
-							// Technically, we should be doing the clone on the main thread
-							// and then passing it to the worker, but that would require blocking
-							// the main thread while we cloned all the images.
-							imagesToDispose.Add(image = image.Clone());
-						}
-
-						string fileName = fileNamingStrategy.GetSingleImageFileName(image, fileExtension);
-						SelectedExporter.Export(image, fileName, exportParams);
-
-						ReportProgress(context, fileName, ++progress);
-					}
-					else if (clipboardItem.Item is IDisplaySet)
-					{
-						IDisplaySet displaySet = (IDisplaySet) clipboardItem.Item;
-						foreach (ImageFileNamePair pair in fileNamingStrategy.GetImagesAndFileNames(displaySet, fileExtension))
-						{
-							if (context != null && context.CancelRequested)
-								break;
-
-							IPresentationImage image = pair.Image;
-							if (context != null)
-							{
-								// A graphic should belong to (and be disposed on) a single thread 
-								// and should not be rendered on multiple threads, so we clone it.
-								// Technically, we should be doing the clone on the main thread
-								// and then passing it to the worker, but that would require blocking
-								// the main thread while we cloned all the images.
-								imagesToDispose.Add(image = image.Clone());
-							}
-
-							SelectedExporter.Export(image, pair.FileName, exportParams);
-
-							ReportProgress(context, pair.FileName, ++progress);
-						}
-					}
-				}
-
-				if (context != null)
-				{
-					if (context.CancelRequested)
-					{
-						ReportProgress(context, SR.MessageCancelled, progress);
-						context.Cancel();
-					}
-					else
-					{
-						ReportProgress(context, SR.MessageExportComplete, progress);
-						context.Complete();
-					}
-				}
-			}
-			catch(Exception e)
-			{
-				_error = e;
-				Platform.Log(LogLevel.Error, e);
-			}
-			finally
-			{
-				imagesToDispose.ForEach(delegate (IPresentationImage image) { image.Dispose(); });
-			}
-		}
-
-		private void ReportProgress(IBackgroundTaskContext context, string message, int currentStep)
-		{
-			if (context == null)
-				return;
-
-			int percent = Math.Min((int)(currentStep/(float) NumberOfImagesToExport * 100), 100);
-			context.ReportProgress(new BackgroundTaskProgress(percent, message));
-		}
-
 		#endregion
-
-		private void Cleanup(bool asynchronous)
-		{
-			if (asynchronous)
-				_itemsToExport.ForEach(delegate(IClipboardItem item) { item.Unlock(); });
-
-			_progressComponentShelf = null;
-
-			if (_error != null)
-			{
-				this.Host.DesktopWindow.ShowMessageBox(SR.MessageExportFailed, MessageBoxActions.Ok);
-				_error = null;
-			}
-		}
 
 		private static int GetNumberOfImagesToExport(IEnumerable<IClipboardItem> itemsToExport)
 		{
@@ -641,6 +434,50 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 
 			return number;
+		}
+
+		#region Export
+
+		private void Export()
+		{
+			if (SelectedImageExporter == null)
+				throw new InvalidOperationException("No exporter was chosen; unable to export any images.");
+
+			if (NumberOfImagesToExport == 1)
+			{
+				if (!Directory.Exists(Path.GetDirectoryName(ExportFilePath ?? "")))
+					throw new FileNotFoundException("The specified export file path does not exist: " + ExportFilePath ?? "");
+
+				ClipboardItem clipboardItem = (ClipboardItem)_itemsToExport[0];
+
+				ExportImageParams exportParams = GetExportParams(clipboardItem);
+				SelectedImageExporter.Export((IPresentationImage)clipboardItem.Item, ExportFilePath, exportParams);
+			}
+			else
+			{
+				if (!Directory.Exists(ExportFilePath ?? ""))
+					throw new FileNotFoundException("The specified export directory does not exist." + ExportFilePath ?? "");
+
+				_multipleImageExporter = new MultipleImageExporter(this);
+				_multipleImageExporter.Run();
+			}
+		}
+
+		private void OnMultipleImageExportComplete(Exception error)
+		{
+			if (error != null)
+				this.Host.DesktopWindow.ShowMessageBox(SR.MessageExportFailed, MessageBoxActions.Ok); 
+
+			_multipleImageExporter = null;
+		}
+
+		private ExportImageParams GetExportParams(ClipboardItem clipboardItem)
+		{
+			ExportImageParams exportParams = new ExportImageParams();
+			exportParams.ExportOption = ExportOption;
+			exportParams.DisplayRectangle = clipboardItem.DisplayRectangle;
+			exportParams.Scale = Scale;
+			return exportParams;
 		}
 
 		#endregion
