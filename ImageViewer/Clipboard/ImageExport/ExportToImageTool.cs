@@ -25,8 +25,8 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		{
 			try
 			{
-				ImageExportComponent.Launch(this.Context.DesktopWindow,
-				                            new List<IClipboardItem>(this.Context.SelectedClipboardItems));
+				List<IClipboardItem> selectedClipboardItems = new List<IClipboardItem>(this.Context.SelectedClipboardItems);
+				ImageExportComponent.Launch(this.Context.DesktopWindow, selectedClipboardItems);
 			}
 			catch (Exception e)
 			{

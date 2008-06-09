@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		public string GetSingleImageFileName(IPresentationImage image, string fileExtension)
 		{
-			return GetImageFileName(_baseDirectory, "Image", fileExtension, ref _singleImageStartNumber, 0);
+			return GetImageFileName(_baseDirectory, "Image", fileExtension, 0, ref _singleImageStartNumber);
 		}
 
 		public IEnumerable<ImageFileNamePair> GetImagesAndFileNames(IDisplaySet displaySet, string fileExtension)
@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			int startNumber = 1;
 			foreach(IPresentationImage image in displaySet.PresentationImages)
 			{
-				string filePath = GetImageFileName(displaySetDirectory, "Image", fileExtension, ref startNumber, numberOfZeroes);
+				string filePath = GetImageFileName(displaySetDirectory, "Image", fileExtension, numberOfZeroes, ref startNumber);
 				yield return new ImageFileNamePair(image, filePath);
 			}
 		}
@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
-		private static string GetImageFileName(string baseDirectory, string prefix, string fileExtension, ref int startNumber, int numberOfZeros)
+		private static string GetImageFileName(string baseDirectory, string prefix, string fileExtension, int numberOfZeros, ref int startNumber)
 		{
 			do
 			{

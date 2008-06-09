@@ -241,13 +241,11 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 				_clipboardItem.Lock();
 
-				ProgressDialogComponent progressComponent = 
-					new ProgressDialogComponent(task, true, ProgressBarStyle.Blocks);
-				_progressComponentShelf = ApplicationComponent.LaunchAsShelf(
-					this.Host.DesktopWindow,
-					progressComponent,
-					SR.TitleCreatingVideo, "CreatingVideo",
-					ShelfDisplayHint.DockFloat);
+				ProgressDialogComponent progressComponent = new ProgressDialogComponent(task, true, ProgressBarStyle.Blocks);
+				_progressComponentShelf = ApplicationComponent.LaunchAsShelf(this.Host.DesktopWindow,
+																progressComponent,
+																SR.TitleCreatingVideo, "CreatingVideo",
+																ShelfDisplayHint.DockFloat);
 
 				_progressComponentShelf.Closed +=
 					delegate
@@ -275,45 +273,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 			try
 			{
-				ExportImageParams exportParams = new ExportImageParams();
-				exportParams.Scale = Scale;
-				exportParams.ExportOption = _exportOption;
-				exportParams.DisplayRectangle = _clipboardItem.DisplayRectangle;
-
 				ReportProgress(context, SR.MessageCreatingVideo, 0);
 
-				using (AviVideoStreamWriter writer = new AviVideoStreamWriter())
-				{
-					for (int i = 0; i < NumberOfImages; ++i)
-					{
-						if (context != null && context.CancelRequested)
-							break;
-
-						if (context != null)
-						{
-							int number = i + 1;
-							string message = String.Format(SR.MessageFormatExportingFrame, number, NumberOfImages);
-							ReportProgress(context, message, number);
-						}
-
-						IPresentationImage image = DisplaySet.PresentationImages[i].Clone();
-						imagesToDispose.Add(image);
-
-						using (Bitmap bitmap = ImageExporter.DrawToBitmap(image, exportParams))
-						{
-							if (!writer.IsOpen)
-							{
-								writer.Width = bitmap.Width;
-								writer.Height = bitmap.Height;
-								writer.FrameRate = this.FrameRate;
-
-								writer.Open(this.FilePath);
-							}
-
-							writer.AddBitmap(bitmap);
-						}
-					}
-				}
+				ExportImages(context, ref imagesToDispose);
 
 				if (context != null)
 				{
@@ -336,7 +298,48 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 			finally
 			{
-				imagesToDispose.ForEach(delegate (IPresentationImage image) { image.Dispose(); });
+				imagesToDispose.ForEach(delegate(IPresentationImage image) { image.Dispose(); });
+			}
+		}
+
+		private void ExportImages(IBackgroundTaskContext context, ref List<IPresentationImage> imagesToDispose)
+		{
+			ExportImageParams exportParams = new ExportImageParams();
+			exportParams.Scale = Scale;
+			exportParams.ExportOption = _exportOption;
+			exportParams.DisplayRectangle = _clipboardItem.DisplayRectangle;
+
+			using (AviVideoStreamWriter writer = new AviVideoStreamWriter())
+			{
+				for (int i = 0; i < NumberOfImages; ++i)
+				{
+					if (context != null && context.CancelRequested)
+						break;
+
+					if (context != null)
+					{
+						int number = i + 1;
+						string message = String.Format(SR.MessageFormatExportingFrame, number, NumberOfImages);
+						ReportProgress(context, message, number);
+					}
+
+					IPresentationImage image = DisplaySet.PresentationImages[i].Clone();
+					imagesToDispose.Add(image);
+
+					using (Bitmap bitmap = ImageExporter.DrawToBitmap(image, exportParams))
+					{
+						if (!writer.IsOpen)
+						{
+							writer.Width = bitmap.Width;
+							writer.Height = bitmap.Height;
+							writer.FrameRate = this.FrameRate;
+
+							writer.Open(this.FilePath);
+						}
+
+						writer.AddBitmap(bitmap);
+					}
+				}
 			}
 		}
 

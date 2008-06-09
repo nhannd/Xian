@@ -110,11 +110,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// not yet exist; this value is based solely on <see cref="IComposableLut.MinInputValue"/>
 		/// and <see cref="IComposableLut.MaxInputValue"/>.
 		/// </remarks>
-		public uint Length
+		public int Length
 		{
 			get
 			{
-				return (uint)(1 + MaxInputValue - MinInputValue);
+				return 1 + MaxInputValue - MinInputValue;
 			}
 		}
 

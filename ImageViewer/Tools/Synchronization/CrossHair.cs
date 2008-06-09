@@ -6,9 +6,9 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
 	public partial class SpatialLocatorTool
 	{
-		// The reference point is a container for a graphic that is tied to an imagebox;
+		// The crosshair is a container for a graphic that is tied to an imagebox;
 		// the container moves the graphic between different images in the imagebox.
-		private class SpatialLocatorReferencePoint : IDisposable
+		private class CrossHair : IDisposable
 		{
 			#region Private Fields
 
@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 			public readonly IImageBox ImageBox;
 
-			public SpatialLocatorReferencePoint(IImageBox imageBox, SpatialLocatorTool spatialLocatorTool)
+			public CrossHair(IImageBox imageBox, SpatialLocatorTool spatialLocatorTool)
 			{
 				ImageBox = imageBox;
 				_spatialLocatorTool = spatialLocatorTool;

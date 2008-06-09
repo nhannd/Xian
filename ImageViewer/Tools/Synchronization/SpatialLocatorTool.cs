@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		private SynchronizationToolCoordinator _coordinator;
 
 		private DicomImagePlane _referencePlane;
-		private readonly List<SpatialLocatorReferencePoint> _referencePoints;
+		private readonly List<CrossHair> _crosshairs;
 		private bool _inUse;
 
 		#endregion
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			: base(SR.PrefixSpatialLocatorTool)
 		{
 			_inUse = false;
-			_referencePoints = new List<SpatialLocatorReferencePoint>();
+			_crosshairs = new List<CrossHair>();
 
 			this.CursorToken = new CursorToken("SpatialLocatorCursor.png", this.GetType().Assembly);
 		}
@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
             base.Initialize();
 			
 			_coordinator = SynchronizationToolCoordinator.Get(base.ImageViewer);
-        	_coordinator.SpatialLocatorTool = this;
+        	_coordinator.SetSpatialLocatorTool(this);
         }
 
 		protected override void Dispose(bool disposing)
@@ -130,21 +130,21 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			}
 		}
 
-		private SpatialLocatorReferencePoint GetReferencePoint(IImageBox imageBox)
+		private CrossHair GetCrosshair(IImageBox imageBox)
 		{
-			SpatialLocatorReferencePoint referencePoint = _referencePoints.Find(
-				delegate(SpatialLocatorReferencePoint test)
+			CrossHair crossHair = _crosshairs.Find(
+				delegate(CrossHair test)
 					{
 						return test.ImageBox == imageBox;
 					});
 
-			if (referencePoint == null)
+			if (crossHair == null)
 			{
-				referencePoint = new SpatialLocatorReferencePoint(imageBox, this);
-				_referencePoints.Add(referencePoint);
+				crossHair = new CrossHair(imageBox, this);
+				_crosshairs.Add(crossHair);
 			}
 
-			return referencePoint;
+			return crossHair;
 		}
 
 		private IEnumerable<DicomImagePlane> GetTargetImagePlanes(IImageBox imageBox)
@@ -171,32 +171,32 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			return imageBox == _referencePlane.SourceImage.ParentDisplaySet.ImageBox;
 		}
 
-		private void UpdateReferencePoint(SpatialLocatorReferencePoint referencePoint, PointF referenceImagePoint)
+		private void UpdateCrossHair(CrossHair crossHair, PointF referenceImagePoint)
 		{
 			DicomImagePlane closestTargetPlane;
 			PointF closestTargetImagePoint;
-			GetPlaneClosestToReferenceImagePoint(referenceImagePoint, GetTargetImagePlanes(referencePoint.ImageBox),
+			GetPlaneClosestToReferenceImagePoint(referenceImagePoint, GetTargetImagePlanes(crossHair.ImageBox),
 												out closestTargetPlane, out closestTargetImagePoint);
 
 			if (closestTargetPlane == null)
 			{
-				referencePoint.Image = null;
+				crossHair.Image = null;
 			}
 			else 
 			{
-				referencePoint.Image = closestTargetPlane.SourceImage;
-				referencePoint.ImagePoint = closestTargetImagePoint;
+				crossHair.Image = closestTargetPlane.SourceImage;
+				crossHair.ImagePoint = closestTargetImagePoint;
 			}
 		}
 
-		private void UpdateAllReferencePoints(Point destinationPoint)
+		private void UpdateCrosshairs(Point destinationPoint)
 		{
 			PointF referenceImagePoint = _referencePlane.SourceImageTransform.ConvertToSource(destinationPoint);
 
 			foreach (IImageBox imageBox in GetTargetImageBoxes())
-				UpdateReferencePoint(GetReferencePoint(imageBox), referenceImagePoint);
+				UpdateCrossHair(GetCrosshair(imageBox), referenceImagePoint);
 
-			_coordinator.OnSpatialLocatorReferencePointsUpdated();
+			_coordinator.OnSpatialLocatorCrosshairsUpdated();
 		}
 
 		#endregion
@@ -214,22 +214,22 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			_referencePlane = null;
 			_inUse = false;
 
-			foreach (SpatialLocatorReferencePoint referencePoint in _referencePoints)
-				referencePoint.Image = null;
+			foreach (CrossHair crosshair in _crosshairs)
+				crosshair.Image = null;
 
 			_coordinator.OnSpatialLocatorStopped();
 
-			foreach (SpatialLocatorReferencePoint referencePoint in _referencePoints)
-				referencePoint.Dispose();
+			foreach (CrossHair crosshair in _crosshairs)
+				crosshair.Dispose();
 
-			_referencePoints.Clear();
+			_crosshairs.Clear();
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			_inUse = Start();
 			if (_inUse)
-				UpdateAllReferencePoints(mouseInformation.Location);
+				UpdateCrosshairs(mouseInformation.Location);
 
 			return _inUse;
 		}
@@ -237,7 +237,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		public override bool Track(IMouseInformation mouseInformation)
 		{
 			if (_inUse)
-				UpdateAllReferencePoints(mouseInformation.Location);
+				UpdateCrosshairs(mouseInformation.Location);
 
 			return _inUse;
         }
@@ -259,10 +259,10 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		internal IEnumerable<IImageBox> GetImageBoxesToRedraw()
 		{
-			foreach (SpatialLocatorReferencePoint referencePoint in _referencePoints)
+			foreach (CrossHair crosshair in _crosshairs)
 			{
-				if (referencePoint.Dirty)
-					yield return referencePoint.ImageBox;
+				if (crosshair.Dirty)
+					yield return crosshair.ImageBox;
 			}
 		}
 

@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 
 		private string _customRange;
 
-		public CopySubsetToClipboardComponent(IDesktopWindow desktopWindow)
+		internal CopySubsetToClipboardComponent(IDesktopWindow desktopWindow)
 		{
 			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
 			_desktopWindow = desktopWindow;

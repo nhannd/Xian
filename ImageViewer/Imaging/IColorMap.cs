@@ -30,9 +30,12 @@
 #endregion
 
 using System;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	//TODO: remove this
+
 	/// <summary>
 	/// A Color Map as defined for use by the framework.
 	/// </summary>

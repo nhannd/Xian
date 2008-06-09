@@ -7,11 +7,11 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	{
 		private class FrameOfReferenceCalibrator
 		{
-			#region Key class
+			#region Plane class
 
-			private class Key
+			private class Plane
 			{
-				public Key(string studyInstanceUid, string frameOfReferenceUid, Vector3D normal)
+				public Plane(string studyInstanceUid, string frameOfReferenceUid, Vector3D normal)
 				{
 					FrameOfReferenceUid = frameOfReferenceUid;
 					StudyInstanceUid = studyInstanceUid;
@@ -27,9 +27,9 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 					if (obj == this)
 						return true;
 
-					if (obj is Key)
+					if (obj is Plane)
 					{
-						Key other = (Key)obj;
+						Plane other = (Plane)obj;
 						return other.FrameOfReferenceUid == FrameOfReferenceUid &&
 							other.StudyInstanceUid == StudyInstanceUid &&
 							other.Normal.Equals(Normal);
@@ -46,48 +46,48 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 			#endregion
 
-			private readonly Dictionary<Key, Dictionary<Key, Vector3D>> _calibrationMap;
+			private readonly Dictionary<Plane, Dictionary<Plane, Vector3D>> _calibrationMatrix;
 			private readonly float _angleTolerance;
 
 			public FrameOfReferenceCalibrator(float angleTolerance)
 			{
-				_calibrationMap = new Dictionary<Key, Dictionary<Key, Vector3D>>();
+				_calibrationMatrix = new Dictionary<Plane, Dictionary<Plane, Vector3D>>();
 				_angleTolerance = angleTolerance;
 			}
 
-			private static Key CreateKey(DicomImagePlane plane)
+			private static Plane FromDicomImagePlane(DicomImagePlane plane)
 			{
 				string frameOfReferenceUid = plane.FrameOfReferenceUid;
 				string studyInstanceUid = plane.StudyInstanceUid;
 				Vector3D normal = plane.Normal;
 
-				return new Key(studyInstanceUid, frameOfReferenceUid, normal);
+				return new Plane(studyInstanceUid, frameOfReferenceUid, normal);
 			}
 
-			private Dictionary<Key, Vector3D> GetOffsetDictionary(Key referenceKey)
+			private Dictionary<Plane, Vector3D> GetOffsetDictionary(Plane referencePlane)
 			{
-				if (_calibrationMap.ContainsKey(referenceKey))
-					return _calibrationMap[referenceKey];
+				if (_calibrationMatrix.ContainsKey(referencePlane))
+					return _calibrationMatrix[referencePlane];
 				else
-					_calibrationMap[referenceKey] = new Dictionary<Key, Vector3D>();
+					_calibrationMatrix[referencePlane] = new Dictionary<Plane, Vector3D>();
 
-				return _calibrationMap[referenceKey];
+				return _calibrationMatrix[referencePlane];
 			}
 
-			private Vector3D ExtrapolateOffset(Key referenceKey, Key targetKey, List<Key> eliminatedKeys)
+			private Vector3D ExtrapolateOffset(Plane referencePlane, Plane targetPlane, List<Plane> eliminatedPlanes)
 			{
 				Vector3D relativeOffset = null;
 
-				foreach (Key relatedKey in _calibrationMap[referenceKey].Keys)
+				foreach (Plane relatedPlane in _calibrationMatrix[referencePlane].Keys)
 				{
-					if (eliminatedKeys.Contains(relatedKey))
+					if (eliminatedPlanes.Contains(relatedPlane))
 						continue;
 
-					Vector3D offset = GetOffset(relatedKey, targetKey, eliminatedKeys);
+					Vector3D offset = GetOffset(relatedPlane, targetPlane, eliminatedPlanes);
 					if (offset != null)
 					{
 						//again, find the smallest of all possible offsets.
-						offset += _calibrationMap[referenceKey][relatedKey];
+						offset += _calibrationMatrix[referencePlane][relatedPlane];
 						if (relativeOffset == null || offset.Magnitude < relativeOffset.Magnitude)
 							relativeOffset = offset;
 					}
@@ -96,52 +96,52 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				return relativeOffset;
 			}
 
-			private Vector3D GetOffset(Key referenceKey, Key targetKey, List<Key> eliminatedKeys)
+			private Vector3D GetOffset(Plane referencePlane, Plane targetPlane, List<Plane> eliminatedPlane)
 			{
-				if (referenceKey.Equals(targetKey))
+				if (referencePlane.Equals(targetPlane))
 					return null;
 
-				// This 'reference key' has now been checked against 'targetKey', so whether it 
+				// This 'reference plane' has now been checked against 'target plane', so whether it 
 				// has a direct dependency or not, it should not be considered again,
 				// otherwise, we could end up in infinite recursion.
-				eliminatedKeys.Add(referenceKey);
+				eliminatedPlane.Add(referencePlane);
 
-				if (_calibrationMap[referenceKey].ContainsKey(targetKey))
-					return _calibrationMap[referenceKey][targetKey];
+				if (_calibrationMatrix[referencePlane].ContainsKey(targetPlane))
+					return _calibrationMatrix[referencePlane][targetPlane];
 				else
-					return ExtrapolateOffset(referenceKey, targetKey, eliminatedKeys);
+					return ExtrapolateOffset(referencePlane, targetPlane, eliminatedPlane);
 			}
-
-			public Vector3D GetOffset(DicomImagePlane referencePlane, DicomImagePlane targetPlane)
+			
+			public Vector3D GetOffset(DicomImagePlane referenceImagePlane, DicomImagePlane targetImagePlane)
 			{
 				Vector3D offset = null;
 
-				Key referenceKey = CreateKey(referencePlane);
-				if (_calibrationMap.ContainsKey(referenceKey))
+				Plane referencePlane = FromDicomImagePlane(referenceImagePlane);
+				if (_calibrationMatrix.ContainsKey(referencePlane))
 				{
-					Key targetKey = CreateKey(targetPlane);
-					if (!referenceKey.Equals(targetKey))
-						offset = GetOffset(referenceKey, targetKey, new List<Key>());
+					Plane targetPlane = FromDicomImagePlane(targetImagePlane);
+					if (!referencePlane.Equals(targetPlane))
+						offset = GetOffset(referencePlane, targetPlane, new List<Plane>());
 				}
 
 				return offset;
 			}
 			
 
-			public void Calibrate(DicomImagePlane referencePlane, DicomImagePlane targetPlane)
+			public void Calibrate(DicomImagePlane referenceImagePlane, DicomImagePlane targetImagePlane)
 			{
-				if (!referencePlane.IsInSameFrameOfReference(targetPlane) && referencePlane.IsParallelTo(targetPlane, _angleTolerance))
+				if (!referenceImagePlane.IsInSameFrameOfReference(targetImagePlane) && referenceImagePlane.IsParallelTo(targetImagePlane, _angleTolerance))
 				{
-					Key referenceKey = CreateKey(referencePlane);
-					Key targetKey = CreateKey(targetPlane);
+					Plane referencePlane = FromDicomImagePlane(referenceImagePlane);
+					Plane targetPlane = FromDicomImagePlane(targetImagePlane);
 
-					Dictionary<Key, Vector3D> referenceOffsets = GetOffsetDictionary(referenceKey);
-					Dictionary<Key, Vector3D> targetOffsets = GetOffsetDictionary(targetKey);
+					Dictionary<Plane, Vector3D> referenceOffsets = GetOffsetDictionary(referencePlane);
+					Dictionary<Plane, Vector3D> targetOffsets = GetOffsetDictionary(targetPlane);
 
-					Vector3D offset = targetPlane.PositionPatientCenterOfImage - referencePlane.PositionPatientCenterOfImage;
+					Vector3D offset = targetImagePlane.PositionPatientCenterOfImage - referenceImagePlane.PositionPatientCenterOfImage;
 					
-					referenceOffsets[targetKey] = offset;
-					targetOffsets[referenceKey] = -offset;
+					referenceOffsets[targetPlane] = offset;
+					targetOffsets[referencePlane] = -offset;
 				}
 			}
 		}

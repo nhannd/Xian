@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 	/// An observable container for <see cref="AnnotationBox"/>es.
 	/// </summary>
 	[Cloneable(true)]
-	public sealed class AnnotationBoxList : ObservableList<AnnotationBox>
+	public class AnnotationBoxList : ObservableList<AnnotationBox>
 	{
 		internal AnnotationBoxList()
 		{

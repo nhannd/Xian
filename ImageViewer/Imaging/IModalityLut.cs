@@ -33,6 +33,8 @@ using System;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	//TODO: remove
+
 	/// <summary>
 	/// A Modality Lut as defined for use by the framework.
 	/// </summary>

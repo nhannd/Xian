@@ -24,11 +24,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 	{
 		private readonly ImageFormat _imageFormat;
 
-		internal StandardImageExporter(
-			string identifier, 
-			string description,
-			ImageFormat imageFormat, 
-			string[] fileExtensions)
+		internal StandardImageExporter( string identifier, string description, ImageFormat imageFormat, string[] fileExtensions)
 			: base(identifier, description, fileExtensions)
 		{
 			Platform.CheckForNullReference(imageFormat, "imageFormat");

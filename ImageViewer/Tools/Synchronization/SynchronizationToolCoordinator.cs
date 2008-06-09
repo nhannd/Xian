@@ -102,19 +102,19 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			_viewer = viewer;
 		}
 
-		public StackingSynchronizationTool StackingSynchronizationTool
+		public void SetStackingSynchronizationTool(StackingSynchronizationTool tool)
 		{
-			set { _stackingSynchronizationTool = value; }
+			_stackingSynchronizationTool = tool;
 		}
 
-		public ReferenceLineTool ReferenceLineTool
+		public void SetReferenceLineTool(ReferenceLineTool tool)
 		{
-			set { _referenceLineTool = value; }
+			_referenceLineTool = tool;
 		}
 
-		public SpatialLocatorTool SpatialLocatorTool
+		public void SetSpatialLocatorTool(SpatialLocatorTool tool)
 		{
-			set { _spatialLocatorTool = value; }	
+			_spatialLocatorTool = tool;
 		}
 
 		private static void Draw<T>(IEnumerable<T> itemsToDraw)
@@ -122,6 +122,23 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		{
 			foreach (IDrawable drawable in itemsToDraw)
 				drawable.Draw();
+		}
+
+		private void DrawImageBoxes(IEnumerable<IImageBox> imageBoxes)
+		{
+			List<IImageBox> imageBoxesToDraw = new List<IImageBox>(imageBoxes);
+
+			//Then calculate the reference lines.
+			_referenceLineTool.RefreshAllReferenceLines();
+
+			foreach (IPresentationImage image in _referenceLineTool.GetImagesToRedraw())
+			{
+				//Only draw images that won't be drawn as a result of the image boxes being drawn.
+				if (!imageBoxesToDraw.Contains(image.ParentDisplaySet.ImageBox))
+					image.Draw();
+			}
+
+			Draw(imageBoxesToDraw);
 		}
 
 		private void OnTileSelected(object sender, TileSelectedEventArgs e)
@@ -216,37 +233,15 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		public void OnSynchronizedImageBoxes()
 		{
-			List<IImageBox> imageBoxesToDraw = new List<IImageBox>(_stackingSynchronizationTool.GetImageBoxesToDraw());
-
-			_referenceLineTool.RefreshAllReferenceLines();
-
-			foreach (IPresentationImage image in _referenceLineTool.GetImagesToRedraw())
-			{
-				if (!imageBoxesToDraw.Contains(image.ParentDisplaySet.ImageBox))
-					image.Draw();
-			}
-
-			Draw(imageBoxesToDraw);
+			DrawImageBoxes(_stackingSynchronizationTool.GetImageBoxesToDraw());
 		}
 
-		public void OnSpatialLocatorReferencePointsUpdated()
+		public void OnSpatialLocatorCrosshairsUpdated()
 		{
 			//The spatial locator and stacking sync tool conflict.
 			_stackingSynchronizationTool.SynchronizeActive = false;
 
-			List<IImageBox> imageBoxesToDraw = new List<IImageBox>(_spatialLocatorTool.GetImageBoxesToRedraw());
-
-			//Then calculate the reference lines.
-			_referenceLineTool.RefreshAllReferenceLines();
-
-			foreach (IPresentationImage image in _referenceLineTool.GetImagesToRedraw())
-			{
-				//Only draw images that won't be drawn as a result of the image boxes being drawn.
-				if (!imageBoxesToDraw.Contains(image.ParentDisplaySet.ImageBox))
-					image.Draw();
-			}
-
-			Draw(imageBoxesToDraw);
+			DrawImageBoxes(_spatialLocatorTool.GetImageBoxesToRedraw());
 		}
 
 		public void OnSpatialLocatorStopped()

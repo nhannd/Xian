@@ -35,7 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FrameOfReferenceCalibrator.cs" />
-    <Compile Include="SpatialLocatorReferencePoint.cs" />
+    <Compile Include="CrossHair.cs" />
     <Compile Include="CrosshairGraphic.cs" />
     <Compile Include="DicomImagePlane.cs" />
     <Compile Include="SpatialLocatorTool.cs" />

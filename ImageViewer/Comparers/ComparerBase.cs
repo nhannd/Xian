@@ -95,6 +95,8 @@ namespace ClearCanvas.ImageViewer.Comparers
 			private set { _returnValue = value; }
 		}
 
+		//TODO: make this private (?)
+
 		/// <summary>
 		/// Performs a comparison of the 2 input values strictly based on whether or
 		/// not either or both of the inputs are null.

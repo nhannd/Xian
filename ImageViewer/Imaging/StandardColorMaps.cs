@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			Color color;
 
 			int j = 0;
-			uint maxGrayLevel = this.Length - 1;
+			int maxGrayLevel = this.Length - 1;
 
 			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
 			{

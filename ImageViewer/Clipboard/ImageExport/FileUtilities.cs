@@ -6,19 +6,19 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {
 	internal static class FileUtilities
 	{
-		public static bool HasExtension(string fileName, string[] fileExtensions)
+		public static bool HasExtension(string fileName, string[] allowedExtensions)
 		{
 			if (String.IsNullOrEmpty(fileName))
 				return false;
 
 			string extension = Path.GetExtension(fileName);
 			if (String.IsNullOrEmpty(extension))
-				return (fileExtensions.Length == 0);
+				return (allowedExtensions.Length == 0);
 
 			extension = extension.Replace(".", "").Trim();
 
 			return CollectionUtils.Contains(
-				fileExtensions,
+				allowedExtensions,
 				delegate(string test)
 					{
 						string testExtension = test.Replace(".", "").Trim();

@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			base.ImageViewer.PhysicalWorkspace.LayoutCompleted += OnLayoutCompleted;
 
 			_coordinator = SynchronizationToolCoordinator.Get(base.ImageViewer);
-			_coordinator.StackingSynchronizationTool = this;
+			_coordinator.SetStackingSynchronizationTool(this);
 		}
 
 		protected override void Dispose(bool disposing)

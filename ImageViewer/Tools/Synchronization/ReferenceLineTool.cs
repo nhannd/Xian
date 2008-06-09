@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			base.Initialize();
 
 			_coordinator = SynchronizationToolCoordinator.Get(base.ImageViewer);
-			_coordinator.ReferenceLineTool = this;
+			_coordinator.SetReferenceLineTool(this);
 
 			base.ImageViewer.EventBroker.ImageDrawing += OnImageDrawing;
 		}

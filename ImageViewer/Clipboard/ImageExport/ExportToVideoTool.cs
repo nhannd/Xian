@@ -29,13 +29,10 @@
 
 #endregion
 
-using System.Collections.Generic;
+using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using System.Drawing;
-using System;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -54,25 +51,31 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		{
 		}
 
+		private void UpdateEnabled()
+		{
+			bool isOneItemSelected = this.Context.SelectedClipboardItems.Count == 1;
+			bool selectedItemIsDisplaySet = isOneItemSelected && this.Context.SelectedClipboardItems[0].Item is IDisplaySet;
+
+			this.Enabled = isOneItemSelected && selectedItemIsDisplaySet;
+		}
+
 		public override void Initialize()
 		{
 			base.Initialize();
-			this.Enabled = this.Context.SelectedClipboardItems.Count == 1 &&
-				this.Context.SelectedClipboardItems[0].Item is IDisplaySet;
+		
+			UpdateEnabled();
 		}
 
 		protected override void  OnSelectionChanged()
 		{
-			Enabled = this.Context.SelectedClipboardItems.Count == 1 &&
-				this.Context.SelectedClipboardItems[0].Item is IDisplaySet;
+			UpdateEnabled();
 		}
 
 		public void Export()
 		{
 			try
 			{
-				AviExportComponent.Launch(this.Context.DesktopWindow,
-				                          (ClipboardItem) this.Context.SelectedClipboardItems[0]);
+				AviExportComponent.Launch(this.Context.DesktopWindow, (ClipboardItem) this.Context.SelectedClipboardItems[0]);
 			}
 			catch(Exception e)
 			{

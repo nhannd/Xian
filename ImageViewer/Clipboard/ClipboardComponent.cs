@@ -204,6 +204,18 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			EventsHelper.Fire(_clipboardItemsChanged, this, EventArgs.Empty);
 		}
 
+		private static void HideTextOverlay(IEnumerable<IPresentationImage> images)
+		{
+			foreach (IPresentationImage image in images)
+				HideTextOverlay(image);
+		}
+
+		private static void HideTextOverlay(IPresentationImage image)
+		{
+			if (image is IAnnotationLayoutProvider)
+				((IAnnotationLayoutProvider) image).AnnotationLayout.Visible = false;
+		}
+
 		internal static void AddToClipboard(IPresentationImage image)
 		{
 			Platform.CheckForNullReference(image, "image");
@@ -252,18 +264,6 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			Bitmap bmp = IconCreator.CreateDisplaySetIcon(displaySet, clientRectangle);
 			ClipboardItem item = new ClipboardItem(displaySet, bmp, displaySet.Name, clientRectangle);
 			_clipboardItems.Add(item);
-		}
-
-		internal static void HideTextOverlay(IEnumerable<IPresentationImage> images)
-		{
-			foreach (IPresentationImage image in images)
-				HideTextOverlay(image);
-		}
-
-		internal static void HideTextOverlay(IPresentationImage image)
-		{
-			if (image is IAnnotationLayoutProvider)
-				((IAnnotationLayoutProvider) image).AnnotationLayout.Visible = false;
 		}
 	}
 }

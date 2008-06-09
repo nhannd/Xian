@@ -75,6 +75,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#endregion
 
+		//TODO: unify with modality lut proxy after removing dead interfaces
 		#region ColorMap Proxy Class
 
 		[Cloneable(true)]
