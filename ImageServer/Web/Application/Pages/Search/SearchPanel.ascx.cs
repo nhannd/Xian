@@ -264,7 +264,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
             StudyListGridView.StudyListGrid.ClearSelections();
         }
 
-        protected void OnDeleteToolbarButtonClick(object sender, EventArgs e)
+        protected void DeleteStudyButton_Click(object sender, EventArgs e)
         {
             IList<Study> studies = StudyListGridView.SelectedStudies;
 

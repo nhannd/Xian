@@ -170,15 +170,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
 
         protected void UpdateUI()
         {
+            // Update the title and OK button text. Changing the image is the only way to do this, since the 
+            // SkinID cannot be set dynamically after Page_PreInit.
             if (EditMode)
             {
-                ModalDialog.Title= "Edit Partition";
-                OKButton.Text = "Update";
+                ModalDialog.Title = App_GlobalResources.SR.DialogEditPartitionTitle;
+                OKButton.EnabledImageURL = "~/App_Themes/" + this.Page.Theme + "/images/Buttons/UpdateEnabled.png";
             }
             else
             {
-                ModalDialog.Title = "Add Partition";
-                OKButton.Text = "Add";
+                ModalDialog.Title = App_GlobalResources.SR.DialogAddPartitionTitle;
+                OKButton.EnabledImageURL = "~/App_Themes/" + this.Page.Theme + "/images/Buttons/AddEnabled.png";
             }
 
             // update the dropdown list

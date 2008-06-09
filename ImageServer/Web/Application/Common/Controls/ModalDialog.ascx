@@ -19,7 +19,9 @@
                                             <asp:TableCell ID="TitleBarLeft" CssClass="DefaultModalDialogTitleBarLeft">
                                             </asp:TableCell>
                                             <asp:TableCell ID="TitleBarCenter" CssClass="DefaultModalDialogTitleBarTitle">
-                                                <asp:Label ID="TitleLabel" runat="server" Text="&nbsp;"></asp:Label>
+                                                    <asp:Panel runat="server" style="padding-bottom: 4px">
+                                                        <asp:Label ID="TitleLabel" runat="server" Text="&nbsp;"></asp:Label>
+                                                    </asp:Panel>
                                             </asp:TableCell>
                                             <asp:TableCell CssClass="DefaultModalDialogTitleBarRight">
                                             </asp:TableCell>

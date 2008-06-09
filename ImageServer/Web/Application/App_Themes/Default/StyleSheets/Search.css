@@ -5,11 +5,10 @@
 
 .SearchPanelContent
 {
-    background: #8FC3E4;
-    border: solid 1px #A0D4F5;
+    background: url(../images/MainContent/SearchPanelBackground.png) repeat-x;
     padding: 4px 4px 4px 4px;
-    margin-left: 2px;
-    margin-right: 2px;
+    margin-left: 0px;
+    margin-right: 0px;
 }
 
 .SearchTextBoxLabel

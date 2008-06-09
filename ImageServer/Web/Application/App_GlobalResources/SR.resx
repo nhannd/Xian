@@ -123,11 +123,44 @@
   <data name="Any" xml:space="preserve">
     <value>Any</value>
   </data>
+  <data name="ConfirmDialogDefault" xml:space="preserve">
+    <value>Please Confirm</value>
+  </data>
+  <data name="ConfirmDialogError" xml:space="preserve">
+    <value>Error</value>
+  </data>
   <data name="Default" xml:space="preserve">
     <value>Default</value>
   </data>
+  <data name="DeviceDefaultPort" xml:space="preserve">
+    <value>104</value>
+  </data>
   <data name="DHCP" xml:space="preserve">
     <value>DHCP</value>
+  </data>
+  <data name="DialogAddDeviceTitle" xml:space="preserve">
+    <value>Add Device</value>
+  </data>
+  <data name="DialogAddFileSystemTitle" xml:space="preserve">
+    <value>Add File System</value>
+  </data>
+  <data name="DialogAddPartitionTitle" xml:space="preserve">
+    <value>Add Partition</value>
+  </data>
+  <data name="DialogAddServerRuleTitle" xml:space="preserve">
+    <value>Add Server Rule</value>
+  </data>
+  <data name="DialogEditDeviceTitle" xml:space="preserve">
+    <value>Edit Device</value>
+  </data>
+  <data name="DialogEditFileSystemTitle" xml:space="preserve">
+    <value>Edit File System</value>
+  </data>
+  <data name="DialogEditPartitionTitle" xml:space="preserve">
+    <value>Edit Partition</value>
+  </data>
+  <data name="DialogEditServerRuleTitle" xml:space="preserve">
+    <value>Edit Server Rule</value>
   </data>
   <data name="Disabled" xml:space="preserve">
     <value>Disabled</value>

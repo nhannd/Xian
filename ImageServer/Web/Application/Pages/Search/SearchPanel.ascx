@@ -75,7 +75,7 @@
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
                                         <ccUI:ToolbarButton ID="ViewStudyDetailsButton" runat="server" SkinID="ViewDetailsButton" />
                                         <ccUI:ToolbarButton ID="MoveStudyButton" runat="server" SkinID="MoveButton" />
-                                        <ccUI:ToolbarButton ID="DeleteStudyButton" runat="server" SkinID="DeleteButton" />
+                                        <ccUI:ToolbarButton ID="DeleteStudyButton" runat="server" SkinID="DeleteButton" OnClick="DeleteStudyButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

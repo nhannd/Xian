@@ -57,6 +57,7 @@ Global.css - Defines the global styles for the entire web application relating
     font-size: 20px;
     padding-left: 8px;
     padding-bottom: 2px;
+    background: url(../images/MainContent/MainContentTitleBackground.png) repeat-x;
 }
 
 .MainContentSubTitle
@@ -180,6 +181,14 @@ Global.css - Defines the global styles for the entire web application relating
     text-align: right;
 }
 
+.MainContentTitleButtonPanel
+{
+    text-align: right;
+    background: url(../images/MainContent/MainContentTitleBackground.png) repeat-x;
+    padding-right: 5px; 
+    vertical-align: bottom;
+}
+
 
 /*================================
  * About 
@@ -191,157 +200,4 @@ Global.css - Defines the global styles for the entire web application relating
     padding-right: 10px;
     font-family: Sans-Serif;
     font-size: 14px;
-}
-
-/*************************************************************************************************
-	Popup Dialog
-*************************************************************************************************/
-
-.CSSPopupWindow
-{
-	background-color: white;
-	
-}
-
-
-.CSSPopupWindowBody 
-{ 
-	
-}
-
-.CSSDialogTabPanelContent
-{
-	
-}
-        
-.CSSPopupWindowTitleBar
-{
-	background-color: #3D98D1;
-	
-	
-}
-
-/*************************************************************************************************
-	Popup Dialog
-*************************************************************************************************/
-
-
-.CSSPopupWindow
-{
-	border-right: 1px outset;
-	border-top: 1px outset;
-	border-left: 1px outset;
-	border-bottom: 1px outset;
-}
-
-
-.CSSPopupWindowBody 
-{ 
-	
-}
-
-.CSSDialogTabPanelContent
-{
-	
-}
-
-        
-.CSSPopupWindowTitleBar
-{
-	border-bottom: gray 1px ridge;
-	
-}
-
-
-/*************************************************************************************************
-	Popup dialog font
-*************************************************************************************************/
-
-.CSSPopupWindow
-{
-	
-}
-
-
-.CSSPopupWindowBody 
-{ 
-	
-}
-
-.CSSDialogTabPanelContent
-{
-	
-}
-        
-.CSSPopupWindowTitleBar
-{
-	font-weight: bold;
-	font-size: larger;
-	text-transform: capitalize;
-	color:White;
-}
-
-/*************************************************************************************************
-	Popup dialog
-*************************************************************************************************/
-
-
-.CSSPopupWindow
-{
-	
-}
-
-
-.CSSPopupWindowBody 
-{ 
-	vertical-align: top;
-	margin:15px;
-}
-
-.CSSDialogTabPanelContent
-{
-	padding:10px;
-}
-        
-.CSSPopupWindowTitleBar
-{
-	cursor: move;
-	width: 100%;
-	height: 30px;
-	vertical-align: middle;
-	text-align: center;
-	
-}
-
-
-
-/*************************************************************************************************
-	Popup Dialog
-*************************************************************************************************/
-
-
-.CSSPopupWindow
-{
-	border-right: 1px outset;
-	border-top: 1px outset;
-	border-left: 1px outset;
-	border-bottom: 1px outset;
-}
-
-
-.CSSPopupWindowBody 
-{ 
-	
-}
-
-.CSSDialogTabPanelContent
-{
-	
-}
-
-        
-.CSSPopupWindowTitleBar
-{
-	border-bottom: gray 1px ridge;
-	
 }

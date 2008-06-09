@@ -38,24 +38,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
         protected global::System.Web.UI.ScriptManagerProxy DialogScriptManager;
         
         /// <summary>
-        /// Panel3 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel3;
-        
-        /// <summary>
-        /// Panel1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
-        
-        /// <summary>
         /// IconImage control.
         /// </summary>
         /// <remarks>
@@ -89,7 +71,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button YesButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton YesButton;
         
         /// <summary>
         /// NoButton control.
@@ -98,7 +80,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button NoButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton NoButton;
         
         /// <summary>
         /// OKButton control.
@@ -107,7 +89,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button OKButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OKButton;
         
         /// <summary>
         /// CancelButton control.
@@ -116,6 +98,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button CancelButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton CancelButton;
     }
 }

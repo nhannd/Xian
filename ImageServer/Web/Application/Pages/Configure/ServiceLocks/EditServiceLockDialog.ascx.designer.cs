@@ -29,15 +29,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
         protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog;
         
         /// <summary>
-        /// Panel3 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel3;
-        
-        /// <summary>
         /// Table1 control.
         /// </summary>
         /// <remarks>
@@ -119,13 +110,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
         protected global::System.Web.UI.WebControls.DropDownList ScheduleTimeDropDownList;
         
         /// <summary>
+        /// Panel1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel1;
+        
+        /// <summary>
         /// OKButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button OKButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OKButton;
         
         /// <summary>
         /// CancelButton control.
@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button CancelButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton CancelButton;
         
         /// <summary>
         /// MessageBox control.

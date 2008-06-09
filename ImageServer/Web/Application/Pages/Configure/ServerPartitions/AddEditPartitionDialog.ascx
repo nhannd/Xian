@@ -4,20 +4,17 @@
 <ccAsp:ModalDialog ID="ModalDialog" runat="server">
     <ContentTemplate>
         <asp:Panel ID="Panel3" runat="server" DefaultButton="OKButton">
-            <aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
-                CssClass="CSSDialogTabControl">
-                <aspAjax:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel"
-                    CssClass="CSSTabPanel">
+            <aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl">
+                <aspAjax:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel" CssClass="DialogTabControl">
                     <ContentTemplate>
-                        <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
                             <table id="GeneralTabTable" runat="server">
                                 <tr id="Tr1" runat="server" align="left">
                                     <td id="Td1" runat="server">
                                         <table width="100%">
                                             <tr align="left">
-                                                <td width="100%">
-                                                    <asp:Label ID="Label4" runat="server" Text="AE Title" CssClass="CSSTextLabel" /><br />
-                                                    <asp:TextBox ID="AETitleTextBox" runat="server" MaxLength="16" ValidationGroup="vg1"
+                                                <td>
+                                                    <asp:Label ID="Label4" runat="server" Text="AE Title" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:TextBox ID="AETitleTextBox" runat="server" MaxLength="16" ValidationGroup="vg1" CssClass="DialogTextBox"
                                                         ToolTip="The DICOM Application Entity Title for the partition."></asp:TextBox>
                                                 </td>
                                                 <td>
@@ -41,9 +38,9 @@
                                     <td id="Td2" runat="server" align="left">
                                         <table width="100%">
                                             <tr align="left">
-                                                <td width="100%">
-                                                    <asp:Label ID="Label1" runat="server" Text="Description" CssClass="CSSTextLabel" /><br />
-                                                    <asp:TextBox ID="DescriptionTextBox" runat="server" ToolTip="A textual description of the partition."></asp:TextBox>
+                                                <td>
+                                                    <asp:Label ID="Label1" runat="server" Text="Description" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:TextBox ID="DescriptionTextBox" runat="server" ToolTip="A textual description of the partition." CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
                                                 <td>
                                                 </td>
@@ -57,9 +54,9 @@
                                     <td id="Td3" runat="server">
                                         <table width="100%">
                                             <tr align="left">
-                                                <td width="100%">
-                                                    <asp:Label ID="Label2" runat="server" Text="Port" CssClass="CSSTextLabel" /><br />
-                                                    <asp:TextBox ID="PortTextBox" runat="server"></asp:TextBox>
+                                                <td>
+                                                    <asp:Label ID="Label2" runat="server" Text="Port" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:TextBox ID="PortTextBox" runat="server" CssClass="DialogTextBox"></asp:TextBox>
                                                     <ccValidator:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
                                                         ErrorMessage="Partition Port must be between 1 and 65535" Display="None" InvalidInputIndicatorID="PortHelp"></ccValidator:RangeValidator>
@@ -74,9 +71,9 @@
                                         <table width="100%">
                                             <tr align="left">
                                                 <td>
-                                                    <asp:Label ID="Label3" runat="server" Text="Folder Name" CssClass="CSSTextLabel" /><br />
+                                                    <asp:Label ID="Label3" runat="server" Text="Folder Name" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="PartitionFolderTextBox" runat="server" CausesValidation="true" ValidationGroup="vg1"
-                                                        ToolTip="A unique folder name to store images within for the partition."></asp:TextBox>
+                                                        ToolTip="A unique folder name to store images within for the partition." CssClass="DialogTextBox"></asp:TextBox>
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="Conditionalrequiredfieldvalidator1"
                                                         runat="server" ControlToValidate="PartitionFolderTextBox" Display="None" EnableClientScript="true"
                                                         ErrorMessage="Folder Name is required" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
@@ -93,8 +90,8 @@
                                     <td id="Td5" runat="server">
                                         <table width="100%">
                                             <tr>
-                                                <td width="100%">
-                                                    <asp:CheckBox ID="EnabledCheckBox" runat="server" Checked="True" Text="Enabled" ToolTip="Enable or Disable DICOM connections to the partition." />
+                                                <td>
+                                                    <asp:CheckBox ID="EnabledCheckBox" runat="server" Checked="True" Text="Enabled" ToolTip="Enable or Disable DICOM connections to the partition." CssClass="DialogCheckBox" />
                                                 </td>
                                                 <td>
                                                 </td>
@@ -104,9 +101,9 @@
                                     <td id="Td6" runat="server" valign="top">
                                         <table width="100%">
                                             <tr>
-                                                <td width="100%">
-                                                    <asp:Label ID="DuplicateSopLabel" runat="server" Text="Duplicate Object Policy" CssClass="CSSTextLabel" /><br />
-                                                    <asp:DropDownList ID="DuplicateSopDropDownList" runat="server" ToolTip="A policy for dealing with duplication DICOM objects received by the partition." />
+                                                <td>
+                                                    <asp:Label ID="DuplicateSopLabel" runat="server" Text="Duplicate Object Policy" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:DropDownList ID="DuplicateSopDropDownList" runat="server" CssClass="DialogDropDownList" ToolTip="A policy for dealing with duplication DICOM objects received by the partition." />
                                                 </td>
                                                 <td>
                                                 </td>
@@ -123,14 +120,14 @@
                 </aspAjax:TabPanel>
                 <aspAjax:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2">
                     <ContentTemplate>
-                        <asp:Panel ID="Panel2" runat="server" CssClass="CSSDialogTabPanelContent" >
+                        <asp:Panel ID="Panel2" runat="server" CssClass="DialogTabPanelContent" >
                             <table width="100%">
                                 <tr>
                                     <td align="left">
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <asp:CheckBox ID="AcceptAnyDeviceCheckBox" runat="server" Text="Accept Any Device"
+                                                    <asp:CheckBox ID="AcceptAnyDeviceCheckBox" runat="server" Text="Accept Any Device" CssClass="DialogCheckBox"
                                                         ToolTip="Accept DICOM Associations from any device to this partition." />
                                                 </td>
                                                 <td>
@@ -144,7 +141,7 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <asp:CheckBox ID="AutoInsertDeviceCheckBox" runat="server" Text="Auto Insert Devices"
+                                                    <asp:CheckBox ID="AutoInsertDeviceCheckBox" runat="server" Text="Auto Insert Devices" CssClass="DialogCheckBox"
                                                         ToolTip="Automatically add devices when they connect to this partition." />
                                                 </td>
                                                 <td>
@@ -158,8 +155,7 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <asp:Label ID="Label5" runat="server" Text="Default Remote Port" CssClass="CSSTextLabel" /><br />
-                                                    <asp:TextBox ID="DefaultRemotePortTextBox" runat="server"></asp:TextBox>
+                                                    <asp:Label ID="Label5" runat="server" Text="Default Remote Port" CssClass="DialogTextBoxLabel" /><asp:TextBox ID="DefaultRemotePortTextBox" CssClass="DialogTextBox" runat="server"></asp:TextBox>
                                                     <td>
                                                         <ccAsp:InvalidInputIndicator ID="DefaultPortHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
                                                         <ccValidator:RangeValidator ID="DefaultRemotePortRangeValidator" runat="server"
@@ -180,20 +176,16 @@
                 </aspAjax:TabPanel>
             </aspAjax:TabContainer>
         </asp:Panel>
-        <center>
-            <br />
-            <table width="80%">
-                <tr align="center">
+            <table cellpadding="0" cellspacing="0" width="100%">
+                <tr align="right">
                     <td>
-                        <asp:Button ID="OKButton" runat="server" Text="Add" Width="77px" OnClick="OKButton_Click"
-                            ValidationGroup="vg1" />
-                    </td>
-                    <td>
-                        <asp:Button ID="CancelButton" runat="server" Text="Cancel" OnClick="CancelButton_Click" />
+                        <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
+                            <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" OnClick="OKButton_Click" ValidationGroup="vg1" />
+                            <ccUI:ToolbarButton ID="Cancel" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
+                        </asp:Panel>
+
                     </td>
                 </tr>
             </table>
-            <br />
-        </center>
     </ContentTemplate>
 </ccAsp:ModalDialog>

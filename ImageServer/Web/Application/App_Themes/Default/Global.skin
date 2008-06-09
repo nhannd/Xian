@@ -35,3 +35,8 @@
 <ccUI:ToolbarButton runat="server" SkinID="AddButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/AddEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/AddDisabled.png" />
 <ccUI:ToolbarButton runat="server" SkinID="DoneButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/DoneEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/DoneDisabled.png" />
 <ccUI:ToolbarButton runat="server" SkinID="SearchButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/SearchEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/SearchDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="OKButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/OKEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/OKDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="CancelButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/CancelEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/CancelDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="YesButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/YesEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/YesDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="NoButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/NoEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/NoDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="ApplyButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/ApplyEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/ApplyDisabled.png" />

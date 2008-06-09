@@ -3,76 +3,72 @@
 
 <ccAsp:ModalDialog ID="ModalDialog" runat="server" Title="Edit Service Schedule" Width="450px">
     <ContentTemplate>
-        <asp:Panel ID="Panel3" runat="server" style="border-width:1px; border-color:#b0c4de; border-style:solid; padding:10px;">
+        <asp:Panel runat="server" CssClass="DialogPanelContent">
             <asp:Table ID="Table1" runat="server" CellSpacing="3" CellPadding="3">
                 <asp:TableRow>
-                    <asp:TableCell Width="30%">
+                    <asp:TableCell Width="30%" CssClass="DialogTextBoxLabel">
                         Description
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Label ID="Description" runat="server" Text="Label"></asp:Label>           
+                        <asp:Label ID="Description" runat="server" Text="Label" CssClass="DialogLabel"></asp:Label>           
                     </asp:TableCell>
                 </asp:TableRow>
                 
                 <asp:TableRow>
-                    <asp:TableCell>
+                    <asp:TableCell CssClass="DialogTextBoxLabel">
                         Type
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Label ID="Type" runat="server" Text="Label"></asp:Label>           
+                        <asp:Label ID="Type" runat="server" Text="Label" CssClass="DialogLabel"></asp:Label>           
                     </asp:TableCell>
                 </asp:TableRow>
                 
                 
                 <asp:TableRow>
-                    <asp:TableCell>
+                    <asp:TableCell CssClass="DialogTextBoxLabel">
                         File System
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Label ID="FileSystem" runat="server" Text="Label"></asp:Label>           
+                        <asp:Label ID="FileSystem" runat="server" Text="Label" CssClass="DialogLabel"></asp:Label>           
                     </asp:TableCell>
                 </asp:TableRow>
                 
                 <asp:TableRow>
-                    <asp:TableCell>
+                    <asp:TableCell CssClass="DialogTextBoxLabel">
                         Enabled
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:CheckBox ID="Enabled" runat="server" />
+                        <asp:CheckBox ID="Enabled" runat="server" CssClass="DialogCheckbox" />
                     </asp:TableCell>
                 </asp:TableRow>
                 
                 <asp:TableRow>
-                    <asp:TableCell>
+                    <asp:TableCell CssClass="DialogTextBoxLabel">
                         Schedule
                     </asp:TableCell>
-                    <asp:TableCell>
-                        <asp:TextBox ID="ScheduleDate" runat="server" Width="80px" ReadOnly="true"></asp:TextBox>
+                    <asp:TableCell Wrap="false">
+                        <asp:TextBox ID="ScheduleDate" runat="server" Width="80px" ReadOnly="true" CssClass="DialogTextBox"></asp:TextBox>
                         <asp:Button ID="DatePickerButton" runat="server" Text="..."/>
                         <aspAjax:CalendarExtender ID="CalendarExtender" runat="server" 
                                     TargetControlID="ScheduleDate" PopupButtonID="DatePickerButton" CssClass="Calendar" >
                         </aspAjax:CalendarExtender>&nbsp;
-                        <asp:DropDownList ID="ScheduleTimeDropDownList" runat="server"></asp:DropDownList>
+                        <asp:DropDownList ID="ScheduleTimeDropDownList" runat="server" CssClass="DialogDropDownList"></asp:DropDownList>
                     </asp:TableCell>
                 </asp:TableRow>
+                
+                <asp:TableRow><asp:TableCell><img src="../../../images/blank.gif" height="3" /></asp:TableCell></asp:TableRow>
             </asp:Table>
-        </asp:Panel>
-        
-        <center>
-                <br />
-                <table width="80%">
+</asp:Panel>
+                <table width="100%" cellpadding="0" cellspacing="0">
                     <tr>
-                        <td align="center">
-                            <asp:Button ID="OKButton" runat="server" Text="Apply" Width="77px" OnClick="ApplyButton_Click"
-                                ValidationGroup="vg1" />
-                        </td>
-                        <td align="center">
-                            <asp:Button ID="CancelButton" runat="server" Text="Cancel" OnClick="CancelButton_Click" />
+                        <td align="right">
+                            <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
+                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="ApplyButton" OnClick="OKButton_Click" ValidationGroup="vg1" />
+                                <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
+                            </asp:Panel>
                         </td>
                     </tr>
                 </table>
-                <br />
-            </center>
     </ContentTemplate>
 </ccAsp:ModalDialog>
 

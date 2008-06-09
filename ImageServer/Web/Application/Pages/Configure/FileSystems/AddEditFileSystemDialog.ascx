@@ -8,9 +8,8 @@
 </asp:ScriptManagerProxy>
 <ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="450px">
     <ContentTemplate>
-        <asp:Panel ID="Panel2" runat="server">
-            <aspAjax:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
-                <aspAjax:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
+            <aspAjax:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl">
+                <aspAjax:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="DialogTabControl">
                     <ContentTemplate>
                         <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
                             <table id="TABLE1" runat="server" cellspacing="4" width="100%">
@@ -19,9 +18,9 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <asp:Label ID="Label1" runat="server" Text="Description" CssClass="CSSTextLabel" /><br />
+                                                    <asp:Label ID="Label1" runat="server" Text="Description" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="DescriptionTextBox" runat="server" Width="220px" BorderColor="LightSteelBlue"
-                                                        BorderWidth="1px" MaxLength="128" ValidationGroup="vg1"></asp:TextBox>
+                                                        BorderWidth="1px" MaxLength="128" ValidationGroup="vg1" CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
                                                 <td>
                                                     <ccAsp:InvalidInputIndicator ID="InvalidDescriptionHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png"
@@ -40,7 +39,7 @@
                                             <tr>
                                                 <td>
                                                     <asp:CheckBox ID="ReadCheckBox" runat="server"  Text="Read"
-                                                        Checked="True" TextAlign="Right" />
+                                                        Checked="True" TextAlign="Right" CssClass="DialogCheckBox" />
                                                 </td>
                                             </tr>
                                         </table>
@@ -51,9 +50,9 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <asp:Label ID="Label2" runat="server" Text="Path" CssClass="CSSTextLabel" /><br />
+                                                    <asp:Label ID="Label2" runat="server" Text="Path" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="PathTextBox" runat="server" Width="220px" BorderColor="LightSteelBlue"
-                                                        BorderWidth="1px" ValidationGroup="vg1" MaxLength="256"></asp:TextBox>
+                                                        BorderWidth="1px" ValidationGroup="vg1" MaxLength="256" CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
                                                 <td>
                                                     <ccAsp:InvalidInputIndicator ID="InvalidPathHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
@@ -70,7 +69,7 @@
                                         <table width="100px">
                                             <tr>
                                                 <td>
-                                                    <asp:CheckBox ID="WriteCheckBox" runat="server" Text="Write" Checked="True" />
+                                                    <asp:CheckBox ID="WriteCheckBox" runat="server" Text="Write" Checked="True" CssClass="DialogCheckBox" />
                                                 </td>
                                             </tr>
                                         </table>
@@ -81,8 +80,8 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <asp:Label ID="Label3" runat="server" Text="Filesystem" CssClass="CSSTextLabel" /><br />
-                                                    <asp:DropDownList ID="TiersDropDownList" runat="server" Width="220px">
+                                                    <asp:Label ID="Label3" runat="server" Text="Filesystem" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:DropDownList ID="TiersDropDownList" runat="server" Width="220px" CssClass="DialogDropDownList">
                                                     </asp:DropDownList>
                                                 </td>
                                             </tr>
@@ -100,7 +99,6 @@
                 </aspAjax:TabPanel>
                 <aspAjax:TabPanel ID="TabPanel2" runat="server" HeaderText="Watermarks Tab" OnClientClick="LoadFilesystemInfo">
                     <ContentTemplate>
-                        <asp:Panel ID="Panel3" runat="server" CssClass="CSSDialogTabPanelContent" Width="100%">
                             <table id="TABLE2" runat="server" cellspacing="4">
                                 <!-- total size -->
                                 <tr id="Tr4" align="left" valign="bottom">
@@ -109,10 +107,10 @@
                                             <table>
                                                 <tr>
                                                     <td width="120px" align="left" valign="bottom">
-                                                        <asp:Label ID="Label7" runat="server" Text="Total Size" CssClass="CSSTextLabel" />
+                                                        <asp:Label ID="Label7" runat="server" Text="Total Size" CssClass="DialogTextBoxLabel" />
                                                     </td>
                                                     <td>
-                                                        <asp:Label ID="TotalSizeIndicator" runat="server" Text="??? KB" />
+                                                        <asp:Label ID="TotalSizeIndicator" runat="server" Text="??? KB" CssClass="DialogTextBoxLabel" />
                                                     </td>
                                                 </tr>
                                             </table>
@@ -126,10 +124,10 @@
                                             <table>
                                                 <tr>
                                                     <td width="120px" align="left" valign="bottom">
-                                                        <asp:Label ID="Label8" runat="server" Text="Used" CssClass="CSSTextLabel" />
+                                                        <asp:Label ID="Label8" runat="server" Text="Used" CssClass="DialogTextBoxLabel" />
                                                     </td>
                                                     <td>
-                                                        <asp:Label ID="UsedSizeIndicator" runat="server" Text="??? KB" />
+                                                        <asp:Label ID="UsedSizeIndicator" runat="server" Text="??? KB" CssClass="DialogTextBoxLabel" />
                                                     </td>
                                                 </tr>
                                             </table>
@@ -143,13 +141,13 @@
                                             <table>
                                                 <tr>
                                                     <td width="120px" align="left" valign="bottom">
-                                                        <asp:Label ID="Label4" runat="server" Text="High Watermark" CssClass="CSSTextLabel" /><br />
-                                                        <asp:TextBox ID="HighWatermarkTextBox" runat="server" BorderColor="LightSteelBlue"
-                                                            BorderWidth="1px" ValidationGroup="vg1" MaxLength="8" Width="100px" />%
+                                                        <asp:Label ID="Label4" runat="server" Text="High Watermark" CssClass="DialogTextBoxLabel" /><br />
+                                                        <asp:TextBox ID="HighWatermarkTextBox" runat="server" CssClass="DialogTextBox"
+                                                            ValidationGroup="vg1" MaxLength="8" />
                                                     </td>
                                                     <td align="left" valign="bottom">
-                                                        <asp:TextBox runat="server" ID="HighWatermarkSize" BorderColor="LightSteelBlue" BorderWidth="1px"
-                                                            Text="???.??? GB" Enabled="false" Width="80px" Style="text-align: right" />
+                                                        <asp:TextBox runat="server" ID="HighWatermarkSize" CssClass="DialogTextBox"
+                                                            Text="???.??? GB" Enabled="false"  Style="text-align: right" />%
                                                     </td>
                                                     <td align="left" valign="bottom">
                                                         <ccAsp:InvalidInputIndicator ID="HighWatermarkHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
@@ -172,13 +170,12 @@
                                             <table>
                                                 <tr>
                                                     <td width="120px" align="left" valign="bottom">
-                                                        <asp:Label ID="Label5" runat="server" Text="Low Watermark" CssClass="CSSTextLabel" /><br />
-                                                        <asp:TextBox ID="LowWatermarkTextBox" runat="server" BorderColor="LightSteelBlue"
-                                                            BorderWidth="1px" ValidationGroup="vg1" MaxLength="8" Width="100px" />%
+                                                        <asp:Label ID="Label5" runat="server" Text="Low Watermark" CssClass="DialogTextBoxLabel" /><br />
+                                                        <asp:TextBox ID="LowWatermarkTextBox" runat="server" CssClass="DialogTextBox" ValidationGroup="vg1" MaxLength="8" />
                                                     </td>
                                                     <td align="left" valign="bottom">
-                                                        <asp:TextBox runat="server" ID="LowWaterMarkSize" BorderColor="LightSteelBlue" BorderWidth="1px"
-                                                            Text="???.??? GB" Enabled="false" Width="80px" Style="text-align: right" />
+                                                        <asp:TextBox runat="server" ID="LowWaterMarkSize" CssClass="DialogTextBox"
+                                                            Text="???.??? GB" Enabled="false" Style="text-align: right" />%
                                                     </td>
                                                     <td align="left" valign="bottom">
                                                         <ccAsp:InvalidInputIndicator ID="LowWatermarkHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
@@ -195,29 +192,23 @@
                                     </td>
                                 </tr>
                             </table>
-                        </asp:Panel>
                     </ContentTemplate>
                     <HeaderTemplate>
                         Watermarks
                     </HeaderTemplate>
                 </aspAjax:TabPanel>
             </aspAjax:TabContainer>
-        </asp:Panel>
-        <center>
-            <br />
-            <table cellpadding="0" cellspacing="0" width="60%">
-                <tr align="center">
+
+            <table cellspacing="0" cellpadding="0" width="100%">
+                <tr align="right">
                     <td>
-                        <asp:Button ID="OKButton" runat="server" Text="Add" Width="77px" OnClick="OKButton_Click"
-                            ValidationGroup="vg1" />
-                    </td>
-                    <td>
-                        <asp:Button ID="CancelButton" runat="server" Text="Cancel" OnClick="CancelButton_Click" />
+                            <asp:Panel ID="Panel2" runat="server" CssClass="DefaultModalDialogButtonPanel">
+                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" OnClick="OKButton_Click" ValidationGroup="vg1" />
+                                <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
+                            </asp:Panel>
                     </td>
                 </tr>
             </table>
-            <br />
-        </center>
         <asp:HiddenField ID="TotalSize" runat="server" />
         <asp:HiddenField ID="AvailableSize" runat="server" />
     </ContentTemplate>

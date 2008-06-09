@@ -233,16 +233,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
                     );
             }
 
-            // Update the title and OK button text
+            // Update the title and OK button text. Changing the image is the only way to do this, since the 
+            // SkinID cannot be set dynamically after Page_PreInit.
             if (EditMode)
             {
-                ModalDialog1.Title  = "Edit Device";
-                OKButton.Text = "Update";
+                ModalDialog1.Title  = App_GlobalResources.SR.DialogEditDeviceTitle;
+                OKButton.EnabledImageURL = "~/App_Themes/" + this.Page.Theme + "/images/Buttons/UpdateEnabled.png";
             }
             else
             {
-                ModalDialog1.Title = "Add Device";
-                OKButton.Text = "Add";
+                ModalDialog1.Title = App_GlobalResources.SR.DialogAddDeviceTitle;
+                OKButton.EnabledImageURL = "~/App_Themes/" + this.Page.Theme + "/images/Buttons/AddEnabled.png";   
             }
 
             // Update the rest of the fields
@@ -253,7 +254,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
                 ActiveCheckBox.Checked = true;
                 DHCPCheckBox.Checked = false;
                 DescriptionTextBox.Text = "";
-                PortTextBox.Text = "104";
+                PortTextBox.Text = App_GlobalResources.SR.DeviceDefaultPort;
                 AllowStorageCheckBox.Checked = true;
                 AllowQueryCheckBox.Checked = true;
                 AllowRetrieveCheckBox.Checked = true;

@@ -79,6 +79,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please Confirm.
+        /// </summary>
+        internal static string ConfirmDialogDefault {
+            get {
+                return ResourceManager.GetString("ConfirmDialogDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string ConfirmDialogError {
+            get {
+                return ResourceManager.GetString("ConfirmDialogError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Default.
         /// </summary>
         internal static string Default {
@@ -88,11 +106,92 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 104.
+        /// </summary>
+        internal static string DeviceDefaultPort {
+            get {
+                return ResourceManager.GetString("DeviceDefaultPort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DHCP.
         /// </summary>
         internal static string DHCP {
             get {
                 return ResourceManager.GetString("DHCP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Device.
+        /// </summary>
+        internal static string DialogAddDeviceTitle {
+            get {
+                return ResourceManager.GetString("DialogAddDeviceTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add File System.
+        /// </summary>
+        internal static string DialogAddFileSystemTitle {
+            get {
+                return ResourceManager.GetString("DialogAddFileSystemTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Partition.
+        /// </summary>
+        internal static string DialogAddPartitionTitle {
+            get {
+                return ResourceManager.GetString("DialogAddPartitionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Server Rule.
+        /// </summary>
+        internal static string DialogAddServerRuleTitle {
+            get {
+                return ResourceManager.GetString("DialogAddServerRuleTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Device.
+        /// </summary>
+        internal static string DialogEditDeviceTitle {
+            get {
+                return ResourceManager.GetString("DialogEditDeviceTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit File System.
+        /// </summary>
+        internal static string DialogEditFileSystemTitle {
+            get {
+                return ResourceManager.GetString("DialogEditFileSystemTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Partition.
+        /// </summary>
+        internal static string DialogEditPartitionTitle {
+            get {
+                return ResourceManager.GetString("DialogEditPartitionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Server Rule.
+        /// </summary>
+        internal static string DialogEditServerRuleTitle {
+            get {
+                return ResourceManager.GetString("DialogEditServerRuleTitle", resourceCulture);
             }
         }
         

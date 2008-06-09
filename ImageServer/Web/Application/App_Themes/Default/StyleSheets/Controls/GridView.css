@@ -42,7 +42,7 @@
 .GlobalGridViewSelectedRow td
 {
     Height: 18px;
-    background: #dddddd url(../../images/Controls/GridView/GridViewSelectedBackground.png) repeat-x;
+    background: #eeeeee url(../../images/Controls/GridView/GridViewSelectedBackground.png) repeat-x;
     border-bottom: solid 2px #eeeeee;
     color: Black;
     padding-left: 3px;

@@ -8,21 +8,19 @@
 </asp:ScriptManagerProxy>
 <ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="700px">
 	<ContentTemplate>
-		<asp:Panel runat="server">
 			<aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
-				CssClass="CSSDialogTabControl">
+				CssClass="DialogTabControl">
 				<aspAjax:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel"
-					TabIndex="0" CssClass="CSSTabPanel">
+					TabIndex="0" CssClass="DialogTabControl">
 					<ContentTemplate>
-						<asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
 							<table id="Table1" runat="server" width="100%">
 								<tr>
 									<td colspan="5">
 										<table width="100%">
 											<tr>
 												<td colspan="4">
-													<asp:Label ID="RuleNameLabel" runat="server" Text="Name" CssClass="CSSTextLabel"></asp:Label><br />
-													<asp:TextBox ID="RuleNameTextBox" runat="server" Width="100%" ValidationGroup="vg1"></asp:TextBox>
+													<asp:Label ID="RuleNameLabel" runat="server" Text="Name" CssClass="DialogTextBoxLabel"></asp:Label><br />
+													<asp:TextBox ID="RuleNameTextBox" runat="server" Width="100%" ValidationGroup="vg1" CssClass="DialogTextBox"></asp:TextBox>
 												</td>
 												<td>
 													<ccAsp:InvalidInputIndicator ID="RuleNameHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png"/>
@@ -39,8 +37,8 @@
 										<table width="100%">
 											<tr>
 												<td>
-													<asp:Label ID="RuleTypeLabel" runat="server" Text="Type" CssClass="CSSTextLabel"/><br />
-													<asp:DropDownList ID="RuleTypeDropDownList" runat="server" Width="100%"/>
+													<asp:Label ID="RuleTypeLabel" runat="server" Text="Type" CssClass="DialogTextBoxLabel"/><br />
+													<asp:DropDownList ID="RuleTypeDropDownList" runat="server" Width="100%" CssClass="DialogDropDownList"/>
 												</td>
 											</tr>
 										</table>
@@ -49,8 +47,8 @@
 										<table width="100%">
 											<tr>
 												<td>
-													<asp:Label ID="RuleApplyTimeLabel" runat="server" Text="Apply Time"/><br />
-													<asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" Width="50%"/>
+													<asp:Label ID="RuleApplyTimeLabel" runat="server" Text="Apply Time" CssClass="DialogTextBoxLabel"/><br />
+													<asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" Width="50%" CssClass="DialogDropDownList"/>
 												</td>
 												<td></td>
 											</tr>
@@ -60,20 +58,19 @@
 								</tr>
 								<tr>
 									<td colspan="2">
-										<asp:CheckBox ID="EnabledCheckBox" runat="server" Text="Enabled" Checked="true" ToolTip="Enable/Disable the rule" />
+										<asp:CheckBox ID="EnabledCheckBox" runat="server" Text="Enabled" Checked="true" ToolTip="Enable/Disable the rule" CssClass="DialogCheckBox"/>
 									</td>
 									<td>
 										<asp:CheckBox ID="DefaultCheckBox" runat="server" Text="Default Rule" Checked="false"
-											ToolTip="Default rule applied if no other rules of the type apply to a DICOM message/study." />
+											ToolTip="Default rule applied if no other rules of the type apply to a DICOM message/study." CssClass="DialogCheckBox" />
 									</td>
 									<td>
 										<asp:CheckBox ID="ExemptRuleCheckBox" runat="server" Text="Exempt Rule" Checked="false"
-											ToolTip="Rule that specifies DICOM messages or studies that are exempt from the rule." />
+											ToolTip="Rule that specifies DICOM messages or studies that are exempt from the rule." CssClass="DialogCheckBox" />
 									</td>
 									<td></td>
 								</tr>
 							</table>
-						</asp:Panel>
 					</ContentTemplate>
 					<HeaderTemplate>
 						General
@@ -81,18 +78,17 @@
 				</aspAjax:TabPanel>
 				<aspAjax:TabPanel ID="RuleXmlTabPanel" runat="server" HeaderText="TabPanel2">
 					<ContentTemplate>
-						<asp:Panel ID="Panel2" runat="server" CssClass="CSSDialogTabPanelContent">
 							<table width="100%" cellpadding="5" cellspacing="5">
 								<tr>
 									<td>
-										<asp:Label ID="SelectSampleRuleLabel" runat="server" Text="Select Sample Rule"></asp:Label><br />
-										<asp:DropDownList ID="SampleRuleDropDownList" runat="server"/>
+										<asp:Label ID="SelectSampleRuleLabel" runat="server" Text="Select Sample Rule" CssClass="DialogTextBoxLabel"></asp:Label><br />
+										<asp:DropDownList ID="SampleRuleDropDownList" runat="server" CssClass="DialogDropDownList"/>
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<asp:TextBox ID="RuleXmlTextBox" runat="server" EnableViewState="true" Width="100%"
-											Rows="16" TextMode="MultiLine"></asp:TextBox>
+											Rows="16" TextMode="MultiLine" CssClass="DialogTextBox"></asp:TextBox>
 									</td>
 									<td>
 										<ccAsp:InvalidInputIndicator ID="InvalidRuleHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
@@ -104,28 +100,21 @@
 									</td>
 								</tr>
 							</table>
-						</asp:Panel>
 					</ContentTemplate>
 					<HeaderTemplate>
 						Rule XML
 					</HeaderTemplate>
 				</aspAjax:TabPanel>
 			</aspAjax:TabContainer>
-			<center>
-				<br />
-				<table width="60%">
-					<tr>
-						<td align="center">
-							<asp:Button ID="OKButton" runat="server" OnClick="OKButton_Click" ValidationGroup="vg1"
-								Text="Add" Width="77px" />
-						</td>
-						<td align="center">
-							<asp:Button ID="CancelButton" runat="server" Text="Cancel" OnClick="CancelButton_Click" />
-						</td>
-					</tr>
-				</table>
-				<br />
-			</center>
-		</asp:Panel>
+            <table width="100%" cellspacing="0" cellpadding="0">
+                <tr align="right">
+                    <td>
+                            <asp:Panel ID="Panel3" runat="server" CssClass="DefaultModalDialogButtonPanel">
+                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" OnClick="OKButton_Click" ValidationGroup="vg1" />
+                                <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
+                            </asp:Panel>
+                    </td>
+                </tr>
+            </table>
 	</ContentTemplate>
 </ccAsp:ModalDialog>

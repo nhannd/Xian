@@ -328,9 +328,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 
 			if (EditMode)
 			{
-				ModalDialog.Title = "Edit Server Rule";
-				OKButton.Text = "Update";
-
+                ModalDialog.Title = App_GlobalResources.SR.DialogEditServerRuleTitle;
+                OKButton.EnabledImageURL = "~/App_Themes/" + this.Page.Theme + "/images/Buttons/UpdateEnabled.png";
+                
 				DefaultCheckBox.Checked = _rule.DefaultRule;
 				EnabledCheckBox.Checked = _rule.Enabled;
 				ExemptRuleCheckBox.Checked = _rule.ExemptRule;
@@ -400,8 +400,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			}
 			else
 			{
-				ModalDialog.Title = "Add Server Rule";
-				OKButton.Text = "Add";
+                ModalDialog.Title = App_GlobalResources.SR.DialogAddServerRuleTitle;
+                OKButton.EnabledImageURL = "~/App_Themes/" + this.Page.Theme + "/images/Buttons/AddEnabled.png";
 
 				DefaultCheckBox.Checked = false;
 				EnabledCheckBox.Checked = true;

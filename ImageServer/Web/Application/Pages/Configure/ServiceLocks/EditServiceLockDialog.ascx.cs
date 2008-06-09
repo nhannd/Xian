@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void ApplyButton_Click(object sender, EventArgs e)
+        protected void OKButton_Click(object sender, EventArgs e)
         {
             if (Page.IsValid)
             {

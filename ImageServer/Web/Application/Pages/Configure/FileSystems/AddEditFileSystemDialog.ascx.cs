@@ -197,17 +197,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
         private void UpdateUI()
         {
+            // Update the title and OK button text. Changing the image is the only way to do this, since the 
+            // SkinID cannot be set dynamically after Page_PreInit.
             if (EditMode)
             {
-                // set the dialog box title and OK button text
-                ModalDialog.Title = "Edit Filesystem";
-                OKButton.Text = "Update";
+                ModalDialog.Title = App_GlobalResources.SR.DialogEditFileSystemTitle;
+                OKButton.EnabledImageURL = "~/App_Themes/" + this.Page.Theme + "/images/Buttons/UpdateEnabled.png";
             }
             else
             {
-                // set the dialog box title and OK button text
-                ModalDialog.Title = "Add Filesystem";
-                OKButton.Text = "Add";
+                ModalDialog.Title = App_GlobalResources.SR.DialogAddFileSystemTitle;
+                OKButton.EnabledImageURL = "~/App_Themes/" + this.Page.Theme + "/images/Buttons/AddEnabled.png";
             }
 
             // update the dropdown list

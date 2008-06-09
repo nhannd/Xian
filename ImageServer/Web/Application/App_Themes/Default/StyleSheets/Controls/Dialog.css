@@ -1,61 +1,126 @@
 .DefaultModalDialogBackground
 {
-	background-color: #345;
+	background-color: #333333;
 	filter:alpha(opacity=30); opacity:0.3;
 }
 
 .DefaultModalDialogTitleBarLeft
 {
-	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG-left.gif);
+	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG.png);
 	background-repeat:no-repeat;
-	width:4px;
+	border-left: #205F87 solid 1px;
+	border-top: #205F87 solid 1px;
+	width: 1px;
 }
 
 .DefaultModalDialogTitleBarTitle
 {
 	cursor: move;
-	vertical-align: middle;
 	text-align: center;
-	color: #ffffff;
+	padding-top: 2px;
+	color: #205F87;
 	font-family: Sans-Serif;
 	font-weight:bold;
-	height:25px;
-	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG.gif);
+	height:20px;
+	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG.png);
 	background-repeat: repeat-x;
+	border-top: #205F87 solid 1px;
+	border-bottom: #618FAD solid 1px;
 }
 
 .DefaultModalDialogTitleBarControlBoxes
 {
-	cursor: move;
-	vertical-align: middle;
-	text-align: right;
-	color: #ffffff;
-	font-size: medium;
-	font-weight:normal;
-	padding:0px;
-	height:25px;
-	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG.gif);
-	background-repeat: repeat-x;
-	width:25px;
+
 }
 
 .DefaultModalDialogTitleBarRight
 {
-	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG-right.gif);
+	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG-right.png);
 	background-repeat:no-repeat;
-	width:5px;
+	border-right: #205F87 solid 1px;
+	border-top: #205F87 solid 1px;
+	width: 1px;
 }
 
 .DefaultModalDialogContent
 {
 	vertical-align: top;
-	padding: 15px;
-	background-color: #ffffff;
-	border-left: #69C 2px solid;
-	border-right: #69C 2px solid;
-	border-bottom: #69C 2px solid;
+	padding: 10px 10px 0px 10px;
+	background-color: #E1EFF8;
+	border-left: #205F87 1px solid;
+	border-right: #205F87 1px solid;
+	border-bottom: #205F87 1px solid;
 	
 }
+
+.DefaultModalDialogButtonPanel
+{
+    padding-top: 6px;
+    padding-bottom: 5px;
+}
+
+.ConfirmationButtonPanel
+{
+    padding-top: 6px;
+}
+
+.ConfirmationContent
+{
+    background:#ffffff; 
+    padding: 10px 10px 10px 10px; 
+    border: solid 1px #618FAD; 
+}
+
+.DialogTextBoxLabel
+{
+    font-family: Sans-Serif;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 3px;
+	margin-right: 3px;
+	color: #16425D;
+}
+
+.DialogTextBox
+{
+    font-family: Sans-Serif;
+    font-size: 11px;
+    font-weight: normal;
+    padding-left: 2px;
+    width: 100px;
+	margin-left: 3px;
+	margin-right: 3px;
+	border: solid 1px #618FAD;
+}
+
+.DialogCheckBox
+{
+    font-family: Sans-Serif;
+    font-size: 14px;
+    font-weight: normal;
+    color: #16425D;
+}
+
+.DialogDropDownList
+{
+	margin-left: 3px;
+	margin-right: 3px;
+	font-family: Sans-Serif;
+	font-size: 11px;
+	border: solid 1px #618FAD;
+}
+
+.DialogLabel
+{
+    font-size: 12px;
+}
+
+.DialogPanelContent
+{
+    background: #ffffff url(../../images/Controls/Dialog/DialogTabContentBottom.png) repeat-x bottom; 
+    border: #618FAD 1px solid;
+}
+
 
 /*************************************************************************************************
 	
@@ -72,88 +137,69 @@
 /* .ajax__tab_active - This is applied to a tab when it is the currently selected tab. Child CSS classes:.ajax__tab_outer. */   
 
 
-/*************************************************************************************************
-	Background styles
-*************************************************************************************************/
+.DialogTabControl .ajax__tab_header					
+{
+    margin-top: 8px;
+}
+.DialogTabControl .ajax__tab_outer
+{
+	background: url(../../images/Controls/Dialog/DialogInactiveTabRight.png) no-repeat right;
+	height: 20px;
+	margin-right: 1px;
+}
+.DialogTabControl .ajax__tab_inner
+{
+	background: url(../../images/Controls/Dialog/DialogInactiveTabLeft.png) no-repeat;
+	padding-left: 3px;
+	height: 20px;
+}
+.DialogTabControl .ajax__tab_tab
+{
+	background: url(../../images/Controls/Dialog/DialogInactiveTabMiddle.png) repeat-x;
+	padding-left: 3px;
+	padding-right: 2px;
+	height: 20px;
+	padding-top: 3px;
+	color: #16425D;
+}
+.DialogTabControl .ajax__tab_hover .ajax__tab_outer
+{
+	background: url(../../images/Controls/Dialog/DialogHoverTabRight.png) no-repeat right;
+}
+.DialogTabControl .ajax__tab_hover .ajax__tab_inner
+{
+	background: url(../../images/Controls/Dialog/DialogHoverTabLeft.png) no-repeat;
+}
+.DialogTabControl .ajax__tab_hover .ajax__tab_tab
+{
+	background: url(../../images/Controls/Dialog/DialogHoverTabMiddle.png) repeat-x;
+    color: #16425D;
+}
+.DialogTabControl .ajax__tab_active .ajax__tab_outer
+{
+	background: url(../../images/Controls/Dialog/DialogActiveTabRight.png) no-repeat right;
 
-.CSSDialogTabControl .ajax__tab_header					
-{
-	background: url(../../images/Controls/Tabs/tab-line.gif) repeat-x bottom; 
-	vertical-align:bottom;
 }
-.CSSDialogTabControl .ajax__tab_outer
+.DialogTabControl .ajax__tab_active .ajax__tab_inner
 {
-	background: url(../../images/Controls/Tabs/tab-right.gif) no-repeat right;
+	background: url(../../images/Controls/Dialog/DialogActiveTabLeft.png) no-repeat;
 }
-.CSSDialogTabControl .ajax__tab_inner
+.DialogTabControl .ajax__tab_active .ajax__tab_tab
 {
-	background: url(../../images/Controls/Tabs/tab-left.gif) no-repeat;
+	background: url(../../images/Controls/Dialog/DialogActiveTabMiddle.png) repeat-x;
+	color: #205F87;
+    font-weight: bold;
+    padding-top: 2px;
 }
-.CSSDialogTabControl .ajax__tab_tab
-{
-	background: url(../../images/Controls/Tabs/tab.gif) repeat-x;
-}
-.CSSDialogTabControl .ajax__tab_hover .ajax__tab_outer
-{
-	background: url(../../images/Controls/Tabs/tab-right.gif) no-repeat right;
-}
-.CSSDialogTabControl .ajax__tab_hover .ajax__tab_inner
-{
-	background: url(../../images/Controls/Tabs/tab-left.gif) no-repeat;
-}
-.CSSDialogTabControl .ajax__tab_hover .ajax__tab_tab
-{
-	background: url(../../images/Controls/Tabs/tab.gif) repeat-x;
-}
-.CSSDialogTabControl .ajax__tab_active .ajax__tab_outer
-{
-	background: url(../../images/Controls/Tabs/tab-active-right.gif) no-repeat right;
-}
-.CSSDialogTabControl .ajax__tab_active .ajax__tab_inner
-{
-	background: url(../../images/Controls/Tabs/tab-active-left.gif) no-repeat;
-}
-.CSSDialogTabControl .ajax__tab_active .ajax__tab_tab
-{
-	background: url(../../images/Controls/Tabs/tab-active.gif) repeat-x;
-	
-}
-
 
 /*************************************************************************************************
 	Other styles
 *************************************************************************************************/
-.CSSDialogTabControl .ajax__tab_header
-{
-	vertical-align:bottom;
-}
-	
-.CSSDialogTabControl .ajax__tab_outer
-{
-	height: 29px;
-}
-.CSSDialogTabControl .ajax__tab_inner
-{
-	padding-left: 3px;
-}
-.CSSDialogTabControl .ajax__tab_tab
-{
-	padding: 6px 6px;
-	margin: 0;
-	font-size:100%;	
-}
 
-.CSSDialogTabControl .ajax__tab_active .ajax__tab_tab
-{
-	font-size:100%;
-}
-
-.CSSDialogTabControl .ajax__tab_body
+.DialogTabControl .ajax__tab_body
 {
 	margin: 0px;
 	padding: 5px;
-	border-right: darkgray 1px solid;
-	border-top: darkgray 1px solid;
-	border-left: darkgray 1px solid;
-	border-bottom: darkgray 1px solid;
+	background: #ffffff url(../../images/Controls/Dialog/DialogTabContentBottom.png) repeat-x bottom;
+	border: #618FAD 1px solid;
 }

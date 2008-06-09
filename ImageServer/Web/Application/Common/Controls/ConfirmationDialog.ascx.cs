@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                 case MessageTypeEnum.ERROR:
                     OKButton.Visible = true;
                     if (String.IsNullOrEmpty(Title))
-                        Title = "Error";
+                        Title = App_GlobalResources.SR.ConfirmDialogError;
                     break;
 
                 case MessageTypeEnum.INFORMATION:
@@ -188,14 +188,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                     OKButton.Visible = true;
                     CancelButton.Visible = true;
                     if (String.IsNullOrEmpty(Title))
-                        Title = "Please confirm";
+                        Title = App_GlobalResources.SR.ConfirmDialogDefault;
                     break;
 
                 case MessageTypeEnum.YESNO:
                     YesButton.Visible = true;
                     NoButton.Visible = true;
                     if (String.IsNullOrEmpty(Title))
-                        Title = "Please confirm";
+                        Title = App_GlobalResources.SR.ConfirmDialogDefault;
                     break;
 
                 default:

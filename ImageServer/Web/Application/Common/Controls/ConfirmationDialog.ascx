@@ -1,48 +1,34 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ConfirmationDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog" %>
-<%@ Register Src="ModalDialog.ascx" TagName="ModalDialog" TagPrefix="uc1" %>
-<uc1:ModalDialog ID="ModalDialog" runat="server" Title="" >
+
+<%@ Register Src="ModalDialog.ascx" TagName="ModalDialog" TagPrefix="localAsp" %>
+
+<localAsp:ModalDialog ID="ModalDialog" runat="server" Title="" >
     <ContentTemplate>
         <asp:ScriptManagerProxy ID="DialogScriptManager" runat="server"/>
-        <asp:Panel ID="Panel3" runat="server">
-            <asp:Panel ID="Panel1" runat="server">
                 <table cellspacing="0" cellpadding="0">
                     <tr>
                         <td colspan="1" style="height: 24px">
                             <asp:Image ID="IconImage" runat="server" Visible="false" /></td>
-                        <td colspan="2" style="height: 24px; padding-right: 10px; padding-left: 10px; padding-bottom: 10px;
-                            vertical-align: top; padding-top: 10px; text-align: center;">
-                            <asp:Label ID="MessageLabel" runat="server" Style="text-align: center" Text="Message">
-                            </asp:Label>
+                        <td colspan="2" style="height: 24px; vertical-align: top; text-align: center;">
+                            <asp:Panel runat="server" CssClass="ConfirmationContent">
+                                <asp:Label ID="MessageLabel" runat="server" Style="text-align: center" Text="Message" />
+                            </asp:Panel>
                         </td>
                     </tr>
                     <tr>
                         <td>
                         </td>
-                        <td align="center">
-                            <asp:Panel ID="ButtonPanel" runat="server" DefaultButton="NoButton">
-                                 <table width="50%" cellspacing="10">
-                                    <tr>
-                                        <td>
-                                            <asp:Button ID="YesButton" runat="server" OnClick="YesButton_Click" Text="Yes" Width="77px" />
-                                        </td>
-                                        <td>
-                                            <asp:Button ID="NoButton" runat="server" Text="No" OnClick="NoButton_Click" Width="77px" />
-                                        </td>
-                                        <td>
-                                            <asp:Button ID="OKButton" runat="server" Text="OK" OnClick="OKButton_Click" Width="77px" />
-                                        </td>
-                                        <td>
-                                            <asp:Button ID="CancelButton" runat="server" Text="Cancel" OnClick="CancelButton_Click" Width="77px" />
-                                        </td>
-                                    </tr>
-                                </table>
+                        <td align="right">
+                            <asp:Panel ID="ButtonPanel" runat="server" DefaultButton="NoButton" CssClass="ConfirmationButtonPanel">
+                                            <ccUI:ToolbarButton ID="YesButton" runat="server" SkinID="YesButton" OnClick="YesButton_Click" />
+                                            <ccUI:ToolbarButton ID="NoButton" runat="server" SkinID="NoButton" OnClick="NoButton_Click"  />
+                                            <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="OKButton" OnClick="OKButton_Click"  />
+                                            <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
                             </asp:Panel>
                            
                         </td>
                     </tr>
                 </table>
-            </asp:Panel>
-        </asp:Panel>
     </ContentTemplate>
-</uc1:ModalDialog>
+</localAsp:ModalDialog>
