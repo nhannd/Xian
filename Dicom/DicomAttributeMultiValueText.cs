@@ -53,6 +53,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using ClearCanvas.Dicom.IO;
@@ -208,6 +209,12 @@ namespace ClearCanvas.Dicom
         {
             get
             {
+                if (IsNull || IsEmpty)
+                {
+                    return 0;
+                }
+                    
+
                 if (ParentCollection!=null && ParentCollection.SpecificCharacterSet != null)
                 {
                     return (uint)GetByteBuffer(TransferSyntax.ExplicitVrBigEndian, ParentCollection.SpecificCharacterSet).Length;

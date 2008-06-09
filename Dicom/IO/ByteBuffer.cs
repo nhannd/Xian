@@ -342,10 +342,17 @@ namespace ClearCanvas.Dicom.IO
 
         public void SetString(string val)
         {
-            if (_specificCharacterSet != null)
-                _data = DicomImplementation.CharacterParser.Encode(val, _specificCharacterSet);
+            if (val == null)
+            {
+                _data = null;
+            }
             else
-                _data = _encoding.GetBytes(val);
+            {
+                if (_specificCharacterSet != null)
+                    _data = DicomImplementation.CharacterParser.Encode(val, _specificCharacterSet);
+                else
+                    _data = _encoding.GetBytes(val);
+            }
             _ms = null;
         }
 
@@ -365,15 +372,23 @@ namespace ClearCanvas.Dicom.IO
             }
             else
             {
-                int count = _encoding.GetByteCount(val);
-                if ((count & 1) == 1)
-                    count++;
+                if (val==null)
+                {
+                    _data = null;
+                }
+                else
+                {
+                    int count = _encoding.GetByteCount(val);
+                    if ((count & 1) == 1)
+                        count++;
 
-                byte[] bytes = new byte[count];
-                if (_encoding.GetBytes(val, 0, val.Length, bytes, 0) < count)
-                    bytes[count - 1] = pad;
+                    byte[] bytes = new byte[count];
+                    if (_encoding.GetBytes(val, 0, val.Length, bytes, 0) < count)
+                        bytes[count - 1] = pad;
 
-                _data = bytes;
+                    _data = bytes;
+                }
+                
             }
             _ms = null;
         }

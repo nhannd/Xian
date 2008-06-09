@@ -53,6 +53,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom
@@ -116,7 +117,13 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (ParentCollection.SpecificCharacterSet != null)
+                if (IsNull || IsEmpty)
+                {
+                    return 0;
+                }
+
+
+                if (ParentCollection!=null && ParentCollection.SpecificCharacterSet != null)
                 {
                     return (uint)GetByteBuffer(TransferSyntax.ExplicitVrBigEndian, ParentCollection.SpecificCharacterSet).Length;
                 }
@@ -221,10 +228,14 @@ namespace ClearCanvas.Dicom
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
             ByteBuffer bb = new ByteBuffer(syntax.Endian);
-
-            if (Tag.VR.SpecificCharacterSet)
+           if (Tag.VR.SpecificCharacterSet)
                 bb.SpecificCharacterSet = specificCharacterSet;
-
+            
+            //if (_value == null)
+            //{
+            //    return bb; // return empty buffer if the value is not set
+            //}
+            
             bb.SetString(_value, (byte)' ');
             return bb;
         }

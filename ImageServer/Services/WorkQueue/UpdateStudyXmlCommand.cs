@@ -41,17 +41,19 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
-	public class UpdateStudyXmlCommand : ServerCommand
+    public class UpdateStudyXmlCommand : ServerCommand
     {
         #region Private Members
 
         private readonly DicomFile _file;
         private readonly StudyXml _stream;
         private readonly StudyStorageLocation _studyStorageLocation;
+
         #endregion
 
         #region Constructors
-		public UpdateStudyXmlCommand(DicomFile file, StudyXml stream, StudyStorageLocation storageLocation)
+
+        public UpdateStudyXmlCommand(DicomFile file, StudyXml stream, StudyStorageLocation storageLocation)
             : base("Update Study XML", true)
         {
             Platform.CheckForNullReference(file, "Dicom File object");
@@ -61,37 +63,44 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             _file = file;
             _stream = stream;
             _studyStorageLocation = storageLocation;
-
         }
+
         #endregion
 
         protected override void OnExecute()
         {
             // Setup the insert parameters
-        	if (false == _stream.RemoveFile(_file))
-        	{
-        		Platform.Log(LogLevel.Warn,"SOP was unexpectedly not in XML Study Descriptor for file: {0}",_file.Filename);
-			}
+            if (false == _stream.RemoveFile(_file))
+            {
+                Platform.Log(LogLevel.Warn, "SOP was unexpectedly not in XML Study Descriptor for file: {0}",
+                             _file.Filename);
+            }
             if (false == _stream.AddFile(_file))
             {
-                Platform.Log(LogLevel.Error,"Unexpected error adding SOP to XML Study Descriptor for file {0}",_file.Filename);
-                throw new ApplicationException("Unexpected error adding SOP to XML Study Descriptor for SOP: " + _file.MediaStorageSopInstanceUid);
+                Platform.Log(LogLevel.Error, "Unexpected error adding SOP to XML Study Descriptor for file {0}",
+                             _file.Filename);
+                throw new ApplicationException("Unexpected error adding SOP to XML Study Descriptor for SOP: " +
+                                               _file.MediaStorageSopInstanceUid);
             }
             // Write it back out.  We flush it out with every added image so that if a failure happens,
             // we can recover properly.
-            WriteStudyStream(Path.Combine(_studyStorageLocation.GetStudyPath(),_studyStorageLocation.StudyInstanceUid + ".xml"), _stream);
+            WriteStudyStream(
+                Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml"),
+                _stream);
         }
 
         protected override void OnUndo()
         {
             _stream.RemoveFile(_file);
 
-            WriteStudyStream(Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml"), _stream);
+            WriteStudyStream(
+                Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml"),
+                _stream);
         }
 
         private static void WriteStudyStream(string streamFile, StudyXml theStream)
         {
-            XmlDocument doc = theStream.GetMemento();
+            XmlDocument doc = theStream.GetMemento(ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings);
 
             // allocate the random number generator here, in case we need it below
             Random rand = new Random();

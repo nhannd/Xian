@@ -209,6 +209,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.TestApp.HeaderStressTest", "TestApp\HeaderStressTest\HeaderStressTest\ClearCanvas.ImageServer.TestApp.HeaderStressTest.csproj", "{805F162D-D55D-4018-B9AA-F5D087F31EF3}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -499,6 +505,16 @@ Global
 		{AB89527E-B1B6-49A4-B3A0-D07948FC23E0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{AB89527E-B1B6-49A4-B3A0-D07948FC23E0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{AB89527E-B1B6-49A4-B3A0-D07948FC23E0}.Release|Win32.ActiveCfg = Release|Any CPU
+		{805F162D-D55D-4018-B9AA-F5D087F31EF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{805F162D-D55D-4018-B9AA-F5D087F31EF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{805F162D-D55D-4018-B9AA-F5D087F31EF3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{805F162D-D55D-4018-B9AA-F5D087F31EF3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{805F162D-D55D-4018-B9AA-F5D087F31EF3}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{805F162D-D55D-4018-B9AA-F5D087F31EF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{805F162D-D55D-4018-B9AA-F5D087F31EF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{805F162D-D55D-4018-B9AA-F5D087F31EF3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{805F162D-D55D-4018-B9AA-F5D087F31EF3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{805F162D-D55D-4018-B9AA-F5D087F31EF3}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

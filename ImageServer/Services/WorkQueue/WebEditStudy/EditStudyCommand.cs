@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                 string newStudyXmlPath = Path.Combine(srcStudyFolder, context.NewStudyInstanceUid + ".xml");
                 using (FileStream stream = new FileStream(newStudyXmlPath, FileMode.CreateNew))
                 {
-                    StudyXmlIo.Write(context.NewStudyXml.GetMemento(), stream);
+                    StudyXmlIo.Write(context.NewStudyXml.GetMemento(ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings), stream);
                 }
 
                 // Before moving the temp study folder to the real filesystem, 

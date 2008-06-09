@@ -179,6 +179,9 @@ namespace ClearCanvas.Dicom.Tests
 
                 #endregion
             }
+
+            
+
         }
         #endregion
 
@@ -6727,7 +6730,78 @@ namespace ClearCanvas.Dicom.Tests
 
             }
 
+
         }
+        #endregion
+
+        #region DICOMAttributeST Tests
+        [Test]
+        public void DICOMAttributeSTTest()
+        {
+            DICOMAttributeSTTestSuite test = new DICOMAttributeSTTestSuite();
+            test.TestStreamLength();
+            test.TestSet();
+            
+        }
+
+        private class DICOMAttributeSTTestSuite
+        {
+            public DicomAttributeST CreateAttribute()
+            {
+                DicomAttributeST attrib = new DicomAttributeST(DicomTagDictionary.GetDicomTag(DicomTags.PartialViewDescription));
+                Assert.AreEqual(0, attrib.Count);
+                Assert.AreEqual(0, attrib.StreamLength);
+                return attrib;
+            }
+
+            public void TestStreamLength()
+            {
+                DicomAttributeST attrib = CreateAttribute();
+                Assert.AreEqual(0, attrib.StreamLength);
+
+                // test StreamLength when parent collection is assigned
+                DicomAttributeCollection parent = new DicomAttributeCollection();
+                parent.SpecificCharacterSet = "ISO_IR 100";
+                attrib.ParentCollection = parent;
+                Assert.AreEqual(0, attrib.StreamLength);
+
+                attrib.SetNullValue();
+                Assert.AreEqual(0, attrib.StreamLength);
+
+                attrib.SetStringValue("TEST");
+                Assert.AreEqual(4, attrib.StreamLength);
+            }
+            
+
+            public void TestSet()
+            {
+                DicomAttributeST attrib = CreateAttribute();
+                attrib.SetStringValue("10000");
+                Assert.AreEqual(1, attrib.Count);
+                Assert.AreEqual(6, attrib.StreamLength);
+
+                attrib = CreateAttribute();
+                attrib.SetStringValue("10000\\50694");
+                Assert.AreEqual(1, attrib.Count); // ST must be treated as single value
+                Assert.AreEqual(12, attrib.StreamLength);
+
+                attrib = CreateAttribute();
+                attrib.SetStringValue(null);
+                Assert.AreEqual(1, attrib.Count); // ST must be treated as single value
+                Assert.AreEqual(0, attrib.StreamLength);
+
+
+                attrib = CreateAttribute();
+                attrib.SetNullValue();
+                Assert.AreEqual(1, attrib.Count); // ST must be treated as single value
+                Assert.AreEqual(0, attrib.StreamLength);
+
+
+            }
+
+
+        }
+
         #endregion
 
     }
