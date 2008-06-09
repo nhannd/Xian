@@ -103,7 +103,6 @@
     <Compile Include="Notebox.cs" />
     <Compile Include="NoteboxItemSearchCriteria.cs" />
     <Compile Include="NoteAcknowledgement.cs" />
-    <Compile Include="NoteRecipient.cs" />
     <Compile Include="NotePosting.cs" />
     <Compile Include="Imex\ExternalPractitionerImporter.cs" />
     <Compile Include="Imex\FacilityImporter.cs" />
