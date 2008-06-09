@@ -94,6 +94,8 @@
     <Compile Include="OrderNotes\AcknowledgeAndPostResponse.cs" />
     <Compile Include="OrderNotes\GetConversationEditorFormDataRequest.cs" />
     <Compile Include="OrderNotes\GetConversationEditorFormDataResponse.cs" />
+    <Compile Include="OrderNotes\ListStaffGroupsRequest.cs" />
+    <Compile Include="OrderNotes\ListStaffGroupsResponse.cs" />
     <Compile Include="OrderNotes\OrderNoteboxItemSummary.cs" />
     <Compile Include="OrderNotes\GetConversationRequest.cs" />
     <Compile Include="OrderNotes\GetConversationResponse.cs" />

@@ -73,7 +73,7 @@ namespace ClearCanvas.Healthcare {
                 delegate(OrderNote note)
                 {
 					// ignore this note, and notes in other categories
-					return !Equals(this, note) && note.Category == this.Category && this.CanAcknowledge(this.Author);
+					return !Equals(this, note) && note.Category == this.Category && note.CanAcknowledge(this.Author);
                 });
 
             if(unAckedNotes)

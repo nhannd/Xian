@@ -21,7 +21,7 @@ namespace ClearCanvas.Healthcare {
 		/// <returns></returns>
 		protected virtual internal bool CanAcknowledge(Staff acknowledger)
 		{
-			throw new NotImplementedException();
+			return !_isAcknowledged;
 		}
 
         /// <summary>

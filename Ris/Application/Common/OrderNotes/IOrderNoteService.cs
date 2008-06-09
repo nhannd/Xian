@@ -12,6 +12,14 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
     [RisServiceProvider]
     public interface IOrderNoteService
     {
+		/// <summary>
+		/// Lists staff groups to which the current user belongs.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		ListStaffGroupsResponse ListStaffGroups(ListStaffGroupsRequest request);
+
         /// <summary>
         /// Queries the contents of a specified notebox.
         /// </summary>

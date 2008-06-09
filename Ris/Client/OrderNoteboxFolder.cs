@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Client
 				delegate(IOrderNoteService service)
 				{
 					QueryNoteboxRequest request = new QueryNoteboxRequest(_noteboxClassName, true, true);
-
+					PrepareQueryRequest(request);
 					QueryNoteboxResponse response = service.QueryNotebox(request);
 					result = new QueryItemsResult(response.NoteboxItems, response.ItemCount);
 				});
@@ -46,12 +46,17 @@ namespace ClearCanvas.Ris.Client
 				delegate(IOrderNoteService service)
 				{
 					QueryNoteboxRequest request = new QueryNoteboxRequest(_noteboxClassName, true, false);
-
+					PrepareQueryRequest(request);
 					QueryNoteboxResponse response = service.QueryNotebox(request);
 					count = response.ItemCount;
 				});
 
 			return count;
+		}
+
+		protected virtual void PrepareQueryRequest(QueryNoteboxRequest request)
+		{
+			// nothing to do
 		}
 
 		public bool GetOperationEnablement(string operationName)

@@ -28,6 +28,13 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
         [DataMember]
         public string NoteboxClass;
 
+		/// <summary>
+		/// Identifies the staff group notebox to query, in the case where <see cref="NoteboxClass"/> 
+		/// refers to a group notebox.
+		/// </summary>
+		[DataMember]
+    	public EntityRef StaffGroupRef;
+
         /// <summary>
         /// Specifies whether to return a count of the total number of items in the notebox.
         /// </summary>

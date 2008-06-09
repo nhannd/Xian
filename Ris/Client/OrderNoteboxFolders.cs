@@ -1,4 +1,7 @@
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.OrderNotes;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -26,19 +29,24 @@ namespace ClearCanvas.Ris.Client
 	[FolderPath("Posted to my groups")]
 	internal class GroupInboxFolder : OrderNoteboxFolder
 	{
+		private readonly EntityRef _groupRef;
+
 		private GroupInboxFolder(OrderNoteboxFolderSystem folderSystem, string folderDisplayName, string folderDescription)
 			: base(folderSystem, folderDisplayName, folderDescription, "OrderNoteGroupInbox")
 		{
 		}
 
-		public GroupInboxFolder(OrderNoteboxFolderSystem orderNoteboxFolderSystem)
-			: this(orderNoteboxFolderSystem, null, null)
+		public GroupInboxFolder(OrderNoteboxFolderSystem orderNoteboxFolderSystem, StaffGroupSummary staffGroup)
+			: this(orderNoteboxFolderSystem, staffGroup.Name, staffGroup.Name)
 		{
+			_groupRef = staffGroup.StaffGroupRef;
 		}
 
-		public GroupInboxFolder()
-			: this(null)
+		protected override void PrepareQueryRequest(QueryNoteboxRequest request)
 		{
+			base.PrepareQueryRequest(request);
+
+			request.StaffGroupRef = _groupRef;
 		}
 	}
 

@@ -44,6 +44,11 @@ namespace ClearCanvas.Healthcare
         /// </summary>
         Staff Staff { get; }
 
+		/// <summary>
+		/// For group-based noteboxes, gets the group for which the notebox query is executing.
+		/// </summary>
+		StaffGroup StaffGroup { get; }
+
         /// <summary>
         /// Gets the working <see cref="Facility"/> for which the notebox query is executing, or null if the working facility is not known.
         /// </summary>

@@ -19,7 +19,7 @@ namespace ClearCanvas.Healthcare {
     	/// <returns></returns>
     	protected internal override bool CanAcknowledge(Staff acknowledger)
 		{
-			return !this.IsAcknowledged && Equals(_recipient, acknowledger);
+			return base.CanAcknowledge(acknowledger) && Equals(_recipient, acknowledger);
 		}
 	
 		/// <summary>

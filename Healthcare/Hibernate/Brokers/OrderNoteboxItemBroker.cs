@@ -28,6 +28,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         protected static readonly HqlJoin JoinNotePostings = new HqlJoin("n.Postings", "np");
 
 
+		//protected static readonly HqlCondition ConditionMostRecentNote = new HqlCondition(
+		//    "(n.PostTime = (select max(n2.PostTime) from OrderNote n2 join n2.Postings np2 where np2 = np and n2.Order = n.Order and n2.Category = n.Category))");
 
         protected static readonly HqlCondition ConditionConstrainPatientProfile =
             new HqlCondition("pp.Mrn.AssigningAuthority = o.OrderingFacility.InformationAuthority");
@@ -151,11 +153,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 if(criteria.SentToMe)
 					and.Conditions.Add(new HqlCondition("np = (select np1 from StaffNotePosting np1 where np1 = np and np1.Recipient = ?)", nqc.Staff));
                 if(criteria.SentToGroupIncludingMe)
-					and.Conditions.Add(new HqlCondition("np = (select np1 from GroupNotePosting np1 where np1 = np and np1.Recipient in (select elements(s.Groups) from Staff s where s = ?))", nqc.Staff));
+					and.Conditions.Add(new HqlCondition("np = (select np1 from GroupNotePosting np1 where np1 = np and np1.Recipient = ?)", nqc.StaffGroup));
                 
                 or.Conditions.Add(and);
             }
             query.Conditions.Add(or);
+			//query.Conditions.Add(ConditionMostRecentNote);
 
 			if(!countQuery)
 	            query.Sorts.AddRange(InboxItemOrdering);

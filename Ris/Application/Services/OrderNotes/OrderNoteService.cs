@@ -24,16 +24,19 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
         {
             private readonly ApplicationServiceBase _applicationService;
             private readonly SearchResultPage _page;
+        	private readonly StaffGroup _staffGroup;
 
             /// <summary>
             /// Constructor.
             /// </summary>
             /// <param name="service"></param>
             /// <param name="page"></param>
-            public NoteboxQueryContext(ApplicationServiceBase service, SearchResultPage page)
+            /// <param name="staffGroup"></param>
+            public NoteboxQueryContext(ApplicationServiceBase service, SearchResultPage page, StaffGroup staffGroup)
             {
                 _applicationService = service;
                 _page = page;
+            	_staffGroup = staffGroup;
             }
 
             #region INoteboxQueryContext Members
@@ -46,7 +49,15 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
                 get { return _applicationService.CurrentUserStaff; }
             }
 
-            /// <summary>
+			/// <summary>
+			/// Gets the staff group (relevant only for group folders).
+			/// </summary>
+        	public StaffGroup StaffGroup
+        	{
+				get { return _staffGroup; }
+        	}
+
+        	/// <summary>
             /// Gets the working <see cref="Facility"/> associated with the current user, or null if no facility is associated.
             /// </summary>
             public Facility WorkingFacility
@@ -77,7 +88,18 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
         
         #region IOrderNoteService Members
 
-        [ReadOperation]
+		[ReadOperation]
+		public ListStaffGroupsResponse ListStaffGroups(ListStaffGroupsRequest request)
+    	{
+			Platform.CheckForNullReference(request, "request");
+
+			StaffGroupAssembler assembler = new StaffGroupAssembler();
+			return new ListStaffGroupsResponse(
+				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(this.CurrentUserStaff.Groups,
+					delegate (StaffGroup g) { return assembler.CreateSummary(g);}));
+		}
+
+    	[ReadOperation]
         public QueryNoteboxResponse QueryNotebox(QueryNoteboxRequest request)
         {
             Platform.CheckForNullReference(request, "request");
@@ -85,11 +107,14 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
 
             Notebox notebox = NoteboxFactory.Instance.CreateNotebox(request.NoteboxClass);
             SearchResultPage page = new SearchResultPage(0, new OrderNoteSettings().ItemsPerPage);
+    		NoteboxQueryContext nqc = new NoteboxQueryContext(this, page, request.StaffGroupRef == null ?
+				null : PersistenceContext.Load<StaffGroup>(request.StaffGroupRef));
+
             IList results = null;
             if (request.QueryItems)
             {
                 // get the first page, up to the default max number of items per page
-                results = notebox.GetItems(new NoteboxQueryContext(this, page));
+                results = notebox.GetItems(nqc);
             }
 
             int count = -1;
@@ -100,7 +125,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
                 if (results != null && results.Count < page.MaxRows)
                     count = results.Count;
                 else
-                    count = notebox.GetItemCount(new NoteboxQueryContext(this, null));
+					count = notebox.GetItemCount(nqc);
             }
 
             if (request.QueryItems)

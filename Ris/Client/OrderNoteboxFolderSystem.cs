@@ -5,6 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
 
 namespace ClearCanvas.Ris.Client
@@ -164,9 +165,20 @@ namespace ClearCanvas.Ris.Client
 
 			PersonalInboxFolder inboxFolder = new PersonalInboxFolder(this);
 			inboxFolder.TotalItemCountChanged += OnPrimaryFolderCountChanged;
-
 			this.AddFolder(inboxFolder);
-			this.AddFolder(new GroupInboxFolder(this));
+
+			Platform.GetService<IOrderNoteService>(
+				delegate(IOrderNoteService service)
+				{
+					ListStaffGroupsResponse response = service.ListStaffGroups(new ListStaffGroupsRequest());
+					foreach (StaffGroupSummary group in response.StaffGroups)
+					{
+						GroupInboxFolder groupFolder = new GroupInboxFolder(this, group);
+						groupFolder.IsStatic = false;
+						this.AddFolder(groupFolder);
+					}
+				});
+
 			this.AddFolder(new SentItemsFolder(this));
 		}
 
