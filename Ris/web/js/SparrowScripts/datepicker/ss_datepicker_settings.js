@@ -23,7 +23,7 @@
 	var ssdp_enableHoliday=true;		// allow holidays to be selected?
 
 	var ssdp_dateFormat="dd/mm/yyyy";		// date format of the datepicker
-	var ssdp_todayFormat="m/d/yyyy";		// date format of the today's date
+	var ssdp_todayFormat="dd/mm/yyyy";		// date format of the today's date
 
 	var ss_yearSplit = 40;	// interprete from this value to 99 as 19xx to 1999 instead of 20xx to 2099.
 

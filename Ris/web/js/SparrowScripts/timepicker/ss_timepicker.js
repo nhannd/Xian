@@ -11,7 +11,7 @@
 		document.write("<div style='position:absolute;visibility:hidden' id='sstp_iframe'></div>");
 	}
 
-	function showTimePicker(activatorCtl, contentCtl) {
+	function showTimePicker(activatorCtl, contentCtl, callback) {
 
 		if(sstp_bShow)
 		{
@@ -22,6 +22,8 @@
 		{
 			ssdp_hideDatePicker();
 		}
+	
+		sstp_onTimePickerClosedCallback = callback;
 	
 		// render time picker
 
@@ -84,6 +86,14 @@
 		sstp_bShow=false;
 	}
 
+	function sstp_onTimePickerClosed(date)
+	{
+		if(sstp_onTimePickerClosedCallback)
+		{
+			sstp_onTimePickerClosedCallback(date);
+		}
+	}
+	
 	//document.onkeypress = 
 	function sstp_escTimepicker (event) {
 
@@ -149,6 +159,11 @@
 		{
 			t=t.charAt(0)+t.charAt(1)+":"+t.charAt(2)+t.charAt(3);
 		}
+		
+		if ((sstp_isNumeric(t))&&(t.length==3))
+		{
+			t=t.charAt(0)+":"+t.charAt(1)+t.charAt(2);
+		}	
 
 		var t=new String(t);
 		tl=t.length;

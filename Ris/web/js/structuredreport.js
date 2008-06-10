@@ -429,7 +429,7 @@ var IndicationsAndDatesForm = {
 		[			
 			{
 				label: "Date of LMP",
-				cellType: "datetime",
+				cellType: "date",
 				getValue: function(item) { return item.LMP; },
 				setValue: function(item, value) { item.LMP = value; },
 				getError: function(item) { return null; }
@@ -457,7 +457,7 @@ var IndicationsAndDatesForm = {
 		[						
 			{
 				label: "1st Ultrasound",
-				cellType: "datetime",
+				cellType: "date",
 				getValue: function(item) { return item.firstUltrasound; },
 				setValue: function(item, value) { item.firstUltrasound = value; },
 				getError: function(item) { return null; }
@@ -490,7 +490,7 @@ var IndicationsAndDatesForm = {
 		[			
 			{
 				label: "EDC",
-				cellType: "datetime",
+				cellType: "date",
 				getValue: function(item) { return item.establishedEDC; },
 				setValue: function(item, value) { item.establishedEDC = value; },
 				getError: function(item) { return null; }
@@ -512,7 +512,7 @@ var IndicationsAndDatesForm = {
 			},
 			{
 				label: "Transferred Date",
-				cellType: "datetime",
+				cellType: "date",
 				getValue: function(item) { return item.transferredDate; },
 				setValue: function(item, value) { item.transferredDate = value; },
 				getError: function(item) { return null; },

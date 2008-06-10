@@ -3,9 +3,10 @@
 <head>
 	<title>Angio/Interventional Details</title>
 	<link href="../../css/default.css" rel="stylesheet" type="text/css" />
-	<link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="../../js/calendar/calendar.js"></script>
-	<script type="text/javascript" src="../../js/calendar/lang/calendar-en.js"></script>
+	<script type="text/javascript" SRC="../../js/SparrowScripts/datepicker/ss_datepicker_settings.js"></script>
+	<script type="text/javascript" SRC="../../js/SparrowScripts/datepicker/ss_datepicker.js"></script>
+	<script type="text/javascript" SRC="../../js/SparrowScripts/timepicker/ss_timepicker_settings.js"></script>
+	<script type="text/javascript" SRC="../../js/SparrowScripts/timepicker/ss_timepicker.js"></script>
 	<script type="text/javascript" src="../../js/jsx.js"></script>
 	<script type="text/javascript" src="../../js/jsml.js"></script>
 	<script type="text/javascript" src="../../js/ui.js"></script>
@@ -270,7 +271,7 @@
 					},
 					{   label: "Time",
 						cellType: "datetime",
-						getValue: function(item) { return item.time; },
+						getValue: function(item) { return item.time || { date:null, time:null }; },
 						setValue: function(item, value) { item.time = value; },
 						getError: function(item) { return null; }
 					}

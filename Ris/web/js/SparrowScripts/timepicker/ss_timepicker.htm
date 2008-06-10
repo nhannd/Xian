@@ -38,6 +38,7 @@
 			opener.document.getElementById(sstp_parentControl).value=dt;
 		}
 		sstp_hideTimePicker();
+		parent.sstp_onTimePickerClosed(dt);
 	}
 
 	function sstp_padZero(num) {

@@ -3,9 +3,10 @@
 <head>
 	<title>Ultrasound Documentation</title>
 	<link href="../../css/default.css" rel="stylesheet" type="text/css" />
-	<link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="../../js/calendar/calendar.js"></script>
-	<script type="text/javascript" src="../../js/calendar/lang/calendar-en.js"></script>
+	<script type="text/javascript" SRC="../../js/SparrowScripts/datepicker/ss_datepicker_settings.js"></script>
+	<script type="text/javascript" SRC="../../js/SparrowScripts/datepicker/ss_datepicker.js"></script>
+	<script type="text/javascript" SRC="../../js/SparrowScripts/timepicker/ss_timepicker_settings.js"></script>
+	<script type="text/javascript" SRC="../../js/SparrowScripts/timepicker/ss_timepicker.js"></script>
 	<script type="text/javascript" src="../../js/jsx.js"></script>
 	<script type="text/javascript" src="../../js/jsml.js"></script>
 	<script type="text/javascript" src="../../js/ui.js"></script>
@@ -320,10 +321,10 @@
 						setValue: function(item, value) { item.staff = value; },
 						getError: function(item) { return null; }
 					},*/
-					{  label: "Time",
+					{  label: "Date",
 						cellType: "datetime",
-						getValue: function(item) { return item.time; },
-						setValue: function(item, value) { item.time = value; },
+						getValue: function(item) { return item.date || { date:null, time:null }; },
+						setValue: function(item, value) { item.date = value; },
 						getError: function(item) { return null; }
 					}
 				]);

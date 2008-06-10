@@ -22,7 +22,7 @@
 		}
 	}
 
-	function showDatePicker(activatorCtl, contentCtl) {
+	function showDatePicker(activatorCtl, contentCtl, callback) {
 
 		if(ssdp_bShow)
 		{
@@ -34,6 +34,8 @@
 			sstp_hideTimePicker();
 		}
 	
+
+		ssdp_onDatePickerClosedCallback = callback;
 	
 		// render date picker
 
@@ -106,6 +108,15 @@
 		ssdp_bShow=false;
 	}
 
+	function ssdp_onDatePickerClosed(date)
+	{
+		if(ssdp_onDatePickerClosedCallback)
+		{
+			ssdp_onDatePickerClosedCallback(date);
+		}
+	}
+	
+	
 	//document.onkeypress = 
 	function ssdp_escDatepicker (event) {
 
