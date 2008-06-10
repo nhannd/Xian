@@ -59,6 +59,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _component = component;
 
         	_foldersTableView.Table = _component.StaffGroupTable;
+			_foldersTableView.DataBindings.Add("Selection", _component, "SelectedTableItem", true, DataSourceUpdateMode.OnPropertyChanged);
         	_foldersTableView.MenuModel = _foldersTableView.ToolbarModel = _component.ActionModel;
         	_groupLookup.LookupHandler = _component.StaffGroupLookupHandler;
 			_groupLookup.DataBindings.Add("Value", _component, "StaffGroupToAdd", true, DataSourceUpdateMode.OnPropertyChanged);

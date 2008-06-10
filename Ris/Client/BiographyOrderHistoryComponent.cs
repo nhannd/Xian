@@ -75,31 +75,46 @@ namespace ClearCanvas.Ris.Client
         public BiographyOrderHistoryComponent(EntityRef patientRef)
         {
             _patientRef = patientRef;
-            _orderList = new Table<OrderListItem>();
-            _orderList.Columns.Add(new TableColumn<OrderListItem, string>("Requested For",
-                delegate(OrderListItem order) { return Format.DateTime(order.SchedulingRequestTime); }));
-            _orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnAccessionNumber,
-                delegate(OrderListItem order) { return order.AccessionNumber; }));
-            _orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnDiagnosticService,
-                delegate(OrderListItem order) { return order.DiagnosticService.Name; }));
-            _orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnPriority,
-                delegate(OrderListItem order) { return order.OrderPriority.Value; }));
-            _orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnStatus,
-                delegate(OrderListItem order) { return order.OrderStatus.Value; }));
-            _orderList.Columns.Add(new TableColumn<OrderListItem, string>("Ordered by",
-                delegate(OrderListItem order) { return PersonNameFormat.Format(order.OrderingPractitioner.Name); }));
-            _orderList.Columns.Add(new TableColumn<OrderListItem, string>("Ordering Facility",
-                delegate(OrderListItem order) { return order.OrderingFacility.Name; }));
-            _orderList.Columns.Add(new TableColumn<OrderListItem, string>("Indication",
-                delegate(OrderListItem order) { return order.ReasonForStudy; }));
-            _orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnCreatedOn,
-                delegate(OrderListItem order) { return Format.DateTime(order.EnteredTime); }));
+            _orderList = new Table<OrderListItem>(3);
+			_orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnCreatedOn,
+				delegate(OrderListItem order) { return Format.DateTime(order.EnteredTime); }, 0.5f));
+			_orderList.Columns.Add(new TableColumn<OrderListItem, string>("Scheduled For",
+				delegate(OrderListItem order) { return Format.DateTime(order.OrderScheduledStartTime); }, 0.5f));
+
+			_orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnDiagnosticService,
+				delegate(OrderListItem order) { return order.DiagnosticService.Name; }, 1.5f));
+			_orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnStatus,
+				delegate(OrderListItem order) { return order.OrderStatus.Value; }, 0.5f));
+
+			_orderList.Columns.Add(new TableColumn<OrderListItem, string>("MoreInfo",
+				delegate(OrderListItem order)
+				{
+					return string.Format("{0} Ordered by {1}, Facility: {2}",
+					                     AccessionFormat.Format(order.AccessionNumber),
+										 PersonNameFormat.Format(order.OrderingPractitioner.Name),
+					                     order.OrderingFacility.Code
+					                     );
+				}, 1));
+
+			_orderList.Columns.Add(new TableColumn<OrderListItem, string>("Indication",
+				delegate(OrderListItem order)
+				{
+					return string.Format("Indication: {0}", order.ReasonForStudy);
+				}, 2));
+
+			//_orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnAccessionNumber,
+			//    delegate(OrderListItem order) { return order.AccessionNumber; }));
+			//_orderList.Columns.Add(new TableColumn<OrderListItem, string>("Ordering Facility",
+			//    delegate(OrderListItem order) { return order.OrderingFacility.Name; }));
+			//_orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnPriority,
+			//    delegate(OrderListItem order) { return order.OrderPriority.Value; }));
+
+			//_orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnCreatedOn,
+			//    delegate(OrderListItem order) { return Format.DateTime(order.EnteredTime); }));
         }
 
         public override void Start()
         {
-
-
             Platform.GetService<IBrowsePatientDataService>(
                 delegate(IBrowsePatientDataService service)
                 {
