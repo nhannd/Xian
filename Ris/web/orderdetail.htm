@@ -18,8 +18,8 @@
 					return;
 				try
 				{
-					var worklistItem = Ris.getHealthcareContext();
-					if (worklistItem == null)
+					var context = Ris.getHealthcareContext();
+					if (context == null)
 					{
 						Field.setValue($("myForm"), "");
 						return;
@@ -29,7 +29,7 @@
 					var request = {
 						GetOrderDetailRequest:
 							 { 
-								OrderRef: worklistItem.OrderRef,
+								OrderRef: context.OrderRef,
 								IncludeProcedures: true,
 								IncludeNotes: true,
 								NoteCategoriesFilter: ["General"]

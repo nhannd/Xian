@@ -134,7 +134,11 @@ namespace ClearCanvas.Ris.Client
 		public override void Start()
 		{
 			ExternalPractitionerContactPointTable thisTable = (ExternalPractitionerContactPointTable) this.SummaryTable;
-			thisTable.DefaultContactPointChanged += delegate { this.Modified = true; };
+			thisTable.DefaultContactPointChanged += delegate
+				{
+					if (this.SupportModified)
+						this.Modified = true;
+				};
 
 			base.Start();
 		}
@@ -303,7 +307,8 @@ namespace ClearCanvas.Ris.Client
 				if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
 					this.Table.Items.Remove(mergeComponent.SelectedDuplicate);
-					this.Modified = true;
+					if (this.SupportModified)
+						this.Modified = true;
 				}
 			}
 			catch (Exception e)

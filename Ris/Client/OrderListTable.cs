@@ -1,0 +1,50 @@
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Ris.Application.Common.BrowsePatientData;
+using ClearCanvas.Ris.Client.Formatting;
+
+namespace ClearCanvas.Ris.Client
+{
+	public class OrderListTable : Table<OrderListItem>
+	{
+		public OrderListTable(int cellRowCount)
+			: base(cellRowCount)
+		{
+			this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnCreatedOn,
+				delegate(OrderListItem order) { return Format.DateTime(order.EnteredTime); }, 0.5f));
+			this.Columns.Add(new TableColumn<OrderListItem, string>("Scheduled For",
+				delegate(OrderListItem order) { return Format.DateTime(order.OrderScheduledStartTime); }, 0.5f));
+
+			this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnDiagnosticService,
+				delegate(OrderListItem order) { return order.DiagnosticService.Name; }, 1.5f));
+			this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnStatus,
+				delegate(OrderListItem order) { return order.OrderStatus.Value; }, 0.5f));
+
+			this.Columns.Add(new TableColumn<OrderListItem, string>("MoreInfo",
+				delegate(OrderListItem order)
+				{
+					return string.Format("{0} Ordered by {1}, Facility: {2}",
+										 AccessionFormat.Format(order.AccessionNumber),
+										 PersonNameFormat.Format(order.OrderingPractitioner.Name),
+										 order.OrderingFacility.Code
+										 );
+				}, 1));
+
+			this.Columns.Add(new TableColumn<OrderListItem, string>("Indication",
+				delegate(OrderListItem order)
+				{
+					return string.Format("Indication: {0}", order.ReasonForStudy);
+				}, 2));
+
+			//this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnAccessionNumber,
+			//    delegate(OrderListItem order) { return order.AccessionNumber; }));
+			//this.Columns.Add(new TableColumn<OrderListItem, string>("Ordering Facility",
+			//    delegate(OrderListItem order) { return order.OrderingFacility.Name; }));
+			//this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnPriority,
+			//    delegate(OrderListItem order) { return order.OrderPriority.Value; }));
+
+			//this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnCreatedOn,
+			//    delegate(OrderListItem order) { return Format.DateTime(order.EnteredTime); }));
+		}
+	}
+}

@@ -29,18 +29,31 @@
 
 #endregion
 
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Client
 {
 	public class OrderDetailViewComponent : DHtmlComponent
 	{
-		private readonly WorklistItemSummaryBase _worklistItem;
-
-		public OrderDetailViewComponent(WorklistItemSummaryBase worklistItem)
+		// Internal data contract used for jscript deserialization
+		[DataContract]
+		public class OrderContext : DataContractBase
 		{
-			_worklistItem = worklistItem;
+			public OrderContext(EntityRef orderRef)
+			{
+				this.OrderRef = orderRef;
+			}
+
+			[DataMember]
+			public EntityRef OrderRef;
+		}
+
+		private OrderContext _context;
+
+		public OrderDetailViewComponent(EntityRef orderRef)
+		{
+			_context = orderRef == null ? null : new OrderContext(orderRef);
 		}
 
 		public override void Start()
@@ -56,7 +69,17 @@ namespace ClearCanvas.Ris.Client
 
 		protected override DataContractBase GetHealthcareContext()
 		{
-			return _worklistItem;
+			return _context;
+		}
+
+		public OrderContext Context
+		{
+			get { return _context; }
+			set
+			{
+				_context = value;
+				Refresh();
+			}
 		}
 	}
 }

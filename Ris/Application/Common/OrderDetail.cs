@@ -100,5 +100,8 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public List<OrderNoteSummary> Notes;
+
+		[DataMember]
+		public List<OrderAttachmentSummary> Attachments;
     }
 }

@@ -39,7 +39,6 @@ using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
@@ -59,15 +58,17 @@ namespace ClearCanvas.Ris.Client
     public class BiographyOrderHistoryComponent : ApplicationComponent
     {
         private readonly EntityRef _patientRef;
-        private readonly Table<OrderListItem> _orderList;
+		private readonly OrderListTable _orderList;
         private OrderListItem _selectedOrder;
-        private OrderDetail _orderDetail;
-        private ModalityProcedureStepDetail _selectedMPS;
+    	private OrderDetail _orderDetail;
 
-        private event EventHandler _diagnosticServiceChanged;
-        private Tree<ProcedureDetail> _diagnosticServiceBreakdown;
-        private object _selectedDiagnosticServiceBreakdownItem;
+		private ChildComponentHost _orderDetailComponentHost;
+		private ChildComponentHost _orderVisitComponentHost;
+		private ChildComponentHost _orderDocumentComponentHost;
 
+    	private OrderDetailViewComponent _orderDetailComponent;
+		private VisitDetailViewComponent _visitDetailComponent;
+    	private MimeDocumentPreviewComponent _orderDocumentComponent;
 
         /// <summary>
         /// Constructor
@@ -75,42 +76,7 @@ namespace ClearCanvas.Ris.Client
         public BiographyOrderHistoryComponent(EntityRef patientRef)
         {
             _patientRef = patientRef;
-            _orderList = new Table<OrderListItem>(3);
-			_orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnCreatedOn,
-				delegate(OrderListItem order) { return Format.DateTime(order.EnteredTime); }, 0.5f));
-			_orderList.Columns.Add(new TableColumn<OrderListItem, string>("Scheduled For",
-				delegate(OrderListItem order) { return Format.DateTime(order.OrderScheduledStartTime); }, 0.5f));
-
-			_orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnDiagnosticService,
-				delegate(OrderListItem order) { return order.DiagnosticService.Name; }, 1.5f));
-			_orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnStatus,
-				delegate(OrderListItem order) { return order.OrderStatus.Value; }, 0.5f));
-
-			_orderList.Columns.Add(new TableColumn<OrderListItem, string>("MoreInfo",
-				delegate(OrderListItem order)
-				{
-					return string.Format("{0} Ordered by {1}, Facility: {2}",
-					                     AccessionFormat.Format(order.AccessionNumber),
-										 PersonNameFormat.Format(order.OrderingPractitioner.Name),
-					                     order.OrderingFacility.Code
-					                     );
-				}, 1));
-
-			_orderList.Columns.Add(new TableColumn<OrderListItem, string>("Indication",
-				delegate(OrderListItem order)
-				{
-					return string.Format("Indication: {0}", order.ReasonForStudy);
-				}, 2));
-
-			//_orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnAccessionNumber,
-			//    delegate(OrderListItem order) { return order.AccessionNumber; }));
-			//_orderList.Columns.Add(new TableColumn<OrderListItem, string>("Ordering Facility",
-			//    delegate(OrderListItem order) { return order.OrderingFacility.Name; }));
-			//_orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnPriority,
-			//    delegate(OrderListItem order) { return order.OrderPriority.Value; }));
-
-			//_orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnCreatedOn,
-			//    delegate(OrderListItem order) { return Format.DateTime(order.EnteredTime); }));
+			_orderList = new OrderListTable(3);
         }
 
         public override void Start()
@@ -125,10 +91,30 @@ namespace ClearCanvas.Ris.Client
                     _orderList.Items.AddRange(response.ListOrdersResponse.Orders);
                 });
 
+			_orderDetailComponent = new OrderDetailViewComponent(null);
+			_orderDetailComponentHost = new ChildComponentHost(this.Host, _orderDetailComponent);
+			_orderDetailComponentHost.StartComponent();
+
+			_visitDetailComponent = new VisitDetailViewComponent(null);
+			_orderVisitComponentHost = new ChildComponentHost(this.Host, _visitDetailComponent);
+			_orderVisitComponentHost.StartComponent();
+
+			_orderDocumentComponent = new MimeDocumentPreviewComponent(true, true, MimeDocumentPreviewComponent.AttachmentMode.Order);
+			_orderDocumentComponentHost = new ChildComponentHost(this.Host, _orderDocumentComponent);
+			_orderDocumentComponentHost.StartComponent();
+
             base.Start();
         }
 
-        #region Presentation Model - Order
+		public override void Stop()
+		{
+			_orderDetailComponentHost.StopComponent();
+			_orderVisitComponentHost.StopComponent();
+			_orderDocumentComponentHost.StopComponent();
+
+			base.Stop();
+		}
+        #region Presentation Model
 
         public ITable Orders
         {
@@ -149,180 +135,22 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public string PlacerNumber
-        {
-            get { return _orderDetail == null ? null : _orderDetail.PlacerNumber; }
-        }
+		public ApplicationComponentHost OrderDetailComponentHost
+		{
+			get { return _orderDetailComponentHost; }
+		}
 
-        public string AccessionNumber
-        {
-            get { return _orderDetail == null ? null : _orderDetail.AccessionNumber; }
-        }
+		public ApplicationComponentHost OrderVisitComponentHost
+		{
+			get { return _orderVisitComponentHost; }
+		}
 
-        public string ReasonForStudy
-        {
-            get { return _orderDetail == null ? null : _orderDetail.ReasonForStudy; }
-        }
-
-        public string CancelReason
-        {
-            get { return _orderDetail == null || _orderDetail.CancelReason == null ? null : _orderDetail.CancelReason.Value; }
-        }
-
-        public string Priority
-        {
-            get { return _orderDetail == null ? null : _orderDetail.OrderPriority.Value; }
-        }
-
-        public string SchedulingRequestDateTime
-        {
-            get { return _orderDetail == null ? null : Format.DateTime(_orderDetail.SchedulingRequestTime); }
-        }
-
-        public string OrderingPhysician
-        {
-            get { return _orderDetail == null ? null : String.Format("{0}, {1}", _orderDetail.OrderingPractitioner.Name.FamilyName, _orderDetail.OrderingPractitioner.Name.GivenName); }
-        }
-
-        public string OrderingFacility
-        {
-            get { return _orderDetail == null ? null : _orderDetail.OrderingFacility.Name; }
-        }
+		public ApplicationComponentHost OrderDocumentComponentHost
+		{
+			get { return _orderDocumentComponentHost; }
+		}
 
         #endregion
-
-        #region Presentation Model - Visit
-
-        public string VisitNumber
-        {
-            get { return _orderDetail == null ? null : VisitNumberFormat.Format(_orderDetail.Visit.VisitNumber); }
-        }
-
-        public string PreAdmitNumber
-        {
-            get { return _orderDetail == null ? null : _orderDetail.Visit.PreadmitNumber; }
-        }
-
-        public string PatientClass
-        {
-            get { return _orderDetail == null ? null : _orderDetail.Visit.PatientClass.Value; }
-        }
-
-        public string PatientType
-        {
-            get { return _orderDetail == null ? null : _orderDetail.Visit.PatientType.Value; }
-        }
-
-        public string AdmissionType
-        {
-            get { return _orderDetail == null ? null : _orderDetail.Visit.AdmissionType.Value; }
-        }
-
-        public string VisitStatus
-        {
-            get { return _orderDetail == null ? null : _orderDetail.Visit.Status.Value; }
-        }
-
-        public string AdmitDateTime
-        {
-            get { return _orderDetail == null ? null : Format.DateTime(_orderDetail.Visit.AdmitTime); }
-        }
-
-        public string DischargeDateTime
-        {
-            get { return _orderDetail == null ? null : Format.DateTime(_orderDetail.Visit.DischargeTime); }
-        }
-
-        public string AmbulatoryStatus
-        {
-            get
-            {
-                return _orderDetail == null ? null :
-                    StringUtilities.Combine(
-                        CollectionUtils.Map<EnumValueInfo, String, List<string>>(_orderDetail.Visit.AmbulatoryStatuses,
-                            delegate(EnumValueInfo status)
-                            {
-                                return status.Value;
-                            }),
-                            "/");
-            }
-        }
-
-        public bool VIP
-        {
-            get { return _orderDetail == null ? false : _orderDetail.Visit.VipIndicator; }
-        }
-
-        #endregion
-
-        #region Presentation Model - ProcedureStep
-
-        public string Modality
-        {
-            get { return _selectedMPS == null ? null : _selectedMPS.ModalityName; }
-        }
-
-        public string MPSState
-        {
-            get { return _selectedMPS == null ? null : _selectedMPS.State.Value; }
-        }
-
-        public string PerformerStaff
-        {
-            get { return _selectedMPS == null || _selectedMPS.Performer == null ? null : String.Format("{0}, {1}", _selectedMPS.Performer.Name.FamilyName, _selectedMPS.Performer.Name.GivenName); }
-        }
-
-        public string StartTime
-        {
-            get { return _selectedMPS == null ? null : Format.DateTime(_selectedMPS.StartTime); }
-        }
-
-        public string EndTime
-        {
-            get { return _selectedMPS == null ? null : Format.DateTime(_selectedMPS.EndTime); }
-        }
-
-        public string ScheduledPerformerStaff
-        {
-            get { return _selectedMPS == null || _selectedMPS.ScheduledPerformer == null ? null : String.Format("{0}, {1}", _selectedMPS.ScheduledPerformer.Name.FamilyName, _selectedMPS.ScheduledPerformer.Name.GivenName); }
-        }
-
-        public string ScheduledStartTime
-        {
-            get { return _selectedMPS == null ? null : Format.DateTime(_selectedMPS.ScheduledStartTime); }
-        }
-
-        public string ScheduledEndTime
-        {
-            get { return "FooBar"; }
-        }
-
-        #endregion
-
-        public event EventHandler DiagnosticServiceChanged
-        {
-            add { _diagnosticServiceChanged += value; }
-            remove { _diagnosticServiceChanged -= value; }
-        }
-
-        public ITree DiagnosticServiceBreakdown
-        {
-            get { return _diagnosticServiceBreakdown; }
-        }
-
-        public ISelection SelectedDiagnosticServiceBreakdownItem
-        {
-            get { return _selectedDiagnosticServiceBreakdownItem == null ? Selection.Empty : new Selection(_selectedDiagnosticServiceBreakdownItem); }
-            set
-            {
-                _selectedDiagnosticServiceBreakdownItem = value.Item;
-                if (_selectedDiagnosticServiceBreakdownItem == null || _selectedDiagnosticServiceBreakdownItem is ModalityProcedureStepDetail)
-                {
-                    _selectedMPS = _selectedDiagnosticServiceBreakdownItem as ModalityProcedureStepDetail;
-                    NotifyAllPropertiesChanged();
-                }
-            }
-        }
 
         private void OrderSelectionChanged()
         {
@@ -334,20 +162,15 @@ namespace ClearCanvas.Ris.Client
                         delegate(IBrowsePatientDataService service)
                         {
                             GetDataRequest request = new GetDataRequest();
-                            request.GetOrderDetailRequest = new GetOrderDetailRequest(_selectedOrder.OrderRef, true, true, false, false);
+                            request.GetOrderDetailRequest = new GetOrderDetailRequest(_selectedOrder.OrderRef, true, true, false, false, true);
                             GetDataResponse response = service.GetData(request);
 
-                            _orderDetail = response.GetOrderDetailResponse.Order;
+							_orderDetail = response.GetOrderDetailResponse.Order;
                         });
+				}
 
-                    _diagnosticServiceBreakdown = new Tree<ProcedureDetail>(
-                        GetProcedureBinding(), _orderDetail.Procedures);
-
-                    EventsHelper.Fire(_diagnosticServiceChanged, this, EventArgs.Empty);
-
-                    SelectFirstProcedureStep();
-                }
-            }
+            	UpdatePages();
+			}
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
@@ -356,57 +179,21 @@ namespace ClearCanvas.Ris.Client
             NotifyAllPropertiesChanged();
         }
 
-        private void SelectFirstProcedureStep()
-        {
-            if (_orderDetail.Procedures.Count > 0)
-            {
-                if (_orderDetail.Procedures[0].ModalityProcedureSteps.Count > 0)
-                {
-                    this.SelectedDiagnosticServiceBreakdownItem = new Selection(_orderDetail.Procedures[0].ModalityProcedureSteps[0]);
-                }
-            }
-        }
-
-        private TreeItemBinding<ProcedureDetail> GetProcedureBinding()
-        {
-            TreeItemBinding<ProcedureDetail> binding =
-                new TreeItemBinding<ProcedureDetail>(
-                delegate(ProcedureDetail rp) { return rp.Type.Name; },
-                delegate(ProcedureDetail rp)
-                {
-                    return new Tree<ModalityProcedureStepDetail>(
-                        GetModalityProcedureStepBinding(), rp.ModalityProcedureSteps);
-                });
-
-            binding.ResourceResolverProvider = delegate{ return new ResourceResolver(this.GetType().Assembly); };
-			binding.IconSetProvider = delegate{ return new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenLarge.png"); };
-            
-            return binding;
-        }
-
-        private TreeItemBinding<ModalityProcedureStepDetail> GetModalityProcedureStepBinding()
-        {
-            TreeItemBinding<ModalityProcedureStepDetail> binding =
-                new TreeItemBinding<ModalityProcedureStepDetail>(
-                delegate(ModalityProcedureStepDetail mps) { return String.Format("{0} ({1})", mps.ProcedureStepName, mps.ModalityName); });
-
-            binding.ResourceResolverProvider = delegate{ return new ResourceResolver(this.GetType().Assembly); };
-            binding.IconSetProvider =
-                delegate(ModalityProcedureStepDetail mps)
-                {
-                    if (mps.State.Code == "SC")
-						return new IconSet(IconScheme.Colour, "EditToolSmall.png", "EditToolSmall.png", "EditToolSmall.png");
-                    else if (mps.State.Code == "IP")
-                        return new IconSet(IconScheme.Colour, "AlertClock.png", "AlertClock.png", "AlertClock.png");
-                    else if (mps.State.Code == "CM")
-                        return new IconSet(IconScheme.Colour, "CheckSmall.png", "CheckSmall.png", "CheckSmall.png");
-                    else if (mps.State.Code == "DC")
-						return new IconSet(IconScheme.Colour, "DeleteToolSmall.png", "DeleteToolSmall.png", "DeleteToolSmall.png");
-
-                    return null;
-                };
-
-            return binding;
-        }
+		private void UpdatePages()
+		{
+			if (_selectedOrder == null)
+			{
+				_orderDetailComponent.Context = null;
+				_visitDetailComponent.Context = null;
+				_orderDocumentComponent.OrderAttachments = new List<OrderAttachmentSummary>();
+			}
+			else
+			{
+				_orderDetailComponent.Context = new OrderDetailViewComponent.OrderContext(_selectedOrder.OrderRef);
+				_visitDetailComponent.Context = new VisitDetailViewComponent.VisitContext(_selectedOrder.VisitRef);
+				_orderDocumentComponent.OrderAttachments = _orderDetail == null ? new List<OrderAttachmentSummary>() : _orderDetail.Attachments;
+			}
+			
+		}
     }
 }

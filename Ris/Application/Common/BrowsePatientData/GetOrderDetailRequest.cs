@@ -42,13 +42,15 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
             bool includeVisit,
             bool includeProcedures,
             bool includeAlerts,
-            bool includeNotes)
+            bool includeNotes,
+			bool includeAttachments)
         {
             this.OrderRef = orderRef;
             this.IncludeVisit = includeVisit;
             this.IncludeProcedures = includeProcedures;
             this.IncludeAlerts = includeAlerts;
             this.IncludeNotes = includeNotes;
+        	this.IncludeAttachments = includeAttachments;
         }
 
         public GetOrderDetailRequest()
@@ -81,6 +83,12 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         /// </summary>
         [DataMember]
         public bool IncludeNotes;
+
+        /// <summary>
+        /// Include order attachments.
+        /// </summary>
+        [DataMember]
+        public bool IncludeAttachments;
 
         /// <summary>
         /// A list of filters that determine which categories of order notes are returned. Optional, defaults to all.
