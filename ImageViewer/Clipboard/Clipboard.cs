@@ -1,3 +1,4 @@
+using ClearCanvas.Common;
 using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.ImageViewer.Clipboard
@@ -23,6 +24,8 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		/// </remarks>
 		public static void Add(IPresentationImage image)
 		{
+			Platform.CheckForNullReference(image, "image");
+
 			ClipboardComponent.AddToClipboard(image);
 		}
 
@@ -38,6 +41,8 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		/// </remarks>
 		public static void Add(IDisplaySet displaySet)
 		{
+			Platform.CheckForNullReference(displaySet, "displaySet");
+
 			ClipboardComponent.AddToClipboard(displaySet);
 		}
 
@@ -55,6 +60,9 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		/// </remarks>
 		public static void Add(IDisplaySet displaySet, IImageSelectionStrategy selectionStrategy)
 		{
+			Platform.CheckForNullReference(displaySet, "displaySet");
+			Platform.CheckForNullReference(selectionStrategy, "selectionStrategy");
+
 			ClipboardComponent.AddToClipboard(displaySet, selectionStrategy);
 		}
 	}

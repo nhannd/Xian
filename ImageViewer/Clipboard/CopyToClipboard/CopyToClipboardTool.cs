@@ -34,6 +34,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Tools;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -41,23 +43,105 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 {
 	[MenuAction("copyImage", "imageviewer-contextmenu/MenuClipboard/MenuCopyImageToClipboard", "CopyImage")]
 	[IconSet("copyImage", IconScheme.Colour, "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
-	[EnabledStateObserver("copyImage", "Enabled", "EnabledChanged")]
+	[EnabledStateObserver("copyImage", "CopyImageEnabled", "CopyImageEnabledChanged")]
 
 	[MenuAction("copyDisplaySet", "imageviewer-contextmenu/MenuClipboard/MenuCopyDisplaySetToClipboard", "CopyDisplaySet")]
 	[IconSet("copyDisplaySet", IconScheme.Colour, "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
-	[EnabledStateObserver("copyDisplaySet", "Enabled", "EnabledChanged")]
+	[EnabledStateObserver("copyDisplaySet", "CopyDisplaySetEnabled", "CopyDisplaySetEnabledChanged")]
 
 	[MenuAction("copySubset", "imageviewer-contextmenu/MenuClipboard/MenuCopySubsetToClipboard", "CopySubset")]
 	[IconSet("copySubset", IconScheme.Colour, "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
-	[EnabledStateObserver("copySubset", "Enabled", "EnabledChanged")]
+	[EnabledStateObserver("copySubset", "CopySubsetEnabled", "CopySubsetEnabledChanged")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class CopyToClipboardTool : ImageViewerTool
+	public class CopyToClipboardTool : Tool<IImageViewerToolContext>
 	{
-		private static IShelf _shelf;
+		private static IShelf _copySubsetShelf;
+
+		private bool _copyDisplaySetEnabled;
+		private bool _copyImageEnabled;
+		private bool _copySubsetEnabled;
+
+		private event EventHandler _copyDisplaySetEnabledChanged;
+		private event EventHandler _copyImageEnabledChanged;
+		private event EventHandler _copySubsetEnabledChanged;
 
 		public CopyToClipboardTool()
 		{
+			_copyDisplaySetEnabled = false;
+			_copyImageEnabled = false;
+			_copySubsetEnabled = false;
+		}
+
+		public bool CopyDisplaySetEnabled
+		{
+			get { return _copyDisplaySetEnabled; }	
+			set
+			{
+				if (value == _copyDisplaySetEnabled)
+					return;
+
+				_copyDisplaySetEnabled = value;
+				EventsHelper.Fire(_copyDisplaySetEnabledChanged, this, EventArgs.Empty);
+			}
+		}
+
+		public event EventHandler CopyDisplaySetEnabledChanged
+		{
+			add { _copyDisplaySetEnabledChanged += value; }
+			remove { _copyDisplaySetEnabledChanged -= value; }
+		}
+
+		public bool CopyImageEnabled
+		{
+			get { return _copyImageEnabled; }
+			set
+			{
+				if (value == _copyImageEnabled)
+					return;
+
+				_copyImageEnabled = value;
+				EventsHelper.Fire(_copyImageEnabledChanged, this, EventArgs.Empty);
+			}
+		}
+
+		public event EventHandler CopyImageEnabledChanged
+		{
+			add { _copyImageEnabledChanged += value; }
+			remove { _copyImageEnabledChanged -= value; }
+		}
+
+		public bool CopySubsetEnabled
+		{
+			get { return _copySubsetEnabled; }
+			set
+			{
+				if (value == _copySubsetEnabled)
+					return;
+
+				_copySubsetEnabled = value;
+				EventsHelper.Fire(_copySubsetEnabledChanged, this, EventArgs.Empty);
+			}
+		}
+
+		public event EventHandler CopySubsetEnabledChanged
+		{
+			add { _copySubsetEnabledChanged += value; }
+			remove { _copySubsetEnabledChanged -= value; }
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			base.Context.Viewer.EventBroker.TileSelected += OnTileSelected;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			base.Context.Viewer.EventBroker.TileSelected -= OnTileSelected;
+
+			base.Dispose(disposing);
 		}
 
 		public void CopyImage()
@@ -67,7 +151,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 				BlockingOperation.Run(
 					delegate
 						{
-							Clipboard.Add(this.SelectedPresentationImage);
+							Clipboard.Add(this.Context.Viewer.SelectedPresentationImage);
 						});
 			}
 			catch(Exception e)
@@ -83,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 				BlockingOperation.Run(
 					delegate
 						{
-							Clipboard.Add(this.SelectedPresentationImage.ParentDisplaySet);
+							Clipboard.Add(this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
 						});
 			}
 			catch (Exception e)
@@ -98,16 +182,16 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			{
 				CopySubsetToClipboardComponent component;
 
-				if (_shelf != null)
+				if (_copySubsetShelf != null)
 				{
-					component = (CopySubsetToClipboardComponent)_shelf.Component;
+					component = (CopySubsetToClipboardComponent)_copySubsetShelf.Component;
 					if (component.DesktopWindow != this.Context.DesktopWindow)
 					{
 						component.Close();
 					}
 					else
 					{
-						_shelf.Activate();
+						_copySubsetShelf.Activate();
 						return;
 					}
 				}
@@ -116,13 +200,13 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 
 				component = new CopySubsetToClipboardComponent(desktopWindow);
 
-				_shelf = ApplicationComponent.LaunchAsShelf(
+				_copySubsetShelf = ApplicationComponent.LaunchAsShelf(
 					desktopWindow,
 					component,
 					SR.TitleCopySubsetToClipboard,
 					ShelfDisplayHint.DockFloat | ShelfDisplayHint.ShowNearMouse);
 
-				_shelf.Closed += delegate { _shelf = null; };
+				_copySubsetShelf.Closed += delegate { _copySubsetShelf = null; };
 			}
 			catch (Exception e)
 			{
@@ -130,14 +214,26 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			}
 		}
 
-		protected override void OnTileSelected(object sender, TileSelectedEventArgs e)
+		protected void OnTileSelected(object sender, TileSelectedEventArgs e)
 		{
-			base.OnTileSelected(sender, e);
-
-			if (e.SelectedTile.PresentationImage != null)
-				this.Enabled = true;
+			if (e.SelectedTile.PresentationImage == null || e.SelectedTile.ParentImageBox.DisplaySet.PresentationImages.Count < 1)
+			{
+				CopyDisplaySetEnabled = false;
+				CopySubsetEnabled = false;
+				CopyImageEnabled = false;
+			}
+			else if (e.SelectedTile.ParentImageBox.DisplaySet.PresentationImages.Count == 1)
+			{
+				CopyDisplaySetEnabled = false;
+				CopySubsetEnabled = false;
+				CopyImageEnabled = true;
+			}
 			else
-				this.Enabled = false;
+			{
+				CopyDisplaySetEnabled = true;
+				CopySubsetEnabled = true;
+				CopyImageEnabled = true;
+			}
 		}
 	}
 }

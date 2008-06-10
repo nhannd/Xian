@@ -64,6 +64,10 @@ namespace ClearCanvas.ImageViewer.Clipboard
 	[AssociateView(typeof(ClipboardComponentViewExtensionPoint))]
 	public class ClipboardComponent : ApplicationComponent
 	{
+		#region Component
+
+		#region ClipboardToolContext class
+
 		private class ClipboardToolContext : ToolContext, IClipboardToolContext
 		{
 			readonly ClipboardComponent _component;
@@ -102,6 +106,10 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			}
 		}
 
+		#endregion
+
+		#region Private Fields
+
 		private ToolSet _toolSet;
 		private ActionModelRoot _toolbarModel;
 		private ActionModelRoot _contextMenuModel;
@@ -111,8 +119,9 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		private readonly ClipboardItemList _clipboardItemWrapper;
 
-		private static readonly BindingList<IClipboardItem> _clipboardItems
-			= new BindingList<IClipboardItem>();
+		private static readonly BindingList<IClipboardItem> _clipboardItems = new BindingList<IClipboardItem>();
+
+		#endregion
 
 		/// <summary>
 		/// Constructor.
@@ -172,6 +181,8 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		#endregion
 
+		#region Overrides
+
 		/// <summary>
 		/// Called by the host to initialize the application component.
 		/// </summary>
@@ -199,27 +210,19 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			base.Stop();
 		}
 
+		#endregion
+
 		private void OnBindingListChanged(object sender, ListChangedEventArgs e)
 		{
 			EventsHelper.Fire(_clipboardItemsChanged, this, EventArgs.Empty);
 		}
 
-		private static void HideTextOverlay(IEnumerable<IPresentationImage> images)
-		{
-			foreach (IPresentationImage image in images)
-				HideTextOverlay(image);
-		}
+		#endregion
 
-		private static void HideTextOverlay(IPresentationImage image)
-		{
-			if (image is IAnnotationLayoutProvider)
-				((IAnnotationLayoutProvider) image).AnnotationLayout.Visible = false;
-		}
+		#region Static Helper Methods
 
 		internal static void AddToClipboard(IPresentationImage image)
 		{
-			Platform.CheckForNullReference(image, "image");
-
 			Rectangle clientRectangle = image.ClientRectangle;
 			
 			image = image.Clone();
@@ -236,8 +239,6 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		internal static void AddToClipboard(IDisplaySet displaySet, IImageSelectionStrategy selectionStrategy)
 		{
-			Platform.CheckForNullReference(displaySet, "displaySet");
-
 			if (displaySet.ImageBox == null || 
 				displaySet.ImageBox.SelectedTile == null || 
 				displaySet.ImageBox.SelectedTile.PresentationImage == null)
@@ -248,22 +249,55 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			Rectangle clientRectangle = displaySet.ImageBox.SelectedTile.PresentationImage.ClientRectangle;
 			if (selectionStrategy == null)
 			{
-				displaySet = displaySet.Clone();
+				if (displaySet.PresentationImages.Count == 1)
+				{
+					// Add as a single image.
+					AddToClipboard(displaySet.PresentationImages[0]);
+				}
+				else
+				{
+					AddDisplaySet(displaySet.Clone(), clientRectangle);
+				}
 			}
 			else
 			{
-				string name = String.Format("{0} - {1}", selectionStrategy.Description, displaySet.Name);
-				IDisplaySet sourceDisplaySet = displaySet;
-				displaySet = new DisplaySet(name, displaySet.Uid);
-				foreach (IPresentationImage image in selectionStrategy.GetImages(sourceDisplaySet))
-					displaySet.PresentationImages.Add(image.Clone());
+				List<IPresentationImage> images = new List<IPresentationImage>(selectionStrategy.GetImages(displaySet));
+				if (images.Count == 1)
+				{
+					// Add as a single image.
+					AddToClipboard(images[0]);
+				}
+				else
+				{
+					string name = String.Format("{0} - {1}", selectionStrategy.Description, displaySet.Name);
+					displaySet = new DisplaySet(name, displaySet.Uid);
+					images.ForEach(delegate(IPresentationImage image) { displaySet.PresentationImages.Add(image.Clone()); });
+					AddDisplaySet(displaySet, clientRectangle);
+				}
 			}
+		}
 
+		private static void AddDisplaySet(IDisplaySet displaySet, Rectangle clientRectangle)
+		{
 			HideTextOverlay(displaySet.PresentationImages);
 
 			Bitmap bmp = IconCreator.CreateDisplaySetIcon(displaySet, clientRectangle);
 			ClipboardItem item = new ClipboardItem(displaySet, bmp, displaySet.Name, clientRectangle);
 			_clipboardItems.Add(item);
 		}
+
+		private static void HideTextOverlay(IEnumerable<IPresentationImage> images)
+		{
+			foreach (IPresentationImage image in images)
+				HideTextOverlay(image);
+		}
+
+		private static void HideTextOverlay(IPresentationImage image)
+		{
+			if (image is IAnnotationLayoutProvider)
+				((IAnnotationLayoutProvider) image).AnnotationLayout.Visible = false;
+		}
+
+		#endregion
 	}
 }
