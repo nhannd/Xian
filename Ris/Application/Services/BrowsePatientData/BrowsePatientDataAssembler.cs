@@ -78,9 +78,18 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             return data;
         }
 
+		public VisitListItem CreateVisitListItem(Visit visit, IPersistenceContext context)
+		{
+			VisitListItem data = new VisitListItem();
+
+			UpdateListItem(data, visit, context);
+
+			return data;
+		}
+
         #region Private Helpers
 
-        private void UpdateListItem(OrderListItem data, Visit visit, IPersistenceContext context)
+        private void UpdateListItem(VisitListItem data, Visit visit, IPersistenceContext context)
         {
             FacilityAssembler facilityAssembler = new FacilityAssembler();
 
@@ -134,5 +143,5 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.ReportStatus = EnumUtils.GetEnumValueInfo(report.Status, context);
         }
         #endregion
-    }
+	}
 }

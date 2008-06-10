@@ -72,6 +72,11 @@
     <Compile Include="Admin\WorklistAdmin\ListWorklistClassesRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\ListWorklistClassesResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistClassSummary.cs" />
+    <Compile Include="BrowsePatientData\GetVisitDetailRequest.cs" />
+    <Compile Include="BrowsePatientData\GetVisitDetailResponse.cs" />
+    <Compile Include="BrowsePatientData\ListVisitsRequest.cs" />
+    <Compile Include="BrowsePatientData\ListVisitsResponse.cs" />
+    <Compile Include="BrowsePatientData\VisitListItem.cs" />
     <Compile Include="CannedTextService\AddCannedTextRequest.cs" />
     <Compile Include="CannedTextService\AddCannedTextResponse.cs" />
     <Compile Include="CannedTextService\CannedTextDetail.cs" />
@@ -419,8 +424,6 @@
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\SaveDataResponse.cs" />
     <Compile Include="ModalityWorkflow\CompleteModalityPerformedProcedureStepRequest.cs" />
     <Compile Include="ModalityWorkflow\CompleteModalityPerformedProcedureStepResponse.cs" />
-    <Compile Include="BrowsePatientData\GetAlertsRequest.cs" />
-    <Compile Include="BrowsePatientData\GetAlertsResponse.cs" />
     <Compile Include="ProtocolCodeDetail.cs" />
     <Compile Include="ProtocollingWorkflow\AcceptOrderProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\AcceptOrderProtocolResponse.cs" />

@@ -39,42 +39,8 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class OrderListItem : DataContractBase
+    public class OrderListItem : VisitListItem
     {
-        #region Visit
-
-        [DataMember]
-        public EntityRef VisitRef;
-
-        [DataMember]
-        public CompositeIdentifierDetail VisitNumber;
-
-        [DataMember]
-        public EnumValueInfo PatientClass;
-
-        [DataMember]
-        public EnumValueInfo PatientType;
-
-        [DataMember]
-        public EnumValueInfo AdmissionType;
-
-        [DataMember]
-        public EnumValueInfo VisitStatus;
-
-        [DataMember]
-        public DateTime? AdmitTime;
-
-        [DataMember]
-        public DateTime? DischargeTime;
-
-        [DataMember]
-        public FacilitySummary VisitFacility;
-
-        [DataMember]
-        public string PreadmitNumber;
-
-        #endregion
-
         #region Order
 
         [DataMember]
@@ -139,6 +105,5 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public EnumValueInfo ProcedureStatus;
 
         #endregion
-
     }
 }

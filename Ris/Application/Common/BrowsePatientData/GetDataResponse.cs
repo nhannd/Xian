@@ -43,7 +43,13 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         [DataMember]
         public GetPatientProfileDetailResponse GetPatientProfileDetailResponse;
 
-        [DataMember]
+		[DataMember]
+		public ListVisitsResponse ListVisitsResponse;
+
+		[DataMember]
+		public GetVisitDetailResponse GetVisitDetailResponse;
+
+		[DataMember]
         public ListOrdersResponse ListOrdersResponse;
 
         [DataMember]

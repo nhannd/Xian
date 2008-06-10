@@ -60,7 +60,13 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             if (request.GetPatientProfileDetailRequest != null)
                 response.GetPatientProfileDetailResponse = GetPatientProfileDetail(request.GetPatientProfileDetailRequest);
 
-            if (request.ListOrdersRequest != null)
+			if (request.ListVisitsRequest != null)
+				response.ListVisitsResponse = ListVisits(request.ListVisitsRequest);
+
+			if (request.GetVisitDetailRequest != null)
+				response.GetVisitDetailResponse = GetVisitDetail(request.GetVisitDetailRequest);
+
+			if (request.ListOrdersRequest != null)
                 response.ListOrdersResponse = ListOrders(request.ListOrdersRequest);
 
             if (request.GetOrderDetailRequest != null)
@@ -123,7 +129,35 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             return response;
         }
 
-        private ListOrdersResponse ListOrders(ListOrdersRequest request)
+		private ListVisitsResponse ListVisits(ListVisitsRequest request)
+		{
+			BrowsePatientDataAssembler assembler = new BrowsePatientDataAssembler();
+
+			Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
+
+			VisitSearchCriteria where = new VisitSearchCriteria();
+			where.Patient.EqualTo(patient);
+
+			IList<Visit> visits = PersistenceContext.GetBroker<IVisitBroker>().Find(where);
+			return new ListVisitsResponse(
+				CollectionUtils.Map<Visit, VisitListItem>(visits,
+					delegate (Visit v)
+					{
+						return assembler.CreateVisitListItem(v, PersistenceContext);
+					}));
+		}
+
+		private GetVisitDetailResponse GetVisitDetail(GetVisitDetailRequest request)
+		{
+			Visit visit = PersistenceContext.Load<Visit>(request.VisitRef, EntityLoadFlags.Proxy);
+			
+			VisitAssembler assembler = new VisitAssembler();
+			VisitDetail detail = assembler.CreateVisitDetail(visit, PersistenceContext);
+
+			return new GetVisitDetailResponse(detail);
+		}
+
+		private ListOrdersResponse ListOrders(ListOrdersRequest request)
         {
             BrowsePatientDataAssembler assembler = new BrowsePatientDataAssembler();
 
