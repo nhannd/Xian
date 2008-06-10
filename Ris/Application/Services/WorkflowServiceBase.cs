@@ -95,7 +95,25 @@ namespace ClearCanvas.Ris.Application.Services
             _worklistExtPoint = new WorklistExtensionPoint();
         }
 
-        protected QueryWorklistResponse<TSummary> QueryWorklistHelper<TItem, TSummary>(QueryWorklistRequest request,
+		/// <summary>
+		/// Obtain the list of worklists for the current user.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[ReadOperation]
+		public ListWorklistsForUserResponse ListWorklistsForUser(ListWorklistsForUserRequest request)
+		{
+			WorklistAssembler assembler = new WorklistAssembler();
+			return new ListWorklistsForUserResponse(
+				CollectionUtils.Map<Worklist, WorklistSummary>(
+					PersistenceContext.GetBroker<IWorklistBroker>().FindWorklistsForStaff(CurrentUserStaff, request.WorklistTokens),
+					delegate(Worklist worklist)
+					{
+						return assembler.GetWorklistSummary(worklist);
+					}));
+		}
+
+		protected QueryWorklistResponse<TSummary> QueryWorklistHelper<TItem, TSummary>(QueryWorklistRequest request,
             Converter<TItem, TSummary> mapCallback)
         {
             IWorklist worklist = request.WorklistRef != null ?
@@ -161,7 +179,7 @@ namespace ClearCanvas.Ris.Application.Services
 		}
 
 
-        protected List<WorklistSummary> ListWorklistsHelper(List<string> worklistTokens)
+		protected List<WorklistSummary> ListWorklistsHelper(List<string> worklistTokens)
         {
             WorklistAssembler assembler = new WorklistAssembler();
             return CollectionUtils.Map<Worklist, WorklistSummary>(

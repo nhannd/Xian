@@ -82,12 +82,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
-        public ListWorklistsResponse ListWorklists(ListWorklistsRequest request)
-        {
-            return new ListWorklistsResponse(ListWorklistsHelper(request.WorklistTokens));
-        }
-
-        [ReadOperation]
         public QueryWorklistResponse<RegistrationWorklistItem> QueryWorklist(QueryWorklistRequest request)
         {
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();

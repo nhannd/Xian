@@ -38,14 +38,6 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 	public interface IModalityWorkflowService : IWorklistService<ModalityWorklistItem>
     {
         /// <summary>
-        /// Obtain the list of worklists for the current user.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
-        ListWorklistsResponse ListWorklists(ListWorklistsRequest request);
-
-        /// <summary>
         /// Get the enablement of all workflow operations.
         /// </summary>
         /// <param name="request"></param>

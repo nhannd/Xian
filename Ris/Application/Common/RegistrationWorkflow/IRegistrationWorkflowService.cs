@@ -59,9 +59,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         [OperationContract]
         LoadSearchPatientFormDataResponse LoadSearchPatientFormData(LoadSearchPatientFormDataRequest request);
 
-        [OperationContract]
-        ListWorklistsResponse ListWorklists(ListWorklistsRequest request);
-
         /// <summary>
         /// Get enablements for operations that can be applied to a worklist item
         /// </summary>

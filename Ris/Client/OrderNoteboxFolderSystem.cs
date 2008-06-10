@@ -45,11 +45,12 @@ namespace ClearCanvas.Ris.Client
 
 	public class OrderNoteboxFolderSystem : WorkflowFolderSystem<OrderNoteboxItemSummary>
 	{
-		class OrderNoteboxItemToolContext : ToolContext, IOrderNoteboxItemToolContext
+		class OrderNoteboxItemToolContext : WorkflowItemToolContext, IOrderNoteboxItemToolContext
 		{
 			private readonly OrderNoteboxFolderSystem _owner;
 
-			public OrderNoteboxItemToolContext(OrderNoteboxFolderSystem _owner)
+			public OrderNoteboxItemToolContext(OrderNoteboxFolderSystem owner)
+				:base(owner)
 			{
 				this._owner = _owner;
 			}
@@ -63,88 +64,14 @@ namespace ClearCanvas.Ris.Client
 
 			#endregion
 
-			#region IWorkflowItemToolContext<OrderNoteboxItemSummary> Members
-
-			public ICollection<OrderNoteboxItemSummary> SelectedItems
-			{
-				get
-				{
-					return CollectionUtils.Map<object, OrderNoteboxItemSummary>(_owner.SelectedItems.Items,
-						delegate(object item) { return (OrderNoteboxItemSummary)item; });
-				}
-			}
-
-			#endregion
-
-			#region IWorkflowItemToolContext Members
-
-			public bool GetWorkflowOperationEnablement(string operationClass)
-			{
-				return _owner.GetOperationEnablement(operationClass);
-			}
-
-			public event EventHandler SelectionChanged
-			{
-				add { _owner.SelectedItemsChanged += value; }
-				remove { _owner.SelectedItemsChanged -= value; }
-			}
-
-			public ISelection Selection
-			{
-				get { return _owner.SelectedItems; }
-			}
-
-			public IEnumerable Folders
-			{
-				get { return _owner.Folders; }
-			}
-
-			public IFolder SelectedFolder
-			{
-				get { return _owner.SelectedFolder; }
-			}
-
-			public IDesktopWindow DesktopWindow
-			{
-				get { return _owner.DesktopWindow; }
-			}
-
-			#endregion
 		}
 
-		class OrderNoteboxFolderToolContext : ToolContext, IOrderNoteboxFolderToolContext
+		class OrderNoteboxFolderToolContext : WorkflowFolderToolContext, IOrderNoteboxFolderToolContext
 		{
-			private readonly OrderNoteboxFolderSystem _owner;
-
 			public OrderNoteboxFolderToolContext(OrderNoteboxFolderSystem owner)
+				:base(owner)
 			{
-				this._owner = owner;
 			}
-
-			#region IWorkflowFolderToolContext Members
-
-			public IEnumerable Folders
-			{
-				get { return _owner.Folders; }
-			}
-
-			public IFolder SelectedFolder
-			{
-				get { return _owner.SelectedFolder; }
-			}
-
-			public event EventHandler SelectedFolderChanged
-			{
-				add { _owner.SelectedFolderChanged += value; }
-				remove { _owner.SelectedFolderChanged -= value; }
-			}
-
-			public IDesktopWindow DesktopWindow
-			{
-				get { return _owner.DesktopWindow; }
-			}
-
-			#endregion
 		}
 
 		#region private fields
@@ -190,19 +117,6 @@ namespace ClearCanvas.Ris.Client
 			this.AddFolder(new SentItemsFolder(this));
 		}
 
-		public bool GetOperationEnablement(string operationName)
-		{
-			try
-			{
-				return _workflowEnablement == null ? false : _workflowEnablement[operationName];
-			}
-			catch (KeyNotFoundException)
-			{
-				Platform.Log(LogLevel.Error, string.Format(SR.ExceptionOperationEnablementUnknown, operationName));
-				return false;
-			}
-		}
-
 		public override string PreviewUrl
 		{
 			get { return WebResourcesSettings.Default.EmergencyPhysicianOrderNoteboxFolderSystemUrl; }
@@ -219,6 +133,16 @@ namespace ClearCanvas.Ris.Client
 
 			if (notesTool != null && notesTool.Enabled)
 				notesTool.Open();
+		}
+
+		protected override ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request)
+		{
+			return new ListWorklistsForUserResponse(new List<WorklistSummary>());
+		}
+
+		protected override IDictionary<string, bool> QueryOperationEnablement(ISelection selection)
+		{
+			return new Dictionary<string, bool>();
 		}
 
 		protected void OnPrimaryFolderCountChanged(object sender, System.EventArgs e)

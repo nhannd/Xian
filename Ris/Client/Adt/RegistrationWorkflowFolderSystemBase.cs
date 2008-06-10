@@ -52,56 +52,17 @@ namespace ClearCanvas.Ris.Client.Adt
 
     public abstract class RegistrationWorkflowFolderSystemBase : WorkflowFolderSystem<RegistrationWorklistItem>
     {
-        class RegistrationWorkflowItemToolContext : ToolContext, IRegistrationWorkflowItemToolContext
+		class RegistrationWorkflowItemToolContext : WorkflowItemToolContext, IRegistrationWorkflowItemToolContext
         {
-            private readonly RegistrationWorkflowFolderSystemBase _owner;
+			private readonly RegistrationWorkflowFolderSystemBase _owner;
 
             public RegistrationWorkflowItemToolContext(RegistrationWorkflowFolderSystemBase owner)
+				:base(owner)
             {
-                _owner = owner;
+            	_owner = owner;
             }
 
             #region IRegistrationWorkflowItemToolContext Members
-
-            public IDesktopWindow DesktopWindow
-            {
-                get { return _owner.DesktopWindow; }
-            }
-
-            public ISelection Selection
-            {
-                get { return _owner.SelectedItems; }
-            }
-
-            public ICollection<RegistrationWorklistItem> SelectedItems
-            {
-                get
-                {
-                    return CollectionUtils.Map<object, RegistrationWorklistItem>(_owner.SelectedItems.Items,
-                        delegate(object item) { return (RegistrationWorklistItem)item; });
-                }
-            }
-
-            public event EventHandler SelectionChanged
-            {
-                add { _owner.SelectedItemsChanged += value; }
-                remove { _owner.SelectedItemsChanged -= value; }
-            }
-
-            public IEnumerable Folders
-            {
-                get { return _owner.Folders; }
-            }
-
-            public IFolder SelectedFolder
-            {
-                get { return _owner.SelectedFolder; }
-            }
-
-            public bool GetWorkflowOperationEnablement(string operationClass)
-            {
-                return _owner.GetOperationEnablement(operationClass);
-            }
 
             public RegistrationWorkflowFolderSystemBase FolderSystem
             {
@@ -111,42 +72,13 @@ namespace ClearCanvas.Ris.Client.Adt
             #endregion
         }
 
-        class RegistrationWorkflowFolderToolContext : ToolContext, IRegistrationWorkflowFolderToolContext
+		class RegistrationWorkflowFolderToolContext : WorkflowFolderToolContext, IRegistrationWorkflowFolderToolContext
         {
-            private readonly RegistrationWorkflowFolderSystemBase _owner;
-
             public RegistrationWorkflowFolderToolContext(RegistrationWorkflowFolderSystemBase owner)
+				:base(owner)
             {
-                _owner = owner;
             }
-
-            #region IRegistrationWorkflowFolderToolContext Members
-
-            public event EventHandler SelectedFolderChanged
-            {
-                add { _owner.SelectedFolderChanged += value; }
-                remove { _owner.SelectedFolderChanged -= value; }
-            }
-
-            public IDesktopWindow DesktopWindow
-            {
-                get { return _owner.DesktopWindow; }
-            }
-
-            public IEnumerable Folders
-            {
-                get { return _owner.Folders; }
-            }
-
-            public IFolder SelectedFolder
-            {
-                get { return _owner.SelectedFolder; }
-            }
-
-            #endregion
         }
-
-        private IDictionary<string, bool> _workflowEnablment;
 
         public RegistrationWorkflowFolderSystemBase(
 			string title,
@@ -156,76 +88,34 @@ namespace ClearCanvas.Ris.Client.Adt
             ExtensionPoint<ITool> folderToolExtensionPoint)
             : base(title, folderExplorer, folderExtensionPoint)
         {
-			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
-
-            if (this.WorklistClassNames.Count > 0)
-            {
-                Platform.GetService<IRegistrationWorkflowService>(
-                    delegate(IRegistrationWorkflowService service)
-                    {
-                        ListWorklistsResponse response = service.ListWorklists(new ListWorklistsRequest(this.WorklistClassNames));
-                        foreach (WorklistSummary summary in response.Worklists)
-                        {
-                            Type foundType = GetFolderClassForWorklistClass(summary.ClassName);
-                            WorkflowFolder<RegistrationWorklistItem> folder = 
-                                (WorkflowFolder<RegistrationWorklistItem>)Activator.CreateInstance(foundType, this, summary.DisplayName, summary.Description, summary.WorklistRef);
-                            if (folder != null)
-                            {
-                                folder.IsStatic = false;
-                                this.AddFolder(folder);
-                            }
-                        }
-                    });
-            }
-
             _itemTools = new ToolSet(itemToolExtensionPoint, new RegistrationWorkflowItemToolContext(this));
             _folderTools = new ToolSet(folderToolExtensionPoint, new RegistrationWorkflowFolderToolContext(this));
         }
 
-        public bool GetOperationEnablement(string operationName)
-        {
-            try
-            {
-                return _workflowEnablment == null ? false : _workflowEnablment[operationName];
-            }
-            catch (KeyNotFoundException)
-            {
-                Platform.Log(LogLevel.Error, string.Format(SR.ExceptionOperationEnablementUnknown, operationName));
-                return false;
-            }
+		protected override ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request)
+		{
+			ListWorklistsForUserResponse response = null;
+			Platform.GetService<IRegistrationWorkflowService>(
+				delegate(IRegistrationWorkflowService service)
+				{
+					response = service.ListWorklistsForUser(request);
+				});
 
-        }
+			return response;
+		}
 
-        public override void SelectedItemsChangedEventHandler(object sender, EventArgs e)
-        {
-            RegistrationWorklistItem selectedItem = (RegistrationWorklistItem)this.SelectedItems.Item;
-
-            if (selectedItem == null)
-            {
-                _workflowEnablment = null;
-            }
-            else
-            {
-                try
-                {
-                    BlockingOperation.Run(
-                        delegate
-                        {
-                            Platform.GetService<IRegistrationWorkflowService>(
-                                delegate(IRegistrationWorkflowService service)
-                                {
-                                    GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem.PatientProfileRef, selectedItem.OrderRef));
-                                    _workflowEnablment = response.OperationEnablementDictionary;
-                                });
-                        });
-                }
-                catch (Exception ex)
-                {
-                    ExceptionHandler.Report(ex, this.DesktopWindow);
-                }
-            }
-
-            base.SelectedItemsChangedEventHandler(sender, e);
-        }
+		protected override IDictionary<string, bool> QueryOperationEnablement(ISelection selection)
+		{
+			IDictionary<string, bool> enablement = null;
+			Platform.GetService<IRegistrationWorkflowService>(
+				delegate(IRegistrationWorkflowService service)
+				{
+					RegistrationWorklistItem item = (RegistrationWorklistItem)selection.Item;
+					GetOperationEnablementResponse response = service.GetOperationEnablement(
+						new GetOperationEnablementRequest(item.PatientProfileRef, item.OrderRef));
+					enablement = response.OperationEnablementDictionary;
+				});
+			return enablement;
+		}
     }
 }

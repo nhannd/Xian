@@ -74,9 +74,9 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         /// <param name="request"></param>
         /// <returns></returns>
         [ReadOperation]
-        public ListWorklistsResponse ListWorklists(ListWorklistsRequest request)
+        public ListWorklistsForUserResponse ListWorklistsForUser(ListWorklistsForUserRequest request)
         {
-            return new ListWorklistsResponse(ListWorklistsHelper(request.WorklistTokens));
+			return new ListWorklistsForUserResponse(ListWorklistsHelper(request.WorklistTokens));
         }
 
         /// <summary>

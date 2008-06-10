@@ -51,96 +51,22 @@ namespace ClearCanvas.Ris.Client.Adt
 
     public abstract class TechnologistWorkflowFolderSystemBase : WorkflowFolderSystem<ModalityWorklistItem>
     {
-        class TechnologistWorkflowItemToolContext : ToolContext, ITechnologistWorkflowItemToolContext
+        class TechnologistWorkflowItemToolContext : WorkflowItemToolContext, ITechnologistWorkflowItemToolContext
         {
-            private readonly TechnologistWorkflowFolderSystemBase _owner;
-
             public TechnologistWorkflowItemToolContext(TechnologistWorkflowFolderSystemBase owner)
+				:base(owner)
             {
-                _owner = owner;
             }
-
-            #region ITechnologistWorkflowItemToolContext Members
-
-            public IDesktopWindow DesktopWindow
-            {
-                get { return _owner.DesktopWindow; }
-            }
-
-            public ISelection Selection
-            {
-                get { return _owner.SelectedItems; }
-            }
-
-            public ICollection<ModalityWorklistItem> SelectedItems
-            {
-                get
-                {
-                    return CollectionUtils.Map<object, ModalityWorklistItem>(_owner.SelectedItems.Items,
-                        delegate(object item) { return (ModalityWorklistItem)item; });
-                }
-            }
-
-            public event EventHandler SelectionChanged
-            {
-                add { _owner.SelectedItemsChanged += value; }
-                remove { _owner.SelectedItemsChanged -= value; }
-            }
-
-            public bool GetWorkflowOperationEnablement(string operationClass)
-            {
-                return _owner.GetOperationEnablement(operationClass);
-            }
-
-            public IEnumerable Folders
-            {
-                get { return _owner.Folders; }
-            }
-
-            public IFolder SelectedFolder
-            {
-                get { return _owner.SelectedFolder; }
-            }
-
-            #endregion
         }
 
-        class TechnologistWorkflowFolderToolContext : ToolContext, ITechnologistWorkflowFolderToolContext
+        class TechnologistWorkflowFolderToolContext : WorkflowFolderToolContext, ITechnologistWorkflowFolderToolContext
         {
-            private readonly TechnologistWorkflowFolderSystemBase _owner;
-
             public TechnologistWorkflowFolderToolContext(TechnologistWorkflowFolderSystemBase owner)
+				:base(owner)
             {
-                _owner = owner;
             }
-
-            #region ITechnologistWorkflowFolderToolContext Members
-
-            public event EventHandler SelectedFolderChanged
-            {
-                add { _owner.SelectedFolderChanged += value; }
-                remove { _owner.SelectedFolderChanged -= value; }
-            }
-
-            public IDesktopWindow DesktopWindow
-            {
-                get { return _owner.DesktopWindow; }
-            }
-
-            public IEnumerable Folders
-            {
-                get { return _owner.Folders; }
-            }
-
-            public IFolder SelectedFolder
-            {
-                get { return _owner.SelectedFolder; }
-            }
-
-            #endregion
         }
 
-        private IDictionary<string, bool> _workflowEnablement;
 
         public TechnologistWorkflowFolderSystemBase(
 			string title,
@@ -150,72 +76,33 @@ namespace ClearCanvas.Ris.Client.Adt
             ExtensionPoint<ITool> folderToolExtensionPoint)
             : base(title, folderExplorer, folderExtensionPoint)
 		{
-			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
-
-            if (this.WorklistClassNames.Count > 0)
-            {
-                Platform.GetService<IModalityWorkflowService>(
-                    delegate(IModalityWorkflowService service)
-                        {
-                            ListWorklistsResponse response =
-                                service.ListWorklists(new ListWorklistsRequest(this.WorklistClassNames));
-                            foreach (WorklistSummary summary in response.Worklists)
-                            {
-                                Type foundType = GetFolderClassForWorklistClass(summary.ClassName);
-                                WorkflowFolder<ModalityWorklistItem> folder =
-                                    (WorkflowFolder<ModalityWorklistItem>)Activator.CreateInstance(foundType, this, summary.DisplayName, summary.Description, summary.WorklistRef);
-                                if (folder != null)
-                                {
-                                    folder.IsStatic = false;
-                                    this.AddFolder(folder);
-                                }
-                            }
-                        });
-            }
-
             _itemTools = new ToolSet(itemToolExtensionPoint, new TechnologistWorkflowItemToolContext(this));
             _folderTools = new ToolSet(folderToolExtensionPoint, new TechnologistWorkflowFolderToolContext(this));
         }
 
-        public bool GetOperationEnablement(string operationName)
-        {
-            try
-            {
-                return _workflowEnablement == null ? false : _workflowEnablement[operationName];
-            }
-            catch (KeyNotFoundException)
-            {
-                Platform.Log(LogLevel.Error, string.Format(SR.ExceptionOperationEnablementUnknown, operationName));
-                return false;
-            }
-        }
+		protected override ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request)
+		{
+			ListWorklistsForUserResponse response = null;
+			Platform.GetService<IModalityWorkflowService>(
+				delegate(IModalityWorkflowService service)
+				{
+					response = service.ListWorklistsForUser(request);
+				});
 
-        public override void SelectedItemsChangedEventHandler(object sender, EventArgs e)
-        {
-            ModalityWorklistItem selectedItem = (ModalityWorklistItem) this.SelectedItems.Item;
+			return response;
+		}
 
-            if (selectedItem == null)
-            {
-                _workflowEnablement = null;
-            }
-            else
-            {
-                try
-                {
-                    Platform.GetService<IModalityWorkflowService>(
-                        delegate(IModalityWorkflowService service)
-                        {
-                            GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem.ProcedureStepRef));
-                            _workflowEnablement = response.OperationEnablementDictionary;
-                        });
-                }
-                catch (Exception ex)
-                {
-                    ExceptionHandler.ReferenceEquals(ex, this.DesktopWindow);
-                }
-            }
-
-            base.SelectedItemsChangedEventHandler(sender, e);
-        }
+		protected override IDictionary<string, bool> QueryOperationEnablement(ISelection selection)
+		{
+			IDictionary<string, bool> enablement = null;
+			Platform.GetService<IModalityWorkflowService>(
+				delegate(IModalityWorkflowService service)
+				{
+					ModalityWorklistItem item = (ModalityWorklistItem) selection.Item;
+					GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(item.ProcedureStepRef));
+					enablement = response.OperationEnablementDictionary;
+				});
+			return enablement;
+		}
     }
 }

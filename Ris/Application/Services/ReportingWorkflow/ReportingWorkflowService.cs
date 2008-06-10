@@ -68,13 +68,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		}
 
         [ReadOperation]
-        public ListWorklistsResponse ListWorklists(ListWorklistsRequest request)
-        {
-            return new ListWorklistsResponse(ListWorklistsHelper(request.WorklistTokens));
-        }
-
-
-        [ReadOperation]
         public QueryWorklistResponse<ReportingWorklistItem> QueryWorklist(QueryWorklistRequest request)
         {
             ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();

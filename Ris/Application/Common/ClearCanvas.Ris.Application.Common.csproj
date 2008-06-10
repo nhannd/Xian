@@ -93,6 +93,8 @@
     <Compile Include="CannedTextService\UpdateCannedTextResponse.cs" />
     <Compile Include="CannedTextService\CannedTextSummary.cs" />
     <Compile Include="IWorklistService.cs" />
+    <Compile Include="ListWorklistsForUserRequest.cs" />
+    <Compile Include="ListWorklistsForUserResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\LoadDataRequest.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\LoadDataResponse.cs" />
     <Compile Include="OrderNotes\AcknowledgeAndPostRequest.cs" />
@@ -449,15 +451,11 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\ReplaceOrderResponse.cs" />
     <Compile Include="ReportingWorkflow\GetRadiologistListRequest.cs" />
     <Compile Include="ReportingWorkflow\GetRadiologistListResponse.cs" />
-    <Compile Include="ReportingWorkflow\ListWorklistsRequest.cs" />
-    <Compile Include="ReportingWorkflow\ListWorklistsResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminSummary.cs" />
     <Compile Include="DiagnosticServiceDetail.cs" />
     <Compile Include="DiagnosticServiceSummary.cs" />
     <Compile Include="ModalityProcedureStepSummary.cs" />
     <Compile Include="ModalityProcedureStepTypeDetail.cs" />
-    <Compile Include="ModalityWorkflow\ListWorklistsRequest.cs" />
-    <Compile Include="ModalityWorkflow\ListWorklistsResponse.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureRequest.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureResponse.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
@@ -536,8 +534,6 @@
     <Compile Include="QueryWorklistRequest.cs" />
     <Compile Include="QueryWorklistResponse.cs" />
     <Compile Include="RegistrationWorkflow\IRegistrationWorkflowService.cs" />
-    <Compile Include="RegistrationWorkflow\ListWorklistsRequest.cs" />
-    <Compile Include="RegistrationWorkflow\ListWorklistsResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\DiagnosticServiceTreeItem.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetDiagnosticServiceSubTreeRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetDiagnosticServiceSubTreeResponse.cs" />

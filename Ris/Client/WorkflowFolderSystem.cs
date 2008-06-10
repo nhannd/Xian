@@ -35,13 +35,117 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
+using System.Collections;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
     public abstract class WorkflowFolderSystem<TItem> : IFolderSystem
     {
+		#region WorkflowItemToolContext class
+
+		protected class WorkflowItemToolContext : IWorkflowItemToolContext<TItem>
+		{
+			private readonly WorkflowFolderSystem<TItem> _owner;
+
+			public WorkflowItemToolContext(WorkflowFolderSystem<TItem> owner)
+			{
+				_owner = owner;
+			}
+
+
+			#region IWorkflowItemToolContext<TItem> Members
+
+			public ICollection<TItem> SelectedItems
+			{
+				get
+				{
+					return CollectionUtils.Map<object, TItem>(_owner.SelectedItems.Items,
+						delegate(object item) { return (TItem)item; });
+				}
+			}
+
+			#endregion
+
+			#region IWorkflowItemToolContext Members
+
+			public bool GetWorkflowOperationEnablement(string operationClass)
+			{
+				return _owner.GetOperationEnablement(operationClass);
+			}
+
+			public event EventHandler SelectionChanged
+			{
+				add { _owner.SelectedItemsChanged += value; }
+				remove { _owner.SelectedItemsChanged -= value; }
+			}
+
+			public ISelection Selection
+			{
+				get { return _owner.SelectedItems; }
+			}
+
+			public IEnumerable Folders
+			{
+				get { return _owner.Folders; }
+			}
+
+			public IFolder SelectedFolder
+			{
+				get { return _owner.SelectedFolder; }
+			}
+
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _owner.DesktopWindow; }
+			}
+
+			#endregion
+		}
+
+		#endregion
+
+		#region WorkflowFolderToolContext class
+		
+		protected class WorkflowFolderToolContext : IWorkflowFolderToolContext
+		{
+			private readonly WorkflowFolderSystem<TItem> _owner;
+
+			public WorkflowFolderToolContext(WorkflowFolderSystem<TItem> owner)
+			{
+				_owner = owner;
+			}
+
+			#region IWorkflowFolderToolContext Members
+
+			public IEnumerable Folders
+			{
+				get { return _owner.Folders; }
+			}
+
+			public IFolder SelectedFolder
+			{
+				get { return _owner.SelectedFolder; }
+			}
+
+			public event EventHandler SelectedFolderChanged
+			{
+				add { _owner.SelectedFolderChanged += value; }
+				remove { _owner.SelectedFolderChanged -= value; }
+			}
+
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _owner.DesktopWindow; }
+			}
+
+			#endregion
+		}
+
+		#endregion
+
         private readonly IFolderExplorerToolContext _folderExplorer;
-        private readonly IDictionary<string, Type> _mapWorklistClassToFolderClass;
+        private readonly IDictionary<string, Type> _mapWorklistClassToFolderClass = new Dictionary<string, Type>();
         private readonly IList<IFolder> _workflowFolders;
 
         private event EventHandler _selectedItemDoubleClicked;
@@ -57,6 +161,8 @@ namespace ClearCanvas.Ris.Client
 		protected IToolSet _itemTools;
         protected IToolSet _folderTools;
 
+		private IDictionary<string, bool> _workflowEnablement;
+
         public WorkflowFolderSystem(string title, IFolderExplorerToolContext folderExplorer)
             : this(title, folderExplorer, null)
         {
@@ -64,33 +170,61 @@ namespace ClearCanvas.Ris.Client
 
 		public WorkflowFolderSystem(string title, IFolderExplorerToolContext folderExplorer, ExtensionPoint<IFolder> folderExtensionPoint)
         {
-			// establish default resource resolver on this assembly (not the assembly of the derived class)
-			_resourceResolver = new ResourceResolver(typeof(WorkflowFolderSystem<TItem>).Assembly);
-
 			_title = title;
-
+			_folderExplorer = folderExplorer;
             _workflowFolders = new List<IFolder>();
 
-            _folderExplorer = folderExplorer;
+			// establish default resource resolver
+			_resourceResolver = new ResourceResolver(this.GetType(), true);
 
-            // Collect all worklist classes
-            _mapWorklistClassToFolderClass = new Dictionary<string, Type>();
-            if (folderExtensionPoint != null)
-            {
-                foreach (IFolder folder in folderExtensionPoint.CreateExtensions())
-                {
-                    if (folder is WorkflowFolder<TItem>)
-                    {
-                        WorkflowFolder<TItem> workflowFolder = (WorkflowFolder<TItem>)folder;
-                        if (!string.IsNullOrEmpty(workflowFolder.WorklistClassName))
-                            _mapWorklistClassToFolderClass.Add(workflowFolder.WorklistClassName, workflowFolder.GetType());
-                    }
-                }
-            }
+			InitializeFolders(folderExtensionPoint);
 
             _itemTools = new ToolSet();
             _folderTools = new ToolSet();
         }
+
+		private void InitializeFolders(ExtensionPoint<IFolder> folderExtensionPoint)
+		{
+			// Collect all worklist classes
+			if (folderExtensionPoint != null)
+			{
+				foreach (IFolder folder in folderExtensionPoint.CreateExtensions())
+				{
+					if (folder is WorkflowFolder<TItem>)
+					{
+						WorkflowFolder<TItem> workflowFolder = (WorkflowFolder<TItem>)folder;
+						if (!string.IsNullOrEmpty(workflowFolder.WorklistClassName))
+							_mapWorklistClassToFolderClass.Add(workflowFolder.WorklistClassName, workflowFolder.GetType());
+					}
+				}
+			}
+
+			if (_mapWorklistClassToFolderClass.Keys.Count > 0)
+			{
+				ListWorklistsForUserResponse response = QueryWorklistSet(new ListWorklistsForUserRequest(this.WorklistClassNames));
+				foreach (WorklistSummary summary in response.Worklists)
+				{
+					try
+					{
+						Type folderClass = _mapWorklistClassToFolderClass[summary.ClassName];
+						IFolder folder = (IFolder)Activator.CreateInstance(folderClass, this, summary.DisplayName, summary.Description, summary.WorklistRef);
+						if (folder != null)
+						{
+							folder.IsStatic = false;
+							this.AddFolder(folder);
+						}
+
+					}
+					catch (KeyNotFoundException e)
+					{
+						Platform.Log(LogLevel.Error, e, string.Format("Worklist class {0} is not mapped to a folder class.", summary.ClassName));
+					}
+				}
+			}
+		}
+
+    	protected abstract ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request);
+
 
         ~WorkflowFolderSystem()
         {
@@ -147,7 +281,20 @@ namespace ClearCanvas.Ris.Client
 
         public abstract string PreviewUrl { get; }
 
-        #endregion
+		public bool GetOperationEnablement(string operationName)
+		{
+			try
+			{
+				return _workflowEnablement == null ? false : _workflowEnablement[operationName];
+			}
+			catch (KeyNotFoundException)
+			{
+				Platform.Log(LogLevel.Error, string.Format(SR.ExceptionOperationEnablementUnknown, operationName));
+				return false;
+			}
+		}
+
+		#endregion
 
         /// <summary>
         /// Invalidates all folders of the specified type so that they
@@ -177,7 +324,8 @@ namespace ClearCanvas.Ris.Client
         {
             // TODO: could implement more of an "invalidate", rather than an immediate refresh
             // the folder doesn't actually need to refresh unless the explorer workspace is visible
-            _folderExplorer.SelectedFolder.Refresh();
+			if(_folderExplorer.SelectedFolder != null)
+				_folderExplorer.SelectedFolder.Refresh();
         }
 
         public Type GetFolderClassForWorklistClass(string worklistClassName)
@@ -241,10 +389,26 @@ namespace ClearCanvas.Ris.Client
             EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
         }
 
-        public virtual void SelectedItemsChangedEventHandler(object sender, EventArgs e)
+        public void SelectedItemsChangedEventHandler(object sender, EventArgs e)
         {
-            EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
+			try
+			{
+				BlockingOperation.Run(
+					delegate
+					{
+						_workflowEnablement = this.SelectedItems.Equals(Selection.Empty) ? null :
+							QueryOperationEnablement(this.SelectedItems);
+					});
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Error, ex);
+			}
+
+			EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
         }
+
+    	protected abstract IDictionary<string, bool> QueryOperationEnablement(ISelection selection);
 
         public virtual void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
         {
