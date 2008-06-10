@@ -7,6 +7,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -38,6 +39,7 @@ namespace ClearCanvas.Ris.Client
 	public class OrderNoteboxRefreshTool : RefreshTool<IOrderNoteboxFolderToolContext>
 	{
 	}
+
 
 
 	public class OrderNoteboxFolderSystem : WorkflowFolderSystem<OrderNoteboxItemSummary>

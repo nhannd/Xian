@@ -18,7 +18,17 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 		/// <param name="request"></param>
 		/// <returns></returns>
 		[OperationContract]
+		//TODO: consider using staff admin service rather than defining method on this service
 		ListStaffGroupsResponse ListStaffGroups(ListStaffGroupsRequest request);
+
+		/// <summary>
+		/// Add the current user to the specified staff groups.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		//TODO: consider using staff admin service rather than defining method on this service
+		AddStaffGroupsResponse AddStaffGroups(AddStaffGroupsRequest request);
 
         /// <summary>
         /// Queries the contents of a specified notebox.

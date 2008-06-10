@@ -99,6 +99,22 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
 					delegate (StaffGroup g) { return assembler.CreateSummary(g);}));
 		}
 
+		[UpdateOperation]
+		public AddStaffGroupsResponse AddStaffGroups(AddStaffGroupsRequest request)
+    	{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.StaffGroups, "StaffGroups");
+
+			this.CurrentUserStaff.Groups.AddAll(
+				CollectionUtils.Map<StaffGroupSummary, StaffGroup>(request.StaffGroups,
+					delegate(StaffGroupSummary s)
+					{
+						 return PersistenceContext.Load<StaffGroup>(s.StaffGroupRef, EntityLoadFlags.Proxy);
+					}));
+
+			return new AddStaffGroupsResponse();
+		}
+
     	[ReadOperation]
         public QueryNoteboxResponse QueryNotebox(QueryNoteboxRequest request)
         {

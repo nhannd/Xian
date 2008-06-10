@@ -223,6 +223,13 @@
     <Compile Include="LookupField.Designer.cs">
       <DependentUpon>LookupField.cs</DependentUpon>
     </Compile>
+    <Compile Include="OrderNoteboxConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="OrderNoteboxConfigurationComponentControl.Designer.cs">
+      <DependentUpon>OrderNoteboxConfigurationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OrderNoteboxConfigurationComponentView.cs" />
     <Compile Include="OrderNoteEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -475,6 +482,10 @@
     <EmbeddedResource Include="LookupField.resx">
       <DependentUpon>LookupField.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OrderNoteboxConfigurationComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>OrderNoteboxConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OrderNoteEditorComponentControl.resx">
       <SubType>Designer</SubType>
