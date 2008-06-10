@@ -18,8 +18,17 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 
 			public RangeImageSelectionStrategy(int startValue, int endValue, int selectionInterval, bool useInstanceNumbers)
 			{
-				Platform.CheckPositive(startValue, "startValue");
-				Platform.CheckPositive(endValue, "endValue");
+				if (!useInstanceNumbers)
+				{
+					Platform.CheckPositive(startValue, "startValue");
+					Platform.CheckPositive(endValue, "endValue");
+				}
+				else
+				{
+					Platform.CheckNonNegative(startValue, "startValue");
+					Platform.CheckNonNegative(endValue, "endValue");
+				}
+
 				Platform.CheckPositive(selectionInterval, "selectionInterval");
 
 				if (endValue < startValue)
