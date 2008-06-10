@@ -368,6 +368,9 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create))
 				return false;
 
+			if (enablementContext.ProcedureStepRef == null)
+				return false;
+
 			ProcedureStep step = PersistenceContext.Load<ProcedureStep>(enablementContext.ProcedureStepRef);
 
 			if (!step.Is<ProtocolAssignmentStep>())
