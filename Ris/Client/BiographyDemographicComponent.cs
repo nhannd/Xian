@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Client
 				set
 				{
 					_patientProfile = value;
-					this.SetUrl(WebResourcesSettings.Default.PatientProfilePageUrl);
+					this.SetUrl(WebResourcesSettings.Default.BiographyPatientProfilePageUrl);
 				}
 			}
 

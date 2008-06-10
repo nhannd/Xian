@@ -114,12 +114,12 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("patientprofile.htm")]
-		public string PatientProfilePageUrl
+		[global::System.Configuration.DefaultSettingValueAttribute("biographypatientprofile.htm")]
+		public string BiographyPatientProfilePageUrl
 		{
 			get
 			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["PatientProfilePageUrl"]));
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["BiographyPatientProfilePageUrl"]));
 			}
 		}
 

@@ -1,0 +1,279 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Registration Preview</title>
+		<link href="css/default.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="js/jsx.js"></script>
+		<script type="text/javascript" src="js/jsml.js"></script>
+		<script type="text/javascript" src="js/ui.js"></script>
+		<script type="text/javascript" src="js/ris.js"></script>
+		<script type="text/javascript" src="js/preview.js"></script>
+		<script type="text/javascript" src="js/layout.js"></script>
+		<script type="text/javascript" >
+			function onBodyLoad()
+			{				
+				if(!Ris)
+						return;
+						
+					try
+					{
+						var context = Ris.getHealthcareContext();
+					if (context == null)
+					{
+								Field.setValue($("myForm"), "");
+								return;
+					}
+
+						var request = {
+								GetPatientProfileDetailRequest: {
+									PatientProfileRef: context.PatientProfileRef,
+									IncludeAlerts: true,
+									IncludeAddresses: true,
+									IncludeTelephoneNumbers: true,
+									IncludeEmailAddresses: true,
+									IncludeContactPersons: true
+							}
+						};
+						
+						var service = Ris.getPatientDataService();
+						var data = service.getData(request);
+						if (data == null || data.length == 0)
+						{
+								Field.setValue($("myForm"), "");
+								return;
+						}
+						
+						// update patient demography
+						var patientProfile = data.GetPatientProfileDetailResponse.PatientProfile;
+						var patientName = Ris.formatPersonName(patientProfile.Name);
+						if (patientProfile)
+						{
+							Field.setValue($("name"), patientName);
+							Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
+							Field.setValue($("age"), getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath));
+							Field.setValue($("sex"), patientProfile.Sex.Value);	
+							Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
+							Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
+							Field.setValue($("currentHomePhone"), Ris.formatTelephone(patientProfile.CurrentHomePhone));
+							Field.setValue($("currentHomeAddress"), Ris.formatAddress(patientProfile.CurrentHomeAddress));
+							if(patientProfile.PrimaryLanguage)
+								Field.setValue($("primaryLanguage"), patientProfile.PrimaryLanguage.Value);
+							if(patientProfile.Religion)
+								Field.setValue($("religion"), patientProfile.Religion.Value);
+						}
+						
+
+						// update alerts
+						var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
+						var alertHtml = "";
+						alertNotifications.each(function(item) { alertHtml += getAlertHtml(item, patientName); });
+						$("alerts").innerHTML = alertHtml;
+						
+						initAddressTable($("addressTable"), data.GetPatientProfileDetailResponse.PatientProfile.Addresses); 
+						initPhoneTable($("phoneTable"), data.GetPatientProfileDetailResponse.PatientProfile.TelephoneNumbers); 
+						initEmailTable($("emailTable"), data.GetPatientProfileDetailResponse.PatientProfile.EmailAddresses); 
+						initContactTable($("contactTable"), data.GetPatientProfileDetailResponse.PatientProfile.ContactPersons); 
+					}
+					catch(e)
+					{
+						var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+						Field.setValue($("myForm"), message);
+					}
+			}
+			
+				function initAddressTable(htmlTable, addresses)
+				{
+					htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+						[
+							{	label: "Type",
+								cellType: "text",
+								getValue: function(item) { return item.Type.Value; }
+							},
+							{	label: "Address",
+								cellType: "text",
+								getValue: function(item) { return Ris.formatAddress(item); }
+							},
+							{	label: "Expiry Date",
+								cellType: "text",
+								getValue: function(item) { return Ris.formatDate(item.ValidRangeUntil); }
+							}
+						]);
+						
+					htmlTable.rowCycleClassNames = ["row0", "row1"];
+					htmlTable.bindItems(addresses);
+				}
+				
+				function initPhoneTable(htmlTable, phoneNumbers)
+				{
+					htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+						[
+							{	label: "Type",
+								cellType: "text",
+								getValue: function(item) { return item.Type.Value; }
+							},
+							{	label: "Address",
+								cellType: "text",
+								getValue: function(item) { return Ris.formatTelephone(item); }
+							},
+							{	label: "Expiry Date",
+								cellType: "text",
+								getValue: function(item) { return Ris.formatDate(item.ValidRangeUntil); }
+							}
+						]);
+						
+					htmlTable.rowCycleClassNames = ["row0", "row1"];
+					htmlTable.bindItems(phoneNumbers);
+				}
+				
+				function initEmailTable(htmlTable, emails)
+				{
+					htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+						[
+							{	label: "Address",
+								cellType: "text",
+								getValue: function(item) { return item.Address; }
+							},
+							{	label: "Expiry Date",
+								cellType: "text",
+								getValue: function(item) { return Ris.formatDate(item.ValidRangeUntil); }
+							}
+						]);
+						
+					htmlTable.rowCycleClassNames = ["row0", "row1"];
+					htmlTable.bindItems(emails);
+				}
+				
+				function initContactTable(htmlTable, contacts)
+				{
+					htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+						[
+							{	label: "Type",
+								cellType: "text",
+								getValue: function(item) { return item.Type.Value; }
+							},
+							{	label: "Relationship",
+								cellType: "text",
+								getValue: function(item) { return item.Relationship.Value; }
+							},
+							{	label: "Name",
+								cellType: "text",
+								getValue: function(item) { return item.Name; }
+							},
+							{	label: "Home #",
+								cellType: "text",
+								getValue: function(item) { return item.HomePhoneNumber; }
+							},
+							{	label: "Work #",
+								cellType: "text",
+								getValue: function(item) { return item.BusinessPhoneNumber; }
+							},
+							{	label: "Address",
+								cellType: "text",
+								getValue: function(item) { return item.Address; }
+							}
+						]);
+						
+					htmlTable.rowCycleClassNames = ["row0", "row1"];
+					htmlTable.bindItems(contacts);
+				}
+		</script>
+	</head>
+	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth(2)">
+		<form id="myForm">
+			<table width="100%" border="0">
+				<tr>
+					<td class="pageheading"><div id="name"/></td>
+					<td rowspan="2" align="right"><div id="alerts"/></td>
+				</tr>
+				<tr>
+					<td class="pageheading2"><div id="mrn"/></td>
+				</tr>
+			</table>	
+			<div style="{width:48%; float:left}">
+				<table style="{margin-bottom:2em}">
+					<tr><td class="sectionheading" colspan="4">Primary Demographics</td></tr>
+					<tr>
+						<td width="120" class="propertyname">Date of Birth</td>
+						<td width="200"><div id="dateOfBirth"/></td>
+						<td width="63" class="propertyname">Age</td>
+						<td width="229"><div id="age"/></td>
+					</tr>
+					<tr>
+						<td class="propertyname">Healthcard # </td>
+						<td><div id="healthcard"/></td>
+						<td width="63" class="propertyname">Sex</td>
+						<td width="229"><div id="sex"/></td>
+					</tr>
+					<tr>
+						<td>&nbsp</td>
+					</tr>
+					<tr>
+						<td class="propertyname">Home Phone</td>
+						<td colspan="3"><div id="currentHomePhone"/></td>
+					</tr>
+					<tr>
+						<td class="propertyname">Home Address</td>
+						<td colspan="3"><div id="currentHomeAddress"/></td>
+					</tr>
+				</table>
+				<table style="{margin-bottom:2em}" >
+					<tr><td class="sectionheading" colspan="4">Additional Demographics</td></tr>
+					<tr>
+						<td width="120" class="propertyname">Language</td>
+						<td><div id="primaryLanguage"/></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">Religion</td>
+						<td><div id="religion"/></td>
+					</tr>
+					<!--
+					<tr class="additionalentriescount">
+						<td colspan="4">
+							<script language="javascript" type="text/javascript">
+										document.write(Ris.getActionHtml("Details", "more..."));
+							</script>
+						</td>
+					</tr>
+					-->
+				</table>
+			</div>
+			<div style="{width:48%; float:right}">
+				<table style="{margin-bottom:2em}"  id="addressTable">
+					<tr><td class="sectionheading" colspan="6">Addresses</td></tr>
+					<tr class="tableheading">
+						<td width="75">Type</td>
+						<td>Address</td>
+						<td width="120">Expiry Date</td>
+					</tr>
+				</table>
+				<table style="{margin-bottom:2em}" id="phoneTable">
+					<tr><td class="sectionheading" colspan="6">Phone Numbers</td></tr>
+					<tr class="tableheading">
+						<td width="75">Type</td>
+						<td>Phone Number</td>
+						<td width="120">Expiry Date</td>
+					</tr>
+				</table>
+				<table style="{margin-bottom:2em}" id="emailTable">
+					<tr><td class="sectionheading" colspan="6">Email Addresses</td></tr>
+					<tr class="tableheading">
+						<td>Address</td>
+						<td width="120">Expiry Date</td>
+					</tr>
+				</table>
+				<table style="{margin-bottom:2em}" id="contactTable">
+					<tr><td class="sectionheading" colspan="6">Contacts</td></tr>
+					<tr class="tableheading">
+						<td>Type</td>
+						<td>Relationship</td>
+						<td>Name</td>
+						<td>Home #</td>
+						<td>Work #</td>
+						<td>Address</td>
+					</tr>
+				</table>
+			</div>
+			<div style="{clear:both}"></div>
+		</form>
+	</body>
+</html>
