@@ -73,9 +73,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._foldersTableView.Location = new System.Drawing.Point(3, 85);
+			this._foldersTableView.MultiSelect = false;
 			this._foldersTableView.Name = "_foldersTableView";
 			this._foldersTableView.ReadOnly = false;
-			this._foldersTableView.ShowToolbar = false;
 			this._foldersTableView.Size = new System.Drawing.Size(461, 248);
 			this._foldersTableView.TabIndex = 0;
 			this._foldersTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;

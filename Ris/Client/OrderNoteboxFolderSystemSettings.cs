@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,20 +29,62 @@
 
 #endregion
 
+using System;
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client
 {
 
-	// TODO add a description of the purpose of the settings group here
-	[SettingsGroupDescription("")]
+	[SettingsGroupDescription("Settings that affect behaviour of the order notebox folder system.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-	internal sealed partial class OrderNoteboxFolderSettings
+	internal sealed partial class OrderNoteboxFolderSystemSettings
 	{
-		private OrderNoteboxFolderSettings()
+		[DataContract]
+		internal class GroupFoldersData : DataContractBase
+		{
+			/// <summary>
+			/// Deserialization constructor.
+			/// </summary>
+			public GroupFoldersData()
+			{
+				StaffGroupRefs = new List<EntityRef>();
+			}
+
+			public GroupFoldersData(List<EntityRef> staffGroupRefs)
+			{
+				StaffGroupRefs = staffGroupRefs;
+			}
+
+			/// <summary>
+			/// List of staff groups for which folders are visible.
+			/// </summary>
+			[DataMember]
+			public List<EntityRef> StaffGroupRefs;
+		}
+
+
+		private OrderNoteboxFolderSystemSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+		}
+
+		public GroupFoldersData GroupFolders
+		{
+			get
+			{
+				return string.IsNullOrEmpty(this.GroupFoldersXml)
+						? new GroupFoldersData()
+						: JsmlSerializer.Deserialize<GroupFoldersData>(this.GroupFoldersXml);
+			}
+			set
+			{
+				this.GroupFoldersXml = JsmlSerializer.Serialize(value, "GroupFoldersData");
+			}
 		}
 	}
 }

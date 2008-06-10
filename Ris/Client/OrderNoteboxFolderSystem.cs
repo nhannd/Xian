@@ -5,6 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Desktop.Actions;
@@ -172,12 +173,17 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IOrderNoteService>(
 				delegate(IOrderNoteService service)
 				{
+					List<EntityRef> visibleGroups = OrderNoteboxFolderSystemSettings.Default.GroupFolders.StaffGroupRefs;
 					ListStaffGroupsResponse response = service.ListStaffGroups(new ListStaffGroupsRequest());
 					foreach (StaffGroupSummary group in response.StaffGroups)
 					{
-						GroupInboxFolder groupFolder = new GroupInboxFolder(this, group);
-						groupFolder.IsStatic = false;
-						this.AddFolder(groupFolder);
+						if(CollectionUtils.Contains(visibleGroups,
+							delegate (EntityRef groupRef) { return groupRef.Equals(group.StaffGroupRef, true);}))
+						{
+							GroupInboxFolder groupFolder = new GroupInboxFolder(this, group);
+							groupFolder.IsStatic = false;
+							this.AddFolder(groupFolder);
+						}
 					}
 				});
 

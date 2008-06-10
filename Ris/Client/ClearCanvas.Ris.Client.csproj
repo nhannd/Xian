@@ -58,6 +58,12 @@
     <Compile Include="FolderExplorerGroupComponent.cs" />
     <Compile Include="OrderListTable.cs" />
     <Compile Include="OrderNoteboxConfigurationComponent.cs" />
+    <Compile Include="OrderNoteboxFolderSystemSettings.cs" />
+    <Compile Include="OrderNoteboxFolderSystemSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>OrderNoteboxFolderSystemSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="OrderNoteboxFolderSystemTool.cs" />
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointEditorComponent.cs" />
@@ -79,12 +85,6 @@
     <Compile Include="OrderDetailViewComponent.cs" />
     <Compile Include="OrderNoteboxFolder.cs" />
     <Compile Include="OrderNoteboxFolders.cs" />
-    <Compile Include="OrderNoteboxFolderSettings.cs" />
-    <Compile Include="OrderNoteboxFolderSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>OrderNoteboxFolderSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="OrderNoteboxFolderSystem.cs" />
     <Compile Include="OrderNoteboxTable.cs" />
     <Compile Include="OrderNoteCategory.cs" />
@@ -289,9 +289,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>HomePageSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="OrderNoteboxFolderSettings.settings">
+    <None Include="OrderNoteboxFolderSystemSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>OrderNoteboxFolderSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>OrderNoteboxFolderSystemSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="OrderNoteConversationComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -105,12 +105,12 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.StaffGroups, "StaffGroups");
 
-			this.CurrentUserStaff.Groups.AddAll(
-				CollectionUtils.Map<StaffGroupSummary, StaffGroup>(request.StaffGroups,
-					delegate(StaffGroupSummary s)
-					{
-						 return PersistenceContext.Load<StaffGroup>(s.StaffGroupRef, EntityLoadFlags.Proxy);
-					}));
+			CollectionUtils.ForEach(request.StaffGroups,
+				delegate(StaffGroupSummary s)
+				{
+					StaffGroup group = PersistenceContext.Load<StaffGroup>(s.StaffGroupRef, EntityLoadFlags.Proxy);
+					group.AddMember(this.CurrentUserStaff);
+				});
 
 			return new AddStaffGroupsResponse();
 		}

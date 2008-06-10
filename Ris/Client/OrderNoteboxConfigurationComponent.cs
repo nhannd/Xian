@@ -38,6 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Common.Utilities;
@@ -117,12 +118,17 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IOrderNoteService>(
 				delegate(IOrderNoteService service)
 				{
-					ListStaffGroupsResponse response = service.ListStaffGroups(new ListStaffGroupsRequest());
+					List<EntityRef> visibleGroups = OrderNoteboxFolderSystemSettings.Default.GroupFolders.StaffGroupRefs;
+					List<StaffGroupSummary> groups = service.ListStaffGroups(new ListStaffGroupsRequest()).StaffGroups;
 					_staffGroupTable.Items.AddRange(
-						CollectionUtils.Map<StaffGroupSummary, TableItem>(response.StaffGroups,
-							delegate (StaffGroupSummary g) { return new TableItem(g, true, false);}));
+						CollectionUtils.Map<StaffGroupSummary, TableItem>(groups,
+							delegate(StaffGroupSummary g)
+							{
+								bool visible = CollectionUtils.Contains(visibleGroups,
+									delegate (EntityRef groupRef) { return g.StaffGroupRef.Equals(groupRef, true);});
+								 return new TableItem(g, visible, false);
+							}));
 				});
-
 
 			_staffGroupLookupHandler = new StaffGroupLookupHandler(this.Host.DesktopWindow);
 
@@ -202,12 +208,52 @@ namespace ClearCanvas.Ris.Client
 
 		public void Accept()
 		{
-			
+			try
+			{
+				// if the user added any new groups, need to add the user as a member of those groups
+				List<TableItem> newItems = CollectionUtils.Select(_staffGroupTable.Items,
+					delegate(TableItem item) { return item.IsNew; });
+
+				if (newItems.Count > 0)
+				{
+					AddStaffGroupsRequest request = new AddStaffGroupsRequest(
+						CollectionUtils.Map<TableItem, StaffGroupSummary>(newItems,
+							delegate(TableItem item) { return item.Item; }));
+
+					Platform.GetService<IOrderNoteService>(
+						delegate(IOrderNoteService service)
+						{
+							service.AddStaffGroups(request);
+						});
+				}
+
+				// save the set of folders that should be visible
+				List<TableItem> visibleItems = CollectionUtils.Select(_staffGroupTable.Items,
+					delegate(TableItem item) { return item.IsChecked; });
+
+				OrderNoteboxFolderSystemSettings.Default.GroupFolders = 
+					new OrderNoteboxFolderSystemSettings.GroupFoldersData(
+						CollectionUtils.Map<TableItem, EntityRef>(visibleItems,
+							delegate(TableItem item) { return item.Item.StaffGroupRef; }));
+
+				OrderNoteboxFolderSystemSettings.Default.Save();
+
+				this.Exit(ApplicationComponentExitCode.Accepted);
+
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, "", this.Host.DesktopWindow,
+					delegate
+					{
+						this.Exit(ApplicationComponentExitCode.Error);
+					});
+			}
 		}
 
 		public void Cancel()
 		{
-			
+			this.Exit(ApplicationComponentExitCode.None);
 		}
 
 		#endregion

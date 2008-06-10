@@ -16,7 +16,7 @@ namespace ClearCanvas.Ris.Client
 			_folderSystem = folderSystem;
 			_noteboxClassName = noteboxClassName;
 
-			this.RefreshTime = OrderNoteboxFolderSettings.Default.RefreshTime;
+			this.RefreshTime = OrderNoteboxFolderSystemSettings.Default.RefreshTime;
 		}
 
 		protected override bool CanQuery()
