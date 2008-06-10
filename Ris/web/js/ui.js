@@ -374,7 +374,7 @@ var Table = {
 			if(["date"].indexOf(column.cellType) > -1)
 			{
 				var input = document.createElement("input");
-				input.id = this.id + "_" + column.label + "_" + "dateinput";
+				input.id = this.id + "_" + column.label + "_" + "dateinput" + row;
 				td.appendChild(input);
 				td._setCellDisplayValue = function(value) { input.value = value ? value : ""; };
 				if(column.size) input.size = column.size;
@@ -412,7 +412,7 @@ var Table = {
 			if(["time"].indexOf(column.cellType) > -1)
 			{
 				var input = document.createElement("input");
-				input.id = this.id + "_" + column.label + "_" + "timeinput";
+				input.id = this.id + "_" + column.label + "_" + "timeinput" + row;
 				td.appendChild(input);
 				td._setCellDisplayValue = function(value) { input.value = value ? value : ""; };
 				if(column.size) input.size = column.size;
@@ -454,7 +454,7 @@ var Table = {
 			if(["datetime"].indexOf(column.cellType) > -1)
 			{
 				var input = document.createElement("input");
-				input.id = this.id + "_" + column.label + "_" + "dateinput";
+				input.id = this.id + "_" + column.label + "_" + "dateinput" + row;
 				td.appendChild(input);
 				if(column.size) input.size = column.size;
 				
@@ -490,7 +490,7 @@ var Table = {
 				}
 
 				var input2 = document.createElement("input");
-				input2.id = this.id + "_" + column.label + "_" + "timeinput";
+				input2.id = this.id + "_" + column.label + "_" + "timeinput" + row;
 				td.appendChild(input2);
 				if(column.size) input.size = column.size;
 
