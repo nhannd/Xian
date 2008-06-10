@@ -47,7 +47,23 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
             this.PatientRef = patientRef;
         }
 
+		public ListReportsRequest(EntityRef patientRef, EntityRef orderRef)
+		{
+			this.PatientRef = patientRef;
+			this.OrderRef = orderRef;
+		}
+
+
+		/// <summary>
+		/// Specifies patient whose reports should be returned. Ignored if <see cref="OrderRef"/> is valued.
+		/// </summary>
         [DataMember]
         public EntityRef PatientRef;
-    }
+
+		/// <summary>
+		/// Specifies the order whose reports should be returned.  May be null.
+		/// </summary>
+		[DataMember]
+		public EntityRef OrderRef;
+	}
 }

@@ -217,18 +217,30 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 
         private ListReportsResponse ListReports(ListReportsRequest request)
         {
-            BrowsePatientDataAssembler assembler = new BrowsePatientDataAssembler();
+			// TODO: this implementation is inefficient - need custom broker methods to do this efficiently
 
-            // TODO: this implementation is inefficient - need custom broker methods to do this efficiently
-            Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
-            IList<Procedure> procedures = PersistenceContext.GetBroker<IPreviewBroker>().QueryProcedureData(patient);
-            return new ListReportsResponse(
-                CollectionUtils.Map<Procedure, ReportListItem>(
-                    procedures,
-                    delegate(Procedure rp)
-                    {
-                        return assembler.CreateReportListItem(rp, this.PersistenceContext);
-                    }));
+			IEnumerable<Procedure> procedures = new List<Procedure>();
+			if(request.OrderRef != null)
+			{
+				// list only reports for this order
+				Order order = PersistenceContext.Load<Order>(request.OrderRef, EntityLoadFlags.Proxy);
+				procedures = order.Procedures;
+			}
+			else if(request.PatientRef != null)
+			{
+				Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
+				procedures = PersistenceContext.GetBroker<IPreviewBroker>().QueryProcedureData(patient);
+			}
+
+			BrowsePatientDataAssembler assembler = new BrowsePatientDataAssembler();
+			return new ListReportsResponse(
+				CollectionUtils.Map<Procedure, ReportListItem>(
+					procedures,
+					delegate(Procedure rp)
+					{
+						return assembler.CreateReportListItem(rp, this.PersistenceContext);
+					}));
+
         }
 
         private GetReportDetailResponse GetReportDetail(GetReportDetailRequest request)
