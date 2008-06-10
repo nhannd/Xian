@@ -32,9 +32,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Serialization;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit;
@@ -83,36 +80,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             detail.Status = item.WorkQueueStatusEnum;
             detail.Priority = item.WorkQueuePriorityEnum;
             detail.FailureDescription = item.FailureDescription;
-
-            if (item.ServerInformationKey!=null)
-            {
-                try
-                {
-                    ServerInformation serverInfo = ServerInformation.Load(item.ServerInformationKey);
-
-                    detail.ServerDescription = serverInfo.ServerName;
-                    
-                    XmlSerializer serializer = new XmlSerializer(typeof (ServerAddress));
-                    ServerAddress address = (ServerAddress) serializer.Deserialize(new XmlNodeReader(serverInfo.ExtInformation["ServerAddress"]));
-                    
-                    detail.ServerDescription += " [ ";
-                    for (int i = 0; i < address.IPAddresses.Count; i++ )
-                    {
-                        detail.ServerDescription += String.Format("IP {0}: {1} ", i + 1, address.IPAddresses[i]);
-
-                        if (i != address.IPAddresses.Count - 1)
-                            detail.ServerDescription += ", "; 
-                    }
-                    detail.ServerDescription += " ] ";
-                }
-                catch(Exception)
-                {
-                    // ignore
-                }
-                
-
-            }
-
+            detail.ServerDescription = item.ProcessorID;
             
             // Fetch UIDs
             WorkQueueUidAdaptor wqUidsAdaptor = new WorkQueueUidAdaptor();

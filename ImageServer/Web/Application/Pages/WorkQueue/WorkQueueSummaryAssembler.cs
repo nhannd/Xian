@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             summary.Type = item.WorkQueueTypeEnum;
             summary.Status = item.WorkQueueStatusEnum;
             summary.Priority = item.WorkQueuePriorityEnum;
-            summary.ProcessingServer = item.ServerInformationKey==null? null:ServerInformation.Load(item.ServerInformationKey);
+            summary.ProcessorID = item.ProcessorID;
 
             // Fetch the patient info:
             StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();

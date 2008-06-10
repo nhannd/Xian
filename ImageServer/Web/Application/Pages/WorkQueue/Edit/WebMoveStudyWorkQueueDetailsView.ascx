@@ -1,12 +1,12 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WebMoveStudyWorkQueueDetailsView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit.WebMoveStudyWorkQueueDetailsView" %>
 
-<asp:DetailsView ID="WebMoveStudyDetailsView" runat="server" AutoGenerateRows="False" CellPadding="2"  OnDataBound="WebMoveStudyDetailsView_DataBound"
+<asp:DetailsView ID="WebMoveStudyDetailsView" runat="server" AutoGenerateRows="False" CellPadding="2"
     GridLines="Horizontal" CssClass="GlobalGridView" Width="100%">
     <Fields>
         <asp:TemplateField HeaderText="Type">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
             <ItemTemplate>
-                <asp:Label ID="Type" runat="server" ></asp:Label>
+                <asp:Label ID="Type" runat="server" Text='<%# Eval("Type.Description") %>' ></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         
@@ -41,14 +41,14 @@
         <asp:TemplateField HeaderText="Status">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
             <ItemTemplate>
-                <asp:Label ID="Status" runat="server"></asp:Label>
+                <asp:Label ID="Status" runat="server" Text='<%# Eval("Status.Description") %>'></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         
         <asp:TemplateField HeaderText="Priority">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
             <ItemTemplate>
-                <asp:Label ID="Priority" runat="server"></asp:Label>
+                <asp:Label ID="Priority" runat="server" Text='<%# Eval("Priority.Description") %>'></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         

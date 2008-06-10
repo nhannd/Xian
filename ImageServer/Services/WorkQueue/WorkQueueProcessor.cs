@@ -227,25 +227,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         }
 
         /// <summary>
-        /// Mark the work queue item to indicate it's being processed by this server
-        /// </summary>
-        /// <param name="item"></param>
-        private void MarkItem(Model.WorkQueue item)
-        {
-            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IWorkQueueEntityBroker broker = ctx.GetBroker<IWorkQueueEntityBroker>();
-
-                WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-                columns.ProcessorID = ServiceTools.ProcessorId;
-                columns.ServerInformationKey = ServiceTools.localServerInformation.GetKey();
-
-                broker.Update(item.GetKey(), columns);
-                ctx.Commit();
-            }
-        }
-
-        /// <summary>
         /// The processing thread.
         /// </summary>
         /// <remarks>
@@ -324,8 +305,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                                     {
                                                         try
                                                         {
-                                                            MarkItem(queueItem);
-                                                            
                                                             processor.Process(queueItem);
                                                         }
                                                         catch (Exception e)

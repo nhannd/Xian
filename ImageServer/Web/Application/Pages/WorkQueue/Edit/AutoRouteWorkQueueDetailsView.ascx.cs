@@ -63,40 +63,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
         #region Protected Methods
 
-        protected void GeneralInfoDetailsView_DataBound(object sender, EventArgs e)
-        {
-            WorkQueueDetails item = GeneralInfoDetailsView.DataItem as WorkQueueDetails;
-            if (item != null)
-            {
-                Label statusLabel = GeneralInfoDetailsView.FindControl("Status") as Label;
-                if (statusLabel != null)
-                {
-                    statusLabel.Text = item.Status.Description;
-                }
-
-                Label priorityLabel = GeneralInfoDetailsView.FindControl("Priority") as Label;
-                if (priorityLabel != null)
-                {
-                    priorityLabel.Text = item.Priority.Description;
-                }
-            }
-
-
-        }
-
-        protected void AutoRouteDetailsView_DataBound(object sender, EventArgs e)
-        {
-            WorkQueueDetails item = AutoRouteDetailsView.DataItem as WorkQueueDetails;
-            if (item != null)
-            {
-                Label typeLabel = AutoRouteDetailsView.FindControl("Type") as Label;
-                if (typeLabel != null)
-                {
-                    typeLabel.Text = item.Type.Description;
-                }
-
-            }
-        }
+       
         #endregion Protected Methods
 
         #region Public Methods

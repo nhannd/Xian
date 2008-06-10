@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             }
             set
             {
-                PriorityDropDownList.SelectedValue = value.ToString();
+                PriorityDropDownList.SelectedValue = value.Lookup;
             }
         }
 
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             IList<WorkQueuePriorityEnum> priorities = WorkQueuePriorityEnum.GetAll();
             foreach (WorkQueuePriorityEnum priority in priorities)
             {
-                PriorityDropDownList.Items.Add(new ListItem(priority.ToString(), priority.Lookup));
+                PriorityDropDownList.Items.Add(new ListItem(priority.Description, priority.Lookup));
             }
 
         }

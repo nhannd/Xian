@@ -63,7 +63,6 @@
     <Compile Include="EntityBrokers\PatientEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\RequestAttributesEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\SeriesEntityBroker.gen.cs" />
-    <Compile Include="EntityBrokers\ServerInformationEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ServerPartitionEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ServerRuleApplyTimeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\ServerRuleEntityBroker.gen.cs" />

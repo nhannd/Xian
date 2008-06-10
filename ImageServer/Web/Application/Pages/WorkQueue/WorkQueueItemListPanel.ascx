@@ -61,7 +61,7 @@
                                     <HeaderStyle Wrap="false" HorizontalAlign="Center" />
                                     <ItemStyle Wrap="false" HorizontalAlign="Center" />
                                     <ItemTemplate>
-                                        <asp:Label ID="ServerInfoLabel" runat="server"></asp:Label>
+                                        <asp:Label ID="ServerInfoLabel" runat="server" Text='<%# Eval("ProcessorID") %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Notes">

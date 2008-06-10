@@ -395,7 +395,6 @@ CREATE TABLE [dbo].[WorkQueue](
 	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
 	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
 	[DeviceGUID] [uniqueidentifier] NULL,
-	[ServerInformationGUID] [uniqueidentifier] NULL,
 	[WorkQueueTypeEnum] [smallint] NOT NULL,
 	[WorkQueueStatusEnum] [smallint] NOT NULL, 
 	[WorkQueuePriorityEnum] [smallint] NOT NULL CONSTRAINT [DF_WorkQueue_WorkQueuePriorityEnum]  DEFAULT ((200)),
@@ -851,28 +850,6 @@ CREATE TABLE [dbo].[Filesystem](
 END
 GO
 
-/****** Object:  Table [dbo].[ServerInformation]    Script Date: 05/27/2008 13:45:40 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_PADDING ON
-GO
-CREATE TABLE [dbo].[ServerInformation](
-	[GUID] [uniqueidentifier] NOT NULL,
-	[ServerName] [nvarchar](50) NOT NULL,
-	[Hostname] [varchar](50) NOT NULL,
-	[ExtInformation] [xml] NULL,
-	[LastKnownTime] [datetime] NOT NULL,
- CONSTRAINT [PK_ServerInformation] PRIMARY KEY CLUSTERED 
-(
-	[GUID] ASC
-)WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-
-GO
-
-
 
 /****** Object:  ForeignKey [FK_Device_ServerPartition]    Script Date: 01/09/2008 15:03:26 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Device_ServerPartition]') AND parent_object_id = OBJECT_ID(N'[dbo].[Device]'))
@@ -1102,12 +1079,6 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueue_WorkQueuePriorityEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueue]'))
 ALTER TABLE [dbo].[WorkQueue]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueue_WorkQueuePriorityEnum] FOREIGN KEY([WorkQueuePriorityEnum])
 REFERENCES [dbo].[WorkQueuePriorityEnum] ([Enum])
-GO
-
-/****** Object:  ForeignKey [FK_WorkQueue_ServerInformationGUID]    Script Date: 05/27/2008 15:04:30 ******/
-IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueue_ServerInformationGUID]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueue]'))
-ALTER TABLE [dbo].[WorkQueue]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueue_ServerInformationGUID] FOREIGN KEY([ServerInformationGUID])
-REFERENCES [dbo].[ServerInformation] ([GUID])
 GO
 
 

@@ -64,30 +64,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
         #region Protected Methods
 
-        protected void WebMoveStudyDetailsView_DataBound(object sender, EventArgs e)
-        {
-            WorkQueueDetails item = WebMoveStudyDetailsView.DataItem as WorkQueueDetails;
-            if (item != null)
-            {
-                Label typeLabel = WebMoveStudyDetailsView.FindControl("Type") as Label;
-                if (typeLabel != null)
-                {
-                    typeLabel.Text = item.Type.Description;
-                }
-                Label statusLabel = WebMoveStudyDetailsView.FindControl("Status") as Label;
-                if (statusLabel != null)
-                {
-                    statusLabel.Text = item.Status.Description;
-                }
-
-                Label priorityLabel = WebMoveStudyDetailsView.FindControl("Priority") as Label;
-                if (priorityLabel != null)
-                {
-                    priorityLabel.Text = item.Priority.Description;
-                }
-
-            }
-        }
+       
         #endregion Protected Methods
 
         #region Public Methods

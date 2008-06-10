@@ -325,33 +325,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
             if (item!=null)
             {
-                if (item.ProcessingServer!=null)
-                {
-                    Label serverLabel = row.FindControl("ServerInfoLabel") as Label;
-                    if (serverLabel != null)
-                    {
-                        serverLabel.Text = item.ProcessingServer.ServerName;
-                        if (item.ProcessingServer.ExtInformation != null)
-                        {
-                            XmlSerializer serializer = new XmlSerializer(typeof(ServerAddress));
-                            try
-                            {
-                                ServerAddress address = (ServerAddress)serializer.Deserialize(new XmlNodeReader(item.ProcessingServer.ExtInformation.FirstChild));
-
-                                for (int i = 0; i < address.IPAddresses.Count; i++)
-                                {
-                                    serverLabel.ToolTip += String.Format("IP {0} : {1}\r\n", i + 1, address.IPAddresses[i]);
-                                }
-
-                            }
-                            catch (Exception)
-                            {
-                                // ignore it
-                            }
-                        }
-                    }
-                }
-               
 
                 Label typeLabel = row.FindControl("Type") as Label;
                 if (typeLabel != null)
@@ -426,6 +399,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
 
         #endregion Public Methods
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
 
     }
 }

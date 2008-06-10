@@ -2,13 +2,13 @@
 
 <ccAsp:SectionPanel ID="AutoRouteInfoSectionPanel" runat="server" HeadingText="Auto-Route" HeadingCSS="CSSDefaultSectionHeading">
 <SectionContentTemplate>
-    <asp:DetailsView ID="AutoRouteDetailsView" runat="server" AutoGenerateRows="False" CellPadding="4" OnDataBound="AutoRouteDetailsView_DataBound"
+    <asp:DetailsView ID="AutoRouteDetailsView" runat="server" AutoGenerateRows="False" CellPadding="4"
     GridLines="Horizontal" CssClass="CSSStudyDetailsView" Width="100%">
     <Fields>
         <asp:TemplateField HeaderText="Type">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
             <ItemTemplate>
-                <asp:Label ID="Type" runat="server" ></asp:Label>
+                <asp:Label ID="Type" runat="server"  Text='<%# Eval("Type.Description") %>'></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         
@@ -33,7 +33,7 @@
 
 <ccAsp:SectionPanel ID="GeneralInfoSectionPanel" runat="server" HeadingText="General Information" HeadingCSS="CSSDefaultSectionHeading">
 <SectionContentTemplate>
-    <asp:DetailsView ID="GeneralInfoDetailsView" runat="server" AutoGenerateRows="False" CellPadding="4"  OnDataBound="GeneralInfoDetailsView_DataBound"
+    <asp:DetailsView ID="GeneralInfoDetailsView" runat="server" AutoGenerateRows="False" CellPadding="4"
     GridLines="Horizontal" CssClass="CSSStudyDetailsView" Width="100%">
     <Fields>
     
@@ -54,14 +54,14 @@
         <asp:TemplateField HeaderText="Status">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
             <ItemTemplate>
-                <asp:Label ID="Status" runat="server"></asp:Label>
+                <asp:Label ID="Status" runat="server" Text='<%# Eval("Status.Description") %>'></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         
         <asp:TemplateField HeaderText="Priority">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
             <ItemTemplate>
-                <asp:Label ID="Priority" runat="server"></asp:Label>
+                <asp:Label ID="Priority" runat="server" Text='<%# Eval("Priority.Description") %>'></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         

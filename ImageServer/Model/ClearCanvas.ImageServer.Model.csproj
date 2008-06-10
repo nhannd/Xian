@@ -75,7 +75,6 @@
     <Compile Include="EntityBrokers\IPatientEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IRequestAttributesEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ISeriesEntityBroker.gen.cs" />
-    <Compile Include="EntityBrokers\IServerInformationEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IServerPartitionEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IServerRuleApplyTimeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IServerRuleEntityBroker.gen.cs" />
@@ -139,7 +138,6 @@
     <Compile Include="Patient.gen.cs" />
     <Compile Include="RequestAttributes.gen.cs" />
     <Compile Include="Series.gen.cs" />
-    <Compile Include="ServerInformation.gen.cs" />
     <Compile Include="ServerPartition.gen.cs" />
     <Compile Include="ServerRule.gen.cs" />
     <Compile Include="ServerRuleApplyTimeEnum.gen.cs" />

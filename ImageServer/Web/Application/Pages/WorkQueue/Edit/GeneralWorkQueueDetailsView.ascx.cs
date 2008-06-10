@@ -89,28 +89,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         }
 
 
-        protected void OnDataBound(object sender, EventArgs e)
+        protected void GeneralInfoDetailsView_DataBound(object sender, EventArgs e)
         {
             WorkQueueDetails item = GeneralInfoDetailsView.DataItem as WorkQueueDetails;
             if (item!=null)
             {
-                Label typeLabel = GeneralInfoDetailsView.FindControl("Type") as Label;
-                if (typeLabel != null)
-                {
-                    typeLabel.Text = item.Type.Description;
-                }
-
-                Label statusLabel = GeneralInfoDetailsView.FindControl("Status") as Label;
-                if (statusLabel != null)
-                {
-                    statusLabel.Text = item.Status.Description;
-                }
-
-                Label priorityLabel = GeneralInfoDetailsView.FindControl("Priority") as Label;
-                if (priorityLabel != null)
-                {
-                    priorityLabel.Text = item.Priority.Description;
-                }
+                
             }
 
             

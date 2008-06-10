@@ -30,25 +30,14 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
-using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
-
 namespace ClearCanvas.ImageServer.Common
 {
     public static class ServiceTools
     {
         #region Static Private Members
         private static string _processorId;
-        private static ServerInformation _serverInformation;
-        private static readonly object _serverInformationLock = new object();
         #endregion
 
         #region Static Properties
@@ -116,112 +105,7 @@ namespace ClearCanvas.ImageServer.Common
                 return _processorId;
             }
         }
-
-        
-
-        /// <summary>
-        /// Gets the <see cref="ServerInformation"/> entry in the database that represents the server on the local machine.
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        public static ServerInformation localServerInformation
-        {
-            get
-            {
-                lock (_serverInformationLock)
-                {
-                    if (_serverInformation==null)
-                    {
-                        // Add or load the server information entry
-                        
-                        IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-
-                        using (IUpdateContext context = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-                        {
-                            ServerAddress localserver = ServerAddress.Local;
-
-                            // serialize it
-                            XmlDocument xmlAddress = new XmlDocument();
-                            XmlWriterSettings writerSettings = new XmlWriterSettings();
-                            writerSettings.OmitXmlDeclaration = true;
-                            writerSettings.Indent = true;
-                            StringBuilder sb = new StringBuilder();
-                            XmlWriter writer = XmlWriter.Create(sb, writerSettings);
-                            XmlSerializerNamespaces xsn = new XmlSerializerNamespaces();
-                            xsn.Add(string.Empty, string.Empty); // don't use namespace
-                            XmlSerializer serializer = new XmlSerializer(typeof(ServerAddress));
-                            serializer.Serialize(writer, localserver, xsn);
-                            xmlAddress.LoadXml(sb.ToString());
-
-
-                            _serverInformation = FindLocalServerInDB(context);
-
-                            if (_serverInformation == null)
-                            {
-                                // Add the entry
-
-                                ServerInformationUpdateColumns columns = new ServerInformationUpdateColumns();
-                                // use the hostname as the server name.
-                                columns.ServerName = localserver.HostName;
-                                columns.Hostname = localserver.HostName;
-                                columns.ExtInformation = xmlAddress;
-                                columns.LastKnownTime = Platform.Time;
-
-                                IServerInformationEntityBroker broker = context.GetBroker<IServerInformationEntityBroker>();
-                                _serverInformation = broker.Insert(columns);
-
-                            }
-                            else
-                            {
-                                // Update it
-
-                                ServerInformationUpdateColumns columns = new ServerInformationUpdateColumns();
-                                columns.Hostname = localserver.HostName;
-                                columns.ExtInformation = xmlAddress;
-                                columns.LastKnownTime = Platform.Time;
-
-                                IServerInformationEntityBroker broker = context.GetBroker<IServerInformationEntityBroker>();
-                                broker.Update(_serverInformation.GetKey(), columns);
-                            }
-
-                            context.Commit();
-                        }
-                    }
-                    
-                }
-                
-                Debug.Assert(_serverInformation != null);
-                return _serverInformation;
-            }
-        }
         #endregion
 
-        #region Private Methods
-        /// <summary>
-        /// Returns the <see cref="ServerInformation"/> entry in the database corresponding to the server on the local machine
-        /// </summary>
-        /// <param name="context">The update context used for database connection</param>
-        /// <returns>null if the entry doesn't exist.</returns>
-        private static ServerInformation FindLocalServerInDB(IPersistenceContext context)
-        {
-            IServerInformationEntityBroker broker = context.GetBroker<IServerInformationEntityBroker>();
-            ServerInformationSelectCriteria criteria = new ServerInformationSelectCriteria();
-
-            // TODO consider caching the database key locally and use it for lookup instead.
-            // This way if users modify the entries in the DB through the GUI, the service won't
-            // insert another entry.
-            criteria.Hostname.EqualTo(Dns.GetHostName());
-
-            IList<ServerInformation> existingEntries = broker.Find(criteria);
-            if (existingEntries == null || existingEntries.Count == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return existingEntries[0];
-            }
-        }
-        #endregion
     }
 }
