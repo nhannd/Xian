@@ -32,14 +32,11 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -66,7 +63,7 @@ namespace ClearCanvas.Ris.Client
 		private ChildComponentHost _orderVisitComponentHost;
 		private ChildComponentHost _orderDocumentComponentHost;
 
-    	private OrderDetailViewComponent _orderDetailComponent;
+		private BiographyOrderDetailViewComponent _orderDetailComponent;
 		private VisitDetailViewComponent _visitDetailComponent;
     	private MimeDocumentPreviewComponent _orderDocumentComponent;
 
@@ -91,11 +88,11 @@ namespace ClearCanvas.Ris.Client
                     _orderList.Items.AddRange(response.ListOrdersResponse.Orders);
                 });
 
-			_orderDetailComponent = new OrderDetailViewComponent(null);
+			_orderDetailComponent = new BiographyOrderDetailViewComponent();
 			_orderDetailComponentHost = new ChildComponentHost(this.Host, _orderDetailComponent);
 			_orderDetailComponentHost.StartComponent();
 
-			_visitDetailComponent = new VisitDetailViewComponent(null);
+			_visitDetailComponent = new VisitDetailViewComponent();
 			_orderVisitComponentHost = new ChildComponentHost(this.Host, _visitDetailComponent);
 			_orderVisitComponentHost.StartComponent();
 

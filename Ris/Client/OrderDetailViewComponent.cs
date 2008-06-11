@@ -51,6 +51,11 @@ namespace ClearCanvas.Ris.Client
 
 		private OrderContext _context;
 
+		public OrderDetailViewComponent()
+			: this(null)
+		{
+		}
+
 		public OrderDetailViewComponent(EntityRef orderRef)
 		{
 			_context = orderRef == null ? null : new OrderContext(orderRef);
@@ -58,18 +63,18 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			SetUrl(WebResourcesSettings.Default.OrderDetailPageUrl);
+			SetUrl(this.PageUrl);
 			base.Start();
-		}
-
-		public void Refresh()
-		{
-			NotifyAllPropertiesChanged();
 		}
 
 		protected override DataContractBase GetHealthcareContext()
 		{
 			return _context;
+		}
+
+		protected virtual string PageUrl
+		{
+			get { return WebResourcesSettings.Default.OrderDetailPageUrl; }
 		}
 
 		public OrderContext Context
@@ -78,7 +83,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_context = value;
-				Refresh();
+				NotifyAllPropertiesChanged();
 			}
 		}
 	}

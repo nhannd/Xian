@@ -104,6 +104,16 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("biographyorderdetail.htm")]
+		public string BiographyOrderDetailPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["BiographyOrderDetailPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
 		[global::System.Configuration.DefaultSettingValueAttribute("visitdetail.htm")]
 		public string VisitDetailPageUrl
 		{

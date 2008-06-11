@@ -46,6 +46,7 @@
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
+    <Compile Include="BiographyOrderDetailViewComponent.cs" />
     <Compile Include="CannedTextLookupHandler.cs" />
     <Compile Include="CannedTextSummaryComponent.cs" />
     <Compile Include="CannedTextEditorComponent.cs" />

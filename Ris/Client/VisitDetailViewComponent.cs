@@ -20,6 +20,11 @@ namespace ClearCanvas.Ris.Client
 
 		private VisitContext _context;
 
+		public VisitDetailViewComponent()
+			: this(null)
+		{
+		}
+
 		public VisitDetailViewComponent(EntityRef visitRef)
 		{
 			_context = visitRef == null ? null : new VisitContext(visitRef);
@@ -27,18 +32,18 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			SetUrl(WebResourcesSettings.Default.VisitDetailPageUrl);
+			SetUrl(this.PageUrl);
 			base.Start();
-		}
-
-		public void Refresh()
-		{
-			NotifyAllPropertiesChanged();
 		}
 
 		protected override DataContractBase GetHealthcareContext()
 		{
 			return _context;
+		}
+
+		protected virtual string PageUrl
+		{
+			get { return WebResourcesSettings.Default.VisitDetailPageUrl; }
 		}
 
 		public VisitContext Context
@@ -47,7 +52,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_context = value;
-				Refresh();
+				NotifyAllPropertiesChanged();
 			}
 		}
 	}

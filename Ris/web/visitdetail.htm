@@ -25,6 +25,26 @@
 						return;
 					}
 
+					// construct request object
+					var request = {
+						GetVisitDetailRequest:
+							 { 
+								VisitRef: context.VisitRef
+							}
+					};
+
+					var service = Ris.getPatientDataService();
+					var data = service.getData(request);
+
+					if (data == null || data.length == 0)
+					{
+						Field.setValue($("myForm"), "");
+						return;
+					}
+
+					var visitDetail = data.GetVisitDetailResponse.Visit;
+
+					
 				}
 				catch(e)
 				{
@@ -36,7 +56,7 @@
 	</head>
 	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 		<form id="myForm">
-		
+
 		</form>
 	</body>
 </html>
