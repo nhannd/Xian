@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client
 		public BiographyOrderHistoryComponent(EntityRef patientRef)
 		{
 			_patientRef = patientRef;
-			_orderList = new OrderListTable(3);
+			_orderList = new OrderListTable();
 		}
 
 		public override void Start()

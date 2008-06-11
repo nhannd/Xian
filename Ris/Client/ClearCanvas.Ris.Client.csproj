@@ -46,7 +46,7 @@
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
-    <Compile Include="BiographyOrderReportsComponent.cs" />
+    <Compile Include="BiographyVisitHistoryComponent.cs" />
     <Compile Include="BiographyOrderDetailViewComponent.cs" />
     <Compile Include="CannedTextLookupHandler.cs" />
     <Compile Include="CannedTextSummaryComponent.cs" />
@@ -119,6 +119,7 @@
     <Compile Include="StaffStaffGroupEditorComponent.cs" />
     <Compile Include="SummaryComponentBase.cs" />
     <Compile Include="VisitDetailViewComponent.cs" />
+    <Compile Include="VisitListTable.cs" />
     <Compile Include="WeakSearchCriteriaException.cs" />
     <Compile Include="FolderSystemItemPreviewComponent.cs" />
     <Compile Include="FolderContentsComponent.cs" />

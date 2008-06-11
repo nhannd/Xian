@@ -312,6 +312,9 @@
   <data name="ColumnVisitNumber" xml:space="preserve">
     <value>Visit #</value>
   </data>
+  <data name="ColumnVisitStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
   <data name="ColumnVisitType" xml:space="preserve">
     <value>Visit Type</value>
   </data>
@@ -329,6 +332,12 @@
   </data>
   <data name="ExceptioinFailedToDeleteTemporaryFiles" xml:space="preserve">
     <value>Failed to delete temporary files</value>
+  </data>
+  <data name="ExceptionCannotAddUpdateVisit" xml:space="preserve">
+    <value>Unable to add/update visit</value>
+  </data>
+  <data name="ExceptionCannotAddVisitPractitioner" xml:space="preserve">
+    <value>Unable to add practitioner to visit</value>
   </data>
   <data name="ExceptionCannotExpandDiagnositicServiceTree" xml:space="preserve">
     <value>Unable to retrieve diagnostic service tree</value>
@@ -507,6 +516,9 @@
   <data name="TitleAddStaff" xml:space="preserve">
     <value>Add Staff</value>
   </data>
+  <data name="TitleAddVisit" xml:space="preserve">
+    <value>Add Visit...</value>
+  </data>
   <data name="TitleCannedText" xml:space="preserve">
     <value>Canned Text</value>
   </data>
@@ -611,5 +623,11 @@
   </data>
   <data name="TitleUpdateStaff" xml:space="preserve">
     <value>Update Staff</value>
+  </data>
+  <data name="TitleUpdateVisit" xml:space="preserve">
+    <value>Update Visit...</value>
+  </data>
+  <data name="TitleVisits" xml:space="preserve">
+    <value>Visit History</value>
   </data>
 </root>

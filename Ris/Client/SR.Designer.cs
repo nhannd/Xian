@@ -646,6 +646,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Status.
+        /// </summary>
+        internal static string ColumnVisitStatus {
+            get {
+                return ResourceManager.GetString("ColumnVisitStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Visit Type.
         /// </summary>
         internal static string ColumnVisitType {
@@ -696,6 +705,24 @@ namespace ClearCanvas.Ris.Client {
         internal static string ExceptioinFailedToDeleteTemporaryFiles {
             get {
                 return ResourceManager.GetString("ExceptioinFailedToDeleteTemporaryFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to add/update visit.
+        /// </summary>
+        internal static string ExceptionCannotAddUpdateVisit {
+            get {
+                return ResourceManager.GetString("ExceptionCannotAddUpdateVisit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to add practitioner to visit.
+        /// </summary>
+        internal static string ExceptionCannotAddVisitPractitioner {
+            get {
+                return ResourceManager.GetString("ExceptionCannotAddVisitPractitioner", resourceCulture);
             }
         }
         
@@ -1231,6 +1258,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Visit....
+        /// </summary>
+        internal static string TitleAddVisit {
+            get {
+                return ResourceManager.GetString("TitleAddVisit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Canned Text.
         /// </summary>
         internal static string TitleCannedText {
@@ -1542,6 +1578,24 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleUpdateStaff {
             get {
                 return ResourceManager.GetString("TitleUpdateStaff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Visit....
+        /// </summary>
+        internal static string TitleUpdateVisit {
+            get {
+                return ResourceManager.GetString("TitleUpdateVisit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Visit History.
+        /// </summary>
+        internal static string TitleVisits {
+            get {
+                return ResourceManager.GetString("TitleVisits", resourceCulture);
             }
         }
     }

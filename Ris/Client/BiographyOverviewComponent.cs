@@ -150,6 +150,7 @@ namespace ClearCanvas.Ris.Client
             BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
             BiographyDemographicComponent demographicComponent = new BiographyDemographicComponent(_patientRef, _profileRef);
             MimeDocumentPreviewComponent documentComponent = new MimeDocumentPreviewComponent();
+			BiographyVisitHistoryComponent visitHistoryComponent = new BiographyVisitHistoryComponent(_patientRef);
             documentComponent.PatientAttachments = _patientProfile.Attachments;
 
             // Create tab and tab groups
@@ -158,6 +159,7 @@ namespace ClearCanvas.Ris.Client
             tabContainer.Pages.Add(new TabPage(SR.TitleDemographic, demographicComponent));
             tabContainer.Pages.Add(new TabPage(SR.TitleDocuments, documentComponent));
             tabContainer.Pages.Add(new TabPage(SR.TitleNotes, noteComponent));
+			tabContainer.Pages.Add(new TabPage(SR.TitleVisits, visitHistoryComponent));
 
             TabGroupComponentContainer tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
             tabGroupContainer.AddTabGroup(new TabGroup(tabContainer, 1.0f));

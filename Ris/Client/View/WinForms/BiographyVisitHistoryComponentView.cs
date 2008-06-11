@@ -29,40 +29,50 @@
 
 #endregion
 
-using System.Windows.Forms;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="BiographyOrderHistoryComponentControl"/>
+    /// Provides a Windows Forms view onto <see cref="BiographyVisitHistoryComponent"/>.
     /// </summary>
-    public partial class BiographyOrderHistoryComponentControl : ApplicationComponentUserControl
+    [ExtensionOf(typeof(BiographyVisitHistoryComponentViewExtensionPoint))]
+    public class BiographyVisitHistoryComponentView : WinFormsView, IApplicationComponentView
     {
-        private readonly BiographyOrderHistoryComponent _component;
+        private BiographyVisitHistoryComponent _component;
+        private BiographyVisitHistoryComponentControl _control;
+
+        #region IApplicationComponentView Members
 
         /// <summary>
-        /// Constructor
+        /// Called by the host to assign this view to a component.
         /// </summary>
-        public BiographyOrderHistoryComponentControl(BiographyOrderHistoryComponent component)
+        public void SetComponent(IApplicationComponent component)
         {
-            InitializeComponent();
-            _component = component;
+            _component = (BiographyVisitHistoryComponent)component;
+        }
 
-            _orderList.Table = _component.Orders;
-            _orderList.DataBindings.Add("Selection", _component, "SelectedOrder", true, DataSourceUpdateMode.OnPropertyChanged);
+        #endregion
 
-			Control order = (Control)_component.OrderDetailComponentHost.ComponentView.GuiElement;
-			order.Dock = DockStyle.Fill;
-			_orderPage.Controls.Add(order);
-
-			Control visit = (Control)_component.OrderVisitComponentHost.ComponentView.GuiElement;
-			visit.Dock = DockStyle.Fill;
-			_visitPage.Controls.Add(visit);
-
-			Control document = (Control)_component.OrderDocumentComponentHost.ComponentView.GuiElement;
-			document.Dock = DockStyle.Fill;
-			_documentPage.Controls.Add(document);
-		}
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new BiographyVisitHistoryComponentControl(_component);
+                }
+                return _control;
+            }
+        }
     }
 }

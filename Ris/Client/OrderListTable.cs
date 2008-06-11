@@ -7,8 +7,8 @@ namespace ClearCanvas.Ris.Client
 {
 	public class OrderListTable : Table<OrderListItem>
 	{
-		public OrderListTable(int cellRowCount)
-			: base(cellRowCount)
+		public OrderListTable()
+			: base(3)
 		{
 			this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnCreatedOn,
 				delegate(OrderListItem order) { return Format.DateTime(order.EnteredTime); }, 0.5f));

@@ -31,38 +31,33 @@
 
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
+using System.Collections.Generic;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="BiographyOrderHistoryComponentControl"/>
-    /// </summary>
-    public partial class BiographyOrderHistoryComponentControl : ApplicationComponentUserControl
-    {
-        private readonly BiographyOrderHistoryComponent _component;
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="BiographyVisitHistoryComponentControl"/>
+	/// </summary>
+	public partial class BiographyVisitHistoryComponentControl : ApplicationComponentUserControl
+	{
+		private readonly BiographyVisitHistoryComponent _component;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public BiographyOrderHistoryComponentControl(BiographyOrderHistoryComponent component)
-        {
-            InitializeComponent();
-            _component = component;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public BiographyVisitHistoryComponentControl(BiographyVisitHistoryComponent component)
+		{
+			InitializeComponent();
+			_component = component;
 
-            _orderList.Table = _component.Orders;
-            _orderList.DataBindings.Add("Selection", _component, "SelectedOrder", true, DataSourceUpdateMode.OnPropertyChanged);
+			_visitList.Table = _component.Visits;
+			_visitList.DataBindings.Add("Selection", _component, "SelectedVisit", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			Control order = (Control)_component.OrderDetailComponentHost.ComponentView.GuiElement;
-			order.Dock = DockStyle.Fill;
-			_orderPage.Controls.Add(order);
-
-			Control visit = (Control)_component.OrderVisitComponentHost.ComponentView.GuiElement;
-			visit.Dock = DockStyle.Fill;
-			_visitPage.Controls.Add(visit);
-
-			Control document = (Control)_component.OrderDocumentComponentHost.ComponentView.GuiElement;
-			document.Dock = DockStyle.Fill;
-			_documentPage.Controls.Add(document);
+			Control detailView = (Control)_component.VisitDetailComponentHost.ComponentView.GuiElement;
+			detailView.Dock = DockStyle.Fill;
+			_detailPanel.Controls.Add(detailView);
 		}
-    }
+	}
 }
