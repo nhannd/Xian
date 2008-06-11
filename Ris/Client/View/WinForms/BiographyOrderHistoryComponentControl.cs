@@ -56,6 +56,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			order.Dock = DockStyle.Fill;
 			_orderPage.Controls.Add(order);
 
+			Control report = (Control)_component.OrderReportsComponentHost.ComponentView.GuiElement;
+			report.Dock = DockStyle.Fill;
+			_reportPage.Controls.Add(report);
+
 			Control visit = (Control)_component.OrderVisitComponentHost.ComponentView.GuiElement;
 			visit.Dock = DockStyle.Fill;
 			_visitPage.Controls.Add(visit);

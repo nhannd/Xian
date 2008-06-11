@@ -64,8 +64,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this._orderPage = new System.Windows.Forms.TabPage();
 			this._visitPage = new System.Windows.Forms.TabPage();
-			this._documentPage = new System.Windows.Forms.TabPage();
 			this._reportPage = new System.Windows.Forms.TabPage();
+			this._documentPage = new System.Windows.Forms.TabPage();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
@@ -131,18 +131,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._visitPage.Padding = new System.Windows.Forms.Padding(3);
 			this._visitPage.Size = new System.Drawing.Size(505, 560);
 			this._visitPage.TabIndex = 1;
-			this._visitPage.Text = "Order Visit";
+			this._visitPage.Text = "Visit Details";
 			this._visitPage.UseVisualStyleBackColor = true;
-			// 
-			// _documentPage
-			// 
-			this._documentPage.Location = new System.Drawing.Point(4, 22);
-			this._documentPage.Name = "_documentPage";
-			this._documentPage.Padding = new System.Windows.Forms.Padding(3);
-			this._documentPage.Size = new System.Drawing.Size(505, 560);
-			this._documentPage.TabIndex = 3;
-			this._documentPage.Text = "Order Document";
-			this._documentPage.UseVisualStyleBackColor = true;
 			// 
 			// _reportPage
 			// 
@@ -151,8 +141,18 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._reportPage.Padding = new System.Windows.Forms.Padding(3);
 			this._reportPage.Size = new System.Drawing.Size(505, 560);
 			this._reportPage.TabIndex = 4;
-			this._reportPage.Text = "Order Reports";
+			this._reportPage.Text = "Reports";
 			this._reportPage.UseVisualStyleBackColor = true;
+			// 
+			// _documentPage
+			// 
+			this._documentPage.Location = new System.Drawing.Point(4, 22);
+			this._documentPage.Name = "_documentPage";
+			this._documentPage.Padding = new System.Windows.Forms.Padding(3);
+			this._documentPage.Size = new System.Drawing.Size(505, 560);
+			this._documentPage.TabIndex = 3;
+			this._documentPage.Text = "Attachments";
+			this._documentPage.UseVisualStyleBackColor = true;
 			// 
 			// BiographyOrderHistoryComponentControl
 			// 

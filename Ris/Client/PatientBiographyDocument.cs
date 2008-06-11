@@ -55,13 +55,6 @@ namespace ClearCanvas.Ris.Client
             _patientRef = patientRef;
         }
 
-        public PatientBiographyDocument(PatientProfileSummary patientProfile, DesktopWindow window)
-            :base(patientProfile.PatientRef, window)
-        {
-            _patientRef = patientProfile.PatientRef;
-            _profileRef = patientProfile.PatientProfileRef;
-        }
-
         public override string GetTitle()
         {
             return "";  // not relevant - component will set title

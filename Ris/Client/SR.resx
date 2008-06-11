@@ -519,6 +519,9 @@
   <data name="TitleAddVisit" xml:space="preserve">
     <value>Add Visit...</value>
   </data>
+  <data name="TitleBiography" xml:space="preserve">
+    <value>Biography - {0} {1}</value>
+  </data>
   <data name="TitleCannedText" xml:space="preserve">
     <value>Canned Text</value>
   </data>
@@ -534,14 +537,11 @@
   <data name="TitleDelete" xml:space="preserve">
     <value>Delete</value>
   </data>
-  <data name="TitleDemographic" xml:space="preserve">
-    <value>Demographic</value>
+  <data name="TitleDemographicProfiles" xml:space="preserve">
+    <value>Demographic Profiles</value>
   </data>
   <data name="TitleDiagnosticServices" xml:space="preserve">
     <value>Diagnostic Services</value>
-  </data>
-  <data name="TitleDocuments" xml:space="preserve">
-    <value>Documents</value>
   </data>
   <data name="TitleDuplicate" xml:space="preserve">
     <value>Duplicate</value>
@@ -564,17 +564,20 @@
   <data name="TitleNext" xml:space="preserve">
     <value>Next Page</value>
   </data>
-  <data name="TitleNotes" xml:space="preserve">
-    <value>Notes</value>
-  </data>
   <data name="TitleOrderNoteboxFolderSystem" xml:space="preserve">
     <value>Order Notes</value>
   </data>
   <data name="TitleOrders" xml:space="preserve">
     <value>Orders</value>
   </data>
+  <data name="TitlePatientAttachments" xml:space="preserve">
+    <value>Patient Documents</value>
+  </data>
   <data name="TitlePatientComponent" xml:space="preserve">
     <value>Patient - {0} {1}</value>
+  </data>
+  <data name="TitlePatientNotes" xml:space="preserve">
+    <value>Patient Notes</value>
   </data>
   <data name="TitlePatientProfile" xml:space="preserve">
     <value>Patient Profile</value>
@@ -628,6 +631,6 @@
     <value>Update Visit...</value>
   </data>
   <data name="TitleVisits" xml:space="preserve">
-    <value>Visit History</value>
+    <value>Visits</value>
   </data>
 </root>

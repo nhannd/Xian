@@ -141,7 +141,7 @@ namespace ClearCanvas.Ris.Client
                     _patientProfile = response.GetPatientProfileDetailResponse.PatientProfile;
                 });
 
-            this.Host.Title = string.Format(SR.TitlePatientComponent,
+            this.Host.Title = string.Format(SR.TitleBiography,
                     PersonNameFormat.Format(_patientProfile.Name),
                     MrnFormat.Format(_patientProfile.Mrn));
 
@@ -156,10 +156,10 @@ namespace ClearCanvas.Ris.Client
             // Create tab and tab groups
             TabComponentContainer tabContainer = new TabComponentContainer();
             tabContainer.Pages.Add(new TabPage(SR.TitleOrders, orderHistoryComponent));
-            tabContainer.Pages.Add(new TabPage(SR.TitleDemographic, demographicComponent));
-            tabContainer.Pages.Add(new TabPage(SR.TitleDocuments, documentComponent));
-            tabContainer.Pages.Add(new TabPage(SR.TitleNotes, noteComponent));
 			tabContainer.Pages.Add(new TabPage(SR.TitleVisits, visitHistoryComponent));
+			tabContainer.Pages.Add(new TabPage(SR.TitleDemographicProfiles, demographicComponent));
+            tabContainer.Pages.Add(new TabPage(SR.TitlePatientAttachments, documentComponent));
+            tabContainer.Pages.Add(new TabPage(SR.TitlePatientNotes, noteComponent));
 
             TabGroupComponentContainer tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
             tabGroupContainer.AddTabGroup(new TabGroup(tabContainer, 1.0f));
