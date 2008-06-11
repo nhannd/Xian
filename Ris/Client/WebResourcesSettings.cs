@@ -143,7 +143,17 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		#endregion
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("biographyreportdetail.htm")]
+		public string BiographyReportDetailPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["BiographyReportDetailPageUrl"]));
+			}
+		}
+
+#endregion
 
 		#region ClearCanvas.Ris.Client.Adt component settings
 

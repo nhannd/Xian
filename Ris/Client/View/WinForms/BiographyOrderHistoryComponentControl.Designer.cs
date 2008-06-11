@@ -65,6 +65,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._orderPage = new System.Windows.Forms.TabPage();
 			this._visitPage = new System.Windows.Forms.TabPage();
 			this._documentPage = new System.Windows.Forms.TabPage();
+			this._reportPage = new System.Windows.Forms.TabPage();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
@@ -104,6 +105,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this.tabControl1.Controls.Add(this._orderPage);
 			this.tabControl1.Controls.Add(this._visitPage);
+			this.tabControl1.Controls.Add(this._reportPage);
 			this.tabControl1.Controls.Add(this._documentPage);
 			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
@@ -142,6 +144,16 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._documentPage.Text = "Order Document";
 			this._documentPage.UseVisualStyleBackColor = true;
 			// 
+			// _reportPage
+			// 
+			this._reportPage.Location = new System.Drawing.Point(4, 22);
+			this._reportPage.Name = "_reportPage";
+			this._reportPage.Padding = new System.Windows.Forms.Padding(3);
+			this._reportPage.Size = new System.Drawing.Size(505, 560);
+			this._reportPage.TabIndex = 4;
+			this._reportPage.Text = "Order Reports";
+			this._reportPage.UseVisualStyleBackColor = true;
+			// 
 			// BiographyOrderHistoryComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -165,5 +177,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.TabPage _orderPage;
 		private System.Windows.Forms.TabPage _visitPage;
 		private System.Windows.Forms.TabPage _documentPage;
+		private System.Windows.Forms.TabPage _reportPage;
     }
 }

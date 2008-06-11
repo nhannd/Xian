@@ -29,44 +29,50 @@
 
 #endregion
 
-using System.Windows.Forms;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-	/// <summary>
-	/// Provides a Windows Forms user-interface for <see cref="BiographyOrderHistoryComponentControl"/>
-	/// </summary>
-	public partial class BiographyOrderHistoryComponentControl : ApplicationComponentUserControl
-	{
-		private readonly BiographyOrderHistoryComponent _component;
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="BiographyOrderReportsComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(BiographyOrderReportsComponentViewExtensionPoint))]
+    public class BiographyOrderReportsComponentView : WinFormsView, IApplicationComponentView
+    {
+        private BiographyOrderReportsComponent _component;
+        private BiographyOrderReportsComponentControl _control;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public BiographyOrderHistoryComponentControl(BiographyOrderHistoryComponent component)
-		{
-			InitializeComponent();
-			_component = component;
+        #region IApplicationComponentView Members
 
-			_orderList.Table = _component.Orders;
-			_orderList.DataBindings.Add("Selection", _component, "SelectedOrder", true, DataSourceUpdateMode.OnPropertyChanged);
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (BiographyOrderReportsComponent)component;
+        }
 
-			Control order = (Control)_component.OrderDetailComponentHost.ComponentView.GuiElement;
-			order.Dock = DockStyle.Fill;
-			_orderPage.Controls.Add(order);
+        #endregion
 
-			Control visit = (Control)_component.OrderVisitComponentHost.ComponentView.GuiElement;
-			visit.Dock = DockStyle.Fill;
-			_visitPage.Controls.Add(visit);
-
-			Control report = (Control)_component.OrderReportsComponentHost.ComponentView.GuiElement;
-			report.Dock = DockStyle.Fill;
-			_reportPage.Controls.Add(report);
-
-			Control document = (Control)_component.OrderDocumentComponentHost.ComponentView.GuiElement;
-			document.Dock = DockStyle.Fill;
-			_documentPage.Controls.Add(document);
-		}
-	}
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new BiographyOrderReportsComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

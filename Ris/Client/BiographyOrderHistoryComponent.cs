@@ -40,53 +40,59 @@ using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="BiographyOrderHistoryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class PatientOrderHistoryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="BiographyOrderHistoryComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class PatientOrderHistoryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// PatientOrderHistoryComponent class
-    /// </summary>
-    [AssociateView(typeof(PatientOrderHistoryComponentViewExtensionPoint))]
-    public class BiographyOrderHistoryComponent : ApplicationComponent
-    {
-        private readonly EntityRef _patientRef;
+	/// <summary>
+	/// PatientOrderHistoryComponent class
+	/// </summary>
+	[AssociateView(typeof(PatientOrderHistoryComponentViewExtensionPoint))]
+	public class BiographyOrderHistoryComponent : ApplicationComponent
+	{
+		private readonly EntityRef _patientRef;
 		private readonly OrderListTable _orderList;
-        private OrderListItem _selectedOrder;
-    	private OrderDetail _orderDetail;
+		private OrderListItem _selectedOrder;
+		private OrderDetail _orderDetail;
 
 		private ChildComponentHost _orderDetailComponentHost;
 		private ChildComponentHost _orderVisitComponentHost;
 		private ChildComponentHost _orderDocumentComponentHost;
+		private ChildComponentHost _orderReportsComponentHost;
 
+<<<<<<< .mine
+		private OrderDetailViewComponent _orderDetailComponent;
+=======
 		private BiographyOrderDetailViewComponent _orderDetailComponent;
+>>>>>>> .r5717
 		private VisitDetailViewComponent _visitDetailComponent;
-    	private MimeDocumentPreviewComponent _orderDocumentComponent;
+		private MimeDocumentPreviewComponent _orderDocumentComponent;
+		private BiographyOrderReportsComponent _orderReportsComponent;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public BiographyOrderHistoryComponent(EntityRef patientRef)
-        {
-            _patientRef = patientRef;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public BiographyOrderHistoryComponent(EntityRef patientRef)
+		{
+			_patientRef = patientRef;
 			_orderList = new OrderListTable(3);
-        }
+		}
 
-        public override void Start()
-        {
-            Platform.GetService<IBrowsePatientDataService>(
-                delegate(IBrowsePatientDataService service)
-                {
-                    GetDataRequest request = new GetDataRequest();
-                    request.ListOrdersRequest = new ListOrdersRequest(_patientRef, PatientOrdersQueryDetailLevel.Order);
-                    GetDataResponse response = service.GetData(request);
+		public override void Start()
+		{
+			Platform.GetService<IBrowsePatientDataService>(
+				delegate(IBrowsePatientDataService service)
+				{
+					GetDataRequest request = new GetDataRequest();
+					request.ListOrdersRequest = new ListOrdersRequest(_patientRef, PatientOrdersQueryDetailLevel.Order);
+					GetDataResponse response = service.GetData(request);
 
-                    _orderList.Items.AddRange(response.ListOrdersResponse.Orders);
-                });
+					_orderList.Items.AddRange(response.ListOrdersResponse.Orders);
+				});
 
 			_orderDetailComponent = new BiographyOrderDetailViewComponent();
 			_orderDetailComponentHost = new ChildComponentHost(this.Host, _orderDetailComponent);
@@ -96,41 +102,47 @@ namespace ClearCanvas.Ris.Client
 			_orderVisitComponentHost = new ChildComponentHost(this.Host, _visitDetailComponent);
 			_orderVisitComponentHost.StartComponent();
 
+			_orderReportsComponent = new BiographyOrderReportsComponent();
+			_orderReportsComponentHost = new ChildComponentHost(this.Host, _orderReportsComponent);
+			_orderReportsComponentHost.StartComponent();
+
 			_orderDocumentComponent = new MimeDocumentPreviewComponent(true, true, MimeDocumentPreviewComponent.AttachmentMode.Order);
 			_orderDocumentComponentHost = new ChildComponentHost(this.Host, _orderDocumentComponent);
 			_orderDocumentComponentHost.StartComponent();
 
-            base.Start();
-        }
+			base.Start();
+		}
 
 		public override void Stop()
 		{
 			_orderDetailComponentHost.StopComponent();
 			_orderVisitComponentHost.StopComponent();
+			_orderReportsComponentHost.StopComponent();
 			_orderDocumentComponentHost.StopComponent();
 
 			base.Stop();
 		}
-        #region Presentation Model
 
-        public ITable Orders
-        {
-            get { return _orderList; }
-        }
+		#region Presentation Model
 
-        public ISelection SelectedOrder
-        {
-            get { return new Selection(_selectedOrder); }
-            set
-            {
-                OrderListItem newSelection = (OrderListItem)value.Item;
-                if (_selectedOrder != newSelection)
-                {
-                    _selectedOrder = newSelection;
-                    OrderSelectionChanged();
-                }
-            }
-        }
+		public ITable Orders
+		{
+			get { return _orderList; }
+		}
+
+		public ISelection SelectedOrder
+		{
+			get { return new Selection(_selectedOrder); }
+			set
+			{
+				OrderListItem newSelection = (OrderListItem)value.Item;
+				if (_selectedOrder != newSelection)
+				{
+					_selectedOrder = newSelection;
+					OrderSelectionChanged();
+				}
+			}
+		}
 
 		public ApplicationComponentHost OrderDetailComponentHost
 		{
@@ -142,39 +154,44 @@ namespace ClearCanvas.Ris.Client
 			get { return _orderVisitComponentHost; }
 		}
 
+		public ApplicationComponentHost OrderReportsComponentHost
+		{
+			get { return _orderReportsComponentHost; }
+		}
+
 		public ApplicationComponentHost OrderDocumentComponentHost
 		{
 			get { return _orderDocumentComponentHost; }
 		}
 
-        #endregion
+		#endregion
 
-        private void OrderSelectionChanged()
-        {
-            try
-            {
-                if (_selectedOrder != null)
-                {
-                    Platform.GetService<IBrowsePatientDataService>(
-                        delegate(IBrowsePatientDataService service)
-                        {
-                            GetDataRequest request = new GetDataRequest();
-                            request.GetOrderDetailRequest = new GetOrderDetailRequest(_selectedOrder.OrderRef, true, true, false, false, true);
-                            GetDataResponse response = service.GetData(request);
+		private void OrderSelectionChanged()
+		{
+			try
+			{
+				if (_selectedOrder != null)
+				{
+					Platform.GetService<IBrowsePatientDataService>(
+						delegate(IBrowsePatientDataService service)
+						{
+							GetDataRequest request = new GetDataRequest();
+							request.GetOrderDetailRequest = new GetOrderDetailRequest(_selectedOrder.OrderRef, true, true, false, false, true);
+							GetDataResponse response = service.GetData(request);
 
 							_orderDetail = response.GetOrderDetailResponse.Order;
-                        });
+						});
 				}
 
-            	UpdatePages();
+				UpdatePages();
 			}
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
 
-            NotifyAllPropertiesChanged();
-        }
+			NotifyAllPropertiesChanged();
+		}
 
 		private void UpdatePages()
 		{
@@ -182,15 +199,17 @@ namespace ClearCanvas.Ris.Client
 			{
 				_orderDetailComponent.Context = null;
 				_visitDetailComponent.Context = null;
+				_orderReportsComponent.Context = null;
 				_orderDocumentComponent.OrderAttachments = new List<OrderAttachmentSummary>();
 			}
 			else
 			{
 				_orderDetailComponent.Context = new OrderDetailViewComponent.OrderContext(_selectedOrder.OrderRef);
 				_visitDetailComponent.Context = new VisitDetailViewComponent.VisitContext(_selectedOrder.VisitRef);
+				_orderReportsComponent.Context = new BiographyOrderReportsComponent.ReportsContext(_selectedOrder.OrderRef, _orderDetail.PatientRef);
 				_orderDocumentComponent.OrderAttachments = _orderDetail == null ? new List<OrderAttachmentSummary>() : _orderDetail.Attachments;
 			}
-			
+
 		}
-    }
+	}
 }

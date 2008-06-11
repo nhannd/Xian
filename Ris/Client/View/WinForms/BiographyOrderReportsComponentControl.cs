@@ -29,44 +29,42 @@
 
 #endregion
 
+using System;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
 	/// <summary>
-	/// Provides a Windows Forms user-interface for <see cref="BiographyOrderHistoryComponentControl"/>
+	/// Provides a Windows Forms user-interface for <see cref="BiographyOrderReportsComponent"/>.
 	/// </summary>
-	public partial class BiographyOrderHistoryComponentControl : ApplicationComponentUserControl
+	public partial class BiographyOrderReportsComponentControl : ApplicationComponentUserControl
 	{
-		private readonly BiographyOrderHistoryComponent _component;
+		private BiographyOrderReportsComponent _component;
 
 		/// <summary>
-		/// Constructor
+		/// Constructor.
 		/// </summary>
-		public BiographyOrderHistoryComponentControl(BiographyOrderHistoryComponent component)
+		public BiographyOrderReportsComponentControl(BiographyOrderReportsComponent component)
+			: base(component)
 		{
-			InitializeComponent();
 			_component = component;
+			InitializeComponent();
 
-			_orderList.Table = _component.Orders;
-			_orderList.DataBindings.Add("Selection", _component, "SelectedOrder", true, DataSourceUpdateMode.OnPropertyChanged);
+			Control reportPreview = (Control) _component.ReportPreviewComponentHost.ComponentView.GuiElement;
+			reportPreview.Dock = DockStyle.Fill;
+			_reportPreviewPanel.Controls.Add(reportPreview);
 
-			Control order = (Control)_component.OrderDetailComponentHost.ComponentView.GuiElement;
-			order.Dock = DockStyle.Fill;
-			_orderPage.Controls.Add(order);
+			_reports.DataSource = _component.Reports;
+			_reports.DataBindings.Add("Value", _component, "SelectedReport", true, DataSourceUpdateMode.OnPropertyChanged);
+			_reports.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatReportListItem(e.ListItem); };
 
-			Control visit = (Control)_component.OrderVisitComponentHost.ComponentView.GuiElement;
-			visit.Dock = DockStyle.Fill;
-			_visitPage.Controls.Add(visit);
+			_component.AllPropertiesChanged += AllPropertiesChangedEventHandler;
+		}
 
-			Control report = (Control)_component.OrderReportsComponentHost.ComponentView.GuiElement;
-			report.Dock = DockStyle.Fill;
-			_reportPage.Controls.Add(report);
-
-			Control document = (Control)_component.OrderDocumentComponentHost.ComponentView.GuiElement;
-			document.Dock = DockStyle.Fill;
-			_documentPage.Controls.Add(document);
+		private void AllPropertiesChangedEventHandler(object sender, EventArgs e)
+		{
+			_reports.DataSource = _component.Reports;
 		}
 	}
 }
