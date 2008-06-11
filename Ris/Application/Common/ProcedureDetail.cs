@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System;
 
 namespace ClearCanvas.Ris.Application.Common
 {
@@ -51,11 +52,35 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public ProcedureTypeDetail Type;
-        
+
+		[DataMember]
+		public DateTime? ScheduledStartTime;
+
+		[DataMember]
+		public DateTime? StartTime;
+
+		[DataMember]
+		public DateTime? EndTime;
+
+		[DataMember]
+		public DateTime? CheckInTime;
+
+		[DataMember]
+		public DateTime? CheckOutTime;
+
+		[DataMember]
+		public FacilityDetail PerformingFacility;
+
+		[DataMember]
+		public EnumValueInfo Laterality;
+
+		[DataMember]
+		public bool Portable;
+
         [DataMember]
         public List<ModalityProcedureStepDetail> ModalityProcedureSteps;
 
         [DataMember]
         public ProtocolDetail Protocol;
-    }
+	}
 }

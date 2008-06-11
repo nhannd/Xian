@@ -50,6 +50,14 @@ namespace ClearCanvas.Ris.Application.Services
             detail.ProcedureRef = rp.GetRef();
             detail.Status = EnumUtils.GetEnumValueInfo(rp.Status, context);
             detail.Type = new ProcedureTypeAssembler().CreateProcedureTypeDetail(rp.Type);
+        	detail.ScheduledStartTime = rp.ScheduledStartTime;
+        	detail.StartTime = rp.StartTime;
+        	detail.EndTime = rp.EndTime;
+        	detail.CheckInTime = rp.ProcedureCheckIn.CheckInTime;
+        	detail.CheckOutTime = rp.ProcedureCheckIn.CheckOutTime;
+        	detail.PerformingFacility = new FacilityAssembler().CreateFacilityDetail(rp.PerformingFacility);
+			detail.Laterality = EnumUtils.GetEnumValueInfo(rp.Laterality, context);
+        	detail.Portable = rp.Portable;
 
             if (includeProcedureSteps)
             {
