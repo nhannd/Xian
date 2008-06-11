@@ -64,11 +64,7 @@ namespace ClearCanvas.Ris.Client
 		private ChildComponentHost _orderDocumentComponentHost;
 		private ChildComponentHost _orderReportsComponentHost;
 
-<<<<<<< .mine
-		private OrderDetailViewComponent _orderDetailComponent;
-=======
 		private BiographyOrderDetailViewComponent _orderDetailComponent;
->>>>>>> .r5717
 		private VisitDetailViewComponent _visitDetailComponent;
 		private MimeDocumentPreviewComponent _orderDocumentComponent;
 		private BiographyOrderReportsComponent _orderReportsComponent;
