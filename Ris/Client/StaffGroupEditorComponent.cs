@@ -165,6 +165,20 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+		public bool IsElective
+		{
+			get { return _staffGroupDetail.IsElective; }
+			set
+			{
+				if (_staffGroupDetail.IsElective != value)
+				{
+					_staffGroupDetail.IsElective = value;
+					this.Modified = true;
+					NotifyPropertyChanged("IsElective");
+				}
+			}
+		}
+
         public ITable AvailableStaffTable
         {
             get { return _availableStaff; }

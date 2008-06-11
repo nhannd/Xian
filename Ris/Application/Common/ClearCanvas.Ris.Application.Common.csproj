@@ -61,6 +61,7 @@
     <Compile Include="Admin\StaffGroupAdmin\LoadStaffGroupEditorFormDataResponse.cs" />
     <Compile Include="Admin\StaffGroupAdmin\LoadStaffGroupForEditRequest.cs" />
     <Compile Include="Admin\StaffGroupAdmin\LoadStaffGroupForEditResponse.cs" />
+    <Compile Include="Admin\StaffGroupAdmin\StaffGroupTextQueryRequest.cs" />
     <Compile Include="Admin\UserAdmin\ImportAuthorityGroupsRequest.cs" />
     <Compile Include="Admin\UserAdmin\ImportAuthorityGroupsResponse.cs" />
     <Compile Include="Admin\UserAdmin\ImportAuthorityTokensRequest.cs" />

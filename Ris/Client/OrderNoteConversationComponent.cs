@@ -256,7 +256,7 @@ namespace ClearCanvas.Ris.Client
 		public override void Start()
 		{
 			_staffLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow);
-			_staffGroupLookupHandler = new StaffGroupLookupHandler(this.Host.DesktopWindow);
+			_staffGroupLookupHandler = new StaffGroupLookupHandler(this.Host.DesktopWindow, false);
 			_cannedTextLookupHandler = new CannedTextLookupHandler(this.Host.DesktopWindow);
 
 			Platform.GetService<IOrderNoteService>(

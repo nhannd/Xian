@@ -59,6 +59,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _component = component;
             _name.DataBindings.Add("Value", _component, "GroupName", true, DataSourceUpdateMode.OnPropertyChanged);
             _description.DataBindings.Add("Value", _component, "GroupDescription", true, DataSourceUpdateMode.OnPropertyChanged);
+			_electiveCheckbox.DataBindings.Add("Checked", _component, "IsElective", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _staffMemberSelector.AvailableItemsTable = _component.AvailableStaffTable;
             _staffMemberSelector.SelectedItemsTable = _component.SelectedStaffTable;

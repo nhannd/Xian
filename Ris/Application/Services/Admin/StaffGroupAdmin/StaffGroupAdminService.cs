@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
         #region IStaffGroupAdminService Members
 
         [ReadOperation]
-        public TextQueryResponse<StaffGroupSummary> TextQuery(TextQueryRequest request)
+        public TextQueryResponse<StaffGroupSummary> TextQuery(StaffGroupTextQueryRequest request)
         {
             IStaffGroupBroker broker = PersistenceContext.GetBroker<IStaffGroupBroker>();
             StaffGroupAssembler assembler = new StaffGroupAssembler();
@@ -65,6 +65,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
                         // allow matching on name (assume entire query is a name which may contain spaces)
                         StaffGroupSearchCriteria nameCriteria = new StaffGroupSearchCriteria();
                         nameCriteria.Name.StartsWith(rawQuery);
+						if(request.ElectiveGroupsOnly)
+							nameCriteria.Elective.EqualTo(true);
 
                         return new StaffGroupSearchCriteria[]{ nameCriteria };
                     },

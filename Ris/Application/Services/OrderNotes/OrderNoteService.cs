@@ -109,6 +109,8 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
 				delegate(StaffGroupSummary s)
 				{
 					StaffGroup group = PersistenceContext.Load<StaffGroup>(s.StaffGroupRef, EntityLoadFlags.Proxy);
+					if(!group.Elective)
+						throw new RequestValidationException(string.Format("You cannot be added to non-elective staff group '{0}'.", group.Name));
 					group.AddMember(this.CurrentUserStaff);
 				});
 

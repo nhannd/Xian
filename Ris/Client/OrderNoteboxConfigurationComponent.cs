@@ -130,7 +130,7 @@ namespace ClearCanvas.Ris.Client
 							}));
 				});
 
-			_staffGroupLookupHandler = new StaffGroupLookupHandler(this.Host.DesktopWindow);
+			_staffGroupLookupHandler = new StaffGroupLookupHandler(this.Host.DesktopWindow, true);
 
 			base.Start();
 		}

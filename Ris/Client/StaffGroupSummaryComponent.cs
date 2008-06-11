@@ -89,7 +89,9 @@ namespace ClearCanvas.Ris.Client
                 delegate(StaffGroupSummary item) { return item.Name; }));
             this.Columns.Add(new TableColumn<StaffGroupSummary, string>("Description",
                 delegate(StaffGroupSummary item) { return item.Description; }));
-        }
+			this.Columns.Add(new TableColumn<StaffGroupSummary, bool>("Elective",
+				delegate(StaffGroupSummary item) { return item.IsElective; }));
+		}
     }
 
     /// <summary>

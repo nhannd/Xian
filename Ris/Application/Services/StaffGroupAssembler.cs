@@ -15,7 +15,8 @@ namespace ClearCanvas.Ris.Application.Services
             return new StaffGroupSummary(
                 staffGroup.GetRef(),
                 staffGroup.Name,
-                staffGroup.Description);
+                staffGroup.Description,
+				staffGroup.Elective);
         }
 
         public StaffGroupDetail CreateDetail(StaffGroup staffGroup, IPersistenceContext context)
@@ -25,6 +26,7 @@ namespace ClearCanvas.Ris.Application.Services
                 staffGroup.GetRef(),
                 staffGroup.Name,
                 staffGroup.Description,
+				staffGroup.Elective,
                 CollectionUtils.Map<Staff, StaffSummary>(staffGroup.Members,
                                                          delegate (Staff staff)
                                                          {
@@ -37,6 +39,7 @@ namespace ClearCanvas.Ris.Application.Services
         {
             group.Name = detail.Name;
             group.Description = detail.Description;
+        	group.Elective = detail.IsElective;
 
             group.Members.Clear();
             CollectionUtils.ForEach(detail.Members,

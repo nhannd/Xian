@@ -58,6 +58,11 @@ namespace ClearCanvas.Ris.Client
 
 		protected override TextQueryResponse<StaffSummary> DoQuery(StaffTextQueryRequest request)
 		{
+			if (_staffTypesFilter != null && _staffTypesFilter.Length > 0)
+			{
+				request.StaffTypesFilter = _staffTypesFilter;
+			}
+
 			TextQueryResponse<StaffSummary> response = null;
 			Platform.GetService<IStaffAdminService>(
 				delegate(IStaffAdminService service)
@@ -105,16 +110,6 @@ namespace ClearCanvas.Ris.Client
 		public override string FormatItem(StaffSummary item)
 		{
 			return PersonNameFormat.Format(item.Name);
-		}
-
-		protected override void PrepareRequest(StaffTextQueryRequest request, object[] additionalArgs)
-		{
-			base.PrepareRequest(request, additionalArgs);
-
-			if (_staffTypesFilter != null && _staffTypesFilter.Length > 0)
-			{
-				request.StaffTypesFilter = _staffTypesFilter;
-			}
 		}
 	}
 }

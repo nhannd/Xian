@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client
 		/// <returns></returns>
 		public bool ResolveName(string query, int specificityThreshold, out TSummary[] results)
 		{
-			return ResolveNameHelper(query, specificityThreshold, out results, new object[] { });
+			return ResolveNameHelper(query, specificityThreshold, out results);
 		}
 
 		/// <summary>
@@ -118,7 +118,7 @@ namespace ClearCanvas.Ris.Client
 		/// <returns></returns>
 		public bool ResolveName(string query, out TSummary[] results)
 		{
-			return ResolveNameHelper(query, _defaultSpecificityThreshold, out results, new object[] { });
+			return ResolveNameHelper(query, _defaultSpecificityThreshold, out results);
 		}
 
 		/// <summary>
@@ -195,12 +195,6 @@ namespace ClearCanvas.Ris.Client
 
 		protected abstract TextQueryResponse<TSummary> DoQuery(TRequest request);
 
-		protected virtual void PrepareRequest(TRequest request, object[] additionalArgs)
-		{
-			// nothing to do
-			// subclasses can override to deal with additonal args
-		}
-
 		#endregion
 
 		#region Protected Helpers
@@ -208,20 +202,18 @@ namespace ClearCanvas.Ris.Client
 		protected bool ResolveNameHelper(string query, out TSummary result, params object[] additionalArgs)
         {
             TSummary[] results;
-            bool success = ResolveNameHelper(query, 1, out results, additionalArgs);
+            bool success = ResolveNameHelper(query, 1, out results);
             result = success && results.Length > 0 ? results[0] : null;
             return success;
         }
 
-        protected bool ResolveNameHelper(string query, int specificityThreshold, out TSummary[] results, params object[] additionalArgs)
+        protected bool ResolveNameHelper(string query, int specificityThreshold, out TSummary[] results)
         {
             if (!string.IsNullOrEmpty(query) && query.Trim().Length >= _minQueryStringLength)
             {
                 TRequest request = new TRequest();
                 request.TextQuery = query;
                 request.SpecificityThreshold = specificityThreshold;
-
-                PrepareRequest(request, additionalArgs);
 
                 TextQueryResponse<TSummary> response = DoQuery(request);
                 if (!response.TooManyMatches)

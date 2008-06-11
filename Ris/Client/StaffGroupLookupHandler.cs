@@ -6,13 +6,15 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
-	public class StaffGroupLookupHandler : LookupHandler<TextQueryRequest, StaffGroupSummary>
+	public class StaffGroupLookupHandler : LookupHandler<StaffGroupTextQueryRequest, StaffGroupSummary>
 	{
 		private readonly DesktopWindow _desktopWindow;
+		private readonly bool _electiveGroupsOnly;
 
-		public StaffGroupLookupHandler(DesktopWindow desktopWindow)
+		public StaffGroupLookupHandler(DesktopWindow desktopWindow, bool electiveGroupsOnly)
 		{
 			_desktopWindow = desktopWindow;
+			_electiveGroupsOnly = electiveGroupsOnly;
 		}
 
 		public override bool ResolveNameInteractive(string query, out StaffGroupSummary result)
@@ -36,8 +38,10 @@ namespace ClearCanvas.Ris.Client
 			return item.Name;
 		}
 
-		protected override TextQueryResponse<StaffGroupSummary> DoQuery(TextQueryRequest request)
+		protected override TextQueryResponse<StaffGroupSummary> DoQuery(StaffGroupTextQueryRequest request)
 		{
+			request.ElectiveGroupsOnly = _electiveGroupsOnly;
+
 			TextQueryResponse<StaffGroupSummary> response = null;
 			Platform.GetService<IStaffGroupAdminService>(
 				delegate(IStaffGroupAdminService service)

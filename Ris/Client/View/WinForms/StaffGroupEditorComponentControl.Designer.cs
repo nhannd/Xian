@@ -59,80 +59,93 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._description = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._okButton = new System.Windows.Forms.Button();
-            this._cancelButton = new System.Windows.Forms.Button();
-            this._staffMemberSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
-            this.SuspendLayout();
-            // 
-            // _name
-            // 
-            this._name.LabelText = "Name";
-            this._name.Location = new System.Drawing.Point(3, 15);
-            this._name.Margin = new System.Windows.Forms.Padding(2);
-            this._name.Mask = "";
-            this._name.Name = "_name";
-            this._name.PasswordChar = '\0';
-            this._name.Size = new System.Drawing.Size(555, 41);
-            this._name.TabIndex = 0;
-            this._name.ToolTip = null;
-            this._name.Value = null;
-            // 
-            // _description
-            // 
-            this._description.LabelText = "Description";
-            this._description.Location = new System.Drawing.Point(3, 70);
-            this._description.Margin = new System.Windows.Forms.Padding(2);
-            this._description.Mask = "";
-            this._description.Name = "_description";
-            this._description.PasswordChar = '\0';
-            this._description.Size = new System.Drawing.Size(555, 41);
-            this._description.TabIndex = 1;
-            this._description.ToolTip = null;
-            this._description.Value = null;
-            // 
-            // _okButton
-            // 
-            this._okButton.Location = new System.Drawing.Point(402, 379);
-            this._okButton.Name = "_okButton";
-            this._okButton.Size = new System.Drawing.Size(75, 23);
-            this._okButton.TabIndex = 2;
-            this._okButton.Text = "OK";
-            this._okButton.UseVisualStyleBackColor = true;
-            this._okButton.Click += new System.EventHandler(this._okButton_Click);
-            // 
-            // _cancelButton
-            // 
-            this._cancelButton.Location = new System.Drawing.Point(483, 379);
-            this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(75, 23);
-            this._cancelButton.TabIndex = 3;
-            this._cancelButton.Text = "Cancel";
-            this._cancelButton.UseVisualStyleBackColor = true;
-            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
-            // 
-            // _staffMemberSelector
-            // 
-            this._staffMemberSelector.AvailableItemsTable = null;
-            this._staffMemberSelector.Location = new System.Drawing.Point(3, 129);
-            this._staffMemberSelector.Name = "_staffMemberSelector";
-            this._staffMemberSelector.SelectedItemsTable = null;
-            this._staffMemberSelector.Size = new System.Drawing.Size(555, 244);
-            this._staffMemberSelector.TabIndex = 4;
-            // 
-            // StaffGroupEditorComponentControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._staffMemberSelector);
-            this.Controls.Add(this._cancelButton);
-            this.Controls.Add(this._okButton);
-            this.Controls.Add(this._description);
-            this.Controls.Add(this._name);
-            this.Name = "StaffGroupEditorComponentControl";
-            this.Size = new System.Drawing.Size(573, 405);
-            this.ResumeLayout(false);
+			this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._description = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._okButton = new System.Windows.Forms.Button();
+			this._cancelButton = new System.Windows.Forms.Button();
+			this._staffMemberSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
+			this._electiveCheckbox = new System.Windows.Forms.CheckBox();
+			this.SuspendLayout();
+			// 
+			// _name
+			// 
+			this._name.LabelText = "Name";
+			this._name.Location = new System.Drawing.Point(3, 15);
+			this._name.Margin = new System.Windows.Forms.Padding(2);
+			this._name.Mask = "";
+			this._name.Name = "_name";
+			this._name.PasswordChar = '\0';
+			this._name.Size = new System.Drawing.Size(424, 41);
+			this._name.TabIndex = 0;
+			this._name.ToolTip = null;
+			this._name.Value = null;
+			// 
+			// _description
+			// 
+			this._description.LabelText = "Description";
+			this._description.Location = new System.Drawing.Point(3, 70);
+			this._description.Margin = new System.Windows.Forms.Padding(2);
+			this._description.Mask = "";
+			this._description.Name = "_description";
+			this._description.PasswordChar = '\0';
+			this._description.Size = new System.Drawing.Size(424, 41);
+			this._description.TabIndex = 1;
+			this._description.ToolTip = null;
+			this._description.Value = null;
+			// 
+			// _okButton
+			// 
+			this._okButton.Location = new System.Drawing.Point(402, 379);
+			this._okButton.Name = "_okButton";
+			this._okButton.Size = new System.Drawing.Size(75, 23);
+			this._okButton.TabIndex = 2;
+			this._okButton.Text = "OK";
+			this._okButton.UseVisualStyleBackColor = true;
+			this._okButton.Click += new System.EventHandler(this._okButton_Click);
+			// 
+			// _cancelButton
+			// 
+			this._cancelButton.Location = new System.Drawing.Point(483, 379);
+			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
+			this._cancelButton.TabIndex = 3;
+			this._cancelButton.Text = "Cancel";
+			this._cancelButton.UseVisualStyleBackColor = true;
+			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+			// 
+			// _staffMemberSelector
+			// 
+			this._staffMemberSelector.AvailableItemsTable = null;
+			this._staffMemberSelector.Location = new System.Drawing.Point(3, 129);
+			this._staffMemberSelector.Name = "_staffMemberSelector";
+			this._staffMemberSelector.SelectedItemsTable = null;
+			this._staffMemberSelector.Size = new System.Drawing.Size(555, 244);
+			this._staffMemberSelector.TabIndex = 4;
+			// 
+			// _electiveCheckbox
+			// 
+			this._electiveCheckbox.AutoSize = true;
+			this._electiveCheckbox.Location = new System.Drawing.Point(459, 35);
+			this._electiveCheckbox.Name = "_electiveCheckbox";
+			this._electiveCheckbox.Size = new System.Drawing.Size(64, 17);
+			this._electiveCheckbox.TabIndex = 5;
+			this._electiveCheckbox.Text = "Elective";
+			this._electiveCheckbox.UseVisualStyleBackColor = true;
+			// 
+			// StaffGroupEditorComponentControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._electiveCheckbox);
+			this.Controls.Add(this._staffMemberSelector);
+			this.Controls.Add(this._cancelButton);
+			this.Controls.Add(this._okButton);
+			this.Controls.Add(this._description);
+			this.Controls.Add(this._name);
+			this.Name = "StaffGroupEditorComponentControl";
+			this.Size = new System.Drawing.Size(573, 405);
+			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
@@ -143,5 +156,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private System.Windows.Forms.Button _okButton;
         private System.Windows.Forms.Button _cancelButton;
         private ClearCanvas.Desktop.View.WinForms.ListItemSelector _staffMemberSelector;
+		private System.Windows.Forms.CheckBox _electiveCheckbox;
     }
 }

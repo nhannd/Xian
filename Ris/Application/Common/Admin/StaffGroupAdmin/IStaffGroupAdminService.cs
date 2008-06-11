@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        TextQueryResponse<StaffGroupSummary> TextQuery(TextQueryRequest request);
+        TextQueryResponse<StaffGroupSummary> TextQuery(StaffGroupTextQueryRequest request);
 
         /// <summary>
         /// Summary list of all staff groups.
