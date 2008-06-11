@@ -30,153 +30,122 @@
 #endregion
 
 using System;
-
+using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Client;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     /// <summary>
-    /// Extension point for views onto <see cref="VisitSummaryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class VisitSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
-
-    /// <summary>
     /// VisitSummaryComponent class
     /// </summary>
-    [AssociateView(typeof(VisitSummaryComponentViewExtensionPoint))]
-    public class VisitSummaryComponent : ApplicationComponent
+    public class VisitSummaryComponent : SummaryComponentBase<VisitSummary, VisitSummaryTable>
     {
         private readonly EntityRef _patientRef;
 
-        private VisitSummaryTable _visitTable;
-        private VisitSummary _selectedVisit;
-
-        private CrudActionModel _visitActionHandler;
-
-        public VisitSummaryComponent(EntityRef patientRef)
+        public VisitSummaryComponent(EntityRef patientRef, bool dialogMode)
+			:base(dialogMode)
         {
             _patientRef = patientRef;
         }
 
-        public override void Start()
-        {
-            _visitTable = new VisitSummaryTable();
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-            _visitActionHandler = new CrudActionModel(true, true, false);
-            _visitActionHandler.Add.SetClickHandler(AddVisit);
-			_visitActionHandler.Add.SetPermissibility(AuthorityTokens.Workflow.Visit.Create);
-			_visitActionHandler.Add.Enabled = true;
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Visit.Create);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Visit.Update);
+		}
 
-            _visitActionHandler.Edit.SetClickHandler(UpdateSelectedVisit);
-			_visitActionHandler.Add.SetPermissibility(AuthorityTokens.Workflow.Visit.Update);
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<VisitSummary> ListItems(int firstItem, int maxItems)
+		{
+			ListVisitsForPatientResponse listResponse = null;
+			Platform.GetService<IVisitAdminService>(
+				delegate(IVisitAdminService service)
+				{
+					listResponse = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef));
+				});
 
-            _visitTable.Items.Clear();
+			return listResponse.Visits;
+		}
 
-            Platform.GetService<IVisitAdminService>(
-                delegate(IVisitAdminService service)
-                {
-                    ListVisitsForPatientResponse response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef));
-                    _visitTable.Items.AddRange(response.Visits);
-                });
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<VisitSummary> addedItems)
+		{
+			addedItems = new List<VisitSummary>();
+			VisitEditorComponent editor = new VisitEditorComponent(_patientRef);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleAddVisit);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(editor.VisitSummary);
+				return true;
+			}
+			return false;
+		}
 
-            base.Start();
-        }
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<VisitSummary> items, out IList<VisitSummary> editedItems)
+		{
+			editedItems = new List<VisitSummary>();
+			VisitSummary item = CollectionUtils.FirstElement(items);
 
-        public ITable Visits
-        {
-            get { return _visitTable; }
-        }
+			VisitEditorComponent editor = new VisitEditorComponent(item.VisitRef);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleUpdateVisit);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(editor.VisitSummary);
+				return true;
+			}
+			return false;
+		}
 
-        public ISelection SelectedVisit
-        {
-            get { return new Selection(_selectedVisit); }
-            set
-            {
-                _selectedVisit = (VisitSummary) value.Item;
-                VisitSelectionChanged();
-            }
-        }
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<VisitSummary> items)
+		{
+			throw new NotImplementedException();
+		}
 
-        private void VisitSelectionChanged()
-        {
-            if (_selectedVisit != null)
-            {
-                _visitActionHandler.Edit.Enabled = true;
-                _visitActionHandler.Delete.Enabled = true;
-            }
-            else
-            {
-                _visitActionHandler.Edit.Enabled = false;
-                _visitActionHandler.Delete.Enabled = false;
-            }
-
-            NotifyPropertyChanged("SelectedVisit");
-        }
-
-        public ActionModelNode VisitListActionModel
-        {
-            get { return _visitActionHandler; }
-        }
-
-        public void AddVisit()
-        {
-            try
-            {
-                VisitEditorComponent editor = new VisitEditorComponent(_patientRef);
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddVisit);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _visitTable.Items.Add(editor.AddedVisit);
-                    this.Modified = true;
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void UpdateSelectedVisit()
-        {             
-            // can occur if user double clicks while holding control
-            if (_selectedVisit == null) return;
-
-            try
-            {
-                VisitEditorComponent editor = new VisitEditorComponent(_selectedVisit);
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateVisit);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    // delete and re-insert to ensure that TableView updates correctly
-                    VisitSummary toBeRemoved = _selectedVisit;
-                    _visitTable.Items.Remove(toBeRemoved);
-                    _visitTable.Items.Add(editor.AddedVisit);
-                    this.Modified = true;
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void Close()
-        {
-            if (this.Modified)
-                this.ExitCode = ApplicationComponentExitCode.Accepted;
-
-            Host.Exit();
-        }
-    }
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(VisitSummary x, VisitSummary y)
+		{
+			return x.VisitRef.Equals(y.VisitRef, true);
+		}
+	}
 }

@@ -478,36 +478,44 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             try
             {
-                VisitSummaryComponent component = new VisitSummaryComponent(_patientRef);
-                if (ApplicationComponentExitCode.Accepted ==
-                    LaunchAsDialog(
-                        this.Host.DesktopWindow,
-                        component,
-                        SR.TitlePatientVisits))
-                {
-                    EntityRef existingSelectedVisitRef = _selectedVisit == null ? null : _selectedVisit.VisitRef;
+                VisitSummaryComponent component = new VisitSummaryComponent(_patientRef, true);
+            	ApplicationComponentExitCode exitCode = LaunchAsDialog(
+            		this.Host.DesktopWindow,
+            		component,
+            		SR.TitlePatientVisits);
 
-                    Platform.GetService<IOrderEntryService>(
-                        delegate(IOrderEntryService service)
-                        {
-                            ListActiveVisitsForPatientResponse response =
-                                service.ListActiveVisitsForPatient(new ListActiveVisitsForPatientRequest(_patientRef));
-                            _activeVisits = response.Visits;
-                        });
 
-                    NotifyPropertyChanged("ActiveVisits");
-                    EventsHelper.Fire(_activeVisitsChanged, this, EventArgs.Empty);
+				// remember the previous selection before updating the list
+				EntityRef selectedVisitRef = _selectedVisit == null ? null : _selectedVisit.VisitRef;
 
-                    if (existingSelectedVisitRef != null)
-                    {
-                        this.SelectedVisit = CollectionUtils.SelectFirst(_activeVisits,
-                            delegate(VisitSummary visit)
-                            {
-                                return visit.VisitRef.Equals(existingSelectedVisitRef, true);
-                            });
-                    }
-                }
+				// if the user made a selection and accepted, then override the previous selection
+				if (ApplicationComponentExitCode.Accepted == exitCode)
+				{
+					VisitSummary selectedVisit = (VisitSummary)component.SummarySelection.Item;
+					selectedVisitRef = selectedVisit == null ? null : selectedVisit.VisitRef;
+				}
 
+				// regardless of whether the user pressed OK or cancel, we should still update the list of active visits
+				// because they could have added a new visit prior to cancelling out of the dialog
+				Platform.GetService<IOrderEntryService>(
+					delegate(IOrderEntryService service)
+					{
+						ListActiveVisitsForPatientResponse response =
+							service.ListActiveVisitsForPatient(new ListActiveVisitsForPatientRequest(_patientRef));
+						_activeVisits = response.Visits;
+					});
+
+				NotifyPropertyChanged("ActiveVisits");
+				EventsHelper.Fire(_activeVisitsChanged, this, EventArgs.Empty);
+
+				if (selectedVisitRef != null)
+				{
+					this.SelectedVisit = CollectionUtils.SelectFirst(_activeVisits,
+						delegate(VisitSummary visit)
+						{
+							return visit.VisitRef.Equals(selectedVisitRef, true);
+						});
+				}
             }
             catch (Exception e)
             {

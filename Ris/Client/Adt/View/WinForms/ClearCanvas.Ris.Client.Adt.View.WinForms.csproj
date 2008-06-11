@@ -151,13 +151,6 @@
       <DependentUpon>VisitPractitionersSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="VisitPractitionersSummaryComponentView.cs" />
-    <Compile Include="VisitSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="VisitSummaryComponentControl.Designer.cs">
-      <DependentUpon>VisitSummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="VisitSummaryComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -228,10 +221,6 @@
     <EmbeddedResource Include="VisitPractitionersSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>VisitPractitionersSummaryComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="VisitSummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>VisitSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

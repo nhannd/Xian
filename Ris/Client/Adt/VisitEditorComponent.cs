@@ -131,7 +131,7 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Stop();
         }
         
-        public VisitSummary AddedVisit
+        public VisitSummary VisitSummary
         {
             get { return _addedVisit; }
         }

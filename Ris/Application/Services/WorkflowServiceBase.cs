@@ -179,17 +179,6 @@ namespace ClearCanvas.Ris.Application.Services
 		}
 
 
-		protected List<WorklistSummary> ListWorklistsHelper(List<string> worklistTokens)
-        {
-            WorklistAssembler assembler = new WorklistAssembler();
-            return CollectionUtils.Map<Worklist, WorklistSummary>(
-                    PersistenceContext.GetBroker<IWorklistBroker>().FindWorklistsForStaff(CurrentUserStaff, worklistTokens),
-                    delegate(Worklist worklist)
-                    {
-                        return assembler.GetWorklistSummary(worklist);
-                    });
-        }
-
         protected Dictionary<string, bool> GetOperationEnablement(object itemKey)
         {
             Dictionary<string, bool> results = new Dictionary<string, bool>();

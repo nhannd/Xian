@@ -69,17 +69,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         }
 
         /// <summary>
-        /// Obtain the list of worklists for the current user.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [ReadOperation]
-        public ListWorklistsForUserResponse ListWorklistsForUser(ListWorklistsForUserRequest request)
-        {
-			return new ListWorklistsForUserResponse(ListWorklistsHelper(request.WorklistTokens));
-        }
-
-        /// <summary>
         /// Query the specified worklist.
         /// </summary>
         /// <param name="request"></param>
