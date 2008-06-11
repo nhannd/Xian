@@ -34,7 +34,6 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
-using ClearCanvas.Ris.Application.Services.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 {
@@ -61,22 +60,25 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             return data;
         }
 
-        public ReportListItem CreateReportListItem(Procedure rp, IPersistenceContext context)
-        {
-            ReportListItem data = new ReportListItem();
+		public ReportListItem CreateReportListItem(Procedure rp, IPersistenceContext context)
+		{
+			// a given procedure should only ever have 1 non-X report
+			Report report = CollectionUtils.SelectFirst(rp.Reports,
+				delegate(Report r) { return r.Status != ReportStatus.X; });
 
-            UpdateListItem(data, rp.Order, context);
-            UpdateListItem(data, rp.Order.Visit, context);
-            UpdateListItem(data, rp, context);
+			if (report == null)
+				return null;
 
-            // a given procedure should only ever have 1 non-X report
-            Report report = CollectionUtils.SelectFirst(rp.Reports,
-                delegate(Report r) { return r.Status != ReportStatus.X; });
+			ReportListItem data = new ReportListItem();
 
-            UpdateListItem(data, report, context);
+			UpdateListItem(data, rp.Order, context);
+			UpdateListItem(data, rp.Order.Visit, context);
+			UpdateListItem(data, rp, context);
 
-            return data;
-        }
+			UpdateListItem(data, report, context);
+
+			return data;
+		}
 
 		public VisitListItem CreateVisitListItem(Visit visit, IPersistenceContext context)
 		{
@@ -140,6 +142,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 
         private void UpdateListItem(ReportListItem data, Report report, IPersistenceContext context)
         {
+        	data.ReportRef = report.GetRef();
             data.ReportStatus = EnumUtils.GetEnumValueInfo(report.Status, context);
         }
         #endregion

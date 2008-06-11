@@ -32,33 +32,31 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Alerts;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 {
-    [ServiceImplementsContract(typeof(IBrowsePatientDataService))]
-    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class BrowsePatientDataService : ApplicationServiceBase, IBrowsePatientDataService
-    {
-        #region IBrowsePatientDataService Members
+	[ServiceImplementsContract(typeof(IBrowsePatientDataService))]
+	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+	public class BrowsePatientDataService : ApplicationServiceBase, IBrowsePatientDataService
+	{
+		#region IBrowsePatientDataService Members
 
-        [ReadOperation]
-        public GetDataResponse GetData(GetDataRequest request)
-        {
-            GetDataResponse response = new GetDataResponse();
+		[ReadOperation]
+		public GetDataResponse GetData(GetDataRequest request)
+		{
+			GetDataResponse response = new GetDataResponse();
 
-            if (request.ListPatientProfilesRequest != null)
-                response.ListPatientProfilesResponse = ListPatientProfiles(request.ListPatientProfilesRequest);
+			if (request.ListPatientProfilesRequest != null)
+				response.ListPatientProfilesResponse = ListPatientProfiles(request.ListPatientProfilesRequest);
 
-            if (request.GetPatientProfileDetailRequest != null)
-                response.GetPatientProfileDetailResponse = GetPatientProfileDetail(request.GetPatientProfileDetailRequest);
+			if (request.GetPatientProfileDetailRequest != null)
+				response.GetPatientProfileDetailResponse = GetPatientProfileDetail(request.GetPatientProfileDetailRequest);
 
 			if (request.ListVisitsRequest != null)
 				response.ListVisitsResponse = ListVisits(request.ListVisitsRequest);
@@ -67,67 +65,67 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 				response.GetVisitDetailResponse = GetVisitDetail(request.GetVisitDetailRequest);
 
 			if (request.ListOrdersRequest != null)
-                response.ListOrdersResponse = ListOrders(request.ListOrdersRequest);
+				response.ListOrdersResponse = ListOrders(request.ListOrdersRequest);
 
-            if (request.GetOrderDetailRequest != null)
-                response.GetOrderDetailResponse = GetOrderDetail(request.GetOrderDetailRequest);
+			if (request.GetOrderDetailRequest != null)
+				response.GetOrderDetailResponse = GetOrderDetail(request.GetOrderDetailRequest);
 
-            if (request.ListReportsRequest != null)
-                response.ListReportsResponse = ListReports(request.ListReportsRequest);
+			if (request.ListReportsRequest != null)
+				response.ListReportsResponse = ListReports(request.ListReportsRequest);
 
-            if (request.GetReportDetailRequest != null)
-                response.GetReportDetailResponse = GetReportDetail(request.GetReportDetailRequest);
+			if (request.GetReportDetailRequest != null)
+				response.GetReportDetailResponse = GetReportDetail(request.GetReportDetailRequest);
 
-            return response;
-        }
+			return response;
+		}
 
-        #endregion
+		#endregion
 
 
-        private ListPatientProfilesResponse ListPatientProfiles(ListPatientProfilesRequest request)
-        {
-            Patient patient = PersistenceContext.Load<Patient>(request.PatientRef);
+		private ListPatientProfilesResponse ListPatientProfiles(ListPatientProfilesRequest request)
+		{
+			Patient patient = PersistenceContext.Load<Patient>(request.PatientRef);
 
-            PatientProfileAssembler assembler = new PatientProfileAssembler();
-            return new ListPatientProfilesResponse(
-                CollectionUtils.Map<PatientProfile, PatientProfileSummary>(
-                patient.Profiles,
-                delegate(PatientProfile profile)
-                {
-                    return assembler.CreatePatientProfileSummary(profile, PersistenceContext);
-                }));
-        }
+			PatientProfileAssembler assembler = new PatientProfileAssembler();
+			return new ListPatientProfilesResponse(
+				CollectionUtils.Map<PatientProfile, PatientProfileSummary>(
+				patient.Profiles,
+				delegate(PatientProfile profile)
+				{
+					return assembler.CreatePatientProfileSummary(profile, PersistenceContext);
+				}));
+		}
 
-        private GetPatientProfileDetailResponse GetPatientProfileDetail(GetPatientProfileDetailRequest request)
-        {
-            PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef);
+		private GetPatientProfileDetailResponse GetPatientProfileDetail(GetPatientProfileDetailRequest request)
+		{
+			PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef);
 
-            PatientProfileAssembler assembler = new PatientProfileAssembler();
-            GetPatientProfileDetailResponse response = new GetPatientProfileDetailResponse();
-            response.PatientProfile = assembler.CreatePatientProfileDetail(profile, this.PersistenceContext,
-                                                                                 request.IncludeAddresses,
-                                                                                 request.IncludeContactPersons,
-                                                                                 request.IncludeEmailAddresses,
-                                                                                 request.IncludeTelephoneNumbers,
-                                                                                 request.IncludeNotes,
-                                                                                 request.IncludeAttachments);
-            if (request.IncludeAlerts)
-            {
-                List<AlertNotification> alerts = new List<AlertNotification>();
-                alerts.AddRange(AlertHelper.Instance.Test(profile.Patient, this.PersistenceContext));
-                alerts.AddRange(AlertHelper.Instance.Test(profile, this.PersistenceContext));
+			PatientProfileAssembler assembler = new PatientProfileAssembler();
+			GetPatientProfileDetailResponse response = new GetPatientProfileDetailResponse();
+			response.PatientProfile = assembler.CreatePatientProfileDetail(profile, this.PersistenceContext,
+																				 request.IncludeAddresses,
+																				 request.IncludeContactPersons,
+																				 request.IncludeEmailAddresses,
+																				 request.IncludeTelephoneNumbers,
+																				 request.IncludeNotes,
+																				 request.IncludeAttachments);
+			if (request.IncludeAlerts)
+			{
+				List<AlertNotification> alerts = new List<AlertNotification>();
+				alerts.AddRange(AlertHelper.Instance.Test(profile.Patient, this.PersistenceContext));
+				alerts.AddRange(AlertHelper.Instance.Test(profile, this.PersistenceContext));
 
-                AlertAssembler alertAssembler = new AlertAssembler();
-                response.PatientAlerts =
-                    CollectionUtils.Map<AlertNotification, AlertNotificationDetail>(alerts,
-                    delegate(AlertNotification alert)
-                    {
-                        return alertAssembler.CreateAlertNotification(alert);
-                    });
-            }
+				AlertAssembler alertAssembler = new AlertAssembler();
+				response.PatientAlerts =
+					CollectionUtils.Map<AlertNotification, AlertNotificationDetail>(alerts,
+					delegate(AlertNotification alert)
+					{
+						return alertAssembler.CreateAlertNotification(alert);
+					});
+			}
 
-            return response;
-        }
+			return response;
+		}
 
 		private ListVisitsResponse ListVisits(ListVisitsRequest request)
 		{
@@ -141,7 +139,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 			IList<Visit> visits = PersistenceContext.GetBroker<IVisitBroker>().Find(where);
 			return new ListVisitsResponse(
 				CollectionUtils.Map<Visit, VisitListItem>(visits,
-					delegate (Visit v)
+					delegate(Visit v)
 					{
 						return assembler.CreateVisitListItem(v, PersistenceContext);
 					}));
@@ -150,7 +148,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 		private GetVisitDetailResponse GetVisitDetail(GetVisitDetailRequest request)
 		{
 			Visit visit = PersistenceContext.Load<Visit>(request.VisitRef, EntityLoadFlags.Proxy);
-			
+
 			VisitAssembler assembler = new VisitAssembler();
 			VisitDetail detail = assembler.CreateVisitDetail(visit, PersistenceContext);
 
@@ -158,98 +156,102 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 		}
 
 		private ListOrdersResponse ListOrders(ListOrdersRequest request)
-        {
-            BrowsePatientDataAssembler assembler = new BrowsePatientDataAssembler();
+		{
+			BrowsePatientDataAssembler assembler = new BrowsePatientDataAssembler();
 
-            Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
+			Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
 
-            if (request.QueryDetailLevel == PatientOrdersQueryDetailLevel.Order)
-            {
-                return new ListOrdersResponse(
-                    CollectionUtils.Map<Order, OrderListItem>(
-                        PersistenceContext.GetBroker<IPreviewBroker>().QueryOrderData(patient),
-                        delegate(Order order)
-                        {
-                            return assembler.CreateOrderListItem(order, this.PersistenceContext);
-                        }));
-            }
-            else if (request.QueryDetailLevel == PatientOrdersQueryDetailLevel.Procedure)
-            {
-                return new ListOrdersResponse(
-                    CollectionUtils.Map<Procedure, OrderListItem>(
-                        PersistenceContext.GetBroker<IPreviewBroker>().QueryProcedureData(patient),
-                        delegate(Procedure rp)
-                        {
-                            return assembler.CreateOrderListItem(rp, this.PersistenceContext);
-                        }));
-            }
+			if (request.QueryDetailLevel == PatientOrdersQueryDetailLevel.Order)
+			{
+				return new ListOrdersResponse(
+					CollectionUtils.Map<Order, OrderListItem>(
+						PersistenceContext.GetBroker<IPreviewBroker>().QueryOrderData(patient),
+						delegate(Order order)
+						{
+							return assembler.CreateOrderListItem(order, this.PersistenceContext);
+						}));
+			}
+			else if (request.QueryDetailLevel == PatientOrdersQueryDetailLevel.Procedure)
+			{
+				return new ListOrdersResponse(
+					CollectionUtils.Map<Procedure, OrderListItem>(
+						PersistenceContext.GetBroker<IPreviewBroker>().QueryProcedureData(patient),
+						delegate(Procedure rp)
+						{
+							return assembler.CreateOrderListItem(rp, this.PersistenceContext);
+						}));
+			}
 
-            return new ListOrdersResponse(new List<OrderListItem>());
-        }
+			return new ListOrdersResponse(new List<OrderListItem>());
+		}
 
-        private GetOrderDetailResponse GetOrderDetail(GetOrderDetailRequest request)
-        {
-            Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
+		private GetOrderDetailResponse GetOrderDetail(GetOrderDetailRequest request)
+		{
+			Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
 
-            GetOrderDetailResponse response = new GetOrderDetailResponse();
-            OrderAssembler assembler = new OrderAssembler();
-            response.Order = assembler.CreateOrderDetail(order,
-                this.PersistenceContext,
-                request.IncludeVisit,
-                request.IncludeProcedures,
-                request.IncludeNotes,
+			GetOrderDetailResponse response = new GetOrderDetailResponse();
+			OrderAssembler assembler = new OrderAssembler();
+			response.Order = assembler.CreateOrderDetail(order,
+				this.PersistenceContext,
+				request.IncludeVisit,
+				request.IncludeProcedures,
+				request.IncludeNotes,
 				request.IncludeAttachments,
-                request.NoteCategoriesFilter);
+				request.NoteCategoriesFilter);
 
-            if (request.IncludeAlerts)
-            {
-                AlertAssembler alertAssembler = new AlertAssembler();
-                response.OrderAlerts =
-                    CollectionUtils.Map<AlertNotification, AlertNotificationDetail>(
-                    AlertHelper.Instance.Test(order, this.PersistenceContext),
-                    delegate(AlertNotification alert)
-                    {
-                        return alertAssembler.CreateAlertNotification(alert);
-                    });
-            }
+			if (request.IncludeAlerts)
+			{
+				AlertAssembler alertAssembler = new AlertAssembler();
+				response.OrderAlerts =
+					CollectionUtils.Map<AlertNotification, AlertNotificationDetail>(
+					AlertHelper.Instance.Test(order, this.PersistenceContext),
+					delegate(AlertNotification alert)
+					{
+						return alertAssembler.CreateAlertNotification(alert);
+					});
+			}
 
-            return response;
-        }
+			return response;
+		}
 
-        private ListReportsResponse ListReports(ListReportsRequest request)
-        {
+		private ListReportsResponse ListReports(ListReportsRequest request)
+		{
 			// TODO: this implementation is inefficient - need custom broker methods to do this efficiently
 
 			IEnumerable<Procedure> procedures = new List<Procedure>();
-			if(request.OrderRef != null)
+			if (request.OrderRef != null)
 			{
 				// list only reports for this order
 				Order order = PersistenceContext.Load<Order>(request.OrderRef, EntityLoadFlags.Proxy);
 				procedures = order.Procedures;
 			}
-			else if(request.PatientRef != null)
+			else if (request.PatientRef != null)
 			{
 				Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
 				procedures = PersistenceContext.GetBroker<IPreviewBroker>().QueryProcedureData(patient);
 			}
 
 			BrowsePatientDataAssembler assembler = new BrowsePatientDataAssembler();
-			return new ListReportsResponse(
-				CollectionUtils.Map<Procedure, ReportListItem>(
-					procedures,
-					delegate(Procedure rp)
-					{
-						return assembler.CreateReportListItem(rp, this.PersistenceContext);
-					}));
+			List<ReportListItem> reportListItems = new List<ReportListItem>();
 
-        }
+			CollectionUtils.ForEach<Procedure>(
+				procedures,
+				delegate(Procedure rp)
+				{
+					ReportListItem reportListItem = assembler.CreateReportListItem(rp, this.PersistenceContext);
+					if (reportListItem != null)
+						reportListItems.Add(reportListItem);
+				});
 
-        private GetReportDetailResponse GetReportDetail(GetReportDetailRequest request)
-        {
-            Report report = PersistenceContext.Load<Report>(request.ReportRef);
+			return new ListReportsResponse(reportListItems);
+		}
 
-            ReportAssembler assembler = new ReportAssembler();
-            return new GetReportDetailResponse(assembler.CreateReportDetail(report, PersistenceContext));
-        }
-    }
+		private GetReportDetailResponse GetReportDetail(GetReportDetailRequest request)
+		{
+			Report report = PersistenceContext.Load<Report>(request.ReportRef);
+
+			ReportAssembler assembler = new ReportAssembler();
+			return new GetReportDetailResponse(assembler.CreateReportDetail(report, PersistenceContext));
+		}
+	}
 }

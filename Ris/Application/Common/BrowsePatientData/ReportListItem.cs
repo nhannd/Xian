@@ -29,20 +29,22 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
-    [DataContract]
-    public class ReportListItem : OrderListItem
-    {
-        #region Report
+	[DataContract]
+	public class ReportListItem : OrderListItem
+	{
+		#region Report
 
-        [DataMember]
-        public EnumValueInfo ReportStatus;
+		[DataMember]
+		public EntityRef ReportRef;
 
-        #endregion
-    }
+		[DataMember]
+		public EnumValueInfo ReportStatus;
+
+		#endregion
+	}
 }
