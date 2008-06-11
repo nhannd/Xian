@@ -1,94 +1,95 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-        <title>Booking Preview</title>
-        <link href="css/default.css" rel="stylesheet" type="text/css" />
-        <script type="text/javascript" src="js/jsx.js"></script>
-	    <script type="text/javascript" src="js/jsml.js"></script>
-	    <script type="text/javascript" src="js/ui.js"></script>
-	    <script type="text/javascript" src="js/ris.js"></script>
-	    <script type="text/javascript" src="js/preview.js"></script>
-	    <script type="text/javascript" src="js/layout.js"></script>
-	    <script type="text/javascript" >
-		    function onBodyLoad()
-		    {		        
-			    scaleWidth();
-		        if(!Ris)
-		            return;
-		            
-	            try
-	            {
+		<title>Booking Preview</title>
+		<link href="css/default.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="js/jsx.js"></script>
+		<script type="text/javascript" src="js/jsml.js"></script>
+		<script type="text/javascript" src="js/ui.js"></script>
+		<script type="text/javascript" src="js/ris.js"></script>
+		<script type="text/javascript" src="js/preview.js"></script>
+		<script type="text/javascript" src="js/layout.js"></script>
+		<script type="text/javascript" >
+			function onBodyLoad()
+			{
+				scaleWidth();
+
+				if(!Ris)
+					return;
+
+				try
+				{
 					var worklistItem = Ris.getHealthcareContext();
 					if (worklistItem == null)
 					{
-                        Field.setValue($("myForm"), "");
-                        return;
+						Field.setValue($("myForm"), "");
+						return;
 					}
 
-                    var request = {
-                        GetPatientProfileDetailRequest: 
+					var request = 
+					{
+						GetPatientProfileDetailRequest: 
 						{ 
 							PatientProfileRef: worklistItem.PatientProfileRef, 
 							IncludeAlerts: true 
 						},
-                        ListOrdersRequest: 	
+						ListOrdersRequest: 	
 						{ 
 							PatientRef: worklistItem.PatientRef, 
 							QueryDetailLevel: "Procedure" 
 						},
-                        
-                        // need the order detail only for order alerts, and only if OrderRef is not null
-                        GetOrderDetailRequest: worklistItem.OrderRef == null ? null : 
+						// need the order detail only for order alerts, and only if OrderRef is not null
+						GetOrderDetailRequest: worklistItem.OrderRef == null ? null : 
 						{ 
 							OrderRef: worklistItem.OrderRef, 
 							IncludeAlerts: true,
 							IncludeProcedures: true,
 							IncludeNotes: true,
-							NoteCategoriesFilter: ["General"]
+							NoteCategoriesFilter: ["General", "Protocol"]
 						}
-                    };
-                    
-                    var service = Ris.getPatientDataService();
-                    var data = service.getData(request);
-                    if (data == null || data.length == 0)
-                    {
-                        Field.setValue($("myForm"), "");
-                        return;
-                    }
+					};
 
-		            // update patient demography
-	                var patientProfile = data.GetPatientProfileDetailResponse.PatientProfile;
-	                var patientName = Ris.formatPersonName(patientProfile.Name);
-		            if (patientProfile)
-		            {
-		                Field.setValue($("name"), patientName);
-			            Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
-			            Field.setValue($("age"), getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath));
-			            Field.setValue($("sex"), patientProfile.Sex.Value);
-			            Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
-			            Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
+					var service = Ris.getPatientDataService();
+					var data = service.getData(request);
+					if (data == null || data.length == 0)
+					{
+						Field.setValue($("myForm"), "");
+							return;
+					}
+
+					// update patient demography
+					var patientProfile = data.GetPatientProfileDetailResponse.PatientProfile;
+					var patientName = Ris.formatPersonName(patientProfile.Name);
+					if (patientProfile)
+					{
+						Field.setValue($("name"), patientName);
+						Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
+						Field.setValue($("age"), getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath));
+						Field.setValue($("sex"), patientProfile.Sex.Value);
+						Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
+						Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
 						if (patientProfile.CurrentHomePhone)
 							Field.setValue($("currentHomePhone"), Ris.formatTelephone(patientProfile.CurrentHomePhone));
 						else
 							Field.show($("HomePhoneRow"), false);
-						
+
 						if (patientProfile.CurrentHomeAddress)
 							Field.setValue($("currentHomeAddress"), Ris.formatAddress(patientProfile.CurrentHomeAddress));
 						else
 							Field.show($("HomeAddressRow"), false);
-		            }
+					}
 
-                    // update alerts
-		            var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
-		            if(data.GetOrderDetailResponse)
-		                alertNotifications = alertNotifications.concat(data.GetOrderDetailResponse.OrderAlerts);
-		            if (alertNotifications)
-		            {
-                        var alertHtml = "";
-	                    alertNotifications.each(function(item) { alertHtml += getAlertHtml(item, patientName); });
-                        $("alerts").innerHTML = alertHtml;
-		            }
-					
+					// update alerts
+					var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
+					if(data.GetOrderDetailResponse)
+						alertNotifications = alertNotifications.concat(data.GetOrderDetailResponse.OrderAlerts);
+					if (alertNotifications)
+					{
+						var alertHtml = "";
+						alertNotifications.each(function(item) { alertHtml += getAlertHtml(item, patientName); });
+						$("alerts").innerHTML = alertHtml;
+					}
+
 					if(data.GetOrderDetailResponse)
 					{
 						var orderDetail = data.GetOrderDetailResponse.Order;
@@ -104,104 +105,100 @@
 					}
 					else
 					{
-							Field.show($("orderDetailsSection"), false);
+						Field.show($("orderDetailsSection"), false);
 					}
 
-		            
-                    // update active and past RIC tables
-   		            var patientOrderData = data.ListOrdersResponse.Orders;
-		            if (patientOrderData)
-		            {
+					// update active and past RIC tables
+					var patientOrderData = data.ListOrdersResponse.Orders;
+					if (patientOrderData)
+					{
+						var today = Date.today();
+						var pastProcedures = patientOrderData.select(
+							function(item) 
+							{ 
+								return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) < 0;
+							}).sort(procedureScheduledDateComparison);
 
-		                var today = Date.today();
-		                var pastProcedures = patientOrderData.select(
-		                    function(item) 
-		                    { 
-		                        return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) < 0;
-		                    }).sort(procedureScheduledDateComparison);
+						var activeProcedures = patientOrderData.select(
+							function(item) 
+							{ 
+								return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) >= 0;
+							}).sort(procedureScheduledDateComparison);
 
-		                var activeProcedures = patientOrderData.select(
-		                    function(item) 
-		                    { 
-		                        return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) >= 0;
-		                    }).sort(procedureScheduledDateComparison);
+						var notScheduledActiveProceduress = patientOrderData.select(
+							function(item) 
+							{ 
+								return item.ProcedureScheduledStartTime == null
+									&& item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) >= 0;
+							}).sort(orderRequestScheduledDateComparison);
 
-			            var notScheduledActiveProceduress = patientOrderData.select(
-			                function(item) 
-			                { 
-			                    return item.ProcedureScheduledStartTime == null
-								&& item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) >= 0;
-			                }).sort(orderRequestScheduledDateComparison);
-							
-			            var notScheduledPastProceduress = patientOrderData.select(
-			                function(item) 
-			                { 
-			                    return item.ProcedureScheduledStartTime == null
-								&& item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) < 0;
-			                }).sort(orderRequestScheduledDateComparison);
+						var notScheduledPastProceduress = patientOrderData.select(
+							function(item) 
+							{ 
+								return item.ProcedureScheduledStartTime == null
+									&& item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) < 0;
+							}).sort(orderRequestScheduledDateComparison);
 
-			            activeProcedures = activeProcedures.concat(notScheduledActiveProceduress);
-			            pastProcedures = pastProcedures.concat(notScheduledPastProceduress);
+						activeProcedures = activeProcedures.concat(notScheduledActiveProceduress);
+						pastProcedures = pastProcedures.concat(notScheduledPastProceduress);
 
 						// add a renderRow handler to highlight the correct row
 						var currentAccession = worklistItem.AccessionNumber;
-						
-                        if (activeProcedures.length == 0)
-                        {
-                            Field.show($("activeProceduresTable"), false);
-                        }
-                        else
-                        {
-                            var activeProceduresTable = createImagingRequestsTable($("activeProceduresTable"));
-                            
-                            activeProceduresTable.renderRow = function(sender, args)
-                            {
-                                if(args.item.AccessionNumber == currentAccession)
-                                    args.htmlRow.className = "highlight";
-                            };
-							
-                            activeProceduresTable.bindItems(activeProcedures);
-    	                }
-    	                
-                        if (pastProcedures.length == 0)
-                        {
-                            Field.show($("pastProceduresTable"), false);
-                        }
-                        else
-                        {
-                            var pastProceduresTable = createImagingRequestsTable($("pastProceduresTable"));
 
-                            pastProceduresTable.renderRow = function(sender, args)
-                            {
-                                if(args.item.AccessionNumber == currentAccession)
-                                    args.htmlRow.className = "highlight";
-                            };
+						if (activeProcedures.length == 0)
+						{
+							Field.show($("activeProceduresTable"), false);
+						}
+						else
+						{
+							var activeProceduresTable = createImagingRequestsTable($("activeProceduresTable"));
+							activeProceduresTable.renderRow = function(sender, args)
+								{
+									if(args.item.AccessionNumber == currentAccession)
+										args.htmlRow.className = "highlight";
+								};
 
-                            pastProceduresTable.bindItems(pastProcedures);
-    	                }
-		            }
-	            }
-	            catch(e)
-	            {
-	                var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
-		            Field.setValue($("myForm"), message);
-	            }
-		    }
+							activeProceduresTable.bindItems(activeProcedures);
+						}
+
+						if (pastProcedures.length == 0)
+						{
+							Field.show($("pastProceduresTable"), false);
+						}
+						else
+						{
+							var pastProceduresTable = createImagingRequestsTable($("pastProceduresTable"));
+							pastProceduresTable.renderRow = function(sender, args)
+								{
+									if(args.item.AccessionNumber == currentAccession)
+										args.htmlRow.className = "highlight";
+								};
+
+							pastProceduresTable.bindItems(pastProcedures);
+						}
+					}
+				}
+				catch(e)
+				{
+					var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+					Field.setValue($("myForm"), message);
+				}
+			}
 		</script>
 	</head>
 	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 		<form id="myForm">
-		    <table width="100%" border="0">
-			    <tr>
-				    <td class="patientnameheading"><div id="name"/></td>
-				    <td rowspan="2" align="right"><div id="alerts"/></td>
-			    </tr>
-			    <tr>
-				    <td class="patientmrnheading"><div id="mrn"/></td>
-			    </tr>
-		    </table>
-    		
-		    <p>&nbsp;</p>
+			<table width="100%" border="0">
+				<tr>
+					<td class="patientnameheading"><div id="name"/></td>
+					<td rowspan="2" align="right"><div id="alerts"/></td>
+				</tr>
+				<tr>
+					<td class="patientmrnheading"><div id="mrn"/></td>
+				</tr>
+			</table>
+			
+			<p>&nbsp;</p>
 			<table width="100%" border="0">
 				<tr>
 					<td width="120" class="propertyname">Date of Birth</td>
@@ -230,7 +227,7 @@
 					<td colspan="4"><div id="currentHomeAddress"/></td>
 				</tr>
 			</table>
-    		
+			
 			<div id="orderDetailsSection">
 				<table border="0" id="orderNotesTable">
 					<tr><td class="sectionheading" colspan="6">Order Notes</td></tr>
@@ -251,28 +248,28 @@
 				</table>
 			</div>
 
-	        <table border="0" id="activeProceduresTable">
-		    <tr><td class="sectionheading" colspan="6">Active Requests for Imaging Consultation</td></tr>
-	            <tr class="tableheading">
-		            <td>Procedure</td>
-		            <td>Schedule</td>
-		            <td>Status</td>
-		            <td>Insurance</td>
-		            <td>Ordering Facility</td>
-		            <td>Ordering Physician</td>
-	            </tr>
-	        </table>
-	        <table border="0" id="pastProceduresTable">
-	            <tr><td class="sectionheading" colspan="6">Past Requests for Imaging Consultation</td></tr>
-	            <tr class="tableheading">
-		            <td>Procedure</td>
-		            <td>Schedule</td>
-		            <td>Status</td>
-		            <td>Insurance</td>
-		            <td>Ordering Facility</td>
-		            <td>Ordering Physician</td>
-	            </tr>
-	        </table>
+			<table border="0" id="activeProceduresTable">
+			<tr><td class="sectionheading" colspan="6">Active Requests for Imaging Consultation</td></tr>
+					<tr class="tableheading">
+						<td>Procedure</td>
+						<td>Schedule</td>
+						<td>Status</td>
+						<td>Insurance</td>
+						<td>Ordering Facility</td>
+						<td>Ordering Physician</td>
+					</tr>
+			</table>
+			<table border="0" id="pastProceduresTable">
+					<tr><td class="sectionheading" colspan="6">Past Requests for Imaging Consultation</td></tr>
+					<tr class="tableheading">
+						<td>Procedure</td>
+						<td>Schedule</td>
+						<td>Status</td>
+						<td>Insurance</td>
+						<td>Ordering Facility</td>
+						<td>Ordering Physician</td>
+					</tr>
+			</table>
 		</form>
 	</body>
 </html>
