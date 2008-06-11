@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._duplicateGroupBox.Size = new System.Drawing.Size(272, 360);
 			this._duplicateGroupBox.TabIndex = 1;
 			this._duplicateGroupBox.TabStop = false;
-			this._duplicateGroupBox.Text = "Specifywhat you want to merge:";
+			this._duplicateGroupBox.Text = "Select items to merge:";
 			// 
 			// _report
 			// 

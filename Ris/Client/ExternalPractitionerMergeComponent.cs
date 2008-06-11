@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Client
 			}
 			else
 			{
-				reportBuilder.AppendLine("Affected Orders accession number");
+				reportBuilder.AppendLine("Affected Orders");
 				CollectionUtils.ForEach(affectedOrders, delegate(OrderSummary o) { reportBuilder.AppendLine(o.AccessionNumber); });
 			}
 
@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client
 			}
 			else
 			{
-				reportBuilder.AppendLine("Affected Visit Id");
+				reportBuilder.AppendLine("Affected Visit");
 				CollectionUtils.ForEach(affectedVisits, delegate(VisitSummary v) { reportBuilder.AppendLine(MrnFormat.Format(v.VisitNumber)); });
 			}
 
