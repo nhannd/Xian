@@ -74,6 +74,21 @@ namespace ClearCanvas.Utilities.BuildTasks
                             assemblyInfoAttributes.Add(fileline);
                         }
                     }
+                    else if (fileline.ToLower().StartsWith("[assembly : "))
+                    {
+                        if (fileline.Contains("("))
+                        {
+                            attribute = fileline.Substring(12, fileline.IndexOf('(') - 12);
+                        }
+                        else
+                        {
+                            attribute = fileline.Substring(12, fileline.LastIndexOf(']') - 12);
+                        }
+                        if (!_attributesEncountered.Contains(attribute))
+                        {
+                            assemblyInfoAttributes.Add(fileline);
+                        }
+                    }
                 }
                 reader.Close();
                 //Write file
