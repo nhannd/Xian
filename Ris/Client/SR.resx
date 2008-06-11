@@ -192,8 +192,8 @@
   <data name="ColumnGivenName" xml:space="preserve">
     <value>Given Name</value>
   </data>
-  <data name="ColumnGroups" xml:space="preserve">
-    <value>Groups</value>
+  <data name="ColumnGroup" xml:space="preserve">
+    <value>Group</value>
   </data>
   <data name="ColumnHealthcardNumber" xml:space="preserve">
     <value>Healthcard #</value>
@@ -440,6 +440,9 @@
   </data>
   <data name="MessageConfirmExpireSelectedNote" xml:space="preserve">
     <value>Are you sure you want to permanently expire the selected note?</value>
+  </data>
+  <data name="MessageCopyToClipboard" xml:space="preserve">
+    <value>Copy to clipboard</value>
   </data>
   <data name="MessageLoginTimeout" xml:space="preserve">
     <value>Timed-out while attempting to login</value>

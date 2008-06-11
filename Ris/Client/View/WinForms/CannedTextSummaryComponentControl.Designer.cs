@@ -46,6 +46,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _cannedTexts
 			// 
 			this._cannedTexts.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._cannedTexts.FilterTextBoxVisible = true;
 			this._cannedTexts.Location = new System.Drawing.Point(0, 0);
 			this._cannedTexts.Name = "_cannedTexts";
 			this._cannedTexts.ReadOnly = false;

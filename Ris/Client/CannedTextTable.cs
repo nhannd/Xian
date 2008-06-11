@@ -7,9 +7,6 @@ namespace ClearCanvas.Ris.Client
 	{
 		public CannedTextTable()
 		{
-			this.Columns.Add(new TableColumn<CannedTextSummary, string>(SR.ColumnGroups,
-				delegate(CannedTextSummary item) { return item.IsPersonal ? SR.ColumnPersonal : item.StaffGroup.Name; }, 1.0f));
-
 			this.Columns.Add(new TableColumn<CannedTextSummary, string>(SR.ColumnName,
 				delegate(CannedTextSummary c) { return c.Name; },
 				0.5f));
@@ -19,6 +16,8 @@ namespace ClearCanvas.Ris.Client
 			this.Columns.Add(new TableColumn<CannedTextSummary, string>(SR.ColumnText,
 				delegate(CannedTextSummary c) { return c.Text; },
 				1.0f));
+			this.Columns.Add(new TableColumn<CannedTextSummary, string>(SR.ColumnGroup,
+				delegate(CannedTextSummary item) { return item.IsPersonal ? SR.ColumnPersonal : item.StaffGroup.Name; }, 1.0f));
 		}
 	}
 }

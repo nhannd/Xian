@@ -172,7 +172,7 @@ namespace ClearCanvas.Ris.Client
 				SR.TitleDuplicate, DuplicateAdd);
 
 			_copyCannedTextAction = model.AddAction("copyCannedText", SR.TitleCopy, "Icons.CopyToolSmall.png",
-				SR.TitleCopy, CopyCannedText);
+				SR.MessageCopyToClipboard, CopyCannedText);
 
 			model.Edit.Enabled = false;
 			model.Delete.Enabled = false;
