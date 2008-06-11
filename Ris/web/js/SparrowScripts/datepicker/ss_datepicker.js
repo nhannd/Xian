@@ -110,6 +110,7 @@
 
 	function ssdp_onDatePickerClosed(date)
 	{
+		ssdp_bShow = false;
 		if(ssdp_onDatePickerClosedCallback)
 		{
 			ssdp_onDatePickerClosedCallback(date);

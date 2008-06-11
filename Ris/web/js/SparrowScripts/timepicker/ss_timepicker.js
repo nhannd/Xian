@@ -88,6 +88,7 @@
 
 	function sstp_onTimePickerClosed(date)
 	{
+		sstp_bShow=false;
 		if(sstp_onTimePickerClosedCallback)
 		{
 			sstp_onTimePickerClosedCallback(date);
