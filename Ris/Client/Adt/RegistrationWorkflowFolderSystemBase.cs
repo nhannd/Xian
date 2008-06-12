@@ -43,54 +43,49 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public interface IRegistrationWorkflowItemToolContext : IWorkflowItemToolContext<RegistrationWorklistItem>
     {
-        RegistrationWorkflowFolderSystemBase FolderSystem { get; }
     }
 
     public interface IRegistrationWorkflowFolderToolContext : IWorkflowFolderToolContext
     {
     }
 
-    public abstract class RegistrationWorkflowFolderSystemBase : WorkflowFolderSystem<RegistrationWorklistItem>
-    {
+	public abstract class RegistrationWorkflowFolderSystemBase<TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
+		: WorkflowFolderSystem<RegistrationWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
+		where TFolderExtensionPoint : ExtensionPoint<IFolder>, new()
+		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
+		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()
+	{
 		class RegistrationWorkflowItemToolContext : WorkflowItemToolContext, IRegistrationWorkflowItemToolContext
         {
-			private readonly RegistrationWorkflowFolderSystemBase _owner;
-
-            public RegistrationWorkflowItemToolContext(RegistrationWorkflowFolderSystemBase owner)
+            public RegistrationWorkflowItemToolContext(WorkflowFolderSystem owner)
 				:base(owner)
             {
-            	_owner = owner;
             }
-
-            #region IRegistrationWorkflowItemToolContext Members
-
-            public RegistrationWorkflowFolderSystemBase FolderSystem
-            {
-                get { return _owner; }
-            }
-
-            #endregion
         }
 
 		class RegistrationWorkflowFolderToolContext : WorkflowFolderToolContext, IRegistrationWorkflowFolderToolContext
         {
-            public RegistrationWorkflowFolderToolContext(RegistrationWorkflowFolderSystemBase owner)
+            public RegistrationWorkflowFolderToolContext(WorkflowFolderSystem owner)
 				:base(owner)
             {
             }
         }
 
-        public RegistrationWorkflowFolderSystemBase(
-			string title,
-            IFolderExplorerToolContext folderExplorer, 
-            ExtensionPoint<IFolder> folderExtensionPoint,
-            ExtensionPoint<ITool> itemToolExtensionPoint,
-            ExtensionPoint<ITool> folderToolExtensionPoint)
-            : base(title, folderExplorer, folderExtensionPoint)
+
+        public RegistrationWorkflowFolderSystemBase(string title, IFolderExplorerToolContext folderExplorer)
+            : base(title, folderExplorer)
         {
-            _itemTools = new ToolSet(itemToolExtensionPoint, new RegistrationWorkflowItemToolContext(this));
-            _folderTools = new ToolSet(folderToolExtensionPoint, new RegistrationWorkflowFolderToolContext(this));
         }
+
+		protected override IWorkflowFolderToolContext CreateFolderToolContext()
+		{
+			return new RegistrationWorkflowFolderToolContext(this);
+		}
+
+		protected override IWorkflowItemToolContext CreateItemToolContext()
+		{
+			return new RegistrationWorkflowItemToolContext(this);
+		}
 
 		protected override ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request)
 		{

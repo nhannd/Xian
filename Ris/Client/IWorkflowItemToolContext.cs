@@ -49,6 +49,8 @@ namespace ClearCanvas.Ris.Client
         IFolder SelectedFolder { get; }
 
         IDesktopWindow DesktopWindow { get; }
+
+		WorkflowFolderSystem FolderSystem { get; }
     }
 
     public interface IWorkflowItemToolContext<TItem> : IWorkflowItemToolContext

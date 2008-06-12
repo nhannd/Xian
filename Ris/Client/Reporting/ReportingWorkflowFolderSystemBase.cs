@@ -43,56 +43,48 @@ namespace ClearCanvas.Ris.Client.Reporting
 {
     public interface IReportingWorkflowItemToolContext : IWorkflowItemToolContext<ReportingWorklistItem>
     {
-        ReportingWorkflowFolderSystemBase FolderSystem { get; }
     }
 
     public interface IReportingWorkflowFolderToolContext : IWorkflowFolderToolContext
     {
     }
 
-    public abstract class ReportingWorkflowFolderSystemBase : WorkflowFolderSystem<ReportingWorklistItem>
-    {
+	public abstract class ReportingWorkflowFolderSystemBase<TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
+		: WorkflowFolderSystem<ReportingWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
+		where TFolderExtensionPoint : ExtensionPoint<IFolder>, new()
+		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
+		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()
+	{
 		class ReportingWorkflowItemToolContext : WorkflowItemToolContext, IReportingWorkflowItemToolContext
         {
-            private readonly ReportingWorkflowFolderSystemBase _owner;
-
-            public ReportingWorkflowItemToolContext(ReportingWorkflowFolderSystemBase owner)
+            public ReportingWorkflowItemToolContext(WorkflowFolderSystem owner)
 				:base(owner)
             {
-                _owner = owner;
             }
-
-            #region IReportingWorkflowItemToolContext Members
-
-            public ReportingWorkflowFolderSystemBase FolderSystem
-            {
-                get { return _owner; }
-            }
-
-            #endregion
         }
 
 		class ReportingWorkflowFolderToolContext : WorkflowFolderToolContext, IReportingWorkflowFolderToolContext
         {
-            public ReportingWorkflowFolderToolContext(ReportingWorkflowFolderSystemBase owner)
+            public ReportingWorkflowFolderToolContext(WorkflowFolderSystem owner)
 				:base(owner)
             {
             }
         }
 
-        private IDictionary<string, bool> _workflowEnablement;
-
-        public ReportingWorkflowFolderSystemBase(
-			string title,
-            IFolderExplorerToolContext folderExplorer,
-            ExtensionPoint<IFolder> folderExtensionPoint,
-            ExtensionPoint<ITool> itemToolExtensionPoint,
-            ExtensionPoint<ITool> folderToolExtensionPoint)
-            : base(title, folderExplorer, folderExtensionPoint)
+        public ReportingWorkflowFolderSystemBase(string title, IFolderExplorerToolContext folderExplorer)
+            : base(title, folderExplorer)
         {
-            _itemTools = new ToolSet(itemToolExtensionPoint, new ReportingWorkflowItemToolContext(this));
-            _folderTools = new ToolSet(folderToolExtensionPoint, new ReportingWorkflowFolderToolContext(this));
         }
+
+		protected override IWorkflowFolderToolContext CreateFolderToolContext()
+		{
+			return new ReportingWorkflowFolderToolContext(this);
+		}
+
+		protected override IWorkflowItemToolContext CreateItemToolContext()
+		{
+			return new ReportingWorkflowItemToolContext(this);
+		}
 
 		protected override ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request)
 		{

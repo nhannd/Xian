@@ -52,15 +52,14 @@ namespace ClearCanvas.Ris.Client.Adt
 	{
 	}
 
-	public class TechnologistMainWorkflowFolderSystem : TechnologistWorkflowFolderSystemBase, ISearchDataHandler
+	public class TechnologistMainWorkflowFolderSystem
+		: TechnologistWorkflowFolderSystemBase<TechnologistMainWorkflowFolderExtensionPoint, TechnologistMainWorkflowFolderToolExtensionPoint,
+			TechnologistMainWorkflowItemToolExtensionPoint>, ISearchDataHandler
 	{
 		private readonly Folders.TechnologistSearchFolder _searchFolder;
 
 		public TechnologistMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(SR.TitlePerformingFolderSystem, folderExplorer,
-			new TechnologistMainWorkflowFolderExtensionPoint(),
-			new TechnologistMainWorkflowItemToolExtensionPoint(),
-			new TechnologistMainWorkflowFolderToolExtensionPoint())
+			: base(SR.TitlePerformingFolderSystem, folderExplorer)
 		{
 			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
 

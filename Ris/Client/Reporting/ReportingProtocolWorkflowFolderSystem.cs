@@ -52,15 +52,14 @@ namespace ClearCanvas.Ris.Client.Reporting
 	{
 	}
 
-	public class ReportingProtocolWorkflowFolderSystem : ReportingWorkflowFolderSystemBase, ISearchDataHandler
+	public class ReportingProtocolWorkflowFolderSystem
+		: ReportingWorkflowFolderSystemBase<ReportingProtocolWorkflowFolderExtensionPoint, ReportingProtocolWorkflowFolderToolExtensionPoint,
+			ReportingProtocolWorkflowItemToolExtensionPoint>, ISearchDataHandler
 	{
 		private readonly Folders.ProtocollingSearchFolder _searchFolder;
 
 		public ReportingProtocolWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(SR.TitleProtocollingFolderSystem, folderExplorer,
-			new ReportingProtocolWorkflowFolderExtensionPoint(),
-			new ReportingProtocolWorkflowItemToolExtensionPoint(),
-			new ReportingProtocolWorkflowFolderToolExtensionPoint())
+			: base(SR.TitleProtocollingFolderSystem, folderExplorer)
 		{
 			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
 

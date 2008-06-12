@@ -45,5 +45,7 @@ namespace ClearCanvas.Ris.Client
 
         event EventHandler SelectedFolderChanged;
         IDesktopWindow DesktopWindow { get; }
+
+
     }
 }

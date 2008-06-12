@@ -159,7 +159,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             return CollectionUtils.FirstElement(this.Context.SelectedItems);
         }
 
-        protected abstract bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem);
+		protected abstract bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem);
 
         #region IDropHandler<ReportingWorklistItem> Members
 

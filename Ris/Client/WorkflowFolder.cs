@@ -54,11 +54,16 @@ namespace ClearCanvas.Ris.Client
         }
     }
 
+	public abstract class WorkflowFolder : Folder
+	{
+        public abstract string WorklistClassName { get; }
+	}
+
     /// <summary>
     /// Abstract base class for folders that display the contents of worklists.
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
-    public abstract class WorkflowFolder<TItem> : Folder, IDisposable
+	public abstract class WorkflowFolder<TItem> : WorkflowFolder, IDisposable
     {
 
         #region QueryItemsResult class
@@ -91,7 +96,7 @@ namespace ClearCanvas.Ris.Client
         private readonly Table<TItem> _itemsTable;
         private bool _isPopulated;
         private int _itemCount = -1;
-        private readonly WorkflowFolderSystem<TItem> _folderSystem;
+        private readonly WorkflowFolderSystem _folderSystem;
         private readonly string _worklistClassName;
 
         private Timer _refreshTimer;
@@ -111,7 +116,7 @@ namespace ClearCanvas.Ris.Client
         /// <param name="folderName"></param>
         /// <param name="folderTooltip"></param>
         /// <param name="itemsTable"></param>
-        public WorkflowFolder(WorkflowFolderSystem<TItem> folderSystem, string folderName, string folderTooltip, Table<TItem> itemsTable)
+        public WorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, string folderTooltip, Table<TItem> itemsTable)
         {
             _folderSystem = folderSystem;
             _folderTooltip = folderTooltip;
@@ -148,7 +153,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public virtual string WorklistClassName
+        public override string WorklistClassName
         {
             get { return _worklistClassName; }
         }
@@ -180,7 +185,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _isPopulated || _itemCount > -1; }
 		}
 
-        public WorkflowFolderSystem<TItem> WorkflowFolderSystem
+        public WorkflowFolderSystem WorkflowFolderSystem
         {
             get { return _folderSystem; }
         }

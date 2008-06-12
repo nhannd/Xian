@@ -17,7 +17,7 @@ namespace ClearCanvas.Ris.Client
 	public abstract class SearchResultsFolder<TItem> : Folder
 		where TItem : DataContractBase
 	{
-		private readonly WorkflowFolderSystem<TItem> _folderSystem;
+		private readonly WorkflowFolderSystem _folderSystem;
 		private readonly Table<TItem> _itemsTable;
 
 		private BackgroundTask _queryItemsTask;
@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		/// <param name="folderSystem"></param>
 		/// <param name="itemsTable"></param>
-		protected SearchResultsFolder(WorkflowFolderSystem<TItem> folderSystem, Table<TItem> itemsTable)
+		protected SearchResultsFolder(WorkflowFolderSystem folderSystem, Table<TItem> itemsTable)
 		{
 			_folderSystem = folderSystem;
 			_itemsTable = itemsTable;

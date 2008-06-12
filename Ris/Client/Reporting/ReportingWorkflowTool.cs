@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			remove { }
 		}
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
+		protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
         }
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
+		protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem)
         {
             try
             {
@@ -135,7 +135,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
         }
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
+		protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem)
         {
             try
             {
@@ -192,7 +192,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 ctxt.GetOperationEnablement("CompleteVerification");
         }
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
+		protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem)
         {
             try
             {
@@ -251,7 +251,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
         }
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
+		protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem)
         {
             if (ActivateIfAlreadyOpen(item))
                 return true;
@@ -292,7 +292,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
         }
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
+		protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem)
         {
             try
             {

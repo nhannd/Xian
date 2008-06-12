@@ -43,12 +43,12 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Scheduled", true)]
     public class ScheduledTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
-        public ScheduledTechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+		public ScheduledTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, null)
         {
         }
 
-        public ScheduledTechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem)
+		public ScheduledTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
             : this(folderSystem, null, null, null)
         {
         }
@@ -69,12 +69,12 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-        public CheckedInTechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+		public CheckedInTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
         {
         }
 
-        public CheckedInTechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem)
+		public CheckedInTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
             : this(folderSystem, null, null, null)
         {
         }
@@ -95,12 +95,12 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-        public InProgressTechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+		public InProgressTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
         {
         }
 
-        public InProgressTechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem)
+		public InProgressTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
             : this(folderSystem, null, null, null)
         {
         }
@@ -121,12 +121,12 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-        public CompletedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+		public CompletedTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
         {
         }
 
-        public CompletedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem)
+		public CompletedTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
             : this(folderSystem, null, null, null)
         {
         }
@@ -142,12 +142,12 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Undocumented")]
     public class UndocumentedTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
-        public UndocumentedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+		public UndocumentedTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
         }
 
-        public UndocumentedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem)
+		public UndocumentedTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
             : this(folderSystem, null, null, null)
         {
         }
@@ -168,12 +168,12 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-        public SuspendedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+		public SuspendedTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
         {
         }
 
-        public SuspendedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem)
+		public SuspendedTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
             : this(folderSystem, null, null, null)
         {
         }
@@ -194,12 +194,12 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-        public CancelledTechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+		public CancelledTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
         {
         }
 
-        public CancelledTechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem)
+		public CancelledTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
             : this(folderSystem, null, null, null)
         {
         }
@@ -213,7 +213,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 	[FolderPath("Search Results")]
     public class TechnologistSearchFolder : SearchResultsFolder<ModalityWorklistItem>
     {
-        public TechnologistSearchFolder(TechnologistWorkflowFolderSystemBase folderSystem)
+		public TechnologistSearchFolder(WorkflowFolderSystem folderSystem)
 			: base(folderSystem, new ModalityWorklistTable())
         {
         }

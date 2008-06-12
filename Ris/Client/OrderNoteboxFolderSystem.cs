@@ -29,7 +29,6 @@ namespace ClearCanvas.Ris.Client
 
 	public interface IOrderNoteboxItemToolContext : IWorkflowItemToolContext<OrderNoteboxItemSummary>
 	{
-		OrderNoteboxFolderSystem FolderSystem { get; }
 	}
 
 	public interface IOrderNoteboxFolderToolContext : IWorkflowFolderToolContext
@@ -43,53 +42,34 @@ namespace ClearCanvas.Ris.Client
 
 
 
-	public class OrderNoteboxFolderSystem : WorkflowFolderSystem<OrderNoteboxItemSummary>
+	public class OrderNoteboxFolderSystem: WorkflowFolderSystem<
+		OrderNoteboxItemSummary,
+		OrderNoteboxFolderExtensionPoint,
+		OrderNoteboxFolderToolExtensionPoint,
+		OrderNoteboxItemToolExtensionPoint>
 	{
 		class OrderNoteboxItemToolContext : WorkflowItemToolContext, IOrderNoteboxItemToolContext
 		{
-			private readonly OrderNoteboxFolderSystem _owner;
-
-			public OrderNoteboxItemToolContext(OrderNoteboxFolderSystem owner)
+			public OrderNoteboxItemToolContext(WorkflowFolderSystem owner)
 				:base(owner)
 			{
-				this._owner = _owner;
 			}
-
-			#region IOrderNoteboxItemToolContext Members
-
-			public OrderNoteboxFolderSystem FolderSystem
-			{
-				get { return _owner; }
-			}
-
-			#endregion
-
 		}
 
 		class OrderNoteboxFolderToolContext : WorkflowFolderToolContext, IOrderNoteboxFolderToolContext
 		{
-			public OrderNoteboxFolderToolContext(OrderNoteboxFolderSystem owner)
+			public OrderNoteboxFolderToolContext(WorkflowFolderSystem owner)
 				:base(owner)
 			{
 			}
 		}
 
-		#region private fields
-
-		private IDictionary<string, bool> _workflowEnablement;
 		private readonly IconSet _unacknowledgedNotesIconSet;
 		private readonly string _baseTitle;
 
-		#endregion
-
 		public OrderNoteboxFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(SR.TitleOrderNoteboxFolderSystem, folderExplorer, new OrderNoteboxFolderExtensionPoint())
+			: base(SR.TitleOrderNoteboxFolderSystem, folderExplorer)
 		{
-			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
-
-			_itemTools = new ToolSet(new OrderNoteboxItemToolExtensionPoint(), new OrderNoteboxItemToolContext(this));
-			_folderTools = new ToolSet(new OrderNoteboxFolderToolExtensionPoint(), new OrderNoteboxFolderToolContext(this));
-
 			_unacknowledgedNotesIconSet = new IconSet("NoteUnread.png");
 			_baseTitle = SR.TitleOrderNoteboxFolderSystem;
 
@@ -115,6 +95,16 @@ namespace ClearCanvas.Ris.Client
 				});
 
 			this.AddFolder(new SentItemsFolder(this));
+		}
+
+		protected override IWorkflowFolderToolContext CreateFolderToolContext()
+		{
+			return new OrderNoteboxFolderToolContext(this);
+		}
+
+		protected override IWorkflowItemToolContext CreateItemToolContext()
+		{
+			return new OrderNoteboxItemToolContext(this);
 		}
 
 		public override string PreviewUrl

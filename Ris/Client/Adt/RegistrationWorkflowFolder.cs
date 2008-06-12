@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Gets the folder system that owns the drop target folder
         /// </summary>
-        RegistrationWorkflowFolderSystemBase FolderSystem { get; }
+        WorkflowFolderSystem FolderSystem { get; }
     }
 
     public abstract class RegistrationWorkflowFolder : WorkflowFolder<RegistrationWorklistItem>
@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             public bool GetOperationEnablement(string operationName)
             {
-                return _folder._folderSystem.GetOperationEnablement(operationName);
+                return _folder.WorkflowFolderSystem.GetOperationEnablement(operationName);
             }
 
             public RegistrationWorkflowFolder DropTargetFolder
@@ -85,11 +85,11 @@ namespace ClearCanvas.Ris.Client.Adt
                 get { return _folder; }
             }
 
-            public RegistrationWorkflowFolderSystemBase FolderSystem
+            public WorkflowFolderSystem FolderSystem
             {
                 get
                 {
-                    return _folder._folderSystem;
+                    return _folder.WorkflowFolderSystem;
                 }
             }
 
@@ -99,53 +99,37 @@ namespace ClearCanvas.Ris.Client.Adt
 
             public IDesktopWindow DesktopWindow
             {
-                get { return _folder._folderSystem.DesktopWindow; }
+                get { return _folder.WorkflowFolderSystem.DesktopWindow; }
             }
 
             #endregion
         }
 
 
-        private RegistrationWorkflowFolderSystemBase _folderSystem;
         private readonly EntityRef _worklistRef;
 
-        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
+        public RegistrationWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
             : base(folderSystem, folderName, folderDescription, new RegistrationWorklistTable())
         {
-            _folderSystem = folderSystem;
-
             if (dropHandlerExtensionPoint != null)
             {
                 this.InitDragDropHandling(dropHandlerExtensionPoint, new DropContext(this));
             }
 
             _worklistRef = worklistRef;
-
-            //this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            //((SimpleActionModel)this.MenuModel).AddAction("Option", "Option", "EditToolSmall.png", "Option",
-            //    delegate { DisplayOption(folderSystem.DesktopWindow); });
         }
 
-        //private void DisplayOption(IDesktopWindow desktopWindow)
-        //{
-        //    FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
-        //    if (ApplicationComponent.LaunchAsDialog(desktopWindow, optionComponent, "Option") == ApplicationComponentExitCode.Accepted)
-        //    {
-        //        this.RefreshTime = optionComponent.RefreshTime;
-        //    }
-        //}
-
-        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
+		public RegistrationWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
             : this(folderSystem, folderName, null, null, dropHandlerExtensionPoint)
         {
         }
 
-        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName)
+		public RegistrationWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName)
             :this(folderSystem, folderName, null, null, null)
         {
         }
 
-        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
+		public RegistrationWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
             : this(folderSystem, folderName, folderDescription, worklistRef, null)
         {
         }
@@ -189,11 +173,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 });
 
             return count;
-        }
-
-        public bool GetOperationEnablement(string operationName)
-        {
-            return _folderSystem.GetOperationEnablement(operationName);
         }
    }
 }

@@ -49,11 +49,15 @@ namespace ClearCanvas.Ris.Client.Adt
     {
     }
 
-    public abstract class TechnologistWorkflowFolderSystemBase : WorkflowFolderSystem<ModalityWorklistItem>
+	public abstract class TechnologistWorkflowFolderSystemBase<TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
+		: WorkflowFolderSystem<ModalityWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
+		where TFolderExtensionPoint : ExtensionPoint<IFolder>, new()
+		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
+		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()
     {
         class TechnologistWorkflowItemToolContext : WorkflowItemToolContext, ITechnologistWorkflowItemToolContext
         {
-            public TechnologistWorkflowItemToolContext(TechnologistWorkflowFolderSystemBase owner)
+            public TechnologistWorkflowItemToolContext(WorkflowFolderSystem owner)
 				:base(owner)
             {
             }
@@ -61,24 +65,27 @@ namespace ClearCanvas.Ris.Client.Adt
 
         class TechnologistWorkflowFolderToolContext : WorkflowFolderToolContext, ITechnologistWorkflowFolderToolContext
         {
-            public TechnologistWorkflowFolderToolContext(TechnologistWorkflowFolderSystemBase owner)
+            public TechnologistWorkflowFolderToolContext(WorkflowFolderSystem owner)
 				:base(owner)
             {
             }
         }
 
 
-        public TechnologistWorkflowFolderSystemBase(
-			string title,
-            IFolderExplorerToolContext folderExplorer,
-            ExtensionPoint<IFolder> folderExtensionPoint,
-            ExtensionPoint<ITool> itemToolExtensionPoint,
-            ExtensionPoint<ITool> folderToolExtensionPoint)
-            : base(title, folderExplorer, folderExtensionPoint)
+        public TechnologistWorkflowFolderSystemBase(string title, IFolderExplorerToolContext folderExplorer)
+            : base(title, folderExplorer)
 		{
-            _itemTools = new ToolSet(itemToolExtensionPoint, new TechnologistWorkflowItemToolContext(this));
-            _folderTools = new ToolSet(folderToolExtensionPoint, new TechnologistWorkflowFolderToolContext(this));
         }
+
+		protected override IWorkflowFolderToolContext CreateFolderToolContext()
+		{
+			return new TechnologistWorkflowFolderToolContext(this);
+		}
+
+		protected override IWorkflowItemToolContext CreateItemToolContext()
+		{
+			return new TechnologistWorkflowItemToolContext(this);
+		}
 
 		protected override ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request)
 		{

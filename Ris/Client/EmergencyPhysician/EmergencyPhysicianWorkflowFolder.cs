@@ -10,17 +10,15 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 {
 	public abstract class EmergencyPhysicianWorkflowFolder : WorkflowFolder<RegistrationWorklistItem>
 	{
-		private readonly RegistrationWorkflowFolderSystemBase _folderSystem;
 		private readonly EntityRef _worklistRef;
 
-		public EmergencyPhysicianWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
+		public EmergencyPhysicianWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
 			: base(folderSystem, folderName, folderDescription, new RegistrationWorklistTable())
 		{
-			_folderSystem = folderSystem;
 			_worklistRef = worklistRef;
 		}
 
-		public EmergencyPhysicianWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName)
+		public EmergencyPhysicianWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName)
 			: this(folderSystem, folderName, null, null)
 		{
 		}
@@ -66,7 +64,7 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 
 		public bool GetOperationEnablement(string operationName)
 		{
-			return _folderSystem.GetOperationEnablement(operationName);
+			return WorkflowFolderSystem.GetOperationEnablement(operationName);
 		}
 	}
 }

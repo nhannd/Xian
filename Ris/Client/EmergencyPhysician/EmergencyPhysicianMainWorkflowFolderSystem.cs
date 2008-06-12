@@ -26,18 +26,15 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 	{
 	}
 
-	public class EmergencyPhysicianMainWorkflowFolderSystem : RegistrationWorkflowFolderSystemBase, ISearchDataHandler
+	public class EmergencyPhysicianMainWorkflowFolderSystem
+		: RegistrationWorkflowFolderSystemBase<EmergencyPhysicianMainWorkflowFolderExtensionPoint, EmergencyPhysicianMainWorkflowFolderToolExtensionPoint,
+			EmergencyPhysicianMainWorkflowItemToolExtensionPoint>, ISearchDataHandler
 	{
 		private readonly RegistrationSearchFolder _searchFolder;
 
 		public EmergencyPhysicianMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(SR.TitleEmergencyFolderSystem, folderExplorer,
-			       new EmergencyPhysicianMainWorkflowFolderExtensionPoint(),
-			       new EmergencyPhysicianMainWorkflowItemToolExtensionPoint(),
-			       new EmergencyPhysicianMainWorkflowFolderToolExtensionPoint())
+			: base(SR.TitleEmergencyFolderSystem, folderExplorer)
 		{
-			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
-
 			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
 			{
 				this.AddFolder(new EROrdersFolder(this));

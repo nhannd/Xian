@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             return ctxt.GetOperationEnablement("StartInterpretation");
         }
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
+		protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem)
         {
             // check if the document is already open
             if(ActivateIfAlreadyOpen(item))

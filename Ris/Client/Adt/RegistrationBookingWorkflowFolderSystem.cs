@@ -52,15 +52,15 @@ namespace ClearCanvas.Ris.Client.Adt
 	{
 	}
 
-	public class RegistrationBookingWorkflowFolderSystem : RegistrationWorkflowFolderSystemBase, ISearchDataHandler
+	public class RegistrationBookingWorkflowFolderSystem
+		: RegistrationWorkflowFolderSystemBase<RegistrationBookingWorkflowFolderExtensionPoint,
+			RegistrationBookingWorkflowFolderToolExtensionPoint, RegistrationBookingWorkflowItemToolExtensionPoint>,
+		ISearchDataHandler
 	{
 		private readonly Folders.BookingSearchFolder _searchFolder;
 
 		public RegistrationBookingWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(SR.TitleBookingFolderSystem, folderExplorer,
-			new RegistrationBookingWorkflowFolderExtensionPoint(),
-			new RegistrationBookingWorkflowItemToolExtensionPoint(),
-			new RegistrationBookingWorkflowFolderToolExtensionPoint())
+			: base(SR.TitleBookingFolderSystem, folderExplorer)
 		{
 			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
 

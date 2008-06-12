@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 get { return _operationName; }
             }
 
-            protected abstract bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, RegistrationWorkflowFolderSystemBase folderSystem);
+			protected abstract bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem);
 
             #region IDropHandler<RegistrationWorklistItem> Members
 
@@ -123,7 +123,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
             }
 
-            protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, RegistrationWorkflowFolderSystemBase folderSystem)
+			protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem)
             {
                 try
                 {
@@ -171,7 +171,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
             }
 
-            protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, RegistrationWorkflowFolderSystemBase folderSystem)
+			protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem)
             {
                 try
                 {
