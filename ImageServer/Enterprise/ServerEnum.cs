@@ -122,8 +122,8 @@ namespace ClearCanvas.ImageServer.Enterprise
 
             // Must be in the inheritance hierarchy of each other to be equal
             // eg, Status enum can't be equal to Type enum.
-            if (this.GetType().IsAssignableFrom(obj.GetType()) ||
-                obj.GetType().IsAssignableFrom(this.GetType()))
+            if (GetType().IsAssignableFrom(obj.GetType()) ||
+                obj.GetType().IsAssignableFrom(GetType()))
             {
                 return e.Enum == Enum;
             }
@@ -131,6 +131,10 @@ namespace ClearCanvas.ImageServer.Enterprise
                 return false;
         }
 
+		public override string ToString()
+		{
+			return Description;
+		}
         #endregion
 
         #region Operators
