@@ -61,11 +61,7 @@ namespace ClearCanvas.Ris.Client
 
 		private IDictionary<string, bool> _workflowEnablement;
 
-		public WorkflowFolderSystem(
-			string title,
-			IFolderExplorerToolContext folderExplorer,
-			ExtensionPoint<IFolder> folderExtensionPoint
-			)
+		public WorkflowFolderSystem(string title, IFolderExplorerToolContext folderExplorer, ExtensionPoint<IFolder> folderExtensionPoint)
 		{
 			_title = title;
 			_folderExplorer = folderExplorer;
@@ -82,49 +78,7 @@ namespace ClearCanvas.Ris.Client
 			Dispose(false);
 		}
 
-		private void InitializeFolders(ExtensionPoint<IFolder> folderExtensionPoint)
-		{
-			// Collect all worklist classes
-			if (folderExtensionPoint != null)
-			{
-				foreach (WorkflowFolder folder in folderExtensionPoint.CreateExtensions())
-				{
-					if (!string.IsNullOrEmpty(folder.WorklistClassName))
-						_mapWorklistClassToFolderClass.Add(folder.WorklistClassName, folder.GetType());
-				}
-			}
-
-			if (_mapWorklistClassToFolderClass.Keys.Count > 0)
-			{
-				ListWorklistsForUserResponse response = QueryWorklistSet(new ListWorklistsForUserRequest(this.WorklistClassNames));
-				foreach (WorklistSummary summary in response.Worklists)
-				{
-					try
-					{
-						Type folderClass = _mapWorklistClassToFolderClass[summary.ClassName];
-						IFolder folder = (IFolder)Activator.CreateInstance(folderClass, this, summary.DisplayName, summary.Description, summary.WorklistRef);
-						if (folder != null)
-						{
-							folder.IsStatic = false;
-							this.AddFolder(folder);
-						}
-
-					}
-					catch (KeyNotFoundException e)
-					{
-						Platform.Log(LogLevel.Error, e, string.Format("Worklist class {0} is not mapped to a folder class.", summary.ClassName));
-					}
-				}
-			}
-		}
-
-		protected abstract ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request);
-
-		protected abstract IToolSet CreateItemToolSet();
-
-		protected abstract IToolSet CreateFolderToolSet();
-
-		#region IFolderSystem implmentation
+		#region IFolderSystem implementation
 
 		public string Id
 		{
@@ -134,7 +88,7 @@ namespace ClearCanvas.Ris.Client
 		public string Title
 		{
 			get { return _title; }
-			set
+			protected set
 			{
 				_title = value;
 				EventsHelper.Fire(_titleChanged, this, EventArgs.Empty);
@@ -144,7 +98,7 @@ namespace ClearCanvas.Ris.Client
 		public IconSet TitleIcon
 		{
 			get { return _titleIcon; }
-			set
+			protected set
 			{
 				_titleIcon = value;
 				EventsHelper.Fire(_titleIconChanged, this, EventArgs.Empty);
@@ -182,22 +136,66 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public abstract string PreviewUrl { get; }
+		public string PreviewUrl
+		{
+			get { return GetPreviewUrl(); }
+		}
 
-		public bool GetOperationEnablement(string operationName)
+		public event EventHandler TextChanged
+		{
+			add { _titleChanged += value; }
+			remove { _titleChanged -= value; }
+		}
+
+		public event EventHandler IconChanged
+		{
+			add { _titleIconChanged += value; }
+			remove { _titleIconChanged -= value; }
+		}
+
+		public virtual void OnSelectedFolderChanged()
+		{
+			EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
+		}
+
+		public void OnSelectedItemsChanged()
 		{
 			try
 			{
-				return _workflowEnablement == null ? false : _workflowEnablement[operationName];
+				BlockingOperation.Run(
+					delegate
+					{
+						_workflowEnablement = this.SelectedItems.Equals(Selection.Empty) ? null :
+							QueryOperationEnablement(this.SelectedItems);
+					});
 			}
-			catch (KeyNotFoundException)
+			catch (Exception ex)
 			{
-				Platform.Log(LogLevel.Error, string.Format(SR.ExceptionOperationEnablementUnknown, operationName));
-				return false;
+				Platform.Log(LogLevel.Error, ex);
 			}
+
+			EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
+		}
+
+		public virtual void OnSelectedItemDoubleClicked()
+		{
+			EventsHelper.Fire(_selectedItemDoubleClicked, this, EventArgs.Empty);
 		}
 
 		#endregion
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		#endregion
+
+		#region Public API
+
 		/// <summary>
 		/// Invalidates all folders of the specified type so that they
 		/// will refresh their content or count.
@@ -230,49 +228,22 @@ namespace ClearCanvas.Ris.Client
 				_folderExplorer.SelectedFolder.Refresh();
 		}
 
-		public Type GetFolderClassForWorklistClass(string worklistClassName)
+		public bool GetOperationEnablement(string operationName)
 		{
-			return _mapWorklistClassToFolderClass.ContainsKey(worklistClassName) ? _mapWorklistClassToFolderClass[worklistClassName] : null;
-		}
-
-		public List<string> WorklistClassNames
-		{
-			get { return new List<string>(_mapWorklistClassToFolderClass.Keys); }
+			try
+			{
+				return _workflowEnablement == null ? false : _workflowEnablement[operationName];
+			}
+			catch (KeyNotFoundException)
+			{
+				Platform.Log(LogLevel.Error, string.Format(SR.ExceptionOperationEnablementUnknown, operationName));
+				return false;
+			}
 		}
 
 		public IDesktopWindow DesktopWindow
 		{
 			get { return _folderExplorer.DesktopWindow; }
-		}
-
-		public event EventHandler SelectedItemDoubleClicked
-		{
-			add { _selectedItemDoubleClicked += value; }
-			remove { _selectedItemDoubleClicked -= value; }
-		}
-
-		public event EventHandler SelectedItemsChanged
-		{
-			add { _selectedItemsChanged += value; }
-			remove { _selectedItemsChanged -= value; }
-		}
-
-		public event EventHandler SelectedFolderChanged
-		{
-			add { _selectedFolderChanged += value; }
-			remove { _selectedFolderChanged -= value; }
-		}
-
-		public event EventHandler TextChanged
-		{
-			add { _titleChanged += value; }
-			remove { _titleChanged -= value; }
-		}
-
-		public event EventHandler IconChanged
-		{
-			add { _titleIconChanged += value; }
-			remove { _titleIconChanged -= value; }
 		}
 
 		public IFolder SelectedFolder
@@ -281,41 +252,19 @@ namespace ClearCanvas.Ris.Client
 			set { _folderExplorer.SelectedFolder = value; }
 		}
 
-		public ISelection SelectedItems
-		{
-			get { return _folderExplorer.SelectedItems; }
-		}
+		#endregion
 
-		public virtual void SelectedFolderChangedEventHandler(object sender, EventArgs e)
-		{
-			EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
-		}
+		#region Protected API
 
-		public void SelectedItemsChangedEventHandler(object sender, EventArgs e)
-		{
-			try
-			{
-				BlockingOperation.Run(
-					delegate
-					{
-						_workflowEnablement = this.SelectedItems.Equals(Selection.Empty) ? null :
-							QueryOperationEnablement(this.SelectedItems);
-					});
-			}
-			catch (Exception ex)
-			{
-				Platform.Log(LogLevel.Error, ex);
-			}
+		protected abstract ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request);
 
-			EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
-		}
+		protected abstract IToolSet CreateItemToolSet();
+
+		protected abstract IToolSet CreateFolderToolSet();
+
+		protected abstract string GetPreviewUrl();
 
 		protected abstract IDictionary<string, bool> QueryOperationEnablement(ISelection selection);
-
-		public virtual void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
-		{
-			EventsHelper.Fire(_selectedItemDoubleClicked, this, EventArgs.Empty);
-		}
 
 		protected void AddFolder(IFolder folder)
 		{
@@ -337,12 +286,67 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		#region IDisposable Members
-
-		public void Dispose()
+		protected internal ISelection SelectedItems
 		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
+			get { return _folderExplorer.SelectedItems; }
+		}
+
+		protected internal event EventHandler SelectedItemsChanged
+		{
+			add { _selectedItemsChanged += value; }
+			remove { _selectedItemsChanged -= value; }
+		}
+
+		protected internal event EventHandler SelectedFolderChanged
+		{
+			add { _selectedFolderChanged += value; }
+			remove { _selectedFolderChanged -= value; }
+		}
+
+		#endregion
+
+		#region Private Helpers
+
+		private void InitializeFolders(ExtensionPoint<IFolder> folderExtensionPoint)
+		{
+			// Collect all worklist class names
+			if (folderExtensionPoint != null)
+			{
+				foreach (ExtensionInfo info in folderExtensionPoint.ListExtensions())
+				{
+					FolderForWorklistClassAttribute a =
+						AttributeUtils.GetAttribute<FolderForWorklistClassAttribute>(info.ExtensionClass);
+					if (a != null && !string.IsNullOrEmpty(a.WorklistClassName))
+						_mapWorklistClassToFolderClass.Add(a.WorklistClassName, info.ExtensionClass);
+				}
+			}
+
+			if (_mapWorklistClassToFolderClass.Keys.Count > 0)
+			{
+				ListWorklistsForUserResponse response = QueryWorklistSet(new ListWorklistsForUserRequest(new List<string>(_mapWorklistClassToFolderClass.Keys)));
+				foreach (WorklistSummary summary in response.Worklists)
+				{
+					try
+					{
+						Type folderClass = _mapWorklistClassToFolderClass[summary.ClassName];
+						WorkflowFolder folder = (WorkflowFolder)Activator.CreateInstance(folderClass, this);
+						if (!string.IsNullOrEmpty(summary.DisplayName))
+						{
+							folder.FolderPath = new Path(string.Concat(folder.FolderPath.ToString(), "/", summary.DisplayName), folder.ResourceResolver);
+						}
+						folder.Tooltip = summary.Description;
+						folder.WorklistRef = summary.WorklistRef;
+						folder.IsStatic = false;
+
+						this.AddFolder(folder);
+
+					}
+					catch (KeyNotFoundException e)
+					{
+						Platform.Log(LogLevel.Error, e, string.Format("Worklist class {0} is not mapped to a folder class.", summary.ClassName));
+					}
+				}
+			}
 		}
 
 		#endregion
@@ -426,8 +430,6 @@ namespace ClearCanvas.Ris.Client
 				_owner = owner;
 			}
 
-			#region IWorkflowFolderToolContext Members
-
 			public IEnumerable Folders
 			{
 				get { return _owner.Folders; }
@@ -448,8 +450,6 @@ namespace ClearCanvas.Ris.Client
 			{
 				get { return _owner.DesktopWindow; }
 			}
-
-			#endregion
 		}
 
 		#endregion
@@ -459,6 +459,8 @@ namespace ClearCanvas.Ris.Client
 			:base(title, folderExplorer, new TFolderExtensionPoint())
 		{
 		}
+
+		#region Protected overrides
 
 		protected override IToolSet CreateItemToolSet()
 		{
@@ -470,8 +472,14 @@ namespace ClearCanvas.Ris.Client
 			return new ToolSet(new TFolderToolExtensionPoint(), CreateFolderToolContext());
 		}
 
+		#endregion
+
+		#region Protected API
+
 		protected abstract IWorkflowItemToolContext CreateItemToolContext();
 
 		protected abstract IWorkflowFolderToolContext CreateFolderToolContext();
+
+		#endregion
 	}
 }

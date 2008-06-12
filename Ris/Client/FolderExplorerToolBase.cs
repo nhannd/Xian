@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 
@@ -39,7 +40,7 @@ namespace ClearCanvas.Ris.Client
         IDesktopWindow DesktopWindow { get; }
         IFolder SelectedFolder { get; set; }
         ISelection SelectedItems { get; }
-    }
+   }
 
     public class FolderExplorerToolBase : Tool<IFolderExplorerToolContext>
     {

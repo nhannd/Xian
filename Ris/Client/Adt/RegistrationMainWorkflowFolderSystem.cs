@@ -74,14 +74,14 @@ namespace ClearCanvas.Ris.Client.Adt
 			this.AddFolder(_searchFolder = new Folders.RegistrationSearchFolder(this));
 		}
 
-		public override string PreviewUrl
+		protected override string GetPreviewUrl()
 		{
-			get { return WebResourcesSettings.Default.RegistrationFolderSystemUrl; }
+			return WebResourcesSettings.Default.RegistrationFolderSystemUrl;
 		}
 
-		public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
+		public override void OnSelectedItemDoubleClicked()
 		{
-			base.SelectedItemDoubleClickedEventHandler(sender, e);
+			base.OnSelectedItemDoubleClicked();
 
 			PatientBiographyTool biographyTool = (PatientBiographyTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
 				delegate(ITool tool) { return tool is PatientBiographyTool; });

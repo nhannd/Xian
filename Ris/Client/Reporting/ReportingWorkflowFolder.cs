@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 		WorkflowFolderSystem FolderSystem { get; }
 	}
 
-	public abstract class ReportingWorkflowFolder : WorkflowFolder<ReportingWorklistItem>
+	public abstract class ReportingWorkflowFolder : WorklistFolder<ReportingWorklistItem, IReportingWorkflowService>
 	{
 		class DropContext : IReportingWorkflowFolderDropContext
 		{
@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 			public bool GetOperationEnablement(string operationName)
 			{
-				return _folder._folderSystem.GetOperationEnablement(operationName);
+				return _folder.WorkflowFolderSystem.GetOperationEnablement(operationName);
 			}
 
 			public ReportingWorkflowFolder DropTargetFolder
@@ -97,90 +97,19 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 			public IDesktopWindow DesktopWindow
 			{
-				get { return _folder._folderSystem.DesktopWindow; }
+				get { return _folder.WorkflowFolderSystem.DesktopWindow; }
 			}
 
 			#endregion
 		}
 
-		private readonly WorkflowFolderSystem _folderSystem;
-		private readonly EntityRef _worklistRef;
-
-		public ReportingWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
-			: base(folderSystem, folderName, folderDescription, new ReportingWorklistTable())
+		public ReportingWorkflowFolder(WorkflowFolderSystem folderSystem, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
+			: base(folderSystem, new ReportingWorklistTable())
 		{
-			_folderSystem = folderSystem;
-
 			if (dropHandlerExtensionPoint != null)
 			{
 				this.InitDragDropHandling(dropHandlerExtensionPoint, new DropContext(this));
 			}
-
-			_worklistRef = worklistRef;
-		}
-
-		public ReportingWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
-			: this(folderSystem, folderName, null, null, dropHandlerExtensionPoint)
-		{
-		}
-
-		public ReportingWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
-			: this(folderSystem, folderName, folderDescription, worklistRef, null)
-		{
-		}
-
-		public ReportingWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName)
-			: this(folderSystem, folderName, null, null, null)
-		{
-		}
-
-		public EntityRef WorklistRef
-		{
-			get { return _worklistRef; }
-		}
-
-		protected override bool CanQuery()
-		{
-			return true;
-		}
-
-		protected override QueryItemsResult QueryItems()
-		{
-			QueryItemsResult result = null;
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					QueryWorklistRequest request = _worklistRef == null
-						? new QueryWorklistRequest(this.WorklistClassName, true, true)
-						: new QueryWorklistRequest(_worklistRef, true, true);
-
-					QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);
-					result = new QueryItemsResult(response.WorklistItems, response.ItemCount);
-				});
-
-			return result;
-		}
-
-		protected override int QueryCount()
-		{
-			int count = -1;
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					QueryWorklistRequest request = _worklistRef == null
-						? new QueryWorklistRequest(this.WorklistClassName, false, true)
-						: new QueryWorklistRequest(_worklistRef, false, true);
-
-					QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);
-					count = response.ItemCount;
-				});
-
-			return count;
-		}
-
-		public bool GetOperationEnablement(string operationName)
-		{
-			return _folderSystem.GetOperationEnablement(operationName);
 		}
 	}
 }

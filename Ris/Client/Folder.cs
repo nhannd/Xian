@@ -95,6 +95,7 @@ namespace ClearCanvas.Ris.Client
 		private static readonly IconSet _closedIconSet = new IconSet(IconScheme.Colour, "FolderClosedSmall.png", "FolderClosedMedium.png", "FolderClosedMedium.png");
 		private static readonly IconSet _openIconSet = new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenMedium.png");
 		private IconSet _iconSet;
+		private string _folderTooltip;
 
 		/// <summary>
 		/// Constructor
@@ -265,7 +266,12 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public virtual string Tooltip
 		{
-			get { return null; }
+			get { return _folderTooltip; }
+			protected internal set
+			{
+				_folderTooltip = value;
+				EventsHelper.Fire(_tooltipChanged, this, EventArgs.Empty);
+			}
 		}
 
 		/// <summary>

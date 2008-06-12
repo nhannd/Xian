@@ -43,14 +43,14 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 			this.AddFolder(_searchFolder = new RegistrationSearchFolder(this));
 		}
 
-		public override string PreviewUrl
+		protected override string GetPreviewUrl()
 		{
-			get { return WebResourcesSettings.Default.EmergencyPhysicianFolderSystemUrl; }
+			return WebResourcesSettings.Default.EmergencyPhysicianFolderSystemUrl;
 		}
 
-		public override void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
+		public override void OnSelectedItemDoubleClicked()
 		{
-			base.SelectedItemDoubleClickedEventHandler(sender, e);
+			base.OnSelectedItemDoubleClicked();
 
 			EmergencyPhysicianEmergencyOrdersConversationTool notesTool = 
 				(EmergencyPhysicianEmergencyOrdersConversationTool)CollectionUtils.SelectFirst(

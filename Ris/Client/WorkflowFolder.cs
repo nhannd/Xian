@@ -35,6 +35,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -56,7 +58,16 @@ namespace ClearCanvas.Ris.Client
 
 	public abstract class WorkflowFolder : Folder
 	{
-        public abstract string WorklistClassName { get; }
+		private EntityRef _worklistRef;
+
+		public abstract string WorklistClassName { get; }
+
+		public EntityRef WorklistRef
+		{
+			get { return _worklistRef; }
+			internal set { _worklistRef = value; }
+		}
+
 	}
 
     /// <summary>
@@ -64,8 +75,8 @@ namespace ClearCanvas.Ris.Client
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
 	public abstract class WorkflowFolder<TItem> : WorkflowFolder, IDisposable
+		where TItem : DataContractBase
     {
-
         #region QueryItemsResult class
 
         protected class QueryItemsResult
@@ -92,12 +103,10 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-        private readonly string _folderTooltip;
         private readonly Table<TItem> _itemsTable;
         private bool _isPopulated;
         private int _itemCount = -1;
         private readonly WorkflowFolderSystem _folderSystem;
-        private readonly string _worklistClassName;
 
         private Timer _refreshTimer;
         private int _refreshTime;
@@ -113,35 +122,17 @@ namespace ClearCanvas.Ris.Client
         /// Constructor
         /// </summary>
         /// <param name="folderSystem"></param>
-        /// <param name="folderName"></param>
-        /// <param name="folderTooltip"></param>
         /// <param name="itemsTable"></param>
-        public WorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, string folderTooltip, Table<TItem> itemsTable)
+        public WorkflowFolder(WorkflowFolderSystem folderSystem, Table<TItem> itemsTable)
         {
             _folderSystem = folderSystem;
-            _folderTooltip = folderTooltip;
             _itemsTable = itemsTable;
             _itemsTable.Items.ItemsChanged += delegate
                 {
                     SetTotalItemCount(_itemsTable.Items.Count);
                 };
-
-			//TODO: this isn't good practice - updating base-class properties in the constructor
-			//should define a new base constructor overload instead
-            if (!string.IsNullOrEmpty(folderName))
-				this.FolderPath = new Path(string.Concat(this.FolderPath.ToString(), "/", folderName), this.ResourceResolver);
-
-            // Initialize worklist type
-            FolderForWorklistClassAttribute attrib = (FolderForWorklistClassAttribute) CollectionUtils.SelectFirst(
-                this.GetType().GetCustomAttributes(false),
-                delegate(object o)
-                    {
-                        return o is FolderForWorklistClassAttribute;
-                    });
-
-            if (attrib != null)
-                _worklistClassName = attrib.WorklistClassName;
         }
+
 
         public override string Id
         {
@@ -155,15 +146,10 @@ namespace ClearCanvas.Ris.Client
 
         public override string WorklistClassName
         {
-            get { return _worklistClassName; }
-        }
-
-
-        public override string Tooltip
-        {
             get
             {
-                return _folderTooltip;
+				FolderForWorklistClassAttribute a = AttributeUtils.GetAttribute<FolderForWorklistClassAttribute>(this.GetType());
+            	return a == null ? null : a.WorklistClassName;
             }
         }
 
@@ -412,9 +398,14 @@ namespace ClearCanvas.Ris.Client
             _dropContext = dropContext;
         }
 
-        protected abstract bool CanQuery();
-        protected abstract int QueryCount();
-        protected abstract QueryItemsResult QueryItems();
+		protected virtual bool CanQuery()
+		{
+			return true;
+		}
+
+    	protected abstract QueryItemsResult QueryItems();
+    	protected abstract int QueryCount();
+
 
         #region IDisposable Members
 
@@ -429,4 +420,51 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
     }
+
+	public abstract class WorklistFolder<TItem, TWorklistService> : WorkflowFolder<TItem>
+		where TItem : DataContractBase
+		where TWorklistService : IWorklistService<TItem>
+
+	{
+		protected WorklistFolder(WorkflowFolderSystem folderSystem, Table<TItem> itemsTable)
+			: base(folderSystem, itemsTable)
+		{
+		}
+
+		protected override QueryItemsResult QueryItems()
+		{
+			QueryItemsResult result = null;
+
+			Platform.GetService<TWorklistService>(
+				delegate(TWorklistService service)
+				{
+					QueryWorklistRequest request = this.WorklistRef == null
+						? new QueryWorklistRequest(this.WorklistClassName, true, true)
+						: new QueryWorklistRequest(this.WorklistRef, true, true);
+
+					QueryWorklistResponse<TItem> response = service.QueryWorklist(request);
+					result = new QueryItemsResult(response.WorklistItems, response.ItemCount);
+				});
+
+			return result;
+		}
+
+		protected override int QueryCount()
+		{
+			int count = -1;
+
+			Platform.GetService<TWorklistService>(
+				delegate(TWorklistService service)
+				{
+					QueryWorklistRequest request = this.WorklistRef == null
+						? new QueryWorklistRequest(this.WorklistClassName, false, true)
+						: new QueryWorklistRequest(this.WorklistRef, false, true);
+
+					QueryWorklistResponse<TItem> response = service.QueryWorklist(request);
+					count = response.ItemCount;
+				});
+
+			return count;
+		}
+	}
 }

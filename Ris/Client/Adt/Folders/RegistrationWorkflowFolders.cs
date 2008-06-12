@@ -32,8 +32,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
@@ -44,18 +42,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Scheduled", true)]
     public class ScheduledFolder : RegistrationWorkflowFolder
     {
-        public ScheduledFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
-		public ScheduledFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public ScheduledFolder()
-            : this(null)
+        public ScheduledFolder(WorkflowFolderSystem folderSystem)
+            : base(folderSystem)
         {
         }
     }
@@ -70,18 +58,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-		public CheckedInFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
-        {
-        }
-
 		public CheckedInFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public CheckedInFolder()
-            : this(null)
+            : base(folderSystem, new DropHandlerExtensionPoint())
         {
         }
     }
@@ -91,18 +69,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("In Progress")]
     public class InProgressFolder : RegistrationWorkflowFolder
     {
-		public InProgressFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
 		public InProgressFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public InProgressFolder()
-            : this(null)
+            : base(folderSystem)
         {
         }
     }
@@ -112,18 +80,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Completed")]
     public class CompletedFolder : RegistrationWorkflowFolder
     {
-		public CompletedFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
 		public CompletedFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public CompletedFolder()
-            : this(null)
+            : base(folderSystem)
         {
         }
     }
@@ -138,18 +96,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-		public CancelledFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
-        {
-        }
-
 		public CancelledFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public CancelledFolder()
-            : this(null)
+            : base(folderSystem, new DropHandlerExtensionPoint())
         {
         }
     }
@@ -159,18 +107,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Completed Protocol", true)]
     public class CompletedProtocolFolder : RegistrationWorkflowFolder
     {
-		public CompletedProtocolFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
 		public CompletedProtocolFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public CompletedProtocolFolder()
-            : this(null)
+            : base(folderSystem)
         {
         }
     }
@@ -180,18 +118,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Suspended Protocol")]
     public class SuspendedProtocolFolder : RegistrationWorkflowFolder
     {
-		public SuspendedProtocolFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
 		public SuspendedProtocolFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public SuspendedProtocolFolder()
-            : this(null)
+            : base(folderSystem)
         {
         }
     }
@@ -201,18 +129,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Rejected Protocol")]
     public class RejectedProtocolFolder : RegistrationWorkflowFolder
     {
-		public RejectedProtocolFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
 		public RejectedProtocolFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public RejectedProtocolFolder()
-            : this(null)
+            : base(folderSystem)
         {
         }
     }
@@ -222,18 +140,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Pending Protocol")]
     public class PendingProtocolFolder : RegistrationWorkflowFolder
     {
-		public PendingProtocolFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
 		public PendingProtocolFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public PendingProtocolFolder()
-            : this(null)
+            : base(folderSystem)
         {
         }
     }
@@ -243,18 +151,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("To Be Scheduled")]
     public class ToBeScheduledFolder : RegistrationWorkflowFolder
     {
-		public ToBeScheduledFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
 		public ToBeScheduledFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public ToBeScheduledFolder()
-            : this(null)
+            : base(folderSystem)
         {
         }
     }

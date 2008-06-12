@@ -80,8 +80,13 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-		void SelectedFolderChangedEventHandler(object sender, EventArgs e);
-		void SelectedItemsChangedEventHandler(object sender, EventArgs e);
-		void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e);
+		//TODO: (JR Jun 2008) Get rid of this method - the folder system should subscribe to an event on IFolderExplorerToolContext instead
+		void OnSelectedFolderChanged();
+
+		//TODO: (JR Jun 2008) Get rid of this method - the folder system should subscribe to an event on IFolderExplorerToolContext instead
+		void OnSelectedItemsChanged();
+
+		//TODO: (JR Jun 2008) Get rid of this method - the folder system should subscribe to an event on IFolderExplorerToolContext instead
+		void OnSelectedItemDoubleClicked();
 	}
 }

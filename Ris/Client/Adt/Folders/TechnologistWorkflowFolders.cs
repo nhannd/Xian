@@ -43,18 +43,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Scheduled", true)]
     public class ScheduledTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
-		public ScheduledTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef, null)
-        {
-        }
-
 		public ScheduledTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public ScheduledTechnologistWorkflowFolder()
-            : this(null)
+            : base(folderSystem, null)
         {
         }
     }
@@ -69,18 +59,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-		public CheckedInTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
-        {
-        }
-
 		public CheckedInTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public CheckedInTechnologistWorkflowFolder()
-            : this(null)
+            : base(folderSystem, new DropHandlerExtensionPoint())
         {
         }
     }
@@ -95,18 +75,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-		public InProgressTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
-        {
-        }
-
 		public InProgressTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public InProgressTechnologistWorkflowFolder()
-            : this(null)
+            : base(folderSystem, new DropHandlerExtensionPoint())
         {
         }
     }
@@ -121,18 +91,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-		public CompletedTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
-        {
-        }
-
 		public CompletedTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public CompletedTechnologistWorkflowFolder()
-            : this(null)
+            : base(folderSystem, new DropHandlerExtensionPoint())
         {
         }
     }
@@ -142,44 +102,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Undocumented")]
     public class UndocumentedTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
-		public UndocumentedTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
 		public UndocumentedTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public UndocumentedTechnologistWorkflowFolder()
-            : this(null)
-        {
-        }
-    }
-
-    //[ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.TechnologistSuspendedWorklist)]
-    [FolderPath("Suspended")]
-    public class SuspendedTechnologistWorkflowFolder : TechnologistWorkflowFolder
-    {
-        [ExtensionPoint]
-        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ModalityWorklistItem>>
-        {
-        }
-
-		public SuspendedTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
-        {
-        }
-
-		public SuspendedTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public SuspendedTechnologistWorkflowFolder()
-            : this(null)
+            : base(folderSystem, null)
         {
         }
     }
@@ -194,18 +118,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-		public CancelledTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
-        {
-        }
-
 		public CancelledTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public CancelledTechnologistWorkflowFolder()
-            : this(null)
+            : base(folderSystem, new DropHandlerExtensionPoint())
         {
         }
     }

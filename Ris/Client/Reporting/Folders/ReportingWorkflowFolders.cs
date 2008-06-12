@@ -44,18 +44,8 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     [FolderPath("To be Reported", true)]
     public class ToBeReportedFolder : ReportingWorkflowFolder
     {
-		public ToBeReportedFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
 		public ToBeReportedFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public ToBeReportedFolder()
-            : this(null)
+            : base(folderSystem, null)
         {
         }
     }
@@ -70,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
 
 		public AssignedFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, null, new DropHandlerExtensionPoint())
+            : base(folderSystem, new DropHandlerExtensionPoint())
         {
         }
     }
@@ -85,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
 
 		public DraftFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, null, new DropHandlerExtensionPoint())
+            : base(folderSystem, new DropHandlerExtensionPoint())
         {
         }
     }
@@ -100,7 +90,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
 
 		public InTranscriptionFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, null, new DropHandlerExtensionPoint())
+            : base(folderSystem, new DropHandlerExtensionPoint())
         {
         }
     }
@@ -115,7 +105,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
 
 		public ToBeVerifiedFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, null, new DropHandlerExtensionPoint())
+            : base(folderSystem, new DropHandlerExtensionPoint())
         {
         }
 
@@ -143,7 +133,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
 
 		public ReviewResidentReportFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, null, new DropHandlerExtensionPoint())
+            : base(folderSystem, new DropHandlerExtensionPoint())
         {
         }
     }
@@ -158,7 +148,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
 
 		public VerifiedFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, null, new DropHandlerExtensionPoint())
+            : base(folderSystem, new DropHandlerExtensionPoint())
         {
         }
 
@@ -181,18 +171,8 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     [FolderPath("To be Protocolled", true)]
     public class ToBeProtocolledFolder : ReportingWorkflowFolder
     {
-		public ToBeProtocolledFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
 		public ToBeProtocolledFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public ToBeProtocolledFolder()
-            : this(null)
+            : base(folderSystem, null)
         {
         }
     }
@@ -202,18 +182,8 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
 	[FolderPath("To be Approved", true)]
 	public class ToBeApprovedFolder : ReportingWorkflowFolder
 	{
-		public ToBeApprovedFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-			: base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-		{
-		}
-
 		public ToBeApprovedFolder(WorkflowFolderSystem folderSystem)
-			: this(folderSystem, null, null, null)
-		{
-		}
-
-		public ToBeApprovedFolder()
-			: this(null)
+			: base(folderSystem, null)
 		{
 		}
 	}
@@ -222,18 +192,8 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     [FolderPath("Draft")]
     public class DraftProtocolFolder : ReportingWorkflowFolder
     {
-		public DraftProtocolFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
 		public DraftProtocolFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public DraftProtocolFolder()
-            : this(null)
+            : base(folderSystem, null)
         {
         }
     }
@@ -242,18 +202,8 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     [FolderPath("Completed")]
     public class CompletedProtocolFolder : ReportingWorkflowFolder
     {
-		public CompletedProtocolFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
 		public CompletedProtocolFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public CompletedProtocolFolder()
-            : this(null)
+            : base(folderSystem, null)
         {
         }
     }
@@ -262,18 +212,8 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
 	[FolderPath("Awaiting Approval")]
 	public class AwaitingApprovalProtocolFolder : ReportingWorkflowFolder
 	{
-		public AwaitingApprovalProtocolFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-			: base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-		{
-		}
-
 		public AwaitingApprovalProtocolFolder(WorkflowFolderSystem folderSystem)
-			: this(folderSystem, null, null, null)
-		{
-		}
-
-		public AwaitingApprovalProtocolFolder()
-			: this(null)
+			: base(folderSystem, null)
 		{
 		}
 	}
@@ -282,18 +222,8 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     [FolderPath("Suspended")]
     public class SuspendedProtocolFolder : ReportingWorkflowFolder
     {
-		public SuspendedProtocolFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
 		public SuspendedProtocolFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public SuspendedProtocolFolder()
-            : this(null)
+            : base(folderSystem, null)
         {
         }
     }
@@ -302,18 +232,8 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     [FolderPath("Rejected")]
     public class RejectedProtocolFolder : ReportingWorkflowFolder
     {
-		public RejectedProtocolFolder(WorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
-        {
-        }
-
 		public RejectedProtocolFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null, null, null)
-        {
-        }
-
-        public RejectedProtocolFolder()
-            : this(null)
+            : base(folderSystem, null)
         {
         }
     }

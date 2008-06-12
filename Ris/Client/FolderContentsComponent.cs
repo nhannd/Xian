@@ -75,19 +75,7 @@ namespace ClearCanvas.Ris.Client
 					this.SelectedItems = Selection.Empty;
 					this.SelectedFolder = null;
 
-					if (_folderSystem != null)
-					{
-						this.SelectedItemsChanged -= _folderSystem.SelectedItemsChangedEventHandler;
-						this.SelectedItemDoubleClicked -= _folderSystem.SelectedItemDoubleClickedEventHandler;
-					}
-
 					_folderSystem = value;
-
-					if (_folderSystem != null)
-					{
-						this.SelectedItemsChanged += _folderSystem.SelectedItemsChangedEventHandler;
-						this.SelectedItemDoubleClicked += _folderSystem.SelectedItemDoubleClickedEventHandler;
-					}
 
 					EventsHelper.Fire(_folderSystemChanged, this, EventArgs.Empty);
 				}
@@ -110,7 +98,7 @@ namespace ClearCanvas.Ris.Client
 
                     // notify view
                     EventsHelper.Fire(_tableChanged, this, EventArgs.Empty);
-					EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
+					OnSelectedItemsChanged(this, EventArgs.Empty);
 
                     NotifyPropertyChanged("StatusMessage");
                 }
@@ -167,7 +155,7 @@ namespace ClearCanvas.Ris.Client
                 if (!_selectedItems.Equals(value))
                 {
                     _selectedItems = value;
-                    EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
+                    OnSelectedItemsChanged(this, EventArgs.Empty);
                 }
             }
         }
@@ -217,9 +205,18 @@ namespace ClearCanvas.Ris.Client
         public void OnSelectedItemDoubleClicked()
         {
             EventsHelper.Fire(_selectedItemDoubleClicked, this, EventArgs.Empty);
+			if(_folderSystem != null)
+				_folderSystem.OnSelectedItemDoubleClicked();
         }
 
-        #endregion
+		private void OnSelectedItemsChanged(object sender, EventArgs args)
+		{
+			EventsHelper.Fire(_selectedItemsChanged, sender, args);
+			if (_folderSystem != null)
+				_folderSystem.OnSelectedItemsChanged();
+		}
+
+		#endregion
 
         private void TotalItemCountChangedEventHandler(object sender, EventArgs e)
         {

@@ -84,14 +84,14 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.AddFolder(_searchFolder = new Folders.ReportingSearchFolder(this));
         }
 
-        public override string PreviewUrl
+		protected override string GetPreviewUrl()
         {
-            get { return WebResourcesSettings.Default.RadiologistFolderSystemUrl; }
+            return WebResourcesSettings.Default.RadiologistFolderSystemUrl;
         }
 
-        public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
+        public override void OnSelectedItemDoubleClicked()
         {
-            base.SelectedItemDoubleClickedEventHandler(sender, e);
+            base.OnSelectedItemDoubleClicked();
 
             EditReportTool editTool = (EditReportTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
                 delegate(ITool tool) { return tool is EditReportTool; });

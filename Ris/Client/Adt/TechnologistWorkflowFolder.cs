@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client.Adt
 		WorkflowFolderSystem FolderSystem { get; }
     }
 
-    public abstract class TechnologistWorkflowFolder : WorkflowFolder<ModalityWorklistItem>
+	public abstract class TechnologistWorkflowFolder : WorklistFolder<ModalityWorklistItem, IModalityWorkflowService>
     {
         class DropContext : ITechnologistWorkflowFolderDropContext
         {
@@ -102,73 +102,13 @@ namespace ClearCanvas.Ris.Client.Adt
             #endregion
         }
 
-        private readonly EntityRef _worklistRef;
-
-		public TechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<ModalityWorklistItem>> dropHandlerExtensionPoint)
-            : base(folderSystem, folderName, folderDescription, new ModalityWorklistTable())
+		public TechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, ExtensionPoint<IDropHandler<ModalityWorklistItem>> dropHandlerExtensionPoint)
+            : base(folderSystem, new ModalityWorklistTable())
         {
             if (dropHandlerExtensionPoint != null)
             {
                 this.InitDragDropHandling(dropHandlerExtensionPoint, new DropContext(this));
             }
-
-            _worklistRef = worklistRef;
-        }
-
-		public TechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<ModalityWorklistItem>> dropHandlerExtensionPoint)
-            : this(folderSystem, folderName, null, null, dropHandlerExtensionPoint)
-        {
-        }
-
-		public TechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName)
-            : this(folderSystem, folderName, null, null, null)
-        {
-        }
-
-		public TechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
-            : this(folderSystem, folderName, folderDescription, worklistRef, null)
-        {
-        }
-
-        protected override bool CanQuery()
-        {
-            return true;
-        }
-
-        protected override int QueryCount()
-        {
-            int count = -1;
-
-            Platform.GetService<IModalityWorkflowService>(
-                delegate(IModalityWorkflowService service)
-                {
-                    QueryWorklistRequest request = _worklistRef == null
-                        ? new QueryWorklistRequest(this.WorklistClassName, false, true)
-                        : new QueryWorklistRequest(_worklistRef, false, true);
-
-                    QueryWorklistResponse<ModalityWorklistItem> response = service.QueryWorklist(request);
-                    count = response.ItemCount;
-                });
-
-            return count;
-        }
-
-        protected override QueryItemsResult QueryItems()
-        {
-            QueryItemsResult result = null;
-
-            Platform.GetService<IModalityWorkflowService>(
-                delegate(IModalityWorkflowService service)
-                {
-                    QueryWorklistRequest request = _worklistRef == null
-                        ? new QueryWorklistRequest(this.WorklistClassName, true, true)
-                        : new QueryWorklistRequest(_worklistRef, true, true);
-
-                    QueryWorklistResponse<ModalityWorklistItem> response = service.QueryWorklist(request);
-                    result = new QueryItemsResult(response.WorklistItems, response.ItemCount);
-                });
-
-            return result;
         }
     }
 }

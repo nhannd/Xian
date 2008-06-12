@@ -107,14 +107,14 @@ namespace ClearCanvas.Ris.Client
 			return new OrderNoteboxItemToolContext(this);
 		}
 
-		public override string PreviewUrl
+		protected override string GetPreviewUrl()
 		{
-			get { return WebResourcesSettings.Default.EmergencyPhysicianOrderNoteboxFolderSystemUrl; }
+			return WebResourcesSettings.Default.EmergencyPhysicianOrderNoteboxFolderSystemUrl;
 		}
 
-		public override void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
+		public override void OnSelectedItemDoubleClicked()
 		{
-			base.SelectedItemDoubleClickedEventHandler(sender, e);
+			base.OnSelectedItemDoubleClicked();
 
 			OrderNoteConversationTool notesTool =
 				(OrderNoteConversationTool)CollectionUtils.SelectFirst(

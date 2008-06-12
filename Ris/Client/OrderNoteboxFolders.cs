@@ -1,4 +1,5 @@
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
@@ -9,18 +10,8 @@ namespace ClearCanvas.Ris.Client
 	[FolderPath("Posted to me")]
 	internal class PersonalInboxFolder : OrderNoteboxFolder
 	{
-		private PersonalInboxFolder(OrderNoteboxFolderSystem folderSystem, string folderDisplayName, string folderDescription)
-			: base(folderSystem, folderDisplayName, folderDescription, "OrderNotePersonalInbox")
-		{
-		}
-
-		public PersonalInboxFolder(OrderNoteboxFolderSystem orderNoteboxFolderSystem)
-			: this(orderNoteboxFolderSystem, null, null)
-		{
-		}
-
-		public PersonalInboxFolder()
-			: this(null)
+		public PersonalInboxFolder(OrderNoteboxFolderSystem folderSystem)
+			: base(folderSystem, "OrderNotePersonalInbox")
 		{
 		}
 	}
@@ -31,15 +22,12 @@ namespace ClearCanvas.Ris.Client
 	{
 		private readonly EntityRef _groupRef;
 
-		private GroupInboxFolder(OrderNoteboxFolderSystem folderSystem, string folderDisplayName, string folderDescription)
-			: base(folderSystem, folderDisplayName, folderDescription, "OrderNoteGroupInbox")
-		{
-		}
-
 		public GroupInboxFolder(OrderNoteboxFolderSystem orderNoteboxFolderSystem, StaffGroupSummary staffGroup)
-			: this(orderNoteboxFolderSystem, staffGroup.Name, staffGroup.Name)
+			: base(orderNoteboxFolderSystem, "OrderNoteGroupInbox")
 		{
 			_groupRef = staffGroup.StaffGroupRef;
+			this.FolderPath = new Path(string.Concat(this.FolderPath.ToString(), "/", staffGroup.Name), this.ResourceResolver);
+			this.Tooltip = staffGroup.Name;
 		}
 
 		protected override void PrepareQueryRequest(QueryNoteboxRequest request)
@@ -54,18 +42,8 @@ namespace ClearCanvas.Ris.Client
 	[FolderPath("Posted by me")]
 	internal class SentItemsFolder : OrderNoteboxFolder
 	{
-		private SentItemsFolder(OrderNoteboxFolderSystem folderSystem, string folderDisplayName, string folderDescription)
-			: base(folderSystem, folderDisplayName, folderDescription, "OrderNoteSentItems")
-		{
-		}
-
-		public SentItemsFolder(OrderNoteboxFolderSystem orderNoteboxFolderSystem)
-			: this(orderNoteboxFolderSystem, null, null)
-		{
-		}
-
-		public SentItemsFolder()
-			: this(null)
+		public SentItemsFolder(OrderNoteboxFolderSystem folderSystem)
+			: base(folderSystem, "OrderNoteSentItems")
 		{
 		}
 	}

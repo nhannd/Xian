@@ -8,63 +8,11 @@ using ClearCanvas.Ris.Client.Adt;
 
 namespace ClearCanvas.Ris.Client.EmergencyPhysician
 {
-	public abstract class EmergencyPhysicianWorkflowFolder : WorkflowFolder<RegistrationWorklistItem>
+	public abstract class EmergencyPhysicianWorkflowFolder : WorklistFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
 	{
-		private readonly EntityRef _worklistRef;
-
-		public EmergencyPhysicianWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
-			: base(folderSystem, folderName, folderDescription, new RegistrationWorklistTable())
+		public EmergencyPhysicianWorkflowFolder(WorkflowFolderSystem folderSystem)
+			: base(folderSystem, new RegistrationWorklistTable())
 		{
-			_worklistRef = worklistRef;
-		}
-
-		public EmergencyPhysicianWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName)
-			: this(folderSystem, folderName, null, null)
-		{
-		}
-
-		protected override bool CanQuery()
-		{
-			return true;
-		}
-
-		protected override QueryItemsResult QueryItems()
-		{
-			QueryItemsResult result = null;
-			Platform.GetService<IRegistrationWorkflowService>(
-				delegate(IRegistrationWorkflowService service)
-					{
-						QueryWorklistRequest request = _worklistRef == null
-						                               	? new QueryWorklistRequest(this.WorklistClassName, true, true)
-						                               	: new QueryWorklistRequest(_worklistRef, true, true);
-
-						QueryWorklistResponse<RegistrationWorklistItem> response = service.QueryWorklist(request);
-						result = new QueryItemsResult(response.WorklistItems, response.ItemCount);
-					});
-
-			return result;
-		}
-
-		protected override int QueryCount()
-		{
-			int count = -1;
-			Platform.GetService<IRegistrationWorkflowService>(
-				delegate(IRegistrationWorkflowService service)
-					{
-						QueryWorklistRequest request = _worklistRef == null
-						                               	? new QueryWorklistRequest(this.WorklistClassName, false, true)
-						                               	: new QueryWorklistRequest(_worklistRef, false, true);
-
-						QueryWorklistResponse<RegistrationWorklistItem> response = service.QueryWorklist(request);
-						count = response.ItemCount;
-					});
-
-			return count;
-		}
-
-		public bool GetOperationEnablement(string operationName)
-		{
-			return WorkflowFolderSystem.GetOperationEnablement(operationName);
 		}
 	}
 }

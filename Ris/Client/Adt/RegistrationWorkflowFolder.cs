@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Adt
         WorkflowFolderSystem FolderSystem { get; }
     }
 
-    public abstract class RegistrationWorkflowFolder : WorkflowFolder<RegistrationWorklistItem>
+	public abstract class RegistrationWorkflowFolder : WorklistFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
     {
         class DropContext : IRegistrationWorkflowFolderDropContext
         {
@@ -106,73 +106,19 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
 
-        private readonly EntityRef _worklistRef;
-
-        public RegistrationWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
-            : base(folderSystem, folderName, folderDescription, new RegistrationWorklistTable())
+        public RegistrationWorkflowFolder(WorkflowFolderSystem folderSystem, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
+            : base(folderSystem, new RegistrationWorklistTable())
         {
             if (dropHandlerExtensionPoint != null)
             {
                 this.InitDragDropHandling(dropHandlerExtensionPoint, new DropContext(this));
             }
-
-            _worklistRef = worklistRef;
         }
 
-		public RegistrationWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
-            : this(folderSystem, folderName, null, null, dropHandlerExtensionPoint)
+		public RegistrationWorkflowFolder(WorkflowFolderSystem folderSystem)
+            : this(folderSystem, null)
         {
         }
 
-		public RegistrationWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName)
-            :this(folderSystem, folderName, null, null, null)
-        {
-        }
-
-		public RegistrationWorkflowFolder(WorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
-            : this(folderSystem, folderName, folderDescription, worklistRef, null)
-        {
-        }
-
-        protected override bool CanQuery()
-        {
-            return true;
-        }
-
-        protected override QueryItemsResult QueryItems()
-        {
-            QueryItemsResult result = null;
-
-            Platform.GetService<IRegistrationWorkflowService>(
-                delegate(IRegistrationWorkflowService service)
-                {
-                    QueryWorklistRequest request = _worklistRef == null
-                        ? new QueryWorklistRequest(this.WorklistClassName, true, true)
-                        : new QueryWorklistRequest(_worklistRef, true, true);
-
-                    QueryWorklistResponse<RegistrationWorklistItem> response = service.QueryWorklist(request);
-                    result = new QueryItemsResult(response.WorklistItems, response.ItemCount);
-                });
-
-            return result;
-        }
-
-        protected override int QueryCount()
-        {
-            int count = -1;
-
-            Platform.GetService<IRegistrationWorkflowService>(
-                delegate(IRegistrationWorkflowService service)
-                {
-                    QueryWorklistRequest request = _worklistRef == null
-                        ? new QueryWorklistRequest(this.WorklistClassName, false, true)
-                        : new QueryWorklistRequest(_worklistRef, false, true);
-
-                    QueryWorklistResponse<RegistrationWorklistItem> response = service.QueryWorklist(request);
-                    count = response.ItemCount;
-                });
-
-            return count;
-        }
    }
 }

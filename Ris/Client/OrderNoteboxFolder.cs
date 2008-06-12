@@ -10,8 +10,8 @@ namespace ClearCanvas.Ris.Client
 		private readonly OrderNoteboxFolderSystem _folderSystem;
 		private readonly string _noteboxClassName;
 
-		public OrderNoteboxFolder(OrderNoteboxFolderSystem folderSystem, string folderDisplayName, string folderDescription, string noteboxClassName)
-			: base(folderSystem, folderDisplayName, folderDescription, new OrderNoteboxTable())
+		public OrderNoteboxFolder(OrderNoteboxFolderSystem folderSystem, string noteboxClassName)
+			: base(folderSystem, new OrderNoteboxTable())
 		{
 			_folderSystem = folderSystem;
 			_noteboxClassName = noteboxClassName;

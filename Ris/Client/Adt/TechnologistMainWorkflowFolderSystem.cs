@@ -75,14 +75,14 @@ namespace ClearCanvas.Ris.Client.Adt
 			this.AddFolder(_searchFolder = new Folders.TechnologistSearchFolder(this));
 		}
 
-		public override string PreviewUrl
+		protected override string GetPreviewUrl()
 		{
-			get { return WebResourcesSettings.Default.TechnologistFolderSystemUrl; }
+			return WebResourcesSettings.Default.TechnologistFolderSystemUrl;
 		}
 
-		public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
+		public override void OnSelectedItemDoubleClicked()
 		{
-			base.SelectedItemDoubleClickedEventHandler(sender, e);
+			base.OnSelectedItemDoubleClicked();
 
 			TechnologistDocumentationTool documentationTool = (TechnologistDocumentationTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
 				delegate(ITool tool) { return tool is TechnologistDocumentationTool; });
