@@ -127,5 +127,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			return _pixelData;
 		}
+
+		public override void UnloadPixelData()
+		{
+			lock (_syncLock)
+			{
+				_pixelData = null;
+			}
+		}
 	}
 }

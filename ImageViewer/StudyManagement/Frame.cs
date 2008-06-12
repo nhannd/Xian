@@ -754,13 +754,31 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <description>Pixel data is always uncompressed.</description>
 		/// </item>
 		/// </list>
+		/// <para>
 		/// Ensuring that the pixel data always meets the above criteria
 		/// allows clients to easily consume pixel data without having
 		/// to worry about the the multitude of DICOM photometric interpretations
 		/// and transfer syntaxes.
+		/// </para>
+		/// <para>
+		/// Pixel data is reloaded when this method is called after a 
+		/// call to <see cref="UnloadPixelData"/>.
+		/// </para>
 		/// </remarks>
 		/// <seealso cref="ToArgb"/>
 		public abstract byte[] GetNormalizedPixelData();
+
+		/// <summary>
+		/// Unloads the pixel data.
+		/// </summary>
+		/// <remarks>
+		/// It is sometimes necessary to manage the memory used by unloading the pixel data. 
+		/// Calling this method will not necessarily result in an immediate decrease in memory
+		/// usage, since it merely releases the reference to the pixel data; it is up to the
+		/// garbage collector to free the memory.  Calling <see cref="GetNormalizedPixelData"/>
+		/// will reload the pixel data.
+		/// </remarks>
+		public abstract void UnloadPixelData();
 
 		/// <summary>
 		/// Converts colour pixel data to ARGB.
