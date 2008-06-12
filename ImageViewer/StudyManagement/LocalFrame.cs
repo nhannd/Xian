@@ -128,6 +128,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return _pixelData;
 		}
 
+		/// <summary>
+		/// Unloads the pixel data.
+		/// </summary>
+		/// <remarks>
+		/// It is sometimes necessary to manage the memory used by unloading the pixel data. 
+		/// Calling this method will not necessarily result in an immediate decrease in memory
+		/// usage, since it merely releases the reference to the pixel data; it is up to the
+		/// garbage collector to free the memory.  Calling <see cref="GetNormalizedPixelData"/>
+		/// will reload the pixel data.
+		/// </remarks>
 		public override void UnloadPixelData()
 		{
 			lock (_syncLock)
