@@ -55,34 +55,50 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
 
         public void RunApplication(string[] args)
         {
-            using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
-            {
-                ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
+			SetupCommandLine cmdLine = new SetupCommandLine();
+			try
+			{
+				cmdLine.Parse(args);
 
-                // import authority tokens
-                AuthorityTokenImporter tokenImporter = new AuthorityTokenImporter();
-                IList<AuthorityToken> allTokens = tokenImporter.ImportFromPlugins((IUpdateContext)PersistenceScope.Current);
+				using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
+				{
+					((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
+
+					// import authority tokens
+					AuthorityTokenImporter tokenImporter = new AuthorityTokenImporter();
+					IList<AuthorityToken> allTokens = tokenImporter.ImportFromPlugins((IUpdateContext)PersistenceScope.Current);
 
 
-                // create the sys admin group, which has all tokens assigned by default
-                string[] tokenStrings = CollectionUtils.Map<AuthorityToken, string, List<string>>(allTokens,
-                   delegate(AuthorityToken t) { return t.Name; }).ToArray();
-                AuthorityGroupDefinition adminGroupDef = new AuthorityGroupDefinition(SysAdminGroup, tokenStrings);
-                AuthorityGroupImporter groupImporter = new AuthorityGroupImporter();
-                groupImporter.Import(new AuthorityGroupDefinition[] { adminGroupDef }, (IUpdateContext)PersistenceScope.Current);
+					// create the sys admin group, which has all tokens assigned by default
+					string[] tokenStrings = CollectionUtils.Map<AuthorityToken, string, List<string>>(allTokens,
+					   delegate(AuthorityToken t) { return t.Name; }).ToArray();
+					AuthorityGroupDefinition adminGroupDef = new AuthorityGroupDefinition(SysAdminGroup, tokenStrings);
+					AuthorityGroupImporter groupImporter = new AuthorityGroupImporter();
 
-                // import any other authority groups defined in other plugins
-                IList<AuthorityGroup> allGroups = groupImporter.ImportFromPlugins((IUpdateContext)PersistenceScope.Current);
+					IList<AuthorityGroup> groups = 
+						groupImporter.Import(new AuthorityGroupDefinition[] { adminGroupDef }, (IUpdateContext)PersistenceScope.Current);
 
-                // find the admin group that was just created
-                AuthorityGroup adminGroup = CollectionUtils.SelectFirst(allGroups,
-                    delegate(AuthorityGroup g) { return g.Name == SysAdminGroup; });
+					// find the admin group entity that was just created
+					AuthorityGroup adminGroup = CollectionUtils.SelectFirst(groups,
+						delegate(AuthorityGroup g) { return g.Name == SysAdminGroup; });
 
-                // create the "sa" user
-                CreateSysAdminUser(adminGroup, PersistenceScope.Current, Console.Out);
+					// create the "sa" user
+					CreateSysAdminUser(adminGroup, PersistenceScope.Current, Console.Out);
 
-                scope.Complete();
-            }
+					// optionally import other default authority groups defined in other plugins
+					if (cmdLine.ImportDefaultAuthorityGroups)
+					{
+						groupImporter.ImportFromPlugins((IUpdateContext) PersistenceScope.Current);
+					}
+
+					scope.Complete();
+				}
+			}
+			catch (CommandLineException e)
+			{
+				Console.WriteLine(e.Message);
+				cmdLine.PrintUsage(Console.Out);
+			}
         }
 
         public void CreateSysAdminUser(AuthorityGroup adminGroup, IPersistenceContext context, TextWriter log)
