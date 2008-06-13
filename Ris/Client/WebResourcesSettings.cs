@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("forms/technologist/pre-exam.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("forms/technologist/orderadditionalinfo.htm")]
 		public string OrderAdditionalInfoPageUrl
 		{
 			get
