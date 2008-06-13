@@ -1,35 +1,35 @@
 /*
-    Ris object
+	Ris object
 	The Ris object is a singleton object representing the RIS client desktop application.
 */
 
 if(window.external)
 {
-    var Ris = {
-    
-        // parse filter to customize some aspects of JSML parsing without modifying the JSML.js script
-        _jsmlParserFilter: function(key, value)
-        {
-            // if it has the properties of a staff person, replace it with a Staff object
-            if(value && value.hasOwnProperty('staffId') && value.hasOwnProperty('staffName'))
-                return new Staff(value.staffId, value.staffName, value.staffType);
-            return value;
-        },
-        
+	var Ris = {
+	
+		// parse filter to customize some aspects of JSML parsing without modifying the JSML.js script
+		_jsmlParserFilter: function(key, value)
+		{
+			// if it has the properties of a staff person, replace it with a Staff object
+			if(value && value.hasOwnProperty('staffId') && value.hasOwnProperty('staffName'))
+				return new Staff(value.staffId, value.staffName, value.staffType);
+			return value;
+		},
+		
 		// equivalent of the window.confirm function, but routes the message through the RIS client desktop application
-        // message - confirmation message to display
-        // type - a string containing either "YesNo" or "OkCancel" (not case-sensitive)
-        // returns true if the user pressed Yes or OK, false otherwise
-        confirm: function(message, type)
-        {
-            return window.external.Confirm(message || "", type || "OkCancel");
-        },
-        
+		// message - confirmation message to display
+		// type - a string containing either "YesNo" or "OkCancel" (not case-sensitive)
+		// returns true if the user pressed Yes or OK, false otherwise
+		confirm: function(message, type)
+		{
+			return window.external.Confirm(message || "", type || "OkCancel");
+		},
+		
 		// equivalent of the window.alert function, but routes the message through the RIS client desktop application
-        alert: function(message)
-        {
-            window.external.Alert(message || "");
-        },
+		alert: function(message)
+		{
+			window.external.Alert(message || "");
+		},
 		
 		// informs the application that the user has modified data on the page
 		// (sets the ApplicationComponent.Modified flag to the specified value)
@@ -37,7 +37,7 @@ if(window.external)
 		{
 			window.external.Modified = modified;
 		},
-        
+		
 		getActionHtml: function(labelSearch, actionLabel)
 		{
 			return window.external.GetActionHtml(labelSearch, actionLabel);
@@ -46,39 +46,39 @@ if(window.external)
 		// attempts to resolve the specified query string to a staff person,
 		// returning a Staff object if successful, otherwise null.
 		// note: this method may interact with the user via a dialog box if the query is not specific enough
-        resolveStaffName: function(query)
-        {
-            var staffSummary = JSML.parse(window.external.ResolveStaffName(query || ""));
-            if(staffSummary == null)
-                return null;
-            
-            return new Staff(
-                staffSummary.StaffId,
-                staffSummary.Name.FamilyName + ", " + staffSummary.Name.GivenName,
-                staffSummary.StaffType.Value);
-        },
-        
+		resolveStaffName: function(query)
+		{
+			var staffSummary = JSML.parse(window.external.ResolveStaffName(query || ""));
+			if(staffSummary == null)
+				return null;
+			
+			return new Staff(
+				staffSummary.StaffId,
+				staffSummary.Name.FamilyName + ", " + staffSummary.Name.GivenName,
+				staffSummary.StaffType.Value);
+		},
+		
 		// gets the application format string for showing date only
 		// this format string is based on the .NET DateTime class format specifiers
-        getDateFormat: function()
-        {
-            return window.external.DateFormat;
-        },
-        
+		getDateFormat: function()
+		{
+			return window.external.DateFormat;
+		},
+		
 		// gets the application format string for showing time only
 		// this format string is based on the .NET DateTime class format specifiers
-        getTimeFormat: function()
-        {
-            return window.external.TimeFormat;
-        },
-        
+		getTimeFormat: function()
+		{
+			return window.external.TimeFormat;
+		},
+		
 		// gets the application format string for showing both date and time
 		// this format string is based on the .NET DateTime class format specifiers
-        getDateTimeFormat: function()
-        {
-            return window.external.DateTimeFormat;
-        },
-        
+		getDateTimeFormat: function()
+		{
+			return window.external.DateTimeFormat;
+		},
+		
 		// formats the specified date object to a string showing only the date
 		formatDate: function(date)
 		{
@@ -130,30 +130,30 @@ if(window.external)
 		// obtains a proxy to a RIS web-service
 		getService: function(serviceContractName)
 		{
-		    var innerProxy = window.external.GetServiceProxy(serviceContractName);
-		    var operations = JSML.parse(innerProxy.GetOperationNames());
-		    
-		    var proxy = { _innerProxy: innerProxy };
-		    operations.each(
-		        function(operation)
-		        {
-		            // create camelCase (as opposed to PascalCase) version of the operation name
-		            var ccOperation = operation.slice(0,1).toLowerCase() + operation.slice(1);
-		            
-		            // allow the operation to be invoked via either camel or pascal casing
-		            proxy[operation] = proxy[ccOperation] = 
-		                function(request)
-		                {
-		                    return JSML.parse( this._innerProxy.InvokeOperation(operation, JSML.create(request, "requestData")) );
-		                };
-		        });
-		    return proxy;
+			var innerProxy = window.external.GetServiceProxy(serviceContractName);
+			var operations = JSML.parse(innerProxy.GetOperationNames());
+			
+			var proxy = { _innerProxy: innerProxy };
+			operations.each(
+				function(operation)
+				{
+						// create camelCase (as opposed to PascalCase) version of the operation name
+						var ccOperation = operation.slice(0,1).toLowerCase() + operation.slice(1);
+						
+						// allow the operation to be invoked via either camel or pascal casing
+						proxy[operation] = proxy[ccOperation] = 
+							function(request)
+							{
+								return JSML.parse( this._innerProxy.InvokeOperation(operation, JSML.create(request, "requestData")) );
+							};
+				});
+			return proxy;
 		},
 		
 		// convenience method to get the RIS BrowsePatientDataService, which provides access to a patient's data
 		getPatientDataService: function()
 		{
-		    return this.getService("ClearCanvas.Ris.Application.Common.BrowsePatientData.IBrowsePatientDataService, ClearCanvas.Ris.Application.Common");
+			return this.getService("ClearCanvas.Ris.Application.Common.BrowsePatientData.IBrowsePatientDataService, ClearCanvas.Ris.Application.Common");
 		},
 		
 		// gets the healthcare context in which the page is running
@@ -163,7 +163,7 @@ if(window.external)
 		// check that component's documentation
 		getHealthcareContext: function()
 		{
-		    return JSML.parse(window.external.GetHealthcareContext());
+			return JSML.parse(window.external.GetHealthcareContext());
 		},
 		
 		// returns the value associated with the specified tag
@@ -171,38 +171,43 @@ if(window.external)
 		// in which case this function retrieves the value associated with the tag (key)
 		// the hosting component is responsible for determining the scope of the stored values -
 		// typically they are relative to the HealthcareContext (see getHealthcareContext).
-        getTag: function(tag)
-        {
-            return window.external.GetTag(tag);
-        },
-        
+		getTag: function(tag)
+		{
+			return window.external.GetTag(tag);
+		},
+		
 		// sets the value associated with the specified tag
 		// the hosting component may allow the page to store abritrary key-value pairs,
 		// in which case this function stores the data (value) associated with the tag (key)
 		// the hosting component is responsible for determining the scope of the stored values -
 		// typically they are relative to the HealthcareContext (see getHealthcareContext).
-        setTag: function(tag, data)
-        {
-            window.external.SetTag(tag, data);
-        }
-   };
-    
-    // install global JSML parser filter
-    JSML.setParseFilter(Ris._jsmlParserFilter);
-    
-    // redefine some browser functions to use Ris versions
-    window.confirm = Ris.confirm;
-    window.alert = Ris.alert;
+		setTag: function(tag, data)
+		{
+			window.external.SetTag(tag, data);
+		},
+
+		openPractitionerDetails: function(practitionerJsml)
+		{
+			window.external.OpenPractitionerDetail(practitionerJsml);
+		}
+	};
+	
+	// install global JSML parser filter
+	JSML.setParseFilter(Ris._jsmlParserFilter);
+	
+	// redefine some browser functions to use Ris versions
+	window.confirm = Ris.confirm;
+	window.alert = Ris.alert;
 }
 
 /*
-    Staff class
+	Staff class
 */
 function Staff(id, name, type)
 {
-    this.staffId = id;
-    this.staffName = name;
-    this.staffType = type;
+	this.staffId = id;
+	this.staffName = name;
+	this.staffType = type;
 }
-// override the toString function - this just makes it work seamlessly with the Table view                 
-Staff.prototype.toString = function() { return this.staffName; }           
+// override the toString function - this just makes it work seamlessly with the Table view					
+Staff.prototype.toString = function() { return this.staffName; }			

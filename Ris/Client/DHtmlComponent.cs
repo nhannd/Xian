@@ -30,17 +30,15 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Jsml;
-using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Enterprise.Common;
-using System.Collections;
-using System.Collections.Generic;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -211,6 +209,13 @@ namespace ClearCanvas.Ris.Client
             public void SetTag(string tag, string data)
             {
                 _component.SetTag(tag, data);
+            }
+
+            public void OpenPractitionerDetail(string jsml)
+            {
+                ExternalPractitionerSummary summary = JsmlSerializer.Deserialize<ExternalPractitionerSummary>(jsml);
+                ExternalPractitionerEditorComponent component = new ExternalPractitionerEditorComponent(summary.PractitionerRef);
+                LaunchAsDialog(_component.Host.DesktopWindow, component, SR.TitleExternalPractitioner);
             }
         }
 

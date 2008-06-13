@@ -133,8 +133,24 @@ function createImagingRequestsTable(htmlTable)
 				getValue: function(item) { return item.OrderingFacility.Code; }
 			},
 			{   label: "Ordering Physician",
-				cellType: "text",
-				getValue: function(item) { return Ris.formatPersonName(item.OrderingPractitioner.Name); }
+				cellType: "html",
+				getValue: function(item) 
+				{ 
+					// return "<a href=\"javascript:Ris.openPractitionerDetails('" + JSML.create(item.OrderingPractitioner, "Practitioner") + "')\">" 
+						// + Ris.formatPersonName(item.OrderingPractitioner.Name)
+						// + "</a>"; 
+					return Ris.formatPersonName(item.OrderingPractitioner.Name);
+				}
+			},
+			{
+				label: "Ordering Physician Lookup",
+				cellType: "html",
+				getValue: function(item)
+				{
+					return "<a href=\"javascript:Ris.openPractitionerDetails('" + JSML.create(item.OrderingPractitioner, "Practitioner") + "')\">" 
+						+ "<img src='images/PractitionerDetail.png' border=\"0\"/>"
+						+ "</a>"; 
+				}
 			}
 		 ]);
 		 
