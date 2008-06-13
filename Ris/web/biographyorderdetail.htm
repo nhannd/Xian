@@ -10,6 +10,8 @@
 		<script type="text/javascript" src="js/preview.js"></script>
 		<script type="text/javascript" src="js/layout.js"></script>
 		<script type="text/javascript" >
+			var errorProvider = new ErrorProvider();
+			
 			function onBodyLoad()
 			{
 				scaleWidth();
@@ -62,39 +64,12 @@
 						else
 							Field.show($("CancelReasonSection"), false);
 
-						// build a list of items for the diagnostic service breakdown table
-						var breakdownItems = [];
-						orderDetail.Procedures.each(
-							function(rp)
-							{
-								rp.ModalityProcedureSteps.each(
-									function(mps)
-									{
-										breakdownItems.add(
-											{
-												DiagnosticService: orderDetail.DiagnosticService.Name,
-												Procedure: rp.Type.Name,
-												Step: mps.ProcedureStepName,
-												State: mps.State.Value
-											});
-									});
-							});
-
-						var dsTable = createDiagnosticServiceBreakdownTable($("dsBreakdownTable"));
-						dsTable.bindItems(breakdownItems);
-
 						if(orderDetail.Notes.length)
 							createOrderNotesTable($("orderNotesTable"), orderDetail.Notes);
 						else
 							Field.show($("orderNotesTable"), false);
 
-						if (orderDetail.Procedures.length)
-							createProceduresTable($("proceduresTable"), orderDetail.Procedures);
-						else
-							Field.show($("proceduresTable"), false);
-
-							
-							
+						initProcedureTable(orderDetail.Procedures);
 					}
 				}
 				catch(e)
@@ -102,6 +77,86 @@
 					var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
 					Field.setValue($("myForm"), message);
 				}
+			}
+			
+			function initProcedureTable(procedures)
+			{
+				procedures = procedures || {};
+
+				var table = Table.createTable($("proceduresTable"), { editInPlace: false, flow: false },
+					[
+						{	label: "Procedure",
+							cellType: "html",
+							getValue: function(item) 
+							{
+								createProcedureTable(item);
+								return "";
+							}
+						}
+					]);
+
+				table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+				table.bindItems(procedures);
+			}
+			
+			function createProcedureTable(procedureDetail)
+			{
+				var tableId = procedureDetail.ProcedureRef;
+
+				var el = document.createElement("div"); 
+				el.innerHTML = GetProcedureTableTemplate(tableId); 
+				document.body.appendChild(el);
+
+				var $$ = function(tableId, id) { return $(tableId + id); }
+				Field.setValue($$(tableId, "TypeName"), procedureDetail.Type.Name);
+				Field.setValue($$(tableId, "PerformingFacility"), procedureDetail.PerformingFacility.Name);
+				Field.setValue($$(tableId, "Status"), procedureDetail.Status.Value);
+				Field.setValue($$(tableId, "Laterality"), procedureDetail.Laterality.Value);
+				Field.setValue($$(tableId, "Portable"), procedureDetail.Portable || "False");
+				Field.setValue($$(tableId, "ScheduledStartTime"), Ris.formatDateTime(procedureDetail.ScheduledStartTime));
+				Field.setValue($$(tableId, "CheckInTime"), Ris.formatDateTime(procedureDetail.CheckInTime));
+				Field.setValue($$(tableId, "CheckOutTime"), Ris.formatDateTime(procedureDetail.CheckOutTime));
+				Field.setValue($$(tableId, "StartTime"), Ris.formatDateTime(procedureDetail.StartTime));
+				Field.setValue($$(tableId, "EndTime"), Ris.formatDateTime(procedureDetail.EndTime));
+			}
+			
+			function GetProcedureTableTemplate(tableId)
+			{
+				var tableTemplate = "";
+				tableTemplate += "<table>";
+				tableTemplate += "<tr>";
+				tableTemplate += "	<td class='sectionheading' colspan='4'><div id='" + tableId + "TypeName'/></td>";
+				tableTemplate += "</tr>";
+				tableTemplate += "<tr>";
+				tableTemplate += "	<td width='120' class='propertyname'>PerformingFacility</td>";
+				tableTemplate += "	<td width='200'><div id='" + tableId + "PerformingFacility'/></td>";
+				tableTemplate += "	<td width='120' class='propertyname'>Status</td>";
+				tableTemplate += "	<td width='200'><div id='" + tableId + "Status'/></td>";
+				tableTemplate += "</tr>";
+				tableTemplate += "<tr>";
+				tableTemplate += "	<td width='120' class='propertyname'>Laterality</td>";
+				tableTemplate += "	<td width='200'><div id='" + tableId + "Laterality'/></td>";
+				tableTemplate += "	<td width='120' class='propertyname'>Portable</td>";
+				tableTemplate += "	<td width='200'><div id='" + tableId + "Portable'/></td>";
+				tableTemplate += "</tr>";
+				tableTemplate += "<tr>";
+				tableTemplate += "	<td width='120' class='propertyname'>ScheduledStartTime</td>";
+				tableTemplate += "	<td width='200'><div id='" + tableId + "ScheduledStartTime'/></td>";
+				tableTemplate += "</tr>";
+				tableTemplate += "<tr>";
+				tableTemplate += "	<td width='120' class='propertyname'>StartTime</td>";
+				tableTemplate += "	<td width='200'><div id='" + tableId + "StartTime'/></td>";
+				tableTemplate += "	<td width='120' class='propertyname'>CheckInTime</td>";
+				tableTemplate += "	<td width='200'><div id='" + tableId + "CheckInTime'/></td>";
+				tableTemplate += "</tr>";
+				tableTemplate += "<tr>";
+				tableTemplate += "	<td width='120' class='propertyname'>EndTime</td>";
+				tableTemplate += "	<td width='200'><div id='" + tableId + "EndTime'/></td>";
+				tableTemplate += "	<td width='120' class='propertyname'>CheckOutTime</td>";
+				tableTemplate += "	<td width='200'><div id='" + tableId + "CheckOutTime'/></td>";
+				tableTemplate += "</tr>";
+				tableTemplate += "</table>";
+				return tableTemplate;
 			}
 		</script>
 	</head>
@@ -145,23 +200,8 @@
 				</tr>
 			</table>
 
-			<table width="100%" border="0" id="dsBreakdownTable">
-				<tr><td class="sectionheading" colspan="5">Diagnostic Service Breakdown</td></tr>
-				<tr class="tableheading">
-					<td>Diagnostic Service</td>
-					<td>Procedure</td>
-					<td>Procedure Step</td>
-					<td>Status</td>
-				</tr>
-			</table>
-
-			<table border="0" id="proceduresTable">
-				<tr><td class="sectionheading" colspan="6">Ordered Procedures</td></tr>
-				<tr class="tableheading">
-					<td>Procedure</td>
-					<td>Protocol</td>
-					<td>Code</td>
-				</tr>
+			<table id="proceduresTable"  width="100%">
+			<tr><td class="tableheading"></td></tr>
 			</table>
 
 			<table border="0" id="orderNotesTable">
