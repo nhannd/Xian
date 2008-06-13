@@ -65,18 +65,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		public void _availableItems_DataGridKeyDown(object sender, KeyEventArgs args)
 		{
-			args.Handled = true;
 			if (args.KeyCode.Equals(Keys.Enter))
 			{
+				args.Handled = true;
 				AddSelection(sender, args);
 			}
 		}
 
 		public void _selectedItems_DataGridKeyDown(object sender, KeyEventArgs args)
 		{
-			args.Handled = true;
 			if (args.KeyCode.Equals(Keys.Delete))
 			{
+				args.Handled = true;
 				RemoveSelection(sender, args);
 			}
 		}
@@ -312,5 +312,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         #endregion
+
     }
 }
