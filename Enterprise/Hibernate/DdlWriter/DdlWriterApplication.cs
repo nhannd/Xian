@@ -95,7 +95,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
                 PreProcessor preProcessor = new PreProcessor(cmdLine.CreateIndexes, cmdLine.AutoIndexForeignKeys);
                 preProcessor.Process(store);
 
-                ScriptWriter scriptWriter = new ScriptWriter(store, dialect);
+                ScriptWriter scriptWriter = new ScriptWriter(store, dialect, cmdLine.PopulateEnumerations);
                 scriptWriter.WriteCreateScript(writer);
             }
             catch (Exception e)

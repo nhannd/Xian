@@ -9,6 +9,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
     {
         private bool _autoIndexForeignKeys;
         private bool _createIndexes;
+    	private bool _populateEnumerations = true;	// true by default
         private string _outputFile;
 
         [CommandLineParameter("fki", "Specifies whether to auto-index all foreign keys.  Ignored unless /index is also specified.")]
@@ -25,7 +26,14 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
             set { _createIndexes = value; }
         }
 
-        [CommandLineParameter("out", "Specifies the name of the ouput file.  If omitted, output is written to stdout.")]
+		[CommandLineParameter("enums", "e", "Specifies whether to populate enumerations.")]
+		public bool PopulateEnumerations
+		{
+			get { return _populateEnumerations; }
+			set { _populateEnumerations = value; }
+		}
+
+		[CommandLineParameter("out", "Specifies the name of the ouput file.  If omitted, output is written to stdout.")]
         public string OutputFile
         {
             get { return _outputFile; }

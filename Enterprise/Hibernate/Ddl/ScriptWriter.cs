@@ -56,11 +56,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     /// </summary>
     public class ScriptWriter
     {
-        private List<IDdlScriptGenerator> _generators;
-        private PersistentStore _store;
-        private Dialect _dialect;
+        private readonly List<IDdlScriptGenerator> _generators;
+        private readonly PersistentStore _store;
+        private readonly Dialect _dialect;
 
-        public ScriptWriter(PersistentStore store, Dialect dialect)
+        public ScriptWriter(PersistentStore store, Dialect dialect, bool populateEnums)
         {
             _store = store;
             _dialect = dialect;
@@ -70,9 +70,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
             // the order of generator execution is important, so add the static generators first
             _generators.Add(new RelationalSchemaGenerator());
-            _generators.Add(new EnumValueInsertGenerator());
+			if (populateEnums)
+			{
+				_generators.Add(new EnumValueInsertGenerator());
+			}
 
-            // subsequently we can add extension generators, with uncontrolled ordering
+        	// subsequently we can add extension generators, with uncontrolled ordering
             foreach (IDdlScriptGenerator generator in (new DdlScriptGeneratorExtensionPoint().CreateExtensions()))
             {
                 _generators.Add(generator);
