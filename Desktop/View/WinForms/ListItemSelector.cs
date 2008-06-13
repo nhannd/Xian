@@ -56,9 +56,30 @@ namespace ClearCanvas.Desktop.View.WinForms
         public ListItemSelector()
         {
             InitializeComponent();
+
+			_availableItems.DataGridKeyDown += new KeyEventHandler(_availableItems_DataGridKeyDown);
+			_selectedItems.DataGridKeyDown += new KeyEventHandler(_selectedItems_DataGridKeyDown);
         }
 
         #endregion
+
+		public void _availableItems_DataGridKeyDown(object sender, KeyEventArgs args)
+		{
+			args.Handled = true;
+			if (args.KeyCode.Equals(Keys.Enter))
+			{
+				AddSelection(sender, args);
+			}
+		}
+
+		public void _selectedItems_DataGridKeyDown(object sender, KeyEventArgs args)
+		{
+			args.Handled = true;
+			if (args.KeyCode.Equals(Keys.Delete))
+			{
+				RemoveSelection(sender, args);
+			}
+		}
 
         #region Public Properties
 
@@ -164,6 +185,18 @@ namespace ClearCanvas.Desktop.View.WinForms
             add { _availableItems.SelectionChanged += value; }
             remove { _availableItems.SelectionChanged -= value; }
         }
+
+		public event KeyEventHandler AvailableItemsKeyDown
+		{
+			add { _availableItems.DataGridKeyDown += value; }
+			remove { _availableItems.DataGridKeyDown -= value; }
+		}
+
+		public event KeyEventHandler SelectedItemsKeyDown
+		{
+			add { _selectedItems.DataGridKeyDown += value; }
+			remove { _selectedItems.DataGridKeyDown -= value; }
+		}
 
         #endregion
 

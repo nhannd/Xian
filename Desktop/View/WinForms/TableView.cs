@@ -324,6 +324,15 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+		/// <summary>
+		/// Exposes the <see cref="KeyDown"/> event of the underlying data grid view.
+		/// </summary>
+		public event KeyEventHandler DataGridKeyDown
+		{
+			add { _dataGridView.KeyDown += value; }
+			remove { _dataGridView.KeyDown -= value; }
+		}
+
 
         #endregion
 
@@ -780,8 +789,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (this.DesignMode == false)
             {
-                _toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
-                _textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
+                //_toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
+                //_textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
             }
             else
             {
