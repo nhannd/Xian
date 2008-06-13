@@ -89,74 +89,26 @@
 							cellType: "html",
 							getValue: function(item) 
 							{
-								createProcedureTable(item);
-								return "";
+								// Write values to the hidden procedure template table
+								Field.setValue($("TypeName"), item.Type.Name);
+								Field.setValue($("PerformingFacility"), item.PerformingFacility.Name);
+								Field.setValue($("Status"), item.Status.Value);
+								Field.setValue($("Laterality"), item.Laterality.Value);
+								Field.setValue($("Portable"), item.Portable || "False");
+								Field.setValue($("ScheduledStartTime"), Ris.formatDateTime(item.ScheduledStartTime));
+								Field.setValue($("CheckInTime"), Ris.formatDateTime(item.CheckInTime));
+								Field.setValue($("CheckOutTime"), Ris.formatDateTime(item.CheckOutTime));
+								Field.setValue($("StartTime"), Ris.formatDateTime(item.StartTime));
+								Field.setValue($("EndTime"), Ris.formatDateTime(item.EndTime));
+
+								// retrieve the innerHTML of the template table
+								return Field.getValue($("procedureTableTemplate"));
 							}
 						}
 					]);
 
 				table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				table.bindItems(procedures);
-			}
-			
-			function createProcedureTable(procedureDetail)
-			{
-				var tableId = procedureDetail.ProcedureRef;
-
-				var el = document.createElement("div"); 
-				el.innerHTML = GetProcedureTableTemplate(tableId); 
-				document.body.appendChild(el);
-
-				var $$ = function(tableId, id) { return $(tableId + id); }
-				Field.setValue($$(tableId, "TypeName"), procedureDetail.Type.Name);
-				Field.setValue($$(tableId, "PerformingFacility"), procedureDetail.PerformingFacility.Name);
-				Field.setValue($$(tableId, "Status"), procedureDetail.Status.Value);
-				Field.setValue($$(tableId, "Laterality"), procedureDetail.Laterality.Value);
-				Field.setValue($$(tableId, "Portable"), procedureDetail.Portable || "False");
-				Field.setValue($$(tableId, "ScheduledStartTime"), Ris.formatDateTime(procedureDetail.ScheduledStartTime));
-				Field.setValue($$(tableId, "CheckInTime"), Ris.formatDateTime(procedureDetail.CheckInTime));
-				Field.setValue($$(tableId, "CheckOutTime"), Ris.formatDateTime(procedureDetail.CheckOutTime));
-				Field.setValue($$(tableId, "StartTime"), Ris.formatDateTime(procedureDetail.StartTime));
-				Field.setValue($$(tableId, "EndTime"), Ris.formatDateTime(procedureDetail.EndTime));
-			}
-			
-			function GetProcedureTableTemplate(tableId)
-			{
-				var tableTemplate = "";
-				tableTemplate += "<table>";
-				tableTemplate += "<tr>";
-				tableTemplate += "	<td class='sectionheading' colspan='4'><div id='" + tableId + "TypeName'/></td>";
-				tableTemplate += "</tr>";
-				tableTemplate += "<tr>";
-				tableTemplate += "	<td width='120' class='propertyname'>PerformingFacility</td>";
-				tableTemplate += "	<td width='200'><div id='" + tableId + "PerformingFacility'/></td>";
-				tableTemplate += "	<td width='120' class='propertyname'>Status</td>";
-				tableTemplate += "	<td width='200'><div id='" + tableId + "Status'/></td>";
-				tableTemplate += "</tr>";
-				tableTemplate += "<tr>";
-				tableTemplate += "	<td width='120' class='propertyname'>Laterality</td>";
-				tableTemplate += "	<td width='200'><div id='" + tableId + "Laterality'/></td>";
-				tableTemplate += "	<td width='120' class='propertyname'>Portable</td>";
-				tableTemplate += "	<td width='200'><div id='" + tableId + "Portable'/></td>";
-				tableTemplate += "</tr>";
-				tableTemplate += "<tr>";
-				tableTemplate += "	<td width='120' class='propertyname'>ScheduledStartTime</td>";
-				tableTemplate += "	<td width='200'><div id='" + tableId + "ScheduledStartTime'/></td>";
-				tableTemplate += "</tr>";
-				tableTemplate += "<tr>";
-				tableTemplate += "	<td width='120' class='propertyname'>StartTime</td>";
-				tableTemplate += "	<td width='200'><div id='" + tableId + "StartTime'/></td>";
-				tableTemplate += "	<td width='120' class='propertyname'>CheckInTime</td>";
-				tableTemplate += "	<td width='200'><div id='" + tableId + "CheckInTime'/></td>";
-				tableTemplate += "</tr>";
-				tableTemplate += "<tr>";
-				tableTemplate += "	<td width='120' class='propertyname'>EndTime</td>";
-				tableTemplate += "	<td width='200'><div id='" + tableId + "EndTime'/></td>";
-				tableTemplate += "	<td width='120' class='propertyname'>CheckOutTime</td>";
-				tableTemplate += "	<td width='200'><div id='" + tableId + "CheckOutTime'/></td>";
-				tableTemplate += "</tr>";
-				tableTemplate += "</table>";
-				return tableTemplate;
 			}
 		</script>
 	</head>
@@ -199,9 +151,10 @@
 					<td width="200" colspan="4"><div id="CancelReason"/></td>
 				</tr>
 			</table>
+			<br>
 
 			<table id="proceduresTable"  width="100%">
-			<tr><td class="tableheading"></td></tr>
+			<tr><td class="sectionheading" colspan="4">Ordered Procedures</td></tr>
 			</table>
 
 			<table border="0" id="orderNotesTable">
@@ -212,6 +165,42 @@
 					<td>Author</td>
 				</tr>
 			</table>
+			
+			<div id="procedureTableTemplate" style="display:none">
+				<table>
+				<tr>
+					<td class="sectionheading" colspan="4"><div id="TypeName"/></td>
+				</tr>
+				<tr>
+					<td width="120" class="propertyname">Performing Facility</td>
+					<td width="200"><div id="PerformingFacility"/></td>
+					<td width="120" class="propertyname">Status</td>
+					<td width="200"><div id="Status"/></td>
+				</tr>
+				<tr>
+					<td width="120" class="propertyname">Laterality</td>
+					<td width="200"><div id="Laterality"/></td>
+					<td width="120" class="propertyname">Portable</td>
+					<td width="200"><div id="Portable"/></td>
+				</tr>
+				<tr>
+					<td width="120" class="propertyname">Scheduled Start Time</td>
+					<td width="200"><div id="ScheduledStartTime"/></td>
+				</tr>
+				<tr>
+					<td width="120" class="propertyname">Start Time</td>
+					<td width="200"><div id="StartTime"/></td>
+					<td width="120" class="propertyname">Check-In Time</td>
+					<td width="200"><div id="CheckInTime"/></td>
+				</tr>
+				<tr>
+					<td width="120" class="propertyname">End Time</td>
+					<td width="200"><div id="EndTime"/></td>
+					<td width="120" class="propertyname">Check-Out Time</td>
+					<td width="200"><div id="CheckOutTime"/></td>
+				</tr>
+				</table>
+			</div>
 		</form>
 	</body>
 </html>
