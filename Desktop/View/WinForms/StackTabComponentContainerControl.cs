@@ -112,8 +112,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OnControlPageChanged(TabbedGroups tg, Crownwood.DotNetMagic.Controls.TabPage selectedPage)
 		{
-			if (selectedPage != null)
-				ChangeComponentPageFromLeaf(tg.LeafForPage(selectedPage));
+			if (_component.StackStyle == StackStyle.ShowMultiple)
+			{
+				if (selectedPage != null)
+					ChangeComponentPageFromLeaf(tg.LeafForPage(selectedPage));
+			}
 		}
 
 		private void OnComponentCurrentPageChanged(object sender, EventArgs e)
@@ -164,7 +167,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 				else
 				{
 					if (tgl == _stackTabControl.RootSequence[0])
+					{
 						OpenLeaf(tgl, 100);
+						HighlightLeaf(tgl, true);
+					}
 					else
 						CloseLeaf(tgl);
 				}

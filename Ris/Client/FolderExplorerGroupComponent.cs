@@ -160,9 +160,7 @@ namespace ClearCanvas.Ris.Client
 		public FolderExplorerGroupComponent(IExtensionPoint folderExplorerExtensionPoint, FolderContentsComponent contentComponent)
 		{
 			_contentComponent = contentComponent;
-			_stackTabComponent = new StackTabComponentContainer(
-				HomePageSettings.Default.ShowMultipleFolderSystems ? StackStyle.ShowMultiple : StackStyle.ShowOneOnly,
-				HomePageSettings.Default.OpenAllFolderSystemsInitially);
+			_stackTabComponent = new StackTabComponentContainer(StackStyle.ShowOneOnly, false);
 
 			_folderExplorerComponents = new Dictionary<IFolderSystem, FolderExplorerComponent>();
 
