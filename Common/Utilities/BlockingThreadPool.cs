@@ -34,6 +34,102 @@ using System.Threading;
 
 namespace ClearCanvas.Common.Utilities
 {
+	#region ItemProcessingThreadPool class
+
+	/// <summary>
+	/// A strongly typed delegate for use with <see cref="ItemProcessingThreadPool{T}"/>.
+	/// </summary>
+	/// <param name="item">A specific item to be passed to the delegate.</param>
+	public delegate void ProcessItemDelegate<T>(T item);
+
+	/// <summary>
+	/// A class used with <see cref="ItemProcessingThreadPool{T}"/> to pass an item to a delgate
+	/// </summary>
+	public class ProcessItemCommand<T>
+	{
+		private readonly T _parameter;
+		private readonly ProcessItemDelegate<T> _del;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="parameter">The item to pass to <paramref name="del"/></param>
+		/// <param name="del">The delegate to call.</param>
+		public ProcessItemCommand(T parameter, ProcessItemDelegate<T> del)
+		{
+			_parameter = parameter;
+			_del = del;
+		}
+
+		/// <summary>
+		/// Execute the delegate
+		/// </summary>
+		public void Execute()
+		{
+			_del(_parameter);
+		}
+	}
+
+	/// <summary>
+	/// An implementation of <see cref="BlockingThreadPool{T}"/> that processes <see cref="ProcessItemDelegate{T}"/>s.
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// ItemProcessingThreadPool allows for the creation of a thread pools for passing a strongly typed
+	/// item to the delegate.
+	/// </para>
+	/// </remarks>
+	/// <typeparam name="T">A specific type for passing to the delegate.</typeparam>
+	public class ItemProcessingThreadPool<T> : BlockingThreadPool<ProcessItemCommand<T>>
+	{
+		/// <summary>
+		/// Adds an item to the queue.
+		/// </summary>
+		/// <param name="del">The delegate to enqueue.</param>
+		/// <param name="parameter">The parameter to pass to the delegate when it is executed.</param>
+		public void Enqueue(T parameter, ProcessItemDelegate<T> del)
+		{
+			Enqueue(new ProcessItemCommand<T>(parameter, del));
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="concurrency">Defines the number of concurrent threads that will process enqueued items.</param>
+		/// <param name="allowInactiveAdd">Specifies whether or not items can be added while the threads are not running.</param>
+		public ItemProcessingThreadPool(int concurrency, bool allowInactiveAdd)
+			: base(concurrency, allowInactiveAdd)
+		{
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="concurrency">Defines the number of concurrent threads that will process enqueued items.</param>
+		public ItemProcessingThreadPool(int concurrency)
+			: base(concurrency)
+		{
+		}
+
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
+		protected ItemProcessingThreadPool()
+		{
+		}
+
+		/// <summary>
+		/// Called by one of the threads in the pool when a <see cref="ProcessItemDelegate{T}"/> is about to be processed.
+		/// </summary>
+		/// <param name="parm">The delegate that will be executed by this method call.</param>
+		protected override void ProcessItem(ProcessItemCommand<T> parm)
+		{
+			//execute the delegate.
+			parm.Execute();
+		}
+	}
+	#endregion
+
 	#region SimpleBlockingThreadPool class
 
 	/// <summary>
@@ -69,7 +165,6 @@ namespace ClearCanvas.Common.Utilities
 		/// Protected constructor.
 		/// </summary>
 		protected SimpleBlockingThreadPool()
-			: base()
 		{
 		}
 
@@ -97,10 +192,12 @@ namespace ClearCanvas.Common.Utilities
 	public abstract class BlockingThreadPool<T> : ThreadPoolBase
 		where T : class
 	{
-		private BlockingQueue<T> _blockingQueue;
+		private readonly BlockingQueue<T> _blockingQueue;
 		private bool _allowInactiveAdd;
 		private volatile int _sleepTime;
-	
+		private int _activeCount = 0;
+		private readonly object _syncLock = new object();
+
 		/// <summary>
 		/// Protected constructor.
 		/// </summary>
@@ -139,7 +236,7 @@ namespace ClearCanvas.Common.Utilities
 			get { return _allowInactiveAdd; }
 			set
 			{
-				if (this.Active)
+				if (Active)
 					throw new InvalidOperationException(String.Format(SR.ExceptionThreadPoolMustBeStopped, "AllowInactiveAdd"));
 
 				_allowInactiveAdd = value;
@@ -161,6 +258,34 @@ namespace ClearCanvas.Common.Utilities
 		public int QueueCount
 		{
 			get { return _blockingQueue.Count; }
+		}
+
+		/// <summary>
+		/// The current number of active threads in the queue.
+		/// </summary>
+		public int ActiveCount
+		{
+			get
+			{
+				lock (_syncLock)
+				{
+					return _activeCount;
+				}
+			}
+		}
+
+		/// <summary>
+		/// The current number of active threads and queued delegates.
+		/// </summary>
+		public int QueueAndActiveCount
+		{
+			get
+			{
+				lock(_syncLock)
+				{
+					return _activeCount + QueueCount;
+				}
+			}
 		}
 
 		/// <summary>
@@ -209,7 +334,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <param name="item"></param>
 		public void Enqueue(T item)
 		{
-			if (!_allowInactiveAdd && !this.Active)
+			if (!_allowInactiveAdd && !Active)
 				throw new InvalidOperationException(SR.ExceptionThreadPoolNotStarted);
 
 			_blockingQueue.Enqueue(item);
@@ -226,11 +351,16 @@ namespace ClearCanvas.Common.Utilities
 				bool queueEmpty = !_blockingQueue.Dequeue(out item);
 
 				if (!queueEmpty)
+				{
+					lock (_syncLock) { _activeCount++; }
+
 					ProcessItem(item);
 
-				if (base.State == StartStopState.Stopping)
+					lock (_syncLock) { _activeCount--; }
+				}
+				if (State == StartStopState.Stopping)
 				{
-					if (queueEmpty || !base.CompleteBeforeStop)
+					if (queueEmpty || !CompleteBeforeStop)
 						break;
 				}
 
