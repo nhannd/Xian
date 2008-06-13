@@ -47,11 +47,10 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 
         public static void DeleteIfEmpty(string path)
         {
-            DirectoryInfo dir = Directory.GetParent(path);
-            if (dir.Exists)
+            if (Directory.Exists(path))
             {
-                if (dir.GetFiles().Length == 0 && dir.GetDirectories().Length == 0)
-                    dir.Delete(true);
+                if (Directory.GetFiles(path).Length == 0 && Directory.GetDirectories(path).Length == 0)
+                    Directory.Delete(path, true);
             }
         }
 

@@ -13,13 +13,14 @@ using ClearCanvas.ImageServer.Common.Utilities;
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 {
     /// <summary>
-    /// Command class to update study files
+    /// Command class to update study folder in the filesystem.
     /// </summary>
     /// <remarks>
-    /// This class updates the contents in the study folder and moves the folder to the
-    /// appropriate location if necessary.
+    /// This class updates the contents in the study folder and moves it to an 
+    /// appropriate location if necessary. It uses <see cref="IActionItem{EditStudyContext}"/> plugins
+    /// as part of its operation to actual update the contents of the study dicom files. 
     /// </remarks>
-    internal class StudyFilesUpdateCommand : EditStudyActionCommandBase
+    internal class StudyFolderUpdateCommand : EditStudyActionCommandBase
     {
         #region Private Members
         private readonly IActionSet<EditStudyContext> _action = null;
@@ -28,12 +29,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         #region Constructors
         /// <summary>
-        /// Creates an instance of <see cref="StudyFilesUpdateCommand"/>
+        /// Creates an instance of <see cref="StudyFolderUpdateCommand"/>
         /// </summary>
         /// <param name="description"></param>
         /// <param name="context"></param>
         /// <param name="actionNode"></param>
-        public StudyFilesUpdateCommand(string description, EditStudyContext context, XmlElement actionNode)
+        public StudyFolderUpdateCommand(string description, EditStudyContext context, XmlElement actionNode)
             : base(description, context)
         {
             Platform.CheckForNullReference(actionNode, "actionNode");
@@ -85,9 +86,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
             string originalStudyFolder = Context.OriginalStorageLocation.GetStudyPath();
             string newStudyFolder = Directory.GetParent(DesinationStudyFolder).FullName;
-
             
             Directory.Move(originalStudyFolder, originalStudyFolder + ".tobedeleted");
+
             _originalFilesModified = true; 
             
             if (!Directory.Exists(newStudyFolder))

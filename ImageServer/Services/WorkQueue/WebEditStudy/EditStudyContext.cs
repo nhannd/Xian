@@ -57,6 +57,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         private StudyXml _newStudyXml;
         #endregion Private members
 
+        #region Public Properties
+
         /// <summary>
         /// The <see cref="Model.WorkQueue"/> item being processed
         /// </summary>
@@ -165,5 +167,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             get { return _updateContext; }
             set { _updateContext = value; }
         }
+
+        #endregion
+
     }
 }

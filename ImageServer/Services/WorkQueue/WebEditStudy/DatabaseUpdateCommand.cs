@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -19,6 +20,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         public DatabaseUpdateCommand(string description, EditStudyContext context)
             : base(description, context)
         {
+            Platform.CheckForNullReference(context, "context");
         }
         #endregion
 

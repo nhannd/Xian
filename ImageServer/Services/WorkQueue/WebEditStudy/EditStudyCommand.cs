@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             if (Context!=null)
             {
 
-                StudyFilesUpdateCommand updatefiles = new StudyFilesUpdateCommand("Study Files Update Command", Context, _actionNode);
+                StudyFolderUpdateCommand updatefiles = new StudyFolderUpdateCommand("Study Files Update Command", Context, _actionNode);
                 DatabaseUpdateCommand dbUpdateCommand = new DatabaseUpdateCommand("Database Update Command", Context);
                 dbUpdateCommand.Context = Context;
 
@@ -110,7 +110,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                     throw new ApplicationException(_processor.FailureReason); // this will cause the caller to call Undo()
                 
             }
-
         }
 
 

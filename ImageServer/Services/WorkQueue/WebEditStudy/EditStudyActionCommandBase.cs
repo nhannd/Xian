@@ -4,24 +4,9 @@ using ClearCanvas.ImageServer.Common;
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 {
     /// <summary>
-    /// Defines the interface of study editting action commands.
+    /// Base command class for actions in a study edit operation.
     /// </summary>
-    public interface IEditStudyActionCommand
-    {
-        /// <summary>
-        /// Gets or sets the context of the command.
-        /// </summary>
-        EditStudyContext Context
-        {
-            get;
-            set;
-        }
-    }
-
-    /// <summary>
-    /// Base class for study editting action commands
-    /// </summary>
-    public abstract class EditStudyActionCommandBase : ServerCommand, IEditStudyActionCommand
+    public abstract class EditStudyActionCommandBase : ServerCommand
     {
         #region Private Memeber
         private EditStudyContext _context = null;
