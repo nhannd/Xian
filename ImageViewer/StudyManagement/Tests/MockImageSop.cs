@@ -146,6 +146,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 				return new PixelSpacing(1, 1);
 			}
 		}
+
+		public override void UnloadPixelData()
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
 	}
 
 	// This mock IImageSop only implements the bare minimum of the overridden properties
