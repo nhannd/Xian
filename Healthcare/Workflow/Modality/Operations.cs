@@ -29,141 +29,137 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Workflow;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Workflow.Modality
 {
-    public abstract class ModalityOperation
-    {
-        protected void UpdateCheckInStep(Procedure rp, bool procedureAborted, IWorkflow workflow)
-        {
-            bool allMpsScheduled = rp.ModalityProcedureSteps.TrueForAll(
-                delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.SC; });
+	public abstract class ModalityOperation
+	{
+		protected void UpdateCheckInStep(Procedure rp, bool procedureAborted, IWorkflow workflow)
+		{
+			bool allMpsScheduled = rp.ModalityProcedureSteps.TrueForAll(
+				delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.SC; });
 
-            bool allMpsTerminated = rp.ModalityProcedureSteps.TrueForAll(
-                delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
+			bool allMpsTerminated = rp.ModalityProcedureSteps.TrueForAll(
+				delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
 
-            // auto- check-in/check-out
-            // Note: this behaviour may need to be disabled in future - ideally check-in/check-out should be done
-            // explicitly by the user
-            if (allMpsTerminated)
-            {
-                // auto check-out
-                rp.ProcedureCheckIn.CheckOut();
-            }
-            else if (!allMpsScheduled)
-            {
-                // check-in this procedure, since some mps has started
-                rp.ProcedureCheckIn.CheckIn();
-            }
-        }
-    }
+			// auto- check-in/check-out
+			// Note: this behaviour may need to be disabled in future - ideally check-in/check-out should be done
+			// explicitly by the user
+			if (allMpsTerminated)
+			{
+				// auto check-out
+				rp.ProcedureCheckIn.CheckOut();
+			}
+			else if (!allMpsScheduled)
+			{
+				// check-in this procedure, since some mps has started
+				rp.ProcedureCheckIn.CheckIn();
+			}
+		}
+	}
 
-    public class StartModalityProcedureStepsOperation : ModalityOperation
-    {
-        public ModalityPerformedProcedureStep Execute(IList<ModalityProcedureStep> modalitySteps, Staff technologist, IWorkflow workflow, IPersistenceContext context)
-        {
-            if (modalitySteps.Count == 0)
-                throw new WorkflowException("At least one procedure step is required.");
+	public class StartModalityProcedureStepsOperation : ModalityOperation
+	{
+		public ModalityPerformedProcedureStep Execute(IList<ModalityProcedureStep> modalitySteps, Staff technologist, IWorkflow workflow, IPersistenceContext context)
+		{
+			if (modalitySteps.Count == 0)
+				throw new WorkflowException("At least one procedure step is required.");
 
-            // validate that each mps being started is being performed on the same modality
-            if (!CollectionUtils.TrueForAll(modalitySteps,
-                delegate(ModalityProcedureStep step) { return step.Modality.Equals(modalitySteps[0].Modality); }))
-            {
-                throw new WorkflowException("Procedure steps cannot be started together because they are not on the same modality.");
-            }
-            
-            // create an mpps
-            ModalityPerformedProcedureStep mpps = new ModalityPerformedProcedureStep();
-            context.Lock(mpps, DirtyState.New);
+			// validate that each mps being started is being performed on the same modality
+			if (!CollectionUtils.TrueForAll(modalitySteps,
+				delegate(ModalityProcedureStep step) { return step.Modality.Equals(modalitySteps[0].Modality); }))
+			{
+				throw new WorkflowException("Procedure steps cannot be started together because they are not on the same modality.");
+			}
 
-            foreach (ModalityProcedureStep mps in modalitySteps)
-            {
-                mps.Start(technologist);
-                mps.AddPerformedStep(mpps);
+			// create an mpps
+			ModalityPerformedProcedureStep mpps = new ModalityPerformedProcedureStep();
+			context.Lock(mpps, DirtyState.New);
 
-                UpdateCheckInStep(mps.Procedure, false, workflow);
-            }
+			foreach (ModalityProcedureStep mps in modalitySteps)
+			{
+				mps.Start(technologist);
+				mps.AddPerformedStep(mpps);
 
-            // Create Documentation Step for each RP that has an MPS started by this service call
-            foreach (ModalityProcedureStep step in modalitySteps)
-            {
-                if (step.Procedure.DocumentationProcedureStep == null)
-                {
-                    ProcedureStep docStep = new DocumentationProcedureStep(step.Procedure);
-                    docStep.Start(technologist);
-                    context.Lock(docStep, DirtyState.New);
-                }
-            }
+				UpdateCheckInStep(mps.Procedure, false, workflow);
+			}
 
-            return mpps;
-        }
-    }
+			// Create Documentation Step for each RP that has an MPS started by this service call
+			foreach (ModalityProcedureStep step in modalitySteps)
+			{
+				if (step.Procedure.DocumentationProcedureStep == null)
+				{
+					ProcedureStep docStep = new DocumentationProcedureStep(step.Procedure);
+					docStep.Start(technologist);
+					context.Lock(docStep, DirtyState.New);
+				}
+			}
 
-    public class DiscontinueModalityProcedureStepOperation : ModalityOperation
-    {
-        public void Execute(ModalityProcedureStep mps, bool procedureAborted, IWorkflow workflow)
-        {
-            mps.Discontinue();
-            UpdateCheckInStep(mps.Procedure, procedureAborted, workflow);
-        }
-    }
+			return mpps;
+		}
+	}
 
-    public class CompleteModalityPerformedProcedureStepOperation : ModalityOperation
-    {
-        public void Execute(ModalityPerformedProcedureStep mpps, IWorkflow workflow)
-        {
-            // complete mpps
-            mpps.Complete();
+	public class DiscontinueModalityProcedureStepOperation : ModalityOperation
+	{
+		public void Execute(ModalityProcedureStep mps, bool procedureAborted, IWorkflow workflow)
+		{
+			mps.Discontinue();
+			UpdateCheckInStep(mps.Procedure, procedureAborted, workflow);
+		}
+	}
 
-            ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ModalityProcedureStep>(mpps.Activities);
-            Order order = oneMps.Procedure.Order;
+	public class CompleteModalityPerformedProcedureStepOperation : ModalityOperation
+	{
+		public void Execute(ModalityPerformedProcedureStep mpps, IWorkflow workflow)
+		{
+			// complete mpps
+			mpps.Complete();
 
-            // try to complete any mps that have all mpps completed
-            foreach (Procedure rp in order.Procedures)
-            {
-                foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
-                {
-                    bool allPerformedStepsDone = CollectionUtils.TrueForAll<PerformedProcedureStep>(mps.PerformedSteps,
-                            delegate(PerformedProcedureStep pps) { return pps.IsTerminated; });
+			ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ModalityProcedureStep>(mpps.Activities);
+			Order order = oneMps.Procedure.Order;
 
-                    if (!mps.IsTerminated && allPerformedStepsDone)
-                        mps.Complete();
+			// try to complete any mps that have all mpps completed
+			foreach (Procedure rp in order.Procedures)
+			{
+				foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
+				{
+					bool allPerformedStepsDone =
+						!mps.PerformedSteps.IsEmpty
+						&& CollectionUtils.TrueForAll<PerformedProcedureStep>(mps.PerformedSteps,
+							delegate(PerformedProcedureStep pps) { return pps.IsTerminated; });
 
-                    UpdateCheckInStep(mps.Procedure, false, workflow);
-                }
-            }
-        }
-    }
+					if (!mps.IsTerminated && allPerformedStepsDone)
+						mps.Complete();
 
-    public class DiscontinueModalityPerformedProcedureStepOperation : ModalityOperation
-    {
-        public void Execute(ModalityPerformedProcedureStep mpps, IWorkflow workflow)
-        {
-            mpps.Discontinue();
+					UpdateCheckInStep(mps.Procedure, false, workflow);
+				}
+			}
+		}
+	}
 
-            foreach (ModalityProcedureStep mps in mpps.Activities)
-            {
-                // Any MPS can have multiple MPPS's, so discontinue the MPS only if all MPPS's are discontinued
-                if (mps.PerformedSteps.Count > 1)
-                {
-                    bool allMppsDiscontinued = CollectionUtils.TrueForAll<PerformedProcedureStep>(mps.PerformedSteps,
-                            delegate(PerformedProcedureStep pps) { return pps.State == PerformedStepStatus.DC; });
+	public class DiscontinueModalityPerformedProcedureStepOperation : ModalityOperation
+	{
+		public void Execute(ModalityPerformedProcedureStep mpps, IWorkflow workflow)
+		{
+			mpps.Discontinue();
 
-                    if (allMppsDiscontinued)
-                        mps.Discontinue();
-                }
-            }
-        }
-    }
+			foreach (ModalityProcedureStep mps in mpps.Activities)
+			{
+				// Any MPS can have multiple MPPS's, so discontinue the MPS only if all MPPS's are discontinued
+				if (mps.PerformedSteps.Count > 1)
+				{
+					bool allMppsDiscontinued = CollectionUtils.TrueForAll<PerformedProcedureStep>(mps.PerformedSteps,
+							delegate(PerformedProcedureStep pps) { return pps.State == PerformedStepStatus.DC; });
+
+					if (allMppsDiscontinued)
+						mps.Discontinue();
+				}
+			}
+		}
+	}
 
 }
