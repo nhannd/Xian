@@ -19,6 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\ClearCanvas.ImageViewer.Clipboard.XML</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -48,8 +49,16 @@
     <Compile Include="ClipboardTool.cs" />
     <Compile Include="CopyToClipboard\CopySubsetToClipboardComponent.cs" />
     <Compile Include="IClipboardToolContext.cs" />
+    <Compile Include="ImageExport\AviCodec.cs" />
+    <Compile Include="ImageExport\AviExportAdvancedComponent.cs" />
     <Compile Include="ImageExport\AviExportComponent.cs" />
     <Compile Include="ImageExport\Avi.cs" />
+    <Compile Include="ImageExport\AviExportSettings.cs" />
+    <Compile Include="ImageExport\AviExportSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>AviExportSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ImageExport\AviVideoStreamWriter.cs" />
     <Compile Include="ImageExport\ExportToImageTool.cs" />
     <Compile Include="DeleteAllClipboardItemsTool.cs" />
@@ -132,6 +141,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="ImageExport\AviExportSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>AviExportSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ImageExport\ImageExportSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ImageExportSettings.Designer.cs</LastGenOutput>

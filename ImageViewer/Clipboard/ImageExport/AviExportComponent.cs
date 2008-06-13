@@ -31,12 +31,13 @@
 
 #pragma warning disable 0419,1574,1587,1591
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using System;
+using System.Runtime.InteropServices;
 
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {
@@ -48,6 +49,8 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 	[AssociateView(typeof(AviExportComponentViewExtensionPoint))]
 	public class AviExportComponent : ApplicationComponent
 	{
+		#region Private Fields
+
 		private static IShelf _progressComponentShelf;
 
 		private volatile ClipboardItem _clipboardItem;
@@ -55,13 +58,23 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		private volatile int _frameRate = 20;
 		private volatile ExportOption _exportOption;
 		private volatile float _scale = 1;
-		
+
+		private readonly List<Avi.Codec> _availableCodecs;
+		private Avi.Codec _selectedCodec;
+		private bool _useDefaultQuality;
+		private int _quality;
+
 		private volatile Exception _error;
+
+		#endregion
 
 		private AviExportComponent(ClipboardItem clipboardItem)
 		{
 			_clipboardItem = clipboardItem;
+			_availableCodecs = new List<Avi.Codec>();
 		}
+
+		#region Private Properties
 
 		private IDisplaySet DisplaySet
 		{
@@ -73,13 +86,24 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			get { return DisplaySet.PresentationImages.Count; }	
 		}
 
-		public override void Start()
+		private Avi.Codec SelectedCodec
 		{
-			_exportOption = (ExportOption)ImageExportSettings.Default.SelectedVideoExportOption;
-			_frameRate = ImageExportSettings.Default.SelectedVideoExportFrameRate;
-
-			base.Start();
+			get { return _selectedCodec; }
 		}
+
+		private bool UseDefaultQuality
+		{
+			get { return _useDefaultQuality; }
+			set
+			{
+				if (!_selectedCodec.SupportsQuality)
+					value = true;
+
+				_useDefaultQuality = value;
+			}
+		}
+
+		#endregion
 
 		#region Presentation Model
 
@@ -174,6 +198,23 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
+		public void ShowAdvanced()
+		{
+			AviExportAdvancedComponent component = new AviExportAdvancedComponent(_availableCodecs);
+			component.SelectedCodec = _selectedCodec;
+			component.Quality = _quality;
+			component.UseDefaultQuality = UseDefaultQuality;
+
+			if (ApplicationComponentExitCode.Accepted != LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleAdvancedOptions))
+				return;
+
+			_selectedCodec = component.SelectedCodec;
+			_quality = component.Quality;
+			UseDefaultQuality = component.UseDefaultQuality;
+
+			SaveAdvancedSettings();
+		}
+
 		public void Accept()
 		{
 			if (HasValidationErrors)
@@ -182,10 +223,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 			else
 			{
-				ImageExportSettings.Default.SelectedVideoExportOption = (int) _exportOption;
-				ImageExportSettings.Default.SelectedVideoExportFrameRate = _frameRate;
-				ImageExportSettings.Default.Save();
-
+				SaveSettings();
 				ExitCode = ApplicationComponentExitCode.Accepted;
 				Host.Exit();
 			}
@@ -219,14 +257,20 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 
 			AviExportComponent component = new AviExportComponent(clipboardItem);
-			if (ApplicationComponentExitCode.Accepted !=
-				ApplicationComponent.LaunchAsDialog(desktopWindow, component, SR.TitleExportToVideo))
+			component.LoadSettings();
+			if (component.SelectedCodec == null)
 			{
+				desktopWindow.ShowMessageBox(SR.MessageNoAcceptableCodecsInstalled, MessageBoxActions.Ok);
 				return;
 			}
 
+			if (ApplicationComponentExitCode.Accepted != LaunchAsDialog(desktopWindow, component, SR.TitleExportToVideo))
+				return;
+
 			component.Export();
 		}
+
+		#region Export
 
 		private void Export()
 		{
@@ -309,8 +353,11 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			exportParams.ExportOption = _exportOption;
 			exportParams.DisplayRectangle = _clipboardItem.DisplayRectangle;
 
-			using (AviVideoStreamWriter writer = new AviVideoStreamWriter())
+			using (Avi.VideoStreamWriter writer = new Avi.VideoStreamWriter(_selectedCodec))
 			{
+				if (!UseDefaultQuality)
+					writer.Quality = _quality;
+
 				for (int i = 0; i < NumberOfImages; ++i)
 				{
 					if (context != null && context.CancelRequested)
@@ -330,8 +377,12 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 					{
 						if (!writer.IsOpen)
 						{
-							writer.Width = bitmap.Width;
-							writer.Height = bitmap.Height;
+							//many codecs (like DivX) expect width and/or height to be divisible by 4.
+							int width = NormalizeDimension(bitmap.Width);
+							int height = NormalizeDimension(bitmap.Height);
+
+							writer.Width = width;
+							writer.Height = height;
 							writer.FrameRate = this.FrameRate;
 
 							writer.Open(this.FilePath);
@@ -351,5 +402,76 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			int percent = Math.Min((int)(currentStep / (float)NumberOfImages * 100), 100);
 			context.ReportProgress(new BackgroundTaskProgress(percent, message));
 		}
+
+		#endregion
+
+		#region Private Methods
+
+		private void LoadSettings()
+		{
+			_exportOption = (ExportOption)AviExportSettings.Default.ExportOption;
+			_frameRate = AviExportSettings.Default.FrameRate;
+
+			_selectedCodec = Avi.Codec.GetInstalledCodec(AviExportSettings.Default.PreferredCodecFccCode);
+
+			_availableCodecs.AddRange(GetAvailiableCodecs());
+			if (!_availableCodecs.Contains(_selectedCodec))
+				_selectedCodec = Avi.Codec.Find(GetInputFormat(), null); //use whatever the OS provides.
+
+			_quality = AviExportSettings.Default.Quality;
+			UseDefaultQuality = AviExportSettings.Default.UseDefaultQuality;
+		}
+
+		private void SaveSettings()
+		{
+			AviExportSettings.Default.ExportOption = (int)_exportOption;
+			AviExportSettings.Default.FrameRate = _frameRate;
+
+			AviExportSettings.Default.Save();
+		}
+
+		private void SaveAdvancedSettings()
+		{
+			AviExportSettings.Default.PreferredCodecFccCode = _selectedCodec.FourCCCode;
+			AviExportSettings.Default.UseDefaultQuality = UseDefaultQuality;
+			AviExportSettings.Default.Quality = _quality;
+
+			AviExportSettings.Default.Save();
+		}
+
+		private IEnumerable<Avi.Codec> GetAvailiableCodecs()
+		{
+			Avi.BITMAPINFOHEADER header = GetInputFormat();
+
+			foreach(Avi.Codec codec in Avi.Codec.GetInstalledCodecs())
+			{
+				if (codec.CanCompress(header))
+					yield return codec;
+			}
+		}
+
+		private static Avi.BITMAPINFOHEADER GetInputFormat()
+		{
+			Avi.BITMAPINFOHEADER format = new Avi.BITMAPINFOHEADER();
+			format.biSize = Marshal.SizeOf(format);
+			format.biPlanes = 1;
+			format.biBitCount = 24;
+			format.biCompression = 0; //RGB
+			format.biHeight = 512; //use 512x512 just to get the available codecs.
+			format.biWidth = 512;
+			format.biSizeImage = 3*format.biWidth*format.biHeight;
+			return format;
+		}
+
+		private static int NormalizeDimension(int dimension)
+		{
+			int offset = dimension%4;
+			if (offset == 0)
+				return dimension;
+
+			return dimension + (4 - offset);
+		}
+
+		#endregion
 	}
 }

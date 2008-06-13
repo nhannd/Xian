@@ -376,6 +376,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There are no acceptable video codecs installed..
+        /// </summary>
+        internal static string MessageNoAcceptableCodecsInstalled {
+            get {
+                return ResourceManager.GetString("MessageNoAcceptableCodecsInstalled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The interval value is invalid..
         /// </summary>
         internal static string MessageRangeIntervalInvalid {
@@ -408,6 +417,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         internal static string MessageVideoExportStillRunning {
             get {
                 return ResourceManager.GetString("MessageVideoExportStillRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Advanced Options.
+        /// </summary>
+        internal static string TitleAdvancedOptions {
+            get {
+                return ResourceManager.GetString("TitleAdvancedOptions", resourceCulture);
             }
         }
         

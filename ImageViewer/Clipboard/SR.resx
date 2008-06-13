@@ -222,6 +222,9 @@
   <data name="MessageInvalidFilePath" xml:space="preserve">
     <value>The specified file path is invalid.</value>
   </data>
+  <data name="MessageNoAcceptableCodecsInstalled" xml:space="preserve">
+    <value>There are no acceptable video codecs installed.</value>
+  </data>
   <data name="MessageRangeIntervalInvalid" xml:space="preserve">
     <value>The interval value is invalid.</value>
   </data>
@@ -233,6 +236,9 @@
   </data>
   <data name="MessageVideoExportStillRunning" xml:space="preserve">
     <value>Another video is currently being created.  You must wait until it completes to create another.</value>
+  </data>
+  <data name="TitleAdvancedOptions" xml:space="preserve">
+    <value>Advanced Options</value>
   </data>
   <data name="TitleClipboard" xml:space="preserve">
     <value>Clipboard</value>

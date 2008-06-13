@@ -8,420 +8,410 @@
  */
 
 using System;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using ClearCanvas.Common;
-using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {
-	internal class AviVideoStreamWriterException : Exception
+	internal partial class Avi
 	{
-		internal AviVideoStreamWriterException(string message)
-			: base(message)
+		public class NoCodecFoundException : VideoStreamWriterException
 		{
-		}
-	}
-
-	internal class AviVideoStreamWriter : IDisposable
-	{
-		private int _aviFileRef = 0;
-		private IntPtr _aviStreamRef = IntPtr.Zero;
-		private IntPtr _aviCompressedStreamRef = IntPtr.Zero;
-
-		private bool _initialized = false;
-		private string _fileName;
-
-		private int _width = 256;
-		private int _height = 256;
-		private int _quality = -1;
-		private int _frameRate = 20;
-
-		private int _frameCount = 0;
-
-		public AviVideoStreamWriter()
-		{
-		}
-
-		~AviVideoStreamWriter()
-		{
-			try
+			internal NoCodecFoundException(string message)
+				: base(message)
 			{
-				Close();
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
 			}
 		}
 
-		private int FrameSize
+		public class VideoStreamWriterException : Exception
 		{
-			get { return _width * _height * 4; }
-		}
-
-		#region Public Properties
-
-		public int Width
-		{
-			get { return _width; }
-			set
+			internal VideoStreamWriterException(string message)
+				: base(message)
 			{
-				Platform.CheckPositive(value, "Width");
-				CheckNotOpen();
-				_width = value;
 			}
 		}
 
-		public int Height
+		public class VideoStreamWriter : IDisposable
 		{
-			get { return _height; }
-			set
+			private readonly Codec _codec;
+
+			private int _aviFileRef = 0;
+			private IntPtr _aviStreamRef = IntPtr.Zero;
+			private IntPtr _aviCompressedStreamRef = IntPtr.Zero;
+
+			private bool _initialized = false;
+			private string _fileName;
+
+			private int _width = 512;
+			private int _height = 512;
+			private int _quality = -1;
+			private int _frameRate = 20;
+
+			private int _frameCount = 0;
+
+			public VideoStreamWriter(Codec codec)
 			{
-				Platform.CheckPositive(value, "Height");
-				CheckNotOpen();
-				_height = value;
-			}
-		}
-
-		public int Quality
-		{
-			get { return _quality; }
-			set
-			{
-				Platform.CheckPositive(value, "Quality");
-				CheckNotOpen(); 
-				_quality = value;
-			}
-		}
-
-		public int FrameRate
-		{
-			get { return _frameRate; }
-			set
-			{
-				Platform.CheckPositive(value, "FrameRate");
-				CheckNotOpen();
-				_frameRate = value;
-			}
-		}
-
-		public bool IsOpen
-		{
-			get { return _aviFileRef != 0; }	
-		}
-
-		#endregion
-
-		#region Public Methods
-
-		public void Open(string fileName)
-		{
-			if (this.IsOpen)
-				throw new AviVideoStreamWriterException("The avi file is already open.");
-
-			_fileName = fileName;
-			Platform.CheckForEmptyString(_fileName, "fileName");
-
-			Open();
-		}
-
-		public void AddBitmap(Bitmap bitmap)
-		{
-			if (bitmap.PixelFormat != PixelFormat.Format32bppArgb)
-				throw new AviVideoStreamWriterException("Bitmap must be standard 32 bit ARGB.");
-
-			bool dispose = false;
-
-			if (bitmap.Width != _width || bitmap.Height != _height)
-			{
-				bitmap = new Bitmap(bitmap, _width, _height);
-				dispose = true;
+				Platform.CheckForNullReference(codec, "codec");
+				_codec = codec;
 			}
 
-			try
+			~VideoStreamWriter()
 			{
-				AddBitmapInternal(bitmap);
-			}
-			finally
-			{
-				if (dispose)
-					bitmap.Dispose();
-			}
-		}
-
-		public void Close()
-		{
-			try
-			{
-				ReleaseCompressedStream();
-				ReleaseStream();
-				ReleaseFile();
-			}
-			finally
-			{
-				_aviCompressedStreamRef = IntPtr.Zero;
-				_aviStreamRef = IntPtr.Zero;
-				_aviFileRef = 0;
-
-				if (_initialized)
+				try
 				{
-					_initialized = false;
-					Avi.AVIFileExit();
+					Close();
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
 				}
 			}
-		}
 
-		#region IDisposable Members
-
-		public void Dispose()
-		{
-			try
+			private int FrameSize
 			{
-				Close();
-				GC.SuppressFinalize(this);
+				get { return _width * _height * 3; }
 			}
-			catch(Exception e)
+
+			#region Public Properties
+
+			public int Width
 			{
-				Platform.Log(LogLevel.Error, e);
+				get { return _width; }
+				set
+				{
+					Platform.CheckPositive(value, "Width");
+					CheckNotOpen();
+					_width = value;
+				}
 			}
-		}
 
-		#endregion
-		#endregion
-
-		#region Private Methods
-
-		private void CheckNotOpen()
-		{
-			if (IsOpen)
-				throw new AviVideoStreamWriterException("Cannot change the stream's properties once it has been opened.");
-		}
-
-		private void Open()
-		{
-			Avi.AVIFileInit();
-			_initialized = true;
-
-			int result = Avi.AVIFileOpen(ref _aviFileRef, _fileName, Avi.OF_WRITE | Avi.OF_CREATE, 0);
-			if (result != 0)
-				throw new AviVideoStreamWriterException("Avi file could not be created.");
-
-			CreateStream();
-		}
-
-		private void AddBitmapInternal(Bitmap bitmap)
-		{
-			//flip it.
-			bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-
-			BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
-			                                  ImageLockMode.ReadOnly, bitmap.PixelFormat);
-
-
-			IntPtr outputStream = _aviStreamRef;
-			if (_aviCompressedStreamRef != IntPtr.Zero)
-				outputStream = _aviCompressedStreamRef;
-
-			int result = Avi.AVIStreamWrite(outputStream, _frameCount++, 1, data.Scan0,
-			                                (Int32)(data.Stride * data.Height), 0, 0, 0);
-
-			bitmap.UnlockBits(data);
-
-			//reset it.
-			bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-
-			if (result != 0)
-				throw new AviVideoStreamWriterException("Error adding bitmap to video stream.");
-
-		}
-
-		private static void GetHandlers(out int uncompressedHandler, out int compressedHandler)
-		{
-			int fccType = Avi.mmioStringToFOURCC("VIDC", 0);
-
-			uncompressedHandler = 0;
-			compressedHandler = 0;
-			int compressedHandlerScore = 0;
-
-			int i = 0;
-			Avi.ICINFO handlerInfo = new Avi.ICINFO();
-			while (0 != Avi.ICInfo(fccType, i++, ref handlerInfo))
+			public int Height
 			{
-				IntPtr handle = Avi.ICOpen(fccType, handlerInfo.fccHandler, (Int32)Avi.ICModeFlags.ICMODE_QUERY);
-				if (handle == IntPtr.Zero)
-					continue;
+				get { return _height; }
+				set
+				{
+					Platform.CheckPositive(value, "Height");
+					CheckNotOpen();
+					_height = value;
+				}
+			}
+
+			public int Quality
+			{
+				get { return _quality; }
+				set
+				{
+					Platform.CheckArgumentRange(value, -1, 100, "Quality");
+					CheckNotOpen();
+					_quality = value;
+				}
+			}
+
+			public int FrameRate
+			{
+				get { return _frameRate; }
+				set
+				{
+					Platform.CheckPositive(value, "FrameRate");
+					CheckNotOpen();
+					_frameRate = value;
+				}
+			}
+
+			public Codec Codec
+			{
+				get { return _codec; }
+			}
+
+			public bool IsOpen
+			{
+				get { return _aviFileRef != 0; }
+			}
+
+			#endregion
+
+			#region Public Methods
+
+			public void Open(string fileName)
+			{
+				if (this.IsOpen)
+					throw new VideoStreamWriterException("The avi file is already open.");
+
+				_fileName = fileName;
+				Platform.CheckForEmptyString(_fileName, "fileName");
+
+				Open();
+			}
+
+			public void AddBitmap(Bitmap bitmap)
+			{
+				bool convert = false;
+				if (bitmap.PixelFormat == PixelFormat.Format32bppArgb)
+				{
+					convert = true;
+				}
+				else if (bitmap.PixelFormat != PixelFormat.Format24bppRgb)
+				{
+					throw new VideoStreamWriterException("Bitmap must be standard 24 bit RGB or 32 bit ARGB.");
+				}
+
+				if (bitmap.Width != Width || bitmap.Height != Height)
+					convert = true;
+
+				bool dispose = false;
+				if (convert)
+				{
+					dispose = true;
+					Bitmap old = bitmap;
+					bitmap = new Bitmap(Width, Height, PixelFormat.Format24bppRgb);
+					System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bitmap);
+					g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+					g.DrawImage(old, 0, 0, Width, Height);
+					g.Dispose();
+				}
 
 				try
 				{
-					Avi.ICINFO queryHandlerInfo = new Avi.ICINFO();
-					if (0 != Avi.ICGetInfo(handle, ref queryHandlerInfo, Marshal.SizeOf(queryHandlerInfo)))
-					{
-						int score = ScoreHandler(queryHandlerInfo);
-
-						//take the first uncompressed handler
-						if (uncompressedHandler == 0 && score == 0)
-							uncompressedHandler = handlerInfo.fccHandler;
-
-						//take the most flexible compressed handler
-						if (score > compressedHandlerScore)
-						{
-							compressedHandlerScore = score;
-							compressedHandler = handlerInfo.fccHandler;
-						}
-					}
+					AddBitmapInternal(bitmap);
 				}
 				finally
 				{
-					Avi.ICClose(handle);
+					if (dispose)
+						bitmap.Dispose();
 				}
 			}
-		}
 
-		private static int ScoreHandler(Avi.ICINFO compressorInfo)
-		{
-			int score = -1;
-
-			Avi.ICInfoFlags flags = (Avi.ICInfoFlags)compressorInfo.dwFlags;
-			if (0 == (flags & Avi.ICInfoFlags.VIDCF_COMPRESSFRAMES))
+			public void Close()
 			{
-				score = 0;
-				score += (int)(flags & Avi.ICInfoFlags.VIDCF_QUALITY);
-				score += (int)(flags & Avi.ICInfoFlags.VIDCF_TEMPORAL);
-				score += (int)(flags & Avi.ICInfoFlags.VIDCF_FASTTEMPORALC);
+				try
+				{
+					ReleaseCompressedStream();
+					ReleaseStream();
+					ReleaseFile();
+				}
+				finally
+				{
+					_aviCompressedStreamRef = IntPtr.Zero;
+					_aviStreamRef = IntPtr.Zero;
+					_aviFileRef = 0;
+
+					if (_initialized)
+					{
+						_initialized = false;
+						Avi.AVIFileExit();
+					}
+				}
 			}
 
-			return score;
-		}
+			#region IDisposable Members
 
-		private void CreateStream()
-		{
-			int uncompressedHandler, compressedHandler;
-			GetHandlers(out uncompressedHandler, out compressedHandler);
-
-			if (uncompressedHandler == 0 && compressedHandler == 0)
-				throw new AviVideoStreamWriterException("Unable to locate acceptable video codec.");
-
-			int handler = uncompressedHandler;
-			if (compressedHandler != 0)
-				handler = compressedHandler;
-
-			Avi.AVISTREAMINFO streamInfo = GetStreamInfo(handler);
-
-			int result = Avi.AVIFileCreateStream(_aviFileRef, out _aviStreamRef, ref streamInfo);
-			if (result != 0)
-				throw new AviVideoStreamWriterException("Avi stream could not be created.");
-
-			if (compressedHandler <= 0)
-				SetFormat(_aviStreamRef);
-			else
-				MakeStreamCompressed();
-		}
-
-		private void MakeStreamCompressed()
-		{
-			Avi.AVICOMPRESSOPTIONS compressOptions = GetCompressOptions();
-
-			int result = Avi.AVIMakeCompressedStream(out _aviCompressedStreamRef, _aviStreamRef, ref compressOptions, 0);
-			if (result != 0)
-				throw new Exception("Failed to create compressed stream.");
-
-			SetFormat(_aviCompressedStreamRef);
-		}
-
-		private Avi.AVISTREAMINFO GetStreamInfo(int handler)
-		{
-			Avi.AVISTREAMINFO streamInfo = new Avi.AVISTREAMINFO();
-			
-			streamInfo.fccType = Avi.streamtypeVIDEO;
-			streamInfo.fccHandler = handler;
-			streamInfo.dwFlags = 0;
-			streamInfo.dwCaps = 0;
-			streamInfo.wPriority = 0;
-			streamInfo.wLanguage = 0;
-			streamInfo.dwScale = (int)1;
-			streamInfo.dwRate = (int)_frameRate;
-			streamInfo.dwStart = 0;
-			streamInfo.dwLength = 0;
-			streamInfo.dwInitialFrames = 0;
-			streamInfo.dwSuggestedBufferSize = FrameSize;
-			streamInfo.dwQuality = _quality;
-			streamInfo.dwSampleSize = 0;
-			streamInfo.rcFrame.top = 0;
-			streamInfo.rcFrame.left = 0;
-			streamInfo.rcFrame.bottom = _height;
-			streamInfo.rcFrame.right = _width;
-			streamInfo.dwEditCount = 0;
-			streamInfo.dwFormatChangeCount = 0;
-			streamInfo.szName = new UInt16[64];
-
-			return streamInfo;
-		}
-
-		private Avi.AVICOMPRESSOPTIONS GetCompressOptions()
-		{
-			Avi.AVICOMPRESSOPTIONS compressOptions = new Avi.AVICOMPRESSOPTIONS();
-
-			compressOptions.fccType = Avi.streamtypeVIDEO;
-			compressOptions.fccHandler = Avi.mmioStringToFOURCC("CVID", 0);
-			compressOptions.dwKeyFrameEvery = 0;
-			compressOptions.dwQuality = _quality;
-			compressOptions.dwFlags = 0;
-			compressOptions.dwBytesPerSecond = 0;
-			compressOptions.lpFormat = IntPtr.Zero;
-			compressOptions.cbFormat = 0;
-			compressOptions.lpParms = IntPtr.Zero;
-			compressOptions.cbParms = 0;
-			compressOptions.dwInterleaveEvery = 0;
-
-			return compressOptions;
-		}
-
-		private void SetFormat(IntPtr aviStream)
-		{
-			Avi.BITMAPINFOHEADER info = new Avi.BITMAPINFOHEADER();
-			info.biSize = Marshal.SizeOf(info);
-			info.biWidth = _width;
-			info.biHeight = _height;
-			info.biPlanes = 1;
-			info.biBitCount = 32;
-			info.biSizeImage = FrameSize;
-
-			int result = Avi.AVIStreamSetFormat(aviStream, 0, ref info, info.biSize);
-			if (result != 0)
-				throw new AviVideoStreamWriterException("Avi stream format could not be set.");
-		}
-
-		private void ReleaseCompressedStream()
-		{
-			if (_aviCompressedStreamRef != IntPtr.Zero)
+			public void Dispose()
 			{
-				int result = Avi.AVIStreamRelease(_aviCompressedStreamRef);
+				try
+				{
+					Close();
+					GC.SuppressFinalize(this);
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+				}
+			}
+
+			#endregion
+			#endregion
+
+			#region Private Methods
+
+			private void CheckNotOpen()
+			{
+				if (IsOpen)
+					throw new VideoStreamWriterException("Cannot change the stream's properties once it has been opened.");
+			}
+
+			private void Open()
+			{
+				Avi.AVIFileInit();
+				_initialized = true;
+
+				int result = Avi.AVIFileOpen(ref _aviFileRef, _fileName, Avi.OF_WRITE | Avi.OF_CREATE, 0);
 				if (result != 0)
-					throw new AviVideoStreamWriterException("Error releasing compressed Avi stream.");
-			}
-		}
+					throw new VideoStreamWriterException("Avi file could not be created.");
 
-		private void ReleaseStream()
-		{
-			if (_aviStreamRef != IntPtr.Zero)
+				CreateStream();
+			}
+
+			private void AddBitmapInternal(Bitmap bitmap)
 			{
-				int result = Avi.AVIStreamRelease(_aviStreamRef);
-				if (result != 0)
-					throw new AviVideoStreamWriterException("Error releasing Avi stream.");
-			}
-		}
+				//flip it.
+				bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
 
-		private void ReleaseFile()
-		{
-			if (_aviFileRef != 0)
+				BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+												  ImageLockMode.ReadOnly, bitmap.PixelFormat);
+
+
+				IntPtr outputStream = _aviStreamRef;
+				if (_aviCompressedStreamRef != IntPtr.Zero)
+					outputStream = _aviCompressedStreamRef;
+
+				int result = Avi.AVIStreamWrite(outputStream, _frameCount++, 1, data.Scan0,
+												(Int32)(data.Stride * data.Height), 0, 0, 0);
+
+				bitmap.UnlockBits(data);
+
+				//reset it.
+				bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+
+				if (result != 0)
+					throw new VideoStreamWriterException("Error adding bitmap to video stream.");
+
+			}
+
+			private void CreateStream()
 			{
-				int result = Avi.AVIFileRelease(_aviFileRef);
-				if (result != 0)
-					throw new AviVideoStreamWriterException("Error releasing Avi file.");
-			}
-		}
+				Avi.AVISTREAMINFO streamInfo = GetStreamInfo();
 
-		#endregion
+				int result = Avi.AVIFileCreateStream(_aviFileRef, out _aviStreamRef, ref streamInfo);
+				if (result != 0)
+					throw new VideoStreamWriterException("Avi stream could not be created.");
+
+				GC.KeepAlive(streamInfo);
+
+				if (!Codec.SupportsQuality)
+					SetFormat(_aviStreamRef);
+				else
+					MakeStreamCompressed();
+			}
+
+			private void MakeStreamCompressed()
+			{
+				Avi.AVICOMPRESSOPTIONS compressOptions = GetCompressOptions();
+
+				int result = Avi.AVIMakeCompressedStream(out _aviCompressedStreamRef, _aviStreamRef, ref compressOptions, 0);
+				if (result != 0)
+					throw new Exception("Failed to create compressed stream.");
+
+				GC.KeepAlive(compressOptions);
+
+				SetFormat(_aviCompressedStreamRef);
+			}
+
+			private Avi.AVISTREAMINFO GetStreamInfo()
+			{
+				Avi.AVISTREAMINFO streamInfo = new Avi.AVISTREAMINFO();
+				streamInfo.fccType = Avi.streamtypeVIDEO;
+				streamInfo.fccHandler = this.Codec.FourCCHandler;
+				streamInfo.dwFlags = 0;
+				streamInfo.dwCaps = 0;
+				streamInfo.wPriority = 0;
+				streamInfo.wLanguage = 0;
+				streamInfo.dwScale = (int)1;
+				streamInfo.dwRate = (int)_frameRate;
+				streamInfo.dwStart = 0;
+				streamInfo.dwLength = 0;
+				streamInfo.dwInitialFrames = 0;
+				streamInfo.dwSuggestedBufferSize = FrameSize;
+				streamInfo.dwQuality = ComputeQuality();
+				streamInfo.dwSampleSize = 0;
+				streamInfo.rcFrame.top = 0;
+				streamInfo.rcFrame.left = 0;
+				streamInfo.rcFrame.bottom = Height;
+				streamInfo.rcFrame.right = Width;
+				streamInfo.dwEditCount = 0;
+				streamInfo.dwFormatChangeCount = 0;
+				streamInfo.szName = new UInt16[64];
+
+				return streamInfo;
+			}
+
+			private Avi.AVICOMPRESSOPTIONS GetCompressOptions()
+			{
+				Avi.AVICOMPRESSOPTIONS compressOptions = new Avi.AVICOMPRESSOPTIONS();
+
+				compressOptions.fccType = Avi.streamtypeVIDEO;
+				compressOptions.fccHandler = this.Codec.FourCCHandler;
+				compressOptions.dwKeyFrameEvery = 0;
+				compressOptions.dwQuality = ComputeQuality();
+				compressOptions.dwFlags = 0;
+				compressOptions.dwBytesPerSecond = 0;
+				compressOptions.lpFormat = IntPtr.Zero;
+				compressOptions.cbFormat = 0;
+				compressOptions.lpParms = IntPtr.Zero;
+				compressOptions.cbParms = 0;
+				compressOptions.dwInterleaveEvery = 0;
+
+				return compressOptions;
+			}
+
+			private Avi.BITMAPINFOHEADER GetImageFormat()
+			{
+				Avi.BITMAPINFOHEADER format = new Avi.BITMAPINFOHEADER();
+				format.biSize = Marshal.SizeOf(format);
+				format.biPlanes = 1;
+				format.biBitCount = 24;
+				format.biCompression = 0; //RGB
+				format.biHeight = Height;
+				format.biWidth = Width;
+				format.biSizeImage = FrameSize;
+				return format;
+			}
+
+			private void SetFormat(IntPtr aviStream)
+			{
+				Avi.BITMAPINFOHEADER info = GetImageFormat();
+
+				int result = Avi.AVIStreamSetFormat(aviStream, 0, ref info, info.biSize);
+				if (result != 0)
+					throw new VideoStreamWriterException("Avi stream format could not be set.");
+
+				GC.KeepAlive(info);
+			}
+
+			private int ComputeQuality()
+			{
+				if (!Codec.SupportsQuality)
+					return -1;
+
+				if (_quality == -1)
+					return _quality;
+
+				return _quality * 100;
+			}
+
+			private void ReleaseCompressedStream()
+			{
+				if (_aviCompressedStreamRef != IntPtr.Zero)
+				{
+					int result = Avi.AVIStreamRelease(_aviCompressedStreamRef);
+					if (result != 0)
+						throw new VideoStreamWriterException("Error releasing compressed Avi stream.");
+				}
+			}
+
+			private void ReleaseStream()
+			{
+				if (_aviStreamRef != IntPtr.Zero)
+				{
+					int result = Avi.AVIStreamRelease(_aviStreamRef);
+					if (result != 0)
+						throw new VideoStreamWriterException("Error releasing Avi stream.");
+				}
+			}
+
+			private void ReleaseFile()
+			{
+				if (_aviFileRef != 0)
+				{
+					int result = Avi.AVIFileRelease(_aviFileRef);
+					if (result != 0)
+						throw new VideoStreamWriterException("Error releasing Avi file.");
+				}
+			}
+
+			#endregion
+		}
 	}
 }

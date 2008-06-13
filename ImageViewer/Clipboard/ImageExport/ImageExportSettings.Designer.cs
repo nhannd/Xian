@@ -46,29 +46,5 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport {
                 this["SelectedImageExportOption"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int SelectedVideoExportOption {
-            get {
-                return ((int)(this["SelectedVideoExportOption"]));
-            }
-            set {
-                this["SelectedVideoExportOption"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("20")]
-        public int SelectedVideoExportFrameRate {
-            get {
-                return ((int)(this["SelectedVideoExportFrameRate"]));
-            }
-            set {
-                this["SelectedVideoExportFrameRate"] = value;
-            }
-        }
     }
 }

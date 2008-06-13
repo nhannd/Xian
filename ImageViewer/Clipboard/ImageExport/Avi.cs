@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {
 
-	internal class Avi{
+	internal partial class Avi{
 
 		public static int PALETTE_SIZE = 4*256; //RGBQUAD * 256 colours
 
@@ -45,6 +45,17 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
             return ((Int32)(byte)(ch0) | ((byte)(ch1) << 8) |
                 ((byte)(ch2) << 16) | ((byte)(ch3) << 24));
         }
+
+		public static string mmioFourCCToString(Int32 code)
+		{
+			char[] values = new char[4];
+			values[0] = (char)((code & 0x000000ff));
+			values[1] = (char)((code & 0x0000ff00) >> 8);
+			values[2] = (char)((code & 0x00ff0000) >> 16);
+			values[3] = (char)((code & 0xff000000) >> 24);
+
+			return new String(values);
+		}
 
 		#region structure declarations
 
@@ -407,7 +418,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			public Int32 dwFlags;
 			public Int32 dwVersion;
 			public Int32 dwVersionICM;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
 			public UInt16[] szName;
 			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
 			public UInt16[] szDescription;
@@ -456,6 +467,14 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		[DllImport("msvfw32.dll")]
 		public static extern Int32 ICGetInfo(IntPtr hic, ref ICINFO picinfo, Int32 size);
+
+		[DllImport("msvfw32.dll")]
+		public static extern IntPtr ICLocate(
+		  Int32 fccType,
+		  Int32 fccHandler,
+		  ref BITMAPINFOHEADER lpbiIn,
+		  IntPtr lpbiOut,
+		  Int16 wFlags);
 
 		#endregion
 	}

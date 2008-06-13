@@ -59,9 +59,12 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			_trackBarFrameRate.DataBindings.Add("Minimum", _component, "MinFrameRate", true, DataSourceUpdateMode.OnPropertyChanged);
 			_trackBarFrameRate.DataBindings.Add("Maximum", _component, "MaxFrameRate", true, DataSourceUpdateMode.OnPropertyChanged);
 			_trackBarFrameRate.DataBindings.Add("Value", _component, "FrameRate", true, DataSourceUpdateMode.OnPropertyChanged);
-			_frameRate.DataBindings.Add("Text", _component, "FrameRate", true, DataSourceUpdateMode.OnPropertyChanged);
-			Binding binding = new Binding("Text", _component, "DurationSeconds", true, DataSourceUpdateMode.OnPropertyChanged);
-			binding.Format += new ConvertEventHandler(OnParseDuration);
+			Binding binding = new Binding("Text", _component, "FrameRate", true, DataSourceUpdateMode.OnPropertyChanged);
+			binding.Format += new ConvertEventHandler(OnFormatFrameRate);
+			_frameRate.DataBindings.Add(binding);
+			
+			binding = new Binding("Text", _component, "DurationSeconds", true, DataSourceUpdateMode.OnPropertyChanged);
+			binding.Format += new ConvertEventHandler(OnFormatDuration);
         	_duration.DataBindings.Add(binding);
 
 			_checkOptionWysiwyg.DataBindings.Add("Checked", _component, "OptionWysiwyg", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -72,12 +75,25 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			_scale.DataBindings.Add("Value", _component, "Scale", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
-		void OnParseDuration(object sender, ConvertEventArgs e)
+		private void OnFormatFrameRate(object sender, ConvertEventArgs e)
+		{
+			if (e.DesiredType != typeof(string))
+				return;
+
+			e.Value = String.Format("({0})", (int)e.Value);
+		}
+
+		private void OnFormatDuration(object sender, ConvertEventArgs e)
 		{
 			if (e.DesiredType != typeof(string))
 				return;
 
 			e.Value = String.Format(((float) e.Value).ToString("F2"));
+		}
+
+		private void OnAdvanced(object sender, EventArgs e)
+		{
+			_component.ShowAdvanced();
 		}
 
 		private void OnCancel(object sender, EventArgs e)
@@ -98,5 +114,5 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 				_component.Accept();
 			}
 		}
-    }
+	}
 }
