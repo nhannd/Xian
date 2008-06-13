@@ -56,31 +56,37 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Enabled")]
         public System.Boolean Enabled
         {
         get { return _enabled; }
         set { _enabled = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="FilesystemGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey FilesystemKey
         {
         get { return _filesystemKey; }
         set { _filesystemKey = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Lock")]
         public System.Boolean Lock
         {
         get { return _lock; }
         set { _lock = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ProcessorId")]
         public System.String ProcessorId
         {
         get { return _processorId; }
         set { _processorId = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ScheduledTime")]
         public System.DateTime ScheduledTime
         {
         get { return _scheduledTime; }
         set { _scheduledTime = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ServiceLockTypeEnum")]
         public ServiceLockTypeEnum ServiceLockTypeEnum
         {
         get { return _serviceLockTypeEnum; }

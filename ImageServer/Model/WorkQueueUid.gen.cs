@@ -58,38 +58,45 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Duplicate")]
         public System.Boolean Duplicate
         {
         get { return _duplicate; }
         set { _duplicate = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Extension")]
         public System.String Extension
         {
         get { return _extension; }
         set { _extension = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Failed")]
         public System.Boolean Failed
         {
         get { return _failed; }
         set { _failed = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="FailureCount")]
         public System.Int16 FailureCount
         {
         get { return _failureCount; }
         set { _failureCount = value; }
         }
         [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SeriesInstanceUid")]
         public System.String SeriesInstanceUid
         {
         get { return _seriesInstanceUid; }
         set { _seriesInstanceUid = value; }
         }
         [DicomField(DicomTags.SopInstanceUid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SopInstanceUid")]
         public System.String SopInstanceUid
         {
         get { return _sopInstanceUid; }
         set { _sopInstanceUid = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="WorkQueueGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey WorkQueueKey
         {
         get { return _workQueueKey; }

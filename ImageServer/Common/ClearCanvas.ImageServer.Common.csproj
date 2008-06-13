@@ -58,6 +58,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\DirectoryUtility.cs" />
     <Compile Include="Utilities\FilesystemInfo.cs" />
     <Compile Include="Utilities\FilesystemUtils.cs" />
   </ItemGroup>

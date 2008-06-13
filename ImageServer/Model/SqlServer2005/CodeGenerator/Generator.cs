@@ -493,8 +493,10 @@ namespace CodeGenerator
                 {
                     DicomTag tag = DicomTagDictionary.GetDicomTag(col.ColumnName);
                     if (tag != null)
-                        writer.WriteLine("        [DicomField(DicomTags.{0}, DefaultValue = DicomFieldDefault.Null)]",
-                                         col.ColumnName);
+                        writer.WriteLine("        [DicomField(DicomTags.{0}, DefaultValue = DicomFieldDefault.Null)]", col.ColumnName);
+
+                    writer.WriteLine("        [EntityFieldDatabaseMappingAttribute(TableName=\"{0}\", ColumnName=\"{1}\")]",table.TableName, col.ColumnName.Replace("Key", "GUID"));
+
                     if (col.ColumnName.EndsWith("Enum"))
                         writer.WriteLine("        public {0} {1}", col.ColumnName, col.ColumnName);
                     else

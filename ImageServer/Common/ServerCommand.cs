@@ -29,6 +29,8 @@
 
 #endregion
 
+using System;
+
 namespace ClearCanvas.ImageServer.Common
 {
     /// <summary>
@@ -39,11 +41,11 @@ namespace ClearCanvas.ImageServer.Common
     /// file and database operations to allow undoing of the operations.  This
     /// abstract class is used as the interface for the command.</para>
     /// </remarks>
-    public abstract class ServerCommand
+    public abstract class ServerCommand:IDisposable
     {
         #region Private Members
         private string _description;
-        private readonly bool _requiresRollback;
+        private bool _requiresRollback;
         private ServerCommandStatistics _stats;
             
         #endregion
@@ -90,6 +92,7 @@ namespace ClearCanvas.ImageServer.Common
         public bool RequiresRollback
         {
             get { return _requiresRollback; }
+            set { _requiresRollback = value; }
         }
         #endregion
 
@@ -129,6 +132,15 @@ namespace ClearCanvas.ImageServer.Common
 
         protected abstract void OnExecute();
         protected abstract void OnUndo();
+        #endregion
+
+        #region IDisposable Members
+
+        public virtual void Dispose()
+        {
+            
+        }
+
         #endregion
     }
 }

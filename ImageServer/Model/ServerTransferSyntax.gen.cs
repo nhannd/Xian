@@ -55,22 +55,26 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Description")]
         public System.String Description
         {
         get { return _description; }
         set { _description = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Enabled")]
         public System.Boolean Enabled
         {
         get { return _enabled; }
         set { _enabled = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Lossless")]
         public System.Boolean Lossless
         {
         get { return _lossless; }
         set { _lossless = value; }
         }
         [DicomField(DicomTags.Uid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Uid")]
         public System.String Uid
         {
         get { return _uid; }

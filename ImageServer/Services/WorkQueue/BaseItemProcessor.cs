@@ -38,6 +38,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -59,7 +60,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private TimeSpanStatistics _studyXmlLoadTime = new TimeSpanStatistics();
         private TimeSpanStatistics _processTime = new TimeSpanStatistics();
 
-        private IList<StudyStorageLocation> _storageLocationList;
+        protected IList<StudyStorageLocation> _storageLocationList;
         private IList<WorkQueueUid> _uidList;
 
         #region Protected Properties
@@ -131,8 +132,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// Load the storage location for the WorkQueue item.
         /// </summary>
         /// <param name="item">The item to load the location for.</param>
-        protected void LoadStorageLocation(Model.WorkQueue item)
+        protected IList<StudyStorageLocation> LoadStorageLocation(Model.WorkQueue item)
         {
+            IList<StudyStorageLocation> list = null;
             StorageLocationLoadTime.Add(
                 delegate
                     {
@@ -141,9 +143,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
                         parms.StudyStorageKey = item.StudyStorageKey;
 
-                        _storageLocationList = select.Execute(parms);
+                        list = select.Execute(parms);
 
-                        if (_storageLocationList.Count == 0)
+                        if (list.Count == 0)
                         {
                             Platform.Log(LogLevel.Error, "Unable to find storage location for WorkQueue item: {0}",
                                          item.GetKey().ToString());
@@ -151,8 +153,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         }
                     }
                 );
+
             
-            Debug.Assert(_storageLocationList.Count > 0);
+            Debug.Assert(list != null && list.Count> 0);
+            return list;
         }
 
         /// <summary>
@@ -443,6 +447,66 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					}
 				);
 		}
+
+
+
+        /// <summary>
+        /// Simple routine for failing a work queue item.
+        /// </summary>
+        /// <param name="item">The item to fail.</param>
+        /// <param name="failureDescription">The reason for the failure.</param>
+        protected virtual void FailQueueItem(Model.WorkQueue item, string failureDescription)
+        {
+            DBUpdateTime.Add(
+                delegate
+                    {
+                        using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                        {
+                            IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
+                            WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+                            parms.ProcessorID = ServiceTools.ProcessorId;
+
+                            parms.WorkQueueKey = item.GetKey();
+                            parms.StudyStorageKey = item.StudyStorageKey;
+                            parms.FailureCount = item.FailureCount + 1;
+                            parms.FailureDescription = failureDescription;
+
+                            WorkQueueSettings settings = WorkQueueSettings.Default;
+                            if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
+                            {
+                                Platform.Log(LogLevel.Error,
+                                             "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
+                                             item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
+                                parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
+                                parms.ScheduledTime = Platform.Time;
+                                parms.ExpirationTime = Platform.Time.AddDays(1);
+                            }
+                            else
+                            {
+                                Platform.Log(LogLevel.Error,
+                                             "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
+                                             item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
+                                parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+                                parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
+                                parms.ExpirationTime =
+                                    Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
+                                                             settings.WorkQueueFailureDelayMinutes);
+                            }
+
+                            if (false == update.Execute(parms))
+                            {
+                                Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum,
+                                             item.GetKey().ToString());
+                            }
+                            else
+                                updateContext.Commit();
+                        }
+                    }
+                );
+
+            
+        }
+
 
     	/// <summary>
         /// Delete an entry in the <see cref="WorkQueueUid"/> table.

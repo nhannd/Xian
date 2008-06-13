@@ -61,56 +61,67 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AeTitle")]
         public System.String AeTitle
         {
         get { return _aeTitle; }
         set { _aeTitle = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowAutoRoute")]
         public System.Boolean AllowAutoRoute
         {
         get { return _allowAutoRoute; }
         set { _allowAutoRoute = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowQuery")]
         public System.Boolean AllowQuery
         {
         get { return _allowQuery; }
         set { _allowQuery = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowRetrieve")]
         public System.Boolean AllowRetrieve
         {
         get { return _allowRetrieve; }
         set { _allowRetrieve = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowStorage")]
         public System.Boolean AllowStorage
         {
         get { return _allowStorage; }
         set { _allowStorage = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Description")]
         public System.String Description
         {
         get { return _description; }
         set { _description = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Dhcp")]
         public System.Boolean Dhcp
         {
         get { return _dhcp; }
         set { _dhcp = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Enabled")]
         public System.Boolean Enabled
         {
         get { return _enabled; }
         set { _enabled = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="IpAddress")]
         public System.String IpAddress
         {
         get { return _ipAddress; }
         set { _ipAddress = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Port")]
         public System.Int32 Port
         {
         get { return _port; }
         set { _port = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ServerPartitionGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }

@@ -53,16 +53,19 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="Enabled")]
         public System.Boolean Enabled
         {
         get { return _enabled; }
         set { _enabled = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="ServerPartitionGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="ServerSopClassGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerSopClassKey
         {
         get { return _serverSopClassKey; }

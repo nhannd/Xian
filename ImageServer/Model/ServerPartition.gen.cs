@@ -60,51 +60,61 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AcceptAnyDevice")]
         public System.Boolean AcceptAnyDevice
         {
         get { return _acceptAnyDevice; }
         set { _acceptAnyDevice = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AeTitle")]
         public System.String AeTitle
         {
         get { return _aeTitle; }
         set { _aeTitle = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AutoInsertDevice")]
         public System.Boolean AutoInsertDevice
         {
         get { return _autoInsertDevice; }
         set { _autoInsertDevice = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="DefaultRemotePort")]
         public System.Int32 DefaultRemotePort
         {
         get { return _defaultRemotePort; }
         set { _defaultRemotePort = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Description")]
         public System.String Description
         {
         get { return _description; }
         set { _description = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="DuplicateSopPolicyEnum")]
         public DuplicateSopPolicyEnum DuplicateSopPolicyEnum
         {
         get { return _duplicateSopPolicyEnum; }
         set { _duplicateSopPolicyEnum = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Enabled")]
         public System.Boolean Enabled
         {
         get { return _enabled; }
         set { _enabled = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="PartitionFolder")]
         public System.String PartitionFolder
         {
         get { return _partitionFolder; }
         set { _partitionFolder = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Port")]
         public System.Int32 Port
         {
         get { return _port; }
         set { _port = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="StudyCount")]
         public System.Int32 StudyCount
         {
         get { return _studyCount; }

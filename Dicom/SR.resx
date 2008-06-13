@@ -445,4 +445,12 @@
   <data name="ExceptionMoveWarningSuboperationsCompleteOneOrMoreFailures" xml:space="preserve">
     <value>C-Move warning: sub-operations completed; one or more failures.</value>
   </data>
+  <data name="ExceptionGeneralUIDFormat" xml:space="preserve">
+    <value>Invalid DICOM UID format: {0}</value>
+    <comment>0 - violated uid string</comment>
+  </data>
+  <data name="ExceptionGeneralUIDLength" xml:space="preserve">
+    <value>UID cannot exceeed 64 characters: {0}</value>
+    <comment>0 - violated uid value</comment>
+  </data>
 </root>

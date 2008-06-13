@@ -35,11 +35,11 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 using System.Diagnostics;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
@@ -92,56 +92,76 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         protected override void ProcessItem(Model.WorkQueue item)
         {
             Platform.CheckForNullReference(item.Data, "item.Data");
-            ServerCommandProcessor processor = new ServerCommandProcessor("Process EditStudy");
-            bool successful = false;
-            try
+            EditStudyContext ctx = new EditStudyContext();
+
+                        
+            using(ServerCommandProcessor processor = new ServerCommandProcessor("Process EditStudy"))
             {
-                LoadStorageLocation(item);
-
-                LoadEntities(item);
-
-                if (Study != null && Patient!=null)
+                bool successful = false;
+                string failure = null;
+                try
                 {
-                    EditStudyContext ctx = new EditStudyContext();
-                    ctx.WorkQueueItem = item;
-                    ctx.StudyKey = Study.GetKey();
-                    ctx.PatientKey = Patient.GetKey();
-                    ctx.Partition = Partition;
-                    ctx.StorageLocation = StorageLocation;
-                    ctx.NewStudyXml = new DicomServices.Xml.StudyXml();
+                    _storageLocationList = LoadStorageLocation(item);
 
-                    // output folder = temp\ImageServer\EditStudy\.....
-                    string destFolder = GetTempPath();
-                    destFolder = Path.Combine(destFolder, "ImageServer");
-                    destFolder = Path.Combine(destFolder, "EditStudy");
-                    destFolder = Path.Combine(destFolder, Path.GetRandomFileName());
-                    ctx.DestinationFolder = destFolder;
+                    LoadEntities(item);
+
+                    if (Study != null && Patient != null)
+                    {
+                        ctx.UpdateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush);
+
+                        ctx.WorkQueueItem = item;
+                        ctx.Study = Study;
+                        ctx.Patient = Patient;
+                        ctx.Partition = Partition;
+                        ctx.StorageLocation = StorageLocation;
+                        ctx.OriginalStorageLocation = LoadStorageLocation(item)[0];// copy
+                        ctx.NewStudyXml = new DicomServices.Xml.StudyXml();
+
+                        // output folder = temp\ImageServer\EditStudy\.....
+                        string outFolder = GetTempPath();
+                        outFolder = Path.Combine(outFolder, "ImageServer");
+                        outFolder = Path.Combine(outFolder, "EditStudy");
+                        outFolder = Path.Combine(outFolder, Path.GetRandomFileName());
+                        ctx.TempOutRootFolder = outFolder;
 
 
-                    string itemSesc = String.Format("WebEditStudy for {0} study={1} UID={2}", Patient.Name, Study.StudyDescription, Study.StudyInstanceUid);
-                    EditStudyCommand editCommand = new EditStudyCommand(itemSesc, item.Data.DocumentElement);
-                    editCommand.Context = ctx;
+                        string itemDesc = String.Format("WebEditStudy for {0} study={1} UID={2}", Patient.Name, Study.StudyDescription, Study.StudyInstanceUid);
+                        EditStudyCommand editCommand = new EditStudyCommand(itemDesc, ctx, item.Data.DocumentElement);
+                        processor.AddCommand(editCommand);
+                        
+                        successful = processor.Execute();
 
-                    processor.AddCommand(editCommand);
+                        failure = processor.FailureReason;
+                    }
 
-                    successful = processor.Execute();
                 }
-                
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e,"Unexpected exception occured while processing the WebEditStudy work queue item");
-                item.FailureDescription = e.Message;
-            }
-            finally
-            {
-				if (successful)
-					PostProcessing(item,false,true); // Complete
-				else
-					PostProcessingFailure(item, false);
-            }
-        }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e, "Unexpected exception occured while processing the WebEditStudy work queue item");
+                    failure = e.Message;
+                    processor.Rollback();
+                    successful = false;
 
+                }
+                finally
+                {
+                    if (successful)
+                    {
+                        ctx.UpdateContext.Commit();
+                        PostProcessing(item, false, true);
+                    }
+                    else
+                    {
+                        ctx.UpdateContext.Dispose();
+                        FailQueueItem(item, failure);
+                    }
+
+                    // delete the temp folder
+                    DirectoryUtility.DeleteIfExists(ctx.TempOutRootFolder);
+                }
+            }
+            
+        }
         
         #endregion Public Methods
 

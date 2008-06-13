@@ -58,41 +58,49 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Description")]
         public System.String Description
         {
         get { return _description; }
         set { _description = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Enabled")]
         public System.Boolean Enabled
         {
         get { return _enabled; }
         set { _enabled = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemPath")]
         public System.String FilesystemPath
         {
         get { return _filesystemPath; }
         set { _filesystemPath = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemTierEnum")]
         public FilesystemTierEnum FilesystemTierEnum
         {
         get { return _filesystemTierEnum; }
         set { _filesystemTierEnum = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="HighWatermark")]
         public System.Decimal HighWatermark
         {
         get { return _highWatermark; }
         set { _highWatermark = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="LowWatermark")]
         public System.Decimal LowWatermark
         {
         get { return _lowWatermark; }
         set { _lowWatermark = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="ReadOnly")]
         public System.Boolean ReadOnly
         {
         get { return _readOnly; }
         set { _readOnly = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="WriteOnly")]
         public System.Boolean WriteOnly
         {
         get { return _writeOnly; }

@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
         protected override void ProcessItem(Model.WorkQueue item)
         {
             //Load the storage location.
-            LoadStorageLocation(item);
+            _storageLocationList = LoadStorageLocation(item);
 
             _partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
 

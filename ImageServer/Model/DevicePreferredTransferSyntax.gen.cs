@@ -53,16 +53,19 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="DeviceGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey DeviceKey
         {
         get { return _deviceKey; }
         set { _deviceKey = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="ServerSopClassGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerSopClassKey
         {
         get { return _serverSopClassKey; }
         set { _serverSopClassKey = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="ServerTransferSyntaxGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerTransferSyntaxKey
         {
         get { return _serverTransferSyntaxKey; }

@@ -511,7 +511,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                 _statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
             
                                 //Load the storage location.
-                                LoadStorageLocation(item);
+                                _storageLocationList = LoadStorageLocation(item);
 
                                 // Process the images in the list
                                 successful = ProcessUidList(item);

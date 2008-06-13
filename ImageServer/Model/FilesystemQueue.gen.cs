@@ -57,32 +57,38 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey FilesystemKey
         {
         get { return _filesystemKey; }
         set { _filesystemKey = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemQueueTypeEnum")]
         public FilesystemQueueTypeEnum FilesystemQueueTypeEnum
         {
         get { return _filesystemQueueTypeEnum; }
         set { _filesystemQueueTypeEnum = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="QueueXml")]
         public System.Xml.XmlDocument QueueXml
         {
         get { return _queueXml; }
         set { _queueXml = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="ScheduledTime")]
         public System.DateTime ScheduledTime
         {
         get { return _scheduledTime; }
         set { _scheduledTime = value; }
         }
         [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="SeriesInstanceUid")]
         public System.String SeriesInstanceUid
         {
         get { return _seriesInstanceUid; }
         set { _seriesInstanceUid = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="StudyStorageGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
         {
         get { return _studyStorageKey; }

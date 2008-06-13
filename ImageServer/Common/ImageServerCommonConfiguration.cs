@@ -52,5 +52,13 @@ namespace ClearCanvas.ImageServer.Common
                 return settings;
             }
         }
+
+        static public string DefaultStudyRootFolder
+        {
+            get
+            {
+                return Settings.Default.DefaultStudyRootFolder;
+            }
+        }
     }
 }

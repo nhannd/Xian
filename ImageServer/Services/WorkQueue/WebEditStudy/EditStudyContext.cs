@@ -31,7 +31,6 @@
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
@@ -39,19 +38,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
     /// <summary>
     /// The context operation for <see cref="EditStudyCommand"/>
     /// </summary>
+    /// <remarks>
+    /// When the operation is committed, it assumes <see cref="Study"/>, <see cref="Patient"/> contains the updated information.
+    /// Therefore, data in <see cref="Study"/> and <see cref="Patient"/>  should be updated before the <cref="UpdateContext"/> is committed.
+    /// </remarks>
     public class EditStudyContext
     {
         #region Private members
         private IUpdateContext _updateContext;
         private Model.WorkQueue _workQueueItem;
-        private string _newStudyInstanceUid;
         private ServerPartition _partition;
-        private ServerEntityKey _studyKey;
-        private ServerEntityKey _patientKey;
+        private Study _study;
+        private Patient _patient;
+        private StudyStorageLocation _oldStorageLocation;
         private StudyStorageLocation _storageLocation;
-        private string _newStudyDate;
         private DicomFile _currentFile;
-        private string   _destFolder;
+        private string   _tempOutFolder;
         private StudyXml _newStudyXml;
         #endregion Private members
 
@@ -64,14 +66,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             set { _workQueueItem = value; }
         }
 
-        /// <summary>
-        /// The database context
-        /// </summary>
-        public IUpdateContext UpdateContext
-        {
-            get { return _updateContext; }
-            set { _updateContext = value; }
-        }
 
         /// <summary>
         /// The <see cref="DicomFile"/> being editted.
@@ -83,25 +77,31 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         }
 
         /// <summary>
-        /// The <see cref="ServerEntityKey"/> for the <see cref="Study"/> being editted
+        /// The up-to-dated information of the study being editted.
         /// </summary>
-        public ServerEntityKey StudyKey
+        public Study Study
         {
-            get { return _studyKey; }
-            set { _studyKey = value; }
+            get
+            {
+                return _study;
+            }
+            set
+            {
+                _study = value;
+            }
         }
 
         /// <summary>
-        /// The <see cref="ServerEntityKey"/> for the <see cref="Patient"/> being editted
+        /// The up-to-dated information of the patient of the study being editted
         /// </summary>
-        public ServerEntityKey PatientKey
+        public Patient Patient
         {
-            get { return _patientKey; }
-            set { _patientKey = value; }
+            get { return _patient; }
+            set { _patient = value; }
         }
 
         /// <summary>
-        /// The <see cref="StudyStorageLocation"/> of the study being editted
+        /// The up-to-dated information of the location of the study being editted
         /// </summary>
         public StudyStorageLocation StorageLocation
         {
@@ -110,15 +110,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         }
 
         /// <summary>
-        /// The output folder where editted files are stored
+        /// The output folder where edited study will be stored
         /// </summary>
-        public string DestinationFolder
+        public string TempOutRootFolder
         {
             get 
             {
-                return _destFolder; 
+                return _tempOutFolder; 
             }
-            set { _destFolder = value; }
+            set { _tempOutFolder = value; }
         }
 
         /// <summary>
@@ -132,26 +132,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
 
         /// <summary>
-        /// The study date for the study after it is editted
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        public string NewStudyDate
-        {
-            get { return _newStudyDate; }
-            set { _newStudyDate = value; }
-        }
-
-        /// <summary>
-        /// The study instance Uid for the study after it is editted.
-        /// </summary>
-        public string NewStudyInstanceUid
-        {
-            get { return _newStudyInstanceUid; }
-            set { _newStudyInstanceUid = value; }
-        }
-
-        /// <summary>
         /// The new <see cref="StudyXml"/> that is used to store the new study header information
         /// </summary>
         /// <remarks>
@@ -162,6 +142,28 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         {
             get { return _newStudyXml; }
             set { _newStudyXml = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the original location of the study on the filesystem.
+        /// </summary>
+        public StudyStorageLocation OriginalStorageLocation
+        {
+            get { return _oldStorageLocation; }
+            set { _oldStorageLocation = value; }
+        }
+
+        /// <summary>
+        /// The <see cref="IUpdateContext"/> associated with the study edit operation.
+        /// </summary>
+        /// <remarks>
+        /// Application/components can use this context to access the database. As all components involved
+        /// in the study edit operation shared the same context, it should only not be committed and rolled back by the creator.
+        /// </remarks>
+        public IUpdateContext UpdateContext
+        {
+            get { return _updateContext; }
+            set { _updateContext = value; }
         }
     }
 }

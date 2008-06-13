@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.Common
     /// in committing transactions, and could cause database deadlocks and problems.
     /// </para>
     /// </remarks>
-    public class ServerCommandProcessor
+    public class ServerCommandProcessor : IDisposable
     {
         #region Private Members
         private readonly string _description;
@@ -123,6 +123,7 @@ namespace ClearCanvas.ImageServer.Common
             while (_queue.Count > 0)
             {
                 ServerCommand command = _queue.Dequeue();
+                
                 ServerDatabaseCommand dbCommand = command as ServerDatabaseCommand;
 
                 _stack.Push(command);
@@ -137,12 +138,12 @@ namespace ClearCanvas.ImageServer.Common
                     }
 
                     command.Execute();
-                } 
+                }
                 catch (Exception e)
                 {
                     if (command.RequiresRollback || dbCommand != null)
                     {
-                        _failureReason = e.Message;
+                        _failureReason = String.Format("{0}: {1}", e.GetType().Name, e.Message);
                         Platform.Log(LogLevel.Error, e, "Unexpected error when executing command: {0}", command.Description);
                         Rollback();
                         return false;
@@ -154,6 +155,8 @@ namespace ClearCanvas.ImageServer.Common
                         _stack.Pop(); // Pop it off the stack, since it failed.
                     }
                 }
+                
+                
             }
 
             if (_updateContext != null)
@@ -179,17 +182,45 @@ namespace ClearCanvas.ImageServer.Common
 
             while (_stack.Count > 0)
             {
+                using(ServerCommand command = _stack.Pop())
+                {
+                    try
+                    {
+                        command.Undo();
+                    }
+                    catch (Exception e)
+                    {
+                        Platform.Log(LogLevel.Error, e, "Unexpected exception rolling back command {0}", command.Description);
+                    }
+                }
+                
+            }
+
+        }
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if (_updateContext != null)
+            {
+                Rollback();
+            }
+
+            foreach (ServerCommand command in _queue)
+            {
+                command.Dispose();
+            }
+
+            while (_stack.Count > 0)
+            {
                 ServerCommand command = _stack.Pop();
-                try
-                {
-                    command.Undo();
-                }
-                catch (Exception e)
-                {
-                    Platform.Log(LogLevel.Error, e, "Unexpected exception rolling back command {0}", command.Description);
-                }
+                command.Dispose();
+
             }
         }
+
         #endregion
     }
 }

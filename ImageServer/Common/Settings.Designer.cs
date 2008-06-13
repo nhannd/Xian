@@ -49,5 +49,14 @@ namespace ClearCanvas.ImageServer.Common {
                 return ((ulong)(this["StudyHeaderMaxValueLength"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Unknown")]
+        public string DefaultStudyRootFolder {
+            get {
+                return ((string)(this["DefaultStudyRootFolder"]));
+            }
+        }
     }
 }

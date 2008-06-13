@@ -58,41 +58,49 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="DefaultRule")]
         public System.Boolean DefaultRule
         {
         get { return _defaultRule; }
         set { _defaultRule = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="Enabled")]
         public System.Boolean Enabled
         {
         get { return _enabled; }
         set { _enabled = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ExemptRule")]
         public System.Boolean ExemptRule
         {
         get { return _exemptRule; }
         set { _exemptRule = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleName")]
         public System.String RuleName
         {
         get { return _ruleName; }
         set { _ruleName = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleXml")]
         public System.Xml.XmlDocument RuleXml
         {
         get { return _ruleXml; }
         set { _ruleXml = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerPartitionGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerRuleApplyTimeEnum")]
         public ServerRuleApplyTimeEnum ServerRuleApplyTimeEnum
         {
         get { return _serverRuleApplyTimeEnum; }
         set { _serverRuleApplyTimeEnum = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerRuleTypeEnum")]
         public ServerRuleTypeEnum ServerRuleTypeEnum
         {
         get { return _serverRuleTypeEnum; }

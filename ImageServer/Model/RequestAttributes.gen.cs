@@ -55,17 +55,20 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Public Properties
         [DicomField(DicomTags.RequestedProcedureId, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="RequestedProcedureId")]
         public System.String RequestedProcedureId
         {
         get { return _requestedProcedureId; }
         set { _requestedProcedureId = value; }
         }
         [DicomField(DicomTags.ScheduledProcedureStepId, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="ScheduledProcedureStepId")]
         public System.String ScheduledProcedureStepId
         {
         get { return _scheduledProcedureStepId; }
         set { _scheduledProcedureStepId = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="SeriesGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey SeriesKey
         {
         get { return _seriesKey; }

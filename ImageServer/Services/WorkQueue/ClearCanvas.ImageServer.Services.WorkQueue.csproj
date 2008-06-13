@@ -45,10 +45,13 @@
     <Compile Include="CompressStudy\CompressStudyFactoryExtension.cs" />
     <Compile Include="CompressStudy\CompressStudyItemProcessor.cs" />
     <Compile Include="UpdateStudyXmlCommand.cs" />
+    <Compile Include="WebEditStudy\StudyFilesUpdateCommand.cs" />
+    <Compile Include="WebEditStudy\IEditStudyActionCommand.cs" />
     <Compile Include="WebEditStudy\EditStudyCommand.cs" />
     <Compile Include="WebEditStudy\EditStudyContext.cs" />
     <Compile Include="WebEditStudy\ActionPlugins\SetValueActionItem.cs" />
     <Compile Include="WebEditStudy\ActionPlugins\SetValueOperator.cs" />
+    <Compile Include="WebEditStudy\DatabaseUpdateCommand.cs" />
     <Compile Include="WebEditStudy\WebEditStudyFactoryExtension.cs" />
     <Compile Include="WebEditStudy\WebEditStudyItemProcessor.cs" />
     <Compile Include="StudyProcess\InstanceStatistics.cs" />

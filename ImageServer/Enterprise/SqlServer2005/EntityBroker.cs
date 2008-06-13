@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
@@ -502,6 +504,73 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
             return String.Format("UPDATE [{0}] SET {1} WHERE {2}", entityName, setClause, whereClause);
         }
+
+
+        /// <summary>
+        /// Proves an UPDATE SQL statement based on the supplied input entity.
+        /// </summary>
+        /// <param name="entityName">The entity that is being selected from.</param>
+        /// <param name="command">The SqlCommand to use.</param>
+        /// <param name="key">The GUID of the table row to update</param>
+        /// <param name="parameters">The columns to update.</param>
+        /// <returns>The SQL string.</returns>
+        private static string GetUpdateSql(TServerEntity entity, SqlCommand command)
+        {
+            
+            StringBuilder set = new StringBuilder();
+            PropertyInfo[] props = entity.GetType().GetProperties();
+            int fieldUpdated = 0;
+            foreach (PropertyInfo prop in props)
+            {
+                object[] attr = prop.GetCustomAttributes(typeof(EntityFieldDatabaseMappingAttribute), true);
+                if (attr!=null && attr.Length>0)
+                {
+                    EntityFieldDatabaseMappingAttribute map = attr[0] as EntityFieldDatabaseMappingAttribute;
+
+                    object value = prop.GetValue(entity, null);
+
+                    if (value is ServerEntityKey)
+                    {
+                        value = ((ServerEntityKey)value).Key;
+                    }
+                    else if (value is ServerEnum)
+                    {
+                        value = ((ServerEnum)value).Enum;
+                    }
+                    else if (value is ServerEntity)
+                    {
+                        value = ((ServerEntity)value).GetKey().Key;
+                    }
+
+                    if (fieldUpdated == 0)
+                    {
+                        set.AppendFormat("{0}= @{1}", map.ColumnName, prop.Name);
+                        command.Parameters.AddWithValue("@" + prop.Name, value==null? System.DBNull.Value: value);
+                    }
+                    else
+                    {
+                        set.AppendFormat(", {0}=@{1}", map.ColumnName, prop.Name);
+                        command.Parameters.AddWithValue("@" + prop.Name, value == null ? System.DBNull.Value : value);
+                    }
+
+                    fieldUpdated++;
+                }
+                
+            }
+
+            if (fieldUpdated == 0)
+                return null;
+
+            StringBuilder where = new StringBuilder();
+            where.AppendFormat("GUID=@{0}", "KEY");
+            command.Parameters.AddWithValue("@KEY", entity.GetKey().Key);
+            
+            
+            StringBuilder sql = new StringBuilder();
+            sql.AppendFormat("UPDATE {0} SET {1} WHERE {2}", entity.Name, set.ToString(), where.ToString());
+
+            return sql.ToString();
+        }
 		/// <summary>
 		/// Proves a SQL statement based on the supplied input criteria.
 		/// </summary>
@@ -883,6 +952,49 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 			}
 		}
 
+        public bool Update(TServerEntity entity)
+        {
+            Platform.CheckForNullReference(entity, "entity");
+
+            SqlCommand command = null;
+            try
+            {
+                command = new SqlCommand();
+                command.Connection = Context.Connection;
+                command.CommandType = CommandType.Text;
+                UpdateContext update = Context as UpdateContext;
+
+                if (update != null)
+                    command.Transaction = update.Transaction;
+
+                command.CommandText = GetUpdateSql(entity, command);
+
+                if (command.CommandText == null)
+                    return true; //ok. nothign to update
+
+                int rows = command.ExecuteNonQuery();
+                return rows > 0;
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception with update: {0}",
+                             command != null ? command.CommandText : "");
+
+                throw new PersistenceException(
+                    String.Format("Unexpected problem with update statment on table {0}: {1}", _entityName, e.Message),
+                    e);
+            }
+            finally
+            {
+                // Cleanup the reader/command, or else we won't be able to do anything with the
+                // connection the next time here.
+
+                if (command != null)
+                    command.Dispose();
+            }
+                
+        }
+
 		public bool Update(TSelectCriteria criteria, TUpdateColumns parameters)
         {
 			Platform.CheckForNullReference(criteria, "criteria");
@@ -978,5 +1090,6 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         }
 
         #endregion
+
     }
 }

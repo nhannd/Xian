@@ -57,32 +57,38 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="InsertTime")]
         public System.DateTime InsertTime
         {
         get { return _insertTime; }
         set { _insertTime = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="LastAccessedTime")]
         public System.DateTime LastAccessedTime
         {
         get { return _lastAccessedTime; }
         set { _lastAccessedTime = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="Lock")]
         public System.Boolean Lock
         {
         get { return _lock; }
         set { _lock = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="ServerPartitionGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
         }
         [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyInstanceUid")]
         public System.String StudyInstanceUid
         {
         get { return _studyInstanceUid; }
         set { _studyInstanceUid = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyStatusEnum")]
         public StudyStatusEnum StudyStatusEnum
         {
         get { return _studyStatusEnum; }

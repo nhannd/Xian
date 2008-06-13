@@ -53,16 +53,19 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="StorageFilesystem", ColumnName="FilesystemGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey FilesystemKey
         {
         get { return _filesystemKey; }
         set { _filesystemKey = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StorageFilesystem", ColumnName="StudyFolder")]
         public System.String StudyFolder
         {
         get { return _studyFolder; }
         set { _studyFolder = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StorageFilesystem", ColumnName="StudyStorageGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
         {
         get { return _studyStorageKey; }

@@ -200,7 +200,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         public StudyStorageLocation GetStudyStorageLocation(DicomMessage message)
         {
             String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
-            String studyDate = message.DataSet[DicomTags.StudyDate].GetString(0, Platform.Time.ToString("yyyyMMdd"));
+            String studyDate = message.DataSet[DicomTags.StudyDate].GetString(0, ImageServerCommonConfiguration.DefaultStudyRootFolder);
 
             Filesystem filesystem = Selector.SelectFilesystem(message);
             if (filesystem == null)

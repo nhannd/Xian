@@ -322,6 +322,24 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid DICOM UID format: {0}.
+        /// </summary>
+        public static string ExceptionGeneralUIDFormat {
+            get {
+                return ResourceManager.GetString("ExceptionGeneralUIDFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UID cannot exceeed 64 characters: {0}.
+        /// </summary>
+        public static string ExceptionGeneralUIDLength {
+            get {
+                return ResourceManager.GetString("ExceptionGeneralUIDLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The UID cannot be null.
         /// </summary>
         public static string ExceptionGeneralUidNull {

@@ -33,6 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntityField.cs" />
     <Compile Include="IEntityBroker.cs" />
     <Compile Include="IEnumBroker.cs" />
     <Compile Include="IProcedureQueryBroker.cs" />

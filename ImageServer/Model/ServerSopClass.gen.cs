@@ -54,17 +54,20 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="Description")]
         public System.String Description
         {
         get { return _description; }
         set { _description = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="NonImage")]
         public System.Boolean NonImage
         {
         get { return _nonImage; }
         set { _nonImage = value; }
         }
         [DicomField(DicomTags.SopClassUid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="SopClassUid")]
         public System.String SopClassUid
         {
         get { return _sopClassUid; }

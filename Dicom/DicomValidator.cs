@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ClearCanvas.Dicom
 {
@@ -195,9 +196,38 @@ namespace ClearCanvas.Dicom
 		/// <param name="uid"></param>
 		public static void ValidateTransferSyntaxUID(string uid)
 		{
-			if (String.IsNullOrEmpty(uid) || uid.TrimEnd(' ').Length == 0)
-				throw new DicomValidationException(String.Format(SR.ExceptionInvalidTransferUID));
+
+            try
+            {
+                ValidateUid(uid);
+            }
+            catch (DicomValidationException e)
+            {
+                throw new DicomValidationException(String.Format("Invalid transfer syntax: {0} ", e.Message));
+            } 
+            
+            if (String.IsNullOrEmpty(uid) || uid.TrimEnd(' ').Length == 0)
+                throw new DicomValidationException(String.Format(SR.ExceptionInvalidTransferUID));
+
 		}
+
+        /// <summary>
+        /// Validate the specified uid conforms to Dicom standard.
+        /// </summary>
+        public static void ValidateUid(string uid)
+        {
+            if (String.IsNullOrEmpty(uid) || uid.TrimEnd(' ').Length == 0)
+                return;// ok
+
+            if (uid.Length > 64)
+                throw new DicomValidationException(String.Format(SR.ExceptionGeneralUIDLength, uid));
+
+            Regex regex = new Regex("^[0-9]+([\\.][0-9]+)*$");
+            if (!regex.IsMatch(uid))
+            {
+                throw new DicomValidationException(String.Format(SR.ExceptionGeneralUIDFormat, uid));
+            }
+        }
 
 		/// <summary>
 		/// Validate that the Study Instance UID is not empty.
@@ -205,8 +235,19 @@ namespace ClearCanvas.Dicom
 		/// <param name="uid"></param>
 		public static void ValidateStudyInstanceUID(string uid)
 		{
-			if (String.IsNullOrEmpty(uid) || uid.TrimEnd(' ').Length == 0)
-				throw new DicomValidationException(String.Format(SR.ExceptionInvalidStudyInstanceUID));
+            try
+            {
+                ValidateUid(uid);
+            }
+            catch (DicomValidationException e)
+            {
+                throw new DicomValidationException(String.Format("Invalid Study Instance UID: {0} ", e.Message));
+            }
+
+            if (String.IsNullOrEmpty(uid) || uid.TrimEnd(' ').Length == 0)
+                throw new DicomValidationException(String.Format(SR.ExceptionInvalidStudyInstanceUID));
+
+            
 		}
 
 		/// <summary>
@@ -215,8 +256,19 @@ namespace ClearCanvas.Dicom
 		/// <param name="uid"></param>
 		public static void ValidateSeriesInstanceUID(string uid)
 		{
-			if (String.IsNullOrEmpty(uid) || uid.TrimEnd(' ').Length == 0)
-				throw new DicomValidationException(String.Format(SR.ExceptionInvalidSeriesInstanceUID));
+            try
+            {
+                ValidateUid(uid);
+            }
+            catch (DicomValidationException e)
+            {
+                throw new DicomValidationException(String.Format("Invalid Series Instance UID: {0} ", e.Message));
+            }
+
+            if (String.IsNullOrEmpty(uid) || uid.TrimEnd(' ').Length == 0)
+                throw new DicomValidationException(String.Format(SR.ExceptionInvalidSeriesInstanceUID));
+
+            
 		}
 
 		/// <summary>
@@ -225,8 +277,19 @@ namespace ClearCanvas.Dicom
 		/// <param name="uid"></param>
 		public static void ValidateSOPInstanceUID(string uid)
 		{
-			if (String.IsNullOrEmpty(uid) || uid.TrimEnd(' ').Length == 0)
-				throw new DicomValidationException(String.Format(SR.ExceptionInvalidSOPInstanceUID));
+            
+            try
+            {
+                ValidateUid(uid);
+            }
+            catch (DicomValidationException e)
+            {
+                throw new DicomValidationException(String.Format("Invalid SOP Instance UID: {0} ", e.Message));
+            }
+
+            if (String.IsNullOrEmpty(uid) || uid.TrimEnd(' ').Length == 0)
+                throw new DicomValidationException(String.Format(SR.ExceptionInvalidSOPInstanceUID));
+
 		}
 
 		#endregion

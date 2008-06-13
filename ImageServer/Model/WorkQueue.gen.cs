@@ -63,66 +63,79 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="Data")]
         public System.Xml.XmlDocument Data
         {
         get { return _data; }
         set { _data = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="DeviceGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey DeviceKey
         {
         get { return _deviceKey; }
         set { _deviceKey = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ExpirationTime")]
         public System.DateTime ExpirationTime
         {
         get { return _expirationTime; }
         set { _expirationTime = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="FailureCount")]
         public System.Int32 FailureCount
         {
         get { return _failureCount; }
         set { _failureCount = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="FailureDescription")]
         public System.String FailureDescription
         {
         get { return _failureDescription; }
         set { _failureDescription = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="InsertTime")]
         public System.DateTime InsertTime
         {
         get { return _insertTime; }
         set { _insertTime = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ProcessorID")]
         public System.String ProcessorID
         {
         get { return _processorID; }
         set { _processorID = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ScheduledTime")]
         public System.DateTime ScheduledTime
         {
         get { return _scheduledTime; }
         set { _scheduledTime = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ServerPartitionGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="StudyStorageGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
         {
         get { return _studyStorageKey; }
         set { _studyStorageKey = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="WorkQueuePriorityEnum")]
         public WorkQueuePriorityEnum WorkQueuePriorityEnum
         {
         get { return _workQueuePriorityEnum; }
         set { _workQueuePriorityEnum = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="WorkQueueStatusEnum")]
         public WorkQueueStatusEnum WorkQueueStatusEnum
         {
         get { return _workQueueStatusEnum; }
         set { _workQueueStatusEnum = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="WorkQueueTypeEnum")]
         public WorkQueueTypeEnum WorkQueueTypeEnum
         {
         get { return _workQueueTypeEnum; }

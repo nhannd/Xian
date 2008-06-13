@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 #region License
 
@@ -36,6 +37,7 @@ using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -118,7 +120,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy.ActionPlugins
                 }
             }
 
-            // TODO: add value validation here
+            if (_targetTag.TagValue == DicomTags.StudyInstanceUid)
+            {
+                DicomValidator.ValidateStudyInstanceUID(_value);
+            }
         }
 
 
@@ -136,10 +141,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy.ActionPlugins
             try
             {
                 EditDicomFile(context);
-                if (_previousCalls == 1 /* this is the first time*/)
-                {
-                    UpdateDatabase(context);
-                }
+                UpdateEntities(context);
                 
             }
             catch(Exception)
@@ -154,113 +156,55 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy.ActionPlugins
 
         #region Private Methods
 
-        private void UpdateDatabase(EditStudyContext context)
-        {
-            Platform.CheckForNullReference(context, "context");
-            
-            UpdatePatientDemoFields(context);
-            UpdateStudyFields(context);
-        }
 
-
-        private void UpdatePatientDemoFields(EditStudyContext context)
+        private void UpdateEntities(EditStudyContext context)
         {
-            Platform.CheckForNullReference(context, "context");
-            
-            try
+            Study study = context.Study;
+            PropertyInfo[] properties = study.GetType().GetProperties();
+            foreach (PropertyInfo property in properties)
             {
-                // use reflection to update the field in the database
-                IPatientEntityBroker broker = context.UpdateContext.GetBroker<IPatientEntityBroker>();
-                Platform.CheckForNullReference(broker, "broker");
-
-                PatientUpdateColumns columns = new PatientUpdateColumns();
-
-                PropertyInfo[] properties = columns.GetType().GetProperties();
-                foreach (PropertyInfo property in properties)
+                object[] attributes = property.GetCustomAttributes(typeof(DicomFieldAttribute), true);
+                foreach (DicomFieldAttribute attr in attributes)
                 {
-                    object[] attributes = property.GetCustomAttributes(typeof(DicomFieldAttribute), true);
-                    foreach (DicomFieldAttribute attr in attributes)
+                    if (attr.Tag == _edittedAttribute.Tag)
                     {
-                        if (attr.Tag == _edittedAttribute.Tag)
-                        {
-                            Platform.Log(LogLevel.Debug, "Updating database field {0}", property.Name);
-                            property.SetValue(columns, _value, null);
-
-                            if (!broker.Update(context.PatientKey, columns))
-                                throw new Exception("patient table update failed");
-                        }
+                        Platform.Log(LogLevel.Debug, "Updating patient table field {0}", property.Name);
+                        property.SetValue(study, _value, null);
                     }
                 }
             }
-            catch(Exception)
+
+
+            Patient patient = context.Patient;
+            properties = patient.GetType().GetProperties();
+            foreach (PropertyInfo property in properties)
             {
-                FailureReason =
-                    String.Format("Unable to update patient demographic fields: {0}", _edittedAttribute.Tag.Name);
-                throw;
-            }
-        }
-
-        private void UpdateStudyFields(EditStudyContext context)
-        {
-            Platform.CheckForNullReference(context, "context");
-            
-            try
-            {
-                // use reflection to update the field in the database
-                IStudyEntityBroker broker = context.UpdateContext.GetBroker<IStudyEntityBroker>();
-
-                StudyUpdateColumns columns = new StudyUpdateColumns();
-
-                PropertyInfo[] properties = columns.GetType().GetProperties();
-                bool found = false;
-                foreach (PropertyInfo property in properties)
+                object[] attributes = property.GetCustomAttributes(typeof(DicomFieldAttribute), true);
+                foreach (DicomFieldAttribute attr in attributes)
                 {
-                    object[] attributes = property.GetCustomAttributes(typeof(DicomFieldAttribute), true);
-                    foreach (DicomFieldAttribute attr in attributes)
+                    if (attr.Tag == _edittedAttribute.Tag)
                     {
-                        if (attr.Tag == _edittedAttribute.Tag)
-                        {
-                            Platform.Log(LogLevel.Debug, "Updating database field {0}", property.Name);
-                            property.SetValue(columns, _value, null);
-
-                            if (!broker.Update(context.StudyKey, columns))
-                                throw new Exception("study table update failed");
-
-                            found = true; // assume there's only one db field mapped to the tag
-                            break;
-                        }
+                        Platform.Log(LogLevel.Debug, "Updating patient table field {0}", property.Name);
+                        property.SetValue(patient, _value, null);
                     }
-
-                    if (found)
-                        break;
-                }
-
-                // we use the study date for the study folder. If it is changed, must we also update this field
-                if (_edittedAttribute.Tag.TagValue == DicomTags.StudyDate)
-                {
-                    IStorageFilesystemEntityBroker storageFilesystemBroker = context.UpdateContext.GetBroker<IStorageFilesystemEntityBroker>();
-                    StorageFilesystemUpdateColumns parms = new StorageFilesystemUpdateColumns();
-                    parms.StudyFolder = _value;
-                    parms.StudyStorageKey = context.StorageLocation.GetKey();
-
-                    StorageFilesystemSelectCriteria criteria = new StorageFilesystemSelectCriteria();
-                    criteria.StudyStorageKey.EqualTo(context.StorageLocation.GetKey());
-                    IList<StorageFilesystem> storageFilesystems = storageFilesystemBroker.Find(criteria);
-
-                    foreach (StorageFilesystem fs in storageFilesystems)
-                    {
-                        if (!storageFilesystemBroker.Update(fs.GetKey(), parms))
-                            throw new Exception("storage filesystem table update failed");
-                    }
-
                 }
             }
-            catch (Exception)
+
+            if (_edittedAttribute.Tag.TagValue == DicomTags.StudyDate)
             {
-                FailureReason =
-                    String.Format("Unable to update study fields: {0}", _edittedAttribute.Tag.Name);
-                throw;
+                if (String.IsNullOrEmpty(_value) == false)
+                {
+                    // Must remove trailing spaces for the folder name
+                    context.StorageLocation.StudyFolder = _value.Trim();
+                }
+                else
+                {
+                    // Must remove trailing spaces for the folder name
+                    context.StorageLocation.StudyFolder = ImageServerCommonConfiguration.DefaultStudyRootFolder.Trim();
+                }
             }
+
+            context.StorageLocation.StudyInstanceUid = context.Study.StudyInstanceUid;
         }
 
 
@@ -273,33 +217,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy.ActionPlugins
 
             try
             {
-                DicomAttributeCollection collection = context.CurrentFile.DataSet;
-                if (_parentTags!=null)
-                {
-                    foreach (DicomTag tag in _parentTags)
-                    {
-                        DicomAttribute sq = collection[tag] as DicomAttributeSQ;
-                        if (sq == null)
-                        {
-                            throw new Exception(String.Format("Invalid tag value: {0}({1}) is not a SQ VR", tag, tag.Name));
-                        }
-                        if (sq.IsEmpty)
-                        {
-                            DicomSequenceItem item = new DicomSequenceItem();
-                            sq.AddSequenceItem(item);
-                        }
-
-                        DicomSequenceItem[] items = sq.Values as DicomSequenceItem[];
-                        Platform.CheckForNullReference(items, "items");
-                        collection = items[0];
-                    }
-                }
-
-                _edittedAttribute = collection[_targetTag];
+                _edittedAttribute = FindAttribute(context);
 
                 String msg = String.Format("**** EDITING : Setting tag {0} to {1}", _edittedAttribute.Tag, _value);
                 Platform.Log(LogLevel.Debug, msg);
-
                 _edittedAttribute.SetStringValue(_value);
 
             }
@@ -309,6 +230,33 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy.ActionPlugins
                 throw;
             }
 
+        }
+
+        private DicomAttribute FindAttribute(EditStudyContext context)
+        {
+            DicomAttributeCollection collection = context.CurrentFile.DataSet;
+            if (_parentTags!=null)
+            {
+                foreach (DicomTag tag in _parentTags)
+                {
+                    DicomAttribute sq = collection[tag] as DicomAttributeSQ;
+                    if (sq == null)
+                    {
+                        throw new Exception(String.Format("Invalid tag value: {0}({1}) is not a SQ VR", tag, tag.Name));
+                    }
+                    if (sq.IsEmpty)
+                    {
+                        DicomSequenceItem item = new DicomSequenceItem();
+                        sq.AddSequenceItem(item);
+                    }
+
+                    DicomSequenceItem[] items = sq.Values as DicomSequenceItem[];
+                    Platform.CheckForNullReference(items, "items");
+                    collection = items[0];
+                }
+            }
+
+            return collection[_targetTag];
         }
 
         #endregion
