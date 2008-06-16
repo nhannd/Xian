@@ -111,7 +111,17 @@ namespace ClearCanvas.Ris.Client
 			_selectedItems = new List<TSummary>();
 		}
 
-        #region ApplicationComponent overrides
+		/// <summary>
+		/// Gets or sets a value indicating whether this component will set <see cref="ApplicationComponent.Modified"/> to true
+		/// when the summary list is changed.
+		/// </summary>
+		public bool SetModifiedOnListChange
+		{
+			get { return _supportModified; }
+			set { _supportModified = value; }
+		}
+
+		#region ApplicationComponent overrides
 
         public override void Start()
         {
@@ -145,7 +155,7 @@ namespace ClearCanvas.Ris.Client
 			}
 			else
 			{
-				_summaryTable.Items.AddRange(ListAllItems());
+				_summaryTable.Items.AddRange(ListItems(0, -1));
 			}
 
             base.Start();
@@ -314,20 +324,13 @@ namespace ClearCanvas.Ris.Client
 		
         /// <summary>
         /// Gets the list of items to show in the table, according to the specifed first and max items.
+        /// If <see cref="SupportsPaging"/> is false, then this method should ignore the first and max items
+        /// parameters and return all items.
         /// </summary>
         /// <param name="firstItem"></param>
         /// <param name="maxItems"></param>
         /// <returns></returns>
         protected abstract IList<TSummary> ListItems(int firstItem, int maxItems);
-
-		/// <summary>
-		/// Gets the list of all items to show in the table.
-		/// </summary>
-		/// <returns></returns>
-		protected virtual IList<TSummary> ListAllItems()
-		{
-			throw new NotImplementedException();
-		}
 
         /// <summary>
         /// Called to handle the "add" action.
@@ -412,14 +415,13 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Gets a value indicating whether this component supports paging.  The default is true.
 		/// Override this method to change support for paging.
-		/// Also override ListAllItems if paging is not supported
 		/// </summary>
 		protected virtual bool SupportsPaging
     	{
 			get { return true; }
     	}
 
-        #endregion 
+		#endregion 
         
         /// <summary>
         /// Gets the action model.
@@ -452,16 +454,5 @@ namespace ClearCanvas.Ris.Client
         {
             get { return _selectedItems; }
         }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether this component will set this.Modified to true
-		/// when the summary list changed.  This property is public because it is different per instance, not per class.
-		/// </summary>
-		public virtual bool SupportModified
-		{
-			get { return _supportModified; }
-			set { _supportModified = value; }
-		}
-
 	}
 }

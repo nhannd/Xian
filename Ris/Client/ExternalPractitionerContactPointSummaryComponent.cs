@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Client
 			ExternalPractitionerContactPointTable thisTable = (ExternalPractitionerContactPointTable) this.SummaryTable;
 			thisTable.DefaultContactPointChanged += delegate
 				{
-					if (this.SupportModified)
+					if (this.SetModifiedOnListChange)
 						this.Modified = true;
 				};
 
@@ -175,12 +175,6 @@ namespace ClearCanvas.Ris.Client
 		protected override IList<ExternalPractitionerContactPointDetail> ListItems(int firstItem, int maxItems)
 		{
 			throw new NotImplementedException();
-		}
-
-		protected override IList<ExternalPractitionerContactPointDetail> ListAllItems()
-		{
-			// don't have to do anything, because the table is populcated by parent object
-			return new List<ExternalPractitionerContactPointDetail>();
 		}
 
 		/// <summary>
@@ -307,7 +301,7 @@ namespace ClearCanvas.Ris.Client
 				if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
 					this.Table.Items.Remove(mergeComponent.SelectedDuplicate);
-					if (this.SupportModified)
+					if (this.SetModifiedOnListChange)
 						this.Modified = true;
 				}
 			}

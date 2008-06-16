@@ -166,7 +166,7 @@ namespace ClearCanvas.Ris.Client
 
 			_contactPointSummaryComponent = new ExternalPractitionerContactPointSummaryComponent(_practitionerRef,
 				formDataResponse.AddressTypeChoices, formDataResponse.PhoneTypeChoices, formDataResponse.ResultCommunicationModeChoices);
-			_contactPointSummaryComponent.SupportModified = true;
+			_contactPointSummaryComponent.SetModifiedOnListChange = true;
 
 			string rootPath = SR.TitleExternalPractitioner;
 			this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new ExternalPractitionerDetailsEditorComponent(_isNew)));

@@ -12,6 +12,7 @@ using ClearCanvas.Enterprise.Common;
 namespace $rootnamespace$
 {
     [MenuAction("launch", "global-menus/Admin/$fileinputname$", "Launch")]
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.$fileinputname$)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class $fileinputname$AdminTool : Tool<IDesktopToolContext>
     {
@@ -58,8 +59,21 @@ namespace $rootnamespace$
     /// <summary>
     /// $fileinputname$SummaryComponent class.
     /// </summary>
-    public class $fileinputname$SummaryComponent : SummaryComponentBase<$fileinputname$Summary, StaffGroupSummaryTable>
+    public class $fileinputname$SummaryComponent : SummaryComponentBase<$fileinputname$Summary, $fileinputname$SummaryTable>
     {
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
+
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.$fileinputname$);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.$fileinputname$);
+		}
+		
         /// <summary>
         /// Gets the list of items to show in the table, according to the specifed first and max items.
         /// </summary>
