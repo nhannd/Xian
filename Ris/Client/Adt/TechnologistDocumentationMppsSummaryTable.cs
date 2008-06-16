@@ -32,6 +32,7 @@
 using System;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -49,10 +50,12 @@ namespace ClearCanvas.Ris.Client.Adt
                                  delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.State.Value; },
                                  1.2f));
 
-            this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, DateTime>(
+			ITableColumn sortColumn = new TableColumn<ModalityPerformedProcedureStepDetail, DateTime?>(
                                  "Start Time",
                                  delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.StartTime; },
-                                 1.5f));
+                                 1.5f);
+			this.Columns.Add(sortColumn);
+			this.Sort(new TableSortParams(sortColumn, true));
 
             this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, DateTime?>(
                                  "End Time",

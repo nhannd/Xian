@@ -263,6 +263,7 @@ namespace ClearCanvas.Ris.Client.Adt
 						ListPerformedProcedureStepsResponse mppsResponse = service.ListPerformedProcedureSteps(mppsRequest);
 
 						_mppsTable.Items.AddRange(mppsResponse.PerformedProcedureSteps);
+						_mppsTable.Sort();
 					});
 			}
 
