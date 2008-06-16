@@ -59,5 +59,59 @@ namespace ClearCanvas.Ris.Server {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This shred hosts the Ris Server..
+        /// </summary>
+        internal static string MessageRisServerDescription {
+            get {
+                return ResourceManager.GetString("MessageRisServerDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Ris Server has failed to start.  Please check the log for more details..
+        /// </summary>
+        internal static string ServiceFailedToStart {
+            get {
+                return ResourceManager.GetString("ServiceFailedToStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Ris Server has failed to stop.  Please check the log for more details..
+        /// </summary>
+        internal static string ServiceFailedToStop {
+            get {
+                return ResourceManager.GetString("ServiceFailedToStop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Ris Server has started successfully..
+        /// </summary>
+        internal static string ServiceStartedSuccessfully {
+            get {
+                return ResourceManager.GetString("ServiceStartedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Ris Server has stopped successfully..
+        /// </summary>
+        internal static string ServiceStoppedSuccessfully {
+            get {
+                return ResourceManager.GetString("ServiceStoppedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ris Server.
+        /// </summary>
+        internal static string TitleRisServer {
+            get {
+                return ResourceManager.GetString("TitleRisServer", resourceCulture);
+            }
+        }
     }
 }
