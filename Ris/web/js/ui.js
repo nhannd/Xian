@@ -449,7 +449,6 @@ var Table = {
 						showTimePicker(findButtonTime, inputTime,
 							function(time)
 							{
-								alert(time);
 								var extendedDate = column.getValue(obj) || new Date();
 								extendedDate.setHours(time.getHours());  // Ensure Date object has extensions defined in jsx.js
 								extendedDate.setMinutes(time.getMinutes());  // Ensure Date object has extensions defined in jsx.js
