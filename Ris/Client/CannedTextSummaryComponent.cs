@@ -293,9 +293,9 @@ namespace ClearCanvas.Ris.Client
 				}
 				else
 				{
-					this.ActionModel.Add.Enabled = 
-						this.ActionModel.Add.Enabled = 
-						this.ActionModel.Add.Enabled = HasGroupAdminAuthority;
+					this.ActionModel.Add.Enabled =
+						this.ActionModel.Edit.Enabled =
+						this.ActionModel.Delete.Enabled = HasGroupAdminAuthority;
 				}
 			}
 			else
