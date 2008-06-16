@@ -266,7 +266,18 @@ var Table = {
 			// by default, set cell content to the value of the specified property of the object
 			var column = this._columns[col];
 			var value = this._getColumnValue(column, obj);
-			td.innerHTML = column.cellType == "html" ? value : ((value || "")+"").escapeHTML();
+			if (column.cellType == "html")
+			{
+				td.innerHTML = value;
+			}
+			else if (column.cellType == "readonly")
+			{
+				Field.setPreFormattedValue(td, value);
+			}
+			else
+			{
+				Field.setValue(td, value);
+			}
 
 			// fire custom formatting event, which may itself set the innerHTML property to override default cell content
 			if(this.renderCell)
@@ -334,10 +345,10 @@ var Table = {
 
 			if(["readonly"].indexOf(column.cellType) > -1)
 			{
-				var field = document.createElement("div");
-			  field.className = "readonlyField";
+				var field = document.createElement("pre");
+				field.className = "readonlyField";
 				td.appendChild(field);
-				td._setCellDisplayValue = function(value) { Field.setValue(field, value); }
+				td._setCellDisplayValue = function(value) { Field.setPreFormattedValue(field, value); }
 			}
 			else
 			if(["text"].indexOf(column.cellType) > -1)
@@ -843,7 +854,12 @@ var Field =
 	{
 		element.innerHTML = value ? (value + "").escapeHTML() : "";
 	},
-	
+
+	setPreFormattedValue: function(element, value)
+	{
+		element.innerHTML = value ? "<PRE>" + (value + "") + "</PRE>" : "";
+	},
+
 	getValue: function(element)
 	{
 		return element.innerHTML;

@@ -6,6 +6,10 @@ body {
 	font-family: Arial;
 }
 
+pre {
+	font-family: Arial;
+}
+
 p {
 	margin-top: 2px;
 	margin-bottom: 2px;

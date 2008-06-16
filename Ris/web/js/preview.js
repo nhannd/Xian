@@ -218,7 +218,7 @@ function createOrderNotesTable(htmlTable, notes)
 	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
 		 [
 			{   label: "Note",
-				cellType: "text",
+				cellType: "readonly",
 				getValue: function(item) { return item.NoteBody; }
 			},
 			{   label: "Time",
@@ -314,7 +314,7 @@ function createReportPreview(element, report)
 			if (addendumContent)
 			{
 				formattedReport += "<b>Addendum " + i + " (" + statusMap[addendumStatus] + "): </b><br>";
-				formattedReport += addendumContent;
+				formattedReport += "<pre>" + addendumContent + "</pre>";
 				formattedReport += formatReportPerformer(addendumPart);
 
 				if (['D', 'P'].indexOf(addendumStatus) > -1)
@@ -362,7 +362,7 @@ function createReportPreview(element, report)
 	formattedReport += "<div id=\"structuredReport\" style=\"{margin-bottom:1em;}\"></div>";
 	if(mainReportText)
 	{
-		formattedReport += mainReportText;
+		formattedReport += "<pre>" + mainReportText + "</pre>";
 	}
 
 	formattedReport += formatReportPerformer(report.Parts[0]);
