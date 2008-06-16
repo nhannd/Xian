@@ -406,7 +406,7 @@
 					},
 					{  label: "Time",
 						cellType: "datetime",
-						getValue: function(item) { return item.time || { date:null, time:null }; },
+						getValue: function(item) { return item.time; },
 						setValue: function(item, value) { item.time = value; },
 						getError: function(item) { return null; }
 					}
@@ -491,7 +491,7 @@
 					},
 					{  label: "Time",
 						cellType: "datetime",
-						getValue: function(item) { return item.time || { date:null, time:null }; },
+						getValue: function(item) { return item.time; },
 						setValue: function(item, value) { item.time = value; },
 						getError: function(item) { return null; }
 					}
@@ -549,7 +549,7 @@
 					},
 					{  label: "Time",
 						cellType: "datetime",
-						getValue: function(item) { return item.time || { date:null, time:null }; },
+						getValue: function(item) { return item.time; },
 						setValue: function(item, value) { item.time = value; },
 						getError: function(item) { return null; }
 					}

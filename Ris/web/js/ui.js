@@ -382,171 +382,100 @@ var Table = {
 				input.onblur = function() { table._onEditComplete(row, col); }
 			}
 			else
-			if(["date"].indexOf(column.cellType) > -1)
+			if(["date", "time", "datetime"].indexOf(column.cellType) > -1)
 			{
-				var input = document.createElement("input");
-				input.id = this.id + "_" + column.label + "_" + "dateinput" + row;
-				td.appendChild(input);
-				td._setCellDisplayValue = function(value) { input.value = value ? value : ""; };
-				if(column.size) input.size = column.size;
-				
-				input.onkeyup = function()
+				if(["date", "datetime"].indexOf(column.cellType) > -1)
 				{
-					// if user blanked out the field, set the value to null, otherwise parse field
-					column.setValue(obj, (this.value && this.value.length) ? this.value : null );
-					table._onCellUpdate(row, col);
-				}
-				
-				// consider the edit complete when focus is lost
-				input.onblur = function() 
-				{ 
-					table._onEditComplete(row, col); 
+					var inputDate = document.createElement("input");
+					inputDate.id = this.id + "_" + column.label + "_" + "dateinput" + row;
+					td.appendChild(inputDate);
+					if(column.size) inputDate.size = column.size;
+					inputDate.readOnly = "readonly";
+
+					// launch calendar on click
+					var findButtonDate = document.createElement("input");
+					findButtonDate.type = "button";
+					findButtonDate.value = "...";
+					td.appendChild(findButtonDate);
+					findButtonDate.onclick = function() 
+					{
+						showDatePicker(findButtonDate, inputDate, 
+							function(date) 
+							{
+								var extendedDate = column.getValue(obj) || new Date();
+								extendedDate.setDate(date.getDate());
+								extendedDate.setMonth(date.getMonth());
+								extendedDate.setYear(date.getYear());
+								column.setValue(obj, extendedDate);
+								table._onCellUpdate(row, col);
+								table._onEditComplete(row, col);
+							});
+					}
 				}
 
-				// launch calendar on click
-				var findButton = document.createElement("input");
-				findButton.type = "button";
-				findButton.value = "...";
-				td.appendChild(findButton);
-				findButton.onclick = function() 
-				{ 
-					showDatePicker(findButton, input, 
-						function(date) 
-						{
-							// TODO: set date properly
-							column.setValue(obj, date );
-							table._onCellUpdate(row, col);
-							table._onEditComplete(row, col);
-						});
-				}
-			}
-			else
-			if(["time"].indexOf(column.cellType) > -1)
-			{
-				var input = document.createElement("input");
-				input.id = this.id + "_" + column.label + "_" + "timeinput" + row;
-				td.appendChild(input);
-				td._setCellDisplayValue = function(value) { input.value = value ? value : ""; };
-				if(column.size) input.size = column.size;
-
-				input.onkeyup = function()
+				if(["time", "datetime"].indexOf(column.cellType) > -1)
 				{
-					// if user blanked out the field, set the value to null, otherwise parse field
-					column.setValue(obj, (this.value && this.value.length) ? this.value : null );
-					table._onCellUpdate(row, col);
+					var inputTime = document.createElement("input");
+					inputTime.id = this.id + "_" + column.label + "_" + "timeinput" + row;
+					td.appendChild(inputTime);
+					if(column.size) inputTime.size = column.size;
+					inputTime.readOnly = "readonly";
+
+					/*
+					inputTime.onkeyup = function()
+					{
+						// if user blanked out the field, set the value to null, otherwise parse field
+						column.setValue(obj, (this.value && this.value.length) ? this.value : null );
+						table._onCellUpdate(row, col);
+					}
+					
+					// consider the edit complete when focus is lost
+					inputTime.onblur = function() 
+					{ 
+						sstp_validateTimePicker(input);
+						// store validated value.
+						column.setValue(obj, (this.value && this.value.length) ? this.value : null );
+						table._onEditComplete(row, col); 
+					}
+					*/
+
+					// launch calendar on click
+					var findButtonTime = document.createElement("input");
+					findButtonTime.type = "button";
+					findButtonTime.value = "...";
+					td.appendChild(findButtonTime);
+					findButtonTime.onclick = function() 
+					{ 
+						showTimePicker(findButtonTime, inputTime,
+							function(time)
+							{
+								alert(time);
+								var extendedDate = column.getValue(obj) || new Date();
+								extendedDate.setHours(time.getHours());  // Ensure Date object has extensions defined in jsx.js
+								extendedDate.setMinutes(time.getMinutes());  // Ensure Date object has extensions defined in jsx.js
+								column.setValue(obj, extendedDate);
+								table._onCellUpdate(row, col);
+								table._onEditComplete(row, col);
+							}); 
+					}
 				}
 				
-				// consider the edit complete when focus is lost
-				input.onblur = function() 
-				{ 
-					sstp_validateTimePicker(input);
-					// store validated value.
-					column.setValue(obj, (this.value && this.value.length) ? this.value : null );
-					table._onEditComplete(row, col); 
-				}
-
-				// launch calendar on click
-				var findButton = document.createElement("input");
-				findButton.type = "button";
-				findButton.value = "...";
-				td.appendChild(findButton);
-				findButton.onclick = function() 
-				{ 
-					showTimePicker(findButton, input,
-						function(time)
-						{
-							column.setValue(obj, time);
-							table._onCellUpdate(row, col);
-							table._onEditComplete(row, col);
-						}); 
-				}
-
-			}
-			else
-			if(["datetime"].indexOf(column.cellType) > -1)
-			{
-				var input = document.createElement("input");
-				input.id = this.id + "_" + column.label + "_" + "dateinput" + row;
-				td.appendChild(input);
-				if(column.size) input.size = column.size;
-				
-				input.onkeyup = function()
+				if(["date"].indexOf(column.cellType) > -1)
 				{
-					// if user blanked out the field, set the value to null, otherwise parse field
-					time = input2.value;
-					column.setValue(obj, {time:time, date:((this.value && this.value.length) ? this.value : null )} );
-					table._onCellUpdate(row, col);
+					td._setCellDisplayValue = function(value) { inputDate.value = value ? Ris.formatDate(value) : ""; };
 				}
-				
-				// consider the edit complete when focus is lost
-				input.onblur = function() 
-				{ 
-					table._onEditComplete(row, col); 
-				}
-
-				// launch calendar on click
-				var findButton = document.createElement("input");
-				findButton.type = "button";
-				findButton.value = "...";
-				td.appendChild(findButton);
-				findButton.onclick = function() 
-				{ 
-					showDatePicker(findButton, input, 
-						function(date) 
-						{
-							time = input2.value;
-							column.setValue(obj, {time:time, date:date} );
-							table._onCellUpdate(row, col);
-							table._onEditComplete(row, col);
-						});
-				}
-
-				var input2 = document.createElement("input");
-				input2.id = this.id + "_" + column.label + "_" + "timeinput" + row;
-				td.appendChild(input2);
-				if(column.size) input.size = column.size;
-
-				input2.onkeyup = function()
+				if(["time"].indexOf(column.cellType) > -1)
 				{
-					// if user blanked out the field, set the value to null, otherwise parse field
-					date = input.value;
-					column.setValue(obj, {time:((this.value && this.value.length) ? this.value : null ), date:date} );
-					table._onCellUpdate(row, col);
+					td._setCellDisplayValue = function(value) { inputTime.value = value ? Ris.formatTime(value) : ""; };
 				}
-				
-				// consider the edit complete when focus is lost
-				input2.onblur = function() 
-				{ 
-					sstp_validateTimePicker(input2);
-					// store validated value.
-					date = input.value;
-					column.setValue(obj, {time:((this.value && this.value.length) ? this.value : null ), date:date} );
-					table._onEditComplete(row, col); 
+				if(["datetime"].indexOf(column.cellType) > -1)
+				{
+					td._setCellDisplayValue = function(value) 
+					{ 
+						inputDate.value = value ? Ris.formatDate(value) : "";
+						inputTime.value = value ? Ris.formatTime(value) : ""; 
+					};
 				}
-
-				// launch calendar on click
-				var findButton2 = document.createElement("input");
-				findButton2.type = "button";
-				findButton2.value = "...";
-				td.appendChild(findButton2);
-				findButton2.onclick = function() 
-				{ 
-					showTimePicker(findButton2, input2,
-						function(time)
-						{
-							date = input.value;
-							column.setValue(obj, {time:time, date:date} );
-							table._onCellUpdate(row, col);
-							table._onEditComplete(row, col);
-						}); 
-				}
-
-				td._setCellDisplayValue = function(value) 
-				{ 
-					input.value = value.date ? value.date : ""; 
-					input2.value = value.time ? value.time : ""; 
-				};
-
 			}
 			else
 			if(["choice", "combobox", "dropdown", "enum", "list", "listbox"].indexOf(column.cellType) > -1)
@@ -805,48 +734,6 @@ function ErrorProvider(visible)
 			});
 	}
 }
-
-/*
-	DateInput
-	
-	The DateInput class provides the ability to show a calendar next to any HTML DOM element, and receive
-	a callback with the selected value from the calendar.
-	
-	DateInput relies on the jscalendar library from www.dynarch.com.  These scripts must be included on the 
-	page prior to this file.
-	
-	Because a Calendar is a relatively expensive object to create, DateInput is designed as a singleton class
-	that manages a single instance of a Calendar.  The calendar can only be opened next to one input field at
-	a time.  This is sufficient for most use cases.
-	
-	Methods
-	
-	show(atElement, initialDate, callback)
-		atElement - the element (eg input field) that serves as the anchor point for the calendar
-		initialDate - the date to initialize the calendar to
-		callback - function(date, dateString) is a function that is called when the user clicks a date
-			in the calendar.  The function is passed both a Date object and a formatted date string for convenience.
-		
-	parse(dateString)
-		attempts to parse the specified string and return a Date object.  If parsing fails, a date object
-		set to "now" is returned (this behaviour is not ideal, but that is the jscalendar behaviour) 
-		
-	format(date)
-		formats the specified date object according to the default format string.  DateInput attempts to
-		obtain the default format string from the Ris object, if this object is available.
-*/
-var DateInput = 
-{
-	parse: function(dateString)
-	{
-		return Date.parseDate(dateString, ssdp_dateFormat);
-	},
-	
-	format: function(date)
-	{
-		return date.print(this._getCalendar().dateFormat);
-	}
-};
 
 var Field = 
 {

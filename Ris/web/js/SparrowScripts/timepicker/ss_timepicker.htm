@@ -38,7 +38,24 @@
 			opener.document.getElementById(sstp_parentControl).value=dt;
 		}
 		sstp_hideTimePicker();
-		parent.sstp_onTimePickerClosed(dt);
+		
+		var date = new Date();
+		if(sstp_24Hr)
+		{
+			date.setHours(parseInt(dt.substring(0, 2)));
+			date.setMinutes(parseInt(dt.substring(2)));
+		}
+		else
+		{
+			var colon = dt.indexOf(":");
+			date.setHours(parseInt(dt.substring(0, colon)));
+			date.setMinutes(parseInt(dt.substring(colon+1, colon+3)));
+			if(dt.indexOf("pm") > -1)
+			{
+				date.setHours((date.getHours() == 12) ?  0 : date.getHours() + 12);
+			}
+		}	
+		parent.sstp_onTimePickerClosed(date);
 	}
 
 	function sstp_padZero(num) {
