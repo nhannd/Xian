@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
+    <Compile Include="Admin\ProcedureTypeAdmin\ProcedureTypeAdminService.cs" />
     <Compile Include="Admin\StaffGroupAdmin\StaffGroupAdminService.cs" />
     <Compile Include="CannedTextService\CannedTextAssembler.cs" />
     <Compile Include="CannedTextService\CannedTextService.cs" />
@@ -234,7 +235,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Admin\ProcedureTypeAdmin\" />
     <Folder Include="Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

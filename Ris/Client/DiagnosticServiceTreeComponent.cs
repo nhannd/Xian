@@ -62,14 +62,14 @@ namespace ClearCanvas.Ris.Client
         private DiagnosticServiceTreeItem _selectedDiagnosticServiceTreeItem;
         private DiagnosticServiceDetail _selectedDiagnosticServiceDetail;
 
-        private Table<ProcedureTypeDetail> _diagnosticServiceBreakdown;
+        private Table<ProcedureTypeSummary> _diagnosticServiceBreakdown;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public DiagnosticServiceTreeComponent()
         {
-            _diagnosticServiceBreakdown = new Table<ProcedureTypeDetail>();
+			_diagnosticServiceBreakdown = new Table<ProcedureTypeSummary>();
             _diagnosticServiceBreakdown.Columns.Add(
                 new TableColumn<ProcedureTypeDetail, string>("Procedure Name",
                            delegate(ProcedureTypeDetail rp) { return rp.Name; }));

@@ -33,22 +33,41 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
+using System.Xml;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Ris.Application.Services
 {
     public class ProcedureTypeAssembler
     {
-        public ProcedureTypeSummary CreateProcedureTypeSummary(ProcedureType rpt)
+		public ProcedureTypeSummary CreateSummary(ProcedureType rpt)
         {
             return new ProcedureTypeSummary(rpt.GetRef(), rpt.Name, rpt.Id);
         }
 
-        public ProcedureTypeDetail CreateProcedureTypeDetail(ProcedureType procedureType)
+		public ProcedureTypeDetail CreateDetail(ProcedureType procedureType)
         {
+			//TODO: should be a better way than calling GetPlanXml().Tostring
             return new ProcedureTypeDetail(
                 procedureType.GetRef(),
                 procedureType.Id,
-                procedureType.Name);
+                procedureType.Name,
+				procedureType.BaseType == null ? null : CreateSummary(procedureType.BaseType),
+				procedureType.GetPlanXml().ToString());
         }
+
+		public void UpdateProcedureType(ProcedureType procType, ProcedureTypeDetail detail, IPersistenceContext context)
+		{
+			procType.Id = detail.Id;
+			procType.Name = detail.Name;
+			procType.BaseType = detail.BaseType == null
+			                    	? null
+			                    	: context.Load<ProcedureType>(detail.BaseType.ProcedureTypeRef, EntityLoadFlags.Proxy);
+
+			//TODO: should be a better way of doing this - can we send Xml directly in data contract??
+			XmlDocument xmlPlan = new XmlDocument();
+			xmlPlan.LoadXml(detail.PlanXml);
+			procType.SetPlanXml(xmlPlan);
+		}
     }
 }

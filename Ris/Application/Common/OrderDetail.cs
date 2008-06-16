@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Application.Common
         public string AccessionNumber;
 
         [DataMember]
-        public DiagnosticServiceDetail DiagnosticService;
+        public DiagnosticServiceSummary DiagnosticService;
 
         [DataMember]
         public DateTime? EnteredTime;
@@ -75,10 +75,10 @@ namespace ClearCanvas.Ris.Application.Common
         public DateTime? SchedulingRequestTime;
 
         [DataMember]
-        public ExternalPractitionerDetail OrderingPractitioner;
+        public ExternalPractitionerSummary OrderingPractitioner;
 
         [DataMember]
-        public FacilityDetail OrderingFacility;
+        public FacilitySummary OrderingFacility;
 
         [DataMember]
         public string ReasonForStudy;

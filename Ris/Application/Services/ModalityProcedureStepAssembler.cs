@@ -40,21 +40,21 @@ namespace ClearCanvas.Ris.Application.Services
 		public ModalityProcedureStepSummary CreateModalityProcedureStepSummary(ModalityProcedureStep mp, IPersistenceContext context)
 		{
 			ProcedureAssembler assembler = new ProcedureAssembler();
-
+			ModalityAssembler modalityAssembler = new ModalityAssembler();
 			return new ModalityProcedureStepSummary(
 				mp.GetRef(),
 				mp.Name,
 				EnumUtils.GetEnumValueInfo(mp.State, context),
 				mp.StartTime,
 				mp.EndTime,
-				mp.Modality.Id,
-				mp.Modality.Name,
+				modalityAssembler.CreateModalitySummary(mp.Modality),
 				assembler.CreateProcedureSummary(mp.Procedure, context));
 		}
 
 		public ModalityProcedureStepDetail CreateModalityProcedureStepDetail(ModalityProcedureStep mp, IPersistenceContext context)
 		{
 			StaffAssembler staffAssembler = new StaffAssembler();
+			ModalityAssembler modalityAssembler = new ModalityAssembler();
 
 			return new ModalityProcedureStepDetail(
 				mp.GetRef(),
@@ -65,8 +65,7 @@ namespace ClearCanvas.Ris.Application.Services
 				mp.EndTime,
 				mp.AssignedStaff == null ? null : staffAssembler.CreateStaffSummary(mp.AssignedStaff, context),
 				mp.PerformingStaff == null ? null : staffAssembler.CreateStaffSummary(mp.PerformingStaff, context),
-				mp.Modality.Id,
-				mp.Modality.Name);
+				modalityAssembler.CreateModalitySummary(mp.Modality));
 		}
 	}
 }

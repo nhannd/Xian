@@ -55,11 +55,11 @@ namespace ClearCanvas.Ris.Application.Services
                 diagnosticService.GetRef(),
                 diagnosticService.Id,
                 diagnosticService.Name,
-                CollectionUtils.Map<ProcedureType, ProcedureTypeDetail, List<ProcedureTypeDetail>>(
+                CollectionUtils.Map<ProcedureType, ProcedureTypeSummary>(
                     diagnosticService.ProcedureTypes,
                     delegate(ProcedureType rpType)
                     {
-                        return rptAssembler.CreateProcedureTypeDetail(rpType);
+						return rptAssembler.CreateSummary(rpType);
                     }));
         }
     }

@@ -40,13 +40,13 @@ namespace ClearCanvas.Ris.Application.Common
     {
         public ProcedureTypeSummary(EntityRef entityRef, string name, string id)
         {
-            this.EntityRef = entityRef;
+            this.ProcedureTypeRef = entityRef;
             this.Name = name;
             this.Id = id;
         }
 
         [DataMember]
-        public EntityRef EntityRef;
+        public EntityRef ProcedureTypeRef;
 
         [DataMember]
         public string Name;
@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Application.Common
         public bool Equals(ProcedureTypeSummary that)
         {
             if (that == null) return false;
-            return Equals(this.EntityRef, that.EntityRef);
+            return Equals(this.ProcedureTypeRef, that.ProcedureTypeRef);
         }
 
         public override bool Equals(object obj)
@@ -68,7 +68,7 @@ namespace ClearCanvas.Ris.Application.Common
 
         public override int GetHashCode()
         {
-            return EntityRef.GetHashCode();
+            return ProcedureTypeRef.GetHashCode();
         }
     }
 }

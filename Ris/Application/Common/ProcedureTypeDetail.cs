@@ -35,17 +35,20 @@ using System.Text;
 using System.Runtime.Serialization;
 
 using ClearCanvas.Enterprise.Common;
+using System.Xml;
 
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
     public class ProcedureTypeDetail : DataContractBase
     {
-        public ProcedureTypeDetail(EntityRef entityRef, string id, string name)
+		public ProcedureTypeDetail(EntityRef entityRef, string id, string name, ProcedureTypeSummary baseType, string planXml)
         {
             this.ProcedureTypeRef = entityRef;
             this.Id = id;
             this.Name = name;
+        	this.BaseType = baseType;
+        	this.PlanXml = planXml;
         }
 
         [DataMember]
@@ -56,6 +59,12 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public string Name;
+
+		[DataMember]
+		public ProcedureTypeSummary BaseType;
+
+		[DataMember]
+		public string PlanXml;
 
         public ProcedureTypeSummary GetSummary()
         {

@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class DiagnosticServiceDetail : DataContractBase
     {
-        public DiagnosticServiceDetail(EntityRef diagnosticServiceRef, string id, string name, List<ProcedureTypeDetail> procedureTypes)
+        public DiagnosticServiceDetail(EntityRef diagnosticServiceRef, string id, string name, List<ProcedureTypeSummary> procedureTypes)
         {
             this.DiagnosticServiceRef = diagnosticServiceRef;
             this.Id = id;
@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Common
         public string Name;
 
         [DataMember]
-        public List<ProcedureTypeDetail> ProcedureTypes;
+        public List<ProcedureTypeSummary> ProcedureTypes;
 
         public DiagnosticServiceSummary GetSummary()
         {

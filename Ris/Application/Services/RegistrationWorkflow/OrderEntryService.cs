@@ -174,14 +174,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             List<ProcedureTypeSummary> summaries = CollectionUtils.Map<ProcedureType, ProcedureTypeSummary>(rpTypes,
                    delegate(ProcedureType rpt)
                        {
-                           return rptAssembler.CreateProcedureTypeSummary(rpt);
+                           return rptAssembler.CreateSummary(rpt);
                        });
             
             // remove types that have already been ordered
             summaries = CollectionUtils.Reject<ProcedureTypeSummary>(summaries,
                       delegate(ProcedureTypeSummary s)
                           {
-                              return request.OrderedProcedureTypes.Contains(s.EntityRef);
+                              return request.OrderedProcedureTypes.Contains(s.ProcedureTypeRef);
                           });
 
 
@@ -372,7 +372,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 requisition.Procedures,
                 delegate (ProcedureRequisition req)
                     {
-                        ProcedureType rpt = PersistenceContext.Load<ProcedureType>(req.ProcedureType.EntityRef);
+                        ProcedureType rpt = PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
                         Procedure rp = new Procedure(rpt);
                         mapProcToReq.Add(rp, req);
                         return rp;
@@ -449,7 +449,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             // insertions and updates
             foreach (ProcedureRequisition req in procedureReqs)
             {
-                ProcedureType requestedType = PersistenceContext.Load<ProcedureType>(req.ProcedureType.EntityRef);
+                ProcedureType requestedType = PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
 
                 Procedure rp = CollectionUtils.SelectFirst(order.Procedures,
                     delegate(Procedure x) { return req.ProcedureIndex == x.Index; });

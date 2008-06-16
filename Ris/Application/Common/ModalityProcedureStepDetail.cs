@@ -47,8 +47,7 @@ namespace ClearCanvas.Ris.Application.Common
             DateTime? endTime,
             StaffSummary scheduledPerformer,
             StaffSummary performer,
-            string modalityId,
-            string modalityName
+			ModalitySummary modality
             )
         {
             this.ProcedureStepRef = procedureStepRef;
@@ -57,9 +56,8 @@ namespace ClearCanvas.Ris.Application.Common
             this.ScheduledStartTime = scheduledStartTime;
             this.StartTime = startTime;
             this.EndTime = endTime;
-            this.ModalityId = modalityId;
-            this.ModalityName = modalityName;
-            this.ScheduledPerformer = scheduledPerformer;
+			this.Modality = modality;
+			this.ScheduledPerformer = scheduledPerformer;
             this.Performer = performer;
         }
 
@@ -88,11 +86,8 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public StaffSummary Performer;
 
-        [DataMember]
-        public string ModalityId;
-
-        [DataMember]
-        public string ModalityName;
+		[DataMember]
+		public ModalitySummary Modality;
 
     }
 }

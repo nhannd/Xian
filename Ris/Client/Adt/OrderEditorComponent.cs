@@ -745,7 +745,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     {
                         ListOrderableProcedureTypesRequest request = new ListOrderableProcedureTypesRequest(
                             CollectionUtils.Map<ProcedureRequisition, EntityRef>(_proceduresTable.Items,
-                                delegate(ProcedureRequisition req) { return req.ProcedureType.EntityRef; }));
+                                delegate(ProcedureRequisition req) { return req.ProcedureType.ProcedureTypeRef; }));
 
                         orderableProcedureTypes = service.ListOrderableProcedureTypes(request).OrderableProcedureTypes;
 

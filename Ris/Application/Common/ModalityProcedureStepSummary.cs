@@ -44,8 +44,7 @@ namespace ClearCanvas.Ris.Application.Common
 			EnumValueInfo state,
 			DateTime? startTime,
 			DateTime? endTime,
-			string modalityId,
-			string modalityName,
+			ModalitySummary modality,
 			ProcedureSummary procedure
 			)
 		{
@@ -54,8 +53,7 @@ namespace ClearCanvas.Ris.Application.Common
 			this.State = state;
 			this.StartTime = startTime;
 			this.EndTime = endTime;
-			this.ModalityId = modalityId;
-			this.ModalityName = modalityName;
+			this.Modality = modality;
 			this.Procedure = procedure;
 		}
 
@@ -75,10 +73,7 @@ namespace ClearCanvas.Ris.Application.Common
 		public DateTime? EndTime;
 
 		[DataMember]
-		public string ModalityId;
-
-		[DataMember]
-		public string ModalityName;
+		public ModalitySummary Modality;
 
 		[DataMember]
 		public ProcedureSummary Procedure;

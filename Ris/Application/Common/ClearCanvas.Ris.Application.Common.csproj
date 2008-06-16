@@ -52,6 +52,17 @@
     <Compile Include="Admin\ExternalPractitionerAdmin\MergeDuplicateContactPointResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\MergeDuplicatePractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\MergeDuplicatePractitionerResponse.cs" />
+    <Compile Include="Admin\ProcedureTypeAdmin\AddProcedureTypeRequest.cs" />
+    <Compile Include="Admin\ProcedureTypeAdmin\AddProcedureTypeResponse.cs" />
+    <Compile Include="Admin\ProcedureTypeAdmin\IProcedureTypeAdminService.cs" />
+    <Compile Include="Admin\ProcedureTypeAdmin\ListProcedureTypesRequest.cs" />
+    <Compile Include="Admin\ProcedureTypeAdmin\ListProcedureTypesResponse.cs" />
+    <Compile Include="Admin\ProcedureTypeAdmin\LoadProcedureTypeEditorFormDataRequest.cs" />
+    <Compile Include="Admin\ProcedureTypeAdmin\LoadProcedureTypeEditorFormDataResponse.cs" />
+    <Compile Include="Admin\ProcedureTypeAdmin\LoadProcedureTypeForEditRequest.cs" />
+    <Compile Include="Admin\ProcedureTypeAdmin\LoadProcedureTypeForEditResponse.cs" />
+    <Compile Include="Admin\ProcedureTypeAdmin\UpdateProcedureTypeRequest.cs" />
+    <Compile Include="Admin\ProcedureTypeAdmin\UpdateProcedureTypeResponse.cs" />
     <Compile Include="Admin\StaffGroupAdmin\AddStaffGroupRequest.cs" />
     <Compile Include="Admin\StaffGroupAdmin\AddStaffGroupResponse.cs" />
     <Compile Include="Admin\StaffGroupAdmin\IStaffGroupAdminService.cs" />

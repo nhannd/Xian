@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Services
 
             detail.PlacerNumber = order.PlacerNumber;
             detail.AccessionNumber = order.AccessionNumber;
-            detail.DiagnosticService = dsAssembler.CreateDiagnosticServiceDetail(order.DiagnosticService);
+            detail.DiagnosticService = dsAssembler.CreateDiagnosticServiceSummary(order.DiagnosticService);
 
             detail.EnteredTime = order.EnteredTime;
 			detail.EnteredBy = order.EnteredBy == null ? null :
@@ -78,8 +78,8 @@ namespace ClearCanvas.Ris.Application.Services
         	detail.EnteredComment = order.EnteredComment;
 
 			detail.SchedulingRequestTime = order.SchedulingRequestTime;
-            detail.OrderingPractitioner = pracAssembler.CreateExternalPractitionerDetail(order.OrderingPractitioner, context);
-            detail.OrderingFacility = facilityAssembler.CreateFacilityDetail(order.OrderingFacility);
+            detail.OrderingPractitioner = pracAssembler.CreateExternalPractitionerSummary(order.OrderingPractitioner, context);
+            detail.OrderingFacility = facilityAssembler.CreateFacilitySummary(order.OrderingFacility);
             detail.ReasonForStudy = order.ReasonForStudy;
             detail.OrderPriority = EnumUtils.GetEnumValueInfo(order.Priority, context);
 

@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Application.Services
                 rptGroup.ProcedureTypes,
                 delegate (ProcedureType rpt)
                     {
-                        return assembler.CreateProcedureTypeSummary(rpt);
+                        return assembler.CreateSummary(rpt);
                     });
 
             return detail;
@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Application.Services
             detail.ProcedureTypes.ForEach(
                 delegate(ProcedureTypeSummary summary)
                     {
-                        group.ProcedureTypes.Add(context.Load<ProcedureType>(summary.EntityRef));
+                        group.ProcedureTypes.Add(context.Load<ProcedureType>(summary.ProcedureTypeRef));
                     });
         }
     }

@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Application.Common
         public EnumValueInfo Status;
 
         [DataMember]
-        public ProcedureTypeDetail Type;
+        public ProcedureTypeSummary Type;
 
 		[DataMember]
 		public DateTime? ScheduledStartTime;
@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Application.Common
 		public DateTime? CheckOutTime;
 
 		[DataMember]
-		public FacilityDetail PerformingFacility;
+		public FacilitySummary PerformingFacility;
 
 		[DataMember]
 		public EnumValueInfo Laterality;

@@ -72,7 +72,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
                 PersistenceContext.GetBroker<IProcedureTypeBroker>().FindAll(),
                 delegate(ProcedureType rpt)
                 {
-                    return assembler.CreateProcedureTypeSummary(rpt);
+                    return assembler.CreateSummary(rpt);
                 });
 
             return response;

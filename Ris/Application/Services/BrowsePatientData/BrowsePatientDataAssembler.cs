@@ -133,7 +133,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
         {
             ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
             data.ProcedureRef = rp.GetRef();
-            data.ProcedureType = rptAssembler.CreateProcedureTypeSummary(rp.Type);
+			data.ProcedureType = rptAssembler.CreateSummary(rp.Type);
             data.ProcedureScheduledStartTime = rp.ScheduledStartTime;
             data.ProcedureCheckInTime = rp.ProcedureCheckIn.CheckInTime;
             data.ProcedureCheckOutTime = rp.ProcedureCheckIn.CheckOutTime;

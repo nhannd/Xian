@@ -2,15 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Security.Permissions;
-using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.$fileinputname$Admin;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace $rootnamespace$
 {
@@ -24,9 +23,12 @@ namespace $rootnamespace$
         public List$fileinputname$sResponse List$fileinputname$s(List$fileinputname$sRequest request)
         {
             Platform.CheckForNullReference(request, "request");
-
+			
+			$fileinputname$SearchCriteria where = new $fileinputname$SearchCriteria();
+			//TODO: add sorting
+		
             I$fileinputname$Broker broker = PersistenceContext.GetBroker<I$fileinputname$Broker>();
-            IList<$fileinputname$> items = request.Page == null ? broker.FindAll() : broker.Find(new $fileinputname$SearchCriteria(), request.Page);
+            IList<$fileinputname$> items = broker.Find(where, request.Page);
 
             $fileinputname$Assembler assembler = new $fileinputname$Assembler();
             return new List$fileinputname$sResponse(
@@ -57,6 +59,7 @@ namespace $rootnamespace$
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.$fileinputname$)]
         public Add$fileinputname$Response Add$fileinputname$(Add$fileinputname$Request request)
         {
             Platform.CheckForNullReference(request, "request");
@@ -70,10 +73,11 @@ namespace $rootnamespace$
             PersistenceContext.Lock(item, DirtyState.New);
             PersistenceContext.SynchState();
 
-            return new Add$fileinputname$Response(assembler.CreateSummary(item));
+            return new Add$fileinputname$Response(assembler.CreateSummary(item, PersistenceContext));
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.$fileinputname$)]
         public Update$fileinputname$Response Update$fileinputname$(Update$fileinputname$Request request)
         {
             Platform.CheckForNullReference(request, "request");
@@ -87,7 +91,7 @@ namespace $rootnamespace$
 
             PersistenceContext.SynchState();
 
-            return new Update$fileinputname$Response(assembler.CreateSummary(item));
+            return new Update$fileinputname$Response(assembler.CreateSummary(item, PersistenceContext));
         }
 
         #endregion
