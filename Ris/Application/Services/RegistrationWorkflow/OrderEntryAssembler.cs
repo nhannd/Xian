@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             OrderRequisition requisition = new OrderRequisition();
             requisition.Patient = order.Patient.GetRef();
             requisition.Visit = visitAssembler.CreateVisitSummary(order.Visit, context);
-            requisition.DiagnosticService = dsAssembler.CreateDiagnosticServiceSummary(order.DiagnosticService);
+            requisition.DiagnosticService = dsAssembler.CreateSummary(order.DiagnosticService);
             requisition.SchedulingRequestTime = order.SchedulingRequestTime;
             requisition.OrderingPractitioner = pracAssembler.CreateExternalPractitionerSummary(order.OrderingPractitioner, context);
             requisition.OrderingFacility = facilityAssembler.CreateFacilitySummary(order.OrderingFacility);
@@ -187,7 +187,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return new DiagnosticServiceTreeItem(
                 node.GetRef(),
                 node.Description,
-                node.DiagnosticService == null ? null : dsAssembler.CreateDiagnosticServiceSummary(node.DiagnosticService));
+                node.DiagnosticService == null ? null : dsAssembler.CreateSummary(node.DiagnosticService));
         }
 
         // arguably this is a business logic decision that shouldn't go here, but there is really no

@@ -42,6 +42,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressDetail.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\AddDiagnosticServiceRequest.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\AddDiagnosticServiceResponse.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\IDiagnosticServiceAdminService.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\ListDiagnosticServicesRequest.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\ListDiagnosticServicesResponse.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\LoadDiagnosticServiceEditorFormDataRequest.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\LoadDiagnosticServiceEditorFormDataResponse.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\LoadDiagnosticServiceForEditRequest.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\LoadDiagnosticServiceForEditResponse.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\UpdateDiagnosticServiceRequest.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\UpdateDiagnosticServiceResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\DeletePractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\DeletePractitionerResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\LoadMergeDuplicateContactPointFormDataRequest.cs" />
@@ -165,8 +176,6 @@
     <Compile Include="Admin\UserAdmin\UpdateAuthorityGroupResponse.cs" />
     <Compile Include="Admin\UserAdmin\UpdateUserRequest.cs" />
     <Compile Include="Admin\UserAdmin\UpdateUserResponse.cs" />
-    <Compile Include="Admin\DiagnosticServiceAdmin\ListDiagnosticServicesRequest.cs" />
-    <Compile Include="Admin\DiagnosticServiceAdmin\ListDiagnosticServicesResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\AddExternalPractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\AddExternalPractitionerResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\IExternalPractitionerAdminService.cs" />
@@ -233,7 +242,6 @@
     <Compile Include="MimeDocumentService\IMimeDocumentService.cs" />
     <Compile Include="ExternalPractitionerDetail.cs" />
     <Compile Include="ExternalPractitionerSummary.cs" />
-    <Compile Include="Admin\DiagnosticServiceAdmin\IDiagnosticServiceAdminService.cs" />
     <Compile Include="Admin\EnumerationAdmin\AddValueRequest.cs" />
     <Compile Include="Admin\EnumerationAdmin\AddValueResponse.cs" />
     <Compile Include="Admin\EnumerationAdmin\EditValueRequest.cs" />

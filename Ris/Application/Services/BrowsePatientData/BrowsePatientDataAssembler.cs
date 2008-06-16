@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.OrderRef = order.GetRef();
             data.PlacerNumber = order.PlacerNumber;
             data.AccessionNumber = order.AccessionNumber;
-            data.DiagnosticService = dsAssembler.CreateDiagnosticServiceSummary(order.DiagnosticService);
+            data.DiagnosticService = dsAssembler.CreateSummary(order.DiagnosticService);
             data.EnteredTime = order.EnteredTime;
             data.SchedulingRequestTime = order.SchedulingRequestTime;
             data.OrderingPractitioner = practitionerAssembler.CreateExternalPractitionerSummary(order.OrderingPractitioner, context);

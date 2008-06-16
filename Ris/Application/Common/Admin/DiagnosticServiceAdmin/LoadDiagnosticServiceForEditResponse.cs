@@ -7,14 +7,14 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin
 {
 	[DataContract]
-	public class ListDiagnosticServicesResponse : DataContractBase
+	public class LoadDiagnosticServiceForEditResponse : DataContractBase
 	{
-		public ListDiagnosticServicesResponse(List<DiagnosticServiceSummary> DiagnosticServices)
+		public LoadDiagnosticServiceForEditResponse(DiagnosticServiceDetail detail)
 		{
-			this.DiagnosticServices = DiagnosticServices;
+			this.DiagnosticService = detail;
 		}
 
 		[DataMember]
-		public List<DiagnosticServiceSummary> DiagnosticServices;
+		public DiagnosticServiceDetail DiagnosticService;
 	}
 }

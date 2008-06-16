@@ -7,15 +7,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin
 {
 	[DataContract]
-	public class ListDiagnosticServicesRequest : PagedDataContractBase
+	public class LoadDiagnosticServiceEditorFormDataResponse : DataContractBase
 	{
-		public ListDiagnosticServicesRequest()
-		{
-		}
-
-		public ListDiagnosticServicesRequest(SearchResultPage page)
-			: base(page)
-		{
-		}
 	}
 }

@@ -35,12 +35,13 @@ using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Ris.Application.Services
 {
     public class DiagnosticServiceAssembler
     {
-        public DiagnosticServiceSummary CreateDiagnosticServiceSummary(DiagnosticService diagnosticService)
+        public DiagnosticServiceSummary CreateSummary(DiagnosticService diagnosticService)
         {
             return new DiagnosticServiceSummary(
                 diagnosticService.GetRef(),
@@ -48,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Services
                 diagnosticService.Name);
         }
 
-        public DiagnosticServiceDetail CreateDiagnosticServiceDetail(DiagnosticService diagnosticService)
+        public DiagnosticServiceDetail CreateDetail(DiagnosticService diagnosticService)
         {
             ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
             return new DiagnosticServiceDetail(
@@ -62,5 +63,20 @@ namespace ClearCanvas.Ris.Application.Services
 						return rptAssembler.CreateSummary(rpType);
                     }));
         }
+
+		public void UpdateDiagnosticService(DiagnosticService ds, DiagnosticServiceDetail detail, IPersistenceContext context)
+		{
+			ds.Id = detail.Id;
+			ds.Name = detail.Name;
+
+			ds.ProcedureTypes.Clear();
+			ds.ProcedureTypes.AddAll(
+				CollectionUtils.Map<ProcedureTypeSummary, ProcedureType>(
+					detail.ProcedureTypes,
+					delegate(ProcedureTypeSummary pt)
+					{
+						return context.Load<ProcedureType>(pt.ProcedureTypeRef, EntityLoadFlags.Proxy);
+					}));
+		}
     }
 }

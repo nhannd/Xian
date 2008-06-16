@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceAdminService.cs" />
     <Compile Include="Admin\ProcedureTypeAdmin\ProcedureTypeAdminService.cs" />
     <Compile Include="Admin\StaffGroupAdmin\StaffGroupAdminService.cs" />
     <Compile Include="CannedTextService\CannedTextAssembler.cs" />
@@ -90,7 +91,6 @@
     <Compile Include="Admin\Import\ImportService.cs" />
     <Compile Include="ModalityAssembler.cs" />
     <Compile Include="Admin\NoteCategoryAdmin\NoteCategoryAdminService.cs" />
-    <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceAdminService.cs" />
     <Compile Include="FacilityAssembler.cs" />
     <Compile Include="Admin\FacilityAdmin\FacilityAdminService.cs" />
     <Compile Include="Admin\HL7Admin\HL7QueueService.cs" />

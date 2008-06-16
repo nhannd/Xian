@@ -121,7 +121,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             DiagnosticService diagnosticService = dsBroker.Load(request.DiagnosticServiceRef);
 
             DiagnosticServiceAssembler assembler = new DiagnosticServiceAssembler();
-            return new LoadDiagnosticServiceBreakdownResponse(assembler.CreateDiagnosticServiceDetail(diagnosticService));
+            return new LoadDiagnosticServiceBreakdownResponse(assembler.CreateDetail(diagnosticService));
         }
 
         [ReadOperation]

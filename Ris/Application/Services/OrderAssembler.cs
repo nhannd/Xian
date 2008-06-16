@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Services
 
             detail.PlacerNumber = order.PlacerNumber;
             detail.AccessionNumber = order.AccessionNumber;
-            detail.DiagnosticService = dsAssembler.CreateDiagnosticServiceSummary(order.DiagnosticService);
+            detail.DiagnosticService = dsAssembler.CreateSummary(order.DiagnosticService);
 
             detail.EnteredTime = order.EnteredTime;
 			detail.EnteredBy = order.EnteredBy == null ? null :
