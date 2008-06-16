@@ -6,26 +6,20 @@
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
 
-
-<div>
-        <b class="roundedCorners"><b class="roundedCorners1"><b></b></b><b class="roundedCorners2">
-            <b></b></b><b class="roundedCorners3"></b><b class="roundedCorners4"></b><b class="roundedCorners5">
-            </b></b>
-        <div class="roundedCornersfg">          
-
-            <asp:Table ID="Table" runat="server"  
-                CellPadding="0"
-                BorderWidth="0px" Width="100%">
+            <asp:Table runat="server">
                 <asp:TableRow>
                     <asp:TableCell HorizontalAlign="right" VerticalAlign="Bottom" >
                     
                        <table cellpadding="0" cellspacing="0"  width="100%">
                             <!-- need this table so that the filter panel container is fit to the content -->
                             <tr>
-                                <td align="right">
+                                <td align="left">
                                 <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
+                                            <td valign="bottom">
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
+                                            </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="Patient Name" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
@@ -43,7 +37,7 @@
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label5" runat="server" Text="Study Date" CssClass="SearchTextBoxLabel" EnableViewState="false"/>
-                                                <asp:LinkButton ID="ClearStudyDateButton" runat="server" Text="[clear]" CssClass="SmallLink"/><br />
+                                                <asp:LinkButton ID="ClearStudyDateButton" runat="server" Text="X" CssClass="SmallLink"/><br />
                                                 <asp:TextBox ID="StudyDate" runat="server" CssClass="SearchTextBox" ReadOnly="true" style="background-color: #fefefe" ToolTip="Search the list by Study Date [dd/mm/yyyy]" />
                                             </td>
                                             <td align="left" valign="bottom">
@@ -51,9 +45,6 @@
                                                     EnableViewState="False" /><br />
                                                 <asp:TextBox ID="StudyDescription" runat="server"  CssClass="SearchTextBox" ToolTip="Search the list by Study Description" />
                                             </td>                                            
-                                            <td align="right" valign="bottom">
-                                                <asp:Panel runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
-                                            </td>
                                         </tr>
                                     </table>
                                 </asp:Panel>
@@ -96,11 +87,6 @@
                 </asp:TableRow>
             </asp:Table>
 
-        </div>
-        <b class="roundedCorners"><b class="roundedCorners5"></b><b class="roundedCorners4">
-        </b><b class="roundedCorners3"></b><b class="roundedCorners2"><b></b></b><b class="roundedCorners1">
-            <b></b></b></b>
-    </div>
         <ccAsp:ConfirmationDialog ID="ConfirmationDialog" runat="server" />    
     </ContentTemplate>
 </asp:UpdatePanel>

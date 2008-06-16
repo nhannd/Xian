@@ -6,7 +6,7 @@
 <%@ Register Src="Edit/ResetWorkQueueDialog.ascx" TagName="ResetWorkQueueDialog"    TagPrefix="localAsp" %>        
 <%@ Register Src="Edit/DeleteWorkQueueDialog.ascx" TagName="DeleteWorkQueueDialog"    TagPrefix="localAsp" %>        
 
-<asp:Content ID="LocationName" ContentPlaceHolderID="LocationNamePlaceHolder" runat="server">Work Queue</asp:Content>
+<asp:Content ID="ContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder" runat="server">Work Queue</asp:Content>
   
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
     <table cellpadding="0" cellspacing="0" width="100%">

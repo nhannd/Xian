@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             Response.ContentType = "image/png";
 
             // Load the background image
-            Image bmp = Image.FromFile(Server.MapPath("~/images/usage.png"));
+            Image bmp = Image.FromFile(Server.MapPath("~/Common/Images/usage.png"));
             Graphics graphics = Graphics.FromImage(bmp);
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
                 // add watermark icons
                 graphics.CompositingMode = CompositingMode.SourceOver;
-                Image watermark = Image.FromFile(Server.MapPath("~/images/Watermark.gif"));
+                Image watermark = Image.FromFile(Server.MapPath("~/Common/Images/Watermark.gif"));
 
 
                 graphics.DrawImageUnscaled(watermark, (int)(_width * _high / 100f) - watermark.Width / 2 + leftoffset, 12);

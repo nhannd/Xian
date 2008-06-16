@@ -29,15 +29,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems {
         protected global::System.Web.UI.UpdatePanel UpdatePanel;
         
         /// <summary>
-        /// Table control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Table Table;
-        
-        /// <summary>
         /// Panel6 control.
         /// </summary>
         /// <remarks>
@@ -45,6 +36,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel Panel6;
+        
+        /// <summary>
+        /// Panel1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel1;
+        
+        /// <summary>
+        /// SearchButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton SearchButton;
         
         /// <summary>
         /// Label1 control.
@@ -81,24 +90,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList TiersDropDownList;
-        
-        /// <summary>
-        /// SearchButtonContainer control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel SearchButtonContainer;
-        
-        /// <summary>
-        /// SearchToolbarButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton SearchToolbarButton;
         
         /// <summary>
         /// ToolBarUpdatePanel control.

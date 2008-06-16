@@ -5,10 +5,15 @@
 
 .SearchPanelContent
 {
-    background: url(../images/MainContent/SearchPanelBackground.png) repeat-x;
-    padding: 4px 4px 4px 4px;
-    margin-left: 0px;
-    margin-right: 0px;
+    background: #3D98D1 url(../images/MainContent/SearchPanelBackground.png) repeat-x top;
+    padding: 6px 4px 6px 4px;
+}
+
+.SearchPanelContentWithoutTabs
+{
+    background: #3D98D1;
+    border-top: solid 1px #305ba6;
+    padding: 6px 4px 6px 4px;
 }
 
 .SearchTextBoxLabel
@@ -39,7 +44,8 @@
     width: 100px;
 	margin-left: 3px;
 	margin-right: 3px;
-	border: solid 1px #618FAD;
+	border: solid 1px #305ba6;
+    background: #ffffff url(../images/MainContent/SearchTextBoxBackground.png) repeat-x ;
 }
 
 .SearchCheckBox
@@ -54,13 +60,14 @@
 	margin-right: 3px;
 	font-family: Sans-Serif;
 	font-size: 11px;
-	border: solid 1px #618FAD;
+	border: solid 1px #305ba6;
+	background: #ffffff url(../images/MainContent/SearchTextBoxBackground.png) repeat-x ;
 }
 
 .SearchButtonPanel
 {
 	margin-left:5px;
-	margin-right: 2px;
+	margin-right: 5px;
 	vertical-align: bottom;
 	padding: 0px;
 }
@@ -69,5 +76,10 @@
 {
     color: #D13D4D;
     font-size: 12px;
+    font-weight: bold;
     text-decoration: none;
+    background: #8FC3E4 url(../images/Buttons/ClearButtonBackground.png) repeat-x;
+    border: solid 1px #305ba6;
+    padding: 0px 2px 0px 2px;
+    margin-left: 18px;
 }

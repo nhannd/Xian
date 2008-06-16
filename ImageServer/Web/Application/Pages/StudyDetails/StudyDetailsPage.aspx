@@ -5,10 +5,10 @@
 <%@ Register Src="StudyDetailsPanel.ascx" TagName="StudyDetailsPanel" TagPrefix="localAsp" %>
 
 <asp:Content runat="server" ID="MainMenuContent" contentplaceholderID="MainMenuPlaceHolder">
-    <table width="100%"><tr><td align="right" style="padding-top: 17px;"><asp:LinkButton ID="LinkButton1" runat="server" Text="Close" Font-Size="18px" Font-Bold="true" ForeColor="white" Font-Underline="false" OnClientClick="javascript: window.close(); return false;" /></td></tr></table>
+    <asp:Table ID="Table1" runat="server"><asp:TableRow><asp:TableCell HorizontalAlign="right" style="padding-top: 12px;"><asp:LinkButton ID="LinkButton1" runat="server" SkinId="CloseButton" OnClientClick="javascript: window.close(); return false;" /></asp:TableCell></asp:TableRow></asp:Table>
 </asp:Content>
 
-<asp:Content ContentPlaceHolderID="MainContentSection" runat="server">
+<asp:Content ContentPlaceHolderID="MainContentSectionPlaceHolder" runat="server">
             <asp:UpdatePanel runat="server" ID="updatepanel" UpdateMode="Conditional">
                 <ContentTemplate>
                     <localAsp:StudyDetailsPanel ID="StudyDetailsPanel" runat="server" />

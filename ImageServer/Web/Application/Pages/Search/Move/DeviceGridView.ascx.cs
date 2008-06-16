@@ -241,11 +241,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "DHCP"));
                 if (active)
                 {
-                    img.ImageUrl = "~/images/checked_small.gif";
+                    img.ImageUrl = "~/Common/Images/checked.png";
                 }
                 else
                 {
-                    img.ImageUrl = "~/images/unchecked_small.gif";
+                    img.ImageUrl = "~/Common/Images/unchecked.png";
                 }
             }
         }
@@ -258,10 +258,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             {
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "Enabled"));
                 if (active)
-                    img.ImageUrl = "~/images/checked_small.gif";
+                    img.ImageUrl = "~/Common/Images/checked.png";
                 else
                 {
-                    img.ImageUrl = "~/images/unchecked_small.gif";
+                    img.ImageUrl = "~/Common/Images/unchecked.png";
                 }
             }
         }

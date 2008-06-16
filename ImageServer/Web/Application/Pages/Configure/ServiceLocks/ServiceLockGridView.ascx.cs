@@ -264,7 +264,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
             ServiceLock item = row.DataItem as ServiceLock;
             if (img!=null && item != null)
             {
-                img.ImageUrl = item.Enabled ? "~/images/checked_small.gif" : "~/images/unchecked_small.gif";
+                img.ImageUrl = item.Enabled ? "~/Common/Images/checked.png" : "~/Common/Images/unchecked.png";
             }
         }
         protected void CustomizeLockColumn(GridViewRow row)
@@ -274,7 +274,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
             ServiceLock item = row.DataItem as ServiceLock;
             if (img != null && item != null)
             {
-                img.ImageUrl = item.Lock ? "~/images/checked_small.gif" : "~/images/unchecked_small.gif";
+                img.ImageUrl = item.Lock ? "~/Common/Images/checked.png" : "~/Common/Images/unchecked.png";
             }
         }
         protected void CustomizeFilesystemColumn(GridViewRow row)

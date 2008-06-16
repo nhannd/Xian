@@ -91,15 +91,6 @@ public partial class GlobalMasterPage {
     protected global::System.Web.UI.WebControls.Menu MainMenu;
     
     /// <summary>
-    /// LocationNamePlaceHolder control.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated field.
-    /// To modify move field declaration from designer file to code-behind file.
-    /// </remarks>
-    protected global::System.Web.UI.WebControls.ContentPlaceHolder LocationNamePlaceHolder;
-    
-    /// <summary>
     /// MainContentUpdatePanel control.
     /// </summary>
     /// <remarks>
@@ -116,6 +107,15 @@ public partial class GlobalMasterPage {
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
     protected global::System.Web.UI.WebControls.Panel PageContentPanel;
+    
+    /// <summary>
+    /// MainContentTitlePlaceHolder control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.ContentPlaceHolder MainContentTitlePlaceHolder;
     
     /// <summary>
     /// MainContentPlaceHolder control.

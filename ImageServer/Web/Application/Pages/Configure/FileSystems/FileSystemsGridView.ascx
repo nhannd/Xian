@@ -17,14 +17,14 @@
                     <asp:BoundField DataField="Description" HeaderText="Description" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
                     <asp:TemplateField HeaderText="Read">
                         <ItemTemplate>
-                            <asp:Image ID="ReadImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
+                            <asp:Image ID="ReadImage" runat="server" SkinID="Checked" />
                         </ItemTemplate>
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Write">
                         <ItemTemplate>
-                            <asp:Image ID="WriteImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
+                            <asp:Image ID="WriteImage" runat="server" SkinID="Unchecked" />
                         </ItemTemplate>
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle HorizontalAlign="Center" />

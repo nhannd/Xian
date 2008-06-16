@@ -5,23 +5,13 @@
     <asp:Menu runat="server" ID="MainMenu" SkinID="MainMenu" DataSourceID="MainMenuSiteMapDataSource" style="font-family: Sans-Serif"></asp:Menu>
 </asp:Content>
 
-<asp:Content ID="LocationName" ContentPlaceHolderID="LocationNamePlaceHolder" runat="server">About</asp:Content>
+<asp:Content ID="ContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder" runat="server">About ClearCanvas ImageServer</asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
 
-<div>
-  <b class="roundedCorners">
-  <b class="roundedCorners1"><b></b></b>
-  <b class="roundedCorners2"><b></b></b>
-  <b class="roundedCorners3"></b>
-  <b class="roundedCorners4"></b>
-  <b class="roundedCorners5"></b></b>
-
-  <div class="roundedCornersfg">
   
   <table cellpadding="0" cellspacing="0" width="100%">
-  <tr><td class="MainContentTitle">About ClearCanvas</td></tr>
-  <tr><td style="padding-left: 3px; padding-right: 3px; padding-top: 2px;">
+  <tr><td style="padding-top: 1px;">
     <asp:Panel runat="server" ScrollBars="Vertical" Height="500" BackColor="white"  CssClass="AboutPanel">
 <pre style="font-family: Sans-Serif; font-size: 14px;">
 <h4>ClearCanvas Inc.</h4>
@@ -1245,15 +1235,4 @@ variant is the sole purpose of your product, please let us know.
     </asp:Panel>
   </td></tr>
   </table>
-
-  </div>
-
-    
-  <b class="roundedCorners">
-  <b class="roundedCorners5"></b>
-  <b class="roundedCorners4"></b>
-  <b class="roundedCorners3"></b>
-  <b class="roundedCorners2"><b></b></b>
-  <b class="roundedCorners1"><b></b></b></b>    
-</div>    
 </asp:Content>

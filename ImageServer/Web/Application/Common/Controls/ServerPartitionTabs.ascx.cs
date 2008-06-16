@@ -84,12 +84,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             return null;
         }
 
-
         public void SetupLoadPartitionTabs(GetTabPanel tabDelegate)
         {
             int n = 0;
 
             this.PartitionTabContainer.Tabs.Clear();
+
+            TabPanel headingLabelTab = new TabPanel();
+            headingLabelTab.HeaderText = "Partitions: ";
+            headingLabelTab.ID = "Tab_Heading";
+            
+            // Add the tab into the tabstrip
+            PartitionTabContainer.Tabs.Add(headingLabelTab);
+            
             foreach (ServerPartition part in ServerPartitionList)
             {
                 n++;
@@ -123,7 +130,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
             }
 
             if (ServerPartitionList != null && ServerPartitionList.Count > 0)
-                PartitionTabContainer.ActiveTabIndex = 0;
+                PartitionTabContainer.ActiveTabIndex = 1;
             else
             {
                 PartitionTabContainer.ActiveTabIndex = -1;

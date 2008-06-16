@@ -7,7 +7,7 @@ Global.css - Defines the global styles for the entire web application relating
 .GlobalBody
 {
 	background-color: #c5dee7;
-	margin:10px 10px 10px 10px;
+	margin:5px 5px 5px 5px;
 	z-index: -1;
 	font-family: Sans-Serif;
 	font-size: 14px;
@@ -25,21 +25,32 @@ Global.css - Defines the global styles for the entire web application relating
 
 .MainContentPanel 
 {
-	background-color: White;
-	padding: 20px 5px 5px 5px;
+	background-color: white;
+	padding: 3px 0px 0px 0px;
+}
+
+.MainContentTable
+{
+    background: #EFEFEF url(../images/MainContent/Loading.png) no-repeat center;
+}
+
+.MainContentBorder
+{
+    border-left: solid 3px #3D98D1; 
+    border-right: solid 3px #3D98D1;
 }
 
 .MainContentLeftEdge
 {
 	background: white url(../images/MainContent/MainContentLeftEdge.png) repeat-y;
-	width: 14px;
+	width: 7px;
 	height: 1px;
 }
 
 .MainContentRightEdge
 {
 	background: white url(../images/MainContent/MainContentRightEdge.png) repeat-y;
-	width: 14px;
+	width: 7px;
 	height: 1px;
 }
 
@@ -73,14 +84,14 @@ Global.css - Defines the global styles for the entire web application relating
  * Rounded Corner Items
  *======================================*/
 
-.roundedCorners{display:block}
-.roundedCorners *{
+.MainContentCorners{display:block}
+.MainContentCorners *{
   display:block;
   height:1px;
   overflow:hidden;
   font-size:.01em;
   background:#3d98d1}
-.roundedCorners1{
+.MainContentCorners1{
   margin-left:3px;
   margin-right:3px;
   padding-left:1px;
@@ -88,7 +99,7 @@ Global.css - Defines the global styles for the entire web application relating
   border-left:1px solid #abd2eb;
   border-right:1px solid #abd2eb;
   background:#6db1dc}
-.roundedCorners2{
+.MainContentCorners2{
   margin-left:1px;
   margin-right:1px;
   padding-right:1px;
@@ -96,18 +107,18 @@ Global.css - Defines the global styles for the entire web application relating
   border-left:1px solid #ebf4fa;
   border-right:1px solid #ebf4fa;
   background:#61abd9}
-.roundedCorners3{
+.MainContentCorners3{
   margin-left:1px;
   margin-right:1px;
   border-left:1px solid #61abd9;
   border-right:1px solid #61abd9;}
-.roundedCorners4{
+.MainContentCorners4{
   border-left:1px solid #abd2eb;
   border-right:1px solid #abd2eb}
-.roundedCorners5{
+.MainContentCorners5{
   border-left:1px solid #6db1dc;
   border-right:1px solid #6db1dc}
-.roundedCornersfg{
+.MainContentCornersFG{
   background:#3d98d1}
 
 .spiffy{display:block}

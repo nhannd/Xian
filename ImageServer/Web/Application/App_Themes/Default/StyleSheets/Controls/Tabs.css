@@ -20,97 +20,49 @@
 
 .TabControl .ajax__tab_header					
 {
-
+    background: #3a74ae url(../../images/Controls/Tabs/TabHeaderBackgroundTop.png) repeat-x top;
+	padding-bottom: 0px;
 }
 .TabControl .ajax__tab_outer
 {
-	background: url(../../images/Controls/Tabs/tab-right.gif) no-repeat right;
 }
 .TabControl .ajax__tab_inner
 {
-	background: url(../../images/Controls/Tabs/tab-left.gif) no-repeat;
+    padding-left: 2px;
 }
 .TabControl .ajax__tab_tab
 {
-	background: url(../../images/Controls/Tabs/tab.gif) repeat-x;
+	padding: 4px 3px 3px 3px;
+	font-family: san-Serif;
+	color: White;
+	font-size: 11px;
+	font-weight:bold;
 }
 .TabControl .ajax__tab_hover .ajax__tab_outer
 {
-	background: url(../../images/Controls/Tabs/tab-hover-right.gif) no-repeat right;
 }
 .TabControl .ajax__tab_hover .ajax__tab_inner
 {
-	background: url(../../images/Controls/Tabs/tab-hover-left.gif) no-repeat;
+
 }
 .TabControl .ajax__tab_hover .ajax__tab_tab
 {
-	background: #205F87 url(../../images/Controls/Tabs/tab-hover.gif) repeat-x;
+    color: yellow;
 }
+
 .TabControl .ajax__tab_active .ajax__tab_outer
 {
-	background: url(../../images/Controls/Tabs/tab-active-right.gif) no-repeat right;
+	background: url(../../images/Controls/Tabs/TabActiveRight.png) no-repeat right;
+	height: 20px;
 }
 .TabControl .ajax__tab_active .ajax__tab_inner
 {
-	background:  url(../../images/Controls/Tabs/tab-active-left.gif) no-repeat;
+	background:  url(../../images/Controls/Tabs/TabActiveLeft.png) no-repeat;
 }
 .TabControl .ajax__tab_active .ajax__tab_tab
 {
-	background: #3D98D1 url(../../images/Controls/Tabs/tab-active.gif) repeat-x;
-}
-
-/*************************************************************************************************
-	Other styles
-*************************************************************************************************/
-
-.TabControl .ajax__tab_header
-{
-	margin: 5px 5px 0px 5px;
-}
-	
-.TabControl .ajax__tab_outer
-{
-	height: 21px;
-	margin-left: 1px;
-	padding: 0px 0px 0px 0px;
-	background-color: #3a74ae;
-}
-
-.TabControl .ajax__tab_inner
-{
-	padding: 0px 0px 0px 4px;
-	color: #eeeeee;
-	background-color: #3a74ae;
-}
-
-.TabControl .ajax__tab_tab
-{
-	padding: 5px 2px 0px 2px;
-	font-family: Sans-Serif;
-	font-size:12px;
-	background-color: #3a74ae;
-}
-
-.TabControl .ajax__tab_body
-{
-	padding: 0px;
-	background-color: #3a74ae;
-}
-
-.TabControl .ajax__tab_active .ajax__tab_tab
-{
+	background: url(../../images/Controls/Tabs/TabActiveMiddle.png) repeat-x;
+	padding-top: 3px;
+	color: #3a74ae;
 	font-weight: bold;
-	font-family: Sans-Serif;
-	color: White;
-	padding: 5px 2px 0px 2px;
-	background-color: #3a74ae;
 }
-
-.TabControl .ajax__tab_hover .ajax__tab_tab
-{
-	font-family: Sans-Serif;
-	color: White;
-	padding: 5px 2px 0px 2px;
-	background-color: #3a74ae;
-}
-

@@ -6,18 +6,15 @@
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
 
-<div>
-        <b class="roundedCorners"><b class="roundedCorners1"><b></b></b><b class="roundedCorners2">
-            <b></b></b><b class="roundedCorners3"></b><b class="roundedCorners4"></b><b class="roundedCorners5">
-            </b></b>
-        <div class="roundedCornersfg">
-        
-            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0" BorderWidth="0px">
+            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0" CellSpacing="0" BorderWidth="0px">
                 <asp:TableRow>
-                    <asp:TableCell HorizontalAlign="right">                          
+                    <asp:TableCell>                          
                                 <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
+                                            <td valign="bottom">
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
+                                            </td>                                        
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label2" runat="server" Text="Patient ID" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
@@ -34,8 +31,8 @@
                                                 <asp:TextBox ID="StudyDescription" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Study Description" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label1" runat="server" Text="Schedule" CssClass="SearchTextBoxLabel" />
-                                                <asp:LinkButton ID="ClearScheduleDateButton" runat="server" Text="[clear]" CssClass="SmallLink"/><br />
+                                                <asp:Label ID="Label1" runat="server" Text="Schedule" CssClass="SearchTextBoxLabel" />&nbsp;&nbsp;
+                                                <asp:LinkButton ID="ClearScheduleDateButton" runat="server" Text="X" CssClass="SmallLink"/><br />
                                                 <asp:TextBox ID="ScheduleDate" runat="server" ReadOnly="true" CssClass="SearchTextBox" BackColor="White" ToolTip="Search the list by Schedule Date [dd/mm/yyyy]" />
                                             </td>
                                             <td align="left" valign="bottom">
@@ -52,11 +49,7 @@
                                                 <asp:Label ID="Label7" runat="server" Text="Priority" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
                                                 <asp:DropDownList ID="PriorityDropDownList" runat="server" CssClass="SearchDropDownList">
-                                                </asp:DropDownList></td>
-                                            <td align="right" valign="bottom">
-                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png"
-                                                    OnClick="SearchButton_Click" ToolTip="Search" /></asp:Panel>
-                                            </td>
+                                                </asp:DropDownList>
                                         </tr>
                                     </table>
                                 </asp:Panel>
@@ -97,13 +90,6 @@
                 </asp:TableRow>
 
             </asp:Table>
-
-
-    </div>
-        <b class="roundedCorners"><b class="roundedCorners5"></b><b class="roundedCorners4">
-        </b><b class="roundedCorners3"></b><b class="roundedCorners2"><b></b></b><b class="roundedCorners1">
-            <b></b></b></b>
-    </div>
 
     </ContentTemplate>
 </asp:UpdatePanel>

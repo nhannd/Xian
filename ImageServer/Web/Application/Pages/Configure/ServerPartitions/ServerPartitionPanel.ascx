@@ -5,19 +5,18 @@
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-    
-    <div>
-        <b class="roundedCorners"><b class="roundedCorners1"><b></b></b><b class="roundedCorners2">
-            <b></b></b><b class="roundedCorners3"></b><b class="roundedCorners4"></b><b class="roundedCorners5">
-            </b></b>
-        <div class="roundedCornersfg">          
-     
-            <asp:Table ID="Table" runat="server" Width="100%" Height="100%" CellPadding="0">
+         
+            <asp:Table runat="server">
                 <asp:TableRow>
-                    <asp:TableCell HorizontalAlign="right" Wrap="false">
-                                <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchToolbarButton">
+                    <asp:TableCell Wrap="false">
+                                <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContentWithoutTabs" DefaultButton="SearchButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
+                                            <td align="right" valign="bottom">
+                                            <td valign="bottom">
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
+                                            </td>
+                                            </td>
                                             <td align="left">
                                                 <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox"></asp:TextBox>
@@ -35,11 +34,7 @@
                                                 <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
                                             </td>
-                                            <td align="right" valign="bottom">
-                                                <asp:Panel ID="SearchButtonContainer" runat="server" CssClass="SearchButtonContainer">
-                                                    <asp:ImageButton ID="SearchToolbarButton" runat="server" SkinID="SearchButton" OnClick="SearchButton_Click" Tooltip="Search for Partitions" />
-                                                </asp:Panel>
-                                            </td>
+
                                         </tr>
                                     </table>
                                 </asp:Panel>
@@ -74,11 +69,6 @@
                     </asp:TableCell>                
                 </asp:TableRow>
             </asp:Table>
-        </div>
-        <b class="roundedCorners"><b class="roundedCorners5"></b><b class="roundedCorners4">
-        </b><b class="roundedCorners3"></b><b class="roundedCorners2"><b></b></b><b class="roundedCorners1">
-            <b></b></b></b>
-    </div>            
             
     </ContentTemplate>
 </asp:UpdatePanel>

@@ -4,21 +4,16 @@
 <%@ Register Src="FileSystemsGridView.ascx" TagName="FileSystemsGridView" TagPrefix="localAsp" %>
     
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
-    <ContentTemplate>
-
-<div>
-        <b class="roundedCorners"><b class="roundedCorners1"><b></b></b><b class="roundedCorners2">
-            <b></b></b><b class="roundedCorners3"></b><b class="roundedCorners4"></b><b class="roundedCorners5">
-            </b></b>
-        <div class="roundedCornersfg">          
-
-
-            <asp:Table ID="Table" runat="server" Width="100%">
+    <ContentTemplate>   
+            <asp:Table runat="server">
                 <asp:TableRow>
-                    <asp:TableCell HorizontalAlign="right">
-                                <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchToolbarButton">
+                    <asp:TableCell>
+                                <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContentWithoutTabs" DefaultButton="SearchButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
+                                            <td valign="bottom">
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
+                                            </td>
                                             <td align="left">
                                                 <asp:Label ID="Label1" runat="server" Text="Description" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search by description"></asp:TextBox></td>
@@ -26,12 +21,7 @@
                                                 <asp:Label ID="Label2" runat="server" Text="Tiers" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="TiersDropDownList" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList></td>
-                                            <td align="right" valign="bottom">
-                                                <asp:Panel ID="SearchButtonContainer" runat="server" CssClass="SearchButtonContainer">
-                                                   <asp:ImageButton ID="SearchToolbarButton" runat="server" SkinID="SearchButton" OnClick="SearchButton_Click" Tooltip="Search for File Systems" />
-                                                 </asp:Panel>
-                                            </td>
-                                
+
                                         </tr> 
                                     </table>
                             </asp:Panel>
@@ -65,11 +55,5 @@
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table> 
-       
-        </div>
-        <b class="roundedCorners"><b class="roundedCorners5"></b><b class="roundedCorners4">
-        </b><b class="roundedCorners3"></b><b class="roundedCorners2"><b></b></b><b class="roundedCorners1">
-            <b></b></b></b>
-    </div>       
     </ContentTemplate>
 </asp:UpdatePanel>

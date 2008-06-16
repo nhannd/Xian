@@ -178,11 +178,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			{
 				if (fs.Enabled)
 				{
-					img.ImageUrl = "~/images/checked_small.gif";
+					img.ImageUrl = "~/Common/Images/checked.png";
 				}
 				else
 				{
-					img.ImageUrl = "~/images/unchecked_small.gif";
+					img.ImageUrl = "~/Common/Images/unchecked.png";
 				}
 			}
 
@@ -191,11 +191,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			{
 				if (fs.DefaultRule)
 				{
-					img.ImageUrl = "~/images/checked_small.gif";
+					img.ImageUrl = "~/Common/Images/checked.png";
 				}
 				else
 				{
-					img.ImageUrl = "~/images/unchecked_small.gif";
+					img.ImageUrl = "~/Common/Images/unchecked.png";
 				}
 			}
 			img = ((Image)e.Row.FindControl("ExemptImage"));
@@ -203,11 +203,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			{
 				if (fs.ExemptRule)
 				{
-					img.ImageUrl = "~/images/checked_small.gif";
+					img.ImageUrl = "~/Common/Images/checked.png";
 				}
 				else
 				{
-					img.ImageUrl = "~/images/unchecked_small.gif";
+					img.ImageUrl = "~/Common/Images/unchecked.png";
 				}
 			}
 		}

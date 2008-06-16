@@ -26,14 +26,14 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Enabled">
                         <ItemTemplate>
-                            <asp:Image ID="EnabledImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
+                            <asp:Image ID="EnabledImage" runat="server" SkinId="Unchecked" />
                         </ItemTemplate>
                         <HeaderStyle HorizontalAlign="Center" />
                         <ItemStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Locked">
                         <ItemTemplate>
-                            <asp:Image ID="LockedImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
+                            <asp:Image ID="LockedImage" runat="server" SkinId="Unchecked" />
                         </ItemTemplate>
                         <HeaderStyle HorizontalAlign="Center" />
                         <ItemStyle HorizontalAlign="Center" />

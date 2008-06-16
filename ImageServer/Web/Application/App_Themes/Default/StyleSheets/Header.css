@@ -5,94 +5,95 @@
 .MainMenuPanel
 {
 	background: url("../images/Header/MenuBackground.png") repeat-x;
-	height: 45px;
+	height: 40px;
 	text-align: left;
 	font-family: Sans-Serif;
-	color: White;
+	color: #205F87;
 }
 
 .MainMenuContent
 {
-	padding: 21px 0px 0px 0px;
-	font-family: Sans-Serif;
-	font-weight: bold;
+	padding: 11px 0px 0px 0px;
 }
 
 .StaticMenu
 {
-    color: White;
+    color: white;
     font-family: Sans-Serif;
+    font-size: 16px;
 }
 
 .StaticMenuItem
 {
-    color: White;
+    color: white;
     margin: 0px 3px 0px 3px;
-    padding: 1px 1px 6px 1px;
+    padding: 0px 1px 0px 1px;
     font-family: Sans-Serif;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     text-align: center;
+    border-top: solid 1px #3D98D1;
+    border-left: solid 1px #3D98D1;
+    border-right: solid 1px #3D98D1;
+    border-bottom: solid 1px #3D98D1;
 }
 
 .StaticHover
 {
-    color: White;
-    background: #336699 url(../images/Header/StaticMenuHoverBackground.png) repeat-x;
+    color: white;
+    background: #3482b2 url(../images/Header/MenuHoverBackground.png) repeat-x;
     margin: 0px 3px 0px 3px;
-    padding: 1px 1px 6px 1px;
+    padding: 0px 1px 0px 1px;
     font-family: Sans-Serif;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
+    text-align: center;
+    border-top: solid 1px #2371a1;
+    border-left: solid 1px #2371a1;
+    border-right: solid 1px #2371a1;
+    border-bottom: solid 1px #2371a1;
 }
 
 .StaticSelected
 {
-    color: White;
+    color: white;
 }
 
 .DynamicMenu
 {
-    color: White;
-    font-family: Sans-Serif;
+    padding: 0px 1px 0px 0px;
+    border-left: solid 1px #2371a1;
+    border-right: solid 1px #2371a1;
+    border-top: solid 1px #2371a1;
+    border-bottom: solid 1px #2371a1;
 }
 
 .DynamicMenuItem
 {
     color: White;
-    background-color: #336699;
+    background: #3482b2;
     font-weight: bold;
     font-size: 14px;
-    padding: 3px 3px 3px 3px;
+    border-top: solid 1px #3482b2;
+    border-bottom: solid 1px #3482b2;
+    border-left: solid 1px #3482b2;
+    border-right: solid 1px #3482b2;
+    padding: 1px 1px 1px 1px;
+    margin: 1px;
 }
 
 .DynamicHover
 {
-    color: White;
-    background-color: #999999;
-    padding: 3px 3px 3px 3px;
-    background: #336699 url(../images/Header/StaticMenuHoverBackground.png) repeat-x;
+    color: white;
+    background:  url(../images/Header/MenuHoverBackground.png) repeat-x;
+    padding: 1px 1px 1px 1px;
+    border-top: solid 1px #2371a1;
+    border-bottom: solid 1px #2371a1;
+    border-left: solid 1px #2371a1;
+    border-right: solid 1px #2371a1;
 }
 
 .DynamicSelected
 {
     color: White;
-}
-    
-/* Location Panel and Content */
-
-.LocationPanel
-{
-	background: url(../images/Header/LocationBackground.png) repeat-x;
-	height: 18px;
-	z-index: -1;
-}
-
-.LocationPanelContent
-{
-    font-family: Sans-Serif;
-	font-size: 12px;
-	font-weight: bold;
-	padding: 1px 10px 0px 10px;
-	
 }

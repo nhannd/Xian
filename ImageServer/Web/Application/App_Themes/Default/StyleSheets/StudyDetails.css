@@ -11,16 +11,6 @@
     border: solid 1px #ff0000;
 }
 
-.StudyDetailsContent
-{
-    padding: 0px 2px 0px 2px;
-}
-
-.SeriesContent
-{
-    padding: 1px 3px 0px 3px;
-}
-
 .PatientName
 {
     font-size: 24px;
@@ -33,7 +23,7 @@
     color: #205F87;
     white-space: nowrap;
     font-size: 18px;
-    padding: 2px 3px 3px 3px;
+    padding: 2px 1px 2px 1px;
 }
 
 .PatientSummaryTable
@@ -54,11 +44,18 @@
     font-weight: bold;
     color: #336699;
     border-right: dashed 1px White;
-    
     width: 200px;
 }
 
 .StudyDetailsViewHeader td
 {
     border: solid 1px #cccccc;
+}
+
+.CloseButton
+{
+    color: White;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
 }

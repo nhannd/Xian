@@ -16,7 +16,7 @@
                                                     <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="vg1" MaxLength="16" CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
                                                 <td>
-                                                    <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png"
+                                                    <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" ImageUrl="~/Common/images/icons/HelpSmall.png"
                                                         Visible="true" />
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                         ControlToValidate="AETitleTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"

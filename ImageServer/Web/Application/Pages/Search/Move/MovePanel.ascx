@@ -9,10 +9,6 @@
     <table cellpadding="0" cellspacing="0" width="100%">
   
   <tr>
-  <td class="MainContentTitle">Move Studies</td>  
-  </tr>
-  
-  <tr>
   <td class="SeriesDetailsContent">
     <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
         <tr>
@@ -32,7 +28,7 @@
     </table>
   </tr>
 
-  <tr><td><img src="~/images/blank.gif" height="3px" /></td></tr>
+  <tr><td><asp:image runat="server" SkinID="Spacer" height="3px" /></td></tr>
 
   <tr>
   <td class="SeriesDetailsContent">

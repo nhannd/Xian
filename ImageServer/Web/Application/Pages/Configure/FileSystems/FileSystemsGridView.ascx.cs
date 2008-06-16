@@ -336,11 +336,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
                 bool active = Convert.ToBoolean(DataBinder.Eval(row.DataItem, fieldName));
                 if (active)
                 {
-                    img.ImageUrl = "~/images/checked_small.gif";
+                    img.ImageUrl = "~/Common/Images/checked.png";
                 }
                 else
                 {
-                    img.ImageUrl = "~/images/unchecked_small.gif";
+                    img.ImageUrl = "~/Common/Images/unchecked.png";
                 }
             }
         }
@@ -358,11 +358,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
                 if (canRead)
                 {
-                    img.ImageUrl = "~/images/checked_small.gif";
+                    img.ImageUrl = "~/Common/Images/checked.png";
                 }
                 else
                 {
-                    img.ImageUrl = "~/images/unchecked_small.gif";
+                    img.ImageUrl = "~/Common/Images/unchecked.png";
                 }
             }
         }
@@ -385,11 +385,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
                 if (canWrite)
                 {
-                    img.ImageUrl = "~/images/checked_small.gif";
+                    img.ImageUrl = "~/Common/Images/checked.png";
                 }
                 else
                 {
-                    img.ImageUrl = "~/images/unchecked_small.gif";
+                    img.ImageUrl = "~/Common/Images/unchecked.png";
                 }
             }
         }

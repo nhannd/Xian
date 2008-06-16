@@ -53,11 +53,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Default.aspx" />
-    <Content Include="images\CCLogo.png" />
-    <Content Include="images\checked_small.gif" />
-    <Content Include="images\dimbackground.gif" />
-    <Content Include="images\LogoSmall.png" />
-    <Content Include="images\unchecked_small.gif" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +84,9 @@
     <Compile Include="Common\Controls\ModalDialog.ascx.designer.cs">
       <DependentUpon>ModalDialog.ascx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Common\Controls\PartitionTabs.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </EmbeddedResource>
     <Compile Include="Common\Controls\SectionPanel.ascx.cs">
       <DependentUpon>SectionPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -132,13 +130,6 @@
     </Compile>
     <Compile Include="Common\Pages\MainContentSection.Master.designer.cs">
       <DependentUpon>MainContentSection.Master</DependentUpon>
-    </Compile>
-    <Compile Include="Common\Pages\SearchContentSection.Master.cs">
-      <DependentUpon>SearchContentSection.Master</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Common\Pages\SearchContentSection.Master.designer.cs">
-      <DependentUpon>SearchContentSection.Master</DependentUpon>
     </Compile>
     <Compile Include="GlobalMasterPage.master.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
@@ -597,10 +588,12 @@
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewHeaderBackground.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerTopBackground.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewSelectedBackground.png" />
+    <Content Include="App_Themes\Default\images\Controls\Tabs\TabActiveLeft.png" />
+    <Content Include="App_Themes\Default\images\Controls\Tabs\TabActiveMiddle.png" />
+    <Content Include="App_Themes\Default\images\Controls\Tabs\TabActiveRight.png" />
+    <Content Include="App_Themes\Default\images\Controls\Tabs\TabHeaderBackgroundTop.png" />
     <Content Include="App_Themes\Default\images\Header\ClearCanvasLogo.png" />
     <Content Include="App_Themes\Default\images\Header\LocationEdge.png" />
-    <Content Include="App_Themes\Default\images\Header\StaticMenuHoverBackground.png" />
-    <Content Include="App_Themes\Default\images\Icons\SearchButton.png" />
     <Content Include="App_Themes\Default\images\MainContent\MainContentBottom.png" />
     <Content Include="App_Themes\Default\images\MainContent\MainContentBottomLeftCorner.png" />
     <Content Include="App_Themes\Default\images\MainContent\MainContentBottomRightCorner.png" />
@@ -620,46 +613,24 @@
     <Content Include="App_Themes\Default\StyleSheets\SeriesDetails.css" />
     <Content Include="App_Themes\Default\StyleSheets\StudyDetails.css" />
     <Content Include="App_Themes\Default\StyleSheets\Toolbar.css" />
-    <Content Include="App_Themes\Default\StyleSheets\Accordian.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\Calendar.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\Dialog.css" />
-    <Content Include="App_Themes\Default\images\icon_warning.gif" />
-    <Content Include="App_Themes\Default\images\Controls\Tabs\tab-active-left.gif" />
-    <Content Include="App_Themes\Default\images\Controls\Tabs\tab-active-right.gif" />
-    <Content Include="App_Themes\Default\images\Controls\Tabs\tab-active.gif" />
-    <Content Include="App_Themes\Default\images\Controls\Tabs\tab-hover-left.gif" />
-    <Content Include="App_Themes\Default\images\Controls\Tabs\tab-hover-right.gif" />
-    <Content Include="App_Themes\Default\images\Controls\Tabs\tab-hover.gif" />
-    <Content Include="App_Themes\Default\images\Controls\Tabs\tab-left.gif" />
-    <Content Include="App_Themes\Default\images\Controls\Tabs\tab-line.gif" />
-    <Content Include="App_Themes\Default\images\Controls\Tabs\tab-right.gif" />
-    <Content Include="App_Themes\Default\images\Controls\Tabs\tab.gif" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\Tabs.css" />
     <Content Include="Common\Controls\ConfirmationDialog.ascx" />
     <Content Include="Common\Controls\GridPager.ascx" />
     <Content Include="Common\Controls\InvalidInputIndicator.ascx" />
+    <EmbeddedResource Include="Common\Controls\ServerPartitionTabs.js" />
     <Content Include="Common\Controls\ModalDialog.ascx" />
     <Content Include="Common\Controls\SectionPanel.ascx" />
     <Content Include="Common\Controls\ServerPartitionTabs.ascx" />
     <Content Include="Common\Controls\TimedDialog.ascx" />
+    <Content Include="Common\Images\checked.png" />
+    <Content Include="Common\Images\unchecked.png" />
     <Content Include="Common\Pages\BasePage.aspx" />
-    <Content Include="images\blank.gif" />
-    <Content Include="images\icons\AutoRouteSmall.png" />
-    <Content Include="images\icons\close.png" />
+    <Content Include="Common\Images\blank.gif" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-left.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-right.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG.png" />
-    <Content Include="images\icons\ClearDate.png" />
-    <Content Include="images\icons\EraserEnabled.png" />
-    <Content Include="images\icons\ViewDetailsDisabled.png" />
-    <Content Include="images\icons\ViewDetailsEnabled.png" />
-    <Content Include="images\icons\ResetDisabled.png" />
-    <Content Include="images\icons\ResetEnabled.png" />
-    <Content Include="images\icons\ScheduleDisabled.png" />
-    <Content Include="images\icons\ScheduleEnabled.png" />
-    <Content Include="images\icons\SendDisabled.png" />
-    <Content Include="images\icons\SendEnabled.png" />
-    <Content Include="images\Splash.png" />
     <Content Include="Pages\Configure\Devices\AddEditDeviceDialog.ascx" />
     <Content Include="Pages\Configure\Devices\DeviceGridView.ascx" />
     <Content Include="Pages\Configure\Devices\DevicePage.aspx" />
@@ -722,7 +693,6 @@
     <Content Include="GlobalMasterPage.master" />
     <Content Include="App_Themes\Default\Global.skin" />
     <Content Include="Common\Pages\MainContentSection.Master" />
-    <Content Include="Common\Pages\SearchContentSection.Master" />
     <None Include="Pages\WorkQueue\WorkQueueSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
@@ -730,38 +700,8 @@
     <None Include="Scripts\.svn\entries" />
     <None Include="Scripts\.svn\format" />
     <None Include="Service References\FilesystemServiceProxy.map" />
-    <Content Include="images\checked_tall.gif" />
-    <Content Include="images\filter.gif" />
-    <Content Include="images\filter_disabled.gif" />
-    <Content Include="images\filter_on.gif" />
-    <Content Include="images\icons\HelpSmall.png" />
-    <Content Include="images\icons\AddDisabled.png" />
-    <Content Include="images\icons\AddEnabled.png" />
-    <Content Include="images\icons\BackDisabled.png" />
-    <Content Include="images\icons\BackEnabled.png" />
-    <Content Include="images\icons\DeleteDisabled.png" />
-    <Content Include="images\icons\DeleteEnabled.png" />
-    <Content Include="images\icons\EditDisabled.png" />
-    <Content Include="images\icons\EditEnabled.png" />
-    <Content Include="images\icons\ForwardDisabled.png" />
-    <Content Include="images\icons\ForwardEnabled.png" />
-    <Content Include="images\icons\icon_warning.png" />
-    <Content Include="images\icons\ImageServerLogo.png" />
-    <Content Include="images\icons\QueryDisabled.png" />
-    <Content Include="images\icons\QueryEnabled.png" />
-    <Content Include="images\icons\QuerySmall.png" />
-    <Content Include="images\icons\RefreshDisabled.png" />
-    <Content Include="images\icons\RefreshEnabled.png" />
-    <Content Include="images\icons\RetrieveSmall.png" />
-    <Content Include="images\icons\StoreSmall.png" />
-    <Content Include="images\icon_warning.gif" />
-    <Content Include="images\next.gif" />
-    <Content Include="images\prev.gif" />
-    <Content Include="images\query.gif" />
-    <Content Include="images\storage.gif" />
-    <Content Include="images\unchecked_tall.gif" />
-    <Content Include="images\Plus.ico" />
-    <Content Include="images\usage.png" />
+    <Content Include="Common\Images\HelpSmall.png" />
+    <Content Include="Common\Images\usage.png" />
     <Content Include="Services\FilesystemInfoService.asmx" />
     <Content Include="Services\ValidationServices.asmx" />
     <EmbeddedResource Include="App_GlobalResources\SR.resx">

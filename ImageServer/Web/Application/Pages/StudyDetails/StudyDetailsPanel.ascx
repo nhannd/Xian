@@ -29,12 +29,12 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="2" class="StudyDetailsContent">                  
+                <td colspan="2">                  
                     <localAsp:StudyDetailsView ID="StudyDetailsView" runat="server" />
                 </td>
             </tr>
             <tr>
-                <td colspan="2" class="SeriesContent">
+                <td colspan="2">
                     <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
                         <tr><td class="MainContentSubTitle" >Series</td><td class="ButtonPanel"><ccUI:ToolbarButton runat="server" ID="ViewSeriesButton" SkinID="ViewDetailsButton" /></td></tr>
                         <tr><td colspan="2"><localAsp:SeriesGridView ID="SeriesGridView" runat="server" /></td></tr>

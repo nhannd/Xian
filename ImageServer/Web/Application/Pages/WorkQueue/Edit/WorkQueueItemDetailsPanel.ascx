@@ -6,7 +6,7 @@
         <ContentTemplate>
             <table width="100%" cellpadding="0" cellspacing="0">
                 <tr><td class="MainContentTitle"><asp:Label ID="WorkQueueItemTitle" runat="server" Text="Work Queue Item Details"></asp:Label></td></tr>
-                <tr><td style="padding-left: 3px; padding-right: 3px;">
+                <tr><td>
                         <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
                             <tr><td>
                                     <ccUI:ToolbarButton ID="RescheduleToolbarButton" runat="server" SkinID="RescheduleButton" OnClick="Reschedule_Click"/>

@@ -19,7 +19,7 @@
   </tr>
   
   <tr>
-  <td class="StudySummaryContent">
+  <td>
       <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
         <tr><td class="MainContentSubTitle">Study Summary</td></tr>
         <tr><td>
@@ -29,7 +29,7 @@
   </td>
   </tr>
   <tr>
-  <td class="SeriesDetailsContent">
+  <td>
     <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel" style="margin-top: 3px;">
         <tr><td class="MainContentSubTitle">Series Summary</td></tr>
         <tr><td>

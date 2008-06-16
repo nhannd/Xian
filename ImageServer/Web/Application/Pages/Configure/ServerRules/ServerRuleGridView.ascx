@@ -28,7 +28,7 @@
                             <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Enabled") %>'></asp:TextBox>
                         </EditItemTemplate>
                         <ItemTemplate>
-                            <asp:Image ID="EnabledImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
+                            <asp:Image ID="EnabledImage" runat="server" SkinId="Unchecked" />
                         </ItemTemplate>
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle  HorizontalAlign="Center" />
@@ -38,7 +38,7 @@
                             <asp:TextBox ID="TextBox2" runat="server" Text='<%# Bind("Default") %>'></asp:TextBox>
                         </EditItemTemplate>
                         <ItemTemplate>
-                            <asp:Image ID="DefaultImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
+                            <asp:Image ID="DefaultImage" runat="server" SkinId="Unchecked" />
                         </ItemTemplate>
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle HorizontalAlign="Center" />
@@ -48,7 +48,7 @@
                             <asp:TextBox ID="TextBox3" runat="server" Text='<%# Bind("Exempt") %>'></asp:TextBox>
                         </EditItemTemplate>
                         <ItemTemplate>
-                            <asp:Image ID="ExemptImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
+                            <asp:Image ID="ExemptImage" runat="server" SkinId="Unchecked" />
                         </ItemTemplate>
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle HorizontalAlign="Center" />

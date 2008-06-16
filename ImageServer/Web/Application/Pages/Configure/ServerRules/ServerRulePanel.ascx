@@ -5,20 +5,16 @@
 
 <asp:UpdatePanel ID="ServerRuleUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-
-    <div>
-        <b class="roundedCorners"><b class="roundedCorners1"><b></b></b><b class="roundedCorners2">
-            <b></b></b><b class="roundedCorners3"></b><b class="roundedCorners4"></b><b class="roundedCorners5">
-            </b></b>
-        <div class="roundedCornersfg">                      
-
             <asp:Table ID="Table" runat="server" Width="100%" CellPadding="2" style="border-color: #6699CC"
                 BorderWidth="2px">
                 <asp:TableRow>
-                    <asp:TableCell HorizontalAlign="right" VerticalAlign="Bottom" Wrap="false">
-                                <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchToolbarButton">
+                    <asp:TableCell VerticalAlign="Bottom" Wrap="false">
+                                <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
+                                            <td align="right" valign="bottom">
+                                                <asp:Panel ID="Panel2" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
+                                            </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="Type" CssClass="SearchTextBoxLabel" EnableViewState="False" /><br />
                                                 <asp:DropDownList ID="RuleTypeDropDownList" runat="server" CssClass="SearchDropDownList" ToolTip="Search by type" />
@@ -37,11 +33,6 @@
                                                 <asp:Label ID="Label4" runat="server" Text="Default" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="DefaultFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
-                                            </td>
-                                            <td align="right" valign="bottom">
-                                                <asp:Panel ID="SearchButtonContainer" runat="server" CssClass="SearchButtonContainer">
-                                                   <asp:ImageButton ID="SearchToolbarButton" runat="server" SkinID="SearchButton" OnClick="SearchButton_Click" Tooltip="Search for Server Rules" />
-                                                </asp:Panel>
                                             </td>
                                         </tr>
                                     </table>
@@ -78,12 +69,5 @@
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
-
-   </div>
-        <b class="roundedCorners"><b class="roundedCorners5"></b><b class="roundedCorners4">
-        </b><b class="roundedCorners3"></b><b class="roundedCorners2"><b></b></b><b class="roundedCorners1">
-            <b></b></b></b>
-    </div>
-
     </ContentTemplate>
 </asp:UpdatePanel>

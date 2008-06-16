@@ -5,20 +5,14 @@
 <asp:Content runat="server" ContentPlaceHolderID="MainMenuPlaceHolder">
     <asp:ContentPlaceHolder ID="MainMenuPlaceHolder" runat="server">
         <asp:SiteMapDataSource ID="MainMenuSiteMapDataSource" runat="server" ShowStartingNode="False" />
-        <asp:Menu runat="server" ID="MainMenu" SkinID="MainMenu" DataSourceID="MainMenuSiteMapDataSource" style="font-family: Sans-Serif"></asp:Menu>
+        <asp:Menu runat="server" ID="MainMenu" SkinID="MainMenu" DataSourceID="MainMenuSiteMapDataSource"></asp:Menu>
     </asp:ContentPlaceHolder>
 </asp:Content>
 
 <asp:Content runat="server" ContentPlaceHolderID="MainContentPlaceHolder">
-    <div>
-        <b class="roundedCorners"><b class="roundedCorners1"><b></b></b><b class="roundedCorners2">
-            <b></b></b><b class="roundedCorners3"></b><b class="roundedCorners4"></b><b class="roundedCorners5">
-            </b></b>
-        <div class="roundedCornersfg">          
-            <asp:ContentPlaceHolder runat="server" ID="MainContentSection" />   
-        </div>
-        <b class="roundedCorners"><b class="roundedCorners5"></b><b class="roundedCorners4">
-        </b><b class="roundedCorners3"></b><b class="roundedCorners2"><b></b></b><b class="roundedCorners1">
-            <b></b></b></b>
-    </div>
+            <asp:ContentPlaceHolder runat="server" ID="MainContentSectionPlaceHolder" />   
+</asp:Content>
+
+<asp:Content runat="server" ContentPlaceHolderID="MainContentTitlePlaceHolder">
+            <asp:ContentPlaceHolder runat="server" ID="TitlePlaceHolder" />   
 </asp:Content>

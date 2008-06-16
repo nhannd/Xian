@@ -29,12 +29,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Common {
         protected global::AjaxControlToolkit.TabContainer PartitionTabContainer;
         
         /// <summary>
-        /// TabPanel1 control.
+        /// PartitionTabPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.TabPanel TabPanel1;
+        protected global::AjaxControlToolkit.TabPanel PartitionTabPanel;
     }
 }

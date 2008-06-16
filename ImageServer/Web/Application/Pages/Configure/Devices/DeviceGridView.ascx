@@ -26,7 +26,7 @@
                             <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Enabled") %>'></asp:TextBox>
                         </EditItemTemplate>
                         <ItemTemplate>
-                            <asp:Image ID="ActiveImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
+                            <asp:Image ID="ActiveImage" runat="server" SkinId="Unchecked" />
                         </ItemTemplate>
                         <HeaderStyle HorizontalAlign="Center" />
                         <ItemStyle HorizontalAlign="Center" />
@@ -36,7 +36,7 @@
                             <asp:TextBox ID="TextBox2" runat="server" Text='<%# Bind("DHCP") %>'></asp:TextBox>
                         </EditItemTemplate>
                         <ItemTemplate>
-                            <asp:Image ID="DHCPImage" runat="server" ImageUrl="~/images/unchecked_small.gif" />
+                            <asp:Image ID="DHCPImage" runat="server" SkinId="Unchecked" />
                         </ItemTemplate>
                         <HeaderStyle HorizontalAlign="Center" />
                         <ItemStyle HorizontalAlign="Center" />
