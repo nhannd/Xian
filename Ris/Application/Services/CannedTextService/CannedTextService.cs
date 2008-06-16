@@ -93,6 +93,7 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 			CannedTextAssembler assembler = new CannedTextAssembler();
 			assembler.UpdateCannedText(cannedText, request.Detail, this.PersistenceContext);
 
+			PersistenceContext.SynchState();
 			return new UpdateCannedTextResponse(assembler.GetCannedTextSummary(cannedText, this.PersistenceContext));
 		}
 
