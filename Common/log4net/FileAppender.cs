@@ -24,6 +24,8 @@ using log4net.Appender;
 using log4net.Core;
 using log4net.Layout;
 using log4net.Util;
+using System.Security.AccessControl;
+using System.Security.Principal;
 
 namespace ClearCanvas.Common.log4net
 {
@@ -649,8 +651,7 @@ namespace ClearCanvas.Common.log4net
             {
                 if (m_mutex == null)
                 {
-                    m_mutexname = GetMutexName(m_filename);
-                    m_mutex = new Mutex(false, m_mutexname);
+                    m_mutex = CreateMutex();
                     m_mutexLocked = false;
                 }
                 else
@@ -659,8 +660,7 @@ namespace ClearCanvas.Common.log4net
                     {
                         m_mutex.Close();
                         m_mutex = null;
-                        m_mutexname = GetMutexName(m_filename);
-                        m_mutex = new Mutex(false, m_mutexname);
+                        m_mutex = CreateMutex();
                     }
                 }
 
@@ -671,6 +671,65 @@ namespace ClearCanvas.Common.log4net
                 }
 
                 return false;
+            }
+
+            private Mutex CreateMutex()
+            {
+                bool mutexWasCreated = false;
+
+                m_mutexname = GetMutexName(m_filename);
+
+                try
+                {
+                    // Open the mutex.
+                    m_mutex = Mutex.OpenExisting(m_mutexname);
+                }
+                catch (WaitHandleCannotBeOpenedException)
+                {
+                    // The named mutex does not exist.
+                    LogLog.Warn("The named mutex does not exist.");
+                    MutexSecurity mSec = new MutexSecurity();
+
+                    MutexAccessRule rule = new MutexAccessRule(
+                        new SecurityIdentifier(WellKnownSidType.WorldSid, null),
+                        MutexRights.FullControl, AccessControlType.Allow);
+                    mSec.AddAccessRule(rule);
+
+                    m_mutex = new Mutex(false, m_mutexname, out mutexWasCreated, mSec);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // The named mutex exists, but the user does not have the security access required to use it.
+                    LogLog.Warn("The named mutex exists, but the user does not have the security access required to use it.");
+                    try
+                    {
+                        m_mutex = Mutex.OpenExisting(m_mutexname, MutexRights.ReadPermissions | MutexRights.ChangePermissions);
+
+                        // Get the current ACL. This requires MutexRights.ReadPermissions.
+                        MutexSecurity mSec = m_mutex.GetAccessControl();
+
+                        // Now grant the user the correct rights.
+                        MutexAccessRule rule = new MutexAccessRule(
+                            new SecurityIdentifier(WellKnownSidType.WorldSid, null), 
+                            MutexRights.FullControl, AccessControlType.Allow);
+                        mSec.AddAccessRule(rule);
+
+                        // Update the ACL. This requires MutexRights.ChangePermissions.
+                        m_mutex.SetAccessControl(mSec);
+
+                        LogLog.Debug("Updated mutex security.");
+
+                       m_mutex = Mutex.OpenExisting(m_mutexname);
+
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        LogLog.Error("Unable to change permissions on mutex.", ex);
+                        m_mutex = new Mutex(false, m_mutexname);
+                    }
+                }
+
+                return m_mutex;
             }
 
             /// <summary>
