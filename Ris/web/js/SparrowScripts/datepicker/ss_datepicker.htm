@@ -143,7 +143,7 @@
 			parent.document.getElementById(ssdp_parentControl).value=dt;			
 			ssdp_renderCalendar();
 		}
-		parent.ssdp_onDatePickerClosed(dt);
+		parent.ssdp_onDatePickerClosed(ssdp_selectedDate);
 	}
 
 	function ssdp_startDecMonth() {
@@ -244,7 +244,7 @@
 
 	function ssdp_getTokenLength(cTokenType) {
 
-		if ((cTokenType=="a")||(cTokenType=="d"))
+		if ((cTokenType=="a")||(cTokenType=="e"))
 		{
 			return 3;
 		}
@@ -262,7 +262,6 @@
 	}
 
 	function ssdp_parseInputDate(sDate) {
-		
 		var sDateFormat=ssdp_dateFormat.replace("ddd","a");
 		sDateFormat=sDateFormat.replace("dd","b");
 		sDateFormat=sDateFormat.replace("d","c");
@@ -272,7 +271,7 @@
 		sDateFormat=sDateFormat.replace("m","g");
 		sDateFormat=sDateFormat.replace("yyyy","h");
 		sDateFormat=sDateFormat.replace("yy","i");
-
+		
 		var cCurrentTokenType, cCurrentTokenDatePart, nCurrentTokenMaxLength, nTokenIndex=0;
 		var ch, nIndex=0;
 		var i, str;
@@ -304,7 +303,7 @@
 
 				if (nCurrentTokenMaxLength>0)
 				{
-					if (cCurrentTokenType=="d") {
+					if (cCurrentTokenType=="e") {
 						for (i=0;i<=11;i++)
 						{
 							str=sDate.substring(nIndex,nIndex+3).toLowerCase();
