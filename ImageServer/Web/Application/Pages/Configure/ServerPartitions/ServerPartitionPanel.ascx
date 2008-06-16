@@ -48,8 +48,8 @@
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
                                         <ccUI:ToolbarButton ID="AddPartitionButton" runat="server" SkinID="AddButton" OnClick="AddPartitionButton_Click" />
-                                        <ccUI:ToolbarButton ID="EditPartitionButton" runat="server" SkinID="EditButton" OnClick="AddPartitionButton_Click" />
-                                        <ccUI:ToolbarButton ID="DeletePartitionButton" runat="server" SkinID="DeleteButton" OnClick="AddPartitionButton_Click" />
+                                        <ccUI:ToolbarButton ID="EditPartitionButton" runat="server" SkinID="EditButton" OnClick="EditPartitionButton_Click" />
+                                        <ccUI:ToolbarButton ID="DeletePartitionButton" runat="server" SkinID="DeleteButton" OnClick="DeletePartitionButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  
