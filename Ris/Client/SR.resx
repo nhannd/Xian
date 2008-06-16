@@ -561,8 +561,11 @@
   <data name="TitleExternalPractitioner" xml:space="preserve">
     <value>External Practitioner</value>
   </data>
-  <data name="TitleMerge" xml:space="preserve">
-    <value>Merge</value>
+  <data name="TitleMergeContactPoints" xml:space="preserve">
+    <value>Merge Contact Points</value>
+  </data>
+  <data name="TitleMergePractitioner" xml:space="preserve">
+    <value>Merge Practitioners</value>
   </data>
   <data name="TitleNext" xml:space="preserve">
     <value>Next Page</value>

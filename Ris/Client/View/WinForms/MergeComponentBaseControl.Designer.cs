@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._report.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this._report.LabelText = "Merge Report";
+			this._report.LabelText = "Proposed Changes:";
 			this._report.Location = new System.Drawing.Point(7, 146);
 			this._report.Margin = new System.Windows.Forms.Padding(2);
 			this._report.Name = "_report";

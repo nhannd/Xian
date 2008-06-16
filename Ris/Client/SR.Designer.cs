@@ -1393,11 +1393,20 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Merge.
+        ///   Looks up a localized string similar to Merge Contact Points.
         /// </summary>
-        internal static string TitleMerge {
+        internal static string TitleMergeContactPoints {
             get {
-                return ResourceManager.GetString("TitleMerge", resourceCulture);
+                return ResourceManager.GetString("TitleMergeContactPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge Practitioners.
+        /// </summary>
+        internal static string TitleMergePractitioner {
+            get {
+                return ResourceManager.GetString("TitleMergePractitioner", resourceCulture);
             }
         }
         

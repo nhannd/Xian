@@ -156,8 +156,8 @@ namespace ClearCanvas.Ris.Client
 		{
 			base.InitializeActionModel(model);
 
-			_mergeContactPointAction = model.AddAction("mergeContactPoint", SR.TitleMerge, "Icons.MergeToolSmall.png",
-				SR.TitleMerge, MergeSelectedContactPoint);
+			_mergeContactPointAction = model.AddAction("mergeContactPoint", SR.TitleMergePractitioner, "Icons.MergeToolSmall.png",
+				SR.TitleMergePractitioner, MergeSelectedContactPoint);
 			_mergeContactPointAction.Enabled = false;
 		}
 
@@ -301,8 +301,8 @@ namespace ClearCanvas.Ris.Client
 
 				ApplicationComponentExitCode exitCode = LaunchAsDialog(
 					this.Host.DesktopWindow, 
-					mergeComponent, 
-					SR.TitleMerge);
+					mergeComponent,
+					SR.TitleMergeContactPoints);
 
 				if (exitCode == ApplicationComponentExitCode.Accepted)
 				{

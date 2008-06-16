@@ -202,8 +202,8 @@ namespace ClearCanvas.Ris.Client
 			model.Edit.SetPermissibility(
 				OrPermissions(AuthorityTokens.Admin.Data.ExternalPractitioner, AuthorityTokens.Workflow.ExternalPractitioner.Update));
 
-			_mergePractitionerAction = model.AddAction("mergePractitioner", SR.TitleMerge, "Icons.MergeToolSmall.png",
-				SR.TitleMerge, Merge);
+			_mergePractitionerAction = model.AddAction("mergePractitioner", SR.TitleMergePractitioner, "Icons.MergeToolSmall.png",
+				SR.TitleMergePractitioner, Merge);
 			_mergePractitionerAction.Enabled = false;
 		}
 
@@ -324,7 +324,7 @@ namespace ClearCanvas.Ris.Client
 
 			ExternalPractitionerMergeComponent mergeComponent = new ExternalPractitionerMergeComponent(firstSelectedItem, secondSelectedItem);
 			ApplicationComponentExitCode exitCode = LaunchAsDialog(
-				this.Host.DesktopWindow, mergeComponent, SR.TitleMerge);
+				this.Host.DesktopWindow, mergeComponent, SR.TitleMergePractitioner);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				this.Table.Items.Remove(mergeComponent.SelectedDuplicate);
