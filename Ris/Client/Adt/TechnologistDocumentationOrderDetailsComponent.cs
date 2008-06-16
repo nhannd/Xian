@@ -1,9 +1,7 @@
+using System.Runtime.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -21,72 +19,72 @@ namespace ClearCanvas.Ris.Client.Adt
 	[AssociateView(typeof(TechnologistDocumentationOrderDetailsComponentViewExtensionPoint))]
 	public class TechnologistDocumentationOrderDetailsComponent : ApplicationComponent
 	{
-        #region ProtocolSummaryComponent class
+		#region ProtocolSummaryComponent class
 
-        public class ProtocolSummaryComponent : DHtmlComponent
-        {
-            [DataContract]
-            public class HealthcareContext : DataContractBase
-            {
-                internal HealthcareContext(EntityRef orderRef)
-                {
-                    this.OrderRef = orderRef;
-                }
+		public class ProtocolSummaryComponent : DHtmlComponent
+		{
+			[DataContract]
+			public class HealthcareContext : DataContractBase
+			{
+				internal HealthcareContext(EntityRef orderRef)
+				{
+					this.OrderRef = orderRef;
+				}
 
-                [DataMember]
-                public EntityRef OrderRef;
+				[DataMember]
+				public EntityRef OrderRef;
 
-            }
+			}
 
-            private readonly HealthcareContext _healthcareContext;
+			private readonly HealthcareContext _healthcareContext;
 
-            public ProtocolSummaryComponent(ITechnologistDocumentationContext context)
-            {
-                _healthcareContext = new HealthcareContext(context.OrderRef);
-            }
+			public ProtocolSummaryComponent(ITechnologistDocumentationContext context)
+			{
+				_healthcareContext = new HealthcareContext(context.OrderRef);
+			}
 
-            public override void Start()
-            {
-                SetUrl(WebResourcesSettings.Default.ProtocolSummaryUrl);
-                base.Start();
-            }
+			public override void Start()
+			{
+				SetUrl(WebResourcesSettings.Default.ProtocolSummaryUrl);
+				base.Start();
+			}
 
-            protected override DataContractBase GetHealthcareContext()
-            {
-                return _healthcareContext;
-            }
-        }
+			protected override DataContractBase GetHealthcareContext()
+			{
+				return _healthcareContext;
+			}
+		}
 
-        #endregion
+		#endregion
 
-
-	    private OrderNoteSummaryComponent _orderNoteComponent;
+		private OrderNoteSummaryComponent _orderNoteComponent;
 		private ChildComponentHost _orderNotesComponentHost;
 		private ChildComponentHost _protocolSummaryComponentHost;
 		private ChildComponentHost _additionalInfoComponentHost;
 		private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 
-	    private readonly ITechnologistDocumentationContext _context;
+		private readonly ITechnologistDocumentationContext _context;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		public TechnologistDocumentationOrderDetailsComponent(ITechnologistDocumentationContext context)
 		{
-		    _context = context;
+			_context = context;
 		}
 
 		public override void Start()
 		{
-            _orderNoteComponent = new OrderNoteSummaryComponent(OrderNoteCategory.General);
-            _orderNoteComponent.Notes = _context.OrderNotes;
-            _orderNotesComponentHost = new ChildComponentHost(this.Host, _orderNoteComponent);
+			_orderNoteComponent = new OrderNoteSummaryComponent(OrderNoteCategory.General);
+			_orderNoteComponent.Notes = _context.OrderNotes;
+			_orderNotesComponentHost = new ChildComponentHost(this.Host, _orderNoteComponent);
 			_orderNotesComponentHost.StartComponent();
 
 			_protocolSummaryComponentHost = new ChildComponentHost(this.Host, new ProtocolSummaryComponent(_context));
 			_protocolSummaryComponentHost.StartComponent();
 
-			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent(_context.OrderExtendedProperties);
+			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
+			_orderAdditionalInfoComponent.OrderExtendedProperties = _context.OrderExtendedProperties;
 			_additionalInfoComponentHost = new ChildComponentHost(this.Host, _orderAdditionalInfoComponent);
 			_additionalInfoComponentHost.StartComponent();
 

@@ -264,7 +264,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 		private OrderDetailViewComponent _orderDetailComponent;
 		private ChildComponentHost _orderDetailHost;
 
-		private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
+		private OrderAdditionalInfoSummaryComponent _orderAdditionalInfoComponent;
 		private ChildComponentHost _orderAdditionalInfoHost;
 
 		private bool _canCompleteInterpretationAndVerify;
@@ -300,7 +300,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			_orderDetailHost = new ChildComponentHost(this.Host, _orderDetailComponent);
 			_orderDetailHost.StartComponent();
 
-			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
+			_orderAdditionalInfoComponent = new OrderAdditionalInfoSummaryComponent();
 			_orderAdditionalInfoHost = new ChildComponentHost(this.Host, _orderAdditionalInfoComponent);
 			_orderAdditionalInfoHost.StartComponent();
 

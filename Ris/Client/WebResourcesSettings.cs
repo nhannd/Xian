@@ -94,6 +94,16 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("forms/technologist/orderadditionalinfosummary.htm")]
+		public string OrderAdditionalInfoSummaryPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderAdditionalInfoSummaryPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
 		[global::System.Configuration.DefaultSettingValueAttribute("orderdetail.htm")]
 		public string OrderDetailPageUrl
 		{

@@ -402,6 +402,7 @@ var Table = {
 					showDatePicker(findButton, input, 
 						function(date) 
 						{
+							// TODO: set date properly
 							column.setValue(obj, date );
 							table._onCellUpdate(row, col);
 							table._onEditComplete(row, col);
@@ -595,6 +596,11 @@ var Table = {
 				  var input = document.createElement("input");
 				input.type = "checkbox";
 				  label.appendChild(input);
+				  
+				  if(column.readonly)
+				  {
+					input.disabled = "disabled";
+					}
 
 				  // move the "label text" from the div/cell to the label element
 				  var text = td.removeChild(td.firstChild);
