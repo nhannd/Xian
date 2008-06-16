@@ -147,7 +147,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 552);
 			this.flowLayoutPanel2.Name = "flowLayoutPanel2";
 			this.flowLayoutPanel2.Size = new System.Drawing.Size(469, 58);
-			this.flowLayoutPanel2.TabIndex = 0;
+			this.flowLayoutPanel2.TabIndex = 1;
 			// 
 			// _btnAccept
 			// 
@@ -165,7 +165,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._btnSubmitForApproval.Location = new System.Drawing.Point(84, 3);
 			this._btnSubmitForApproval.Name = "_btnSubmitForApproval";
 			this._btnSubmitForApproval.Size = new System.Drawing.Size(109, 23);
-			this._btnSubmitForApproval.TabIndex = 6;
+			this._btnSubmitForApproval.TabIndex = 1;
 			this._btnSubmitForApproval.Text = "Submit for Approval";
 			this._btnSubmitForApproval.UseVisualStyleBackColor = true;
 			this._btnSubmitForApproval.Click += new System.EventHandler(this._btnSubmitForApproval_Click);
@@ -175,7 +175,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._btnReject.Location = new System.Drawing.Point(199, 3);
 			this._btnReject.Name = "_btnReject";
 			this._btnReject.Size = new System.Drawing.Size(75, 23);
-			this._btnReject.TabIndex = 1;
+			this._btnReject.TabIndex = 2;
 			this._btnReject.Text = "Reject";
 			this._btnReject.UseVisualStyleBackColor = true;
 			this._btnReject.Click += new System.EventHandler(this._btnReject_Click);
@@ -185,7 +185,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._btnSuspend.Location = new System.Drawing.Point(280, 3);
 			this._btnSuspend.Name = "_btnSuspend";
 			this._btnSuspend.Size = new System.Drawing.Size(75, 23);
-			this._btnSuspend.TabIndex = 2;
+			this._btnSuspend.TabIndex = 3;
 			this._btnSuspend.Text = "Suspend";
 			this._btnSuspend.UseVisualStyleBackColor = true;
 			this._btnSuspend.Click += new System.EventHandler(this._btnSuspend_Click);
@@ -195,7 +195,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._btnSave.Location = new System.Drawing.Point(361, 3);
 			this._btnSave.Name = "_btnSave";
 			this._btnSave.Size = new System.Drawing.Size(75, 23);
-			this._btnSave.TabIndex = 3;
+			this._btnSave.TabIndex = 4;
 			this._btnSave.Text = "Save";
 			this._btnSave.UseVisualStyleBackColor = true;
 			this._btnSave.Click += new System.EventHandler(this._btnSave_Click);
@@ -217,7 +217,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._protocolNextItem.Location = new System.Drawing.Point(84, 32);
 			this._protocolNextItem.Name = "_protocolNextItem";
 			this._protocolNextItem.Size = new System.Drawing.Size(119, 23);
-			this._protocolNextItem.TabIndex = 4;
+			this._protocolNextItem.TabIndex = 6;
 			this._protocolNextItem.Text = "Protocol Next Order";
 			this._protocolNextItem.UseVisualStyleBackColor = true;
 			// 
@@ -237,7 +237,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._btnClose.Location = new System.Drawing.Point(3, 3);
 			this._btnClose.Name = "_btnClose";
 			this._btnClose.Size = new System.Drawing.Size(75, 23);
-			this._btnClose.TabIndex = 1;
+			this._btnClose.TabIndex = 0;
 			this._btnClose.Text = "Close";
 			this._btnClose.UseVisualStyleBackColor = true;
 			this._btnClose.Click += new System.EventHandler(this._btnClose_Click);
@@ -328,7 +328,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._orderSummaryPanel.Margin = new System.Windows.Forms.Padding(0);
 			this._orderSummaryPanel.Name = "_orderSummaryPanel";
 			this._orderSummaryPanel.Size = new System.Drawing.Size(1128, 85);
-			this._orderSummaryPanel.TabIndex = 1;
+			this._orderSummaryPanel.TabIndex = 0;
 			// 
 			// _statusText
 			// 
@@ -343,7 +343,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._statusText.Name = "_statusText";
 			this._statusText.Padding = new System.Windows.Forms.Padding(3, 3, 3, 1);
 			this._statusText.Size = new System.Drawing.Size(1122, 19);
-			this._statusText.TabIndex = 2;
+			this._statusText.TabIndex = 1;
 			this._statusText.Text = "Protocolling from X worklist - Y items available - Z items completed";
 			// 
 			// ProtocollingComponentControl

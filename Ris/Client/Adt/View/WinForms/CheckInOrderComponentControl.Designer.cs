@@ -59,58 +59,53 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            this._orderTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._okButton = new System.Windows.Forms.Button();
-            this._cancelButton = new System.Windows.Forms.Button();
-            this.SuspendLayout();
-            // 
-            // _orderTableView
-            // 
-            this._orderTableView.Location = new System.Drawing.Point(7, 11);
-            this._orderTableView.MenuModel = null;
-            this._orderTableView.Name = "_orderTableView";
-            this._orderTableView.ReadOnly = false;
-            this._orderTableView.Selection = selection1;
-            this._orderTableView.ShowToolbar = false;
-            this._orderTableView.Size = new System.Drawing.Size(469, 219);
-            this._orderTableView.TabIndex = 0;
-            this._orderTableView.Table = null;
-            this._orderTableView.ToolbarModel = null;
-            this._orderTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            // 
-            // _okButton
-            // 
-            this._okButton.Location = new System.Drawing.Point(320, 241);
-            this._okButton.Name = "_okButton";
-            this._okButton.Size = new System.Drawing.Size(75, 23);
-            this._okButton.TabIndex = 2;
-            this._okButton.Text = "Check-In";
-            this._okButton.UseVisualStyleBackColor = true;
-            this._okButton.Click += new System.EventHandler(this._okButton_Click);
-            // 
-            // _cancelButton
-            // 
-            this._cancelButton.Location = new System.Drawing.Point(401, 241);
-            this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(75, 23);
-            this._cancelButton.TabIndex = 3;
-            this._cancelButton.Text = "Cancel";
-            this._cancelButton.UseVisualStyleBackColor = true;
-            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
-            // 
-            // CheckInOrderComponentControl
-            // 
-            this.AcceptButton = this._okButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this._cancelButton;
-            this.Controls.Add(this._cancelButton);
-            this.Controls.Add(this._okButton);
-            this.Controls.Add(this._orderTableView);
-            this.Name = "CheckInOrderComponentControl";
-            this.Size = new System.Drawing.Size(484, 272);
-            this.ResumeLayout(false);
+			this._orderTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this._okButton = new System.Windows.Forms.Button();
+			this._cancelButton = new System.Windows.Forms.Button();
+			this.SuspendLayout();
+			// 
+			// _orderTableView
+			// 
+			this._orderTableView.Location = new System.Drawing.Point(7, 11);
+			this._orderTableView.Name = "_orderTableView";
+			this._orderTableView.ReadOnly = false;
+			this._orderTableView.ShowToolbar = false;
+			this._orderTableView.Size = new System.Drawing.Size(469, 219);
+			this._orderTableView.TabIndex = 0;
+			this._orderTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			// 
+			// _okButton
+			// 
+			this._okButton.Location = new System.Drawing.Point(320, 241);
+			this._okButton.Name = "_okButton";
+			this._okButton.Size = new System.Drawing.Size(75, 23);
+			this._okButton.TabIndex = 1;
+			this._okButton.Text = "Check-In";
+			this._okButton.UseVisualStyleBackColor = true;
+			this._okButton.Click += new System.EventHandler(this._okButton_Click);
+			// 
+			// _cancelButton
+			// 
+			this._cancelButton.Location = new System.Drawing.Point(401, 241);
+			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
+			this._cancelButton.TabIndex = 2;
+			this._cancelButton.Text = "Cancel";
+			this._cancelButton.UseVisualStyleBackColor = true;
+			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+			// 
+			// CheckInOrderComponentControl
+			// 
+			this.AcceptButton = this._okButton;
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this._cancelButton;
+			this.Controls.Add(this._cancelButton);
+			this.Controls.Add(this._okButton);
+			this.Controls.Add(this._orderTableView);
+			this.Name = "CheckInOrderComponentControl";
+			this.Size = new System.Drawing.Size(484, 272);
+			this.ResumeLayout(false);
 
         }
 

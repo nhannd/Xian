@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._cancelButton.Location = new System.Drawing.Point(392, 191);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 1;
+			this._cancelButton.TabIndex = 10;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -89,7 +89,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._acceptButton.Location = new System.Drawing.Point(311, 191);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
-			this._acceptButton.TabIndex = 0;
+			this._acceptButton.TabIndex = 9;
 			this._acceptButton.Text = "Accept";
 			this._acceptButton.UseVisualStyleBackColor = true;
 			this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._facility.Margin = new System.Windows.Forms.Padding(2);
 			this._facility.Name = "_facility";
 			this._facility.Size = new System.Drawing.Size(150, 41);
-			this._facility.TabIndex = 0;
+			this._facility.TabIndex = 3;
 			this._facility.Value = null;
 			// 
 			// _building
@@ -116,7 +116,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._building.Name = "_building";
 			this._building.PasswordChar = '\0';
 			this._building.Size = new System.Drawing.Size(229, 41);
-			this._building.TabIndex = 1;
+			this._building.TabIndex = 4;
 			this._building.ToolTip = null;
 			this._building.Value = null;
 			// 
@@ -129,7 +129,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._floor.Name = "_floor";
 			this._floor.PasswordChar = '\0';
 			this._floor.Size = new System.Drawing.Size(71, 41);
-			this._floor.TabIndex = 2;
+			this._floor.TabIndex = 5;
 			this._floor.ToolTip = null;
 			this._floor.Value = null;
 			// 
@@ -142,7 +142,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._pointOfCare.Name = "_pointOfCare";
 			this._pointOfCare.PasswordChar = '\0';
 			this._pointOfCare.Size = new System.Drawing.Size(150, 41);
-			this._pointOfCare.TabIndex = 3;
+			this._pointOfCare.TabIndex = 6;
 			this._pointOfCare.ToolTip = null;
 			this._pointOfCare.Value = null;
 			// 
@@ -155,7 +155,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._room.Name = "_room";
 			this._room.PasswordChar = '\0';
 			this._room.Size = new System.Drawing.Size(229, 41);
-			this._room.TabIndex = 4;
+			this._room.TabIndex = 7;
 			this._room.ToolTip = null;
 			this._room.Value = null;
 			// 
@@ -168,7 +168,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._bed.Name = "_bed";
 			this._bed.PasswordChar = '\0';
 			this._bed.Size = new System.Drawing.Size(71, 41);
-			this._bed.TabIndex = 5;
+			this._bed.TabIndex = 8;
 			this._bed.ToolTip = null;
 			this._bed.Value = null;
 			// 
@@ -181,7 +181,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._id.Name = "_id";
 			this._id.PasswordChar = '\0';
 			this._id.Size = new System.Drawing.Size(150, 41);
-			this._id.TabIndex = 6;
+			this._id.TabIndex = 0;
 			this._id.ToolTip = null;
 			this._id.Value = null;
 			// 
@@ -194,7 +194,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._name.Name = "_name";
 			this._name.PasswordChar = '\0';
 			this._name.Size = new System.Drawing.Size(304, 41);
-			this._name.TabIndex = 7;
+			this._name.TabIndex = 1;
 			this._name.ToolTip = null;
 			this._name.Value = null;
 			// 
@@ -207,7 +207,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._description.Name = "_description";
 			this._description.PasswordChar = '\0';
 			this._description.Size = new System.Drawing.Size(458, 41);
-			this._description.TabIndex = 8;
+			this._description.TabIndex = 2;
 			this._description.ToolTip = null;
 			this._description.Value = null;
 			// 

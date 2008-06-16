@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._foldersTableView.Name = "_foldersTableView";
 			this._foldersTableView.ReadOnly = false;
 			this._foldersTableView.Size = new System.Drawing.Size(461, 248);
-			this._foldersTableView.TabIndex = 0;
+			this._foldersTableView.TabIndex = 3;
 			this._foldersTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _addGroupButton
@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._addGroupButton.Location = new System.Drawing.Point(408, 30);
 			this._addGroupButton.Name = "_addGroupButton";
 			this._addGroupButton.Size = new System.Drawing.Size(37, 23);
-			this._addGroupButton.TabIndex = 4;
+			this._addGroupButton.TabIndex = 1;
 			this._addGroupButton.Text = "Add";
 			this._addGroupButton.UseVisualStyleBackColor = true;
 			this._addGroupButton.Click += new System.EventHandler(this._addGroupButton_Click);
@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.label1.Location = new System.Drawing.Point(3, 69);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(148, 13);
-			this.label1.TabIndex = 5;
+			this.label1.TabIndex = 2;
 			this.label1.Text = "Select group folders to display";
 			// 
 			// _okButton
@@ -105,7 +105,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._okButton.Location = new System.Drawing.Point(308, 339);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
-			this._okButton.TabIndex = 6;
+			this._okButton.TabIndex = 4;
 			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
@@ -116,7 +116,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton.Location = new System.Drawing.Point(389, 339);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 7;
+			this._cancelButton.TabIndex = 5;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -130,7 +130,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._groupLookup.Margin = new System.Windows.Forms.Padding(0);
 			this._groupLookup.Name = "_groupLookup";
 			this._groupLookup.Size = new System.Drawing.Size(402, 41);
-			this._groupLookup.TabIndex = 3;
+			this._groupLookup.TabIndex = 0;
 			this._groupLookup.Value = null;
 			// 
 			// OrderNoteboxConfigurationComponentControl

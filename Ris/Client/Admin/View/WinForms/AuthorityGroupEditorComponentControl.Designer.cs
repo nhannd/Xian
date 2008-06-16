@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._cancelButton.Location = new System.Drawing.Point(475, 458);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 0;
+			this._cancelButton.TabIndex = 4;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._acceptButton.Location = new System.Drawing.Point(394, 458);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
-			this._acceptButton.TabIndex = 1;
+			this._acceptButton.TabIndex = 3;
 			this._acceptButton.Text = "OK";
 			this._acceptButton.UseVisualStyleBackColor = true;
 			this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
@@ -101,7 +101,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._authorityGroupName.Name = "_authorityGroupName";
 			this._authorityGroupName.PasswordChar = '\0';
 			this._authorityGroupName.Size = new System.Drawing.Size(282, 40);
-			this._authorityGroupName.TabIndex = 1;
+			this._authorityGroupName.TabIndex = 0;
 			this._authorityGroupName.ToolTip = null;
 			this._authorityGroupName.Value = null;
 			// 
@@ -120,7 +120,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._tokenTreeView.SelectedNode = null;
 			this._tokenTreeView.SelectedNoFocusBackColor = System.Drawing.SystemColors.Control;
 			this._tokenTreeView.Size = new System.Drawing.Size(549, 334);
-			this._tokenTreeView.TabIndex = 3;
+			this._tokenTreeView.TabIndex = 1;
 			this._tokenTreeView.Text = "Permissions";
 			this._tokenTreeView.AfterSelect += new Crownwood.DotNetMagic.Controls.NodeEventHandler(this._tokenTreeView_AfterSelect);
 			// 
@@ -130,7 +130,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.label1.Location = new System.Drawing.Point(3, 52);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(62, 13);
-			this.label1.TabIndex = 4;
+			this.label1.TabIndex = 5;
 			this.label1.Text = "Permissions";
 			// 
 			// _description
@@ -143,7 +143,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._description.PasswordChar = '\0';
 			this._description.ReadOnly = true;
 			this._description.Size = new System.Drawing.Size(547, 41);
-			this._description.TabIndex = 5;
+			this._description.TabIndex = 2;
 			this._description.ToolTip = null;
 			this._description.Value = null;
 			// 

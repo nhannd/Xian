@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._previewTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._previewTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._previewTableLayoutPanel.Size = new System.Drawing.Size(349, 295);
-			this._previewTableLayoutPanel.TabIndex = 4;
+			this._previewTableLayoutPanel.TabIndex = 0;
 			// 
 			// _text
 			// 

@@ -62,13 +62,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._practitionerTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this._clearButton = new System.Windows.Forms.Button();
 			this._searchButton = new System.Windows.Forms.Button();
 			this._lastName = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._firstName = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
-			this._clearButton = new System.Windows.Forms.Button();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._practitionerTableView.Name = "_practitionerTableView";
 			this._practitionerTableView.ReadOnly = false;
 			this._practitionerTableView.Size = new System.Drawing.Size(562, 359);
-			this._practitionerTableView.TabIndex = 0;
+			this._practitionerTableView.TabIndex = 1;
 			this._practitionerTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._practitionerTableView.Load += new System.EventHandler(this._staffs_Load);
 			this._practitionerTableView.ItemDoubleClicked += new System.EventHandler(this._staffs_ItemDoubleClicked);
@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(570, 461);
-			this.tableLayoutPanel1.TabIndex = 1;
+			this.tableLayoutPanel1.TabIndex = 0;
 			// 
 			// panel1
 			// 
@@ -114,7 +114,18 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.panel1.Location = new System.Drawing.Point(3, 3);
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(484, 54);
-			this.panel1.TabIndex = 2;
+			this.panel1.TabIndex = 0;
+			// 
+			// _clearButton
+			// 
+			this._clearButton.Location = new System.Drawing.Point(389, 20);
+			this._clearButton.Margin = new System.Windows.Forms.Padding(2);
+			this._clearButton.Name = "_clearButton";
+			this._clearButton.Size = new System.Drawing.Size(75, 23);
+			this._clearButton.TabIndex = 3;
+			this._clearButton.Text = "Clear";
+			this._clearButton.UseVisualStyleBackColor = true;
+			this._clearButton.Click += new System.EventHandler(this._clearButton_Click);
 			// 
 			// _searchButton
 			// 
@@ -164,7 +175,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.Size = new System.Drawing.Size(566, 30);
-			this.flowLayoutPanel1.TabIndex = 1;
+			this.flowLayoutPanel1.TabIndex = 2;
 			// 
 			// _cancelButton
 			// 
@@ -187,17 +198,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
-			// 
-			// _clearButton
-			// 
-			this._clearButton.Location = new System.Drawing.Point(389, 20);
-			this._clearButton.Margin = new System.Windows.Forms.Padding(2);
-			this._clearButton.Name = "_clearButton";
-			this._clearButton.Size = new System.Drawing.Size(75, 23);
-			this._clearButton.TabIndex = 3;
-			this._clearButton.Text = "Clear";
-			this._clearButton.UseVisualStyleBackColor = true;
-			this._clearButton.Click += new System.EventHandler(this._clearButton_Click);
 			// 
 			// ExternalPractitionerSummaryComponentControl
 			// 

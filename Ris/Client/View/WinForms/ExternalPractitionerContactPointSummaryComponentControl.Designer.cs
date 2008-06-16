@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._contactPointTableView.Name = "_contactPointTableView";
 			this._contactPointTableView.ReadOnly = false;
 			this._contactPointTableView.Size = new System.Drawing.Size(392, 315);
-			this._contactPointTableView.TabIndex = 1;
+			this._contactPointTableView.TabIndex = 0;
 			this._contactPointTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._contactPointTableView.ItemDoubleClicked += new System.EventHandler(this._contactPointTableView_ItemDoubleClicked);
 			// 
@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._okButton.Location = new System.Drawing.Point(236, 322);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
-			this._okButton.TabIndex = 2;
+			this._okButton.TabIndex = 1;
 			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton.Location = new System.Drawing.Point(317, 322);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 3;
+			this._cancelButton.TabIndex = 2;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);

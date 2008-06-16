@@ -206,7 +206,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._replyBody.Location = new System.Drawing.Point(3, 48);
 			this._replyBody.Name = "_replyBody";
 			this._replyBody.Size = new System.Drawing.Size(513, 216);
-			this._replyBody.TabIndex = 0;
+			this._replyBody.TabIndex = 1;
 			this._replyBody.Text = "";
 			// 
 			// _onBehalf
@@ -222,7 +222,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._onBehalf.Margin = new System.Windows.Forms.Padding(2);
 			this._onBehalf.Name = "_onBehalf";
 			this._onBehalf.Size = new System.Drawing.Size(515, 41);
-			this._onBehalf.TabIndex = 2;
+			this._onBehalf.TabIndex = 0;
 			this._onBehalf.Value = null;
 			// 
 			// _recipientsTableLayout
@@ -273,7 +273,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._staffRecipientLookup.Margin = new System.Windows.Forms.Padding(0);
 			this._staffRecipientLookup.Name = "_staffRecipientLookup";
 			this._staffRecipientLookup.Size = new System.Drawing.Size(270, 41);
-			this._staffRecipientLookup.TabIndex = 0;
+			this._staffRecipientLookup.TabIndex = 2;
 			this._staffRecipientLookup.Value = null;
 			// 
 			// _groupRecipientLookup
@@ -286,7 +286,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._groupRecipientLookup.Margin = new System.Windows.Forms.Padding(0);
 			this._groupRecipientLookup.Name = "_groupRecipientLookup";
 			this._groupRecipientLookup.Size = new System.Drawing.Size(270, 41);
-			this._groupRecipientLookup.TabIndex = 2;
+			this._groupRecipientLookup.TabIndex = 0;
 			this._groupRecipientLookup.Value = null;
 			// 
 			// _groupRecipientAddButton
@@ -297,7 +297,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._groupRecipientAddButton.Location = new System.Drawing.Point(273, 15);
 			this._groupRecipientAddButton.Name = "_groupRecipientAddButton";
 			this._groupRecipientAddButton.Size = new System.Drawing.Size(36, 23);
-			this._groupRecipientAddButton.TabIndex = 3;
+			this._groupRecipientAddButton.TabIndex = 1;
 			this._groupRecipientAddButton.Text = "Add";
 			this._groupRecipientAddButton.UseVisualStyleBackColor = true;
 			this._groupRecipientAddButton.Click += new System.EventHandler(this._groupRecipientAddButton_Click);
@@ -310,7 +310,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._staffRecipientAddButton.Location = new System.Drawing.Point(273, 56);
 			this._staffRecipientAddButton.Name = "_staffRecipientAddButton";
 			this._staffRecipientAddButton.Size = new System.Drawing.Size(36, 23);
-			this._staffRecipientAddButton.TabIndex = 1;
+			this._staffRecipientAddButton.TabIndex = 3;
 			this._staffRecipientAddButton.Text = "Add";
 			this._staffRecipientAddButton.UseVisualStyleBackColor = true;
 			this._staffRecipientAddButton.Click += new System.EventHandler(this._staffRecipientAddButton_Click);

@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.groupBox1.Margin = new System.Windows.Forms.Padding(0);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(527, 506);
-			this.groupBox1.TabIndex = 0;
+			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Codes";
 			// 
@@ -113,7 +113,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._protocolCodesSelector.ShowColumnHeading = false;
 			this._protocolCodesSelector.ShowToolbars = false;
 			this._protocolCodesSelector.Size = new System.Drawing.Size(498, 436);
-			this._protocolCodesSelector.TabIndex = 0;
+			this._protocolCodesSelector.TabIndex = 2;
 			// 
 			// _protocolGroup
 			// 
@@ -201,7 +201,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._author.PasswordChar = '\0';
 			this._author.ReadOnly = true;
 			this._author.Size = new System.Drawing.Size(523, 40);
-			this._author.TabIndex = 2;
+			this._author.TabIndex = 3;
 			this._author.ToolTip = null;
 			this._author.Value = null;
 			// 

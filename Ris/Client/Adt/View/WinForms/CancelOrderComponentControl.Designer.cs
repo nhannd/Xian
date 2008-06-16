@@ -59,86 +59,86 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._cancelButton = new System.Windows.Forms.Button();
-            this._okButton = new System.Windows.Forms.Button();
-            this._cancelReason = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // _cancelButton
-            // 
-            this._cancelButton.Location = new System.Drawing.Point(185, 3);
-            this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(75, 23);
-            this._cancelButton.TabIndex = 6;
-            this._cancelButton.Text = "Cancel";
-            this._cancelButton.UseVisualStyleBackColor = true;
-            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
-            // 
-            // _okButton
-            // 
-            this._okButton.Location = new System.Drawing.Point(104, 3);
-            this._okButton.Name = "_okButton";
-            this._okButton.Size = new System.Drawing.Size(75, 23);
-            this._okButton.TabIndex = 5;
-            this._okButton.Text = "Confirm";
-            this._okButton.UseVisualStyleBackColor = true;
-            this._okButton.Click += new System.EventHandler(this._okButton_Click);
-            // 
-            // _cancelReason
-            // 
-            this._cancelReason.DataSource = null;
-            this._cancelReason.DisplayMember = "";
-            this._cancelReason.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._cancelReason.LabelText = "Cancel Reason";
-            this._cancelReason.Location = new System.Drawing.Point(2, 2);
-            this._cancelReason.Margin = new System.Windows.Forms.Padding(2);
-            this._cancelReason.Name = "_cancelReason";
-            this._cancelReason.Size = new System.Drawing.Size(265, 41);
-            this._cancelReason.TabIndex = 7;
-            this._cancelReason.Value = null;
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this._cancelReason, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 1);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(269, 82);
-            this.tableLayoutPanel1.TabIndex = 8;
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.Controls.Add(this._cancelButton);
-            this.flowLayoutPanel1.Controls.Add(this._okButton);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 50);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(263, 29);
-            this.flowLayoutPanel1.TabIndex = 8;
-            // 
-            // CancelOrderComponentControl
-            // 
-            this.AcceptButton = this._okButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this._cancelButton;
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "CancelOrderComponentControl";
-            this.Size = new System.Drawing.Size(269, 82);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.ResumeLayout(false);
+			this._cancelButton = new System.Windows.Forms.Button();
+			this._okButton = new System.Windows.Forms.Button();
+			this._cancelReason = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+			this.tableLayoutPanel1.SuspendLayout();
+			this.flowLayoutPanel1.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// _cancelButton
+			// 
+			this._cancelButton.Location = new System.Drawing.Point(185, 3);
+			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
+			this._cancelButton.TabIndex = 1;
+			this._cancelButton.Text = "Cancel";
+			this._cancelButton.UseVisualStyleBackColor = true;
+			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+			// 
+			// _okButton
+			// 
+			this._okButton.Location = new System.Drawing.Point(104, 3);
+			this._okButton.Name = "_okButton";
+			this._okButton.Size = new System.Drawing.Size(75, 23);
+			this._okButton.TabIndex = 0;
+			this._okButton.Text = "Confirm";
+			this._okButton.UseVisualStyleBackColor = true;
+			this._okButton.Click += new System.EventHandler(this._okButton_Click);
+			// 
+			// _cancelReason
+			// 
+			this._cancelReason.DataSource = null;
+			this._cancelReason.DisplayMember = "";
+			this._cancelReason.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._cancelReason.LabelText = "Cancel Reason";
+			this._cancelReason.Location = new System.Drawing.Point(2, 2);
+			this._cancelReason.Margin = new System.Windows.Forms.Padding(2);
+			this._cancelReason.Name = "_cancelReason";
+			this._cancelReason.Size = new System.Drawing.Size(265, 41);
+			this._cancelReason.TabIndex = 0;
+			this._cancelReason.Value = null;
+			// 
+			// tableLayoutPanel1
+			// 
+			this.tableLayoutPanel1.ColumnCount = 1;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Controls.Add(this._cancelReason, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 1);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 2;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(269, 82);
+			this.tableLayoutPanel1.TabIndex = 0;
+			// 
+			// flowLayoutPanel1
+			// 
+			this.flowLayoutPanel1.Controls.Add(this._cancelButton);
+			this.flowLayoutPanel1.Controls.Add(this._okButton);
+			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 50);
+			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(263, 29);
+			this.flowLayoutPanel1.TabIndex = 1;
+			// 
+			// CancelOrderComponentControl
+			// 
+			this.AcceptButton = this._okButton;
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this._cancelButton;
+			this.Controls.Add(this.tableLayoutPanel1);
+			this.Name = "CancelOrderComponentControl";
+			this.Size = new System.Drawing.Size(269, 82);
+			this.tableLayoutPanel1.ResumeLayout(false);
+			this.flowLayoutPanel1.ResumeLayout(false);
+			this.ResumeLayout(false);
 
         }
 

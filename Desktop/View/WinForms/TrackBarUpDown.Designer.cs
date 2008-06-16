@@ -71,7 +71,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._numericUpDown.Location = new System.Drawing.Point(201, 3);
 			this._numericUpDown.Name = "_numericUpDown";
 			this._numericUpDown.Size = new System.Drawing.Size(76, 20);
-			this._numericUpDown.TabIndex = 0;
+			this._numericUpDown.TabIndex = 1;
 			this._numericUpDown.Value = new decimal(new int[] {
             99,
             0,
@@ -86,8 +86,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._trackBar.AutoSize = false;
 			this._trackBar.Location = new System.Drawing.Point(0, 0);
 			this._trackBar.Name = "_trackBar";
-			this._trackBar.Size = new System.Drawing.Size(193, 56);
-			this._trackBar.TabIndex = 1;
+			this._trackBar.Size = new System.Drawing.Size(193, 164);
+			this._trackBar.TabIndex = 0;
 			// 
 			// TrackBarUpDown
 			// 
@@ -97,7 +97,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.Controls.Add(this._trackBar);
 			this.Controls.Add(this._numericUpDown);
 			this.Name = "TrackBarUpDown";
-			this.Size = new System.Drawing.Size(280, 42);
+			this.Size = new System.Drawing.Size(280, 150);
 			((System.ComponentModel.ISupportInitialize)(this._numericUpDown)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._trackBar)).EndInit();
 			this.ResumeLayout(false);

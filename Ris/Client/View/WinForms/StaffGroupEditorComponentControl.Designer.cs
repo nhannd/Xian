@@ -89,7 +89,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._description.Name = "_description";
 			this._description.PasswordChar = '\0';
 			this._description.Size = new System.Drawing.Size(424, 41);
-			this._description.TabIndex = 1;
+			this._description.TabIndex = 2;
 			this._description.ToolTip = null;
 			this._description.Value = null;
 			// 
@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._okButton.Location = new System.Drawing.Point(402, 379);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
-			this._okButton.TabIndex = 2;
+			this._okButton.TabIndex = 4;
 			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
@@ -108,7 +108,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton.Location = new System.Drawing.Point(483, 379);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 3;
+			this._cancelButton.TabIndex = 5;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -120,7 +120,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._staffMemberSelector.Name = "_staffMemberSelector";
 			this._staffMemberSelector.SelectedItemsTable = null;
 			this._staffMemberSelector.Size = new System.Drawing.Size(555, 244);
-			this._staffMemberSelector.TabIndex = 4;
+			this._staffMemberSelector.TabIndex = 3;
 			// 
 			// _electiveCheckbox
 			// 
@@ -128,7 +128,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._electiveCheckbox.Location = new System.Drawing.Point(459, 35);
 			this._electiveCheckbox.Name = "_electiveCheckbox";
 			this._electiveCheckbox.Size = new System.Drawing.Size(64, 17);
-			this._electiveCheckbox.TabIndex = 5;
+			this._electiveCheckbox.TabIndex = 1;
 			this._electiveCheckbox.Text = "Elective";
 			this._electiveCheckbox.UseVisualStyleBackColor = true;
 			// 

@@ -28,87 +28,85 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
-            this._diagnosticServiceTree = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
-            this._okButton = new System.Windows.Forms.Button();
-            this._cancelButton = new System.Windows.Forms.Button();
-            this._procedures = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this.label1 = new System.Windows.Forms.Label();
-            this.SuspendLayout();
-            // 
-            // _diagnosticServiceTree
-            // 
-            this._diagnosticServiceTree.AllowDrop = true;
-            this._diagnosticServiceTree.Location = new System.Drawing.Point(3, 2);
-            this._diagnosticServiceTree.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._diagnosticServiceTree.MenuModel = null;
-            this._diagnosticServiceTree.Name = "_diagnosticServiceTree";
-            this._diagnosticServiceTree.Selection = selection1;
-            this._diagnosticServiceTree.ShowToolbar = false;
-            this._diagnosticServiceTree.Size = new System.Drawing.Size(513, 321);
-            this._diagnosticServiceTree.TabIndex = 14;
-            this._diagnosticServiceTree.ToolbarModel = null;
-            this._diagnosticServiceTree.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._diagnosticServiceTree.Tree = null;
-            // 
-            // _okButton
-            // 
-            this._okButton.Location = new System.Drawing.Point(349, 456);
-            this._okButton.Name = "_okButton";
-            this._okButton.Size = new System.Drawing.Size(75, 23);
-            this._okButton.TabIndex = 15;
-            this._okButton.Text = "OK";
-            this._okButton.UseVisualStyleBackColor = true;
-            this._okButton.Click += new System.EventHandler(this._okButton_Click);
-            // 
-            // _cancelButton
-            // 
-            this._cancelButton.Location = new System.Drawing.Point(430, 456);
-            this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(75, 23);
-            this._cancelButton.TabIndex = 16;
-            this._cancelButton.Text = "Cancel";
-            this._cancelButton.UseVisualStyleBackColor = true;
-            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
-            // 
-            // _procedures
-            // 
-            this._procedures.Location = new System.Drawing.Point(4, 356);
-            this._procedures.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this._procedures.MenuModel = null;
-            this._procedures.Name = "_procedures";
-            this._procedures.ReadOnly = false;
-            this._procedures.Selection = selection2;
-            this._procedures.ShowToolbar = false;
-            this._procedures.Size = new System.Drawing.Size(511, 95);
-            this._procedures.TabIndex = 17;
-            this._procedures.Table = null;
-            this._procedures.ToolbarModel = null;
-            this._procedures.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 335);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(81, 17);
-            this.label1.TabIndex = 18;
-            this.label1.Text = "Procedures";
-            // 
-            // DiagnosticServiceTreeComponentControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this._procedures);
-            this.Controls.Add(this._cancelButton);
-            this.Controls.Add(this._okButton);
-            this.Controls.Add(this._diagnosticServiceTree);
-            this.Name = "DiagnosticServiceTreeComponentControl";
-            this.Size = new System.Drawing.Size(519, 488);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+			this._diagnosticServiceTree = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
+			this._okButton = new System.Windows.Forms.Button();
+			this._cancelButton = new System.Windows.Forms.Button();
+			this._procedures = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this.label1 = new System.Windows.Forms.Label();
+			this.SuspendLayout();
+			// 
+			// _diagnosticServiceTree
+			// 
+			this._diagnosticServiceTree.AllowDrop = true;
+			this._diagnosticServiceTree.IconColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+			this._diagnosticServiceTree.IconSize = new System.Drawing.Size(16, 16);
+			this._diagnosticServiceTree.Location = new System.Drawing.Point(2, 2);
+			this._diagnosticServiceTree.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._diagnosticServiceTree.Name = "_diagnosticServiceTree";
+			this._diagnosticServiceTree.ShowToolbar = false;
+			this._diagnosticServiceTree.Size = new System.Drawing.Size(385, 261);
+			this._diagnosticServiceTree.TabIndex = 0;
+			this._diagnosticServiceTree.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this._diagnosticServiceTree.TreeBackColor = System.Drawing.SystemColors.Window;
+			this._diagnosticServiceTree.TreeForeColor = System.Drawing.SystemColors.WindowText;
+			this._diagnosticServiceTree.TreeLineColor = System.Drawing.Color.Black;
+			// 
+			// _okButton
+			// 
+			this._okButton.Location = new System.Drawing.Point(262, 370);
+			this._okButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._okButton.Name = "_okButton";
+			this._okButton.Size = new System.Drawing.Size(56, 19);
+			this._okButton.TabIndex = 3;
+			this._okButton.Text = "OK";
+			this._okButton.UseVisualStyleBackColor = true;
+			this._okButton.Click += new System.EventHandler(this._okButton_Click);
+			// 
+			// _cancelButton
+			// 
+			this._cancelButton.Location = new System.Drawing.Point(322, 370);
+			this._cancelButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(56, 19);
+			this._cancelButton.TabIndex = 4;
+			this._cancelButton.Text = "Cancel";
+			this._cancelButton.UseVisualStyleBackColor = true;
+			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+			// 
+			// _procedures
+			// 
+			this._procedures.Location = new System.Drawing.Point(3, 289);
+			this._procedures.Name = "_procedures";
+			this._procedures.ReadOnly = false;
+			this._procedures.ShowToolbar = false;
+			this._procedures.Size = new System.Drawing.Size(383, 77);
+			this._procedures.TabIndex = 2;
+			this._procedures.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(2, 272);
+			this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(61, 13);
+			this.label1.TabIndex = 1;
+			this.label1.Text = "Procedures";
+			// 
+			// DiagnosticServiceTreeComponentControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.label1);
+			this.Controls.Add(this._procedures);
+			this.Controls.Add(this._cancelButton);
+			this.Controls.Add(this._okButton);
+			this.Controls.Add(this._diagnosticServiceTree);
+			this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.Name = "DiagnosticServiceTreeComponentControl";
+			this.Size = new System.Drawing.Size(389, 396);
+			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 

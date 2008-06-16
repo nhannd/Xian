@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._duplicateGroupBox.Location = new System.Drawing.Point(3, 3);
 			this._duplicateGroupBox.Name = "_duplicateGroupBox";
 			this._duplicateGroupBox.Size = new System.Drawing.Size(272, 360);
-			this._duplicateGroupBox.TabIndex = 1;
+			this._duplicateGroupBox.TabIndex = 0;
 			this._duplicateGroupBox.TabStop = false;
 			this._duplicateGroupBox.Text = "Select items to merge:";
 			// 
@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._switchButton.Location = new System.Drawing.Point(89, 70);
 			this._switchButton.Name = "_switchButton";
 			this._switchButton.Size = new System.Drawing.Size(63, 23);
-			this._switchButton.TabIndex = 2;
+			this._switchButton.TabIndex = 1;
 			this._switchButton.Text = "Switch";
 			this._switchButton.UseVisualStyleBackColor = true;
 			this._switchButton.Click += new System.EventHandler(this._switchButton_Click);
@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._originalLookupField.Margin = new System.Windows.Forms.Padding(0);
 			this._originalLookupField.Name = "_originalLookupField";
 			this._originalLookupField.Size = new System.Drawing.Size(248, 41);
-			this._originalLookupField.TabIndex = 1;
+			this._originalLookupField.TabIndex = 2;
 			this._originalLookupField.Value = null;
 			// 
 			// _duplicateLookupField
@@ -108,7 +108,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._acceptButton.Location = new System.Drawing.Point(119, 369);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
-			this._acceptButton.TabIndex = 3;
+			this._acceptButton.TabIndex = 1;
 			this._acceptButton.Text = "Merge";
 			this._acceptButton.UseVisualStyleBackColor = true;
 			this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton.Location = new System.Drawing.Point(200, 369);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 4;
+			this._cancelButton.TabIndex = 2;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);

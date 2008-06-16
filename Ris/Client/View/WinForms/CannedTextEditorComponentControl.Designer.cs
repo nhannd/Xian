@@ -183,7 +183,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._groups.Margin = new System.Windows.Forms.Padding(2);
 			this._groups.Name = "_groups";
 			this._groups.Size = new System.Drawing.Size(282, 42);
-			this._groups.TabIndex = 6;
+			this._groups.TabIndex = 1;
 			this._groups.Value = null;
 			// 
 			// CannedTextEditorComponentControl

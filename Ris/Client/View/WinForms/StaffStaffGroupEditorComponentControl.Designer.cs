@@ -59,27 +59,27 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._staffGroupSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
-            this.SuspendLayout();
-            // 
-            // _staffGroupSelector
-            // 
-            this._staffGroupSelector.AvailableItemsTable = null;
-            this._staffGroupSelector.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._staffGroupSelector.Location = new System.Drawing.Point(0, 0);
-            this._staffGroupSelector.Name = "_staffGroupSelector";
-            this._staffGroupSelector.SelectedItemsTable = null;
-            this._staffGroupSelector.Size = new System.Drawing.Size(461, 423);
-            this._staffGroupSelector.TabIndex = 0;
-            // 
-            // StaffStaffGroupEditorComponentControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._staffGroupSelector);
-            this.Name = "StaffStaffGroupEditorComponentControl";
-            this.Size = new System.Drawing.Size(461, 423);
-            this.ResumeLayout(false);
+			this._staffGroupSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
+			this.SuspendLayout();
+			// 
+			// _staffGroupSelector
+			// 
+			this._staffGroupSelector.AvailableItemsTable = null;
+			this._staffGroupSelector.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._staffGroupSelector.Location = new System.Drawing.Point(0, 0);
+			this._staffGroupSelector.Name = "_staffGroupSelector";
+			this._staffGroupSelector.SelectedItemsTable = null;
+			this._staffGroupSelector.Size = new System.Drawing.Size(461, 423);
+			this._staffGroupSelector.TabIndex = 0;
+			// 
+			// StaffStaffGroupEditorComponentControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._staffGroupSelector);
+			this.Name = "StaffStaffGroupEditorComponentControl";
+			this.Size = new System.Drawing.Size(461, 423);
+			this.ResumeLayout(false);
 
         }
 

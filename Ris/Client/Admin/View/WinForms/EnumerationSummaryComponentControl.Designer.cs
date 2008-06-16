@@ -59,82 +59,84 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._enumerationName = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-            this._enumerationValuesTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this._enumerationClass = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // _enumerationName
-            // 
-            this._enumerationName.DataSource = null;
-            this._enumerationName.DisplayMember = "";
-            this._enumerationName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._enumerationName.LabelText = "Enumeration";
-            this._enumerationName.Location = new System.Drawing.Point(2, 2);
-            this._enumerationName.Margin = new System.Windows.Forms.Padding(2);
-            this._enumerationName.Name = "_enumerationName";
-            this._enumerationName.Size = new System.Drawing.Size(272, 41);
-            this._enumerationName.TabIndex = 0;
-            this._enumerationName.Value = null;
-            // 
-            // _enumerationValuesTableView
-            // 
-            this._enumerationValuesTableView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._enumerationValuesTableView.Location = new System.Drawing.Point(3, 93);
-            this._enumerationValuesTableView.MultiSelect = false;
-            this._enumerationValuesTableView.Name = "_enumerationValuesTableView";
-            this._enumerationValuesTableView.ReadOnly = false;
-            this._enumerationValuesTableView.Size = new System.Drawing.Size(623, 382);
-            this._enumerationValuesTableView.TabIndex = 1;
-            this._enumerationValuesTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._enumerationValuesTableView.ItemDoubleClicked += new System.EventHandler(this._enumerationValuesTableView_ItemDoubleClicked);
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this._enumerationName, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this._enumerationValuesTableView, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this._enumerationClass, 0, 1);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(629, 476);
-            this.tableLayoutPanel1.TabIndex = 3;
-            // 
-            // _enumerationClass
-            // 
-            this._enumerationClass.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._enumerationClass.LabelText = "Class Name";
-            this._enumerationClass.Location = new System.Drawing.Point(2, 47);
-            this._enumerationClass.Margin = new System.Windows.Forms.Padding(2);
-            this._enumerationClass.Mask = "";
-            this._enumerationClass.Name = "_enumerationClass";
-            this._enumerationClass.ReadOnly = true;
-            this._enumerationClass.Size = new System.Drawing.Size(625, 41);
-            this._enumerationClass.TabIndex = 2;
-            this._enumerationClass.Value = null;
-            // 
-            // EnumerationSummaryComponentControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "EnumerationSummaryComponentControl";
-            this.Size = new System.Drawing.Size(629, 476);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.ResumeLayout(false);
+			this._enumerationName = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._enumerationValuesTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this._enumerationClass = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this.tableLayoutPanel1.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// _enumerationName
+			// 
+			this._enumerationName.DataSource = null;
+			this._enumerationName.DisplayMember = "";
+			this._enumerationName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._enumerationName.LabelText = "Enumeration";
+			this._enumerationName.Location = new System.Drawing.Point(2, 2);
+			this._enumerationName.Margin = new System.Windows.Forms.Padding(2);
+			this._enumerationName.Name = "_enumerationName";
+			this._enumerationName.Size = new System.Drawing.Size(272, 41);
+			this._enumerationName.TabIndex = 0;
+			this._enumerationName.Value = null;
+			// 
+			// _enumerationValuesTableView
+			// 
+			this._enumerationValuesTableView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._enumerationValuesTableView.Location = new System.Drawing.Point(3, 93);
+			this._enumerationValuesTableView.MultiSelect = false;
+			this._enumerationValuesTableView.Name = "_enumerationValuesTableView";
+			this._enumerationValuesTableView.ReadOnly = false;
+			this._enumerationValuesTableView.Size = new System.Drawing.Size(623, 382);
+			this._enumerationValuesTableView.TabIndex = 2;
+			this._enumerationValuesTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this._enumerationValuesTableView.ItemDoubleClicked += new System.EventHandler(this._enumerationValuesTableView_ItemDoubleClicked);
+			// 
+			// tableLayoutPanel1
+			// 
+			this.tableLayoutPanel1.ColumnCount = 1;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Controls.Add(this._enumerationName, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this._enumerationValuesTableView, 0, 2);
+			this.tableLayoutPanel1.Controls.Add(this._enumerationClass, 0, 1);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 3;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(629, 476);
+			this.tableLayoutPanel1.TabIndex = 0;
+			// 
+			// _enumerationClass
+			// 
+			this._enumerationClass.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._enumerationClass.LabelText = "Class Name";
+			this._enumerationClass.Location = new System.Drawing.Point(2, 47);
+			this._enumerationClass.Margin = new System.Windows.Forms.Padding(2);
+			this._enumerationClass.Mask = "";
+			this._enumerationClass.Name = "_enumerationClass";
+			this._enumerationClass.PasswordChar = '\0';
+			this._enumerationClass.ReadOnly = true;
+			this._enumerationClass.Size = new System.Drawing.Size(625, 41);
+			this._enumerationClass.TabIndex = 1;
+			this._enumerationClass.ToolTip = null;
+			this._enumerationClass.Value = null;
+			// 
+			// EnumerationSummaryComponentControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.tableLayoutPanel1);
+			this.Margin = new System.Windows.Forms.Padding(2);
+			this.Name = "EnumerationSummaryComponentControl";
+			this.Size = new System.Drawing.Size(629, 476);
+			this.tableLayoutPanel1.ResumeLayout(false);
+			this.ResumeLayout(false);
 
         }
 

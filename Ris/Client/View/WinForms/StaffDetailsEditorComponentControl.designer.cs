@@ -144,7 +144,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._billingNumber.Name = "_billingNumber";
 			this._billingNumber.PasswordChar = '\0';
 			this._billingNumber.Size = new System.Drawing.Size(150, 41);
-			this._billingNumber.TabIndex = 6;
+			this._billingNumber.TabIndex = 8;
 			this._billingNumber.ToolTip = null;
 			this._billingNumber.Value = null;
 			// 
@@ -157,7 +157,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._licenseNumber.Name = "_licenseNumber";
 			this._licenseNumber.PasswordChar = '\0';
 			this._licenseNumber.Size = new System.Drawing.Size(150, 41);
-			this._licenseNumber.TabIndex = 5;
+			this._licenseNumber.TabIndex = 7;
 			this._licenseNumber.ToolTip = null;
 			this._licenseNumber.Value = null;
 			// 
@@ -171,7 +171,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._sex.Margin = new System.Windows.Forms.Padding(2);
 			this._sex.Name = "_sex";
 			this._sex.Size = new System.Drawing.Size(150, 41);
-			this._sex.TabIndex = 7;
+			this._sex.TabIndex = 5;
 			this._sex.Value = null;
 			// 
 			// _title
@@ -183,7 +183,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._title.Name = "_title";
 			this._title.PasswordChar = '\0';
 			this._title.Size = new System.Drawing.Size(316, 41);
-			this._title.TabIndex = 8;
+			this._title.TabIndex = 6;
 			this._title.ToolTip = null;
 			this._title.Value = null;
 			// 

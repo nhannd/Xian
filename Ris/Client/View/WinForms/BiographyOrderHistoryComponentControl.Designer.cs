@@ -112,7 +112,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(513, 586);
-			this.tabControl1.TabIndex = 24;
+			this.tabControl1.TabIndex = 0;
 			// 
 			// _orderPage
 			// 

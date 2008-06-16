@@ -247,7 +247,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 			this.tableLayoutPanel4.RowCount = 1;
 			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel4.Size = new System.Drawing.Size(495, 45);
-			this.tableLayoutPanel4.TabIndex = 6;
+			this.tableLayoutPanel4.TabIndex = 7;
 			// 
 			// _visit
 			// 
@@ -302,7 +302,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(489, 325);
-			this.tabControl1.TabIndex = 9;
+			this.tabControl1.TabIndex = 10;
 			// 
 			// tabPage1
 			// 
@@ -336,7 +336,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 			this._orderNotesTab.Location = new System.Drawing.Point(4, 22);
 			this._orderNotesTab.Margin = new System.Windows.Forms.Padding(2);
 			this._orderNotesTab.Name = "_orderNotesTab";
-			this._orderNotesTab.Size = new System.Drawing.Size(496, 299);
+			this._orderNotesTab.Size = new System.Drawing.Size(481, 299);
 			this._orderNotesTab.TabIndex = 2;
 			this._orderNotesTab.Text = "Notes";
 			this._orderNotesTab.UseVisualStyleBackColor = true;
@@ -348,7 +348,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 			this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Padding = new System.Windows.Forms.Padding(2);
-			this.tabPage2.Size = new System.Drawing.Size(496, 299);
+			this.tabPage2.Size = new System.Drawing.Size(481, 299);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Copies To";
 			this.tabPage2.UseVisualStyleBackColor = true;
@@ -366,7 +366,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 			this.tableLayoutPanel1.RowCount = 2;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(492, 295);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(477, 295);
 			this.tableLayoutPanel1.TabIndex = 0;
 			// 
 			// _recipientsTableView
@@ -382,7 +382,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 			this._recipientsTableView.Name = "_recipientsTableView";
 			this._recipientsTableView.ReadOnly = false;
 			this._recipientsTableView.ShowToolbar = false;
-			this._recipientsTableView.Size = new System.Drawing.Size(484, 182);
+			this._recipientsTableView.Size = new System.Drawing.Size(469, 182);
 			this._recipientsTableView.TabIndex = 2;
 			this._recipientsTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
@@ -394,7 +394,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 			this.panel2.Location = new System.Drawing.Point(2, 2);
 			this.panel2.Margin = new System.Windows.Forms.Padding(2);
 			this.panel2.Name = "panel2";
-			this.panel2.Size = new System.Drawing.Size(486, 106);
+			this.panel2.Size = new System.Drawing.Size(473, 106);
 			this.panel2.TabIndex = 0;
 			// 
 			// _consultantContactPoint
@@ -446,7 +446,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 			this._schedulingRequestTime.ShowDate = false;
 			this._schedulingRequestTime.ShowTime = true;
 			this._schedulingRequestTime.Size = new System.Drawing.Size(244, 40);
-			this._schedulingRequestTime.TabIndex = 8;
+			this._schedulingRequestTime.TabIndex = 9;
 			this._schedulingRequestTime.Value = null;
 			// 
 			// _diagnosticService
@@ -476,7 +476,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 			this._schedulingRequestDate.Name = "_schedulingRequestDate";
 			this._schedulingRequestDate.Nullable = true;
 			this._schedulingRequestDate.Size = new System.Drawing.Size(243, 40);
-			this._schedulingRequestDate.TabIndex = 7;
+			this._schedulingRequestDate.TabIndex = 8;
 			this._schedulingRequestDate.Value = null;
 			// 
 			// _priority

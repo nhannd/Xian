@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 4;
+			this._cancelButton.TabIndex = 7;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._loginButton.Margin = new System.Windows.Forms.Padding(2);
 			this._loginButton.Name = "_loginButton";
 			this._loginButton.Size = new System.Drawing.Size(75, 23);
-			this._loginButton.TabIndex = 3;
+			this._loginButton.TabIndex = 6;
 			this._loginButton.Text = "Login";
 			this._loginButton.UseVisualStyleBackColor = true;
 			this._loginButton.Click += new System.EventHandler(this._loginButton_Click);
@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._userName.Location = new System.Drawing.Point(12, 26);
 			this._userName.Name = "_userName";
 			this._userName.Size = new System.Drawing.Size(234, 20);
-			this._userName.TabIndex = 0;
+			this._userName.TabIndex = 1;
 			this._userName.TextChanged += new System.EventHandler(this._userName_TextChanged);
 			// 
 			// _password
@@ -107,7 +107,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._password.Name = "_password";
 			this._password.PasswordChar = '*';
 			this._password.Size = new System.Drawing.Size(234, 20);
-			this._password.TabIndex = 1;
+			this._password.TabIndex = 3;
 			this._password.TextChanged += new System.EventHandler(this._password_TextChanged);
 			// 
 			// _facility
@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._facility.Location = new System.Drawing.Point(12, 129);
 			this._facility.Name = "_facility";
 			this._facility.Size = new System.Drawing.Size(235, 21);
-			this._facility.TabIndex = 2;
+			this._facility.TabIndex = 5;
 			this._facility.SelectedValueChanged += new System.EventHandler(this._facility_SelectedValueChanged);
 			// 
 			// label1
@@ -126,7 +126,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.label1.Location = new System.Drawing.Point(12, 9);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(29, 13);
-			this.label1.TabIndex = 8;
+			this.label1.TabIndex = 0;
 			this.label1.Text = "User";
 			// 
 			// label2
@@ -135,7 +135,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.label2.Location = new System.Drawing.Point(12, 110);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(39, 13);
-			this.label2.TabIndex = 9;
+			this.label2.TabIndex = 4;
 			this.label2.Text = "Facility";
 			// 
 			// label3
@@ -144,7 +144,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.label3.Location = new System.Drawing.Point(12, 57);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(53, 13);
-			this.label3.TabIndex = 10;
+			this.label3.TabIndex = 2;
 			this.label3.Text = "Password";
 			// 
 			// LoginForm

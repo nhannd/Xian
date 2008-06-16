@@ -59,73 +59,73 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this.components = new System.ComponentModel.Container();
-            this._showItemListButton = new System.Windows.Forms.Button();
-            this._contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this._itemString = new System.Windows.Forms.Label();
-            this._label = new System.Windows.Forms.Label();
-            this.SuspendLayout();
-            // 
-            // _showItemListButton
-            // 
-            this._showItemListButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._showItemListButton.Location = new System.Drawing.Point(161, 17);
-            this._showItemListButton.Margin = new System.Windows.Forms.Padding(2);
-            this._showItemListButton.Name = "_showItemListButton";
-            this._showItemListButton.Size = new System.Drawing.Size(25, 21);
-            this._showItemListButton.TabIndex = 2;
-            this._showItemListButton.TabStop = false;
-            this._showItemListButton.Text = "...";
-            this._showItemListButton.UseVisualStyleBackColor = true;
-            this._showItemListButton.Click += new System.EventHandler(this._showItemListButton_Click);
-            // 
-            // _contextMenuStrip
-            // 
-            this._contextMenuStrip.AllowMerge = false;
-            this._contextMenuStrip.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this._contextMenuStrip.DropShadowEnabled = false;
-            this._contextMenuStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.VerticalStackWithOverflow;
-            this._contextMenuStrip.Name = "contextMenuStrip1";
-            this._contextMenuStrip.ShowImageMargin = false;
-            this._contextMenuStrip.ShowItemToolTips = false;
-            this._contextMenuStrip.Size = new System.Drawing.Size(36, 4);
-            // 
-            // _itemString
-            // 
-            this._itemString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._itemString.AutoEllipsis = true;
-            this._itemString.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this._itemString.Location = new System.Drawing.Point(3, 18);
-            this._itemString.Margin = new System.Windows.Forms.Padding(2);
-            this._itemString.Name = "_itemString";
-            this._itemString.Size = new System.Drawing.Size(156, 20);
-            this._itemString.TabIndex = 1;
-            this._itemString.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // _label
-            // 
-            this._label.AutoSize = true;
-            this._label.Location = new System.Drawing.Point(2, 0);
-            this._label.Margin = new System.Windows.Forms.Padding(2);
-            this._label.Name = "_label";
-            this._label.Size = new System.Drawing.Size(29, 13);
-            this._label.TabIndex = 3;
-            this._label.Text = "label";
-            // 
-            // DropListPickerField
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.Controls.Add(this._label);
-            this.Controls.Add(this._itemString);
-            this.Controls.Add(this._showItemListButton);
-            this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "DropListPickerField";
-            this.Size = new System.Drawing.Size(187, 41);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+			this.components = new System.ComponentModel.Container();
+			this._showItemListButton = new System.Windows.Forms.Button();
+			this._contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this._itemString = new System.Windows.Forms.Label();
+			this._label = new System.Windows.Forms.Label();
+			this.SuspendLayout();
+			// 
+			// _showItemListButton
+			// 
+			this._showItemListButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this._showItemListButton.Location = new System.Drawing.Point(161, 17);
+			this._showItemListButton.Margin = new System.Windows.Forms.Padding(2);
+			this._showItemListButton.Name = "_showItemListButton";
+			this._showItemListButton.Size = new System.Drawing.Size(25, 21);
+			this._showItemListButton.TabIndex = 1;
+			this._showItemListButton.TabStop = false;
+			this._showItemListButton.Text = "...";
+			this._showItemListButton.UseVisualStyleBackColor = true;
+			this._showItemListButton.Click += new System.EventHandler(this._showItemListButton_Click);
+			// 
+			// _contextMenuStrip
+			// 
+			this._contextMenuStrip.AllowMerge = false;
+			this._contextMenuStrip.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+			this._contextMenuStrip.DropShadowEnabled = false;
+			this._contextMenuStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.VerticalStackWithOverflow;
+			this._contextMenuStrip.Name = "contextMenuStrip1";
+			this._contextMenuStrip.ShowImageMargin = false;
+			this._contextMenuStrip.ShowItemToolTips = false;
+			this._contextMenuStrip.Size = new System.Drawing.Size(36, 4);
+			// 
+			// _itemString
+			// 
+			this._itemString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._itemString.AutoEllipsis = true;
+			this._itemString.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this._itemString.Location = new System.Drawing.Point(3, 18);
+			this._itemString.Margin = new System.Windows.Forms.Padding(2);
+			this._itemString.Name = "_itemString";
+			this._itemString.Size = new System.Drawing.Size(156, 20);
+			this._itemString.TabIndex = 0;
+			this._itemString.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// _label
+			// 
+			this._label.AutoSize = true;
+			this._label.Location = new System.Drawing.Point(2, 0);
+			this._label.Margin = new System.Windows.Forms.Padding(2);
+			this._label.Name = "_label";
+			this._label.Size = new System.Drawing.Size(29, 13);
+			this._label.TabIndex = 3;
+			this._label.Text = "label";
+			// 
+			// DropListPickerField
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoSize = true;
+			this.Controls.Add(this._label);
+			this.Controls.Add(this._itemString);
+			this.Controls.Add(this._showItemListButton);
+			this.Margin = new System.Windows.Forms.Padding(2);
+			this.Name = "DropListPickerField";
+			this.Size = new System.Drawing.Size(187, 41);
+			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 

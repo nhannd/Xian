@@ -85,14 +85,14 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.flowLayoutPanel1.Size = new System.Drawing.Size(449, 29);
-			this.flowLayoutPanel1.TabIndex = 1;
+			this.flowLayoutPanel1.TabIndex = 2;
 			// 
 			// _btnCancel
 			// 
 			this._btnCancel.Location = new System.Drawing.Point(371, 3);
 			this._btnCancel.Name = "_btnCancel";
 			this._btnCancel.Size = new System.Drawing.Size(75, 23);
-			this._btnCancel.TabIndex = 0;
+			this._btnCancel.TabIndex = 1;
 			this._btnCancel.Text = "Cancel";
 			this._btnCancel.UseVisualStyleBackColor = true;
 			this._btnCancel.Click += new System.EventHandler(this._btnCancel_Click);
@@ -102,7 +102,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._btnOK.Location = new System.Drawing.Point(290, 3);
 			this._btnOK.Name = "_btnOK";
 			this._btnOK.Size = new System.Drawing.Size(75, 23);
-			this._btnOK.TabIndex = 1;
+			this._btnOK.TabIndex = 0;
 			this._btnOK.Text = "OK";
 			this._btnOK.UseVisualStyleBackColor = true;
 			this._btnOK.Click += new System.EventHandler(this._btnOK_Click);
@@ -120,7 +120,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._otherReason.Padding = new System.Windows.Forms.Padding(0, 0, 20, 0);
 			this._otherReason.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Both;
 			this._otherReason.Size = new System.Drawing.Size(451, 141);
-			this._otherReason.TabIndex = 2;
+			this._otherReason.TabIndex = 1;
 			this._otherReason.Value = null;
 			// 
 			// ProtocolReasonComponentControl

@@ -89,7 +89,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tableLayoutPanel3.Size = new System.Drawing.Size(555, 420);
-			this.tableLayoutPanel3.TabIndex = 1;
+			this.tableLayoutPanel3.TabIndex = 0;
 			// 
 			// _addItemButton
 			// 
@@ -99,7 +99,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._addItemButton.Location = new System.Drawing.Point(263, 184);
 			this._addItemButton.Name = "_addItemButton";
 			this._addItemButton.Size = new System.Drawing.Size(29, 23);
-			this._addItemButton.TabIndex = 4;
+			this._addItemButton.TabIndex = 0;
 			this._addItemButton.Text = ">>";
 			this._addItemButton.UseVisualStyleBackColor = true;
 			this._addItemButton.Click += new System.EventHandler(this.AddSelection);
@@ -111,7 +111,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._removeItemButton.Location = new System.Drawing.Point(263, 213);
 			this._removeItemButton.Name = "_removeItemButton";
 			this._removeItemButton.Size = new System.Drawing.Size(29, 23);
-			this._removeItemButton.TabIndex = 5;
+			this._removeItemButton.TabIndex = 1;
 			this._removeItemButton.Text = "<<";
 			this._removeItemButton.UseVisualStyleBackColor = true;
 			this._removeItemButton.Click += new System.EventHandler(this.RemoveSelection);
@@ -126,10 +126,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.groupBox1.Name = "groupBox1";
 			this.tableLayoutPanel3.SetRowSpan(this.groupBox1, 2);
 			this.groupBox1.Size = new System.Drawing.Size(254, 414);
-			this.groupBox1.TabIndex = 6;
+			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Available";
-			this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
 			// 
 			// _availableItems
 			// 
@@ -141,7 +140,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._availableItems.Name = "_availableItems";
 			this._availableItems.ReadOnly = false;
 			this._availableItems.Size = new System.Drawing.Size(248, 395);
-			this._availableItems.TabIndex = 2;
+			this._availableItems.TabIndex = 0;
 			this._availableItems.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._availableItems.ItemDoubleClicked += new System.EventHandler(this.AddSelection);
 			// 
@@ -155,7 +154,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.groupBox2.Name = "groupBox2";
 			this.tableLayoutPanel3.SetRowSpan(this.groupBox2, 2);
 			this.groupBox2.Size = new System.Drawing.Size(254, 414);
-			this.groupBox2.TabIndex = 7;
+			this.groupBox2.TabIndex = 3;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Selected";
 			// 
@@ -169,7 +168,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._selectedItems.Name = "_selectedItems";
 			this._selectedItems.ReadOnly = false;
 			this._selectedItems.Size = new System.Drawing.Size(248, 395);
-			this._selectedItems.TabIndex = 3;
+			this._selectedItems.TabIndex = 0;
 			this._selectedItems.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._selectedItems.ItemDoubleClicked += new System.EventHandler(this.RemoveSelection);
 			// 

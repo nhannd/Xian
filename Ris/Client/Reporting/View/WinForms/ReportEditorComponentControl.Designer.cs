@@ -59,29 +59,29 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._browserSplitContainer = new System.Windows.Forms.SplitContainer();
-            this._browserSplitContainer.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // _browserSplitContainer
-            // 
-            this._browserSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._browserSplitContainer.Location = new System.Drawing.Point(0, 0);
-            this._browserSplitContainer.Name = "_browserSplitContainer";
-            this._browserSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this._browserSplitContainer.Size = new System.Drawing.Size(478, 450);
-            this._browserSplitContainer.SplitterDistance = 132;
-            this._browserSplitContainer.TabIndex = 7;
-            // 
-            // ReportEditorComponentControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._browserSplitContainer);
-            this.Name = "ReportEditorComponentControl";
-            this.Size = new System.Drawing.Size(478, 450);
-            this._browserSplitContainer.ResumeLayout(false);
-            this.ResumeLayout(false);
+			this._browserSplitContainer = new System.Windows.Forms.SplitContainer();
+			this._browserSplitContainer.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// _browserSplitContainer
+			// 
+			this._browserSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._browserSplitContainer.Location = new System.Drawing.Point(0, 0);
+			this._browserSplitContainer.Name = "_browserSplitContainer";
+			this._browserSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			this._browserSplitContainer.Size = new System.Drawing.Size(478, 450);
+			this._browserSplitContainer.SplitterDistance = 132;
+			this._browserSplitContainer.TabIndex = 0;
+			// 
+			// ReportEditorComponentControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._browserSplitContainer);
+			this.Name = "ReportEditorComponentControl";
+			this.Size = new System.Drawing.Size(478, 450);
+			this._browserSplitContainer.ResumeLayout(false);
+			this.ResumeLayout(false);
 
         }
 

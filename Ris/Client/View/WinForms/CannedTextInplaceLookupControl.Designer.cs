@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._suggestBox.Name = "_suggestBox";
 			this._suggestBox.Size = new System.Drawing.Size(250, 130);
 			this._suggestBox.SuggestionProvider = null;
-			this._suggestBox.TabIndex = 0;
+			this._suggestBox.TabIndex = 2;
 			this._suggestBox.Value = null;
 			this._suggestBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this._suggestBox_KeyPress);
 			this._suggestBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this._suggestBox_KeyDown);
@@ -58,7 +58,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._findButton.Margin = new System.Windows.Forms.Padding(0, 2, 2, 2);
 			this._findButton.Name = "_findButton";
 			this._findButton.Size = new System.Drawing.Size(25, 24);
-			this._findButton.TabIndex = 2;
+			this._findButton.TabIndex = 1;
 			this._findButton.UseVisualStyleBackColor = true;
 			this._findButton.Visible = false;
 			this._findButton.Click += new System.EventHandler(this._findButton_Click);
@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.label1.Location = new System.Drawing.Point(3, 0);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(68, 13);
-			this.label1.TabIndex = 3;
+			this.label1.TabIndex = 0;
 			this.label1.Text = "Canned Text";
 			// 
 			// CannedTextInplaceLookupControl
