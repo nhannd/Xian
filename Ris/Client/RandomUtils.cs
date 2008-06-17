@@ -370,11 +370,11 @@ namespace ClearCanvas.Ris.Client
 
                     requisition.Procedures = new List<ProcedureRequisition>();
                     requisition.Procedures.AddRange(
-                       CollectionUtils.Map<ProcedureTypeDetail, ProcedureRequisition>(
+					   CollectionUtils.Map<ProcedureTypeSummary, ProcedureRequisition>(
                            dsResponse.DiagnosticServiceDetail.ProcedureTypes,
-                           delegate(ProcedureTypeDetail rpt)
+                           delegate(ProcedureTypeSummary rpt)
                            {
-                               ProcedureRequisition req = new ProcedureRequisition(rpt.GetSummary(), performingFacility);
+                               ProcedureRequisition req = new ProcedureRequisition(rpt, performingFacility);
                                req.ScheduledTime = scheduledTime;
                                return req;
                            }));
