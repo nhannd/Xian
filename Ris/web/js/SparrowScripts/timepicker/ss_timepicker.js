@@ -174,7 +174,7 @@
 				ctl.value=t+":00 am";
 			}
 			else {
-				return false;
+				return null;
 			}
 		}
 		else if (tl==2) {
@@ -252,7 +252,7 @@
 					}
 				}
 				else {
-					return false;
+					return null;
 				}
 			}
 		}
@@ -286,7 +286,7 @@
 					hr=0;
 				} else {
 					if (hr>24) {
-						return false;
+						return null;
 					}
 					else if (hr==24) {
 						if (!sstp_24Hr) {
@@ -319,7 +319,7 @@
 					hr=0;
 				} else {
 					if (hr>24) {
-						return false;
+						return null;
 					}
 					else if (hr==24) {
 						hr=0;
@@ -345,12 +345,22 @@
 				}
 			}
 
+			var date = new Date();
+			date.setHours(hr);
+			date.setMinutes(mn);
+
 			if (sstp_24Hr) {
 				ctl.value=sstp_padZero(hr)+":"+sstp_padZero(mn);
 			}
 			else {
 				ctl.value=hr+":"+sstp_padZero(mn)+" "+mode;
+				if(mode=="pm")
+				{
+					date.setHours((date.getHours() == 12) ?  0 : date.getHours() + 12);
+				}
 			}
+			
+			return date;
 		}
 	}
 //-->

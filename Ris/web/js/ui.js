@@ -419,25 +419,33 @@ var Table = {
 					inputTime.id = this.id + "_" + column.label + "_" + "timeinput" + row;
 					td.appendChild(inputTime);
 					if(column.size) inputTime.size = column.size;
-					inputTime.readOnly = "readonly";
 
-					/*
 					inputTime.onkeyup = function()
 					{
-						// if user blanked out the field, set the value to null, otherwise parse field
-						column.setValue(obj, (this.value && this.value.length) ? this.value : null );
+						// if user blanked out the field, reset time
+						if(!this.value || this.value.length == 0)
+						{
+							var extendedDate = column.getValue(obj) || new Date();
+							extendedDate.setHours(0);  
+							extendedDate.setMinutes(0);  
+							column.setValue(obj, extendedDate);
+						}
 						table._onCellUpdate(row, col);
 					}
 					
 					// consider the edit complete when focus is lost
 					inputTime.onblur = function() 
 					{ 
-						sstp_validateTimePicker(input);
-						// store validated value.
-						column.setValue(obj, (this.value && this.value.length) ? this.value : null );
+						var date = sstp_validateTimePicker(inputTime);
+						if(date)
+						{
+							var extendedDate = column.getValue(obj) || new Date();
+							extendedDate.setHours(date.getHours());  
+							extendedDate.setMinutes(date.getMinutes());  
+							column.setValue(obj, extendedDate);
+						}
 						table._onEditComplete(row, col); 
 					}
-					*/
 
 					// launch calendar on click
 					var findButtonTime = document.createElement("input");
