@@ -56,24 +56,9 @@ namespace ClearCanvas.Ris.Client.Admin
 	[AssociateView(typeof(ProcedureTypeGroupSummaryComponentViewExtensionPoint))]
 	public class ProcedureTypeGroupSummaryComponent : SummaryComponentBase<ProcedureTypeGroupSummary, ProcedureTypeGroupSummaryTable>
     {
-		class DummyItem
-		{
-			private readonly string _displayString;
-
-			public DummyItem(string displayString)
-			{
-				_displayString = displayString;
-			}
-
-			public override string ToString()
-			{
-				return _displayString;
-			}
-		}
-
-		private static readonly object _nullFilterItem = new DummyItem(SR.DummyItemNone);
-		private List<EnumValueInfo> _categoryChoices;
-		private ArrayList _selectedCategories;
+    	private readonly EnumValueInfo _filterNone;
+		private readonly List<EnumValueInfo> _categoryChoices;
+		private EnumValueInfo _selectedCategory;
 		
 		private ListProcedureTypeGroupsRequest _listRequest;
 
@@ -92,28 +77,29 @@ namespace ClearCanvas.Ris.Client.Admin
         public ProcedureTypeGroupSummaryComponent(bool dialogMode)
             :base(dialogMode)
         {
+			_filterNone = new EnumValueInfo(SR.DummyItemNone, SR.DummyItemNone);
+			_categoryChoices = new List<EnumValueInfo>();
         }
 
 		public override void Start()
 		{
+			_categoryChoices.Add(_filterNone);
+			_selectedCategory = _filterNone;
+
 			Platform.GetService<IProcedureTypeGroupAdminService>(
 				delegate(IProcedureTypeGroupAdminService service)
 					{
 						GetProcedureTypeGroupSummaryFormDataResponse response =
 							service.GetProcedureTypeGroupSummaryFormData(new GetProcedureTypeGroupSummaryFormDataRequest());
-						_categoryChoices = response.CategoryChoices;
+						_categoryChoices.AddRange(response.CategoryChoices);
 					});
 
 			_listRequest = new ListProcedureTypeGroupsRequest();
 
 			base.Start();
 		}
-		#region Presentation Model
 
-		public object NullFilterItem
-		{
-			get { return _nullFilterItem; }
-		}
+		#region Presentation Model
 
 		public IList CategoryChoices
 		{
@@ -131,16 +117,13 @@ namespace ClearCanvas.Ris.Client.Admin
 				return item.ToString(); // place-holder items
 		}
 
-		public IList SelectedCategories
+		public EnumValueInfo SelectedCategory
 		{
-			get { return _selectedCategories; }
+			get { return _selectedCategory; }
 			set
 			{
-				if (!CollectionUtils.Equal(value, _selectedCategories, false))
-				{
-					_selectedCategories = new ArrayList(value);
-					Search();
-				}
+				_selectedCategory = value;
+				Search();
 			}
 		}
 
@@ -169,6 +152,9 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <returns></returns>
 		protected override IList<ProcedureTypeGroupSummary> ListItems(int firstItem, int maxItems)
 		{
+			if (_selectedCategory != _filterNone)
+				_listRequest.CategoryFilter = _selectedCategory;
+
 			ListProcedureTypeGroupsResponse listResponse = null;
 			Platform.GetService<IProcedureTypeGroupAdminService>(
 				delegate(IProcedureTypeGroupAdminService service)
@@ -248,13 +234,8 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			try
 			{
-				_listRequest.CategoryFilter =
-					CollectionUtils.Map<object, EnumValueInfo>(
-						_selectedCategories,
-						delegate(object o)
-						{
-							return (EnumValueInfo)o;
-						});
+				if (_selectedCategory != _filterNone)
+					_listRequest.CategoryFilter = _selectedCategory;
 
 				this.Table.Items.Clear();
 				this.Table.Items.AddRange(this.PagingController.GetFirst());

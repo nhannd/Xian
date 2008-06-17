@@ -7,6 +7,7 @@ using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -20,15 +21,21 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<ProcedureTypeGroup> Find(ProcedureTypeGroupSearchCriteria criteria, Type subClass)
         {
-            HqlQuery query = new HqlQuery(string.Format("from {0} x", subClass.Name));
-
-            query.Conditions.AddRange(HqlCondition.FromSearchCriteria("x", criteria));
-            query.Sorts.AddRange(HqlSort.FromSearchCriteria("x", criteria));
-
-            return ExecuteHql<ProcedureTypeGroup>(query);
+        	return Find(criteria, subClass, null);
         }
 
-        public ProcedureTypeGroup FindOne(ProcedureTypeGroupSearchCriteria criteria, Type subClass)
+		public IList<ProcedureTypeGroup> Find(ProcedureTypeGroupSearchCriteria criteria, Type subClass, SearchResultPage page)
+		{
+			HqlQuery query = new HqlQuery(string.Format("from {0} x", subClass.Name));
+
+			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("x", criteria));
+			query.Sorts.AddRange(HqlSort.FromSearchCriteria("x", criteria));
+			query.Page = page;
+
+			return ExecuteHql<ProcedureTypeGroup>(query);
+		}
+
+		public ProcedureTypeGroup FindOne(ProcedureTypeGroupSearchCriteria criteria, Type subClass)
         {
             IList<ProcedureTypeGroup> groups = Find(criteria, subClass);
 

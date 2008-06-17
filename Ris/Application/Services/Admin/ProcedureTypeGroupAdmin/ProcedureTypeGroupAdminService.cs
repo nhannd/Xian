@@ -98,25 +98,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
             ListProcedureTypeGroupsResponse response = new ListProcedureTypeGroupsResponse();
             ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
 
-            List<ProcedureTypeGroupSummary> ptgs = CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary, List<ProcedureTypeGroupSummary>>(
-                PersistenceContext.GetBroker<IProcedureTypeGroupBroker>().Find(
-                    new ProcedureTypeGroupSearchCriteria(),
-                    request.Page),
+			ProcedureTypeGroupSearchCriteria criteria = new ProcedureTypeGroupSearchCriteria();
+
+			IList<ProcedureTypeGroup> result = request.CategoryFilter == null ?
+				PersistenceContext.GetBroker<IProcedureTypeGroupBroker>().Find(criteria, request.Page) :
+				PersistenceContext.GetBroker<IProcedureTypeGroupBroker>().Find(criteria, Type.GetType(request.CategoryFilter.Code), request.Page);
+
+			response.Items = CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary, List<ProcedureTypeGroupSummary>>(result,
                 delegate(ProcedureTypeGroup rptGroup)
                 {
                     return assembler.GetProcedureTypeGroupSummary(rptGroup, this.PersistenceContext);
                 });
-
-			response.Items = request.CategoryFilter.Count == 0 ? ptgs :
-				CollectionUtils.Select(ptgs, 
-					delegate(ProcedureTypeGroupSummary ptg)
-					{
-						return CollectionUtils.Contains(request.CategoryFilter,
-							delegate(EnumValueInfo category)
-								{
-									return ptg.Category.Code == category.Code;
-								});
-					}); 
 
             return response;
         }

@@ -31,10 +31,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._procedureTypeGroupTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.panel1 = new System.Windows.Forms.Panel();
-			this._categories = new ClearCanvas.Desktop.View.WinForms.DropListPickerField();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
+			this._category = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
@@ -73,21 +73,11 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// panel1
 			// 
-			this.panel1.Controls.Add(this._categories);
+			this.panel1.Controls.Add(this._category);
 			this.panel1.Location = new System.Drawing.Point(3, 3);
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(455, 54);
 			this.panel1.TabIndex = 0;
-			// 
-			// _categories
-			// 
-			this._categories.AutoSize = true;
-			this._categories.LabelText = "Category Filter";
-			this._categories.Location = new System.Drawing.Point(2, 3);
-			this._categories.Margin = new System.Windows.Forms.Padding(2);
-			this._categories.Name = "_categories";
-			this._categories.Size = new System.Drawing.Size(299, 40);
-			this._categories.TabIndex = 2;
 			// 
 			// flowLayoutPanel1
 			// 
@@ -124,6 +114,19 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
 			// 
+			// _category
+			// 
+			this._category.DataSource = null;
+			this._category.DisplayMember = "";
+			this._category.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._category.LabelText = "Category Filter";
+			this._category.Location = new System.Drawing.Point(2, 2);
+			this._category.Margin = new System.Windows.Forms.Padding(2);
+			this._category.Name = "_category";
+			this._category.Size = new System.Drawing.Size(261, 41);
+			this._category.TabIndex = 0;
+			this._category.Value = null;
+			// 
 			// ProcedureTypeGroupSummaryComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -133,7 +136,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.Size = new System.Drawing.Size(520, 394);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.panel1.ResumeLayout(false);
-			this.panel1.PerformLayout();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -147,6 +149,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _okButton;
 		private System.Windows.Forms.Panel panel1;
-		private ClearCanvas.Desktop.View.WinForms.DropListPickerField _categories;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _category;
     }
 }

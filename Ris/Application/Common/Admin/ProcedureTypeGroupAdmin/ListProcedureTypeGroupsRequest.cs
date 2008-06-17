@@ -31,7 +31,6 @@
 
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
-using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin
 {
@@ -40,22 +39,20 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin
     {
 		public ListProcedureTypeGroupsRequest()
 		{
-			this.CategoryFilter = new List<EnumValueInfo>();
 		}
 
 		public ListProcedureTypeGroupsRequest(SearchResultPage page)
 			:base(page)
 		{
-			this.CategoryFilter = new List<EnumValueInfo>();
 		}
 
-		public ListProcedureTypeGroupsRequest(List<EnumValueInfo> categoryFilter, SearchResultPage page)
+		public ListProcedureTypeGroupsRequest(EnumValueInfo categoryFilter, SearchResultPage page)
 			:base(page)
 		{
 			this.CategoryFilter = categoryFilter;
 		}
 
 		[DataMember]
-		public List<EnumValueInfo> CategoryFilter;
+		public EnumValueInfo CategoryFilter;
 	}
 }

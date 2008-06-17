@@ -27,11 +27,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			_procedureTypeGroupTableView.Table = _component.SummaryTable;
 			_procedureTypeGroupTableView.DataBindings.Add("Selection", _component, "SummarySelection", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_categories.NullItem = _component.NullFilterItem;
-			_categories.Format += delegate(object sender, ListControlConvertEventArgs args) { args.Value = _component.FormatCategory(args.ListItem); };
-			_categories.DataBindings.Add("Items", _component, "CategoryChoices", true, DataSourceUpdateMode.Never);
-			_categories.DataBindings.Add("CheckedItems", _component, "SelectedCategories", true,
-										 DataSourceUpdateMode.OnPropertyChanged);
+			_category.DataSource = _component.CategoryChoices;
+			_category.DataBindings.Add("Value", _component, "SelectedCategory", true, DataSourceUpdateMode.OnPropertyChanged);
+			_category.Format += delegate(object sender, ListControlConvertEventArgs args) { args.Value = _component.FormatCategory(args.ListItem); };
 
 			_okButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
 			_okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");
