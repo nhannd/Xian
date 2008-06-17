@@ -12,11 +12,17 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
 		public const int MaxTextLength = 128;
 
 		public CannedTextSummary(EntityRef cannedTextRef
-			, CannedTextIdentifierDetail id
+			, string name
+			, string category
+			, StaffSummary staff
+			, StaffGroupSummary staffGroup
 			, string textSnippet)
 		{
 			this.CannedTextRef = cannedTextRef;
-			this.Id = id;
+			this.Name = name;
+			this.Category = category;
+			this.Staff = staff;
+			this.StaffGroup = staffGroup;
 			this.TextSnippet = textSnippet.Substring(0, textSnippet.Length < MaxTextLength ? textSnippet.Length : MaxTextLength);
 		}
 
@@ -24,19 +30,28 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
 		public EntityRef CannedTextRef;
 
 		[DataMember]
-		public CannedTextIdentifierDetail Id;
+		public string Name;
+
+		[DataMember]
+		public string Category;
+
+		[DataMember]
+		public StaffSummary Staff;
+
+		[DataMember]
+		public StaffGroupSummary StaffGroup;
 
 		[DataMember]
 		public string TextSnippet;
 
 		public bool IsPersonal
 		{
-			get { return this.Id.Staff != null; }
+			get { return this.Staff != null; }
 		}
 
 		public bool IsGroup
 		{
-			get { return this.Id.StaffGroup != null; }
+			get { return this.StaffGroup != null; }
 		}
 	}
 }

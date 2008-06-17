@@ -8,29 +8,40 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
 	{
 		public CannedTextDetail()
 		{
-			this.Id = new CannedTextIdentifierDetail();
 		}
 
-		public CannedTextDetail(CannedTextIdentifierDetail id, string text)
+		public CannedTextDetail(string name, string category, StaffSummary staff, StaffGroupSummary staffGroup, string text)
 		{
-			this.Id = id;
+			this.Name = name;
+			this.Category = category;
+			this.Staff = staff;
+			this.StaffGroup = staffGroup;
 			this.Text = text;
 		}
 
 		[DataMember]
-		public CannedTextIdentifierDetail Id;
+		public string Name;
+
+		[DataMember]
+		public string Category;
+
+		[DataMember]
+		public StaffSummary Staff;
+
+		[DataMember]
+		public StaffGroupSummary StaffGroup;
 
 		[DataMember]
 		public string Text;
 
 		public bool IsPersonal
 		{
-			get { return this.Id.Staff != null; }
+			get { return this.Staff != null; }
 		}
 
 		public bool IsGroup
 		{
-			get { return this.Id.StaffGroup != null; }
+			get { return this.StaffGroup != null; }
 		}
 	}
 }

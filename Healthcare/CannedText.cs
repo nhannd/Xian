@@ -11,7 +11,7 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// CannedText entity
     /// </summary>
-	[UniqueKey("CannedTextId", new string[] { "CannedTextId.Name", "CannedTextId.Category", "CannedTextId.Staff", "CannedTextId.StaffGroup" })]
+	[UniqueKey("CannedTextId", new string[] { "Name", "Category", "Staff", "StaffGroup" })]
 	public partial class CannedText : ClearCanvas.Enterprise.Core.Entity
 	{
 	

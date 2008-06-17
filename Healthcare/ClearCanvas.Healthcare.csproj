@@ -81,7 +81,6 @@
     <Compile Include="Alerts\NoteAlert.cs" />
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
     <Compile Include="CannedText.cs" />
-    <Compile Include="CannedTextIdentifier.cs" />
     <Compile Include="EmergencyWorklists.cs" />
     <Compile Include="GroupNotePosting.cs" />
     <Compile Include="Imex\PatientNoteCategoryImex.cs" />

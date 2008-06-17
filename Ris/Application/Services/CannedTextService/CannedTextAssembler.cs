@@ -6,42 +6,30 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 {
 	public class CannedTextAssembler
 	{
-		public CannedTextIdentifierDetail CreateCannedTextIdentifierDetail(CannedTextIdentifier id, IPersistenceContext context)
+		public CannedTextSummary GetCannedTextSummary(CannedText cannedText, IPersistenceContext context)
 		{
 			StaffAssembler staffAssembler = new StaffAssembler();
 			StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
 
-			if (id == null)
-				return new CannedTextIdentifierDetail();
-
-			return new CannedTextIdentifierDetail(
-				id.Name,
-				id.Category,
-				id.Staff == null ? null : staffAssembler.CreateStaffSummary(id.Staff, context),
-				id.StaffGroup == null ? null : groupAssembler.CreateSummary(id.StaffGroup));
-		}
-
-		public void UpdateCannedTextIdentifierDetail(CannedTextIdentifier id, CannedTextIdentifierDetail detail, IPersistenceContext context)
-		{
-			id.Name = detail.Name;
-			id.Category = detail.Category;
-			id.Staff = detail.Staff == null ? null : context.Load<Staff>(detail.Staff.StaffRef, EntityLoadFlags.Proxy);
-			id.StaffGroup = detail.StaffGroup == null ? null : context.Load<StaffGroup>(detail.StaffGroup.StaffGroupRef, EntityLoadFlags.Proxy);
-		}
-
-		public CannedTextSummary GetCannedTextSummary(CannedText cannedText, IPersistenceContext context)
-		{
-
 			return new CannedTextSummary(
 				cannedText.GetRef(),
-				CreateCannedTextIdentifierDetail(cannedText.CannedTextId, context),
+				cannedText.Name,
+				cannedText.Category,
+				cannedText.Staff == null ? null : staffAssembler.CreateStaffSummary(cannedText.Staff, context),
+				cannedText.StaffGroup == null ? null : groupAssembler.CreateSummary(cannedText.StaffGroup),
 				cannedText.Text);
 		}
 
 		public CannedTextDetail GetCannedTextDetail(CannedText cannedText, IPersistenceContext context)
 		{
+			StaffAssembler staffAssembler = new StaffAssembler();
+			StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
+
 			return new CannedTextDetail(
-				CreateCannedTextIdentifierDetail(cannedText.CannedTextId, context),
+				cannedText.Name,
+				cannedText.Category,
+				cannedText.Staff == null ? null : staffAssembler.CreateStaffSummary(cannedText.Staff, context),
+				cannedText.StaffGroup == null ? null : groupAssembler.CreateSummary(cannedText.StaffGroup),
 				cannedText.Text);
 		}
 
@@ -54,7 +42,10 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 
 		public void UpdateCannedText(CannedText cannedText, CannedTextDetail detail, IPersistenceContext context)
 		{
-			UpdateCannedTextIdentifierDetail(cannedText.CannedTextId, detail.Id, context);
+			cannedText.Name = detail.Name;
+			cannedText.Category = detail.Category;
+			cannedText.Staff = detail.Staff == null ? null : context.Load<Staff>(detail.Staff.StaffRef, EntityLoadFlags.Proxy);
+			cannedText.StaffGroup = detail.StaffGroup == null ? null : context.Load<StaffGroup>(detail.StaffGroup.StaffGroupRef, EntityLoadFlags.Proxy);
 			cannedText.Text = detail.Text;
 		}
 	}

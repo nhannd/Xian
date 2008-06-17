@@ -6,7 +6,6 @@
 	</id>
 	<version name="Version" column="Version_"/>
 
-	<component name="CannedTextId" class="CannedTextIdentifier">
 	  <property name="Name" type="String">
 		<column name="Name_" unique-key="CannedTextId" not-null="true" length ="1024"/>
 	  </property>
@@ -22,7 +21,6 @@
 	  <many-to-one name="StaffGroup" class="StaffGroup" fetch="join">
 		<column name="StaffGroupOID_" unique-key="CannedTextId"/>
 	  </many-to-one>
-	</component>
 
 	<property name="Text" column="Text_" type="StringClob" length ="65000" not-null="true" />
 

@@ -23,13 +23,13 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 			List<CannedTextSearchCriteria> criterias = new List<CannedTextSearchCriteria>();
 
 			CannedTextSearchCriteria personalCannedTextCriteria = new CannedTextSearchCriteria();
-			personalCannedTextCriteria.CannedTextId.Staff.EqualTo(this.CurrentUserStaff);
+			personalCannedTextCriteria.Staff.EqualTo(this.CurrentUserStaff);
 			criterias.Add(personalCannedTextCriteria);
 
 			if (this.CurrentUserStaff.Groups != null && this.CurrentUserStaff.Groups.Count > 0)
 			{
 				CannedTextSearchCriteria groupCannedTextCriteria = new CannedTextSearchCriteria();
-				groupCannedTextCriteria.CannedTextId.StaffGroup.In(this.CurrentUserStaff.Groups);
+				groupCannedTextCriteria.StaffGroup.In(this.CurrentUserStaff.Groups);
 				criterias.Add(groupCannedTextCriteria);
 			}
 
@@ -74,16 +74,16 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 				CannedTextSearchCriteria criteria = new CannedTextSearchCriteria();
 
 				if (!string.IsNullOrEmpty(request.Name))
-					criteria.CannedTextId.Name.EqualTo(request.Name);
+					criteria.Name.EqualTo(request.Name);
 
 				if (!string.IsNullOrEmpty(request.Category))
-					criteria.CannedTextId.Category.EqualTo(request.Category);
+					criteria.Category.EqualTo(request.Category);
 
 				if (!string.IsNullOrEmpty(request.StaffId))
-					criteria.CannedTextId.Staff.Id.EqualTo(request.StaffId);
+					criteria.Staff.Id.EqualTo(request.StaffId);
 
 				if (!string.IsNullOrEmpty(request.StaffGroupName))
-					criteria.CannedTextId.StaffGroup.Name.EqualTo(request.StaffGroupName);
+					criteria.StaffGroup.Name.EqualTo(request.StaffGroupName);
 
 				cannedText = broker.FindOne(criteria);
 			}
@@ -97,10 +97,10 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 		{
 			try
 			{
-				if (string.IsNullOrEmpty(request.Detail.Id.Name))
+				if (string.IsNullOrEmpty(request.Detail.Name))
 					throw new RequestValidationException(SR.ExceptionCannedTextNameRequired);
 
-				if (string.IsNullOrEmpty(request.Detail.Id.Category))
+				if (string.IsNullOrEmpty(request.Detail.Category))
 					throw new RequestValidationException(SR.ExceptionCannedTextNameRequired);
 
 				CannedTextAssembler assembler = new CannedTextAssembler();
@@ -111,11 +111,11 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 
 				return new AddCannedTextResponse(assembler.GetCannedTextSummary(cannedText, this.PersistenceContext));
 			}
-			catch (EntityValidationException e)
+			catch (EntityValidationException)
 			{
 				string text = request.Detail.IsPersonal ? 
-					string.Format("staff {0}, {1}", request.Detail.Id.Staff.Name.FamilyName, request.Detail.Id.Staff.Name.GivenName) :
-					string.Format("{0} group", request.Detail.Id.StaffGroup.Name);
+					string.Format("staff {0}, {1}", request.Detail.Staff.Name.FamilyName, request.Detail.Staff.Name.GivenName) :
+					string.Format("{0} group", request.Detail.StaffGroup.Name);
 
 				throw new RequestValidationException(string.Format(SR.ExceptionIdenticalCannedTextExist, text));
 			}

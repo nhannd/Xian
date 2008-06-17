@@ -78,10 +78,10 @@ namespace ClearCanvas.Ris.Client
 							delegate(CannedTextSummary s)
 								{
 									return new CannedText(
-										s.Id.Name, 
-										s.Id.Category, 
-										s.Id.Staff == null ? null : s.Id.Staff.StaffId,
-										s.Id.StaffGroup == null ? null : s.Id.StaffGroup.Name,
+										s.Name, 
+										s.Category, 
+										s.Staff == null ? null : s.Staff.StaffId,
+										s.StaffGroup == null ? null : s.StaffGroup.Name,
 										s.TextSnippet);
 								});
 					});
