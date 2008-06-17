@@ -7,6 +7,16 @@
 			document.write("<SCRIPT LANGUAGE='JavaScript' SRC='ss_datepicker_lang_"+ssdp_language+".js'></SCRIPT>");
 		//-->
 		</SCRIPT>
+		<script type="text/javascript" src="../../jsx.js"></script>
+		<script type="text/javascript" src="../../jsml.js"></script>
+		<script type="text/javascript" SRC="../../ris.js"></script>
+		<SCRIPT LANGUAGE="JavaScript">
+			if(Ris)
+			{
+				ssdp_dateFormat = Ris.getDateFormat().toLowerCase();
+				ssdp_todayFormat = Ris.getDateFormat().toLowerCase();
+			}
+		</SCRIPT>
 	</head>
 	<body leftmargin='0' topmargin='0' marginheight='0' marginwidth='0'>
 		<div style='position:absolute;visibility:hidden' id='ssdp_selector'></div>
@@ -210,8 +220,8 @@
 		sTmp = sTmp.replace ('m','<m>');
 		sTmp = sTmp.replace ('<m>',m+1);
 		sTmp = sTmp.replace ('<n>',ssdp_padZero(m+1));
-		sTmp = sTmp.replace ('<o>',ssdp_monthName[m]);
-		sTmp = sTmp.replace ('<p>',ssdp_monthName[m].substring(0,3).toUpperCase());
+		sTmp = sTmp.replace ('<o>',ssdp_monthName[m].substring(0,3).toUpperCase());
+		sTmp = sTmp.replace ('<p>',ssdp_monthName[m]);
 		sTmp = sTmp.replace ('yyyy',y);
 
 		return sTmp.replace ('yy',ssdp_padZero(y%100));
