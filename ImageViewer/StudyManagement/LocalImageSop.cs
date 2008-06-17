@@ -72,6 +72,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
+		/// Gets the filename this <see cref="LocalImageSop"/> was constructed with.
+		/// </summary>
+		public string Filename
+		{
+			get	{ return _dicomFile.Filename; }
+		}
+
+		/// <summary>
 		/// Gets the DICOM toolkit representation of this <see cref="LocalImageSop"/>.
 		/// </summary>
         public override DicomMessageBase NativeDicomObject

@@ -66,11 +66,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (image == null)
 				return;
 
-			DicomFile dicomFile = image.ImageSop.NativeDicomObject as DicomFile;
-			if (dicomFile == null)
+			LocalImageSop localImageSop = image.ImageSop as LocalImageSop;
+			if (localImageSop == null)
 				return;
 
-			System.Diagnostics.Process.Start("explorer.exe", "/n,/select," + dicomFile.Filename);
+			System.Diagnostics.Process.Start("explorer.exe", "/n,/select," + localImageSop.Filename);
         }
     }
 }
