@@ -88,7 +88,7 @@
     <EmbeddedResource Include="Jpeg2000LossyAction\SampleJpeg2000Lossy.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Jpeg2000LosslessAction\SampleJpeg2000Combo.xml" />
+    <EmbeddedResource Include="Jpeg2000LosslessAction\SampleJpeg2000Combo.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
