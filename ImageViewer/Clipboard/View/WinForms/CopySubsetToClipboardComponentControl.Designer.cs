@@ -76,6 +76,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._radioUseInstanceNumber = new System.Windows.Forms.RadioButton();
 			this.label3 = new System.Windows.Forms.Label();
 			this._sourceDisplaySet = new System.Windows.Forms.Label();
+			this.label4 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this._copyRangeStart)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._copyRangeEnd)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._copyRangeInterval)).BeginInit();
@@ -86,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			// _radioCopyCustom
 			// 
 			this._radioCopyCustom.AutoSize = true;
-			this._radioCopyCustom.Location = new System.Drawing.Point(14, 249);
+			this._radioCopyCustom.Location = new System.Drawing.Point(14, 259);
 			this._radioCopyCustom.Name = "_radioCopyCustom";
 			this._radioCopyCustom.Size = new System.Drawing.Size(60, 17);
 			this._radioCopyCustom.TabIndex = 12;
@@ -128,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			// 
 			// _customRange
 			// 
-			this._customRange.Location = new System.Drawing.Point(90, 248);
+			this._customRange.Location = new System.Drawing.Point(90, 258);
 			this._customRange.Name = "_customRange";
 			this._customRange.Size = new System.Drawing.Size(255, 20);
 			this._customRange.TabIndex = 13;
@@ -173,7 +174,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			// 
 			// _sendToClipboardButton
 			// 
-			this._sendToClipboardButton.Location = new System.Drawing.Point(235, 286);
+			this._sendToClipboardButton.Location = new System.Drawing.Point(235, 296);
 			this._sendToClipboardButton.Name = "_sendToClipboardButton";
 			this._sendToClipboardButton.Size = new System.Drawing.Size(110, 23);
 			this._sendToClipboardButton.TabIndex = 14;
@@ -244,6 +245,15 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._sourceDisplaySet.Text = "<source display set>";
 			this._sourceDisplaySet.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.Location = new System.Drawing.Point(87, 240);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(157, 13);
+			this.label4.TabIndex = 17;
+			this.label4.Text = "example: -10, 12, 14, 16-20, 25-";
+			// 
 			// CopySubsetToClipboardComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -259,8 +269,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this.Controls.Add(this._radioCopyRange);
 			this.Controls.Add(this._radioCopyCustom);
 			this.Controls.Add(this._betweenGroup);
+			this.Controls.Add(this.label4);
 			this.Name = "CopySubsetToClipboardComponentControl";
-			this.Size = new System.Drawing.Size(368, 333);
+			this.Size = new System.Drawing.Size(368, 342);
 			((System.ComponentModel.ISupportInitialize)(this._copyRangeStart)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._copyRangeEnd)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._copyRangeInterval)).EndInit();
@@ -292,5 +303,6 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 		private System.Windows.Forms.RadioButton _radioUseInstanceNumber;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label _sourceDisplaySet;
+		private System.Windows.Forms.Label label4;
     }
 }
