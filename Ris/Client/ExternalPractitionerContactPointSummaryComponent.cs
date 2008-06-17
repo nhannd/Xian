@@ -174,7 +174,8 @@ namespace ClearCanvas.Ris.Client
 		/// <returns></returns>
 		protected override IList<ExternalPractitionerContactPointDetail> ListItems(int firstItem, int maxItems)
 		{
-			throw new NotImplementedException();
+			// Return an empty list because the table items are set using the Subject property
+			return new List<ExternalPractitionerContactPointDetail>();
 		}
 
 		/// <summary>
