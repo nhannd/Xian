@@ -105,7 +105,7 @@ namespace ClearCanvas.Ris.Client
 
 							// new canned text
 							_isEditingPersonal = true;
-							_cannedTextDetail.Staff = _currentStaff;
+							_cannedTextDetail.Id.Staff = _currentStaff;
 						}
 						else
 						{
@@ -121,16 +121,16 @@ namespace ClearCanvas.Ris.Client
 					}); 
 
 			// The selected staff groups should only contain entries in the selected group choices
-			if (_cannedTextDetail.StaffGroup == null)
+			if (_cannedTextDetail.Id.StaffGroup == null)
 			{
-				_cannedTextDetail.StaffGroup = CollectionUtils.FirstElement(_staffGroupChoices);
+				_cannedTextDetail.Id.StaffGroup = CollectionUtils.FirstElement(_staffGroupChoices);
 			}
 			else
 			{
-				_cannedTextDetail.StaffGroup = CollectionUtils.SelectFirst(_staffGroupChoices,
+				_cannedTextDetail.Id.StaffGroup = CollectionUtils.SelectFirst(_staffGroupChoices,
 					delegate(StaffGroupSummary choice)
 					{
-						return _cannedTextDetail.StaffGroup.StaffGroupRef.Equals(choice.StaffGroupRef, true);
+						return _cannedTextDetail.Id.StaffGroup.StaffGroupRef.Equals(choice.StaffGroupRef, true);
 					});
 			}
 
@@ -193,20 +193,20 @@ namespace ClearCanvas.Ris.Client
 		[ValidateNotNull]
 		public string Name
 		{
-			get { return _cannedTextDetail.Name; }
+			get { return _cannedTextDetail.Id.Name; }
 			set
 			{
-				_cannedTextDetail.Name = value;
+				_cannedTextDetail.Id.Name = value;
 				this.Modified = true;
 			}
 		}
 
-		public string Path
+		public string Category
 		{
-			get { return _cannedTextDetail.Path; }
+			get { return _cannedTextDetail.Id.Category; }
 			set
 			{
-				_cannedTextDetail.Path = value;
+				_cannedTextDetail.Id.Category = value;
 				this.Modified = true;
 			}
 		}
@@ -224,10 +224,10 @@ namespace ClearCanvas.Ris.Client
 
 		public StaffGroupSummary StaffGroup
 		{
-			get { return _cannedTextDetail.StaffGroup; }
+			get { return _cannedTextDetail.Id.StaffGroup; }
 			set
 			{
-				_cannedTextDetail.StaffGroup = value;
+				_cannedTextDetail.Id.StaffGroup = value;
 				this.Modified = true;
 			}
 		}
@@ -248,9 +248,9 @@ namespace ClearCanvas.Ris.Client
 			try
 			{
 				if (this.IsEditingPersonal)
-					_cannedTextDetail.StaffGroup = null;
+					_cannedTextDetail.Id.StaffGroup = null;
 				else
-					_cannedTextDetail.Staff = null;
+					_cannedTextDetail.Id.Staff = null;
 
 				Platform.GetService<ICannedTextService>(
 					delegate(ICannedTextService service)

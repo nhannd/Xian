@@ -11,7 +11,31 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
 			this.CannedTextRef = cannedTextRef;
 		}
 
+		public LoadCannedTextForEditRequest(
+			string name,
+			string category,
+			string staffId,
+			string staffGroupName)
+		{
+			this.Name = name;
+			this.Category = category;
+			this.StaffId = staffId;
+			this.StaffGroupName = staffGroupName;
+		}
+
 		[DataMember]
 		public EntityRef CannedTextRef;
+
+		[DataMember]
+		public string Name;
+
+		[DataMember]
+		public string Category;
+
+		[DataMember]
+		public string StaffId;
+
+		[DataMember]
+		public string StaffGroupName;
 	}
 }

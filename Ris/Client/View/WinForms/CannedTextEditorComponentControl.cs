@@ -24,6 +24,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_typeGroupBox.Visible = _component.CanChangeType;
 			if (_component.CanChangeType == false && _component.IsEditingPersonal)
 				_groups.Visible = false;
+			else
+				_radioGroup.Checked = _component.IsEditingGroup;
 
 			_radioPersonal.DataBindings.Add("Checked", _component, "IsEditingPersonal", true, DataSourceUpdateMode.OnPropertyChanged);
 
@@ -33,7 +35,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_groups.DataBindings.Add("Enabled", _component, "IsEditingGroup", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
-			_path.DataBindings.Add("Value", _component, "Path", true, DataSourceUpdateMode.OnPropertyChanged);
+			_category.DataBindings.Add("Value", _component, "Category", true, DataSourceUpdateMode.OnPropertyChanged);
 			_text.DataBindings.Add("Value", _component, "Text", true, DataSourceUpdateMode.OnPropertyChanged);
 			_acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 		}

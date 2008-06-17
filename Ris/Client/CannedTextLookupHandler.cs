@@ -1,29 +1,35 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Application.Common.CannedTextService;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common.CannedTextService;
 
 namespace ClearCanvas.Ris.Client
 {
     public interface ICannedTextLookupHandler : ILookupHandler
     {
+    	string GetFullText(CannedText cannedText);
     }
 
+	/// <summary>
+	/// This class is created so it can be shared between model and the view.  This way the summary object does not have to be exposed to the view.
+	/// </summary>
     public class CannedText
     {
-        private string _name;
-        private string _path;
-        private string _text;
+        private readonly string _name;
+		private readonly string _category;
+    	private readonly string _staffId;
+    	private readonly string _staffGroupName;
+		private readonly string _text;
 
-        public CannedText(string name, string path, string text)
+		public CannedText(string name, string category, string staffId, string staffGroupName, string text)
         {
             _name = name;
-            _path = path;
-            _text = text;
+            _category = category;
+			_staffId = staffId;
+			_staffGroupName = staffGroupName;
+			_text = text;
         }
 
         public string Name
@@ -31,15 +37,30 @@ namespace ClearCanvas.Ris.Client
             get { return _name; }
         }
 
-        public string Path
+        public string Category
         {
-            get { return _path; }
+            get { return _category; }
+        }
+
+        public string StaffId
+        {
+			get { return _staffId; }
+        }
+
+        public string StaffGroupName
+        {
+			get { return _staffGroupName; }
         }
 
         public string Text
         {
-            get { return _text; }
+			get { return _text; }
         }
+
+    	public bool IsSnippet
+    	{
+			get { return _text.Length.Equals(CannedTextSummary.MaxTextLength); }
+    	}
     }
 
     public class CannedTextLookupHandler : ICannedTextLookupHandler
@@ -54,7 +75,15 @@ namespace ClearCanvas.Ris.Client
 					{
 						ListCannedTextResponse response = service.ListCannedText(new ListCannedTextRequest());
 						cannedTexts = CollectionUtils.Map<CannedTextSummary, CannedText>(response.CannedTexts,
-							delegate(CannedTextSummary s) { return new CannedText(s.Name, s.Path, s.Text); });
+							delegate(CannedTextSummary s)
+								{
+									return new CannedText(
+										s.Id.Name, 
+										s.Id.Category, 
+										s.Id.Staff == null ? null : s.Id.Staff.StaffId,
+										s.Id.StaffGroup == null ? null : s.Id.StaffGroup.Name,
+										s.TextSnippet);
+								});
 					});
 
 				// sort results in the way that they will be formatted for the suggest box
@@ -85,7 +114,7 @@ namespace ClearCanvas.Ris.Client
 
         private static string FormatItem(CannedText ct)
         {
-			return string.Format("{0} ({1})", ct.Name, ct.Path);
+			return string.Format("{0} ({1})", ct.Name, ct.Category);
 		}
 
 
@@ -115,5 +144,36 @@ namespace ClearCanvas.Ris.Client
         }
 
         #endregion
-    }
+
+		#region ICannedTextLookupHandler Members
+
+		public string GetFullText(CannedText cannedText)
+		{
+			string fullText = null;
+
+			try
+			{
+				Platform.GetService<ICannedTextService>(
+					delegate(ICannedTextService service)
+					{
+						LoadCannedTextForEditResponse response = service.LoadCannedTextForEdit(
+							new LoadCannedTextForEditRequest(
+								cannedText.Name,
+								cannedText.Category,
+								cannedText.StaffId,
+								cannedText.StaffGroupName));
+
+						fullText = response.CannedTextDetail.Text;
+					});
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, _desktopWindow);
+			}
+
+			return fullText;
+		}
+
+		#endregion
+	}
 }

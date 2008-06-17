@@ -59,6 +59,7 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(CannedTextSummaryComponentViewExtensionPoint))]
 	public class CannedTextSummaryComponent : SummaryComponentBase<CannedTextSummary, CannedTextTable>
 	{
+		private CannedTextDetail _selectedCannedTextDetail;
 		private EventHandler _copyCannedTextRequested;
 
 		private Action _duplicateCannedTextAction;
@@ -66,49 +67,33 @@ namespace ClearCanvas.Ris.Client
 
 		#region Presentation Model
 
-		public string Group
+		public string GetFullCannedText()
 		{
-			get
+			if (this.SelectedItems.Count != 1)
+				return string.Empty;
+
+			// if the detail object is not null, it means the selection havn't changed
+			// no need to hit the server, return the text now
+			if (_selectedCannedTextDetail != null)
+				return _selectedCannedTextDetail.Text;
+
+			CannedTextSummary summary = CollectionUtils.FirstElement(this.SelectedItems);
+
+			try
 			{
-				if (this.SelectedItems.Count != 1)
-					return string.Empty;
-
-				CannedTextSummary item = this.SelectedItems[0];
-				return item.IsPersonal ? SR.ColumnPersonal : item.StaffGroup.Name;
+				Platform.GetService<ICannedTextService>(
+					delegate(ICannedTextService service)
+					{
+						LoadCannedTextForEditResponse response = service.LoadCannedTextForEdit(new LoadCannedTextForEditRequest(summary.CannedTextRef));
+						_selectedCannedTextDetail = response.CannedTextDetail;
+					});
 			}
-		}
-
-		public string Name
-		{
-			get
+			catch (Exception e)
 			{
-				if (this.SelectedItems.Count != 1)
-					return string.Empty;
-
-				return this.SelectedItems[0].Name;
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
 			}
-		}
 
-		public string Category
-		{
-			get
-			{
-				if (this.SelectedItems.Count != 1)
-					return string.Empty;
-
-				return this.SelectedItems[0].Path;
-			}
-		}
-
-		public string Preview
-		{
-			get
-			{
-				if (this.SelectedItems.Count != 1)
-					return string.Empty;
-
-				return this.SelectedItems[0].Text;
-			}
+			return _selectedCannedTextDetail.Text;
 		}
 
 		public event EventHandler CopyCannedTextRequested
@@ -157,6 +142,15 @@ namespace ClearCanvas.Ris.Client
 		protected override bool SupportsDelete
 		{
 			get { return true; }
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether this component supports paging.  The default is true.
+		/// Override this method to change support for paging.
+		/// </summary>
+		protected override bool SupportsPaging
+		{
+			get { return false; }
 		}
 
 		/// <summary>
@@ -303,6 +297,10 @@ namespace ClearCanvas.Ris.Client
 				_duplicateCannedTextAction.Enabled = false;
 				_copyCannedTextAction.Enabled = false;
 			}
+
+			// The detail is only loaded whenever a copy/drag is performed
+			// Set this to null, so the view doesn't get wrong text data.
+			_selectedCannedTextDetail = null;
 
 			NotifyAllPropertiesChanged();
 		}

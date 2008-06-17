@@ -2,17 +2,14 @@ using System;
 using System.Collections;
 using System.Text;
 
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Healthcare {
 
 
     /// <summary>
-    /// CannedText entity
+    /// CannedTextIdentifier component
     /// </summary>
-	[UniqueKey("CannedTextId", new string[] { "CannedTextId.Name", "CannedTextId.Category", "CannedTextId.Staff", "CannedTextId.StaffGroup" })]
-	public partial class CannedText : ClearCanvas.Enterprise.Core.Entity
+	public partial class CannedTextIdentifier
 	{
 	
 		/// <summary>

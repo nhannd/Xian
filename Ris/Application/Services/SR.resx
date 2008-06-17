@@ -195,4 +195,10 @@
   <data name="ExceptionCannedTextNameRequired" xml:space="preserve">
     <value>A canned text name is required</value>
   </data>
+  <data name="ExceptionCannedTextCategoryRequired" xml:space="preserve">
+    <value>A canned text category is required</value>
+  </data>
+  <data name="ExceptionIdenticalCannedTextExist" xml:space="preserve">
+    <value>An identical canned text already exist for {0}</value>
+  </data>
 </root>

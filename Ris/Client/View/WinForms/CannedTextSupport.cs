@@ -64,7 +64,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             if (cannedText != null)
             {
-                _textEditor.SelectedText = cannedText.Text;
+				if (cannedText.IsSnippet)
+					_textEditor.SelectedText = _lookupHandler.GetFullText(cannedText);
+				else
+	                _textEditor.SelectedText = cannedText.Text;
             }
         }
 

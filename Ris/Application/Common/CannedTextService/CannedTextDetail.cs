@@ -3,45 +3,34 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.CannedTextService
 {
-    [DataContract]
-    public class CannedTextDetail : DataContractBase
-    {
+	[DataContract]
+	public class CannedTextDetail : DataContractBase
+	{
 		public CannedTextDetail()
 		{
+			this.Id = new CannedTextIdentifierDetail();
 		}
 
-		public CannedTextDetail(string name, string path, string text, StaffSummary staff, StaffGroupSummary staffGroup)
-        {
-        	this.Name = name;
-        	this.Path = path;
-        	this.Text = text;
-			this.Staff = staff;
-			this.StaffGroup = staffGroup;
-        }
-
-        [DataMember]
-        public string Name;
-
-        [DataMember]
-        public string Path;
-
-        [DataMember]
-        public string Text;
+		public CannedTextDetail(CannedTextIdentifierDetail id, string text)
+		{
+			this.Id = id;
+			this.Text = text;
+		}
 
 		[DataMember]
-		public StaffSummary Staff;
+		public CannedTextIdentifierDetail Id;
 
 		[DataMember]
-		public StaffGroupSummary StaffGroup;
+		public string Text;
 
 		public bool IsPersonal
 		{
-			get { return this.Staff != null; }
+			get { return this.Id.Staff != null; }
 		}
 
 		public bool IsGroup
 		{
-			get { return this.StaffGroup != null; }
+			get { return this.Id.StaffGroup != null; }
 		}
 	}
 }

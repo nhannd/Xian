@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._editorTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this._text = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
 			this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._path = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._category = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._buttonFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._acceptButton = new System.Windows.Forms.Button();
@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._editorTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._editorTableLayoutPanel.Controls.Add(this._text, 0, 4);
 			this._editorTableLayoutPanel.Controls.Add(this._name, 0, 2);
-			this._editorTableLayoutPanel.Controls.Add(this._path, 0, 3);
+			this._editorTableLayoutPanel.Controls.Add(this._category, 0, 3);
 			this._editorTableLayoutPanel.Controls.Add(this._buttonFlowLayoutPanel, 0, 5);
 			this._editorTableLayoutPanel.Controls.Add(this._typeGroupBox, 0, 0);
 			this._editorTableLayoutPanel.Controls.Add(this._groups, 0, 1);
@@ -93,19 +93,19 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._name.ToolTip = null;
 			this._name.Value = null;
 			// 
-			// _path
+			// _category
 			// 
-			this._path.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._path.LabelText = "Category";
-			this._path.Location = new System.Drawing.Point(2, 146);
-			this._path.Margin = new System.Windows.Forms.Padding(2);
-			this._path.Mask = "";
-			this._path.Name = "_path";
-			this._path.PasswordChar = '\0';
-			this._path.Size = new System.Drawing.Size(282, 41);
-			this._path.TabIndex = 3;
-			this._path.ToolTip = null;
-			this._path.Value = null;
+			this._category.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._category.LabelText = "Category";
+			this._category.Location = new System.Drawing.Point(2, 146);
+			this._category.Margin = new System.Windows.Forms.Padding(2);
+			this._category.Mask = "";
+			this._category.Name = "_category";
+			this._category.PasswordChar = '\0';
+			this._category.Size = new System.Drawing.Size(282, 41);
+			this._category.TabIndex = 3;
+			this._category.ToolTip = null;
+			this._category.Value = null;
 			// 
 			// _buttonFlowLayoutPanel
 			// 
@@ -208,7 +208,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.TableLayoutPanel _editorTableLayoutPanel;
 		private ClearCanvas.Desktop.View.WinForms.TextAreaField _text;
 		private ClearCanvas.Desktop.View.WinForms.TextField _name;
-		private ClearCanvas.Desktop.View.WinForms.TextField _path;
+		private ClearCanvas.Desktop.View.WinForms.TextField _category;
 		private System.Windows.Forms.FlowLayoutPanel _buttonFlowLayoutPanel;
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _acceptButton;
