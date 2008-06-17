@@ -29,19 +29,17 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
-using System;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
 {
@@ -78,6 +76,21 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
             return response;
         }
 
+		[ReadOperation]
+		public GetProcedureTypeGroupSummaryFormDataResponse GetProcedureTypeGroupSummaryFormData(GetProcedureTypeGroupSummaryFormDataRequest request)
+		{
+			ProcedureTypeGroupAssembler ptgAssembler = new ProcedureTypeGroupAssembler();
+			IList<Type> subClasses = ProcedureTypeGroup.ListSubClasses(PersistenceContext);
+
+			// Category choices
+			return new GetProcedureTypeGroupSummaryFormDataResponse(
+				CollectionUtils.Map<Type, EnumValueInfo>(subClasses,
+					delegate(Type t)
+					{
+						return ptgAssembler.GetCategoryEnumValueInfo(t);
+					}));
+		}
+
         [ReadOperation]
         public ListProcedureTypeGroupsResponse ListProcedureTypeGroups(
             ListProcedureTypeGroupsRequest request)
@@ -85,14 +98,25 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
             ListProcedureTypeGroupsResponse response = new ListProcedureTypeGroupsResponse();
             ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
 
-            response.Items = CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary, List<ProcedureTypeGroupSummary>>(
+            List<ProcedureTypeGroupSummary> ptgs = CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary, List<ProcedureTypeGroupSummary>>(
                 PersistenceContext.GetBroker<IProcedureTypeGroupBroker>().Find(
                     new ProcedureTypeGroupSearchCriteria(),
                     request.Page),
                 delegate(ProcedureTypeGroup rptGroup)
                 {
                     return assembler.GetProcedureTypeGroupSummary(rptGroup, this.PersistenceContext);
-                }); 
+                });
+
+			response.Items = request.CategoryFilter.Count == 0 ? ptgs :
+				CollectionUtils.Select(ptgs, 
+					delegate(ProcedureTypeGroupSummary ptg)
+					{
+						return CollectionUtils.Contains(request.CategoryFilter,
+							delegate(EnumValueInfo category)
+								{
+									return ptg.Category.Code == category.Code;
+								});
+					}); 
 
             return response;
         }

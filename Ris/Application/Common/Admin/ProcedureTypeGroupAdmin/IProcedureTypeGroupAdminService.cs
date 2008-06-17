@@ -55,6 +55,15 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+		GetProcedureTypeGroupSummaryFormDataResponse GetProcedureTypeGroupSummaryFormData(
+			GetProcedureTypeGroupSummaryFormDataRequest request);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
         ListProcedureTypeGroupsResponse ListProcedureTypeGroups(
             ListProcedureTypeGroupsRequest request);
 

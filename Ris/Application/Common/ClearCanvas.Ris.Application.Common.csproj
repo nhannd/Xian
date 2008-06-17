@@ -74,6 +74,8 @@
     <Compile Include="Admin\ProcedureTypeAdmin\LoadProcedureTypeForEditResponse.cs" />
     <Compile Include="Admin\ProcedureTypeAdmin\UpdateProcedureTypeRequest.cs" />
     <Compile Include="Admin\ProcedureTypeAdmin\UpdateProcedureTypeResponse.cs" />
+    <Compile Include="Admin\ProcedureTypeGroupAdmin\GetProcedureTypeGroupSummaryFormDataRequest.cs" />
+    <Compile Include="Admin\ProcedureTypeGroupAdmin\GetProcedureTypeGroupSummaryFormDataResponse.cs" />
     <Compile Include="Admin\StaffGroupAdmin\AddStaffGroupRequest.cs" />
     <Compile Include="Admin\StaffGroupAdmin\AddStaffGroupResponse.cs" />
     <Compile Include="Admin\StaffGroupAdmin\IStaffGroupAdminService.cs" />

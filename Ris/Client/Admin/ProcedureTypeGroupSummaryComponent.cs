@@ -35,10 +35,10 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -53,8 +53,100 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// ProcedureTypeGroupSummaryComponent class
     /// </summary>
-    public class ProcedureTypeGroupSummaryComponent : SummaryComponentBase<ProcedureTypeGroupSummary, ProcedureTypeGroupSummaryTable>
+	[AssociateView(typeof(ProcedureTypeGroupSummaryComponentViewExtensionPoint))]
+	public class ProcedureTypeGroupSummaryComponent : SummaryComponentBase<ProcedureTypeGroupSummary, ProcedureTypeGroupSummaryTable>
     {
+		class DummyItem
+		{
+			private readonly string _displayString;
+
+			public DummyItem(string displayString)
+			{
+				_displayString = displayString;
+			}
+
+			public override string ToString()
+			{
+				return _displayString;
+			}
+		}
+
+		private static readonly object _nullFilterItem = new DummyItem(SR.DummyItemNone);
+		private List<EnumValueInfo> _categoryChoices;
+		private ArrayList _selectedCategories;
+		
+		private ListProcedureTypeGroupsRequest _listRequest;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public ProcedureTypeGroupSummaryComponent()
+			: this(false)
+        {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="dialogMode">Indicates whether the component will be shown in a dialog box or not</param>
+        public ProcedureTypeGroupSummaryComponent(bool dialogMode)
+            :base(dialogMode)
+        {
+        }
+
+		public override void Start()
+		{
+			Platform.GetService<IProcedureTypeGroupAdminService>(
+				delegate(IProcedureTypeGroupAdminService service)
+					{
+						GetProcedureTypeGroupSummaryFormDataResponse response =
+							service.GetProcedureTypeGroupSummaryFormData(new GetProcedureTypeGroupSummaryFormDataRequest());
+						_categoryChoices = response.CategoryChoices;
+					});
+
+			_listRequest = new ListProcedureTypeGroupsRequest();
+
+			base.Start();
+		}
+		#region Presentation Model
+
+		public object NullFilterItem
+		{
+			get { return _nullFilterItem; }
+		}
+
+		public IList CategoryChoices
+		{
+			get { return _categoryChoices; }
+		}
+
+		public string FormatCategory(object item)
+		{
+			if (item is EnumValueInfo)
+			{
+				EnumValueInfo category = (EnumValueInfo)item;
+				return category.Value;
+			}
+			else
+				return item.ToString(); // place-holder items
+		}
+
+		public IList SelectedCategories
+		{
+			get { return _selectedCategories; }
+			set
+			{
+				if (!CollectionUtils.Equal(value, _selectedCategories, false))
+				{
+					_selectedCategories = new ArrayList(value);
+					Search();
+				}
+			}
+		}
+
+		#endregion
+
+		#region Overrides
 
 		/// <summary>
 		/// Override this method to perform custom initialization of the action model,
@@ -81,7 +173,8 @@ namespace ClearCanvas.Ris.Client.Admin
 			Platform.GetService<IProcedureTypeGroupAdminService>(
 				delegate(IProcedureTypeGroupAdminService service)
 				{
-					listResponse = service.ListProcedureTypeGroups(new ListProcedureTypeGroupsRequest(new SearchResultPage(firstItem, maxItems)));
+					_listRequest.Page = new SearchResultPage(firstItem, maxItems);
+					listResponse = service.ListProcedureTypeGroups(_listRequest);
 				});
 
 			return listResponse.Items;
@@ -96,7 +189,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			addedItems = new List<ProcedureTypeGroupSummary>();
 			ProcedureTypeGroupEditorComponent editor = new ProcedureTypeGroupEditorComponent();
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(
 				this.Host.DesktopWindow, editor, SR.TitleAddProcedureTypeGroup);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
@@ -118,7 +211,7 @@ namespace ClearCanvas.Ris.Client.Admin
 			ProcedureTypeGroupSummary item = CollectionUtils.FirstElement(items);
 
 			ProcedureTypeGroupEditorComponent editor = new ProcedureTypeGroupEditorComponent(item.ProcedureTypeGroupRef);
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(
 				this.Host.DesktopWindow, editor, SR.TitleUpdateProcedureTypeGroup);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
@@ -148,5 +241,29 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			return x.ProcedureTypeGroupRef.Equals(y.ProcedureTypeGroupRef, true);
 		}
-    }
+
+		#endregion
+
+		private void Search()
+		{
+			try
+			{
+				_listRequest.CategoryFilter =
+					CollectionUtils.Map<object, EnumValueInfo>(
+						_selectedCategories,
+						delegate(object o)
+						{
+							return (EnumValueInfo)o;
+						});
+
+				this.Table.Items.Clear();
+				this.Table.Items.AddRange(this.PagingController.GetFirst());
+			}
+			catch (Exception e)
+			{
+				// search failed
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+	}
 }
