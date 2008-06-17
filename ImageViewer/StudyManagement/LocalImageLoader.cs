@@ -114,9 +114,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			try
 			{
 				image = new LocalImageSop(file);
-
+				string sopInstanceUid = image.SopInstanceUID;
 				_viewer.StudyTree.AddImage(image);
-				_viewer.EventBroker.OnImageLoaded(new ItemEventArgs<Sop>(_viewer.StudyTree.GetSop(image.SopInstanceUID)));
+				_viewer.EventBroker.OnImageLoaded(new ItemEventArgs<Sop>(_viewer.StudyTree.GetSop(sopInstanceUid)));
 			}
 			catch (Exception e)
 			{
