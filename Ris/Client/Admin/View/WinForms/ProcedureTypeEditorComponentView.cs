@@ -32,47 +32,48 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Runtime.Serialization;
 
-using ClearCanvas.Enterprise.Common;
-using System.Xml;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.Admin;
 
-namespace ClearCanvas.Ris.Application.Common
+namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    [DataContract]
-    public class ProcedureTypeDetail : DataContractBase
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="ProcedureTypeEditorComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(ProcedureTypeEditorComponentViewExtensionPoint))]
+    public class ProcedureTypeEditorComponentView : WinFormsView, IApplicationComponentView
     {
-		public ProcedureTypeDetail()
-		{
-		}
+        private ProcedureTypeEditorComponent _component;
+        private ProcedureTypeEditorComponentControl _control;
 
-		public ProcedureTypeDetail(EntityRef entityRef, string id, string name, ProcedureTypeSummary baseType, string planXml)
+        #region IApplicationComponentView Members
+
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
         {
-            this.ProcedureTypeRef = entityRef;
-            this.Id = id;
-            this.Name = name;
-        	this.BaseType = baseType;
-        	this.PlanXml = planXml;
+            _component = (ProcedureTypeEditorComponent)component;
         }
 
-        [DataMember]
-        public EntityRef ProcedureTypeRef;
+        #endregion
 
-        [DataMember]
-        public string Id;
-
-        [DataMember]
-        public string Name;
-
-		[DataMember]
-		public ProcedureTypeSummary BaseType;
-
-		[DataMember]
-		public string PlanXml;
-
-        public ProcedureTypeSummary GetSummary()
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
         {
-            return new ProcedureTypeSummary(this.ProcedureTypeRef, this.Name, this.Id);
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new ProcedureTypeEditorComponentControl(_component);
+                }
+                return _control;
+            }
         }
     }
 }

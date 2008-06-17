@@ -31,48 +31,53 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
 using System.Text;
-using System.Runtime.Serialization;
+using System.Windows.Forms;
 
-using ClearCanvas.Enterprise.Common;
-using System.Xml;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.Admin;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.Ris.Application.Common
+namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    [DataContract]
-    public class ProcedureTypeDetail : DataContractBase
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="ProcedureTypeEditorComponent"/>.
+    /// </summary>
+    public partial class ProcedureTypeEditorComponentControl : ApplicationComponentUserControl
     {
-		public ProcedureTypeDetail()
-		{
+        private ProcedureTypeEditorComponent _component;
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public ProcedureTypeEditorComponentControl(ProcedureTypeEditorComponent component)
+            :base(component)
+        {
+			_component = component;
+            InitializeComponent();
+
+			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
+			_id.DataBindings.Add("Value", _component, "ID", true, DataSourceUpdateMode.OnPropertyChanged);
+			_planXml.DataBindings.Add("Value", _component, "PlanXml", true, DataSourceUpdateMode.OnPropertyChanged);
+			_acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_baseType.DataSource = _component.BaseTypeList;
+			_baseType.DataBindings.Add("Value", _component, "BaseType", true, DataSourceUpdateMode.OnPropertyChanged);
+			_baseType.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatBaseTypeItem(e.ListItem); };
+
 		}
 
-		public ProcedureTypeDetail(EntityRef entityRef, string id, string name, ProcedureTypeSummary baseType, string planXml)
-        {
-            this.ProcedureTypeRef = entityRef;
-            this.Id = id;
-            this.Name = name;
-        	this.BaseType = baseType;
-        	this.PlanXml = planXml;
-        }
+		private void _acceptButton_Click(object sender, EventArgs e)
+		{
+			_component.Accept();
+		}
 
-        [DataMember]
-        public EntityRef ProcedureTypeRef;
-
-        [DataMember]
-        public string Id;
-
-        [DataMember]
-        public string Name;
-
-		[DataMember]
-		public ProcedureTypeSummary BaseType;
-
-		[DataMember]
-		public string PlanXml;
-
-        public ProcedureTypeSummary GetSummary()
-        {
-            return new ProcedureTypeSummary(this.ProcedureTypeRef, this.Name, this.Id);
-        }
+		private void _cancelButton_Click(object sender, EventArgs e)
+		{
+			_component.Cancel();
+		}
     }
 }

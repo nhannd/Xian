@@ -96,6 +96,13 @@
       <DependentUpon>NoteCategoryEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="NoteCategoryEditorComponentView.cs" />
+    <Compile Include="ProcedureTypeEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProcedureTypeEditorComponentControl.Designer.cs">
+      <DependentUpon>ProcedureTypeEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProcedureTypeEditorComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -247,6 +254,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="NoteCategoryEditorComponentControl.resx">
       <DependentUpon>NoteCategoryEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProcedureTypeEditorComponentControl.resx">
+      <DependentUpon>ProcedureTypeEditorComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ProcedureTypeGroupSummaryComponentControl.resx">

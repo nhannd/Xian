@@ -61,6 +61,9 @@
     <Compile Include="ModalityTable.cs" />
     <Compile Include="NoteCategoryEditorComponent.cs" />
     <Compile Include="NoteCategorySummaryComponent.cs" />
+    <Compile Include="ProcedureTypeEditorComponent.cs" />
+    <Compile Include="ProcedureTypeSummaryComponent.cs" />
+    <Compile Include="ProcedureTypeDetailTable.cs" />
     <Compile Include="ProcedureTypeGroupSummaryComponent.cs">
       <SubType>Code</SubType>
     </Compile>
