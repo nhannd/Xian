@@ -160,7 +160,7 @@ namespace ClearCanvas.Healthcare
         public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
         {
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
-            criteria.Order.Status.In(new OrderStatus[] { OrderStatus.DC, OrderStatus.CA });
+            criteria.Order.Status.In(new OrderStatus[] { OrderStatus.DC, OrderStatus.CA, OrderStatus.RP });
 
             // apply filter to the end-time (time procedure was was cancelled)
             ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureEndTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeNewestItems);
