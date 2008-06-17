@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
                 // add watermark icons
                 graphics.CompositingMode = CompositingMode.SourceOver;
-                Image watermark = Image.FromFile(Server.MapPath("~/Common/Images/Watermark.gif"));
+                Image watermark = Image.FromFile(Server.MapPath("~/Images/Watermark.gif"));
 
 
                 graphics.DrawImageUnscaled(watermark, (int)(_width * _high / 100f) - watermark.Width / 2 + leftoffset, 12);

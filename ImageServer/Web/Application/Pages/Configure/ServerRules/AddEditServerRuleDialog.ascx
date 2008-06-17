@@ -23,7 +23,7 @@
 													<asp:TextBox ID="RuleNameTextBox" runat="server" Width="100%" ValidationGroup="vg1" CssClass="DialogTextBox"></asp:TextBox>
 												</td>
 												<td>
-													<ccAsp:InvalidInputIndicator ID="RuleNameHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png"/>
+													<ccAsp:InvalidInputIndicator ID="RuleNameHelp" runat="server" SkinID="InvalidInputIndicator"/>
 													<ccValidator:ConditionalRequiredFieldValidator ID="RuleNameValidator" runat="server"
 														ControlToValidate="RuleNameTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
 														ErrorMessage="Rule must have a name" InvalidInputIndicatorID="RuleNameHelp" Display="None"/>
@@ -91,7 +91,7 @@
 											Rows="16" TextMode="MultiLine" CssClass="DialogTextBox"></asp:TextBox>
 									</td>
 									<td>
-										<ccAsp:InvalidInputIndicator ID="InvalidRuleHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
+										<ccAsp:InvalidInputIndicator ID="InvalidRuleHint" runat="server" SkinID="InvalidInputIndicator" />
 										<ccValidator:ServerRuleValidator runat="server" ID="ServerRuleValidator" ControlToValidate="RuleXmlTextBox"
 											InputName="Server Rule XML" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidRuleHint"
 											ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateServerRule"

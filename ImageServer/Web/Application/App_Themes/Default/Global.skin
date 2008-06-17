@@ -1,4 +1,5 @@
 <%@ Register assembly="ClearCanvas.ImageServer.Web.Common" namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" tagPrefix="ccUI" %>
+<%@ Register src="~/Common/Controls/InvalidInputIndicator.ascx" tagPrefix="ccASP" tagName="InvalidInputIndicator" %>
 
 <asp:Image runat="server" SkinID="Spacer" ImageUrl="~/images/blank.gif" />
 
@@ -46,5 +47,8 @@
 <asp:table runat="server" SkinId="MainContentTable" CellPadding="0" BorderWidth="0" CellSpacing="0" Width="100%" CssClass="MainContentTable"/>
 
 <%-- Images --%>
-<asp:Image runat="server" SkinID="Unchecked" ImageUrl="~/Common/Images/unchecked.png" />
-<asp:Image runat="server" SkinID="Checked" ImageUrl="~/Common/Images/checked.png" />
+<asp:Image runat="server" SkinID="Unchecked" ImageUrl="~/App_Themes/Default/images/Indicators/unchecked.png" />
+<asp:Image runat="server" SkinID="Checked" ImageUrl="~/App_Themes/Default/images/Indicators/checked.png" />
+
+<%-- Custom Controls --%>
+<ccAsp:InvalidInputIndicator SkinID="InvalidInputIndicator" runat="server" ImageUrl="~/App_Themes/Default/images/Indicators/HelpSmall.png" Visible="true" />

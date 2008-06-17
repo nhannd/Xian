@@ -5,6 +5,7 @@ using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
 
 namespace ClearCanvas.ImageServer.Web.Application.Common
 {
+    [Themeable(true)]
     public partial class InvalidInputIndicator : System.Web.UI.UserControl, IInvalidInputIndicator
     {
         private int _referenceCounter = 0;

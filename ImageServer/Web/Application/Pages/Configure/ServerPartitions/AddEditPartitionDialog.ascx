@@ -18,7 +18,7 @@
                                                         ToolTip="The DICOM Application Entity Title for the partition."></asp:TextBox>
                                                 </td>
                                                 <td>
-                                                    <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
+                                                    <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                     
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                         ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="true" ErrorMessage="AE Title is required"
@@ -62,7 +62,7 @@
                                                         ErrorMessage="Partition Port must be between 1 and 65535" Display="None" InvalidInputIndicatorID="PortHelp"></ccValidator:RangeValidator>
                                                 </td>
                                                 <td>
-                                                    <ccAsp:InvalidInputIndicator ID="PortHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
+                                                    <ccAsp:InvalidInputIndicator ID="PortHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                 </td>
                                             </tr>
                                         </table>
@@ -80,7 +80,7 @@
                                                         InvalidInputIndicatorID="FolderHelp"></ccValidator:ConditionalRequiredFieldValidator>
                                                 </td>
                                                 <td>
-                                                    <ccAsp:InvalidInputIndicator ID="FolderHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
+                                                    <ccAsp:InvalidInputIndicator ID="FolderHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                 </td>
                                             </tr>
                                         </table>
@@ -157,7 +157,7 @@
                                                 <td>
                                                     <asp:Label ID="Label5" runat="server" Text="Default Remote Port" CssClass="DialogTextBoxLabel" /><asp:TextBox ID="DefaultRemotePortTextBox" CssClass="DialogTextBox" runat="server"></asp:TextBox>
                                                     <td>
-                                                        <ccAsp:InvalidInputIndicator ID="DefaultPortHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
+                                                        <ccAsp:InvalidInputIndicator ID="DefaultPortHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                         <ccValidator:RangeValidator ID="DefaultRemotePortRangeValidator" runat="server"
                                                             ControlToValidate="DefaultRemotePortTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
                                                             MinValue="1" MaxValue="65535" ErrorMessage="Remote device default port must be between 1 and 65535"

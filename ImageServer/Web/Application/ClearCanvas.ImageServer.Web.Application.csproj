@@ -624,8 +624,8 @@
     <Content Include="Common\Controls\SectionPanel.ascx" />
     <Content Include="Common\Controls\ServerPartitionTabs.ascx" />
     <Content Include="Common\Controls\TimedDialog.ascx" />
-    <Content Include="Common\Images\checked.png" />
-    <Content Include="Common\Images\unchecked.png" />
+    <Content Include="App_Themes\Default\images\Indicators\checked.png" />
+    <Content Include="App_Themes\Default\images\Indicators\unchecked.png" />
     <Content Include="Common\Pages\BasePage.aspx" />
     <Content Include="Common\Images\blank.gif" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-left.png" />
@@ -700,7 +700,7 @@
     <None Include="Scripts\.svn\entries" />
     <None Include="Scripts\.svn\format" />
     <None Include="Service References\FilesystemServiceProxy.map" />
-    <Content Include="Common\Images\HelpSmall.png" />
+    <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
     <Content Include="Common\Images\usage.png" />
     <Content Include="Services\FilesystemInfoService.asmx" />
     <Content Include="Services\ValidationServices.asmx" />

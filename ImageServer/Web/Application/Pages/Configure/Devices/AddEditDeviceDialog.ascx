@@ -16,8 +16,7 @@
                                                     <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="vg1" MaxLength="16" CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
                                                 <td>
-                                                    <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" ImageUrl="~/Common/images/icons/HelpSmall.png"
-                                                        Visible="true" />
+                                                    <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                         ControlToValidate="AETitleTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
                                                         InvalidInputIndicatorID="AETitleHelp" ErrorMessage="AE Title is required" Display="None"
@@ -54,7 +53,7 @@
                                                     </asp:TextBox>
                                                 </td>
                                                 <td align="left">
-                                                    <ccAsp:InvalidInputIndicator ID="IPAddressHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                    <ccAsp:InvalidInputIndicator ID="IPAddressHelp" runat="server" SkinID="InvalidInputIndicator">
                                                     </ccAsp:InvalidInputIndicator>
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
                                                         runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
@@ -92,8 +91,7 @@
                                                     <asp:TextBox ID="PortTextBox" runat="server" CssClass="DialogTextBox" />
                                                 </td>
                                                 <td>
-                                                    <ccAsp:InvalidInputIndicator ID="PortHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png"
-                                                        Visible="true"></ccAsp:InvalidInputIndicator>
+                                                    <ccAsp:InvalidInputIndicator ID="PortHelp" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>
                                                     <ccValidator:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
                                                         ErrorMessage="Device Port must be between 1 and 65535" InvalidInputIndicatorID="PortHelp"
