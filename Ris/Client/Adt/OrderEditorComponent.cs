@@ -867,11 +867,11 @@ namespace ClearCanvas.Ris.Client.Adt
                         LoadDiagnosticServiceBreakdownResponse response = service.LoadDiagnosticServiceBreakdown(
                             new LoadDiagnosticServiceBreakdownRequest(summary.DiagnosticServiceRef));
                         _proceduresTable.Items.AddRange(
-                           CollectionUtils.Map<ProcedureTypeDetail, ProcedureRequisition>(
+                           CollectionUtils.Map<ProcedureTypeSummary, ProcedureRequisition>(
                                response.DiagnosticServiceDetail.ProcedureTypes,
-                               delegate(ProcedureTypeDetail rpt)
+                               delegate(ProcedureTypeSummary rpt)
                                {
-                                   return new ProcedureRequisition(rpt.GetSummary(), _orderingFacility);
+                                   return new ProcedureRequisition(rpt, _orderingFacility);
                                }));
                     });
             }
