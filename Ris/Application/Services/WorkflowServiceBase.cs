@@ -45,55 +45,52 @@ using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    public abstract class WorkflowServiceBase : ApplicationServiceBase
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
+	public class OperationEnablementAttribute : Attribute
+	{
+		private readonly string _enablementMethodName;
+
+		public OperationEnablementAttribute(string enablementMethodName)
+		{
+			_enablementMethodName = enablementMethodName;
+		}
+
+		public string EnablementMethodName
+		{
+			get { return _enablementMethodName; }
+		}
+	}
+
+
+	public abstract class WorkflowServiceBase<TItemSummary> : ApplicationServiceBase, IWorkflowService<TItemSummary>
+		where TItemSummary : DataContractBase
     {
-        protected IExtensionPoint _worklistExtPoint;
-        protected IExtensionPoint _operationExtPoint;
 
-        [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
-        protected class OperationEnablementAttribute : Attribute
-        {
-            private readonly string _enablementMethodName;
+		#region PersistentWorkflow class
 
-            public OperationEnablementAttribute(string enablementMethodName)
-            {
-                _enablementMethodName = enablementMethodName;
-            }
+		protected class PersistentWorkflow : IWorkflow
+		{
+			private readonly IPersistenceContext _context;
 
-            public string EnablementMethodName
-            {
-                get { return _enablementMethodName; }
-            }
-        }
+			public PersistentWorkflow(IPersistenceContext context)
+			{
+				_context = context;
+			}
 
-        protected class PersistentWorkflow : IWorkflow
-        {
-            private readonly IPersistenceContext _context;
+			public void AddActivity(Activity activity)
+			{
+				_context.Lock(activity, DirtyState.New);
+			}
 
-            public PersistentWorkflow(IPersistenceContext context)
-            {
-                _context = context;
-            }
+			public IPersistenceContext CurrentContext
+			{
+				get { return _context; }
+			}
+		}
 
-            #region IWorkflow Members
+		#endregion
 
-            public void AddActivity(Activity activity)
-            {
-                _context.Lock(activity, DirtyState.New);
-            }
-
-            public IPersistenceContext CurrentContext 
-            {
-                get { return _context; }
-            }
-
-            #endregion
-        }
-
-        public WorkflowServiceBase()
-        {
-            _worklistExtPoint = new WorklistExtensionPoint();
-        }
+		#region IWorkflowService implementation
 
 		/// <summary>
 		/// Obtain the list of worklists for the current user.
@@ -113,6 +110,34 @@ namespace ClearCanvas.Ris.Application.Services
 					}));
 		}
 
+		[ReadOperation]
+		public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest<TItemSummary> request)
+		{
+			return new GetOperationEnablementResponse(GetOperationEnablement(GetWorkItemKey(request.WorkItem)));
+		}
+
+
+		#endregion
+
+
+		#region Protected API
+
+		/// <summary>
+		/// Extracts a work-item key from the specified work-item.
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		protected abstract object GetWorkItemKey(TItemSummary item);
+
+
+		/// <summary>
+		/// Helper method to query a worklist.
+		/// </summary>
+		/// <typeparam name="TItem"></typeparam>
+		/// <typeparam name="TSummary"></typeparam>
+		/// <param name="request"></param>
+		/// <param name="mapCallback"></param>
+		/// <returns></returns>
 		protected QueryWorklistResponse<TSummary> QueryWorklistHelper<TItem, TSummary>(QueryWorklistRequest request,
             Converter<TItem, TSummary> mapCallback)
         {
@@ -178,42 +203,53 @@ namespace ClearCanvas.Ris.Application.Services
 			return helper.Query(request);
 		}
 
+		#endregion
 
-        protected Dictionary<string, bool> GetOperationEnablement(object itemKey)
-        {
-            Dictionary<string, bool> results = new Dictionary<string, bool>();
+		#region Private
 
-            Type serviceContractType = this.GetType();
-            foreach (MethodInfo info in serviceContractType.GetMethods())
-            {
-                object[] attribs = info.GetCustomAttributes(typeof(OperationEnablementAttribute), true);
-                if (attribs.Length < 1)
-                    continue;
+		/// <summary>
+		/// Helper method to determine operation enablement for.
+		/// </summary>
+		/// <param name="itemKey"></param>
+		/// <returns></returns>
+		private Dictionary<string, bool> GetOperationEnablement(object itemKey)
+		{
+			Dictionary<string, bool> results = new Dictionary<string, bool>();
 
-                // Evaluate the list of enablement method in the OperationEnablementAttribute
+			Type serviceContractType = this.GetType();
+			foreach (MethodInfo info in serviceContractType.GetMethods())
+			{
+				object[] attribs = info.GetCustomAttributes(typeof(OperationEnablementAttribute), true);
+				if (attribs.Length < 1)
+					continue;
 
-                bool enablement = true;
-                foreach (object obj in attribs)
-                {
-                    OperationEnablementAttribute attrib = obj as OperationEnablementAttribute;
+				// Evaluate the list of enablement method in the OperationEnablementAttribute
 
-                    MethodInfo enablementHelper = serviceContractType.GetMethod(attrib.EnablementMethodName);
-                    if (enablementHelper == null)
-                        throw new EnablementMethodNotFoundException(attrib.EnablementMethodName, info.Name);
+				bool enablement = true;
+				foreach (object obj in attribs)
+				{
+					OperationEnablementAttribute attrib = obj as OperationEnablementAttribute;
 
-                    bool test = (bool) enablementHelper.Invoke(this, new object[] { itemKey });
-                    if (test == false)
-                    {
-                        // No need to continue after any evaluation failed
-                        enablement = false;
-                        break;
-                    }
-                }
+					MethodInfo enablementHelper = serviceContractType.GetMethod(attrib.EnablementMethodName);
+					if (enablementHelper == null)
+						throw new EnablementMethodNotFoundException(attrib.EnablementMethodName, info.Name);
 
-                results.Add(info.Name, enablement);
-            }
+					bool test = (bool)enablementHelper.Invoke(this, new object[] { itemKey });
+					if (test == false)
+					{
+						// No need to continue after any evaluation failed
+						enablement = false;
+						break;
+					}
+				}
 
-            return results;
-        }
-    }
+				results.Add(info.Name, enablement);
+			}
+
+			return results;
+		}
+
+		#endregion
+
+	}
 }

@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     /// </summary>
     [RisServiceProvider]
     [ServiceContract]
-	public interface IRegistrationWorkflowService : IWorklistService<RegistrationWorklistItem>
+	public interface IRegistrationWorkflowService : IWorklistService<RegistrationWorklistItem>, IWorkflowService<RegistrationWorklistItem>
     {
 
         /// <summary>
@@ -58,14 +58,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// <returns><see cref="LoadSearchPatientFormDataResponse"/></returns>
         [OperationContract]
         LoadSearchPatientFormDataResponse LoadSearchPatientFormData(LoadSearchPatientFormDataRequest request);
-
-        /// <summary>
-        /// Get enablements for operations that can be applied to a worklist item
-        /// </summary>
-        /// <param name="request"><see cref="GetOperationEnablementRequest"/></param>
-        /// <returns><see cref="GetOperationEnablementResponse"/></returns>
-        [OperationContract]
-        GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
 
         /// <summary>
         /// Get procedures that can be checked-in for a patient

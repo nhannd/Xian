@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
@@ -41,13 +42,15 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Protocolling;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 {
 	[ServiceImplementsContract(typeof(IProtocollingWorkflowService))]
 	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-	public class ProtocollingWorkflowService : WorkflowServiceBase, IProtocollingWorkflowService
+	public class ProtocollingWorkflowService : WorkflowServiceBase<WorklistItemSummaryBase>, IProtocollingWorkflowService
 	{
 		/// <summary>
 		/// Provides a context for determining if protocol operations are enabled.
@@ -140,13 +143,6 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 				assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
 
 			return new GetProcedurePlanForProtocollingWorklistItemResponse(procedurePlanSummary);
-		}
-
-		[ReadOperation]
-		public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
-		{
-			return new GetOperationEnablementResponse(
-				GetOperationEnablement(new ProtocolOperationEnablementContext(request.OrderRef, request.ProcedureStepRef)));
 		}
 
 		[ReadOperation]
@@ -426,6 +422,11 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		#endregion
+
+		protected override object GetWorkItemKey(WorklistItemSummaryBase item)
+		{
+			return new ProtocolOperationEnablementContext(item.OrderRef, item.ProcedureStepRef);
+		}
 
 		private void AddAdditionalCommentsNote(OrderNoteDetail detail, Order order)
 		{

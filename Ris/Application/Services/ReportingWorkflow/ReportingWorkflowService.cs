@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
     [ServiceImplementsContract(typeof(IReportingWorkflowService))]
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class ReportingWorkflowService : WorkflowServiceBase, IReportingWorkflowService
+	public class ReportingWorkflowService : WorkflowServiceBase<ReportingWorklistItem>, IReportingWorkflowService
     {
         #region IReportingWorkflowService Members
 
@@ -77,12 +77,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 {
                     return assembler.CreateWorklistItemSummary(item, this.PersistenceContext);
                 });
-        }
-
-        [ReadOperation]
-        public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
-        {
-            return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.ProcedureStepRef, request.ProcedureRef)));
         }
 
         [UpdateOperation]
@@ -520,6 +514,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         #endregion
+
+		protected override object GetWorkItemKey(ReportingWorklistItem item)
+		{
+			return new WorklistItemKey(item.ProcedureStepRef, item.ProcedureRef);
+		}
 
 		/// <summary>
 		/// Get the supervisor, using the new supervisor if supplied, otherwise using an existing supervisor if found.

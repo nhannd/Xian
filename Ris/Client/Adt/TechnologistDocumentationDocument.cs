@@ -40,9 +40,8 @@ namespace ClearCanvas.Ris.Client.Adt
     public class TechnologistDocumentationDocument : Document
     {
         private readonly ModalityWorklistItem _item;
-        private readonly IEnumerable _folders;
 
-        public TechnologistDocumentationDocument(ModalityWorklistItem item, IEnumerable folders, IDesktopWindow desktopWindow)
+        public TechnologistDocumentationDocument(ModalityWorklistItem item, IDesktopWindow desktopWindow)
             : base(item.OrderRef, desktopWindow)
         {
             if(item == null)
@@ -51,7 +50,6 @@ namespace ClearCanvas.Ris.Client.Adt
             }
 
             _item = item;
-            _folders = folders;
         }
 
         public override string GetTitle()

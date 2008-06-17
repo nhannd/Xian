@@ -40,76 +40,11 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-	public interface IReportingWorkflowFolderDropContext : IDropContext
-	{
-		/// <summary>
-		/// Gets the enablement of the specified operation from the folder system
-		/// </summary>
-		/// <param name="operationName"></param>
-		/// <returns></returns>
-		bool GetOperationEnablement(string operationName);
-
-		/// <summary>
-		/// Gets the folder that is the drop target of the current operation
-		/// </summary>
-		ReportingWorkflowFolder DropTargetFolder { get; }
-
-		/// <summary>
-		/// Gets the folder system that owns the drop target folder
-		/// </summary>
-		WorkflowFolderSystem FolderSystem { get; }
-	}
-
 	public abstract class ReportingWorkflowFolder : WorklistFolder<ReportingWorklistItem, IReportingWorkflowService>
 	{
-		class DropContext : IReportingWorkflowFolderDropContext
+		public ReportingWorkflowFolder()
+			: base(new ReportingWorklistTable())
 		{
-			private ReportingWorkflowFolder _folder;
-
-			public DropContext(ReportingWorkflowFolder folder)
-			{
-				_folder = folder;
-			}
-
-			#region IReportingWorkflowFolderDropContext Members
-
-			public bool GetOperationEnablement(string operationName)
-			{
-				return _folder.WorkflowFolderSystem.GetOperationEnablement(operationName);
-			}
-
-			public ReportingWorkflowFolder DropTargetFolder
-			{
-				get { return _folder; }
-			}
-
-			public WorkflowFolderSystem FolderSystem
-			{
-				get
-				{
-					return _folder.WorkflowFolderSystem;
-				}
-			}
-
-			#endregion
-
-			#region IDropContext Members
-
-			public IDesktopWindow DesktopWindow
-			{
-				get { return _folder.WorkflowFolderSystem.DesktopWindow; }
-			}
-
-			#endregion
-		}
-
-		public ReportingWorkflowFolder(WorkflowFolderSystem folderSystem, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
-			: base(folderSystem, new ReportingWorklistTable())
-		{
-			if (dropHandlerExtensionPoint != null)
-			{
-				this.InitDragDropHandling(dropHandlerExtensionPoint, new DropContext(this));
-			}
 		}
 	}
 }

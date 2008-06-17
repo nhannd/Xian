@@ -75,7 +75,7 @@
     <Compile Include="PriorReportComponent.cs" />
     <Compile Include="ReportEditorComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReportingWorkflowTool.cs" />
+    <Compile Include="ReportingWorkflowTools.cs" />
     <Compile Include="ReportingWorkflowFolderSystemBase.cs" />
     <Compile Include="ReportingMainWorkflowFolderSystemTool.cs" />
     <Compile Include="ReportingWorkflowFolder.cs" />
@@ -93,7 +93,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>SupervisorSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="WorkflowItemTool.cs" />
+    <Compile Include="ReportingWorkflowItemTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Adt
     }
 
 	public abstract class RegistrationWorkflowFolderSystemBase<TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
-		: WorkflowFolderSystem<RegistrationWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
+		: WorklistFolderSystem<RegistrationWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, IRegistrationWorkflowService>
 		where TFolderExtensionPoint : ExtensionPoint<IFolder>, new()
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
 		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()
@@ -72,7 +72,7 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
 
-        public RegistrationWorkflowFolderSystemBase(string title, IFolderExplorerToolContext folderExplorer)
+        protected RegistrationWorkflowFolderSystemBase(string title, IFolderExplorerToolContext folderExplorer)
             : base(title, folderExplorer)
         {
         }
@@ -85,32 +85,6 @@ namespace ClearCanvas.Ris.Client.Adt
 		protected override IWorkflowItemToolContext CreateItemToolContext()
 		{
 			return new RegistrationWorkflowItemToolContext(this);
-		}
-
-		protected override ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request)
-		{
-			ListWorklistsForUserResponse response = null;
-			Platform.GetService<IRegistrationWorkflowService>(
-				delegate(IRegistrationWorkflowService service)
-				{
-					response = service.ListWorklistsForUser(request);
-				});
-
-			return response;
-		}
-
-		protected override IDictionary<string, bool> QueryOperationEnablement(ISelection selection)
-		{
-			IDictionary<string, bool> enablement = null;
-			Platform.GetService<IRegistrationWorkflowService>(
-				delegate(IRegistrationWorkflowService service)
-				{
-					RegistrationWorklistItem item = (RegistrationWorklistItem)selection.Item;
-					GetOperationEnablementResponse response = service.GetOperationEnablement(
-						new GetOperationEnablementRequest(item.PatientProfileRef, item.OrderRef));
-					enablement = response.OperationEnablementDictionary;
-				});
-			return enablement;
 		}
     }
 }

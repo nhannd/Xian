@@ -36,16 +36,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [RisServiceProvider]
     [ServiceContract]
-	public interface IReportingWorkflowService : IWorklistService<ReportingWorklistItem>
+	public interface IReportingWorkflowService : IWorklistService<ReportingWorklistItem>, IWorkflowService<ReportingWorklistItem>
     {
-        /// <summary>
-        /// Get enablements for operations that can be applied to a worklist item
-        /// </summary>
-        /// <param name="request"><see cref="GetOperationEnablementRequest"/></param>
-        /// <returns><see cref="GetOperationEnablementResponse"/></returns>
-        [OperationContract]
-        GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
-
         /// <summary>
         /// Start an interpretation step
         /// </summary>

@@ -54,25 +54,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
 	public class RegistrationBookingWorkflowFolderSystem
 		: RegistrationWorkflowFolderSystemBase<RegistrationBookingWorkflowFolderExtensionPoint,
-			RegistrationBookingWorkflowFolderToolExtensionPoint, RegistrationBookingWorkflowItemToolExtensionPoint>,
-		ISearchDataHandler
+			RegistrationBookingWorkflowFolderToolExtensionPoint, RegistrationBookingWorkflowItemToolExtensionPoint>
 	{
-		private readonly Folders.BookingSearchFolder _searchFolder;
-
 		public RegistrationBookingWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
 			: base(SR.TitleBookingFolderSystem, folderExplorer)
 		{
-			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
-
-			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
-			{
-				this.AddFolder(new Folders.CompletedProtocolFolder(this));
-				this.AddFolder(new Folders.SuspendedProtocolFolder(this));
-				this.AddFolder(new Folders.RejectedProtocolFolder(this));
-				this.AddFolder(new Folders.PendingProtocolFolder(this));
-				this.AddFolder(new Folders.ToBeScheduledFolder(this));
-			}
-			this.AddFolder(_searchFolder = new Folders.BookingSearchFolder(this));
 		}
 
 		protected override string GetPreviewUrl()
@@ -80,28 +66,10 @@ namespace ClearCanvas.Ris.Client.Adt
 			return WebResourcesSettings.Default.BookingFolderSystemUrl;
 		}
 
-		public override void OnSelectedItemDoubleClicked()
-		{
-			base.OnSelectedItemDoubleClicked();
+        protected override SearchResultsFolder CreateSearchResultsFolder()
+        {
+            return new Folders.BookingSearchFolder();
+        }
 
-			PatientBiographyTool biographyTool = (PatientBiographyTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
-			   delegate(ITool tool) { return tool is PatientBiographyTool; });
-
-			if (biographyTool != null && biographyTool.Enabled)
-				biographyTool.View();
-		}
-
-		#region ISearchDataHandler Members
-
-		public SearchData SearchData
-		{
-			set
-			{
-				_searchFolder.SearchData = value;
-				SelectedFolder = _searchFolder;
-			}
-		}
-
-		#endregion
 	}
 }

@@ -41,10 +41,6 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
-using GetOperationEnablementRequest =
-	ClearCanvas.Ris.Application.Common.ProtocollingWorkflow.GetOperationEnablementRequest;
-using GetOperationEnablementResponse =
-	ClearCanvas.Ris.Application.Common.ProtocollingWorkflow.GetOperationEnablementResponse;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -639,7 +635,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 					if (response.ProtocolClaimed == shouldClaim)
 					{
 						GetOperationEnablementResponse enablementResponse =
-							service.GetOperationEnablement(new GetOperationEnablementRequest(_worklistItem.OrderRef, _worklistItem.ProcedureStepRef));
+							service.GetOperationEnablement(new GetOperationEnablementRequest<WorklistItemSummaryBase>(_worklistItem));
 
 						_acceptEnabled = enablementResponse.OperationEnablementDictionary["AcceptOrderProtocol"];
 						_suspendEnabled = enablementResponse.OperationEnablementDictionary["SuspendOrderProtocol"];

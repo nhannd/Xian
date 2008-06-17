@@ -10,8 +10,8 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 {
 	public abstract class EmergencyPhysicianWorkflowFolder : WorklistFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
 	{
-		public EmergencyPhysicianWorkflowFolder(WorkflowFolderSystem folderSystem)
-			: base(folderSystem, new RegistrationWorklistTable())
+		public EmergencyPhysicianWorkflowFolder()
+			: base(new RegistrationWorklistTable())
 		{
 		}
 	}

@@ -33,6 +33,7 @@ namespace ClearCanvas.Ris.Client
 
 	public interface IOrderNoteboxFolderToolContext : IWorkflowFolderToolContext
 	{
+		void RebuildGroupFolders();
 	}
 
 	[ExtensionOf(typeof(OrderNoteboxFolderToolExtensionPoint))]
@@ -58,16 +59,24 @@ namespace ClearCanvas.Ris.Client
 
 		class OrderNoteboxFolderToolContext : WorkflowFolderToolContext, IOrderNoteboxFolderToolContext
 		{
-			public OrderNoteboxFolderToolContext(WorkflowFolderSystem owner)
+			private readonly OrderNoteboxFolderSystem _owner;
+
+			public OrderNoteboxFolderToolContext(OrderNoteboxFolderSystem owner)
 				:base(owner)
 			{
+				_owner = owner;
+			}
+
+			public void RebuildGroupFolders()
+			{
+				_owner.RebuildGroupFolders();
 			}
 		}
 
 		private readonly IconSet _unacknowledgedNotesIconSet;
 		private readonly string _baseTitle;
 
-		public OrderNoteboxFolderSystem(IFolderExplorerToolContext folderExplorer)
+        public OrderNoteboxFolderSystem(IFolderExplorerToolContext folderExplorer)
 			: base(SR.TitleOrderNoteboxFolderSystem, folderExplorer)
 		{
 			_unacknowledgedNotesIconSet = new IconSet("NoteUnread.png");
@@ -75,26 +84,10 @@ namespace ClearCanvas.Ris.Client
 
 			PersonalInboxFolder inboxFolder = new PersonalInboxFolder(this);
 			inboxFolder.TotalItemCountChanged += OnPrimaryFolderCountChanged;
-			this.AddFolder(inboxFolder);
+			this.Folders.Add(inboxFolder);
+			this.Folders.Add(new SentItemsFolder(this));
 
-			Platform.GetService<IOrderNoteService>(
-				delegate(IOrderNoteService service)
-				{
-					List<EntityRef> visibleGroups = OrderNoteboxFolderSystemSettings.Default.GroupFolders.StaffGroupRefs;
-					ListStaffGroupsResponse response = service.ListStaffGroups(new ListStaffGroupsRequest());
-					foreach (StaffGroupSummary group in response.StaffGroups)
-					{
-						if(CollectionUtils.Contains(visibleGroups,
-							delegate (EntityRef groupRef) { return groupRef.Equals(group.StaffGroupRef, true);}))
-						{
-							GroupInboxFolder groupFolder = new GroupInboxFolder(this, group);
-							groupFolder.IsStatic = false;
-							this.AddFolder(groupFolder);
-						}
-					}
-				});
-
-			this.AddFolder(new SentItemsFolder(this));
+			RebuildGroupFolders();
 		}
 
 		protected override IWorkflowFolderToolContext CreateFolderToolContext()
@@ -107,22 +100,15 @@ namespace ClearCanvas.Ris.Client
 			return new OrderNoteboxItemToolContext(this);
 		}
 
+        protected override SearchResultsFolder CreateSearchResultsFolder()
+        {
+            // searching not currently supported
+            return null;
+        }
+
 		protected override string GetPreviewUrl()
 		{
 			return WebResourcesSettings.Default.EmergencyPhysicianOrderNoteboxFolderSystemUrl;
-		}
-
-		public override void OnSelectedItemDoubleClicked()
-		{
-			base.OnSelectedItemDoubleClicked();
-
-			OrderNoteConversationTool notesTool =
-				(OrderNoteConversationTool)CollectionUtils.SelectFirst(
-					this.ItemTools.Tools,
-					delegate(ITool tool) { return tool is OrderNoteConversationTool; });
-
-			if (notesTool != null && notesTool.Enabled)
-				notesTool.Open();
 		}
 
 		protected override ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request)
@@ -135,11 +121,41 @@ namespace ClearCanvas.Ris.Client
 			return new Dictionary<string, bool>();
 		}
 
-		protected void OnPrimaryFolderCountChanged(object sender, System.EventArgs e)
+		protected void OnPrimaryFolderCountChanged(object sender, EventArgs e)
 		{
 			IFolder folder = (IFolder)sender;
 			this.Title = string.Format(SR.FormatOrderNoteboxFolderSystemTitle, _baseTitle, folder.TotalItemCount);
 			this.TitleIcon = folder.TotalItemCount > 0 ? _unacknowledgedNotesIconSet : null;
+		}
+
+		private void RebuildGroupFolders()
+		{
+			List<StaffGroupSummary> groupsToShow = null;
+			Platform.GetService<IOrderNoteService>(
+				delegate(IOrderNoteService service)
+				{
+					List<EntityRef> visibleGroups = OrderNoteboxFolderSystemSettings.Default.GroupFolders.StaffGroupRefs;
+					ListStaffGroupsResponse response = service.ListStaffGroups(new ListStaffGroupsRequest());
+
+					// select those groups that are marked as visible
+					groupsToShow = CollectionUtils.Select(response.StaffGroups,
+						delegate(StaffGroupSummary g)
+						{
+							return CollectionUtils.Contains(visibleGroups,
+								delegate(EntityRef groupRef) { return groupRef.Equals(g.StaffGroupRef, true); });
+						});
+				});
+
+			// remove existing group folders
+			CollectionUtils.Remove(this.Folders,
+				delegate(IFolder f) { return f is GroupInboxFolder; });
+
+			// add new group folders again
+			foreach (StaffGroupSummary group in groupsToShow)
+			{
+				GroupInboxFolder groupFolder = new GroupInboxFolder(this, group);
+				this.Folders.Add(groupFolder);
+			}
 		}
 	}
 }

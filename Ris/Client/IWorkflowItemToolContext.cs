@@ -35,26 +35,97 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
+	/// <summary>
+	/// Defines a base tool context for tools that operate on workflow items.
+	/// </summary>
     public interface IWorkflowItemToolContext : IToolContext
     {
-        bool GetWorkflowOperationEnablement(string operationClass);
+		/// <summary>
+		/// Gets the desktop window.
+		/// </summary>
+		IDesktopWindow DesktopWindow { get; }
 
-        event EventHandler SelectionChanged;
-        ISelection Selection { get; }
+		/// <summary>
+		/// Gets the currently selected folder.
+		/// </summary>
+		IFolder SelectedFolder { get; }
 
-        IEnumerable Folders { get; }
-        IFolder SelectedFolder { get; }
+		/// <summary>
+		/// Gets the current selection of items.
+		/// </summary>
+		ISelection Selection { get; }
 
-        IDesktopWindow DesktopWindow { get; }
+		/// <summary>
+		/// Occurs when <see cref="Selection"/> changes.
+		/// </summary>
+		event EventHandler SelectionChanged;
 
-		WorkflowFolderSystem FolderSystem { get; }
-    }
+		/// <summary>
+		/// Convenience method to invalidate the currently selected folder.
+		/// </summary>
+		void InvalidateSelectedFolder();
 
-    public interface IWorkflowItemToolContext<TItem> : IWorkflowItemToolContext
+		/// <summary>
+		/// Invalidates all folders of the specified class.
+		/// </summary>
+		/// <param name="folderClass"></param>
+		void InvalidateFolder(Type folderClass);
+
+		/// <summary>
+		/// Allows the tool to register itself as a double-click handler for items,
+		/// regardless of which folder they are in.
+		/// </summary>
+		/// <remarks>
+		/// It does not make sense for more than one tool to register a double-click handler.
+		/// Only the last tool to register will actually receive the call.
+		/// </remarks>
+		/// <param name="handler"></param>
+		void RegisterDoubleClickHandler(ClickHandlerDelegate handler);
+
+		/// <summary>
+		/// Allows the tool to register a workflow service with the folder system.  When the selection changes,
+		/// the folder system queries the operation enablement of all registered workflow services, and the
+		/// results are available to the tool by calling <see cref="GetOperationEnablement(string)"/>.
+		/// </summary>
+		/// <param name="serviceContract"></param>
+		void RegisterWorkflowService(Type serviceContract);
+
+		/// <summary>
+		/// Gets a value indicating whether the specified operation is enabled for the current items selection.
+		/// </summary>
+		/// <param name="serviceContract"></param>
+		/// <param name="operationClass"></param>
+		/// <returns></returns>
+		bool GetOperationEnablement(Type serviceContract, string operationClass);
+
+		/// <summary>
+		/// Gets a value indicating whether the specified operation is enabled for the current items selection.
+		/// </summary>
+		/// <param name="operationClass"></param>
+		/// <returns></returns>
+		bool GetOperationEnablement(string operationClass);
+	}
+
+	/// <summary>
+	/// Defines a base tool context for tools that operate on workflow items.
+	/// </summary>
+	public interface IWorkflowItemToolContext<TItem> : IWorkflowItemToolContext
     {
+		/// <summary>
+		/// Gets the currently selection items as a strongly typed collection.
+		/// </summary>
         ICollection<TItem> SelectedItems { get; }
-    }
+
+		/// <summary>
+		/// Allows the tool to register a drag-drop handler on the specified folder class.
+		/// </summary>
+		/// <param name="folderClass"></param>
+		/// <param name="dropHandler"></param>
+        void RegisterDropHandler(Type folderClass, IDropHandler<TItem> dropHandler);
+	}
 }

@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Adt
     }
 
 	public abstract class TechnologistWorkflowFolderSystemBase<TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
-		: WorkflowFolderSystem<ModalityWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
+		: WorklistFolderSystem<ModalityWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, IModalityWorkflowService>
 		where TFolderExtensionPoint : ExtensionPoint<IFolder>, new()
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
 		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()
@@ -72,7 +72,7 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
 
-        public TechnologistWorkflowFolderSystemBase(string title, IFolderExplorerToolContext folderExplorer)
+        protected TechnologistWorkflowFolderSystemBase(string title, IFolderExplorerToolContext folderExplorer)
             : base(title, folderExplorer)
 		{
         }
@@ -85,31 +85,6 @@ namespace ClearCanvas.Ris.Client.Adt
 		protected override IWorkflowItemToolContext CreateItemToolContext()
 		{
 			return new TechnologistWorkflowItemToolContext(this);
-		}
-
-		protected override ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request)
-		{
-			ListWorklistsForUserResponse response = null;
-			Platform.GetService<IModalityWorkflowService>(
-				delegate(IModalityWorkflowService service)
-				{
-					response = service.ListWorklistsForUser(request);
-				});
-
-			return response;
-		}
-
-		protected override IDictionary<string, bool> QueryOperationEnablement(ISelection selection)
-		{
-			IDictionary<string, bool> enablement = null;
-			Platform.GetService<IModalityWorkflowService>(
-				delegate(IModalityWorkflowService service)
-				{
-					ModalityWorklistItem item = (ModalityWorklistItem) selection.Item;
-					GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(item.ProcedureStepRef));
-					enablement = response.OperationEnablementDictionary;
-				});
-			return enablement;
 		}
     }
 }

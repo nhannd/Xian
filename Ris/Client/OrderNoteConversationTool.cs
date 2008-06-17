@@ -124,6 +124,13 @@ namespace ClearCanvas.Ris.Client
 	[ExtensionOf(typeof(OrderNoteboxItemToolExtensionPoint))]
 	public class OrderNoteConversationTool : OrderNoteConversationToolBase<OrderNoteboxItemSummary, IOrderNoteboxItemToolContext>
 	{
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            this.Context.RegisterDoubleClickHandler(Open);
+        }
+
 		protected override EntityRef OrderRef
 		{
 			get { return this.SummaryItem.OrderRef; }
@@ -147,9 +154,9 @@ namespace ClearCanvas.Ris.Client
 
 		protected override void OnOpenCompleted()
 		{
-			this.Context.FolderSystem.InvalidateFolder(typeof(PersonalInboxFolder));
-			this.Context.FolderSystem.InvalidateFolder(typeof(GroupInboxFolder));
-			this.Context.FolderSystem.InvalidateFolder(typeof(SentItemsFolder));
+			this.Context.InvalidateFolder(typeof(PersonalInboxFolder));
+			this.Context.InvalidateFolder(typeof(GroupInboxFolder));
+			this.Context.InvalidateFolder(typeof(SentItemsFolder));
 			base.OnOpenCompleted();
 		}
 	}

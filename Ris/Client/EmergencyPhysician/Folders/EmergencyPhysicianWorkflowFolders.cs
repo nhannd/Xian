@@ -11,9 +11,5 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician.Folders
 	[FolderPath("Emergency Orders", true)]
 	public class EROrdersFolder : EmergencyPhysicianWorkflowFolder
 	{
-		public EROrdersFolder(WorkflowFolderSystem folderSystem)
-			: base(folderSystem)
-		{
-		}
 	}
 }

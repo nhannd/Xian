@@ -32,6 +32,7 @@
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using System;
 
 namespace ClearCanvas.Desktop
 {
@@ -112,22 +113,16 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
-		/// Gets the remainder of the full path, beginning at the specified depth.
+		/// Gets the path up to the specified depth.
 		/// </summary>
-        public string SubPath(int depth)
+        public Path SubPath(int depth)
         {
             Platform.CheckIndexRange(depth, 0, _segments.Length - 1, "depth");
 
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i <= depth; i++)
-            {
-                if (sb.Length > 0)
-                    sb.Append(SEPARATOR);
+			PathSegment[] copy = new PathSegment[depth + 1];
+			Array.Copy(_segments, 0, copy, 0, depth + 1);
 
-                sb.Append(_segments[i].LocalizedText);
-            }
-
-            return sb.ToString();
+			return new Path(copy);
         }
 
         /// <summary>

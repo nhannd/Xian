@@ -29,33 +29,43 @@
 
 #endregion
 
+using System;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.Trees;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-    /// <summary>
-    /// Manages a single level of a tree view, listening for changes to the underlying model and updating the tree view
-    /// as required.  This class is used internally and is not intended to be used directly by application code.
-    /// </summary>
-    internal class BindingTreeLevelManager
+	/// <summary>
+	/// Manages a single level of a tree view, listening for changes to the underlying model and updating the tree view
+	/// as required.  This class is used internally and is not intended to be used directly by application code.
+	/// </summary>
+	internal class BindingTreeLevelManager : IDisposable
     {
-        private ITree _tree;
-        private TreeNodeCollection _nodeCollection;
+        private readonly ITree _tree;
+        private readonly TreeNodeCollection _nodeCollection;
+		private readonly TreeView _treeView;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="tree"></param>
         /// <param name="nodeCollection"></param>
-        public BindingTreeLevelManager(ITree tree, TreeNodeCollection nodeCollection)
+        /// <param name="treeView"></param>
+        public BindingTreeLevelManager(ITree tree, TreeNodeCollection nodeCollection, TreeView treeView)
         {
             _tree = tree;
             _tree.Items.ItemsChanged += TreeItemsChangedEventHandler;
             _nodeCollection = nodeCollection;
+        	_treeView = treeView;
 
             BuildLevel();
         }
+
+		public void Dispose()
+		{
+			_tree.Items.ItemsChanged -= TreeItemsChangedEventHandler;
+		}
 
         /// <summary>
         /// Handles changes to the tree's items collection
@@ -87,7 +97,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="item"></param>
         private void AddNode(object item)
         {
-            _nodeCollection.Add(new BindingTreeNode(_tree, item));
+            _nodeCollection.Add(new BindingTreeNode(_tree, item, _treeView));
         }
 
         /// <summary>
@@ -108,7 +118,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="index"></param>
         private void RemoveNode(int index)
         {
+			BindingTreeNode node = (BindingTreeNode)_nodeCollection[index];
             _nodeCollection.RemoveAt(index);
+			node.Dispose();
         }
 
         /// <summary>
@@ -116,10 +128,19 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void BuildLevel()
         {
+			// dispose of all existing tree nodes before clearing the collection
+        	foreach (TreeNode node in _nodeCollection)
+        	{
+        		if(node is IDisposable)
+					(node as IDisposable).Dispose();
+        	}
+
             _nodeCollection.Clear();
+
+			// create new node for each item
             foreach (object item in _tree.Items)
             {
-                BindingTreeNode node = new BindingTreeNode(_tree, item);
+                BindingTreeNode node = new BindingTreeNode(_tree, item, _treeView);
                 _nodeCollection.Add(node);
                 node.UpdateDisplay();
             }

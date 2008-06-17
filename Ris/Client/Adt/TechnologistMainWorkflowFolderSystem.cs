@@ -54,25 +54,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
 	public class TechnologistMainWorkflowFolderSystem
 		: TechnologistWorkflowFolderSystemBase<TechnologistMainWorkflowFolderExtensionPoint, TechnologistMainWorkflowFolderToolExtensionPoint,
-			TechnologistMainWorkflowItemToolExtensionPoint>, ISearchDataHandler
+			TechnologistMainWorkflowItemToolExtensionPoint>
 	{
-		private readonly Folders.TechnologistSearchFolder _searchFolder;
-
 		public TechnologistMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
 			: base(SR.TitlePerformingFolderSystem, folderExplorer)
 		{
-			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
-
-			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
-			{
-				this.AddFolder(new Folders.ScheduledTechnologistWorkflowFolder(this));
-				this.AddFolder(new Folders.CheckedInTechnologistWorkflowFolder(this));
-				this.AddFolder(new Folders.InProgressTechnologistWorkflowFolder(this));
-				this.AddFolder(new Folders.UndocumentedTechnologistWorkflowFolder(this));
-				this.AddFolder(new Folders.CancelledTechnologistWorkflowFolder(this));
-				this.AddFolder(new Folders.CompletedTechnologistWorkflowFolder(this));
-			}
-			this.AddFolder(_searchFolder = new Folders.TechnologistSearchFolder(this));
 		}
 
 		protected override string GetPreviewUrl()
@@ -80,28 +66,9 @@ namespace ClearCanvas.Ris.Client.Adt
 			return WebResourcesSettings.Default.TechnologistFolderSystemUrl;
 		}
 
-		public override void OnSelectedItemDoubleClicked()
-		{
-			base.OnSelectedItemDoubleClicked();
-
-			TechnologistDocumentationTool documentationTool = (TechnologistDocumentationTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
-				delegate(ITool tool) { return tool is TechnologistDocumentationTool; });
-
-			if (documentationTool != null && documentationTool.Enabled)
-				documentationTool.Apply();
-		}
-
-		#region ISearchDataHandler Members
-
-		public SearchData SearchData
-		{
-			set
-			{
-				_searchFolder.SearchData = value;
-				SelectedFolder = _searchFolder;
-			}
-		}
-
-		#endregion
+        protected override SearchResultsFolder CreateSearchResultsFolder()
+        {
+            return new Folders.TechnologistSearchFolder();
+        }
 	}
 }

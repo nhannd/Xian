@@ -87,7 +87,6 @@ namespace ClearCanvas.Ris.Client
 		private bool _isOpen;
 		private bool _refreshOnOpen = true;
 
-		private readonly IList<IFolder> _subfolders;
 		private Path _folderPath;
 		private readonly bool _startExpanded;
 		private bool _isStatic = true;
@@ -104,7 +103,6 @@ namespace ClearCanvas.Ris.Client
 		{
 			// establish default resource resolver on this assembly (not the assembly of the derived class)
 			_resourceResolver = new ResourceResolver(typeof(Folder).Assembly);
-			_subfolders = new List<IFolder>();
 
 			// Initialize folder Path
 			FolderPathAttribute attrib = AttributeUtils.GetAttribute<FolderPathAttribute>(this.GetType());
@@ -124,7 +122,6 @@ namespace ClearCanvas.Ris.Client
 		{
 			// establish default resource resolver on this assembly (not the assembly of the derived class)
 			_resourceResolver = new ResourceResolver(typeof(Folder).Assembly);
-			_subfolders = new List<IFolder>();
 			_folderPath = new Path(path, _resourceResolver);
 			_startExpanded = startExpanded;
 		}
@@ -267,7 +264,7 @@ namespace ClearCanvas.Ris.Client
 		public virtual string Tooltip
 		{
 			get { return _folderTooltip; }
-			protected internal set
+			protected set
 			{
 				_folderTooltip = value;
 				EventsHelper.Fire(_tooltipChanged, this, EventArgs.Empty);
@@ -392,46 +389,6 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Gets a list of sub folders
-		/// </summary>
-		public IList<IFolder> Subfolders
-		{
-			get { return _subfolders; }
-		}
-
-		/// <summary>
-		/// Add a subfolder
-		/// </summary>
-		/// <param name="subFolder"></param>
-		public void AddFolder(IFolder subFolder)
-		{
-			_subfolders.Add(subFolder);
-		}
-
-		/// <summary>
-		/// Remove a sub folder
-		/// </summary>
-		/// <param name="subFolder"></param>
-		/// <returns></returns>
-		public bool RemoveFolder(IFolder subFolder)
-		{
-			return _subfolders.Remove(subFolder);
-		}
-
-		/// <summary>
-		/// Replace a sub folder with another in its place.  The order of the subfolders is retained
-		/// </summary>
-		/// <param name="oldSubFolder"></param>
-		/// <param name="newSubFolder"></param>
-		/// <returns></returns>
-		public bool ReplaceFolder(IFolder oldSubFolder, IFolder newSubFolder)
-		{
-			int oldFolderIndex = _subfolders.IndexOf(oldSubFolder);
-			_subfolders.Insert(oldFolderIndex, newSubFolder);
-			return _subfolders.Remove(oldSubFolder);
-		}
-
-		/// <summary>
 		/// Gets a value indicating whether or not the folder is 'static'.
 		/// </summary>
 		/// <remarks>
@@ -441,7 +398,7 @@ namespace ClearCanvas.Ris.Client
 		public bool IsStatic
 		{
 			get { return _isStatic; }
-			set { _isStatic = value; }
+			protected set { _isStatic = value; }
 		}
 
 		#endregion

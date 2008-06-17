@@ -194,8 +194,8 @@ namespace ClearCanvas.Ris.Client
 
 					_stackTabComponent.Pages.Add(thisPage);
 
-					folderSystem.TextChanged += delegate { thisPage.SetTitle(string.Empty, folderSystem.Title, string.Empty); };
-					folderSystem.IconChanged += delegate { thisPage.IconSet = folderSystem.TitleIcon; };
+					folderSystem.TitleChanged += delegate { thisPage.SetTitle(string.Empty, folderSystem.Title, string.Empty); };
+					folderSystem.TitleIconChanged += delegate { thisPage.IconSet = folderSystem.TitleIcon; };
 				});
 
 			// Find all the folder explorer group tools
@@ -303,7 +303,7 @@ namespace ClearCanvas.Ris.Client
 				if (_selectedFolder != value)
 				{
 					if (_selectedFolderExplorer != null)
-						_selectedFolderExplorer.SelectedFolder = new Selection(value);
+						_selectedFolderExplorer.SelectedFolder = value;
 
 					_selectedFolder = value;
 					EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
@@ -313,7 +313,7 @@ namespace ClearCanvas.Ris.Client
 
 		public bool SearchEnabled
 		{
-			get { return this.SelectedFolderSystem is ISearchDataHandler; }
+			get { return this.SelectedFolderSystem.SearchEnabled; }
 		}
 
 		public string SearchMessage
@@ -333,9 +333,7 @@ namespace ClearCanvas.Ris.Client
 		private void OnSelectedFolderChanged(object sender, EventArgs e)
 		{
 			FolderExplorerComponent selectedFolderExplorer = (FolderExplorerComponent)sender;
-
-			IFolder newSelectedFolder = (IFolder)selectedFolderExplorer.SelectedFolder.Item;
-			this.SelectedFolder = newSelectedFolder;
+			this.SelectedFolder = selectedFolderExplorer.SelectedFolder;
 		}
 
 		#endregion
@@ -343,7 +341,7 @@ namespace ClearCanvas.Ris.Client
 		public void Search(SearchData searchData)
 		{
 			if (this.SearchEnabled)
-				((ISearchDataHandler)this.SelectedFolderSystem).SearchData = searchData;
+				this.SelectedFolderSystem.ExecuteSearch(searchData);
 		}
 
 	}

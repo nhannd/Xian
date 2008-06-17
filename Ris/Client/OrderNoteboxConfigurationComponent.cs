@@ -52,8 +52,14 @@ namespace ClearCanvas.Ris.Client
 		public void Apply()
 		{
 			OrderNoteboxConfigurationComponent component = new OrderNoteboxConfigurationComponent();
-			ApplicationComponent.LaunchAsDialog(
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
 				this.Context.DesktopWindow, component, "Notebox Groups Configuration");
+
+			if(exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				this.Context.RebuildGroupFolders();
+			}
+
 		}
 	}
 

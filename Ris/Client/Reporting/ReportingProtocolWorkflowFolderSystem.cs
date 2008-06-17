@@ -54,29 +54,20 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 	public class ReportingProtocolWorkflowFolderSystem
 		: ReportingWorkflowFolderSystemBase<ReportingProtocolWorkflowFolderExtensionPoint, ReportingProtocolWorkflowFolderToolExtensionPoint,
-			ReportingProtocolWorkflowItemToolExtensionPoint>, ISearchDataHandler
+			ReportingProtocolWorkflowItemToolExtensionPoint>
 	{
-		private readonly Folders.ProtocollingSearchFolder _searchFolder;
-
 		public ReportingProtocolWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
 			: base(SR.TitleProtocollingFolderSystem, folderExplorer)
 		{
-			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
-
-			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
-			{
-				this.AddFolder(new Folders.ToBeProtocolledFolder(this));
-				this.AddFolder(new Folders.ToBeApprovedFolder(this));
-			}
-			this.AddFolder(new Folders.DraftProtocolFolder(this));
-			this.AddFolder(new Folders.CompletedProtocolFolder(this));
+            // add the personal folders, since they are not extensions and will not be automatically added
+			this.Folders.Add(new Folders.DraftProtocolFolder());
+			this.Folders.Add(new Folders.CompletedProtocolFolder());
 			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.SubmitForApproval))
 			{
-				this.AddFolder(new Folders.AwaitingApprovalProtocolFolder(this));
+				this.Folders.Add(new Folders.AwaitingApprovalProtocolFolder());
 			}
-			this.AddFolder(new Folders.SuspendedProtocolFolder(this));
-			this.AddFolder(new Folders.RejectedProtocolFolder(this));
-			this.AddFolder(_searchFolder = new Folders.ProtocollingSearchFolder(this));
+			this.Folders.Add(new Folders.SuspendedProtocolFolder());
+			this.Folders.Add(new Folders.RejectedProtocolFolder());
 		}
 
 		protected override string GetPreviewUrl()
@@ -84,28 +75,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 			return WebResourcesSettings.Default.ProtocollingFolderSystemUrl;
 		}
 
-		public override void OnSelectedItemDoubleClicked()
-		{
-			base.OnSelectedItemDoubleClicked();
-
-			ProtocollingTool protocollingTool = (ProtocollingTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
-				delegate(ITool tool) { return tool is ProtocollingTool; });
-
-			if (protocollingTool != null && protocollingTool.Enabled)
-				protocollingTool.Apply();
-		}
-
-		#region ISearchDataHandler Members
-
-		public SearchData SearchData
-		{
-			set
-			{
-				_searchFolder.SearchData = value;
-				SelectedFolder = _searchFolder;
-			}
-		}
-
-		#endregion
-	}
+        protected override SearchResultsFolder CreateSearchResultsFolder()
+        {
+            return new Folders.ProtocollingSearchFolder();
+        }
+    }
 }

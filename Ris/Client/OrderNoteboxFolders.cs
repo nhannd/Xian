@@ -28,6 +28,7 @@ namespace ClearCanvas.Ris.Client
 			_groupRef = staffGroup.StaffGroupRef;
 			this.FolderPath = new Path(string.Concat(this.FolderPath.ToString(), "/", staffGroup.Name), this.ResourceResolver);
 			this.Tooltip = staffGroup.Name;
+            this.IsStatic = false;
 		}
 
 		protected override void PrepareQueryRequest(QueryNoteboxRequest request)

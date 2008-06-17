@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
     [ServiceImplementsContract(typeof(IRegistrationWorkflowService))]
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class RegistrationWorkflowService : WorkflowServiceBase, IRegistrationWorkflowService
+    public class RegistrationWorkflowService : WorkflowServiceBase<RegistrationWorklistItem>, IRegistrationWorkflowService
     {
         #region IRegistrationWorkflowService Members
 
@@ -91,12 +91,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 {
                     return assembler.CreateWorklistItemSummary(item, this.PersistenceContext);
                 });
-        }
-
-        [ReadOperation]
-        public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
-        {
-            return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.OrderRef, request.PatientProfileRef)));
         }
 
         [ReadOperation]
@@ -162,6 +156,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         #endregion
+
+		protected override object GetWorkItemKey(RegistrationWorklistItem item)
+		{
+			return new WorklistItemKey(item.OrderRef, item.PatientProfileRef);
+		}
 
         public bool CanCheckInProcedure(WorklistItemKey itemKey)
         {

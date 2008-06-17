@@ -313,7 +313,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			Platform.GetService<IReportingWorkflowService>(
 				delegate(IReportingWorkflowService service)
 				{
-					GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(_worklistItem.ProcedureStepRef, _worklistItem.ProcedureRef));
+					GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest<ReportingWorklistItem>(_worklistItem));
 					_canCompleteInterpretationAndVerify = enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
 					_canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
 					_canCompleteInterpretationForVerification = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];

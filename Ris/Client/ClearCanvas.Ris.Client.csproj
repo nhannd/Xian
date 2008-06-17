@@ -57,6 +57,7 @@
     <Compile Include="ExternalPractitionerContactPointLookupHandler.cs" />
     <Compile Include="ExternalPractitionerContactPointMergeComponent.cs" />
     <Compile Include="ExternalPractitionerMergeComponent.cs" />
+    <Compile Include="FolderTreeNode.cs" />
     <Compile Include="MergeComponentBase.cs" />
     <Compile Include="FolderExplorerGroupComponent.cs" />
     <Compile Include="OrderAdditionalInfoSummaryComponent.cs" />
@@ -143,7 +144,6 @@
     <Compile Include="BiographyNoteTable.cs" />
     <Compile Include="BiographyOrderHistoryComponent.cs" />
     <Compile Include="BiographyOverviewComponent.cs" />
-    <Compile Include="ContainerFolder.cs" />
     <Compile Include="DiagnosticServiceLookupHandler.cs" />
     <Compile Include="DiagnosticServiceTreeComponent.cs" />
     <Compile Include="ExternalPractitionerDetailsEditorComponent.cs" />
@@ -204,7 +204,6 @@
     <Compile Include="Formatting\HealthcardFormat.cs" />
     <Compile Include="Formatting\MrnFormat.cs" />
     <Compile Include="HtmlApplicationComponent.cs" />
-    <Compile Include="IDropContext.cs" />
     <Compile Include="IDropHandler.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="ILoginDialog.cs" />
@@ -247,6 +246,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>LoginDialogSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="WorkflowItemTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

@@ -43,10 +43,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Scheduled", true)]
     public class ScheduledTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
-		public ScheduledTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, null)
-        {
-        }
     }
 
     [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
@@ -54,15 +50,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Checked In")]
     public class CheckedInTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
-        [ExtensionPoint]
-        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ModalityWorklistItem>>
-        {
-        }
-
-		public CheckedInTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, new DropHandlerExtensionPoint())
-        {
-        }
     }
 
     [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
@@ -70,15 +57,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("In Progress")]
     public class InProgressTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
-        [ExtensionPoint]
-        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ModalityWorklistItem>>
-        {
-        }
-
-		public InProgressTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, new DropHandlerExtensionPoint())
-        {
-        }
     }
 
     [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
@@ -86,15 +64,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Completed")]
     public class CompletedTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
-        [ExtensionPoint]
-        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ModalityWorklistItem>>
-        {
-        }
-
-		public CompletedTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, new DropHandlerExtensionPoint())
-        {
-        }
     }
 
     [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
@@ -102,10 +71,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Undocumented")]
     public class UndocumentedTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
-		public UndocumentedTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, null)
-        {
-        }
     }
 
     [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
@@ -113,36 +78,21 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Cancelled")]
     public class CancelledTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
-        [ExtensionPoint]
-        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ModalityWorklistItem>>
-        {
-        }
-
-		public CancelledTechnologistWorkflowFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, new DropHandlerExtensionPoint())
-        {
-        }
     }
 
 	[FolderPath("Search Results")]
-    public class TechnologistSearchFolder : SearchResultsFolder<ModalityWorklistItem>
+    public class TechnologistSearchFolder : WorklistSearchResultsFolder<ModalityWorklistItem, IModalityWorkflowService>
     {
-		public TechnologistSearchFolder(WorkflowFolderSystem folderSystem)
-			: base(folderSystem, new ModalityWorklistTable())
+		public TechnologistSearchFolder()
+			: base(new ModalityWorklistTable())
         {
         }
 
-		protected override TextQueryResponse<ModalityWorklistItem> DoQuery(string query, int specificityThreshold)
-		{
-			TextQueryResponse<ModalityWorklistItem> response = null;
-			Platform.GetService<IModalityWorkflowService>(
-				delegate(IModalityWorkflowService service)
-				{
-					//TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
-					//it is the only way to get things working right now
-					response = service.SearchWorklists(new WorklistTextQueryRequest(query, specificityThreshold, "ModalityProcedureStep"));
-				});
-			return response;
-		}
+        //TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
+        //it is the only way to get things working right now
+        protected override string ProcedureStepClassName
+        {
+            get { return "ModalityProcedureStep"; }
+        }
     }
 }

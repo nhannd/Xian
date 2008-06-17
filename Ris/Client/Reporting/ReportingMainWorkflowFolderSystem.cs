@@ -54,34 +54,23 @@ namespace ClearCanvas.Ris.Client.Reporting
 
     public class ReportingMainWorkflowFolderSystem
 		: ReportingWorkflowFolderSystemBase<ReportingMainWorkflowFolderExtensionPoint, ReportingMainWorkflowFolderToolExtensionPoint,
-			ReportingMainWorkflowItemToolExtensionPoint>, ISearchDataHandler
+			ReportingMainWorkflowItemToolExtensionPoint>
     {
-        private readonly Folders.ReportingSearchFolder _searchFolder;
-
         public ReportingMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
             : base(SR.TitleReportingFolderSystem, folderExplorer) 
         {
-			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
-
-			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
-            {
-                this.AddFolder(new Folders.ToBeReportedFolder(this));
-            }
-
-            this.AddFolder(new Folders.AssignedFolder(this));
-            this.AddFolder(new Folders.DraftFolder(this));
+            // add the personal folders, since they are not extensions and will not be automatically added
+            this.Folders.Add(new Folders.AssignedFolder());
+			this.Folders.Add(new Folders.DraftFolder());
 
             if (ReportingSettings.Default.EnableTranscriptionWorkflow)
-                this.AddFolder(new Folders.InTranscriptionFolder(this));
+				this.Folders.Add(new Folders.InTranscriptionFolder());
 
-            this.AddFolder(new Folders.ToBeVerifiedFolder(this));
-            this.AddFolder(new Folders.VerifiedFolder(this));
+			this.Folders.Add(new Folders.ToBeVerifiedFolder());
+			this.Folders.Add(new Folders.VerifiedFolder());
 
             if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.UnsupervisedReporting))
-                this.AddFolder(new Folders.ReviewResidentReportFolder(this));
-
-
-            this.AddFolder(_searchFolder = new Folders.ReportingSearchFolder(this));
+				this.Folders.Add(new Folders.ReviewResidentReportFolder());
         }
 
 		protected override string GetPreviewUrl()
@@ -89,28 +78,9 @@ namespace ClearCanvas.Ris.Client.Reporting
             return WebResourcesSettings.Default.RadiologistFolderSystemUrl;
         }
 
-        public override void OnSelectedItemDoubleClicked()
+        protected override SearchResultsFolder CreateSearchResultsFolder()
         {
-            base.OnSelectedItemDoubleClicked();
-
-            EditReportTool editTool = (EditReportTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
-                delegate(ITool tool) { return tool is EditReportTool; });
-
-            if (editTool != null && editTool.Enabled)
-                editTool.Apply();
+            return new Folders.ReportingSearchFolder();
         }
-
-		#region ISearchDataHandler Members
-
-		public SearchData SearchData
-		{
-			set
-			{
-				_searchFolder.SearchData = value;
-				SelectedFolder = _searchFolder;
-			}
-		}
-
-		#endregion
-	}
+    }
 }

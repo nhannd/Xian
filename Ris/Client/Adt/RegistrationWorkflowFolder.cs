@@ -42,83 +42,11 @@ using ClearCanvas.Ris.Client.Adt.Folders;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public interface IRegistrationWorkflowFolderDropContext : IDropContext
-    {
-        /// <summary>
-        /// Gets the enablement of the specified operation from the folder system
-        /// </summary>
-        /// <param name="operationName"></param>
-        /// <returns></returns>
-        bool GetOperationEnablement(string operationName);
-
-        /// <summary>
-        /// Gets the folder that is the drop target of the current operation
-        /// </summary>
-        RegistrationWorkflowFolder DropTargetFolder { get; }
-
-        /// <summary>
-        /// Gets the folder system that owns the drop target folder
-        /// </summary>
-        WorkflowFolderSystem FolderSystem { get; }
-    }
-
 	public abstract class RegistrationWorkflowFolder : WorklistFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
     {
-        class DropContext : IRegistrationWorkflowFolderDropContext
-        {
-            private RegistrationWorkflowFolder _folder;
-
-            public DropContext(RegistrationWorkflowFolder folder)
-            {
-                _folder = folder;
-            }
-
-            #region IRegistrationWorkflowFolderDropContext Members
-
-            public bool GetOperationEnablement(string operationName)
-            {
-                return _folder.WorkflowFolderSystem.GetOperationEnablement(operationName);
-            }
-
-            public RegistrationWorkflowFolder DropTargetFolder
-            {
-                get { return _folder; }
-            }
-
-            public WorkflowFolderSystem FolderSystem
-            {
-                get
-                {
-                    return _folder.WorkflowFolderSystem;
-                }
-            }
-
-            #endregion
-
-            #region IDropContext Members
-
-            public IDesktopWindow DesktopWindow
-            {
-                get { return _folder.WorkflowFolderSystem.DesktopWindow; }
-            }
-
-            #endregion
-        }
-
-
-        public RegistrationWorkflowFolder(WorkflowFolderSystem folderSystem, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
-            : base(folderSystem, new RegistrationWorklistTable())
-        {
-            if (dropHandlerExtensionPoint != null)
-            {
-                this.InitDragDropHandling(dropHandlerExtensionPoint, new DropContext(this));
-            }
-        }
-
-		public RegistrationWorkflowFolder(WorkflowFolderSystem folderSystem)
-            : this(folderSystem, null)
+        public RegistrationWorkflowFolder()
+            : base(new RegistrationWorklistTable())
         {
         }
-
    }
 }

@@ -36,7 +36,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Gets the list of folders that belong to this folder system
 		/// </summary>
-		IList<IFolder> Folders { get; }
+		ObservableList<IFolder> Folders { get; }
 
 		/// <summary>
 		/// Gets the toolset defined for the folders
@@ -58,14 +58,14 @@ namespace ClearCanvas.Ris.Client
 		#region Events
 
 		/// <summary>
-		/// Allows the folder system to notify that its display text has changed
+		/// Occurs when the <see cref="Title"/> property changes.
 		/// </summary>
-		event EventHandler TextChanged;
+		event EventHandler TitleChanged;
 
 		/// <summary>
-		/// Allows the folder system to notify that its icon has changed
+		/// Occurs when the <see cref="TitleIcon"/> property changes.
 		/// </summary>
-		event EventHandler IconChanged;
+		event EventHandler TitleIconChanged;
 
 		#endregion
 
@@ -79,6 +79,18 @@ namespace ClearCanvas.Ris.Client
 		void InvalidateFolder(Type folderType);
 
 		#endregion
+
+        /// <summary>
+        /// Gets a value indicating whether this folder system supports searching.
+        /// </summary>
+        bool SearchEnabled { get; }
+
+        /// <summary>
+        /// Performs a search, if enabled.
+        /// </summary>
+        /// <param name="data"></param>
+        void ExecuteSearch(SearchData data);
+
 
 		//TODO: (JR Jun 2008) Get rid of this method - the folder system should subscribe to an event on IFolderExplorerToolContext instead
 		void OnSelectedFolderChanged();

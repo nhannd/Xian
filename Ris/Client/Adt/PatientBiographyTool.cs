@@ -81,6 +81,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     this.Enabled = DetermineEnablement();
                 };
+
+                ((IRegistrationWorkflowItemToolContext)this.ContextBase).RegisterDoubleClickHandler(View);
             }
             else if (this.ContextBase is IPreviewToolContext)
             {

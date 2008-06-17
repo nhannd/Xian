@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
                 if (ShowReconciliationDialog(item.PatientProfileRef, context.DesktopWindow))
                 {
-                    context.FolderSystem.InvalidateSelectedFolder();
+                    context.InvalidateSelectedFolder();
                 }
             }
             else

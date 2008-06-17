@@ -117,6 +117,9 @@
     <Compile Include="CannedTextService\UpdateCannedTextRequest.cs" />
     <Compile Include="CannedTextService\UpdateCannedTextResponse.cs" />
     <Compile Include="CannedTextService\CannedTextSummary.cs" />
+    <Compile Include="GetOperationEnablementRequest.cs" />
+    <Compile Include="GetOperationEnablementResponse.cs" />
+    <Compile Include="IWorkflowService.cs" />
     <Compile Include="IWorklistService.cs" />
     <Compile Include="ListWorklistsForUserRequest.cs" />
     <Compile Include="ListWorklistsForUserResponse.cs" />
@@ -138,8 +141,6 @@
     <Compile Include="OrderNotes\AddStaffGroupsRequest.cs" />
     <Compile Include="OrderNotes\AddStaffGroupsResponse.cs" />
     <Compile Include="ProtocollingWorkflow\UpdateOrderProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\GetOperationEnablementRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\GetOperationEnablementResponse.cs" />
     <Compile Include="ProtocollingWorkflow\GetProtocolFormDataRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetProtocolFormDataResponse.cs" />
     <Compile Include="ProtocollingWorkflow\SubmitProtocolForApprovalRequest.cs" />
@@ -500,8 +501,6 @@
     <Compile Include="ModalityWorkflow\CancelProcedureResponse.cs" />
     <Compile Include="ModalityWorkflow\StartProcedureResponse.cs" />
     <Compile Include="ModalityWorkflow\ExecuteOperationRequest.cs" />
-    <Compile Include="ModalityWorkflow\GetOperationEnablementRequest.cs" />
-    <Compile Include="ModalityWorkflow\GetOperationEnablementResponse.cs" />
     <Compile Include="ModalityWorkflow\IModalityWorkflowService.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistItem.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistSearchData.cs" />
@@ -551,8 +550,6 @@
     <Compile Include="RegistrationWorkflow\GetDataForCancelOrderTableResponse.cs" />
     <Compile Include="RegistrationWorkflow\GetDataForCheckInTableRequest.cs" />
     <Compile Include="RegistrationWorkflow\GetDataForCheckInTableResponse.cs" />
-    <Compile Include="RegistrationWorkflow\GetOperationEnablementRequest.cs" />
-    <Compile Include="RegistrationWorkflow\GetOperationEnablementResponse.cs" />
     <Compile Include="QueryWorklistRequest.cs" />
     <Compile Include="QueryWorklistResponse.cs" />
     <Compile Include="RegistrationWorkflow\IRegistrationWorkflowService.cs" />
@@ -595,8 +592,6 @@
     <Compile Include="ReportingWorkflow\SaveReportResponse.cs" />
     <Compile Include="ReportingWorkflow\StartVerificationResponse.cs" />
     <Compile Include="ReportingWorkflow\StartInterpretationResponse.cs" />
-    <Compile Include="ReportingWorkflow\GetOperationEnablementRequest.cs" />
-    <Compile Include="ReportingWorkflow\GetOperationEnablementResponse.cs" />
     <Compile Include="ReportingWorkflow\IReportingWorkflowService.cs" />
     <Compile Include="ReportingWorkflow\ReportingWorklistItem.cs" />
     <Compile Include="ReportingWorkflow\ReportingWorklistSearchCriteria.cs" />

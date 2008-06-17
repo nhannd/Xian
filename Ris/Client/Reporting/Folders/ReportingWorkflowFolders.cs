@@ -44,71 +44,30 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     [FolderPath("To be Reported", true)]
     public class ToBeReportedFolder : ReportingWorkflowFolder
     {
-		public ToBeReportedFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, null)
-        {
-        }
     }
 
     [FolderForWorklistClass(WorklistClassNames.ReportingAssignedWorklist)]
     [FolderPath("Assigned")]
     public class AssignedFolder : ReportingWorkflowFolder
     {
-        [ExtensionPoint]
-        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
-        {
-        }
-
-		public AssignedFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, new DropHandlerExtensionPoint())
-        {
-        }
     }
 
     [FolderForWorklistClass(WorklistClassNames.ReportingDraftWorklist)]
     [FolderPath("Draft")]
     public class DraftFolder : ReportingWorkflowFolder
     {
-        [ExtensionPoint]
-        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
-        {
-        }
-
-		public DraftFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, new DropHandlerExtensionPoint())
-        {
-        }
     }
 
     [FolderForWorklistClass(WorklistClassNames.ReportingInTranscriptionWorklist)]
     [FolderPath("In Transcription")]
     public class InTranscriptionFolder : ReportingWorkflowFolder
     {
-        [ExtensionPoint]
-        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
-        {
-        }
-
-		public InTranscriptionFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, new DropHandlerExtensionPoint())
-        {
-        }
     }
 
     [FolderForWorklistClass(WorklistClassNames.ReportingRadiologistToBeVerifiedWorklist)]
     [FolderPath("To be Verified")]
     public class ToBeVerifiedFolder : ReportingWorkflowFolder
     {
-        [ExtensionPoint]
-        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
-        {
-        }
-
-		public ToBeVerifiedFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, new DropHandlerExtensionPoint())
-        {
-        }
-
         /// <summary>
         /// Overridden to tweak behaviour based on user permissions.
         /// </summary>
@@ -127,31 +86,12 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     [FolderPath("Review Resident Report")]
     public class ReviewResidentReportFolder : ReportingWorkflowFolder
     {
-        [ExtensionPoint]
-        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
-        {
-        }
-
-		public ReviewResidentReportFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, new DropHandlerExtensionPoint())
-        {
-        }
     }
 
     [FolderForWorklistClass(WorklistClassNames.ReportingRadiologistVerifiedWorklist)]
     [FolderPath("Verified")]
     public class VerifiedFolder : ReportingWorkflowFolder
     {
-        [ExtensionPoint]
-        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
-        {
-        }
-
-		public VerifiedFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, new DropHandlerExtensionPoint())
-        {
-        }
-
         /// <summary>
         /// Overridden to tweak behaviour based on user permissions.
         /// </summary>
@@ -171,10 +111,6 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     [FolderPath("To be Protocolled", true)]
     public class ToBeProtocolledFolder : ReportingWorkflowFolder
     {
-		public ToBeProtocolledFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, null)
-        {
-        }
     }
 
 	[ExtensionOf(typeof(ReportingProtocolWorkflowFolderExtensionPoint))]
@@ -182,105 +118,68 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
 	[FolderPath("To be Approved", true)]
 	public class ToBeApprovedFolder : ReportingWorkflowFolder
 	{
-		public ToBeApprovedFolder(WorkflowFolderSystem folderSystem)
-			: base(folderSystem, null)
-		{
-		}
 	}
 
 	[FolderForWorklistClass(WorklistClassNames.ReportingDraftProtocolWorklist)]
     [FolderPath("Draft")]
     public class DraftProtocolFolder : ReportingWorkflowFolder
     {
-		public DraftProtocolFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, null)
-        {
-        }
     }
 
     [FolderForWorklistClass(WorklistClassNames.ReportingCompletedProtocolWorklist)]
     [FolderPath("Completed")]
     public class CompletedProtocolFolder : ReportingWorkflowFolder
     {
-		public CompletedProtocolFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, null)
-        {
-        }
     }
 
 	[FolderForWorklistClass(WorklistClassNames.ReportingAwaitingApprovalProtocolWorklist)]
 	[FolderPath("Awaiting Approval")]
 	public class AwaitingApprovalProtocolFolder : ReportingWorkflowFolder
 	{
-		public AwaitingApprovalProtocolFolder(WorkflowFolderSystem folderSystem)
-			: base(folderSystem, null)
-		{
-		}
 	}
 
 	[FolderForWorklistClass(WorklistClassNames.ReportingSuspendedProtocolWorklist)]
     [FolderPath("Suspended")]
     public class SuspendedProtocolFolder : ReportingWorkflowFolder
     {
-		public SuspendedProtocolFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, null)
-        {
-        }
     }
 
     [FolderForWorklistClass(WorklistClassNames.ReportingRejectedProtocolWorklist)]
     [FolderPath("Rejected")]
     public class RejectedProtocolFolder : ReportingWorkflowFolder
     {
-		public RejectedProtocolFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, null)
-        {
-        }
     }
 
 	[FolderPath("Search Results")]
-    public class ReportingSearchFolder : SearchResultsFolder<ReportingWorklistItem>
+    public class ReportingSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItem, IReportingWorkflowService>
     {
-		public ReportingSearchFolder(WorkflowFolderSystem folderSystem)
-			: base(folderSystem, new ReportingWorklistTable())
+		public ReportingSearchFolder()
+			: base(new ReportingWorklistTable())
         {
         }
 
-		protected override TextQueryResponse<ReportingWorklistItem> DoQuery(string query, int specificityThreshold)
-		{
-			TextQueryResponse<ReportingWorklistItem> response = null;
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					//TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
-					//it is the only way to get things working right now
-					response = service.SearchWorklists(new WorklistTextQueryRequest(query, specificityThreshold, "ReportingProcedureStep"));
-				});
-			return response;
-		}
+        //TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
+        //it is the only way to get things working right now
+        protected override string ProcedureStepClassName
+        {
+            get { return "ReportingProcedureStep"; }
+        }
 
     }
 
 	[FolderPath("Search Results")]
-	public class ProtocollingSearchFolder : SearchResultsFolder<ReportingWorklistItem>
+    public class ProtocollingSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItem, IReportingWorkflowService>
 	{
-		public ProtocollingSearchFolder(WorkflowFolderSystem folderSystem)
-			: base(folderSystem, new ReportingWorklistTable())
+		public ProtocollingSearchFolder()
+			: base(new ReportingWorklistTable())
 		{
 		}
 
-		protected override TextQueryResponse<ReportingWorklistItem> DoQuery(string query, int specificityThreshold)
-		{
-			TextQueryResponse<ReportingWorklistItem> response = null;
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					//TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
-					//it is the only way to get things working right now
-					response = service.SearchWorklists(new WorklistTextQueryRequest(query, specificityThreshold, "ProtocolAssignmentStep"));
-				});
-			return response;
-		}
-
+        //TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
+        //it is the only way to get things working right now
+        protected override string ProcedureStepClassName
+        {
+            get { return "ProtocolAssignmentStep"; }
+        }
 	}
 }

@@ -8,5 +8,11 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 	[ExtensionOf(typeof(EmergencyPhysicianMainWorkflowItemToolExtensionPoint))]
 	public class EmergencyPhysicianEmergencyOrdersConversationTool : PreliminaryDiagnosisConversationTool<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
 	{
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            this.Context.RegisterDoubleClickHandler(Open);
+        }
 	}
 }

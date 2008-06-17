@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     [ServiceImplementsContract(typeof(IModalityWorkflowService))]
-    public class ModalityWorkflowService : WorkflowServiceBase, IModalityWorkflowService
+	public class ModalityWorkflowService : WorkflowServiceBase<ModalityWorklistItem>, IModalityWorkflowService
     {
         /// <summary>
         /// SearchWorklists for worklist items based on specified criteria.
@@ -83,17 +83,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                 {
                     return assembler.CreateWorklistItemSummary(item, this.PersistenceContext);
                 });
-        }
-
-        /// <summary>
-        /// Get the enablement of all workflow operations.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [ReadOperation]
-        public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
-        {
-            return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.ProcedureStepRef)));
         }
 
     	/// <summary>
@@ -264,5 +253,10 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
             return response;
         }
+
+		protected override object GetWorkItemKey(ModalityWorklistItem item)
+		{
+			return new WorklistItemKey(item.ProcedureStepRef);
+		}
     }
 }

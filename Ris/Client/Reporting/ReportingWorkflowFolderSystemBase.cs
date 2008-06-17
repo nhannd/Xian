@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Reporting
     }
 
 	public abstract class ReportingWorkflowFolderSystemBase<TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
-		: WorkflowFolderSystem<ReportingWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
+		: WorklistFolderSystem<ReportingWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, IReportingWorkflowService>
 		where TFolderExtensionPoint : ExtensionPoint<IFolder>, new()
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
 		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()
@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        public ReportingWorkflowFolderSystemBase(string title, IFolderExplorerToolContext folderExplorer)
+        protected ReportingWorkflowFolderSystemBase(string title, IFolderExplorerToolContext folderExplorer)
             : base(title, folderExplorer)
         {
         }
@@ -84,31 +84,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 		protected override IWorkflowItemToolContext CreateItemToolContext()
 		{
 			return new ReportingWorkflowItemToolContext(this);
-		}
-
-		protected override ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request)
-		{
-			ListWorklistsForUserResponse response = null;
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					response = service.ListWorklistsForUser(request);
-				});
-
-			return response;
-		}
-
-		protected override IDictionary<string, bool> QueryOperationEnablement(ISelection selection)
-		{
-			IDictionary<string, bool> enablement = null;
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					ReportingWorklistItem item = (ReportingWorklistItem)selection.Item;
-					GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(item.ProcedureStepRef));
-					enablement = response.OperationEnablementDictionary;
-				});
-			return enablement;
 		}
     }
 }

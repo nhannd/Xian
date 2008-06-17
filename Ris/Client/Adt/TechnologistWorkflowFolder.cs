@@ -39,76 +39,11 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public interface ITechnologistWorkflowFolderDropContext : IDropContext
-    {
-        /// <summary>
-        /// Gets the enablement of the specified operation from the folder system
-        /// </summary>
-        /// <param name="operationName"></param>
-        /// <returns></returns>
-        bool GetOperationEnablement(string operationName);
-
-        /// <summary>
-        /// Gets the folder that is the drop target of the current operation
-        /// </summary>
-        TechnologistWorkflowFolder DropTargetFolder { get; }
-
-        /// <summary>
-        /// Gets the folder system that owns the drop target folder
-        /// </summary>
-		WorkflowFolderSystem FolderSystem { get; }
-    }
-
 	public abstract class TechnologistWorkflowFolder : WorklistFolder<ModalityWorklistItem, IModalityWorkflowService>
     {
-        class DropContext : ITechnologistWorkflowFolderDropContext
+		public TechnologistWorkflowFolder()
+            : base(new ModalityWorklistTable())
         {
-            private TechnologistWorkflowFolder _folder;
-
-            public DropContext(TechnologistWorkflowFolder folder)
-            {
-                _folder = folder;
-            }
-
-            #region ITechnologistWorkflowFolderDropContextMembers
-
-            public bool GetOperationEnablement(string operationName)
-            {
-				return _folder.WorkflowFolderSystem.GetOperationEnablement(operationName);
-            }
-
-            public TechnologistWorkflowFolder DropTargetFolder
-            {
-                get { return _folder; }
-            }
-
-			public WorkflowFolderSystem FolderSystem
-            {
-                get
-                {
-					return _folder.WorkflowFolderSystem;
-                }
-            }
-
-            #endregion
-
-            #region IDropContext Members
-
-            public IDesktopWindow DesktopWindow
-            {
-				get { return _folder.WorkflowFolderSystem.DesktopWindow; }
-            }
-
-            #endregion
-        }
-
-		public TechnologistWorkflowFolder(WorkflowFolderSystem folderSystem, ExtensionPoint<IDropHandler<ModalityWorklistItem>> dropHandlerExtensionPoint)
-            : base(folderSystem, new ModalityWorklistTable())
-        {
-            if (dropHandlerExtensionPoint != null)
-            {
-                this.InitDragDropHandling(dropHandlerExtensionPoint, new DropContext(this));
-            }
         }
     }
 }

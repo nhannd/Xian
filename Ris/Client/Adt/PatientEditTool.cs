@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 RegistrationWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
                 if (Edit(item.PatientProfileRef, context.DesktopWindow))
                 {
-                    context.FolderSystem.InvalidateSelectedFolder();
+                    context.InvalidateSelectedFolder();
                 }
             }
             else if (this.ContextBase is IPatientSearchToolContext)

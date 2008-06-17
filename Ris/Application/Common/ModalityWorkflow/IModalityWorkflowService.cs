@@ -35,16 +35,8 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [RisServiceProvider]
     [ServiceContract]
-	public interface IModalityWorkflowService : IWorklistService<ModalityWorklistItem>
+	public interface IModalityWorkflowService : IWorklistService<ModalityWorklistItem>, IWorkflowService<ModalityWorklistItem>
     {
-        /// <summary>
-        /// Get the enablement of all workflow operations.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
-        GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
-
         /// <summary>
         /// Returns a summary of the procedure plan for a specified order.
         /// </summary>

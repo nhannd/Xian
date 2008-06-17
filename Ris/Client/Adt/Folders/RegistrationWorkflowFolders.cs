@@ -42,10 +42,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Scheduled", true)]
     public class ScheduledFolder : RegistrationWorkflowFolder
     {
-        public ScheduledFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem)
-        {
-        }
     }
 
     [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
@@ -53,15 +49,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Checked In")]
     public class CheckedInFolder : RegistrationWorkflowFolder
     {
-        [ExtensionPoint]
-        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<RegistrationWorklistItem>>
-        {
-        }
-
-		public CheckedInFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, new DropHandlerExtensionPoint())
-        {
-        }
     }
 
     [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
@@ -69,10 +56,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("In Progress")]
     public class InProgressFolder : RegistrationWorkflowFolder
     {
-		public InProgressFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem)
-        {
-        }
     }
 
     [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
@@ -80,10 +63,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Completed")]
     public class CompletedFolder : RegistrationWorkflowFolder
     {
-		public CompletedFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem)
-        {
-        }
     }
 
     [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
@@ -91,15 +70,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Cancelled")]
     public class CancelledFolder : RegistrationWorkflowFolder
     {
-        [ExtensionPoint]
-        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<RegistrationWorklistItem>>
-        {
-        }
-
-		public CancelledFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, new DropHandlerExtensionPoint())
-        {
-        }
     }
 
     [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
@@ -107,10 +77,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Completed Protocol", true)]
     public class CompletedProtocolFolder : RegistrationWorkflowFolder
     {
-		public CompletedProtocolFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem)
-        {
-        }
     }
 
     [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
@@ -118,10 +84,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Suspended Protocol")]
     public class SuspendedProtocolFolder : RegistrationWorkflowFolder
     {
-		public SuspendedProtocolFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem)
-        {
-        }
     }
 
     [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
@@ -129,10 +91,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Rejected Protocol")]
     public class RejectedProtocolFolder : RegistrationWorkflowFolder
     {
-		public RejectedProtocolFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem)
-        {
-        }
     }
 
     [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
@@ -140,10 +98,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("Pending Protocol")]
     public class PendingProtocolFolder : RegistrationWorkflowFolder
     {
-		public PendingProtocolFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem)
-        {
-        }
     }
 
     [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
@@ -151,52 +105,37 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderPath("To Be Scheduled")]
     public class ToBeScheduledFolder : RegistrationWorkflowFolder
     {
-		public ToBeScheduledFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem)
-        {
-        }
     }
 
 	[FolderPath("Search Results")]
-    public class RegistrationSearchFolder : SearchResultsFolder<RegistrationWorklistItem>
+    public class RegistrationSearchFolder : WorklistSearchResultsFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
     {
-		public RegistrationSearchFolder(WorkflowFolderSystem folderSystem)
-            : base(folderSystem, new RegistrationWorklistTable())
+		public RegistrationSearchFolder()
+            : base(new RegistrationWorklistTable())
         {
         }
 
-		protected override TextQueryResponse<RegistrationWorklistItem> DoQuery(string query, int specificityThreshold)
-		{
-			TextQueryResponse<RegistrationWorklistItem> response = null;
-			Platform.GetService<IRegistrationWorkflowService>(
-				delegate(IRegistrationWorkflowService service)
-				{
-					response = service.SearchWorklists(new WorklistTextQueryRequest(query, specificityThreshold, null));
-				});
-			return response;
-		}
+        protected override string ProcedureStepClassName
+        {
+            get { return null; }
+        }
     }
 
 	[FolderPath("Search Results")]
-	public class BookingSearchFolder : SearchResultsFolder<RegistrationWorklistItem>
+    public class BookingSearchFolder : WorklistSearchResultsFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
 	{
-		public BookingSearchFolder(WorkflowFolderSystem folderSystem)
-			: base(folderSystem, new RegistrationWorklistTable())
+		public BookingSearchFolder()
+			: base(new RegistrationWorklistTable())
 		{
 		}
 
-		protected override TextQueryResponse<RegistrationWorklistItem> DoQuery(string query, int specificityThreshold)
-		{
-			TextQueryResponse<RegistrationWorklistItem> response = null;
-			Platform.GetService<IRegistrationWorkflowService>(
-				delegate(IRegistrationWorkflowService service)
-				{
-					//TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
-					//it is the only way to get things working right now
-					response = service.SearchWorklists(new WorklistTextQueryRequest(query, specificityThreshold, "ProtocolResolutionStep"));
-				});
-			return response;
-		}
+
+        //TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
+        //it is the only way to get things working right now
+        protected override string ProcedureStepClassName
+        {
+            get { return "ProtocolResolutionStep"; }
+        }
 
 	}
 }

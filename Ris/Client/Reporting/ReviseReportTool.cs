@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Reporting
     [IconSet("apply", IconScheme.Colour, "Icons.EditToolSmall.png", "Icons.EditToolSmall.png", "Icons.EditToolSmall.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
-    public class ReviseReportTool : WorkflowItemTool
+    public class ReviseReportTool : ReportingWorkflowItemTool
     {
 
         public ReviseReportTool()
@@ -60,46 +60,35 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             get
             {
-                return this.Context.GetWorkflowOperationEnablement("ReviseResidentReport") ||
-                    this.Context.GetWorkflowOperationEnablement("ReviseUnpublishedReport");
+                return this.Context.GetOperationEnablement("ReviseResidentReport") ||
+                    this.Context.GetOperationEnablement("ReviseUnpublishedReport");
             }
         }
 
-        public override bool CanAcceptDrop(IDropContext dropContext, ICollection<ReportingWorklistItem> items)
+        public override bool CanAcceptDrop(ICollection<ReportingWorklistItem> items)
         {
-            IReportingWorkflowFolderDropContext ctxt = (IReportingWorkflowFolderDropContext)dropContext;
-
-            return ctxt.GetOperationEnablement("ReviseResidentReport") ||
-                    ctxt.GetOperationEnablement("ReviseUnpublishedReport");
+            return this.Context.GetOperationEnablement("ReviseResidentReport") ||
+                    this.Context.GetOperationEnablement("ReviseUnpublishedReport");
         }
 
-		protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem)
+		protected override bool Execute(ReportingWorklistItem item)
         {
             // check if the document is already open
             if(ActivateIfAlreadyOpen(item))
                 return true;
 
-            try
+            if(this.Context.GetOperationEnablement("ReviseResidentReport"))
             {
-
-                if(this.Context.GetWorkflowOperationEnablement("ReviseResidentReport"))
-                {
-                    // note: updating only the ProcedureStepRef is hacky - the service should return an updated item
-                    item.ProcedureStepRef = ReviseResidentReport(item);
-                }
-                else if (this.Context.GetWorkflowOperationEnablement("ReviseUnpublishedReport"))
-                {
-                    // note: updating only the ProcedureStepRef is hacky - the service should return an updated item
-                    item.ProcedureStepRef = ReviseUnpublishedReport(item);
-                }
-
-                OpenReportEditor(item);
+                // note: updating only the ProcedureStepRef is hacky - the service should return an updated item
+                item.ProcedureStepRef = ReviseResidentReport(item);
             }
-            catch (Exception e)
+            else if (this.Context.GetOperationEnablement("ReviseUnpublishedReport"))
             {
-                ExceptionHandler.Report(e, desktopWindow);
-                return false;
+                // note: updating only the ProcedureStepRef is hacky - the service should return an updated item
+                item.ProcedureStepRef = ReviseUnpublishedReport(item);
             }
+
+            OpenReportEditor(item);
 
             return true;
         }

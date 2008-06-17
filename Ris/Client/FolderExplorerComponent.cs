@@ -54,62 +54,30 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(FolderExplorerComponentViewExtensionPoint))]
     public class FolderExplorerComponent : ApplicationComponent
     {
-        private readonly Tree<IFolder> _folderTree;
-        private readonly IDictionary<IFolder, ITree> _containers;
-        private IFolder _selectedFolder;
+    	private readonly FolderTreeRoot _folderTreeRoot;
+		private FolderTreeNode _selectedTreeNode;
         private event EventHandler _selectedFolderChanged;
-        private event EventHandler _folderIconChanged;
         private event EventHandler _suppressSelectionChangedEvent;
 
         private readonly IFolderSystem _folderSystem;
-        private readonly IList<IFolder> _folders;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public FolderExplorerComponent(IFolderSystem folderSystem)
         {
-            _containers = new Dictionary<IFolder, ITree>();
-            _folderTree = new Tree<IFolder>(GetBinding());
-            _folders = new List<IFolder>();
+			_folderTreeRoot = new FolderTreeRoot(this);
             _folderSystem = folderSystem;
         }
 
-        private TreeItemBinding<IFolder> GetBinding()
-        {
-            TreeItemBinding<IFolder> binding = new TreeItemBinding<IFolder>();
-
-            binding.NodeTextProvider = delegate(IFolder folder) { return folder.Text; };
-            binding.IconSetProvider = delegate(IFolder folder) { return folder.IconSet; };
-            binding.TooltipTextProvider = delegate(IFolder folder) { return folder.Tooltip; };
-            binding.ResourceResolverProvider = delegate(IFolder folder) { return folder.ResourceResolver; };
-
-            binding.CanAcceptDropHandler = CanFolderAcceptDrop;
-            binding.AcceptDropHandler = FolderAcceptDrop;
-
-            binding.CanHaveSubTreeHandler = delegate(IFolder folder) { return folder.Subfolders.Count > 0; };
-            binding.IsInitiallyExpandedHandler = delegate(IFolder folder) { return folder.StartExpanded; };
-            binding.SubTreeProvider =
-                delegate(IFolder folder)
-                {
-                    if (folder.Subfolders.Count > 0)
-                    {
-                        // Sub trees need to be cached so that delegates assigned to its ItemsChanged event are not orphaned 
-                        // on successive GetSubTree calls
-                        if (_containers.ContainsKey(folder) == false)
-                        {
-                            _containers.Add(folder, new Tree<IFolder>(GetBinding(), folder.Subfolders));
-                        }
-                        return _containers[folder];
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                };
-
-            return binding;
-        }
+    	public IFolder SelectedFolder
+    	{
+			get { return _selectedTreeNode == null ? null : _selectedTreeNode.Folder; }
+			set
+			{
+				this.SelectedFolderTreeNode = new Selection(_folderTreeRoot.FindNode(value));
+			}
+    	}
 
         #region Application Component overrides
 
@@ -117,19 +85,24 @@ namespace ClearCanvas.Ris.Client
         {
             base.Start();
 
+			// build initial folder system
             FolderExplorerComponentSettings.Default.BuildAndSynchronize(_folderSystem, InsertFolderUsingPath);
 
-            RefreshCounts(_folderTree);
+			// after building initial folder system, listen for changes
+			_folderSystem.Folders.ItemAdded += FolderAddedEventHandler;
+			_folderSystem.Folders.ItemRemoved += FolderRemovedEventHandler;
+
+			RefreshCounts(_folderTreeRoot);
         }
 
-        private void RefreshCounts(ITree tree)
+        private void RefreshCounts(FolderTreeNode node)
         {
-            if (tree == null) return;
+			if (node == null) return;
 
-            foreach (IFolder folder in tree.Items)
+			foreach (FolderTreeNode child in node.GetSubTree().Items)
             {
-                RefreshCounts(tree.Binding.GetSubTree(folder));
-                folder.RefreshCount();
+				RefreshCounts(child);
+				child.Folder.RefreshCount();
             }
         }
 
@@ -149,34 +122,28 @@ namespace ClearCanvas.Ris.Client
 
         public ITree FolderTree
         {
-            get { return _folderTree; }
+			get { return _folderTreeRoot.GetSubTree(); }
         }
 
-        public ISelection SelectedFolder
+        public ISelection SelectedFolderTreeNode
         {
-            get { return new Selection(_selectedFolder); }
+            get { return new Selection(_selectedTreeNode); }
             set
             {
-                IFolder folderToSelect = (IFolder)value.Item;
-                SelectFolder(folderToSelect);
+				FolderTreeNode nodeToSelect = (FolderTreeNode)value.Item;
+                SelectFolder(nodeToSelect);
             }
         }
 
         public ITable FolderContentsTable
         {
-            get { return _selectedFolder == null ? null : _selectedFolder.ItemsTable; }
+            get { return _selectedTreeNode == null ? null : _selectedTreeNode.Folder.ItemsTable; }
         }
 
         public event EventHandler SelectedFolderChanged
         {
             add { _selectedFolderChanged += value; }
             remove { _selectedFolderChanged -= value; }
-        }
-
-        public event EventHandler FolderIconChanged
-        {
-            add { _folderIconChanged += value; }
-            remove { _folderIconChanged -= value; }
         }
 
         public event EventHandler SuppressSelectionChanged
@@ -190,8 +157,8 @@ namespace ClearCanvas.Ris.Client
             get
             {
                 ActionModelRoot amr = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-contextmenu", _folderSystem.FolderTools.Actions);
-                if (_selectedFolder != null && _selectedFolder.MenuModel != null)
-                    amr.Merge(_selectedFolder.MenuModel);
+                if (_selectedTreeNode != null && _selectedTreeNode.Folder.MenuModel != null)
+                    amr.Merge(_selectedTreeNode.Folder.MenuModel);
                 return amr;
             }
         }
@@ -201,8 +168,8 @@ namespace ClearCanvas.Ris.Client
             get
             {
                 ActionModelRoot amr = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-toolbar", _folderSystem.FolderTools.Actions);
-                if (_selectedFolder != null && _selectedFolder.MenuModel != null)
-                    amr.Merge(_selectedFolder.MenuModel);
+                if (_selectedTreeNode != null && _selectedTreeNode.Folder.MenuModel != null)
+					amr.Merge(_selectedTreeNode.Folder.MenuModel);
                 return amr;
             }
         }
@@ -216,25 +183,25 @@ namespace ClearCanvas.Ris.Client
 
         #region Private methods
 
-        private void SelectFolder(IFolder folder)
+        private void SelectFolder(FolderTreeNode node)
         {
-            if (_selectedFolder != folder)
+            if (_selectedTreeNode != node)
             {
-                if (_selectedFolder != null)
+                if (_selectedTreeNode != null)
                 {
-                    _selectedFolder.RefreshBegin -= OnSelectedFolderRefreshBegin;
-                    _selectedFolder.RefreshFinish -= OnSelectedFolderRefreshFinish;
-                    _selectedFolder.CloseFolder();
+                    _selectedTreeNode.Folder.RefreshBegin -= OnSelectedFolderRefreshBegin;
+					_selectedTreeNode.Folder.RefreshFinish -= OnSelectedFolderRefreshFinish;
+					_selectedTreeNode.Folder.CloseFolder();
                 }
 
-				if (folder != null)
+				if (node != null)
                 {
-					folder.RefreshBegin += OnSelectedFolderRefreshBegin;
-					folder.RefreshFinish += OnSelectedFolderRefreshFinish;
-					folder.OpenFolder();
+					node.Folder.RefreshBegin += OnSelectedFolderRefreshBegin;
+					node.Folder.RefreshFinish += OnSelectedFolderRefreshFinish;
+					node.Folder.OpenFolder();
                 }
 
-				_selectedFolder = folder;
+				_selectedTreeNode = node;
 				EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
 			}
 		}
@@ -249,24 +216,24 @@ namespace ClearCanvas.Ris.Client
             EventsHelper.Fire(_suppressSelectionChangedEvent, this, new ItemEventArgs<bool>(false));
         }
 
-        private DragDropKind CanFolderAcceptDrop(IFolder folder, object dropData, DragDropKind kind)
+        internal DragDropKind CanFolderAcceptDrop(FolderTreeNode treeNode, object dropData, DragDropKind kind)
         {
-            if (folder != _selectedFolder && dropData is ISelection)
+            if (treeNode.Folder != _selectedTreeNode && dropData is ISelection)
             {
-                return folder.CanAcceptDrop((dropData as ISelection).Items, kind);
+                return treeNode.Folder.CanAcceptDrop((dropData as ISelection).Items, kind);
             }
             return DragDropKind.None;
         }
 
-        private DragDropKind FolderAcceptDrop(IFolder folder, object dropData, DragDropKind kind)
+		internal DragDropKind FolderAcceptDrop(FolderTreeNode treeNode, object dropData, DragDropKind kind)
         {
-            if (folder != _selectedFolder && dropData is ISelection)
+			if (treeNode.Folder != _selectedTreeNode && dropData is ISelection)
             {
                 // inform the target folder to accept the drop
-                DragDropKind result = folder.AcceptDrop((dropData as ISelection).Items, kind);
+				DragDropKind result = treeNode.Folder.AcceptDrop((dropData as ISelection).Items, kind);
 
                 // inform the source folder that a drag was completed
-                _selectedFolder.DragComplete((dropData as ISelection).Items, result);
+                _selectedTreeNode.Folder.DragComplete((dropData as ISelection).Items, result);
             }
             return DragDropKind.None;
         }
@@ -278,146 +245,25 @@ namespace ClearCanvas.Ris.Client
         /// <param name="folder"></param>
         private void InsertFolderUsingPath(IFolder folder)
         {
-            int lastIndex = folder.FolderPath.Segments.Length - 1;
-            IFolder parentFolder = null;
-
-            // Loop through all folder path segments, create container folder for all intermediate path
-            // and insert the actual folder as the leaf folder
-            for (int index = 0; index < folder.FolderPath.Segments.Length; index++)
-            {
-                bool isLeaf = index == lastIndex;
-
-                string currentPath = folder.FolderPath.SubPath(index);
-                IFolder folderWithCurrentPath = CollectionUtils.SelectFirst(_folders,
-                    delegate(IFolder f) { return Equals(currentPath, f.FolderPath.ToString()); });
-
-                if (folderWithCurrentPath != null)
-                {
-                    // If this is not the leaf folder, no need to replace ContainerFolder with the current folder
-                    // if the original leaf folder is NOT a container folder, do not replace.  It's okay to have two leaf folders with the same name
-                    // Only replace if the original leaf folder is a container folder
-                    if (isLeaf && folderWithCurrentPath is ContainerFolder && !(folder is ContainerFolder))
-                    {
-                        ReplaceFolder(folderWithCurrentPath, folder);
-                        _folders.Remove(folderWithCurrentPath);
-                    }
-
-                    parentFolder = folderWithCurrentPath;
-                    continue;
-                }
-
-                IFolder currentFolder;
-                if (isLeaf)
-                {
-                    currentFolder = folder;
-                }
-                else
-                {
-                    currentFolder = new ContainerFolder(currentPath, folder.StartExpanded);
-                    _folders.Add(currentFolder);
-                }
-
-                if (parentFolder == null)
-                    AddFolder(currentFolder);
-                else
-                    AddFolder(currentFolder, parentFolder);
-
-                parentFolder = currentFolder;
-            }
-
-            _folders.Add(folder);
+			_folderTreeRoot.InsertFolder(folder);
         }
 
-        private void AddFolder(IFolder folder)
-        {
-            _folderTree.Items.Add(folder);
-            folder.TextChanged += FolderChangedEventHandler;
-            folder.IconChanged += FolderChangedEventHandler;
-        }
+		private void FolderAddedEventHandler(object sender, ListEventArgs<IFolder> e)
+		{
+			// folder was added to the folder system, so add it to the tree
+			// TODO: should update folder path from XML settings first
+			_folderTreeRoot.InsertFolder(e.Item);
+		}
 
-        private void RemoveFolder(IFolder folder)
-        {
-            _folderTree.Items.Remove(folder);
-            folder.TextChanged -= FolderChangedEventHandler;
-            folder.IconChanged -= FolderChangedEventHandler;
-        }
+		private void FolderRemovedEventHandler(object sender, ListEventArgs<IFolder> e)
+		{
+			// if the folder being removed is currently selected, de-select it first
+			//if(this.SelectedFolder == e.Item)
+			//	this.SelectedFolder = null;
 
-        private void AddFolder(IFolder folder, IFolder parentFolder)
-        {
-            parentFolder.AddFolder(folder);
-            folder.TextChanged += FolderChangedEventHandler;
-            folder.IconChanged += FolderChangedEventHandler;
-        }
-
-        private void RemoveFolder(IFolder folder, IFolder parentFolder)
-        {
-            parentFolder.RemoveFolder(folder);
-            folder.TextChanged -= FolderChangedEventHandler;
-            folder.IconChanged -= FolderChangedEventHandler;
-        }
-
-        private void ReplaceFolder(IFolder oldFolder, IFolder newFolder, IFolder parentFolder)
-        {
-            parentFolder.ReplaceFolder(oldFolder, newFolder);
-            oldFolder.TextChanged -= FolderChangedEventHandler;
-            oldFolder.IconChanged -= FolderChangedEventHandler;
-        }
-
-        private void ReplaceFolder(IFolder oldFolder, IFolder newFolder)
-        {
-            foreach (IFolder subFolder in oldFolder.Subfolders)
-            {
-                // we don't use this.AddFolder(...) so the eventHandler will stay intact
-                newFolder.AddFolder(subFolder);
-            }
-            
-            oldFolder.Subfolders.Clear();
-
-            IFolder parentFolder = CollectionUtils.SelectFirst(_folderTree.Items,
-                delegate(IFolder f) { return f.Subfolders.Contains(oldFolder); });
-
-            if (parentFolder != null)
-            {
-                ReplaceFolder(oldFolder, newFolder, parentFolder);
-            }
-            else
-            {
-                RemoveFolder(oldFolder);
-                AddFolder(newFolder);
-            }
-        }
-
-        // Tells the item collection holding the specified folder that the folder has been changed
-        private void FolderChangedEventHandler(object sender, EventArgs e)
-        {
-            IFolder folder = (IFolder)sender;
-            ITree tree = GetSubtreeContainingFolder(_folderTree, folder);
-            if (tree != null)
-            {
-                ((Tree<IFolder>)tree).Items.NotifyItemUpdated(folder);
-            }
-        }
-
-        // Recursively finds the correct [sub]tree which holds the specified folder
-        private ITree GetSubtreeContainingFolder(ITree tree, IFolder folder)
-        {
-            if (tree == null) return null;
-
-            if (tree.Items.Contains(folder))
-            {
-                return tree;
-            }
-            else
-            {
-                foreach (IFolder treeFolder in tree.Items)
-                {
-                    ITree subTree = GetSubtreeContainingFolder(tree.Binding.GetSubTree(treeFolder), folder);
-                    if (subTree != null) return subTree;
-                }
-            }
-
-            return null;
-        }
+			// folder was removed from the folder system, so remove it from the tree
+			_folderTreeRoot.RemoveFolder(e.Item);
+		}
 
         #endregion
     }

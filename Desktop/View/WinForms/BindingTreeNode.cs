@@ -41,20 +41,25 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// Tree node that knows how to build its subtree on demand from an <see cref="ITree"/> model.  This class
     /// is used internally and is not intended to be used directly by application code.
     /// </summary>
-    internal class BindingTreeNode : TreeNode
+    internal class BindingTreeNode : TreeNode, IDisposable
     {
-        private BindingTreeLevelManager _subtreeManager;
+		/// <summary>
+		/// need to cache our own reference to the treeView, because during construction the base-class TreeView property is null
+		/// </summary>
+		private readonly TreeView _treeView;
+		private readonly ITree _parentTree;
+		private BindingTreeLevelManager _subtreeManager;
         private object _item;
-        private ITree _parentTree;
         private bool _isSubTreeBuilt;
 
-        public BindingTreeNode(ITree parentTree, object item)
+		public BindingTreeNode(ITree parentTree, object item, TreeView treeView)
             : base(parentTree.Binding.GetNodeText(item))
         {
             _item = item;
             _parentTree = parentTree;
+			_treeView = treeView;
 
-            UpdateDisplay();
+			UpdateDisplay(_treeView.ImageList);
 
             if (_parentTree.Binding.IsInitiallyExpanded(_item))
                 this.Expand();
@@ -76,66 +81,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        /// <summary>
-        /// Updates the displayable properties of this node, based on the underlying model
-        /// </summary>
-        public void UpdateDisplay()
+		/// <summary>
+		/// Updates the displayable properties of this node, based on the underlying model
+		/// </summary>
+		public void UpdateDisplay()
         {
-            if(this.TreeView != null)
-                this.TreeView.BeginUpdate();
-
-            // update all displayable attributes from the binding
-            this.Text = _parentTree.Binding.GetNodeText(_item);
-            this.ToolTipText = _parentTree.Binding.GetTooltipText(_item);
-
-            this.Checked = _parentTree.Binding.GetIsChecked(_item);
-            
-            if (this.TreeView != null && this.TreeView.ImageList != null)
-            {
-                IResourceResolver resolver = _parentTree.Binding.GetResourceResolver(_item);
-                IconSet iconSet = _parentTree.Binding.GetIconSet(_item);
-                ImageList.ImageCollection imageCollection = this.TreeView.ImageList.Images;
-                if (iconSet == null)
-                {
-                    this.ImageIndex = -1;
-                }
-                else if (imageCollection.ContainsKey(iconSet.MediumIcon))
-                {
-                    this.ImageIndex = imageCollection.IndexOfKey(iconSet.MediumIcon);
-                }
-                else
-                {
-                    try
-                    {
-                        imageCollection.Add(iconSet.MediumIcon, IconFactory.CreateIcon(iconSet.MediumIcon, resolver));
-                        this.ImageIndex = imageCollection.IndexOfKey(iconSet.MediumIcon);
-                    }
-                    catch (Exception e)
-                    {
-                        Platform.Log(LogLevel.Error, e);
-                        this.ImageIndex = -1;
-                    }
-                }
-
-                this.SelectedImageIndex = this.ImageIndex;
-            }
-
-            // if the subtree was already built, we need to rebuild it because it may no longer be valid
-            if (_isSubTreeBuilt)
-            {
-                RebuildSubTree();
-            }
-            else
-            {
-                // add a dummy child so that we get a "plus" sign next to the node
-                if (_parentTree.Binding.CanHaveSubTree(_item) && this.Nodes.Count == 0)
-                {
-                    this.Nodes.Add(new TreeNode("dummy"));
-                }
-            }
-
-            if (this.TreeView != null)
-                this.TreeView.EndUpdate();
+			UpdateDisplay(_treeView.ImageList);
         }
 
         /// <summary>
@@ -179,17 +130,84 @@ namespace ClearCanvas.Desktop.View.WinForms
             return _parentTree.Binding.AcceptDrop(_item, dropData, kind);
         }
 
-        /// <summary>
+		private void UpdateDisplay(ImageList treeViewImageList)
+		{
+			if (this.TreeView != null)
+				this.TreeView.BeginUpdate();
+
+			// update all displayable attributes from the binding
+			this.Text = _parentTree.Binding.GetNodeText(_item);
+			this.ToolTipText = _parentTree.Binding.GetTooltipText(_item);
+
+			this.Checked = _parentTree.Binding.GetIsChecked(_item);
+
+			if (treeViewImageList != null)
+			{
+				IResourceResolver resolver = _parentTree.Binding.GetResourceResolver(_item);
+				IconSet iconSet = _parentTree.Binding.GetIconSet(_item);
+				ImageList.ImageCollection imageCollection = treeViewImageList.Images;
+				if (iconSet == null)
+				{
+					this.ImageIndex = -1;
+				}
+				else if (imageCollection.ContainsKey(iconSet.MediumIcon))
+				{
+					this.ImageIndex = imageCollection.IndexOfKey(iconSet.MediumIcon);
+				}
+				else
+				{
+					try
+					{
+						imageCollection.Add(iconSet.MediumIcon, IconFactory.CreateIcon(iconSet.MediumIcon, resolver));
+						this.ImageIndex = imageCollection.IndexOfKey(iconSet.MediumIcon);
+					}
+					catch (Exception e)
+					{
+						Platform.Log(LogLevel.Error, e);
+						this.ImageIndex = -1;
+					}
+				}
+
+				this.SelectedImageIndex = this.ImageIndex;
+			}
+
+			// if the subtree was already built, we need to rebuild it because it may no longer be valid
+			if (_isSubTreeBuilt)
+			{
+				RebuildSubTree();
+			}
+			else
+			{
+				// add a dummy child so that we get a "plus" sign next to the node
+				if (_parentTree.Binding.CanHaveSubTree(_item) && this.Nodes.Count == 0)
+				{
+					this.Nodes.Add(new TreeNode("dummy"));
+				}
+			}
+
+			if (this.TreeView != null)
+				this.TreeView.EndUpdate();
+		}
+
+		/// <summary>
         /// Rebuilds the sub-tree
         /// </summary>
         private void RebuildSubTree()
         {
-            this.Nodes.Clear(); // remove any existing nodes
-
+			// dispose of the old sub-tree manager
+			if(_subtreeManager != null)
+			{
+				_subtreeManager.Dispose();
+				_subtreeManager = null;
+			}
+			
+			// get the sub-tree from the binding
+			// note: there is no guarantee that successive calls will return the same ITree instance,
+			// which is why we create a new BindingTreeLevelManager
             ITree subTree = _parentTree.Binding.GetSubTree(_item);
             if (subTree != null)
             {
-                _subtreeManager = new BindingTreeLevelManager(subTree, this.Nodes);
+				_subtreeManager = new BindingTreeLevelManager(subTree, this.Nodes, _treeView);
             }
         }
 
@@ -197,5 +215,18 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             _parentTree.Binding.SetIsChecked(_item, this.Checked);
         }
-    }
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			if(_subtreeManager != null)
+			{
+				_subtreeManager.Dispose();
+				_subtreeManager = null;
+			}
+		}
+
+		#endregion
+	}
 }

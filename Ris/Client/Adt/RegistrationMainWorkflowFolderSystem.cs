@@ -54,24 +54,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
 	public class RegistrationMainWorkflowFolderSystem
 		: RegistrationWorkflowFolderSystemBase<RegistrationMainWorkflowFolderExtensionPoint, RegistrationMainWorkflowFolderToolExtensionPoint,
-			RegistrationMainWorkflowItemToolExtensionPoint>, ISearchDataHandler
+			RegistrationMainWorkflowItemToolExtensionPoint>
 	{
-		private readonly Folders.RegistrationSearchFolder _searchFolder;
-
 		public RegistrationMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
 			: base(SR.TitleRegistrationFolderSystem, folderExplorer)
 		{
-			this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
-
-			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
-			{
-				this.AddFolder(new Folders.ScheduledFolder(this));
-				this.AddFolder(new Folders.CheckedInFolder(this));
-				this.AddFolder(new Folders.InProgressFolder(this));
-				this.AddFolder(new Folders.CompletedFolder(this));
-				this.AddFolder(new Folders.CancelledFolder(this));
-			}
-			this.AddFolder(_searchFolder = new Folders.RegistrationSearchFolder(this));
 		}
 
 		protected override string GetPreviewUrl()
@@ -79,28 +66,9 @@ namespace ClearCanvas.Ris.Client.Adt
 			return WebResourcesSettings.Default.RegistrationFolderSystemUrl;
 		}
 
-		public override void OnSelectedItemDoubleClicked()
-		{
-			base.OnSelectedItemDoubleClicked();
-
-			PatientBiographyTool biographyTool = (PatientBiographyTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
-				delegate(ITool tool) { return tool is PatientBiographyTool; });
-
-			if (biographyTool != null && biographyTool.Enabled)
-				biographyTool.View();
-		}
-
-		#region ISearchDataHandler Members
-
-		public SearchData SearchData
-		{
-			set
-			{
-				_searchFolder.SearchData = value;
-				SelectedFolder = _searchFolder;
-			}
-		}
-
-		#endregion
-	}
+        protected override SearchResultsFolder CreateSearchResultsFolder()
+        {
+            return new Folders.RegistrationSearchFolder();
+        }
+    }
 }

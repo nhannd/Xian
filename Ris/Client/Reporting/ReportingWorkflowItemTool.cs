@@ -40,7 +40,7 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    public abstract class WorkflowItemTool : Tool<IReportingWorkflowItemToolContext>, IDropHandler<ReportingWorklistItem>
+    public abstract class ReportingWorkflowItemTool : WorkflowItemTool<ReportingWorklistItem, IReportingWorkflowItemToolContext, IReportingWorkflowService>
     {
         public class StepType
         {
@@ -59,40 +59,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 
 
-        protected string _operationName;
-
-        public WorkflowItemTool(string operationName)
+        protected ReportingWorkflowItemTool(string operationName)
+            :base(operationName)
         {
-            _operationName = operationName;
-        }
-
-        public virtual bool Enabled
-        {
-            get
-            {
-                return this.Context.GetWorkflowOperationEnablement(_operationName);
-            }
-        }
-
-        public virtual event EventHandler EnabledChanged
-        {
-            add { this.Context.SelectionChanged += value; }
-            remove { this.Context.SelectionChanged -= value; }
-        }
-
-        public virtual void Apply()
-        {
-            ReportingWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
-            bool success = Execute(item, this.Context.DesktopWindow, this.Context.FolderSystem);
-            if (success)
-            {
-                this.Context.FolderSystem.InvalidateSelectedFolder();
-            }
-        }
-
-        protected string OperationName
-        {
-            get { return _operationName; }
         }
 
         protected bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
@@ -158,30 +127,5 @@ namespace ClearCanvas.Ris.Client.Reporting
                 return null;
             return CollectionUtils.FirstElement(this.Context.SelectedItems);
         }
-
-		protected abstract bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem);
-
-        #region IDropHandler<ReportingWorklistItem> Members
-
-        public virtual bool CanAcceptDrop(IDropContext dropContext, ICollection<ReportingWorklistItem> items)
-        {
-            IReportingWorkflowFolderDropContext ctxt = (IReportingWorkflowFolderDropContext)dropContext;
-            return ctxt.GetOperationEnablement(this.OperationName);
-        }
-
-        public virtual bool ProcessDrop(IDropContext dropContext, ICollection<ReportingWorklistItem> items)
-        {
-            IReportingWorkflowFolderDropContext ctxt = (IReportingWorkflowFolderDropContext)dropContext;
-            ReportingWorklistItem item = CollectionUtils.FirstElement(items);
-            bool success = Execute(item, ctxt.DesktopWindow, ctxt.FolderSystem);
-            if (success)
-            {
-                ctxt.FolderSystem.InvalidateSelectedFolder();
-                return true;
-            }
-            return false;
-        }
-
-        #endregion
     }
 }

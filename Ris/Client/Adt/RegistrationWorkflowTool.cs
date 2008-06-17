@@ -43,167 +43,105 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public class RegistrationWorkflowTool
-    {
-        public abstract class WorkflowItemTool : Tool<IRegistrationWorkflowItemToolContext>, IDropHandler<RegistrationWorklistItem>
-        {
-            protected string _operationName;
+	public abstract class RegistrationWorkflowTool : WorkflowItemTool<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext, IRegistrationWorkflowService>
+	{
+		protected RegistrationWorkflowTool(string operationName)
+			: base(operationName)
+		{
+		}
+	}
 
-            public WorkflowItemTool(string operationName)
-            {
-                _operationName = operationName;
-            }
 
-            public virtual bool Enabled
-            {
-                get
-                {
-                    return this.Context.GetWorkflowOperationEnablement(_operationName);
-                }
-            }
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Check-in", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Check-in", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.CheckInToolSmall.png", "Icons.CheckInToolMedium.png", "Icons.CheckInToolLarge.png")]
+	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[ActionPermission("apply", AuthorityTokens.Workflow.Procedure.CheckIn)]
+	[ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
+	public class CheckInProceduresTool : RegistrationWorkflowTool
+	{
+		public CheckInProceduresTool()
+			: base("CheckInProcedure")
+		{
+		}
 
-            public virtual event EventHandler EnabledChanged
-            {
-                add { this.Context.SelectionChanged += value; }
-                remove { this.Context.SelectionChanged -= value; }
-            }
+		public override void Initialize()
+		{
+			base.Initialize();
 
-            public virtual void Apply()
-            {
-                RegistrationWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
-                bool success = Execute(item, this.Context.DesktopWindow, this.Context.FolderSystem);
-                if (success)
-                {
-                    this.Context.FolderSystem.InvalidateSelectedFolder();
-                }
-            }
+			this.Context.RegisterDropHandler(typeof(Folders.CheckedInFolder), this);
+		}
 
-            protected string OperationName
-            {
-                get { return _operationName; }
-            }
+		protected override bool Execute(RegistrationWorklistItem item)
+		{
+			CheckInOrderComponent checkInComponent = new CheckInOrderComponent(item);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Context.DesktopWindow,
+				checkInComponent,
+				String.Format("Checking in {0}", PersonNameFormat.Format(item.PatientName)));
 
-			protected abstract bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				Platform.GetService<IRegistrationWorkflowService>(
+					delegate(IRegistrationWorkflowService service)
+					{
+						service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedProcedures));
+					});
 
-            #region IDropHandler<RegistrationWorklistItem> Members
+				this.Context.InvalidateFolder(typeof(Folders.CheckedInFolder));
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
 
-            public virtual bool CanAcceptDrop(IDropContext dropContext, ICollection<RegistrationWorklistItem> items)
-            {
-                IRegistrationWorkflowFolderDropContext ctxt = (IRegistrationWorkflowFolderDropContext)dropContext;
-                return ctxt.GetOperationEnablement(this.OperationName);
-            }
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Cancel Order", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Cancel Order", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
+	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[ActionPermission("apply", AuthorityTokens.Workflow.Order.Cancel)]
+	[ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
+	public class CancelOrdersTool : RegistrationWorkflowTool
+	{
+		public CancelOrdersTool()
+			: base("CancelOrder")
+		{
+		}
 
-            public virtual bool ProcessDrop(IDropContext dropContext, ICollection<RegistrationWorklistItem> items)
-            {
-                IRegistrationWorkflowFolderDropContext ctxt = (IRegistrationWorkflowFolderDropContext)dropContext;
-                RegistrationWorklistItem item = CollectionUtils.FirstElement(items);
-                bool success = Execute(item, ctxt.DesktopWindow, ctxt.FolderSystem);
-                if (success)
-                {
-                    ctxt.FolderSystem.InvalidateSelectedFolder();
-                    return true;
-                }
-                return false;
-            }
+		public override void Initialize()
+		{
+			base.Initialize();
 
-            #endregion
-        }
+			this.Context.RegisterDropHandler(typeof(Folders.CancelledFolder), this);
+		}
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Check-in", "Apply")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Check-in", "Apply")]
-		[IconSet("apply", IconScheme.Colour, "Icons.CheckInToolSmall.png", "Icons.CheckInToolMedium.png", "Icons.CheckInToolLarge.png")]
-		[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-		[ActionPermission("apply", AuthorityTokens.Workflow.Procedure.CheckIn)]
-		[ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
-        [ExtensionOf(typeof(Folders.CheckedInFolder.DropHandlerExtensionPoint))]
-        public class CheckInTool : WorkflowItemTool
-        {
-            public CheckInTool()
-                : base("CheckInProcedure")
-            {
-            }
+		protected override bool Execute(RegistrationWorklistItem item)
+		{
+			CancelOrderComponent cancelOrderComponent = new CancelOrderComponent();
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Context.DesktopWindow,
+				cancelOrderComponent,
+				String.Format(SR.TitleCancelOrder, PersonNameFormat.Format(item.PatientName)));
 
-			protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem)
-            {
-                try
-                {
-                    CheckInOrderComponent checkInComponent = new CheckInOrderComponent(item); 
-                    ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                        desktopWindow,
-                        checkInComponent,
-                        String.Format("Checking in {0}", PersonNameFormat.Format(item.PatientName)));
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				Platform.GetService<IRegistrationWorkflowService>(
+					delegate(IRegistrationWorkflowService service)
+					{
+						service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason));
+					});
 
-                    if (exitCode == ApplicationComponentExitCode.Accepted)
-                    {
-                        Platform.GetService<IRegistrationWorkflowService>(
-                            delegate(IRegistrationWorkflowService service)
-                            {
-                                service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedProcedures));
-                            });
-
-                        folderSystem.InvalidateFolder(typeof(Folders.CheckedInFolder));
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, desktopWindow);
-                    return false;
-                }
-            }
-        }
-
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel Order", "Apply")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel Order", "Apply")]
-		[IconSet("apply", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
-		[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-		[ActionPermission("apply", AuthorityTokens.Workflow.Order.Cancel)]
-        [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
-        [ExtensionOf(typeof(Folders.CancelledFolder.DropHandlerExtensionPoint))]
-        public class CancelTool : WorkflowItemTool
-        {
-            public CancelTool()
-                : base("CancelOrder")
-            {
-            }
-
-			protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem)
-            {
-                try
-                {
-                    CancelOrderComponent cancelOrderComponent = new CancelOrderComponent();
-                    ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                        desktopWindow,
-                        cancelOrderComponent,
-                        String.Format(SR.TitleCancelOrder, PersonNameFormat.Format(item.PatientName)));
-
-                    if (exitCode == ApplicationComponentExitCode.Accepted)
-                    {
-                        Platform.GetService<IRegistrationWorkflowService>(
-                            delegate(IRegistrationWorkflowService service)
-                            {
-                                service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason));
-                            });
-
-                        folderSystem.InvalidateFolder(typeof(Folders.CancelledFolder));
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, desktopWindow);
-                    return false;
-                }
-            }
-        }
-    }
+				this.Context.InvalidateFolder(typeof(Folders.CancelledFolder));
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
 }
 

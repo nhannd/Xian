@@ -101,7 +101,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     PlaceRandomOrderForPatient(item.PatientRef, item.PatientProfileRef, item.Mrn.AssigningAuthority);
                 }
 
-                context.FolderSystem.InvalidateFolder(typeof(Folders.ScheduledFolder));
+                context.InvalidateFolder(typeof(Folders.ScheduledFolder));
             }
             catch (Exception e)
             {

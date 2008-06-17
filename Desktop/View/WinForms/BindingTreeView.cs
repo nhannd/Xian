@@ -84,11 +84,22 @@ namespace ClearCanvas.Desktop.View.WinForms
             get { return _root; }
             set
             {
-                _root = value;
-                if (_root != null)
-                {
-                    _rootLevelManager = new BindingTreeLevelManager(_root, _treeCtrl.Nodes);
-                }
+				if(value != _root)
+				{
+					if (_rootLevelManager != null)
+					{
+						// be sure to dispose of _rootLevelManager, in order to unsubscribe events, etc.
+						_rootLevelManager.Dispose();
+						_rootLevelManager = null;
+					}
+
+					_root = value;
+
+					if (_root != null)
+					{
+						_rootLevelManager = new BindingTreeLevelManager(_root, _treeCtrl.Nodes, _treeCtrl);
+					}
+				}
             }
         }
 

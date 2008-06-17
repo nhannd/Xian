@@ -40,6 +40,9 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
+	/// <summary>
+	/// Associates a folder class with a worklist class.
+	/// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class FolderForWorklistClassAttribute : Attribute
     {
@@ -56,25 +59,233 @@ namespace ClearCanvas.Ris.Client
         }
     }
 
-	public abstract class WorkflowFolder : Folder
+	/// <summary>
+	/// Internal inteface used to initialize a <see cref="WorkflowFolder"/> once,
+	/// without having to define a constructor.
+	/// </summary>
+    internal interface IInitializeWorkflowFolder
+    {
+		/// <summary>
+		/// Initializes this folder with the specified arguments.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="worklistRef"></param>
+		/// <param name="description"></param>
+		/// <param name="isStatic"></param>
+    	void Initialize(Path path, EntityRef worklistRef, string description, bool isStatic);
+
+		/// <summary>
+		/// Associates this folder with the specified folder system.
+		/// </summary>
+		/// <param name="folderSystem"></param>
+    	void SetFolderSystem(WorkflowFolderSystem folderSystem);
+    }
+
+	/// <summary>
+	/// Abstract base class for workflow folders.  A workflow folder is characterized by the fact
+	/// that it contains "work items".
+	/// </summary>
+	public abstract class WorkflowFolder : Folder, IInitializeWorkflowFolder, IDisposable
 	{
-		private EntityRef _worklistRef;
+        private WorkflowFolderSystem _folderSystem;
+        private EntityRef _worklistRef;
+        private int _itemCount = -1;
+        private bool _isPopulated;
 
-		public abstract string WorklistClassName { get; }
+        private Timer _refreshTimer;
+        private int _refreshTime;
 
+		#region IInitializeWorkflowFolder Members
+
+		void IInitializeWorkflowFolder.Initialize(Path path, EntityRef worklistRef, string description, bool isStatic)
+		{
+			this.FolderPath = path;
+			_worklistRef = worklistRef;
+			this.Tooltip = description;
+			this.IsStatic = isStatic;
+		}
+
+		void IInitializeWorkflowFolder.SetFolderSystem(WorkflowFolderSystem folderSystem)
+		{
+			_folderSystem = folderSystem;
+		}
+
+		#endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if (_refreshTimer != null)
+            {
+                _refreshTimer.Dispose();
+                _refreshTimer = null;
+            }
+        }
+
+        #endregion
+
+		#region Public API
+
+		/// <summary>
+		/// Gets the reference to the worklist that populates this folder, or null if the folder is not associated with a worklist instance.
+		/// </summary>
+		//TODO: does this belong here or on the WorklistFolder class?
 		public EntityRef WorklistRef
 		{
 			get { return _worklistRef; }
-			internal set { _worklistRef = value; }
 		}
 
+		/// <summary>
+		/// Gets the name of the worklist class that this folder is associated with,
+		/// typically defined by the <see cref="FolderForWorklistClassAttribute"/>.
+		/// </summary>
+		//TODO: does this belong here or on the WorklistFolder class?
+		public virtual string WorklistClassName
+		{
+			get
+			{
+				FolderForWorklistClassAttribute a = AttributeUtils.GetAttribute<FolderForWorklistClassAttribute>(this.GetType());
+				return a == null ? null : a.WorklistClassName;
+			}
+		}
+
+		/// <summary>
+		/// Gets the folder system that this folder belongs to.
+		/// </summary>
+		public WorkflowFolderSystem FolderSystem
+		{
+			get { return _folderSystem; }
+		}
+
+		/// <summary>
+		/// Gets or sets the auto-refresh interval for this folder.
+		/// </summary>
+		public int RefreshTime
+		{
+			get { return _refreshTime; }
+			set
+			{
+				_refreshTime = value;
+				this.RestartRefreshTimer();
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether this folder is populated or not.
+		/// </summary>
+		public bool IsPopulated
+		{
+			get { return _isPopulated; }
+			protected set { _isPopulated = value; }
+		}
+
+		#endregion
+
+		#region Folder overrides
+
+		/// <summary>
+		/// Gets the ID that identifies the folder
+		/// </summary>
+		public override string Id
+		{
+			get
+			{
+				return this.IsStatic
+						   ? string.Concat(this.GetType().Name)
+						   : string.Concat(this.GetType().Name, ":", this.FolderPath.LastSegment.LocalizedText);
+			}
+		}
+
+		/// <summary>
+		/// Opens the folder (i.e. instructs the folder to show its "open" state icon).
+		/// </summary>
+		public override void OpenFolder()
+        {
+            base.OpenFolder();
+
+            this.RestartRefreshTimer();
+        }
+
+		/// <summary>
+		/// Closes the folder (i.e. instructs the folder to show its "closed" state icon).
+		/// </summary>
+		public override void CloseFolder()
+        {
+            base.CloseFolder();
+
+            this.RestartRefreshTimer();
+        }
+
+		/// <summary>
+		/// Gets the total number of items "contained" in this folder, which may be the same
+		/// as the number of items displayed in the <see cref="IFolder.ItemsTable"/>, or may be larger
+		/// in the event the table is only showing a subset of the total number of items.
+		/// </summary>
+		public override int TotalItemCount
+        {
+            get { return _itemCount; }
+        }
+
+		/// <summary>
+		/// Gets a value indicating whether the count of items in the folder is currently known.
+		/// </summary>
+		protected override bool IsItemCountKnown
+        {
+            get { return _isPopulated || _itemCount > -1; }
+		}
+
+		#endregion
+
+		#region Protected API
+
+		/// <summary>
+		/// Sets the total "logical" item count for this folder, which may be greater than the number of items in the folder,
+		/// for example, if there are too many items to display.
+		/// </summary>
+		/// <param name="n"></param>
+        protected void SetTotalItemCount(int n)
+        {
+            if (n != _itemCount)
+            {
+                _itemCount = n;
+                NotifyTotalItemCountChanged();
+                NotifyTextChanged();
+            }
+        }
+
+		/// <summary>
+		/// Restarts the refresh timer.
+		/// </summary>
+        protected void RestartRefreshTimer()
+        {
+            if (_refreshTimer != null)
+            {
+                _refreshTimer.Stop();
+                _refreshTimer.Dispose();
+                _refreshTimer = null;
+            }
+
+            if (_refreshTime > 0)
+            {
+                TimerDelegate timerDelegate = this.IsOpen
+                    ? new TimerDelegate(delegate(object state) { Refresh(); })
+                    : new TimerDelegate(delegate(object state) { RefreshCount(); });
+
+                _refreshTimer = new Timer(timerDelegate);
+                _refreshTimer.IntervalMilliseconds = _refreshTime;
+                _refreshTimer.Start();
+            }
+		}
+
+		#endregion
 	}
 
     /// <summary>
     /// Abstract base class for folders that display the contents of worklists.
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
-	public abstract class WorkflowFolder<TItem> : WorkflowFolder, IDisposable
+	public abstract class WorkflowFolder<TItem> : WorkflowFolder
 		where TItem : DataContractBase
     {
         #region QueryItemsResult class
@@ -104,15 +315,6 @@ namespace ClearCanvas.Ris.Client
         #endregion
 
         private readonly Table<TItem> _itemsTable;
-        private bool _isPopulated;
-        private int _itemCount = -1;
-        private readonly WorkflowFolderSystem _folderSystem;
-
-        private Timer _refreshTimer;
-        private int _refreshTime;
-
-        private ExtensionPoint<IDropHandler<TItem>> _dropHandlerExtensionPoint;
-        private IDropContext _dropContext;
         private IDropHandler<TItem> _currentDropHandler;
 
         private BackgroundTask _queryItemsTask;
@@ -121,39 +323,22 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="folderSystem"></param>
         /// <param name="itemsTable"></param>
-        public WorkflowFolder(WorkflowFolderSystem folderSystem, Table<TItem> itemsTable)
+        public WorkflowFolder(Table<TItem> itemsTable)
         {
-            _folderSystem = folderSystem;
             _itemsTable = itemsTable;
             _itemsTable.Items.ItemsChanged += delegate
                 {
                     SetTotalItemCount(_itemsTable.Items.Count);
                 };
-        }
+		}
 
+		#region Folder overrides
 
-        public override string Id
-        {
-            get
-            {
-                return this.IsStatic
-                           ? string.Concat(this.GetType().Name)
-                           : string.Concat(this.GetType().Name, ":", this.FolderPath.LastSegment.LocalizedText);
-            }
-        }
-
-        public override string WorklistClassName
-        {
-            get
-            {
-				FolderForWorklistClassAttribute a = AttributeUtils.GetAttribute<FolderForWorklistClassAttribute>(this.GetType());
-            	return a == null ? null : a.WorklistClassName;
-            }
-        }
-
-        public override ITable ItemsTable
+		/// <summary>
+    	/// Gets a table of the items that are contained in this folder
+    	/// </summary>
+    	public override ITable ItemsTable
         {
             get
             {
@@ -161,32 +346,10 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public override int TotalItemCount
-        {
-            get { return _itemCount; }
-        }
-
-		protected override bool IsItemCountKnown
-		{
-			get { return _isPopulated || _itemCount > -1; }
-		}
-
-        public WorkflowFolderSystem WorkflowFolderSystem
-        {
-            get { return _folderSystem; }
-        }
-
-        public int RefreshTime
-        {
-            get { return _refreshTime; }
-            set
-            {
-                _refreshTime = value;
-                this.RestartRefreshTimer();
-            }
-        }
-
-        public override void  Refresh()
+    	/// <summary>
+    	/// Asks the folder to refresh its contents.  The implementation may be asynchronous.
+    	/// </summary>
+    	public override void  Refresh()
         {
             if (_queryItemsTask != null)
             {
@@ -194,36 +357,110 @@ namespace ClearCanvas.Ris.Client
                 return;
             }
 
-            if (CanQuery())
-            {
-                _queryItemsTask = new BackgroundTask(
-                    delegate(IBackgroundTaskContext taskContext)
+            _queryItemsTask = new BackgroundTask(
+                delegate(IBackgroundTaskContext taskContext)
+                {
+                    try
                     {
-                        try
-                        {
-                            QueryItemsResult result = QueryItems();
-                            taskContext.Complete(result);
-                        }
-                        catch (Exception e)
-                        {
-                            taskContext.Error(e);
-                        }
-                    },
-                    false);
+                        QueryItemsResult result = QueryItems();
+                        taskContext.Complete(result);
+                    }
+                    catch (Exception e)
+                    {
+                        taskContext.Error(e);
+                    }
+                },
+                false);
 
-                _queryItemsTask.Terminated += OnQueryItemsCompleted;
-                _queryItemsTask.Run();
-            }
+            _queryItemsTask.Terminated += OnQueryItemsCompleted;
+            _queryItemsTask.Run();
         }
 
-        private void OnQueryItemsCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
+    	/// <summary>
+    	/// Asks the folder to refresh the count of its contents, without actually refreshing the contents.
+    	/// The implementation may be asynchronous.
+    	/// </summary>
+    	public override void RefreshCount()
+		{
+			if (_queryCountTask != null)
+			{
+				// refresh already in progress
+				return;
+			}
+
+			_queryCountTask = new BackgroundTask(
+				delegate(IBackgroundTaskContext taskContext)
+				{
+					try
+					{
+						int count = QueryCount();
+						taskContext.Complete(count);
+					}
+					catch (Exception e)
+					{
+						taskContext.Error(e);
+					}
+				},
+				false);
+
+			_queryCountTask.Terminated += OnQueryCountCompleted;
+			_queryCountTask.Run();
+		}
+
+    	/// <summary>
+    	/// Informs the folder that the specified items were dragged from it.  It is up to the implementation
+    	/// of the folder to determine the appropriate response (e.g. whether the items should be removed or not).
+    	/// </summary>
+    	/// <param name="items"></param>
+    	public override void DragComplete(object[] items, DragDropKind kind)
+		{
+			if (kind == DragDropKind.Move)
+			{
+				// items have been "moved" out of this folder
+			}
+		}
+
+    	/// <summary>
+    	/// Asks the folder if it can accept a drop of the specified items
+    	/// </summary>
+    	/// <param name="items"></param>
+    	/// <param name="kind"></param>
+    	/// <returns></returns>
+    	public override DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)
+		{
+			_currentDropHandler = (IDropHandler<TItem>)this.FolderSystem.GetDropHandler(this, items);
+
+			// if the items are acceptable, return Move (never Copy, which would make no sense for a workflow folder)
+			return _currentDropHandler != null ? DragDropKind.Move : DragDropKind.None;
+		}
+
+    	/// <summary>
+    	/// Instructs the folder to accept the specified items
+    	/// </summary>
+    	/// <param name="items"></param>
+    	/// <param name="kind"></param>
+    	public override DragDropKind AcceptDrop(object[] items, DragDropKind kind)
+		{
+			if (_currentDropHandler == null)
+				return DragDropKind.None;
+
+			// cast items to type safe collection
+			ICollection<TItem> dropItems = CollectionUtils.Map<object, TItem>(items, delegate(object item) { return (TItem)item; });
+			return _currentDropHandler.ProcessDrop(dropItems) ? DragDropKind.Move : DragDropKind.None;
+		}
+
+		#endregion
+
+		#region Helpers
+
+		private void OnQueryItemsCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
         {
             if(args.Reason == BackgroundTaskTerminatedReason.Completed)
             {
                 NotifyRefreshBegin();
 
                 QueryItemsResult result = (QueryItemsResult)args.Result;
-                _isPopulated = true;
+                this.IsPopulated = true;
                 _itemsTable.Items.Clear();
                 _itemsTable.Items.AddRange(result.Items);
                 _itemsTable.Sort();
@@ -236,7 +473,7 @@ namespace ClearCanvas.Ris.Client
                 // this message must be reported to the user
                 if (args.Exception is WeakSearchCriteriaException)
                 {
-                    ExceptionHandler.Report(args.Exception, _folderSystem.DesktopWindow);
+                    ExceptionHandler.Report(args.Exception, this.FolderSystem.DesktopWindow);
                 }
                 else
                 {
@@ -251,47 +488,6 @@ namespace ClearCanvas.Ris.Client
             _queryItemsTask = null;
 
             this.RestartRefreshTimer();
-        }
-
-        public override void RefreshCount()
-        {
-            if (_queryCountTask != null)
-            {
-                // refresh already in progress
-                return;
-            }
-
-            if (CanQuery())
-            {
-                _queryCountTask = new BackgroundTask(
-                    delegate(IBackgroundTaskContext taskContext)
-                    {
-                        try
-                        {
-                            int count = QueryCount();
-                            taskContext.Complete(count);
-                        }
-                        catch (Exception e)
-                        {
-                            taskContext.Error(e);
-                        }
-                    },
-                    false);
-
-                _queryCountTask.Terminated += OnQueryCountCompleted;
-                _queryCountTask.Run();
-
-            }
-        }
-
-        protected void SetTotalItemCount(int n)
-        {
-            if (n != _itemCount)
-            {
-                _itemCount = n;
-                NotifyTotalItemCountChanged();
-                NotifyTextChanged();
-            }
         }
 
         private void OnQueryCountCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
@@ -311,126 +507,50 @@ namespace ClearCanvas.Ris.Client
             _queryCountTask = null;
 
             this.RestartRefreshTimer();
-        }
-
-        public override void OpenFolder()
-        {
-            base.OpenFolder();
-
-            this.RestartRefreshTimer();
-        }
-
-        public override void CloseFolder()
-        {
-            base.CloseFolder();
-
-            this.RestartRefreshTimer();
-        }
-
-        public override void DragComplete(object[] items, DragDropKind kind)
-        {
-            if (kind == DragDropKind.Move)
-            {
-                // items have been "moved" out of this folder
-            }
-        }
-
-        public override DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)
-        {
-            if (_dropHandlerExtensionPoint == null)
-                return DragDropKind.None;
-
-            // cast items to type safe collection, cannot accept drop if items contains a different item type 
-        	ICollection<TItem> dropItems = new List<TItem>();
-			foreach (object item in items)
-			{
-				if (item is TItem)
-					dropItems.Add((TItem)item);
-				else
-					return DragDropKind.None;
-			}
-
-            // check for a handler that can accept
-            _currentDropHandler = CollectionUtils.SelectFirst<IDropHandler<TItem>>(_dropHandlerExtensionPoint.CreateExtensions(),
-                delegate(IDropHandler<TItem> handler)
-                {
-                    return handler.CanAcceptDrop(_dropContext, dropItems);
-                });
-
-            // if the items are acceptable, return Move (never Copy, which would make no sense for a workflow folder)
-            return _currentDropHandler != null ? DragDropKind.Move : DragDropKind.None;
-        }
-
-        public override DragDropKind AcceptDrop(object[] items, DragDropKind kind)
-        {
-            if (_currentDropHandler == null)
-                return DragDropKind.None;
-
-            // cast items to type safe collection
-            ICollection<TItem> dropItems = CollectionUtils.Map<object, TItem>(items, delegate(object item) { return (TItem)item; });
-            return _currentDropHandler.ProcessDrop(_dropContext, dropItems) ? DragDropKind.Move : DragDropKind.None;
-        }
-
-        protected void RestartRefreshTimer()
-        {
-            if (_refreshTimer != null)
-            {
-                _refreshTimer.Stop();
-                _refreshTimer.Dispose();
-                _refreshTimer = null;
-            }
-
-            if (_refreshTime > 0)
-            {
-                TimerDelegate timerDelegate = this.IsOpen
-                    ? new TimerDelegate(delegate(object state) { Refresh(); })
-                    : new TimerDelegate(delegate(object state) { RefreshCount(); });
-
-                _refreshTimer = new Timer(timerDelegate);
-                _refreshTimer.IntervalMilliseconds = _refreshTime;
-                _refreshTimer.Start();
-            }
-        }
-
-        protected void InitDragDropHandling(ExtensionPoint<IDropHandler<TItem>> dropHandlerExtensionPoint, IDropContext dropContext)
-        {
-            _dropHandlerExtensionPoint = dropHandlerExtensionPoint;
-            _dropContext = dropContext;
-        }
-
-		protected virtual bool CanQuery()
-		{
-			return true;
 		}
 
-    	protected abstract QueryItemsResult QueryItems();
+		#endregion
+
+		#region Protected API
+
+		/// <summary>
+		/// Called to obtain the set of items in the folder.
+		/// </summary>
+		/// <returns></returns>
+		protected abstract QueryItemsResult QueryItems();
+
+		/// <summary>
+		/// Called to obtain a count of the logical total number of items in the folder (which may be more than the number in memory).
+		/// </summary>
+		/// <returns></returns>
     	protected abstract int QueryCount();
 
+		#endregion
+	}
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            if (_refreshTimer != null)
-            {
-                _refreshTimer.Dispose();
-                _refreshTimer = null;
-            }
-        }
-
-        #endregion
-    }
-
+	/// <summary>
+	/// Abstract base class for folders that display the contents of worklists.
+	/// </summary>
+	/// <typeparam name="TItem"></typeparam>
+	/// <typeparam name="TWorklistService"></typeparam>
 	public abstract class WorklistFolder<TItem, TWorklistService> : WorkflowFolder<TItem>
 		where TItem : DataContractBase
-		where TWorklistService : IWorklistService<TItem>
+		where TWorklistService : IWorklistService<TItem>, IWorkflowService<TItem>
 
 	{
-		protected WorklistFolder(WorkflowFolderSystem folderSystem, Table<TItem> itemsTable)
-			: base(folderSystem, itemsTable)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="itemsTable"></param>
+		protected WorklistFolder(Table<TItem> itemsTable)
+			: base(itemsTable)
 		{
 		}
 
+		/// <summary>
+		/// Called to obtain the set of items in the folder.
+		/// </summary>
+		/// <returns></returns>
 		protected override QueryItemsResult QueryItems()
 		{
 			QueryItemsResult result = null;
@@ -449,6 +569,11 @@ namespace ClearCanvas.Ris.Client
 			return result;
 		}
 
+
+		/// <summary>
+		/// Called to obtain a count of the logical total number of items in the folder (which may be more than the number in memory).
+		/// </summary>
+		/// <returns></returns>
 		protected override int QueryCount()
 		{
 			int count = -1;

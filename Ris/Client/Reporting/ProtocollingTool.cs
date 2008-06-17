@@ -52,6 +52,14 @@ namespace ClearCanvas.Ris.Client.Reporting
 	[ExtensionOf(typeof(ReportingProtocolWorkflowItemToolExtensionPoint))]
 	public class ProtocollingTool : Tool<IReportingWorkflowItemToolContext>
 	{
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            this.Context.RegisterDoubleClickHandler(Apply);
+        }
+
+
 		#region public properties
 
 		/// <summary>

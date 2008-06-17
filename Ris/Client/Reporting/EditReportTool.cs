@@ -51,13 +51,20 @@ namespace ClearCanvas.Ris.Client.Reporting
     [LabelValueObserver("apply", "Label", "LabelChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
 	[ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(Folders.DraftFolder.DropHandlerExtensionPoint))]
-    public class EditReportTool : WorkflowItemTool
+    public class EditReportTool : ReportingWorkflowItemTool
     {
 
         public EditReportTool()
             : base("EditReport")
         {
+        }
+
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            this.Context.RegisterDropHandler(typeof(Folders.DraftFolder), this);
+            this.Context.RegisterDoubleClickHandler(Apply);
         }
 
         public string Label
@@ -84,8 +91,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 ReportingWorklistItem item = GetSelectedItem();
                 return 
-                    this.Context.GetWorkflowOperationEnablement("StartInterpretation") ||
-                    this.Context.GetWorkflowOperationEnablement("StartVerification") ||
+                    this.Context.GetOperationEnablement("StartInterpretation") ||
+                    this.Context.GetOperationEnablement("StartVerification") ||
 
                     // there is no workflow operation for editing a previously created draft,
                     // so we enable the tool if it looks like a draft
@@ -95,51 +102,41 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        public override bool CanAcceptDrop(IDropContext dropContext, ICollection<ReportingWorklistItem> items)
+        public override bool CanAcceptDrop(ICollection<ReportingWorklistItem> items)
         {
-            IReportingWorkflowFolderDropContext ctxt = (IReportingWorkflowFolderDropContext)dropContext;
-
             // this tool is only registered as a drop handler for the Drafts folder
             // and the only operation that would make sense in this context is StartInterpretation
-            return ctxt.GetOperationEnablement("StartInterpretation");
+            return this.Context.GetOperationEnablement("StartInterpretation");
         }
 
-		protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, WorkflowFolderSystem folderSystem)
+		protected override bool Execute(ReportingWorklistItem item)
         {
             // check if the document is already open
             if(ActivateIfAlreadyOpen(item))
                 return true;
 
-            try
+            if (item.ProcedureStepName == StepType.Interpretation && item.ActivityStatus.Code == StepState.Scheduled)
             {
-                if (item.ProcedureStepName == StepType.Interpretation && item.ActivityStatus.Code == StepState.Scheduled)
-                {
-                    // if creating a new report, check for linked interpretations
+                // if creating a new report, check for linked interpretations
 
-                    List<ReportingWorklistItem> linkedInterpretations;
-                    bool ok = PromptForLinkedInterpretations(item, out linkedInterpretations);
-                    if (!ok)
-                        return false;
+                List<ReportingWorklistItem> linkedInterpretations;
+                bool ok = PromptForLinkedInterpretations(item, out linkedInterpretations);
+                if (!ok)
+                    return false;
 
-                    // start the interpretation step
-                    // note: updating only the ProcedureStepRef is hacky - the service should return an updated item
-                    item.ProcedureStepRef = StartInterpretation(item, linkedInterpretations);
-                }
-                else if (item.ProcedureStepName == StepType.Verification && item.ActivityStatus.Code == StepState.Scheduled)
-                {
-                    // start the verification step
-                    // note: updating only the ProcedureStepRef is hacky - the service should return an updated item
-                    item.ProcedureStepRef = StartVerification(item);
-                }
-
-                // open the report editor
-                OpenReportEditor(item);
+                // start the interpretation step
+                // note: updating only the ProcedureStepRef is hacky - the service should return an updated item
+                item.ProcedureStepRef = StartInterpretation(item, linkedInterpretations);
             }
-            catch (Exception e)
+            else if (item.ProcedureStepName == StepType.Verification && item.ActivityStatus.Code == StepState.Scheduled)
             {
-                ExceptionHandler.Report(e, desktopWindow);
-                return false;
+                // start the verification step
+                // note: updating only the ProcedureStepRef is hacky - the service should return an updated item
+                item.ProcedureStepRef = StartVerification(item);
             }
+
+            // open the report editor
+            OpenReportEditor(item);
 
             return true;
         }

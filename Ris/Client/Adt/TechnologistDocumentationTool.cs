@@ -48,6 +48,13 @@ namespace ClearCanvas.Ris.Client.Adt
     [ExtensionOf(typeof(TechnologistMainWorkflowItemToolExtensionPoint))]
     public class TechnologistDocumentationTool : Tool<ITechnologistWorkflowItemToolContext>
     {
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            this.Context.RegisterDoubleClickHandler(Apply);
+        }
+
         public bool Enabled
         {
             get
@@ -74,7 +81,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     Workspace workspace = DocumentManager.Get<TechnologistDocumentationDocument>(item.OrderRef);
                     if (workspace == null)
                     {
-                        Document doc = new TechnologistDocumentationDocument(item, this.Context.Folders, this.Context.DesktopWindow);
+                        Document doc = new TechnologistDocumentationDocument(item, this.Context.DesktopWindow);
                         doc.Open();
                     }
                     else

@@ -29,15 +29,17 @@
 
 #endregion
 
+using System;
+
 namespace ClearCanvas.Desktop
 {
     /// <summary>
     /// Represents a single segment of a <see cref="Path"/>.
     /// </summary>
-    public class PathSegment
+    public class PathSegment : IEquatable<PathSegment>
     {
-        private string _key;
-        private string _localized;
+        private readonly string _key;
+        private readonly string _localized;
 
         /// <summary>
         /// Internal constructor.
@@ -65,5 +67,43 @@ namespace ClearCanvas.Desktop
         {
             get { return _localized; }
         }
+
+
+    	///<summary>
+    	///</summary>
+    	///<param name="pathSegment1"></param>
+    	///<param name="pathSegment2"></param>
+    	///<returns></returns>
+    	public static bool operator !=(PathSegment pathSegment1, PathSegment pathSegment2)
+    	{
+    		return !Equals(pathSegment1, pathSegment2);
+    	}
+
+    	///<summary>
+    	///</summary>
+    	///<param name="pathSegment1"></param>
+    	///<param name="pathSegment2"></param>
+    	///<returns></returns>
+    	public static bool operator ==(PathSegment pathSegment1, PathSegment pathSegment2)
+    	{
+    		return Equals(pathSegment1, pathSegment2);
+    	}
+
+    	public bool Equals(PathSegment pathSegment)
+    	{
+    		if (pathSegment == null) return false;
+    		return Equals(_localized, pathSegment._localized);
+    	}
+
+    	public override bool Equals(object obj)
+    	{
+    		if (ReferenceEquals(this, obj)) return true;
+    		return Equals(obj as PathSegment);
+    	}
+
+    	public override int GetHashCode()
+    	{
+    		return _localized != null ? _localized.GetHashCode() : 0;
+    	}
     }
 }

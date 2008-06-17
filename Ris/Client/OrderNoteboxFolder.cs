@@ -11,17 +11,12 @@ namespace ClearCanvas.Ris.Client
 		private readonly string _noteboxClassName;
 
 		public OrderNoteboxFolder(OrderNoteboxFolderSystem folderSystem, string noteboxClassName)
-			: base(folderSystem, new OrderNoteboxTable())
+			: base(new OrderNoteboxTable())
 		{
 			_folderSystem = folderSystem;
 			_noteboxClassName = noteboxClassName;
 
 			this.RefreshTime = OrderNoteboxFolderSystemSettings.Default.RefreshTime;
-		}
-
-		protected override bool CanQuery()
-		{
-			return true;
 		}
 
 		protected override QueryItemsResult QueryItems()
@@ -57,11 +52,6 @@ namespace ClearCanvas.Ris.Client
 		protected virtual void PrepareQueryRequest(QueryNoteboxRequest request)
 		{
 			// nothing to do
-		}
-
-		public bool GetOperationEnablement(string operationName)
-		{
-			return _folderSystem.GetOperationEnablement(operationName);
 		}
 	}
 }
