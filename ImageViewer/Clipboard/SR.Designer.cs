@@ -385,6 +385,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to n/a.
+        /// </summary>
+        internal static string MessageNotApplicable {
+            get {
+                return ResourceManager.GetString("MessageNotApplicable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The interval value is invalid..
         /// </summary>
         internal static string MessageRangeIntervalInvalid {

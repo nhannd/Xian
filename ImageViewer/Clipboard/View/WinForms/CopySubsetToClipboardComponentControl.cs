@@ -55,6 +55,8 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 
         	base.AcceptButton = _sendToClipboardButton;
 
+			_sourceDisplaySet.DataBindings.Add("Text", _component, "SourceDisplaySetDescription", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_radioUseInstanceNumber.DataBindings.Add("Checked", _component, "UseInstanceNumber", true, DataSourceUpdateMode.OnPropertyChanged);
 			_radioUseInstanceNumber.DataBindings.Add("Enabled", _component, "UseInstanceNumberEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 

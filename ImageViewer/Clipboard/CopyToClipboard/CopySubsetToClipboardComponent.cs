@@ -88,6 +88,11 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			SetActiveViewer(viewer);
 		}
 
+		private void OnImageBoxSelected(object sender, ImageBoxSelectedEventArgs e)
+		{
+			CurrentDisplaySet = e.SelectedImageBox.DisplaySet;
+		}
+
 		private void OnDisplaySetSelected(object sender, DisplaySetSelectedEventArgs e)
 		{
 			CurrentDisplaySet = e.SelectedDisplaySet;
@@ -96,7 +101,10 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 		private void SetActiveViewer(IImageViewer viewer)
 		{
 			if (_activeViewer != null)
+			{
+				_activeViewer.EventBroker.ImageBoxSelected -= OnImageBoxSelected;
 				_activeViewer.EventBroker.DisplaySetSelected -= OnDisplaySetSelected;
+			}
 
 			_activeViewer = viewer;
 
@@ -104,6 +112,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 
 			if (_activeViewer != null)
 			{
+				_activeViewer.EventBroker.ImageBoxSelected += OnImageBoxSelected;
 				_activeViewer.EventBroker.DisplaySetSelected += OnDisplaySetSelected;
 
 				if (_activeViewer.SelectedImageBox != null)
@@ -222,6 +231,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 				UpdateCopyRange();
 				UpdateCopyCustom();
 
+				NotifyPropertyChanged("SourceDisplaySetDescription");
 				NotifyPropertyChanged("UsePositionNumberEnabled");
 				NotifyPropertyChanged("CopyRangeEnabled");
 				NotifyPropertyChanged("CopyRangeAllEnabled");
@@ -319,6 +329,17 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 		}
 
 		#region Presentation Model
+
+		public string SourceDisplaySetDescription
+		{
+			get
+			{
+				if (this.CurrentDisplaySet != null)
+					return this.CurrentDisplaySet.Name;
+				else
+					return SR.MessageNotApplicable;
+			}	
+		}
 
 		public bool UsePositionNumber
 		{

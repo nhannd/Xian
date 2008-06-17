@@ -225,6 +225,9 @@
   <data name="MessageNoAcceptableCodecsInstalled" xml:space="preserve">
     <value>There are no acceptable video codecs installed.</value>
   </data>
+  <data name="MessageNotApplicable" xml:space="preserve">
+    <value>n/a</value>
+  </data>
   <data name="MessageRangeIntervalInvalid" xml:space="preserve">
     <value>The interval value is invalid.</value>
   </data>
